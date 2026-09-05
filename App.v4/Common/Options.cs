@@ -237,6 +237,10 @@ namespace x360ce.App
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
 		int _AiAccessPort = 37360;
 
+		[DefaultValue(false), Description("Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.")]
+		public bool AiAccessWindows { get { return _AiAccessWindows; } set { _AiAccessWindows = value; OnPropertyChanged(); } }
+		bool _AiAccessWindows;
+
 		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
 		public string AiAccessToken { get; set; }
 

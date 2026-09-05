@@ -301,7 +301,9 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Value]     │       │           │       ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
 [Button]    │       │           │       ├── Copy URL                                    # Copies the URL to the clipboard.
 [Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
-[Button]    │       │           │       └── Copy snippet                                # Copies the registration snippet to the clipboard.
+[Button]    │       │           │       ├── Copy snippet                                # Copies the registration snippet to the clipboard.
+[CheckBox]  │       │           │       ├── Register with Windows                       # Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.
+[Button]    │       │           │       └── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.

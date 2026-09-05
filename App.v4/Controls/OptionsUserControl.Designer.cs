@@ -94,6 +94,8 @@
 			this.AiAccessUrlLabel = new System.Windows.Forms.Label();
 			this.AiAccessUrlTextBox = new System.Windows.Forms.TextBox();
 			this.AiAccessUrlCopyButton = new System.Windows.Forms.Button();
+			this.AiAccessWindowsCheckBox = new System.Windows.Forms.CheckBox();
+			this.AiAccessLogButton = new System.Windows.Forms.Button();
 			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
 			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
@@ -922,9 +924,11 @@
 			this.AiAccessGroupBox.Controls.Add(this.AiAccessSnippetLabel);
 			this.AiAccessGroupBox.Controls.Add(this.AiAccessSnippetTextBox);
 			this.AiAccessGroupBox.Controls.Add(this.AiAccessCopyButton);
-			this.AiAccessGroupBox.Location = new System.Drawing.Point(263, 390);
+			this.AiAccessGroupBox.Controls.Add(this.AiAccessWindowsCheckBox);
+			this.AiAccessGroupBox.Controls.Add(this.AiAccessLogButton);
+			this.AiAccessGroupBox.Location = new System.Drawing.Point(263, 388);
 			this.AiAccessGroupBox.Name = "AiAccessGroupBox";
-			this.AiAccessGroupBox.Size = new System.Drawing.Size(376, 154);
+			this.AiAccessGroupBox.Size = new System.Drawing.Size(376, 164);
 			this.AiAccessGroupBox.TabIndex = 73;
 			this.AiAccessGroupBox.TabStop = false;
 			this.AiAccessGroupBox.Text = "AI assistant access (MCP server)";
@@ -932,7 +936,7 @@
 			// AiAccessLevelLabel
 			// 
 			this.AiAccessLevelLabel.AutoSize = true;
-			this.AiAccessLevelLabel.Location = new System.Drawing.Point(6, 22);
+			this.AiAccessLevelLabel.Location = new System.Drawing.Point(6, 20);
 			this.AiAccessLevelLabel.Name = "AiAccessLevelLabel";
 			this.AiAccessLevelLabel.Size = new System.Drawing.Size(33, 13);
 			this.AiAccessLevelLabel.TabIndex = 0;
@@ -942,7 +946,7 @@
 			// 
 			this.AiAccessComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.AiAccessComboBox.FormattingEnabled = true;
-			this.AiAccessComboBox.Location = new System.Drawing.Point(105, 19);
+			this.AiAccessComboBox.Location = new System.Drawing.Point(105, 17);
 			this.AiAccessComboBox.Name = "AiAccessComboBox";
 			this.AiAccessComboBox.Size = new System.Drawing.Size(96, 21);
 			this.AiAccessComboBox.TabIndex = 1;
@@ -950,7 +954,7 @@
 			// AiAccessAddressLabel
 			// 
 			this.AiAccessAddressLabel.AutoSize = true;
-			this.AiAccessAddressLabel.Location = new System.Drawing.Point(6, 49);
+			this.AiAccessAddressLabel.Location = new System.Drawing.Point(6, 44);
 			this.AiAccessAddressLabel.Name = "AiAccessAddressLabel";
 			this.AiAccessAddressLabel.Size = new System.Drawing.Size(45, 13);
 			this.AiAccessAddressLabel.TabIndex = 2;
@@ -960,7 +964,7 @@
 			// 
 			this.AiAccessAddressComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.AiAccessAddressComboBox.FormattingEnabled = true;
-			this.AiAccessAddressComboBox.Location = new System.Drawing.Point(105, 46);
+			this.AiAccessAddressComboBox.Location = new System.Drawing.Point(105, 41);
 			this.AiAccessAddressComboBox.Name = "AiAccessAddressComboBox";
 			this.AiAccessAddressComboBox.Size = new System.Drawing.Size(96, 21);
 			this.AiAccessAddressComboBox.TabIndex = 3;
@@ -968,7 +972,7 @@
 			// AiAccessPortLabel
 			// 
 			this.AiAccessPortLabel.AutoSize = true;
-			this.AiAccessPortLabel.Location = new System.Drawing.Point(213, 49);
+			this.AiAccessPortLabel.Location = new System.Drawing.Point(213, 44);
 			this.AiAccessPortLabel.Name = "AiAccessPortLabel";
 			this.AiAccessPortLabel.Size = new System.Drawing.Size(26, 13);
 			this.AiAccessPortLabel.TabIndex = 4;
@@ -976,7 +980,7 @@
 			// 
 			// AiAccessPortNumericUpDown
 			// 
-			this.AiAccessPortNumericUpDown.Location = new System.Drawing.Point(245, 47);
+			this.AiAccessPortNumericUpDown.Location = new System.Drawing.Point(245, 42);
 			this.AiAccessPortNumericUpDown.Maximum = new decimal(new int[] {
             49151,
             0,
@@ -1000,7 +1004,7 @@
 			// AiAccessTokenLabel
 			// 
 			this.AiAccessTokenLabel.AutoSize = true;
-			this.AiAccessTokenLabel.Location = new System.Drawing.Point(6, 75);
+			this.AiAccessTokenLabel.Location = new System.Drawing.Point(6, 68);
 			this.AiAccessTokenLabel.Name = "AiAccessTokenLabel";
 			this.AiAccessTokenLabel.Size = new System.Drawing.Size(38, 13);
 			this.AiAccessTokenLabel.TabIndex = 6;
@@ -1010,7 +1014,7 @@
 			// 
 			this.AiAccessTokenTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessTokenTextBox.Location = new System.Drawing.Point(105, 72);
+			this.AiAccessTokenTextBox.Location = new System.Drawing.Point(105, 65);
 			this.AiAccessTokenTextBox.Name = "AiAccessTokenTextBox";
 			this.AiAccessTokenTextBox.ReadOnly = true;
 			this.AiAccessTokenTextBox.Size = new System.Drawing.Size(184, 20);
@@ -1019,7 +1023,7 @@
 			// AiAccessRegenerateButton
 			// 
 			this.AiAccessRegenerateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessRegenerateButton.Location = new System.Drawing.Point(295, 70);
+			this.AiAccessRegenerateButton.Location = new System.Drawing.Point(295, 63);
 			this.AiAccessRegenerateButton.Name = "AiAccessRegenerateButton";
 			this.AiAccessRegenerateButton.Size = new System.Drawing.Size(75, 23);
 			this.AiAccessRegenerateButton.TabIndex = 8;
@@ -1029,7 +1033,7 @@
 			// AiAccessUrlLabel
 			// 
 			this.AiAccessUrlLabel.AutoSize = true;
-			this.AiAccessUrlLabel.Location = new System.Drawing.Point(6, 101);
+			this.AiAccessUrlLabel.Location = new System.Drawing.Point(6, 92);
 			this.AiAccessUrlLabel.Name = "AiAccessUrlLabel";
 			this.AiAccessUrlLabel.Size = new System.Drawing.Size(29, 13);
 			this.AiAccessUrlLabel.TabIndex = 9;
@@ -1039,7 +1043,7 @@
 			// 
 			this.AiAccessUrlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessUrlTextBox.Location = new System.Drawing.Point(105, 98);
+			this.AiAccessUrlTextBox.Location = new System.Drawing.Point(105, 89);
 			this.AiAccessUrlTextBox.Name = "AiAccessUrlTextBox";
 			this.AiAccessUrlTextBox.ReadOnly = true;
 			this.AiAccessUrlTextBox.Size = new System.Drawing.Size(184, 20);
@@ -1048,7 +1052,7 @@
 			// AiAccessUrlCopyButton
 			// 
 			this.AiAccessUrlCopyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessUrlCopyButton.Location = new System.Drawing.Point(295, 96);
+			this.AiAccessUrlCopyButton.Location = new System.Drawing.Point(295, 87);
 			this.AiAccessUrlCopyButton.Name = "AiAccessUrlCopyButton";
 			this.AiAccessUrlCopyButton.Size = new System.Drawing.Size(75, 23);
 			this.AiAccessUrlCopyButton.TabIndex = 11;
@@ -1058,7 +1062,7 @@
 			// AiAccessSnippetLabel
 			// 
 			this.AiAccessSnippetLabel.AutoSize = true;
-			this.AiAccessSnippetLabel.Location = new System.Drawing.Point(6, 127);
+			this.AiAccessSnippetLabel.Location = new System.Drawing.Point(6, 116);
 			this.AiAccessSnippetLabel.Name = "AiAccessSnippetLabel";
 			this.AiAccessSnippetLabel.Size = new System.Drawing.Size(93, 13);
 			this.AiAccessSnippetLabel.TabIndex = 12;
@@ -1068,7 +1072,7 @@
 			// 
 			this.AiAccessSnippetTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessSnippetTextBox.Location = new System.Drawing.Point(105, 124);
+			this.AiAccessSnippetTextBox.Location = new System.Drawing.Point(105, 113);
 			this.AiAccessSnippetTextBox.Name = "AiAccessSnippetTextBox";
 			this.AiAccessSnippetTextBox.ReadOnly = true;
 			this.AiAccessSnippetTextBox.Size = new System.Drawing.Size(184, 20);
@@ -1077,12 +1081,32 @@
 			// AiAccessCopyButton
 			// 
 			this.AiAccessCopyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AiAccessCopyButton.Location = new System.Drawing.Point(295, 122);
+			this.AiAccessCopyButton.Location = new System.Drawing.Point(295, 111);
 			this.AiAccessCopyButton.Name = "AiAccessCopyButton";
 			this.AiAccessCopyButton.Size = new System.Drawing.Size(75, 23);
 			this.AiAccessCopyButton.TabIndex = 14;
 			this.AiAccessCopyButton.Text = "Copy";
 			this.AiAccessCopyButton.UseVisualStyleBackColor = true;
+			//
+			// AiAccessWindowsCheckBox
+			//
+			this.AiAccessWindowsCheckBox.AutoSize = true;
+			this.AiAccessWindowsCheckBox.Location = new System.Drawing.Point(9, 139);
+			this.AiAccessWindowsCheckBox.Name = "AiAccessWindowsCheckBox";
+			this.AiAccessWindowsCheckBox.Size = new System.Drawing.Size(137, 17);
+			this.AiAccessWindowsCheckBox.TabIndex = 15;
+			this.AiAccessWindowsCheckBox.Text = "Register with Windows";
+			this.AiAccessWindowsCheckBox.UseVisualStyleBackColor = true;
+			//
+			// AiAccessLogButton
+			//
+			this.AiAccessLogButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.AiAccessLogButton.Location = new System.Drawing.Point(295, 135);
+			this.AiAccessLogButton.Name = "AiAccessLogButton";
+			this.AiAccessLogButton.Size = new System.Drawing.Size(75, 23);
+			this.AiAccessLogButton.TabIndex = 16;
+			this.AiAccessLogButton.Text = "Open log";
+			this.AiAccessLogButton.UseVisualStyleBackColor = true;
 			// 
 			// VirtualDevicePanel
 			// 
@@ -1432,6 +1456,8 @@
 		private System.Windows.Forms.Label AiAccessUrlLabel;
 		private System.Windows.Forms.TextBox AiAccessUrlTextBox;
 		private System.Windows.Forms.Button AiAccessUrlCopyButton;
+		private System.Windows.Forms.CheckBox AiAccessWindowsCheckBox;
+		private System.Windows.Forms.Button AiAccessLogButton;
 		public System.Windows.Forms.CheckBox AllowRemote3CheckBox;
 		public System.Windows.Forms.CheckBox AllowRemote2CheckBox;
 		public System.Windows.Forms.CheckBox AllowRemote1CheckBox;

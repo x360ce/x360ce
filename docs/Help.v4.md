@@ -256,7 +256,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
 program. It is off until you choose a level on the Options page. **Read**: read the interface, the
-devices and the help; changes nothing. **Configure**: everything a person does on the tabs; Windows
+devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
 may still ask, as it asks a person, when HID Guardian is set to configure automatically.
 **Administer**: also the actions that install or remove drivers and switch on debug mode. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
@@ -278,6 +278,13 @@ frames the control and shows a balloon with its words beside it for a few second
 such steps into a short script, pointing, pausing, pressing and setting in turn, so it walks you
 through a task rather than describing it, and it can find any control by a word from its name or
 purpose rather than reading the whole interface first.
+
+Everything done through the door is written down: Open log on the Options page shows each call,
+its arguments and what came of it, with the time, so you can see afterwards what an assistant did.
+
+On a Windows that has the agent registry, tick "Register with Windows" and Copilot and other
+agents find the program by themselves; Windows then asks you, in Settings, which agents may use
+it. On other Windows the box says it needs a newer Windows and stays off.
 
 From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the

@@ -23,6 +23,17 @@ namespace x360ce.App.Controls
 			AiAccessSnippetTextBox.Text = "{\"mcpServers\":{\"x360ce\":{\"command\":\"" + Application.ExecutablePath.Replace("\\", "\\\\") + "\",\"args\":[\"/Mcp\"]}}}";
 			AiAccessCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessSnippetTextBox.Text);
 			AiAccessUrlCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessUrlTextBox.Text);
+			// The Windows agent registry ships with newer Windows only. Where its tool is absent the
+			// switch stays off and says why, rather than promising something the machine cannot do.
+			AiAccessWindowsCheckBox.Enabled = Mcp.WindowsAgentRegistry.IsAvailable;
+			if (!Mcp.WindowsAgentRegistry.IsAvailable)
+				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
+			AiAccessLogButton.Click += (s, e) =>
+			{
+				if (!File.Exists(Mcp.McpLog.Path))
+					Mcp.McpLog.Write("log opened from the Options page");
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Mcp.McpLog.Path) { UseShellExecute = true });
+			};
 			UpdateAiAccessUrl();
 			AiAccessRegenerateButton.Click += (s, e) =>
 			{
@@ -153,6 +164,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(AiAccess)));
 			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
+			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
 			// LoadAndMonitor has no branch for a number box, and ValueChanged fires on every spin
 			// click, each of which would restart the listener; the value is taken when editing ends.
 			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;

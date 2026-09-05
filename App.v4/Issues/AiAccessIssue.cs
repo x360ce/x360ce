@@ -24,6 +24,11 @@ namespace x360ce.App.Issues
 				SetSeverity(IssueSeverity.Important, Mcp.McpListener.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
 				return;
 			}
+			if (Mcp.WindowsAgentRegistry.LastError != null)
+			{
+				SetSeverity(IssueSeverity.Important, 0, "AI assistant access: " + Mcp.WindowsAgentRegistry.LastError);
+				return;
+			}
 			SetSeverity(IssueSeverity.None);
 		}
 

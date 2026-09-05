@@ -16,18 +16,18 @@ namespace x360ce.App.UiTree
 		/// <summary>The control being pointed at, or null.</summary>
 		public static Control Target { get; private set; }
 
-		/// <summary>Frames the control and shows the words beside it for the given seconds. A new call replaces the last.</summary>
+		/// <summary>
+		/// Frames the control and shows the words beside it for the given seconds. A new call
+		/// replaces the last. The overlay is made afresh each time and disposed when hidden, so it
+		/// always belongs to the thread that asked; a callout is rare, so that costs nothing.
+		/// </summary>
 		public static void Show(Control target, string text, int seconds)
 		{
 			Hide();
 			Target = target;
-			if (_frame == null)
-				_frame = new Frame();
-			if (_timer == null)
-			{
-				_timer = new Timer();
-				_timer.Tick += (s, e) => Hide();
-			}
+			_frame = new Frame();
+			_timer = new Timer();
+			_timer.Tick += (s, e) => Hide();
 			var around = target.RectangleToScreen(target.ClientRectangle);
 			around.Inflate(4, 4);
 			_frame.Point(around, text);
@@ -40,7 +40,10 @@ namespace x360ce.App.UiTree
 			if (Target == null)
 				return;
 			_timer.Stop();
-			_frame.Hide();
+			_timer.Dispose();
+			_timer = null;
+			_frame.Dispose();
+			_frame = null;
 			Target = null;
 		}
 

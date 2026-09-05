@@ -1894,6 +1894,18 @@
 																	"Description":"Copies the registration snippet to the clipboard.",
 																	"Role":"Button",
 																	"Id":"AiAccessCopyButton"
+																},
+																{
+																	"Name":"Register with Windows",
+																	"Description":"Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.",
+																	"Role":"CheckBox",
+																	"Id":"AiAccessWindowsCheckBox"
+																},
+																{
+																	"Name":"Open log",
+																	"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
+																	"Role":"Button",
+																	"Id":"AiAccessLogButton"
 																}
 															]
 														}

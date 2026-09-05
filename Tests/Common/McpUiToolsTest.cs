@@ -83,6 +83,8 @@ namespace x360ce.Tests
 					Assert.AreSame(two, tabs.SelectedTab, "The page holding the element must come to the front.");
 					Assert.AreSame(go, UiCallout.Target, "The frame is not around the element.");
 					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiShow("Nowhere", null, 1)).Message, "No element");
+					go.Visible = false;
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiShow("Tabs/Two/Go", null, 1)).Message, "hidden");
 				}
 				finally
 				{
@@ -121,6 +123,8 @@ namespace x360ce.Tests
 					McpCatalog.Level = () => AiAccess.Configure;
 					StringAssert.Contains(McpTools.UiScript("set Tabs/Page/Strength | 40\nclick Tabs/Page/Go"), "2 step(s)");
 					Assert.AreEqual(40, slider.Value);
+					// A sentence may carry a '|' of its own; it is not a fourth part.
+					StringAssert.Contains(McpTools.UiScript("show Tabs/Page/Go | Press A | B, then wait | 1"), "1 step(s)");
 					Assert.AreEqual(1, pressed);
 					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiScript("jump Tabs")).Message, "Unknown step");
 				}

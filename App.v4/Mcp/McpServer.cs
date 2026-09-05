@@ -178,42 +178,90 @@ namespace x360ce.App.Mcp
 				return Error(id, -32600, "No method.");
 			if (method.StartsWith("notifications/", StringComparison.Ordinal))
 				return "";
-			var level = McpCatalog.Level();
 			switch (method)
 			{
 				case "initialize":
-					return Result(id, new Dictionary<string, object>
-					{
-						{ "protocolVersion", ProtocolVersion },
-						{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
-						{ "serverInfo", new Dictionary<string, object> { { "name", "x360ce" }, { "version", System.Windows.Forms.Application.ProductVersion } } },
-					});
+					return Result(id, InitializeResult());
 				case "ping":
 					return Result(id, new Dictionary<string, object>());
 				case "tools/list":
-					return Result(id, new Dictionary<string, object> { { "tools", McpCatalog.Tools.Where(t => t.Level <= level).Select(t => new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() } }).ToArray() } });
+					return Result(id, ToolsList());
 				case "tools/call":
-					return CallTool(id, p, level);
+					return CallTool(id, p, McpCatalog.Level());
 				default:
 					return Error(id, -32601, "Unknown method: " + method);
 			}
 		}
 
+		/// <summary>What initialize answers. Also written into the Windows registration, which checks the two agree.</summary>
+		public static Dictionary<string, object> InitializeResult()
+		{
+			return new Dictionary<string, object>
+			{
+				{ "protocolVersion", ProtocolVersion },
+				{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
+				{ "serverInfo", new Dictionary<string, object> { { "name", "x360ce" }, { "version", System.Windows.Forms.Application.ProductVersion } } },
+			};
+		}
+
+		/// <summary>
+		/// Every tool, whatever the level: the list never changes, which the Windows registration
+		/// requires, and a tool above the level says so when called.
+		/// </summary>
+		public static Dictionary<string, object> ToolsList()
+		{
+			return new Dictionary<string, object> { { "tools", McpCatalog.Tools.Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() } }).ToArray() } };
+		}
+
 		static string CallTool(object id, Dictionary<string, object> p, AiAccess level)
 		{
 			var name = p != null && p.ContainsKey("name") ? p["name"] as string : null;
+			var arguments = p != null && p.ContainsKey("arguments") ? p["arguments"] as Dictionary<string, object> : null;
+			var shown = name + " " + McpLog.Clip(Redact(name, arguments == null ? "" : Json.Serialize(arguments)), 300);
 			var tool = McpCatalog.Tools.FirstOrDefault(t => t.Name == name);
 			if (tool == null)
+			{
+				McpLog.Write(shown + " -> no such tool");
 				return Error(id, -32602, "No such tool: " + name);
+			}
 			if (tool.Level > level)
+			{
+				McpLog.Write(shown + " -> refused, needs " + tool.Level + " and the level is " + level);
 				return Error(id, -32001, McpCatalog.Refusal(tool.Level));
+			}
 			object[] values;
-			try { values = tool.Bind(p.ContainsKey("arguments") ? p["arguments"] as Dictionary<string, object> : null); }
-			catch (ArgumentException ex) { return Error(id, -32602, ex.Message); }
+			try { values = tool.Bind(arguments); }
+			catch (ArgumentException ex)
+			{
+				McpLog.Write(shown + " -> " + ex.Message);
+				return Error(id, -32602, ex.Message);
+			}
+			var watch = System.Diagnostics.Stopwatch.StartNew();
 			object result;
 			try { result = tool.Call(values); }
-			catch (Exception ex) { return Result(id, Content(ex.Message, true)); }
-			return Result(id, Content(result == null ? "Done." : result as string ?? Json.Serialize(result), false));
+			catch (Exception ex)
+			{
+				McpLog.Write(shown + " -> failed after " + watch.ElapsedMilliseconds + " ms: " + McpLog.Clip(ex.Message, 300));
+				return Result(id, Content(ex.Message, true));
+			}
+			var text = result == null ? "Done." : result as string ?? Json.Serialize(result);
+			McpLog.Write(shown + " -> " + McpLog.Clip(text, 200) + " in " + watch.ElapsedMilliseconds + " ms");
+			return Result(id, Content(text, false));
+		}
+
+		/// <summary>
+		/// A password typed through the door must not be readable in the log afterwards. The reader
+		/// already refuses to read a password box out; the writer's argument is masked the same way.
+		/// </summary>
+		static string Redact(string tool, string argumentsJson)
+		{
+			if (argumentsJson.IndexOf("password", StringComparison.OrdinalIgnoreCase) < 0)
+				return argumentsJson;
+			if (tool == "ui_set")
+				return System.Text.RegularExpressions.Regex.Replace(argumentsJson, "\"value\":\"[^\"]*\"", "\"value\":\"***\"");
+			if (tool == "ui_script")
+				return System.Text.RegularExpressions.Regex.Replace(argumentsJson, "(set [^|\\]*password[^|\\]*\\|)[^\\]*", "$1 ***", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+			return argumentsJson;
 		}
 
 		static Dictionary<string, object> Content(string text, bool isError)
@@ -290,6 +338,7 @@ namespace x360ce.App.Mcp
 			_listener = listener;
 			LastError = null;
 			listener.BeginGetContext(OnRequest, listener);
+			McpLog.Write("door opened at " + Prefix(address, port) + " with " + McpCatalog.Level() + " access");
 			return true;
 		}
 
@@ -298,7 +347,10 @@ namespace x360ce.App.Mcp
 			var listener = _listener;
 			_listener = null;
 			if (listener != null)
+			{
 				listener.Close();
+				McpLog.Write("door closed");
+			}
 		}
 
 		/// <summary>
@@ -334,6 +386,8 @@ namespace x360ce.App.Mcp
 			var authorised = (context.Request.Headers["Authorization"] ?? "") == "Bearer " + _token;
 			if (!authorised || context.Request.HttpMethod != "POST")
 			{
+				if (!authorised)
+					McpLog.Write("refused: no valid token, from " + context.Request.RemoteEndPoint);
 				Write(context.Response, authorised ? 405 : 401, "");
 				return;
 			}

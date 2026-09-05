@@ -114,6 +114,10 @@ namespace x360ce.App.UiTree
 				"Settings to paste into an assistant so it can reach this program.");
 			d["OptionsUserControl.AiAccessCopyButton"] = new Text("Copy snippet",
 				"Copies the registration snippet to the clipboard.");
+			d["OptionsUserControl.AiAccessWindowsCheckBox"] = new Text("Register with Windows",
+				"Lists this program in the Windows agent registry, so Copilot and other agents find it by themselves without being told where it is. Needs a Windows that has the registry; elsewhere the box stays off and says so.");
+			d["OptionsUserControl.AiAccessLogButton"] = new Text("Open log",
+				"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.");
 
 			// Hiding the real controller.
 			d["OptionsUserControl.HidHideGroupBox"] = new Text("HID Hide",

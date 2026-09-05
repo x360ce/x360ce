@@ -43,7 +43,7 @@ namespace x360ce.App.Mcp
 		/// </summary>
 		public static string[] DoorControls =
 		{
-			"AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton",
+			"AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
 		};
 
 		static Control RootWindow { get { return Root ?? MainForm.Current; } }
@@ -92,6 +92,9 @@ namespace x360ce.App.Mcp
 				if (main != null && (main.WindowState == FormWindowState.Minimized || !main.Visible))
 					main.RestoreFromTray(true);
 				UiTreeWalker.Reveal(control);
+				var window = control.FindForm();
+				if (!control.Visible || window == null || !window.Visible || window.WindowState == FormWindowState.Minimized)
+					throw new InvalidOperationException("The element is hidden, so there is nothing to point at.");
 				UiCallout.Show(control, text, seconds);
 			});
 			// The pause is the point: the person reads the balloon before the next step arrives.
@@ -138,7 +141,8 @@ namespace x360ce.App.Mcp
 					continue;
 				var space = line.IndexOf(' ');
 				var verb = (space < 0 ? line : line.Substring(0, space)).ToLowerInvariant();
-				var parts = (space < 0 ? "" : line.Substring(space + 1)).Split('|').Select(x => x.Trim()).ToArray();
+				// A value or a sentence may hold a '|' of its own: only as many parts are cut as the step has.
+				var parts = (space < 0 ? "" : line.Substring(space + 1)).Split(new[] { '|' }, verb == "set" ? 2 : 3).Select(x => x.Trim()).ToArray();
 				try
 				{
 					switch (verb)

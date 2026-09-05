@@ -34,9 +34,10 @@ namespace x360ce.Tests
 			{
 				var refused = Assert.ThrowsExactly<WebException>(() => McpClient.Post(Port, "wrong", List));
 				Assert.AreEqual(HttpStatusCode.Unauthorized, ((HttpWebResponse)refused.Response).StatusCode);
-				Assert.IsFalse(McpClient.Post(Port, "secret", List).Contains("poke_value"), "A Configure tool was listed at Read.");
+				const string Poke = "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"poke_value\",\"arguments\":{\"value\":\"x\"}}}";
+				StringAssert.Contains(McpClient.Post(Port, "secret", Poke), "-32001", "A Configure tool was allowed at Read.");
 				McpCatalog.Level = () => AiAccess.Configure;
-				Assert.IsTrue(McpClient.Post(Port, "secret", List).Contains("poke_value"), "The level was not read live.");
+				StringAssert.Contains(McpClient.Post(Port, "secret", Poke), "poked x", "The level was not read live.");
 				StringAssert.Contains(McpClient.Post(Port, "secret", "{not json"), "-32700");
 				var poked = McpClient.Post(Port, "secret", "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"poke_value\",\"arguments\":{\"value\":\"ü\"}}}");
 				StringAssert.Contains(poked, "poked ü", "A non-ASCII value must arrive as sent; bodies are UTF-8.");

@@ -32,6 +32,9 @@ namespace x360ce.Tests
 
 			[McpTool(AiAccess.Read, "Fails")]
 			public static string Boom() { throw new InvalidOperationException("no device"); }
+
+			[McpTool(AiAccess.Configure, "Sets, as the real ui_set does")]
+			public static string UiSet(string path, string value) { return null; }
 		}
 
 		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
@@ -76,6 +79,32 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A password sent through the door is masked in the log, and the token never appears in it")]
+		public void The_log_keeps_no_secret()
+		{
+			var folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "x360ce-log-" + Guid.NewGuid().ToString("N"));
+			System.IO.Directory.CreateDirectory(folder);
+			McpLog.Folder = folder;
+			try
+			{
+				UseSample(AiAccess.Configure);
+				CallTool("ui_set", new Dictionary<string, object> { { "path", "Options/RemotePasswordTextBox" }, { "value", "hunter2" } });
+				var token = new string('a', 64);
+				CallTool("poke_value", new Dictionary<string, object> { { "value", token } });
+				var log = System.IO.File.ReadAllText(McpLog.Path);
+				StringAssert.Contains(log, "RemotePasswordTextBox");
+				Assert.IsFalse(log.Contains("hunter2"), "The password was written to the log.");
+				Assert.IsFalse(log.Contains(token), "The token was written to the log.");
+				StringAssert.Contains(log, "<token>");
+			}
+			finally
+			{
+				McpLog.Folder = null;
+				System.IO.Directory.Delete(folder, true);
+			}
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Initialize names the protocol and the program")]
 		public void Initialize_names_protocol_and_program()
 		{
@@ -86,13 +115,15 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("Only tools the level allows are listed")]
-		public void Tools_are_listed_by_level()
+		[Description("Every tool is listed whatever the level, so the list never changes; the level is enforced when a tool is called")]
+		public void Tools_are_listed_whatever_the_level()
 		{
+			// Windows checks a registered server's tool list against what it declared, so the list
+			// must not depend on a setting. What the level gates is the call, tested below.
 			UseSample(AiAccess.Read);
-			Assert.AreEqual(3, ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Length);
+			Assert.AreEqual(5, ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Length);
 			UseSample(AiAccess.Configure);
-			Assert.AreEqual(4, ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Length);
+			Assert.AreEqual(5, ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Length);
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]

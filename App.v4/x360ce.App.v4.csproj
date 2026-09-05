@@ -426,8 +426,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Mcp\McpClient.cs" />
+    <Compile Include="Mcp\McpLog.cs" />
     <Compile Include="Mcp\McpServer.cs" />
     <Compile Include="Mcp\McpTools.cs" />
+    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
