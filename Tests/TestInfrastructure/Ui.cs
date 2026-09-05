@@ -45,6 +45,18 @@ namespace x360ce.Tests
 				throw new AssertFailedException(failure.Message, failure);
 		}
 
+		/// <summary>
+		/// Unbinds the control helper from whichever thread claimed it, so a test that marshals
+		/// across threads can bind it to its own. The helper binds to the first thread that asks
+		/// and keeps that binding for the life of the process.
+		/// </summary>
+		public static void ReleaseInvokeContext()
+		{
+			typeof(ControlsHelper)
+				.GetProperty("MainTaskScheduler")
+				.SetValue(null, null, null);
+		}
+
 		/// <summary>Repository root, found by walking up from the test assembly.</summary>
 		/// <remarks>
 		/// Several starting points are tried because the base directory of the application domain
