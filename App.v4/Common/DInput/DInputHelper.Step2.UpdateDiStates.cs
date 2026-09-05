@@ -24,6 +24,7 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80070016), // ERROR_BAD_UNIT, device does not recognise the command
 			unchecked((int)0x80040203), // DIERR_NOTDOWNLOADED, effect not on the device
 			unchecked((int)0x80070005), // E_ACCESSDENIED, another application holds the device
+			unchecked((int)0x80040205), // DIERR_NOTEXCLUSIVEACQUIRED, the exclusive hold was lost to another program; it is taken again on the next poll
 		};
 
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)

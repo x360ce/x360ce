@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +9,8 @@ namespace x360ce.App.Controls
 	{
 		public BaseFormWithHeader()
 		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+			DoubleBuffered = true;
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
@@ -16,6 +18,17 @@ namespace x360ce.App.Controls
 			// What the header goes back to before anything has set a subject of its own.
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
+		}
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var cp = base.CreateParams;
+				if (!IsDesignMode)
+					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: smooth bottom-to-top double-buffered painting
+				return cp;
+			}
 		}
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);

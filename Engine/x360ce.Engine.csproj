@@ -87,7 +87,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Resources.Extensions">
-      <HintPath>$(USERPROFILE)\.nuget\packages\system.resources.extensions\7.0.0\lib\net462\System.Resources.Extensions.dll</HintPath>
+      <HintPath>..\App.v4\Resources\Dependencies\System.Resources.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore" />

@@ -42,12 +42,27 @@ namespace x360ce.App.Controls
 			BackColor = SystemColors.Control;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			_Top = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-			_Front = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
-			_TopDisabled = AppHelper.GetDisabledImage(_Top);
-			_FrontDisabled = AppHelper.GetDisabledImage(_Front);
+			if (_TopShared == null)
+			{
+				lock (_BitmapLock)
+				{
+					if (_TopShared == null)
+					{
+						_TopShared = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
+						_FrontShared = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
+						_TopDisabledShared = AppHelper.GetDisabledImage(_TopShared);
+						_FrontDisabledShared = AppHelper.GetDisabledImage(_FrontShared);
+					}
+				}
+			}
+			_Top = _TopShared;
+			_Front = _FrontShared;
+			_TopDisabled = _TopDisabledShared;
+			_FrontDisabled = _FrontDisabledShared;
 		}
 
+		static Bitmap _TopShared, _FrontShared, _TopDisabledShared, _FrontDisabledShared;
+		static readonly object _BitmapLock = new object();
 		Bitmap _Top, _Front, _TopDisabled, _FrontDisabled;
 
 		PadControlImager _Imager;

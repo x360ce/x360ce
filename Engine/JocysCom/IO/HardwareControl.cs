@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
@@ -449,6 +449,10 @@ namespace JocysCom.ClassLibrary.IO
 			ControlsHelper.Invoke(new Action(() =>
 			{
 				var box = LogTextBox;
+				// The work this logs outlives the window it is shown in. A line arriving after the box
+				// is gone has nowhere to go, and writing it there recreated a disposed handle.
+				if (box.IsDisposed || box.Disposing)
+					return;
 				lock (box)
 				{
 					var nl = Environment.NewLine;

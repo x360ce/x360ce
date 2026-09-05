@@ -50,9 +50,9 @@ namespace x360ce.App
 				if (game != null)
 					game.PropertyChanged += CurrentGame_PropertyChanged;
 				// Assing new game.
-				CurrentGame = game;
-				Global.DHelper.SettingsChanged = true;
-				CurrentGame_PropertyChanged(null, null);
+				// Nobody may be listening: the main window lets go of this event while it closes, and
+				// the foreground window keeps changing after that.
+				CurrentGame_PropertyChanged?.Invoke(null, null);
 				//// If pad controls not initializes yet then return.
 				//if (PadControls == null)
 				//	return;
@@ -387,26 +387,39 @@ namespace x360ce.App
 			Programs.Items.SynchronizingObject = so;
 			Presets.Items.SynchronizingObject = so;
 			PadSettings.Items.SynchronizingObject = so;
-			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
 			UserSettings.ValidateData = UserSettings_ValidateData;
-			UserSettings.Load();
-			Summaries.Load();
-			// Make sure that data will be filtered before loading.
-			// Note: Make sure to load Programs before Games.
 			Programs.ValidateData = Programs_ValidateData;
-			Programs.Load();
-			// Make sure that data will be filtered before loading.
 			UserGames.ValidateData = Games_ValidateData;
-			UserGames.Load();
-			Presets.Load();
-			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
-			Layouts.Load();
-			PadSettings.Load();
-			UserDevices.Load();
+
+			// Parallelize independent XML deserialization across multiple CPU cores to cut startup latency
+			System.Threading.Tasks.Parallel.Invoke(
+				() =>
+				{
+					UserSettings.Load();
+					Summaries.Load();
+				},
+				() =>
+				{
+					// Programs must be loaded before UserGames
+					Programs.Load();
+					UserGames.Load();
+				},
+				() =>
+				{
+					Presets.Load();
+					Layouts.Load();
+				},
+				() =>
+				{
+					PadSettings.Load();
+					UserDevices.Load();
+					UserInstances.Load();
+				}
+			);
+
 			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
 			UserDevices.Items.AsynchronousInvoke = true;
-			UserInstances.Load();
 			OptionsData.Items.SynchronizingObject = so;
 		}
 

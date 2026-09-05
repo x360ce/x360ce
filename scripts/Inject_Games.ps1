@@ -23,7 +23,13 @@ if (-not (Test-Path $sourceExe)) {
 $gameFolders = @()
 
 if ($TargetFolder -and (Test-Path $TargetFolder)) {
-    $gameFolders += (Resolve-Path $TargetFolder).Path
+    $resolved = (Resolve-Path $TargetFolder).Path
+    $subDirs = Get-ChildItem -Path $resolved -Directory | Where-Object { Get-ChildItem -Path $_.FullName -Filter "*.exe" -File }
+    if ($subDirs) {
+        $gameFolders += $subDirs.FullName
+    } else {
+        $gameFolders += $resolved
+    }
 } else {
     Write-Host "Searching for installed games..." -ForegroundColor Gray
     $candidates = @("D:\Games", "C:\Games", "D:\SteamLibrary\steamapps\common", "C:\Program Files (x86)\Steam\steamapps\common")

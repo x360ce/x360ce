@@ -64,11 +64,19 @@ namespace JocysCom.ClassLibrary.Controls
 			if (errors.Length > 0)
 				ErrorComboBox.SelectedIndex = 0;
 			else
+			{
 				MainBrowser.Navigate("about:blank");
+				SendErrorButton.Enabled = false;
+			}
 		}
 
 		private void MainBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
+			// Only a report gets the greeting. Written into the blank page shown when there is no
+			// report, it was all that some people sent: a mail saying details were attached below,
+			// with nothing below it.
+			if (ErrorComboBox.SelectedItem == null)
+				return;
 			var doc = MainBrowser.Document;
 			if (doc == null)
 				return;
@@ -87,6 +95,8 @@ namespace JocysCom.ClassLibrary.Controls
 		private void ErrorComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var item = ErrorComboBox.SelectedItem as FileInfo;
+			// There is something to send only while a report is chosen.
+			SendErrorButton.Enabled = item != null;
 			if (item == null)
 			{
 				MainBrowser.Navigate("about:blank");
@@ -146,6 +156,14 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void SendErrorButton_Click(object sender, EventArgs e)
 		{
+			var body = GetBody();
+			// Nothing has loaded yet, or nothing was chosen. Either way there is no report to send.
+			if (string.IsNullOrWhiteSpace(body))
+				return;
+			// One click sends one report. The button stays down until another report is chosen,
+			// because a second click while "Sending..." showed queued the same report again - a
+			// third of the reports received were copies of another.
+			SendErrorButton.Enabled = false;
 			var m = new MailMessage();
 			AddHeader(m, LogHelper.XLogHelperErrorSource);
 			AddHeader(m, LogHelper.XLogHelperErrorType);
@@ -155,7 +173,7 @@ namespace JocysCom.ClassLibrary.Controls
 				m.From = new MailAddress(FromEmailTextBox.Text);
 			m.To.Add(new MailAddress(ToEmailTextBox.Text));
 			m.IsBodyHtml = true;
-			m.Body = GetBody();
+			m.Body = body;
 			SendMessages?.Invoke(this, new EventArgs<List<MailMessage>>(new List<MailMessage> { m }));
 		}
 

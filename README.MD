@@ -1,4 +1,10 @@
-﻿"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
+# Xbox 360 Controller Emulator (x360ce)
+
+![x360ce 4.x Controller Mapping](docs/Images/Screenshot_2026-09-05_073344.png)
+
+"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
+
+![x360ce 4.x Thumbstick Calibration & Deadzone Curve](docs/Images/Screenshot_2026-09-05_073420.png)
 
 IMPORTANT: Please download and run digitally signed files only! If someone asks to disable antivirus or exclude X360CE app from anti-virus - DON'T! Report any suspicion in [Issues](https://github.com/x360ce/x360ce/issues) and we will try to resolve any false positive with anti-virus developers.
 
@@ -6,11 +12,34 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.20.43.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.21.14.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
-Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
+Note: version 4.x uses Virtual Gamepad Emulation (ViGEm). Games communicate directly with virtual Xbox 360 controllers without requiring DLL hooks or Steam Input.
+
+## Universal Portable Setup Tool (`Setup.exe`)
+
+![x360ce Setup Tool](docs/Images/Setup_Modern_UI.png)
+
+The portable release includes **`Setup.exe`**, a standalone graphical installer and controller auto-calibrator:
+1. Double-click `Setup.exe`.
+2. Browse to or drag-and-drop any game folder into the window (or pick from auto-detected game libraries).
+3. Click **"Install & Optimize Game"**.
+4. The tool automatically deploys emulator binaries, calibrates connected controllers for Player 1 & Player 2 (eliminating reversed buttons or missing stick axes), and registers virtual Xbox 360 controller emulation.
+
+## Ultra-Low Latency 1000 Hz Engine & Hardware Auto-Optimization
+
+`x360ce` automatically benchmarks your PC hardware (CPU cores, RAM, power profile) on startup:
+- **1000 Hz (1ms response time)** DirectInput polling rate for ultra-low input lag.
+- Automatic process elevation to `AboveNormal` priority and DirectInput thread to `Highest` priority.
+- Requests 1ms Windows multimedia timer precision (`timeBeginPeriod(1)`).
+- Low-latency garbage collection mode (`GCLatencyMode.SustainedLowLatency`) prevents micro-stutters during gaming.
+- Instant single-frame composited rendering (`WS_EX_COMPOSITED`) eliminates window flicker and element pop-in.
+
+## Centering Spring Force Feedback (v4.21.14.0)
+
+Version 4.21.14.0 introduces native **Centering Spring Force Feedback** (`ForceSpringStrength`) via DirectInput condition effects (`EffectGuid.Spring`), delivering realistic steering wheel resistance and centering response for racing wheels and force feedback gamepads.
 
 ## Mapping formulas (v4.x)
 

@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
@@ -123,7 +123,7 @@ namespace x360ce.App.Controls
 			ApplyButton.Enabled = _entries.Count > 0;
 		}
 
-		void Move(int by)
+		new void Move(int by)
 		{
 			var row = DevicesDataGridView.CurrentRow;
 			if (row == null)

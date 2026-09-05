@@ -108,7 +108,23 @@
   <PropertyGroup />
   <ItemGroup>
     <Reference Include="System.Resources.Extensions">
-      <HintPath>$(USERPROFILE)\.nuget\packages\system.resources.extensions\7.0.0\lib\net462\System.Resources.Extensions.dll</HintPath>
+      <HintPath>Resources\Dependencies\System.Resources.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>Resources\Dependencies\System.Memory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>Resources\Dependencies\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>Resources\Dependencies\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>Resources\Dependencies\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -426,6 +442,7 @@
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\HardwareOptimizer.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -670,6 +687,11 @@
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Resources.Extensions.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Memory.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Buffers.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Numerics.Vectors.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Runtime.CompilerServices.Unsafe.dll" />
     <EmbeddedResource Include="Resources\HidGuardian.zip" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>

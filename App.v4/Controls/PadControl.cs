@@ -306,6 +306,7 @@ namespace x360ce.App.Controls
 				{
 					ForceTypeComboBox,
 					ForceOverallTrackBar,
+					ForceSpringStrengthTrackBar,
 					ForceSwapMotorCheckBox,
 					LeftMotorDirectionComboBox,
 					LeftMotorPeriodTrackBar,
@@ -376,6 +377,11 @@ namespace x360ce.App.Controls
 			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
 		}
 
+		static readonly SharpDX.XInput.DeviceSubType[] _cachedDeviceSubTypes = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
+		static readonly ForceEffectType[] _cachedForceEffectTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
+		static readonly ForceEffectDirection[] _cachedForceEffectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
+		static readonly UserIndex[] _cachedUserIndices = (UserIndex[])Enum.GetValues(typeof(UserIndex));
+
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
@@ -384,24 +390,20 @@ namespace x360ce.App.Controls
 			// Show disabled images by default.
 			_Imager.SetImages(false);
 			// Add GamePad typed to ComboBox.
-			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
-			foreach (var item in types)
+			foreach (var item in _cachedDeviceSubTypes)
 				DeviceSubTypeComboBox.Items.Add(item);
 			// Add force feedback typed to ComboBox.
-			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
-			foreach (var item in effectsTypes)
+			foreach (var item in _cachedForceEffectTypes)
 				ForceTypeComboBox.Items.Add(item);
 
-			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
-			foreach (var item in effectDirections)
+			foreach (var item in _cachedForceEffectDirections)
 				LeftMotorDirectionComboBox.Items.Add(item);
-			foreach (var item in effectDirections)
+			foreach (var item in _cachedForceEffectDirections)
 				RightMotorDirectionComboBox.Items.Add(item);
 
 			// Add player index to combo boxes
 			var playerOptions = new List<KeyValuePair>();
-			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
-			foreach (var item in playerTypes)
+			foreach (var item in _cachedUserIndices)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
 			// Where force feedback is sent when it is passed through. Nothing but the four places and
@@ -796,6 +798,7 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
 			AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
 			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
+			AddMap(() => SettingName.ForceSpringStrength, ForceSpringStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
@@ -1107,6 +1110,23 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		void ForceSpringStrengthTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var cp = base.CreateParams;
+				if (!ControlsHelper.IsDesignMode(this))
+					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: smooth flicker-free rendering
+				return cp;
+			}
 		}
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
