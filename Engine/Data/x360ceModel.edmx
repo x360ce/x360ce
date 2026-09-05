@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
 	<!-- EF Runtime content -->
 	<edmx:Runtime>
@@ -64,6 +64,7 @@
           <Property Name="DPadUp" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceEnable" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceOverall" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSwapMotor" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="GamePadType" Type="varchar" MaxLength="16" Nullable="false" />
@@ -413,6 +414,7 @@
 					<Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringStrength" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -815,6 +817,7 @@
 								<ScalarProperty Name="LeftMotorPeriod" ColumnName="LeftMotorPeriod" />
 								<ScalarProperty Name="GamePadType" ColumnName="GamePadType" />
 								<ScalarProperty Name="ForceType" ColumnName="ForceType" />
+								<ScalarProperty Name="ForceSpringStrength" ColumnName="ForceSpringStrength" />
 								<ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
 								<ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />
 								<ScalarProperty Name="ForceEnable" ColumnName="ForceEnable" />

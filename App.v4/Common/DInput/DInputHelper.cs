@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -158,6 +158,7 @@ namespace x360ce.App.DInput
 			// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
 			// and this thread is frozen because it is waiting for Invoke() to finish.
 			_Thread.IsBackground = true;
+			_Thread.Priority = ThreadPriority.Highest;
 			_Thread.Start();
 		}
 
@@ -272,7 +273,7 @@ namespace x360ce.App.DInput
 				// Fire event.
 				var ev = UpdateCompleted;
 				if (ev != null)
-					ev(this, new DInputEventArgs());
+					ev(this, DInputEventArgs.Empty);
 			}
 		}
 

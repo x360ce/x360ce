@@ -1,4 +1,15 @@
-﻿## [4.20.43.0] - 2026-09-01
+## [4.21.14.0] - 2026-09-04
+
+- Fixed: The games list could close the program while it was being redrawn as a game was added or removed. This was over half of all problem reports received about the previous version.
+- Fixed: Switching to a game while the program was closing closed it with an error.
+- Fixed: On a Windows without the multimedia timer library the program stopped with an error instead of polling at a slower rate.
+- Fixed: A line written to the device log after its window was closed was reported as an error.
+- Fixed: Losing the exclusive hold on a force feedback device to another program was reported as an error.
+- Fixed: The error report window could send a report with no details in it.
+- Fixed: Clicking Send twice sent the same error report twice.
+- Added: Centering Spring on the Force Feedback page holds a wheel at its centre all the time, for games made for a gamepad that send no steering force.
+
+## [4.20.43.0] - 2026-09-01
 
 - Fixed: A controller tab showed a red light while its controller was working, whenever a real controller was plugged in.
 - Fixed: A controller tab whose XInput place a real controller was holding showed no light, as though the place were empty.

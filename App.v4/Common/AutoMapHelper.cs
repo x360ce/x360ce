@@ -1,4 +1,4 @@
-﻿using SharpDX.DirectInput;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,66 +102,328 @@ namespace x360ce.App
 				//     65      10         9  Button         Button 9                        PushButton           
 				//     66     133        10  Button         System Main Menu                PushButton           
 				//
-				// If Sony then...
-				if (ud.DevVendorId == 0x054C)
+				// Twin USB Gamepad / Generic USB Joystick (VID_0810, PID_0001, VID_0079, DragonRise, ShanWan, Betop, etc.)
+				var isTwinUsb = ud.DevVendorId == 0x0810 || ud.DevVendorId == 0x0079 || ud.DevVendorId == 0x11FF || ud.DevVendorId == 0x2563 ||
+					(!string.IsNullOrEmpty(ud.InstanceName) && (
+						ud.InstanceName.IndexOf("Twin USB", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("USB Gamepad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("DragonRise", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("ShanWan", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("Generic USB", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+					(!string.IsNullOrEmpty(ud.ProductName) && (
+						ud.ProductName.IndexOf("Twin USB", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("USB Gamepad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("DragonRise", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("ShanWan", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Generic USB", StringComparison.OrdinalIgnoreCase) >= 0));
+
+				// Nintendo Switch Pro / Joy-Con / Wii U Pro
+				var isNintendo = ud.DevVendorId == 0x057E ||
+					(!string.IsNullOrEmpty(ud.ProductName) && ud.ProductName.IndexOf("Joy-Con", StringComparison.OrdinalIgnoreCase) >= 0);
+
+				// Sony PlayStation (DualSense, DualSense Edge, DualShock 4, DualShock 3)
+				var isSony = ud.DevVendorId == 0x054C ||
+					(!string.IsNullOrEmpty(ud.ProductName) && (
+						ud.ProductName.IndexOf("Wireless Controller", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("DualSense", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("DualShock", StringComparison.OrdinalIgnoreCase) >= 0));
+
+				// Logitech Gamepads (F310, F510, F710, Dual Action, RumblePad 2)
+				var isLogitechPad = ud.DevVendorId == 0x046D && (
+					ud.DevProductId == 0xC216 || ud.DevProductId == 0xC218 || ud.DevProductId == 0xC219 || // F310, F510, F710 in DInput mode
+					ud.DevProductId == 0xC214 || // Dual Action
+					(!string.IsNullOrEmpty(ud.ProductName) && (
+						ud.ProductName.IndexOf("Logitech Dual Action", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Logitech RumblePad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Logitech Cordless", StringComparison.OrdinalIgnoreCase) >= 0)));
+
+				// 8BitDo Gamepads (Pro 2, Ultimate, SN30 Pro)
+				var is8BitDo = ud.DevVendorId == 0x2DC8 ||
+					(!string.IsNullOrEmpty(ud.ProductName) && ud.ProductName.IndexOf("8BitDo", StringComparison.OrdinalIgnoreCase) >= 0);
+
+				// DirectInput Racing Wheel (Logitech G25/G27/G29/G920/G923, Thrustmaster, Fanatec)
+				var isWheel = ud.CapType == (int)DeviceType.Driving || ud.CapType == (int)DeviceType.Flight ||
+					(!string.IsNullOrEmpty(ud.InstanceName) && (
+						ud.InstanceName.IndexOf("Wheel", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("Logitech G", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("Driving Force", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("Thrustmaster", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.InstanceName.IndexOf("Fanatec", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+					(!string.IsNullOrEmpty(ud.ProductName) && (
+						ud.ProductName.IndexOf("Wheel", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Logitech G", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Driving Force", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Thrustmaster", StringComparison.OrdinalIgnoreCase) >= 0 ||
+						ud.ProductName.IndexOf("Fanatec", StringComparison.OrdinalIgnoreCase) >= 0));
+
+				if (isTwinUsb)
 				{
-					ps.ButtonA = GetButtonValue(list, 1, true, "Cross");
-					ps.ButtonB = GetButtonValue(list, 2, true, "Circle");
-					ps.ButtonX = GetButtonValue(list, 0, true, "Square"); // Jump/Kick
-					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
-					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
-					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
-					ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
-					ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
-					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Left Paddle");
-					ps.RightThumbButton = GetButtonValue(list, 11, true, "Right Paddle");
-					// Map triggers from two different axis.
-					ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "L2");
-					ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.RyAxis, true, "R2");
-					// Right Thumb.
-					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true);
-					// Y is inverted by default.
-					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true);
-					// Right Thumb.
-					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
-					// Y is inverted by default.
+					// Twin USB & Generic 12-Button USB physical button mapping:
+					// Button 3 = Cross (A)
+					// Button 2 = Circle (B)
+					// Button 4 = Square (X)
+					// Button 1 = Triangle (Y)
+					// Button 5 = L1 (Left Shoulder)
+					// Button 6 = R1 (Right Shoulder)
+					// Button 7 = L2 (Left Trigger)
+					// Button 8 = R2 (Right Trigger)
+					// Button 9 = Select (Back)
+					// Button 10 = Start (Start)
+					// Button 11 = L3 (Left Thumb)
+					// Button 12 = R3 (Right Thumb)
+					ps.ButtonA = GetButtonValue(list, 2, true, "Button 2", "3");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "3";
+					ps.ButtonB = GetButtonValue(list, 1, true, "Button 1", "2");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "2";
+					ps.ButtonX = GetButtonValue(list, 3, true, "Button 3", "4");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "4";
+					ps.ButtonY = GetButtonValue(list, 0, true, "Button 0", "1");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "1";
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "Button 4", "5");
+					if (string.IsNullOrEmpty(ps.LeftShoulder)) ps.LeftShoulder = "5";
+					ps.RightShoulder = GetButtonValue(list, 5, true, "Button 5", "6");
+					if (string.IsNullOrEmpty(ps.RightShoulder)) ps.RightShoulder = "6";
+					ps.LeftTrigger = GetButtonValue(list, 6, true, "Button 6", "7");
+					if (string.IsNullOrEmpty(ps.LeftTrigger)) ps.LeftTrigger = "7";
+					ps.RightTrigger = GetButtonValue(list, 7, true, "Button 7", "8");
+					if (string.IsNullOrEmpty(ps.RightTrigger)) ps.RightTrigger = "8";
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Button 8", "9");
+					if (string.IsNullOrEmpty(ps.ButtonBack)) ps.ButtonBack = "9";
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Button 9", "10");
+					if (string.IsNullOrEmpty(ps.ButtonStart)) ps.ButtonStart = "10";
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Button 10", "11");
+					if (string.IsNullOrEmpty(ps.LeftThumbButton)) ps.LeftThumbButton = "11";
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "Button 11", "12");
+					if (string.IsNullOrEmpty(ps.RightThumbButton)) ps.RightThumbButton = "12";
+
+					// Analog Sticks
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisY)) ps.LeftThumbAxisY = "a-2";
+
+					var rX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "Z-Axis");
+					if (string.IsNullOrEmpty(rX))
+						rX = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "X-Rotation");
+					if (string.IsNullOrEmpty(rX))
+						rX = "a3";
+					ps.RightThumbAxisX = rX;
+
+					var rY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Z-Rotation");
+					if (string.IsNullOrEmpty(rY))
+						rY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true, "Y-Rotation");
+					if (string.IsNullOrEmpty(rY))
+						rY = "a-4";
+					ps.RightThumbAxisY = rY;
+				}
+				else if (isNintendo)
+				{
+					// Nintendo Switch Pro & Joy-Con (remap A/B and X/Y to match physical Xbox layout)
+					ps.ButtonA = GetButtonValue(list, 0, true, "B");
+					ps.ButtonB = GetButtonValue(list, 1, true, "A");
+					ps.ButtonX = GetButtonValue(list, 2, true, "Y");
+					ps.ButtonY = GetButtonValue(list, 3, true, "X");
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "L");
+					ps.RightShoulder = GetButtonValue(list, 5, true, "R");
+					ps.LeftTrigger = GetButtonValue(list, 6, true, "ZL");
+					ps.RightTrigger = GetButtonValue(list, 7, true, "ZR");
+					ps.ButtonBack = GetButtonValue(list, 8, true, "-");
+					ps.ButtonStart = GetButtonValue(list, 9, true, "+");
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "LStick");
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "RStick");
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true);
 					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true);
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true);
+				}
+				else if (isLogitechPad)
+				{
+					// Logitech F-Series in DirectInput mode, Dual Action & RumblePad 2
+					ps.ButtonA = GetButtonValue(list, 1, true, "Button 1", "2");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "2";
+					ps.ButtonB = GetButtonValue(list, 2, true, "Button 2", "3");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "3";
+					ps.ButtonX = GetButtonValue(list, 0, true, "Button 0", "1");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "1";
+					ps.ButtonY = GetButtonValue(list, 3, true, "Button 3", "4");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "4";
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "Button 4", "5");
+					if (string.IsNullOrEmpty(ps.LeftShoulder)) ps.LeftShoulder = "5";
+					ps.RightShoulder = GetButtonValue(list, 5, true, "Button 5", "6");
+					if (string.IsNullOrEmpty(ps.RightShoulder)) ps.RightShoulder = "6";
+					ps.LeftTrigger = GetButtonValue(list, 6, true, "Button 6", "7");
+					if (string.IsNullOrEmpty(ps.LeftTrigger)) ps.LeftTrigger = "7";
+					ps.RightTrigger = GetButtonValue(list, 7, true, "Button 7", "8");
+					if (string.IsNullOrEmpty(ps.RightTrigger)) ps.RightTrigger = "8";
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Button 8", "9");
+					if (string.IsNullOrEmpty(ps.ButtonBack)) ps.ButtonBack = "9";
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Button 9", "10");
+					if (string.IsNullOrEmpty(ps.ButtonStart)) ps.ButtonStart = "10";
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Button 10", "11");
+					if (string.IsNullOrEmpty(ps.LeftThumbButton)) ps.LeftThumbButton = "11";
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "Button 11", "12");
+					if (string.IsNullOrEmpty(ps.RightThumbButton)) ps.RightThumbButton = "12";
+
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisY)) ps.LeftThumbAxisY = "a-2";
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "Z-Axis");
+					if (string.IsNullOrEmpty(ps.RightThumbAxisX)) ps.RightThumbAxisX = "a3";
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Z-Rotation");
+					if (string.IsNullOrEmpty(ps.RightThumbAxisY)) ps.RightThumbAxisY = "a-4";
+				}
+				else if (is8BitDo)
+				{
+					// 8BitDo Controllers in DirectInput Mode
+					ps.ButtonA = GetButtonValue(list, 0, true, "Button 0", "1");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "1";
+					ps.ButtonB = GetButtonValue(list, 1, true, "Button 1", "2");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "2";
+					ps.ButtonX = GetButtonValue(list, 3, true, "Button 3", "4");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "4";
+					ps.ButtonY = GetButtonValue(list, 4, true, "Button 4", "5");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "5";
+					ps.LeftShoulder = GetButtonValue(list, 6, true, "Button 6", "7");
+					ps.RightShoulder = GetButtonValue(list, 7, true, "Button 7", "8");
+					ps.LeftTrigger = GetButtonValue(list, 8, true, "Button 8", "9");
+					ps.RightTrigger = GetButtonValue(list, 9, true, "Button 9", "10");
+					ps.ButtonBack = GetButtonValue(list, 10, true, "Button 10", "11");
+					ps.ButtonStart = GetButtonValue(list, 11, true, "Button 11", "12");
+					ps.LeftThumbButton = GetButtonValue(list, 13, true, "Button 13", "14");
+					ps.RightThumbButton = GetButtonValue(list, 14, true, "Button 14", "15");
+
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true);
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisY)) ps.LeftThumbAxisY = "a-2";
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true);
+					if (string.IsNullOrEmpty(ps.RightThumbAxisX)) ps.RightThumbAxisX = "a3";
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true);
+					if (string.IsNullOrEmpty(ps.RightThumbAxisY)) ps.RightThumbAxisY = "a-4";
+				}
+				else if (isSony)
+				{
+					// Sony PlayStation: DualSense (PS5), DualShock 4 (PS4), DualShock 3 (PS3)
+					ps.ButtonA = GetButtonValue(list, 1, true, "Cross", "Button 1");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "2";
+					ps.ButtonB = GetButtonValue(list, 2, true, "Circle", "Button 2");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "3";
+					ps.ButtonX = GetButtonValue(list, 0, true, "Square", "Button 0");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "1";
+					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle", "Button 3");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "4";
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1", "Button 4");
+					if (string.IsNullOrEmpty(ps.LeftShoulder)) ps.LeftShoulder = "5";
+					ps.RightShoulder = GetButtonValue(list, 5, true, "R1", "Button 5");
+					if (string.IsNullOrEmpty(ps.RightShoulder)) ps.RightShoulder = "6";
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Share", "Create", "Select", "Button 8");
+					if (string.IsNullOrEmpty(ps.ButtonBack)) ps.ButtonBack = "9";
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Options", "Start", "Button 9");
+					if (string.IsNullOrEmpty(ps.ButtonStart)) ps.ButtonStart = "10";
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "L3", "Left Paddle", "Button 10");
+					if (string.IsNullOrEmpty(ps.LeftThumbButton)) ps.LeftThumbButton = "11";
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "R3", "Right Paddle", "Button 11");
+					if (string.IsNullOrEmpty(ps.RightThumbButton)) ps.RightThumbButton = "12";
+
+					// Map triggers from separate axes or buttons
+					var lTrig = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "L2");
+					if (string.IsNullOrEmpty(lTrig)) lTrig = GetButtonValue(list, 6, true, "L2", "Button 6");
+					if (string.IsNullOrEmpty(lTrig)) lTrig = "a4";
+					ps.LeftTrigger = lTrig;
+
+					var rTrig = GetAxisValue(list, false, false, ObjectGuid.RyAxis, true, "R2");
+					if (string.IsNullOrEmpty(rTrig)) rTrig = GetButtonValue(list, 7, true, "R2", "Button 7");
+					if (string.IsNullOrEmpty(rTrig)) rTrig = "a5";
+					ps.RightTrigger = rTrig;
+
+					// Analog Sticks
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisY)) ps.LeftThumbAxisY = "a-2";
+
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "Z-Axis");
+					if (string.IsNullOrEmpty(ps.RightThumbAxisX)) ps.RightThumbAxisX = "a3";
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Z-Rotation");
+					if (string.IsNullOrEmpty(ps.RightThumbAxisY)) ps.RightThumbAxisY = "a-6";
+				}
+				else if (isWheel)
+				{
+					// Steering Wheels (Logitech G25/G27/G29/G920/G923, Thrustmaster, Fanatec)
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel", "X-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+
+					// Accelerator & Brake Pedals
+					ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.YAxis, true, "Accelerator", "Throttle");
+					if (string.IsNullOrEmpty(ps.RightTrigger)) ps.RightTrigger = "a-2";
+					ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "Brake");
+					if (string.IsNullOrEmpty(ps.LeftTrigger)) ps.LeftTrigger = "a3";
+
+					ps.ButtonA = GetButtonValue(list, 0, true, "Button 0", "1");
+					ps.ButtonB = GetButtonValue(list, 1, true, "Button 1", "2");
+					ps.ButtonX = GetButtonValue(list, 2, true, "Button 2", "3");
+					ps.ButtonY = GetButtonValue(list, 3, true, "Button 3", "4");
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "Paddle L", "Button 4");
+					ps.RightShoulder = GetButtonValue(list, 5, true, "Paddle R", "Button 5");
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Button 8", "9");
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Button 9", "10");
 				}
 				else
 				{
-					ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
-					ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
-					ps.ButtonX = GetButtonValue(list, 2, true, "Square"); // Jump/Kick
-					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
-					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
-					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
-					ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back");
-					ps.ButtonStart = GetButtonValue(list, 7, true, "Start");
-					ps.LeftThumbButton = GetButtonValue(list, 8, true, "Left Paddle");
-					ps.RightThumbButton = GetButtonValue(list, 9, true, "Right Paddle");
-					// Triggers.
+					// Standard Generic DirectInput Gamepad Fallback
+					ps.ButtonA = GetButtonValue(list, 0, true, "Cross", "Button 0", "1");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "1";
+					ps.ButtonB = GetButtonValue(list, 1, true, "Circle", "Button 1", "2");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "2";
+					ps.ButtonX = GetButtonValue(list, 2, true, "Square", "Button 2", "3");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "3";
+					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle", "Button 3", "4");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "4";
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1", "Button 4", "5");
+					if (string.IsNullOrEmpty(ps.LeftShoulder)) ps.LeftShoulder = "5";
+					ps.RightShoulder = GetButtonValue(list, 5, true, "R1", "Button 5", "6");
+					if (string.IsNullOrEmpty(ps.RightShoulder)) ps.RightShoulder = "6";
+					ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back", "Button 6", "7");
+					if (string.IsNullOrEmpty(ps.ButtonBack)) ps.ButtonBack = "7";
+					ps.ButtonStart = GetButtonValue(list, 7, true, "Start", "Button 7", "8");
+					if (string.IsNullOrEmpty(ps.ButtonStart)) ps.ButtonStart = "8";
+					ps.LeftThumbButton = GetButtonValue(list, 8, true, "Button 8", "9");
+					if (string.IsNullOrEmpty(ps.LeftThumbButton)) ps.LeftThumbButton = "9";
+					ps.RightThumbButton = GetButtonValue(list, 9, true, "Button 9", "10");
+					if (string.IsNullOrEmpty(ps.RightThumbButton)) ps.RightThumbButton = "10";
+
+					// Triggers
 					var rightTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "R2");
-					// If RzAxis or "R2" name is missing then...
 					if (string.IsNullOrEmpty(rightTrigger))
 					{
-						// Map triggers form single combinex axis.
 						ps.LeftTrigger = GetAxisValue(list, false, true, ObjectGuid.ZAxis, true, "L2");
 						ps.RightTrigger = GetAxisValue(list, true, true, ObjectGuid.ZAxis, true, "L2");
 					}
 					else
 					{
-						// Map triggers from two different axis.
 						ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "L2");
 						ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "R2");
 					}
-					// Right Thumb.
+
+					// Analog Sticks
 					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true);
-					// Y is inverted by default.
 					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true);
-					// Right Thumb.
 					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
-					// Y is inverted by default.
 					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+				}
+
+				// Enable Force Feedback and Centering Spring for wheels and capable gamepads
+				if (isWheel)
+				{
+					ps.ForceEnable = "1";
+					ps.ForceType = "1";
+					ps.ForceSpringStrength = "100";
+				}
+				{
+					ps.ForceEnable = "1";
+					ps.ForceType = "1";
+					ps.ForceSpringStrength = "100";
 				}
 				// D-Pad
 				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);

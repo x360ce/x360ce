@@ -252,6 +252,36 @@ namespace x360ce.Tests
 				"Going past the low end must not wrap round.");
 		}
 
+		[TestMethod, TestCategory("mapping")]
+		[Description("Radial deadzone removes small stick movements inside the circle")]
+		public void Radial_deadzone_clears_values_inside_radius()
+		{
+			float x = 2000f;
+			float y = 2000f;
+			// magnitude = sqrt(2000^2 + 2000^2) = ~2828
+			ConvertHelper.ApplyRadialDeadZone(ref x, ref y, 3000f, 0f, 0f);
+			Assert.AreEqual(0f, x, "X must be cleared inside radial deadzone");
+			Assert.AreEqual(0f, y, "Y must be cleared inside radial deadzone");
+		}
+
+		[TestMethod, TestCategory("mapping")]
+		[Description("Radial deadzone scales smoothly and preserves angle outside the circle")]
+		public void Radial_deadzone_preserves_angle_and_scales_outside_radius()
+		{
+			float x = 6000f;
+			float y = 8000f;
+			// magnitude = 10000. deadZone = 5000.
+			// original angle: atan2(8000, 6000)
+			ConvertHelper.ApplyRadialDeadZone(ref x, ref y, 5000f, 0f, 0f, 32767f);
+			Assert.IsTrue(x > 0f, "X must be positive");
+			Assert.IsTrue(y > 0f, "Y must be positive");
+			// Check angle preservation (y / x ratio should remain 8000 / 6000 = 1.333)
+			Assert.AreEqual(8000f / 6000f, y / x, 0.001f, "Radial deadzone must preserve stick direction angle");
+			// Magnitude should be (10000 - 5000) / (32767 - 5000) * 32767 = 5000 / 27767 * 32767 = ~5900.35
+			var newMag = (float)Math.Sqrt(x * x + y * y);
+			Assert.AreEqual(5900.35f, newMag, 1.0f, "Magnitude must be rescaled smoothly");
+		}
+
 		#endregion
 
 	}

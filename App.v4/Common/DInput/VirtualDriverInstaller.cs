@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Win32;
 using Microsoft.Win32;
 using System;
@@ -146,7 +146,7 @@ namespace x360ce.App.DInput
 		{
 			if (string.IsNullOrEmpty(deviceId))
 				return 0;
-			var at = deviceId.LastIndexOf('&');
+			var at = deviceId.LastIndexOfAny(new[] { '&', '\\' });
 			if (at < 0 || at + 1 >= deviceId.Length)
 				return 0;
 			uint value;

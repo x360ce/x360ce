@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,6 +9,8 @@ namespace x360ce.App.Controls
 	{
 		public BaseFormWithHeader()
 		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+			DoubleBuffered = true;
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
@@ -17,6 +19,38 @@ namespace x360ce.App.Controls
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
 		}
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var cp = base.CreateParams;
+				if (!IsDesignMode)
+					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: smooth bottom-to-top double-buffered painting
+				return cp;
+			}
+		}
+
+		[System.Runtime.InteropServices.DllImport("dwmapi.dll", PreserveSig = true)]
+		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+		private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+		private const int DWMWCP_ROUND = 2;
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (!IsDesignMode)
+			{
+				try
+				{
+					int cornerPref = DWMWCP_ROUND;
+					DwmSetWindowAttribute(Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref cornerPref, sizeof(int));
+				}
+				catch { }
+			}
+		}
+
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 

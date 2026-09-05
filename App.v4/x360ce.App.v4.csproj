@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -25,6 +25,7 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -106,10 +107,27 @@
   <PropertyGroup />
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+    <Reference Include="System.Resources.Extensions">
+      <HintPath>Resources\Dependencies\System.Resources.Extensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>Resources\Dependencies\System.Memory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>Resources\Dependencies\System.Buffers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors">
+      <HintPath>Resources\Dependencies\System.Numerics.Vectors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>Resources\Dependencies\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SharpDX">
       <HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
       <Private>False</Private>
@@ -424,6 +442,7 @@
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\HardwareOptimizer.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -444,6 +463,7 @@
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <Compile Include="ViGEm\HidGuardianHelper.cs" />
+    <Compile Include="ViGEm\HidHideHelper.cs" />
     <EmbeddedResource Include="Controls\AboutControl.resx">
       <DependentUpon>AboutControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -667,6 +687,11 @@
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Resources.Extensions.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Memory.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Buffers.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Numerics.Vectors.dll" />
+    <EmbeddedResource Include="Resources\Dependencies\System.Runtime.CompilerServices.Unsafe.dll" />
     <EmbeddedResource Include="Resources\HidGuardian.zip" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>
