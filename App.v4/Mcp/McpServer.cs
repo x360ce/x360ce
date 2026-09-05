@@ -235,4 +235,110 @@ namespace x360ce.App.Mcp
 			return Json.Serialize(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", id }, { "error", new Dictionary<string, object> { { "code", code }, { "message", message } } } });
 		}
 	}
+
+	/// <summary>Serves McpServer over HTTP on the loopback address, to callers that present the token.</summary>
+	public static class McpListener
+	{
+		static System.Net.HttpListener _listener;
+		static string _token;
+
+		public static bool IsRunning { get { return _listener != null; } }
+
+		/// <summary>Why the door is not usable, as one sentence with its own remedy, for the Issues tab. Null after a start that worked.</summary>
+		public static string LastError;
+
+		/// <summary>Opens the door on the port. False, with the reason in LastError, when it cannot.</summary>
+		public static bool Start(int port, string token)
+		{
+			Stop();
+			if (port < 1024 || port > 49151)
+			{
+				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range on the Options page.";
+				return false;
+			}
+			var listener = new System.Net.HttpListener();
+			// localhost, never + or *: nothing outside this machine may reach the program. It is
+			// also the host a standard user may bind without a URL reservation, where 127.0.0.1
+			// is refused on some Windows versions.
+			listener.Prefixes.Add("http://localhost:" + port + "/mcp/");
+			try
+			{
+				listener.Start();
+			}
+			catch (System.Net.HttpListenerException ex)
+			{
+				// Another program holds the port. The Issues tab says so and what to do; a crash
+				// report would say neither.
+				LastError = "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options page.";
+				return false;
+			}
+			_token = token;
+			_listener = listener;
+			LastError = null;
+			listener.BeginGetContext(OnRequest, listener);
+			return true;
+		}
+
+		public static void Stop()
+		{
+			var listener = _listener;
+			_listener = null;
+			if (listener != null)
+				listener.Close();
+		}
+
+		/// <summary>
+		/// Runs on a pool thread, which the crash reporter does not watch. Everything is caught and
+		/// answered, so a broken client, a fault in a tool, or a stop that lands mid-request ends in
+		/// a response or in silence rather than in the program.
+		/// </summary>
+		static void OnRequest(IAsyncResult ar)
+		{
+			var listener = (System.Net.HttpListener)ar.AsyncState;
+			System.Net.HttpListenerContext context;
+			try
+			{
+				context = listener.EndGetContext(ar);
+				listener.BeginGetContext(OnRequest, listener);
+			}
+			catch (ObjectDisposedException) { return; }
+			catch (System.Net.HttpListenerException) { return; }
+			try
+			{
+				Answer(context);
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog("AI assistant access request failed: " + ex.Message, System.Diagnostics.EventLogEntryType.Warning);
+				try { Write(context.Response, 500, McpServer.Error(null, -32603, "Internal error.")); }
+				catch (Exception) { }
+			}
+		}
+
+		static void Answer(System.Net.HttpListenerContext context)
+		{
+			var authorised = (context.Request.Headers["Authorization"] ?? "") == "Bearer " + _token;
+			if (!authorised || context.Request.HttpMethod != "POST")
+			{
+				Write(context.Response, authorised ? 405 : 401, "");
+				return;
+			}
+			string body;
+			// JSON is UTF-8 whatever the request says; a missing charset would otherwise mean the system code page.
+			using (var reader = new System.IO.StreamReader(context.Request.InputStream, Encoding.UTF8))
+				body = reader.ReadToEnd();
+			var answer = McpServer.Handle(body);
+			Write(context.Response, answer.Length == 0 ? 202 : 200, answer);
+		}
+
+		static void Write(System.Net.HttpListenerResponse response, int status, string body)
+		{
+			var bytes = Encoding.UTF8.GetBytes(body);
+			response.StatusCode = status;
+			response.ContentType = "application/json; charset=utf-8";
+			response.ContentLength64 = bytes.Length;
+			response.OutputStream.Write(bytes, 0, bytes.Length);
+			response.Close();
+		}
+	}
 }

@@ -750,6 +750,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -1266,7 +1267,8 @@ namespace x360ce.App
 					new VirtualDeviceDriverIssue(),
 					new LeftoverVirtualPadsIssue(),
 					new UnfinishedVirtualPadsIssue(),
-					new RestartToFinishRemovalIssue()
+					new RestartToFinishRemovalIssue(),
+					new AiAccessIssue()
 				);
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;

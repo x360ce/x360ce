@@ -407,6 +407,7 @@
     </Compile>
     <Compile Include="Global.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Issues\AiAccessIssue.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppRuntimeDetector.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
@@ -423,6 +424,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Mcp\McpClient.cs" />
     <Compile Include="Mcp\McpServer.cs" />
     <Compile Include="Mcp\McpTools.cs" />
     <Compile Include="Program.AdminCommands.cs" />
