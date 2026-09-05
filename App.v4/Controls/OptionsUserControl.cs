@@ -23,6 +23,7 @@ namespace x360ce.App.Controls
 			AiAccessSnippetTextBox.Text = "{\"mcpServers\":{\"x360ce\":{\"command\":\"" + Application.ExecutablePath.Replace("\\", "\\\\") + "\",\"args\":[\"/Mcp\"]}}}";
 			AiAccessCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessSnippetTextBox.Text);
 			AiAccessUrlCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessUrlTextBox.Text);
+			AiAccessPromptButton.Click += (s, e) => Clipboard.SetText(AiPrompt());
 			// The Windows agent registry ships with newer Windows only. Where its tool is absent the
 			// switch stays off and says why, rather than promising something the machine cannot do.
 			AiAccessWindowsCheckBox.Enabled = Mcp.WindowsAgentRegistry.IsAvailable;
@@ -162,6 +163,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.AiAccessEnabled, AiAccessEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(AiAccess)));
 			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
 			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
@@ -319,6 +321,29 @@ namespace x360ce.App.Controls
 				RemotePortNumericUpDown.Value = o.RemotePort;
 			if (o.AiAccessPort >= AiAccessPortNumericUpDown.Minimum && o.AiAccessPort <= AiAccessPortNumericUpDown.Maximum)
 				AiAccessPortNumericUpDown.Value = o.AiAccessPort;
+		}
+
+		/// <summary>
+		/// What a person pastes into any AI: how to reach this program, both ways, and a first
+		/// thing to ask, so the assistant proves the connection with something simple.
+		/// </summary>
+		string AiPrompt()
+		{
+			var o = SettingsManager.Options;
+			var sb = new System.Text.StringBuilder();
+			sb.AppendLine("Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.");
+			sb.AppendLine();
+			sb.AppendLine("If you can run commands on this computer, add this MCP server:");
+			sb.AppendLine(AiAccessSnippetTextBox.Text);
+			sb.AppendLine();
+			sb.AppendLine("If you connect to MCP servers by URL, use this one (JSON-RPC over HTTP POST):");
+			sb.AppendLine(AiAccessUrlTextBox.Text);
+			sb.AppendLine("with the header: Authorization: Bearer " + o.AiAccessToken);
+			sb.AppendLine();
+			sb.AppendLine("Start by calling the tool devices_list and tell me what you found. Use ui_find with a word to locate any control, ui_show to point at one for me, and help for the manual.");
+			if (!o.AiAccessEnabled)
+				sb.AppendLine("Note: AI assistant access is not switched on yet; I will tick it on the Options page first.");
+			return sb.ToString();
 		}
 
 		/// <summary>The address an agent that connects over HTTP is given: this computer's name when every network is allowed, the loopback otherwise.</summary>

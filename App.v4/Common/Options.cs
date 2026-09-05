@@ -220,9 +220,13 @@ namespace x360ce.App
 
 		// AI assistant access
 
-		[DefaultValue(AiAccess.Off), Description("AI assistant access: Off, Read, Configure or Administer.")]
+		[DefaultValue(false), Description("Whether an AI assistant or a script may reach the program at all.")]
+		public bool AiAccessEnabled { get { return _AiAccessEnabled; } set { _AiAccessEnabled = value; OnPropertyChanged(); } }
+		bool _AiAccessEnabled;
+
+		[DefaultValue(AiAccess.Read), Description("How much a connected assistant may do: Read, Configure or Administer.")]
 		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
-		AiAccess _AiAccess;
+		AiAccess _AiAccess = AiAccess.Read;
 
 		[DefaultValue(LoopbackAddress), Description("Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.")]
 		public string AiAccessAddress { get { return _AiAccessAddress; } set { _AiAccessAddress = value; OnPropertyChanged(); } }

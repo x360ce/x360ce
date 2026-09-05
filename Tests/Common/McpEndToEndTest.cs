@@ -33,6 +33,8 @@ namespace x360ce.Tests
 				Assert.Inconclusive("The program reads settings from " + programSettings + " and this test from " + EngineHelper.AppDataPath + ".");
 			var o = SettingsManager.Options;
 			var previous = o.AiAccess;
+			var previouslyEnabled = o.AiAccessEnabled;
+			o.AiAccessEnabled = true;
 			o.AiAccess = AiAccess.Configure;
 			o.EnsureAiAccessToken();
 			SettingsManager.OptionsData.Save();
@@ -59,6 +61,7 @@ namespace x360ce.Tests
 				if (process != null)
 					Ui.CloseApp(process);
 				o.AiAccess = previous;
+				o.AiAccessEnabled = previouslyEnabled;
 				SettingsManager.OptionsData.Save();
 			}
 		}

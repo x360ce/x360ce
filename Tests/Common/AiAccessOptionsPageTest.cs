@@ -32,15 +32,18 @@ namespace x360ce.Tests
 					Assert.AreEqual(1024, port.Minimum);
 					Assert.AreEqual(49151, port.Maximum);
 					// The door's own controls, which McpTools refuses at every level, are these three.
+					McpUiToolsTest.AssertField("AiAccessEnabledCheckBox", typeof(CheckBox));
 					McpUiToolsTest.AssertField("AiAccessComboBox", typeof(ComboBox));
 					McpUiToolsTest.AssertField("AiAccessAddressComboBox", typeof(ComboBox));
 					McpUiToolsTest.AssertField("AiAccessPortNumericUpDown", typeof(NumericUpDown));
 					McpUiToolsTest.AssertField("AiAccessRegenerateButton", typeof(Button));
 					McpUiToolsTest.AssertField("AiAccessWindowsCheckBox", typeof(CheckBox));
-					CollectionAssert.AreEquivalent(new[] { "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox" }, x360ce.App.Mcp.McpTools.DoorControls);
+					CollectionAssert.AreEquivalent(new[] { "AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox" }, x360ce.App.Mcp.McpTools.DoorControls);
 					var windows = page.Controls.Find("AiAccessWindowsCheckBox", true).OfType<CheckBox>().First();
 					Assert.AreEqual(x360ce.App.Mcp.WindowsAgentRegistry.IsAvailable, windows.Enabled, "The Windows switch is usable exactly where the registry tool exists.");
 					Assert.AreEqual(1, page.Controls.Find("AiAccessLogButton", true).Length);
+					Assert.AreEqual(1, page.Controls.Find("AiAccessPromptButton", true).Length);
+					Assert.AreEqual(1, page.Controls.Find("AiAccessEnabledCheckBox", true).Length);
 					var address = page.Controls.Find("AiAccessAddressComboBox", true).OfType<ComboBox>().First();
 					Assert.AreEqual(ComboBoxStyle.DropDownList, address.DropDownStyle);
 					var url = page.Controls.Find("AiAccessUrlTextBox", true).OfType<TextBox>().First();

@@ -303,6 +303,7 @@ namespace x360ce.App
 				case nameof(Options.ShowTestButton):
 					TestButton.Visible = o.ShowTestButton;
 					break;
+				case nameof(Options.AiAccessEnabled):
 				case nameof(Options.AiAccess):
 					UpdateStatusAiAccessLabel();
 					break;
@@ -2019,16 +2020,16 @@ namespace x360ce.App
 		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
 		void UpdateStatusAiAccessLabel()
 		{
-			var level = SettingsManager.Options.AiAccess;
-			var word = level.ToString().ToLowerInvariant();
+			var o = SettingsManager.Options;
+			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
 			StatusAiAccessLabel.Text = "AI: " + word;
-			var colour = level == AiAccess.Off ? System.Drawing.SystemColors.ControlDark : System.Drawing.SystemColors.ControlText;
+			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.ControlDark;
 			StatusAiAccessLabel.ForeColor = colour;
 			StatusAiAccessLabel.LinkColor = colour;
 			StatusAiAccessLabel.ActiveLinkColor = colour;
-			StatusAiAccessLabel.AccessibleName = level == AiAccess.Off
-				? "AI assistant access is off"
-				: "AI assistant access: an assistant may " + word + " this program";
+			StatusAiAccessLabel.AccessibleName = o.AiAccessEnabled
+				? "AI assistant access: an assistant may " + word + " this program"
+				: "AI assistant access is off";
 			StatusAiAccessLabel.AccessibleRole = AccessibleRole.PushButton;
 		}
 

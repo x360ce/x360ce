@@ -1840,8 +1840,8 @@
 															"Id":"AiAccessGroupBox",
 															"Items":[
 																{
-																	"Name":"AI assistant access",
-																	"Description":"AI assistant access: Off, Read, Configure or Administer.",
+																	"Name":"AI assistant level",
+																	"Description":"How much a connected assistant may do: Read, Configure or Administer.",
 																	"Role":"List",
 																	"Id":"AiAccessComboBox"
 																},
@@ -1906,6 +1906,18 @@
 																	"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
 																	"Role":"Button",
 																	"Id":"AiAccessLogButton"
+																},
+																{
+																	"Name":"AI assistant access",
+																	"Description":"Whether an AI assistant or a script may reach the program at all.",
+																	"Role":"CheckBox",
+																	"Id":"AiAccessEnabledCheckBox"
+																},
+																{
+																	"Name":"Copy prompt",
+																	"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.",
+																	"Role":"Button",
+																	"Id":"AiAccessPromptButton"
 																}
 															]
 														}

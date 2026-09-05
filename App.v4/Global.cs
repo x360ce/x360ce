@@ -102,7 +102,7 @@ namespace x360ce.App
 
 		/// <summary>
 		/// Opens or closes the assistant's door to match the option, then writes the options file so
-		/// the switches read the same level and token the window shows, Off included. Safe to call
+		/// the switches read the same level and token the window shows, switched off included. Safe to call
 		/// again; it restarts. The door opens before the file is written, so a folder that cannot be
 		/// written leaves the door usable and the Issues tab saying why the switches are not.
 		/// </summary>
@@ -110,7 +110,7 @@ namespace x360ce.App
 		{
 			var o = SettingsManager.Options;
 			Mcp.McpListener.Stop();
-			if (o.AiAccess != AiAccess.Off)
+			if (o.AiAccessEnabled)
 			{
 				o.EnsureAiAccessToken();
 				Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
@@ -145,6 +145,7 @@ namespace x360ce.App
 					if (DHelper != null)
 						DHelper.Frequency = o.PollingRate;
 					break;
+				case nameof(Options.AiAccessEnabled):
 				case nameof(Options.AiAccess):
 				case nameof(Options.AiAccessAddress):
 				case nameof(Options.AiAccessPort):

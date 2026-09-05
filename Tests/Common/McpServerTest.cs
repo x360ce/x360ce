@@ -39,8 +39,12 @@ namespace x360ce.Tests
 
 		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
+		/// <summary>Where the tests' own calls are logged: a temp folder, so the machine's log stays a record of real assistants.</summary>
+		public static readonly string LogFolder = System.IO.Directory.CreateDirectory(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "x360ce-tests")).FullName;
+
 		public static void UseSample(AiAccess level)
 		{
+			McpLog.Folder = LogFolder;
 			McpCatalog.Load(typeof(Sample));
 			McpCatalog.Level = () => level;
 			McpCatalog.OnUiThread = a => a();

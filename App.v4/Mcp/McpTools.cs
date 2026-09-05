@@ -43,7 +43,7 @@ namespace x360ce.App.Mcp
 		/// </summary>
 		public static string[] DoorControls =
 		{
-			"AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
+			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
 		};
 
 		static Control RootWindow { get { return Root ?? MainForm.Current; } }

@@ -63,7 +63,7 @@ namespace x360ce.Tests
 		[Description("Usage is written from the catalogue, with every tool's level and arguments")]
 		public void Usage_comes_from_the_catalogue()
 		{
-			McpServerTest.UseSample(AiAccess.Off);
+			McpServerTest.UseSample(AiAccess.Read);
 			var usage = McpClient.Usage();
 			StringAssert.Contains(usage, "poke_value");
 			StringAssert.Contains(usage, "(Configure)");

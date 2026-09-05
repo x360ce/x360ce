@@ -14,7 +14,8 @@ namespace x360ce.Tests
 		public void Access_is_off_by_default()
 		{
 			var o = new Options();
-			Assert.AreEqual(AiAccess.Off, o.AiAccess);
+			Assert.IsFalse(o.AiAccessEnabled, "The door must be shut until a person opens it.");
+			Assert.AreEqual(AiAccess.Read, o.AiAccess, "Switching on lands on the level that changes nothing.");
 			Assert.IsTrue(string.IsNullOrEmpty(o.AiAccessToken), "A token exists before anyone asked for access.");
 			Assert.AreEqual(37360, o.AiAccessPort);
 			Assert.AreEqual(Options.LoopbackAddress, o.AiAccessAddress, "The door must stay on this computer until somebody opens it wider.");
@@ -42,7 +43,9 @@ namespace x360ce.Tests
 			var o = new Options();
 			string changed = null;
 			o.PropertyChanged += (s, e) => changed = e.PropertyName;
-			o.AiAccess = AiAccess.Read;
+			o.AiAccessEnabled = true;
+			Assert.AreEqual(nameof(Options.AiAccessEnabled), changed);
+			o.AiAccess = AiAccess.Configure;
 			Assert.AreEqual(nameof(Options.AiAccess), changed);
 			o.AiAccessPort = 37361;
 			Assert.AreEqual(nameof(Options.AiAccessPort), changed);

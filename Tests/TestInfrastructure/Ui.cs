@@ -308,18 +308,16 @@ namespace x360ce.Tests
 				NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_RESTORE);
 				return;
 			}
-			string exe;
-			try { exe = p.MainModule.FileName; }
-			catch (InvalidOperationException) { return; }
-			using (var asker = Process.Start(new ProcessStartInfo(exe)
-			{
-				WorkingDirectory = Path.GetDirectoryName(exe),
-				UseShellExecute = false,
-			}))
-			{
-				if (asker != null)
-					asker.WaitForExit(15000);
-			}
+			if (p.HasExited)
+				return;
+			// The same message a second launch would send, sent directly. Launching a copy to send
+			// it was a race: a copy that starts while the first is closing finds nobody to hand off
+			// to, becomes a full instance, plugs its controllers in, and the teardown then finds
+			// them left over and the process still running.
+			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
+				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
+			var message = NativeMethods.RegisterWindowMessage(product);
+			NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
 			WaitFor(() =>
 			{
 				p.Refresh();
@@ -331,9 +329,16 @@ namespace x360ce.Tests
 		{
 			public const int SW_MINIMIZE = 6;
 			public const int SW_RESTORE = 9;
+			public static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool ShowWindow(IntPtr window, int command);
+
+			[System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+			public static extern int RegisterWindowMessage(string name);
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern bool PostMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
 		}
 
 		/// <summary>True when an x360ce process other than this one is alive.</summary>

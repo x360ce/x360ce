@@ -96,8 +96,12 @@ namespace x360ce.App.UiTree
 			// The door an AI assistant or a script comes in by. Off until a person opens it here.
 			d["OptionsUserControl.AiAccessGroupBox"] = new Text("AI assistant access (MCP server)",
 				"Lets an AI assistant or a script read or operate this program, at the level chosen here.");
-			d["OptionsUserControl.AiAccessComboBox"] = new Text("AI assistant access",
-				"Off, Read, Configure or Administer: how much a connected assistant or script may do.");
+			d["OptionsUserControl.AiAccessEnabledCheckBox"] = new Text("AI assistant access",
+				"Lets an AI assistant or a script reach this program at all. Off until a person ticks it.");
+			d["OptionsUserControl.AiAccessComboBox"] = new Text("AI assistant level",
+				"Read, Configure or Administer: how much a connected assistant or script may do.");
+			d["OptionsUserControl.AiAccessPromptButton"] = new Text("Copy prompt",
+				"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.");
 			d["OptionsUserControl.AiAccessAddressComboBox"] = new Text("AI assistant address",
 				"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on.");
 			d["OptionsUserControl.AiAccessUrlTextBox"] = new Text("AI assistant URL",

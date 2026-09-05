@@ -293,7 +293,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Command]   │       │           │   │           └── Add...                              # Adds a folder to search for games.
 [Button]    │       │           │   ├── Developer Tools...                              # Opens a window of aids for working on the program.
 [Section]   │       │           │   └── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[List]      │       │           │       ├── AI assistant access                         # AI assistant access: Off, Read, Configure or Administer.
+[List]      │       │           │       ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
 [List]      │       │           │       ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
 [Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
 [Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
@@ -303,7 +303,9 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
 [Button]    │       │           │       ├── Copy snippet                                # Copies the registration snippet to the clipboard.
 [CheckBox]  │       │           │       ├── Register with Windows                       # Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.
-[Button]    │       │           │       └── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[Button]    │       │           │       ├── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[CheckBox]  │       │           │       ├── AI assistant access                         # Whether an AI assistant or a script may reach the program at all.
+[Button]    │       │           │       └── Copy prompt                                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.

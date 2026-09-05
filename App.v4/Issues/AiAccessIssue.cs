@@ -19,7 +19,7 @@ namespace x360ce.App.Issues
 			// start is not reported as a fault. The sentence carries its own remedy, and the one
 			// remedy the program can apply itself gets the Fix button.
 			var error = Mcp.McpListener.LastError;
-			if (SettingsManager.Options.AiAccess != AiAccess.Off && error != null)
+			if (SettingsManager.Options.AiAccessEnabled && error != null)
 			{
 				SetSeverity(IssueSeverity.Important, Mcp.McpListener.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
 				return;

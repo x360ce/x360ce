@@ -167,7 +167,7 @@ namespace x360ce.App
 				output.Write(Mcp.McpClient.Usage());
 				return 0;
 			}
-			if (o.AiAccess == AiAccess.Off)
+			if (!o.AiAccessEnabled)
 			{
 				error.WriteLine("AI assistant access is off. Switch it on in x360ce Options.");
 				return 2;

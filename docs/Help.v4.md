@@ -255,13 +255,16 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 ## AI assistant access
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
-program. It is off until you choose a level on the Options page. **Read**: read the interface, the
+program. It is off until you tick AI assistant access on the Options page and choose a level.
+**Read**: read the interface, the
 devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
 may still ask, as it asks a person, when HID Guardian is set to configure automatically.
 **Administer**: also the actions that install or remove drivers and switch on debug mode. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
 
-There are two ways to connect an assistant, both shown on the Options page:
+The quickest start is Copy prompt on the Options page: it copies instructions for any AI, with
+both ways to connect and a first request, "list my controllers". Paste it into the assistant's
+chat and it takes it from there. The two ways, both shown on the page:
 
 - **An assistant on this computer that runs commands.** Copy the assistant snippet into its MCP
   settings. It launches `x360ce.exe /Mcp`, which finds the running program, starts it if need be,
