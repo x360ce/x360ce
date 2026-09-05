@@ -28,6 +28,16 @@ The portable release includes **`Setup.exe`**, a standalone graphical installer 
 3. Click **"Install & Optimize Game"**.
 4. The tool automatically deploys emulator binaries, calibrates connected controllers for Player 1 & Player 2 (eliminating reversed buttons or missing stick axes), and registers virtual Xbox 360 controller emulation.
 
+## Universal Minecraft Support (Bedrock & Java Edition)
+
+`Setup.exe` automatically detects and configures all Minecraft versions and launchers:
+- **Minecraft: Bedrock Edition**: Supports Windows 10/11 Store UWP packages (`Microsoft.MinecraftUWP`), Microsoft Store apps, and Xbox App installations (`XboxGames`).
+- **Minecraft: Java Edition**: Automatically discovers `javaw.exe` runtime paths across:
+  - Official Microsoft Store & Windows Desktop Launcher runtimes (`LocalCache`, `Program Files`, `%APPDATA%\.minecraft\runtime`).
+  - Third-party launchers: **Prism Launcher**, **Modrinth App**, **CurseForge**, **Lunar Client**, **Badlion Client**, **Feather**, and **MultiMC**.
+  - Custom JDK/JRE distributions (Adoptium Temurin, BellSoft Liberica, Azul Zulu, Amazon Corretto).
+- Automatically registers runtime executables with virtual ViGEmBus controller mapping for instant gamepad support.
+
 ## Ultra-Low Latency 1000 Hz Engine & Hardware Auto-Optimization
 
 `x360ce` automatically benchmarks your PC hardware (CPU cores, RAM, power profile) on startup:
@@ -267,3 +277,18 @@ Tuning a thumb stick. The curve shows what the game receives for how far you pus
 zone, an anti-dead zone and a sensitivity change can be seen before the game is started.
 
 ![Right Thumb tab, showing the response curve of each axis with its dead zone settings](docs/.attachments/x360ce-v4-rthumb.png)
+
+---
+
+# Architecture & Contributing
+
+For a detailed technical breakdown of the decoupled, anti-monolith architecture, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+### Submitting Pull Requests
+1. Fork the repository to your GitHub account (`https://github.com/sirahmed8/x360ce`).
+2. Create your feature branch: `git checkout -b feature/your-feature-name`.
+3. Verify that all projects build with zero warnings: `dotnet build -c Release`.
+4. Ensure all unit tests pass: `dotnet test -c Release`.
+5. Commit your changes with concise, descriptive messages.
+6. Push to your fork and submit a Pull Request to [x360ce/x360ce](https://github.com/x360ce/x360ce).
+
