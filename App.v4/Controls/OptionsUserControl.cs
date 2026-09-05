@@ -22,6 +22,8 @@ namespace x360ce.App.Controls
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
 			AiAccessSnippetTextBox.Text = "{\"mcpServers\":{\"x360ce\":{\"command\":\"" + Application.ExecutablePath.Replace("\\", "\\\\") + "\",\"args\":[\"/Mcp\"]}}}";
 			AiAccessCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessSnippetTextBox.Text);
+			AiAccessUrlCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessUrlTextBox.Text);
+			UpdateAiAccessUrl();
 			AiAccessRegenerateButton.Click += (s, e) =>
 			{
 				SettingsManager.Options.RegenerateAiAccessToken();
@@ -150,10 +152,12 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(AiAccess)));
+			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
 			// LoadAndMonitor has no branch for a number box, and ValueChanged fires on every spin
 			// click, each of which would restart the listener; the value is taken when editing ends.
 			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;
 			AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
+			UpdateAiAccessUrl();
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
@@ -191,8 +195,11 @@ namespace x360ce.App.Controls
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 					break;
 				case nameof(Options.AiAccess):
-					// Shows the token made when access is first switched on.
+				case nameof(Options.AiAccessAddress):
+				case nameof(Options.AiAccessPort):
+					// Shows the token made when access is first switched on, and where the door now is.
 					AiAccessTokenTextBox.Text = o.AiAccessToken;
+					UpdateAiAccessUrl();
 					break;
 				default:
 					break;
@@ -300,6 +307,14 @@ namespace x360ce.App.Controls
 				RemotePortNumericUpDown.Value = o.RemotePort;
 			if (o.AiAccessPort >= AiAccessPortNumericUpDown.Minimum && o.AiAccessPort <= AiAccessPortNumericUpDown.Maximum)
 				AiAccessPortNumericUpDown.Value = o.AiAccessPort;
+		}
+
+		/// <summary>The address an agent that connects over HTTP is given: this computer's name when every network is allowed, the loopback otherwise.</summary>
+		void UpdateAiAccessUrl()
+		{
+			var o = SettingsManager.Options;
+			var host = o.AiAccessAddress == Options.AnyAddress ? Environment.MachineName.ToLowerInvariant() : Options.LoopbackAddress;
+			AiAccessUrlTextBox.Text = "http://" + host + ":" + o.AiAccessPort + "/mcp/";
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)

@@ -113,7 +113,7 @@ namespace x360ce.App
 			if (o.AiAccess != AiAccess.Off)
 			{
 				o.EnsureAiAccessToken();
-				Mcp.McpListener.Start(o.AiAccessPort, o.AiAccessToken);
+				Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
 			}
 			try
 			{
@@ -146,6 +146,7 @@ namespace x360ce.App
 						DHelper.Frequency = o.PollingRate;
 					break;
 				case nameof(Options.AiAccess):
+				case nameof(Options.AiAccessAddress):
 				case nameof(Options.AiAccessPort):
 					ApplyAiAccess();
 					break;

@@ -24,7 +24,7 @@ namespace x360ce.Tests
 					foreach (var name in new[] { "AiAccessComboBox", "AiAccessTokenTextBox", "AiAccessRegenerateButton", "AiAccessCopyButton" })
 						Assert.AreEqual(1, page.Controls.Find(name, true).Length, name + " is missing.");
 					var group = page.Controls.Find("AiAccessGroupBox", true).OfType<GroupBox>().First();
-					Assert.AreEqual("AI assistant access", group.Text);
+					Assert.AreEqual("AI assistant access (MCP server)", group.Text);
 					// Typed text would leave the list's selection empty and the binding would write Off.
 					var level = page.Controls.Find("AiAccessComboBox", true).OfType<ComboBox>().First();
 					Assert.AreEqual(ComboBoxStyle.DropDownList, level.DropDownStyle);
@@ -33,9 +33,16 @@ namespace x360ce.Tests
 					Assert.AreEqual(49151, port.Maximum);
 					// The door's own controls, which McpTools refuses at every level, are these three.
 					McpUiToolsTest.AssertField("AiAccessComboBox", typeof(ComboBox));
+					McpUiToolsTest.AssertField("AiAccessAddressComboBox", typeof(ComboBox));
 					McpUiToolsTest.AssertField("AiAccessPortNumericUpDown", typeof(NumericUpDown));
 					McpUiToolsTest.AssertField("AiAccessRegenerateButton", typeof(Button));
-					CollectionAssert.AreEquivalent(new[] { "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton" }, x360ce.App.Mcp.McpTools.DoorControls);
+					CollectionAssert.AreEquivalent(new[] { "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton" }, x360ce.App.Mcp.McpTools.DoorControls);
+					var address = page.Controls.Find("AiAccessAddressComboBox", true).OfType<ComboBox>().First();
+					Assert.AreEqual(ComboBoxStyle.DropDownList, address.DropDownStyle);
+					var url = page.Controls.Find("AiAccessUrlTextBox", true).OfType<TextBox>().First();
+					StringAssert.StartsWith(url.Text, "http://127.0.0.1:");
+					StringAssert.EndsWith(url.Text, "/mcp/");
+					Assert.AreEqual(1, page.Controls.Find("AiAccessUrlCopyButton", true).Length);
 					var snippet = page.Controls.Find("AiAccessSnippetTextBox", true).OfType<TextBox>().First();
 					StringAssert.Contains(snippet.Text, "\"/Mcp\"");
 					StringAssert.Contains(snippet.Text, Application.ExecutablePath.Replace("\\", "\\\\"));

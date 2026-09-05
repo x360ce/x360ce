@@ -261,7 +261,18 @@ may still ask, as it asks a person, when HID Guardian is set to configure automa
 **Administer**: also the actions that install or remove drivers and switch on debug mode. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
 
-Copy the registration snippet from the Options page into your assistant's MCP settings; it launches
-`x360ce.exe /Mcp`, which talks to the running program. From a command prompt, `x360ce.exe /Ai`
-lists the tools and `x360ce.exe /Ai=devices_list` calls one; a batch file that needs the exit code
-runs `start /wait x360ce.exe /Ai=...`. Regenerate the token to revoke access.
+There are two ways to connect an assistant, both shown on the Options page:
+
+- **An assistant on this computer that runs commands.** Copy the assistant snippet into its MCP
+  settings. It launches `x360ce.exe /Mcp`, which finds the running program, starts it if need be,
+  and needs no token from you.
+- **An assistant that connects to a URL**, on this computer or another. Copy the URL and give it
+  as an HTTP MCP server, with the header `Authorization: Bearer <token>` where `<token>` is the
+  token on the Options page. For another computer, set Address to `0.0.0.0` first; Windows then
+  asks once, through the Fix button on the Issues tab, for permission to listen on every network.
+  The connection is plain HTTP, so use it only on a network you trust. The default address,
+  `127.0.0.1`, keeps the door on this computer.
+
+From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
+one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
+token to revoke access.

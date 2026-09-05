@@ -94,10 +94,16 @@ namespace x360ce.App.UiTree
 				"Lets a remote computer work controller 4.");
 
 			// The door an AI assistant or a script comes in by. Off until a person opens it here.
-			d["OptionsUserControl.AiAccessGroupBox"] = new Text("AI assistant access",
+			d["OptionsUserControl.AiAccessGroupBox"] = new Text("AI assistant access (MCP server)",
 				"Lets an AI assistant or a script read or operate this program, at the level chosen here.");
 			d["OptionsUserControl.AiAccessComboBox"] = new Text("AI assistant access",
 				"Off, Read, Configure or Administer: how much a connected assistant or script may do.");
+			d["OptionsUserControl.AiAccessAddressComboBox"] = new Text("AI assistant address",
+				"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on.");
+			d["OptionsUserControl.AiAccessUrlTextBox"] = new Text("AI assistant URL",
+				"Address an agent that connects over HTTP is given, with the token as a bearer header.");
+			d["OptionsUserControl.AiAccessUrlCopyButton"] = new Text("Copy URL",
+				"Copies the URL to the clipboard.");
 			d["OptionsUserControl.AiAccessPortNumericUpDown"] = new Text("AI assistant port",
 				"Local port the assistant connects to. Change it if another program holds it.");
 			d["OptionsUserControl.AiAccessTokenTextBox"] = new Text("AI assistant token",

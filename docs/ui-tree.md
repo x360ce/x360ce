@@ -291,7 +291,17 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Command]   │       │           │   │           ├── Refresh                             # Reads the folder list again.
 [Command]   │       │           │   │           ├── Remove                              # Stops searching the selected folder.
 [Command]   │       │           │   │           └── Add...                              # Adds a folder to search for games.
-[Button]    │       │           │   └── Developer Tools...                              # Opens a window of aids for working on the program.
+[Button]    │       │           │   ├── Developer Tools...                              # Opens a window of aids for working on the program.
+[Section]   │       │           │   └── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[List]      │       │           │       ├── AI assistant access                         # AI assistant access: Off, Read, Configure or Administer.
+[List]      │       │           │       ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
+[Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
+[Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
+[Button]    │       │           │       ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │           │       ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
+[Button]    │       │           │       ├── Copy URL                                    # Copies the URL to the clipboard.
+[Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
+[Button]    │       │           │       └── Copy snippet                                # Copies the registration snippet to the clipboard.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
@@ -326,20 +336,13 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │       │           │   │   ├── Allow remote controller 4                   # Lets a remote computer work controller 4.
 [Number]    │       │           │   │   ├── Remote port 1024..49151                     # Network port listened on for a remote controller.
 [CheckBox]  │       │           │   │   └── Enabled                                     # Accepts controllers from another computer.
-[Section]   │       │           │   ├── Virtual controller driver                       # The driver that presents the emulated controllers to Windows.
-[List]      │       │           │   │   ├── Polling rate                                # Virtual Controller update frequency.
-[Text]      │       │           │   │   ├── Driver version                              # Which version of the virtual controller driver is installed.
-[Button]    │       │           │   │   ├── Refresh                                     # Checks the driver again.
-[Button]    │       │           │   │   ├── Install                                     # Installs the virtual controller driver. Needs Administrator.
-[Button]    │       │           │   │   ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
-[Link]      │       │           │   │   └── Driver author                               # Opens the page the virtual controller driver comes from.
-[Section]   │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[List]      │       │           │       ├── AI assistant access                         # AI assistant access: Off, Read, Configure or Administer.
-[Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
-[Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
-[Button]    │       │           │       ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
-[Button]    │       │           │       └── Copy snippet                                # Copies the registration snippet to the clipboard.
+[Section]   │       │           │   └── Virtual controller driver                       # The driver that presents the emulated controllers to Windows.
+[List]      │       │           │       ├── Polling rate                                # Virtual Controller update frequency.
+[Text]      │       │           │       ├── Driver version                              # Which version of the virtual controller driver is installed.
+[Button]    │       │           │       ├── Refresh                                     # Checks the driver again.
+[Button]    │       │           │       ├── Install                                     # Installs the virtual controller driver. Needs Administrator.
+[Button]    │       │           │       ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
+[Link]      │       │           │       └── Driver author                               # Opens the page the virtual controller driver comes from.
 [Tab]       │       │           ├── HID Hide                                            # Hides the real controller from games, so only the emulated one is seen.
 [Section]   │       │           │   └── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
 [Value]     │       │           │       ├── HID Hide state                              # Whether HID Hide is installed, and which version.

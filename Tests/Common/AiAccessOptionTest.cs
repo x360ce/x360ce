@@ -17,6 +17,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(AiAccess.Off, o.AiAccess);
 			Assert.IsTrue(string.IsNullOrEmpty(o.AiAccessToken), "A token exists before anyone asked for access.");
 			Assert.AreEqual(37360, o.AiAccessPort);
+			Assert.AreEqual(Options.LoopbackAddress, o.AiAccessAddress, "The door must stay on this computer until somebody opens it wider.");
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
@@ -45,6 +46,8 @@ namespace x360ce.Tests
 			Assert.AreEqual(nameof(Options.AiAccess), changed);
 			o.AiAccessPort = 37361;
 			Assert.AreEqual(nameof(Options.AiAccessPort), changed);
+			o.AiAccessAddress = Options.AnyAddress;
+			Assert.AreEqual(nameof(Options.AiAccessAddress), changed);
 		}
 	}
 }

@@ -247,29 +247,43 @@ namespace x360ce.App.Mcp
 		/// <summary>Why the door is not usable, as one sentence with its own remedy, for the Issues tab. Null after a start that worked.</summary>
 		public static string LastError;
 
-		/// <summary>Opens the door on the port. False, with the reason in LastError, when it cannot.</summary>
-		public static bool Start(int port, string token)
+		/// <summary>True when the last start failed only because Windows has no URL reservation for every network; the Issues tab can make one.</summary>
+		public static bool NeedsUrlReservation;
+
+		/// <summary>The prefix http.sys is asked for: the loopback name a standard user may bind, or every address, which needs a reservation.</summary>
+		public static string Prefix(string address, int port)
+		{
+			return (address == Options.AnyAddress ? "http://+:" : "http://localhost:") + port + "/mcp/";
+		}
+
+		/// <summary>Opens the door on the address and port. False, with the reason in LastError, when it cannot.</summary>
+		public static bool Start(string address, int port, string token)
 		{
 			Stop();
+			NeedsUrlReservation = false;
 			if (port < 1024 || port > 49151)
 			{
 				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range on the Options page.";
 				return false;
 			}
 			var listener = new System.Net.HttpListener();
-			// localhost, never + or *: nothing outside this machine may reach the program. It is
-			// also the host a standard user may bind without a URL reservation, where 127.0.0.1
-			// is refused on some Windows versions.
-			listener.Prefixes.Add("http://localhost:" + port + "/mcp/");
+			// localhost is the host a standard user may bind without a URL reservation, where
+			// 127.0.0.1 is refused on some Windows versions, and it stays on this machine. Every
+			// network is the + wildcard, the only form http.sys takes for that, and it needs a
+			// reservation made once as Administrator.
+			listener.Prefixes.Add(Prefix(address, port));
 			try
 			{
 				listener.Start();
 			}
 			catch (System.Net.HttpListenerException ex)
 			{
-				// Another program holds the port. The Issues tab says so and what to do; a crash
-				// report would say neither.
-				LastError = "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options page.";
+				// Another program holds the port, or Windows has no reservation. The Issues tab says
+				// which and what to do; a crash report would say neither.
+				NeedsUrlReservation = address == Options.AnyAddress && ex.ErrorCode == 5;
+				LastError = NeedsUrlReservation
+					? "listening on every network needs a one-time permission from Windows. Press Fix on the Issues tab, or run as Administrator: netsh http add urlacl url=" + Prefix(address, port) + " sddl=D:(A;;GX;;;WD)"
+					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options page.";
 				return false;
 			}
 			_token = token;

@@ -1832,6 +1832,70 @@
 															"Description":"Opens a window of aids for working on the program.",
 															"Role":"Button",
 															"Id":"DeveloperToolsButton"
+														},
+														{
+															"Name":"AI assistant access (MCP server)",
+															"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
+															"Role":"Section",
+															"Id":"AiAccessGroupBox",
+															"Items":[
+																{
+																	"Name":"AI assistant access",
+																	"Description":"AI assistant access: Off, Read, Configure or Administer.",
+																	"Role":"List",
+																	"Id":"AiAccessComboBox"
+																},
+																{
+																	"Name":"AI assistant address",
+																	"Description":"Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.",
+																	"Role":"List",
+																	"Id":"AiAccessAddressComboBox"
+																},
+																{
+																	"Name":"AI assistant port",
+																	"Description":"Local port the assistant connects to. Change it if another program holds it.",
+																	"Role":"Number",
+																	"Id":"AiAccessPortNumericUpDown",
+																	"Min":1024,
+																	"Max":49151
+																},
+																{
+																	"Name":"AI assistant token",
+																	"Description":"What a caller must present to be let in. Made by the program.",
+																	"Role":"Value",
+																	"Id":"AiAccessTokenTextBox"
+																},
+																{
+																	"Name":"Regenerate token",
+																	"Description":"Makes a new token, so anything holding the old one is shut out.",
+																	"Role":"Button",
+																	"Id":"AiAccessRegenerateButton"
+																},
+																{
+																	"Name":"AI assistant URL",
+																	"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header.",
+																	"Role":"Value",
+																	"Id":"AiAccessUrlTextBox"
+																},
+																{
+																	"Name":"Copy URL",
+																	"Description":"Copies the URL to the clipboard.",
+																	"Role":"Button",
+																	"Id":"AiAccessUrlCopyButton"
+																},
+																{
+																	"Name":"Registration snippet",
+																	"Description":"Settings to paste into an assistant so it can reach this program.",
+																	"Role":"Value",
+																	"Id":"AiAccessSnippetTextBox"
+																},
+																{
+																	"Name":"Copy snippet",
+																	"Description":"Copies the registration snippet to the clipboard.",
+																	"Role":"Button",
+																	"Id":"AiAccessCopyButton"
+																}
+															]
 														}
 													]
 												},
@@ -2104,52 +2168,6 @@
 																	"Description":"Opens the page the virtual controller driver comes from.",
 																	"Role":"Link",
 																	"Id":"AboutViGEmLinkLabel"
-																}
-															]
-														},
-														{
-															"Name":"AI assistant access",
-															"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
-															"Role":"Section",
-															"Id":"AiAccessGroupBox",
-															"Items":[
-																{
-																	"Name":"AI assistant access",
-																	"Description":"AI assistant access: Off, Read, Configure or Administer.",
-																	"Role":"List",
-																	"Id":"AiAccessComboBox"
-																},
-																{
-																	"Name":"AI assistant port",
-																	"Description":"Local port the assistant connects to. Change it if another program holds it.",
-																	"Role":"Number",
-																	"Id":"AiAccessPortNumericUpDown",
-																	"Min":1024,
-																	"Max":49151
-																},
-																{
-																	"Name":"AI assistant token",
-																	"Description":"What a caller must present to be let in. Made by the program.",
-																	"Role":"Value",
-																	"Id":"AiAccessTokenTextBox"
-																},
-																{
-																	"Name":"Regenerate token",
-																	"Description":"Makes a new token, so anything holding the old one is shut out.",
-																	"Role":"Button",
-																	"Id":"AiAccessRegenerateButton"
-																},
-																{
-																	"Name":"Registration snippet",
-																	"Description":"Settings to paste into an assistant so it can reach this program.",
-																	"Role":"Value",
-																	"Id":"AiAccessSnippetTextBox"
-																},
-																{
-																	"Name":"Copy snippet",
-																	"Description":"Copies the registration snippet to the clipboard.",
-																	"Role":"Button",
-																	"Id":"AiAccessCopyButton"
 																}
 															]
 														}

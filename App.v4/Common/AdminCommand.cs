@@ -13,6 +13,8 @@
 		UninstallDevice,
 		/// <summary>Remove virtual pads left behind by runs that did not shut down cleanly.</summary>
 		RemoveLeftoverPads,
+		/// <summary>Let every user listen for AI assistants on every network at the given port, which http.sys allows only once an Administrator has said so.</summary>
+		ReserveAiAccessUrl,
 		/// <summary>Switch real controllers off, so the places they hold are given up.</summary>
 		/// <remarks>
 		/// Windows will not let an ordinary program switch a device off, and putting controllers in a

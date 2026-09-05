@@ -19,9 +19,17 @@ namespace x360ce.Tests
 		public void Token_gates_and_level_is_live()
 		{
 			McpServerTest.UseSample(AiAccess.Read);
-			Assert.IsFalse(McpListener.Start(80, "secret"), "A port outside the range must be refused, not tried.");
+			Assert.IsFalse(McpListener.Start(Options.LoopbackAddress, 80, "secret"), "A port outside the range must be refused, not tried.");
 			StringAssert.Contains(McpListener.LastError, "1024");
-			Assert.IsTrue(McpListener.Start(Port, "secret"), McpListener.LastError);
+			// Every network needs a reservation Windows only grants to an Administrator; without one the
+			// door stays shut and the reason names the Fix. With one, it opens, and that is fine too.
+			if (!McpListener.Start(Options.AnyAddress, Port, "secret"))
+			{
+				Assert.IsTrue(McpListener.NeedsUrlReservation, McpListener.LastError);
+				StringAssert.Contains(McpListener.LastError, "netsh http add urlacl");
+			}
+			Assert.IsTrue(McpListener.Start(Options.LoopbackAddress, Port, "secret"), McpListener.LastError);
+			Assert.IsFalse(McpListener.NeedsUrlReservation);
 			try
 			{
 				var refused = Assert.ThrowsExactly<WebException>(() => McpClient.Post(Port, "wrong", List));

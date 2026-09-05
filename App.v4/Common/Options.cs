@@ -224,6 +224,15 @@ namespace x360ce.App
 		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
 		AiAccess _AiAccess;
 
+		[DefaultValue(LoopbackAddress), Description("Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.")]
+		public string AiAccessAddress { get { return _AiAccessAddress; } set { _AiAccessAddress = value; OnPropertyChanged(); } }
+		string _AiAccessAddress = LoopbackAddress;
+
+		/// <summary>The address that keeps the door on this computer. The default.</summary>
+		public const string LoopbackAddress = "127.0.0.1";
+		/// <summary>The address that opens the door to every network the computer is on.</summary>
+		public const string AnyAddress = "0.0.0.0";
+
 		[DefaultValue(37360), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
 		int _AiAccessPort = 37360;
