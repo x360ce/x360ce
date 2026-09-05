@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -272,7 +272,7 @@ namespace x360ce.App.DInput
 				// Fire event.
 				var ev = UpdateCompleted;
 				if (ev != null)
-					ev(this, new DInputEventArgs());
+					ev(this, DInputEventArgs.Empty);
 			}
 		}
 

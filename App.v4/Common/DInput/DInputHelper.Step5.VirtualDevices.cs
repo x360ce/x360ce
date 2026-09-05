@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using JocysCom.ClassLibrary.Controls;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
@@ -244,10 +244,13 @@ namespace x360ce.App.DInput
 			// Forgotten rather than assumed, so the next pass plugs in whatever is wanted now.
 			for (var i = 0; i < FeedingState.Length; i++)
 				FeedingState[i] = null;
+			for (var i = 0; i < _feedingInitialized.Length; i++)
+				_feedingInitialized[i] = false;
 			UpdateDevicesEnabled = true;
 			Suspended = false;
 		}
 
+		bool[] _feedingInitialized = new bool[4];
 		Gamepad[] oldGamepadStates = new Gamepad[4];
 
 		bool IsGuideDown;
@@ -259,6 +262,21 @@ namespace x360ce.App.DInput
 		{
 			// Get old and new game pad values.
 			var n = CombinedXiStates[i - 1].Gamepad;
+			// Compare with old state.
+			var o = oldGamepadStates[i - 1];
+			var changed =
+				n.Buttons != o.Buttons ||
+				n.LeftThumbX != o.LeftThumbX ||
+				n.LeftThumbY != o.LeftThumbY ||
+				n.LeftTrigger != o.LeftTrigger ||
+				n.RightThumbX != o.RightThumbX ||
+				n.RightThumbY != o.RightThumbY ||
+				n.RightTrigger != o.RightTrigger;
+
+			// If state has not changed and device was already fed at least once, skip report generation.
+			if (!changed && _feedingInitialized[i - 1])
+				return true;
+
 			var report = new Xbox360Report();
 			// Update only when change.
 			report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
@@ -282,62 +300,52 @@ namespace x360ce.App.DInput
 			report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
 			report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
 			report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
-			// Compare with old state.
-			var o = oldGamepadStates[i - 1];
-			var changed =
-				n.Buttons != o.Buttons ||
-				n.LeftThumbX != o.LeftThumbX ||
-				n.LeftThumbY != o.LeftThumbY ||
-				n.LeftTrigger != o.LeftTrigger ||
-				n.RightThumbX != o.RightThumbX ||
-				n.RightThumbY != o.RightThumbY ||
-				n.RightTrigger != o.RightTrigger;
-			// If state changed then...
-			if (changed)
+
+			// Update controller.
+			try
 			{
-				// Update controller.
-				try
-				{
-					ViGEmClient.Current.Targets[i - 1].SendReport(report);
-				}
-				catch (Nefarius.ViGEm.Client.ViGEmException ex)
-					when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
-						|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
-				{
-					// The controller went away underneath us, which happens when the bus drops one - a driver
-					// update, most often. It is put back on the next pass and nobody sees anything. Saying so
-					// is worth a line in the log and not a fault report to somebody who cannot act on it.
-					return false;
-				}
-				catch (System.Exception ex)
-				{
-					// The virtual bus can drop a target while a game is running, for example
-					// when the driver is updated. Report the failure instead of letting it
-					// escape into the update loop and stop the controller thread.
-					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-					return false;
-				}
-				lock (guideLock)
-				{
-					var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
-					if (isGuidePressed && !IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
-						IsGuideDown = true;
-					}
-					if (!isGuidePressed && IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
-						IsGuideDown = false;
-					}
-				}
-				// Update old state.
-				oldGamepadStates[i - 1] = n;
+				ViGEmClient.Current.Targets[i - 1].SendReport(report);
+				_feedingInitialized[i - 1] = true;
 			}
+			catch (Nefarius.ViGEm.Client.ViGEmException ex)
+				when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
+					|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+			{
+				_feedingInitialized[i - 1] = false;
+				// The controller went away underneath us, which happens when the bus drops one - a driver
+				// update, most often. It is put back on the next pass and nobody sees anything. Saying so
+				// is worth a line in the log and not a fault report to somebody who cannot act on it.
+				return false;
+			}
+			catch (System.Exception ex)
+			{
+				_feedingInitialized[i - 1] = false;
+				// The virtual bus can drop a target while a game is running, for example
+				// when the driver is updated. Report the failure instead of letting it
+				// escape into the update loop and stop the controller thread.
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				return false;
+			}
+			lock (guideLock)
+			{
+				var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
+				if (isGuidePressed && !IsGuideDown)
+				{
+					var keys = GetGuideKeys();
+					if (keys.Count() > 0)
+						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
+					IsGuideDown = true;
+				}
+				if (!isGuidePressed && IsGuideDown)
+				{
+					var keys = GetGuideKeys();
+					if (keys.Count() > 0)
+						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
+					IsGuideDown = false;
+				}
+			}
+			// Update old state.
+			oldGamepadStates[i - 1] = n;
 			return true;
 		}
 
@@ -484,6 +492,7 @@ namespace x360ce.App.DInput
 			// Exactly one should have appeared. None means Windows has not finished building it yet, and
 			// more than one means somebody else made theirs in the same moment - neither can be claimed.
 			RememberOurPlace(userIndex, place, appeared.Count == 1 ? appeared.First() : null);
+			_feedingInitialized[userIndex - 1] = false;
 			return VirtualError.None;
 		}
 
@@ -492,6 +501,7 @@ namespace x360ce.App.DInput
 			bool success;
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
+			_feedingInitialized[userIndex - 1] = false;
 			if (!ViGEmClient.isVBusExists(false))
 				return VirtualError.Missing;
 			if (!ViGEmClient.Current.isControllerExists(userIndex))

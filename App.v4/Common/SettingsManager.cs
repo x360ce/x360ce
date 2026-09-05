@@ -1,4 +1,4 @@
-﻿using SharpDX.DirectInput;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -160,25 +160,157 @@ namespace x360ce.App
 				);
 		}
 
+		#region Fast Lookups and Caches for 1000Hz Engine Path
+
+		static int _settingsVersion = 0;
+		static volatile Dictionary<Guid, UserDevice> _devicesByInstanceCache = null;
+		static volatile Dictionary<Guid, PadSetting> _padSettingsByChecksumCache = null;
+
+		static readonly object _mappedDevicesCacheLock = new object();
+		static UserDevice[] _cachedMappedDevices = null;
+		static string _cachedMappedDevicesGame = null;
+		static bool _cachedMappedDevicesIncludeOffline = false;
+		static int _cachedMappedDevicesVersion = -1;
+
+		static readonly object _userSettingsSnapshotLock = new object();
+		static UserSetting[] _cachedUserSettingsSnapshot = null;
+		static int _cachedUserSettingsVersion = -1;
+
+		static SettingsManager()
+		{
+			UserDevices.Items.ListChanged += (s, e) => InvalidateDeviceCache();
+			PadSettings.Items.ListChanged += (s, e) => InvalidatePadSettingCache();
+			UserSettings.Items.ListChanged += (s, e) => InvalidateUserSettingCache();
+		}
+
+		public static void InvalidateDeviceCache()
+		{
+			_devicesByInstanceCache = null;
+			System.Threading.Interlocked.Increment(ref _settingsVersion);
+		}
+
+		public static void InvalidatePadSettingCache()
+		{
+			_padSettingsByChecksumCache = null;
+			System.Threading.Interlocked.Increment(ref _settingsVersion);
+		}
+
+		public static void InvalidateUserSettingCache()
+		{
+			_cachedUserSettingsSnapshot = null;
+			System.Threading.Interlocked.Increment(ref _settingsVersion);
+		}
+
+		public static UserSetting[] GetUserSettingsSnapshot()
+		{
+			var currentVer = _settingsVersion;
+			var snapshot = _cachedUserSettingsSnapshot;
+			if (snapshot == null || _cachedUserSettingsVersion != currentVer)
+			{
+				lock (_userSettingsSnapshotLock)
+				{
+					currentVer = _settingsVersion;
+					snapshot = _cachedUserSettingsSnapshot;
+					if (snapshot == null || _cachedUserSettingsVersion != currentVer)
+					{
+						snapshot = UserSettings.ItemsToArraySyncronized();
+						_cachedUserSettingsSnapshot = snapshot;
+						_cachedUserSettingsVersion = currentVer;
+					}
+				}
+			}
+			return snapshot;
+		}
+
+		public static UserSetting GetSettingByInstance(Guid instanceGuid)
+		{
+			var snapshot = GetUserSettingsSnapshot();
+			for (int i = 0; i < snapshot.Length; i++)
+			{
+				var s = snapshot[i];
+				if (s != null && s.InstanceGuid.Equals(instanceGuid))
+					return s;
+			}
+			return null;
+		}
+
+		static Dictionary<Guid, UserDevice> BuildDeviceCache()
+		{
+			var dict = new Dictionary<Guid, UserDevice>();
+			var items = UserDevices.ItemsToArraySyncronized();
+			for (int i = 0; i < items.Length; i++)
+			{
+				var item = items[i];
+				if (item != null && !dict.ContainsKey(item.InstanceGuid))
+					dict[item.InstanceGuid] = item;
+			}
+			_devicesByInstanceCache = dict;
+			return dict;
+		}
+
+		static Dictionary<Guid, PadSetting> BuildPadSettingCache()
+		{
+			var dict = new Dictionary<Guid, PadSetting>();
+			var items = PadSettings.ItemsToArraySyncronized();
+			for (int i = 0; i < items.Length; i++)
+			{
+				var item = items[i];
+				if (item != null && !dict.ContainsKey(item.PadSettingChecksum))
+					dict[item.PadSettingChecksum] = item;
+			}
+			_padSettingsByChecksumCache = dict;
+			return dict;
+		}
+
+		#endregion
+
 		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
-			// Get all mapped user instances.
-			var instanceGuids = UserSettings.ItemsToArraySyncronized()
-				// Filter by game.
-				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
-				// Include only mapped devices.
-				.Where(x => x.MapTo > (int)MapTo.None)
-				// Select device instances only.
-				.Select(x => x.InstanceGuid)
-				.ToArray();
-			// Get all connected devices.
-			var userDevices = UserDevices.ItemsToArraySyncronized()
-				// Filter by instance.
-				.Where(x => instanceGuids.Contains(x.InstanceGuid))
-				// Include only currently connected devices.
-				.Where(x => includeOffline || x.IsOnline)
-				.ToArray();
-			return userDevices;
+			var currentVer = _settingsVersion;
+			var cached = _cachedMappedDevices;
+			if (cached != null &&
+				_cachedMappedDevicesVersion == currentVer &&
+				_cachedMappedDevicesIncludeOffline == includeOffline &&
+				string.Equals(_cachedMappedDevicesGame, fileName, StringComparison.OrdinalIgnoreCase))
+			{
+				return cached;
+			}
+
+			lock (_mappedDevicesCacheLock)
+			{
+				currentVer = _settingsVersion;
+				cached = _cachedMappedDevices;
+				if (cached != null &&
+					_cachedMappedDevicesVersion == currentVer &&
+					_cachedMappedDevicesIncludeOffline == includeOffline &&
+					string.Equals(_cachedMappedDevicesGame, fileName, StringComparison.OrdinalIgnoreCase))
+				{
+					return cached;
+				}
+
+				// Get all mapped user instances.
+				var instanceGuids = UserSettings.ItemsToArraySyncronized()
+					// Filter by game.
+					.Where(x => string.Compare(x.FileName, fileName, true) == 0)
+					// Include only mapped devices.
+					.Where(x => x.MapTo > (int)MapTo.None)
+					// Select device instances only.
+					.Select(x => x.InstanceGuid)
+					.ToArray();
+				// Get all connected devices.
+				var userDevices = UserDevices.ItemsToArraySyncronized()
+					// Filter by instance.
+					.Where(x => instanceGuids.Contains(x.InstanceGuid))
+					// Include only currently connected devices.
+					.Where(x => includeOffline || x.IsOnline)
+					.ToArray();
+
+				_cachedMappedDevices = userDevices;
+				_cachedMappedDevicesGame = fileName;
+				_cachedMappedDevicesIncludeOffline = includeOffline;
+				_cachedMappedDevicesVersion = currentVer;
+				return userDevices;
+			}
 		}
 
 		/// <summary>
@@ -196,15 +328,32 @@ namespace x360ce.App
 
 		public static UserDevice GetDevice(Guid instanceGuid)
 		{
-			return UserDevices.ItemsToArraySyncronized().FirstOrDefault(x =>
-				x.InstanceGuid.Equals(instanceGuid));
+			var cache = _devicesByInstanceCache;
+			if (cache == null)
+				cache = BuildDeviceCache();
+			UserDevice dev;
+			if (cache.TryGetValue(instanceGuid, out dev))
+				return dev;
+			var items = UserDevices.ItemsToArraySyncronized();
+			dev = items.FirstOrDefault(x => x.InstanceGuid.Equals(instanceGuid));
+			if (dev != null)
+				InvalidateDeviceCache();
+			return dev;
 		}
 
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
-			// Convert to array in order to prevent selection while modified.
-			return PadSettings.ItemsToArraySyncronized()
-				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
+			var cache = _padSettingsByChecksumCache;
+			if (cache == null)
+				cache = BuildPadSettingCache();
+			PadSetting ps;
+			if (cache.TryGetValue(padSettingChecksum, out ps))
+				return ps;
+			var items = PadSettings.ItemsToArraySyncronized();
+			ps = items.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
+			if (ps != null)
+				InvalidatePadSettingCache();
+			return ps;
 		}
 
 		public static List<UserDevice> GetDevices(string fileName, MapTo mapTo)

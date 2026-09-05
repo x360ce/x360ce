@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
@@ -103,7 +103,9 @@ namespace x360ce.App.DInput
 			for (int i = 0; i < updatedDevices.Length; i++)
 			{
 				var device = updatedDevices[i];
-				var ud = uds.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+				var ud = uds.FirstOrDefault(x => x.InstanceGuid.Equals(device.InstanceGuid));
+				if (ud == null)
+					continue;
 				DeviceInfo hid;
 				// Will refresh device and fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
@@ -152,7 +154,7 @@ namespace x360ce.App.DInput
 			RefreshDevicesCount++;
 			var ev = DevicesUpdated;
 			if (ev != null)
-				ev(this, new DInputEventArgs());
+				ev(this, DInputEventArgs.Empty);
 			//	var game = CurrentGame;
 			//	if (game != null)
 			//	{

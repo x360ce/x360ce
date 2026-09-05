@@ -1,4 +1,4 @@
-﻿using x360ce.App.DInput;
+using x360ce.App.DInput;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
@@ -80,18 +80,27 @@ namespace x360ce.App.Controls
 				var enable = ud != null;
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
-				ControlsHelper.SetEnabled(LoadPresetButton, enable);
-				ControlsHelper.SetEnabled(AutoPresetButton, enable);
-				ControlsHelper.SetEnabled(ClearPresetButton, enable);
-				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
-				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-				for (int p = 0; p < pages.Length; p++)
+				if (_lastEnabledState != enable)
 				{
-					// Get first control to disable which must be Panel.
-					var controls = pages[p].Controls.Cast<Control>().ToArray();
-					for (int c = 0; c < controls.Length; c++)
-						ControlsHelper.SetEnabled(controls[c], enable);
+					_lastEnabledState = enable;
+					ControlsHelper.SetEnabled(LoadPresetButton, enable);
+					ControlsHelper.SetEnabled(AutoPresetButton, enable);
+					ControlsHelper.SetEnabled(ClearPresetButton, enable);
+					ControlsHelper.SetEnabled(ResetPresetButton, enable);
+					var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+					for (int p = 0; p < pages.Length; p++)
+					{
+						// Get first control to disable which must be Panel.
+						var controls = pages[p].Controls.Cast<Control>().ToArray();
+						for (int c = 0; c < controls.Length; c++)
+							ControlsHelper.SetEnabled(controls[c], enable);
+					}
+				}
+				var remapEnable = enable && ud != null && ud.DiState != null;
+				if (_lastRemapEnabledState != remapEnable)
+				{
+					_lastRemapEnabledState = remapEnable;
+					ControlsHelper.SetEnabled(RemapAllButton, remapEnable);
 				}
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
@@ -811,6 +820,8 @@ namespace x360ce.App.Controls
 
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
+		bool? _lastEnabledState = null;
+		bool? _lastRemapEnabledState = null;
 
 		private void UpdatePassThroughRelatedControls()
 		{
