@@ -1,6 +1,5 @@
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
-using mshtml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -70,14 +69,14 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void MainBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
 		{
-			var doc = MainBrowser.Document?.DomDocument as IHTMLDocument3;
+			var doc = MainBrowser.Document;
 			if (doc == null)
 				return;
-			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().FirstOrDefault();
+			var body = doc.Body;
 			if (body == null)
 				return;
-			body.insertAdjacentHTML("afterbegin", "<p>Hi,</p><p></p><p>I would like to report a problem. Error details attached below:</p>");
-			body.setAttribute("contentEditable", "true");
+			body.InnerHtml = "<p>Hi,</p><p></p><p>I would like to report a problem. Error details attached below:</p>" + (body.InnerHtml ?? "");
+			body.SetAttribute("contentEditable", "true");
 		}
 
 		private void OpenErrorsFolderButton_Click(object sender, EventArgs e)
@@ -128,24 +127,21 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public string GetBody()
 		{
-			var doc = MainBrowser.Document?.DomDocument as IHTMLDocument3;
-			if (doc == null)
-				return null;
-			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().FirstOrDefault();
-			if (body == null)
-				return null;
-			return body.innerHTML;
+			return MainBrowser.Document?.Body?.InnerHtml;
 		}
 
 		public string GetMetaContent(string name)
 		{
-			var doc = MainBrowser.Document?.DomDocument as IHTMLDocument3;
+			var doc = MainBrowser.Document;
 			if (doc == null)
 				return null;
-			var meta = doc.getElementsByName(name).OfType<IHTMLMetaElement>().FirstOrDefault();
-			if (meta == null)
-				return null;
-			return meta.content;
+			var metaElements = doc.GetElementsByTagName("meta");
+			foreach (HtmlElement el in metaElements)
+			{
+				if (string.Equals(el.GetAttribute("name"), name, StringComparison.OrdinalIgnoreCase))
+					return el.GetAttribute("content");
+			}
+			return null;
 		}
 
 		private void SendErrorButton_Click(object sender, EventArgs e)
