@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace x360ce.App
@@ -91,6 +92,11 @@ namespace x360ce.App
 		/// <summary>Folder to write the interface description into. Defaults to docs beside the source.</summary>
 		public const string arg_ExportUi = "ExportUi";
 
+		/// <summary>Speak MCP over standard input and output, carried to the running program.</summary>
+		public const string arg_Mcp = "Mcp";
+		/// <summary>Call one tool of the running program and print the answer; alone, print the tools.</summary>
+		public const string arg_Ai = "Ai";
+
 		/// <summary>
 		/// Waits for the window to finish building itself, then describes it.
 		/// </summary>
@@ -131,6 +137,59 @@ namespace x360ce.App
 		{
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			internal static extern bool SetProcessDPIAware();
+
+			[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+			internal static extern bool AttachConsole(int processId);
+
+			[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+			internal static extern IntPtr GetStdHandle(int handle);
+		}
+
+		/// <summary>The two switches that talk to the running program on a caller's behalf.</summary>
+		/// <remarks>
+		/// This is a windowed executable, so a person typing the command gets no console and no
+		/// standard output handle. When there is no handle, the parent console is attached, so /Ai
+		/// prints where it was typed; an assistant's pipe is a real handle and is used as it is.
+		/// Both streams are UTF-8, so a device name reaches the caller as written. Failures are
+		/// printed and become exit codes, because an exception here would open the crash reporter
+		/// for what is a script's mistake.
+		/// </remarks>
+		static int RunClient(System.Configuration.Install.InstallContext ic)
+		{
+			var stdout = NativeMethods.GetStdHandle(-11);
+			if (stdout == IntPtr.Zero || stdout == new IntPtr(-1))
+				NativeMethods.AttachConsole(-1);
+			var output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true };
+			var error = new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true };
+			var o = SettingsManager.Options;
+			if (ic.Parameters.ContainsKey(arg_Ai) && string.IsNullOrEmpty(ic.Parameters[arg_Ai]))
+			{
+				output.Write(Mcp.McpClient.Usage());
+				return 0;
+			}
+			if (o.AiAccess == AiAccess.Off)
+			{
+				error.WriteLine("AI assistant access is off. Switch it on in x360ce Options.");
+				return 2;
+			}
+			var port = o.AiAccessPort;
+			var token = o.AiAccessToken;
+			try
+			{
+				Mcp.McpClient.EnsureRunning(port, token, Application.ExecutablePath);
+				Func<string, string> post = body => Mcp.McpClient.Post(port, token, body);
+				if (ic.Parameters.ContainsKey(arg_Mcp))
+					return Mcp.McpClient.RunStdio(new StreamReader(Console.OpenStandardInput(), Encoding.UTF8), output, post);
+				var arguments = ic.Parameters.Keys.Cast<string>()
+					.Where(k => k != arg_Ai.ToLowerInvariant())
+					.ToDictionary(k => k, k => ic.Parameters[k]);
+				return Mcp.McpClient.RunCommand(ic.Parameters[arg_Ai], arguments, output, post);
+			}
+			catch (Exception ex)
+			{
+				error.WriteLine(ex.Message);
+				return 1;
+			}
 		}
 
 		static void StartApp(string[] args)
@@ -164,6 +223,11 @@ namespace x360ce.App
 				OpenSettingsFolder(Application.UserAppDataPath);
 				OpenSettingsFolder(Application.CommonAppDataPath);
 				OpenSettingsFolder(Application.LocalUserAppDataPath);
+				return;
+			}
+			if (ic.Parameters.ContainsKey(arg_Mcp) || ic.Parameters.ContainsKey(arg_Ai))
+			{
+				Environment.ExitCode = RunClient(ic);
 				return;
 			}
 			if (!CheckSettings())
