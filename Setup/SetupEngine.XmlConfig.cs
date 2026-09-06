@@ -173,10 +173,10 @@ namespace x360ce.Setup
 				if (File.Exists(siderIni))
 				{
 					var text = File.ReadAllText(siderIni);
-					text = System.Text.RegularExpressions.Regex.Replace(text, @"gamepad\.dinput\.enabled\s*=\s*\d+", "gamepad.dinput.enabled = 0");
+					text = System.Text.RegularExpressions.Regex.Replace(text, @"gamepad\.dinput\.enabled\s*=\s*\d+", "gamepad.dinput.enabled = 1");
 					text = System.Text.RegularExpressions.Regex.Replace(text, @"gamepad\.xinput\.enabled\s*=\s*\d+", "gamepad.xinput.enabled = 1");
 					File.WriteAllText(siderIni, text);
-					log?.Invoke("  [FIX] Configured gamepad.ini for pure XInput (double-input prevented)!");
+					log?.Invoke("  [FIX] Configured gamepad.ini with DirectInput and XInput enabled.");
 				}
 			}
 			catch { }

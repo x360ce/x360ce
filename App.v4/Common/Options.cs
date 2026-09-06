@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -200,7 +200,7 @@ namespace x360ce.App
 			get { return _AutoDetectForegroundWindow; }
 			set { _AutoDetectForegroundWindow = value; OnPropertyChanged(); }
 		}
-		bool _AutoDetectForegroundWindow = true;
+		bool _AutoDetectForegroundWindow = false;
 
 		[DefaultValue(false), Description("Check for updates.")]
 		public bool CheckForUpdates

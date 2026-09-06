@@ -28,14 +28,8 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
-			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
 			DoubleBuffered = true;
-			AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			//AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			//AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ControlsHelper.InitInvokeContext();
-			HardwareOptimizer.AutoOptimize();
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)
 			{
@@ -61,8 +55,13 @@ namespace x360ce.App
 					hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(di.FullName, rights, users, false);
 				}
 			}
-			// Initialize interface.
 			InitializeComponent();
+			try
+			{
+				if (Icon == null && File.Exists(Application.ExecutablePath))
+					Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+			}
+			catch { }
 			if (IsDesignMode)
 				return;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -109,16 +108,7 @@ namespace x360ce.App
 			o.WindowPosition?.LoadPosition(this);
 		}
 
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				var cp = base.CreateParams;
-				if (!IsDesignMode)
-					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: eliminates element pop-in and flicker
-				return cp;
-			}
-		}
+
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
 		/// <remarks>Named here so the interface description can include it; the designer keeps its field private.</remarks>
@@ -418,19 +408,6 @@ namespace x360ce.App
 			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
-			// Pre-initialize issues icon and all 4 controller panels synchronously
-			// during load under form layout suspension so that the window renders
-			// 100% complete in a single instant frame without any pop-in or stutter.
-			InitIssuesIcon();
-			UpdateForm1();
-			UpdateForm2();
-			update1Enabled = false;
-			update2Enabled = false;
-			update3Enabled = false;
-			AllowDHelperStart = true;
-			Global.DHelper.Start();
-			// Auto-configure connected controllers for current games
-			HardwareOptimizer.AutoConfigureConnectedControllers();
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -888,8 +865,7 @@ namespace x360ce.App
 					update1Enabled = false;
 					InitIssuesIcon();
 					UpdateForm1();
-					// Enable UpdateForm2 immediately so the user doesn't wait for issue scans
-					update2Enabled = true;
+					// Update 2 part will be enabled after all issues are checked.
 				}
 				if (update2Enabled.HasValue && update2Enabled.Value)
 				{
@@ -1664,7 +1640,6 @@ namespace x360ce.App
 			x360ce.App.DInput.XInputPlaces.Invalidate();
 			XInputDevicesPanel.ReloadPlaces();
 			DevicesPanel.RefreshPlaces();
-			HardwareOptimizer.AutoConfigureConnectedControllers();
 		}
 
 		private bool UpdateCompletedBusy;

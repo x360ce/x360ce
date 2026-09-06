@@ -420,11 +420,6 @@ namespace x360ce.App
 					ps.ForceType = "1";
 					ps.ForceSpringStrength = "100";
 				}
-				{
-					ps.ForceEnable = "1";
-					ps.ForceType = "1";
-					ps.ForceSpringStrength = "100";
-				}
 				// D-Pad
 				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
 				ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);

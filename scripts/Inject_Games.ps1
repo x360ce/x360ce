@@ -5,17 +5,23 @@ param (
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "          X360CE GAME INJECTOR & SETUP UTILITY              " -ForegroundColor Yellow
+Write-Host "       X360CE GAME SYNC & CONFIGURATION UTILITY             " -ForegroundColor Yellow
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 $sourceDir = $PSScriptRoot
 $sourceExe = Join-Path $sourceDir "x360ce.exe"
+if (-not (Test-Path $sourceExe)) {
+    $alt = Join-Path (Split-Path -Parent $sourceDir) "Release_Portable"
+    if (Test-Path (Join-Path $alt "x360ce.exe")) {
+        $sourceDir = $alt
+        $sourceExe = Join-Path $sourceDir "x360ce.exe"
+    }
+}
 $sourceIni = Join-Path $sourceDir "x360ce.ini"
 
 if (-not (Test-Path $sourceExe)) {
     Write-Host "[ERROR] x360ce.exe not found in $sourceDir!" -ForegroundColor Red
-    Pause
     Exit
 }
 
@@ -31,18 +37,12 @@ if ($TargetFolder -and (Test-Path $TargetFolder)) {
         $gameFolders += $resolved
     }
 } else {
-    $readyDrives = [System.IO.DriveInfo]::GetDrives() | Where-Object { $_.IsReady } | Select-Object -ExpandProperty RootDirectory
-    $relativeRoots = @("Games", "SteamLibrary\steamapps\common", "Program Files (x86)\Steam\steamapps\common", "Program Files\Steam\steamapps\common", "Program Files\Epic Games", "XboxGames")
-    $candidates = @()
-    foreach ($d in $readyDrives) {
-        foreach ($rel in $relativeRoots) {
-            $candidates += (Join-Path $d.FullName $rel)
-        }
-    }
+    Write-Host "Searching for installed games..." -ForegroundColor Gray
+    $candidates = @("D:\Games", "C:\Games", "D:\SteamLibrary\steamapps\common", "C:\Program Files (x86)\Steam\steamapps\common")
     foreach ($cand in $candidates) {
         if (Test-Path $cand) {
-            Get-ChildItem -Path $cand -Directory -ErrorAction SilentlyContinue | ForEach-Object {
-                if (Get-ChildItem -Path $_.FullName -Filter "*.exe" -File -ErrorAction SilentlyContinue) {
+            Get-ChildItem -Path $cand -Directory | ForEach-Object {
+                if (Get-ChildItem -Path $_.FullName -Filter "*.exe" -File) {
                     $gameFolders += $_.FullName
                 }
             }
@@ -110,17 +110,22 @@ if (Test-Path $padXmlPath) {
 
 # Process each game folder
 foreach ($dir in $gameFolders) {
-    Write-Host "[INJECTING] $dir..." -ForegroundColor Cyan
-    Copy-Item -Path $sourceExe -Destination $dir -Force
-    if (Test-Path $sourceIni) {
-        Copy-Item -Path $sourceIni -Destination (Join-Path $dir "x360ce.ini") -Force
-    }
+    Write-Host "[CONFIGURING] $dir..." -ForegroundColor Cyan
+    # Clean up any legacy injected files to keep game folders pure
+    Remove-Item -Path (Join-Path $dir "x360ce*.exe") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $dir "x360ce*.ini") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $dir "Setup.exe") -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path (Join-Path $dir "x360ce.Engine.dll") -Force -ErrorAction SilentlyContinue
 
-    # PES Sider gamepad.ini check
+    # PES Sider gamepad.ini and sider.ini check
     $pesIni = Join-Path $dir "gamepad.ini"
     if (Test-Path $pesIni) {
-        (Get-Content $pesIni) -replace 'gamepad.dinput.enabled\s*=\s*1', 'gamepad.dinput.enabled = 0' | Set-Content $pesIni -Encoding UTF8
-        Write-Host "  [PES FIX] Sider gamepad.ini configured for pure XInput (double-input prevented)!" -ForegroundColor Green
+        (Get-Content $pesIni) -replace 'gamepad.dinput.enabled\s*=\s*0', 'gamepad.dinput.enabled = 1' | Set-Content $pesIni -Encoding UTF8
+        Write-Host "  [PES FIX] Sider gamepad.ini configured with DirectInput and XInput enabled!" -ForegroundColor Green
+    }
+    $siderIni = Join-Path $dir "sider.ini"
+    if (Test-Path $siderIni) {
+        (Get-Content $siderIni) -replace 'gamepad.dinput.enabled\s*=\s*0', 'gamepad.dinput.enabled = 1' | Set-Content $siderIni -Encoding UTF8
     }
 
     # Find executables

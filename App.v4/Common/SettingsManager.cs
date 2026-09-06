@@ -50,6 +50,9 @@ namespace x360ce.App
 				if (game != null)
 					game.PropertyChanged += CurrentGame_PropertyChanged;
 				// Assing new game.
+				CurrentGame = game;
+				if (Global.DHelper != null)
+					Global.DHelper.SettingsChanged = true;
 				// Nobody may be listening: the main window lets go of this event while it closes, and
 				// the foreground window keeps changing after that.
 				CurrentGame_PropertyChanged?.Invoke(null, null);

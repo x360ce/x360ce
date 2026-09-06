@@ -117,7 +117,7 @@ namespace x360ce.App
 				o.PollingRate = optimalRate;
 				o.AllowOnlyOneCopy = true;
 				o.MinimizeToTray = true;
-				o.AutoDetectForegroundWindow = true;
+				o.AutoDetectForegroundWindow = false;
 				o.ExcludeVirtualDevices = true;
 				o.ExcludeSupplementalDevices = false;
 
@@ -254,7 +254,7 @@ namespace x360ce.App
 					if (game != null)
 					{
 						game.EmulationType = (int)EmulationType.Virtual;
-						game.EnableMask = 15; // Enable virtual controllers (1 | 2 | 4 | 8)
+						game.EnableMask = 3; // Enable virtual controllers 1 and 2 (1 | 2)
 						game.IsEnabled = true;
 						if (!string.IsNullOrEmpty(customProductName))
 						{
@@ -391,7 +391,7 @@ namespace x360ce.App
 
 				game.EmulationType = (int)EmulationType.Virtual;
 				if (game.EnableMask == 0)
-					game.EnableMask = 15;
+					game.EnableMask = 3;
 
 				var devices = SettingsManager.UserDevices.Items
 					.Where(x => x.IsOnline &&

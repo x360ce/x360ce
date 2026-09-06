@@ -9,7 +9,6 @@ namespace x360ce.App.Controls
 	{
 		public BaseFormWithHeader()
 		{
-			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
 			DoubleBuffered = true;
 			InitializeComponent();
 			if (IsDesignMode)
@@ -18,17 +17,6 @@ namespace x360ce.App.Controls
 			// What the header goes back to before anything has set a subject of its own.
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
-		}
-
-		protected override CreateParams CreateParams
-		{
-			get
-			{
-				var cp = base.CreateParams;
-				if (!IsDesignMode)
-					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: smooth bottom-to-top double-buffered painting
-				return cp;
-			}
 		}
 
 		[System.Runtime.InteropServices.DllImport("dwmapi.dll", PreserveSig = true)]
