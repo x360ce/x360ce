@@ -121,7 +121,7 @@
 			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
 			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.HotkeysGroupBox = new System.Windows.Forms.GroupBox();
-			this.EmulationHotkeyLabel = new System.Windows.Forms.Label();
+			this.EmulationHotkeyCheckBox = new System.Windows.Forms.CheckBox();
 			this.EmulationHotkeyTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
@@ -866,7 +866,7 @@
 			// 
 			// HotkeysGroupBox
 			// 
-			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyLabel);
+			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
 			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 390);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
@@ -875,20 +875,21 @@
 			this.HotkeysGroupBox.TabStop = false;
 			this.HotkeysGroupBox.Text = "Hotkeys";
 			// 
-			// EmulationHotkeyLabel
+			// EmulationHotkeyCheckBox
 			// 
-			this.EmulationHotkeyLabel.AutoSize = true;
-			this.EmulationHotkeyLabel.Location = new System.Drawing.Point(4, 22);
-			this.EmulationHotkeyLabel.Name = "EmulationHotkeyLabel";
-			this.EmulationHotkeyLabel.Size = new System.Drawing.Size(58, 13);
-			this.EmulationHotkeyLabel.TabIndex = 0;
-			this.EmulationHotkeyLabel.Text = "Emulation:";
+			this.EmulationHotkeyCheckBox.AutoSize = true;
+			this.EmulationHotkeyCheckBox.Location = new System.Drawing.Point(6, 21);
+			this.EmulationHotkeyCheckBox.Name = "EmulationHotkeyCheckBox";
+			this.EmulationHotkeyCheckBox.Size = new System.Drawing.Size(76, 17);
+			this.EmulationHotkeyCheckBox.TabIndex = 0;
+			this.EmulationHotkeyCheckBox.Text = "Emulation:";
+			this.EmulationHotkeyCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// EmulationHotkeyTextBox
 			// 
-			this.EmulationHotkeyTextBox.Location = new System.Drawing.Point(68, 19);
+			this.EmulationHotkeyTextBox.Location = new System.Drawing.Point(88, 19);
 			this.EmulationHotkeyTextBox.Name = "EmulationHotkeyTextBox";
-			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(180, 20);
+			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(160, 20);
 			this.EmulationHotkeyTextBox.TabIndex = 1;
 			// 
 			// InternetOptionsTabPage
@@ -1567,7 +1568,7 @@
 		private System.Windows.Forms.Label GuideButtonActionLabel;
 		private System.Windows.Forms.TextBox GuideButtonActionTextBox;
 		private System.Windows.Forms.GroupBox HotkeysGroupBox;
-		private System.Windows.Forms.Label EmulationHotkeyLabel;
+		private System.Windows.Forms.CheckBox EmulationHotkeyCheckBox;
 		private System.Windows.Forms.TextBox EmulationHotkeyTextBox;
 		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 	}

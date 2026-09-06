@@ -51,8 +51,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("The hotkey caption sits whole to the left of its field on the Hotkeys panel")]
-		public void Hotkey_caption_and_field_never_overlap()
+		[Description("The hotkey box sits whole to the left of its field on the Hotkeys panel")]
+		public void Hotkey_box_and_field_never_overlap()
 		{
 			foreach (var factor in WidthFactors)
 			{
@@ -61,7 +61,7 @@ namespace x360ce.Tests
 					var group = Descendants(page).FirstOrDefault(x => x.Name == "HotkeysGroupBox");
 					Assert.IsNotNull(group, "HotkeysGroupBox was not found on the Options page.");
 					Show(group);
-					var caption = group.Controls.Find("EmulationHotkeyLabel", false).Single();
+					var caption = group.Controls.Find("EmulationHotkeyCheckBox", false).Single();
 					var field = group.Controls.Find("EmulationHotkeyTextBox", false).Single();
 					Assert.IsTrue(caption.Bounds.Right <= field.Bounds.Left,
 						"The caption " + caption.Bounds + " runs into the field " + field.Bounds +

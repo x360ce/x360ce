@@ -55,7 +55,7 @@ The emulated controllers can be switched off without closing the program, so a g
 
 1. `[Options]` tab → `[General]` → `[Enable XInput]` turns them on or off. The right half of each controller tab light turns grey while they are off.
 2. The same switch is in the tray menu: right-click the `X360CE` icon in the notification area.
-3. `[Options]` tab → `[General]` → `[Hotkeys]`: click the `[Emulation]` field and press the keys that flip the switch from inside a game, such as `Ctrl + Alt + X`. The keys need `Ctrl`, `Alt` or `Shift` in them. `Backspace` clears the field, and red means another program already holds those keys.
+3. `[Options]` tab → `[General]` → `[Hotkeys]`: tick `[Emulation]` to turn the hotkey on. The field beside it holds `Ctrl + Alt + X`; click it and press other keys to change them. The keys need `Ctrl`, `Alt` or `Shift` in them, `Backspace` clears the field, and red means another program already holds those keys.
 
 ## Saving and loading a preset as a file
 

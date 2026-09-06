@@ -15,7 +15,7 @@
 - Added: Centering Spring on the Force Feedback page holds a wheel at its centre all the time, for games made for a gamepad that send no steering force.
 - Added: AI assistant access on the Options page lets an assistant or a script read or operate the program. Off by default.
 - Added: Enable XInput on the Options page now works, and is in the tray menu too, so the emulated controllers can be switched off and on without closing the program.
-- Added: A hotkey on the Options page turns the emulated controllers on and off from inside a game.
+- Added: A hotkey, Ctrl + Alt + X once ticked on the Options page, turns the emulated controllers on and off from inside a game.
 - Added: Save Preset writes a controller's settings to a file, and Load Preset opens one, so a setup can be kept or passed on.
 
 ## [4.20.43.0] - 2026-09-01

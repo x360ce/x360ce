@@ -40,7 +40,9 @@ namespace x360ce.App.Controls
 			// does, rather than being typed into.
 			EmulationHotkeyTextBox.ReadOnly = true;
 			EmulationHotkeyTextBox.ShortcutsEnabled = false;
-			HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
+			// The cue lives in the window handle, and Windows Forms makes a text box a new handle when it
+			// is parented, so the cue is put back whenever a handle is made.
+			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
 			AiAccessRegenerateButton.Click += (s, e) =>
 			{
@@ -184,6 +186,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyEnabled, EmulationHotkeyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkey, EmulationHotkeyTextBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
@@ -216,10 +219,11 @@ namespace x360ce.App.Controls
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 					break;
+				case nameof(Options.EmulationHotkeyEnabled):
 				case nameof(Options.EmulationHotkey):
-					// Red when Windows refused the combination, which means another program holds it.
+					// Red when the box is on and Windows refused the combination, which means another program holds it.
 					var held = MainForm.Current.ApplyEmulationHotkey();
-					EmulationHotkeyTextBox.ForeColor = held || string.IsNullOrEmpty(o.EmulationHotkey)
+					EmulationHotkeyTextBox.ForeColor = held || !o.EmulationHotkeyEnabled || string.IsNullOrEmpty(o.EmulationHotkey)
 						? System.Drawing.SystemColors.WindowText
 						: System.Drawing.Color.Firebrick;
 					break;

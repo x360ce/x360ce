@@ -287,7 +287,8 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
 [Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
-[Value]     │       │           │   │   └── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game. Click the field and press them, for example Ctrl + Alt + X. Backspace clears it.
+[CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
+[Value]     │       │           │   │   └── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.

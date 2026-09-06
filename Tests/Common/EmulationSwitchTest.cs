@@ -13,12 +13,16 @@ namespace x360ce.Tests
 	public class EmulationSwitchTest
 	{
 		[TestMethod, TestCategory("options"), TestCategory("smoke")]
-		[Description("A fresh set of options has emulation on and no hotkey")]
-		public void Switch_is_on_and_hotkey_is_empty_by_default()
+		[Description("A fresh set of options has emulation on, the hotkey off, and the default keys already in the field")]
+		public void Switch_is_on_and_hotkey_is_off_by_default()
 		{
 			var options = new Options();
 			Assert.IsTrue(options.XInputEnabled, "Settings files from before the switch existed must load with emulation on.");
-			Assert.AreEqual("", options.EmulationHotkey, "A hotkey nobody chose would take keys from every other program.");
+			Assert.IsFalse(options.EmulationHotkeyEnabled, "A hotkey nobody turned on would take keys from every other program.");
+			Assert.AreEqual(Options.DefaultEmulationHotkey, options.EmulationHotkey, "The field starts with the keys to tick on, so there is nothing to work out first.");
+			uint modifiers;
+			System.Windows.Forms.Keys key;
+			Assert.IsTrue(HotkeyHelper.TryParse(options.EmulationHotkey, out modifiers, out key), "The default keys must be ones the program can register.");
 		}
 
 		[TestMethod, TestCategory("options"), TestCategory("smoke")]

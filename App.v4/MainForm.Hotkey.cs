@@ -8,17 +8,20 @@ namespace x360ce.App
 		/// <summary>Identifies the emulation hotkey among any this window registers.</summary>
 		const int EmulationHotkeyId = 1;
 
-		/// <summary>Registers the hotkey from the Options page, or lets go of it when the field is empty.</summary>
+		/// <summary>Registers the hotkey from the Options page, or lets go of it when the box is off or the field is empty.</summary>
 		/// <remarks>
-		/// Called once the settings are loaded and again whenever the field changes.
+		/// Called once the settings are loaded and again whenever the box or the field changes.
 		/// </remarks>
-		/// <returns>True when Windows holds the hotkey for this window. False when there is none, or another program already holds the combination.</returns>
+		/// <returns>True when Windows holds the hotkey for this window. False when it is off, there is none, or another program already holds the combination.</returns>
 		public bool ApplyEmulationHotkey()
 		{
 			if (!IsHandleCreated || SettingsManager.OptionsData.Items.Count == 0)
 				return false;
 			HotkeyHelper.Unregister(Handle, EmulationHotkeyId);
-			return HotkeyHelper.Register(Handle, EmulationHotkeyId, SettingsManager.Options.EmulationHotkey);
+			var o = SettingsManager.Options;
+			if (!o.EmulationHotkeyEnabled)
+				return false;
+			return HotkeyHelper.Register(Handle, EmulationHotkeyId, o.EmulationHotkey);
 		}
 
 		/// <summary>Turns the emulated controllers on or off, and says so from the notification area.</summary>

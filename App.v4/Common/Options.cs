@@ -178,14 +178,26 @@ namespace x360ce.App
 		}
 		bool _XInputEnabled = true;
 
+		/// <summary>Whether the emulation hotkey is registered at all. Off by default, so no keys are taken from other programs unasked.</summary>
+		[DefaultValue(false), Description("Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.")]
+		public bool EmulationHotkeyEnabled
+		{
+			get { return _EmulationHotkeyEnabled; }
+			set { _EmulationHotkeyEnabled = value; OnPropertyChanged(); }
+		}
+		bool _EmulationHotkeyEnabled;
+
+		/// <summary>The keys the field starts with, so there is nothing to work out before ticking the box.</summary>
+		public const string DefaultEmulationHotkey = "Ctrl + Alt + X";
+
 		/// <summary>Keys that flip <see cref="XInputEnabled"/> from anywhere, written as Windows shows a shortcut.</summary>
-		[DefaultValue(""), Description("Keys that turn the emulated controllers on and off from inside a game. Click the field and press them, for example Ctrl + Alt + X. Backspace clears it.")]
+		[DefaultValue(DefaultEmulationHotkey), Description("Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.")]
 		public string EmulationHotkey
 		{
 			get { return _EmulationHotkey; }
 			set { _EmulationHotkey = value; OnPropertyChanged(); }
 		}
-		string _EmulationHotkey = "";
+		string _EmulationHotkey = DefaultEmulationHotkey;
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 

@@ -46,8 +46,10 @@ namespace x360ce.App.UiTree
 				"Program or command run when the Guide button is pressed.");
 			d["OptionsUserControl.HotkeysGroupBox"] = new Text("Hotkeys",
 				"Keys that reach this program from inside a game.");
+			d["OptionsUserControl.EmulationHotkeyCheckBox"] = new Text("Emulation",
+				"Turns the hotkey on. Off by default, so the keys stay with other programs until you choose.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
-				"Click, then press the keys that turn the emulated controllers on and off from inside a game, such as Ctrl + Alt + X. Backspace clears it.");
+				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them. Backspace clears it.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
