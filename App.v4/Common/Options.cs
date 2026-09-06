@@ -199,6 +199,15 @@ namespace x360ce.App
 		}
 		string _EmulationHotkey = DefaultEmulationHotkey;
 
+		/// <summary>Whether a hotkey press answers with a note on the screen, where a game would hide the tray balloon.</summary>
+		[DefaultValue(true), Description("Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.")]
+		public bool EmulationHotkeyOverlay
+		{
+			get { return _EmulationHotkeyOverlay; }
+			set { _EmulationHotkeyOverlay = value; OnPropertyChanged(); }
+		}
+		bool _EmulationHotkeyOverlay = true;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

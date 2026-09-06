@@ -1810,6 +1810,12 @@
 																	"Description":"Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.",
 																	"Role":"Value",
 																	"Id":"EmulationHotkeyTextBox"
+																},
+																{
+																	"Name":"Show a note on the screen when pressed",
+																	"Description":"Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.",
+																	"Role":"CheckBox",
+																	"Id":"EmulationOverlayCheckBox"
 																}
 															]
 														},
@@ -3089,7 +3095,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.21.23 (Build: 2026-09-06) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.21.24 (Build: 2026-09-06) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

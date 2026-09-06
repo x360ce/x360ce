@@ -47,12 +47,8 @@ namespace x360ce.App.UiTree
 			Target = null;
 		}
 
-		/// <summary>
-		/// A see-through window that draws only the frame and the balloon, never takes focus, and
-		/// lets clicks through. Drawn by hand, because the built-in balloon tip will not show for a
-		/// window that is not the active one, and an assistant's window rarely is.
-		/// </summary>
-		sealed class Frame : Form
+		/// <summary>Draws the frame and the balloon on an overlay, which is what keeps it out of the way.</summary>
+		sealed class Frame : OverlayForm
 		{
 			const int Stem = 12;
 			const int Pad = 8;
@@ -63,17 +59,6 @@ namespace x360ce.App.UiTree
 			Rectangle _balloon;
 			Point[] _stem;
 			string _text;
-
-			public Frame()
-			{
-				FormBorderStyle = FormBorderStyle.None;
-				ShowInTaskbar = false;
-				TopMost = true;
-				StartPosition = FormStartPosition.Manual;
-				BackColor = Color.Magenta;
-				TransparencyKey = Color.Magenta;
-				Font = SystemFonts.MessageBoxFont;
-			}
 
 			/// <summary>Lays the frame around the screen rectangle and the balloon below it, or above when there is no room below.</summary>
 			public void Point(Rectangle around, string text)
@@ -98,21 +83,6 @@ namespace x360ce.App.UiTree
 					: new[] { new Point(tipX - 6, _balloon.Bottom), new Point(tipX, _around.Top), new Point(tipX + 6, _balloon.Bottom) };
 				Show();
 				Invalidate();
-			}
-
-			protected override bool ShowWithoutActivation { get { return true; } }
-
-			protected override CreateParams CreateParams
-			{
-				get
-				{
-					const int WS_EX_TRANSPARENT = 0x20;
-					const int WS_EX_TOOLWINDOW = 0x80;
-					const int WS_EX_NOACTIVATE = 0x08000000;
-					var p = base.CreateParams;
-					p.ExStyle |= WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE;
-					return p;
-				}
 			}
 
 			protected override void OnPaint(PaintEventArgs e)

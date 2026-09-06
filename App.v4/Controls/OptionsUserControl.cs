@@ -188,6 +188,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyEnabled, EmulationHotkeyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkey, EmulationHotkeyTextBox);
+			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyOverlay, EmulationOverlayCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
 			LoadSettings();

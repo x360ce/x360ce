@@ -1,4 +1,4 @@
-﻿## [4.21.23.0] - 2026-09-06
+﻿## [4.21.24.0] - 2026-09-06
 
 - Fixed: The games list could close the program while it was being redrawn as a game was added or removed. This was over half of all problem reports received about the previous version.
 - Fixed: Switching to a game while the program was closing closed it with an error.
@@ -16,6 +16,7 @@
 - Added: AI assistant access on the Options page lets an assistant or a script read or operate the program. Off by default.
 - Added: Enable XInput on the Options page now works, and is in the tray menu too, so the emulated controllers can be switched off and on without closing the program.
 - Added: A hotkey, Ctrl + Alt + X once ticked on the Options page, turns the emulated controllers on and off from inside a game.
+- Added: Pressing the hotkey shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. It can be turned off beside the hotkey.
 - Added: Save Preset writes a controller's settings to a file, and Load Preset opens one, so a setup can be kept or passed on.
 
 ## [4.20.43.0] - 2026-09-01

@@ -123,6 +123,7 @@
 			this.HotkeysGroupBox = new System.Windows.Forms.GroupBox();
 			this.EmulationHotkeyCheckBox = new System.Windows.Forms.CheckBox();
 			this.EmulationHotkeyTextBox = new System.Windows.Forms.TextBox();
+			this.EmulationOverlayCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsPanel = new x360ce.App.Controls.OptionsSettingsUserControl();
@@ -868,9 +869,10 @@
 			// 
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
+			this.HotkeysGroupBox.Controls.Add(this.EmulationOverlayCheckBox);
 			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 390);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
-			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 47);
+			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 70);
 			this.HotkeysGroupBox.TabIndex = 32;
 			this.HotkeysGroupBox.TabStop = false;
 			this.HotkeysGroupBox.Text = "Hotkeys";
@@ -891,6 +893,16 @@
 			this.EmulationHotkeyTextBox.Name = "EmulationHotkeyTextBox";
 			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(160, 20);
 			this.EmulationHotkeyTextBox.TabIndex = 1;
+			// 
+			// EmulationOverlayCheckBox
+			// 
+			this.EmulationOverlayCheckBox.AutoSize = true;
+			this.EmulationOverlayCheckBox.Location = new System.Drawing.Point(6, 44);
+			this.EmulationOverlayCheckBox.Name = "EmulationOverlayCheckBox";
+			this.EmulationOverlayCheckBox.Size = new System.Drawing.Size(214, 17);
+			this.EmulationOverlayCheckBox.TabIndex = 2;
+			this.EmulationOverlayCheckBox.Text = "Show a note on the screen when pressed";
+			this.EmulationOverlayCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// InternetOptionsTabPage
 			// 
@@ -1570,6 +1582,7 @@
 		private System.Windows.Forms.GroupBox HotkeysGroupBox;
 		private System.Windows.Forms.CheckBox EmulationHotkeyCheckBox;
 		private System.Windows.Forms.TextBox EmulationHotkeyTextBox;
+		private System.Windows.Forms.CheckBox EmulationOverlayCheckBox;
 		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 	}
 }

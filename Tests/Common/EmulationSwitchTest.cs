@@ -20,6 +20,7 @@ namespace x360ce.Tests
 			Assert.IsTrue(options.XInputEnabled, "Settings files from before the switch existed must load with emulation on.");
 			Assert.IsFalse(options.EmulationHotkeyEnabled, "A hotkey nobody turned on would take keys from every other program.");
 			Assert.AreEqual(Options.DefaultEmulationHotkey, options.EmulationHotkey, "The field starts with the keys to tick on, so there is nothing to work out first.");
+			Assert.IsTrue(options.EmulationHotkeyOverlay, "Without the note a hotkey press is silent inside a full-screen game, where Windows hides the tray balloon.");
 			uint modifiers;
 			System.Windows.Forms.Keys key;
 			Assert.IsTrue(HotkeyHelper.TryParse(options.EmulationHotkey, out modifiers, out key), "The default keys must be ones the program can register.");

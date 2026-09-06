@@ -69,6 +69,11 @@ namespace x360ce.Tests
 					Assert.IsTrue(field.Bounds.Right <= group.ClientSize.Width,
 						"The field " + field.Bounds + " runs past the panel, which is " +
 						group.ClientSize.Width + " px wide.");
+					var note = group.Controls.Find("EmulationOverlayCheckBox", false).Single();
+					Assert.IsTrue(note.Bounds.Top >= field.Bounds.Bottom && note.Bounds.Top >= caption.Bounds.Bottom,
+						"The note box " + note.Bounds + " is painted over the hotkey row.");
+					Assert.IsTrue(note.Bounds.Bottom <= group.ClientSize.Height && note.Bounds.Right <= group.ClientSize.Width,
+						"The note box " + note.Bounds + " runs past the panel, which is " + group.ClientSize + ".");
 				});
 			}
 		}

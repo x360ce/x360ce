@@ -288,7 +288,8 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
 [Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
 [CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
-[Value]     │       │           │   │   └── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[CheckBox]  │       │           │   │   └── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
@@ -480,7 +481,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.23 (Build: 2026-09-06) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.24 (Build: 2026-09-06) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

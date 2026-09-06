@@ -566,6 +566,8 @@
       <Link>Documents\Help.HidGuardian.md</Link>
     </EmbeddedResource>
     <Compile Include="Common\HotkeyHelper.cs" />
+    <Compile Include="Common\OverlayForm.cs" />
+    <Compile Include="Common\OverlayNote.cs" />
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

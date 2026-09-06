@@ -24,16 +24,21 @@ namespace x360ce.App
 			return HotkeyHelper.Register(Handle, EmulationHotkeyId, o.EmulationHotkey);
 		}
 
-		/// <summary>Turns the emulated controllers on or off, and says so from the notification area.</summary>
+		/// <summary>Turns the emulated controllers on or off, and says so where the person is looking.</summary>
 		/// <remarks>
-		/// The window is usually minimised while a game runs, so the icon is the one place the person can see.
+		/// The window is usually minimised while a game runs. A note over the game is the one answer
+		/// that reaches a person there: the tray balloon is a Windows notification, and Windows silences
+		/// those by itself while a full-screen game runs. The balloon stays for whoever turns the note off.
 		/// </remarks>
 		public void ToggleEmulation()
 		{
 			var o = SettingsManager.Options;
 			o.XInputEnabled = !o.XInputEnabled;
-			TrayNotifyIcon.ShowBalloonTip(2, "X360CE",
-				o.XInputEnabled ? "Emulated controllers on" : "Emulated controllers off", ToolTipIcon.Info);
+			var text = o.XInputEnabled ? "Emulated controllers on" : "Emulated controllers off";
+			if (o.EmulationHotkeyOverlay)
+				OverlayNote.Show(text, System.Drawing.ColorTranslator.FromHtml(o.XInputEnabled ? AppHelper.StatusGreen : AppHelper.StatusGrey));
+			else
+				TrayNotifyIcon.ShowBalloonTip(2, "X360CE", text, ToolTipIcon.Info);
 		}
 
 		protected override void OnHandleCreated(EventArgs e)

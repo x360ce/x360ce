@@ -50,6 +50,8 @@ namespace x360ce.App.UiTree
 				"Turns the hotkey on. Off by default, so the keys stay with other programs until you choose.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
 				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them. Backspace clears it.");
+			d["OptionsUserControl.EmulationOverlayCheckBox"] = new Text("Show a note on the screen when pressed",
+				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
