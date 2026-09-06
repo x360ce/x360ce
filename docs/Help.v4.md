@@ -49,6 +49,21 @@ If you want `HELP` and have questions about installation or configuration, pleas
 5. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 6. Launch the game and see how it works.
 
+## Turning emulation on and off
+
+The emulated controllers can be switched off without closing the program, so a game that reads both a wheel and a real gamepad can be swapped between them.
+
+1. `[Options]` tab → `[General]` → `[Enable XInput]` turns them on or off. The right half of each controller tab light turns grey while they are off.
+2. The same switch is in the tray menu: right-click the `X360CE` icon in the notification area.
+3. `[Options]` tab → `[General]` → `[Hotkeys]`: tick `[Emulation]` to turn the hotkey on. The field beside it holds `Ctrl + Alt + X`; click it and press other keys to change them. The keys need `Ctrl`, `Alt` or `Shift` in them, `Backspace` clears the field, and red means another program already holds those keys.
+4. Pressing the hotkey shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. Untick `[Show a note on the screen when pressed]` to have the tray notification instead, which Windows hides while a full-screen game runs.
+
+## Saving and loading a preset as a file
+
+1. `[Controller #]` tab → `[Save Preset...]` writes the controller's settings to an `XML` file.
+2. `[Load Preset...]` → `[Open File...]` loads such a file onto the selected controller.
+3. `[Copy Preset]` and `[Paste Preset]` carry the same settings through the clipboard.
+
 ## What the light on each controller tab means
 
 The light answers two questions at once, so it is drawn in two halves. The **left half is your
@@ -251,3 +266,44 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Anything that is not a real number, such as dividing by zero, becomes 0.
 - A decimal point is always a dot, whatever language Windows is set to.
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
+
+## AI assistant access
+
+Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
+program. It is off until you tick AI assistant access on the Options page and choose a level.
+**Read**: read the interface, the
+devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
+may still ask, as it asks a person, when HID Guardian is set to configure automatically.
+**Administer**: also the actions that install or remove drivers and switch on debug mode. The
+level, the port and the token are changed here and only here; an assistant cannot change them.
+
+The quickest start is Copy prompt on the Options page: it copies instructions for any AI, with
+both ways to connect and a first request, "list my controllers". Paste it into the assistant's
+chat and it takes it from there. The two ways, both shown on the page:
+
+- **An assistant on this computer that runs commands.** Copy the assistant snippet into its MCP
+  settings. It launches `x360ce.exe /Mcp`, which finds the running program, starts it if need be,
+  and needs no token from you.
+- **An assistant that connects to a URL**, on this computer or another. Copy the URL and give it
+  as an HTTP MCP server, with the header `Authorization: Bearer <token>` where `<token>` is the
+  token on the Options page. For another computer, set Address to `0.0.0.0` first; Windows then
+  asks once, through the Fix button on the Issues tab, for permission to listen on every network.
+  The connection is plain HTTP, so use it only on a network you trust. The default address,
+  `127.0.0.1`, keeps the door on this computer.
+
+An assistant can also point: ask it where something is and it brings the page to the front,
+frames the control and shows a balloon with its words beside it for a few seconds. It can string
+such steps into a short script, pointing, pausing, pressing and setting in turn, so it walks you
+through a task rather than describing it, and it can find any control by a word from its name or
+purpose rather than reading the whole interface first.
+
+Everything done through the door is written down: Open log on the Options page shows each call,
+its arguments and what came of it, with the time, so you can see afterwards what an assistant did.
+
+On a Windows that has the agent registry, tick "Register with Windows" and Copilot and other
+agents find the program by themselves; Windows then asks you, in Settings, which agents may use
+it. On other Windows the box says it needs a newer Windows and stays off.
+
+From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
+one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
+token to revoke access.

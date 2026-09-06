@@ -46,7 +46,10 @@ namespace x360ce.App
 
 		private static void WindowHook_OnActivate(object sender, EventArgs<Process> e)
 		{
-			var process = e.Data;
+			// The window in front keeps changing while this program shuts down, and each change used
+			// to select a game into controls that were already being disposed.
+			if (Program.IsClosing)
+				return;
 			SelectOpenGame();
 		}
 
@@ -100,6 +103,33 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>
+		/// Opens or closes the assistant's door to match the option, then writes the options file so
+		/// the switches read the same level and token the window shows, switched off included. Safe to call
+		/// again; it restarts. The door opens before the file is written, so a folder that cannot be
+		/// written leaves the door usable and the Issues tab saying why the switches are not.
+		/// </summary>
+		public static void ApplyAiAccess()
+		{
+			var o = SettingsManager.Options;
+			Mcp.McpListener.Stop();
+			if (o.AiAccessEnabled)
+			{
+				o.EnsureAiAccessToken();
+				Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
+			}
+			try
+			{
+				SettingsManager.OptionsData.Save();
+			}
+			catch (Exception ex)
+			{
+				// This runs on the interface thread from the options-changed event; an exception here
+				// would be a crash report for a folder that is read-only, which the Issues tab explains better.
+				Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+			}
+		}
+
 		private static void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			var o = SettingsManager.Options;
@@ -117,6 +147,15 @@ namespace x360ce.App
 					// the device loop and not to the control that happens to set it.
 					if (DHelper != null)
 						DHelper.Frequency = o.PollingRate;
+					break;
+				case nameof(Options.AiAccessEnabled):
+				case nameof(Options.AiAccess):
+				case nameof(Options.AiAccessAddress):
+				case nameof(Options.AiAccessPort):
+					ApplyAiAccess();
+					break;
+				case nameof(Options.AiAccessWindows):
+					Mcp.WindowsAgentRegistry.Apply(o.AiAccessWindows);
 					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;

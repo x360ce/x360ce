@@ -166,6 +166,9 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.OveralEffectsStengthLabel = new System.Windows.Forms.Label();
 			this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
+			this.ForceSpringStrengthLabel = new System.Windows.Forms.Label();
+			this.ForceSpringStrengthTextBox = new System.Windows.Forms.TextBox();
+			this.ForceSpringStrengthTrackBar = new System.Windows.Forms.TrackBar();
 			this.LeftMotorGroupBox = new System.Windows.Forms.GroupBox();
 			this.LeftMotorDirectionLabel = new System.Windows.Forms.Label();
 			this.LeftMotorStrengthTrackBar = new System.Windows.Forms.TrackBar();
@@ -248,6 +251,7 @@
 			this.ForceFeedbackPanel.SuspendLayout();
 			this.ForceFeedbackGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).BeginInit();
 			this.LeftMotorGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
@@ -1357,10 +1361,14 @@
 			// 
 			// SavePresetButton
 			// 
-			this.SavePresetButton.Location = new System.Drawing.Point(0, 0);
+			this.SavePresetButton.AutoSize = true;
+			this.SavePresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.SavePresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.SavePresetButton.Name = "SavePresetButton";
-			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
 			this.SavePresetButton.TabIndex = 69;
+			this.SavePresetButton.Text = "Save Preset...";
+			this.SavePresetButton.UseVisualStyleBackColor = true;
+			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
 			// 
 			// ResetPresetButton
 			// 
@@ -1755,6 +1763,9 @@
 			// 
 			this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForceSpringStrengthLabel);
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForceSpringStrengthTextBox);
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForceSpringStrengthTrackBar);
 			this.ForceFeedbackGroupBox.Controls.Add(this.EffectDescriptionLabel);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughCheckBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexLabel);
@@ -1775,15 +1786,46 @@
 			// 
 			// EffectDescriptionLabel
 			// 
-			this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 91);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
-			this.EffectDescriptionLabel.Size = new System.Drawing.Size(168, 37);
+			this.EffectDescriptionLabel.Size = new System.Drawing.Size(340, 37);
 			this.EffectDescriptionLabel.TabIndex = 5;
 			this.EffectDescriptionLabel.Text = "Effect Description";
-			// 
+			//
+			// ForceSpringStrengthLabel
+			//
+			this.ForceSpringStrengthLabel.AutoSize = true;
+			this.ForceSpringStrengthLabel.Location = new System.Drawing.Point(352, 68);
+			this.ForceSpringStrengthLabel.Name = "ForceSpringStrengthLabel";
+			this.ForceSpringStrengthLabel.Size = new System.Drawing.Size(88, 13);
+			this.ForceSpringStrengthLabel.TabIndex = 0;
+			this.ForceSpringStrengthLabel.Text = "Centering Spring";
+			//
+			// ForceSpringStrengthTextBox
+			//
+			this.ForceSpringStrengthTextBox.Location = new System.Drawing.Point(588, 84);
+			this.ForceSpringStrengthTextBox.Name = "ForceSpringStrengthTextBox";
+			this.ForceSpringStrengthTextBox.ReadOnly = true;
+			this.ForceSpringStrengthTextBox.Size = new System.Drawing.Size(43, 20);
+			this.ForceSpringStrengthTextBox.TabIndex = 0;
+			this.ForceSpringStrengthTextBox.TabStop = false;
+			this.ForceSpringStrengthTextBox.Text = "0 % ";
+			this.ForceSpringStrengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			//
+			// ForceSpringStrengthTrackBar
+			//
+			this.ForceSpringStrengthTrackBar.AutoSize = false;
+			this.ForceSpringStrengthTrackBar.LargeChange = 10;
+			this.ForceSpringStrengthTrackBar.Location = new System.Drawing.Point(355, 84);
+			this.ForceSpringStrengthTrackBar.Maximum = 100;
+			this.ForceSpringStrengthTrackBar.Name = "ForceSpringStrengthTrackBar";
+			this.ForceSpringStrengthTrackBar.Size = new System.Drawing.Size(227, 28);
+			this.ForceSpringStrengthTrackBar.TabIndex = 9;
+			this.ForceSpringStrengthTrackBar.TickFrequency = 2;
+			this.ForceSpringStrengthTrackBar.ValueChanged += new System.EventHandler(this.ForceSpringStrengthTrackBar_ValueChanged);
+			//
 			// ForceTypeComboBox
 			// 
 			this.ForceTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -2494,6 +2536,7 @@
 			this.ButtonsRightPanel.Controls.Add(this.ClearPresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.AutoPresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.LoadPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.SavePresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.PastePresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.CopyPresetButton);
 			this.ButtonsRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2509,7 +2552,6 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MappedDevicesDataGridView);
 			this.Controls.Add(this.GamesToolStrip);
-			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
 			this.Controls.Add(this.ButtonsPanel);
 			this.Name = "PadControl";
@@ -2555,6 +2597,7 @@
 			this.ForceFeedbackGroupBox.ResumeLayout(false);
 			this.ForceFeedbackGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).EndInit();
 			this.LeftMotorGroupBox.ResumeLayout(false);
 			this.LeftMotorGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).EndInit();
@@ -2676,6 +2719,9 @@
 		System.Windows.Forms.CheckBox ForceSwapMotorCheckBox;
 		System.Windows.Forms.Label OveralEffectsStengthLabel;
 		System.Windows.Forms.TrackBar ForceOverallTrackBar;
+		System.Windows.Forms.Label ForceSpringStrengthLabel;
+		System.Windows.Forms.TextBox ForceSpringStrengthTextBox;
+		System.Windows.Forms.TrackBar ForceSpringStrengthTrackBar;
         System.Windows.Forms.ComboBox ForceTypeComboBox;
 		System.Windows.Forms.Button SavePresetButton;
         System.Windows.Forms.Button ResetPresetButton;

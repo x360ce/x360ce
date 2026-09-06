@@ -57,6 +57,7 @@ namespace x360ce.App
 			this.StatusEventsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusSaveLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusIsAdminLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.StatusAiAccessLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusErrorsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
@@ -67,6 +68,7 @@ namespace x360ce.App
 			this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.EmulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
@@ -367,6 +369,7 @@ namespace x360ce.App
             this.StatusEventsLabel,
             this.StatusSaveLabel,
             this.StatusIsAdminLabel,
+            this.StatusAiAccessLabel,
             this.StatusErrorsLabel,
             this.toolStripStatusLabel2,
             this.StatusDllLabel});
@@ -444,6 +447,16 @@ namespace x360ce.App
 			this.StatusIsAdminLabel.Size = new System.Drawing.Size(115, 20);
 			this.StatusIsAdminLabel.Text = "StatusIsAdminLabel";
 			// 
+			// StatusAiAccessLabel
+			// 
+			this.StatusAiAccessLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.StatusAiAccessLabel.IsLink = true;
+			this.StatusAiAccessLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+			this.StatusAiAccessLabel.Name = "StatusAiAccessLabel";
+			this.StatusAiAccessLabel.Size = new System.Drawing.Size(48, 20);
+			this.StatusAiAccessLabel.Text = "AI: off";
+			this.StatusAiAccessLabel.Click += new System.EventHandler(this.StatusAiAccessLabel_Click);
+			// 
 			// StatusErrorsLabel
 			// 
 			this.StatusErrorsLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
@@ -519,6 +532,7 @@ namespace x360ce.App
 			this.TrayContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenApplicationToolStripMenuItem,
+            this.EmulationToolStripMenuItem,
             this.ExitToolStripMenuItem});
 			this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
 			this.TrayContextMenuStrip.Size = new System.Drawing.Size(174, 56);
@@ -531,6 +545,14 @@ namespace x360ce.App
 			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
 			this.OpenApplicationToolStripMenuItem.Click += new System.EventHandler(this.OpenApplicationToolStripMenuItem_Click);
+			// 
+			// EmulationToolStripMenuItem
+			// 
+			this.EmulationToolStripMenuItem.CheckOnClick = true;
+			this.EmulationToolStripMenuItem.Name = "EmulationToolStripMenuItem";
+			this.EmulationToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
+			this.EmulationToolStripMenuItem.Text = "Enable XInput";
+			this.EmulationToolStripMenuItem.Click += new System.EventHandler(this.EmulationToolStripMenuItem_Click);
 			// 
 			// ExitToolStripMenuItem
 			// 
@@ -651,7 +673,7 @@ namespace x360ce.App
 			this.Controls.Add(this.MainStatusStrip);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(740, 780);
+			this.MinimumSize = new System.Drawing.Size(740, 800);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -699,6 +721,7 @@ namespace x360ce.App
 		TabPage HelpTabPage;
         RichTextBox HelpRichTextBox;
 		ToolStripStatusLabel StatusIsAdminLabel;
+		ToolStripStatusLabel StatusAiAccessLabel;
 		ToolStripStatusLabel StatusErrorsLabel;
         ToolStripStatusLabel StatusDllLabel;
         TabPage SettingsTabPage;
@@ -709,6 +732,7 @@ namespace x360ce.App
 		private NotifyIcon TrayNotifyIcon;
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
+		private ToolStripMenuItem EmulationToolStripMenuItem;
 		private ToolStripMenuItem ExitToolStripMenuItem;
 		internal Label HelpBodyLabel;
 		internal PictureBox HelpPictureBox;

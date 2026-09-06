@@ -71,6 +71,12 @@ namespace x360ce.App.UiTree
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
+			d["PadControl.ForceSpringStrengthTextBox"] = new Text("Centering spring",
+				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
+			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
+				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
+			d["PadControl.ForcePassThroughIndexComboBox"] = new Text("Pass through to",
+				"Which XInput place receives the game's vibration when it is passed through.");
 			d["PadControl.InforTextBox"] = new Text("About force feedback",
 				"Explains what the settings on this page do.");
 			AddMotor(d, "Left", "LeftMotorGroupBox", "Left motor",
@@ -102,8 +108,8 @@ namespace x360ce.App.UiTree
 				"Replaces this controller's settings with a saved set.");
 			d["PadControl.AutoPresetButton"] = new Text("Auto Preset",
 				"Fills the mapping from a preset that matches the selected device.");
-			d["PadControl.SavePresetButton"] = new Text("Save Preset",
-				"Stores the current settings as a preset you can load again.");
+			d["PadControl.SavePresetButton"] = new Text("Save Preset...",
+				"Writes this controller's settings to a file, to load again or pass on.");
 			d["PadControl.ClearPresetButton"] = new Text("Clear",
 				"Empties every mapping on this controller.");
 			d["PadControl.ResetPresetButton"] = new Text("Reset",
@@ -112,6 +118,8 @@ namespace x360ce.App.UiTree
 				"Copies this controller's settings to the clipboard.");
 			d["PadControl.PastePresetButton"] = new Text("Paste Preset",
 				"Applies settings from the clipboard to this controller.");
+			d["LoadPresetsForm.OpenFileButton"] = new Text("Open File...",
+				"Loads a preset from a file written by Save Preset.");
 		}
 
 		/// <summary>Both motors carry the same settings, so both are described the same way.</summary>

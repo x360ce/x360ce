@@ -75,7 +75,6 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Value]     │   │   ├── Instance identifier                                             # Device instance GUID.
 [Value]     │   │   ├── Device type                                                     # What kind of device Windows considers this to be.
 [Value]     │   │   ├── Number of buttons                                               # How many buttons the device has.
-[List]      │   │   ├── Map to                                                          # Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.
 [Grid]      │   │   └── Button values reported by the device                            # Which buttons are pressed right now.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
@@ -183,10 +182,14 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │   │   │   ├── Force Feedback                                              # Turns vibration on and sets how strong it is.
 [Section]   │   │   │   │   ├── Force feedback                                          # Vibration settings shared by both motors.
 [Value]     │   │   │   │   │   ├── Overall strength                                    # Scales all vibration, so a device that shakes too hard can be calmed.
+[Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
 [CheckBox]  │   │   │   │   │   ├── Enable                                              # Use Force Feedback. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
-[Slider]    │   │   │   │   │   └── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
+[List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[Slider]    │   │   │   │   │   └── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
@@ -218,10 +221,10 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from a preset that matches the selected device.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
+[Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
 [Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard.
 [Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller.
-[Grid]      │   │   ├── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
-[Button]    │   │   └── Save Preset                                                     # Stores the current settings as a preset you can load again.
+[Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
@@ -233,6 +236,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Status]    │   │   ├── Suspended events (hidden)                                       # Setting changes held back while a page is being filled in.
 [Status]    │   │   ├── Saving (hidden)                                                 # Shown while settings are being written to disk.
 [Status]    │   │   ├── Administrator                                                   # Whether the program is running with Administrator rights.
+[Status]    │   │   ├── AI assistant access is off                                      # Whether an assistant may read or change this program right now. Opens the Options tab.
 [Status]    │   │   ├── No error reports                                                # Opens the error report window
 [Status]    │   │   └── XInput library                                                  # Which XInput library the program loaded, and its version.
 [Label]     │   ├── Help subject                                                        # Name of whatever the mouse is over.
@@ -282,6 +286,10 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
+[Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
+[CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
+[Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[CheckBox]  │       │           │   │   └── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
@@ -289,7 +297,21 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Command]   │       │           │   │           ├── Refresh                             # Reads the folder list again.
 [Command]   │       │           │   │           ├── Remove                              # Stops searching the selected folder.
 [Command]   │       │           │   │           └── Add...                              # Adds a folder to search for games.
-[Button]    │       │           │   └── Developer Tools...                              # Opens a window of aids for working on the program.
+[Button]    │       │           │   ├── Developer Tools...                              # Opens a window of aids for working on the program.
+[Section]   │       │           │   └── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[List]      │       │           │       ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
+[List]      │       │           │       ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
+[Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
+[Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
+[Button]    │       │           │       ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │           │       ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
+[Button]    │       │           │       ├── Copy URL                                    # Copies the URL to the clipboard.
+[Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
+[Button]    │       │           │       ├── Copy snippet                                # Copies the registration snippet to the clipboard.
+[CheckBox]  │       │           │       ├── Register with Windows                       # Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.
+[Button]    │       │           │       ├── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[CheckBox]  │       │           │       ├── AI assistant access                         # Whether an AI assistant or a script may reach the program at all.
+[Button]    │       │           │       └── Copy prompt                                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
@@ -413,6 +435,13 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Section]   │       │           └── Action                                              # Undoes every change made to this game.
 [Button]    │       │               └── Reset to Default                                # Puts this game's settings back the way they started.
 [Tab]       │       ├── Devices                                                         # Every controller the program can see, whether mapped or not.
+[Group]     │       │   ├── (XInputDevicesPanel)
+[Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
+[Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
+[Command]   │       │   │       ├── Move Up                                             # Moves the selected controller one place earlier.
+[Command]   │       │   │       ├── Move Down                                           # Moves the selected controller one place later.
+[Command]   │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
+[Command]   │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
 [Grid]      │       │       ├── Devices                                                 # Every controller the program can see. Unplugged ones are dimmed.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
@@ -452,7 +481,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.16 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.24 (Build: 2026-09-06) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.
@@ -463,5 +492,6 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
 [Section]   └── Tray (hidden)                                                           # The menu behind the icon in the notification area.
 [Command]       ├── Open Application                                                    # Brings the window back from the notification area.
+[Command]       ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.
 [Command]       └── Exit                                                                # Closes the program and stops the emulated controllers.
 ```
