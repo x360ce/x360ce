@@ -200,7 +200,7 @@ namespace x360ce.App
 			get { return _AutoDetectForegroundWindow; }
 			set { _AutoDetectForegroundWindow = value; OnPropertyChanged(); }
 		}
-		bool _AutoDetectForegroundWindow = false;
+		bool _AutoDetectForegroundWindow = true;
 
 		[DefaultValue(false), Description("Check for updates.")]
 		public bool CheckForUpdates

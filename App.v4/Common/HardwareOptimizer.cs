@@ -117,7 +117,7 @@ namespace x360ce.App
 				o.PollingRate = optimalRate;
 				o.AllowOnlyOneCopy = true;
 				o.MinimizeToTray = true;
-				o.AutoDetectForegroundWindow = false;
+				o.AutoDetectForegroundWindow = true;
 				o.ExcludeVirtualDevices = true;
 				o.ExcludeSupplementalDevices = false;
 

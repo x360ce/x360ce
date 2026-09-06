@@ -151,13 +151,18 @@ foreach ($dir in $gameFolders) {
                 if ($machine -eq 0x014c) { $arch = 2 } # x86
             } catch {}
 
+            $isPes = $exe.Name -match "PES|sider|Settings"
+            $emulType = if ($isPes) { "0" } else { "2" }
+            $mask = if ($isPes) { "0" } else { "3" }
+            $enabled = if ($isPes) { "false" } else { "true" }
+
             $existing = $gItems.UserGame | Where-Object { $_.FileName -eq $exe.Name }
             if ($existing) {
-                $existing.EnableMask = "3"
-                $existing.EmulationType = "2"
+                $existing.EnableMask = $mask
+                $existing.EmulationType = $emulType
                 $existing.FullPath = $exe.FullName
                 $existing.ProcessorArchitecture = $arch.ToString()
-                $existing.IsEnabled = "true"
+                $existing.IsEnabled = $enabled
             } else {
                 $newNode = $gXml.CreateElement("UserGame")
                 $newNode.InnerXml = @"
@@ -178,12 +183,12 @@ foreach ($dir in $gameFolders) {
       <Timeout>-1</Timeout>
       <Weight>1</Weight>
       <Comment />
-      <IsEnabled>true</IsEnabled>
+      <IsEnabled>$enabled</IsEnabled>
       <DateCreated>$((Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz"))</DateCreated>
       <DateUpdated>$((Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz"))</DateUpdated>
       <AutoMapMask>0</AutoMapMask>
-      <EnableMask>3</EnableMask>
-      <EmulationType>2</EmulationType>
+      <EnableMask>$mask</EnableMask>
+      <EmulationType>$emulType</EmulationType>
       <Checksum>00000000-0000-0000-0000-000000000000</Checksum>
       <XInputPath />
       <ProfileId>00000000-0000-0000-0000-000000000000</ProfileId>
