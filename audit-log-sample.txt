@@ -1,0 +1,8 @@
+2026-09-06 18:00:31.389	door opened at http://localhost:37360/mcp/ with Configure access
+2026-09-06 18:00:31.404	door closed
+2026-09-06 18:00:31.405	door opened at http://localhost:37360/mcp/ with Configure access
+2026-09-06 18:00:36.398	ui_set {"value":"OptionsTabPage","path":"panel1/MainTabControl"} -> Done. in 4779 ms
+2026-09-06 18:00:36.642	ui_set {"value":"GeneralTabPage","path":"panel1/MainTabControl/OptionsTabPage/OptionsPanel/MainTabControl"} -> Done. in 221 ms
+2026-09-06 18:00:49.780	ui_show {"text":"Tick this to let an assistant in. Everything it does is written to the log.","path":"panel1/MainTabControl/OptionsTabPage/OptionsPanel/MainTabControl/GeneralTabPage/GeneralPanel/AiAccessGroupBox/AiAccessEnabledCheckBox","seconds":8} -> Done. in 8039 ms
+2026-09-06 18:00:49.903	ui_set {"value":"Pad1TabPage","path":"panel1/MainTabControl"} -> Done. in 71 ms
+2026-09-06 18:00:50.916	ui_set {"value":"ForceFeedbackTabPage","path":"panel1/MainTabControl/Pad1TabPage/ControlPad1/PadTabControl"} -> Done. in 1005 ms
