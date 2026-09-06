@@ -36,6 +36,12 @@ namespace x360ce.App.Controls
 				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Mcp.McpLog.Path) { UseShellExecute = true });
 			};
 			UpdateAiAccessUrl();
+			// The hotkey field records what is pressed, the way every other program's shortcut field
+			// does, rather than being typed into.
+			EmulationHotkeyTextBox.ReadOnly = true;
+			EmulationHotkeyTextBox.ShortcutsEnabled = false;
+			HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
+			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
 			AiAccessRegenerateButton.Click += (s, e) =>
 			{
 				SettingsManager.Options.RegenerateAiAccessToken();
@@ -211,7 +217,11 @@ namespace x360ce.App.Controls
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 					break;
 				case nameof(Options.EmulationHotkey):
-					MainForm.Current.ApplyEmulationHotkey();
+					// Red when Windows refused the combination, which means another program holds it.
+					var held = MainForm.Current.ApplyEmulationHotkey();
+					EmulationHotkeyTextBox.ForeColor = held || string.IsNullOrEmpty(o.EmulationHotkey)
+						? System.Drawing.SystemColors.WindowText
+						: System.Drawing.Color.Firebrick;
 					break;
 				case nameof(Options.AiAccess):
 				case nameof(Options.AiAccessAddress):
@@ -223,6 +233,22 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
+		}
+
+		/// <summary>Records the keys pressed into the field. Backspace and Delete clear it; Escape puts back what was there.</summary>
+		/// <remarks>
+		/// A modifier on its own, or a key with no modifier, changes nothing: the first is not finished
+		/// and the second would take a plain key from every program on the machine.
+		/// </remarks>
+		private void EmulationHotkeyTextBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			e.SuppressKeyPress = true;
+			if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+				EmulationHotkeyTextBox.Text = "";
+			else if (e.KeyCode == Keys.Escape)
+				EmulationHotkeyTextBox.Text = SettingsManager.Options.EmulationHotkey;
+			else if (HotkeyHelper.IsComplete(e.KeyData))
+				EmulationHotkeyTextBox.Text = HotkeyHelper.Format(e.KeyData);
 		}
 
 		private void AddLocationButton_Click(object sender, EventArgs e)

@@ -1801,8 +1801,8 @@
 															"Items":[
 																{
 																	"Name":"Emulation hotkey",
-																	"Description":"Keys that turn the emulated controllers on and off from anywhere, for example Ctrl+Alt+X. Empty means no hotkey.",
-																	"Role":"Text",
+																	"Description":"Keys that turn the emulated controllers on and off from inside a game. Click the field and press them, for example Ctrl + Alt + X. Backspace clears it.",
+																	"Role":"Value",
 																	"Id":"EmulationHotkeyTextBox"
 																}
 															]

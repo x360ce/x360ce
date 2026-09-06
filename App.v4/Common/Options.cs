@@ -179,7 +179,7 @@ namespace x360ce.App
 		bool _XInputEnabled = true;
 
 		/// <summary>Keys that flip <see cref="XInputEnabled"/> from anywhere, written as Windows shows a shortcut.</summary>
-		[DefaultValue(""), Description("Keys that turn the emulated controllers on and off from anywhere, for example Ctrl+Alt+X. Empty means no hotkey.")]
+		[DefaultValue(""), Description("Keys that turn the emulated controllers on and off from inside a game. Click the field and press them, for example Ctrl + Alt + X. Backspace clears it.")]
 		public string EmulationHotkey
 		{
 			get { return _EmulationHotkey; }

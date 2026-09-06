@@ -47,7 +47,7 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.HotkeysGroupBox"] = new Text("Hotkeys",
 				"Keys that reach this program from inside a game.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
-				"Keys that turn the emulated controllers on and off from anywhere, such as Ctrl+Alt+X. Empty means none.");
+				"Click, then press the keys that turn the emulated controllers on and off from inside a game, such as Ctrl + Alt + X. Backspace clears it.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",

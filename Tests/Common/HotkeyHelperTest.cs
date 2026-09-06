@@ -44,6 +44,37 @@ namespace x360ce.Tests
 			AssertRejects("Ctrl+None");
 		}
 
+		[TestMethod, TestCategory("options"), TestCategory("smoke")]
+		[Description("Pressed keys are written the way the Windows shortcut field writes them, and read back the same")]
+		public void Pressed_keys_are_written_and_read_back()
+		{
+			Assert.AreEqual("Ctrl + Alt + X", HotkeyHelper.Format(Keys.Control | Keys.Alt | Keys.X));
+			Assert.AreEqual("Shift + F5", HotkeyHelper.Format(Keys.Shift | Keys.F5));
+			Assert.AreEqual("Ctrl + 1", HotkeyHelper.Format(Keys.Control | Keys.D1));
+			Assert.AreEqual("Ctrl + Alt + Shift + Delete", HotkeyHelper.Format(Keys.Control | Keys.Alt | Keys.Shift | Keys.Delete));
+			AssertParses(HotkeyHelper.Format(Keys.Control | Keys.Alt | Keys.X), HotkeyHelper.ModControl | HotkeyHelper.ModAlt, Keys.X);
+			AssertParses(HotkeyHelper.Format(Keys.Control | Keys.D1), HotkeyHelper.ModControl, Keys.D1);
+			// A modifier held on its own is nothing yet, and must not be written as if it were something.
+			Assert.AreEqual("", HotkeyHelper.Format(Keys.Control | Keys.ControlKey));
+			Assert.AreEqual("", HotkeyHelper.Format(Keys.None));
+		}
+
+		[TestMethod, TestCategory("options"), TestCategory("smoke")]
+		[Description("A hotkey is complete only with a modifier and a key that is not one, and never with F12")]
+		public void Only_a_modified_key_is_a_whole_hotkey()
+		{
+			Assert.IsTrue(HotkeyHelper.IsComplete(Keys.Control | Keys.Alt | Keys.X));
+			Assert.IsTrue(HotkeyHelper.IsComplete(Keys.Shift | Keys.F5));
+			// A plain letter would be taken from every program on the machine.
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.X));
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.F5));
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.Control | Keys.ControlKey));
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.Alt | Keys.Menu));
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.None));
+			// Windows keeps F12 for the debugger at all times.
+			Assert.IsFalse(HotkeyHelper.IsComplete(Keys.Control | Keys.F12));
+		}
+
 		static void AssertParses(string text, uint modifiers, Keys key)
 		{
 			uint m;
