@@ -334,12 +334,6 @@
 							"Id":"DiCapButtonsTextBox"
 						},
 						{
-							"Name":"Map to",
-							"Description":"Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.",
-							"Role":"List",
-							"Id":"MapToPadComboBox"
-						},
-						{
 							"Name":"Button values reported by the device",
 							"Description":"Which buttons are pressed right now.",
 							"Role":"Grid",
@@ -1104,6 +1098,12 @@
 													"Id":"ForceOverallTextBox"
 												},
 												{
+													"Name":"Centering spring",
+													"Description":"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.",
+													"Role":"Value",
+													"Id":"ForceSpringStrengthTextBox"
+												},
+												{
 													"Name":"Enable",
 													"Description":"Use Force Feedback. 0 = OFF, 1 = ON.",
 													"Role":"CheckBox",
@@ -1126,6 +1126,26 @@
 													"Description":"Strength of force feedback. Range is 0 to 100. Default is 100.",
 													"Role":"Slider",
 													"Id":"ForceOverallTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Pass Through",
+													"Description":"Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForcePassThroughCheckBox"
+												},
+												{
+													"Name":"Pass through to",
+													"Description":"Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.",
+													"Role":"List",
+													"Id":"ForcePassThroughIndexComboBox"
+												},
+												{
+													"Name":"Centering spring",
+													"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).",
+													"Role":"Slider",
+													"Id":"ForceSpringStrengthTrackBar",
 													"Min":0,
 													"Max":100
 												}
@@ -1438,6 +1458,12 @@
 							"Description":"Whether the program is running with Administrator rights.",
 							"Role":"Status",
 							"Id":"StatusIsAdminLabel"
+						},
+						{
+							"Name":"AI assistant access is off",
+							"Description":"Whether an assistant may read or change this program right now. Opens the Options tab.",
+							"Role":"Status",
+							"Id":"StatusAiAccessLabel"
 						},
 						{
 							"Name":"No error reports",
@@ -1820,6 +1846,94 @@
 															"Description":"Opens a window of aids for working on the program.",
 															"Role":"Button",
 															"Id":"DeveloperToolsButton"
+														},
+														{
+															"Name":"AI assistant access (MCP server)",
+															"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
+															"Role":"Section",
+															"Id":"AiAccessGroupBox",
+															"Items":[
+																{
+																	"Name":"AI assistant level",
+																	"Description":"How much a connected assistant may do: Read, Configure or Administer.",
+																	"Role":"List",
+																	"Id":"AiAccessComboBox"
+																},
+																{
+																	"Name":"AI assistant address",
+																	"Description":"Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.",
+																	"Role":"List",
+																	"Id":"AiAccessAddressComboBox"
+																},
+																{
+																	"Name":"AI assistant port",
+																	"Description":"Local port the assistant connects to. Change it if another program holds it.",
+																	"Role":"Number",
+																	"Id":"AiAccessPortNumericUpDown",
+																	"Min":1024,
+																	"Max":49151
+																},
+																{
+																	"Name":"AI assistant token",
+																	"Description":"What a caller must present to be let in. Made by the program.",
+																	"Role":"Value",
+																	"Id":"AiAccessTokenTextBox"
+																},
+																{
+																	"Name":"Regenerate token",
+																	"Description":"Makes a new token, so anything holding the old one is shut out.",
+																	"Role":"Button",
+																	"Id":"AiAccessRegenerateButton"
+																},
+																{
+																	"Name":"AI assistant URL",
+																	"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header.",
+																	"Role":"Value",
+																	"Id":"AiAccessUrlTextBox"
+																},
+																{
+																	"Name":"Copy URL",
+																	"Description":"Copies the URL to the clipboard.",
+																	"Role":"Button",
+																	"Id":"AiAccessUrlCopyButton"
+																},
+																{
+																	"Name":"Registration snippet",
+																	"Description":"Settings to paste into an assistant so it can reach this program.",
+																	"Role":"Value",
+																	"Id":"AiAccessSnippetTextBox"
+																},
+																{
+																	"Name":"Copy snippet",
+																	"Description":"Copies the registration snippet to the clipboard.",
+																	"Role":"Button",
+																	"Id":"AiAccessCopyButton"
+																},
+																{
+																	"Name":"Register with Windows",
+																	"Description":"Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.",
+																	"Role":"CheckBox",
+																	"Id":"AiAccessWindowsCheckBox"
+																},
+																{
+																	"Name":"Open log",
+																	"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
+																	"Role":"Button",
+																	"Id":"AiAccessLogButton"
+																},
+																{
+																	"Name":"AI assistant access",
+																	"Description":"Whether an AI assistant or a script may reach the program at all.",
+																	"Role":"CheckBox",
+																	"Id":"AiAccessEnabledCheckBox"
+																},
+																{
+																	"Name":"Copy prompt",
+																	"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.",
+																	"Role":"Button",
+																	"Id":"AiAccessPromptButton"
+																}
+															]
 														}
 													]
 												},
@@ -2642,6 +2756,52 @@
 							"Items":[
 								{
 									"Name":null,
+									"Role":"Group",
+									"Id":"XInputDevicesPanel",
+									"Type":"XInputDevicesUserControl",
+									"Items":[
+										{
+											"Name":"XInput devices",
+											"Description":"Every emulated controller and the XInput place it holds, in the order games see them.",
+											"Role":"Grid",
+											"Id":"DevicesDataGridView"
+										},
+										{
+											"Name":"Emulated controller actions",
+											"Description":"Buttons that act on the emulated controllers shown below.",
+											"Role":"Toolbar",
+											"Id":"DevicesToolStrip",
+											"Items":[
+												{
+													"Name":"Move Up",
+													"Description":"Moves the selected controller one place earlier.",
+													"Role":"Command",
+													"Id":"MoveUpButton"
+												},
+												{
+													"Name":"Move Down",
+													"Description":"Moves the selected controller one place later.",
+													"Role":"Command",
+													"Id":"MoveDownButton"
+												},
+												{
+													"Name":"Apply",
+													"Description":"Recreates the controllers in the order shown. Needs Administrator.",
+													"Role":"Command",
+													"Id":"ApplyButton"
+												},
+												{
+													"Name":"Refresh",
+													"Description":"Reads the controllers again, for when one has arrived or left.",
+													"Role":"Command",
+													"Id":"RefreshButton"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":null,
 									"Description":"Every controller the program can see.",
 									"Role":"Group",
 									"Id":"DevicesPanel",
@@ -2909,7 +3069,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.19.16 (Build: 2026-08-29) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.21.15 (Build: 2026-09-06) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

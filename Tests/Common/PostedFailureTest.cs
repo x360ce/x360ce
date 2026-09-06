@@ -1,4 +1,4 @@
-// @under-test: Engine/JocysCom/Controls/ControlsHelper.cs
+﻿// @under-test: Engine/JocysCom/Controls/ControlsHelper.cs
 // @area: diagnostics   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -45,16 +45,6 @@ namespace x360ce.Tests
 			throw new InvalidOperationException("Deliberate failure in posted work");
 		}
 
-		/// <summary>
-		/// Unbinds the helper from whichever thread claimed it, so a test can bind it to its own.
-		/// </summary>
-		static void ReleaseInvokeContext()
-		{
-			typeof(ControlsHelper)
-				.GetProperty("MainTaskScheduler")
-				.SetValue(null, null, null);
-		}
-
 		/// <summary>A real interface thread: a message loop, its scheduler, and its error handler.</summary>
 		sealed class InterfaceThread : IDisposable
 		{
@@ -82,7 +72,7 @@ namespace x360ce.Tests
 				// life of the process. In the application there is one interface thread, so that
 				// is correct; in a test run an earlier test may already have bound it to a thread
 				// that has since ended. Cleared so it binds to this one.
-				ReleaseInvokeContext();
+				Ui.ReleaseInvokeContext();
 				ControlsHelper.InitInvokeContext();
 				Application.ThreadException += (s, e) =>
 				{
@@ -104,7 +94,7 @@ namespace x360ce.Tests
 				catch (InvalidOperationException) { }
 				// Left unbound so the next test to need it binds to its own thread rather than
 				// to this one, which is now gone.
-				ReleaseInvokeContext();
+				Ui.ReleaseInvokeContext();
 				_ready.Dispose();
 				Reported.Dispose();
 			}

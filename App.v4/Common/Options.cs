@@ -218,6 +218,54 @@ namespace x360ce.App
 		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; OnPropertyChanged(); } }
 		bool _RemoteEnabled;
 
+		// AI assistant access
+
+		[DefaultValue(false), Description("Whether an AI assistant or a script may reach the program at all.")]
+		public bool AiAccessEnabled { get { return _AiAccessEnabled; } set { _AiAccessEnabled = value; OnPropertyChanged(); } }
+		bool _AiAccessEnabled;
+
+		[DefaultValue(AiAccess.Read), Description("How much a connected assistant may do: Read, Configure or Administer.")]
+		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
+		AiAccess _AiAccess = AiAccess.Read;
+
+		[DefaultValue(LoopbackAddress), Description("Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.")]
+		public string AiAccessAddress { get { return _AiAccessAddress; } set { _AiAccessAddress = value; OnPropertyChanged(); } }
+		string _AiAccessAddress = LoopbackAddress;
+
+		/// <summary>The address that keeps the door on this computer. The default.</summary>
+		public const string LoopbackAddress = "127.0.0.1";
+		/// <summary>The address that opens the door to every network the computer is on.</summary>
+		public const string AnyAddress = "0.0.0.0";
+
+		[DefaultValue(37360), Description("Local port the assistant connects to.")]
+		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
+		int _AiAccessPort = 37360;
+
+		[DefaultValue(false), Description("Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.")]
+		public bool AiAccessWindows { get { return _AiAccessWindows; } set { _AiAccessWindows = value; OnPropertyChanged(); } }
+		bool _AiAccessWindows;
+
+		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
+		public string AiAccessToken { get; set; }
+
+		/// <summary>Makes the token when there is none. True when it did.</summary>
+		public bool EnsureAiAccessToken()
+		{
+			if (!string.IsNullOrEmpty(AiAccessToken))
+				return false;
+			RegenerateAiAccessToken();
+			return true;
+		}
+
+		public string RegenerateAiAccessToken()
+		{
+			var bytes = new byte[32];
+			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+				rng.GetBytes(bytes);
+			AiAccessToken = System.BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			return AiAccessToken;
+		}
+
 		// Performance Test
 
 		public bool TestEnabled { get; set; }

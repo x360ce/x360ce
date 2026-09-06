@@ -76,6 +76,8 @@ namespace x360ce.App.UiTree
 				"Shown while settings are being written to disk.");
 			d["MainForm.StatusIsAdminLabel"] = Live("Administrator",
 				"Whether the program is running with Administrator rights.");
+			d["MainForm.StatusAiAccessLabel"] = Live("AI assistant access",
+				"Whether an assistant may read or change this program right now. Opens the Options tab.");
 			d["MainForm.StatusErrorsLabel"] = Live("Error reports",
 				"How many faults were recorded. Opens the report window.");
 			d["MainForm.StatusDllLabel"] = Live("XInput library",

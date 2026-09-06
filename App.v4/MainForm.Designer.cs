@@ -57,6 +57,7 @@ namespace x360ce.App
 			this.StatusEventsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusSaveLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusIsAdminLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.StatusAiAccessLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusErrorsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.HelpBodyLabel = new System.Windows.Forms.Label();
@@ -367,6 +368,7 @@ namespace x360ce.App
             this.StatusEventsLabel,
             this.StatusSaveLabel,
             this.StatusIsAdminLabel,
+            this.StatusAiAccessLabel,
             this.StatusErrorsLabel,
             this.toolStripStatusLabel2,
             this.StatusDllLabel});
@@ -443,6 +445,16 @@ namespace x360ce.App
 			this.StatusIsAdminLabel.Name = "StatusIsAdminLabel";
 			this.StatusIsAdminLabel.Size = new System.Drawing.Size(115, 20);
 			this.StatusIsAdminLabel.Text = "StatusIsAdminLabel";
+			// 
+			// StatusAiAccessLabel
+			// 
+			this.StatusAiAccessLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.StatusAiAccessLabel.IsLink = true;
+			this.StatusAiAccessLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
+			this.StatusAiAccessLabel.Name = "StatusAiAccessLabel";
+			this.StatusAiAccessLabel.Size = new System.Drawing.Size(48, 20);
+			this.StatusAiAccessLabel.Text = "AI: off";
+			this.StatusAiAccessLabel.Click += new System.EventHandler(this.StatusAiAccessLabel_Click);
 			// 
 			// StatusErrorsLabel
 			// 
@@ -651,7 +663,7 @@ namespace x360ce.App
 			this.Controls.Add(this.MainStatusStrip);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(740, 780);
+			this.MinimumSize = new System.Drawing.Size(740, 800);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -699,6 +711,7 @@ namespace x360ce.App
 		TabPage HelpTabPage;
         RichTextBox HelpRichTextBox;
 		ToolStripStatusLabel StatusIsAdminLabel;
+		ToolStripStatusLabel StatusAiAccessLabel;
 		ToolStripStatusLabel StatusErrorsLabel;
         ToolStripStatusLabel StatusDllLabel;
         TabPage SettingsTabPage;

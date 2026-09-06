@@ -303,6 +303,10 @@ namespace x360ce.App
 				case nameof(Options.ShowTestButton):
 					TestButton.Visible = o.ShowTestButton;
 					break;
+				case nameof(Options.AiAccessEnabled):
+				case nameof(Options.AiAccess):
+					UpdateStatusAiAccessLabel();
+					break;
 			}
 		}
 
@@ -750,6 +754,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -968,6 +973,7 @@ namespace x360ce.App
 			StatusIsAdminLabel.Text = WinAPI.IsVista
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
+			UpdateStatusAiAccessLabel();
 			CheckEncoding(SettingsManager.TmpFileName);
 			CheckEncoding(SettingsManager.IniFileName);
 			// Show status values.
@@ -1052,7 +1058,7 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.v4.md");
+				AppHelper.LoadHelp(HelpRichTextBox, AppHelper.HelpV4Resource);
 			}
 			else if (MainTabControl.SelectedTab == SettingsTabPage)
 			{
@@ -1266,7 +1272,8 @@ namespace x360ce.App
 					new VirtualDeviceDriverIssue(),
 					new LeftoverVirtualPadsIssue(),
 					new UnfinishedVirtualPadsIssue(),
-					new RestartToFinishRemovalIssue()
+					new RestartToFinishRemovalIssue(),
+					new AiAccessIssue()
 				);
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
@@ -2008,6 +2015,27 @@ namespace x360ce.App
 				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
 				UpdateStatusErrorsLabel();
 			}));
+		}
+
+		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
+		void UpdateStatusAiAccessLabel()
+		{
+			var o = SettingsManager.Options;
+			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
+			StatusAiAccessLabel.Text = "AI: " + word;
+			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.ControlDark;
+			StatusAiAccessLabel.ForeColor = colour;
+			StatusAiAccessLabel.LinkColor = colour;
+			StatusAiAccessLabel.ActiveLinkColor = colour;
+			StatusAiAccessLabel.AccessibleName = o.AiAccessEnabled
+				? "AI assistant access: an assistant may " + word + " this program"
+				: "AI assistant access is off";
+			StatusAiAccessLabel.AccessibleRole = AccessibleRole.PushButton;
+		}
+
+		void StatusAiAccessLabel_Click(object sender, EventArgs e)
+		{
+			MainTabControl.SelectedTab = OptionsTabPage;
 		}
 
 		private void UpdateStatusErrorsLabel()
