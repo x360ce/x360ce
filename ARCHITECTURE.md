@@ -75,3 +75,14 @@ This repository features the modernized, high-performance architecture of x360ce
    - Defensive null checks, graceful exception handling across all file system and registry scans, and zero compiler warnings.
 4. **Binary & Runtime Compatibility**:
    - Strict target runtime: `.NET Framework 4.6.2`, ensuring out-of-the-box compatibility on Windows 7 SP1, 8.1, 10, and 11 without requiring extra runtime downloads.
+
+---
+
+## 5. Solution Structure & Build Automation
+
+- **`App.v4/`**: Modern Windows desktop application (`x360ce.exe`).
+- **`Setup/`**: Standalone modular setup and game configuration tool (`Setup.exe`).
+- **`Engine/`**: Core emulation engine and DirectInput driver (`x360ce.Engine.dll`).
+- **`Tests/`**: Complete regression and unit testing suite (`x360ce.Tests.dll`).
+- **`Release_Portable/`**: Production-ready distribution package.
+- **`scripts/Build.ps1`**: Universal build script (`.\scripts\Build.ps1 -Configuration Release -Package`).

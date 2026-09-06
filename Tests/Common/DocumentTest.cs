@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/JocysCom/Controls/ControlsHelper.Windows.cs, App.v4/Controls/AboutControl.cs
+// @under-test: Engine/JocysCom/Controls/ControlsHelper.Windows.cs, App.v4/Controls/AboutControl.cs
 // @area: about   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,8 +23,6 @@ namespace x360ce.Tests
 		{
 			"App.v4/Documents/ChangeLog.txt",
 			"App.v4/Documents/License.txt",
-			"App.v3/Documents/ChangeLog.txt",
-			"App.v3/Documents/License.txt",
 		};
 
 		[TestMethod, TestCategory("about"), TestCategory("smoke")]

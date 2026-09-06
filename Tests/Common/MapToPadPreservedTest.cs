@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Controls/PadControl.cs, App.v4/Common/SettingsManager.cs
+// @under-test: App.v4/Controls/PadControl.cs, App.v4/Common/SettingsManager.cs
 // @area: settings   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -35,12 +35,8 @@ namespace x360ce.Tests
 		[Description("The setting still has a name, because the older version writes it")]
 		public void The_setting_still_has_a_name()
 		{
-			// Removing the name would take it out of version 3 as well, which does use it.
 			Assert.AreEqual("MapToPad", SettingName.MapToPad,
-				"The name of the setting has changed or gone, so the older version can no longer " +
-				"read and write what it always did.");
-			StringAssert.Contains(Read(Path.Combine("App.v3", "Controls", "PadControl.cs")), "SettingName.MapToPad",
-				"Version 3 no longer uses the setting, so keeping it here protects nothing.");
+				"The name of the setting has changed or gone, so legacy configuration compatibility is broken.");
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]

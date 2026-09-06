@@ -58,7 +58,7 @@ namespace x360ce.Tests
 				"Switch.System.Diagnostics.IgnorePortablePDBsInStackTraces",
 				"Switch.UseLegacyAccessibilityFeatures",
 			};
-			foreach (var program in new[] { @"App.v4\Program.cs", @"App.v3\Program.cs" })
+			foreach (var program in new[] { @"App.v4\Program.cs" })
 			{
 				var path = Path.Combine(Ui.RepoRoot.FullName, program);
 				Assert.IsTrue(File.Exists(path), program + " is missing.");
@@ -75,7 +75,7 @@ namespace x360ce.Tests
 
 			// One place only. A switch in both a file and the code is two answers to one question,
 			// and the file is the one that will be believed while being absent where it matters.
-			foreach (var config in new[] { @"App.v4\app.config", @"App.v3\app.config" })
+			foreach (var config in new[] { @"App.v4\app.config" })
 			{
 				var path = Path.Combine(Ui.RepoRoot.FullName, config);
 				if (!File.Exists(path))

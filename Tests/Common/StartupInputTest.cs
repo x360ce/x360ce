@@ -32,7 +32,7 @@ namespace x360ce.Tests
 		public void Cleanup() => Ui.CloseApp(_process);
 
 		/// <summary>The applications, and the field each one keeps its four pad controls in.</summary>
-		static readonly string[] MainForms = { "App.v3/MainForm.cs", "App.v4/MainForm.cs" };
+		static readonly string[] MainForms = { "App.v4/MainForm.cs" };
 
 		[TestMethod, TestCategory("startup"), TestCategory("smoke")]
 		[Description("Every main form ignores a key press until its pad controls exist")]
@@ -60,11 +60,6 @@ namespace x360ce.Tests
 					relative + " checks " + name + " for null only after it has already been used.");
 			}
 		}
-
-		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive")]
-		[Description("Version 3 survives a key press sent while it is still starting up")]
-		public void V3_survives_a_key_press_during_start_up()
-			=> App_survives_a_key_press_during_start_up("App.v3");
 
 		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive")]
 		[Description("Version 4 survives a key press sent while it is still starting up")]

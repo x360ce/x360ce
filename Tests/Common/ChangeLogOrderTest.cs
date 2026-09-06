@@ -30,7 +30,6 @@ namespace x360ce.Tests
 		static readonly string[] Files =
 		{
 			"App.v4/Documents/ChangeLog.txt",
-			"App.v3/Documents/ChangeLog.txt",
 		};
 
 		static readonly Regex Bullet = new Regex(@"^- ([A-Za-z]+):");

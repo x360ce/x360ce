@@ -31,11 +31,6 @@ namespace x360ce.Tests
 		public void V4_starts_and_titles_the_window_with_its_version()
 			=> App_starts_and_titles_the_window_with_its_version("App.v4");
 
-		[TestMethod, TestCategory("startup"), TestCategory("smoke"), TestCategory("ui-interactive")]
-		[Description("Version 3 starts and shows its own version in the window title")]
-		public void V3_starts_and_titles_the_window_with_its_version()
-			=> App_starts_and_titles_the_window_with_its_version("App.v3");
-
 		/// <summary>
 		/// The title is the cheapest end-to-end signal there is: it proves the process started,
 		/// created its window, resolved its own assembly version, and rendered. An empty title
