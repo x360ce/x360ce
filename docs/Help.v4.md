@@ -49,6 +49,20 @@ If you want `HELP` and have questions about installation or configuration, pleas
 5. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 6. Launch the game and see how it works.
 
+## Turning emulation on and off
+
+The emulated controllers can be switched off without closing the program, so a game that reads both a wheel and a real gamepad can be swapped between them.
+
+1. `[Options]` tab → `[General]` → `[Enable XInput]` turns them on or off. The right half of each controller tab light turns grey while they are off.
+2. The same switch is in the tray menu: right-click the `X360CE` icon in the notification area.
+3. `[Options]` tab → `[General]` → `[Hotkeys]` → `[Emulation]` takes keys such as `Ctrl+Alt+X` that flip the switch from inside a game. Leave it empty for no hotkey.
+
+## Saving and loading a preset as a file
+
+1. `[Controller #]` tab → `[Save Preset...]` writes the controller's settings to an `XML` file.
+2. `[Load Preset...]` → `[Open File...]` loads such a file onto the selected controller.
+3. `[Copy Preset]` and `[Paste Preset]` carry the same settings through the clipboard.
+
 ## What the light on each controller tab means
 
 The light answers two questions at once, so it is drawn in two halves. The **left half is your

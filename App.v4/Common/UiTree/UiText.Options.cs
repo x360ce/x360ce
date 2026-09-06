@@ -44,6 +44,10 @@ namespace x360ce.App.UiTree
 				"What happens when the Guide button is pressed.");
 			d["OptionsUserControl.GuideButtonActionTextBox"] = new Text("Guide button action",
 				"Program or command run when the Guide button is pressed.");
+			d["OptionsUserControl.HotkeysGroupBox"] = new Text("Hotkeys",
+				"Keys that reach this program from inside a game.");
+			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
+				"Keys that turn the emulated controllers on and off from anywhere, such as Ctrl+Alt+X. Empty means none.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",

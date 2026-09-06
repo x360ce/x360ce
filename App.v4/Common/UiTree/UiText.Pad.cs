@@ -108,8 +108,8 @@ namespace x360ce.App.UiTree
 				"Replaces this controller's settings with a saved set.");
 			d["PadControl.AutoPresetButton"] = new Text("Auto Preset",
 				"Fills the mapping from a preset that matches the selected device.");
-			d["PadControl.SavePresetButton"] = new Text("Save Preset",
-				"Stores the current settings as a preset you can load again.");
+			d["PadControl.SavePresetButton"] = new Text("Save Preset...",
+				"Writes this controller's settings to a file, to load again or pass on.");
 			d["PadControl.ClearPresetButton"] = new Text("Clear",
 				"Empties every mapping on this controller.");
 			d["PadControl.ResetPresetButton"] = new Text("Reset",
@@ -118,6 +118,8 @@ namespace x360ce.App.UiTree
 				"Copies this controller's settings to the clipboard.");
 			d["PadControl.PastePresetButton"] = new Text("Paste Preset",
 				"Applies settings from the clipboard to this controller.");
+			d["LoadPresetsForm.OpenFileButton"] = new Text("Open File...",
+				"Loads a preset from a file written by Save Preset.");
 		}
 
 		/// <summary>Both motors carry the same settings, so both are described the same way.</summary>

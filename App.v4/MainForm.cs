@@ -137,6 +137,9 @@ namespace x360ce.App
 			// that requests it: the two part company whenever the XInput library is not loaded, and
 			// then nothing is read while the setting still says everything is being watched.
 			var checking = helper != null && helper.XiStatesRead;
+			// Whether the emulated controllers are switched on at all. Off is a choice, not a fault,
+			// and the lights must not say otherwise.
+			var enabled = SettingsManager.Options.XInputEnabled;
 			for (var i = 0; i < 4; i++)
 			{
 				var padControl = PadControls[i];
@@ -190,7 +193,10 @@ namespace x360ce.App
 				{
 					// A device mapped here and not connected is worth a look; none mapped is simply nothing.
 					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusGrey;
-					if (!checking)
+					if (!enabled)
+						// Switched off on purpose, which is not a fault and must not be lit as one.
+						right = AppHelper.StatusGrey;
+					else if (!checking)
 						// Not looking is not the same as looking and finding nothing.
 						right = AppHelper.StatusBlue;
 					else
@@ -223,7 +229,7 @@ namespace x360ce.App
 					page.ImageKey = bullet;
 				// The colour alone cannot say which half is missing, nor why. A person looking at a light
 				// that is not green needs to be told what is absent and what the bus said about it.
-				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours);
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled);
 				if (page.ToolTipText != hint)
 					page.ToolTipText = hint;
 			}
@@ -243,7 +249,8 @@ namespace x360ce.App
 		/// controller out of the way - and the words are where there is room to say which.
 		/// </remarks>
 		/// <param name="ourPlace">Which XInput place this tab's controller is in, or -1 for none.</param>
-		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1)
+		/// <param name="enabled">Whether the emulated controllers are switched on at all.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true)
 		{
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
@@ -254,7 +261,12 @@ namespace x360ce.App
 					+ "player {0}. Windows gives out the places and cannot be asked for one; use Devices "
 					+ "to put them in the order you want. ", ourPlace + 1, place)
 				: string.Empty;
-			if (diOn && xiOn && xiOurs)
+			if (!enabled)
+				// Off on purpose, so the missing controller is the thing that was asked for.
+				state = "Emulation is switched off, so no virtual controller is made and a game sees " +
+					"only real controllers. Turn on Enable XInput on the Options page, in the tray " +
+					"menu, or with the hotkey.";
+			else if (diOn && xiOn && xiOurs)
 				state = "A mapped device is connected and Windows hands back a virtual controller.";
 			else if (diOn && !checking)
 				// Not the same as knowing it is missing, and it must not be said as if it were.
@@ -985,6 +997,8 @@ namespace x360ce.App
 			MainStatusStrip.Visible = true;
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
+			// The hotkey is read from the settings just loaded.
+			ApplyEmulationHotkey();
 			// Load PAD controls.
 			PadControls = new PadControl[4];
 			for (var i = 0; i < PadControls.Length; i++)
@@ -1230,6 +1244,8 @@ namespace x360ce.App
 				_ResumeTimer.Stop();
 				_ResumeTimer.Start();
 			}
+			if (m.Msg == HotkeyHelper.WM_HOTKEY && m.WParam.ToInt32() == EmulationHotkeyId)
+				ToggleEmulation();
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
 				// Reading the message is interface work; deciding whether it is worth a device read is

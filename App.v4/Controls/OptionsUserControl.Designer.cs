@@ -120,6 +120,9 @@
 			this.GuideButtonGroupBox = new System.Windows.Forms.GroupBox();
 			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
 			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
+			this.HotkeysGroupBox = new System.Windows.Forms.GroupBox();
+			this.EmulationHotkeyLabel = new System.Windows.Forms.Label();
+			this.EmulationHotkeyTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsPanel = new x360ce.App.Controls.OptionsSettingsUserControl();
@@ -153,6 +156,7 @@
 			this.GeneralPanel.SuspendLayout();
 			this.DevelopingGroupBox.SuspendLayout();
 			this.GuideButtonGroupBox.SuspendLayout();
+			this.HotkeysGroupBox.SuspendLayout();
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
@@ -789,6 +793,7 @@
 			this.GeneralPanel.Controls.Add(this.DevelopingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.GeneralPanel.Controls.Add(this.GuideButtonGroupBox);
+			this.GeneralPanel.Controls.Add(this.HotkeysGroupBox);
 			this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
 			this.GeneralPanel.Controls.Add(this.AiAccessGroupBox);
 			this.GeneralPanel.Controls.Add(this.ProgramScanLocationsTabControl);
@@ -858,6 +863,33 @@
 			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
 			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
 			this.GuideButtonActionTextBox.TabIndex = 0;
+			// 
+			// HotkeysGroupBox
+			// 
+			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyLabel);
+			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
+			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 390);
+			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
+			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 47);
+			this.HotkeysGroupBox.TabIndex = 32;
+			this.HotkeysGroupBox.TabStop = false;
+			this.HotkeysGroupBox.Text = "Hotkeys";
+			// 
+			// EmulationHotkeyLabel
+			// 
+			this.EmulationHotkeyLabel.AutoSize = true;
+			this.EmulationHotkeyLabel.Location = new System.Drawing.Point(4, 22);
+			this.EmulationHotkeyLabel.Name = "EmulationHotkeyLabel";
+			this.EmulationHotkeyLabel.Size = new System.Drawing.Size(58, 13);
+			this.EmulationHotkeyLabel.TabIndex = 0;
+			this.EmulationHotkeyLabel.Text = "Emulation:";
+			// 
+			// EmulationHotkeyTextBox
+			// 
+			this.EmulationHotkeyTextBox.Location = new System.Drawing.Point(68, 19);
+			this.EmulationHotkeyTextBox.Name = "EmulationHotkeyTextBox";
+			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(180, 20);
+			this.EmulationHotkeyTextBox.TabIndex = 1;
 			// 
 			// InternetOptionsTabPage
 			// 
@@ -1403,6 +1435,8 @@
 			this.DevelopingGroupBox.PerformLayout();
 			this.GuideButtonGroupBox.ResumeLayout(false);
 			this.GuideButtonGroupBox.PerformLayout();
+			this.HotkeysGroupBox.ResumeLayout(false);
+			this.HotkeysGroupBox.PerformLayout();
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
@@ -1532,6 +1566,9 @@
 		private System.Windows.Forms.GroupBox GuideButtonGroupBox;
 		private System.Windows.Forms.Label GuideButtonActionLabel;
 		private System.Windows.Forms.TextBox GuideButtonActionTextBox;
+		private System.Windows.Forms.GroupBox HotkeysGroupBox;
+		private System.Windows.Forms.Label EmulationHotkeyLabel;
+		private System.Windows.Forms.TextBox EmulationHotkeyTextBox;
 		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 	}
 }

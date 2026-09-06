@@ -221,10 +221,10 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from a preset that matches the selected device.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
+[Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
 [Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard.
 [Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller.
-[Grid]      │   │   ├── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
-[Button]    │   │   └── Save Preset                                                     # Stores the current settings as a preset you can load again.
+[Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
@@ -286,6 +286,8 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
+[Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
+[Text]      │       │           │   │   └── Emulation hotkey                            # Keys that turn the emulated controllers on and off from anywhere, for example Ctrl+Alt+X. Empty means no hotkey.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
@@ -477,7 +479,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.15 (Build: 2026-09-06) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.23 (Build: 2026-09-06) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.
@@ -488,5 +490,6 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
 [Section]   └── Tray (hidden)                                                           # The menu behind the icon in the notification area.
 [Command]       ├── Open Application                                                    # Brings the window back from the notification area.
+[Command]       ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.
 [Command]       └── Exit                                                                # Closes the program and stops the emulated controllers.
 ```

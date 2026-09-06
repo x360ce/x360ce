@@ -177,6 +177,8 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
+			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.EmulationHotkey, EmulationHotkeyTextBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
 			LoadSettings();
@@ -207,6 +209,9 @@ namespace x360ce.App.Controls
 					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
+					break;
+				case nameof(Options.EmulationHotkey):
+					MainForm.Current.ApplyEmulationHotkey();
 					break;
 				case nameof(Options.AiAccess):
 				case nameof(Options.AiAccessAddress):

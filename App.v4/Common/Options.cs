@@ -165,6 +165,28 @@ namespace x360ce.App
 		}
 		string _GuideButtonAction = "{7}";
 
+		/// <summary>The master switch for the emulated controllers.</summary>
+		/// <remarks>
+		/// Off means no virtual controller is made whatever the game asks for, so a wheel can be swapped
+		/// for a real pad without closing the program. Read on the engine thread once per pass.
+		/// </remarks>
+		[DefaultValue(true), Description("Turns the emulated controllers on. Off leaves games with the real ones.")]
+		public bool XInputEnabled
+		{
+			get { return _XInputEnabled; }
+			set { _XInputEnabled = value; OnPropertyChanged(); }
+		}
+		bool _XInputEnabled = true;
+
+		/// <summary>Keys that flip <see cref="XInputEnabled"/> from anywhere, written as Windows shows a shortcut.</summary>
+		[DefaultValue(""), Description("Keys that turn the emulated controllers on and off from anywhere, for example Ctrl+Alt+X. Empty means no hotkey.")]
+		public string EmulationHotkey
+		{
+			get { return _EmulationHotkey; }
+			set { _EmulationHotkey = value; OnPropertyChanged(); }
+		}
+		string _EmulationHotkey = "";
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

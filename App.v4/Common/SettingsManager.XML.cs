@@ -10,6 +10,23 @@ namespace x360ce.App
 	public partial class SettingsManager
 	{
 
+		/// <summary>The file types offered when a preset is saved or opened.</summary>
+		public const string PresetFileFilter = "Controller preset (*.xml)|*.xml|All files (*.*)|*.*";
+
+		/// <summary>Writes one controller's settings to a file, in the form the clipboard carries them.</summary>
+		public static void SavePadSetting(string path, PadSetting padSetting)
+		{
+			var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(padSetting, null, true);
+			System.IO.File.WriteAllText(path, xml);
+		}
+
+		/// <summary>Reads one controller's settings from a file written by <see cref="SavePadSetting"/>.</summary>
+		public static PadSetting LoadPadSetting(string path)
+		{
+			var xml = System.IO.File.ReadAllText(path);
+			return JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
+		}
+
 		/// <summary>
 		/// Apply all settings to XML.
 		/// </summary>

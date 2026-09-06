@@ -50,6 +50,29 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("The hotkey caption sits whole to the left of its field on the Hotkeys panel")]
+		public void Hotkey_caption_and_field_never_overlap()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				WithOptionsPage(factor, page =>
+				{
+					var group = Descendants(page).FirstOrDefault(x => x.Name == "HotkeysGroupBox");
+					Assert.IsNotNull(group, "HotkeysGroupBox was not found on the Options page.");
+					Show(group);
+					var caption = group.Controls.Find("EmulationHotkeyLabel", false).Single();
+					var field = group.Controls.Find("EmulationHotkeyTextBox", false).Single();
+					Assert.IsTrue(caption.Bounds.Right <= field.Bounds.Left,
+						"The caption " + caption.Bounds + " runs into the field " + field.Bounds +
+						" with the page " + factor + " times its designed width.");
+					Assert.IsTrue(field.Bounds.Right <= group.ClientSize.Width,
+						"The field " + field.Bounds + " runs past the panel, which is " +
+						group.ClientSize.Width + " px wide.");
+				});
+			}
+		}
+
 		/// <summary>
 		/// Bounds of every caption and command inside one group box on the Options page.
 		/// </summary>

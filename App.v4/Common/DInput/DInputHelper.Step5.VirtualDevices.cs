@@ -31,7 +31,10 @@ namespace x360ce.App.DInput
 			var allow = !o.TestEnabled || o.TestSetXInputStates;
 			if (!allow)
 				return;
-			var isVirtual = game != null && ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+			// The master switch comes first: off means no emulated controller whatever the game asks
+			// for, so a wheel can be swapped for a real pad without leaving the game.
+			var isVirtual = o.XInputEnabled
+				&& game != null && ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			// If game does not use virtual emulation then...
 			if (!isVirtual)
 			{
@@ -39,7 +42,14 @@ namespace x360ce.App.DInput
 				// so disposing unconditionally made the next call allocate and connect a new
 				// native client, repeating the whole cycle at the polling frequency.
 				if (virtualModeActive)
+				{
+					// Each controller is let go of by name first, which is the path that also forgets
+					// the place it held and the hardware that was ours. Disposing the client alone takes
+					// the controllers away and leaves those notes behind.
+					for (uint i = 1; i <= 4; i++)
+						DisableFeeding(i);
 					ViGEmClient.DisposeCurrent();
+				}
 				virtualModeActive = false;
 				return;
 			}

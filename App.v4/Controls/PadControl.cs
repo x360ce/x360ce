@@ -81,6 +81,7 @@ namespace x360ce.App.Controls
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
 				ControlsHelper.SetEnabled(LoadPresetButton, enable);
+				ControlsHelper.SetEnabled(SavePresetButton, enable);
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
@@ -1605,6 +1606,26 @@ namespace x360ce.App.Controls
 			var ps = GetSelectedPadSetting();
 			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
 			ControlsHelper.CopyToClipboardOrWarn(text);
+		}
+
+		private void SavePresetButton_Click(object sender, EventArgs e)
+		{
+			// Named after the device, so a folder of presets says which controller each one is for.
+			var ud = GetSelectedDevice();
+			var name = ud == null || string.IsNullOrEmpty(ud.DisplayName) ? "Preset" : ud.DisplayName;
+			foreach (var c in System.IO.Path.GetInvalidFileNameChars())
+				name = name.Replace(c, '_');
+			using (var dialog = new SaveFileDialog())
+			{
+				dialog.Title = "Save Preset";
+				dialog.Filter = SettingsManager.PresetFileFilter;
+				dialog.DefaultExt = "xml";
+				dialog.AddExtension = true;
+				dialog.FileName = name + ".xml";
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+					return;
+				SettingsManager.SavePadSetting(dialog.FileName, GetSelectedPadSetting());
+			}
 		}
 
 		private void PastePresetButton_Click(object sender, EventArgs e)

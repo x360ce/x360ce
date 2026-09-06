@@ -88,6 +88,8 @@ namespace x360ce.App.UiTree
 				"Reached by right-clicking the icon in the notification area.");
 			d["MainForm.OpenApplicationToolStripMenuItem"] = new Text("Open Application",
 				"Brings the window back from the notification area.");
+			d["MainForm.EmulationToolStripMenuItem"] = new Text("Enable XInput",
+				"Turns the emulated controllers on or off without opening the window.");
 			d["MainForm.ExitToolStripMenuItem"] = new Text("Exit",
 				"Closes the program and stops the emulated controllers.");
 		}

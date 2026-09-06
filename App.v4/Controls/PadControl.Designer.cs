@@ -1361,10 +1361,14 @@
 			// 
 			// SavePresetButton
 			// 
-			this.SavePresetButton.Location = new System.Drawing.Point(0, 0);
+			this.SavePresetButton.AutoSize = true;
+			this.SavePresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.SavePresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.SavePresetButton.Name = "SavePresetButton";
-			this.SavePresetButton.Size = new System.Drawing.Size(75, 23);
 			this.SavePresetButton.TabIndex = 69;
+			this.SavePresetButton.Text = "Save Preset...";
+			this.SavePresetButton.UseVisualStyleBackColor = true;
+			this.SavePresetButton.Click += new System.EventHandler(this.SavePresetButton_Click);
 			// 
 			// ResetPresetButton
 			// 
@@ -2532,6 +2536,7 @@
 			this.ButtonsRightPanel.Controls.Add(this.ClearPresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.AutoPresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.LoadPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.SavePresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.PastePresetButton);
 			this.ButtonsRightPanel.Controls.Add(this.CopyPresetButton);
 			this.ButtonsRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2547,7 +2552,6 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MappedDevicesDataGridView);
 			this.Controls.Add(this.GamesToolStrip);
-			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
 			this.Controls.Add(this.ButtonsPanel);
 			this.Name = "PadControl";

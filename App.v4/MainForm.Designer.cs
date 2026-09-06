@@ -68,6 +68,7 @@ namespace x360ce.App
 			this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.EmulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
@@ -531,6 +532,7 @@ namespace x360ce.App
 			this.TrayContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenApplicationToolStripMenuItem,
+            this.EmulationToolStripMenuItem,
             this.ExitToolStripMenuItem});
 			this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
 			this.TrayContextMenuStrip.Size = new System.Drawing.Size(174, 56);
@@ -543,6 +545,14 @@ namespace x360ce.App
 			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
 			this.OpenApplicationToolStripMenuItem.Click += new System.EventHandler(this.OpenApplicationToolStripMenuItem_Click);
+			// 
+			// EmulationToolStripMenuItem
+			// 
+			this.EmulationToolStripMenuItem.CheckOnClick = true;
+			this.EmulationToolStripMenuItem.Name = "EmulationToolStripMenuItem";
+			this.EmulationToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
+			this.EmulationToolStripMenuItem.Text = "Enable XInput";
+			this.EmulationToolStripMenuItem.Click += new System.EventHandler(this.EmulationToolStripMenuItem_Click);
 			// 
 			// ExitToolStripMenuItem
 			// 
@@ -722,6 +732,7 @@ namespace x360ce.App
 		private NotifyIcon TrayNotifyIcon;
 		private ContextMenuStrip TrayContextMenuStrip;
 		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
+		private ToolStripMenuItem EmulationToolStripMenuItem;
 		private ToolStripMenuItem ExitToolStripMenuItem;
 		internal Label HelpBodyLabel;
 		internal PictureBox HelpPictureBox;
