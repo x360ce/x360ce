@@ -74,7 +74,8 @@ namespace JocysCom.ClassLibrary.ComponentModel
 					Task.Factory.StartNew(() =>
 					{
 						DynamicInvoke(method, args);
-					}, CancellationToken.None, TaskCreationOptions.None, so);
+					}, CancellationToken.None, TaskCreationOptions.None, so)
+					.ContinueWith(Observe, TaskContinuationOptions.OnlyOnFaulted);
 				else
 				{
 					var task = new Task(() =>
@@ -84,6 +85,20 @@ namespace JocysCom.ClassLibrary.ComponentModel
 					task.RunSynchronously(so);
 				}
 			}
+		}
+
+		/// <summary>
+		/// A change carried to the interface thread and left to fail there would be reported by the
+		/// finalizer as an unobserved task, later and with nothing to say about where it came from.
+		/// Looked at here instead: a control disposed while the change was on its way is the ordinary
+		/// end of a window, and anything else is reported with its own stack.
+		/// </summary>
+		static void Observe(Task task)
+		{
+			var ex = task.Exception == null ? null : task.Exception.GetBaseException();
+			if (ex == null || ex is ObjectDisposedException)
+				return;
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 		}
 
 		// Lock to serialize concurrent list modifications.

@@ -1,6 +1,7 @@
 ﻿using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine.Data;
 
@@ -44,6 +45,9 @@ namespace x360ce.Engine
         DeviceObjectItem actuatorL;
         EffectParameters paramsL;
         Effect effectL;
+
+        /// <summary>Effects the device said it will never take. Asked once, then left alone, or every poll would ask again and every answer would be reported.</summary>
+        readonly HashSet<Effect> unsupported = new HashSet<Effect>();
         public PeriodicForce PeriodicForceL;
         public ConstantForce ConstantForceL;
 
@@ -365,13 +369,13 @@ namespace x360ce.Engine
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
                     ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                effectL = new Effect(device, GUID_Force, paramsL);
+                effectL = CreateEffect(device, GUID_Force, paramsL);
                 if (actuatorR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
                         ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
-                    effectR = new Effect(device, GUID_Force, paramsR);
+                    effectR = CreateEffect(device, GUID_Force, paramsR);
                 }
             }
             if (flagsL != EffectParameterFlags.None)
@@ -432,7 +436,7 @@ namespace x360ce.Engine
                 paramsS.Directions = new int[1] { 0 };
                 paramsS.Gain = DI_FFNOMINALMAX;
                 paramsS.Parameters = conditions;
-                effectS = new Effect(device, EffectGuid.Spring, paramsS);
+                effectS = CreateEffect(device, EffectGuid.Spring, paramsS);
             }
             else
             {
@@ -452,14 +456,44 @@ namespace x360ce.Engine
             }
         }
 
+        /// <summary>
+        /// The two answers a device gives for an effect it will never take: not implemented, and
+        /// refused settings. Neither is a fault of the program, and asking again gets the same answer.
+        /// </summary>
+        static bool IsUnsupported(SharpDX.SharpDXException ex)
+        {
+            var code = ex.ResultCode.Code;
+            return code == unchecked((int)0x80004001) || code == unchecked((int)0x80070057);
+        }
+
+        /// <summary>An effect on the device, or null when the device will not take one of that kind.</summary>
+        static Effect CreateEffect(Joystick device, Guid guid, EffectParameters parameters)
+        {
+            try
+            {
+                return new Effect(device, guid, parameters);
+            }
+            catch (SharpDX.SharpDXException ex) when (IsUnsupported(ex))
+            {
+                return null;
+            }
+        }
+
         void SetParamaters(Effect effect, EffectParameters parameters, EffectParameterFlags flags)
         {
-            if (parameters == null)
+            if (parameters == null || effect == null || unsupported.Contains(effect))
                 return;
             // Do not restart playing effect.
             flags |= effect.Status == EffectStatus.Playing
                 ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
-            effect.SetParameters(parameters, flags);
+            try
+            {
+                effect.SetParameters(parameters, flags);
+            }
+            catch (SharpDX.SharpDXException ex) when (IsUnsupported(ex))
+            {
+                unsupported.Add(effect);
+            }
         }
 
         int TryParse(string value)

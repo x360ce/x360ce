@@ -322,27 +322,9 @@ namespace x360ce.Engine
             if (cachedMask.HasValue)
                 return cachedMask.Value;
             var maxLength = 64 * 1024 * 1024;
-            // If file is less or equal 64 MB then...
-            byte[] fileBytes;
-            if (fi.Length <= maxLength)
-            {
-                // Read all file bytes.
-                fileBytes = File.ReadAllBytes(fi.FullName);
-			}
-			else
-			{
-                // Maximum buffer 64 MB.
-                fileBytes = new byte[maxLength];
-                var half = maxLength / 2;
-                // Do not lock the file.
-                var stream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                // Read 32 MB from the start.
-                stream.Read(fileBytes, 0, half);
-                // Read 32 MB from the end.
-                stream.Seek(fi.Length - half, SeekOrigin.Begin);
-                stream.Read(fileBytes, half, half);
-                stream.Dispose();
-            }
+            var fileBytes = ReadForScan(fi, maxLength);
+            if (fileBytes == null)
+                return Engine.XInputMask.None;
             // Get "XInput positions inside file bytes.
             var positions = GetPositions(fileBytes, "xinput");
             foreach (var position in positions)
@@ -359,6 +341,45 @@ namespace x360ce.Engine
             }
             SetCachedMask(fi, mask);
             return mask;
+        }
+
+        /// <summary>
+        /// The bytes to look through, or null when the file could not be read. An antivirus that is
+        /// still inspecting a program refuses it for a moment, and refuses it outright when it dislikes
+        /// it. The read is tried three times, a second apart, and the file is then skipped: not
+        /// scanned, not cached, so the next scan asks again. Reads 64 MB at most, from both ends of a
+        /// larger file, without locking it.
+        /// </summary>
+        static byte[] ReadForScan(FileInfo fi, int maxLength)
+        {
+            for (var attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    if (fi.Length <= maxLength)
+                        return File.ReadAllBytes(fi.FullName);
+                    var half = maxLength / 2;
+                    var fileBytes = new byte[maxLength];
+                    using (var stream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        stream.Read(fileBytes, 0, half);
+                        stream.Seek(fi.Length - half, SeekOrigin.Begin);
+                        stream.Read(fileBytes, half, half);
+                    }
+                    return fileBytes;
+                }
+                catch (IOException)
+                {
+                    if (attempt == 3)
+                        return null;
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    if (attempt == 3)
+                        return null;
+                }
+                System.Threading.Thread.Sleep(1000);
+            }
         }
 
         public List<int> GetPositions(byte[] bytes, string key)

@@ -214,13 +214,18 @@ namespace x360ce.App
 					}
 				}
 				var bullet = StatusImageKey(left, right);
-				if (ControlPages[i].ImageKey != bullet)
-					ControlPages[i].ImageKey = bullet;
+				var page = ControlPages[i];
+				// A page being moved in or out of the tab control has no place in it for a moment, and
+				// an image or hint set then is refused as an index of minus one. The next tick sets it.
+				if (MainTabControl.TabPages.IndexOf(page) < 0)
+					continue;
+				if (page.ImageKey != bullet)
+					page.ImageKey = bullet;
 				// The colour alone cannot say which half is missing, nor why. A person looking at a light
 				// that is not green needs to be told what is absent and what the bus said about it.
 				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours);
-				if (ControlPages[i].ToolTipText != hint)
-					ControlPages[i].ToolTipText = hint;
+				if (page.ToolTipText != hint)
+					page.ToolTipText = hint;
 			}
 
 		}
