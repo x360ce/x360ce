@@ -171,6 +171,7 @@
 			this.ForceSpringStrengthTrackBar = new System.Windows.Forms.TrackBar();
 			this.ForceSpringAutoButton = new System.Windows.Forms.Button();
 			this.WheelRangeLabel = new System.Windows.Forms.Label();
+			this.WheelDescriptionLabel = new System.Windows.Forms.Label();
 			this.WheelRangeComboBox = new System.Windows.Forms.ComboBox();
 			this.SpringAutoTimer = new System.Windows.Forms.Timer(this.components);
 			this.WheelGroupBox = new System.Windows.Forms.GroupBox();
@@ -1768,8 +1769,7 @@
 			// 
 			// ForceFeedbackGroupBox
 			// 
-			this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.ForceFeedbackGroupBox.Controls.Add(this.EffectDescriptionLabel);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughCheckBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexLabel);
@@ -1783,7 +1783,7 @@
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 131);
+			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(360, 160);
 			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1798,16 +1798,27 @@
 			this.WheelGroupBox.Controls.Add(this.ForceSpringAutoButton);
 			this.WheelGroupBox.Controls.Add(this.WheelRangeLabel);
 			this.WheelGroupBox.Controls.Add(this.WheelRangeComboBox);
-			this.WheelGroupBox.Location = new System.Drawing.Point(3, 140);
+			this.WheelGroupBox.Controls.Add(this.WheelDescriptionLabel);
+			this.WheelGroupBox.Location = new System.Drawing.Point(369, 3);
 			this.WheelGroupBox.Name = "WheelGroupBox";
-			this.WheelGroupBox.Size = new System.Drawing.Size(180, 75);
+			this.WheelGroupBox.Size = new System.Drawing.Size(340, 160);
 			this.WheelGroupBox.TabIndex = 1;
 			this.WheelGroupBox.TabStop = false;
 			this.WheelGroupBox.Text = "Wheel";
 			// 
+			// WheelDescriptionLabel
+			// 
+			this.WheelDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+			this.WheelDescriptionLabel.AutoSize = false;
+			this.WheelDescriptionLabel.Location = new System.Drawing.Point(6, 104);
+			this.WheelDescriptionLabel.Name = "WheelDescriptionLabel";
+			this.WheelDescriptionLabel.Size = new System.Drawing.Size(321, 50);
+			this.WheelDescriptionLabel.TabIndex = 0;
+			this.WheelDescriptionLabel.Text = "With the spring off, the wheel's own centering, or its maker's software, is left in charge. Auto finds the weakest spring that brings this wheel home.";
+			// 
 			// EffectDescriptionLabel
 			// 
-			this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 91);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
@@ -1827,7 +1838,7 @@
 			//
 			// ForceSpringStrengthTextBox
 			//
-			this.ForceSpringStrengthTextBox.Location = new System.Drawing.Point(454, 17);
+			this.ForceSpringStrengthTextBox.Location = new System.Drawing.Point(284, 17);
 			this.ForceSpringStrengthTextBox.Name = "ForceSpringStrengthTextBox";
 			this.ForceSpringStrengthTextBox.ReadOnly = true;
 			this.ForceSpringStrengthTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1840,10 +1851,10 @@
 			//
 			this.ForceSpringStrengthTrackBar.AutoSize = false;
 			this.ForceSpringStrengthTrackBar.LargeChange = 10;
-			this.ForceSpringStrengthTrackBar.Location = new System.Drawing.Point(148, 17);
+			this.ForceSpringStrengthTrackBar.Location = new System.Drawing.Point(118, 17);
 			this.ForceSpringStrengthTrackBar.Maximum = 100;
 			this.ForceSpringStrengthTrackBar.Name = "ForceSpringStrengthTrackBar";
-			this.ForceSpringStrengthTrackBar.Size = new System.Drawing.Size(300, 28);
+			this.ForceSpringStrengthTrackBar.Size = new System.Drawing.Size(160, 28);
 			this.ForceSpringStrengthTrackBar.TabIndex = 9;
 			this.ForceSpringStrengthTrackBar.TickFrequency = 2;
 			this.ForceSpringStrengthTrackBar.ValueChanged += new System.EventHandler(this.ForceSpringStrengthTrackBar_ValueChanged);
@@ -1852,7 +1863,7 @@
 			//
 			this.ForceSpringAutoButton.AutoSize = true;
 			this.ForceSpringAutoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ForceSpringAutoButton.Location = new System.Drawing.Point(503, 16);
+			this.ForceSpringAutoButton.Location = new System.Drawing.Point(252, 75);
 			this.ForceSpringAutoButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.ForceSpringAutoButton.Name = "ForceSpringAutoButton";
 			this.ForceSpringAutoButton.TabIndex = 10;
@@ -1873,9 +1884,9 @@
 			//
 			this.WheelRangeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.WheelRangeComboBox.FormattingEnabled = true;
-			this.WheelRangeComboBox.Location = new System.Drawing.Point(148, 46);
+			this.WheelRangeComboBox.Location = new System.Drawing.Point(118, 46);
 			this.WheelRangeComboBox.Name = "WheelRangeComboBox";
-			this.WheelRangeComboBox.Size = new System.Drawing.Size(195, 21);
+			this.WheelRangeComboBox.Size = new System.Drawing.Size(209, 21);
 			this.WheelRangeComboBox.TabIndex = 11;
 			//
 			// SpringAutoTimer
@@ -1905,7 +1916,7 @@
 			// 
 			// ForceOverallTextBox
 			// 
-			this.ForceOverallTextBox.Location = new System.Drawing.Point(588, 40);
+			this.ForceOverallTextBox.Location = new System.Drawing.Point(304, 131);
 			this.ForceOverallTextBox.Name = "ForceOverallTextBox";
 			this.ForceOverallTextBox.ReadOnly = true;
 			this.ForceOverallTextBox.Size = new System.Drawing.Size(43, 20);
@@ -1936,7 +1947,7 @@
 			// OveralEffectsStengthLabel
 			// 
 			this.OveralEffectsStengthLabel.AutoSize = true;
-			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(352, 20);
+			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(6, 134);
 			this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
 			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(114, 13);
 			this.OveralEffectsStengthLabel.TabIndex = 0;
@@ -1946,10 +1957,10 @@
 			// 
 			this.ForceOverallTrackBar.AutoSize = false;
 			this.ForceOverallTrackBar.LargeChange = 10;
-			this.ForceOverallTrackBar.Location = new System.Drawing.Point(355, 40);
+			this.ForceOverallTrackBar.Location = new System.Drawing.Point(148, 131);
 			this.ForceOverallTrackBar.Maximum = 100;
 			this.ForceOverallTrackBar.Name = "ForceOverallTrackBar";
-			this.ForceOverallTrackBar.Size = new System.Drawing.Size(227, 28);
+			this.ForceOverallTrackBar.Size = new System.Drawing.Size(150, 28);
 			this.ForceOverallTrackBar.TabIndex = 4;
 			this.ForceOverallTrackBar.TickFrequency = 2;
 			this.ForceOverallTrackBar.Value = 100;
@@ -1968,7 +1979,7 @@
 			this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
 			this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
 			this.LeftMotorGroupBox.Controls.Add(this.TestLeftMotorLabel);
-			this.LeftMotorGroupBox.Location = new System.Drawing.Point(3, 221);
+			this.LeftMotorGroupBox.Location = new System.Drawing.Point(3, 169);
 			this.LeftMotorGroupBox.Name = "LeftMotorGroupBox";
 			this.LeftMotorGroupBox.Size = new System.Drawing.Size(294, 211);
 			this.LeftMotorGroupBox.TabIndex = 9;
@@ -2102,7 +2113,7 @@
 			this.groupBox1.Controls.Add(this.RightMotorTestTrackBar);
 			this.groupBox1.Controls.Add(this.RightMotorTestTextBox);
 			this.groupBox1.Controls.Add(this.RightMotorPeriodTextBox);
-			this.groupBox1.Location = new System.Drawing.Point(303, 221);
+			this.groupBox1.Location = new System.Drawing.Point(303, 169);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(310, 211);
 			this.groupBox1.TabIndex = 10;
@@ -2782,6 +2793,7 @@
 		public System.Windows.Forms.Button ForceSpringAutoButton;
 		System.Windows.Forms.GroupBox WheelGroupBox;
 		System.Windows.Forms.Label WheelRangeLabel;
+		System.Windows.Forms.Label WheelDescriptionLabel;
 		public System.Windows.Forms.ComboBox WheelRangeComboBox;
 		System.Windows.Forms.Timer SpringAutoTimer;
         System.Windows.Forms.ComboBox ForceTypeComboBox;

@@ -1135,10 +1135,10 @@ namespace x360ce.App.Controls
 			var ud = GetSelectedDevice();
 			if (ud == null || ud.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
 			{
-				EffectDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
+				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
 				return;
 			}
-			EffectDescriptionLabel.Text = "Hands off the wheel. It is pushed to each stop, then brought home with a rising force.";
+			WheelDescriptionLabel.Text = "Hands off the wheel. It is pushed to each stop, then brought home with a rising force.";
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = ud;
@@ -1162,13 +1162,13 @@ namespace x360ce.App.Controls
 			if (run.Result > 0)
 			{
 				ForceSpringStrengthTrackBar.Value = run.Result;
-				EffectDescriptionLabel.Text = string.Format(
+				WheelDescriptionLabel.Text = string.Format(
 					"Centering spring set to {0} %: the weakest force that brought the wheel home from both sides, {1} % and {2} %, plus a margin.",
 					run.Result, run.LowLevel, run.HighLevel);
 			}
 			else
 			{
-				EffectDescriptionLabel.Text = run.Message;
+				WheelDescriptionLabel.Text = run.Message;
 			}
 		}
 
