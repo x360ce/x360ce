@@ -268,12 +268,13 @@
     <Compile Include="Controls\SummariesGridUserControl.Designer.cs">
       <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
     </Compile>
-        <Compile Include="Controls\XInputDevicesUserControl.cs">
+    <Compile Include="Controls\XInputDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\XInputDevicesUserControl.Designer.cs">
       <DependentUpon>XInputDevicesUserControl.cs</DependentUpon>
-    </Compile><Compile Include="Controls\UserDevicesUserControl.cs">
+    </Compile>
+    <Compile Include="Controls\UserDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\UserDevicesUserControl.Designer.cs">
@@ -419,7 +420,6 @@
     <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />
-
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Hotkey.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -453,7 +453,6 @@
     <Compile Include="ViGEm\Client\ViGEmClient.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />
-
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <Compile Include="ViGEm\HidGuardianHelper.cs" />
@@ -566,7 +565,9 @@
       <Link>Documents\Help.HidGuardian.md</Link>
     </EmbeddedResource>
     <Compile Include="Common\HotkeyHelper.cs" />
-    <Compile Include="Common\OverlayForm.cs" />
+    <Compile Include="Common\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Common\OverlayNote.cs" />
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">
