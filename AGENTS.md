@@ -51,7 +51,6 @@ against this list:
 A measurement is not optional for a change on this path. Two of these regressions passed the
 whole test suite and were caught by a person looking at the status bar.
 
-
 ## Changelog lines are short
 
 `App.v4/Documents/ChangeLog.txt` is read by people who are not technical. A line names what
