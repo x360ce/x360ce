@@ -206,6 +206,10 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public ForceFeedbackState FFState;
 
+		/// <summary>The Auto button's run on the Force Feedback page, while one is on. Set by the interface, driven by the engine.</summary>
+		[XmlIgnore]
+		public volatile SpringCalibration SpringCalibration;
+
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
 

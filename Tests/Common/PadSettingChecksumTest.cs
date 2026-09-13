@@ -34,7 +34,7 @@ namespace x360ce.Tests
 	public class PadSettingChecksumTest
 	{
 		/// <summary>The settings added after presets were first shared, which must stay invisible until used.</summary>
-		static readonly string[] NewSettings = { "ForcePassThrough", "ForcePassThroughIndex", "ForceSpringStrength" };
+		static readonly string[] NewSettings = { "ForcePassThrough", "ForcePassThroughIndex", "ForceSpringEnable", "ForceSpringStrength", "WheelRange" };
 
 		#region The presets this program ships, as settings
 

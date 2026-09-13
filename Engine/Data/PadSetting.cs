@@ -101,7 +101,9 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForcePassThrough);
 			AddValue(ref list, x => x.ForcePassThroughIndex);
 			AddValue(ref list, x => x.ForceOverall, "100");
+			AddValue(ref list, x => x.ForceSpringEnable);
 			AddValue(ref list, x => x.ForceSpringStrength);
+			AddValue(ref list, x => x.WheelRange);
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
 			AddValue(ref list, x => x.LeftMotorStrength, "100");
@@ -246,6 +248,8 @@ namespace x360ce.Engine.Data
 		public int GetForceOverall() { return GetValue(ForceOverall, 100); }
 		/// <summary>Strength of the centering spring, where nought - the default - means no spring.</summary>
 		public int GetForceSpringStrength() { return GetValue(ForceSpringStrength, 0); }
+		/// <summary>Steering range in degrees sent to a Logitech wheel, where nought - the default - leaves the wheel as it is.</summary>
+		public int GetWheelRange() { return GetValue(WheelRange, 0); }
 
 		/// <summary>The force to send a motor, after the strengths this pad is set to.</summary>
 		/// <remarks>
@@ -292,7 +296,9 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeForceOverall() { return !isDefault(ForceOverall, "100"); }
 		public bool ShouldSerializeForcePassThrough() { return !isDefault(ForcePassThrough); }
 		public bool ShouldSerializeForcePassThroughIndex() { return !isDefault(ForcePassThroughIndex); }
+		public bool ShouldSerializeForceSpringEnable() { return !isDefault(ForceSpringEnable); }
 		public bool ShouldSerializeForceSpringStrength() { return !isDefault(ForceSpringStrength); }
+		public bool ShouldSerializeWheelRange() { return !isDefault(WheelRange); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
 		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
 		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }

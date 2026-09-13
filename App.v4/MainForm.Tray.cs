@@ -81,9 +81,15 @@ namespace x360ce.App
 		}
 
 		/// <summary>Reads the switch each time the menu opens, so the page, the hotkey and the menu never disagree.</summary>
+		/// <remarks>
+		/// The hotkey is shown beside the entry the way Windows menus show their shortcuts, and only
+		/// while it is on, so the menu never promises keys that do nothing.
+		/// </remarks>
 		private void TrayContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			EmulationToolStripMenuItem.Checked = SettingsManager.Options.XInputEnabled;
+			var o = SettingsManager.Options;
+			EmulationToolStripMenuItem.Checked = o.XInputEnabled;
+			EmulationToolStripMenuItem.ShortcutKeyDisplayString = o.EmulationHotkeyEnabled ? o.EmulationHotkey : null;
 		}
 
 		private void EmulationToolStripMenuItem_Click(object sender, EventArgs e)

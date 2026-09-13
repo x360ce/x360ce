@@ -1143,11 +1143,29 @@
 												},
 												{
 													"Name":"Centering spring",
+													"Description":"Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.",
+													"Role":"CheckBox",
+													"Id":"ForceSpringEnableCheckBox"
+												},
+												{
+													"Name":"Centering spring",
 													"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).",
 													"Role":"Slider",
 													"Id":"ForceSpringStrengthTrackBar",
 													"Min":0,
 													"Max":100
+												},
+												{
+													"Name":"Auto",
+													"Description":"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.",
+													"Role":"Button",
+													"Id":"ForceSpringAutoButton"
+												},
+												{
+													"Name":"Wheel range",
+													"Description":"Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).",
+													"Role":"List",
+													"Id":"WheelRangeComboBox"
 												}
 											]
 										},
@@ -3095,7 +3113,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.21.24 (Build: 2026-09-06) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.21.28 (Build: 2026-09-13) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

@@ -64,7 +64,9 @@
           <Property Name="DPadUp" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceEnable" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceOverall" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringEnable" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSpringStrength" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="WheelRange" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSwapMotor" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="GamePadType" Type="varchar" MaxLength="16" Nullable="false" />
@@ -414,7 +416,9 @@
 					<Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSpringStrength" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="WheelRange" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -817,7 +821,9 @@
 								<ScalarProperty Name="LeftMotorPeriod" ColumnName="LeftMotorPeriod" />
 								<ScalarProperty Name="GamePadType" ColumnName="GamePadType" />
 								<ScalarProperty Name="ForceType" ColumnName="ForceType" />
+								<ScalarProperty Name="ForceSpringEnable" ColumnName="ForceSpringEnable" />
 								<ScalarProperty Name="ForceSpringStrength" ColumnName="ForceSpringStrength" />
+								<ScalarProperty Name="WheelRange" ColumnName="WheelRange" />
 								<ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
 								<ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />
 								<ScalarProperty Name="ForceEnable" ColumnName="ForceEnable" />

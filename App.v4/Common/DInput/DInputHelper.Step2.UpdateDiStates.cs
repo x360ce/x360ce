@@ -205,6 +205,11 @@ namespace x360ce.App.DInput
 										}
 									}
 								}
+								// The centering spring follows the wheel every poll, and the Auto button's run
+								// drives the wheel through the same effect. A device with no force state, or
+								// no actuator on an axis, pays nothing here.
+								if (ud.FFState != null && ud.DiState != null && ud.FFState.SpringAxisIndex >= 0)
+									ud.FFState.UpdateSpring(device, ud.DiState.Axis[ud.FFState.SpringAxisIndex], ud.SpringCalibration, Environment.TickCount);
 							}
 						}
 						catch (Exception ex)

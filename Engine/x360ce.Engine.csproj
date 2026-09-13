@@ -165,6 +165,8 @@
     <Compile Include="Common\Enum\XInputMask.cs" />
     <Compile Include="Common\EngineHelper.cs" />
     <Compile Include="Common\ForceFeedbackState.cs" />
+    <Compile Include="Common\LogitechWheel.cs" />
+    <Compile Include="Common\SpringCalibration.cs" />
     <Compile Include="Common\ForegroundWindowHook.cs" />
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />

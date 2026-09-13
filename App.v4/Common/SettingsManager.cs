@@ -710,7 +710,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex)
+				key.EndsWith(SettingName.CombinedIndex) ||
+				key.EndsWith(SettingName.WheelRange)
 				)
 			)
 			{
@@ -837,7 +838,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex))
+				key.EndsWith(SettingName.CombinedIndex) ||
+				key.EndsWith(SettingName.WheelRange))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null)
