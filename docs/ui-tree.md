@@ -182,13 +182,14 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │   │   │   ├── Force Feedback                                              # Turns vibration on and sets how strong it is.
 [Section]   │   │   │   │   ├── Force feedback                                          # Vibration settings shared by both motors.
 [Value]     │   │   │   │   │   ├── Overall strength                                    # Scales all vibration, so a device that shakes too hard can be calmed.
-[Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
 [CheckBox]  │   │   │   │   │   ├── Enable                                              # Use Force Feedback. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
-[List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[List]      │   │   │   │   │   └── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[Section]   │   │   │   │   ├── Wheel                                                   # Settings only a wheel has: the centering spring and the steering range.
+[Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
 [CheckBox]  │   │   │   │   │   ├── Centering spring                                    # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
 [Slider]    │   │   │   │   │   ├── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).
 [Button]    │   │   │   │   │   ├── Auto                                                # Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.
@@ -484,7 +485,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.28 (Build: 2026-09-13) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.30 (Build: 2026-09-13) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

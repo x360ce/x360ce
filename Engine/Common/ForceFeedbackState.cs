@@ -66,6 +66,8 @@ namespace x360ce.Engine
         Effect effectS;
         readonly ConstantForce springForce = new ConstantForce();
         string old_SpringEnable;
+        /// <summary>Whether the spring is wanted, or null before the setting has been read.</summary>
+        bool? springEnabled;
         string old_SpringStrength;
         /// <summary>The spring strength in percent, read once when the setting changes rather than parsed every poll.</summary>
         int springStrength;
@@ -415,6 +417,15 @@ namespace x360ce.Engine
             var springEnableChanged = Changed(ref old_SpringEnable, ps.ForceSpringEnable);
             if (springEnableChanged || Changed(ref old_SpringStrength, ps.ForceSpringStrength))
                 springStrength = ps.ForceSpringEnable == "1" ? Math.Max(0, Math.Min(100, ps.GetForceSpringStrength())) : 0;
+            // Off means nothing of ours on the wheel, so whatever else centres it is left in charge: the
+            // effects come off, and the device is held again so that DirectInput's own autocenter, which
+            // can only be set while the device is let go of, follows the setting.
+            var wanted = ps.ForceSpringEnable == "1";
+            if (springEnabled.HasValue && springEnabled.Value != wanted)
+                ud.IsExclusiveMode = null;
+            springEnabled = wanted;
+            if (springStrength == 0)
+                DropSpring();
             // The actuator the spring sits on may have changed, so the effect is made again on the next poll.
             if (motorsChanged)
                 DropSpring();

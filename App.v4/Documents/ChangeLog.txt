@@ -1,4 +1,4 @@
-﻿## [4.21.29.0] - 2026-09-13
+﻿## [4.21.30.0] - 2026-09-13
 
 - Fixed: The games list could close the program while it was being redrawn as a game was added or removed. This was over half of all problem reports received about the previous version.
 - Fixed: Switching to a game while the program was closing closed it with an error.
@@ -14,6 +14,7 @@
 - Fixed: A list change that reached a window after it had closed was reported as an error later, from nowhere in particular.
 - Fixed: The program's own emulated controller was listed as a leftover from an earlier run on every start, with an offer to remove it.
 - Changed: The Centering Spring pushes with the same force at every angle, lock to lock, and has its own check box, off by default, so a wheel's own software can hold the centre instead.
+- Changed: Centering Spring and Wheel Range sit in their own Wheel group on the Force Feedback page, and with the spring off the wheel's own centering is left switched on.
 - Added: Centering Spring on the Force Feedback page holds a wheel at its centre all the time, for games made for a gamepad that send no steering force.
 - Added: Auto beside the Centering Spring finds the weakest force that brings the wheel home from both sides and sets the slider to it.
 - Added: Wheel Range on the Force Feedback page sends a Logitech wheel its steering range. Such a wheel turns 200 degrees until something sets it.

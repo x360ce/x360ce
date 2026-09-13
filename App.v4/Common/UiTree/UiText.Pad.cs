@@ -71,6 +71,8 @@ namespace x360ce.App.UiTree
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
+			d["PadControl.WheelGroupBox"] = new Text("Wheel",
+				"Settings only a wheel has: the centering spring and the steering range.");
 			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
 				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
 			d["PadControl.ForceSpringStrengthTextBox"] = new Text("Centering spring",

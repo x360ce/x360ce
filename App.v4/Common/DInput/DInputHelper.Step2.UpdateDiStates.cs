@@ -98,6 +98,12 @@ namespace x360ce.App.DInput
 								device.Unacquire();
 								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								// Holding a wheel this way turns its own centering off. It is kept on unless this
+								// program's spring is to hold the centre, so the wheel's own centering, or the wheel
+								// maker's software, stays in charge whenever ours is off. Set here because it can
+								// only be set while the device is let go of.
+								exceptionData.AppendLine("AutoCenter...");
+								SetAutoCenter(device, ps == null || ps.ForceSpringEnable != "1");
 								exceptionData.AppendLine("Acquire (Exclusive)...");
 								device.Acquire();
 								ud.IsExclusiveMode = true;
@@ -327,6 +333,19 @@ namespace x360ce.App.DInput
 					}
 				}
 
+			}
+		}
+
+		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
+		static void SetAutoCenter(Joystick device, bool on)
+		{
+			try
+			{
+				device.Properties.AutoCenter = on;
+			}
+			catch (SharpDXException)
+			{
+				// Not every device has a centre of its own to switch.
 			}
 		}
 

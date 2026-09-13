@@ -1098,12 +1098,6 @@
 													"Id":"ForceOverallTextBox"
 												},
 												{
-													"Name":"Centering spring",
-													"Description":"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.",
-													"Role":"Value",
-													"Id":"ForceSpringStrengthTextBox"
-												},
-												{
 													"Name":"Enable",
 													"Description":"Use Force Feedback. 0 = OFF, 1 = ON.",
 													"Role":"CheckBox",
@@ -1140,6 +1134,20 @@
 													"Description":"Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.",
 													"Role":"List",
 													"Id":"ForcePassThroughIndexComboBox"
+												}
+											]
+										},
+										{
+											"Name":"Wheel",
+											"Description":"Settings only a wheel has: the centering spring and the steering range.",
+											"Role":"Section",
+											"Id":"WheelGroupBox",
+											"Items":[
+												{
+													"Name":"Centering spring",
+													"Description":"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.",
+													"Role":"Value",
+													"Id":"ForceSpringStrengthTextBox"
 												},
 												{
 													"Name":"Centering spring",
@@ -3113,7 +3121,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.21.28 (Build: 2026-09-13) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.21.30 (Build: 2026-09-13) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",
