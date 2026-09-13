@@ -97,8 +97,9 @@ namespace x360ce.App.DInput
 		/// somebody else's.
 		///
 		/// The bus knows each controller by a number, and Windows puts that same number at the end of
-		/// the controller's name, as "&amp;01" for one and "&amp;02" for two. So the numbers of the
-		/// controllers this program is holding are asked for directly and matched against the name.
+		/// the controller's name, after a backslash on the current bus and an ampersand on older ones.
+		/// So the numbers of the controllers this program is holding are asked for directly and
+		/// matched against the name.
 		/// That is a clear reference to its own, rather than a guess from timing.
 		///
 		/// If the numbers cannot be read, nothing is claimed. Being wrong that way mentions a
@@ -107,10 +108,15 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static bool IsOneOfOurs(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
 		{
+			return IsOneOfOurs(device, byId, OurSerials());
+		}
+
+		/// <summary>The same question against a given list of bus numbers, so it can be asked without a bus.</summary>
+		public static bool IsOneOfOurs(DeviceInfo device, Dictionary<string, DeviceInfo> byId, ICollection<uint> serials)
+		{
 			if (device == null || byId == null || string.IsNullOrEmpty(device.DeviceId))
 				return false;
-			var serials = OurSerials();
-			if (serials.Count == 0)
+			if (serials == null || serials.Count == 0)
 				return false;
 			// A controller is not one device but a small family: the one the bus creates and the two
 			// beneath it that Windows adds. Only the top one carries the number, so the question is
@@ -120,6 +126,10 @@ namespace x360ce.App.DInput
 			var current = device;
 			while (current != null)
 			{
+				// The bus that makes every controller is not one of them. Its own name ends in a number
+				// too, and reading that would claim every controller on the bus for whoever holds that number.
+				if (IsViGEmBus(current))
+					return false;
 				if (serials.Contains(TrailingNumber(current.DeviceId)))
 					return true;
 				var parentId = current.ParentDeviceId;
@@ -135,18 +145,18 @@ namespace x360ce.App.DInput
 
 		/// <summary>The number Windows put at the end of a device's name, or zero.</summary>
 		/// <remarks>
-		/// Windows writes the bus number in ordinary digits. This once compared it against the same
-		/// number written in hexadecimal, which agrees only while the number is below ten. A fresh bus
-		/// starts there, so it worked; a few rounds of switching emulation on and off carried it past,
-		/// and from then on the program did not recognise its own controllers and offered to remove the
-		/// one it was using. Reading the number instead of writing it out leaves nothing to disagree.
+		/// Windows writes the bus number in ordinary digits, after whichever of a backslash and an
+		/// ampersand comes last: the current bus names its first controller
+		/// <c>USB\VID_045E&amp;PID_028E\01</c>, older ones end in <c>&amp;01</c>. Read after the ampersand
+		/// alone, the current name gives <c>PID_028E\01</c>, which is no number, so the program did not
+		/// recognise its own controller and offered to remove it on every start.
 		/// </remarks>
-		/// <param name="deviceId">Full device name, whose last part after an ampersand is read.</param>
+		/// <param name="deviceId">Full device name, whose last part is read.</param>
 		public static uint TrailingNumber(string deviceId)
 		{
 			if (string.IsNullOrEmpty(deviceId))
 				return 0;
-			var at = deviceId.LastIndexOf('&');
+			var at = Math.Max(deviceId.LastIndexOf('&'), deviceId.LastIndexOf('\\'));
 			if (at < 0 || at + 1 >= deviceId.Length)
 				return 0;
 			uint value;
