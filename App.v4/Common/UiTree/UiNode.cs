@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace x360ce.App.UiTree
@@ -58,6 +58,14 @@ namespace x360ce.App.UiTree
 		/// <summary>Elements inside this one.</summary>
 		[DataMember(Order = 10, EmitDefaultValue = false)]
 		public List<UiNode> Items { get; set; }
+
+		/// <summary>Control names from the main window's children down, joined by '/'. Filled only when the tree is read with a path.</summary>
+		[DataMember(Order = 11, EmitDefaultValue = false)]
+		public string Path { get; set; }
+
+		/// <summary>What the element holds right now, as text. Filled only when the tree is read with a path.</summary>
+		[DataMember(Order = 12, EmitDefaultValue = false)]
+		public string Value { get; set; }
 
 		public void Add(UiNode child)
 		{

@@ -359,6 +359,15 @@ namespace x360ce.Engine
 		[DefaultValue("100"), Description("Strength of force feedback. Range is 0 to 100. Default is 100.")]
 		static public string ForceOverall { get { return "ForcePercent"; } }
 
+		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.")]
+		static public string ForceSpringEnable { get { return "SpringEnable"; } }
+
+		[DefaultValue("0"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).")]
+		static public string ForceSpringStrength { get { return "SpringStrength"; } }
+
+		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
+		static public string WheelRange { get { return "WheelRange"; } }
+
 		[DefaultValue("60"), Description("Left motor period. Range is 0 to 500. Default is 60.")]
 		static public string LeftMotorPeriod { get { return "LeftMotorPeriod"; } }
 

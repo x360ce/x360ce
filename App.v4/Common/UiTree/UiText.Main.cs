@@ -76,6 +76,8 @@ namespace x360ce.App.UiTree
 				"Shown while settings are being written to disk.");
 			d["MainForm.StatusIsAdminLabel"] = Live("Administrator",
 				"Whether the program is running with Administrator rights.");
+			d["MainForm.StatusAiAccessLabel"] = Live("AI assistant access",
+				"Whether an assistant may read or change this program right now. Opens the Options tab.");
 			d["MainForm.StatusErrorsLabel"] = Live("Error reports",
 				"How many faults were recorded. Opens the report window.");
 			d["MainForm.StatusDllLabel"] = Live("XInput library",
@@ -86,6 +88,8 @@ namespace x360ce.App.UiTree
 				"Reached by right-clicking the icon in the notification area.");
 			d["MainForm.OpenApplicationToolStripMenuItem"] = new Text("Open Application",
 				"Brings the window back from the notification area.");
+			d["MainForm.EmulationToolStripMenuItem"] = new Text("Enable XInput",
+				"Turns the emulated controllers on or off without opening the window.");
 			d["MainForm.ExitToolStripMenuItem"] = new Text("Exit",
 				"Closes the program and stops the emulated controllers.");
 		}

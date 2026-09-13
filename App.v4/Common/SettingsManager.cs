@@ -52,7 +52,9 @@ namespace x360ce.App
 				// Assing new game.
 				CurrentGame = game;
 				Global.DHelper.SettingsChanged = true;
-				CurrentGame_PropertyChanged(null, null);
+				// Nobody may be listening: the main window lets go of this event while it closes, and
+				// the foreground window keeps changing after that.
+				CurrentGame_PropertyChanged?.Invoke(null, null);
 				//// If pad controls not initializes yet then return.
 				//if (PadControls == null)
 				//	return;
@@ -708,7 +710,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex)
+				key.EndsWith(SettingName.CombinedIndex) ||
+				key.EndsWith(SettingName.WheelRange)
 				)
 			)
 			{
@@ -835,7 +838,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.LeftMotorDirection) ||
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex))
+				key.EndsWith(SettingName.CombinedIndex) ||
+				key.EndsWith(SettingName.WheelRange))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null)

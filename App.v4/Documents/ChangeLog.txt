@@ -1,4 +1,30 @@
-﻿## [4.20.43.0] - 2026-09-01
+﻿## [4.21.30.0] - 2026-09-13
+
+- Fixed: The games list could close the program while a game was added or removed.
+- Fixed: Switching game while the program was closing could close it with an error.
+- Fixed: Windows without the multimedia timer library could not poll.
+- Fixed: A device log line after its window closed was reported as an error.
+- Fixed: Losing a force feedback device to another program was reported as an error.
+- Fixed: The error report window could send an empty report.
+- Fixed: Clicking Send twice sent the same report twice.
+- Fixed: A force feedback device refusing an effect was reported as an error.
+- Fixed: A controller tab light could close the program while the tab was moved.
+- Fixed: The games scan stopped when the antivirus refused a file.
+- Fixed: The games scan stopped in a folder with no programs.
+- Fixed: A list change after its window closed was reported as an error.
+- Fixed: The program's own emulated controller was listed as a leftover.
+- Added: Centering Spring holds a wheel at its centre. Off by default.
+- Added: Auto finds the weakest Centering Spring that brings the wheel home.
+- Added: Wheel Range sets a Logitech wheel's steering degrees.
+- Added: Wheel group on the Force Feedback page for these settings.
+- Added: Tray menu shows the hotkey beside Enable XInput.
+- Added: AI assistant access on the Options page. Off by default.
+- Added: Enable XInput on the Options page and in the tray menu.
+- Added: Hotkey Ctrl + Alt + X turns the emulated controllers on and off in a game.
+- Added: A note over the game when the hotkey is pressed.
+- Added: Save Preset and Load Preset as files.
+
+## [4.20.43.0] - 2026-09-01
 
 - Fixed: A controller tab showed a red light while its controller was working, whenever a real controller was plugged in.
 - Fixed: A controller tab whose XInput place a real controller was holding showed no light, as though the place were empty.

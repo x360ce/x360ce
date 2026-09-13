@@ -81,6 +81,7 @@ namespace x360ce.App.Controls
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
 				ControlsHelper.SetEnabled(LoadPresetButton, enable);
+				ControlsHelper.SetEnabled(SavePresetButton, enable);
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
@@ -297,6 +298,8 @@ namespace x360ce.App.Controls
 				{
 					ForceTypeComboBox,
 					ForceOverallTrackBar,
+					ForceSpringEnableCheckBox,
+					ForceSpringStrengthTrackBar,
 					ForceSwapMotorCheckBox,
 					LeftMotorDirectionComboBox,
 					LeftMotorPeriodTrackBar,
@@ -405,6 +408,17 @@ namespace x360ce.App.Controls
 			ForcePassThroughIndexComboBox.DataSource = new BindingSource(forcePlaces, null);
 			ForcePassThroughIndexComboBox.DisplayMember = "Key";
 			ForcePassThroughIndexComboBox.ValueMember = "Value";
+			// The ranges a Logitech wheel takes, named by the cars each one suits. The wheel powers
+			// up at 200 and stays there until told otherwise, which is what the first choice leaves.
+			WheelRangeComboBox.DisplayMember = "Key";
+			WheelRangeComboBox.ValueMember = "Value";
+			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is", "0"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("540° - GT and WRC cars", "540"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("360° - Formula cars", "360"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("270° - Arcade", "270"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("200° - As powered up", "200"));
 			PassThroughIndexComboBox.DisplayMember = "Key";
 			PassThroughIndexComboBox.ValueMember = "Value";
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
@@ -787,6 +801,9 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
 			AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
 			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
+			AddMap(() => SettingName.ForceSpringEnable, ForceSpringEnableCheckBox);
+			AddMap(() => SettingName.ForceSpringStrength, ForceSpringStrengthTrackBar);
+			AddMap(() => SettingName.WheelRange, WheelRangeComboBox);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
@@ -1096,6 +1113,63 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		void ForceSpringStrengthTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		/// <summary>The device the Auto button's run is on, held here because the tab can be switched to another while it runs.</summary>
+		UserDevice springAutoDevice;
+
+		/// <summary>Starts the run that finds the weakest centering force.</summary>
+		/// <remarks>
+		/// The engine drives the wheel and does the measuring; this side only starts it, watches it
+		/// through a timer, and puts the answer on the slider, which saves it like any other move.
+		/// The button waits, greyed, until the run ends on its own, which it does within a minute whatever happens.
+		/// </remarks>
+		void ForceSpringAutoButton_Click(object sender, EventArgs e)
+		{
+			var ud = GetSelectedDevice();
+			if (ud == null || ud.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
+			{
+				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
+				return;
+			}
+			WheelDescriptionLabel.Text = "Hands off the wheel. It is pushed to each stop, then brought home with a rising force.";
+			ForceSpringAutoButton.Text = "Wait...";
+			ForceSpringAutoButton.Enabled = false;
+			springAutoDevice = ud;
+			ud.SpringCalibration = new SpringCalibration();
+			SpringAutoTimer.Start();
+		}
+
+		void SpringAutoTimer_Tick(object sender, EventArgs e)
+		{
+			var ud = springAutoDevice;
+			var run = ud?.SpringCalibration;
+			if (run != null && !run.IsFinished)
+				return;
+			SpringAutoTimer.Stop();
+			ForceSpringAutoButton.Text = "Auto";
+			ForceSpringAutoButton.Enabled = true;
+			springAutoDevice = null;
+			if (run == null)
+				return;
+			ud.SpringCalibration = null;
+			if (run.Result > 0)
+			{
+				ForceSpringStrengthTrackBar.Value = run.Result;
+				WheelDescriptionLabel.Text = string.Format(
+					"Centering spring set to {0} %: the weakest force that brought the wheel home from both sides, {1} % and {2} %, plus a margin.",
+					run.Result, run.LowLevel, run.HighLevel);
+			}
+			else
+			{
+				WheelDescriptionLabel.Text = run.Message;
+			}
 		}
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
@@ -1597,6 +1671,26 @@ namespace x360ce.App.Controls
 			var ps = GetSelectedPadSetting();
 			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
 			ControlsHelper.CopyToClipboardOrWarn(text);
+		}
+
+		private void SavePresetButton_Click(object sender, EventArgs e)
+		{
+			// Named after the device, so a folder of presets says which controller each one is for.
+			var ud = GetSelectedDevice();
+			var name = ud == null || string.IsNullOrEmpty(ud.DisplayName) ? "Preset" : ud.DisplayName;
+			foreach (var c in System.IO.Path.GetInvalidFileNameChars())
+				name = name.Replace(c, '_');
+			using (var dialog = new SaveFileDialog())
+			{
+				dialog.Title = "Save Preset";
+				dialog.Filter = SettingsManager.PresetFileFilter;
+				dialog.DefaultExt = "xml";
+				dialog.AddExtension = true;
+				dialog.FileName = name + ".xml";
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+					return;
+				SettingsManager.SavePadSetting(dialog.FileName, GetSelectedPadSetting());
+			}
 		}
 
 		private void PastePresetButton_Click(object sender, EventArgs e)

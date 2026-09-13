@@ -181,19 +181,28 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>The help page this version shows, as embedded.</summary>
+		public const string HelpV4Resource = "Documents.Help.v4.md";
+
+		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
+		public static string ReadHelp(string resourceName)
+		{
+			using (var stream = EngineHelper.GetResourceStream(resourceName))
+				return stream == null ? "" : new StreamReader(stream).ReadToEnd();
+		}
+
 		public static void LoadHelp(System.Windows.Forms.RichTextBox box, string resourceName)
 		{
-			var stream = EngineHelper.GetResourceStream(resourceName);
+			var text = ReadHelp(resourceName);
 			// A help document that is missing or renamed leaves the box empty. It used to throw
 			// from the constructor of whatever control asked for it, which took the whole screen
 			// down over text nobody had read yet.
-			if (stream == null)
+			if (text.Length == 0)
 				return;
-			var sr = new StreamReader(stream);
 			// The document is Markdown and there is only one copy of it. It becomes what this box
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
-			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(sr.ReadToEnd());
+			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
 			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
 			{
 				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);

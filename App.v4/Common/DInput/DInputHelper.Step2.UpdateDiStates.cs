@@ -24,6 +24,9 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80070016), // ERROR_BAD_UNIT, device does not recognise the command
 			unchecked((int)0x80040203), // DIERR_NOTDOWNLOADED, effect not on the device
 			unchecked((int)0x80070005), // E_ACCESSDENIED, another application holds the device
+			unchecked((int)0x80040205), // DIERR_NOTEXCLUSIVEACQUIRED, the exclusive hold was lost to another program; it is taken again on the next poll
+			unchecked((int)0x80004001), // E_NOTIMPL, the device does not implement the effect it was asked for
+			unchecked((int)0x80070057), // E_INVALIDARG, the device refuses the effect's settings; ForceFeedbackState does not ask again
 		};
 
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
@@ -95,6 +98,12 @@ namespace x360ce.App.DInput
 								device.Unacquire();
 								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								// Holding a wheel this way turns its own centering off. It is kept on unless this
+								// program's spring is to hold the centre, so the wheel's own centering, or the wheel
+								// maker's software, stays in charge whenever ours is off. Set here because it can
+								// only be set while the device is let go of.
+								exceptionData.AppendLine("AutoCenter...");
+								SetAutoCenter(device, ps == null || ps.ForceSpringEnable != "1");
 								exceptionData.AppendLine("Acquire (Exclusive)...");
 								device.Acquire();
 								ud.IsExclusiveMode = true;
@@ -202,6 +211,11 @@ namespace x360ce.App.DInput
 										}
 									}
 								}
+								// The centering spring follows the wheel every poll, and the Auto button's run
+								// drives the wheel through the same effect. A device with no force state, or
+								// no actuator on an axis, pays nothing here.
+								if (ud.FFState != null && ud.DiState != null && ud.FFState.SpringAxisIndex >= 0)
+									ud.FFState.UpdateSpring(device, ud.DiState.Axis[ud.FFState.SpringAxisIndex], ud.SpringCalibration, Environment.TickCount);
 							}
 						}
 						catch (Exception ex)
@@ -319,6 +333,19 @@ namespace x360ce.App.DInput
 					}
 				}
 
+			}
+		}
+
+		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
+		static void SetAutoCenter(Joystick device, bool on)
+		{
+			try
+			{
+				device.Properties.AutoCenter = on;
+			}
+			catch (SharpDXException)
+			{
+				// Not every device has a centre of its own to switch.
 			}
 		}
 

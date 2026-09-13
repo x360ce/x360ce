@@ -165,6 +165,49 @@ namespace x360ce.App
 		}
 		string _GuideButtonAction = "{7}";
 
+		/// <summary>The master switch for the emulated controllers.</summary>
+		/// <remarks>
+		/// Off means no virtual controller is made whatever the game asks for, so a wheel can be swapped
+		/// for a real pad without closing the program. Read on the engine thread once per pass.
+		/// </remarks>
+		[DefaultValue(true), Description("Turns the emulated controllers on. Off leaves games with the real ones.")]
+		public bool XInputEnabled
+		{
+			get { return _XInputEnabled; }
+			set { _XInputEnabled = value; OnPropertyChanged(); }
+		}
+		bool _XInputEnabled = true;
+
+		/// <summary>Whether the emulation hotkey is registered at all. Off by default, so no keys are taken from other programs unasked.</summary>
+		[DefaultValue(false), Description("Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.")]
+		public bool EmulationHotkeyEnabled
+		{
+			get { return _EmulationHotkeyEnabled; }
+			set { _EmulationHotkeyEnabled = value; OnPropertyChanged(); }
+		}
+		bool _EmulationHotkeyEnabled;
+
+		/// <summary>The keys the field starts with, so there is nothing to work out before ticking the box.</summary>
+		public const string DefaultEmulationHotkey = "Ctrl + Alt + X";
+
+		/// <summary>Keys that flip <see cref="XInputEnabled"/> from anywhere, written as Windows shows a shortcut.</summary>
+		[DefaultValue(DefaultEmulationHotkey), Description("Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.")]
+		public string EmulationHotkey
+		{
+			get { return _EmulationHotkey; }
+			set { _EmulationHotkey = value; OnPropertyChanged(); }
+		}
+		string _EmulationHotkey = DefaultEmulationHotkey;
+
+		/// <summary>Whether a hotkey press answers with a note on the screen, where a game would hide the tray balloon.</summary>
+		[DefaultValue(true), Description("Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.")]
+		public bool EmulationHotkeyOverlay
+		{
+			get { return _EmulationHotkeyOverlay; }
+			set { _EmulationHotkeyOverlay = value; OnPropertyChanged(); }
+		}
+		bool _EmulationHotkeyOverlay = true;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
@@ -217,6 +260,54 @@ namespace x360ce.App
 		public int RemotePort { get; set; }
 		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; OnPropertyChanged(); } }
 		bool _RemoteEnabled;
+
+		// AI assistant access
+
+		[DefaultValue(false), Description("Whether an AI assistant or a script may reach the program at all.")]
+		public bool AiAccessEnabled { get { return _AiAccessEnabled; } set { _AiAccessEnabled = value; OnPropertyChanged(); } }
+		bool _AiAccessEnabled;
+
+		[DefaultValue(AiAccess.Read), Description("How much a connected assistant may do: Read, Configure or Administer.")]
+		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
+		AiAccess _AiAccess = AiAccess.Read;
+
+		[DefaultValue(LoopbackAddress), Description("Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.")]
+		public string AiAccessAddress { get { return _AiAccessAddress; } set { _AiAccessAddress = value; OnPropertyChanged(); } }
+		string _AiAccessAddress = LoopbackAddress;
+
+		/// <summary>The address that keeps the door on this computer. The default.</summary>
+		public const string LoopbackAddress = "127.0.0.1";
+		/// <summary>The address that opens the door to every network the computer is on.</summary>
+		public const string AnyAddress = "0.0.0.0";
+
+		[DefaultValue(37360), Description("Local port the assistant connects to.")]
+		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
+		int _AiAccessPort = 37360;
+
+		[DefaultValue(false), Description("Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.")]
+		public bool AiAccessWindows { get { return _AiAccessWindows; } set { _AiAccessWindows = value; OnPropertyChanged(); } }
+		bool _AiAccessWindows;
+
+		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
+		public string AiAccessToken { get; set; }
+
+		/// <summary>Makes the token when there is none. True when it did.</summary>
+		public bool EnsureAiAccessToken()
+		{
+			if (!string.IsNullOrEmpty(AiAccessToken))
+				return false;
+			RegenerateAiAccessToken();
+			return true;
+		}
+
+		public string RegenerateAiAccessToken()
+		{
+			var bytes = new byte[32];
+			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+				rng.GetBytes(bytes);
+			AiAccessToken = System.BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			return AiAccessToken;
+		}
 
 		// Performance Test
 

@@ -128,6 +128,20 @@ namespace x360ce.App
 				DInput.VirtualDriverInstaller.UninstallHidGuardian();
 				return true;
 			}
+			if (ic.Parameters.ContainsKey(AdminCommand.ReserveAiAccessUrl.ToString()))
+			{
+				int port;
+				var valid = int.TryParse(ic.Parameters[AdminCommand.ReserveAiAccessUrl.ToString()], out port) && port >= 1024 && port <= 49151;
+				// The security descriptor rather than a group name, because "Everyone" is spelt
+				// differently on every localized Windows and the well-known SID is not.
+				var netsh = valid ? System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("netsh",
+					"http add urlacl url=" + Mcp.McpListener.Prefix(Options.AnyAddress, port) + " sddl=D:(A;;GX;;;WD)")
+					{ UseShellExecute = false, CreateNoWindow = true }) : null;
+				if (netsh != null)
+					netsh.WaitForExit();
+				Environment.ExitCode = netsh != null && netsh.ExitCode == 0 ? (int)AdminResult.Done : (int)AdminResult.Failed;
+				return true;
+			}
 #if DEBUG
 			// Development builds only. The caller verifies the resulting driver state.
 			if (ic.Parameters.ContainsKey(AdminCommand.InstallHidGuardian.ToString()))

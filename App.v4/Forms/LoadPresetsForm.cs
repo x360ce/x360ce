@@ -72,6 +72,32 @@ namespace x360ce.App.Controls
 			DialogResult = DialogResult.OK;
 		}
 
+		private void OpenFileButton_Click(object sender, EventArgs e)
+		{
+			using (var dialog = new OpenFileDialog())
+			{
+				dialog.Title = "Open Preset";
+				dialog.Filter = SettingsManager.PresetFileFilter;
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+					return;
+				try
+				{
+					SelectedItem = SettingsManager.LoadPadSetting(dialog.FileName);
+				}
+				catch (Exception ex)
+				{
+					// Not a preset, or not readable. Said here, where the file was chosen.
+					var form = new MessageBoxForm();
+					form.StartPosition = FormStartPosition.CenterParent;
+					ControlsHelper.CheckTopMost(form);
+					form.ShowForm(ex.Message);
+					form.Dispose();
+					return;
+				}
+			}
+			DialogResult = DialogResult.OK;
+		}
+
 		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateControls();

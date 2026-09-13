@@ -151,25 +151,7 @@ namespace x360ce.App.Controls
 					break;
 				case XInputMaskScannerState.DirectoryUpdate:
 				case XInputMaskScannerState.FileUpdate:
-					var sb = new StringBuilder();
-					sb.AppendLine(e.Message);
-					if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null)
-					{
-						sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
-					}
-					if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null)
-					{
-						var file = e.Files[e.FileIndex];
-						var size = file.Length / 1024 / 1024;
-						sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
-					}
-					if (e.Level == 0)
-					{
-						sb.AppendLine();
-						sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
-					}
-					sb.AppendLine();
-					label.Text = sb.ToString();
+					label.Text = ProgressText(e);
 					Application.DoEvents();
 					break;
 				case XInputMaskScannerState.Completed:
@@ -182,6 +164,31 @@ namespace x360ce.App.Controls
 			}
 		}
 
+
+		/// <summary>
+		/// What the scan says it is doing. A folder with nothing to scan reports an update with an
+		/// empty list and an index of nought, so the index is checked before it is used.
+		/// </summary>
+		public static string ProgressText(XInputMaskScannerEventArgs e)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine(e.Message);
+			if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null && e.DirectoryIndex >= 0 && e.DirectoryIndex < e.Directories.Count)
+				sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
+			if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null && e.FileIndex >= 0 && e.FileIndex < e.Files.Count)
+			{
+				var file = e.Files[e.FileIndex];
+				var size = file.Length / 1024 / 1024;
+				sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
+			}
+			if (e.Level == 0)
+			{
+				sb.AppendLine();
+				sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
+			}
+			sb.AppendLine();
+			return sb.ToString();
+		}
 
 		void ScanGames(object state)
 		{

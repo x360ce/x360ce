@@ -24,6 +24,7 @@ namespace x360ce.App
 			Resize += MainForm_Resize;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
+			TrayContextMenuStrip.Opening += TrayContextMenuStrip_Opening;
 			// Run event once to apply settings.
 			MainForm_Resize(this, new EventArgs());
 		}
@@ -77,6 +78,23 @@ namespace x360ce.App
 		private void OpenApplicationToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			RestoreFromTray();
+		}
+
+		/// <summary>Reads the switch each time the menu opens, so the page, the hotkey and the menu never disagree.</summary>
+		/// <remarks>
+		/// The hotkey is shown beside the entry the way Windows menus show their shortcuts, and only
+		/// while it is on, so the menu never promises keys that do nothing.
+		/// </remarks>
+		private void TrayContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			var o = SettingsManager.Options;
+			EmulationToolStripMenuItem.Checked = o.XInputEnabled;
+			EmulationToolStripMenuItem.ShortcutKeyDisplayString = o.EmulationHotkeyEnabled ? o.EmulationHotkey : null;
+		}
+
+		private void EmulationToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SettingsManager.Options.XInputEnabled = EmulationToolStripMenuItem.Checked;
 		}
 
 

@@ -2368,7 +2368,79 @@ namespace x360ce.Engine.Data
         private global::System.String _ForcePassThroughIndex;
         partial void OnForcePassThroughIndexChanging(global::System.String value);
         partial void OnForcePassThroughIndexChanged();
-    
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringStrength
+        {
+            get
+            {
+                return _ForceSpringStrength;
+            }
+            set
+            {
+                OnForceSpringStrengthChanging(value);
+                ReportPropertyChanging("ForceSpringStrength");
+                _ForceSpringStrength = StructuralObject.SetValidValue(value, false, "ForceSpringStrength");
+                ReportPropertyChanged("ForceSpringStrength");
+                OnForceSpringStrengthChanged();
+            }
+        }
+        private global::System.String _ForceSpringStrength;
+        partial void OnForceSpringStrengthChanging(global::System.String value);
+        partial void OnForceSpringStrengthChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringEnable
+        {
+            get
+            {
+                return _ForceSpringEnable;
+            }
+            set
+            {
+                OnForceSpringEnableChanging(value);
+                ReportPropertyChanging("ForceSpringEnable");
+                _ForceSpringEnable = StructuralObject.SetValidValue(value, false, "ForceSpringEnable");
+                ReportPropertyChanged("ForceSpringEnable");
+                OnForceSpringEnableChanged();
+            }
+        }
+        private global::System.String _ForceSpringEnable;
+        partial void OnForceSpringEnableChanging(global::System.String value);
+        partial void OnForceSpringEnableChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String WheelRange
+        {
+            get
+            {
+                return _WheelRange;
+            }
+            set
+            {
+                OnWheelRangeChanging(value);
+                ReportPropertyChanging("WheelRange");
+                _WheelRange = StructuralObject.SetValidValue(value, false, "WheelRange");
+                ReportPropertyChanged("WheelRange");
+                OnWheelRangeChanged();
+            }
+        }
+        private global::System.String _WheelRange;
+        partial void OnWheelRangeChanging(global::System.String value);
+        partial void OnWheelRangeChanged();
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>

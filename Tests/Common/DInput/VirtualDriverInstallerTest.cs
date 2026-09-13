@@ -36,6 +36,42 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The bus number is read from the end of a device name, after a backslash or an ampersand")]
+		public void The_bus_number_is_read_from_either_shape_of_name()
+		{
+			// The name the current bus gives its first controller, as pasted in issue 1623 by three people
+			// whose program offered to remove the controller it had just created.
+			Assert.AreEqual(1u, VirtualDriverInstaller.TrailingNumber(@"USB\VID_045E&PID_028E\01"));
+			Assert.AreEqual(12u, VirtualDriverInstaller.TrailingNumber(@"USB\VID_045E&PID_028E\12"));
+			// The older shape, with the number after an ampersand.
+			Assert.AreEqual(60u, VirtualDriverInstaller.TrailingNumber(@"USB\VID_045E&PID_028E\1&79F5D87&0&60"));
+			// A face beneath a controller ends in something that is not the bus number; it climbs to its parent instead.
+			Assert.AreEqual(0u, VirtualDriverInstaller.TrailingNumber(@"HID\VID_045E&PID_028E&IG_00\8&2B33A220&0&0000"));
+			Assert.AreEqual(0u, VirtualDriverInstaller.TrailingNumber(""));
+			Assert.AreEqual(0u, VirtualDriverInstaller.TrailingNumber(null));
+			Assert.AreEqual(0u, VirtualDriverInstaller.TrailingNumber(@"USB\VID_045E&PID_028E\"));
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Ours is the controller with our number and everything beneath it, never the bus or another number")]
+		public void Ours_is_the_controller_with_our_number_and_its_faces()
+		{
+			// The shape the current bus gives: the bus, a controller named by its number beneath it, and
+			// the XInput face Windows adds beneath the controller. A stranger's controller sits beside ours.
+			var bus = Device(ViGEmBusId, null, @"Root\ViGEmBus");
+			var ours = Device(@"USB\VID_045E&PID_028E\01", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var face = Device(@"HID\VID_045E&PID_028E&IG_00\8&2B33A220&0&0000", ours.DeviceId, @"HID\VID_045E&PID_028E&IG_00");
+			var stranger = Device(@"USB\VID_045E&PID_028E\05", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var world = World(bus, ours, face, stranger);
+			var held = new List<uint> { 1 };
+			Assert.IsTrue(VirtualDriverInstaller.IsOneOfOurs(ours, world, held), "The controller carrying our number is ours.");
+			Assert.IsTrue(VirtualDriverInstaller.IsOneOfOurs(face, world, held), "Its face is ours through it.");
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(stranger, world, held), "A controller with another number is somebody else's, even under the same bus.");
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(bus, world, held), "The bus is not a controller, whatever its name ends in.");
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(ours, world, new List<uint>()), "Holding nothing claims nothing.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A pad still held by the virtual bus is recognised")]
 		public void A_pad_the_bus_still_holds_is_ours()
 		{

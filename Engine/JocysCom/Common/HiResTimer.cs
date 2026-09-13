@@ -293,12 +293,31 @@ namespace JocysCom.ClassLibrary
 		uint _TimerId = 0;
 
 		/// <summary>
+		/// Whether the multimedia timer can be used. Cleared for the whole process the first time
+		/// Windows says its library is not there.
+		/// </summary>
+		/// <remarks>
+		/// A Windows without Winmm.dll exists: a stripped installation reported it, and the program
+		/// stopped with an error before it had polled anything. The ordinary timer below is coarser,
+		/// at about fifteen milliseconds, but a slower poll beats no poll at all.
+		/// </remarks>
+		public static bool MultimediaTimerAvailable = true;
+
+		/// <summary>The timer used when the multimedia one is not available.</summary>
+		System.Threading.Timer _fallback;
+
+		/// <summary>
 		/// Stop the current timer instance (if any)
 		/// </summary>
 		internal void KillTimer()
 		{
 			lock (this)
 			{
+				if (_fallback != null)
+				{
+					_fallback.Dispose();
+					_fallback = null;
+				}
 				if (_TimerId <= 0)
 					return;
 				var unused = NativeMethods.timeKillEvent(_TimerId);
@@ -315,22 +334,50 @@ namespace JocysCom.ClassLibrary
 		{
 			lock (this)
 			{
-				// Kill timer.
-				if (_TimerId > 0)
-				{
-					var unused = NativeMethods.timeKillEvent(_TimerId);
-					_TimerId = 0;
-				}
+				KillTimer();
 				// Must create callback or timer will crash.
 				_callback = new HiResTimerCallback(callback);
-				//Set the timer type flags
-				var f = fuEvent.TIME_CALLBACK_FUNCTION | (AutoReset ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
-				_TimerId = NativeMethods.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
-				if (_TimerId == 0)
+				if (MultimediaTimerAvailable)
 				{
-					var ex = new Win32Exception(Marshal.GetLastWin32Error());
-					throw new Exception(ex.Message);
+					//Set the timer type flags
+					var f = fuEvent.TIME_CALLBACK_FUNCTION | (AutoReset ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
+					try
+					{
+						_TimerId = NativeMethods.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
+					}
+					catch (DllNotFoundException)
+					{
+						MultimediaTimerAvailable = false;
+					}
+					catch (EntryPointNotFoundException)
+					{
+						MultimediaTimerAvailable = false;
+					}
+					if (MultimediaTimerAvailable && _TimerId == 0)
+					{
+						var ex = new Win32Exception(Marshal.GetLastWin32Error());
+						throw new Exception(ex.Message);
+					}
 				}
+				if (!MultimediaTimerAvailable)
+					_fallback = new System.Threading.Timer(FallbackElapsed, null, Interval, System.Threading.Timeout.Infinite);
+			}
+		}
+
+		/// <summary>One tick of the ordinary timer, armed again only once the callback has finished.</summary>
+		/// <remarks>
+		/// Armed one tick at a time rather than periodically, so that a callback which takes longer
+		/// than the interval is never entered twice at once.
+		/// </remarks>
+		void FallbackElapsed(object state)
+		{
+			var callback = _callback;
+			if (callback != null)
+				callback(0, 0, UIntPtr.Zero, UIntPtr.Zero, UIntPtr.Zero);
+			lock (this)
+			{
+				if (_fallback != null && AutoReset)
+					_fallback.Change(Interval, System.Threading.Timeout.Infinite);
 			}
 		}
 
