@@ -51,6 +51,21 @@ against this list:
 A measurement is not optional for a change on this path. Two of these regressions passed the
 whole test suite and were caught by a person looking at the status bar.
 
+
+## Changelog lines are short
+
+`App.v4/Documents/ChangeLog.txt` is read by people who are not technical. A line names what
+the reader gets or what stopped hurting, and nothing else, the way the oldest entries at the
+end of the file do: "Fixed: Recording.", "Added: Help tab added.", "Changed: Supports
+hot-plugging USB devices."
+
+- One short sentence, under about twelve words. "Off by default." may follow as a second.
+- No cause, no mechanism, no reasoning, no reporter. Those belong in the commit message and
+  the pull request.
+- A feature added and reshaped in the same unreleased version gets one Added line for its
+  final state, never a Changed line about an earlier shape.
+- Read the end of the file before writing a line, and match it.
+
 ==== END OF INSTRUCTIONS FROM: developer.instructions.md ====
 
 ==== START OF INSTRUCTIONS FROM: repository-analysis.instructions.md ====
