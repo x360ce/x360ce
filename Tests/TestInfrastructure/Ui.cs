@@ -261,11 +261,11 @@ namespace x360ce.Tests
 			// so the question is asked again for a while. Asking once reports a leak that is merely
 			// half a second of ordinary tidying up.
 			var deadline = DateTime.UtcNow.AddSeconds(15);
-			var pads = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads();
+			var pads = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads().Where(x => x.IsPresent).ToArray();
 			while (pads.Length > 0 && DateTime.UtcNow < deadline)
 			{
 				Thread.Sleep(500);
-				pads = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads();
+				pads = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads().Where(x => x.IsPresent).ToArray();
 			}
 			if (pads.Length == 0)
 				return;

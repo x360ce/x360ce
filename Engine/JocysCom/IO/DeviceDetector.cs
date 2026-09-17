@@ -694,16 +694,18 @@ namespace JocysCom.ClassLibrary.IO
 		/// <remarks>
 		/// One information set serves the whole call and each device is opened in it by id. A machine
 		/// with seven hundred nodes answers for a handful in a few milliseconds, where reading them all
-		/// costs about a millisecond a node. An id that is not present is left out.
+		/// costs about a millisecond a node. An id of a device not present now is left out unless
+		/// <paramref name="presentOnly"/> is false, when the record Windows keeps of it is read instead.
 		/// </remarks>
-		public static DeviceInfo[] GetDevices(IEnumerable<string> deviceIds, bool includeParents)
+		public static DeviceInfo[] GetDevices(IEnumerable<string> deviceIds, bool includeParents, bool presentOnly = true)
 		{
 			var list = new List<DeviceInfo>();
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var queue = new Queue<string>(deviceIds.Where(x => !string.IsNullOrEmpty(x)));
 			lock (GetDevicesLock)
 			{
-				var infoSet = NativeMethods.SetupDiGetClassDevs(Guid.Empty, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+				var flags = presentOnly ? DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT : DIGCF.DIGCF_ALLCLASSES;
+				var infoSet = NativeMethods.SetupDiGetClassDevs(Guid.Empty, IntPtr.Zero, IntPtr.Zero, flags);
 				if (infoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 					throw new Exception("Invalid Handle");
 				try

@@ -60,7 +60,9 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static DeviceInfo[] GetLeftoverVirtualPads()
 		{
-			var all = ReadControllerTree();
+			// Records of controllers long gone count too: they are left behind exactly as the present
+			// ones are, and the same removal takes them away.
+			var all = ReadControllerTree(true);
 			var byId = IndexById(all);
 			return all
 				.Where(x => IsVirtualPad(x, byId))
@@ -315,13 +317,18 @@ namespace x360ce.App.DInput
 		/// a lock the device list read had to wait for. The ids of every device are cheap; the
 		/// descriptions of the few that matter are read afterwards.
 		/// </remarks>
-		public static DeviceInfo[] ReadControllerTree()
+		/// <param name="includeRecords">
+		/// Also the records Windows keeps of controllers no longer present. A run that ends without
+		/// unplugging its controllers leaves one record each, for ever; they take no place, but they
+		/// fill Device Manager and every read of the machine walks them.
+		/// </param>
+		public static DeviceInfo[] ReadControllerTree(bool includeRecords = false)
 		{
-			var wanted = DeviceDetector.GetDeviceIds().Where(id =>
+			var wanted = DeviceDetector.GetDeviceIds(!includeRecords).Where(id =>
 				CarriesInputGroup(id)
 				|| id.StartsWith("USB\\VID_045E&PID_028E", StringComparison.OrdinalIgnoreCase)
 				|| id.StartsWith("ROOT\\SYSTEM", StringComparison.OrdinalIgnoreCase));
-			return DeviceDetector.GetDevices(wanted, true);
+			return DeviceDetector.GetDevices(wanted, true, !includeRecords);
 		}
 
 		/// <summary>

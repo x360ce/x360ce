@@ -1,4 +1,4 @@
-﻿## [4.22.17.0] - 2026-09-17
+﻿## [4.22.19.0] - 2026-09-17
 
 - Fixed: Changing the game could list a device twice or close the program.
 - Fixed: Running from inside a 32-bit game's folder stopped the controllers.
@@ -12,6 +12,8 @@
 - Fixed: Reading the devices read every device on the machine; it reads the controllers and their parents.
 - Fixed: The controller pictures went dark while the devices were read.
 - Fixed: The Hardware window could close the program when a device changed.
+- Fixed: The centering spring pulsed under a light push near the centre; its force now grows with the distance.
+- Fixed: The Issues page now also lists and removes records of virtual controllers no longer present.
 - Changed: Starts faster. The devices are read while the window is built, and the program compiles ahead on spare cores.
 - Added: The General tab shows every button, axis, slider and POV of the device as it is used.
 - Added: Click or drag a lit control into a mapping box to map it.

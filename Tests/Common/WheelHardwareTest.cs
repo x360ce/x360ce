@@ -33,8 +33,12 @@ namespace x360ce.Tests
 		{
 			using (var manager = new DirectInput())
 			{
+				// A wheel before anything else with force feedback: a rumble pad plugged in beside
+				// the wheel answers to the same question, and its motor cannot be pushed to a stop.
 				var instance = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly)
-					.FirstOrDefault(x => x.ForceFeedbackDriverGuid != Guid.Empty);
+					.Where(x => x.ForceFeedbackDriverGuid != Guid.Empty)
+					.OrderByDescending(x => x.Type == DeviceType.Driving)
+					.FirstOrDefault();
 				if (instance == null)
 					Assert.Inconclusive("No force feedback controller is attached.");
 				using (var form = new Form())

@@ -67,7 +67,7 @@ namespace x360ce.Tests
 		[Description("The running program keeps its engine rate up, and never stalls")]
 		public void Engine_rate_holds_up_while_the_program_runs()
 		{
-			var leftovers = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads();
+			var leftovers = x360ce.App.DInput.VirtualDriverInstaller.GetLeftoverVirtualPads().Where(x => x.IsPresent).ToArray();
 			Assert.AreEqual(0, leftovers.Length, string.Format(
 				"{0} virtual controllers left behind by earlier runs are still registered. Windows "
 				+ "announces a device change for each of them, and every announcement makes the "
