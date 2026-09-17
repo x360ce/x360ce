@@ -64,8 +64,8 @@ namespace x360ce.App.DInput
 		/// <summary>A finished read waiting for the device thread to take it in, or null.</summary>
 		volatile DeviceListRead _deviceListRead;
 
-		/// <summary>Whether a worker is reading the machine now. Touched by the device thread only.</summary>
-		bool _deviceListReading;
+		/// <summary>Whether a worker is reading the machine now.</summary>
+		volatile bool _deviceListReading;
 
 		/// <summary>The DirectInput the worker enumerates with. Kept for the life of the process, like the device thread's own.</summary>
 		static DirectInput _readManager;
@@ -134,6 +134,30 @@ namespace x360ce.App.DInput
 
 		#endregion
 
+		/// <summary>Starts a read of the device list on a worker, unless one is under way or waiting.</summary>
+		/// <remarks>
+		/// The device thread calls this the moment it wants a list. The window calls it too, as soon
+		/// as the settings are read and before the controller panels are built: the read takes about
+		/// half a second, nearly all of it DirectInput's own enumeration, and the panels take longer,
+		/// so the list is waiting when the device thread starts instead of the other way round.
+		/// </remarks>
+		public void BeginDeviceListRead()
+		{
+			lock (_deviceListStartLock)
+			{
+				if (_deviceListReading || _deviceListRead != null)
+					return;
+				_deviceListReading = true;
+			}
+			var known = new Dictionary<Guid, string>();
+			foreach (var ud in SettingsManager.UserDevices.ItemsToArraySyncronized())
+				known[ud.InstanceGuid] = ud.HidDevicePath;
+			System.Threading.Tasks.Task.Run(() => { _deviceListRead = ReadDeviceList(known); });
+		}
+
+		/// <summary>Guards the start of a read, which the window and the device thread can both ask for.</summary>
+		readonly object _deviceListStartLock = new object();
+
 		void UpdateDiDevices(DirectInput manager)
 		{
 			if (!UpdateDevicesPending)
@@ -142,20 +166,14 @@ namespace x360ce.App.DInput
 			if (read == null)
 			{
 				// The request stays open until a read comes back; the list stays as it is meanwhile.
-				if (!_deviceListReading)
-				{
-					_deviceListReading = true;
-					var known = new Dictionary<Guid, string>();
-					foreach (var ud in SettingsManager.UserDevices.ItemsToArraySyncronized())
-						known[ud.InstanceGuid] = ud.HidDevicePath;
-					System.Threading.Tasks.Task.Run(() => { _deviceListRead = ReadDeviceList(known); });
-				}
+				BeginDeviceListRead();
 				return;
 			}
 			_deviceListRead = null;
 			_deviceListReading = false;
 			_deviceReadMs = read.Milliseconds;
 			_deviceReadPhases = read.Phases;
+			Program.StartupTrace.Mark("device list taken in");
 			UpdateDevicesPending = false;
 			if (read.Error != null)
 			{

@@ -45,10 +45,12 @@ and UI tests are separated by `[TestCategory]`, not by project boundaries.
 Tests that need a desktop session are tagged **`ui-interactive`** and excluded by default,
 which is the one split that matters here — a headless agent can run everything else.
 
-Three more tags mark tests the default run still includes: **`requires-elevation`** (driver
+Four more tags mark tests the default run still includes: **`requires-elevation`** (driver
 install and removal, needs an administrator session), **`requires-wheel`** (a force feedback
-wheel must be attached; the test is inconclusive without one) and **`stress`** (rapid repeated
-clicks). `Run-Tests.ps1` excludes only `ui-interactive`.
+wheel must be attached; the test is inconclusive without one), **`stress`** (rapid repeated
+clicks) and **`performance`** (timing and memory bounds set at two to three times what this laptop
+measures, so a busy machine passes and a return to the old behaviour fails). `Run-Tests.ps1`
+excludes only `ui-interactive`.
 
 No test touches a database, and the `Web/` services are not covered. If that changes, the
 allow-list in `Data/Change Scripts/Backup/Restore-Data.ps1` (`^x360ce_Tests(_\w+)?$`) is the

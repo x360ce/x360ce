@@ -30,9 +30,51 @@ namespace x360ce.App
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
+		/// <summary>
+		/// Writes where the start-up is, and each assembly as it loads, to the file named by
+		/// X360CE_ENGINE_LOG, with the milliseconds since the process started. Nothing is written
+		/// without the variable. Only the framework is used here, because this runs before the
+		/// program's own libraries can be found.
+		/// </summary>
+		/// <remarks>
+		/// The start-up is many stages on several timers, and a guess at which one is slow is
+		/// usually wrong: this shows the settings files being read, the serialisers being compiled,
+		/// the panels being built and the device thread starting, each against the clock.
+		/// </remarks>
+		internal static class StartupTrace
+		{
+			static readonly string Path = Environment.GetEnvironmentVariable("X360CE_ENGINE_LOG");
+			static readonly DateTime Started = string.IsNullOrEmpty(Path) ? DateTime.MinValue : Process.GetCurrentProcess().StartTime;
+			static readonly object Lock = new object();
+
+			public static void Mark(string what)
+			{
+				if (string.IsNullOrEmpty(Path))
+					return;
+				var ms = (long)(DateTime.Now - Started).TotalMilliseconds;
+				try
+				{
+					lock (Lock)
+						File.AppendAllText(Path, "startup," + ms + "," + what + Environment.NewLine);
+				}
+				catch (IOException) { }
+				catch (UnauthorizedAccessException) { }
+			}
+
+			public static void WatchAssemblyLoads()
+			{
+				if (string.IsNullOrEmpty(Path))
+					return;
+				AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => Mark("load " + e.LoadedAssembly.GetName().Name);
+			}
+		}
+
 		[STAThread]
 		static void Main(string[] args)
 		{
+			StartupTrace.Mark("Main");
+			StartupTrace.WatchAssemblyLoads();
+			StartJitProfile();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// Set here rather than in a configuration file, because the program ships as one file
@@ -230,11 +272,15 @@ namespace x360ce.App
 				Environment.ExitCode = RunClient(ic);
 				return;
 			}
+			StartupTrace.Mark("StartApp: before CheckSettings");
 			if (!CheckSettings())
 				return;
+			StartupTrace.Mark("StartApp: settings checked");
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
+			StartupTrace.Mark("StartApp: services ready");
 			MainForm.Current = new MainForm();
+			StartupTrace.Mark("StartApp: main form built");
 			// Describe the interface and leave. The program is the only accurate account of its own
 			// features, so it writes that account itself.
 			//
@@ -353,9 +399,61 @@ namespace x360ce.App
 			return true;
 		}
 
+		/// <summary>
+		/// Lets the runtime compile, on spare cores, the methods the last start compiled, in the
+		/// order it compiled them.
+		/// </summary>
+		/// <remarks>
+		/// Nearly everything this program runs at start it runs for the first time: a library
+		/// loaded from embedded bytes has no native image, so every method is compiled as it is
+		/// reached, on the thread that reaches it. The first controller panel costs three times
+		/// what the next three cost together, and that difference is compilation. The runtime can
+		/// record the order once and, on the next start, compile ahead on other cores while the
+		/// window is built. The record lives beside the settings; a machine that cannot write there
+		/// simply starts as before.
+		/// </remarks>
+		static void StartJitProfile()
+		{
+			if (Environment.ProcessorCount < 2)
+				return;
+			try
+			{
+				var folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "X360CE");
+				Directory.CreateDirectory(folder);
+				System.Runtime.ProfileOptimization.SetProfileRoot(folder);
+				System.Runtime.ProfileOptimization.StartProfile("x360ce.startup.profile");
+			}
+			catch (Exception) { }
+		}
+
+		/// <summary>Each embedded library, loaded once.</summary>
+		/// <remarks>
+		/// A library loaded from bytes is a new library every time it is loaded, even from the same
+		/// bytes: its types are not the types of the earlier load, and a value passed between the
+		/// two fails to cast. The runtime asks for a library from any thread that first needs it,
+		/// and with methods compiled ahead on other cores two threads can ask at once, so the
+		/// answer is kept and given again.
+		/// </remarks>
+		static readonly System.Collections.Generic.Dictionary<string, Assembly> LoadedFromResources =
+			new System.Collections.Generic.Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+
 		static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
 		{
 			var dllName = e.Name.Contains(",") ? e.Name.Substring(0, e.Name.IndexOf(',')) : e.Name.Replace(".dll", "");
+			lock (LoadedFromResources)
+			{
+				Assembly loaded;
+				if (LoadedFromResources.TryGetValue(dllName, out loaded))
+					return loaded;
+				loaded = LoadFromResources(dllName);
+				if (loaded != null)
+					LoadedFromResources[dllName] = loaded;
+				return loaded;
+			}
+		}
+
+		static Assembly LoadFromResources(string dllName)
+		{
 			Stream sr = null;
 			switch (dllName)
 			{
