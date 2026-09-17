@@ -35,8 +35,12 @@ namespace x360ce.App.DInput
 					emType == EmulationType.None ||
 					// Emulation changed or
 					emType != CurrentEmulation ||
-					 // New device was detected so exclusive lock is necessary to retrieve force feedback information.
-					 UpdateDevicesPending ||
+					// A device list read is under way and the library itself holds the devices, so it is
+					// let go of, and the new device can be taken exclusively for its force feedback
+					// information. Under virtual emulation the library loaded is the system one, which
+					// only shows states and holds no device; let go of for every read, it left the
+					// controller pictures dark for as long as each read took.
+					(emType == EmulationType.Library && UpdateDevicesPending) ||
 					// No actual XInput states are required for Virtual emulation.
 					(emType == EmulationType.Virtual && !getXInputStates) ||
 					// No actual XInput states are required for Library emulation when minimized.
@@ -62,10 +66,10 @@ namespace x360ce.App.DInput
 				// Don't load if loaded.
 				if (Controller.IsLoaded)
 					return;
-				// Don't load until device list was not refreshed.
-				if (UpdateDevicesPending)
-					return;
 				var emType = (EmulationType)(game?.EmulationType ?? (int)EmulationType.None);
+				// Not while a device list read is under way, where the library would hold the devices.
+				if (emType == EmulationType.Library && UpdateDevicesPending)
+					return;
 				// Don't load if not needed.
 				if (emType == EmulationType.None)
 					return;

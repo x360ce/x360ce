@@ -1,22 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F980D78A-9448-4834-A6FE-84797077D309}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x360ce.Engine</RootNamespace>
     <AssemblyName>x360ce.Engine</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <!-- Shared JocysCom control files are written against C# 8, which .NET Framework 4.6.2
          compiles happily. Kept at 8.0 so those files can be taken as they are rather than
          edited on the way in, which is how copies drift apart. -->
     <LangVersion>8.0</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Platforms>AnyCPU;x86;x64</Platforms>
+    <!-- The item lists below are the whole content: nothing on disk is compiled or embedded by
+         being there, so a file dropped into the folder cannot change the build unlisted. -->
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <!-- Properties/AssemblyInfo.cs carries the version and attributes, as before. -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- The signing and packaging scripts read bin\Release, bin\Release_x86 and
+         bin\Release_x64, so the output folders keep their names and no framework folder is
+         added beneath them. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,74 +28,52 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;NETFRAMEWORK</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Debug_x64\</OutputPath>
     <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <DebugType>full</DebugType>
     <WarningLevel>1</WarningLevel>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Release_x64\</OutputPath>
     <Optimize>true</Optimize>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE</DefineConstants>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\Debug_x86\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <DebugType>full</DebugType>
-    <DocumentationFile>
-    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\Release_x86\</OutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
@@ -501,23 +483,35 @@
     <Compile Include="SharpDX.XInput\XInput910.x360ce.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="Data\x360ceModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
-    </EntityDeploy>
+    <!--
+      The model metadata the connection strings in App.Config name (res://*/Data.x360ceModel.csdl
+      and so on). Checked in beside each .edmx and embedded under those exact names, so the build
+      needs no EntityDeploy task, which only Visual Studio's MSBuild carries. The .edmx stays for
+      the designer; after editing it, copy its three sections out again into these files.
+    -->
+    <None Include="Data\x360ceModel.edmx" />
+    <EmbeddedResource Include="Data\x360ceModel.csdl">
+      <LogicalName>Data.x360ceModel.csdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\x360ceModel.ssdl">
+      <LogicalName>Data.x360ceModel.ssdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\x360ceModel.msl">
+      <LogicalName>Data.x360ceModel.msl</LogicalName>
+    </EmbeddedResource>
+    <None Include="JocysCom\Security\Data\SecurityModel.edmx" />
+    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.csdl">
+      <LogicalName>JocysCom.Security.Data.SecurityModel.csdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.ssdl">
+      <LogicalName>JocysCom.Security.Data.SecurityModel.ssdl</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.msl">
+      <LogicalName>JocysCom.Security.Data.SecurityModel.msl</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JocysCom\Controls\InfoForm.resx">
@@ -543,20 +537,6 @@
   <ItemGroup>
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
     <ItemGroup>
       <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />

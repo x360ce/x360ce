@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿#nullable disable
+
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
 using System.IO;

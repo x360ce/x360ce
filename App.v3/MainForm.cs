@@ -794,8 +794,6 @@ namespace x360ce.App
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
 			StatusIniLabel.Text = SettingManager.IniFileName;
-			CheckEncoding(SettingManager.TmpFileName);
-			CheckEncoding(SettingManager.IniFileName);
 			// Show status values.
 			MainStatusStrip.Visible = true;
 			// Load PAD controls.
@@ -1017,18 +1015,6 @@ namespace x360ce.App
 		#endregion
 
 		#region Check Files
-
-		void CheckEncoding(string path)
-		{
-			if (!File.Exists(path)) return;
-			var sr = new StreamReader(path, true);
-			var content = sr.ReadToEnd();
-			sr.Close();
-			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
-			{
-				File.WriteAllText(path, content, System.Text.Encoding.Unicode);
-			}
-		}
 
 		bool IsFileSame(string fileName)
 		{

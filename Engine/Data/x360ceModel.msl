@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <Alias Key="Model" Value="x360ceModel" />
+  <Alias Key="Target" Value="x360ceModel.Store" />
+  <EntityContainerMapping CdmEntityContainer="x360ceModelContainer" StorageEntityContainer="x360ceModelStoreContainer">
+    <EntitySetMapping Name="PadSettings">
+      <EntityTypeMapping TypeName="x360ceModel.PadSetting">
+        <MappingFragment StoreEntitySet="x360ce_PadSettings">
+          <ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
+          <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
+          <ScalarProperty Name="LeftTriggerLinear" ColumnName="LeftTriggerLinear" />
+          <ScalarProperty Name="LeftTriggerAntiDeadZone" ColumnName="LeftTriggerAntiDeadZone" />
+          <ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
+          <ScalarProperty Name="DPadRightDeadZone" ColumnName="DPadRightDeadZone" />
+          <ScalarProperty Name="DPadLeftDeadZone" ColumnName="DPadLeftDeadZone" />
+          <ScalarProperty Name="DPadDownDeadZone" ColumnName="DPadDownDeadZone" />
+          <ScalarProperty Name="RightShoulderDeadZone" ColumnName="RightShoulderDeadZone" />
+          <ScalarProperty Name="LeftShoulderDeadZone" ColumnName="LeftShoulderDeadZone" />
+          <ScalarProperty Name="RightThumbButtonDeadZone" ColumnName="RightThumbButtonDeadZone" />
+          <ScalarProperty Name="LeftThumbButtonDeadZone" ColumnName="LeftThumbButtonDeadZone" />
+          <ScalarProperty Name="ButtonYDeadZone" ColumnName="ButtonYDeadZone" />
+          <ScalarProperty Name="ButtonXDeadZone" ColumnName="ButtonXDeadZone" />
+          <ScalarProperty Name="ButtonStartDeadZone" ColumnName="ButtonStartDeadZone" />
+          <ScalarProperty Name="ButtonBackDeadZone" ColumnName="ButtonBackDeadZone" />
+          <ScalarProperty Name="ButtonBDeadZone" ColumnName="ButtonBDeadZone" />
+          <ScalarProperty Name="ButtonADeadZone" ColumnName="ButtonADeadZone" />
+          <ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
+          <ScalarProperty Name="LeftMotorDirection" ColumnName="LeftMotorDirection" />
+          <ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
+          <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
+          <ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
+          <ScalarProperty Name="RightThumbLinearX" ColumnName="RightThumbLinearX" />
+          <ScalarProperty Name="LeftThumbLinearY" ColumnName="LeftThumbLinearY" />
+          <ScalarProperty Name="LeftThumbLinearX" ColumnName="LeftThumbLinearX" />
+          <ScalarProperty Name="RightTriggerDeadZone" ColumnName="RightTriggerDeadZone" />
+          <ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
+          <ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
+          <ScalarProperty Name="RightThumbRight" ColumnName="RightThumbRight" />
+          <ScalarProperty Name="RightThumbLeft" ColumnName="RightThumbLeft" />
+          <ScalarProperty Name="RightThumbDown" ColumnName="RightThumbDown" />
+          <ScalarProperty Name="RightThumbDeadZoneY" ColumnName="RightThumbDeadZoneY" />
+          <ScalarProperty Name="RightThumbDeadZoneX" ColumnName="RightThumbDeadZoneX" />
+          <ScalarProperty Name="RightThumbButton" ColumnName="RightThumbButton" />
+          <ScalarProperty Name="RightThumbAxisY" ColumnName="RightThumbAxisY" />
+          <ScalarProperty Name="RightThumbAxisX" ColumnName="RightThumbAxisX" />
+          <ScalarProperty Name="RightThumbAntiDeadZoneY" ColumnName="RightThumbAntiDeadZoneY" />
+          <ScalarProperty Name="RightThumbAntiDeadZoneX" ColumnName="RightThumbAntiDeadZoneX" />
+          <ScalarProperty Name="RightShoulder" ColumnName="RightShoulder" />
+          <ScalarProperty Name="RightMotorPeriod" ColumnName="RightMotorPeriod" />
+          <ScalarProperty Name="PassThrough" ColumnName="PassThrough" />
+          <ScalarProperty Name="ForcePassThrough" ColumnName="ForcePassThrough" />
+          <ScalarProperty Name="ForcePassThroughIndex" ColumnName="ForcePassThroughIndex" />
+          <ScalarProperty Name="LeftTriggerDeadZone" ColumnName="LeftTriggerDeadZone" />
+          <ScalarProperty Name="LeftTrigger" ColumnName="LeftTrigger" />
+          <ScalarProperty Name="LeftThumbUp" ColumnName="LeftThumbUp" />
+          <ScalarProperty Name="LeftThumbRight" ColumnName="LeftThumbRight" />
+          <ScalarProperty Name="LeftThumbLeft" ColumnName="LeftThumbLeft" />
+          <ScalarProperty Name="LeftThumbDown" ColumnName="LeftThumbDown" />
+          <ScalarProperty Name="LeftThumbDeadZoneY" ColumnName="LeftThumbDeadZoneY" />
+          <ScalarProperty Name="LeftThumbDeadZoneX" ColumnName="LeftThumbDeadZoneX" />
+          <ScalarProperty Name="LeftThumbButton" ColumnName="LeftThumbButton" />
+          <ScalarProperty Name="LeftThumbAxisY" ColumnName="LeftThumbAxisY" />
+          <ScalarProperty Name="LeftThumbAxisX" ColumnName="LeftThumbAxisX" />
+          <ScalarProperty Name="LeftThumbAntiDeadZoneY" ColumnName="LeftThumbAntiDeadZoneY" />
+          <ScalarProperty Name="LeftThumbAntiDeadZoneX" ColumnName="LeftThumbAntiDeadZoneX" />
+          <ScalarProperty Name="LeftShoulder" ColumnName="LeftShoulder" />
+          <ScalarProperty Name="LeftMotorPeriod" ColumnName="LeftMotorPeriod" />
+          <ScalarProperty Name="GamePadType" ColumnName="GamePadType" />
+          <ScalarProperty Name="ForceType" ColumnName="ForceType" />
+          <ScalarProperty Name="ForceSpringEnable" ColumnName="ForceSpringEnable" />
+          <ScalarProperty Name="ForceSpringStrength" ColumnName="ForceSpringStrength" />
+          <ScalarProperty Name="WheelRange" ColumnName="WheelRange" />
+          <ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
+          <ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />
+          <ScalarProperty Name="ForceEnable" ColumnName="ForceEnable" />
+          <ScalarProperty Name="DPadUp" ColumnName="DPadUp" />
+          <ScalarProperty Name="DPadRight" ColumnName="DPadRight" />
+          <ScalarProperty Name="DPadLeft" ColumnName="DPadLeft" />
+          <ScalarProperty Name="DPadDown" ColumnName="DPadDown" />
+          <ScalarProperty Name="DPad" ColumnName="DPad" />
+          <ScalarProperty Name="ButtonY" ColumnName="ButtonY" />
+          <ScalarProperty Name="ButtonX" ColumnName="ButtonX" />
+          <ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
+          <ScalarProperty Name="ButtonGuide" ColumnName="ButtonGuide" />
+          <ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
+          <ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
+          <ScalarProperty Name="ButtonA" ColumnName="ButtonA" />
+          <ScalarProperty Name="AxisToDPadOffset" ColumnName="AxisToDPadOffset" />
+          <ScalarProperty Name="AxisToDPadEnabled" ColumnName="AxisToDPadEnabled" />
+          <ScalarProperty Name="AxisToDPadDeadZone" ColumnName="AxisToDPadDeadZone" />
+          <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserSettings">
+      <EntityTypeMapping TypeName="x360ceModel.UserSetting">
+        <MappingFragment StoreEntitySet="x360ce_Settings">
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="Completion" ColumnName="Completion" />
+          <ScalarProperty Name="MapTo" ColumnName="MapTo" />
+          <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
+          <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+          <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="DeviceType" ColumnName="DeviceType" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+          <ScalarProperty Name="InstanceName" ColumnName="InstanceName" />
+          <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+          <ScalarProperty Name="SettingId" ColumnName="SettingId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Summaries">
+      <EntityTypeMapping TypeName="x360ceModel.Summary">
+        <MappingFragment StoreEntitySet="x360ce_Summaries">
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+          <ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
+          <ScalarProperty Name="Users" ColumnName="Users" />
+          <ScalarProperty Name="SummaryId" ColumnName="SummaryId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Vendors">
+      <EntityTypeMapping TypeName="x360ceModel.Vendor">
+        <MappingFragment StoreEntitySet="x360ce_Vendors">
+          <ScalarProperty Name="WebSite" ColumnName="WebSite" />
+          <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+          <ScalarProperty Name="VendorName" ColumnName="VendorName" />
+          <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Products">
+      <EntityTypeMapping TypeName="x360ceModel.Product">
+        <MappingFragment StoreEntitySet="x360ce_Products">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="VendorId" ColumnName="VendorId" />
+          <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserInstances">
+      <EntityTypeMapping TypeName="x360ceModel.UserInstance">
+        <MappingFragment StoreEntitySet="x360ce_UserInstances">
+          <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+          <ScalarProperty Name="ControllerId" ColumnName="ControllerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserComputers">
+      <EntityTypeMapping TypeName="x360ceModel.UserComputer">
+        <MappingFragment StoreEntitySet="x360ce_UserComputers">
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="ComputerName" ColumnName="ComputerName" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserDevices">
+      <EntityTypeMapping TypeName="x360ceModel.UserDevice">
+        <MappingFragment StoreEntitySet="x360ce_UserDevices">
+          <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
+          <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+          <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />
+          <ScalarProperty Name="DiActuatorMask" ColumnName="DiActuatorMask" />
+          <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
+          <ScalarProperty Name="DiSliderMask" ColumnName="DiSliderMask" />
+          <ScalarProperty Name="DiAxeMask" ColumnName="DiAxeMask" />
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="DevClassDescription" ColumnName="DevClassDescription" />
+          <ScalarProperty Name="DevClassGuid" ColumnName="DevClassGuid" />
+          <ScalarProperty Name="DevParentDeviceId" ColumnName="DevParentDeviceId" />
+          <ScalarProperty Name="DevDevicePath" ColumnName="DevDevicePath" />
+          <ScalarProperty Name="DevDeviceId" ColumnName="DevDeviceId" />
+          <ScalarProperty Name="DevDescription" ColumnName="DevDescription" />
+          <ScalarProperty Name="DevRevision" ColumnName="DevRevision" />
+          <ScalarProperty Name="DevProductId" ColumnName="DevProductId" />
+          <ScalarProperty Name="DevVendorId" ColumnName="DevVendorId" />
+          <ScalarProperty Name="DevManufacturer" ColumnName="DevManufacturer" />
+          <ScalarProperty Name="HidClassDescription" ColumnName="HidClassDescription" />
+          <ScalarProperty Name="HidClassGuid" ColumnName="HidClassGuid" />
+          <ScalarProperty Name="HidParentDeviceId" ColumnName="HidParentDeviceId" />
+          <ScalarProperty Name="HidDevicePath" ColumnName="HidDevicePath" />
+          <ScalarProperty Name="HidDeviceId" ColumnName="HidDeviceId" />
+          <ScalarProperty Name="HidDescription" ColumnName="HidDescription" />
+          <ScalarProperty Name="HidRevision" ColumnName="HidRevision" />
+          <ScalarProperty Name="HidProductId" ColumnName="HidProductId" />
+          <ScalarProperty Name="HidVendorId" ColumnName="HidVendorId" />
+          <ScalarProperty Name="HidManufacturer" ColumnName="HidManufacturer" />
+          <ScalarProperty Name="CapType" ColumnName="CapType" />
+          <ScalarProperty Name="CapSubtype" ColumnName="CapSubtype" />
+          <ScalarProperty Name="CapIsHumanInterfaceDevice" ColumnName="CapIsHumanInterfaceDevice" />
+          <ScalarProperty Name="CapPovCount" ColumnName="CapPovCount" />
+          <ScalarProperty Name="CapHardwareRevision" ColumnName="CapHardwareRevision" />
+          <ScalarProperty Name="CapForceFeedbackSamplePeriod" ColumnName="CapForceFeedbackSamplePeriod" />
+          <ScalarProperty Name="CapForceFeedbackMinimumTimeResolution" ColumnName="CapForceFeedbackMinimumTimeResolution" />
+          <ScalarProperty Name="CapFlags" ColumnName="CapFlags" />
+          <ScalarProperty Name="CapFirmwareRevision" ColumnName="CapFirmwareRevision" />
+          <ScalarProperty Name="CapDriverVersion" ColumnName="CapDriverVersion" />
+          <ScalarProperty Name="CapButtonCount" ColumnName="CapButtonCount" />
+          <ScalarProperty Name="CapAxeCount" ColumnName="CapAxeCount" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductGuid" ColumnName="ProductGuid" />
+          <ScalarProperty Name="InstanceName" ColumnName="InstanceName" />
+          <ScalarProperty Name="InstanceGuid" ColumnName="InstanceGuid" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserGames">
+      <EntityTypeMapping TypeName="x360ceModel.UserGame">
+        <MappingFragment StoreEntitySet="x360ce_UserGames">
+          <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+          <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="EmulationType" ColumnName="EmulationType" />
+          <ScalarProperty Name="EnableMask" ColumnName="EnableMask" />
+          <ScalarProperty Name="AutoMapMask" ColumnName="AutoMapMask" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="Timeout" ColumnName="Timeout" />
+          <ScalarProperty Name="FakePID" ColumnName="FakePID" />
+          <ScalarProperty Name="FakeVID" ColumnName="FakeVID" />
+          <ScalarProperty Name="DInputFile" ColumnName="DInputFile" />
+          <ScalarProperty Name="DInputMask" ColumnName="DInputMask" />
+          <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
+          <ScalarProperty Name="HookMask" ColumnName="HookMask" />
+          <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="FullPath" ColumnName="FullPath" />
+          <ScalarProperty Name="FileVersion" ColumnName="FileVersion" />
+          <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="GameId" ColumnName="GameId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Programs">
+      <EntityTypeMapping TypeName="x360ceModel.Program">
+        <MappingFragment StoreEntitySet="x360ce_Programs">
+          <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
+          <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="SettingChecksum" ColumnName="SettingChecksum" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="Timeout" ColumnName="Timeout" />
+          <ScalarProperty Name="FakePID" ColumnName="FakePID" />
+          <ScalarProperty Name="FakeVID" ColumnName="FakeVID" />
+          <ScalarProperty Name="DInputFile" ColumnName="DInputFile" />
+          <ScalarProperty Name="DInputMask" ColumnName="DInputMask" />
+          <ScalarProperty Name="XInputMask" ColumnName="XInputMask" />
+          <ScalarProperty Name="HookMask" ColumnName="HookMask" />
+          <ScalarProperty Name="AutoMapMask" ColumnName="AutoMapMask" />
+          <ScalarProperty Name="EmulationType" ColumnName="EmulationType" />
+          <ScalarProperty Name="ProcessorArchitecture" ColumnName="ProcessorArchitecture" />
+          <ScalarProperty Name="FileVersion" ColumnName="FileVersion" />
+          <ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Layouts">
+      <EntityTypeMapping TypeName="x360ceModel.Layout">
+        <MappingFragment StoreEntitySet="x360ce_Layouts">
+          <ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
+          <ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
+          <ScalarProperty Name="RightThumbRight" ColumnName="RightThumbRight" />
+          <ScalarProperty Name="RightThumbLeft" ColumnName="RightThumbLeft" />
+          <ScalarProperty Name="RightThumbDown" ColumnName="RightThumbDown" />
+          <ScalarProperty Name="RightThumbButton" ColumnName="RightThumbButton" />
+          <ScalarProperty Name="RightThumbAxisY" ColumnName="RightThumbAxisY" />
+          <ScalarProperty Name="RightThumbAxisX" ColumnName="RightThumbAxisX" />
+          <ScalarProperty Name="RightShoulder" ColumnName="RightShoulder" />
+          <ScalarProperty Name="LeftTrigger" ColumnName="LeftTrigger" />
+          <ScalarProperty Name="LeftThumbUp" ColumnName="LeftThumbUp" />
+          <ScalarProperty Name="LeftThumbRight" ColumnName="LeftThumbRight" />
+          <ScalarProperty Name="LeftThumbLeft" ColumnName="LeftThumbLeft" />
+          <ScalarProperty Name="LeftThumbDown" ColumnName="LeftThumbDown" />
+          <ScalarProperty Name="LeftThumbButton" ColumnName="LeftThumbButton" />
+          <ScalarProperty Name="LeftThumbAxisY" ColumnName="LeftThumbAxisY" />
+          <ScalarProperty Name="LeftThumbAxisX" ColumnName="LeftThumbAxisX" />
+          <ScalarProperty Name="LeftShoulder" ColumnName="LeftShoulder" />
+          <ScalarProperty Name="DPadUp" ColumnName="DPadUp" />
+          <ScalarProperty Name="DPadRight" ColumnName="DPadRight" />
+          <ScalarProperty Name="DPadLeft" ColumnName="DPadLeft" />
+          <ScalarProperty Name="DPadDown" ColumnName="DPadDown" />
+          <ScalarProperty Name="DPad" ColumnName="DPad" />
+          <ScalarProperty Name="ButtonY" ColumnName="ButtonY" />
+          <ScalarProperty Name="ButtonX" ColumnName="ButtonX" />
+          <ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
+          <ScalarProperty Name="ButtonGuide" ColumnName="ButtonGuide" />
+          <ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
+          <ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
+          <ScalarProperty Name="ButtonA" ColumnName="ButtonA" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserProfiles">
+      <EntityTypeMapping TypeName="x360ceModel.UserProfile">
+        <MappingFragment StoreEntitySet="x360ce_UserProfiles">
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="ProfilePath" ColumnName="ProfilePath" />
+          <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+          <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserMacros">
+      <EntityTypeMapping TypeName="x360ceModel.UserMacro">
+        <MappingFragment StoreEntitySet="x360ce_UserMacros">
+          <ScalarProperty Name="Updated" ColumnName="Updated" />
+          <ScalarProperty Name="Created" ColumnName="Created" />
+          <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+          <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+          <ScalarProperty Name="Text" ColumnName="Text" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="MapRpmMax" ColumnName="MapRpmMax" />
+          <ScalarProperty Name="MapRpmMin" ColumnName="MapRpmMin" />
+          <ScalarProperty Name="MapRpmType" ColumnName="MapRpmType" />
+          <ScalarProperty Name="MapEventType" ColumnName="MapEventType" />
+          <ScalarProperty Name="MapRangeMax" ColumnName="MapRangeMax" />
+          <ScalarProperty Name="MapRangeMin" ColumnName="MapRangeMin" />
+          <ScalarProperty Name="MapIndex" ColumnName="MapIndex" />
+          <ScalarProperty Name="MapCode" ColumnName="MapCode" />
+          <ScalarProperty Name="MapType" ColumnName="MapType" />
+          <ScalarProperty Name="SettingId" ColumnName="SettingId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

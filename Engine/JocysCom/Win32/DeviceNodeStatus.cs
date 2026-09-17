@@ -11,7 +11,7 @@ namespace JocysCom.ClassLibrary.Win32
 	[Flags]
 	public enum DeviceNodeStatus : uint
 	{
-		/// <summary>Was enumerated by ROOT <summary>
+		/// <summary>Was enumerated by ROOT</summary>
 		DN_ROOT_ENUMERATED = 0x00000001,
 		/// <summary>Has Register_Device_Driver </summary>
 		DN_DRIVER_LOADED = 0x00000002,

@@ -67,7 +67,8 @@ namespace x360ce.Tests
 			// The list already separates the two elsewhere - Remove Leftover Pads exists precisely
 			// because a virtual controller can outlive the run that made it - so saying "made by this
 			// program" over one of those points at the wrong repair.
-			var source = Read(Path.Combine("App.v4", "Controls", "XInputDevicesUserControl.cs"));
+			// The rows are built off the interface thread, in the plan's own file.
+			var source = Read(Path.Combine("App.v4", "Common", "DInput", "XInputReorderPlan.cs"));
 			StringAssert.Contains(source, "IsOneOfOurs",
 				"The list calls every virtual controller its own, including ones left behind by an " +
 				"earlier run, which it offers no way to fix.");

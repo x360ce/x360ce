@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Threading;
 using System;
 using System.ComponentModel;
@@ -24,6 +26,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
+			// It stays pressed to say that issues are being ignored, rather than doing something and
+			// springing back, which a bar cannot tell apart on its own.
+			IgnoreAllButton.AccessibleRole = AccessibleRole.CheckButton;
 			UpdateIgnoreAllButton();
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();
@@ -72,8 +77,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// <summary>
 		/// This function will run on different thread than UI. Make sure to use Invoke for interface update.
 		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The event arguments.</param>
 		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
 			if (IsSuspended())
@@ -214,15 +219,18 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				if (TasksTimer != null)
 					TasksTimer.Dispose();
 				// Clear list.
-				var items = IssueList.ToArray();
-				IssueList.Clear();
-				// Remove events.
-				foreach (var item in items)
+				var items = IssueList?.ToArray();
+				if (items != null)
 				{
-					item.Checking -= Item_Checking;
-					item.Checked -= Item_Checked;
-					item.Fixing -= Item_Fixing;
-					item.Fixed -= Item_Fixed;
+					IssueList.Clear();
+					// Remove events.
+					foreach (var item in items)
+					{
+						item.Checking -= Item_Checking;
+						item.Checked -= Item_Checked;
+						item.Fixing -= Item_Fixing;
+						item.Fixed -= Item_Fixed;
+					}
 				}
 				if (components != null)
 					components.Dispose();
@@ -314,7 +322,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (grid.Columns[e.ColumnIndex] != SolutionColumn)
 				return;
 			var item = grid.Rows[e.RowIndex].DataBoundItem as IssueItem;
-			if (item == null || !item.FixNeedsAdmin || item.Severity == IssueSeverity.None)
+			if (item is null || !item.FixNeedsAdmin || item.Severity == IssueSeverity.None)
 				return;
 			var text = e.FormattedValue as string ?? string.Empty;
 			var width = TextRenderer.MeasureText(text, e.CellStyle.Font).Width;
@@ -361,7 +369,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			else if (column == MoreColumn)
 			{
-				e.Value = item.MoreInfo == null ? "" : "More...";
+				e.Value = item.MoreInfo is null ? "" : "More...";
 			}
 		}
 
@@ -372,9 +380,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var nextRunTime = TasksTimer.NextRunTime;
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)
-			{
 				remains = nextRunTime.Subtract(DateTime.Now);
-			}
 			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
 			ControlsHelper.SetText(NextRunLabel, nextRun);
 			var lrt = TasksTimer.LastActionDoneTime;

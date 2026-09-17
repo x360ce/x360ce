@@ -158,12 +158,19 @@ namespace x360ce.App.DInput
 								// Contains information about which axis have force feedback actuator attached.
 								ud.DiActuatorMask = actuatorMask;
 								ud.DiActuatorCount = actuatorCount;
-								CustomDiState.GetJoystickSlidersMask(dos, device);
+								// Which of the eight slider slots the device answers to. The mapping list and
+								// the input panel offer a slider only when its bit is set here.
+								ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device);
 							}
 							if (ud.DeviceEffects == null)
 							{
 								exceptionData.AppendFormat("AppHelper.GetDeviceEffects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
+								// The Direct Input tab draws the objects and effects once, when told the device
+								// changed. Told nothing, it kept what it drew before they were read: a device
+								// list read on a worker finishes after the tab has first drawn, so the lists
+								// stayed empty.
+								ud.DeviceChanged = true;
 							}
 							// If device support force feedback then...
 							if (hasForceFeedback)

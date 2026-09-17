@@ -1,4 +1,28 @@
-﻿## [4.21.30.0] - 2026-09-13
+﻿## [4.22.21.0] - 2026-09-17
+
+- Fixed: Changing the game could list a device twice or close the program.
+- Fixed: Running from inside a 32-bit game's folder stopped the controllers.
+- Fixed: Starting from a protected game folder closed the program.
+- Fixed: A device name the driver reported could stop the settings from saving.
+- Fixed: Sliders were missing from the mapping list.
+- Fixed: Removing leftover virtual controllers could freeze the program.
+- Fixed: Windows could slow the program to 125 passes a second behind a game; a wheel then swung side to side.
+- Fixed: A controller tab without a free XInput place slowed the whole program.
+- Fixed: Reading the devices or plugging in a virtual controller stopped the polling for seconds; a wheel then ran to its end stop.
+- Fixed: Reading the devices read every device on the machine; it reads the controllers and their parents.
+- Fixed: The controller pictures went dark while the devices were read.
+- Fixed: The Hardware window could close the program when a device changed.
+- Fixed: The centering spring pulsed under a light push near the centre; its force now grows with the distance.
+- Fixed: The Issues page now also lists and removes records of virtual controllers no longer present.
+- Fixed: Removing leftover controllers switched the XInput view off; it now rests a few seconds and reads again.
+- Changed: Starts faster. The devices are read while the window is built, and the program compiles ahead on spare cores.
+- Changed: The AI assistant door reaches toolbar buttons and the rows of every list, the Issues page's Remove included.
+- Added: The General tab shows every button, axis, slider and POV of the device as it is used.
+- Added: Click or drag a lit control into a mapping box to map it.
+- Added: Auto Preset recognises a steering wheel and its pedals.
+- Added: Checks for a newer version at start. Off by default.
+
+## [4.21.30.0] - 2026-09-13
 
 - Fixed: The games list could close the program while a game was added or removed.
 - Fixed: Switching game while the program was closing could close it with an error.

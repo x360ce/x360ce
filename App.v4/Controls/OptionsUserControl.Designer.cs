@@ -127,6 +127,8 @@
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsPanel = new x360ce.App.Controls.OptionsSettingsUserControl();
+			this.UpdateTabPage = new System.Windows.Forms.TabPage();
+			this.UpdatePanel = new x360ce.App.Controls.OptionsUpdateUserControl();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
@@ -160,6 +162,7 @@
 			this.HotkeysGroupBox.SuspendLayout();
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
+			this.UpdateTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
@@ -768,6 +771,7 @@
 			this.MainTabControl.Controls.Add(this.HidHideTabPage);
 			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
+			this.MainTabControl.Controls.Add(this.UpdateTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Name = "MainTabControl";
@@ -933,6 +937,25 @@
 			this.SettingsPanel.Name = "SettingsPanel";
 			this.SettingsPanel.Size = new System.Drawing.Size(186, 68);
 			this.SettingsPanel.TabIndex = 0;
+			// 
+			// UpdateTabPage
+			// 
+			this.UpdateTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.UpdateTabPage.Controls.Add(this.UpdatePanel);
+			this.UpdateTabPage.Location = new System.Drawing.Point(4, 22);
+			this.UpdateTabPage.Name = "UpdateTabPage";
+			this.UpdateTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.UpdateTabPage.Size = new System.Drawing.Size(192, 74);
+			this.UpdateTabPage.TabIndex = 6;
+			this.UpdateTabPage.Text = "Update";
+			// 
+			// UpdatePanel
+			// 
+			this.UpdatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.UpdatePanel.Location = new System.Drawing.Point(3, 3);
+			this.UpdatePanel.Name = "UpdatePanel";
+			this.UpdatePanel.Size = new System.Drawing.Size(186, 68);
+			this.UpdatePanel.TabIndex = 0;
 			// 
 			// InternetPanel
 			// 
@@ -1452,6 +1475,7 @@
 			this.HotkeysGroupBox.PerformLayout();
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
+			this.UpdateTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.HidHideButtonsPanel.ResumeLayout(false);
@@ -1547,6 +1571,8 @@
 		private System.Windows.Forms.TabPage InternetOptionsTabPage;
 		private System.Windows.Forms.TabPage SettingsTabPage;
 		internal OptionsSettingsUserControl SettingsPanel;
+		private System.Windows.Forms.TabPage UpdateTabPage;
+		public OptionsUpdateUserControl UpdatePanel;
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;
 		public OptionsInternetUserControl InternetPanel;

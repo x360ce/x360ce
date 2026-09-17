@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -13,6 +15,9 @@ namespace JocysCom.ClassLibrary.Runtime
 	//    Full     - Stack Trace will have line numbers even when exception is thrown inside non main threads.
 	//    Embedded - Stack Trace will have missing line numbers when thrown inside non-main threads.
 
+	/// <summary>
+	/// Provides data for the WritingException event, including the exception and support for cancellation.
+	/// </summary>
 	public class LogHelperEventArgs : CancelEventArgs
 	{
 		public Exception Exception { get; set; }
@@ -24,6 +29,10 @@ namespace JocysCom.ClassLibrary.Runtime
 	public partial class LogHelper
 	{
 
+		/// <summary>
+		/// Path to the directory for exception log files.
+		/// Returns OverrideLogFolder if set; otherwise the application data 'Logs' folder.
+		/// </summary>
 		public string LogsFolder
 		{
 			get
@@ -36,10 +45,16 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		/// <summary>Optional override for LogsFolder; when set, logs are written to this folder.</summary>
 		public string OverrideLogFolder = null;
 
 		#region Handling
 
+		/// <summary>
+		/// Registers exception event handlers (unhandled, first-chance, unobserved task exceptions).
+		/// Optionally accepts a custom log folder path.
+		/// </summary>
+		/// <param name="overrideLogsFolder">Custom folder path to override the default LogsFolder.</param>
 		public void InitExceptionHandlers(string overrideLogsFolder = null)
 		{
 			OverrideLogFolder = overrideLogsFolder;
@@ -65,25 +80,29 @@ namespace JocysCom.ClassLibrary.Runtime
 				TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 		}
 
+		/// <summary>
+		/// Occurs before writing an exception to log.
+		/// Subscribers can inspect the exception and cancel the write by setting Cancel on the event args.
+		/// </summary>
 		public event EventHandler<LogHelperEventArgs> WritingException;
 
 		public void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException(e.Exception);
 		}
 
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException((Exception)e.ExceptionObject);
 		}
 
 		public void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException(e.Exception);
 		}
@@ -94,7 +113,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
 		{
-			if (e == null || e.Exception == null)
+			if (e is null || e.Exception is null)
 				return;
 			WriteException(e.Exception);
 		}
@@ -103,10 +122,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Exception
 
-		/// <summary>Get native error code.</summary>
+		/// <summary>
+		/// Get native error code. Walks through inner exceptions to return the first non-zero Win32Exception.NativeErrorCode.
+		/// </summary>
+		/// <param name="ex">Exception to inspect.</param>
+		/// <returns>The first non-zero native error code found; 0 if none found.</returns>
 		public static int GetNativeErrorCode(Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			var code = 0;
 			Win32Exception w32Ex;
@@ -121,17 +144,40 @@ namespace JocysCom.ClassLibrary.Runtime
 			return code;
 		}
 
+		/// <summary>
+		/// Invokes the non-public Exception.GetClassName method via reflection to retrieve the exception's internal class name.
+		/// </summary>
+		/// <param name="ex">Exception instance.</param>
+		/// <returns>The exception class name.</returns>
 		private static string GetClassName(Exception ex)
 		{
 			var method = typeof(Exception).GetMethod("GetClassName", BindingFlags.NonPublic | BindingFlags.Instance);
 			return (string)method.Invoke(ex, null);
 		}
 
+		/// <summary>
+		/// HTML-encodes text if isHtml is true; otherwise returns original text.
+		/// </summary>
+		/// <param name="isHtml">Whether to HTML-encode the text.</param>
+		/// <param name="text">Text to process.</param>
+		/// <returns>Encoded text for HTML or original text.</returns>
 		private static string getText(bool isHtml, string text)
 		{
 			return (isHtml) ? System.Net.WebUtility.HtmlEncode(text) : text;
 		}
 
+		/// <summary>
+		/// Converts an exception to a formatted string, optionally including file/line information and HTML encoding.
+		/// </summary>
+		/// <param name="ex">Exception to convert.</param>
+		/// <param name="needFileLineInfo">Whether to include file and line number information.</param>
+		/// <param name="tf">TraceFormat specifying plain text or HTML formatting.</param>
+		/// <param name="containsFileAndLineNumber">Outputs true if file and line number were included in the formatted string.</param>
+		/// <returns>Formatted exception string with message and stack trace.</returns>
+		/// <remarks>
+		/// When TraceFormat.Html, output is HTML-encoded and wrapped in &lt;span class="Mono"&gt;.
+		/// If ErrorUseNewStackTrace is true, includes a full stack trace from the root and skips frames in LogHelper to preserve original exception location.
+		/// </remarks>
 		private string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf, out bool containsFileAndLineNumber)
 		{
 			containsFileAndLineNumber = false;
@@ -167,7 +213,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				{
 					// Get frame method.
 					var m = fullTrace.GetFrame(i).GetMethod();
-					if (m == null)
+					if (m is null)
 						continue;
 					// If same method was found then...
 					if (m.Equals(method))
@@ -208,7 +254,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static StackFrame GetFormStackFrame(Exception ex)
 		{
-			var trace = (ex == null)
+			var trace = (ex is null)
 				? new StackTrace(true)
 				: new StackTrace(ex, true);
 			for (var i = 0; i < trace.FrameCount; i++)
@@ -225,13 +271,13 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static bool IsFormStackFrame(StackFrame sf)
 		{
-			if (sf == null)
+			if (sf is null)
 				throw new ArgumentNullException(nameof(sf));
 			var method = sf.GetMethod();
-			if (method == null)
+			if (method is null)
 				return false;
 			var declaringType = method.DeclaringType;
-			if (declaringType == null)
+			if (declaringType is null)
 				return false;
 			var t = declaringType;
 			while (t != null)
@@ -245,9 +291,21 @@ namespace JocysCom.ClassLibrary.Runtime
 			return false;
 		}
 
+		/// <summary>
+		/// Formats the specified StackTrace into a string from startFrameIndex, using TraceFormat for text or HTML output.
+		/// </summary>
+		/// <param name="st">StackTrace to format.</param>
+		/// <param name="tf">TraceFormat specifying plain text, HTML, or trailing newline.</param>
+		/// <param name="startFrameIndex">Index of the first frame to include.</param>
+		/// <param name="containsFileAndLineNumber">Outputs true if any frame includes file and line number.</param>
+		/// <returns>String representation of the stack trace.</returns>
+		/// <remarks>
+		/// When TraceFormat.Html, frames are wrapped in &lt;span class="Mono"&gt; and include HTML styling.
+		/// The output includes 'at' prefixes and encodes namespaces, types, and method names, with optional file/line details.
+		/// </remarks>
 		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex, out bool containsFileAndLineNumber)
 		{
-			if (st == null)
+			if (st is null)
 				throw new ArgumentNullException(nameof(st));
 			containsFileAndLineNumber = false;
 			var isHtml = tf == TraceFormat.Html;
@@ -420,22 +478,18 @@ namespace JocysCom.ClassLibrary.Runtime
 				builder.Append("</span>");
 			return builder.ToString();
 		}
-
 		#endregion
-
 		#region ExceptionToText
-
 		public static string ExceptionToText(Exception ex)
 		{
 			var message = "";
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			AddExceptionMessage(ex, ref message);
 			if (ex.InnerException != null)
 				AddExceptionMessage(ex.InnerException, ref message);
 			return message;
 		}
-
 		/// <summary>Add information about missing libraries and DLLs</summary>
 		private static void AddExceptionMessage(Exception ex, ref string message)
 		{
@@ -446,9 +500,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Add extra exception details.
 			var s = "";
 			AddParameters(ref s, ex.Data, TraceFormat.TrailingNewLine);
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 			// Exception string to add.
 			var ex1 = ex as System.Configuration.ConfigurationErrorsException;
 			if (ex1 != null)
@@ -469,10 +521,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				message += "===============================================================\r\n";
 				message += s;
 			}
-
 		}
-
 		#endregion
-
 	}
 }

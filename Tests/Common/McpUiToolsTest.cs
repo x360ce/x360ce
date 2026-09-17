@@ -164,10 +164,17 @@ namespace x360ce.Tests
 		public void Admin_controls_exist_and_tools_are_catalogued()
 		{
 			// The list is what keeps a caller from installing a driver. A name that no longer matches
-			// a control guards nothing, and a toolbar item cannot be reached at all, so each name is
-			// checked against the page's own designer fields, which a rename changes the same day.
-			foreach (var name in McpTools.AdminControls)
+			// an element guards nothing, so each name is checked against the designer fields of the
+			// page it belongs to, which a rename changes the same day.
+			foreach (var name in McpTools.AdminControls.Where(x => x != "CleanupVirtualPadsButton"))
 				AssertField(name, typeof(Button), typeof(CheckBox));
+			// A bar entry is reached by path like any other element now, so the guard has to name it
+			// and the name has to be a real one.
+			var cleanup = typeof(x360ce.App.Controls.UserDevicesUserControl)
+				.GetField("CleanupVirtualPadsButton", BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.IsNotNull(cleanup, "CleanupVirtualPadsButton is not an element of the Devices page.");
+			Assert.AreEqual(typeof(ToolStripButton), cleanup.FieldType,
+				"CleanupVirtualPadsButton is not the kind of element the guard expects.");
 			McpCatalog.Load(typeof(McpTools));
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
 			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);

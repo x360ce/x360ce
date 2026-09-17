@@ -52,7 +52,7 @@ namespace x360ce.Tests
 		/// Only controls with the same parent share a place to be. Windows paints them back to
 		/// front in reverse order, so of an overlapping pair the earlier one is on top.
 		/// </remarks>
-		static IEnumerable<string> Covered(Control root)
+		internal static IEnumerable<string> Covered(Control root)
 		{
 			foreach (var parent in Containers(root))
 			{

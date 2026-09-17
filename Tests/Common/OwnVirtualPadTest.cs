@@ -77,7 +77,7 @@ namespace x360ce.Tests
 
 		static string[] Leftovers()
 		{
-			return VirtualDriverInstaller.GetLeftoverVirtualPads()
+			return VirtualDriverInstaller.GetLeftoverVirtualPads().Where(x => x.IsPresent).ToArray()
 				.Select(x => x.DeviceId)
 				.ToArray();
 		}

@@ -1,5 +1,6 @@
 ﻿// @under-test: App.v4/ViGEm/Client/ViGEmClient.x360ce.cs, App.v4/ViGEm/Client/ViGEmTarget.cs
 // @area: devices   @layer: integration-db
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
@@ -44,7 +45,7 @@ namespace x360ce.Tests
 		public void Before()
 		{
 			UnplugEverything();
-			var already = VirtualDriverInstaller.GetLeftoverVirtualPads();
+			var already = VirtualDriverInstaller.GetLeftoverVirtualPads().Where(x => x.IsPresent).ToArray();
 			if (already.Length > 0)
 				Assert.Inconclusive(already.Length +
 					" virtual controllers were already left behind before this ran. Remove them from " +

@@ -41,6 +41,8 @@
 		<Reference Include="System.Configuration" />
 		<!-- Untyped JSON for the MCP tests, in-box. -->
 		<Reference Include="System.Web.Extensions" />
+		<Reference Include="System.IO.Compression" />
+		<Reference Include="System.IO.Compression.FileSystem" />
 		<!-- Settings rows are entity objects, so their base type has to resolve here. -->
 		<Reference Include="System.Data.Entity" />
 		<!-- The test controller reports a DirectInput state, so the type has to resolve here too. -->

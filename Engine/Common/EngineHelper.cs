@@ -147,6 +147,42 @@ namespace x360ce.Engine
 			return info;
 		}
 
+		/// <summary>
+		/// The text with every character XML cannot hold removed.
+		/// </summary>
+		/// <remarks>
+		/// Device names arrive from drivers and from Windows, and one has carried U+FFFF, which no
+		/// XML writer accepts. The settings save then failed as a whole. A name one character
+		/// short is saved; a name that cannot be saved loses every setting with it.
+		/// </remarks>
+		public static string ToXmlText(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			StringBuilder clean = null;
+			for (var i = 0; i < text.Length; i++)
+			{
+				var c = text[i];
+				var pair = char.IsHighSurrogate(c) && i + 1 < text.Length && System.Xml.XmlConvert.IsXmlSurrogatePair(text[i + 1], c);
+				var keep = pair || System.Xml.XmlConvert.IsXmlChar(c);
+				if (keep)
+				{
+					if (clean != null)
+					{
+						clean.Append(c);
+						if (pair)
+							clean.Append(text[i + 1]);
+					}
+					if (pair)
+						i++;
+					continue;
+				}
+				if (clean == null)
+					clean = new StringBuilder(text, 0, i, text.Length);
+			}
+			return clean == null ? text : clean.ToString();
+		}
+
 		public static Guid GetFileChecksum(string fileName)
 		{
 			var file = new FileStream(fileName, FileMode.Open);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -52,6 +53,67 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>One controller, as the person sees it in the list.</summary>
+		/// <summary>One row per controller on the machine, in the order XInput has them, unplaced ones last.</summary>
+		/// <remarks>
+		/// Reads the device tree, so it runs on a worker or the device thread, never on the interface.
+		/// One row per piece of hardware, not per face: a controller is several devices and a person
+		/// thinks of it as one thing.
+		/// </remarks>
+		public static List<Entry> ReadEntries()
+		{
+			var entries = new List<Entry>();
+			var all = XInputPlaces.ReadMachine();
+			var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
+			var places = XInputPlaces.Resolve(all, byId);
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var device in all.Where(XInputPlaces.IsXInputCapable))
+			{
+				var hardware = XInputPlaces.HardwareOf(device, byId);
+				if (!seen.Add(hardware))
+					continue;
+				int place;
+				if (!places.TryGetValue(hardware, out place))
+					place = XInputPlaces.Unknown;
+				DeviceInfo hardwareInfo;
+				var name = byId.TryGetValue(hardware, out hardwareInfo) && !string.IsNullOrEmpty(hardwareInfo.Description)
+					? hardwareInfo.Description
+					: device.Description;
+				entries.Add(new Entry
+				{
+					HardwareId = hardware,
+					Name = name,
+					IsVirtual = VirtualDriverInstaller.IsVirtualPad(device, byId),
+					IsOurs = VirtualDriverInstaller.IsOneOfOurs(device, byId),
+					Pad = PadHolding(place),
+					Place = place,
+				});
+			}
+			// The order XInput has them is the order a game sees, which is the order worth arguing with.
+			entries.Sort((a, b) =>
+			{
+				var pa = a.Place < 0 ? int.MaxValue : a.Place;
+				var pb = b.Place < 0 ? int.MaxValue : b.Place;
+				return pa != pb ? pa.CompareTo(pb) : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
+			});
+			return entries;
+		}
+
+		/// <summary>Which controller tab has its controller in this place, or zero.</summary>
+		/// <remarks>
+		/// Asked of what was watched rather than worked out from the number: the place a tab's controller
+		/// is in is not the tab's own number, which is the whole reason the Virtual Device page exists.
+		/// </remarks>
+		static int PadHolding(int place)
+		{
+			var helper = Global.DHelper;
+			if (helper == null || place < 0)
+				return 0;
+			for (var pad = 0; pad < helper.XiPlaceForPad.Length; pad++)
+				if (helper.XiPlaceForPad[pad] == place)
+					return pad + 1;
+			return 0;
+		}
+
 		public class Entry
 		{
 			public string HardwareId;

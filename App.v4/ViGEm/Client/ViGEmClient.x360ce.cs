@@ -368,32 +368,6 @@ namespace Nefarius.ViGEm.Client
 			libHandle = IntPtr.Zero;
 		}
 
-		public static DeviceInfo[] GetVirtualDevices()
-		{
-			var list = new List<DeviceInfo>();
-			var devices = DeviceDetector.GetInterfaces();
-			for (int i = 0; i < devices.Length; i++)
-			{
-				var isVirtual = false;
-				var device = devices[i];
-				DeviceInfo p = device;
-				do
-				{
-					p = DeviceDetector.GetParentDevice(p.DeviceId);
-					if (p != null && VirtualDriverInstaller.ViGEmBusHardwareIds.Any(x => string.Compare(p.HardwareIds, x, true) == 0))
-					{
-						isVirtual = true;
-						break;
-					}
-				} while (p != null);
-				if (isVirtual)
-				{
-					list.Add(device);
-				}
-			}
-			return list.ToArray();
-		}
-
 		#endregion
 
 	}

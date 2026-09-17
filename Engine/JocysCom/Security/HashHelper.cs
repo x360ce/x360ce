@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.ComponentModel;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,7 +18,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] keyBytes = encoding.GetBytes(key);
 			byte[] valueBytes = encoding.GetBytes(value);
@@ -27,7 +29,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] keyBytes = encoding.GetBytes(key);
 			return GetGuid(algorithm, keyBytes, value);
@@ -47,7 +49,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] bytes = encoding.GetBytes(value);
 			return GetGuid(algorithm, bytes);
@@ -69,7 +71,7 @@ namespace JocysCom.ClassLibrary.Security
 		)
 		{
 			// This method is equivalent to the FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read).
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			using (var stream = System.IO.File.OpenRead(path))
 			{

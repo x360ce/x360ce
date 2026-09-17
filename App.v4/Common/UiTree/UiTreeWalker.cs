@@ -10,7 +10,7 @@ namespace x360ce.App.UiTree
 	/// Everything the designer created is walked, including pages and panels not on screen at the
 	/// moment, because a page nobody has clicked yet is still a feature of the program.
 	/// </remarks>
-	public static class UiTreeWalker
+	public static partial class UiTreeWalker
 	{
 		/// <summary>Describes a control and everything inside it.</summary>
 		/// <param name="control">Control to start from, usually the main window.</param>
@@ -33,8 +33,7 @@ namespace x360ce.App.UiTree
 			foreach (var child in ChildrenOf(control))
 			{
 				// A control without a name cannot be addressed, so it and its subtree carry no path.
-				var childPath = path == null || string.IsNullOrEmpty(child.Name) ? null : path.Length == 0 ? child.Name : path + "/" + child.Name;
-				var childNode = Read(child, raw, childPath);
+				var childNode = Read(child, raw, ChildPath(path, child.Name));
 				if (childNode != null)
 					Attach(node, childNode, raw);
 			}
@@ -42,32 +41,77 @@ namespace x360ce.App.UiTree
 			{
 				if (!raw && IsSpacer(item))
 					continue;
-				Attach(node, Read(item, raw), raw);
+				Attach(node, Read(item, raw, ChildPath(path, item.Name)), raw);
 			}
+			AddRows(node, control as DataGridView, path);
 			return node;
 		}
 
-		/// <summary>The one control a path names, or null. Paths are control names from the root's children down, joined by '/'. A segment that matches two siblings names neither.</summary>
-		public static Control Find(Control root, string path)
+		/// <summary>Describes whatever a path named: a control, a bar entry, a grid row or a cell.</summary>
+		public static UiNode Read(object element, bool raw, string path)
+		{
+			var control = element as Control;
+			if (control != null)
+				return Read(control, raw, path);
+			var item = element as ToolStripItem;
+			if (item != null)
+				return Read(item, raw, path);
+			var row = element as DataGridViewRow;
+			if (row != null)
+				return Read(row, path);
+			var cell = element as DataGridViewCell;
+			return cell == null ? null : Read(cell, path);
+		}
+
+		/// <summary>
+		/// The one element a path names, or null. Paths are names from the root's children down,
+		/// joined by '/': control names, then a bar entry's name, or 'rows' and an index inside a
+		/// grid and a column name inside a row. A segment that matches two siblings names neither.
+		/// </summary>
+		public static object Find(Control root, string path)
 		{
 			if (root == null || string.IsNullOrEmpty(path))
 				return null;
-			var current = root;
-			foreach (var name in path.Split('/'))
+			object current = root;
+			var names = path.Split('/');
+			for (var i = 0; i < names.Length; i++)
 			{
-				if (name.Length == 0)
+				if (names[i].Length == 0)
 					return null;
-				var matches = ChildrenOf(current).Where(c => c.Name == name).Take(2).ToList();
-				if (matches.Count != 1)
+				// A row is named by two segments together, because an index alone would be a name a
+				// column could also carry.
+				var grid = current as DataGridView;
+				if (grid != null && names[i] == RowsSegment)
+				{
+					if (i + 1 == names.Length)
+						return null;
+					current = RowOf(grid, names[++i]);
+				}
+				else
+				{
+					current = ChildOf(current, names[i]);
+				}
+				if (current == null)
 					return null;
-				current = matches[0];
 			}
 			return current;
 		}
 
-		/// <summary>What a control holds, as text. Null for controls that hold nothing, and for what must not be read out.</summary>
-		public static string GetValue(Control control)
+		/// <summary>What an element holds, as text. Null for elements that hold nothing, and for what must not be read out.</summary>
+		public static string GetValue(object element)
 		{
+			var item = element as ToolStripItem;
+			if (item != null)
+				return GetValue(item);
+			var row = element as DataGridViewRow;
+			if (row != null)
+				return RowValue(row);
+			var gridCell = element as DataGridViewCell;
+			if (gridCell != null)
+				return TextOf(gridCell);
+			var control = element as Control;
+			if (control == null)
+				return null;
 			var check = control as CheckBox;
 			if (check != null) return check.Checked.ToString();
 			var choice = control as RadioButton;
@@ -91,9 +135,19 @@ namespace x360ce.App.UiTree
 			return null;
 		}
 
-		/// <summary>Sets a control from text. Returns null when done, otherwise why not.</summary>
-		public static string SetValue(Control control, string value)
+		/// <summary>Sets an element from text. Returns null when done, otherwise why not.</summary>
+		public static string SetValue(object element, string value)
 		{
+			var item = element as ToolStripItem;
+			if (item != null)
+				return SetValue(item, value);
+			if (element is DataGridViewRow)
+				return "A row is selected by setting the grid it is in to the row's index.";
+			if (element is DataGridViewCell)
+				return "A cell is not set. Use ui_invoke for a button in a row.";
+			var control = element as Control;
+			if (control == null)
+				return "There is nothing here to set.";
 			var check = control as CheckBox;
 			if (check != null) { bool b; if (!bool.TryParse(value, out b)) return "Expected true or false."; check.Checked = b; return null; }
 			var choice = control as RadioButton;
@@ -132,9 +186,12 @@ namespace x360ce.App.UiTree
 			return "This element is not one that is set. Use ui_invoke for buttons.";
 		}
 
-		/// <summary>Brings the pages above a control to the front, so the control is the one on screen.</summary>
-		public static void Reveal(Control control)
+		/// <summary>Brings the pages above an element to the front, so the element is the one on screen.</summary>
+		public static void Reveal(object element)
 		{
+			var control = ControlOf(element);
+			if (control == null)
+				return;
 			for (var c = control.Parent; c != null; c = c.Parent)
 			{
 				var page = c as TabPage;
@@ -149,9 +206,18 @@ namespace x360ce.App.UiTree
 		/// the pages above the button are brought to the front, because a click on a button that is
 		/// not showing does nothing and says nothing. Returns null when done, otherwise why not.
 		/// </summary>
-		public static string Invoke(Control control)
+		public static string Invoke(object element)
 		{
-			var button = control as Button;
+			var item = element as ToolStripItem;
+			if (item != null)
+				return Invoke(item);
+			var row = element as DataGridViewRow;
+			if (row != null)
+				return Invoke(row);
+			var cell = element as DataGridViewCell;
+			if (cell != null)
+				return Invoke(cell);
+			var button = element as Button;
 			if (button == null)
 				return "This element is not pressed. Use ui_set to change it.";
 			if (!button.Enabled)
@@ -159,22 +225,11 @@ namespace x360ce.App.UiTree
 			var window = button.FindForm();
 			if (window == null || !window.Visible)
 				return "The window is hidden, so nothing can be pressed. Restore it first.";
-			Reveal(control);
+			Reveal(button);
 			if (!button.CanSelect)
 				return "This button cannot be pressed now: something above it is disabled.";
 			button.PerformClick();
 			return null;
-		}
-
-		/// <summary>Describes a menu or tool strip item and everything under it.</summary>
-		static UiNode Read(ToolStripItem item, bool raw)
-		{
-			var node = Describe(item);
-			var parent = item as ToolStripDropDownItem;
-			if (parent != null)
-				foreach (ToolStripItem child in parent.DropDownItems)
-					Attach(node, Read(child, raw), raw);
-			return node;
 		}
 
 		/// <summary>
@@ -307,47 +362,6 @@ namespace x360ce.App.UiTree
 				node.Max = (int)number.Maximum;
 			}
 			return node;
-		}
-
-		static UiNode Describe(ToolStripItem item)
-		{
-			return new UiNode
-			{
-				Name = NameOf(item.AccessibleName, UiText.NameFor(item), item.Text, null),
-				Description = Clean(item.AccessibleDescription),
-				Role = RoleOf(item),
-				Id = item.Name,
-				// Whether the program means to offer it, not whether the menu happens to be open.
-				Hidden = !item.Available,
-			};
-		}
-
-		/// <summary>
-		/// A label on a bar reports something; a button does something. Telling them apart keeps a
-		/// reading of the tree from suggesting a reader can press the frame rate.
-		/// </summary>
-		static string RoleOf(ToolStripItem item)
-		{
-			if (item is ToolStripSeparator)
-				return "Separator";
-			if (item is ToolStripLabel || item is ToolStripStatusLabel)
-				return "Status";
-			if (item is ToolStripTextBox)
-				return "Text";
-			if (item is ToolStripComboBox)
-				return "List";
-			return "Command";
-		}
-
-		/// <summary>
-		/// True for a strip item that exists only to push the ones after it along. It states
-		/// nothing, and a reader cannot reach it.
-		/// </summary>
-		static bool IsSpacer(ToolStripItem item)
-		{
-			var label = item as ToolStripStatusLabel;
-			return label != null && label.Spring && string.IsNullOrWhiteSpace(label.Text)
-				&& string.IsNullOrEmpty(label.AccessibleName);
 		}
 
 		/// <summary>

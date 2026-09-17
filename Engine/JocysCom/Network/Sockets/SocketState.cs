@@ -1,4 +1,6 @@
-﻿namespace JocysCom.ClassLibrary.Network.Sockets
+﻿#nullable disable
+
+namespace JocysCom.ClassLibrary.Network.Sockets
 {
 	using System;
 	using System.Net.Sockets;

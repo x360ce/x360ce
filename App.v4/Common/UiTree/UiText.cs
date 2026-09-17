@@ -60,8 +60,10 @@ namespace x360ce.App.UiTree
 					var items = new Dictionary<string, Text>();
 					AddMainWindow(items);
 					AddControllerPanel(items);
+					AddInputPanel(items);
 					AddMapping(items);
 					AddOptions(items);
+					AddUpdateOptions(items);
 					AddLists(items);
 
 					AddMappingPickers(items);

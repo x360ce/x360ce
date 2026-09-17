@@ -451,17 +451,18 @@ namespace x360ce.App.Controls
 			// from a version number that went backwards.
 			if (!AgreedToChangeViGEmBus(installed, supplied))
 				return;
-			if (installed != null)
+			var repair = installed != null;
+			ViGEmBusTextBox.Text = repair ? "Repairing. Please Wait..." : "Installing. Please Wait...";
+			ViGEmBusInstallButton.Enabled = false;
+			// Off this thread. The Administrator copy removes and adds devices, and Windows asks this
+			// window whether each may go; a window waiting here cannot answer, and both wait for ever.
+			System.Threading.Tasks.Task.Run(() =>
 			{
-				ViGEmBusTextBox.Text = "Repairing. Please Wait...";
-				Program.RunElevated(AdminCommand.RepairViGEmBus);
-			}
-			else
-			{
-				ViGEmBusTextBox.Text = "Installing. Please Wait...";
-				DInput.DInputHelper.CheckInstallVirtualDriver();
-			}
-			RefreshViGEmBusStatus();
+				if (repair)
+					Program.RunElevated(AdminCommand.RepairViGEmBus);
+				else
+					DInput.DInputHelper.CheckInstallVirtualDriver();
+			}).ContinueWith(done => RefreshViGEmBusStatus(), System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 		/// <summary>Asks before changing a driver, and says exactly what the change is.</summary>
 		/// <remarks>
@@ -666,9 +667,7 @@ namespace x360ce.App.Controls
 			if (!Confirm(text, "Install HID Guardian"))
 				return;
 			HidGuardianTextBox.Text = "Installing. Please Wait...";
-			Program.RunElevated(AdminCommand.InstallHidGuardian);
-			ReportHidGuardianState("Install");
-			RefreshHidGuardianStatus();
+			RunHidGuardianCommand(AdminCommand.InstallHidGuardian, "Install");
 #else
 			// Install is not supported. Only uninstall is available.
 			HidGuardianTextBox.Text = "Install is not supported by this version. Only uninstall is available.";
@@ -699,16 +698,35 @@ namespace x360ce.App.Controls
 			if (!Confirm(text, "Remove HID Guardian"))
 				return;
 			HidGuardianTextBox.Text = "Uninstalling. Please Wait...";
-			Program.RunElevated(AdminCommand.UninstallHidGuardian);
-			ReportHidGuardianState("Uninstall");
-			RefreshHidGuardianStatus();
+			RunHidGuardianCommand(AdminCommand.UninstallHidGuardian, "Uninstall");
 		}
 
-		/// <summary>Report the driver state reached, measured here rather than trusted.</summary>
-		void ReportHidGuardianState(string action)
+		/// <summary>
+		/// Runs the Administrator copy for a HID Guardian change on a worker and reports the state it
+		/// left, measured rather than trusted. Off this thread because a filter on every HID device
+		/// makes Windows re-ask this window about each of them, and a window waiting here cannot answer.
+		/// </summary>
+		void RunHidGuardianCommand(AdminCommand command, string action)
 		{
-			var filter = DInput.VirtualDriverInstaller.IsHidGuardianClassFilterPresent();
-			var device = DInput.VirtualDriverInstaller.IsHidGuardianDevicePresent();
+			HidGuardianInstallButton.Enabled = false;
+			HidGuardianUninstallButton.Enabled = false;
+			System.Threading.Tasks.Task.Run(() =>
+			{
+				Program.RunElevated(command);
+				return Tuple.Create(
+					DInput.VirtualDriverInstaller.IsHidGuardianClassFilterPresent(),
+					DInput.VirtualDriverInstaller.IsHidGuardianDevicePresent());
+			}).ContinueWith(state =>
+			{
+				if (!state.IsFaulted)
+					ReportHidGuardianState(action, state.Result.Item1, state.Result.Item2);
+				RefreshHidGuardianStatus();
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		/// <summary>Report the driver state reached.</summary>
+		void ReportHidGuardianState(string action, bool filter, bool device)
+		{
 			// The unsafe combination: filter registered while the driver is gone.
 			if (filter && !device)
 			{

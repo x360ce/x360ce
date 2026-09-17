@@ -167,14 +167,11 @@ namespace x360ce.App
 		/// <summary>
 		/// Load PAD settings to form.
 		/// </summary>
-		/// <param name="padSetting">Settings to read.</param>
 		/// <param name="padIndex">Destination pad index.</param>
-		public void LoadPadSettingsIntoSelectedDevice(MapTo padIndex, PadSetting ps)
+		/// <param name="setting">The device selected on that pad, or null when none is.</param>
+		/// <param name="ps">Settings to read.</param>
+		public void LoadPadSettingsIntoSelectedDevice(MapTo padIndex, UserSetting setting, PadSetting ps)
 		{
-			// Get pad control with settings.
-			var padControl = MainForm.Current.PadControls[(int)padIndex - 1];
-			// Get selected setting.
-			var setting = padControl.GetSelectedSetting();
 			// Return if nothing selected.
 			if (setting == null)
 				return;

@@ -74,7 +74,6 @@ namespace x360ce.Engine
         /// <summary>The force the device holds now, so a poll that would set the same value sets nothing.</summary>
         int springMagnitude;
         /// <summary>The wheel is at rest inside the dead band, and stays let go of until it is well outside it.</summary>
-        bool springResting;
         /// <summary>The device refused the spring effect. Asked once, or every poll would ask and throw.</summary>
         bool springRefused;
 
@@ -441,32 +440,56 @@ namespace x360ce.Engine
             return true;
         }
 
-        /// <summary>How near the centre the spring lets go, as DirectInput counts the axis: one percent of the travel.</summary>
-        public const int SpringDeadBand = SpringCalibration.AxisMax / 100;
+        /// <summary>How far from the centre the spring reaches full strength, as a share of the travel to one side.</summary>
+        /// <remarks>
+        /// A spring's force grows with distance; this is where the growth stops. Narrow, so that a
+        /// wheel held off centre by the friction in its own gears comes to rest close to the centre:
+        /// it rests where the spring's force equals that friction, and the steeper the ramp the
+        /// nearer that is. A DirectInput spring effect could do this on the device, but its steepest
+        /// slope is full force over the whole travel, which on a geared wheel leaves the rest far
+        /// out; the loop runs a thousand times a second, which is steep enough to do it here.
+        /// </remarks>
+        public const int SpringRampPercent = 2;
+
+        /// <summary>The ramp in axis units.</summary>
+        public const int SpringRamp = SpringCalibration.Center * SpringRampPercent / 100;
+
+        /// <summary>How many force levels the ramp is cut into. Each change is a message to the device; a wheel crossing the ramp in thirty milliseconds gets eight, not thirty.</summary>
+        public const int SpringRampSteps = 8;
+
+        /// <summary>How near the centre the spring asks nothing, as DirectInput counts the axis: a fifth of a percent of the travel.</summary>
+        /// <remarks>
+        /// Small. The force just outside it is the ramp's lowest step, which is small too, so there
+        /// is no edge for the wheel to chatter across; a wide band was where a wheel came to rest
+        /// short of the centre.
+        /// </remarks>
+        public const int SpringDeadBand = SpringCalibration.AxisMax / 500;
 
         /// <summary>The spring's force for a wheel position, in percent, positive towards the high end of the axis.</summary>
         /// <remarks>
-        /// The force is the same at every angle, so the weakest setting that brings the wheel home
-        /// from one place brings it home from everywhere, and a wheel in a 200 degree range feels
-        /// the same as one in 900. Inside the dead band there is no force, so the wheel comes to
-        /// rest at the centre instead of being pushed back and forth across it, and a wheel at rest
-        /// there is let alone until it is twice the dead band away, so a jitter at the edge does
-        /// not switch the force on and off.
+        /// Beyond the ramp the force is the same at every angle, so the weakest setting that brings
+        /// the wheel home from one place brings it home from everywhere, and a wheel in a 200 degree
+        /// range feels the same as one in 900. Inside the ramp it grows with the distance, in steps,
+        /// down to nothing at the centre. It used to switch between nothing and full at the edge of
+        /// a band, and a wheel nudged gently was pushed back, let go, nudged and pushed back again,
+        /// pulsing under a finger or a small weight; a force that grows has no edge to pulse at.
         /// </remarks>
-        /// <param name="resting">Whether the wheel was at rest in the dead band. Set on the way out to what it is now.</param>
-        public static int SpringForce(int position, int strengthPercent, ref bool resting)
+        public static int SpringForce(int position, int strengthPercent)
         {
             if (strengthPercent <= 0)
                 return 0;
             var offset = position - SpringCalibration.Center;
             var distance = Math.Abs(offset);
-            if (distance <= SpringDeadBand || (resting && distance <= SpringDeadBand * 2))
-            {
-                resting = true;
+            if (distance <= SpringDeadBand)
                 return 0;
+            var percent = strengthPercent;
+            if (distance < SpringRamp)
+            {
+                // Counted from the edge of the dead band, so the first force outside it is one step.
+                var step = (int)((long)(distance - SpringDeadBand) * SpringRampSteps / (SpringRamp - SpringDeadBand)) + 1;
+                percent = strengthPercent * step / SpringRampSteps;
             }
-            resting = false;
-            return offset < 0 ? strengthPercent : -strengthPercent;
+            return offset < 0 ? percent : -percent;
         }
 
         /// <summary>How much the device resists the wheel's speed while the spring is on, per percent of spring strength, in DirectInput's units.</summary>
@@ -514,7 +537,7 @@ namespace x360ce.Engine
         {
             var percent = calibration != null
                 ? calibration.Update(position, nowMs)
-                : SpringForce(position, springStrength, ref springResting);
+                : SpringForce(position, springStrength);
             // The damping follows the setting, not the calibration, whose pushes must move the wheel freely.
             UpdateDamper(device, calibration != null ? 0 : DamperFor(position, springStrength));
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
@@ -613,7 +636,6 @@ namespace x360ce.Engine
             }
             springMagnitude = 0;
             damperCoefficient = 0;
-            springResting = false;
             springRefused = false;
         }
 

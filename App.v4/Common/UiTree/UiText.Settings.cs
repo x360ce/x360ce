@@ -55,10 +55,6 @@ namespace x360ce.App.UiTree
 				"Shares your settings so other people with the same device can use them.");
 			d["OptionsInternetUserControl.GetProgramsIncludeEnabledCheckBox"] = new Text(null,
 				"Counts only games that are switched on when choosing a default.");
-			d["OptionsInternetUserControl.CheckForUpdatesCheckBox"] = new Text(null,
-				"Looks for a newer version each time the program starts.");
-			d["OptionsInternetUserControl.CheckUpdatesButton"] = new Text("Check...",
-				"Looks for a newer version now.");
 			d["OptionsInternetUserControl.OpenSettingsFolderButton"] = new Text("Open",
 				"Opens the folder the profile identifier is taken from.");
 			d["OptionsInternetUserControl.LoginButton"] = new Text("Log In",

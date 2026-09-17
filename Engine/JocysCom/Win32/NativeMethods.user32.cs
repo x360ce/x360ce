@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -196,7 +198,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// <summary>
 		/// Retrieves a handle to the window that contains the specified point. 
 		/// </summary>
-		/// <param name="Point">The point to be checked. </param>
+		/// <param name="point">The point to be checked. </param>
 		/// <returns>
 		/// The return value is a handle to the window that contains the point.
 		/// If no window exists at the given point, the return value is NULL.

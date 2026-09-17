@@ -27,7 +27,6 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.InternetFeatures, InternetFeaturesCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
 			// Load other settings manually.
 			LoadSettings();
@@ -51,11 +50,6 @@ namespace x360ce.App.Controls
 			// Save XML settings into control.
 			var o = SettingsManager.Options;
 			o.Username = UsernameTextBox.Text;
-		}
-
-		private void CheckUpdatesButton_Click(object sender, EventArgs e)
-		{
-			MainForm.Current.ShowUpdateForm();
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)

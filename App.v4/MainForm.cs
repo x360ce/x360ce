@@ -59,7 +59,9 @@ namespace x360ce.App
 				}
 			}
 			// Initialize interface.
+			Program.StartupTrace.Mark("MainForm: before InitializeComponent");
 			InitializeComponent();
+			Program.StartupTrace.Mark("MainForm: after InitializeComponent");
 			if (IsDesignMode)
 				return;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -360,6 +362,7 @@ namespace x360ce.App
 		{
 			if (IsDesignMode)
 				return;
+			Program.StartupTrace.Mark("MainForm_Load: start");
 			// Anything an earlier run switched off to put the controllers in order, and never got
 			// to switch back on. A controller left off by a program that then stopped is one the
 			// person has to find in a window they never opened, with nothing anywhere saying who
@@ -396,7 +399,12 @@ namespace x360ce.App
 			// NotifySettingsChange will be called on setting changes.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
+			Program.StartupTrace.Mark("MainForm_Load: before SettingsManager.Load");
 			SettingsManager.Load(scheduler);
+			Program.StartupTrace.Mark("MainForm_Load: after SettingsManager.Load");
+			// The devices are read while the rest of the window is built, so they are known when
+			// the device thread starts rather than half a second after.
+			Global.DHelper.BeginDeviceListRead();
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
 			InitGameToCustomizeComboBox();
@@ -444,6 +452,7 @@ namespace x360ce.App
 					.Select(x => x.InstanceGuid).ToArray();
 				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
 			}
+			Program.StartupTrace.Mark("MainForm_Load: end");
 		}
 
 		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
@@ -509,14 +518,9 @@ namespace x360ce.App
 
 		private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
 		{
+			// Said, not acted on: the setting is the person's. The reads rest and resume by themselves.
 			if (e.Error != null)
-			{
-				ControlsHelper.BeginInvoke(() =>
-				{
-					SettingsManager.Options.GetXInputStates = false;
-					SetHeaderError(e.Error.Message);
-				});
-			}
+				ControlsHelper.BeginInvoke(() => SetHeaderError(e.Error.Message));
 		}
 
 		private void Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -625,6 +629,7 @@ namespace x360ce.App
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
 			OptionsPanel.UpdateSettingsMap();
 			OptionsPanel.InternetPanel.UpdateSettingsMap();
+			OptionsPanel.UpdatePanel.UpdateSettingsMap();
 		}
 
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
@@ -896,6 +901,7 @@ namespace x360ce.App
 					update3Enabled = false;
 					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 					AllowDHelperStart = true;
+					Program.StartupTrace.Mark("device thread start");
 					Global.DHelper.Start();
 				}
 			}
@@ -981,7 +987,7 @@ namespace x360ce.App
 			MainStatusStrip.Visible = false;
 			// Check for various issues.
 			InitIssuesPanel();
-			InitUpdateForm();
+			Program.StartupTrace.Mark("UpdateForm1: end");
 		}
 
 		private void UpdateForm2()
@@ -991,15 +997,15 @@ namespace x360ce.App
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
 			UpdateStatusAiAccessLabel();
-			CheckEncoding(SettingsManager.TmpFileName);
-			CheckEncoding(SettingsManager.IniFileName);
 			// Show status values.
 			MainStatusStrip.Visible = true;
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// The hotkey is read from the settings just loaded.
 			ApplyEmulationHotkey();
+			ScheduleUpdateProbe();
 			// Load PAD controls.
+			Program.StartupTrace.Mark("UpdateForm2: before pads");
 			PadControls = new PadControl[4];
 			for (var i = 0; i < PadControls.Length; i++)
 			{
@@ -1009,8 +1015,10 @@ namespace x360ce.App
 					Name = string.Format("ControlPad{0}", (int)mapTo),
 					Dock = DockStyle.Fill
 				};
+				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " built");
 				ControlPages[i].Controls.Add(PadControls[i]);
 				PadControls[i].InitPadControl();
+				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " initialised");
 				// Update settings manager with [Mappings] section.
 			}
 			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
@@ -1023,6 +1031,7 @@ namespace x360ce.App
 			{
 				PadControls[i].UpdateSettingsMap();
 				PadControls[i].InitPadData();
+				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " data");
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
@@ -1034,6 +1043,7 @@ namespace x360ce.App
 				Dock = DockStyle.Fill
 			};
 			AboutTabPage.Controls.Add(ControlAbout);
+			Program.StartupTrace.Mark("UpdateForm2: about built");
 
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
@@ -1044,9 +1054,11 @@ namespace x360ce.App
 			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
+			Program.StartupTrace.Mark("UpdateForm2: text applied");
 			UiTree.UiHelp.Attach(this);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
+			Program.StartupTrace.Mark("UpdateForm2: end");
 		}
 
 		/// <summary>
@@ -1093,19 +1105,6 @@ namespace x360ce.App
 		}
 
 		#region Check Files
-
-		private void CheckEncoding(string path)
-		{
-			if (!File.Exists(path))
-				return;
-			var sr = new StreamReader(path, true);
-			var content = sr.ReadToEnd();
-			sr.Close();
-			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
-			{
-				File.WriteAllText(path, content, System.Text.Encoding.Unicode);
-			}
-		}
 
 		private bool IsFileSame(string fileName)
 		{
@@ -1372,61 +1371,6 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Update Form
-
-		private Forms.UpdateForm _UpdateForm;
-		private readonly object UpdateFormLock = new object();
-
-		private void InitUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				_UpdateForm = new Forms.UpdateForm();
-			}
-		}
-
-		private void DisposeUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm != null)
-				{
-					_UpdateForm.Dispose();
-					_UpdateForm = null;
-				}
-			}
-		}
-
-		public bool? ShowUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm == null)
-					return null;
-				var oldTab = MainTabControl.SelectedTab;
-				MainTabControl.SelectedTab = CloudTabPage;
-				_UpdateForm.StartPosition = FormStartPosition.CenterParent;
-				_UpdateForm.OpenDialog();
-				ControlsHelper.CheckTopMost(_UpdateForm);
-				var result = _UpdateForm.ShowDialog();
-				_UpdateForm.CloseDialog();
-				MainTabControl.SelectedTab = oldTab;
-				return null;
-			}
-		}
-
-		public void ProcessUpdateResults(CloudMessage results)
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm == null)
-					return;
-				_UpdateForm.Step2ProcessUpdateResults(results);
-			}
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Clean up any 
 		/// being used.
@@ -1440,7 +1384,7 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeUpdateForm();
+				DisposeUpdateProbe();
 				DisposeInterfaceUpdate();
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();

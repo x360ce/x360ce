@@ -1,4 +1,5 @@
-﻿namespace JocysCom.ClassLibrary.Services.SimpleService
+﻿#if NETFRAMEWORK // .NET Framework
+namespace JocysCom.ClassLibrary.Services.SimpleService
 {
 	partial class SimpleServiceBase<T>
 	{
@@ -20,7 +21,7 @@
 			base.Dispose(disposing);
 		}
 
-		#region Component Designer generated code
+#region Component Designer generated code
 
 		/// <summary> 
 		/// Required method for Designer support - do not modify 
@@ -32,8 +33,9 @@
 			this.ServiceName = "CompanyProduct";
 		}
 
-		#endregion
+#endregion
 
 
 	}
 }
+#endif

@@ -412,6 +412,18 @@ function Test-Detections {
     & $scan
 }
 
+# The updater inside the program reads one manifest from the newest GitHub release.
+# It is written last, from the zip that will ship, and the release stops when that
+# zip does not carry the version the source says it is: a stale build must never
+# be announced as the new one.
+function Write-Manifest {
+    Write-Step "Manifest"
+    $assemblyInfo = Join-Path $root "App.v4\Properties\AssemblyInfo.cs"
+    $match = [regex]::Match((Get-Content -LiteralPath $assemblyInfo -Raw), 'AssemblyFileVersion\("([\d.]+)"\)')
+    if (-not $match.Success) { throw "AssemblyFileVersion not found in $assemblyInfo" }
+    & (Join-Path $PSScriptRoot "App_5_Manifest.ps1") -ExpectedVersion $match.Groups[1].Value | Out-Null
+}
+
 #------------------------------------------------------------------------------
 # Release.
 #------------------------------------------------------------------------------
@@ -454,5 +466,6 @@ foreach ($stage in $config.Stages) {
 Test-EmbeddedSignatures
 Test-Detections
 Write-Result
+Write-Manifest
 Write-Host ""
 Write-Host "Done in $([int]((Get-Date) - $started).TotalMinutes) min $((((Get-Date) - $started).Seconds)) sec."

@@ -21,6 +21,8 @@ namespace x360ce.App.UiTree
 				"The tool HID Hide replaced. Kept so an old installation can be removed.");
 			d["OptionsUserControl.SettingsTabPage"] = new Text("Settings",
 				"Where your settings are kept, and how to move them somewhere else.");
+			d["OptionsUserControl.UpdateTabPage"] = new Text("Update",
+				"Looks for a newer version of the program and installs it.");
 
 			// General page.
 			d["OptionsUserControl.TestingAndLoggingGroupBox"] = new Text("Testing and Logging",
@@ -190,8 +192,25 @@ namespace x360ce.App.UiTree
 				"E-mail address the account was created with.");
 			d["OptionsInternetUserControl.PasswordTextBox"] = new Text("Password",
 				"Password for the account.");
-			d["OptionsInternetUserControl.UpdateOptionsGroupBox"] = new Text("Updates",
-				"Whether the program looks for a newer version.");
+		}
+
+		/// <summary>The Update page: finding and installing a newer version.</summary>
+		static void AddUpdateOptions(Dictionary<string, Text> d)
+		{
+			d["OptionsUpdateUserControl"] = new Text("Update",
+				"Looks for a newer version of the program and installs it, step by step, in the log below.");
+			d["OptionsUpdateUserControl.CheckForUpdatesCheckBox"] = new Text(null,
+				"Looks for a newer version once a day after the program starts. Off, the program makes no request.");
+			d["OptionsUpdateUserControl.PrivacyLabel"] = new Text("What the check sends",
+				"When the check runs and the one thing it sends: this program's version, to github.com.");
+			d["OptionsUpdateUserControl.CheckButton"] = new Text("Check now",
+				"Looks for a newer version now, downloads it, checks it and installs it.");
+			d["OptionsUpdateUserControl.CheckDigitalSignatureCheckBox"] = new Text(null,
+				"Installs only a download that carries a trusted digital signature.");
+			d["OptionsUpdateUserControl.CheckVersionCheckBox"] = new Text(null,
+				"Installs only a download whose version is newer than this one and matches the release.");
+			d["OptionsUpdateUserControl.LogTextBox"] = Live("Update log",
+				"Each step of the last check and what it found.");
 		}
 
 		/// <summary>The Settings page: where settings are kept.</summary>

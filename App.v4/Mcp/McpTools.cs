@@ -22,11 +22,14 @@ namespace x360ce.App.Mcp
 		public static Control Root;
 
 		/// <summary>
-		/// Controls whose press or setting installs or removes a driver, turns on debug mode, or
-		/// sends the controller tabs' Add and Remove buttons through HID Guardian, which elevates.
-		/// Below Administer these may not be touched. Field names as in the tree. The two other
-		/// elevating actions, reorder Apply and Cleanup virtual pads, are toolbar items, which no
-		/// path reaches.
+		/// Elements whose press or setting installs or removes a driver, turns on debug mode, removes
+		/// controllers left behind by earlier runs, or sends the controller tabs' Add and Remove
+		/// buttons through HID Guardian, which elevates. Below Administer these may not be touched.
+		/// Field names as in the tree, so a bar entry is named the same way a control is. The
+		/// remaining elevating action, the XInput reorder Apply, shares its field name with the
+		/// Options page's own Apply, which administers nothing; it is left out rather than have one
+		/// name refuse both, and it states what it will do and waits for the person's answer before
+		/// it changes anything.
 		/// </summary>
 		public static string[] AdminControls =
 		{
@@ -34,6 +37,7 @@ namespace x360ce.App.Mcp
 			"HidGuardianInstallButton", "HidGuardianUninstallButton",
 			"HidGuardianConfigureAutomaticallyCheckBox",
 			"DebugModeCheckBox",
+			"CleanupVirtualPadsButton",
 		};
 
 		/// <summary>
@@ -48,7 +52,7 @@ namespace x360ce.App.Mcp
 
 		static Control RootWindow { get { return Root ?? MainForm.Current; } }
 
-		[McpTool(AiAccess.Read, "The interface as a tree: every element with its kind, name, purpose, path and current value, as JSON. Pass a path to read one branch. Sibling controls that read alike are listed once; setting the one shown sets both.")]
+		[McpTool(AiAccess.Read, "The interface as a tree: every element with its kind, name, purpose, path and current value, as JSON. Pass a path to read one branch; a grid read this way lists its rows and the buttons in them. Sibling controls that read alike are listed once; setting the one shown sets both.")]
 		public static string UiRead([Description("Element path from an earlier ui_read; omit for the whole window.")] string path = null)
 		{
 			path = path ?? "";
@@ -69,7 +73,7 @@ namespace x360ce.App.Mcp
 			return null;
 		}
 
-		[McpTool(AiAccess.Configure, "Presses a Button by path; the tabs above it are selected first. A button that opens a window answers when that window is closed. Buttons that install drivers need Administer access.")]
+		[McpTool(AiAccess.Configure, "Presses a Button by path, whether it stands on its own, on a bar, or in a grid row; the tabs above it are selected first. A button that opens a window answers when that window is closed. Buttons that install drivers need Administer access.")]
 		public static string UiInvoke([Description("Element path from ui_read.")] string path)
 		{
 			var refused = UiTreeWalker.Invoke(Resolve(path));
@@ -84,16 +88,19 @@ namespace x360ce.App.Mcp
 			seconds = Math.Max(1, Math.Min(60, seconds));
 			McpCatalog.OnUiThread(() =>
 			{
-				var control = UiTreeWalker.Find(RootWindow, path);
-				if (control == null)
+				var element = UiTreeWalker.Find(RootWindow, path);
+				if (element == null)
 					throw new InvalidOperationException("No element at " + path + ".");
+				// A frame is drawn around a control, so an entry on a bar is pointed at by its bar and
+				// a row by its grid, which is where the person has to look anyway.
+				var control = UiTreeWalker.ControlOf(element);
 				// "Show me" means the window too: a person asking cannot see a tray icon's insides.
-				var main = control.FindForm() as MainForm;
+				var main = control == null ? null : control.FindForm() as MainForm;
 				if (main != null && (main.WindowState == FormWindowState.Minimized || !main.Visible))
 					main.RestoreFromTray(true);
-				UiTreeWalker.Reveal(control);
-				var window = control.FindForm();
-				if (!control.Visible || window == null || !window.Visible || window.WindowState == FormWindowState.Minimized)
+				UiTreeWalker.Reveal(element);
+				var window = control == null ? null : control.FindForm();
+				if (control == null || !control.Visible || window == null || !window.Visible || window.WindowState == FormWindowState.Minimized)
 					throw new InvalidOperationException("The element is hidden, so there is nothing to point at.");
 				UiCallout.Show(control, text, seconds);
 			});
@@ -284,10 +291,11 @@ namespace x360ce.App.Mcp
 				throw new InvalidOperationException("No preset for " + productName + ". The Load Preset window lists the names.");
 			// The selected row is the device the tab's form shows; loading elsewhere would show one
 			// device's values under another, and the button itself works on the selection.
-			if (MainForm.Current.PadControls[controller - 1].GetSelectedSetting() == null)
+			var selected = MainForm.Current.PadControls[controller - 1].GetSelectedSetting();
+			if (selected == null)
 				throw new InvalidOperationException("No device is selected on controller " + controller + ". Map one, or select its row.");
 			MainForm.Current.UpdateTimer.Stop();
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, ps);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, selected, ps);
 			MainForm.Current.UpdateTimer.Start();
 			return null;
 		}
@@ -299,17 +307,18 @@ namespace x360ce.App.Mcp
 			return null;
 		}
 
-		/// <summary>The control a path names, refused when it is the door's own or administers below Administer.</summary>
-		static Control Resolve(string path)
+		/// <summary>The element a path names, refused when it is the door's own or administers below Administer.</summary>
+		static object Resolve(string path)
 		{
-			var control = UiTreeWalker.Find(RootWindow, path);
-			if (control == null)
+			var element = UiTreeWalker.Find(RootWindow, path);
+			if (element == null)
 				throw new InvalidOperationException("No element at " + path + ".");
-			if (DoorControls.Contains(control.Name))
+			var name = UiTreeWalker.IdOf(element);
+			if (DoorControls.Contains(name))
 				throw new InvalidOperationException("AI assistant access is changed by a person on the Options page, not through this door.");
-			if (McpCatalog.Level() < AiAccess.Administer && AdminControls.Contains(control.Name))
+			if (McpCatalog.Level() < AiAccess.Administer && AdminControls.Contains(name))
 				throw new InvalidOperationException(McpCatalog.Refusal(AiAccess.Administer));
-			return control;
+			return element;
 		}
 	}
 }

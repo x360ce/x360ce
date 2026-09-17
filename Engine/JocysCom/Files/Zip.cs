@@ -1,3 +1,5 @@
+#nullable disable
+
 using System.IO;
 using System.IO.Compression;
 
@@ -38,7 +40,7 @@ namespace JocysCom.ClassLibrary.Files
 		/// </summary>
 		/// <param name="fileName">The name of the file to compress.</param>
 		/// <param name="zipFileName">A relative or absolute path of the ZIP file.</param>
-		/// <param name="filenameInZip">New name of the file inside the ZIP.</param>
+		/// <param name="fileNameInZip">New name of the file inside the ZIP.</param>
 		public static void ZipFile(string fileName, string zipFileName = null, string fileNameInZip = null)
 		{
 			// If archive file name is not specified.

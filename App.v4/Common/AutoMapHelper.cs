@@ -65,6 +65,38 @@ namespace x360ce.App
 				ps.DPadLeft = GetButtonValue(list, null, true, "^\\[$"); // Previous Weapon
 				ps.DPadRight = GetButtonValue(list, null, true, "^\\]$"); // Next Weapon
 			}
+			else if (deviceType == DeviceType.Driving)
+			{
+				// Logitech's wheels number the face buttons the PlayStation way: 1 cross, 2 square,
+				// 3 circle, 4 triangle; the paddles are 5 right and 6 left; 9 and 10 are the small
+				// buttons. The shipped Logitech presets are the specification for this branch.
+				ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
+				ps.ButtonX = GetButtonValue(list, 1, true, "Square");
+				ps.ButtonB = GetButtonValue(list, 2, true, "Circle");
+				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
+				ps.RightShoulder = GetButtonValue(list, 4, true, "R1", "Right Paddle");
+				ps.LeftShoulder = GetButtonValue(list, 5, true, "L1", "Left Paddle");
+				ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
+				ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
+				// Steering.
+				ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel", "Steering");
+				// A pedal rests at the far end of its axis, so it is inverted: released 0, floored full.
+				var brake = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Brake");
+				var gasNames = new[] { "Accelerator", "Gas", "Throttle" };
+				if (string.IsNullOrEmpty(brake))
+				{
+					// One axis carries both pedals. It rests at the centre; the brake takes it one
+					// way and the gas the other, so each trigger is one half of it.
+					ps.LeftTrigger = GetAxisValue(list, false, true, ObjectGuid.YAxis, false, gasNames);
+					ps.RightTrigger = GetAxisValue(list, true, true, ObjectGuid.YAxis, true, gasNames);
+				}
+				else
+				{
+					ps.LeftTrigger = brake;
+					ps.RightTrigger = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, gasNames);
+				}
+				ps.DPad = GetPovValue(list);
+			}
 			else
 			{
 				// ----------------------------------------------------------------------------------------------
@@ -163,12 +195,25 @@ namespace x360ce.App
 					// Y is inverted by default.
 					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
 				}
-				// D-Pad
-				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-				ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
+				ps.DPad = GetPovValue(list);
 			}
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			return ps;
+		}
+
+		/// <summary>Return the first POV as the D-Pad setting value, if the device has one.</summary>
+		static string GetPovValue(List<DeviceObjectItem> objects)
+		{
+			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
+			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
+		}
+
+		/// <summary>True for an object a name hint given to GetAxisValue may match: an axis or a slider.</summary>
+		static bool IsAxis(DeviceObjectItem o)
+		{
+			return o.Type == ObjectGuid.XAxis || o.Type == ObjectGuid.YAxis || o.Type == ObjectGuid.ZAxis
+				|| o.Type == ObjectGuid.RxAxis || o.Type == ObjectGuid.RyAxis || o.Type == ObjectGuid.RzAxis
+				|| o.Type == ObjectGuid.Slider;
 		}
 
 		/// <summary>Return button setting value if button exists.</summary>
@@ -203,9 +248,9 @@ namespace x360ce.App
 			foreach (var name in names)
 			{
 				// Try exact match first.
-				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && string.Compare(x.Name, name, true) == 0);
+				o = objects.FirstOrDefault(x => IsAxis(x) && string.Compare(x.Name, name, true) == 0);
 				if (o == null)
-					o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Name.Contains(name));
+					o = objects.FirstOrDefault(x => IsAxis(x) && x.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
 				if (o != null)
 				{
 					if (removeIfFound)

@@ -105,9 +105,50 @@ namespace x360ce.Engine
 		/// <param name="section">The name of the section.</param>
 		/// <param name="key">The key of the element to add.</param>
 		/// <param name="value">The value of the element to add.</param>
+		/// <returns>Non-zero when written; zero when the file could not be written.</returns>
 		public int SetValue(string section, string key, string value)
 		{
+			if (!EnsureUnicode())
+				return 0;
 			return JocysCom.ClassLibrary.Win32.NativeMethods.WritePrivateProfileString(section, key, value, this.File.FullName);
+		}
+
+		/// <summary>
+		/// Makes sure the file is UTF-16 before Windows writes into it.
+		/// </summary>
+		/// <remarks>
+		/// The profile functions keep whatever encoding a file already has and create a new file as
+		/// ANSI, so a device name outside the code page would be lost. A missing file is created
+		/// empty with the UTF-16 mark, and a file in another encoding is rewritten once. The file
+		/// sits beside the program, so in a protected folder both can be refused; that is answered
+		/// as "not written" rather than thrown, because the caller is a save, not a fault.
+		/// </remarks>
+		/// <returns>True when the file is UTF-16 and can be written.</returns>
+		public bool EnsureUnicode()
+		{
+			var path = this.File.FullName;
+			try
+			{
+				if (!System.IO.File.Exists(path))
+				{
+					System.IO.File.WriteAllText(path, "", Encoding.Unicode);
+					return true;
+				}
+				using (var stream = System.IO.File.OpenRead(path))
+				{
+					var b0 = stream.ReadByte();
+					var b1 = stream.ReadByte();
+					if (b0 == 0xFF && b1 == 0xFE)
+						return true;
+				}
+				string content;
+				using (var reader = new System.IO.StreamReader(path, true))
+					content = reader.ReadToEnd();
+				System.IO.File.WriteAllText(path, content, Encoding.Unicode);
+				return true;
+			}
+			catch (UnauthorizedAccessException) { return false; }
+			catch (System.IO.IOException) { return false; }
 		}
 
 		/// <summary>

@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.ComponentModel;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +28,7 @@ namespace JocysCom.ClassLibrary.Threading
 		public override string DoActionNow(T item = null)
 		{
 			var so = SynchronizingObject;
-			if (so == null)
+			if (so is null)
 				// Run on current thread.
 				return _DoActionNow(item);
 			// Run on synchronizing object thread.
@@ -46,7 +48,7 @@ namespace JocysCom.ClassLibrary.Threading
 				SleepTimerStop();
 				// Put into another variable for thread safety.
 				var so = SynchronizingObject;
-				if (so == null)
+				if (so is null)
 				{
 					// Mark thread as running.
 					IsRunning = true;

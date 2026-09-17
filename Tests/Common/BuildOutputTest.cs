@@ -21,8 +21,6 @@ namespace x360ce.Tests
 	public class BuildOutputTest
 	{
 
-		static readonly XNamespace MsBuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-
 		static readonly string[] Applications =
 		{
 			"App.v3/x360ce.App.v3.csproj",
@@ -67,8 +65,11 @@ namespace x360ce.Tests
 		/// </summary>
 		static IEnumerable<string> LiteralIncludes(string projectPath)
 		{
+			// Matched by local name: an SDK-style project file carries no namespace, the old
+			// format carried the MSBuild one, and the items mean the same in both.
 			return XDocument.Load(projectPath)
-				.Descendants(MsBuild + "GeneratedResource")
+				.Descendants()
+				.Where(x => x.Name.LocalName == "GeneratedResource")
 				.Select(x => (string)x.Attribute("Include"))
 				.Where(x => !string.IsNullOrEmpty(x) && x.IndexOf("@(", StringComparison.Ordinal) < 0);
 		}
@@ -79,6 +80,30 @@ namespace x360ce.Tests
 			return path.Replace('/', '\\')
 				.Split('\\')
 				.Any(segment => segment.Equals(folder, StringComparison.OrdinalIgnoreCase));
+		}
+
+		/// <summary>
+		/// The names the connection strings in the engine's configuration ask for, each of which
+		/// must be embedded under exactly that name or the data model cannot open.
+		/// </summary>
+		static readonly string[] ModelMetadata =
+		{
+			"Data.x360ceModel.csdl", "Data.x360ceModel.ssdl", "Data.x360ceModel.msl",
+			"JocysCom.Security.Data.SecurityModel.csdl", "JocysCom.Security.Data.SecurityModel.ssdl", "JocysCom.Security.Data.SecurityModel.msl",
+		};
+
+		[TestMethod, TestCategory("build"), TestCategory("critical")]
+		[Description("The engine embeds its data-model metadata under the names its connection strings use")]
+		public void Engine_embeds_the_model_metadata_by_name()
+		{
+			var engine = typeof(x360ce.Engine.EngineHelper).Assembly;
+			var names = engine.GetManifestResourceNames();
+			foreach (var name in ModelMetadata)
+				Assert.IsTrue(names.Contains(name), "Missing embedded resource: " + name + ". Present: " + string.Join(", ", names.Where(x => x.EndsWith("dl", StringComparison.Ordinal))));
+			// Each one is the model section it claims to be, not an empty placeholder.
+			foreach (var name in ModelMetadata)
+				using (var stream = engine.GetManifestResourceStream(name))
+					Assert.IsTrue(stream != null && stream.Length > 1000, name + " is empty.");
 		}
 
 	}
