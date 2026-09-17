@@ -1,4 +1,4 @@
-﻿"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
+"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
 
 IMPORTANT: Please download and run digitally signed files only! If someone asks to disable antivirus or exclude X360CE app from anti-virus - DON'T! Report any suspicion in [Issues](https://github.com/x360ce/x360ce/issues) and we will try to resolve any false positive with anti-virus developers.
 
@@ -81,11 +81,11 @@ down first, so a run that is interrupted is undone at the next start.
 
 # Download v3.x
 
-Digitally Signed Application v3.2.9.82 and Libraries 3.4.1
+Digitally Signed Application v3.2.8.77 and Libraries 3.4.1
 
-Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.9.82) - for 32-bit games
+Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.8.77) - for 32-bit games
 
-Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.9.82) - for 64-bit games
+Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.8.77) - for 64-bit games
 
 DInput.dll Plugin (required for some games):
 
