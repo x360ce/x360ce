@@ -55,6 +55,7 @@ public static class W3 {
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
   [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr context);
   [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
+  [DllImport("dwmapi.dll")] public static extern int DwmGetWindowAttribute(IntPtr h, int attr, out RECT r, int size);
   [DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr h, uint m, IntPtr w, IntPtr l);
   [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr a, int x, int y, int cx, int cy, uint f);
   [DllImport("user32.dll")] public static extern bool EnumChildWindows(IntPtr h, EnumProc p, IntPtr l);
@@ -111,7 +112,17 @@ $g = [System.Drawing.Graphics]::FromImage($bmp)
 $hdc = $g.GetHdc()
 [W3]::PrintWindow($p.MainWindowHandle, $hdc, 2) | Out-Null   # 2 = PW_RENDERFULLCONTENT
 $g.ReleaseHdc($hdc)
-$bmp.Save("$OutDir\$Capture")
+# The window rectangle includes the invisible resize frame around the window, which nothing paints,
+# so the bitmap keeps it black. The frame the desktop manager draws is the visible window; crop to it.
+$f = New-Object RECT
+if ([W3]::DwmGetWindowAttribute($p.MainWindowHandle, 9, [ref]$f, [System.Runtime.InteropServices.Marshal]::SizeOf([type][RECT])) -eq 0) {   # 9 = DWMWA_EXTENDED_FRAME_BOUNDS
+    $crop = New-Object System.Drawing.Rectangle ($f.L - $r.L), ($f.T - $r.T), ($f.R - $f.L), ($f.B - $f.T)
+    $visible = $bmp.Clone($crop, $bmp.PixelFormat)
+    $visible.Save("$OutDir\$Capture")
+    $visible.Dispose()
+} else {
+    $bmp.Save("$OutDir\$Capture")
+}
 $g.Dispose(); $bmp.Dispose()
 Write-Host "captured $OutDir\$Capture; tab controls:"
 foreach ($t in @(Get-SortedTabs $p.MainWindowHandle)) {
