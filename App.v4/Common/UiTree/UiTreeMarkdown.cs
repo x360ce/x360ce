@@ -47,9 +47,9 @@ namespace x360ce.App.UiTree
 			sb.AppendLine("accept different ranges - a slider in per cent beside a box in raw units are two");
 			sb.AppendLine("different things to set, so both are kept.");
 			sb.AppendLine();
-			sb.AppendLine("Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,");
-			sb.AppendLine("`Command` and `Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`,");
-			sb.AppendLine("`Number` and `Text` are set. `Value`, `Status` and `Grid` are read, not typed in.");
+			sb.AppendLine("Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button` and");
+			sb.AppendLine("`Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`, `Number` and `Text`");
+			sb.AppendLine("are set. `Value`, `Status` and `Grid` are read, not typed in.");
 			sb.AppendLine();
 			sb.AppendLine("```");
 			sb.AppendLine(Columns("[Kind]", "Where it sits and what it is called", "What it is for"));

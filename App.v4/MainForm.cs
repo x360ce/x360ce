@@ -518,14 +518,9 @@ namespace x360ce.App
 
 		private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
 		{
+			// Said, not acted on: the setting is the person's. The reads rest and resume by themselves.
 			if (e.Error != null)
-			{
-				ControlsHelper.BeginInvoke(() =>
-				{
-					SettingsManager.Options.GetXInputStates = false;
-					SetHeaderError(e.Error.Message);
-				});
-			}
+				ControlsHelper.BeginInvoke(() => SetHeaderError(e.Error.Message));
 		}
 
 		private void Summaries_ListChanged(object sender, ListChangedEventArgs e)

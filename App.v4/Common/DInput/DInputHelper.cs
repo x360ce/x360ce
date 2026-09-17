@@ -82,6 +82,10 @@ namespace x360ce.App.DInput
 				if (_timer != null)
 					return;
 				watch.Restart();
+				// The clock starts again, so the count and the time of the last sample start again with it;
+				// left over from the previous run, they silenced the rate for as long as that run had lasted.
+				lastTime = 0;
+				currentTick = 0;
 				_timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
 				_timer.Elapsed += Timer_Elapsed;
 				_timer.Start();
@@ -368,6 +372,12 @@ namespace x360ce.App.DInput
 					line.Append(plugging != null && !plugging.IsCompleted ? "plugging" : FeedingState[i] == true ? "on" : FeedingState[i] == false ? "off" : "?");
 					line.Append(':').Append(VirtualErrors[i]);
 				}
+				// What the window's XInput view is given: whether the library is loaded and read, and each
+				// pad's place and whether that place answers as connected.
+				line.Append(",xi=").Append(SharpDX.XInput.Controller.IsLoaded ? "loaded" : "unloaded")
+					.Append(XiStatesRead ? "+read" : "+idle");
+				for (int i = 0; i < 4; i++)
+					line.Append('/').Append(XiPlaceForPad[i]).Append(LiveXiConnected[i] ? "c" : "-");
 				for (int i = 0; i < StepTicks.Length; i++)
 				{
 					// Milliseconds spent in this step during the second just measured.

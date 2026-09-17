@@ -17,9 +17,9 @@ A setting offered through several controls at once is listed once, unless they
 accept different ranges - a slider in per cent beside a box in raw units are two
 different things to set, so both are kept.
 
-Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
-`Command` and `Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`,
-`Number` and `Text` are set. `Value`, `Status` and `Grid` are read, not typed in.
+Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button` and
+`Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`, `Number` and `Text`
+are set. `Value`, `Status` and `Grid` are read, not typed in.
 
 ```
 [Kind]      Where it sits and what it is called                                         # What it is for
@@ -39,14 +39,14 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Number]    │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
 [CheckBox]  │   │       ├── Invert sensitivity                                          # Bends the middle the other way: more sensitive in the centre instead of less.
 [Toolbar]   │   │       └── Ready-made settings                                         # Common dead zone and anti-dead zone combinations, applied in one click.
-[Command]   │   │           └── Apply a ready-made setting                              # Fills the three settings above from a common combination.
-[Command]   │   │               ├── Clear                                               # Clears the dead zone, anti-dead zone and sensitivity.
-[Command]   │   │               ├── 5% DeadZone, 100% Controller Anti-DeadZone          # Sets the dead zone to 5% and the anti-dead zone to 100%.
-[Command]   │   │               ├── 100% Controller Anti-DeadZone                       # Sets the dead zone to 0% and the anti-dead zone to 100%.
-[Command]   │   │               ├── 80% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 80%.
-[Command]   │   │               ├── 60% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 60%.
-[Command]   │   │               ├── 40% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 40%.
-[Command]   │   │               └── 20% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 20%.
+[Button]    │   │           └── Apply a ready-made setting                              # Fills the three settings above from a common combination.
+[Button]    │   │               ├── Clear                                               # Clears the dead zone, anti-dead zone and sensitivity.
+[Button]    │   │               ├── 5% DeadZone, 100% Controller Anti-DeadZone          # Sets the dead zone to 5% and the anti-dead zone to 100%.
+[Button]    │   │               ├── 100% Controller Anti-DeadZone                       # Sets the dead zone to 0% and the anti-dead zone to 100%.
+[Button]    │   │               ├── 80% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 80%.
+[Button]    │   │               ├── 60% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 60%.
+[Button]    │   │               ├── 40% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 40%.
+[Button]    │   │               └── 20% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 20%.
 [Control]   │   ├── AxisToButtonUserControl                                             # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Value]     │   │   ├── Mapped control                                                  # Which control on your device works this button.
 [Slider]    │   │   ├── Press point 0..100                                              # How far the control must move before this button counts as pressed.
@@ -226,11 +226,11 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
-[Command]   │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
-[Command]   │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
-[Command]   │   │   │   ├── Auto Map                                                    # Lets the program pick a device for this controller by itself when a game starts.
-[Command]   │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
-[Command]   │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
+[Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
+[Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
+[CheckBox]  │   │   │   ├── Auto Map                                                    # Lets the program pick a device for this controller by itself when a game starts.
+[CheckBox]  │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
+[CheckBox]  │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
 [Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
@@ -246,22 +246,22 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
 [Status]    │   │   ├── Controller rate                                                 # Times a second the program reads the controllers. Higher is better.
-[Command]   │   │   ├── Interface rate                                                  # Times a second the window redraws itself. Press to stop it redrawing, which leaves the controllers being read as before.
+[CheckBox]  │   │   ├── Interface rate                                                  # Times a second the window redraws itself. Press to stop it redrawing, which leaves the controllers being read as before.
 [Status]    │   │   ├── Device reads                                                    # How many times the whole device list has been read again.
 [Status]    │   │   ├── Cloud messages                                                  # Messages waiting to be sent to the online database.
 [Status]    │   │   ├── Suspended events (hidden)                                       # Setting changes held back while a page is being filled in.
 [Status]    │   │   ├── Saving (hidden)                                                 # Shown while settings are being written to disk.
 [Status]    │   │   ├── Administrator                                                   # Whether the program is running with Administrator rights.
-[Status]    │   │   ├── AI assistant access is off                                      # Whether an assistant may read or change this program right now. Opens the Options tab.
+[Status]    │   │   ├── AI assistant access: an assistant may configure this program    # Whether an assistant may read or change this program right now. Opens the Options tab.
 [Status]    │   │   ├── No error reports                                                # Opens the error report window
 [Status]    │   │   └── XInput library                                                  # Which XInput library the program loaded, and its version.
 [Label]     │   ├── Help subject                                                        # Name of whatever the mouse is over.
 [Label]     │   ├── Help text                                                           # What whatever the mouse is over is for.
 [Toolbar]   │   ├── Game bar                                                            # Chooses the game being set up, and saves the settings.
 [List]      │   │   ├── Game                                                            # Which game the settings on every page below belong to.
-[Command]   │   │   ├── Save All                                                        # Writes every setting to disk now.
-[Command]   │   │   ├── Test... (hidden)                                                # Opens a window for trying the emulated controller without a game.
-[Command]   │   │   └── Add Game...                                                     # Sets this program up for another game.
+[Button]    │   │   ├── Save All                                                        # Writes every setting to disk now.
+[Button]    │   │   ├── Test... (hidden)                                                # Opens a window for trying the emulated controller without a game.
+[Button]    │   │   └── Add Game...                                                     # Sets this program up for another game.
 [Tabs]      │   └── Main                                                                # The four controllers, and the pages for everything else.
 [Tab]       │       ├── Controller 1                                                    # Settings for the first emulated Xbox controller.
 [Group]     │       │   └── (ControlPad1) -> PadControl                                 # Everything about one emulated Xbox controller: what works it, and how.
@@ -310,9 +310,9 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
 [Toolbar]   │       │           │   │       └── Scan location actions                   # Adds and removes the folders searched for games.
-[Command]   │       │           │   │           ├── Refresh                             # Reads the folder list again.
-[Command]   │       │           │   │           ├── Remove                              # Stops searching the selected folder.
-[Command]   │       │           │   │           └── Add...                              # Adds a folder to search for games.
+[Button]    │       │           │   │           ├── Refresh                             # Reads the folder list again.
+[Button]    │       │           │   │           ├── Remove                              # Stops searching the selected folder.
+[Button]    │       │           │   │           └── Add...                              # Adds a folder to search for games.
 [Button]    │       │           │   ├── Developer Tools...                              # Opens a window of aids for working on the program.
 [Section]   │       │           │   └── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
 [List]      │       │           │       ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
@@ -399,16 +399,16 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
 [Toolbar]   │       │       ├── Game actions                                            # Finds, adds, starts and removes games.
-[Command]   │       │       │   ├── Scan                                                # Searches the folders listed in Options for games it knows.
-[Command]   │       │       │   ├── Add...                                              # Adds a game by choosing its program file.
-[Command]   │       │       │   ├── Delete                                              # Removes the selected game from the list.
-[Command]   │       │       │   ├── Save                                                # Writes the settings file the selected game reads.
-[Command]   │       │       │   ├── Start                                               # Runs the selected game.
-[Command]   │       │       │   ├── Open...                                             # Opens the folder the selected game is installed in.
-[Command]   │       │       │   └── Show                                                # Limits the list to games that are switched on, or off.
-[Command]   │       │       │       ├── Show: All                                       # Lists every game.
-[Command]   │       │       │       ├── Show: Enabled                                   # Lists only the games that are switched on.
-[Command]   │       │       │       └── Show: Disabled                                  # Lists only the games that are switched off.
+[Button]    │       │       │   ├── Scan                                                # Searches the folders listed in Options for games it knows.
+[Button]    │       │       │   ├── Add...                                              # Adds a game by choosing its program file.
+[Button]    │       │       │   ├── Delete                                              # Removes the selected game from the list.
+[Button]    │       │       │   ├── Save                                                # Writes the settings file the selected game reads.
+[Button]    │       │       │   ├── Start                                               # Runs the selected game.
+[Button]    │       │       │   ├── Open...                                             # Opens the folder the selected game is installed in.
+[Button]    │       │       │   └── Show                                                # Limits the list to games that are switched on, or off.
+[Button]    │       │       │       ├── Show: All                                       # Lists every game.
+[Button]    │       │       │       ├── Show: Enabled                                   # Lists only the games that are switched on.
+[Button]    │       │       │       └── Show: Disabled                                  # Lists only the games that are switched off.
 [Group]     │       │       └── (GameDetailsControl)                                    # How the selected game is set up.
 [Section]   │       │           ├── Hook mask                                           # Which questions a game asks about controllers this program answers for it.
 [CheckBox]  │       │           │   ├── Hook COM                                        # Answers when the game asks Windows for a controller through COM.
@@ -459,33 +459,33 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Group]     │       │   ├── (XInputDevicesPanel)
 [Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
 [Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
-[Command]   │       │   │       ├── Move Up                                             # Moves the selected controller one place earlier.
-[Command]   │       │   │       ├── Move Down                                           # Moves the selected controller one place later.
-[Command]   │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
-[Command]   │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
+[Button]    │       │   │       ├── Move Up                                             # Moves the selected controller one place earlier.
+[Button]    │       │   │       ├── Move Down                                           # Moves the selected controller one place later.
+[Button]    │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
+[Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
 [Grid]      │       │       ├── Devices                                                 # Every controller the program can see. Unplugged ones are dimmed.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
-[Command]   │       │           ├── Refresh                                             # Reads every device again.
-[Command]   │       │           ├── Delete                                              # Forgets the selected device and its settings.
-[Command]   │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
-[Command]   │       │           ├── Add Demo Device                                     # Adds a pretend controller, for trying the program without hardware.
-[Command]   │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
-[Command]   │       │           └── HID Guardian                                        # Actions for the obsolete HID Guardian tool.
-[Command]   │       │               ├── Show Enumerated Devices                         # Lists the devices HID Guardian knows about.
-[Command]   │       │               ├── Show Hidden Devices                             # Lists the devices HID Guardian is hiding from games.
-[Command]   │       │               ├── Unhide All Devices                              # Makes every hidden device visible to games again.
-[Command]   │       │               └── Synchronize To HID Guardian                     # Hides exactly the devices that are mapped to a controller.
+[Button]    │       │           ├── Refresh                                             # Reads every device again.
+[Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.
+[Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
+[Button]    │       │           ├── Add Demo Device                                     # Adds a pretend controller, for trying the program without hardware.
+[Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
+[Button]    │       │           └── HID Guardian                                        # Actions for the obsolete HID Guardian tool.
+[Button]    │       │               ├── Show Enumerated Devices                         # Lists the devices HID Guardian knows about.
+[Button]    │       │               ├── Show Hidden Devices                             # Lists the devices HID Guardian is hiding from games.
+[Button]    │       │               ├── Unhide All Devices                              # Makes every hidden device visible to games again.
+[Button]    │       │               └── Synchronize To HID Guardian                     # Hides exactly the devices that are mapped to a controller.
 [Tab]       │       ├── Cloud                                                           # Settings waiting to be sent to or fetched from the online database.
 [Group]     │       │   └── (CloudPanel)                                                # Settings waiting to be sent to or fetched from the online database.
 [Grid]      │       │       ├── Cloud tasks                                             # Settings waiting to be sent to or fetched from the online database.
 [Toolbar]   │       │       └── Cloud actions                                           # Sends and fetches settings, and clears the queue.
-[Command]   │       │           ├── Refresh                                             # Reads the queue again.
-[Command]   │       │           ├── Upload To Cloud                                     # Sends your settings to the online database.
-[Command]   │       │           ├── Download From Cloud                                 # Fetches settings other people have shared.
+[Button]    │       │           ├── Refresh                                             # Reads the queue again.
+[Button]    │       │           ├── Upload To Cloud                                     # Sends your settings to the online database.
+[Button]    │       │           ├── Download From Cloud                                 # Fetches settings other people have shared.
 [Status]    │       │           ├── Next run                                            # How long until the queue is worked through again.
 [Status]    │       │           ├── Queue state                                         # Whether the queue is running, waiting, or stopped.
-[Command]   │       │           └── Delete                                              # Removes the selected task from the queue.
+[Button]    │       │           └── Delete                                              # Removes the selected task from the queue.
 [Tab]       │       ├── Help                                                            # Instructions for setting up a controller, and answers to common problems.
 [Value]     │       │   └── Help text                                                   # Instructions for setting up a controller, and answers to common problems.
 [Tab]       │       ├── About                                                           # Version, licence, and what changed in each release.
@@ -502,17 +502,17 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.10 (Build: 1950-02-07) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.19 (Build: 1960-05-19) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
-[Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.
-[Command]   │                   ├── Ignore                                              # Stops reporting the selected issue.
-[Command]   │                   ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
+[CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.
+[Button]    │                   ├── Ignore                                              # Stops reporting the selected issue.
+[Button]    │                   ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
 [Status]    │                   ├── Check state                                         # What the program is checking right now.
 [Status]    │                   ├── Next check                                          # How long until the checks run again.
 [Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
 [Section]   └── Tray (hidden)                                                           # The menu behind the icon in the notification area.
-[Command]       ├── Open Application                                                    # Brings the window back from the notification area.
-[Command]       ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.
-[Command]       └── Exit                                                                # Closes the program and stops the emulated controllers.
+[Button]        ├── Open Application                                                    # Brings the window back from the notification area.
+[CheckBox]      ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.
+[Button]        └── Exit                                                                # Closes the program and stops the emulated controllers.
 ```

@@ -26,6 +26,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
+			// It stays pressed to say that issues are being ignored, rather than doing something and
+			// springing back, which a bar cannot tell apart on its own.
+			IgnoreAllButton.AccessibleRole = AccessibleRole.CheckButton;
 			UpdateIgnoreAllButton();
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();

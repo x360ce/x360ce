@@ -40,6 +40,12 @@ namespace x360ce.App.Controls
 			XboxImage.StopRecording = StopRecording;
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
+			// These three stay pressed to say that something is on, rather than doing something and
+			// springing back. A bar cannot tell the two apart on its own, so it is said here: a screen
+			// reader then announces the state, and the interface tree offers them to be set.
+			EnableButton.AccessibleRole = AccessibleRole.CheckButton;
+			AutoMapButton.AccessibleRole = AccessibleRole.CheckButton;
+			GetXInputStatesCheckBox.AccessibleRole = AccessibleRole.CheckButton;
 			// Hide left/right border.
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;

@@ -154,6 +154,7 @@
     <Compile Include="Common\UiTree\UiTreeExporter.cs" />
     <Compile Include="Common\UiTree\UiTreeMarkdown.cs" />
     <Compile Include="Common\UiTree\UiTreeWalker.cs" />
+    <Compile Include="Common\UiTree\UiTreeWalker.Elements.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />

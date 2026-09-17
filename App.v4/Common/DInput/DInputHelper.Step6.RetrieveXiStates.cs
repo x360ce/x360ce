@@ -19,6 +19,31 @@ namespace x360ce.App.DInput
 		// XInput library needs to be reload.
 		public bool SettingsChanged = false;
 
+		/// <summary>How long the display reads rest after XInput fails to answer, in milliseconds.</summary>
+		/// <remarks>
+		/// XInput stops answering while Windows takes controllers away and builds them again, which
+		/// is what removing leftover controllers does. The read used to report that as a fault, and
+		/// the window answered the fault by switching the XInput view off - for good, and with the
+		/// button still showing it on. A pause is all the situation needs: the reads try again by
+		/// themselves once the controllers are back.
+		/// </remarks>
+		public const int XiReadPauseMs = 5000;
+
+		/// <summary>When the display reads may try again, after XInput failed to answer.</summary>
+		int _xiReadPausedUntil;
+
+		/// <summary>Whether the display reads are resting after XInput failed to answer.</summary>
+		public bool XiReadsPaused
+		{
+			get { return IsPaused(_xiReadPausedUntil, Environment.TickCount); }
+		}
+
+		/// <summary>True while the pause that ends at <paramref name="until"/> is still running at <paramref name="now"/>.</summary>
+		public static bool IsPaused(int until, int now)
+		{
+			return unchecked(now - until) < 0;
+		}
+
 		void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
 			// These states are shown on screen and nowhere else, and a screen cannot show more
@@ -29,6 +54,15 @@ namespace x360ce.App.DInput
 			// XInput library stays loaded, and pacing that made it load and unload all day.
 			var due = DueForDisplayRead();
 			var wanted = Controller.IsLoaded && getXInputStates;
+			if (wanted && XiReadsPaused)
+			{
+				// Resting: what was read last still stands, and nothing is asked of XInput.
+				NotePadPlaces();
+				var resting = StatesRetrieved;
+				if (resting != null)
+					resting(this, new DInputEventArgs());
+				return;
+			}
 			// Whether the states were actually read, rather than whether somebody asked for them.
 			// The setting alone was taken as the answer, so with the library not loaded nothing was
 			// read, every place reported empty, and each working controller was accused of being
@@ -64,7 +98,9 @@ namespace x360ce.App.DInput
 					}
 					if (timeout)
 					{
-						error = new Exception("gamePad.GetState(out state) timed out.");
+						_xiReadPausedUntil = unchecked(Environment.TickCount + XiReadPauseMs);
+						error = new Exception("XInput did not answer for a second; the XInput view rests for "
+							+ (XiReadPauseMs / 1000) + " seconds and then reads again.");
 					}
 					LiveXiConnected[i] = success && !timeout;
 					LiveXiStates[i] = state;

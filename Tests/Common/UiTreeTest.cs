@@ -30,7 +30,7 @@ namespace x360ce.Tests
 		static readonly string[] Actionable =
 		{
 			"Button", "CheckBox", "Choice", "List", "Slider", "Number", "Text", "Link",
-			"Grid", "Tab", "Command", "Tabs", "Toolbar", "Control", "Section",
+			"Grid", "Tab", "Tabs", "Toolbar", "Control", "Section",
 			"Value", "Status",
 		};
 
