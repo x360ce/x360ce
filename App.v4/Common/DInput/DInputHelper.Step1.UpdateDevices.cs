@@ -37,29 +37,136 @@ namespace x360ce.App.DInput
 		object UpdateDevicesLock = new object();
 		public int RefreshDevicesCount;
 
+		#region Device list read on a worker
+
+		/// <summary>What one read of the machine found: the DirectInput instances and the device tree.</summary>
+		class DeviceListRead
+		{
+			public List<DeviceInstance> Devices;
+			public DeviceInfo[] DevInfos;
+			public DeviceInfo[] IntInfos;
+			/// <summary>The DirectInput device made for each instance not yet listed, for the device thread to keep.</summary>
+			public Dictionary<Guid, Joystick> Made = new Dictionary<Guid, Joystick>();
+			/// <summary>Why the read gave nothing, or null when it succeeded.</summary>
+			public Exception Error;
+			/// <summary>How long the read took, for the engine log.</summary>
+			public long Milliseconds;
+			/// <summary>The time split by phase: DirectInput enumeration, device creation, interfaces, devices.</summary>
+			public string Phases = "";
+		}
+
+		/// <summary>How long the last worker read took, reported once in the engine log and then cleared.</summary>
+		long _deviceReadMs;
+
+		/// <summary>The phases of the last worker read, reported with <see cref="_deviceReadMs"/>.</summary>
+		volatile string _deviceReadPhases = "";
+
+		/// <summary>A finished read waiting for the device thread to take it in, or null.</summary>
+		volatile DeviceListRead _deviceListRead;
+
+		/// <summary>Whether a worker is reading the machine now. Touched by the device thread only.</summary>
+		bool _deviceListReading;
+
+		/// <summary>The DirectInput the worker enumerates with. Kept for the life of the process, like the device thread's own.</summary>
+		static DirectInput _readManager;
+
+		/// <summary>Reads the machine: three DirectInput enumerations, then only what those devices need.</summary>
+		/// <remarks>
+		/// This used to run on the device thread and read every device on the machine: seven hundred
+		/// nodes at a millisecond each, and every HID interface opened for its strings at ten. Two to
+		/// five seconds, during which every controller stopped being polled and the force feedback
+		/// stayed at whatever it last was, so a wheel under a centering spring ran to its end stop.
+		/// And the read is asked for on every arrival or removal of a HID interface, which includes
+		/// each virtual controller this program plugs in, so a start or a hotkey toggle cost ten
+		/// seconds or more of it. Now it runs on a worker, and asks only for the interfaces whose
+		/// paths the DirectInput devices report and for those devices' own chains up to the root,
+		/// which is all the device list ever looks up. The device thread takes the result in, which
+		/// costs milliseconds.
+		/// </remarks>
+		/// <param name="knownPaths">Interface path of every listed device, by instance, where one is known.</param>
+		static DeviceListRead ReadDeviceList(Dictionary<Guid, string> knownPaths)
+		{
+			var read = new DeviceListRead { Devices = new List<DeviceInstance>() };
+			var started = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				var manager = _readManager ?? (_readManager = new DirectInput());
+				read.Devices.AddRange(manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly));
+				read.Devices.AddRange(manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AttachedOnly));
+				read.Devices.AddRange(manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AttachedOnly));
+				if (Program.IsClosing)
+					return read;
+				var phase = started.ElapsedMilliseconds;
+				read.Phases = "di:" + phase;
+				var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				foreach (var instance in read.Devices)
+				{
+					string path;
+					if (knownPaths.TryGetValue(instance.InstanceGuid, out path))
+					{
+						if (!string.IsNullOrEmpty(path))
+							paths.Add(path);
+						continue;
+					}
+					// Not listed yet: the device is made here, and handed over to be kept.
+					Joystick made;
+					try { made = new Joystick(manager, instance.InstanceGuid); }
+					catch (Exception) { continue; }
+					read.Made[instance.InstanceGuid] = made;
+					if (instance.IsHumanInterfaceDevice)
+						paths.Add(made.Properties.InterfacePath ?? "");
+				}
+				read.Phases += ";made:" + (started.ElapsedMilliseconds - phase);
+				phase = started.ElapsedMilliseconds;
+				read.IntInfos = DeviceDetector.GetInterfaces((deviceId, devicePath) => paths.Contains(devicePath));
+				read.Phases += ";int:" + (started.ElapsedMilliseconds - phase);
+				phase = started.ElapsedMilliseconds;
+				read.DevInfos = DeviceDetector.GetDevices(read.IntInfos.Select(x => x.DeviceId), true);
+				read.Phases += ";dev:" + (started.ElapsedMilliseconds - phase);
+			}
+			catch (Exception ex)
+			{
+				read.Error = ex;
+			}
+			read.Milliseconds = started.ElapsedMilliseconds;
+			return read;
+		}
+
+		#endregion
+
 		void UpdateDiDevices(DirectInput manager)
 		{
 			if (!UpdateDevicesPending)
 				return;
+			var read = _deviceListRead;
+			if (read == null)
+			{
+				// The request stays open until a read comes back; the list stays as it is meanwhile.
+				if (!_deviceListReading)
+				{
+					_deviceListReading = true;
+					var known = new Dictionary<Guid, string>();
+					foreach (var ud in SettingsManager.UserDevices.ItemsToArraySyncronized())
+						known[ud.InstanceGuid] = ud.HidDevicePath;
+					System.Threading.Tasks.Task.Run(() => { _deviceListRead = ReadDeviceList(known); });
+				}
+				return;
+			}
+			_deviceListRead = null;
+			_deviceListReading = false;
+			_deviceReadMs = read.Milliseconds;
+			_deviceReadPhases = read.Phases;
 			UpdateDevicesPending = false;
+			if (read.Error != null)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(read.Error);
+				return;
+			}
 			// Make sure that interface handle is created, before starting device updates.
 			UserDevice[] deleteDevices;
 			// Add connected devices.
 			var insertDevices = new List<UserDevice>();
-			// List of connected devices (can be a very long operation).
-			var devices = new List<DeviceInstance>();
-			// Controllers.
-			var controllerInstances = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly).ToList();
-			foreach (var item in controllerInstances)
-				devices.Add(item);
-			// Pointers.
-			var pointerInstances = manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AttachedOnly).ToList();
-			foreach (var item in pointerInstances)
-				devices.Add(item);
-			// Keyboards.
-			var keyboardInstances = manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AttachedOnly).ToList();
-			foreach (var item in keyboardInstances)
-				devices.Add(item);
+			var devices = read.Devices;
 			if (Program.IsClosing)
 				return;
 			// List of connected devices.
@@ -75,10 +182,10 @@ namespace x360ce.App.DInput
 			DeviceInfo[] intInfos = null;
 			if (addedDevices.Length > 0 || updatedDevices.Length > 0)
 			{
-				devInfos = DeviceDetector.GetDevices();
-				//var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
-				intInfos = DeviceDetector.GetInterfaces();
-				//var intclasses = intInfos.Select(x => x.ClassDescription).Distinct().ToArray();
+				devInfos = read.DevInfos;
+				intInfos = read.IntInfos;
+				// A device came or went, so the places may have moved; the next pass reads them again.
+				XInputPlaces.Invalidate();
 			}
 			//Joystick    = new Guid("6f1d2b70-d5a0-11cf-bfc7-444553540000");
 			//SysMouse    = new Guid("6f1d2b60-d5a0-11cf-bfc7-444553540000");
@@ -88,6 +195,13 @@ namespace x360ce.App.DInput
 			{
 				var device = addedDevices[i];
 				var ud = new UserDevice();
+				Joystick made;
+				if (read.Made.TryGetValue(device.InstanceGuid, out made))
+				{
+					ud.Device = made;
+					ud.IsExclusiveMode = null;
+					ud.LoadCapabilities(made.Capabilities);
+				}
 				DeviceInfo hid;
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
 				// Pads this program feeds are never taken back in as devices somebody could map, or it

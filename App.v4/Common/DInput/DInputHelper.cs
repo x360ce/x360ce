@@ -131,10 +131,14 @@ namespace x360ce.App.DInput
 
 		public Exception LastException = null;
 
+		/// <summary>Timer ticks since the last frequency sample, for the engine log.</summary>
+		long _timerTicks;
+
 		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			try
 			{
+				System.Threading.Interlocked.Increment(ref _timerTicks);
 				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
 				_ResetEvent.Set();
 			}
@@ -242,6 +246,9 @@ namespace x360ce.App.DInput
 		{
 			lock (DiUpdatesLock)
 			{
+				// The places the interface shows are read on a worker, only when something has
+				// changed, and never waited for here.
+				XInputPlaces.ReadWhenStale();
 				var game = SettingsManager.CurrentGame;
 				// If game is not selected.
 				if (game != null)
@@ -333,7 +340,7 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static readonly string EngineLogPath = Environment.GetEnvironmentVariable("X360CE_ENGINE_LOG");
 
-		static void LogFrequency(long elapsedMilliseconds, long frequency)
+		void LogFrequency(long elapsedMilliseconds, long frequency)
 		{
 			if (string.IsNullOrEmpty(EngineLogPath))
 				return;
@@ -341,6 +348,26 @@ namespace x360ce.App.DInput
 			{
 				var line = new System.Text.StringBuilder();
 				line.Append(elapsedMilliseconds).Append(',').Append(frequency);
+				// What the timer did, so a slow loop can be told from a slow timer.
+				var timer = _timer;
+				line.Append(",ticks=").Append(System.Threading.Interlocked.Exchange(ref _timerTicks, 0));
+				line.Append(",timer=").Append(timer == null ? "none" : timer.UsesMultimediaTimer ? "mm" : "fallback");
+				line.Append(",interval=").Append(timer == null ? -1 : timer.Interval);
+				line.Append(",res=").Append(JocysCom.ClassLibrary.HiResTimer.CurrentResolutionMs.ToString("0.0"));
+				line.Append(",throttle=").Append(JocysCom.ClassLibrary.HiResTimer.PowerThrottlingState);
+				// How long the worker took over the last device list read taken in this second, or nothing.
+				line.Append(",read=").Append(System.Threading.Interlocked.Exchange(ref _deviceReadMs, 0));
+				line.Append('(').Append(_deviceReadPhases).Append(')');
+				// What each of the four emulated controllers is doing, so a missing one can be told from a slow loop.
+				line.Append(",pads=");
+				for (int i = 0; i < 4; i++)
+				{
+					if (i > 0)
+						line.Append('/');
+					var plugging = _plugging[i];
+					line.Append(plugging != null && !plugging.IsCompleted ? "plugging" : FeedingState[i] == true ? "on" : FeedingState[i] == false ? "off" : "?");
+					line.Append(':').Append(VirtualErrors[i]);
+				}
 				for (int i = 0; i < StepTicks.Length; i++)
 				{
 					// Milliseconds spent in this step during the second just measured.

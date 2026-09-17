@@ -1,4 +1,7 @@
-﻿using JocysCom.ClassLibrary.Runtime;
+﻿#nullable disable
+
+#if NETFRAMEWORK // .NET Framework
+using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,8 +15,15 @@ using System.Threading;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {
+	/// <summary>
+	/// Base class for hosting an ISimpleService implementation as either a Windows Service or console application.
+	/// Manages installation, event logging, lifecycle (start, stop, pause, continue), and execution loop with configurable sleep.
+	/// </summary>
 	public partial class SimpleServiceBase<T> : ServiceBase where T : ISimpleService, new()
 	{
+		/// <summary>
+		/// Configures service and event log installer components based on assembly metadata (company, product, run mode) and command-line parameters (UserName, Password).
+		/// </summary>
 		public SimpleServiceBase()
 		{
 			InitializeComponent();
@@ -55,6 +65,9 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 		#region "Service"
 
+		/// <summary>
+		/// Invoked by Service Control Manager to start the service: initializes environment and launches the worker thread asynchronously.
+		/// </summary>
 		protected override void OnStart(string[] args)
 		{
 			InitOnStart();
@@ -69,10 +82,20 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			IsSessionEnded = true;
 		}
 
+		/// <summary>
+		/// True if a Windows session end event (shutdown or logoff) has been detected.
+		/// </summary>
 		public bool IsSessionEnded { get; private set; } = false;
 
+		/// <summary>
+		/// Maximum wait time in seconds to allow graceful worker thread shutdown before aborting (default 5 minutes).
+		/// </summary>
 		public int TerminateTimeout = 5 * 60;
 
+		/// <summary>
+		/// Requests service stop, signals worker thread to terminate, waits up to TerminateTimeout seconds for a graceful shutdown,
+		/// aborts the thread on timeout, and removes session end event subscription.
+		/// </summary>
 		protected override void OnStop()
 		{
 			Service.IsStopping = true;
@@ -84,7 +107,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				{
 					LogHelper.WriteInfo("Service is busy. Waiting...");
 				}
-				// Logical delay without blocking the current thread.
+				// Logical delay without blocking the current hardware thread.
 				System.Threading.Tasks.Task.Delay(1000).Wait();
 			}
 			if (_thread.IsAlive)
@@ -107,7 +130,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				lock (serviceLock)
 				{
-					if (_service == null)
+					if (_service is null)
 						_service = new T();
 				}
 				return _service;
@@ -126,6 +149,10 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		}
 
 		Thread _thread;
+
+		/// <summary>
+		/// Starts the service execution asynchronously on a new thread, aborting any existing worker thread first.
+		/// </summary>
 		public void StartServiceAsync(object parameter)
 		{
 			// Clean up previous
@@ -138,6 +165,10 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 		#endregion
 
+		/// <summary>
+		/// Core execution loop: initializes service, optionally hosts it via WCF if T derives from MarshalByRefObject, then
+		/// repeatedly calls Service.DoAction until stopping, respecting pause and session-end flags, and enforces configured sleep interval.
+		/// </summary>
 		void StartService(object parameter)
 		{
 			Service.InitStart();
@@ -159,7 +190,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			// Sleep 5 seconds if not specified.
 			int sleepTime = string.IsNullOrEmpty(st) ? 5 : (int)TimeSpan.Parse(st).TotalSeconds;
 			// Make sure that service initialized (for some reason locks doesn't work inside Service properly.);
-			// Logical delay without blocking the current thread.
+			// Logical delay without blocking the current hardware thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
 			while (!Service.IsStopping)
 			{
@@ -173,7 +204,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				while (!skipSleep && watch.Elapsed.TotalSeconds < sleepTime)
 				{
 					if (Service.IsStopping || Service.IsPaused || IsSessionEnded) break;
-					// Logical delay without blocking the current thread.
+					// Logical delay without blocking the current hardware thread.
 					System.Threading.Tasks.Task.Delay(1000).Wait();
 				}
 			}
@@ -193,7 +224,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				lock (controllerLock)
 				{
-					if (_controller == null)
+					if (_controller is null)
 						_controller = new ServiceController(_installer.AppServiceInstaller.ServiceName);
 				}
 				return _controller;
@@ -329,7 +360,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			Console.WriteLine();
 			while ((!Service.IsStopping))
 			{
-				// Logical delay without blocking the current thread.
+				// Logical delay without blocking the current hardware thread.
 				System.Threading.Tasks.Task.Delay(500).Wait();
 			}
 			LogHelper.WriteInfo("Service is stopping...");
@@ -428,7 +459,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			// Hold till service is closed properly.
 			while (IsConsole && !IsClosing)
 			{
-				// Logical delay without blocking the current thread.
+				// Logical delay without blocking the current hardware thread.
 				System.Threading.Tasks.Task.Delay(100).Wait();
 			}
 		}
@@ -450,3 +481,4 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 	}
 }
+#endif

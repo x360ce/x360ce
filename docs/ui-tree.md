@@ -76,10 +76,22 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Value]     │   │   ├── Device type                                                     # What kind of device Windows considers this to be.
 [Value]     │   │   ├── Number of buttons                                               # How many buttons the device has.
 [Grid]      │   │   └── Button values reported by the device                            # Which buttons are pressed right now.
+[Control]   │   ├── InputChipGroup                                                      # The device's buttons, numbered as the mapping list numbers them.
+[Control]   │   ├── InputUserControl                                                    # Every control of the selected device, lit while it is used, before anything is mapped.
+[Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
+[Section]   │   │   ├── Buttons                                                         # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
+[Group]     │   │   │   └── Button chips -> InputChipGroup                              # The device's buttons, numbered as the mapping list numbers them.
+[Section]   │   │   ├── Axes                                                            # One chip per axis with its reading, lit while it is away from the centre.
+[Group]     │   │   │   └── Axis chips -> InputChipGroup                                # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
+[Section]   │   │   ├── Sliders                                                         # One chip per slider with its reading, lit while it is moved from zero.
+[Group]     │   │   │   └── Slider chips -> InputChipGroup                              # The device's sliders, numbered as the mapping list numbers them.
+[Section]   │   │   └── POVs                                                            # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
+[Group]     │   │       └── POV chips -> InputChipGroup                                 # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
 [Tabs]      │   │   ├── Controller pages                                                # Settings for this controller, grouped by the part being mapped.
 [Tab]       │   │   │   ├── General                                                     # Says which control on your device works each part of the Xbox controller.
+[Group]     │   │   │   │   ├── Input -> InputUserControl                               # Every control of the selected device, lit while it is used, before anything is mapped.
 [Value]     │   │   │   │   ├── Left trigger value                                      # What the game is being given for the left trigger right now.
 [Value]     │   │   │   │   ├── Left stick value                                        # Across and up positions the game is being given for the left stick.
 [List]      │   │   │   │   ├── Left Trigger                                            # Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.
@@ -321,9 +333,6 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
 [CheckBox]  │       │           │       │   ├── Include Enabled                         # Counts only games that are switched on when choosing a default.
 [Number]    │       │           │       │   └── Minimum instances 0..100                # How many people must use a setting before it is offered as the default.
-[Section]   │       │           │       ├── Updates (hidden)                            # Whether the program looks for a newer version.
-[CheckBox]  │       │           │       │   ├── Check for updates on startup            # Check for updates.
-[Button]    │       │           │       │   └── Check...                                # Looks for a newer version now.
 [Section]   │       │           │       ├── Online account                              # Identifies this computer to the online database.
 [Text]      │       │           │       │   ├── Computer disk                           # Disk the computer identifier is taken from.
 [Text]      │       │           │       │   ├── Profile path                            # Folder the profile identifier is taken from.
@@ -371,13 +380,21 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │       │           │   │   ├── Configure automatically                     # Configure Hid Guardian Automatically.
 [Button]    │       │           │   │   └── Refresh                                     # Checks HID Guardian again.
 [Value]     │       │           │   └── HID Guardian notes                              # Explains why HID Guardian is no longer recommended.
-[Tab]       │       │           └── Settings                                            # Where your settings are kept, and how to move them somewhere else.
-[Group]     │       │               └── (SettingsPanel)                                 # Where your settings are kept, and how to move them somewhere else.
-[Value]     │       │                   ├── Settings folder in use                      # Folder the settings are being read from and written to.
-[Button]    │       │                   ├── Open Folder                                 # Opens the settings folder in Explorer.
-[List]      │       │                   ├── Keep settings in                            # Which folder to keep settings in. Your own user folder cannot be locked by another account.
-[List]      │       │                   ├── What to do with existing settings           # Whether the settings you have are copied to the new folder, or left behind.
-[Button]    │       │                   └── Apply                                       # Moves the settings to the chosen folder and starts using it.
+[Tab]       │       │           ├── Settings                                            # Where your settings are kept, and how to move them somewhere else.
+[Group]     │       │           │   └── (SettingsPanel)                                 # Where your settings are kept, and how to move them somewhere else.
+[Value]     │       │           │       ├── Settings folder in use                      # Folder the settings are being read from and written to.
+[Button]    │       │           │       ├── Open Folder                                 # Opens the settings folder in Explorer.
+[List]      │       │           │       ├── Keep settings in                            # Which folder to keep settings in. Your own user folder cannot be locked by another account.
+[List]      │       │           │       ├── What to do with existing settings           # Whether the settings you have are copied to the new folder, or left behind.
+[Button]    │       │           │       └── Apply                                       # Moves the settings to the chosen folder and starts using it.
+[Tab]       │       │           └── Update                                              # Looks for a newer version of the program and installs it.
+[Group]     │       │               └── Update                                          # Looks for a newer version of the program and installs it, step by step, in the log below.
+[CheckBox]  │       │                   ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
+[Label]     │       │                   ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
+[Button]    │       │                   ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
+[CheckBox]  │       │                   ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
+[CheckBox]  │       │                   ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
+[Value]     │       │                   └── Update log                                  # Each step of the last check and what it found.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -485,7 +502,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.30 (Build: 2026-09-13) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.10 (Build: 1950-02-07) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

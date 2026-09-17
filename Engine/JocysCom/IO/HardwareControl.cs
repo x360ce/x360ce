@@ -1,8 +1,9 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -42,8 +43,23 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshHardwareList();
 		}
 
+		/// <summary>
+		/// DeviceDetector event handler: triggers a list refresh and logs details if viewing the Logs tab.
+		/// </summary>
+		/// <remarks>
+		/// The detector raises this on a worker thread. The tab control and the log box belong to the
+		/// interface thread, and asking a control which tab it shows from any other thread ends the
+		/// program with a cross-thread error, so the call is handed over first.
+		/// </remarks>
 		private void Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
+			if (IsDisposed || !IsHandleCreated)
+				return;
+			if (InvokeRequired)
+			{
+				BeginInvoke(new DeviceDetector.DeviceDetectorEventHandler(Detector_DeviceChanged), sender, e);
+				return;
+			}
 			RefreshHardwareList();
 			if (MainTabControl.SelectedTab != LogsTabPage)
 				return;
@@ -52,6 +68,9 @@ namespace JocysCom.ClassLibrary.IO
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
+		/// <summary>
+		/// Handles DBT_DEVNODES_CHANGED notifications by refreshing the hardware list.
+		/// </summary>
 		private void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			if (e.ChangeType == Win32.DBT.DBT_DEVNODES_CHANGED)
@@ -95,6 +114,9 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
+		/// <summary>
+		/// Enables or disables toolbar buttons based on the current device selection and its state.
+		/// </summary>
 		private void UpdateButtons()
 		{
 			DeviceInfo di = null;
@@ -153,11 +175,14 @@ namespace JocysCom.ClassLibrary.IO
 		private readonly object RefreshTimerLock = new object();
 		private System.Timers.Timer RefreshTimer;
 
+		/// <summary>
+		/// Schedules a hardware list refresh after a short delay (520ms) to debounce rapid device change events.
+		/// </summary>
 		private void RefreshHardwareList()
 		{
 			lock (RefreshTimerLock)
 			{
-				if (RefreshTimer == null)
+				if (RefreshTimer is null)
 				{
 					RefreshTimer = new System.Timers.Timer
 					{
@@ -176,6 +201,9 @@ namespace JocysCom.ClassLibrary.IO
 		private List<DeviceInfo> devices = new List<DeviceInfo>();
 		private List<DeviceInfo> allDevices = new List<DeviceInfo>();
 
+		/// <summary>
+		/// Timer elapsed handler that triggers a full device list and tree update.
+		/// </summary>
 		private void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			UpdateListAndTree(true);
@@ -183,6 +211,13 @@ namespace JocysCom.ClassLibrary.IO
 
 		private readonly object updateGridLock = new object();
 
+		/// <summary>
+		/// Refreshes UI by optionally re-scanning hardware, logging changes, and applying the current filter.
+		/// </summary>
+		/// <remarks>
+		/// When updateDevices is true, re-enumerates devices and interfaces and logs additions/removals.
+		/// Then filters and binds the resulting list to the grid and tree view.
+		/// </remarks>
 		private void UpdateListAndTree(bool updateDevices)
 		{
 			lock (updateGridLock)
@@ -205,23 +240,23 @@ namespace JocysCom.ClassLibrary.IO
 						AddLog("Added", addedInterfaces);
 						AddLog("Removed", removedInterfaces);
 					}
-					// Store new list.
+					// Store new lists.
 					devices = newDevices;
 					interfaces = newInterfaces;
-					// Note: 'devices' and 'interfaces' share same DeviceId.
+					// Note: 'devices' and 'interfaces' share the same DeviceId.
 					// Don't just select by DeviceID from 'devices'.
 					allDevices = newDevices;
 					allDevices.AddRange(newInterfaces);
 				}
 				var filter = FilterStripTextBox.Text.Trim();
 				var filtered = JocysCom.ClassLibrary.Data.Linq.ApplySearch(allDevices, filter, (x) =>
-					{
-						return string.Join(" ",
-						x.ClassDescription,
-						x.Description,
-						x.Manufacturer,
-						x.DeviceId);
-					}).ToList();
+				{
+					return string.Join(" ",
+					x.ClassDescription,
+					x.Description,
+					x.Manufacturer,
+					x.DeviceId);
+				}).ToList();
 				BindDeviceList(filtered);
 				BindDeviceTree(filtered);
 			}
@@ -240,6 +275,12 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
+		/// <summary>
+		/// Binds the filtered device list to the DataGridView with a workaround to prevent redundant selection events.
+		/// </summary>
+		/// <remarks>
+		/// Temporarily detaches SelectionChanged, sets DataSource, then re-attaches it asynchronously.
+		/// </remarks>
 		private void BindDeviceList(List<DeviceInfo> filtered)
 		{
 			// WORKAROUND: Remove SelectionChanged event.
@@ -254,6 +295,12 @@ namespace JocysCom.ClassLibrary.IO
 			DeviceListTabPage.Text = string.Format("Device List [{0}]", filtered.Count);
 		}
 
+		/// <summary>
+		/// Binds the filtered devices to the TreeView, including parent hierarchy and class icons.
+		/// </summary>
+		/// <remarks>
+		/// Clears existing nodes and icons, loads class icons, adds TreeNode entries recursively, and expands all.
+		/// </remarks>
 		private void BindDeviceTree(List<DeviceInfo> filtered)
 		{
 			var filteredWithParents = new List<DeviceInfo>();
@@ -279,6 +326,9 @@ namespace JocysCom.ClassLibrary.IO
 			DeviceTreeTabPage.Text = string.Format("Device Tree [{0}]", filteredWithParents.Count);
 		}
 
+		/// <summary>
+		/// Determines the text color for a device row: dark red for hidden, default for present, or gray for absent devices.
+		/// </summary>
 		Color GetForeColor(DeviceInfo di)
 		{
 			return di.IsHidden
@@ -288,6 +338,12 @@ namespace JocysCom.ClassLibrary.IO
 						: SystemColors.ControlDarkDark;
 		}
 
+		/// <summary>
+		/// Recursively adds tree nodes for DeviceInfo items under the specified collection.
+		/// </summary>
+		/// <remarks>
+		/// 'overrideName' is used for root nodes (e.g., machine name); child nodes use the device description.
+		/// </remarks>
 		void AddChildNodes(TreeNodeCollection nodes, DeviceInfo[] dis, List<DeviceInfo> allDevices, string overrideName = null)
 		{
 			foreach (var di in dis)
@@ -316,11 +372,14 @@ namespace JocysCom.ClassLibrary.IO
 		private System.Timers.Timer FilterTimer;
 		private readonly object FilterTimerLock = new object();
 
+		/// <summary>
+		/// Schedules a filter update after a short delay (520ms) to debounce text input.
+		/// </summary>
 		private void RefreshFilterTimer()
 		{
 			lock (FilterTimerLock)
 			{
-				if (FilterTimer == null)
+				if (FilterTimer is null)
 				{
 					FilterTimer = new System.Timers.Timer
 					{
@@ -335,6 +394,9 @@ namespace JocysCom.ClassLibrary.IO
 			FilterTimer.Start();
 		}
 
+		/// <summary>
+		/// Timer elapsed handler that applies the current filter without re-scanning hardware.
+		/// </summary>
 		private void FilterTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			UpdateListAndTree(false);
@@ -369,6 +431,12 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Clear
 
+		/// <summary>
+		/// Enumerates offline, problem, and unknown devices, logs findings, and optionally removes them upon confirmation.
+		/// </summary>
+		/// <remarks>
+		/// Runs on a background thread and marshals UI updates via the main task scheduler and Invoke.
+		/// </remarks>
 		private async Task CheckAndClean(bool clean)
 		{
 			LogTextBox.Clear();
@@ -377,73 +445,79 @@ namespace JocysCom.ClassLibrary.IO
 			var so = ControlsHelper.MainTaskScheduler;
 			await Task.Factory.StartNew(() =>
 			  {
-				  AddLogLine("Enumerating Devices...");
-				  var devices = DeviceDetector.GetDevices();
-				  var offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
-				  var problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
-				  var unknown = devices.Where(x => x.Description.Contains("Unknown")).Except(offline).Except(problem).ToArray();
-				  var list = new List<string>();
-				  if (offline.Length > 0)
-					  list.Add(string.Format("{0} offline devices.", offline.Length));
-				  if (problem.Length > 0)
-					  list.Add(string.Format("{0} problem devices.", problem.Length));
-				  if (unknown.Length > 0)
-					  list.Add(string.Format("{0} unknown devices.", unknown.Length));
-				  var message = string.Join("\r\n", list);
-				  if (list.Count == 0)
-				  {
-					  AddLogLine("No offline, problem or unknown devices found.");
-				  }
-				  else if (clean)
-				  {
-					  foreach (var item in list)
-						  AddLogLine(item);
-					  var result = DialogResult.No;
-					  ControlsHelper.Invoke(new Action(() =>
-					  {
-						  var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm
-						  {
-							  StartPosition = FormStartPosition.CenterParent
-						  };
-						  ControlsHelper.CheckTopMost(form);
-						  result = form.ShowForm(
-								  "Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
-								  "Do you want to remove devices?",
-								  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-						  form.Dispose();
-
-					  }));
-					  if (result != DialogResult.Yes)
-						  return;
-					  var devList = new List<DeviceInfo>();
-					  devList.AddRange(offline);
-					  devList.AddRange(problem);
-					  devList.AddRange(unknown);
-					  for (var i = 0; i < devList.Count; i++)
-					  {
-						  var item = devList[i];
-						  AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, devList.Count, item.Description);
-						  try
-						  {
-							  var exception = DeviceDetector.RemoveDevice(item.DeviceId);
-							  if (exception != null)
-								  AddLogLine(exception.Message);
-							  //System.Windows.Forms.Application.DoEvents();
-						  }
-						  catch (Exception ex)
-						  {
-							  AddLogLine(ex.Message);
-						  }
-					  }
-				  }
-				  AddLogLine("Done");
+				AddLogLine("Enumerating Devices...");
+				var devices = DeviceDetector.GetDevices();
+				var offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
+				var problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
+				var unknown = devices.Where(x => x.Description.Contains("Unknown")).Except(offline).Except(problem).ToArray();
+				var list = new List<string>();
+				if (offline.Length > 0)
+					list.Add(string.Format("{0} offline devices.", offline.Length));
+				if (problem.Length > 0)
+					list.Add(string.Format("{0} problem devices.", problem.Length));
+				if (unknown.Length > 0)
+					list.Add(string.Format("{0} unknown devices.", unknown.Length));
+				var message = string.Join("\r\n", list);
+				if (list.Count == 0)
+				{
+					AddLogLine("No offline, problem or unknown devices found.");
+				}
+				else if (clean)
+				{
+					foreach (var item in list)
+						AddLogLine(item);
+					var result = DialogResult.No;
+					ControlsHelper.Invoke(new Action(() =>
+					{
+						// This is a WinForms control, so the confirmation is a WinForms dialog and
+						// picks up the top-most state of the application windows it must sit above.
+						var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm
+						{
+							StartPosition = FormStartPosition.CenterParent
+						};
+						ControlsHelper.CheckTopMost(form);
+						result = form.ShowForm(
+							"Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
+							"Do you want to remove devices?",
+							MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+						form.Dispose();
+					}));
+					if (result != DialogResult.Yes)
+						return;
+					var devList = new List<DeviceInfo>();
+					devList.AddRange(offline);
+					devList.AddRange(problem);
+					devList.AddRange(unknown);
+					for (var i = 0; i < devList.Count; i++)
+					{
+						var item = devList[i];
+						AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, devList.Count, item.Description);
+						try
+						{
+							var exception = DeviceDetector.RemoveDevice(item.DeviceId);
+							if (exception != null)
+								AddLogLine(exception.Message);
+							//System.Windows.Forms.Application.DoEvents();
+						}
+						catch (Exception ex)
+						{
+							AddLogLine(ex.Message);
+						}
+					}
+				}
+				AddLogLine("Done");
 			  }, CancellationToken.None, TaskCreationOptions.LongRunning, so).ConfigureAwait(true);
 		}
-
 
 		private void AddLogLine(string format, params object[] args) =>
 			AddLog(format + "\r\n", args);
 
+		/// <summary>
+		/// Appends formatted log text to LogTextBox, trimming oldest entries to respect MaxLength.
+		/// </summary>
+		/// <remarks>
+		/// Locks the TextBox, removes full lines if overflow, appends new text, and scrolls to the end.
+		/// </remarks>
 		private void AddLog(string format, params object[] args)
 		{
 			ControlsHelper.Invoke(new Action(() =>
@@ -470,7 +544,7 @@ namespace JocysCom.ClassLibrary.IO
 						box.Select(0, delSize);
 						box.SelectedText = string.Empty;
 					}
-					// Appedn new text.
+					// Append new text.
 					box.Select(box.TextLength + 1, 0);
 					box.SelectedText = addText;
 					if (box.Visible)
@@ -521,17 +595,23 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshHardwareList();
 		}
 
+		/// <summary>
+		/// Checks if the process is running with elevated permissions; shows a warning if not.
+		/// </summary>
 		static bool IsElevated()
 		{
 			var isElevated = JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated;
 			if (!isElevated)
 
-				MessageBoxForm.Show("You must run this program as administrator for this feature to work.");
+				JocysCom.ClassLibrary.Controls.MessageBoxForm.Show("You must run this program as administrator for this feature to work.");
 			return isElevated;
 		}
 
 		#endregion
 
+		/// <summary>
+		/// Updates the Logs tab title to reflect the current log length.
+		/// </summary>
 		private void LogTextBox_TextChanged(object sender, EventArgs e)
 		{
 			LogsTabPage.Text = string.Format("Logs [{0}]", LogTextBox.TextLength);

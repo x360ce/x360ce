@@ -374,7 +374,7 @@ namespace x360ce.App.DInput
 		/// <summary>Where the controller this step acts on is now, or -1 when it holds no place.</summary>
 		static int PlaceOfEntry(XInputReorderPlan.Step step)
 		{
-			XInputPlaces.Invalidate();
+			XInputPlaces.Read();
 			return XInputPlaces.PlaceFor(step.HardwareId);
 		}
 

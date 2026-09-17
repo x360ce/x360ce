@@ -45,9 +45,18 @@ If you want `HELP` and have questions about installation or configuration, pleas
 1. Select `[Controller 1]` tab → `[General]` tab.
 2. Click on `[drop-down]` (drop-down menu with options will appear).
 3. Map `button` or `axis` by selecting `[Record]` option and pressing `button` or moving `axis` on your `controller`.
-4. Click `[Save All]` button (at top right corner of application) when done.
-5. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
-6. Launch the game and see how it works.
+4. Or use the `[Input]` column on the left: it lights every button, axis, slider and POV of your device as you use it, with its reading, before anything is mapped. Click a mapping box, then click a chip to put it there, or pick the chip up and drop it on a box; the boxes that can take it turn green while you hold it.
+5. Click `[Save All]` button (at top right corner of application) when done.
+6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
+7. Launch the game and see how it works.
+
+## Checking for a newer version
+
+The program can look for a newer release and install it, but only when asked to.
+
+1. `[Options]` tab → `[Update]` → `[Check now]` looks now, downloads the newest release, checks its size, hash, digital signature and version, and asks before restarting if a game is using the emulated controllers. Each step is written on the page.
+2. `[Check for updates on startup]` is off by default. When on, the program looks once a day, at a random moment within the first hour after it starts, and shows "version X available" at the top of the window. Nothing is installed until you click `[Check now]`.
+3. The look is one request to `github.com` for the file `latest.json` of the newest release. It sends the program's name and version and the tag of the file last seen, and nothing else about you or the computer.
 
 ## Turning emulation on and off
 
@@ -103,14 +112,11 @@ reported about that controller.
 - Install: `[Options]` tab → `[Virtual Device]` tab → ViGEm Bus `[Install]` button.
 - Uninstall: `[Options]` tab → `[Virtual Device]` tab → ViGEm Bus `[Uninstall]` button.
 
-## How to Install or Uninstall HIDGuardian When Access to Keyboard and Mouse is Lost
+## Hiding the real controller from games (HID Hide)
 
-**IMPORTANT !!! Please read before installing HIDGuardian !!!**
+A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list and tick the controller under Devices.
 
-Purpose of `HIDGuardian` is to hide original controllers from games, so that only virtual controllers are visible. Install `HIDGuardian` only if original controller prevents virtual controller functioning properly in the game.
-
-- Install: `[Options]` tab → `[HID Guardian]` tab → HID Guardian `[Install]` button.
-- Uninstall: `[Options]` tab → `[HID Guardian]` tab → HID Guardian `[Uninstall]` button.
+`HID Guardian` is the tool `HID Hide` replaced. Its author stopped it in 2023, and keyboards, mice and USB devices dropping out while it was installed were its known side effects. This version only removes it: `[Options]` tab → `[HID Guardian (obsolete)]` tab → `[Uninstall]`.
 
 **DO NOT** attempt to remove `HIDGuardian` by simply deleting it from Windows OS `Device Manager`. This can result in **losing access** to your `Mouse` and `Keyboard` and you will be forced to follow Manual Uninstall Instructions below.
 
@@ -266,6 +272,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Anything that is not a real number, such as dividing by zero, becomes 0.
 - A decimal point is always a dot, whatever language Windows is set to.
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
+- A formula can be up to 16 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
 
 ## AI assistant access
 
@@ -306,4 +313,5 @@ it. On other Windows the box says it needs a newer Windows and stays off.
 
 From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
-token to revoke access.
+token to revoke access. The token is kept with the program's settings, which every account on
+this computer can read, so it tells one program from another, not one person from another.

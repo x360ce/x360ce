@@ -32,6 +32,10 @@ namespace x360ce.Tests
 				try
 				{
 					SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
+					// Each interface thread claims the helper for itself. The helper keeps the first
+					// binding it is given, so without this a second test's Invoke waits on the first
+					// test's thread, which has ended, and the test never finishes.
+					ReleaseInvokeContext();
 					ControlsHelper.InitInvokeContext();
 					action();
 				}
@@ -40,9 +44,30 @@ namespace x360ce.Tests
 			thread.SetApartmentState(ApartmentState.STA);
 			thread.Start();
 			// Generous: the page hosts a rich text box that loads its help document on construction.
-			Assert.IsTrue(thread.Join(TimeSpan.FromSeconds(60)), "The interface thread did not finish.");
+			if (!thread.Join(TimeSpan.FromSeconds(60)))
+				Assert.Fail("The interface thread did not finish. It was here:" + Environment.NewLine + StackOf(thread));
+			// The whole chain, because the failure that matters is usually the innermost one:
+			// a list change that fails inside the grid arrives wrapped twice.
 			if (failure != null)
-				throw new AssertFailedException(failure.Message, failure);
+				throw new AssertFailedException(failure.ToString(), failure);
+		}
+
+		/// <summary>Where a thread that never came back is standing, so a hang names its cause.</summary>
+		/// <remarks>
+		/// Reading another thread's stack is only allowed while that thread is suspended, and both
+		/// calls are marked obsolete because the thread may be holding a lock at that moment. Here
+		/// the thread has already failed the test and is never resumed, so nothing waits on it.
+		/// </remarks>
+		static string StackOf(Thread thread)
+		{
+#pragma warning disable 618
+			try
+			{
+				thread.Suspend();
+				return new StackTrace(thread, true).ToString();
+			}
+			catch (Exception ex) { return "(stack unavailable: " + ex.Message + ")"; }
+#pragma warning restore 618
 		}
 
 		/// <summary>
@@ -325,10 +350,36 @@ namespace x360ce.Tests
 			}, TimeSpan.FromSeconds(15), "the window to come back from the tray");
 		}
 
+		/// <summary>
+		/// Clicks a control at a client point the way the mouse does: press and release, delivered
+		/// as window messages, so the control's own mouse handling runs. Must run on the thread
+		/// that owns the control.
+		/// </summary>
+		public static void Click(Control control, System.Drawing.Point at)
+		{
+			var lParam = new IntPtr((at.Y << 16) | (at.X & 0xFFFF));
+			NativeMethods.SendMessage(control.Handle, NativeMethods.WM_LBUTTONDOWN, new IntPtr(NativeMethods.MK_LBUTTON), lParam);
+			NativeMethods.SendMessage(control.Handle, NativeMethods.WM_LBUTTONUP, IntPtr.Zero, lParam);
+		}
+
+		/// <summary>Moves the pointer over a control's client point, as a window message, so hover handling runs.</summary>
+		public static void Hover(Control control, System.Drawing.Point at)
+		{
+			var lParam = new IntPtr((at.Y << 16) | (at.X & 0xFFFF));
+			NativeMethods.SendMessage(control.Handle, NativeMethods.WM_MOUSEMOVE, IntPtr.Zero, lParam);
+		}
+
 		private static class NativeMethods
 		{
 			public const int SW_MINIMIZE = 6;
 			public const int SW_RESTORE = 9;
+			public const int WM_MOUSEMOVE = 0x0200;
+			public const int WM_LBUTTONDOWN = 0x0201;
+			public const int WM_LBUTTONUP = 0x0202;
+			public const int MK_LBUTTON = 0x0001;
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
 			public static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]

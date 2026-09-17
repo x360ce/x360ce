@@ -1,6 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
-using JocysCom.ClassLibrary.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -38,63 +36,25 @@ namespace x360ce.App.Controls
 
 		readonly List<XInputReorderPlan.Entry> _entries = new List<XInputReorderPlan.Entry>();
 
-		/// <summary>Reads the machine and shows what is there.</summary>
+		/// <summary>Reads the machine, on a worker, and shows what is there.</summary>
+		/// <remarks>
+		/// Off this thread, because this is the thread Windows asks whether a device may be removed.
+		/// Reading the device tree here while a removal is under way leaves that question unanswered
+		/// and the program stuck.
+		/// </remarks>
 		void Reload()
 		{
-			_entries.Clear();
-			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
-			var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
-			var places = XInputPlaces.Resolve(all, byId);
-
-			// One row per piece of hardware, not per face. A controller is several devices and a
-			// person thinks of it as one thing.
-			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var device in all.Where(XInputPlaces.IsXInputCapable))
+			System.Threading.Tasks.Task.Run(() => XInputReorderPlan.ReadEntries()).ContinueWith(read =>
 			{
-				var hardware = XInputPlaces.HardwareOf(device, byId);
-				if (!seen.Add(hardware))
-					continue;
-				int place;
-				if (!places.TryGetValue(hardware, out place))
-					place = XInputPlaces.Unknown;
-				DeviceInfo hardwareInfo;
-				var name = byId.TryGetValue(hardware, out hardwareInfo) && !string.IsNullOrEmpty(hardwareInfo.Description)
-					? hardwareInfo.Description
-					: device.Description;
-				_entries.Add(new XInputReorderPlan.Entry
+				if (read.IsFaulted)
 				{
-					HardwareId = hardware,
-					Name = name,
-					IsVirtual = VirtualDriverInstaller.IsVirtualPad(device, byId),
-					IsOurs = VirtualDriverInstaller.IsOneOfOurs(device, byId),
-					Pad = PadHolding(place),
-					Place = place,
-				});
-			}
-			// Shown in the order XInput has them, with anything unplaced after. That is the order a
-			// game sees, which is the order worth arguing with.
-			_entries.Sort((a, b) =>
-			{
-				var pa = a.Place < 0 ? int.MaxValue : a.Place;
-				var pb = b.Place < 0 ? int.MaxValue : b.Place;
-				return pa != pb ? pa.CompareTo(pb) : string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase);
-			});
-			Bind();
-		}
-		/// <summary>Which controller tab has its controller in this place, or zero.</summary>
-		/// <remarks>
-		/// Asked of what was watched rather than worked out from the number: the place a tab's controller
-		/// is in is not the tab's own number, which is the whole reason this page exists.
-		/// </remarks>
-		static int PadHolding(int place)
-		{
-			var helper = Global.DHelper;
-			if (helper == null || place < 0)
-				return 0;
-			for (var pad = 0; pad < helper.XiPlaceForPad.Length; pad++)
-				if (helper.XiPlaceForPad[pad] == place)
-					return pad + 1;
-			return 0;
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(read.Exception.GetBaseException());
+					return;
+				}
+				_entries.Clear();
+				_entries.AddRange(read.Result);
+				Bind();
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 

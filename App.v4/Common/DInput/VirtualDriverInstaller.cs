@@ -60,7 +60,7 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static DeviceInfo[] GetLeftoverVirtualPads()
 		{
-			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+			var all = ReadControllerTree();
 			var byId = IndexById(all);
 			return all
 				.Where(x => IsVirtualPad(x, byId))
@@ -304,6 +304,27 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
+		/// The controller family on the machine and nothing else: every XInput face, every pad of the
+		/// kind the bus makes, every root system device (where the bus lives), and the ancestors of
+		/// each up to the root.
+		/// </summary>
+		/// <remarks>
+		/// Everything asked about controllers walks from a face up to the bus, so this is the whole of
+		/// what those questions ever look up. It used to be answered by reading every device on the
+		/// machine: seven hundred nodes at a millisecond each, on every arrival and removal, and under
+		/// a lock the device list read had to wait for. The ids of every device are cheap; the
+		/// descriptions of the few that matter are read afterwards.
+		/// </remarks>
+		public static DeviceInfo[] ReadControllerTree()
+		{
+			var wanted = DeviceDetector.GetDeviceIds().Where(id =>
+				CarriesInputGroup(id)
+				|| id.StartsWith("USB\\VID_045E&PID_028E", StringComparison.OrdinalIgnoreCase)
+				|| id.StartsWith("ROOT\\SYSTEM", StringComparison.OrdinalIgnoreCase));
+			return DeviceDetector.GetDevices(wanted, true);
+		}
+
+		/// <summary>
 		/// Removes pads left behind by earlier runs.
 		/// </summary>
 		/// <param name="rebootNeeded">True when Windows asked for a restart to finish the work.</param>
@@ -349,7 +370,7 @@ namespace x360ce.App.DInput
 
 		static DeviceInfo[] ReadUnfinishedVirtualPads()
 		{
-			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+			var all = ReadControllerTree();
 			var byId = IndexById(all);
 			// Only this program's own. Somebody else's half-built controller is not its business.
 			var ours = all
@@ -378,6 +399,65 @@ namespace x360ce.App.DInput
 				.Where(x => !finished.Contains(x.DeviceId) && !CarriesInputGroup(x.DeviceId))
 				.OrderBy(x => x.DeviceId)
 				.ToArray();
+		}
+
+		/// <summary>
+		/// Removes the leftover controllers, through an Administrator copy of this program when this
+		/// one is not, and says what happened in words. Never on the interface thread: Windows asks
+		/// this program's window whether each controller may go, and a window whose thread is waiting
+		/// here cannot answer, so the removal and the program wait on each other for ever.
+		/// </summary>
+		/// <param name="expected">How many were there before, for the report.</param>
+		/// <param name="succeeded">Whether anything was removed, or nothing was there to remove.</param>
+		public static string RemoveLeftoverPadsElevated(int expected, out bool succeeded)
+		{
+			// Let go of the controllers first. Windows refuses to remove a device anything still holds
+			// open, and this program holds all four places open while it reads their states; without
+			// this the removal is refused and each refusal leaves Windows needing a restart before it
+			// will finish building any new controller.
+			var helper = Global.DHelper;
+			if (helper != null)
+				helper.ReleaseForDeviceRemoval();
+			try
+			{
+				if (Program.RunElevated(AdminCommand.RemoveLeftoverPads))
+				{
+					// Already running as Administrator, so the work happened in this program and the
+					// outcome is known exactly.
+					bool rebootNeeded;
+					Exception error;
+					var removed = RemoveLeftoverVirtualPads(out rebootNeeded, out error);
+					succeeded = error == null;
+					var result = string.Format("Removed {0} of {1}.", removed, expected);
+					if (rebootNeeded)
+						result += "\r\n\r\nRestart Windows to finish removing them.";
+					if (error != null)
+						result += "\r\n\r\nThe last one that could not be removed reported: " + error.Message;
+					return result;
+				}
+				// Windows refuses while anything holds the controller open, and its own shell does, so
+				// this is a normal answer rather than a fault. Kept, because the only thing that
+				// finishes the removal is a restart, and nobody would otherwise know to do one.
+				if (Program.LastAdminResult == Program.AdminResult.RestartNeeded)
+					RestartNeededToFinishRemoval = true;
+				// The elevated copy runs on its own, so the count is taken again once it has finished.
+				var left = GetLeftoverVirtualPads().Length;
+				var gone = expected - left;
+				succeeded = gone > 0 || left == 0;
+				var text = gone > 0
+					? string.Format("Removed {0} of {1}.", gone, expected)
+					: "Nothing was removed. The request to run as Administrator may have been refused.";
+				if (left > 0 && (gone > 0 || Program.LastAdminResult == Program.AdminResult.RestartNeeded))
+					text += "\r\n\r\nRestart Windows to finish removing the rest.";
+				return text;
+			}
+			finally
+			{
+				// Picked back up whatever happened, or the program is left feeding nothing.
+				if (helper != null)
+					helper.ResumeAfterDeviceRemoval();
+				XInputPlaces.Invalidate();
+			}
 		}
 
 		public static int RemoveLeftoverVirtualPads(out bool rebootNeeded, out Exception error)
@@ -522,7 +602,7 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static DeviceInfo[] GetViGEmBusInstances()
 		{
-			return DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT)
+			return ReadControllerTree()
 				.Where(IsViGEmBus)
 				.ToArray();
 		}

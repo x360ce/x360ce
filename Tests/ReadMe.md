@@ -45,6 +45,19 @@ and UI tests are separated by `[TestCategory]`, not by project boundaries.
 Tests that need a desktop session are tagged **`ui-interactive`** and excluded by default,
 which is the one split that matters here — a headless agent can run everything else.
 
+Three more tags mark tests the default run still includes: **`requires-elevation`** (driver
+install and removal, needs an administrator session), **`requires-wheel`** (a force feedback
+wheel must be attached; the test is inconclusive without one) and **`stress`** (rapid repeated
+clicks). `Run-Tests.ps1` excludes only `ui-interactive`.
+
+No test touches a database, and the `Web/` services are not covered. If that changes, the
+allow-list in `Data/Change Scripts/Backup/Restore-Data.ps1` (`^x360ce_Tests(_\w+)?$`) is the
+contract: the live `x360ce` database is never written to.
+
+Tools considered and not used: Playwright (no browser surface), WinAppDriver, Appium and FlaUI
+(`System.Windows.Automation` is in-box), and Microsoft.Testing.Platform (not available on
+net462).
+
 ## Why the applications are launched, not referenced
 
 `App.v3` and `App.v4` both produce `x360ce.exe` with the root namespace `x360ce.App`, so
@@ -54,10 +67,13 @@ exercises the applications the way a user meets them.
 
 ## Why not `dotnet test`
 
-`x360ce.Engine` has a `Microsoft.mshtml` COM reference that the .NET SDK cannot resolve, so
-`dotnet test` fails at compile time while Visual Studio MSBuild succeeds. `Run-Tests.ps1`
-builds with VS MSBuild and runs `vstest.console.exe`, passing the MSTest adapter path
-explicitly because the package does not copy the adapter into a `net462` output folder.
+Every project this suite references is SDK-style, and `x360ce.Engine` builds under
+`dotnet build`. The applications do not: their `.resx` files hold bitmaps, which the .NET
+SDK's MSBuild cannot serialise in-process (MSB3822) without the `System.Resources.Extensions`
+package and its runtime library, which a single-file program would have to carry. Visual
+Studio MSBuild compiles those resources itself, so `Run-Tests.ps1` builds with VS MSBuild and
+runs `vstest.console.exe`, passing the MSTest adapter path explicitly because the package
+does not copy the adapter into a `net462` output folder.
 
 ## The crash report tests
 

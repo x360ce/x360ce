@@ -51,6 +51,9 @@ namespace x360ce.App.DInput
 
 		static readonly object SyncRoot = new object();
 
+		/// <summary>The controller family as the machine reports it. Replaced by tests that have no machine.</summary>
+		public static Func<DeviceInfo[]> ReadMachine = () => VirtualDriverInstaller.ReadControllerTree();
+
 		/// <summary>Every controller on the bus right now, named by the hardware each belongs to.</summary>
 		/// <remarks>
 		/// Taken before a controller is made and again after, so the one that appeared in between is
@@ -61,7 +64,7 @@ namespace x360ce.App.DInput
 			var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			try
 			{
-				var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+				var all = ReadMachine();
 				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
 				foreach (var device in all.Where(IsXInputCapable))
 					if (VirtualDriverInstaller.IsVirtualPad(device, byId))
@@ -157,7 +160,7 @@ namespace x360ce.App.DInput
 		/// </summary>
 		public static Dictionary<string, int> Resolve()
 		{
-			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+			var all = ReadMachine();
 			var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
 			return Resolve(all, byId);
 		}
@@ -247,21 +250,62 @@ namespace x360ce.App.DInput
 		static Dictionary<string, int> _cache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 		static HashSet<string> _madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		static HashSet<string> _madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-		static DateTime _cachedAt = DateTime.MinValue;
+		static bool _stale = true;
+		/// <summary>Counts invalidations, so a read overlapping one does not clear it.</summary>
+		static int _generation;
+		static bool _reading;
 
-		/// <summary>How long an answer is reused before the machine is read again.</summary>
+		/// <summary>Marks the answers as out of date, so the device thread reads the machine on its next pass.</summary>
 		/// <remarks>
-		/// Working the places out walks every device Windows has, which is far too much to do while
-		/// painting a row of a table. Devices come and go in seconds rather than milliseconds, so an
-		/// answer a moment old is still true, and a table can ask about every row without noticing.
+		/// Working the places out walks every device Windows has. That must never happen on the
+		/// interface thread: Windows delivers the question "may this device go" to this program's main
+		/// window, and while that thread is itself inside the device tree the question is never
+		/// answered, the removal never finishes, and the program never comes back. The removal of a
+		/// leftover controller from the Issues page froze the whole program this way. So the
+		/// interface only ever reads the last answer, and only <see cref="Read"/> touches the machine,
+		/// from the device thread or a worker.
 		/// </remarks>
-		static readonly TimeSpan CacheFor = TimeSpan.FromSeconds(2);
-
-		/// <summary>Reads the machine again, so the next question gets a fresh answer.</summary>
 		public static void Invalidate()
 		{
 			lock (SyncRoot)
-				_cachedAt = DateTime.MinValue;
+			{
+				_stale = true;
+				_generation++;
+			}
+		}
+
+		/// <summary>Whether the last answer is older than the machine.</summary>
+		public static bool IsStale
+		{
+			get { lock (SyncRoot) return _stale; }
+		}
+
+		/// <summary>Reads the machine now when the answers are out of date, on the calling thread.</summary>
+		public static void ReadIfStale()
+		{
+			if (IsStale)
+				Read();
+		}
+
+		/// <summary>
+		/// Starts one read on a worker when the answers are out of date, and returns at once. For the
+		/// device thread: reading the machine takes long enough to drop its rate from a thousand
+		/// passes a second to a few, and while it is that slow a wheel's force feedback is fed in
+		/// jerks and swings from side to side. So the device thread only asks; it never waits.
+		/// </summary>
+		public static void ReadWhenStale()
+		{
+			lock (SyncRoot)
+			{
+				if (!_stale || _reading)
+					return;
+				_reading = true;
+			}
+			System.Threading.Tasks.Task.Run(() =>
+			{
+				try { Read(); }
+				finally { lock (SyncRoot) _reading = false; }
+			});
 		}
 
 		/// <summary>The place held by whichever of these devices is known, or <see cref="Unknown"/>.</summary>
@@ -283,7 +327,6 @@ namespace x360ce.App.DInput
 
 		static bool Known(string[] deviceIds, HashSet<string> set)
 		{
-			Refresh();
 			if (deviceIds == null)
 				return false;
 			lock (SyncRoot)
@@ -293,41 +336,51 @@ namespace x360ce.App.DInput
 			return false;
 		}
 
-		/// <summary>Reads the machine again when the last answer has gone stale.</summary>
-		static void Refresh()
+		/// <summary>Reads the machine now. Never from the interface thread; see <see cref="Invalidate"/>.</summary>
+		public static void Read()
 		{
+			int generation;
+			lock (SyncRoot)
+				generation = _generation;
+			// The machine is read outside the lock, so a lookup from the interface is never made to
+			// wait for it; the answers are swapped in whole once they are ready.
+			Dictionary<string, int> cache = null;
+			HashSet<string> madeNotPluggedIn = null;
+			HashSet<string> madeByUs = null;
+			try
+			{
+				var all = ReadMachine();
+				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
+				cache = Resolve(all, byId);
+				madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				foreach (var device in all.Where(IsXInputCapable))
+				{
+					if (!VirtualDriverInstaller.IsVirtualPad(device, byId))
+						continue;
+					madeNotPluggedIn.Add(device.DeviceId);
+					if (VirtualDriverInstaller.IsOneOfOurs(device, byId))
+						madeByUs.Add(device.DeviceId);
+				}
+			}
+			catch (Exception ex) { JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex); }
 			lock (SyncRoot)
 			{
-				if (DateTime.UtcNow - _cachedAt <= CacheFor)
-					return;
-				try
+				if (cache != null)
 				{
-					var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
-					var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
-					_cache = Resolve(all, byId);
-					// What each one is, gathered in the same reading. A row asks about a device by name and
-					// cannot walk the tree itself: doing that while painting a cell would read every device
-					// Windows has, many times a second.
-					_madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-					_madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-					foreach (var device in all.Where(IsXInputCapable))
-					{
-						if (!VirtualDriverInstaller.IsVirtualPad(device, byId))
-							continue;
-						_madeNotPluggedIn.Add(device.DeviceId);
-						if (VirtualDriverInstaller.IsOneOfOurs(device, byId))
-							_madeByUs.Add(device.DeviceId);
-					}
+					_cache = cache;
+					_madeNotPluggedIn = madeNotPluggedIn;
+					_madeByUs = madeByUs;
 				}
-				catch (Exception ex) { JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex); }
-				_cachedAt = DateTime.UtcNow;
+				// Something invalidated the answers while they were being read: they are already old.
+				_stale = _generation != generation;
 			}
 		}
+
 
 		/// </remarks>
 		public static int PlaceFor(params string[] deviceIds)
 		{
-			Refresh();
 			Dictionary<string, int> places;
 			lock (SyncRoot)
 				places = _cache;

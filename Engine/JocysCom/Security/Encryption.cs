@@ -1,9 +1,12 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Configuration;
-using System.Security.Cryptography.Xml;
 using System.Text;
+
+#if NETFRAMEWORK // .NET Framework
 using System.Web.Security;
-using System.Xml;
+#endif
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -93,6 +96,8 @@ namespace JocysCom.ClassLibrary.Security
 			set { _RsaUseOaepValue = value; }
 		}
 
+#if NETFRAMEWORK // .NET Framework
+
 		#region Machine Key
 
 		/// <summary>Encrypts text with MachineKey and converts to Base64 string.</summary>
@@ -119,6 +124,8 @@ namespace JocysCom.ClassLibrary.Security
 
 		#endregion
 
+#endif
+
 		#region MD5
 
 		object HashProviderLock = new object();
@@ -129,7 +136,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _HashProvider = _HashProvider ??
-					new System.Security.Cryptography.MD5CryptoServiceProvider();
+					System.Security.Cryptography.MD5.Create();
 			}
 		}
 
@@ -171,9 +178,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] hash;
 			lock (HashProviderLock)
-			{
 				hash = HashProvider.ComputeHash(bytes);
-			}
 			return new Guid(hash);
 		}
 
@@ -189,7 +194,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			get
 			{
-				if (_MacProvider == null)
+				if (_MacProvider is null)
 				{
 					// Create MD5HMAC hash provider.
 					if (string.IsNullOrEmpty(HmacHashKeyValue))
@@ -232,7 +237,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] hash;
 			// If HMAC hash key is not supplied then...
-			if (hashKeyBytes == null)
+			if (hashKeyBytes is null)
 			{
 				lock (MacProviderLock)
 					// Use default from config file.
@@ -264,52 +269,42 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				lock (RsaProviderLock)
 				{
-					if (_RsaProvider == null)
+					if (_RsaProvider != null)
+						return _RsaProvider;
+					//Problem Solution: http://support.microsoft.com/default.aspx?scid=KB;EN-US;322371
+					System.Security.Cryptography.RSACryptoServiceProvider.UseMachineKeyStore = true;
+					// Create a new CspParameters object to specify a key container.
+					System.Security.Cryptography.CspParameters cspParams = new System.Security.Cryptography.CspParameters();
+					cspParams.KeyContainerName = "XML_DSIG_RSA_KEY";
+					cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
+					_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
+					// If web.config data is not available then return.
+					if (RsaPublicKeyValue is null) return _RsaProvider;
+					byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
+						? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);
+					byte[] publicKeyBytes = string.IsNullOrEmpty(RsaPublicKeyValue)
+						? new byte[0] : System.Convert.FromBase64String(RsaPublicKeyValue);
+					// If private key was found then...
+					byte[] rsaKeyBytes = (privateKeyBytes.Length > 0) ? privateKeyBytes : publicKeyBytes;
+					//System.Security.Cryptography.RSAParameters rp = new System.Security.Cryptography.RSAParameters()
+					try
 					{
-
-						//Problem Solution: http://support.microsoft.com/default.aspx?scid=KB;EN-US;322371
-						System.Security.Cryptography.RSACryptoServiceProvider.UseMachineKeyStore = true;
-						// Create a new CspParameters object to specify a key container.
-						System.Security.Cryptography.CspParameters cspParams = new System.Security.Cryptography.CspParameters();
-						cspParams.KeyContainerName = "XML_DSIG_RSA_KEY";
-						cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
-						_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
-						// If web.config data is not available then return.
-						if (RsaPublicKeyValue == null) return _RsaProvider;
-						byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
-							? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);
-						byte[] publicKeyBytes = string.IsNullOrEmpty(RsaPublicKeyValue)
-							? new byte[0] : System.Convert.FromBase64String(RsaPublicKeyValue);
-						// If private key was found then...
-						byte[] rsaKeyBytes = (privateKeyBytes.Length > 0) ? privateKeyBytes : publicKeyBytes;
-						//System.Security.Cryptography.RSAParameters rp = new System.Security.Cryptography.RSAParameters()
-						try
-						{
-							// This line can fail due to missing user profile on windows.
-							_RsaProvider.ImportCspBlob(rsaKeyBytes);
-						}
-						catch (Exception) { }
+						// This line can fail due to missing user profile on windows.
+						_RsaProvider.ImportCspBlob(rsaKeyBytes);
 					}
+					catch (Exception) { }
 				}
 				return _RsaProvider;
 			}
 		}
 
-		System.Security.Cryptography.HashAlgorithm _RsaSignatureHashAlgorithm;
 		/// <summary>
 		/// RSA Signature algorithm. SHA1 is default.
 		/// </summary>
 		public System.Security.Cryptography.HashAlgorithm RsaSignatureHashAlgorithm
-		{
-			get
-			{
-				if (_RsaSignatureHashAlgorithm == null)
-				{
-					_RsaSignatureHashAlgorithm = new System.Security.Cryptography.SHA256CryptoServiceProvider();
-				}
-				return _RsaSignatureHashAlgorithm;
-			}
-		}
+			=> _RsaSignatureHashAlgorithm = _RsaSignatureHashAlgorithm ?? System.Security.Cryptography.SHA256.Create();
+
+		System.Security.Cryptography.HashAlgorithm _RsaSignatureHashAlgorithm;
 
 		/// <summary>
 		/// Encrypts data with the System.Security.Cryptography.RSA algorithm.
@@ -319,12 +314,9 @@ namespace JocysCom.ClassLibrary.Security
 		public string RsaEncrypt(byte[] bytes)
 		{
 			byte[] encrypted;
+			// Enable OAEP padding for better security.
 			lock (RsaProviderLock)
-			{
-				// Enable OAEP padding for better security.
-				// Disable for compatibility.
 				encrypted = this.RsaProvider.Encrypt(bytes, RsaUseOaepValue);
-			}
 			return System.Convert.ToBase64String(encrypted);
 		}
 
@@ -348,211 +340,10 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] bytes = System.Convert.FromBase64String(base64Text);
 			byte[] decrypted;
+			// Enable OAEP padding for better security.
 			lock (RsaProviderLock)
-			{
-				// Enable OAEP padding for better security.
-				// Disable for compatibility.
 				decrypted = RsaProvider.Decrypt(bytes, RsaUseOaepValue);
-			}
 			return System.Text.Encoding.UTF8.GetString(decrypted);
-		}
-
-		/// <summary>
-		/// Private RSA key is required to sign data.
-		/// </summary>
-		/// <param name="bytes"></param>
-		/// <returns></returns>
-		/// <remarks>Private RSA key is required to sign data.</remarks>
-		string RsaGenerateSignature(byte[] bytes)
-		{
-			//byte[] hash = RsaSignatureHashAlgorithm.ComputeHash(bytes);
-			//byte[] sign = RsaProvider.SignHash(hash, System.Security.Cryptography.CryptoConfig.MapNameToOID("SHA1"));
-			byte[] sign;
-			lock (RsaProviderLock)
-			{
-				sign = RsaProvider.SignData(bytes, RsaSignatureHashAlgorithm);
-			}
-			string signature = System.Convert.ToBase64String(sign);
-			return signature;
-		}
-
-		/// <summary>
-		/// Computes the hash value of the specified byte array using the specified hash
-		/// algorithm, and signs the resulting hash value.
-		/// </summary>
-		/// <param name="bytes">The input data for which to compute the hash.</param>
-		/// <returns> The System.Security.Cryptography.RSA signature in base64 format for the specified data.</returns>
-		/// <remarks>Private RSA key is required to sign data.</remarks>
-		public string RsaSignData(byte[] bytes)
-		{
-			string signature = RsaGenerateSignature(bytes);
-			return signature;
-		}
-
-		/// <summary>
-		/// Computes the hash value of the specified byte array using the specified hash
-		/// algorithm, and signs the resulting hash value.
-		/// </summary>
-		/// <param name="text">The input data for which to compute the hash.</param>
-		/// <returns> The System.Security.Cryptography.RSA signature in base64 format for the specified data.</returns>
-		public string RsaSignData(string text)
-		{
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
-			return RsaSignData(bytes);
-		}
-
-		/// <summary>
-		/// Computes the hash value of the specified file.
-		/// </summary>
-		/// <param name="text">Name of file to compute the hash.</param>
-		/// <returns>The System.Security.Cryptography.RSA signature in base64 format for the specified data.</returns>
-		public string RsaSignFile(string fileName)
-		{
-			System.IO.FileInfo fi = new System.IO.FileInfo(fileName);
-			if (!fi.Exists) return null;
-			if (fi.Extension.ToLower() == ".xml")
-			{
-				// Create a new XML document.
-				XmlDocument doc = new XmlDocument();
-				// Load an XML file into the XmlDocument object.
-				doc.PreserveWhitespace = true;
-				doc.Load(fileName);
-				// Sign document.
-				XmlElement sign = RsaSignData(doc);
-				// Save the document.
-				doc.Save(fileName);
-				// Save signature to *.rsa file.
-				// return signature.
-				return sign.InnerText;
-			}
-			else
-			{
-				string signFile = System.IO.Path.Combine(fi.FullName, ".rsa");
-				string sign = RsaSignData(System.IO.File.ReadAllBytes(fi.FullName));
-				System.IO.File.WriteAllText(signFile, sign);
-				return sign;
-			}
-		}
-
-		/// <summary>
-		/// Computes the hash value of the specified System.Xml.XmlDocument object.
-		/// </summary>
-		/// <param name="doc">The System.Xml.XmlDocument object to sign.</param>
-		/// <returns>The System.Security.Cryptography.RSA signature as XmlElement</returns>
-		public XmlElement RsaSignData(XmlDocument doc)
-		{
-			// Create a SignedXml object.
-			SignedXml signedXml = new SignedXml(doc);
-			// Add the key to the SignedXml document.
-			signedXml.SigningKey = RsaProvider;
-			// Create a reference to be signed.
-			Reference reference = new Reference();
-			reference.Uri = "";
-			// Add an enveloped transformation to the reference.
-			XmlDsigEnvelopedSignatureTransform env = new XmlDsigEnvelopedSignatureTransform();
-			reference.AddTransform(env);
-			// Add the reference to the SignedXml object.
-			signedXml.AddReference(reference);
-			// Compute the signature.
-			signedXml.ComputeSignature();
-			// Get the XML representation of the signature and save
-			// it to an XmlElement object.
-			XmlElement xmlDigitalSignature = signedXml.GetXml();
-			// Append the element to the XML document.
-			doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
-			return xmlDigitalSignature;
-		}
-
-		/// <summary>
-		/// Verifies the specified signature data by comparing it to the signature computed
-		/// for the specified data.
-		/// </summary>
-		/// <param name="text"> The data that was signed.</param>
-		/// <param name="signature">The base64 signature data to be verified.</param>
-		/// <returns>True if the signature verifies as valid; otherwise, false.</returns>
-		public bool RsaVerifyData(string text, string signature)
-		{
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
-			return RsaVerifyData(bytes, signature);
-		}
-
-		/// <summary>
-		/// Verifies the specified signature data by comparing it to the signature computed
-		/// for the specified data.
-		/// </summary>
-		/// <param name="text"> The data that was signed.</param>
-		/// <param name="signature">The base64 signature data to be verified.</param>
-		/// <returns>True if the signature verifies as valid; otherwise, false.</returns>
-		public bool RsaVerifyData(byte[] bytes, string signature)
-		{
-			//byte[] hash = SHA1.ComputeHash(bytes);
-			//byte[] sign = RsaProvider.SignatureAlgorithm
-			//VerifyHash(hash, System.Security.Cryptography.CryptoConfig.MapNameToOID("SHA1"));
-			string actualSignature = RsaGenerateSignature(bytes);
-			return actualSignature.Equals(signature);
-		}
-
-		/// <summary>
-		/// Determines whether the System.Security.Cryptography.Xml.SignedXml.Signature
-		/// property verifies for the specified key.
-		/// </summary>
-		/// <param name="doc">The System.Xml.XmlDocument object to verify.</param>
-		/// <returns>
-		/// True if the System.Security.Cryptography.Xml.SignedXml.Signature property
-		/// verifies for the specified key; otherwise, false.
-		/// </returns>
-		public bool RsaVerifyData(XmlDocument doc)
-		{
-			// Create a new SignedXml object and pass it
-			// the XML document class.
-			SignedXml signedXml = new SignedXml(doc);
-			// Find the "Signature" node and create a new
-			// XmlNodeList object.
-			XmlNodeList nodeList = doc.GetElementsByTagName("Signature");
-			// Throw an exception if no signature was found.
-			if (nodeList.Count <= 0)
-			{
-				throw new System.Security.Cryptography.CryptographicException("Verification failed: No Signature was found in the document.");
-			}
-			// This example only supports one signature for
-			// the entire XML document.  Throw an exception 
-			// if more than one signature was found.
-			if (nodeList.Count >= 2)
-			{
-				throw new System.Security.Cryptography.CryptographicException("Verification failed: More that one signature was found for the document.");
-			}
-			// Load the first <signature> node.  
-			signedXml.LoadXml((XmlElement)nodeList[0]);
-			// Check the signature and return the result.
-			return signedXml.CheckSignature(RsaProvider);
-		}
-
-
-		/// <summary>
-		/// Computes the hash value of the specified file.
-		/// </summary>
-		/// <param name="text">Name of file to compute the hash.</param>
-		/// <returns>True if the signature verifies as valid; otherwise, false.</returns>
-		public bool RsaVerifyFile(string fileName)
-		{
-			System.IO.FileInfo fi = new System.IO.FileInfo(fileName);
-			if (!fi.Exists) return false;
-			if (fi.Extension.ToLower() == ".xml")
-			{
-				// Create a new XML document.
-				XmlDocument doc = new XmlDocument();
-				// Load an XML file into the XmlDocument object.
-				doc.PreserveWhitespace = true;
-				doc.Load(fileName);
-				// Verify document.
-				return RsaVerifyData(doc);
-			}
-			else
-			{
-				string signFile = System.IO.Path.Combine(fi.FullName, ".rsa");
-				string signature = System.IO.File.ReadAllText(signFile);
-				return RsaVerifyData(System.IO.File.ReadAllBytes(fi.FullName), signature);
-			}
 		}
 
 		#endregion
@@ -619,10 +410,10 @@ namespace JocysCom.ClassLibrary.Security
 		public string GetNewRsaKeys(int keySize)
 		{
 			Keys keys = RsaNewKeys(keySize);
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			string pattern = "<add key=\"{0}\" value=\"{1}\"/>\r\n";
-			sb.Append(String.Format(pattern, RsaPublicKeyName, keys.Public));
-			sb.Append(String.Format(pattern, RsaPrivateKeyName, keys.Private));
+			sb.Append(string.Format(pattern, RsaPublicKeyName, keys.Public));
+			sb.Append(string.Format(pattern, RsaPrivateKeyName, keys.Private));
 			return sb.ToString();
 		}
 
@@ -633,7 +424,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public void UpsertKey(System.Configuration.Configuration config, string name, object value)
 		{
-			if (config.AppSettings.Settings[name] == null)
+			if (config.AppSettings.Settings[name] is null)
 				config.AppSettings.Settings.Add(name, string.Format("{0}", value));
 			else
 				config.AppSettings.Settings[name].Value = string.Format("{0}", value);
@@ -642,10 +433,17 @@ namespace JocysCom.ClassLibrary.Security
 		public void RsaNewKeysSave(int keySize)
 		{
 			Keys keys = RsaNewKeys(keySize);
+
+#if NETFRAMEWORK
+
 			// Get the configuration file.
-			var config = System.Web.HttpRuntime.IISVersion == null
+			var config = System.Web.HttpRuntime.IISVersion is null
 				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
 				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+#else
+			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+#endif
+
 			// Modify settings.
 			UpsertKey(config, HmacHashKeyName, HmacHashKeyValue);
 			UpsertKey(config, RsaPublicKeyName, keys.Public);

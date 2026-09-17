@@ -28,14 +28,35 @@ namespace x360ce.Engine.Data
 
 		public void LoadInstance(DeviceInstance ins)
 		{
+			// Names from the driver are cleaned on the way in, so the settings file stays writable.
+			var instanceName = EngineHelper.ToXmlText(ins.InstanceName);
+			var productName = EngineHelper.ToXmlText(ins.ProductName);
 			if (InstanceGuid != ins.InstanceGuid)
 				InstanceGuid = ins.InstanceGuid;
-			if (InstanceName != ins.InstanceName)
-				InstanceName = ins.InstanceName;
+			if (InstanceName != instanceName)
+				InstanceName = instanceName;
 			if (ProductGuid != ins.ProductGuid)
 				ProductGuid = ins.ProductGuid;
-			if (ProductName != ins.ProductName)
-				ProductName = ins.ProductName;
+			if (ProductName != productName)
+				ProductName = productName;
+		}
+
+		/// <summary>
+		/// Cleans the strings Windows reported for a device of characters XML cannot hold, in
+		/// place, so both loaders below take the same text and the settings file stays writable.
+		/// </summary>
+		static DeviceInfo Clean(DeviceInfo info)
+		{
+			if (info == null)
+				return null;
+			info.Manufacturer = EngineHelper.ToXmlText(info.Manufacturer);
+			info.Description = EngineHelper.ToXmlText(info.Description);
+			info.DeviceId = EngineHelper.ToXmlText(info.DeviceId);
+			info.HardwareIds = EngineHelper.ToXmlText(info.HardwareIds);
+			info.DevicePath = EngineHelper.ToXmlText(info.DevicePath);
+			info.ParentDeviceId = EngineHelper.ToXmlText(info.ParentDeviceId);
+			info.ClassDescription = EngineHelper.ToXmlText(info.ClassDescription);
+			return info;
 		}
 
 		public void LoadCapabilities(Capabilities cap)
@@ -69,6 +90,7 @@ namespace x360ce.Engine.Data
 
 		public void LoadDevDeviceInfo(DeviceInfo info)
 		{
+			Clean(info);
 			if (info == null)
 			{
 				DevManufacturer = "";
@@ -113,6 +135,7 @@ namespace x360ce.Engine.Data
 
 		public void LoadHidDeviceInfo(DeviceInfo info)
 		{
+			Clean(info);
 			if (info == null)
 			{
 				HidManufacturer = "";

@@ -625,6 +625,7 @@ namespace x360ce.App
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
 			OptionsPanel.UpdateSettingsMap();
 			OptionsPanel.InternetPanel.UpdateSettingsMap();
+			OptionsPanel.UpdatePanel.UpdateSettingsMap();
 		}
 
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
@@ -981,7 +982,6 @@ namespace x360ce.App
 			MainStatusStrip.Visible = false;
 			// Check for various issues.
 			InitIssuesPanel();
-			InitUpdateForm();
 		}
 
 		private void UpdateForm2()
@@ -991,14 +991,13 @@ namespace x360ce.App
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
 			UpdateStatusAiAccessLabel();
-			CheckEncoding(SettingsManager.TmpFileName);
-			CheckEncoding(SettingsManager.IniFileName);
 			// Show status values.
 			MainStatusStrip.Visible = true;
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// The hotkey is read from the settings just loaded.
 			ApplyEmulationHotkey();
+			ScheduleUpdateProbe();
 			// Load PAD controls.
 			PadControls = new PadControl[4];
 			for (var i = 0; i < PadControls.Length; i++)
@@ -1093,19 +1092,6 @@ namespace x360ce.App
 		}
 
 		#region Check Files
-
-		private void CheckEncoding(string path)
-		{
-			if (!File.Exists(path))
-				return;
-			var sr = new StreamReader(path, true);
-			var content = sr.ReadToEnd();
-			sr.Close();
-			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
-			{
-				File.WriteAllText(path, content, System.Text.Encoding.Unicode);
-			}
-		}
 
 		private bool IsFileSame(string fileName)
 		{
@@ -1372,61 +1358,6 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Update Form
-
-		private Forms.UpdateForm _UpdateForm;
-		private readonly object UpdateFormLock = new object();
-
-		private void InitUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				_UpdateForm = new Forms.UpdateForm();
-			}
-		}
-
-		private void DisposeUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm != null)
-				{
-					_UpdateForm.Dispose();
-					_UpdateForm = null;
-				}
-			}
-		}
-
-		public bool? ShowUpdateForm()
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm == null)
-					return null;
-				var oldTab = MainTabControl.SelectedTab;
-				MainTabControl.SelectedTab = CloudTabPage;
-				_UpdateForm.StartPosition = FormStartPosition.CenterParent;
-				_UpdateForm.OpenDialog();
-				ControlsHelper.CheckTopMost(_UpdateForm);
-				var result = _UpdateForm.ShowDialog();
-				_UpdateForm.CloseDialog();
-				MainTabControl.SelectedTab = oldTab;
-				return null;
-			}
-		}
-
-		public void ProcessUpdateResults(CloudMessage results)
-		{
-			lock (UpdateFormLock)
-			{
-				if (_UpdateForm == null)
-					return;
-				_UpdateForm.Step2ProcessUpdateResults(results);
-			}
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Clean up any 
 		/// being used.
@@ -1440,7 +1371,7 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeUpdateForm();
+				DisposeUpdateProbe();
 				DisposeInterfaceUpdate();
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();

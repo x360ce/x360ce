@@ -61,3 +61,21 @@ hot-plugging USB devices."
   final state, never a Changed line about an earlier shape.
 - Read the end of the file before writing a line, and match it.
 
+## Versioning
+
+Versions are `Major.Minor.Patch.0`; the fourth number is always 0. Each application line is
+versioned on its own: v4 in `App.v4/Properties/AssemblyInfo.cs`, v3 in
+`App.v3/Properties/AssemblyInfo.cs`. Within a release the patch number rises by one for every
+changelog line the release carries, so the changelog, the assembly version and the version line
+in `README.MD` are written together.
+
+## Plans live in `docs/plans/`
+
+Design notes, requirements and to-do lists for unshipped work live in
+`docs/plans/{Letter}-{name}/`, which `docs/.gitignore` keeps out of the repository. It is the
+only plan folder: a skill that writes to `docs/superpowers/` has its output moved into
+`docs/plans/` straight away. A plan is deleted when its work ships. What a user needs goes into
+`docs/Help.*.md`, what a maintainer needs goes into a doc-comment beside the code or into
+`Tests/ReadMe.md`, and what is still open goes into `docs/TODO.md` as one line. The code and its
+tests are the record of what was built.
+

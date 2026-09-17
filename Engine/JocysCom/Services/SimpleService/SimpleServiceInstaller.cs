@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿#if NETFRAMEWORK // .NET Framework
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {
@@ -12,3 +13,4 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 	}
 }
+#endif

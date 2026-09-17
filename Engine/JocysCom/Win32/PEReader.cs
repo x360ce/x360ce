@@ -1,4 +1,6 @@
-﻿/* PE Header Reader
+﻿#nullable disable
+
+/* PE Header Reader
  * 
  * Copyright (C) 2009-2011 Jeroen Frijters, jeroen@frijters.net
  *

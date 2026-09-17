@@ -75,19 +75,49 @@ namespace x360ce.App.DInput
 				var value = (MapToMask)(game?.EnableMask ?? (int)MapToMask.None);
 				var virtualEnabled = value.HasFlag(flag);
 				var feedingState = FeedingState[i - 1];
+				var plugging = _plugging[i - 1];
 				if (virtualEnabled)
 				{
-					// If feeding status unknown or not enabled then...
-					if (!feedingState.HasValue || !feedingState.Value || !client.IsControllerConnected(i))
+					if (plugging != null)
 					{
-						var result = EnableFeeding(i);
+						// Being plugged in on a worker. Nothing is fed until that has finished.
+						if (!plugging.IsCompleted)
+							continue;
+						_plugging[i - 1] = null;
+						if (plugging.IsFaulted)
+							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
+						var result = plugging.IsFaulted ? VirtualError.Other : plugging.Result;
 						VirtualErrors[i - 1] = result;
 						if (result != VirtualError.None)
+						{
+							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
 							// Kept and moved on from. Giving up on the whole pass here meant that one
 							// controller which could not be made stopped the other three from being tried,
 							// and said nothing about any of it.
 							continue;
+						}
 						FeedingState[i - 1] = true;
+					}
+					// If feeding status unknown or not enabled then...
+					else if (!feedingState.HasValue || !feedingState.Value || !client.IsControllerConnected(i))
+					{
+						// A refusal is not asked about again for a while. Asking costs a probe of all four
+						// places and a read of the device tree, and asked on every pass it held the whole
+						// thread to a few passes a second for as long as the places stayed full - and a
+						// wheel fed at that rate swings from side to side.
+						if (unchecked(Environment.TickCount - _NextPlugAttempt[i - 1]) < 0)
+							continue;
+						// Plugging in waits up to five seconds for Windows to give the controller a place
+						// and reads the device tree twice: three to four seconds a controller, measured.
+						// On this thread that stopped every controller being polled for as long, and a
+						// wheel under a spring ran to its stop. The wait is a worker's now; the answer is
+						// taken in on a later pass. One at a time: plugging in connects the lower places
+						// first, so two at once each undo the other's work and neither arrives.
+						if (_plugging.Any(x => x != null))
+							continue;
+						var index = i;
+						_plugging[i - 1] = System.Threading.Tasks.Task.Run(() => EnableFeeding(index));
+						continue;
 					}
 					// If the virtual target stopped accepting reports then unplug it, so the
 					// next update can plug it in again instead of failing on every frame.
@@ -99,6 +129,13 @@ namespace x360ce.App.DInput
 				}
 				else
 				{
+					// A plug still under way is left to finish first, so that what it made is let go of too.
+					if (plugging != null)
+					{
+						if (!plugging.IsCompleted)
+							continue;
+						_plugging[i - 1] = null;
+					}
 					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || client.IsControllerConnected(i))
 					{
@@ -220,6 +257,14 @@ namespace x360ce.App.DInput
 
 		bool?[] FeedingState = new bool?[4];
 
+		/// <summary>The plug of each controller under way on a worker, or null.</summary>
+		readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
+
+		/// <summary>When each controller may next be asked for a place, after a refusal.</summary>
+		readonly int[] _NextPlugAttempt = new int[4];
+		/// <summary>How long a refused controller waits before asking for a place again.</summary>
+		public const int PlugRetryMs = 2000;
+
 		/// <summary>Lets go of every controller, so Windows is able to remove one.</summary>
 		/// <remarks>
 		/// Windows will not remove a device that anything still holds open, and this program is the
@@ -253,7 +298,10 @@ namespace x360ce.App.DInput
 		{
 			// Forgotten rather than assumed, so the next pass plugs in whatever is wanted now.
 			for (var i = 0; i < FeedingState.Length; i++)
+			{
 				FeedingState[i] = null;
+				_NextPlugAttempt[i] = Environment.TickCount;
+			}
 			UpdateDevicesEnabled = true;
 			Suspended = false;
 		}
@@ -469,14 +517,15 @@ namespace x360ce.App.DInput
 			// lists and the tab light all read that, so an unexpected place is visible rather than
 			// silently wrong.
 			var before = OccupiedPlaces();
+			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
+			// spent waiting for one to appear. Answered before the device tree is read, which is the
+			// expensive part and would be wasted on a refusal.
+			if (before.All(x => x))
+				return VirtualError.PlaceNotGiven;
 			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.
 			var padsBefore = XInputPlaces.VirtualHardwareNow();
-			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
-			// spent waiting for one to appear - every pass, for as long as they stay full.
-			if (before.All(x => x))
-				return VirtualError.PlaceNotGiven;
 			if (!ViGEmClient.Current.PlugIn(userIndex))
 				return VirtualError.Other;
 			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a

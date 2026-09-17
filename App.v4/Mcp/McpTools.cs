@@ -284,10 +284,11 @@ namespace x360ce.App.Mcp
 				throw new InvalidOperationException("No preset for " + productName + ". The Load Preset window lists the names.");
 			// The selected row is the device the tab's form shows; loading elsewhere would show one
 			// device's values under another, and the button itself works on the selection.
-			if (MainForm.Current.PadControls[controller - 1].GetSelectedSetting() == null)
+			var selected = MainForm.Current.PadControls[controller - 1].GetSelectedSetting();
+			if (selected == null)
 				throw new InvalidOperationException("No device is selected on controller " + controller + ". Map one, or select its row.");
 			MainForm.Current.UpdateTimer.Stop();
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, ps);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, selected, ps);
 			MainForm.Current.UpdateTimer.Start();
 			return null;
 		}

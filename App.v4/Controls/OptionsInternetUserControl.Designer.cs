@@ -32,9 +32,6 @@
 			this.GetProgramsIncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
 			this.GetProgramsMinInstancesUpDown = new System.Windows.Forms.NumericUpDown();
-			this.UpdateOptionsGroupBox = new System.Windows.Forms.GroupBox();
-			this.CheckForUpdatesCheckBox = new System.Windows.Forms.CheckBox();
-			this.CheckUpdatesButton = new System.Windows.Forms.Button();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
 			this.InternetAutoSaveCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
@@ -61,7 +58,6 @@
 			this.OnlineAccountLoginGroupBox = new System.Windows.Forms.GroupBox();
 			this.GamesGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GetProgramsMinInstancesUpDown)).BeginInit();
-			this.UpdateOptionsGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
 			this.OnlineAccountGroupBox.SuspendLayout();
 			this.OnlineAccountLoginGroupBox.SuspendLayout();
@@ -114,39 +110,6 @@
             0,
             0,
             0});
-			// 
-			// UpdateOptionsGroupBox
-			// 
-			this.UpdateOptionsGroupBox.Controls.Add(this.CheckForUpdatesCheckBox);
-			this.UpdateOptionsGroupBox.Controls.Add(this.CheckUpdatesButton);
-			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(263, 3);
-			this.UpdateOptionsGroupBox.Name = "UpdateOptionsGroupBox";
-			this.UpdateOptionsGroupBox.Size = new System.Drawing.Size(254, 69);
-			this.UpdateOptionsGroupBox.TabIndex = 34;
-			this.UpdateOptionsGroupBox.TabStop = false;
-			this.UpdateOptionsGroupBox.Text = "Update Options";
-			this.UpdateOptionsGroupBox.Visible = false;
-			// 
-			// CheckForUpdatesCheckBox
-			// 
-			this.CheckForUpdatesCheckBox.AutoSize = true;
-			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(4, 33);
-			this.CheckForUpdatesCheckBox.Name = "CheckForUpdatesCheckBox";
-			this.CheckForUpdatesCheckBox.Size = new System.Drawing.Size(163, 17);
-			this.CheckForUpdatesCheckBox.TabIndex = 30;
-			this.CheckForUpdatesCheckBox.Text = "Check for updates on startup";
-			this.CheckForUpdatesCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// CheckUpdatesButton
-			// 
-			this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckUpdatesButton.Location = new System.Drawing.Point(173, 29);
-			this.CheckUpdatesButton.Name = "CheckUpdatesButton";
-			this.CheckUpdatesButton.Size = new System.Drawing.Size(75, 23);
-			this.CheckUpdatesButton.TabIndex = 68;
-			this.CheckUpdatesButton.Text = "Check...";
-			this.CheckUpdatesButton.UseVisualStyleBackColor = true;
-			this.CheckUpdatesButton.Click += new System.EventHandler(this.CheckUpdatesButton_Click);
 			// 
 			// InternetGroupBox
 			// 
@@ -414,7 +377,6 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.OnlineAccountLoginGroupBox);
 			this.Controls.Add(this.GamesGroupBox);
-			this.Controls.Add(this.UpdateOptionsGroupBox);
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.OnlineAccountGroupBox);
 			this.Name = "OptionsInternetUserControl";
@@ -422,8 +384,6 @@
 			this.GamesGroupBox.ResumeLayout(false);
 			this.GamesGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GetProgramsMinInstancesUpDown)).EndInit();
-			this.UpdateOptionsGroupBox.ResumeLayout(false);
-			this.UpdateOptionsGroupBox.PerformLayout();
 			this.InternetGroupBox.ResumeLayout(false);
 			this.InternetGroupBox.PerformLayout();
 			this.OnlineAccountGroupBox.ResumeLayout(false);
@@ -440,9 +400,6 @@
 		public System.Windows.Forms.CheckBox GetProgramsIncludeEnabledCheckBox;
 		private System.Windows.Forms.Label MinimumInstanceCountLabel;
 		public System.Windows.Forms.NumericUpDown GetProgramsMinInstancesUpDown;
-		private System.Windows.Forms.GroupBox UpdateOptionsGroupBox;
-		public System.Windows.Forms.CheckBox CheckForUpdatesCheckBox;
-		private System.Windows.Forms.Button CheckUpdatesButton;
 		private System.Windows.Forms.GroupBox InternetGroupBox;
 		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
 		public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;

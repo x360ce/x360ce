@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -189,7 +191,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		private void ProcessException(XmlSchemaException ex)
 		{
 			// If stack traces is empty then...
-			if (ex.StackTrace == null)
+			if (ex.StackTrace is null)
 			{
 				try
 				{

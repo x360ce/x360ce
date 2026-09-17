@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -272,6 +274,87 @@ namespace JocysCom.ClassLibrary
 			[DllImport("Winmm.dll", CharSet = CharSet.Auto, SetLastError = true)]
 			internal static extern uint timeEndPeriod(uint uPeriod);
 
+			[StructLayout(LayoutKind.Sequential)]
+			internal struct PROCESS_POWER_THROTTLING_STATE
+			{
+				public uint Version;
+				public uint ControlMask;
+				public uint StateMask;
+			}
+
+			internal const uint PROCESS_POWER_THROTTLING_CURRENT_VERSION = 1;
+			internal const uint PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1;
+			internal const uint PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION = 0x4;
+			internal const int ProcessPowerThrottling = 4;
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			internal static extern bool SetProcessInformation(IntPtr hProcess, int ProcessInformationClass,
+				ref PROCESS_POWER_THROTTLING_STATE ProcessInformation, uint ProcessInformationSize);
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			internal static extern bool GetProcessInformation(IntPtr hProcess, int ProcessInformationClass,
+				ref PROCESS_POWER_THROTTLING_STATE ProcessInformation, uint ProcessInformationSize);
+
+			[DllImport("kernel32.dll")]
+			internal static extern IntPtr GetCurrentProcess();
+
+			[DllImport("ntdll.dll")]
+			internal static extern int NtQueryTimerResolution(out uint minimum, out uint maximum, out uint current);
+		}
+
+		static bool _FullResolutionAsked;
+
+		/// <summary>
+		/// Asks Windows to honour a one millisecond timer for this process whatever its window is
+		/// doing.
+		/// </summary>
+		/// <remarks>
+		/// Windows 11 puts a process it considers to be in the background into its efficiency mode:
+		/// its threads are woken late and its timer resolution requests are ignored, so a thread
+		/// that asks to run every millisecond runs every eight. That is exactly where this program
+		/// sits while a game is played. Measured: the timer ticked a thousand times a second and
+		/// the device thread, woken by it, managed 125 passes, and a wheel fed at that rate swings
+		/// from side to side. The request is made once per process: the period is asked for
+		/// outright, and both parts of the throttling are switched off for this process, which a
+		/// bit set in the control mask and clear in the state mask means. Windows without the
+		/// call carries on as before.
+		/// </remarks>
+		static void AskForFullResolution()
+		{
+			if (_FullResolutionAsked)
+				return;
+			_FullResolutionAsked = true;
+			try { NativeMethods.timeBeginPeriod(1); }
+			catch (Exception) { }
+			try
+			{
+				var state = new NativeMethods.PROCESS_POWER_THROTTLING_STATE
+				{
+					Version = NativeMethods.PROCESS_POWER_THROTTLING_CURRENT_VERSION,
+					ControlMask = NativeMethods.PROCESS_POWER_THROTTLING_EXECUTION_SPEED
+						| NativeMethods.PROCESS_POWER_THROTTLING_IGNORE_TIMER_RESOLUTION,
+					StateMask = 0,
+				};
+				NativeMethods.SetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling,
+					ref state, (uint)Marshal.SizeOf(typeof(NativeMethods.PROCESS_POWER_THROTTLING_STATE)));
+			}
+			catch (Exception) { }
+		}
+
+		/// <summary>The process's power throttling masks as Windows reports them, "control/state", or "?" where it cannot say.</summary>
+		public static string PowerThrottlingState
+		{
+			get
+			{
+				try
+				{
+					var state = new NativeMethods.PROCESS_POWER_THROTTLING_STATE { Version = NativeMethods.PROCESS_POWER_THROTTLING_CURRENT_VERSION };
+					var ok = NativeMethods.GetProcessInformation(NativeMethods.GetCurrentProcess(), NativeMethods.ProcessPowerThrottling,
+						ref state, (uint)Marshal.SizeOf(typeof(NativeMethods.PROCESS_POWER_THROTTLING_STATE)));
+					return ok ? state.ControlMask.ToString("X") + "/" + state.StateMask.ToString("X") : "?";
+				}
+				catch (Exception) { return "?"; }
+			}
 		}
 
 		/// <summary>
@@ -291,6 +374,27 @@ namespace JocysCom.ClassLibrary
 		/// The current timer instance ID
 		/// </summary>
 		uint _TimerId = 0;
+
+		/// <summary>Whether the multimedia timer is the one ticking, rather than the ordinary fallback.</summary>
+		public bool UsesMultimediaTimer
+		{
+			get { return MultimediaTimerAvailable && _TimerId != 0; }
+		}
+
+		/// <summary>The timer resolution the process currently gets from Windows, in milliseconds.</summary>
+		public static double CurrentResolutionMs
+		{
+			get
+			{
+				try
+				{
+					uint min, max, current;
+					NativeMethods.NtQueryTimerResolution(out min, out max, out current);
+					return current / 10000.0;
+				}
+				catch (Exception) { return -1; }
+			}
+		}
 
 		/// <summary>
 		/// Whether the multimedia timer can be used. Cleared for the whole process the first time
@@ -343,6 +447,7 @@ namespace JocysCom.ClassLibrary
 					var f = fuEvent.TIME_CALLBACK_FUNCTION | (AutoReset ? fuEvent.TIME_PERIODIC : fuEvent.TIME_ONESHOT);
 					try
 					{
+						AskForFullResolution();
 						_TimerId = NativeMethods.timeSetEvent((uint)Interval, 0, _callback, UIntPtr.Zero, (uint)f);
 					}
 					catch (DllNotFoundException)

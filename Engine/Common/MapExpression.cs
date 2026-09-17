@@ -16,6 +16,10 @@ namespace x360ce.Engine
 	///
 	/// Values are normalised before evaluation and clamped afterwards by the caller, so an expression is
 	/// written in plain numbers and never has to know a device's range.
+	///
+	/// No expression library is used: each candidate either evaluates C#-like code, or offers operations
+	/// such as summation, factorial and recursion whose cost is unbounded, and none enforces the length,
+	/// depth and node caps this needs.
 	/// </remarks>
 	public sealed class MapExpression
 	{

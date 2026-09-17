@@ -211,9 +211,6 @@ namespace x360ce.App
 								MainForm.Current.SetHeaderInfo(result.ErrorMessage);
 					}
 					break;
-				case CloudAction.CheckUpdates:
-					MainForm.Current.ProcessUpdateResults(result);
-					break;
 			}
 		}
 

@@ -1,3 +1,5 @@
+#nullable disable
+
 using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Drawing
@@ -21,7 +23,7 @@ namespace JocysCom.ClassLibrary.Drawing
 		}
 
 		/// <summary>
-		/// Make bitmap grayscale
+		/// Make bitmap gray-scale
 		/// </summary>
 		/// <param name="b"></param>
 		/// <returns></returns>
@@ -34,6 +36,7 @@ namespace JocysCom.ClassLibrary.Drawing
 				for (int x = 0; x < w; x++)
 				{
 					Color p = b.GetPixel(x, y);
+					// National Television System Committee (NTSC) conversion formula.
 					byte c = (byte)(.299 * p.R + .587 * p.G + .114 * p.B);
 					b.SetPixel(x, y, Color.FromArgb(p.A, c, c, c));
 				}

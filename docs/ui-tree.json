@@ -342,6 +342,88 @@
 					]
 				},
 				{
+					"Name":"InputChipGroup",
+					"Description":"The device's buttons, numbered as the mapping list numbers them.",
+					"Role":"Control"
+				},
+				{
+					"Name":"InputUserControl",
+					"Description":"Every control of the selected device, lit while it is used, before anything is mapped.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Input source",
+							"Description":"The device the chips below belong to, or that none is selected.",
+							"Role":"Label",
+							"Id":"SourceLabel"
+						},
+						{
+							"Name":"Buttons",
+							"Description":"One chip per button, lit while it is held. Click or drag a chip into a mapping box.",
+							"Role":"Section",
+							"Id":"ButtonsGroupBox",
+							"Items":[
+								{
+									"Name":"Button chips",
+									"Description":"The device's buttons, numbered as the mapping list numbers them.",
+									"Role":"Group",
+									"Id":"ButtonChips",
+									"Type":"InputChipGroup",
+									"SameAs":"InputChipGroup"
+								}
+							]
+						},
+						{
+							"Name":"Axes",
+							"Description":"One chip per axis with its reading, lit while it is away from the centre.",
+							"Role":"Section",
+							"Id":"AxesGroupBox",
+							"Items":[
+								{
+									"Name":"Axis chips",
+									"Description":"The device's axes, numbered by the slot each answers to, as the mapping list numbers them.",
+									"Role":"Group",
+									"Id":"AxisChips",
+									"Type":"InputChipGroup",
+									"SameAs":"InputChipGroup"
+								}
+							]
+						},
+						{
+							"Name":"Sliders",
+							"Description":"One chip per slider with its reading, lit while it is moved from zero.",
+							"Role":"Section",
+							"Id":"SlidersGroupBox",
+							"Items":[
+								{
+									"Name":"Slider chips",
+									"Description":"The device's sliders, numbered as the mapping list numbers them.",
+									"Role":"Group",
+									"Id":"SliderChips",
+									"Type":"InputChipGroup",
+									"SameAs":"InputChipGroup"
+								}
+							]
+						},
+						{
+							"Name":"POVs",
+							"Description":"One chip per POV with its reading in degrees, then its four directions, lit while pressed.",
+							"Role":"Section",
+							"Id":"PovsGroupBox",
+							"Items":[
+								{
+									"Name":"POV chips",
+									"Description":"Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.",
+									"Role":"Group",
+									"Id":"PovChips",
+									"Type":"InputChipGroup",
+									"SameAs":"InputChipGroup"
+								}
+							]
+						}
+					]
+				},
+				{
 					"Name":"MapExpressionToggle",
 					"Description":"Writes the Left Trigger mapping as a formula instead of choosing one control.",
 					"Role":"Control"
@@ -363,6 +445,14 @@
 									"Role":"Tab",
 									"Id":"GeneralTabPage",
 									"Items":[
+										{
+											"Name":"Input",
+											"Description":"Every control of the selected device, lit while it is used, before anything is mapped.",
+											"Role":"Group",
+											"Id":"InputPanel",
+											"Type":"InputUserControl",
+											"SameAs":"InputUserControl"
+										},
 										{
 											"Name":"Left trigger value",
 											"Description":"What the game is being given for the left trigger right now.",
@@ -2025,27 +2115,6 @@
 																	]
 																},
 																{
-																	"Name":"Updates",
-																	"Description":"Whether the program looks for a newer version.",
-																	"Role":"Section",
-																	"Id":"UpdateOptionsGroupBox",
-																	"Hidden":true,
-																	"Items":[
-																		{
-																			"Name":"Check for updates on startup",
-																			"Description":"Check for updates.",
-																			"Role":"CheckBox",
-																			"Id":"CheckForUpdatesCheckBox"
-																		},
-																		{
-																			"Name":"Check...",
-																			"Description":"Looks for a newer version now.",
-																			"Role":"Button",
-																			"Id":"CheckUpdatesButton"
-																		}
-																	]
-																},
-																{
 																	"Name":"Online account",
 																	"Description":"Identifies this computer to the online database.",
 																	"Role":"Section",
@@ -2397,6 +2466,59 @@
 																	"Description":"Moves the settings to the chosen folder and starts using it.",
 																	"Role":"Button",
 																	"Id":"ApplyButton"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"Update",
+													"Description":"Looks for a newer version of the program and installs it.",
+													"Role":"Tab",
+													"Id":"UpdateTabPage",
+													"Items":[
+														{
+															"Name":"Update",
+															"Description":"Looks for a newer version of the program and installs it, step by step, in the log below.",
+															"Role":"Group",
+															"Id":"UpdatePanel",
+															"Type":"OptionsUpdateUserControl",
+															"Items":[
+																{
+																	"Name":"Check for updates on startup",
+																	"Description":"Look for a newer version after the program starts. Off means no request is made.",
+																	"Role":"CheckBox",
+																	"Id":"CheckForUpdatesCheckBox"
+																},
+																{
+																	"Name":"What the check sends",
+																	"Description":"When the check runs and the one thing it sends: this program's version, to github.com.",
+																	"Role":"Label",
+																	"Id":"PrivacyLabel"
+																},
+																{
+																	"Name":"Check now",
+																	"Description":"Looks for a newer version now, downloads it, checks it and installs it.",
+																	"Role":"Button",
+																	"Id":"CheckButton"
+																},
+																{
+																	"Name":"Check Digital Signature",
+																	"Description":"Installs only a download that carries a trusted digital signature.",
+																	"Role":"CheckBox",
+																	"Id":"CheckDigitalSignatureCheckBox"
+																},
+																{
+																	"Name":"Check Version",
+																	"Description":"Installs only a download whose version is newer than this one and matches the release.",
+																	"Role":"CheckBox",
+																	"Id":"CheckVersionCheckBox"
+																},
+																{
+																	"Name":"Update log",
+																	"Description":"Each step of the last check and what it found.",
+																	"Role":"Value",
+																	"Id":"LogTextBox"
 																}
 															]
 														}
@@ -3121,7 +3243,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.21.30 (Build: 2026-09-13) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.22.10 (Build: 1950-02-07) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

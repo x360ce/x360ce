@@ -1,12 +1,15 @@
-﻿using JocysCom.ClassLibrary.Win32;
+﻿#nullable disable
+
+using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Configuration;
+// using System.Runtime.Serialization.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -16,7 +19,6 @@ namespace JocysCom.ClassLibrary.IO
 
 	public partial class DeviceDetector : IDisposable
 	{
-
 		private const int ERROR_INSUFFICIENT_BUFFER = 122;
 		private const int ERROR_INVALID_DATA = 13;
 		private const int ERROR_NO_MORE_ITEMS = 259;
@@ -78,60 +80,6 @@ namespace JocysCom.ClassLibrary.IO
 			//Marshal.StructureToPtr(notificationFilter, devBroadcastDeviceInterfaceBuffer, true);
 			//NativeMethods.RegisterDeviceNotification(_RecipientHandle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE);
 		}
-
-		#region Device interface notifications
-
-		/// <summary>The interface class a game controller, mouse or keyboard belongs to.</summary>
-		public static Guid HidInterfaceClass
-		{
-			get
-			{
-				var guid = Guid.Empty;
-				NativeMethods.HidD_GetHidGuid(ref guid);
-				return guid;
-			}
-		}
-
-		/// <summary>Asks Windows to report devices of one interface class arriving and being removed.</summary>
-		/// <remarks>
-		/// A window is sent device node changes without asking for them, but those say only that
-		/// something on the machine changed, never what. The only way to answer them is to read every
-		/// device again, which takes about a second and stops whatever else was running. Asking for one
-		/// interface class instead brings an arrival and a removal for that class alone, which is the
-		/// question actually being asked, at no cost while nothing is plugged in or out.
-		/// </remarks>
-		/// <param name="windowHandle">Window which is to receive the messages.</param>
-		/// <param name="interfaceClass">Interface class to be told about.</param>
-		/// <returns>Registration to be passed to <see cref="UnregisterDeviceInterface"/>.</returns>
-		public static IntPtr RegisterDeviceInterface(IntPtr windowHandle, Guid interfaceClass)
-		{
-			var filter = new DEV_BROADCAST_DEVICEINTERFACE();
-			filter.Initialize();
-			filter.dbch_devicetype = DBCH_DEVICETYPE.DBT_DEVTYP_DEVICEINTERFACE;
-			filter.dbch_classguid = interfaceClass;
-			filter.dbcc_name = new char[1];
-			var buffer = Marshal.AllocHGlobal(filter.dbch_size);
-			try
-			{
-				Marshal.StructureToPtr(filter, buffer, false);
-				// Windows takes its own copy, so the buffer is ours to release either way.
-				return NativeMethods.RegisterDeviceNotification(windowHandle, buffer, (uint)DEVICE_NOTIFY_WINDOW_HANDLE);
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(buffer);
-			}
-		}
-
-		/// <summary>Stops the messages asked for by <see cref="RegisterDeviceInterface"/>.</summary>
-		/// <param name="registration">What the registration returned.</param>
-		public static void UnregisterDeviceInterface(IntPtr registration)
-		{
-			if (registration != IntPtr.Zero)
-				NativeMethods.UnregisterDeviceNotification(registration);
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Message handler which must be called from client form. Processes Windows messages and calls event handlers. 
@@ -206,7 +154,7 @@ namespace JocysCom.ClassLibrary.IO
 		private void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			var ev = DeviceChanged;
-			if (ev == null)
+			if (ev is null)
 				return;
 			var eventListeners = ev.GetInvocationList();
 			for (var i = 0; i < eventListeners.Length; i++)
@@ -353,6 +301,60 @@ namespace JocysCom.ClassLibrary.IO
 		}
 
 
+		#region Device interface notifications
+
+		/// <summary>The interface class a game controller, mouse or keyboard belongs to.</summary>
+		public static Guid HidInterfaceClass
+		{
+			get
+			{
+				var guid = Guid.Empty;
+				NativeMethods.HidD_GetHidGuid(ref guid);
+				return guid;
+			}
+		}
+
+		/// <summary>Asks Windows to report devices of one interface class arriving and being removed.</summary>
+		/// <remarks>
+		/// A window is sent device node changes without asking for them, but those say only that
+		/// something on the machine changed, never what. The only way to answer them is to read every
+		/// device again, which takes about a second and stops whatever else was running. Asking for one
+		/// interface class instead brings an arrival and a removal for that class alone, which is the
+		/// question actually being asked, at no cost while nothing is plugged in or out.
+		/// </remarks>
+		/// <param name="windowHandle">Window which is to receive the messages.</param>
+		/// <param name="interfaceClass">Interface class to be told about.</param>
+		/// <returns>Registration to be passed to <see cref="UnregisterDeviceInterface"/>.</returns>
+		public static IntPtr RegisterDeviceInterface(IntPtr windowHandle, Guid interfaceClass)
+		{
+			var filter = new DEV_BROADCAST_DEVICEINTERFACE();
+			filter.Initialize();
+			filter.dbch_devicetype = DBCH_DEVICETYPE.DBT_DEVTYP_DEVICEINTERFACE;
+			filter.dbch_classguid = interfaceClass;
+			filter.dbcc_name = new char[1];
+			var buffer = Marshal.AllocHGlobal(filter.dbch_size);
+			try
+			{
+				Marshal.StructureToPtr(filter, buffer, false);
+				// Windows takes its own copy, so the buffer is ours to release either way.
+				return NativeMethods.RegisterDeviceNotification(windowHandle, buffer, (uint)DEVICE_NOTIFY_WINDOW_HANDLE);
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		/// <summary>Stops the messages asked for by <see cref="RegisterDeviceInterface"/>.</summary>
+		/// <param name="registration">What the registration returned.</param>
+		public static void UnregisterDeviceInterface(IntPtr registration)
+		{
+			if (registration != IntPtr.Zero)
+				NativeMethods.UnregisterDeviceNotification(registration);
+		}
+
+		#endregion
+
 		#region Cached class icons
 
 		private static Dictionary<int, Dictionary<Guid, Icon>> _cacheIcons = new Dictionary<int, Dictionary<Guid, Icon>>();
@@ -408,12 +410,15 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		/// <param name="classGuid">Filter devices by class.</param>
 		/// <param name="flags">Filter devices by options.</param>
+		/// <param name="deviceInstanceId">Specific device instance ID to enumerate.</param>
+		/// <param name="callback">Callback function to process each device.</param>
 		public static void _EnumDeviceInfo(Guid? classGuid, DIGCF? flags, string deviceInstanceId, Func<IntPtr, SP_DEVINFO_DATA, bool> callback)
 		{
 			if (!classGuid.HasValue)
 				classGuid = Guid.Empty;
+			// A class named without flags means that class; the all-classes flag would make Windows ignore it.
 			if (!flags.HasValue)
-				flags = DIGCF.DIGCF_ALLCLASSES;
+				flags = classGuid.Value == Guid.Empty ? DIGCF.DIGCF_ALLCLASSES : DIGCF.DIGCF_PRESENT;
 			lock (GetDevicesLock)
 			{
 				// https://docs.microsoft.com/en-gb/windows-hardware/drivers/install/device-information-sets
@@ -453,13 +458,15 @@ namespace JocysCom.ClassLibrary.IO
 		/// <summary>
 		/// Enumerate Interfaces.
 		/// </summary>
-		static void _EnumDeviceInterfaces(Func<IntPtr, SP_DEVICE_INTERFACE_DATA, bool> callback)
+		/// <param name="presentOnly">Offer only interfaces of devices present now, not those Windows remembers.</param>
+		static void _EnumDeviceInterfaces(bool presentOnly, Func<IntPtr, SP_DEVICE_INTERFACE_DATA, bool> callback)
 		{
 			var hidGuid = Guid.Empty;
 			NativeMethods.HidD_GetHidGuid(ref hidGuid);
 			lock (GetDevicesLock)
 			{
-				var infoSet = NativeMethods.SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_DEVICEINTERFACE);
+				var flags = presentOnly ? DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT : DIGCF.DIGCF_DEVICEINTERFACE;
+				var infoSet = NativeMethods.SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, flags);
 				if (infoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 					throw new Exception("Invalid Handle");
 				var interfaceData = new SP_DEVICE_INTERFACE_DATA();
@@ -471,80 +478,87 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		public static DeviceInfo[] GetInterfaces()
+		// INTERFACES.
+		public static DeviceInfo[] GetInterfaces(bool DiDevicesOnly = false)
+		{
+			return GetInterfaces(DiDevicesOnly
+				? (Func<string, string, bool>)((deviceId, devicePath) => PnPDeviceIDs.Contains(deviceId))
+				: null);
+		}
+
+		/// <summary>
+		/// Reads the HID interfaces the filter accepts, given each one's device id and interface path.
+		/// A null filter reads them all, remembered devices included; a filter is offered present devices only.
+		/// </summary>
+		/// <remarks>
+		/// Opening an interface and reading its strings costs about ten milliseconds each. The filter is
+		/// asked before that, so a caller after two interfaces on a machine with thirty pays for two.
+		/// A machine keeps the interfaces of devices long gone, and each of those costs as much to
+		/// describe as a live one; a caller with a filter wants live devices, so those are all it sees.
+		/// </remarks>
+		public static DeviceInfo[] GetInterfaces(Func<string, string, bool> filter)
 		{
 			var list = new List<DeviceInfo>();
-			var hidGuid = Guid.Empty;
-			NativeMethods.HidD_GetHidGuid(ref hidGuid);
 			var requiredSize3 = 0;
-			// serialNumbers and physicalDescriptors for debug purposes only.
-			var serialNumbers = new List<string>();
-			var physicalDescriptors = new List<string>();
-			_EnumDeviceInterfaces((deviceInfoSet, interfaceData) =>
+			_EnumDeviceInterfaces(filter != null, (deviceInfoSet, interfaceData) =>
 			{
-				bool success;
 				var deviceInfoData = new SP_DEVINFO_DATA();
 				deviceInfoData.Initialize();
-		// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
-		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
-		// Allocate memory for results. 
-		var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+				// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
+				NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
+				// Allocate memory for results.
+				var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
 				Marshal.WriteInt32(ptrDetails, IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8);
-		// Call 2: Retrieve data.
-		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
+				// Call 2: Retrieve data.
+				NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
+				Marshal.FreeHGlobal(ptrDetails);
+				var deviceId = GetDeviceId(deviceInfoData.DevInst);
+				if (filter != null && !filter(deviceId, interfaceDetail.DevicePath))
+					return true;
 				var di = GetDeviceInfo(deviceInfoSet, deviceInfoData);
 				di.DevicePath = interfaceDetail.DevicePath;
-				Marshal.FreeHGlobal(ptrDetails);
-		// Note: Interfaces don't have vendor or product, therefore must get from parent device.
-		// Open the device as a file so that we can query it with HID and read/write to it.
-		var devHandle = NativeMethods.CreateFile(
-		interfaceDetail.DevicePath,
-		0,
-		FileShare.ReadWrite,
-		IntPtr.Zero,
-		FileMode.Open,
-		0, //WinNT.Overlapped
-		IntPtr.Zero
-	);
+				// Note: Interfaces don't have vendor or product, therefore must get from parent device.
+				// Open the device as a file so that we can query it with HID and read/write to it.
+				var devHandle = NativeMethods.CreateFile(
+					interfaceDetail.DevicePath,
+					0,
+					FileShare.ReadWrite,
+					IntPtr.Zero,
+					FileMode.Open,
+					0,
+					/*WinNT.Overlapped,*/
+					IntPtr.Zero);
 				if (devHandle.IsInvalid)
 					return true;
-		// Get vendor product and version from device.
-		var ha = new HIDD_ATTRIBUTES();
+				// Get vendor product and version from device.
+				var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = NativeMethods.HidD_GetAttributes(devHandle, ref ha);
 				di.VendorId = ha.VendorID;
 				di.ProductId = ha.ProductID;
 				di.Revision = ha.VersionNumber;
-		// Get other options.
-		if (success2)
+				// Get other options.
+				if (success2)
 				{
 					var preparsedDataPtr = new IntPtr();
 					var caps = new HIDP_CAPS();
-			// Read out the 'pre-parsed data'.
-			NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
-			// feed that to GetCaps.
-			NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
-			// Free the 'pre-parsed data'.
-			NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
-			// This could fail if the device was recently attached.
-			// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
-			var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
+					// Read out the 'pre-parsed data'.
+					NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
+					// feed that to GetCaps.
+					NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
+					// Free the 'pre-parsed data'.
+					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
+					// This could fail if the device was recently attached.
+					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
+					var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
 					var sb = new StringBuilder((int)capacity, (int)capacity);
-			// Override manufacturer if found.
-			if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+					// Override manufacturer if found.
+					if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Manufacturer = sb.ToString();
-			// Override ProductName if Found.
-			if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+					// Override ProductName if Found.
+					if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Description = sb.ToString();
-			// Get Serial number.
-			var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
-			? sb.ToString() : "";
-					serialNumbers.Add(serialNumber);
-			// Get physical descriptor.
-			var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
-			? sb.ToString() : "";
-					physicalDescriptors.Add(physicalDescriptor);
 				}
 				list.Add(di);
 				devHandle.Close();
@@ -556,12 +570,6 @@ namespace JocysCom.ClassLibrary.IO
 		/// <summary>
 		/// Get list of devices.
 		/// </summary>
-		/// <param name="classGuid">Filter devices by class.</param>
-		/// <param name="flags">Filter devices by options.</param>
-		/// <param name="deviceId">Filter results by Device ID.</param>
-		/// <param name="vid">Filter results by Vendor ID.</param>
-		/// <param name="pid">Filter results by Product ID.</param>
-		/// <param name="rev">Filter results by Revision ID.</param>
 		/// <returns>List of devices</returns>
 		/// <remarks>
 		/// This is code I cobbled together from a number of newsgroup threads
@@ -574,26 +582,186 @@ namespace JocysCom.ClassLibrary.IO
 		///           Failed to enumerate device tree!
 		///           Invalid handle!
 		/// </remarks>		
-		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
+
+		// Connected PnP Device Id list.
+		private static List<string> PnPDeviceIDs = new List<string>();
+		/// <summary>
+		/// A DirectInput device as the program that reads DirectInput describes it, for the reads that
+		/// answer only about those devices. A plain class rather than a tuple, so that a consumer on
+		/// .NET Framework 4.6.2 compiles without a package.
+		/// </summary>
+		public class DirectInputDevice
+		{
+			/// <summary>The DirectInput instance, kept as object so this library needs no DirectInput reference.</summary>
+			public object DeviceInstance;
+			/// <summary>The DirectInput device class, kept as object for the same reason.</summary>
+			public object DeviceClass;
+			public int Usage;
+			/// <summary>The start of the Plug and Play device id the device answers to.</summary>
+			public string DiDeviceID;
+			public string ProductName;
+			public Guid InstanceGuid;
+		}
+
+		/// <summary>The DirectInput devices the filtered reads answer about, set by the consumer, or null.</summary>
+		public static IEnumerable<DirectInputDevice> DiDevices = null;
+
+		// DEVICES.
+
+		/// <summary>The DirectInput device a Plug and Play device id belongs to, or null.</summary>
+		static DirectInputDevice FindDiDevice(string PnPDeviceID)
+		{
+			if (DiDevices == null)
+				return null;
+			foreach (var item in DiDevices)
+				if (PnPDeviceID.StartsWith(item.DiDeviceID, StringComparison.OrdinalIgnoreCase))
+					return item;
+			return null;
+		}
+
+		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string parentDeviceId = null, int vid = 0, int pid = 0, int rev = 0, bool DiDevicesOnly = false)
 		{
 			var list = new List<DeviceInfo>();
+
 			_EnumDeviceInfo(classGuid, flags, null, (infoSet, infoData) =>
 			{
 				var currentDeviceId = GetDeviceId(infoData.DevInst);
-				if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId)
+
+				if (string.IsNullOrEmpty(currentDeviceId))
 					return true;
-				var device = GetDeviceInfo(infoSet, infoData);
-				if (vid > 0 && device.VendorId != vid)
+
+				// If parent device is requested.
+				if (!string.IsNullOrEmpty(parentDeviceId))
+				{
+					if (currentDeviceId == parentDeviceId)
+					{
+						var device = GetDeviceInfo(infoSet, infoData);
+						list.Add(device);
+						return true;
+					}
 					return true;
-				if (pid > 0 && device.ProductId != pid)
+				}
+				// if devices are requested.
+				else
+				{
+					// MI_00 = Keyboard, MI_01 = Mouse, MI_02 = HID. The DirectInput filter alone skips
+					// devices by these rules; asked for every device, the read returns every device.
+					if (DiDevicesOnly && (FindDiDevice(currentDeviceId) == null || !currentDeviceId.EndsWith("0")))
+						return true;
+
+					var device = GetDeviceInfo(infoSet, infoData);
+					if ((DiDevicesOnly && device.IsRemovable)
+						|| (vid > 0 && device.VendorId != vid)
+						|| (pid > 0 && device.ProductId != pid)
+						|| (rev > 0 && device.Revision != rev))
+						return true;
+
+					list.Add(device);
 					return true;
-				if (rev > 0 && device.Revision != rev)
-					return true;
-				list.Add(device);
+				}
+			});
+
+			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
+			// The ids the DirectInput interface filter answers from.
+			PnPDeviceIDs.Clear();
+			foreach (var device in listOrdered)
+				PnPDeviceIDs.Add(device.DeviceId);
+			return listOrdered;
+		}
+
+		/// <summary>The id of every device, present ones only when asked, and nothing else about them.</summary>
+		/// <remarks>
+		/// A device id is one call to the configuration manager; the rest of a device's description is a
+		/// dozen. Asked for ids alone, seven hundred devices answer in a few milliseconds, and a caller can
+		/// then read the description of the few it wants with <see cref="GetDevices(IEnumerable{string}, bool)"/>.
+		/// </remarks>
+		public static string[] GetDeviceIds(bool presentOnly = true)
+		{
+			var list = new List<string>();
+			var flags = presentOnly ? DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT : DIGCF.DIGCF_ALLCLASSES;
+			_EnumDeviceInfo(null, flags, null, (infoSet, infoData) =>
+			{
+				list.Add(GetDeviceId(infoData.DevInst));
 				return true;
 			});
+			return list.ToArray();
+		}
+
+		/// <summary>
+		/// Reads the named devices, and with <paramref name="includeParents"/> every ancestor of each up
+		/// to the root, without walking the rest of the machine.
+		/// </summary>
+		/// <remarks>
+		/// One information set serves the whole call and each device is opened in it by id. A machine
+		/// with seven hundred nodes answers for a handful in a few milliseconds, where reading them all
+		/// costs about a millisecond a node. An id that is not present is left out.
+		/// </remarks>
+		public static DeviceInfo[] GetDevices(IEnumerable<string> deviceIds, bool includeParents)
+		{
+			var list = new List<DeviceInfo>();
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var queue = new Queue<string>(deviceIds.Where(x => !string.IsNullOrEmpty(x)));
+			lock (GetDevicesLock)
+			{
+				var infoSet = NativeMethods.SetupDiGetClassDevs(Guid.Empty, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+				if (infoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
+					throw new Exception("Invalid Handle");
+				try
+				{
+					while (queue.Count > 0)
+					{
+						var id = queue.Dequeue();
+						if (!seen.Add(id))
+							continue;
+						var infoData = new SP_DEVINFO_DATA();
+						infoData.Initialize();
+						if (!NativeMethods.SetupDiOpenDeviceInfo(infoSet, id, IntPtr.Zero, 0, ref infoData))
+							continue;
+						var device = GetDeviceInfo(infoSet, infoData);
+						list.Add(device);
+						if (includeParents && !string.IsNullOrEmpty(device.ParentDeviceId))
+							queue.Enqueue(device.ParentDeviceId);
+					}
+				}
+				finally
+				{
+					NativeMethods.SetupDiDestroyDeviceInfoList(infoSet);
+				}
+			}
 			return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();
 		}
+
+		public static Dictionary<Guid, string> PnPDeviceClassGuids = new Dictionary<Guid, string>
+		{
+			{ DEVCLASS.KEYBOARD, "Keyboard" },
+			{ DEVCLASS.MOUSE, "Mouse" },
+			{ DEVCLASS.HIDCLASS, "HID" },
+		};
+
+
+		//public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
+		//{
+		//	var list = new List<DeviceInfo>();
+		//	_EnumDeviceInfo(classGuid, flags, null, (infoSet, infoData) =>
+		//	{
+		//		var currentDeviceId = GetDeviceId(infoData.DevInst);
+		//		if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId)
+		//			return true;
+		//		var device = GetDeviceInfo(infoSet, infoData);
+		//			if (vid > 0 && device.VendorId != vid)
+		//			return true;
+		//		if (pid > 0 && device.ProductId != pid)
+		//			return true;
+		//		if (rev > 0 && device.Revision != rev)
+		//			return true;
+		//		Debug.WriteLine($"ClassGuidOld {device.ClassGuid}. ProductId {device.ProductId}. HardwareId {device.HardwareIds}. DeviceId {device.DeviceId}. Removable {device.IsRemovable} Name {device.FriendlyName}. Description {device.Description}. ClassDescription {device.ClassDescription} ");
+		//		list.Add(device);
+
+		//		return true;
+		//	});
+
+		//	return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();
+		//}
 
 		public static string GetAllDeviceProperties(string deviceId)
 		{
@@ -668,7 +836,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// <summary>
 		/// Fill parent devices. Destination list will contain current device on top.
 		/// </summary>
-		/// <param name="deviceId">Current device instance id.</param>
+		/// <param name="device">Current device.</param>
 		/// <param name="source">List of all devices.</param>
 		/// <param name="destination">Destintion list to fill.</param>
 		public static void FillParents(DeviceInfo device, IEnumerable<DeviceInfo> source, IList<DeviceInfo> destination)
@@ -682,7 +850,7 @@ namespace JocysCom.ClassLibrary.IO
 			while (true)
 			{
 				di = source.FirstOrDefault(x => x.DeviceId == deviceId);
-				if (di == null)
+				if (di is null)
 					return;
 				if (destination.Contains(di))
 					return;
@@ -715,8 +883,8 @@ namespace JocysCom.ClassLibrary.IO
 			string parentDeviceId = null;
 			_EnumDeviceInfo(null, null, deviceId, (infoSet, infoData) =>
 			{
-		// If current device found then.
-		if (GetDeviceId(infoData.DevInst) == deviceId)
+				// If current device found then.
+				if (GetDeviceId(infoData.DevInst) == deviceId)
 				{
 					uint parentDeviceInstance;
 					var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, infoData.DevInst, 0);
@@ -770,8 +938,8 @@ namespace JocysCom.ClassLibrary.IO
 		/// <summary>
 		/// Set device state.
 		/// </summary>
-		/// <param name="match"></param>
-		/// <param name="enable"></param>
+		/// <param name="deviceId">The device ID to match.</param>
+		/// <param name="enable">True to enable, false to disable.</param>
 		/// <returns>Success state.</returns>
 		/// <remarks>
 		/// This is nearly identical to the method above except it
@@ -791,11 +959,11 @@ namespace JocysCom.ClassLibrary.IO
 					if (deviceId == currentDeviceId)
 					{
 						SetDeviceState(infoSet, infoData, enable);
-				// Job done. Stop.
-				return false;
+						// Job done. Stop.
+						return false;
 					}
-			// Continue.
-			return true;
+					// Continue.
+					return true;
 				});
 			}
 			catch (Exception ex)
@@ -815,8 +983,8 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					uint status = 0;
 					uint problem = 0;
-			//after the call 'problem' variable will have the problem code
-			var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
+					//after the call 'problem' variable will have the problem code
+					var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
 					if (cr == CR.CR_SUCCESS)
 						isDisabled = problem == CM_PROB_DISABLED;
 					return true;
@@ -918,9 +1086,9 @@ namespace JocysCom.ClassLibrary.IO
 								if (success)
 								{
 									success = NativeMethods.SetupDiCallClassInstaller(DIF_REMOVE, infoSet, ref infoData);
-							// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
-							// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
-							if (!success)
+									// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
+									// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
+									if (!success)
 										ex = new Win32Exception();
 								}
 								else

@@ -23,6 +23,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.DirectInputTabPage = new System.Windows.Forms.TabPage();
             this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
+            this.InputPanel = new x360ce.App.Controls.InputUserControl();
             this.AdvancedTabPage = new System.Windows.Forms.TabPage();
             this.AdvancedOptionsPanel = new System.Windows.Forms.Panel();
             this.CombineGroupBox = new System.Windows.Forms.GroupBox();
@@ -580,13 +581,15 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 390F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.GeneralCenterPanel, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.GeneralLeftPanel, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.GeneralRightPanel, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.InputPanel, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.GeneralCenterPanel, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.GeneralLeftPanel, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.GeneralRightPanel, 3, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 5);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -595,6 +598,15 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1124, 671);
             this.tableLayoutPanel1.TabIndex = 48;
+            //
+            // InputPanel
+            //
+            this.InputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.InputPanel.Location = new System.Drawing.Point(0, 0);
+            this.InputPanel.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
+            this.InputPanel.Name = "InputPanel";
+            this.InputPanel.Size = new System.Drawing.Size(384, 671);
+            this.InputPanel.TabIndex = 0;
             // 
             // GeneralCenterPanel
             // 
@@ -3076,6 +3088,7 @@
 		private System.Windows.Forms.FlowLayoutPanel ButtonsLeftPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonsRightPanel;
 		private DirectInputUserControl DirectInputPanel;
+		private InputUserControl InputPanel;
 		private System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.DataGridView MappedDevicesDataGridView;
 		private System.Windows.Forms.ToolStrip GamesToolStrip;

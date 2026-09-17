@@ -1,6 +1,9 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +12,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 	/// <summary>Marshals list modifications and notifications to a TaskScheduler (e.g., UI thread) to prevent cross-thread errors.</summary>
 	/// <remarks>
 	/// Provides AddRange for bulk addition and overrides to dispatch operations via SynchronizingObject, with optional async invocation.
+	/// Commented-out FixLeak method offers a WPF-specific memory leak workaround.
 	/// </remarks>
 	public class BindingListInvoked<T> : BindingList<T>
 	{
@@ -270,6 +274,22 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			Invoke((Action<AddingNewEventArgs>)base.OnAddingNew, e);
 		}
 
+		//public void FixLeak()
+		//{
+		//	var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+		//	var fi = GetType().BaseType.BaseType.GetField("onListChanged", flags);
+		//	var d = (Delegate)fi.GetValue(this);
+		//	if (d != null)
+		//	{
+		//		if (d.Target is System.Windows.Data.BindingListCollectionView view)
+		//		{
+		//			view.DetachFromSourceCollection();
+		//			var vfi = view.GetType().BaseType.GetField("_currentItem", flags);
+		//			vfi.SetValue(view, null);
+		//			fi.SetValue(this, null);
+		//		}
+		//	}
+		//}
 
 		#endregion
 	}

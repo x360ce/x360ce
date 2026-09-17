@@ -28,6 +28,8 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			InputPanel.ChipClicked += InputPanel_ChipClicked;
+			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
@@ -103,6 +105,7 @@ namespace x360ce.App.Controls
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 				DirectInputPanel.UpdateFrom(ud);
+				InputPanel.UpdateFrom(ud);
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
@@ -429,10 +432,75 @@ namespace x360ce.App.Controls
 			GetAllControls(GeneralTabPage, ref comboBoxes);
 			// Exclude map name combobox
 			comboBoxes.Remove(MapNameComboBox);
-			// Attach context strip with button names to every ComboBox on general tab.
+			// Attach context strip with button names to every ComboBox on general tab, and let the
+			// input panel's chips land in it, by click on the box last focused or by drop.
 			foreach (var cb in comboBoxes)
+			{
 				cb.DropDown += ComboBox_DropDown;
+				cb.Enter += MappingBox_Enter;
+				cb.AllowDrop = true;
+				cb.DragEnter += MappingBox_DragEnter;
+				cb.DragDrop += MappingBox_DragDrop;
+			}
+			_MappingBoxes = comboBoxes.ToArray();
+			if (_MappingBoxes.Length > 0)
+				_MappingBoxColor = _MappingBoxes[0].BackColor;
 			UpdateFromCurrentGame();
+		}
+
+		/// <summary>The mapping box a clicked chip goes into: the one last focused on the General tab.</summary>
+		ComboBox _ChipTargetCbx;
+
+		/// <summary>Every mapping box on the General tab: where a dragged chip may land.</summary>
+		ComboBox[] _MappingBoxes = new ComboBox[0];
+		Color _MappingBoxColor;
+
+		/// <summary>Tints the drop targets while a chip is in the air, and puts their colour back when it lands.</summary>
+		void InputPanel_DraggingChanged(object sender, EventArgs<bool> e)
+		{
+			foreach (var cb in _MappingBoxes)
+				cb.BackColor = e.Data ? DropTargetColor : _MappingBoxColor;
+		}
+
+		/// <summary>The colour of a box a chip may be dropped into: the lit green of the chips themselves.</summary>
+		static readonly Color DropTargetColor = ColorTranslator.FromHtml(AppHelper.StatusGreen);
+
+		void MappingBox_Enter(object sender, EventArgs e)
+		{
+			_ChipTargetCbx = (ComboBox)sender;
+		}
+
+		/// <summary>
+		/// A chip clicked while a mapping box has focus fills that box, the way choosing the same
+		/// item from its list does. While a mapping is being recorded the device itself is being
+		/// listened to, so a click is ignored rather than raced against it.
+		/// </summary>
+		void InputPanel_ChipClicked(object sender, EventArgs<InputChip> e)
+		{
+			if (_Imager.Recorder.Recording)
+				return;
+			var target = _ChipTargetCbx;
+			if (target == null || target.IsDisposed)
+				return;
+			SettingsManager.Current.SetComboBoxValue(target, e.Data.Payload);
+		}
+
+		void MappingBox_DragEnter(object sender, DragEventArgs e)
+		{
+			e.Effect = e.Data.GetDataPresent(DataFormats.Text) ? DragDropEffects.Copy : DragDropEffects.None;
+		}
+
+		void MappingBox_DragDrop(object sender, DragEventArgs e)
+		{
+			if (!e.Data.GetDataPresent(DataFormats.Text))
+				return;
+			var text = (string)e.Data.GetData(DataFormats.Text);
+			MapType type;
+			int index;
+			// Only a mapping is accepted, so a stray drop cannot leave arbitrary text in a box.
+			if (!SettingsConverter.TryParseTextValue(text, out type, out index))
+				return;
+			SettingsManager.Current.SetComboBoxValue((ComboBox)sender, text);
 		}
 
 		public void UpdateFromCurrentGame()
@@ -487,71 +555,114 @@ namespace x360ce.App.Controls
 
 		SortableBindingList<Engine.Data.UserSetting> mappedItems = new SortableBindingList<Engine.Data.UserSetting>();
 
+		/// <summary>True while the rows are being rebuilt.</summary>
+		bool _RowsUpdating;
+
+		/// <summary>A rebuild was asked for during a rebuild; it runs when the current one ends.</summary>
+		bool _RowsUpdatePending;
+
+		/// <summary>
+		/// Brings the mapped-devices list in line with the settings, one pass at a time.
+		/// </summary>
+		/// <remarks>
+		/// The grid selects a row while it inserts it, selecting loads that device's settings into
+		/// the form, the load writes to the setting, and the settings list reports that as a change
+		/// back here. Re-entered from inside the grid's own insert, this added a row twice and left
+		/// the grid measuring a row it had not finished building, which closed the program. A call
+		/// that arrives during a pass is remembered and applied after it, and the selection is
+		/// announced once the rows are in place rather than while they move.
+		/// </remarks>
 		void ShowHideAndSelectGridRows(Guid? instanceGuid = null)
 		{
 			lock (DevicesToMapDataGridViewLock)
 			{
-				var grid = MappedDevicesDataGridView;
-				var game = SettingsManager.CurrentGame;
-				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
-					// Filter devices by controller.
-					.Where(x => x.MapTo == (int)MappedTo)
-					// Filter devices by selected game (no items will be shown if game is not selected).
-					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
-					.ToList();
-				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
-				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
-
-				// If columns will be hidden or shown then...
-				if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
+				if (_RowsUpdating)
 				{
-					var selection = instanceGuid.HasValue
-						? new List<Guid>() { instanceGuid.Value }
-						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, nameof(UserSetting.InstanceGuid));
-					grid.CurrentCell = null;
-					// Suspend Layout.
-					grid.SuspendLayout();
-					// BindingContext is null until the control belongs to a form, and the manager
-					// is absent when the grid is not bound.
-					var cm = grid.DataSource == null ? null : BindingContext?[grid.DataSource] as CurrencyManager;
-					cm?.SuspendBinding();
-					try
-					{
-						// Do removal.
-						foreach (var item in itemsToRemove)
-							mappedItems.Remove(item);
-						// Do adding.
-						foreach (var item in itemsToInsert)
-							mappedItems.Add(item);
-					}
-					finally
-					{
-						// Resume CurrencyManager and Layout. This must run even when the update
-						// above failed: a grid left suspended throws on every later operation, so
-						// one error would turn into a permanently broken control.
-						cm?.ResumeBinding();
-						grid.ResumeLayout();
-					}
-					// Restore selection. Losing the selected row is cosmetic, so a failure here
-					// must not reach the caller. The grid reports a reentrant call when selection
-					// is set while it is still settling after rows were added or removed.
-					try
-					{
-						JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
-					}
-					catch (InvalidOperationException)
-					{
-					}
+					_RowsUpdatePending = true;
+					return;
 				}
-				var visibleCount = mappedItems.Count();
-				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
-				if (mappedItems.Count(x => x.IsEnabled) > 1)
+				_RowsUpdating = true;
+				try
 				{
-					title += " (Combine)";
+					do
+					{
+						_RowsUpdatePending = false;
+						UpdateGridRows(instanceGuid);
+						instanceGuid = null;
+					}
+					while (_RowsUpdatePending);
 				}
-				ControlsHelper.SetText(EnableButton, title);
+				finally
+				{
+					_RowsUpdating = false;
+				}
 			}
+		}
+
+		void UpdateGridRows(Guid? instanceGuid)
+		{
+			var grid = MappedDevicesDataGridView;
+			var game = SettingsManager.CurrentGame;
+			// Get rows which must be displayed on the list.
+			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
+				// Filter devices by controller.
+				.Where(x => x.MapTo == (int)MappedTo)
+				// Filter devices by selected game (no items will be shown if game is not selected).
+				.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
+				.ToList();
+			var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
+			var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
+
+			// If columns will be hidden or shown then...
+			if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
+			{
+				var selection = instanceGuid.HasValue
+					? new List<Guid>() { instanceGuid.Value }
+					: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, nameof(UserSetting.InstanceGuid));
+				grid.CurrentCell = null;
+				// Suspend Layout.
+				grid.SuspendLayout();
+				// BindingContext is null until the control belongs to a form, and the manager
+				// is absent when the grid is not bound.
+				var cm = grid.DataSource == null ? null : BindingContext?[grid.DataSource] as CurrencyManager;
+				cm?.SuspendBinding();
+				try
+				{
+					// Do removal.
+					foreach (var item in itemsToRemove)
+						mappedItems.Remove(item);
+					// Do adding.
+					foreach (var item in itemsToInsert)
+						mappedItems.Add(item);
+				}
+				finally
+				{
+					// Resume CurrencyManager and Layout. This must run even when the update
+					// above failed: a grid left suspended throws on every later operation, so
+					// one error would turn into a permanently broken control.
+					cm?.ResumeBinding();
+					grid.ResumeLayout();
+				}
+				// Restore selection. Losing the selected row is cosmetic, so a failure here
+				// must not reach the caller. The grid reports a reentrant call when selection
+				// is set while it is still settling after rows were added or removed.
+				try
+				{
+					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
+				}
+				catch (InvalidOperationException)
+				{
+				}
+				// The rows are in place, so the selection can be acted on.
+				AnnounceSelection();
+			}
+			var visibleCount = mappedItems.Count();
+			var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
+			if (mappedItems.Count(x => x.IsEnabled) > 1)
+			{
+				title += " (Combine)";
+			}
+			ControlsHelper.SetText(EnableButton, title);
 		}
 
 		public void GetAllControls<T>(Control c, ref List<T> l) where T : Control
@@ -1258,7 +1369,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return false;
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, null);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), null);
 			return true;
 		}
 
@@ -1295,7 +1406,7 @@ namespace x360ce.App.Controls
 				return;
 			var padSetting = AutoMapHelper.GetAutoPreset(ud);
 			// Load created setting.
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), padSetting);
 		}
 
 
@@ -1385,7 +1496,7 @@ namespace x360ce.App.Controls
 				if (ps != null)
 				{
 					MainForm.Current.UpdateTimer.Stop();
-					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
+					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
 					MainForm.Current.UpdateTimer.Start();
 				}
 			}
@@ -1495,11 +1606,21 @@ namespace x360ce.App.Controls
 
 		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
+			// While rows come and go the grid moves its selection several times; the one that
+			// stands once they are in place is announced by the rebuild itself.
+			if (_RowsUpdating)
+				return;
+			AnnounceSelection();
+		}
+
+		/// <summary>Loads the selected device's settings into the form and tells the listeners.</summary>
+		void AnnounceSelection()
+		{
 			var setting = GetSelectedSetting();
 			var padSetting = setting == null
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
 			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			UpdateGridButtons();
 		}
@@ -1699,7 +1820,7 @@ namespace x360ce.App.Controls
 			{
 				var xml = Clipboard.GetText();
 				var ps = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
-				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
+				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
 			}
 			catch (Exception ex)
 			{

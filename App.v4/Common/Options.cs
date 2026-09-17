@@ -245,13 +245,19 @@ namespace x360ce.App
 		}
 		bool _AutoDetectForegroundWindow = true;
 
-		[DefaultValue(false), Description("Check for updates.")]
+		[DefaultValue(false), Description("Look for a newer version after the program starts. Off means no request is made.")]
 		public bool CheckForUpdates
 		{
 			get { return _CheckForUpdates; }
 			set { _CheckForUpdates = value; OnPropertyChanged(); }
 		}
 		bool _CheckForUpdates;
+
+		[Description("When the program last looked for a newer version; the start-up look runs at most once a day.")]
+		public DateTime LastUpdateCheck { get; set; }
+
+		[Description("Tag of the release manifest last seen, so an unchanged one is answered without a download.")]
+		public string UpdateEtag { get; set; }
 
 		// Remote Control
 

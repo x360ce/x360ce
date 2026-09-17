@@ -1,4 +1,8 @@
-﻿## [3.3.14.0] - 2026-08-28
+﻿## [3.3.15.0] - 2026-09-15
+
+- Fixed: Starting from a protected game folder closed the program.
+
+## [3.3.14.0] - 2026-08-28
 
 - Fixed: Help page put the indent after a bullet or number instead of before it.
 - Fixed: Copying text could close the program while another program held the clipboard.
