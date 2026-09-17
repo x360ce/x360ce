@@ -19,9 +19,15 @@
     evidence, never committed).
 .PARAMETER SettleMs
     Milliseconds to wait after each tab selection before capturing.
+.PARAMETER Width
+    Window width to capture at, in logical pixels (the size at 100 % zoom).
+    Multiplied by the zoom of the screen the window is on, so the picture shows
+    the same amount of the program on every screen: 1100 is 1100 pixels at
+    100 % and 1650 at 150 %. Default: the program's own size, 1100.
+.PARAMETER Height
+    Window height in logical pixels, scaled the same way. Default: 850.
 .PARAMETER NoResize
-    Keep the window's current size. Without it the window is resized to
-    1600x1200 physical pixels so all controls fit the capture.
+    Keep the window's current size instead of -Width and -Height.
 .PARAMETER ProcessName
     Process to target. Default: x360ce.
 .EXAMPLE
@@ -37,6 +43,8 @@ param(
     [string]$OutDir = "$PSScriptRoot\captures",
     [int]$SettleMs = 1500,
     [switch]$NoResize,
+    [int]$Width = 1100,
+    [int]$Height = 850,
     [string]$ProcessName = "x360ce"
 )
 Add-Type -AssemblyName System.Drawing
@@ -45,6 +53,8 @@ using System; using System.Text; using System.Collections.Generic; using System.
 public struct RECT { public int L, T, R, B; }
 public static class W3 {
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
+  [DllImport("user32.dll")] public static extern bool SetProcessDpiAwarenessContext(IntPtr context);
+  [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
   [DllImport("user32.dll")] public static extern IntPtr SendMessage(IntPtr h, uint m, IntPtr w, IntPtr l);
   [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr a, int x, int y, int cx, int cy, uint f);
   [DllImport("user32.dll")] public static extern bool EnumChildWindows(IntPtr h, EnumProc p, IntPtr l);
@@ -74,11 +84,18 @@ if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir | Out
 $p = Get-Process $ProcessName -ErrorAction SilentlyContinue |
     Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
 if (-not $p) { throw "$ProcessName is not running with a main window" }
+# This process sees the screen in physical pixels, so a size given in logical pixels is scaled by
+# the zoom of the screen the window is on. Left unaware, Windows would scale every coordinate
+# for us, and the capture would be a blurred, stretched copy at the wrong size.
+[W3]::SetProcessDpiAwarenessContext([IntPtr](-4)) | Out-Null   # per-monitor aware, version 2
+$dpi = [W3]::GetDpiForWindow($p.MainWindowHandle)
+if ($dpi -eq 0) { $dpi = 96 }
+$scale = $dpi / 96
 # Raise (and optionally resize) without activating: SWP_NOACTIVATE|SHOWWINDOW.
 if ($NoResize) {
     [W3]::SetWindowPos($p.MainWindowHandle, [IntPtr]::Zero, 0, 0, 0, 0, 0x0001 -bor 0x0002 -bor 0x0010 -bor 0x0040) | Out-Null
 } else {
-    [W3]::SetWindowPos($p.MainWindowHandle, [IntPtr]::Zero, 50, 50, 1600, 1200, 0x0010 -bor 0x0040) | Out-Null
+    [W3]::SetWindowPos($p.MainWindowHandle, [IntPtr]::Zero, 50, 50, [int]($Width * $scale), [int]($Height * $scale), 0x0010 -bor 0x0040) | Out-Null
 }
 Start-Sleep -Milliseconds 500
 for ($i = 0; $i -lt $SelectTabs.Count; $i += 2) {
