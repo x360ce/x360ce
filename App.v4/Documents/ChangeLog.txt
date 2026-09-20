@@ -15,6 +15,7 @@
 - Fixed: Pressing a key while recording could press a button on the page (Issue #1271, DXSECN).
 - Fixed: Adding a second game with the same file name replaced the first (Issue #1093, alkalifly).
 - Fixed: A device being unplugged mid-read was reported as a fault.
+- Fixed: Opening the program again while it was closing could end it with a fault.
 - Changed: A mapping formula can be up to 128 characters.
 
 ## [4.22.21.0] - 2026-09-17

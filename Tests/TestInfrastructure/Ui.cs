@@ -300,7 +300,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Beside the application when it is carried around, otherwise the shared folder.</summary>
-		static IEnumerable<string> ErrorFolders(string exePath)
+		public static IEnumerable<string> ErrorFolders(string exePath)
 		{
 			yield return Path.Combine(Path.GetDirectoryName(exePath), "x360ce", "Errors");
 			yield return Path.Combine(
@@ -314,7 +314,15 @@ namespace x360ce.Tests
 			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_MINIMIZE);
 		}
 
-		/// <summary>Restore the main window from minimised.</summary>
+		/// <summary>Asks every running copy of the program to show its window, as a second launch does.</summary>
+		public static void PostRestoreRequest()
+		{
+			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
+				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
+			var message = NativeMethods.RegisterWindowMessage(product);
+			NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
+		}
+
 		/// <summary>Bring the window back into view, from the task bar or from the tray.</summary>
 		/// <remarks>
 		/// Minimising this program puts it in the tray and takes its window away: the handle becomes
@@ -339,10 +347,7 @@ namespace x360ce.Tests
 			// it was a race: a copy that starts while the first is closing finds nobody to hand off
 			// to, becomes a full instance, plugs its controllers in, and the teardown then finds
 			// them left over and the process still running.
-			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
-				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
-			var message = NativeMethods.RegisterWindowMessage(product);
-			NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
+			PostRestoreRequest();
 			WaitFor(() =>
 			{
 				p.Refresh();
