@@ -5,6 +5,7 @@
 - Fixed: Changing the game while a virtual controller was connecting could close the program.
 - Fixed: Long sessions ran out of system handles.
 - Fixed: Reloading the XInput library showed a reset error when nothing had failed.
+- Fixed: Options showed the default web service address instead of the saved one.
 - Changed: A mapping formula can be up to 128 characters.
 
 ## [4.22.21.0] - 2026-09-17

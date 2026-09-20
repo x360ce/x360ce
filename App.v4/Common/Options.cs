@@ -34,6 +34,11 @@ namespace x360ce.App
 				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
 				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
 			}
+			// The address box shows only what is in its list. A saved address missing from the list
+			// left the box showing the first entry, and the box's first change wrote that entry back
+			// over the saved one.
+			if (!InternetDatabaseUrls.Contains(InternetDatabaseUrl))
+				InternetDatabaseUrls.Add(InternetDatabaseUrl);
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>() { };
 			if (string.IsNullOrEmpty(ComputerDisk))
