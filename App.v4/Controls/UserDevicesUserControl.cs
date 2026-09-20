@@ -128,9 +128,12 @@ namespace x360ce.App.Controls
 				return;
 
 			var grid = (DataGridView)sender;
+			// The list can have shrunk under a row the grid is still painting; such a row shows nothing.
+			var item = AppHelper.BoundItem<UserDevice>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
-			var item = (UserDevice)row.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
@@ -303,9 +306,10 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var row = grid.Rows[e.RowIndex];
+			var ud = AppHelper.BoundItem<UserDevice>(grid, e.RowIndex);
+			if (ud is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
-			var ud = (UserDevice)row.DataBoundItem;
 			// If user clicked on the CheckBox column then...
 			if (column == IsEnabledColumn)
 			{
