@@ -3,9 +3,9 @@
 - Fixed: Presets saved to the online database lost the centering spring, force pass-through and wheel range settings.
 - Fixed: Searching the online database with no devices reported a server error.
 - Changed: A mapping formula can be up to 128 characters.
-- Fixed: Switching the game or closing the program while a virtual controller was being plugged in could close the program.
-- Fixed: Reading XInput states leaked a system handle per read, and a long session ended with "Insufficient system resources".
-- Fixed: Reloading the XInput library in library mode showed "Failed to Reset() controller" even when the reset worked.
+- Fixed: Changing the game while a virtual controller was connecting could close the program.
+- Fixed: Long sessions ran out of system handles.
+- Fixed: Reloading the XInput library showed a reset error when nothing had failed.
 
 ## [4.22.21.0] - 2026-09-17
 
