@@ -13,6 +13,7 @@
 - Fixed: One unreadable file or folder stopped the game scan.
 - Fixed: Removing a device while the Devices list was drawn could close the program.
 - Fixed: Pressing a key while recording could press a button on the page (Issue #1271, DXSECN).
+- Fixed: Adding a second game with the same file name replaced the first (Issue #1093, alkalifly).
 - Changed: A mapping formula can be up to 128 characters.
 
 ## [4.22.21.0] - 2026-09-17

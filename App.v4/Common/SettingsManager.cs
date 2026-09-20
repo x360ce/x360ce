@@ -480,6 +480,36 @@ namespace x360ce.App
 			PadSettings.Rebase();
 		}
 
+		/// <summary>The listed game a file added by hand would take over, when that game's own file is still in place elsewhere.</summary>
+		/// <remarks>
+		/// One entry per file name is the rule: every copy of a program on the machine shares one
+		/// configuration, and the scanner, the program's own entry and a moved game all rely on it.
+		/// A second entry under the same name is made only on request, and the request is only worth
+		/// asking for when it can mean something: the file already listed under that name is still
+		/// there, in another folder. An entry whose file is gone is the same game moved, and is taken
+		/// over without a question. Null means there is nothing to ask.
+		/// </remarks>
+		public static UserGame OtherGameWithSameName(string fullPath)
+		{
+			var fi = new FileInfo(fullPath);
+			return UserGames.ItemsToArraySyncronized().FirstOrDefault(x =>
+				string.Equals(x.FileName, fi.Name, StringComparison.OrdinalIgnoreCase)
+				&& !string.Equals(x.FullPath, fi.FullName, StringComparison.OrdinalIgnoreCase)
+				&& File.Exists(x.FullPath));
+		}
+
+		/// <summary>The name a game is listed under; the folder is added only where another entry reads the same.</summary>
+		public static string DisplayNameInList(UserGame game)
+		{
+			var name = game.DisplayName;
+			var twin = UserGames.ItemsToArraySyncronized()
+				.Any(x => !ReferenceEquals(x, game) && string.Equals(x.DisplayName, name, StringComparison.OrdinalIgnoreCase));
+			if (!twin || string.IsNullOrEmpty(game.FullPath))
+				return name;
+			var folder = Path.GetFileName(Path.GetDirectoryName(game.FullPath));
+			return string.IsNullOrEmpty(folder) ? name : name + " (" + folder + ")";
+		}
+
 		public static UserGame ProcessExecutable(string filePath)
 		{
 			var fi = new FileInfo(filePath);
