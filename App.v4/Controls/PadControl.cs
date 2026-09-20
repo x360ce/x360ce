@@ -265,6 +265,20 @@ namespace x360ce.App.Controls
 			return _Imager.Recorder.StopRecording();
 		}
 
+		/// <summary>Keeps a key pressed while recording from pressing a button on this page.</summary>
+		/// <remarks>
+		/// The buttons answer to their underlined letters on their own, without Alt, whenever
+		/// nothing else takes the key. Recording takes keys from the keyboard as a device and
+		/// nothing else, so L, pressed to map it, opened Load Preset over the recording instead.
+		/// R, C and A would have reset, cleared or replaced the preset the same way.
+		/// </remarks>
+		protected override bool ProcessMnemonic(char charCode)
+		{
+			if (_Imager != null && _Imager.Recorder.Recording)
+				return true;
+			return base.ProcessMnemonic(charCode);
+		}
+
 		void StartRecording(SettingsMapItem map = null)
 		{
 			if (map == null)

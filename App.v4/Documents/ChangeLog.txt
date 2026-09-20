@@ -12,6 +12,7 @@
 - Fixed: Saving a preset into a protected game folder closed the program.
 - Fixed: One unreadable file or folder stopped the game scan.
 - Fixed: Removing a device while the Devices list was drawn could close the program.
+- Fixed: Pressing a key while recording could press a button on the page (Issue #1271, DXSECN).
 - Changed: A mapping formula can be up to 128 characters.
 
 ## [4.22.21.0] - 2026-09-17
