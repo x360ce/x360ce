@@ -16,6 +16,17 @@ namespace x360ce.App.Controls
 			SettingsGridPanel._ParentForm = this;
 			SummariesGridPanel._ParentForm = this;
 			PresetsGridPanel._ParentForm = this;
+			// The lists fill from the server after the form is open, and a row is selected as it
+			// arrives. The button followed the tab only, so a tab opened while its list was still
+			// empty kept the button off however much was selected afterwards.
+			SettingsGridPanel.SettingsDataGridView.SelectionChanged += Grid_SelectionChanged;
+			SummariesGridPanel.SummariesDataGridView.SelectionChanged += Grid_SelectionChanged;
+			PresetsGridPanel.PresetsDataGridView.SelectionChanged += Grid_SelectionChanged;
+		}
+
+		private void Grid_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateControls();
 		}
 
 		public void InitForm()
@@ -68,6 +79,13 @@ namespace x360ce.App.Controls
 			if (checksum.HasValue)
 			{
 				SelectedItem = SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value);
+				// The lists come with their settings, so a missing one is missing on the server too.
+				// Closing with nothing looked like the button did not work; the form stays open and says.
+				if (SelectedItem == null)
+				{
+					SetHeaderError("The server sent no settings for this preset. Choose another.");
+					return;
+				}
 			}
 			DialogResult = DialogResult.OK;
 		}
@@ -108,13 +126,14 @@ namespace x360ce.App.Controls
 			var tab = MainTabControl.SelectedTab;
 			if (tab != null)
 				SetHeaderSubject(tab.Text);
+			// What the button loads is the selected row, so the selected row is what enables it.
 			var selected = false;
 			if (MainTabControl.SelectedTab == PresetsTabPage)
-				selected = PresetsGridPanel.PresetsDataGridView.Rows.Count > 0;
+				selected = PresetsGridPanel.PresetsDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SummariesTabPage)
-				selected = SummariesGridPanel.SummariesDataGridView.Rows.Count > 0;
+				selected = SummariesGridPanel.SummariesDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SettingsTabPage)
-				selected = SettingsGridPanel.SettingsDataGridView.Rows.Count > 0;
+				selected = SettingsGridPanel.SettingsDataGridView.SelectedRows.Count > 0;
 			ControlsHelper.SetEnabled(OkButton, selected);
 		}
 

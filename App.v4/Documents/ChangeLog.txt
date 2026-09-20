@@ -8,6 +8,7 @@
 - Fixed: Options showed the default web service address instead of the saved one.
 - Fixed: Buttons tab sliders were shifted right and cut off.
 - Fixed: The XInput column did not widen for a device reaching several places.
+- Fixed: Load Preset could leave "Load Selected Preset" off, or close without loading.
 - Changed: A mapping formula can be up to 128 characters.
 
 ## [4.22.21.0] - 2026-09-17

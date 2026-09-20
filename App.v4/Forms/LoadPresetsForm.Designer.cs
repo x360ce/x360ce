@@ -192,16 +192,16 @@
 
 		#endregion
 
-		private System.Windows.Forms.TabControl MainTabControl;
-		private System.Windows.Forms.TabPage SettingsTabPage;
-		private System.Windows.Forms.TabPage SummariesTabPage;
-		private System.Windows.Forms.TabPage PresetsTabPage;
+		public System.Windows.Forms.TabControl MainTabControl;
+		public System.Windows.Forms.TabPage SettingsTabPage;
+		public System.Windows.Forms.TabPage SummariesTabPage;
+		public System.Windows.Forms.TabPage PresetsTabPage;
 		private System.Windows.Forms.Button CloseButton;
 		private System.Windows.Forms.Button OpenFileButton;
-		private System.Windows.Forms.Button OkButton;
+		public System.Windows.Forms.Button OkButton;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private SettingsGridUserControl SettingsGridPanel;
-		private SummariesGridUserControl SummariesGridPanel;
-		private PresetsGridUserControl PresetsGridPanel;
+		public SettingsGridUserControl SettingsGridPanel;
+		public SummariesGridUserControl SummariesGridPanel;
+		public PresetsGridUserControl PresetsGridPanel;
 	}
 }
