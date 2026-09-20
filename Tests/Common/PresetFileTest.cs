@@ -70,6 +70,48 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("presets"), TestCategory("smoke")]
+		[Description("A folder that refuses the preset file is reported, not thrown")]
+		public void A_refused_save_is_reported_rather_than_thrown()
+		{
+			// A read-only file in the way: the folder answers "denied", as a game's folder under
+			// Program Files does. Reported against 4.22.21.0 as the program closing on Save Preset.
+			var path = TempPath();
+			File.WriteAllText(path, "");
+			File.SetAttributes(path, FileAttributes.ReadOnly);
+			try
+			{
+				string refusal;
+				var saved = SettingsManager.TrySavePadSetting(path, new PadSetting(), out refusal);
+				Assert.IsFalse(saved, "A read-only file was reported as written.");
+				Assert.IsFalse(string.IsNullOrEmpty(refusal), "Nothing says why the save was refused.");
+				StringAssert.Contains(refusal, path, "The refusal does not name the file.");
+			}
+			finally
+			{
+				File.SetAttributes(path, FileAttributes.Normal);
+				File.Delete(path);
+			}
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("smoke")]
+		[Description("A save that works answers so, with nothing to say")]
+		public void A_save_that_works_says_nothing()
+		{
+			var path = TempPath();
+			try
+			{
+				string refusal;
+				Assert.IsTrue(SettingsManager.TrySavePadSetting(path, new PadSetting(), out refusal));
+				Assert.IsNull(refusal);
+				Assert.IsTrue(File.Exists(path));
+			}
+			finally
+			{
+				File.Delete(path);
+			}
+		}
+
 		static string TempPath()
 		{
 			return Path.Combine(Path.GetTempPath(), "x360ce-preset-" + Guid.NewGuid().ToString("N") + ".xml");

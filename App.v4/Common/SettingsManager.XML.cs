@@ -20,6 +20,28 @@ namespace x360ce.App
 			System.IO.File.WriteAllText(path, xml);
 		}
 
+		/// <summary>Writes a preset where asked, or says why the place would not take it.</summary>
+		/// <remarks>
+		/// A folder that refuses the file - a game's folder under Program Files, a read-only file - is
+		/// the person's to change, not a fault of the program. Saving next to a game closed the program
+		/// with the refusal unhandled.
+		/// </remarks>
+		/// <returns>True when written; false with <paramref name="refusal"/> set when not.</returns>
+		public static bool TrySavePadSetting(string path, PadSetting padSetting, out string refusal)
+		{
+			try
+			{
+				SavePadSetting(path, padSetting);
+				refusal = null;
+				return true;
+			}
+			catch (System.Exception ex) when (ex is System.UnauthorizedAccessException || ex is System.IO.IOException)
+			{
+				refusal = ex.Message;
+				return false;
+			}
+		}
+
 		/// <summary>Reads one controller's settings from a file written by <see cref="SavePadSetting"/>.</summary>
 		public static PadSetting LoadPadSetting(string path)
 		{

@@ -1832,9 +1832,20 @@ namespace x360ce.App.Controls
 				dialog.DefaultExt = "xml";
 				dialog.AddExtension = true;
 				dialog.FileName = name + ".xml";
+				// The dialog opened in the working folder, which is the game's folder when the program
+				// is started from there, and a game under Program Files refuses the write.
+				dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dialog.ShowDialog(this) != DialogResult.OK)
 					return;
-				SettingsManager.SavePadSetting(dialog.FileName, GetSelectedPadSetting());
+				string refusal;
+				if (SettingsManager.TrySavePadSetting(dialog.FileName, GetSelectedPadSetting(), out refusal))
+					return;
+				// Said where the file was chosen, and the program stays up.
+				var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
+				form.StartPosition = FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				form.ShowForm(refusal);
+				form.Dispose();
 			}
 		}
 
