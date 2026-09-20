@@ -368,8 +368,9 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
 		static public string WheelRange { get { return "WheelRange"; } }
 
-		[DefaultValue("60"), Description("Left motor period. Range is 0 to 500. Default is 60.")]
+		[DefaultValue(DefaultLeftMotorPeriod), Description("Left motor period in milliseconds. The left motor is the low-frequency one, so its pulse is the slower. Range is 0 to 500. Default is 120.")]
 		static public string LeftMotorPeriod { get { return "LeftMotorPeriod"; } }
+		public const string DefaultLeftMotorPeriod = "120";
 
 		[DefaultValue("100"), Description("Left motor strength. Range is 0 to 100. Default is 100.")]
 		static public string LeftMotorStrength { get { return "LeftMotorStrength"; } }
@@ -377,8 +378,9 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
 		static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
 
-		[DefaultValue("120"), Description("Right motor period. Range is 0 to 500. Default is 120.")]
+		[DefaultValue(DefaultRightMotorPeriod), Description("Right motor period in milliseconds. The right motor is the high-frequency one, so its pulse is the faster. Range is 0 to 500. Default is 60.")]
 		static public string RightMotorPeriod { get { return "RightMotorPeriod"; } }
+		public const string DefaultRightMotorPeriod = "60";
 
 		[DefaultValue("100"), Description("Right motor strength. Range is 0 to 100. Default is 100.")]
 		static public string RightMotorStrength { get { return "RightMotorStrength"; } }

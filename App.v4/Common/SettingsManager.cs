@@ -255,6 +255,7 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
+			PadSettings.ValidateData = PadSettings_ValidateData;
 			PadSettings.Load();
 			UserDevices.Load();
 			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
@@ -274,6 +275,50 @@ namespace x360ce.App
 					item.SettingId = Guid.NewGuid();
 			}
 			return items;
+		}
+
+		static IList<PadSetting> PadSettings_ValidateData(IList<PadSetting> items)
+		{
+			UpdateOldDefaultMotorPeriods(items, UserSettings.Items);
+			return items;
+		}
+
+		/// <summary>The motor periods versions before 4.23 gave a new mapping.</summary>
+		public const string OldDefaultLeftMotorPeriod = "60";
+		public const string OldDefaultRightMotorPeriod = "120";
+
+		/// <summary>Gives the settings a person's own mappings use the current default motor periods, where they still carry the old ones.</summary>
+		/// <remarks>
+		/// The left motor is the low-frequency one and the right the high-frequency one, so the left
+		/// period is the longer. The form writes the defaults into every mapping it saves, so changing
+		/// the defaults alone would reach nobody who already had a controller set up. The exact old
+		/// pair is what somebody who never touched the sliders has, and nobody chooses that pair on
+		/// purpose; it becomes the current pair, and anything else is left as it was set.
+		///
+		/// Only settings a mapping of this person's points at are touched. A preset from the server
+		/// keeps its checksum, which is how the server knows it, and the mapping is pointed at the
+		/// setting's new checksum so the two stay together.
+		/// </remarks>
+		/// <returns>How many settings were updated.</returns>
+		public static int UpdateOldDefaultMotorPeriods(IList<PadSetting> padSettings, IList<UserSetting> settings)
+		{
+			var updated = 0;
+			foreach (var ps in padSettings)
+			{
+				if (ps.LeftMotorPeriod != OldDefaultLeftMotorPeriod || ps.RightMotorPeriod != OldDefaultRightMotorPeriod)
+					continue;
+				var was = ps.PadSettingChecksum;
+				var users = settings.Where(x => x.PadSettingChecksum == was).ToList();
+				if (users.Count == 0)
+					continue;
+				ps.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
+				ps.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
+				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+				foreach (var user in users)
+					user.PadSettingChecksum = ps.PadSettingChecksum;
+				updated++;
+			}
+			return updated;
 		}
 
 		static IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
