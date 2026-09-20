@@ -4,6 +4,8 @@
 - Fixed: Searching the online database with no devices reported a server error.
 - Changed: A mapping formula can be up to 128 characters.
 - Fixed: Switching the game or closing the program while a virtual controller was being plugged in could close the program.
+- Fixed: Reading XInput states leaked a system handle per read, and a long session ended with "Insufficient system resources".
+- Fixed: Reloading the XInput library in library mode showed "Failed to Reset() controller" even when the reset worked.
 
 ## [4.22.21.0] - 2026-09-17
 

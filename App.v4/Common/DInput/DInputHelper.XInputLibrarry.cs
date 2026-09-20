@@ -95,15 +95,10 @@ namespace x360ce.App.DInput
 					// If fast reload of settings is supported then...
 					if (Controller.IsLoaded && Controller.IsResetSupported)
 					{
-						IAsyncResult result;
-						Action action = () =>
-						{
-							Controller.Reset();
-						};
-						result = action.BeginInvoke(null, null);
-						var timeout = !result.AsyncWaitHandle.WaitOne(1000);
-						var caption = string.Format("Failed to Reset() controller. '{0}'", dllInfo.FullName);
-						e.Error = new Exception(caption);
+						// Reported only when the reset did not come back. Reported on every fast reload,
+						// as it was, the header showed a failure each time the library was reloaded.
+						if (!RanWithin(() => Controller.Reset(), 1000))
+							e.Error = new Exception(string.Format("Failed to Reset() controller. '{0}'", dllInfo.FullName));
 					}
 					// Slow: Reload whole x360ce.dll.
 					Exception error;

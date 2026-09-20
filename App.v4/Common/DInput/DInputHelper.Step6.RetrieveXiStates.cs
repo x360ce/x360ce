@@ -44,6 +44,20 @@ namespace x360ce.App.DInput
 			return unchecked(now - until) < 0;
 		}
 
+		/// <summary>Runs a native call on a worker and answers whether it returned in time.</summary>
+		/// <remarks>
+		/// XInput can stop answering, and this thread must not stop with it. The call used to go
+		/// through a delegate's BeginInvoke with nothing ever calling EndInvoke, which leaves every
+		/// call's wait handle open: four handles a read, up to sixty reads a second, until a long
+		/// session ran Windows out of handles and the program closed with "Insufficient system
+		/// resources". A task's wait keeps nothing behind. One that runs past its time is left to
+		/// finish on the worker; the next read is what tells whether XInput is answering again.
+		/// </remarks>
+		public static bool RanWithin(Action action, int milliseconds)
+		{
+			return System.Threading.Tasks.Task.Run(action).Wait(milliseconds);
+		}
+
 		void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
 			// These states are shown on screen and nowhere else, and a screen cannot show more
@@ -86,15 +100,9 @@ namespace x360ce.App.DInput
 					var timeout = false;
 					if (wanted)
 					{
-						IAsyncResult result;
-						Action action = () =>
-						{
-							// This can hit CPU hard and used for display only.
-							// Do not use when application is minimized. 
-							success = gamePad.GetState(out state);
-						};
-						result = action.BeginInvoke(null, null);
-						timeout = !result.AsyncWaitHandle.WaitOne(1000);
+						// This can hit CPU hard and used for display only.
+						// Do not use when application is minimized. 
+						timeout = !RanWithin(() => success = gamePad.GetState(out state), 1000);
 					}
 					if (timeout)
 					{
