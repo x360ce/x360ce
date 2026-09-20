@@ -103,8 +103,9 @@ namespace Nefarius.ViGEm.Client
 		public bool UnPlug(uint i)
 		{
 			// Not properly implemented yet.
+			// Disposing itself lets every controller go through here, so only a freed handle says no.
 			var t = Targets;
-			if (t == null || !IsValidIndex(i) || i > t.Length)
+			if (IsDisposed || t == null || !IsValidIndex(i) || i > t.Length)
 				return false;
 			try
 			{
@@ -134,8 +135,11 @@ namespace Nefarius.ViGEm.Client
 
 		public bool PlugIn(uint userIndex)
 		{
+			// A client being let go of has no bus behind it any more. Its native handle is freed, and a
+			// worker that took this client seconds ago, before the game left virtual mode, must be told
+			// no rather than sent into a handle that no longer exists.
 			var t = Targets;
-			if (t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
+			if (Disposing || IsDisposed || t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
 				return false;
 			// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
 			var tempDevices = new bool[PlaceCount];

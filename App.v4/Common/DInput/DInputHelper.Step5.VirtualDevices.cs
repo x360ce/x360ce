@@ -84,9 +84,7 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
-						if (plugging.IsFaulted)
-							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
-						var result = plugging.IsFaulted ? VirtualError.Other : plugging.Result;
+						var result = PlugOutcome(plugging);
 						VirtualErrors[i - 1] = result;
 						if (result != VirtualError.None)
 						{
@@ -135,6 +133,7 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
+						PlugOutcome(plugging);
 					}
 					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || client.IsControllerConnected(i))
@@ -259,6 +258,20 @@ namespace x360ce.App.DInput
 
 		/// <summary>The plug of each controller under way on a worker, or null.</summary>
 		readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
+
+		/// <summary>What a finished plug came to, with a fault written to the log.</summary>
+		/// <remarks>
+		/// Every place a finished plug is let go of reads it through here. A faulted task nobody reads
+		/// is raised again by the finalizer as an unobserved exception, and that reached the person as
+		/// a crash report about a controller that was simply switched off.
+		/// </remarks>
+		static VirtualError PlugOutcome(System.Threading.Tasks.Task<VirtualError> plugging)
+		{
+			if (!plugging.IsFaulted)
+				return plugging.Result;
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
+			return VirtualError.Other;
+		}
 
 		/// <summary>When each controller may next be asked for a place, after a refusal.</summary>
 		readonly int[] _NextPlugAttempt = new int[4];
@@ -496,15 +509,31 @@ namespace x360ce.App.DInput
 			return -1;
 		}
 
+		/// <summary>The bus client to work with for the rest of one call, or null when there is none.</summary>
+		/// <remarks>
+		/// Plugging in runs on a worker for seconds, and the client is let go of on the input thread
+		/// whenever the game leaves virtual mode or the program closes. Read once, the reference is
+		/// ours for the call whatever happens to the shared one; read at each step, it was null by
+		/// the time the controller was connected, and the worker died on it.
+		/// </remarks>
+		static ViGEmClient BusClient(bool createIfMissing)
+		{
+			if (!ViGEmClient.isVBusExists(createIfMissing))
+				return null;
+			var client = ViGEmClient.Current;
+			return client == null || client.Disposing || client.IsDisposed ? null : client;
+		}
+
 		public VirtualError EnableFeeding(uint userIndex)
 		{
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!ViGEmClient.isVBusExists(true))
+			var client = BusClient(true);
+			if (client == null)
 				return VirtualError.Missing;
-			if (!ViGEmClient.Current.isControllerExists(userIndex))
+			if (!client.isControllerExists(userIndex))
 				return VirtualError.Other;
-			if (ViGEmClient.Current.IsControllerConnected(userIndex))
+			if (client.IsControllerConnected(userIndex))
 				return VirtualError.None;
 			// Windows cannot be asked for a particular place, and gives neither the one asked for nor
 			// reliably the lowest free one. That was assumed, and a controller landing anywhere else was
@@ -526,14 +555,14 @@ namespace x360ce.App.DInput
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.
 			var padsBefore = XInputPlaces.VirtualHardwareNow();
-			if (!ViGEmClient.Current.PlugIn(userIndex))
+			if (!client.PlugIn(userIndex))
 				return VirtualError.Other;
 			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
 			// controller, which is not the same as Windows having given it the place we need.
 			var place = WaitForPlace(before);
 			if (place < 0)
 			{
-				ViGEmClient.Current.UnPlug(userIndex);
+				client.UnPlug(userIndex);
 				return VirtualError.PlaceNotGiven;
 			}
 			// Written down now, while it is certain. Nothing reports where a controller was put,
@@ -551,13 +580,14 @@ namespace x360ce.App.DInput
 			bool success;
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!ViGEmClient.isVBusExists(false))
+			var client = BusClient(false);
+			if (client == null)
 				return VirtualError.Missing;
-			if (!ViGEmClient.Current.isControllerExists(userIndex))
+			if (!client.isControllerExists(userIndex))
 				return VirtualError.None;
-			if (!ViGEmClient.Current.IsControllerConnected(userIndex))
+			if (!client.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			success = ViGEmClient.Current.UnPlug(userIndex);
+			success = client.UnPlug(userIndex);
 			if (success)
 			{
 				// The place it held is nobody's now. Left behind, it would go on being counted against
