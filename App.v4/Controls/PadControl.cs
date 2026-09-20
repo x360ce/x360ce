@@ -1565,6 +1565,24 @@ namespace x360ce.App.Controls
 			AddMapButton.Enabled = !auto;
 		}
 
+		/// <summary>Shows the XInput places again, sized to what they now say.</summary>
+		/// <remarks>
+		/// The place text is made while the table paints and stored nowhere, so the column that
+		/// sizes itself to its cells never saw a change and kept the width of the first paint; a
+		/// device reaching several places was cut off. Measured again whenever the places can have
+		/// moved, which is whenever the device list has been read.
+		/// </remarks>
+		public void RefreshPlaces()
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke((Action)RefreshPlaces);
+				return;
+			}
+			MappedDevicesDataGridView.AutoResizeColumn(XInputPlaceColumn.Index);
+			MappedDevicesDataGridView.Invalidate();
+		}
+
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)

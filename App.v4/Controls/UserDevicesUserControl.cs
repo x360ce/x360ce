@@ -106,6 +106,10 @@ namespace x360ce.App.Controls
 		/// The cells are filled while the table paints, so a place that has changed is not shown
 		/// until something makes the table paint. Nothing does when a controller is plugged in, so
 		/// the list kept saying where things were a moment ago.
+		///
+		/// The column is measured again as well. It sizes itself to its cells, but only when a cell's
+		/// stored value changes, and these cells store nothing: the text is made while painting. So
+		/// the column kept the width of the first paint, and a longer answer was cut off.
 		/// </remarks>
 		public void RefreshPlaces()
 		{
@@ -114,6 +118,7 @@ namespace x360ce.App.Controls
 				BeginInvoke((Action)RefreshPlaces);
 				return;
 			}
+			DevicesDataGridView.AutoResizeColumn(XInputPlaceColumn.Index);
 			DevicesDataGridView.Invalidate();
 		}
 

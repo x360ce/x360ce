@@ -1601,6 +1601,9 @@ namespace x360ce.App
 			x360ce.App.DInput.XInputPlaces.Invalidate();
 			XInputDevicesPanel.ReloadPlaces();
 			DevicesPanel.RefreshPlaces();
+			if (PadControls != null)
+				foreach (var pad in PadControls)
+					pad.RefreshPlaces();
 		}
 
 		private bool UpdateCompletedBusy;

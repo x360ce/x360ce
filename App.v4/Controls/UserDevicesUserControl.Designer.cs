@@ -329,7 +329,7 @@
 		}
 
 		#endregion
-		private System.Windows.Forms.DataGridView DevicesDataGridView;
+		public System.Windows.Forms.DataGridView DevicesDataGridView;
 		private System.Windows.Forms.ToolStrip ControllersToolStrip;
 		private System.Windows.Forms.ToolStripButton ControllerDeleteButton;
 		private System.Windows.Forms.ToolStripButton RefreshButton;
@@ -348,7 +348,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
+		public System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
 	}
 }
