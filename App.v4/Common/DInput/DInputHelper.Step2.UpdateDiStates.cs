@@ -27,7 +27,17 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80040205), // DIERR_NOTEXCLUSIVEACQUIRED, the exclusive hold was lost to another program; it is taken again on the next poll
 			unchecked((int)0x80004001), // E_NOTIMPL, the device does not implement the effect it was asked for
 			unchecked((int)0x80070057), // E_INVALIDARG, the device refuses the effect's settings; ForceFeedbackState does not ask again
+			unchecked((int)0x80004005), // E_FAIL, the driver's answer while a device is going away or resetting; it is acquired again on the next poll
 		};
+
+		/// <summary>Whether a device call's failure is a device condition, handled by the next poll, rather than a fault to report.</summary>
+		public static bool IsBenignDeviceResult(SharpDX.Result result)
+		{
+			return result == SharpDX.DirectInput.ResultCode.InputLost
+				|| result == SharpDX.DirectInput.ResultCode.NotAcquired
+				|| result == SharpDX.DirectInput.ResultCode.Unplugged
+				|| BenignDeviceResults.Contains(result.Code);
+		}
 
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
 		{
@@ -232,11 +242,7 @@ namespace x360ce.App.DInput
 							// acquired, refuses the command, or has no force feedback effect downloaded. These
 							// occur routinely while switching cooperative level, and every one that is treated
 							// as a fault is emailed to support, so the noise buries real reports.
-							var benign = dex != null && (
-								dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost ||
-								dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired ||
-								dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged ||
-								BenignDeviceResults.Contains(dex.ResultCode.Code));
+							var benign = dex != null && IsBenignDeviceResult(dex.ResultCode);
 							if (!benign)
 							{
 								var cx = new DInputException("UpdateDiStates Exception", ex);
