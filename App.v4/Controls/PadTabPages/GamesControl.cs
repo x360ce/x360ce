@@ -178,7 +178,8 @@ namespace x360ce.App.Controls
 			if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null && e.FileIndex >= 0 && e.FileIndex < e.Files.Count)
 			{
 				var file = e.Files[e.FileIndex];
-				var size = file.Length / 1024 / 1024;
+				// A name the folder lists but Windows cannot open has no size to give; asking ended the scan.
+				var size = file.Exists ? file.Length / 1024 / 1024 : 0;
 				sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
 			}
 			if (e.Level == 0)
