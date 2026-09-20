@@ -1,4 +1,10 @@
-﻿## [4.22.21.0] - 2026-09-17
+﻿## [4.23.9.0] - 2026-09-20
+
+- Fixed: Presets saved to the online database lost the centering spring, force pass-through and wheel range settings.
+- Fixed: Searching the online database with no devices reported a server error.
+- Changed: A mapping formula can be up to 128 characters.
+
+## [4.22.21.0] - 2026-09-17
 
 - Fixed: Changing the game could list a device twice or close the program.
 - Fixed: Running from inside a 32-bit game's folder stopped the controllers.

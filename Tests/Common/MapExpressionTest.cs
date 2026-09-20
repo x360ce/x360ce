@@ -501,30 +501,24 @@ namespace x360ce.Tests
 		{
 			// Named outright. Deriving every case from the constants means the test passes for any
 			// value of them, including a cap so large it protects nothing.
-			Assert.AreEqual(16, MapExpression.MaxLength, "The length cap moved; say so deliberately.");
+			Assert.AreEqual(128, MapExpression.MaxLength, "The length cap moved; say so deliberately.");
 			Assert.AreEqual(16, MapExpression.MaxDepth, "The nesting cap moved; say so deliberately.");
 			Assert.AreEqual(128, MapExpression.MaxNodes, "The node cap moved; say so deliberately.");
 			Assert.AreEqual(8, MapExpression.MaxReferences, "The source cap moved; say so deliberately.");
 			// Fixed text, so removing a cap fails here rather than quietly widening the test with it.
 			Refuses("=" + new string('(', 17) + "1" + new string(')', 17));
-			Refuses("=" + new string('1', 16));
-			// Nine sources need more room than a mapping is stored in, so the length refuses this
-			// before the source count can. Both caps are real; the tighter one simply speaks first.
+			Refuses("=" + new string('1', 128));
+			// Nine sources fit in a mapping's storage, so it is the source cap that refuses them.
 			Refuses("=a1+a2+a3+a4+a5+a6+a7+a8+a9");
-			Assert.IsTrue("=a1+a2+a3+a4+a5+a6+a7+a8+a9".Length > MapExpression.MaxLength,
-				"If this ever fits, the source cap must be the one refusing it.");
-			// Depth: one under the cap parses, one over does not. Both are only askable while the
-			// deeper of the two fits in what a mapping is stored in; below that the length refuses
-			// first. Which cap is doing the work is stated, so widening the column cannot quietly
-			// leave the depth guard untested.
+			Assert.IsTrue("=a1+a2+a3+a4+a5+a6+a7+a8+a9".Length <= MapExpression.MaxLength,
+				"The length cap refuses this before the source cap can be tested.");
+			// Depth: one under the cap parses, one over does not.
 			var atCap = "=" + new string('(', MapExpression.MaxDepth) + "1" + new string(')', MapExpression.MaxDepth);
-			if (atCap.Length <= MapExpression.MaxLength)
-				Assert.IsNotNull(Parse(atCap));
-			else
-				Assert.IsTrue(MapExpression.MaxDepth * 2 + 2 > MapExpression.MaxLength,
-					"Depth is reachable again; go back to checking one under the cap parses.");
+			Assert.IsTrue(atCap.Length <= MapExpression.MaxLength, "The length cap refuses this before the depth cap can be tested.");
+			Assert.IsNotNull(Parse(atCap));
 			Refuses("=" + new string('(', MapExpression.MaxDepth + 1) + "1" + new string(')', MapExpression.MaxDepth + 1));
 			// Length: exactly at the cap parses, one over does not.
+			Assert.IsNotNull(Parse("=" + new string('1', MapExpression.MaxLength - 1)));
 			Refuses("=" + new string('1', MapExpression.MaxLength));
 		}
 

@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.IO;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
@@ -156,16 +157,19 @@ namespace x360ce.Engine
 			ReportProgress(e);
         }
 
-        private void ff_FileFound(object sender, FileFinderEventArgs e)
+        private void ff_FileFound(object sender, ProgressEventArgs e)
         {
+			// The finder reports folders as its top level and files as its sub level.
+			var directories = (List<DirectoryInfo>)e.TopData;
+			var files = (List<FileInfo>)e.SubData;
 			var e2 = new XInputMaskScannerEventArgs
 			{
-				DirectoryIndex = e.DirectoryIndex,
-				Directories = e.Directories,
-				FileIndex = e.FileIndex,
-				Files = e.Files,
+				DirectoryIndex = (int)e.TopIndex,
+				Directories = directories,
+				FileIndex = (int)e.SubIndex,
+				Files = files,
 				State = XInputMaskScannerState.DirectoryUpdate,
-				Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", e.Files.Count, e.DirectoryIndex + 1, e.Directories.Count)
+				Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", files.Count, e.TopIndex + 1, e.TopCount)
 			};
 			ReportProgress(e2);
         }

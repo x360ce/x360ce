@@ -272,7 +272,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Anything that is not a real number, such as dividing by zero, becomes 0.
 - A decimal point is always a dot, whatever language Windows is set to.
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
-- A formula can be up to 16 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
+- A formula can be up to 128 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
 
 ## AI assistant access
 

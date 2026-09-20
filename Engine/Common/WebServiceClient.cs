@@ -45,7 +45,8 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
-			return Invoke<SearchResult>("SearchSettings", args);
+			// The array is one argument. Passed bare it would spread into the params list.
+			return Invoke<SearchResult>("SearchSettings", new object[] { args });
 		}
 
 		public void SearchSettingsAsync(SearchParameter[] args, object userState = null)

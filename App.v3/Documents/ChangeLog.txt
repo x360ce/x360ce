@@ -1,4 +1,8 @@
-﻿## [3.3.15.0] - 2026-09-15
+﻿## [3.3.16.0] - 2026-09-20
+
+- Fixed: Searching the online database with no devices reported a server error.
+
+## [3.3.15.0] - 2026-09-15
 
 - Fixed: Starting from a protected game folder closed the program.
 

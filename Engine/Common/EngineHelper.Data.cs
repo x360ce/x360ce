@@ -29,6 +29,16 @@ namespace x360ce.Engine
 			return table;
 		}
 
+		/// <summary>One row per month with the running total of controllers, refreshed by the procedure itself.</summary>
+		public static DataTable GetNewDeviceStats()
+		{
+			var cmd = new SqlCommand("x360ce_GetNewDeviceStats");
+			cmd.CommandType = CommandType.StoredProcedure;
+			var cn = SqlHelper.GetConnectionString("x360ceModelContainer");
+			var table = SqlHelper.Current.ExecuteDataTable(cn, cmd);
+			return table;
+		}
+
 		public static DataTable GetDataTable(IEnumerable<SearchParameter> list)
 		{
 			DataTable table = new DataTable();

@@ -45,18 +45,18 @@
     <Property Name="AxisToDPadDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="AxisToDPadEnabled" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="AxisToDPadOffset" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonA" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonB" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonBack" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonGuide" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonStart" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonX" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="ButtonY" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="DPad" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="DPadDown" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="DPadLeft" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="DPadRight" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="DPadUp" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ButtonA" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonB" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonBack" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonGuide" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonStart" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonX" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonY" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="DPad" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="DPadDown" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="DPadLeft" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="DPadRight" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="DPadUp" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="ForceEnable" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceOverall" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSpringEnable" Type="varchar" MaxLength="16" Nullable="false" />
@@ -68,21 +68,21 @@
     <Property Name="LeftMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftShoulder" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbAxisX" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="LeftShoulder" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftThumbAxisX" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="LeftThumbDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftThumbLinearX" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="LeftThumbAxisY" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="LeftThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftThumbLinearY" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbDown" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbLeft" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbRight" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftThumbUp" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="LeftTrigger" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="LeftThumbButton" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftThumbDown" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftThumbLeft" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftThumbRight" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftThumbUp" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="LeftTrigger" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="LeftTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftTriggerAntiDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="LeftTriggerLinear" Type="varchar" MaxLength="16" Nullable="false" />
@@ -92,21 +92,21 @@
     <Property Name="RightMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightShoulder" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbAxisX" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="RightShoulder" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightThumbAxisX" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="RightThumbDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightThumbAntiDeadZoneX" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightThumbLinearX" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbAxisY" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="RightThumbAxisY" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="RightThumbDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightThumbAntiDeadZoneY" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightThumbLinearY" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbDown" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbLeft" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbRight" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightThumbUp" Type="varchar" MaxLength="16" Nullable="false" />
-    <Property Name="RightTrigger" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="RightThumbButton" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightThumbDown" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightThumbLeft" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightThumbRight" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightThumbUp" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="RightTrigger" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="RightTriggerDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightTriggerAntiDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="RightTriggerLinear" Type="varchar" MaxLength="16" Nullable="false" />

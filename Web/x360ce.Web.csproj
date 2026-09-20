@@ -51,7 +51,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.DataVisualization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.Entity" />

@@ -23,18 +23,18 @@
     <Property Type="String" Name="AxisToDPadDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="AxisToDPadEnabled" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="AxisToDPadOffset" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonA" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonB" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="ButtonY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="DPad" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="DPadDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="DPadLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="DPadRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonA" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonB" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonX" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonY" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="DPad" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="DPadDown" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="DPadLeft" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="DPadRight" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="DPadUp" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceSpringEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -44,37 +44,37 @@
     <Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftShoulder" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbAxisX" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbAxisY" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbButton" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbDown" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbLeft" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbRight" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftThumbUp" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="LeftTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="PassThrough" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForcePassThrough" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForcePassThroughIndex" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbAxisX" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbAxisY" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbButton" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-    <Property Type="String" Name="RightTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbDown" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbLeft" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbRight" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightThumbUp" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="RightTrigger" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="RightTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Name="LeftThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Name="LeftThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
