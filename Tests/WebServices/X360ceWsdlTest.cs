@@ -74,9 +74,13 @@ namespace x360ce.Tests
 			var actual = Operations(WebServiceTarget.Wsdl());
 			var missing = expected.Except(actual).ToArray();
 			Assert.AreEqual(0, missing.Length, "Operations missing on the target: " + string.Join(", ", missing));
-			var added = actual.Except(expected).ToArray();
+			// The one operation this release adds; anything else is a decision nobody has made.
+			var added = actual.Except(expected).Except(PlannedOperations).ToArray();
 			Assert.AreEqual(0, added.Length, "Operations the live service does not have: " + string.Join(", ", added));
 		}
+
+		/// <summary>Operations 4.23 adds to the contract, by name.</summary>
+		static readonly string[] PlannedOperations = { "GetServerInfo" };
 
 		[TestMethod, TestCategory("webservice"), TestCategory("wsdl")]
 		[Description("No type, element or element type a released program knows has been removed, renamed or retyped")]
@@ -121,8 +125,12 @@ namespace x360ce.Tests
 			Console.WriteLine(additions.Count == 0
 				? "Target contract equals the live contract."
 				: "Target adds:" + Environment.NewLine + string.Join(Environment.NewLine, additions));
-			// The only additions this release makes are the 4.22 wheel columns of PadSetting.
-			var unexpected = additions.Where(x => !x.StartsWith("PadSetting: +Force") && !x.StartsWith("PadSetting: +WheelRange")).ToArray();
+			// The additions this release makes: the 4.22 wheel columns of PadSetting, and GetServerInfo
+			// with its answer type, for the Options page's Test button.
+			var unexpected = additions
+				.Where(x => !x.StartsWith("PadSetting: +Force") && !x.StartsWith("PadSetting: +WheelRange"))
+				.Where(x => x != "ServerInfo: new type" && x != "message:GetServerInfo: new type" && x != "message:GetServerInfoResponse: new type")
+				.ToArray();
 			Assert.AreEqual(0, unexpected.Length, "Unplanned additions: " + string.Join("; ", unexpected));
 		}
 	}

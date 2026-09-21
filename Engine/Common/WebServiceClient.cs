@@ -132,6 +132,69 @@ namespace x360ce.Engine
 
 		#endregion
 
+		#region Method: GetServerInfo
+
+		[SoapDocumentMethod(ns + "GetServerInfo",
+			RequestNamespace = ns, ResponseNamespace = ns,
+			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
+		public ServerInfo GetServerInfo()
+		{
+			return Invoke<ServerInfo>("GetServerInfo");
+		}
+
+		/// <summary>Asks the service at an address whether it is there and working, and says what it found in one line.</summary>
+		/// <remarks>
+		/// Three answers are possible. A service from 4.23 on reports its version and whether its
+		/// database answers. An older service does not know the question, so a small request every
+		/// version answers is made instead, which proves the address without a version. Anything
+		/// else is not an x360ce service, or not reachable, and the reason is passed on.
+		/// </remarks>
+		/// <param name="url">The service address to try.</param>
+		/// <param name="working">True when the service answered and, where it can say, its database did too.</param>
+		public static string Probe(string url, out bool working)
+		{
+			var ws = new WebServiceClient { Url = url, Timeout = 10000 };
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				var info = ws.GetServerInfo();
+				working = string.IsNullOrEmpty(info.Error);
+				return working
+					? string.Format("Service {0} answers in {1} ms; database '{2}' answers, server time {3:HH:mm:ss} UTC.",
+						info.Version, watch.ElapsedMilliseconds, info.Database, info.DatabaseUtcTime)
+					: string.Format("Service {0} answers in {1} ms, but its database does not: {2}",
+						info.Version, watch.ElapsedMilliseconds, info.Error);
+			}
+			catch (SoapException)
+			{
+				// Asked a question it does not know: a service older than 4.23, or not ours at all.
+			}
+			catch (System.Net.WebException ex)
+			{
+				working = false;
+				return string.Format("No answer from {0}: {1}", url, ex.Message);
+			}
+			catch (InvalidOperationException ex)
+			{
+				// The reply was not SOAP: a web page, an error page, something else at that address.
+				working = false;
+				return string.Format("Not an x360ce service at {0}: {1}", url, ex.Message);
+			}
+			try
+			{
+				ws.GetVendors();
+				working = true;
+				return string.Format("Service answers in {0} ms. It is older than 4.23 and does not report its version.", watch.ElapsedMilliseconds);
+			}
+			catch (Exception ex) when (ex is SoapException || ex is System.Net.WebException || ex is InvalidOperationException)
+			{
+				working = false;
+				return string.Format("Not an x360ce service at {0}: {1}", url, ex.Message);
+			}
+		}
+
+		#endregion
+
 		#region Method: GetVendors
 
 		public event EventHandler<SoapHttpClientEventArgs> GetVendorsCompleted;

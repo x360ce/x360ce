@@ -247,5 +247,51 @@ namespace x360ce.Tests
 		}
 
 		#endregion
+
+		#region 4.23: GetServerInfo and the Test button's probe
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4"), TestCategory("fixed-4-23")]
+		[Description("GetServerInfo names the service version and a database that answers")]
+		public void Get_server_info_names_the_version_and_a_working_database()
+		{
+			using (var ws = WebServiceTarget.Client())
+			{
+				var info = ws.GetServerInfo();
+				Assert.IsFalse(string.IsNullOrEmpty(info.Version), "No version");
+				Assert.IsTrue(string.IsNullOrEmpty(info.Error), "Database error: " + info.Error);
+				Assert.IsFalse(string.IsNullOrEmpty(info.Database), "No database name");
+				Assert.IsTrue(Math.Abs((info.DatabaseUtcTime - info.UtcTime).TotalMinutes) < 5, "Server and database clocks disagree by more than five minutes.");
+			}
+		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4")]
+		[Description("The Test button's probe says a real service is working, with or without GetServerInfo")]
+		public void Probe_says_the_service_is_working()
+		{
+			bool working;
+			var message = WebServiceClient.Probe(WebServiceTarget.Require(), out working);
+			Console.WriteLine(message);
+			Assert.IsTrue(working, message);
+			StringAssert.Contains(message, "answers");
+		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4")]
+		[Description("The Test button's probe says when an address is not an x360ce service")]
+		public void Probe_says_when_the_address_is_not_a_service()
+		{
+			bool working;
+			// The site's root page: reachable, HTML, no SOAP behind it.
+			var root = new Uri(WebServiceTarget.Require()).GetLeftPart(UriPartial.Authority) + "/";
+			var message = WebServiceClient.Probe(root, out working);
+			Console.WriteLine(message);
+			Assert.IsFalse(working, message);
+			// A closed port: nothing answers at all.
+			message = WebServiceClient.Probe("http://127.0.0.1:9/webservices/x360ce.asmx", out working);
+			Console.WriteLine(message);
+			Assert.IsFalse(working, message);
+			StringAssert.StartsWith(message, "No answer from");
+		}
+
+		#endregion
 	}
 }

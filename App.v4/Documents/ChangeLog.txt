@@ -19,6 +19,7 @@
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Default motor periods are 120 ms left and 60 ms right; mappings still on the old pair are updated.
 - Changed: XInput Devices rows carry their own up and down arrows.
+- Added: Options has a Test button for the web service address.
 
 ## [4.22.21.0] - 2026-09-17
 

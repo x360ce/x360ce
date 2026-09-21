@@ -38,6 +38,7 @@
 			this.WebServiceUrlLabel = new System.Windows.Forms.Label();
 			this.InternetAutoLoadCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetFeaturesCheckBox = new System.Windows.Forms.CheckBox();
+			this.TestServiceButton = new System.Windows.Forms.Button();
 			this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
 			this.PasswordTextBox = new System.Windows.Forms.TextBox();
 			this.ResetButton = new System.Windows.Forms.Button();
@@ -116,6 +117,7 @@
 			this.InternetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.InternetGroupBox.Controls.Add(this.InternetAutoSaveCheckBox);
+			this.InternetGroupBox.Controls.Add(this.TestServiceButton);
 			this.InternetGroupBox.Controls.Add(this.InternetDatabaseUrlComboBox);
 			this.InternetGroupBox.Controls.Add(this.WebServiceUrlLabel);
 			this.InternetGroupBox.Controls.Add(this.InternetAutoLoadCheckBox);
@@ -147,8 +149,19 @@
             "http://localhost:20360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(109, 44);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(523, 21);
+			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(442, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
+			//
+			// TestServiceButton
+			//
+			this.TestServiceButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.TestServiceButton.Location = new System.Drawing.Point(557, 43);
+			this.TestServiceButton.Name = "TestServiceButton";
+			this.TestServiceButton.Size = new System.Drawing.Size(75, 23);
+			this.TestServiceButton.TabIndex = 15;
+			this.TestServiceButton.Text = "Test";
+			this.TestServiceButton.UseVisualStyleBackColor = true;
+			this.TestServiceButton.Click += new System.EventHandler(this.TestServiceButton_Click);
 			// 
 			// WebServiceUrlLabel
 			// 
@@ -404,6 +417,7 @@
 		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
 		public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
 		private System.Windows.Forms.Label WebServiceUrlLabel;
+		public System.Windows.Forms.Button TestServiceButton;
 		public System.Windows.Forms.CheckBox InternetAutoLoadCheckBox;
 		public System.Windows.Forms.CheckBox InternetFeaturesCheckBox;
 		private System.Windows.Forms.GroupBox OnlineAccountGroupBox;

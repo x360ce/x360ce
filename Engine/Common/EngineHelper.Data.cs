@@ -39,6 +39,35 @@ namespace x360ce.Engine
 			return table;
 		}
 
+		/// <summary>What the service says about itself: its version, its clock, and whether its database answers.</summary>
+		/// <remarks>
+		/// A database that does not answer is reported in the answer rather than as a fault, because
+		/// the point of asking is to find that out; the caller is the Test button, not a game.
+		/// </remarks>
+		public static ServerInfo GetServerInfo()
+		{
+			var info = new ServerInfo
+			{
+				Version = typeof(EngineHelper).Assembly.GetName().Version.ToString(),
+				UtcTime = DateTime.UtcNow,
+				Database = "",
+				Error = "",
+			};
+			try
+			{
+				var cmd = new SqlCommand("SELECT DB_NAME() AS [Name], GETUTCDATE() AS [Utc]");
+				var cn = SqlHelper.GetConnectionString("x360ceModelContainer");
+				var row = SqlHelper.Current.ExecuteDataTable(cn, cmd).Rows[0];
+				info.Database = (string)row["Name"];
+				info.DatabaseUtcTime = DateTime.SpecifyKind((DateTime)row["Utc"], DateTimeKind.Utc);
+			}
+			catch (Exception ex)
+			{
+				info.Error = ex.Message;
+			}
+			return info;
+		}
+
 		public static DataTable GetDataTable(IEnumerable<SearchParameter> list)
 		{
 			DataTable table = new DataTable();
