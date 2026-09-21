@@ -16,12 +16,12 @@
 		private void InitializeComponent()
 		{
 			this.DevicesToolStrip = new System.Windows.Forms.ToolStrip();
-			this.MoveUpButton = new System.Windows.Forms.ToolStripButton();
-			this.MoveDownButton = new System.Windows.Forms.ToolStripButton();
 			this.ApplyButton = new System.Windows.Forms.ToolStripButton();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
 			this.StatusLabel = new System.Windows.Forms.Label();
+			this.MoveUpColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.MoveDownColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.PlaceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DevicesToolStrip.SuspendLayout();
@@ -31,31 +31,11 @@
 			// DevicesToolStrip
 			//
 			this.DevicesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.MoveUpButton,
-			this.MoveDownButton,
 			this.ApplyButton,
 			this.RefreshButton});
 			this.DevicesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.DevicesToolStrip.Name = "DevicesToolStrip";
 			this.DevicesToolStrip.Size = new System.Drawing.Size(700, 25);
-			//
-			// MoveUpButton
-			//
-			this.MoveUpButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this.MoveUpButton.Image = global::x360ce.App.Properties.Resources.nav_up_16x16;
-			this.MoveUpButton.Name = "MoveUpButton";
-			this.MoveUpButton.Text = "Move Up";
-			this.MoveUpButton.ToolTipText = "Ask for this controller to take an earlier XInput place.";
-			this.MoveUpButton.Click += new System.EventHandler(this.MoveUpButton_Click);
-			//
-			// MoveDownButton
-			//
-			this.MoveDownButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this.MoveDownButton.Image = global::x360ce.App.Properties.Resources.nav_down_16x16;
-			this.MoveDownButton.Name = "MoveDownButton";
-			this.MoveDownButton.Text = "Move Down";
-			this.MoveDownButton.ToolTipText = "Ask for this controller to take a later XInput place.";
-			this.MoveDownButton.Click += new System.EventHandler(this.MoveDownButton_Click);
 			//
 			// ApplyButton
 			//
@@ -105,6 +85,8 @@
 			this.DevicesDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.DevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.MoveUpColumn,
+			this.MoveDownColumn,
 			this.PlaceColumn,
 			this.NameColumn});
 			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -116,6 +98,33 @@
 			this.DevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.DevicesDataGridView.Size = new System.Drawing.Size(700, 275);
 			this.DevicesDataGridView.SelectionChanged += new System.EventHandler(this.DevicesDataGridView_SelectionChanged);
+			this.DevicesDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DevicesDataGridView_CellContentClick);
+			//
+			// MoveUpColumn
+			//
+			this.MoveUpColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.MoveUpColumn.DefaultCellStyle.NullValue = null;
+			this.MoveUpColumn.HeaderText = "";
+			this.MoveUpColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
+			this.MoveUpColumn.MinimumWidth = 24;
+			this.MoveUpColumn.Name = "MoveUpColumn";
+			this.MoveUpColumn.ReadOnly = true;
+			this.MoveUpColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.MoveUpColumn.ToolTipText = "Ask for this controller to take an earlier XInput place.";
+			this.MoveUpColumn.Width = 24;
+			//
+			// MoveDownColumn
+			//
+			this.MoveDownColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.MoveDownColumn.DefaultCellStyle.NullValue = null;
+			this.MoveDownColumn.HeaderText = "";
+			this.MoveDownColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
+			this.MoveDownColumn.MinimumWidth = 24;
+			this.MoveDownColumn.Name = "MoveDownColumn";
+			this.MoveDownColumn.ReadOnly = true;
+			this.MoveDownColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.MoveDownColumn.ToolTipText = "Ask for this controller to take a later XInput place.";
+			this.MoveDownColumn.Width = 24;
 			//
 			// PlaceColumn
 			//
@@ -148,12 +157,12 @@
 		#endregion
 
 		private System.Windows.Forms.ToolStrip DevicesToolStrip;
-		private System.Windows.Forms.ToolStripButton MoveUpButton;
-		private System.Windows.Forms.ToolStripButton MoveDownButton;
 		private System.Windows.Forms.ToolStripButton ApplyButton;
 		private System.Windows.Forms.ToolStripButton RefreshButton;
 		private System.Windows.Forms.DataGridView DevicesDataGridView;
 		private System.Windows.Forms.Label StatusLabel;
+		private System.Windows.Forms.DataGridViewImageColumn MoveUpColumn;
+		private System.Windows.Forms.DataGridViewImageColumn MoveDownColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlaceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 	}

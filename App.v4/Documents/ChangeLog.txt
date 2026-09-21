@@ -18,6 +18,7 @@
 - Fixed: Opening the program again while it was closing could end it with a fault.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Default motor periods are 120 ms left and 60 ms right; mappings still on the old pair are updated.
+- Changed: XInput Devices rows carry their own up and down arrows.
 
 ## [4.22.21.0] - 2026-09-17
 

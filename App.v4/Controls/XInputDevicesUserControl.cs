@@ -62,9 +62,13 @@ namespace x360ce.App.Controls
 		{
 			var selected = DevicesDataGridView.CurrentRow == null ? -1 : DevicesDataGridView.CurrentRow.Index;
 			DevicesDataGridView.Rows.Clear();
-			foreach (var entry in _entries)
+			for (var i = 0; i < _entries.Count; i++)
 			{
+				var entry = _entries[i];
+				// Each row carries its own arrows, blank where there is nowhere to go.
 				var index = DevicesDataGridView.Rows.Add(
+					i > 0 ? Properties.Resources.nav_up_16x16 : null,
+					i < _entries.Count - 1 ? Properties.Resources.nav_down_16x16 : null,
 					XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
 					entry.Name);
 				DevicesDataGridView.Rows[index].Tag = entry;
@@ -76,32 +80,30 @@ namespace x360ce.App.Controls
 
 		void UpdateButtons()
 		{
-			var row = DevicesDataGridView.CurrentRow;
-			var index = row == null ? -1 : row.Index;
-			MoveUpButton.Enabled = index > 0;
-			MoveDownButton.Enabled = index >= 0 && index < DevicesDataGridView.Rows.Count - 1;
 			ApplyButton.Enabled = _entries.Count > 0;
 		}
 
-		void Move(int by)
+		void Move(int from, int by)
 		{
-			var row = DevicesDataGridView.CurrentRow;
-			if (row == null)
-				return;
-			var from = row.Index;
 			var to = from + by;
-			if (to < 0 || to >= _entries.Count)
+			if (from < 0 || from >= _entries.Count || to < 0 || to >= _entries.Count)
 				return;
 			var moved = _entries[from];
 			_entries.RemoveAt(from);
 			_entries.Insert(to, moved);
 			Bind();
-			DevicesDataGridView.CurrentCell = DevicesDataGridView.Rows[to].Cells[0];
+			DevicesDataGridView.CurrentCell = DevicesDataGridView.Rows[to].Cells[PlaceColumn.Index];
 		}
 
-		private void MoveUpButton_Click(object sender, EventArgs e) { Move(-1); }
-
-		private void MoveDownButton_Click(object sender, EventArgs e) { Move(1); }
+		private void DevicesDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex < 0)
+				return;
+			if (e.ColumnIndex == MoveUpColumn.Index)
+				Move(e.RowIndex, -1);
+			else if (e.ColumnIndex == MoveDownColumn.Index)
+				Move(e.RowIndex, 1);
+		}
 
 		/// <summary>Reads the machine again, for when a controller has arrived or left.</summary>
 		public void ReloadPlaces()
@@ -124,8 +126,6 @@ namespace x360ce.App.Controls
 		{
 			Cursor = busy ? Cursors.WaitCursor : Cursors.Default;
 			ApplyButton.Enabled = !busy;
-			MoveUpButton.Enabled = !busy;
-			MoveDownButton.Enabled = !busy;
 			DevicesDataGridView.Enabled = !busy;
 			if (!busy)
 				UpdateButtons();
@@ -143,18 +143,21 @@ namespace x360ce.App.Controls
 			// Shown before anything is touched, because a controller switched off cannot be taken
 			// back by pressing Cancel.
 			var text = plan.ToString();
+			// Every box here is owned by this window, so it opens in front of it even when the window
+			// is kept on top. Unowned, the closing report opened behind, with the buttons still held
+			// still from the run, and the window looked as if it had stopped.
 			if (plan.Refusal != null)
 			{
-				MessageBox.Show(text, "Cannot put them in that order",
+				MessageBox.Show(this, text, "Cannot put them in that order",
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
 			}
 			if (plan.Steps.Count == 0)
 			{
-				MessageBox.Show(text, "Nothing to do", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(this, text, "Nothing to do", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
-			var answer = MessageBox.Show(
+			var answer = MessageBox.Show(this,
 				"This is what will happen:" + Environment.NewLine + Environment.NewLine + text
 				+ Environment.NewLine + Environment.NewLine + "Go ahead?",
 				"Put controllers in this order", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
@@ -183,7 +186,7 @@ namespace x360ce.App.Controls
 				SetBusy(false);
 				StatusLabel.Visible = false;
 				Reload();
-				MessageBox.Show(runner.ToString(),
+				MessageBox.Show(this, runner.ToString(),
 					finished.Result ? "Done" : "Stopped part way",
 					MessageBoxButtons.OK, finished.Result ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());

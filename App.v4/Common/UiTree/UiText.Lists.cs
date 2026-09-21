@@ -149,10 +149,10 @@ namespace x360ce.App.UiTree
 				"Buttons that act on the emulated controllers shown below.");
 			d["XInputDevicesUserControl.DevicesDataGridView"] = new Text("Emulated controllers",
 				"Every emulated controller and the XInput place it holds, in the order games see them.");
-			d["XInputDevicesUserControl.MoveUpButton"] = new Text("Move Up",
-				"Moves the selected controller one place earlier.");
-			d["XInputDevicesUserControl.MoveDownButton"] = new Text("Move Down",
-				"Moves the selected controller one place later.");
+			d["XInputDevicesUserControl.MoveUpColumn"] = new Text("Move Up",
+				"Arrow on each row that moves that controller one place earlier.");
+			d["XInputDevicesUserControl.MoveDownColumn"] = new Text("Move Down",
+				"Arrow on each row that moves that controller one place later.");
 			d["XInputDevicesUserControl.ApplyButton"] = new Text("Apply",
 				"Recreates the controllers in the order shown. Needs Administrator.");
 			d["XInputDevicesUserControl.RefreshButton"] = new Text("Refresh",
