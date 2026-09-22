@@ -635,8 +635,9 @@ namespace x360ce.App.Controls
 			var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
 			var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
 
-			// If columns will be hidden or shown then...
-			if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
+			// If rows come or go, or a device is asked to be selected, then... The rows of a device just
+			// mapped are usually in place already, put there by the settings list's own change.
+			if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0 || instanceGuid.HasValue)
 			{
 				var selection = instanceGuid.HasValue
 					? new List<Guid>() { instanceGuid.Value }
@@ -1617,11 +1618,22 @@ namespace x360ce.App.Controls
 			// Show form which allows to select device.
 			var selectedUserDevices = MainForm.Current.ShowDeviceForm();
 			// Return if no devices were selected.
-			if (selectedUserDevices == null)
+			if (selectedUserDevices == null || selectedUserDevices.Length == 0)
 				return;
+			MapDevices(game, selectedUserDevices);
+		}
+
+		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
+		/// <remarks>
+		/// A device just added is the one the person means to set up next. The list kept whatever row
+		/// was selected before, so with a device already mapped the new one arrived unselected and the
+		/// page went on showing the old one's settings until it was picked by hand.
+		/// </remarks>
+		public void MapDevices(UserGame game, UserDevice[] devices)
+		{
 			// Check if device already have old settings before adding new ones.
 			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
-			SettingsManager.MapGamePadDevices(game, MappedTo, selectedUserDevices,
+			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
 			// If new devices mapped and button is not enabled then...
@@ -1631,6 +1643,7 @@ namespace x360ce.App.Controls
 				EnableButton_Click(null, null);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
+			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)

@@ -25,6 +25,7 @@
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
 - Changed: The period played follows the force, as a real motor slows when driven less.
 - Changed: XInput Devices rows carry their own up and down arrows.
+- Changed: A device added to a controller is selected, ready to set up.
 - Added: Motor Periods presets for wheels, an info button about the motors, and a Defaults button on the Force Feedback page.
 - Added: Options has a Test button for the web service address.
 - Added: The Issues tab names force feedback a device refused or plays differently.
