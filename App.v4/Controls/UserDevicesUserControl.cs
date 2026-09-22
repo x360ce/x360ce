@@ -65,6 +65,7 @@ namespace x360ce.App.Controls
 			_currentData = null;
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
+			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
 			if (MapDeviceToControllerMode)
 				RefreshMapDeviceToList();
 			else
@@ -75,12 +76,14 @@ namespace x360ce.App.Controls
 		{
 			var list = new SortableBindingList<UserDevice>();
 			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-			// Exclude Syste/Virtual devices.
+			// Devices Windows files as system devices are left out unless asked for: keyboards and the
+			// like, which nobody means to map. Some game devices are filed there too, the Logitech G13
+			// among them, and the switch is how they are reached.
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				devices = SettingsManager.UserDevices.Items
-					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
+					.Where(x => ShowSystemDevicesButton.Checked || x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
 			}
 			list.AddRange(devices);
 			// If new list, item added or removed then...
@@ -171,6 +174,15 @@ namespace x360ce.App.Controls
 			var grid = DevicesDataGridView;
 			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserDevice)x.DataBoundItem).ToArray();
 			return items;
+		}
+
+		private void ShowSystemDevicesButton_CheckedChanged(object sender, EventArgs e)
+		{
+			ShowSystemDevicesButton.Image = ShowSystemDevicesButton.Checked
+				? Properties.Resources.checkbox_16x16
+				: Properties.Resources.checkbox_unchecked_16x16;
+			if (MapDeviceToControllerMode)
+				RefreshMapDeviceToList();
 		}
 
 		private void RefreshButton_Click(object sender, EventArgs e)

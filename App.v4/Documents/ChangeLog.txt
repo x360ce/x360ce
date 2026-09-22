@@ -28,6 +28,7 @@
 - Added: Motor Periods presets for wheels, an info button about the motors, and a Defaults button on the Force Feedback page.
 - Added: Options has a Test button for the web service address.
 - Added: The Issues tab names force feedback a device refused or plays differently.
+- Added: Map Device can list system devices, such as the Logitech G13 (Issue #1211, bredita).
 
 ## [4.22.21.0] - 2026-09-17
 

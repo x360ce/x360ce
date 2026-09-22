@@ -167,6 +167,8 @@ namespace x360ce.App.UiTree
 				"Adds a pretend controller, for trying the program without hardware.");
 			d["UserDevicesUserControl.CleanupVirtualPadsButton"] = new Text("Remove Leftover Pads",
 				"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.");
+			d["UserDevicesUserControl.ShowSystemDevicesButton"] = new Text("Show System Devices",
+				"Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.");
 			d["UserDevicesUserControl.toolStripDropDownButton1"] = new Text("HID Guardian",
 				"Actions for the obsolete HID Guardian tool.");
 			d["UserDevicesUserControl.EnumeratedDevicesButton"] = new Text("Show Enumerated Devices",

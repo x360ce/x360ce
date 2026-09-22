@@ -51,6 +51,7 @@
 			this.HardwareButton = new System.Windows.Forms.ToolStripButton();
 			this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
 			this.CleanupVirtualPadsButton = new System.Windows.Forms.ToolStripButton();
+			this.ShowSystemDevicesButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
 			this.EnumeratedDevicesButton = new System.Windows.Forms.ToolStripMenuItem();
 			this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -208,6 +209,7 @@
 			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RefreshButton,
             this.ControllerDeleteButton,
+            this.ShowSystemDevicesButton,
             this.HardwareButton,
             this.AddDemoDevice,
             this.CleanupVirtualPadsButton,
@@ -265,6 +267,17 @@
 			this.CleanupVirtualPadsButton.Text = "Remove Leftover Pads";
 			this.CleanupVirtualPadsButton.ToolTipText = "Remove virtual controllers left behind by earlier runs, which take up the four XInput places.";
 			this.CleanupVirtualPadsButton.Click += new System.EventHandler(this.CleanupVirtualPadsButton_Click);
+			//
+			// ShowSystemDevicesButton
+			//
+			this.ShowSystemDevicesButton.CheckOnClick = true;
+			this.ShowSystemDevicesButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.ShowSystemDevicesButton.Name = "ShowSystemDevicesButton";
+			this.ShowSystemDevicesButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this.ShowSystemDevicesButton.Size = new System.Drawing.Size(137, 22);
+			this.ShowSystemDevicesButton.Text = "Show System Devices";
+			this.ShowSystemDevicesButton.Visible = false;
+			this.ShowSystemDevicesButton.CheckedChanged += new System.EventHandler(this.ShowSystemDevicesButton_CheckedChanged);
 			// 
 			// toolStripDropDownButton1
 			// 
@@ -336,6 +349,7 @@
 		private System.Windows.Forms.ToolStripButton HardwareButton;
 		private System.Windows.Forms.ToolStripButton AddDemoDevice;
 		private System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
+        private System.Windows.Forms.ToolStripButton ShowSystemDevicesButton;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem EnumeratedDevicesButton;
         private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
