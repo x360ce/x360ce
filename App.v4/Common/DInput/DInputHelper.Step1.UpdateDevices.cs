@@ -104,6 +104,11 @@ namespace x360ce.App.DInput
 					string path;
 					if (knownPaths.TryGetValue(instance.InstanceGuid, out path))
 					{
+						// A device written down from an earlier run has no interface path yet: the path is
+						// not saved with it. Asked of DirectInput here, or the device is never matched to
+						// its interface and comes up with no vendor, no id, and a wheel that takes no range.
+						if (string.IsNullOrEmpty(path) && instance.IsHumanInterfaceDevice)
+							path = InterfacePathOf(manager, instance.InstanceGuid);
 						if (!string.IsNullOrEmpty(path))
 							paths.Add(path);
 						continue;
@@ -130,6 +135,20 @@ namespace x360ce.App.DInput
 			}
 			read.Milliseconds = started.ElapsedMilliseconds;
 			return read;
+		}
+
+		/// <summary>The HID interface path of a device, read through a joystick made and let go of for the purpose, or empty.</summary>
+		static string InterfacePathOf(DirectInput manager, Guid instanceGuid)
+		{
+			try
+			{
+				using (var joystick = new Joystick(manager, instanceGuid))
+					return joystick.Properties.InterfacePath ?? "";
+			}
+			catch (Exception)
+			{
+				return "";
+			}
 		}
 
 		#endregion
