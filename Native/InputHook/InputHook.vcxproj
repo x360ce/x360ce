@@ -320,4 +320,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <!-- MinHook is a git submodule. A clone made without it has an empty folder, and the compiler would only say it cannot open a file. -->
+  <Target Name="CheckMinHook" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(ProjectDir)..\..\MinHook\src\hook.c')" Text="MinHook is missing from $([System.IO.Path]::GetFullPath('$(ProjectDir)..\..\MinHook')). It is a git submodule: run &quot;git submodule update --init&quot; in the repository, or clone with --recurse-submodules." />
+  </Target>
 </Project>
