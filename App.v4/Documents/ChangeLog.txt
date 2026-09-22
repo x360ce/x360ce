@@ -15,11 +15,12 @@
 - Fixed: Pressing a key while recording could press a button on the page (Issue #1271, DXSECN).
 - Fixed: Adding a second game with the same file name replaced the first (Issue #1093, alkalifly).
 - Fixed: A device being unplugged mid-read was reported as a fault.
+- Fixed: A missing error reports folder was reported as a fault.
 - Fixed: Opening the program again while it was closing could end it with a fault.
 - Fixed: The centering spring swung through the centre and chattered under a hand at high strength.
 - Fixed: A device known from an earlier run showed no vendor name or id.
 - Fixed: A pad vibrated one motor only, or stopped after reconnecting (Issue #1633, KhaledElSaiad).
-- Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver.
+- Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver (Issue #1634, mahaman626).
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
@@ -36,7 +37,7 @@
 - Fixed: Changing the game could list a device twice or close the program.
 - Fixed: Running from inside a 32-bit game's folder stopped the controllers.
 - Fixed: Starting from a protected game folder closed the program.
-- Fixed: A device name the driver reported could stop the settings from saving.
+- Fixed: A device name the driver reported could stop the settings from saving (Issue #1038, fleytman).
 - Fixed: Sliders were missing from the mapping list.
 - Fixed: Removing leftover virtual controllers could freeze the program.
 - Fixed: Windows could slow the program to 125 passes a second behind a game; a wheel then swung side to side.
@@ -377,7 +378,7 @@
 - Fixed: Crash when DirectInput helper starts before full form initialization.
 - Fixed: Crash when UserSettings list updates PAD Grid from another thread.
 - Fixed: Crash when UserDevice removed on another thread.
-- Changed: DeviceDetector which would crash when retrieving device name.
+- Changed: DeviceDetector which would crash when retrieving device name (Issue #830, Psychophage).
 
 ## [4.13.35.0] - 2020-09-09
 
