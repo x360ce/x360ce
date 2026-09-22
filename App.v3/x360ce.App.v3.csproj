@@ -21,6 +21,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <!-- The title and error reports show the build date, read from the time the linker writes
+         into the file's header. A deterministic build writes a content hash there instead. -->
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <OutputPath>bin\Debug_x86\</OutputPath>
