@@ -373,6 +373,7 @@
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
+    <Compile Include="Issues\ForceFeedbackIssue.cs" />
     <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />

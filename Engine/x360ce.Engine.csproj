@@ -149,6 +149,7 @@
     <Compile Include="Common\Enum\MapToMask.cs" />
     <Compile Include="Common\Enum\XInputMask.cs" />
     <Compile Include="Common\EngineHelper.cs" />
+    <Compile Include="Common\ForceFeedbackDriver.cs" />
     <Compile Include="Common\ForceFeedbackState.cs" />
     <Compile Include="Common\LogitechWheel.cs" />
     <Compile Include="Common\SpringCalibration.cs" />

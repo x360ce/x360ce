@@ -187,25 +187,22 @@ namespace x360ce.Engine
 			// the effects it makes are the only ones the device holds.
 			if (effectL == null && effectR == null && effectS == null && effectD == null)
 				DisposeDeviceEffects(device);
-			effectL?.Download();
-			effectR?.Download();
-			effectS?.Download();
-			effectD?.Download();
+			Resume(effectL);
+			Resume(effectR);
+			Resume(effectS);
+			Resume(effectD);
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
 
-			ForceEffectType forceType = 0;
+			// Read on every poll, not only when the setting changes: effects that are made again after
+			// the device lost them take their layout from it too, and a '2' type made as its plain type
+			// drives one motor on the pads that need both axes in one effect.
+			var forceType = (ForceEffectType)TryParse(ps.ForceType);
 			if (motorsChanged || forceChanged)
             {
                 // Update values.
-                forceType = (ForceEffectType)TryParse(ps.ForceType);
-				if (forceType.HasFlag(ForceEffectType.PeriodicSine))
-					GUID_Force = EffectGuid.Sine;
-				else if (forceType.HasFlag(ForceEffectType.PeriodicSawtooth))
-					GUID_Force = EffectGuid.SawtoothDown;
-				else
-					GUID_Force = EffectGuid.ConstantForce;
+				GUID_Force = ForceFeedbackDriver.EffectFor(forceType, ud.ForceFeedbackDriver);
                 // Force change requires to dispose old effects.
                 // Stop old effects.
                 if (effectL != null)
@@ -707,6 +704,43 @@ namespace x360ce.Engine
             catch (SharpDX.SharpDXException ex) when (IsUnsupported(ex))
             {
                 return null;
+            }
+        }
+
+        /// <summary>Puts an effect back on the device and playing, if the device dropped it.</summary>
+        /// <remarks>
+        /// A device let go of and held again, which the program does whenever it changes how it holds
+        /// the device, forgets what was playing. Downloaded again, an effect is only loaded; nothing
+        /// sets it playing until a game changes the speed, so a game holding a steady rumble got none.
+        /// Every effect this state makes plays from the moment it is made, at nought when it is quiet,
+        /// so one that is not playing was dropped.
+        /// </remarks>
+        void Resume(Effect effect)
+        {
+            if (effect == null || unsupported.Contains(effect))
+                return;
+            effect.Download();
+            if (effect.Status != EffectStatus.Playing)
+                effect.Start(1);
+        }
+
+        /// <summary>What the device refused to play, as a person would name it, or empty when it took everything asked of it.</summary>
+        /// <remarks>
+        /// A refused effect is not asked for again, since the device gives the same answer every time,
+        /// so without this a motor simply stayed silent and nothing said why.
+        /// </remarks>
+        public string[] Refused
+        {
+            get
+            {
+                var list = new List<string>();
+                if (paramsL != null && (effectL == null || unsupported.Contains(effectL)))
+                    list.Add(actuatorR == null ? "the motor" : "the left motor");
+                if (paramsR != null && (effectR == null || unsupported.Contains(effectR)))
+                    list.Add("the right motor");
+                if (springRefused)
+                    list.Add("the centering spring");
+                return list.ToArray();
             }
         }
 

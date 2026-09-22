@@ -18,6 +18,8 @@
 - Fixed: Opening the program again while it was closing could end it with a fault.
 - Fixed: The centering spring swung through the centre and chattered under a hand at high strength.
 - Fixed: A device known from an earlier run showed no vendor name or id.
+- Fixed: A pad vibrated one motor only, or stopped after reconnecting (Issue #1633, KhaledElSaiad).
+- Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
@@ -25,6 +27,7 @@
 - Changed: XInput Devices rows carry their own up and down arrows.
 - Added: Motor Periods presets for wheels, an info button about the motors, and a Defaults button on the Force Feedback page.
 - Added: Options has a Test button for the web service address.
+- Added: The Issues tab names force feedback a device refused or plays differently.
 
 ## [4.22.21.0] - 2026-09-17
 

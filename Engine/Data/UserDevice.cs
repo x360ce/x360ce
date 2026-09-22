@@ -39,6 +39,7 @@ namespace x360ce.Engine.Data
 				ProductGuid = ins.ProductGuid;
 			if (ProductName != productName)
 				ProductName = productName;
+			ForceFeedbackDriver = Engine.ForceFeedbackDriver.FileOf(ins.ForceFeedbackDriverGuid);
 		}
 
 		/// <summary>
@@ -182,6 +183,10 @@ namespace x360ce.Engine.Data
 
 		[XmlIgnore]
 		public bool DeviceChanged;
+
+		/// <summary>The file of the device's force feedback driver, or empty when it has none.</summary>
+		[XmlIgnore]
+		public string ForceFeedbackDriver = "";
 
 		/// <summary>DInput Device State.</summary>
 		[XmlIgnore]

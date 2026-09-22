@@ -1291,6 +1291,7 @@ namespace x360ce.App
 					new XboxDriversIssue(),
 					new VirtualDeviceDriverIssue(),
 					new LeftoverVirtualPadsIssue(),
+					new ForceFeedbackIssue(),
 					new UnfinishedVirtualPadsIssue(),
 					new RestartToFinishRemovalIssue(),
 					new AiAccessIssue()
