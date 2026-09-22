@@ -1990,10 +1990,27 @@ namespace x360ce.App
 		{
 			ControlsHelper.BeginInvoke(new Action(() =>
 			{
-				var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
+				ErrorFilesCount = CountErrorFiles(LogHelper.Current.LogsFolder, LogHelper.Current.FilePattern);
 				UpdateStatusErrorsLabel();
 			}));
+		}
+
+		/// <summary>How many error reports the folder holds, or nought when there is no folder.</summary>
+		/// <remarks>
+		/// The folder can go while the program runs: removed by hand, or by Windows along with the
+		/// temporary folder a program started straight from its zip is unpacked into. Listing it then
+		/// threw, and counting the reports of faults became a fault of its own.
+		/// </remarks>
+		public static int CountErrorFiles(string folder, string pattern)
+		{
+			try
+			{
+				return new DirectoryInfo(folder).GetFiles(pattern).Length;
+			}
+			catch (DirectoryNotFoundException)
+			{
+				return 0;
+			}
 		}
 
 		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
