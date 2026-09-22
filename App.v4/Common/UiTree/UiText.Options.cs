@@ -171,6 +171,8 @@ namespace x360ce.App.UiTree
 				"Whether the program contacts the online settings database at all.");
 			d["OptionsInternetUserControl.InternetDatabaseUrlComboBox"] = new Text("Web service address",
 				"Address of the online settings database.");
+			d["OptionsInternetUserControl.TestServiceButton"] = new Text("Test",
+				"Asks the web service at that address who it is and says whether it answers.");
 			d["OptionsInternetUserControl.GamesGroupBox"] = new Text("Default settings",
 				"How settings shared by other people are chosen.");
 			d["OptionsInternetUserControl.GetProgramsMinInstancesUpDown"] = new Text(
@@ -222,8 +224,8 @@ namespace x360ce.App.UiTree
 				"Which folder to keep settings in. Your own user folder cannot be locked by another account.");
 			d["OptionsSettingsUserControl.MoveModeComboBox"] = new Text("What to do with existing settings",
 				"Whether the settings you have are copied to the new folder, or left behind.");
-			d["OptionsSettingsUserControl.ApplyButton"] = new Text("Apply",
-				"Moves the settings to the chosen folder and starts using it.");
+			d["OptionsSettingsUserControl.ApplyButton"] = new Text("Apply",
+				"Moves the settings to the chosen folder and starts using it.");
 			d["OptionsSettingsUserControl.OpenFolderButton"] = new Text("Open Folder",
 				"Opens the settings folder in Explorer.");
 		}
