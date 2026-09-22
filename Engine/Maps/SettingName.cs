@@ -362,15 +362,16 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.")]
 		static public string ForceSpringEnable { get { return "SpringEnable"; } }
 
-		[DefaultValue("0"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).")]
+		[DefaultValue("30"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.")]
 		static public string ForceSpringStrength { get { return "SpringStrength"; } }
 
 		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
 		static public string WheelRange { get { return "WheelRange"; } }
 
-		[DefaultValue(DefaultLeftMotorPeriod), Description("Left motor period in milliseconds. The left motor is the low-frequency one, so its pulse is the slower. Range is 0 to 500. Default is 120.")]
+		[DefaultValue(DefaultLeftMotorPeriod), Description("Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.")]
 		static public string LeftMotorPeriod { get { return "LeftMotorPeriod"; } }
-		public const string DefaultLeftMotorPeriod = "120";
+		/// <summary>MotorModel.PeriodAtFullMs(MotorModel.DefaultMultiplier, true), spelt out because an attribute needs a constant.</summary>
+		public const string DefaultLeftMotorPeriod = "160";
 
 		[DefaultValue("100"), Description("Left motor strength. Range is 0 to 100. Default is 100.")]
 		static public string LeftMotorStrength { get { return "LeftMotorStrength"; } }
@@ -378,9 +379,10 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
 		static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
 
-		[DefaultValue(DefaultRightMotorPeriod), Description("Right motor period in milliseconds. The right motor is the high-frequency one, so its pulse is the faster. Range is 0 to 500. Default is 60.")]
+		[DefaultValue(DefaultRightMotorPeriod), Description("Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.")]
 		static public string RightMotorPeriod { get { return "RightMotorPeriod"; } }
-		public const string DefaultRightMotorPeriod = "60";
+		/// <summary>MotorModel.PeriodAtFullMs(MotorModel.DefaultMultiplier, false), spelt out because an attribute needs a constant.</summary>
+		public const string DefaultRightMotorPeriod = "64";
 
 		[DefaultValue("100"), Description("Right motor strength. Range is 0 to 100. Default is 100.")]
 		static public string RightMotorStrength { get { return "RightMotorStrength"; } }

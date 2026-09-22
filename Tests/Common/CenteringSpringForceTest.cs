@@ -48,11 +48,12 @@ namespace x360ce.Tests
 		public void The_force_grows_over_the_ramp()
 		{
 			var strength = 80;
+			var ramp = ForceFeedbackState.SpringRampFor(strength);
 			var lowest = Math.Abs(Force(Center + Band + 1, strength));
-			Assert.IsTrue(lowest > 0 && lowest <= strength / ForceFeedbackState.SpringRampSteps + 1,
+			Assert.IsTrue(lowest > 0 && lowest <= strength / ForceFeedbackState.SpringRampSteps(strength) + 1,
 				"Just outside the dead band the force is one step, not full strength: " + lowest);
 			var previous = 0;
-			for (var distance = Band + 1; distance <= Ramp; distance++)
+			for (var distance = Band + 1; distance <= ramp; distance++)
 			{
 				var force = -Force(Center + distance, strength);
 				Assert.IsTrue(force >= previous, "The force fell from " + previous + " to " + force + " at " + distance);
@@ -61,7 +62,7 @@ namespace x360ce.Tests
 			}
 			Assert.AreEqual(strength, previous, "At the end of the ramp the force is the full strength.");
 			// The same curve on the other side, pointing the other way.
-			for (var distance = Band + 1; distance <= Ramp; distance += 37)
+			for (var distance = Band + 1; distance <= ramp; distance += 37)
 				Assert.AreEqual(-Force(Center + distance, strength), Force(Center - distance, strength), "Mirrored at " + distance);
 		}
 
@@ -71,6 +72,51 @@ namespace x360ce.Tests
 		{
 			Assert.AreEqual(0, Force(0, 0));
 			Assert.AreEqual(0, Force(SpringCalibration.AxisMax, -5));
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("No step of the ramp is larger than the cap, at any strength")]
+		public void No_ramp_step_is_larger_than_the_cap()
+		{
+			// At full strength eight steps were a twelve percent blow each; the wheel chattered on one under a finger.
+			foreach (var strength in new[] { 5, 26, 50, 100 })
+			{
+				var previous = 0;
+				for (var distance = Band + 1; distance <= ForceFeedbackState.SpringRampFor(strength); distance++)
+				{
+					var force = -Force(Center + distance, strength);
+					Assert.IsTrue(force - previous <= ForceFeedbackState.SpringStepPercent,
+						string.Format("At {0} % the force jumped from {1} to {2} at {3}.", strength, previous, force, distance));
+					previous = force;
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("Above the stiffness limit the ramp widens with the strength, so the force per unit of travel never grows")]
+		public void The_ramp_widens_so_the_spring_gets_no_stiffer()
+		{
+			var limit = ForceFeedbackState.SpringStiffnessLimit;
+			Assert.AreEqual(Ramp, ForceFeedbackState.SpringRampFor(26), "Auto's usual answer keeps the narrow ramp and the close rest.");
+			Assert.AreEqual(Ramp, ForceFeedbackState.SpringRampFor(limit));
+			Assert.AreEqual(Ramp * 2, ForceFeedbackState.SpringRampFor(limit * 2), "Twice the strength, twice the ramp.");
+			// Force per unit of travel at the end of the ramp, in thousandths, never above the limit's.
+			var stiffnessAtLimit = 1000L * limit / ForceFeedbackState.SpringRampFor(limit);
+			foreach (var strength in new[] { 60, 75, 100 })
+				Assert.IsTrue(1000L * strength / ForceFeedbackState.SpringRampFor(strength) <= stiffnessAtLimit, strength + " % is stiffer than the limit.");
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("The damping is one value: the same at every angle and at every strength")]
+		public void Damping_is_the_same_at_every_angle_and_strength()
+		{
+			// An edge in the damping was felt as a border in the wheel, a third of the way out, where
+			// the resistance dropped for no reason a hand could see. Scaled with the strength instead,
+			// full strength asked the device for everything it had and the wheel ground its way home.
+			Assert.AreEqual(0, ForceFeedbackState.DamperFor(0), "No spring, no damping.");
+			Assert.AreEqual(ForceFeedbackState.DamperCoefficient, ForceFeedbackState.DamperFor(28));
+			Assert.AreEqual(ForceFeedbackState.DamperFor(28), ForceFeedbackState.DamperFor(100), "A stronger spring must not brake the wheel harder.");
+			Assert.IsTrue(ForceFeedbackState.DamperCoefficient * 2 <= 10000, "The damping is a fraction of what the device can do, not all of it.");
 		}
 	}
 }

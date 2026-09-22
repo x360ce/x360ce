@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using x360ce.App.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -408,6 +409,7 @@ namespace x360ce.App.Controls
 			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
 			foreach (var item in effectsTypes)
 				ForceTypeComboBox.Items.Add(item);
+			InitMotorPeriodPresets();
 
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
 			foreach (var item in effectDirections)
@@ -1269,7 +1271,7 @@ namespace x360ce.App.Controls
 				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
 				return;
 			}
-			WheelDescriptionLabel.Text = "Hands off the wheel. It is pushed to each stop, then brought home with a rising force.";
+			WheelDescriptionLabel.Text = "Hands off the wheel.";
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = ud;
@@ -1282,7 +1284,11 @@ namespace x360ce.App.Controls
 			var ud = springAutoDevice;
 			var run = ud?.SpringCalibration;
 			if (run != null && !run.IsFinished)
+			{
+				// The run says what it is doing and what it is after, so the page is not silent for half a minute.
+				WheelDescriptionLabel.Text = run.Status;
 				return;
+			}
 			SpringAutoTimer.Stop();
 			ForceSpringAutoButton.Text = "Auto";
 			ForceSpringAutoButton.Enabled = true;
@@ -1294,8 +1300,8 @@ namespace x360ce.App.Controls
 			{
 				ForceSpringStrengthTrackBar.Value = run.Result;
 				WheelDescriptionLabel.Text = string.Format(
-					"Centering spring set to {0} %: the weakest force that brought the wheel home from both sides, {1} % and {2} %, plus a margin.",
-					run.Result, run.LowLevel, run.HighLevel);
+					"Centering spring set to {0} %. The wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a little is added so it starts every time.",
+					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
 			{
@@ -1312,10 +1318,87 @@ namespace x360ce.App.Controls
 		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 5;
-			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 5;
+			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * PeriodMsPerStep;
+			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * PeriodMsPerStep;
 			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
 			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
+			ShowMotorPeriodPreset(leftMotorPeriod, rightMotorPeriod);
+		}
+
+		/// <summary>Milliseconds per step of the period sliders: 0 to 400, so every preset lands on a step.</summary>
+		const int PeriodMsPerStep = 4;
+
+		/// <summary>Guards the preset box and the sliders against answering each other in a loop.</summary>
+		bool _settingMotorPeriods;
+
+		/// <summary>Shows in the preset box which multiplier the two sliders stand for, or Custom.</summary>
+		void ShowMotorPeriodPreset(int leftMs, int rightMs)
+		{
+			if (_settingMotorPeriods)
+				return;
+			_settingMotorPeriods = true;
+			try
+			{
+				var k = MotorModel.MultiplierOf(leftMs, rightMs);
+				MotorPeriodPresetComboBox.SelectedIndex = k.HasValue ? Array.IndexOf(MotorModel.Multipliers, k.Value) + 1 : 0;
+			}
+			finally
+			{
+				_settingMotorPeriods = false;
+			}
+		}
+
+		/// <summary>Fills the preset box: Custom, then every multiplier the model offers.</summary>
+		void InitMotorPeriodPresets()
+		{
+			MotorPeriodPresetComboBox.Items.Clear();
+			MotorPeriodPresetComboBox.Items.Add("Custom");
+			foreach (var k in MotorModel.Multipliers)
+				MotorPeriodPresetComboBox.Items.Add(MotorModel.Describe(k));
+			MotorPeriodPresetComboBox.SelectedIndex = 0;
+		}
+
+		/// <summary>A chosen multiplier sets both period sliders; Custom changes nothing.</summary>
+		private void MotorPeriodPresetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_settingMotorPeriods || MotorPeriodPresetComboBox.SelectedIndex < 1)
+				return;
+			var k = MotorModel.Multipliers[MotorPeriodPresetComboBox.SelectedIndex - 1];
+			_settingMotorPeriods = true;
+			try
+			{
+				LeftMotorPeriodTrackBar.Value = MotorModel.PeriodAtFullMs(k, true) / PeriodMsPerStep;
+				RightMotorPeriodTrackBar.Value = MotorModel.PeriodAtFullMs(k, false) / PeriodMsPerStep;
+			}
+			finally
+			{
+				_settingMotorPeriods = false;
+			}
+		}
+
+		/// <summary>Shows what the motors do and what the presets mean: the Force Feedback help document.</summary>
+		private void MotorInfoButton_Click(object sender, EventArgs e)
+		{
+			HelpForm.Show(this, "Force Feedback: motors and periods", AppHelper.HelpForceFeedbackResource);
+		}
+
+		/// <summary>Puts every setting on the Force Feedback page back to its default.</summary>
+		/// <remarks>
+		/// Only this page: the mappings, dead zones and the rest of the pad stay as they are. The
+		/// defaults are the ones the settings declare, read the same way a new mapping reads them.
+		/// </remarks>
+		private void ForceDefaultsButton_Click(object sender, EventArgs e)
+		{
+			foreach (var map in SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && IsOnForceFeedbackPage(x.Control)))
+				SettingsManager.Current.LoadSetting(map.Control, map.IniKey, string.Format("{0}", map.DefaultValue ?? ""));
+		}
+
+		bool IsOnForceFeedbackPage(Control control)
+		{
+			for (var c = control; c != null; c = c.Parent)
+				if (c == ForceFeedbackTabPage)
+					return true;
+			return false;
 		}
 
 		public void UpdateForceFeedBack()

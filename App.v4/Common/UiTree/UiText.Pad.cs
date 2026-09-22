@@ -71,6 +71,12 @@ namespace x360ce.App.UiTree
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
+			d["PadControl.MotorPeriodPresetComboBox"] = new Text("Motor periods",
+				"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.");
+			d["PadControl.MotorInfoButton"] = new Text("About the motors",
+				"Shows what each motor is used for, their measured speeds, and what the multipliers mean.");
+			d["PadControl.ForceDefaultsButton"] = new Text("Defaults",
+				"Puts every setting on this page back to its default.");
 			d["PadControl.WheelGroupBox"] = new Text("Wheel",
 				"Settings only a wheel has: the centering spring and the steering range.");
 			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",

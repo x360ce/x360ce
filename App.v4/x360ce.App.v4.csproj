@@ -518,6 +518,12 @@
     <EmbeddedResource Include="..\docs\Help.HidGuardian.md">
       <Link>Documents\Help.HidGuardian.md</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\docs\Help.ForceFeedback.md">
+      <Link>Documents\Help.ForceFeedback.md</Link>
+    </EmbeddedResource>
+    <Compile Include="Forms\HelpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Common\HotkeyHelper.cs" />
     <Compile Include="Common\OverlayForm.cs">
       <SubType>Form</SubType>
@@ -620,6 +626,7 @@
     <None Include="Images\folder_16x16.png" />
     <None Include="Images\cloud_computing_refresh_16x16.png" />
     <None Include="Images\fix_16x16.png" />
+    <None Include="Images\information_16x16.png" />
     <None Include="Images\reset_16x16.png" />
     <None Include="Images\checkbox_undefined_16x16.png" />
     <None Include="Images\data_into_16x16.png" />

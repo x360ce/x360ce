@@ -870,10 +870,10 @@ namespace x360ce.App
 						n = 256;
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
-				// Convert 500 to 100%
+				// Convert 400 ms to 100%: 4 ms a step, so every motor period preset lands on a step.
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					n = System.Convert.ToInt32((float)n / 500F * 100F);
+					n = System.Convert.ToInt32((float)n / 400F * 100F);
 				}
 				// Convert 32767 to 100%
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
@@ -970,10 +970,10 @@ namespace x360ce.App
 				{
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
 				}
-				// convert 100%  to 500
+				// convert 100% to 400 ms
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
+					v = System.Convert.ToInt32((float)tc.Value / 100F * 400F).ToString();
 				}
 				// Convert 100% to 32767
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
