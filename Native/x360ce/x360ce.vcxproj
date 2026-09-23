@@ -123,7 +123,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd"
+      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd" "$(Platform)$(Configuration)"
 </Command>
     </PreBuildEvent>
     <PostBuildEvent>
@@ -161,7 +161,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PreBuildEvent>
-      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd"
+      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd" "$(Platform)$(Configuration)"
 </Command>
     </PreBuildEvent>
     <PostBuildEvent>
@@ -208,7 +208,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd"
+      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd" "$(Platform)$(Configuration)"
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -250,7 +250,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd"
+      <Command>call "$(MSBuildProjectDirectory)\genrev.cmd" "$(Platform)$(Configuration)"
 </Command>
     </PreBuildEvent>
     <ResourceCompile>

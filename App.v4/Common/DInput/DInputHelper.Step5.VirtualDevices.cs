@@ -43,6 +43,9 @@ namespace x360ce.App.DInput
 				// native client, repeating the whole cycle at the polling frequency.
 				if (virtualModeActive)
 				{
+					// A plug still under way is left to finish first; a later pass lets go of what it made.
+					if (!SettlePlugging())
+						return;
 					// Each controller is let go of by name first, which is the path that also forgets
 					// the place it held and the hardware that was ours. Disposing the client alone takes
 					// the controllers away and leaves those notes behind.
@@ -113,8 +116,7 @@ namespace x360ce.App.DInput
 						// first, so two at once each undo the other's work and neither arrives.
 						if (_plugging.Any(x => x != null))
 							continue;
-						var index = i;
-						_plugging[i - 1] = System.Threading.Tasks.Task.Run(() => EnableFeeding(index));
+						BeginPlug(i);
 						continue;
 					}
 					// If the virtual target stopped accepting reports then unplug it, so the
@@ -258,6 +260,50 @@ namespace x360ce.App.DInput
 
 		/// <summary>The plug of each controller under way on a worker, or null.</summary>
 		readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
+
+		/// <summary>Starts plugging in the controller for one pad on a worker; a later pass takes in the answer.</summary>
+		public System.Threading.Tasks.Task<VirtualError> BeginPlug(uint userIndex)
+		{
+			var plugging = System.Threading.Tasks.Task.Run(() => EnableFeeding(userIndex));
+			_plugging[userIndex - 1] = plugging;
+			return plugging;
+		}
+
+		/// <summary>Takes in every finished plug and forgets it. False, with nothing taken in, while one is still under way.</summary>
+		/// <remarks>
+		/// The bus is never let go of while a plug is under way. The plug would win that race: its
+		/// controller connects after every other one has been taken away, and the bus keeps it after
+		/// the program has ended - a controller nobody owns, holding one of the four places until
+		/// Windows restarts.
+		/// </remarks>
+		bool SettlePlugging()
+		{
+			if (_plugging.Any(x => x != null && !x.IsCompleted))
+				return false;
+			for (var i = 0; i < _plugging.Length; i++)
+			{
+				if (_plugging[i] == null)
+					continue;
+				PlugOutcome(_plugging[i]);
+				_plugging[i] = null;
+			}
+			return true;
+		}
+
+		/// <summary>Waits for every plug under way, up to the time given, then takes in what they did.</summary>
+		/// <remarks>A plug waits up to five seconds for Windows to give its controller a place.</remarks>
+		void WaitForPlugging(TimeSpan timeout)
+		{
+			var until = DateTime.UtcNow + timeout;
+			foreach (var plugging in _plugging)
+			{
+				if (plugging == null)
+					continue;
+				var left = until - DateTime.UtcNow;
+				((IAsyncResult)plugging).AsyncWaitHandle.WaitOne(left > TimeSpan.Zero ? left : TimeSpan.Zero);
+			}
+			SettlePlugging();
+		}
 
 		/// <summary>What a finished plug came to, with a fault written to the log.</summary>
 		/// <remarks>

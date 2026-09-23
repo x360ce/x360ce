@@ -25,6 +25,10 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
 			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
+			// The device list is the program's and outlives this control. The Map Device window makes
+			// one of these each time it opens, and left subscribed, every later device change was
+			// handled for each control already gone, on whichever thread had made it.
+			Disposed += (sender, e) => SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 		}
 
 		SortableBindingList<UserDevice> _currentData;

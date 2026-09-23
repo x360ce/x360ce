@@ -83,6 +83,7 @@
           <ScalarProperty Name="ButtonStart" ColumnName="ButtonStart" />
           <ScalarProperty Name="ButtonGuide" ColumnName="ButtonGuide" />
           <ScalarProperty Name="ButtonBack" ColumnName="ButtonBack" />
+          <ScalarProperty Name="ButtonBig" ColumnName="ButtonBig" />
           <ScalarProperty Name="ButtonB" ColumnName="ButtonB" />
           <ScalarProperty Name="ButtonA" ColumnName="ButtonA" />
           <ScalarProperty Name="AxisToDPadOffset" ColumnName="AxisToDPadOffset" />

@@ -199,11 +199,13 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
-[List]      │   │   │   │   │   └── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
+[Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
 [Section]   │   │   │   │   ├── Wheel                                                   # Settings only a wheel has: the centering spring and the steering range.
 [Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
 [CheckBox]  │   │   │   │   │   ├── Centering spring                                    # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
-[Slider]    │   │   │   │   │   ├── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).
+[Slider]    │   │   │   │   │   ├── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.
 [Button]    │   │   │   │   │   ├── Auto                                                # Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.
 [List]      │   │   │   │   │   └── Wheel range                                         # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
@@ -212,7 +214,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │   │   │   │   ├── Test left motor                                     # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Left motor direction                                # Left motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Left motor strength 0..100                          # Left motor strength. Range is 0 to 100. Default is 100.
-[Slider]    │   │   │   │   │   ├── Left motor period 0..100                            # Left motor period. Range is 0 to 500. Default is 60.
+[Slider]    │   │   │   │   │   ├── Left motor period 0..100                            # Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.
 [Slider]    │   │   │   │   │   └── Test left motor 0..100                              # Runs this motor at the chosen strength, so you can feel it without a game.
 [Section]   │   │   │   │   ├── Right motor                                             # The small, fast motor, which produces the light buzz.
 [Value]     │   │   │   │   │   ├── Right motor strength                                # How hard this motor runs when the game asks for vibration.
@@ -220,9 +222,10 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │   │   │   │   ├── Test right motor                                    # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Right motor direction                               # Right motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Right motor strength 0..100                         # Right motor strength. Range is 0 to 100. Default is 100.
-[Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period. Range is 0 to 500. Default is 120.
+[Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
-[Value]     │   │   │   │   └── About force feedback                                    # Explains what the settings on this page do.
+[Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
+[Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
 [Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
@@ -331,19 +334,20 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
-[CheckBox]  │       │           │       │   ├── Include Enabled                         # Counts only games that are switched on when choosing a default.
-[Number]    │       │           │       │   └── Minimum instances 0..100                # How many people must use a setting before it is offered as the default.
-[Section]   │       │           │       ├── Online account                              # Identifies this computer to the online database.
-[Text]      │       │           │       │   ├── Computer disk                           # Disk the computer identifier is taken from.
-[Text]      │       │           │       │   ├── Profile path                            # Folder the profile identifier is taken from.
-[Text]      │       │           │       │   ├── Computer identifier                     # Anonymous identifier for this computer.
-[Text]      │       │           │       │   ├── Profile identifier                      # Anonymous identifier for this profile.
-[Button]    │       │           │       │   └── Open                                    # Opens the folder the profile identifier is taken from.
+[Number]    │       │           │       │   ├── Minimum instances 0..100                # How many people must use a setting before it is offered as the default.
+[CheckBox]  │       │           │       │   └── Include Enabled                         # Counts only games that are switched on when choosing a default.
 [Section]   │       │           │       ├── Internet                                    # Whether the program contacts the online settings database at all.
 [CheckBox]  │       │           │       │   ├── Enable Internet Features                # Enable the use of Internet features like the settings database.
 [CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Auto load settings from Internet Database.
+[CheckBox]  │       │           │       │   ├── Save Settings to Cloud                  # Auto save settings to Internet Database.
 [List]      │       │           │       │   ├── Web service address                     # Internet settings database URL.
-[CheckBox]  │       │           │       │   └── Save Settings to Cloud                  # Auto save settings to Internet Database.
+[Button]    │       │           │       │   └── Test                                    # Asks the web service at that address who it is and says whether it answers.
+[Section]   │       │           │       ├── Online account                              # Identifies this computer to the online database.
+[Text]      │       │           │       │   ├── Computer disk                           # Disk the computer identifier is taken from.
+[Text]      │       │           │       │   ├── Computer identifier                     # Anonymous identifier for this computer.
+[Text]      │       │           │       │   ├── Profile path                            # Folder the profile identifier is taken from.
+[Button]    │       │           │       │   ├── Open                                    # Opens the folder the profile identifier is taken from.
+[Text]      │       │           │       │   └── Profile identifier                      # Anonymous identifier for this profile.
 [Section]   │       │           │       └── Sign in (hidden)                            # Signs in, so settings can be kept with an account instead of this computer.
 [Text]      │       │           │           ├── Username                                # E-mail address the account was created with.
 [Text]      │       │           │           ├── Password                                # Password for the account.
@@ -459,8 +463,6 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Group]     │       │   ├── (XInputDevicesPanel)
 [Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
 [Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
-[Button]    │       │   │       ├── Move Up                                             # Moves the selected controller one place earlier.
-[Button]    │       │   │       ├── Move Down                                           # Moves the selected controller one place later.
 [Button]    │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
 [Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
@@ -468,6 +470,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
 [Button]    │       │           ├── Refresh                                             # Reads every device again.
 [Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.
+[CheckBox]  │       │           ├── Show System Devices (hidden)                        # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
 [Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
 [Button]    │       │           ├── Add Demo Device                                     # Adds a pretend controller, for trying the program without hardware.
 [Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
@@ -502,7 +505,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.19 (Build: 1960-05-19) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-23) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

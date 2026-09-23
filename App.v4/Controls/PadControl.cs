@@ -1520,6 +1520,15 @@ namespace x360ce.App.Controls
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				// What these belong to lives as long as the program. Left subscribed, a page made and
+				// let go of went on handling every change afterwards, on whichever thread had made it.
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+				SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
+				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+				SettingsManager.UserSettings.Items.ListChanged -= UserSettings_Items_ListChanged;
+			}
 			if (disposing && (components != null))
 			{
 				_Imager.Dispose();

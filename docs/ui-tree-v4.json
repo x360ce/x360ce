@@ -1224,6 +1224,18 @@
 													"Description":"Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.",
 													"Role":"List",
 													"Id":"ForcePassThroughIndexComboBox"
+												},
+												{
+													"Name":"Motor periods",
+													"Description":"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.",
+													"Role":"List",
+													"Id":"MotorPeriodPresetComboBox"
+												},
+												{
+													"Name":"About the motors",
+													"Description":"Shows what each motor is used for, their measured speeds, and what the multipliers mean.",
+													"Role":"Button",
+													"Id":"MotorInfoButton"
 												}
 											]
 										},
@@ -1247,7 +1259,7 @@
 												},
 												{
 													"Name":"Centering spring",
-													"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).",
+													"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.",
 													"Role":"Slider",
 													"Id":"ForceSpringStrengthTrackBar",
 													"Min":0,
@@ -1307,7 +1319,7 @@
 												},
 												{
 													"Name":"Left motor period",
-													"Description":"Left motor period. Range is 0 to 500. Default is 60.",
+													"Description":"Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.",
 													"Role":"Slider",
 													"Id":"LeftMotorPeriodTrackBar",
 													"Min":0,
@@ -1363,7 +1375,7 @@
 												},
 												{
 													"Name":"Right motor period",
-													"Description":"Right motor period. Range is 0 to 500. Default is 120.",
+													"Description":"Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.",
 													"Role":"Slider",
 													"Id":"RightMotorPeriodTrackBar",
 													"Min":0,
@@ -1384,6 +1396,12 @@
 											"Description":"Explains what the settings on this page do.",
 											"Role":"Value",
 											"Id":"InforTextBox"
+										},
+										{
+											"Name":"Defaults",
+											"Description":"Puts every setting on this page back to its default.",
+											"Role":"Button",
+											"Id":"ForceDefaultsButton"
 										}
 									]
 								},
@@ -2099,56 +2117,18 @@
 																	"Id":"GamesGroupBox",
 																	"Items":[
 																		{
-																			"Name":"Include Enabled",
-																			"Description":"Counts only games that are switched on when choosing a default.",
-																			"Role":"CheckBox",
-																			"Id":"GetProgramsIncludeEnabledCheckBox"
-																		},
-																		{
 																			"Name":"Minimum instances",
 																			"Description":"How many people must use a setting before it is offered as the default.",
 																			"Role":"Number",
 																			"Id":"GetProgramsMinInstancesUpDown",
 																			"Min":0,
 																			"Max":100
-																		}
-																	]
-																},
-																{
-																	"Name":"Online account",
-																	"Description":"Identifies this computer to the online database.",
-																	"Role":"Section",
-																	"Id":"OnlineAccountGroupBox",
-																	"Items":[
-																		{
-																			"Name":"Computer disk",
-																			"Description":"Disk the computer identifier is taken from.",
-																			"Role":"Text",
-																			"Id":"ComputerDiskTextBox"
 																		},
 																		{
-																			"Name":"Profile path",
-																			"Description":"Folder the profile identifier is taken from.",
-																			"Role":"Text",
-																			"Id":"ProfilePathTextBox"
-																		},
-																		{
-																			"Name":"Computer identifier",
-																			"Description":"Anonymous identifier for this computer.",
-																			"Role":"Text",
-																			"Id":"ComputerIdTextBox"
-																		},
-																		{
-																			"Name":"Profile identifier",
-																			"Description":"Anonymous identifier for this profile.",
-																			"Role":"Text",
-																			"Id":"ProfileIdTextBox"
-																		},
-																		{
-																			"Name":"Open",
-																			"Description":"Opens the folder the profile identifier is taken from.",
-																			"Role":"Button",
-																			"Id":"OpenSettingsFolderButton"
+																			"Name":"Include Enabled",
+																			"Description":"Counts only games that are switched on when choosing a default.",
+																			"Role":"CheckBox",
+																			"Id":"GetProgramsIncludeEnabledCheckBox"
 																		}
 																	]
 																},
@@ -2171,16 +2151,60 @@
 																			"Id":"InternetAutoLoadCheckBox"
 																		},
 																		{
+																			"Name":"Save Settings to Cloud",
+																			"Description":"Auto save settings to Internet Database.",
+																			"Role":"CheckBox",
+																			"Id":"InternetAutoSaveCheckBox"
+																		},
+																		{
 																			"Name":"Web service address",
 																			"Description":"Internet settings database URL.",
 																			"Role":"List",
 																			"Id":"InternetDatabaseUrlComboBox"
 																		},
 																		{
-																			"Name":"Save Settings to Cloud",
-																			"Description":"Auto save settings to Internet Database.",
-																			"Role":"CheckBox",
-																			"Id":"InternetAutoSaveCheckBox"
+																			"Name":"Test",
+																			"Description":"Asks the web service at that address who it is and says whether it answers.",
+																			"Role":"Button",
+																			"Id":"TestServiceButton"
+																		}
+																	]
+																},
+																{
+																	"Name":"Online account",
+																	"Description":"Identifies this computer to the online database.",
+																	"Role":"Section",
+																	"Id":"OnlineAccountGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Computer disk",
+																			"Description":"Disk the computer identifier is taken from.",
+																			"Role":"Text",
+																			"Id":"ComputerDiskTextBox"
+																		},
+																		{
+																			"Name":"Computer identifier",
+																			"Description":"Anonymous identifier for this computer.",
+																			"Role":"Text",
+																			"Id":"ComputerIdTextBox"
+																		},
+																		{
+																			"Name":"Profile path",
+																			"Description":"Folder the profile identifier is taken from.",
+																			"Role":"Text",
+																			"Id":"ProfilePathTextBox"
+																		},
+																		{
+																			"Name":"Open",
+																			"Description":"Opens the folder the profile identifier is taken from.",
+																			"Role":"Button",
+																			"Id":"OpenSettingsFolderButton"
+																		},
+																		{
+																			"Name":"Profile identifier",
+																			"Description":"Anonymous identifier for this profile.",
+																			"Role":"Text",
+																			"Id":"ProfileIdTextBox"
 																		}
 																	]
 																},
@@ -2947,18 +2971,6 @@
 											"Id":"DevicesToolStrip",
 											"Items":[
 												{
-													"Name":"Move Up",
-													"Description":"Moves the selected controller one place earlier.",
-													"Role":"Button",
-													"Id":"MoveUpButton"
-												},
-												{
-													"Name":"Move Down",
-													"Description":"Moves the selected controller one place later.",
-													"Role":"Button",
-													"Id":"MoveDownButton"
-												},
-												{
 													"Name":"Apply",
 													"Description":"Recreates the controllers in the order shown. Needs Administrator.",
 													"Role":"Button",
@@ -3004,6 +3016,13 @@
 													"Description":"Forgets the selected device and its settings.",
 													"Role":"Button",
 													"Id":"ControllerDeleteButton"
+												},
+												{
+													"Name":"Show System Devices",
+													"Description":"Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.",
+													"Role":"CheckBox",
+													"Id":"ShowSystemDevicesButton",
+													"Hidden":true
 												},
 												{
 													"Name":"Hardware...",
@@ -3243,7 +3262,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.22.19 (Build: 1960-05-19) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-23) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

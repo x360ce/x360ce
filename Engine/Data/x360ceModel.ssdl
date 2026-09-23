@@ -47,6 +47,7 @@
     <Property Name="AxisToDPadOffset" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ButtonA" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="ButtonB" Type="varchar" MaxLength="128" Nullable="false" />
+    <Property Name="ButtonBig" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="ButtonBack" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="ButtonGuide" Type="varchar" MaxLength="128" Nullable="false" />
     <Property Name="ButtonStart" Type="varchar" MaxLength="128" Nullable="false" />

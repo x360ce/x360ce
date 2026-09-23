@@ -12,6 +12,10 @@ namespace x360ce.Engine.Data
 	{
 		public PadSetting()
 		{
+			// Stored by the table and the model, and set by nothing: no page offers it and the
+			// checksum leaves it out. The column refuses null, and a copy made without it, such as one
+			// sent by an older program, would otherwise try to save null there.
+			_ButtonBig = "";
 			PropertyChanged += PadSetting_PropertyChanged;
 			MapsChanged = true;
 		}
@@ -287,6 +291,7 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeButtonA() { return !isDefault(ButtonA); }
 		public bool ShouldSerializeButtonB() { return !isDefault(ButtonB); }
 		public bool ShouldSerializeButtonBack() { return !isDefault(ButtonBack); }
+		public bool ShouldSerializeButtonBig() { return !isDefault(ButtonBig); }
 		public bool ShouldSerializeButtonGuide() { return !isDefault(ButtonGuide); }
 		public bool ShouldSerializeButtonStart() { return !isDefault(ButtonStart); }
 		public bool ShouldSerializeButtonX() { return !isDefault(ButtonX); }

@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs, App.v4/ViGEm/Client/ViGEmClient.x360ce.cs
+﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs, App.v4/Common/DInput/DInputHelper.cs, App.v4/ViGEm/Client/ViGEmClient.x360ce.cs
 // @area: devices   @layer: integration-db
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nefarius.ViGEm.Client;
@@ -70,6 +70,45 @@ namespace x360ce.Tests
 				After();
 			}
 			Console.WriteLine(string.Join(" ", answers));
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("A controller being plugged in as the program closes is taken away with the rest")]
+		public void A_plug_in_flight_when_the_program_closes_leaves_no_controller_behind()
+		{
+			// The program closed a moment after it began plugging a controller in. The plug connected
+			// it after the others had been taken away, and the bus kept it after the program ended:
+			// a controller nobody owned, holding a place until Windows restarted. Controllers already
+			// on the bus before the test are not its business, so only new ones are counted.
+			var before = XInputPlaces.VirtualHardwareNow();
+			var made = 0;
+			for (var closeAfterMs = 0; closeAfterMs <= 120; closeAfterMs += 20)
+			{
+				Connected();
+				var helper = new DInputHelper();
+				var plugging = helper.BeginPlug(1);
+				Thread.Sleep(closeAfterMs);
+				helper.Dispose();
+				Assert.IsTrue(plugging.IsCompleted, "Closing did not wait for the plug.");
+				Assert.IsNull(ViGEmClient.Current, "Closing did not let go of the bus client.");
+				if (!plugging.IsFaulted && plugging.Result == VirtualError.None)
+					made++;
+				// Windows takes a moment to remove a controller after it is let go of.
+				var deadline = DateTime.UtcNow.AddSeconds(15);
+				var left = XInputPlaces.VirtualHardwareNow();
+				left.ExceptWith(before);
+				while (left.Count > 0 && DateTime.UtcNow < deadline)
+				{
+					Thread.Sleep(250);
+					left = XInputPlaces.VirtualHardwareNow();
+					left.ExceptWith(before);
+				}
+				Assert.AreEqual(0, left.Count, string.Format("Closed {0} ms into a plug, the program left {1} behind.",
+					closeAfterMs, string.Join(", ", left)));
+			}
+			// Nothing was tested if no controller was ever made.
+			Console.WriteLine("Controllers made and taken away: " + made + " of 7.");
+			Assert.IsTrue(made > 0, "No plug made a controller, so nothing was left behind to find.");
 		}
 
 		[TestMethod]

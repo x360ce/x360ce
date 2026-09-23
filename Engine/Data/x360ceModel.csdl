@@ -25,6 +25,7 @@
     <Property Type="String" Name="AxisToDPadOffset" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ButtonA" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ButtonB" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="ButtonBig" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="128" FixedLength="false" Unicode="false" />

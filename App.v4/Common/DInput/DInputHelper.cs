@@ -428,6 +428,8 @@ namespace x360ce.App.DInput
 					return;
 				IsDisposing = true;
 				var stopped = Stop();
+				// Waited for, so the controller a plug under way makes is taken away with the rest.
+				WaitForPlugging(TimeSpan.FromSeconds(8));
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
 				// Only once the thread has actually gone. Waiting for it gives up after two
 				// seconds, because it can be inside a native call that takes about a second to

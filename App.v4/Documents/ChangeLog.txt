@@ -24,6 +24,8 @@
 - Fixed: A pad vibrated one motor only, or stopped after reconnecting (Issue #1633, KhaledElSaiad).
 - Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver (Issue #1634, mahaman626).
 - Fixed: The AI assistant access Copy buttons could close the program while another program held the clipboard.
+- Fixed: Closing the program while a virtual controller was being connected could leave it plugged in until Windows restarted.
+- Fixed: Each Map Device window went on handling every device change after it was closed.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
