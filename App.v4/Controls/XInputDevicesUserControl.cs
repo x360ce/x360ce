@@ -83,7 +83,7 @@ namespace x360ce.App.Controls
 			ApplyButton.Enabled = _entries.Count > 0;
 		}
 
-		void Move(int from, int by)
+		void MoveRow(int from, int by)
 		{
 			var to = from + by;
 			if (from < 0 || from >= _entries.Count || to < 0 || to >= _entries.Count)
@@ -100,9 +100,9 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0)
 				return;
 			if (e.ColumnIndex == MoveUpColumn.Index)
-				Move(e.RowIndex, -1);
+				MoveRow(e.RowIndex, -1);
 			else if (e.ColumnIndex == MoveDownColumn.Index)
-				Move(e.RowIndex, 1);
+				MoveRow(e.RowIndex, 1);
 		}
 
 		/// <summary>Reads the machine again, for when a controller has arrived or left.</summary>
