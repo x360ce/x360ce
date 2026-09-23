@@ -100,6 +100,14 @@ namespace x360ce.App
 			}
 			if (!CheckSettings())
 				return;
+			// Windows reads an INI file as UTF-16 or ANSI. A UTF-8 byte order mark, which editors
+			// such as Notepad write, becomes part of the first section's name, so [Options] reads
+			// as absent here and in the library the game loads. The file is made UTF-16 before
+			// anything reads it; the first save of every start converts it anyway, and a file in a
+			// protected folder is left as it is.
+			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
+			if (ini.File.Exists)
+				ini.EnsureUnicode();
 			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))

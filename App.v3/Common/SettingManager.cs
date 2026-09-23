@@ -237,6 +237,8 @@ namespace x360ce.App
 		/// </summary>
 		public void ReadSettingTo(Control control, string key, string value)
 		{
+			if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value))
+				value = SettingName.DefaultInternetDatabaseUrl;
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
@@ -288,7 +290,6 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.DefaultInternetDatabaseUrl;
 				// Always override version.
 				if (key == SettingName.Version) value = SettingName.DefaultVersion;
 				control.Text = value;
