@@ -2,6 +2,8 @@
 
 - Fixed: Online presets lost the wheel and centering spring settings.
 - Fixed: Searching the online database with no devices reported a server error.
+- Fixed: Online settings could be listed twice, each with part of its users.
+- Fixed: The same settings could be stored twice on computers set to some languages.
 - Fixed: Changing the game while a virtual controller was connecting could close the program.
 - Fixed: Long sessions ran out of system handles.
 - Fixed: Reloading the XInput library showed a reset error when nothing had failed.

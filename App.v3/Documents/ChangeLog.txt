@@ -1,7 +1,10 @@
-﻿## [3.4.22.0] - 2026-09-22
+﻿## [3.4.25.0] - 2026-09-23
 
 - Fixed: Force feedback test stopped after a moment.
+- Fixed: Options were ignored when x360ce.ini was saved as UTF-8 with BOM.
+- Fixed: An empty web service address stayed empty instead of using the default.
 - Fixed: Searching the online database with no devices reported a server error.
+- Fixed: Online settings could be listed twice, each with part of its users.
 - Fixed: Starting from a protected game folder closed the program.
 - Fixed: Copying text could close the program while another program held the clipboard.
 - Fixed: Crash when a controller was unplugged and plugged back in.
