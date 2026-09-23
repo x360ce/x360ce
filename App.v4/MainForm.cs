@@ -776,7 +776,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			Mcp.McpListener.Stop();
+			Engine.Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -1048,10 +1048,10 @@ namespace x360ce.App
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
 			// navigation tree is built from.
-			UiTree.UiText.Apply(this);
+			Engine.UiTree.UiText.Apply(this);
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
-			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
 			Program.StartupTrace.Mark("UpdateForm2: text applied");

@@ -6,9 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
-using x360ce.Engine;
 
-namespace x360ce.App.Mcp
+namespace x360ce.Engine.Mcp
 {
 	/// <summary>
 	/// Registers the program with the Windows on-device agent registry, so agents such as Copilot
@@ -17,7 +16,15 @@ namespace x360ce.App.Mcp
 	/// </summary>
 	public static class WindowsAgentRegistry
 	{
-		public const string ServerName = "x360ce";
+		/// <summary>The name the program is registered under, the same as the server's own name.</summary>
+		public static string ServerName { get { return McpServer.ServerName; } }
+
+		/// <summary>What Windows shows for the program. Set by each program.</summary>
+		public static string DisplayName = "Jocys.com X360 Controller Emulator";
+
+		/// <summary>What the program offers an agent. Set by each program.</summary>
+		public static string Description = "Inspect and operate the X360 Controller Emulator: read its interface, point at controls, map controllers, apply presets.";
+
 
 		/// <summary>The registry's command-line tool, part of Windows where the registry exists.</summary>
 		public static string OdrPath
@@ -36,7 +43,7 @@ namespace x360ce.App.Mcp
 		/// <summary>The bundle manifest the registry reads, written beside the settings.</summary>
 		public static string ManifestPath
 		{
-			get { return Path.Combine(Folder ?? EngineHelper.AppDataPath, "x360ce.mcpb.json"); }
+			get { return Path.Combine(Folder ?? EngineHelper.AppDataPath, ServerName + ".mcpb.json"); }
 		}
 
 		/// <summary>Why the last registration failed, for the Issues tab. Null after one that worked.</summary>
@@ -56,15 +63,15 @@ namespace x360ce.App.Mcp
 			{
 				{ "manifest_version", "0.3" },
 				{ "name", ServerName },
-				{ "display_name", "Jocys.com X360 Controller Emulator" },
+				{ "display_name", DisplayName },
 				{ "version", Application.ProductVersion },
-				{ "description", "Inspect and operate the X360 Controller Emulator: read its interface, point at controls, map controllers, apply presets." },
+				{ "description", Description },
 				{ "author", new Dictionary<string, object> { { "name", "Jocys.com" } } },
 				{ "server", new Dictionary<string, object>
 					{
 						{ "type", "binary" },
 						{ "entry_point", Path.GetFileName(exePath) },
-						{ "mcp_config", new Dictionary<string, object> { { "command", exePath }, { "args", new[] { "/" + Program.arg_Mcp } }, { "env", new Dictionary<string, object>() } } },
+						{ "mcp_config", new Dictionary<string, object> { { "command", exePath }, { "args", new[] { "/" + McpClient.McpArgument } }, { "env", new Dictionary<string, object>() } } },
 					}
 				},
 				{ "tools", McpCatalog.Tools.Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description } }).ToArray() },

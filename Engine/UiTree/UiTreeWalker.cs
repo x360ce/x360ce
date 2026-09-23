@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>Reads the interface the program built and describes it as a tree of elements.</summary>
 	/// <remarks>

@@ -23,6 +23,7 @@
 - Fixed: A device known from an earlier run showed no vendor name or id.
 - Fixed: A pad vibrated one motor only, or stopped after reconnecting (Issue #1633, KhaledElSaiad).
 - Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver (Issue #1634, mahaman626).
+- Fixed: The AI assistant access Copy buttons could close the program while another program held the clipboard.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
@@ -33,6 +34,7 @@
 - Added: Options has a Test button for the web service address.
 - Added: The Issues tab names force feedback a device refused or plays differently.
 - Added: Map Device can list system devices, such as the Logitech G13 (Issue #1211, bredita).
+- Added: An AI assistant can read and answer the windows that open over the main one.
 
 ## [4.22.21.0] - 2026-09-17
 

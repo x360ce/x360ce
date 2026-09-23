@@ -1,9 +1,10 @@
-// @under-test: App.v4/Mcp/McpServer.cs, App.v4/Mcp/McpClient.cs
+// @under-test: Engine/Mcp/McpServer.cs, Engine/Mcp/McpClient.cs
 // @area: mcp   @layer: integration
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net;
 using x360ce.App;
 using x360ce.App.Mcp;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.Tests
 {

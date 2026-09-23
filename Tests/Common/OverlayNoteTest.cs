@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.Engine.UiTree;
 
 namespace x360ce.Tests
 {

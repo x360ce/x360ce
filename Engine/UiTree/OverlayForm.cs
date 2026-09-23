@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace x360ce.App
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>A see-through window drawn over other programs: never takes the focus, lets clicks through, and shows only what is painted on it.</summary>
 	/// <remarks>

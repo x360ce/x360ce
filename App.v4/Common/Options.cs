@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -287,9 +288,9 @@ namespace x360ce.App
 		string _AiAccessAddress = LoopbackAddress;
 
 		/// <summary>The address that keeps the door on this computer. The default.</summary>
-		public const string LoopbackAddress = "127.0.0.1";
+		public const string LoopbackAddress = McpListener.LoopbackAddress;
 		/// <summary>The address that opens the door to every network the computer is on.</summary>
-		public const string AnyAddress = "0.0.0.0";
+		public const string AnyAddress = McpListener.AnyAddress;
 
 		[DefaultValue(37360), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
@@ -313,10 +314,7 @@ namespace x360ce.App
 
 		public string RegenerateAiAccessToken()
 		{
-			var bytes = new byte[32];
-			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-				rng.GetBytes(bytes);
-			AiAccessToken = System.BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			AiAccessToken = McpListener.NewToken();
 			return AiAccessToken;
 		}
 

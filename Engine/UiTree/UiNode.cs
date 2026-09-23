@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>One element of the interface, as a screen reader or an automation tool sees it.</summary>
 	/// <remarks>
-	/// Written to <c>docs/ui-tree.json</c> by the program itself, so the answer always describes
-	/// the build it came from rather than a document somebody remembered to update.
+	/// Written to <c>docs/ui-tree-v3.json</c> and <c>docs/ui-tree-v4.json</c> by each program itself,
+	/// so the answer always describes the build it came from rather than a document somebody
+	/// remembered to update.
 	/// </remarks>
 	[DataContract]
 	public class UiNode

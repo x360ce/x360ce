@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>
 	/// The parts of the interface that are not controls: the entries on a bar or a menu, and the

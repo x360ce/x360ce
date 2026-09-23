@@ -98,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AdminCommand.cs" />
-    <Compile Include="Common\AiAccess.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
@@ -142,22 +141,15 @@
     <Compile Include="Common\SettingsManager.XML.cs" />
     <Compile Include="Common\TaskName.cs" />
     <Compile Include="Common\TestDeviceHelper.cs" />
-    <Compile Include="Common\UiTree\UiNode.cs" />
-    <Compile Include="Common\UiTree\UiCallout.cs" />
     <Compile Include="Common\UiTree\UiHelp.cs" />
-    <Compile Include="Common\UiTree\UiText.cs" />
-    <Compile Include="Common\UiTree\UiText.Devices.cs" />
-    <Compile Include="Common\UiTree\UiText.Input.cs" />
-    <Compile Include="Common\UiTree\UiText.Settings.cs" />
-    <Compile Include="Common\UiTree\UiText.Lists.cs" />
-    <Compile Include="Common\UiTree\UiText.Main.cs" />
-    <Compile Include="Common\UiTree\UiText.Mapping.cs" />
-    <Compile Include="Common\UiTree\UiText.Options.cs" />
-    <Compile Include="Common\UiTree\UiText.Pad.cs" />
-    <Compile Include="Common\UiTree\UiTreeExporter.cs" />
-    <Compile Include="Common\UiTree\UiTreeMarkdown.cs" />
-    <Compile Include="Common\UiTree\UiTreeWalker.cs" />
-    <Compile Include="Common\UiTree\UiTreeWalker.Elements.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Devices.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Input.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Settings.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Lists.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Main.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Mapping.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Options.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Pad.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
@@ -390,11 +382,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Mcp\McpClient.cs" />
-    <Compile Include="Mcp\McpLog.cs" />
-    <Compile Include="Mcp\McpServer.cs" />
     <Compile Include="Mcp\McpTools.cs" />
-    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -529,9 +517,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Common\HotkeyHelper.cs" />
-    <Compile Include="Common\OverlayForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Common\OverlayNote.cs" />
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">

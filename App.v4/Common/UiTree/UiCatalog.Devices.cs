@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>What each mapping picker on the General page is for.</summary>
 		/// <remarks>

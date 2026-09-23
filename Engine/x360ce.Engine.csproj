@@ -181,6 +181,23 @@
     <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
+    <Compile Include="Mcp\AiAccess.cs" />
+    <Compile Include="Mcp\McpClient.cs" />
+    <Compile Include="Mcp\McpLog.cs" />
+    <Compile Include="Mcp\McpServer.cs" />
+    <Compile Include="Mcp\McpUiTools.cs" />
+    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
+    <Compile Include="UiTree\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UiTree\UiCallout.cs" />
+    <Compile Include="UiTree\UiGameFlags.cs" />
+    <Compile Include="UiTree\UiNode.cs" />
+    <Compile Include="UiTree\UiText.cs" />
+    <Compile Include="UiTree\UiTreeExporter.cs" />
+    <Compile Include="UiTree\UiTreeMarkdown.cs" />
+    <Compile Include="UiTree\UiTreeWalker.cs" />
+    <Compile Include="UiTree\UiTreeWalker.Elements.cs" />
     <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />

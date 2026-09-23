@@ -298,6 +298,8 @@ chat and it takes it from there. The two ways, both shown on the page:
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
 
+An assistant can read and answer the other windows the program opens over the main one.
+
 An assistant can also point: ask it where something is and it brings the page to the front,
 frames the control and shows a balloon with its words beside it for a few seconds. It can string
 such steps into a short script, pointing, pausing, pressing and setting in turn, so it walks you

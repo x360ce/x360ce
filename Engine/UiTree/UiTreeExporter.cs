@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>Writes what the program looks like to a pair of documents beside the source.</summary>
 	/// <remarks>
@@ -14,8 +14,11 @@ namespace x360ce.App.UiTree
 	/// </remarks>
 	public static class UiTreeExporter
 	{
-		public const string JsonFileName = "ui-tree.json";
-		public const string MarkdownFileName = "ui-tree.md";
+		/// <summary>The documents' name without the extension, set by each program: ui-tree-v3 or ui-tree-v4.</summary>
+		public static string BaseName = "ui-tree";
+
+		public static string JsonFileName { get { return BaseName + ".json"; } }
+		public static string MarkdownFileName { get { return BaseName + ".md"; } }
 
 		/// <summary>Describes the whole program: its shared controls, its window, and its tray menu.</summary>
 		/// <param name="window">The main window, already built.</param>

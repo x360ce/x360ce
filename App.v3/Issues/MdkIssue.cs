@@ -26,7 +26,9 @@ namespace x360ce.App.Issues
 			}
 			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SDKs\Windows"))
 			{
-				string versionString = key.GetValue("CurrentVersion") as string;
+				// No key means no SDK. A read through a missing key would throw on the check timer and
+				// stop every later check, and start-up with them.
+				string versionString = key == null ? null : key.GetValue("CurrentVersion") as string;
 				Version version;
 				if (Version.TryParse(versionString, out version))
 				{

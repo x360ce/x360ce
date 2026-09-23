@@ -150,6 +150,34 @@ namespace x360ce.App
 
 		static Dictionary<Control, string> Descriptions = new Dictionary<Control, string>();
 
+		/// <summary>
+		/// Names each control linked to a setting after that setting, and describes it with the
+		/// setting's own description, where the interface catalogue said nothing. Without a name a
+		/// mapping box announces its current value, so four boxes holding "Button 1" could not be
+		/// told apart by a screen reader or by an assistant. A name or purpose given on purpose stays.
+		/// </summary>
+		public void DescribeControls()
+		{
+			foreach (var pair in SettingsMap)
+			{
+				var control = pair.Value;
+				var key = pair.Key.Split('\\')[1];
+				if (string.IsNullOrEmpty(control.AccessibleName))
+					control.AccessibleName = Words(key);
+				string description;
+				if (string.IsNullOrEmpty(control.AccessibleDescription) && Descriptions.TryGetValue(control, out description)
+					&& !string.IsNullOrEmpty(description) && description != key)
+					control.AccessibleDescription = description;
+			}
+		}
+
+		/// <summary>A setting's key as words: LeftThumbAxisX becomes "Left Thumb Axis X", DPadUp becomes "D-Pad Up".</summary>
+		public static string Words(string key)
+		{
+			var words = System.Text.RegularExpressions.Regex.Replace(key, "(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
+			return words.Replace("D Pad", "D-Pad");
+		}
+
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
 			MainForm.Current.UpdateHelpHeader();

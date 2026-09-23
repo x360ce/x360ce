@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>The name and purpose of each part of the interface, in one place.</summary>
 	/// <remarks>
@@ -13,8 +13,9 @@ namespace x360ce.App.UiTree
 	///
 	/// Keys are "OwningType.FieldName", the same pair a developer sees in the designer. A control
 	/// already named where it is built keeps that name; nothing here overwrites a deliberate one.
+	/// Each program supplies its own list through <see cref="Catalog"/>.
 	/// </remarks>
-	public static partial class UiText
+	public static class UiText
 	{
 		/// <summary>What one element is called and what it is for.</summary>
 		public struct Text
@@ -44,10 +45,13 @@ namespace x360ce.App.UiTree
 		/// kept for the exported document, where a fixed name is what is wanted, and the element
 		/// itself is given only its purpose.
 		/// </remarks>
-		static Text Live(string name, string purpose)
+		public static Text Live(string name, string purpose)
 		{
 			return new Text(name, purpose, true);
 		}
+
+		/// <summary>Builds the program's list, keyed "OwningType.FieldName". Set once at start; read the first time it is needed.</summary>
+		public static Func<Dictionary<string, Text>> Catalog;
 
 		static Dictionary<string, Text> _items;
 
@@ -56,23 +60,7 @@ namespace x360ce.App.UiTree
 			get
 			{
 				if (_items == null)
-				{
-					var items = new Dictionary<string, Text>();
-					AddMainWindow(items);
-					AddControllerPanel(items);
-					AddInputPanel(items);
-					AddMapping(items);
-					AddOptions(items);
-					AddUpdateOptions(items);
-					AddLists(items);
-
-					AddMappingPickers(items);
-
-					AddDeviceDetails(items);
-
-					AddSwitches(items);
-					_items = items;
-				}
+					_items = Catalog == null ? new Dictionary<string, Text>() : Catalog();
 				return _items;
 			}
 		}

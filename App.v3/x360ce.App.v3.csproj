@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AiAccessSettings.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
@@ -98,6 +99,9 @@
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Lists.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Main.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Pad.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Controls\AboutControl.cs">
@@ -180,6 +184,7 @@
     <Compile Include="Issues\IssueSeverity.cs" />
     <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />
+    <Compile Include="Mcp\McpTools.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controls\WarningsForm.cs">

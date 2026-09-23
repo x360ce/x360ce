@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using x360ce.App;
 using x360ce.App.Mcp;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.Tests
 {
@@ -17,7 +18,7 @@ namespace x360ce.Tests
 		[Description("The device list names the test controller, and mapping without a game is refused")]
 		public void Device_list_names_the_test_controller()
 		{
-			McpCatalog.Load(typeof(McpTools));
+			McpTools.Register();
 			McpCatalog.OnUiThread = a => a();
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
@@ -45,7 +46,7 @@ namespace x360ce.Tests
 		[Description("The semantic tools are catalogued at the levels the spec gives them, and only input_wait leaves the interface thread")]
 		public void Semantic_tools_carry_their_levels()
 		{
-			McpCatalog.Load(typeof(McpTools));
+			McpTools.Register();
 			var tools = McpCatalog.Tools.ToDictionary(t => t.Name);
 			Assert.AreEqual(AiAccess.Read, tools["devices_list"].Level);
 			foreach (var name in new[] { "device_map", "input_wait", "preset_apply", "settings_save" })

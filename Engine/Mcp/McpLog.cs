@@ -1,9 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using x360ce.Engine;
-
-namespace x360ce.App.Mcp
+namespace x360ce.Engine.Mcp
 {
 	/// <summary>
 	/// What was done through the door, one line per action, so a person can read afterwards what
@@ -18,10 +16,13 @@ namespace x360ce.App.Mcp
 		/// <summary>Where the log lives: beside the settings unless a test points it elsewhere.</summary>
 		public static string Folder;
 
+		/// <summary>The log's file name. Each program sets its own, because both keep their settings in one folder.</summary>
+		public static string FileName = "x360ce.AiAccess.log";
+
 		/// <summary>Beside the settings, so it travels with them and the Options page can open it.</summary>
 		public static string Path
 		{
-			get { return System.IO.Path.Combine(Folder ?? EngineHelper.AppDataPath, "x360ce.AiAccess.log"); }
+			get { return System.IO.Path.Combine(Folder ?? EngineHelper.AppDataPath, FileName); }
 		}
 
 		/// <summary>Appends one dated line. A log that cannot be written must not stop the action it records, so a failure to write is the one thing not logged.</summary>
@@ -45,6 +46,14 @@ namespace x360ce.App.Mcp
 			}
 			catch (IOException) { }
 			catch (UnauthorizedAccessException) { }
+		}
+
+		/// <summary>Opens the log in the program Windows uses for it, writing a first line when there is no log yet.</summary>
+		public static void Open()
+		{
+			if (!File.Exists(Path))
+				Write("log opened from the Options page");
+			System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Path) { UseShellExecute = true });
 		}
 
 		/// <summary>One line, and no more of it than a reader needs: a whole tree read is summarised by its length.</summary>

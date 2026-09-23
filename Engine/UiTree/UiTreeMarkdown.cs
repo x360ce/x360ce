@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace x360ce.App.UiTree
+namespace x360ce.Engine.UiTree
 {
 	/// <summary>Draws the tree as text, in the shape a person reads in a terminal.</summary>
 	public static class UiTreeMarkdown

@@ -1,4 +1,4 @@
-// @under-test: App.v4/Mcp/McpTools.cs
+// @under-test: Engine/Mcp/McpUiTools.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Mcp;
 using x360ce.App.UiTree;
+using x360ce.Engine.Mcp;
+using x360ce.Engine.UiTree;
 
 namespace x360ce.Tests
 {
@@ -20,14 +22,14 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThread(() =>
 			{
-				McpCatalog.Load(typeof(McpTools));
+				McpTools.Register();
 				McpCatalog.Level = () => level;
 				McpCatalog.OnUiThread = a => a();
 				using (var form = new Form { Name = "Main" })
 				{
-					McpTools.Root = form;
+					McpUiTools.Root = form;
 					try { test(form); }
-					finally { McpTools.Root = null; }
+					finally { McpUiTools.Root = null; }
 				}
 			});
 		}
@@ -46,19 +48,19 @@ namespace x360ce.Tests
 				group.Controls.AddRange(new Control[] { slider, button });
 				form.Controls.Add(group);
 				form.Show();
-				var tree = Serializer.DeserializeFromJson<UiNode>(McpTools.UiRead());
+				var tree = Serializer.DeserializeFromJson<UiNode>(McpUiTools.UiRead());
 				Assert.IsNull(tree.Path, "The window is not a segment of any path.");
 				Assert.IsTrue(tree.Items[0].Items.Any(x => x.Path == "Box/Slider" && x.Value == "10"));
-				var branch = Serializer.DeserializeFromJson<UiNode>(McpTools.UiRead("Box"));
+				var branch = Serializer.DeserializeFromJson<UiNode>(McpUiTools.UiRead("Box"));
 				Assert.AreEqual("Box", branch.Path);
 				Assert.IsTrue(branch.Items.Any(x => x.Path == "Box/Slider"), "A branch read must carry paths from the window.");
-				Assert.IsFalse(McpTools.UiRead().Contains("\\/"), "Paths must come out with plain slashes, or they cannot be pasted back.");
-				Assert.IsNull(McpTools.UiSet("Box/Slider", "55"));
+				Assert.IsFalse(McpUiTools.UiRead().Contains("\\/"), "Paths must come out with plain slashes, or they cannot be pasted back.");
+				Assert.IsNull(McpUiTools.UiSet("Box/Slider", "55"));
 				Assert.AreEqual(55, slider.Value);
-				Assert.IsNull(McpTools.UiInvoke("Box/Go"));
+				Assert.IsNull(McpUiTools.UiInvoke("Box/Go"));
 				Assert.AreEqual(1, pressed);
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiSet("Nowhere", "1")).Message, "No element");
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiSet("Box/Slider", "500")).Message, "0 to 100");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Nowhere", "1")).Message, "No element");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Box/Slider", "500")).Message, "0 to 100");
 			});
 		}
 
@@ -79,12 +81,12 @@ namespace x360ce.Tests
 				form.Show();
 				try
 				{
-					Assert.IsNull(McpTools.UiShow("Tabs/Two/Go", "Press this to start", 1));
+					Assert.IsNull(McpUiTools.UiShow("Tabs/Two/Go", "Press this to start", 1));
 					Assert.AreSame(two, tabs.SelectedTab, "The page holding the element must come to the front.");
 					Assert.AreSame(go, UiCallout.Target, "The frame is not around the element.");
-					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiShow("Nowhere", null, 1)).Message, "No element");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiShow("Nowhere", null, 1)).Message, "No element");
 					go.Visible = false;
-					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiShow("Tabs/Two/Go", null, 1)).Message, "hidden");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiShow("Tabs/Two/Go", null, 1)).Message, "hidden");
 				}
 				finally
 				{
@@ -111,22 +113,22 @@ namespace x360ce.Tests
 				form.Show();
 				try
 				{
-					var hits = ((object[])McpTools.UiFind("vibration")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
+					var hits = ((object[])McpUiTools.UiFind("vibration")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
 					Assert.AreEqual(1, hits.Count, "One element speaks of vibration.");
 					Assert.AreEqual("Tabs/Page/Strength", hits[0]["Path"]);
-					StringAssert.Contains(McpTools.UiScript("# a walkthrough\nshow Tabs/Page/Strength | This one | 1\nwait 1"), "2 step(s)");
+					StringAssert.Contains(McpUiTools.UiScript("# a walkthrough\nshow Tabs/Page/Strength | This one | 1\nwait 1"), "2 step(s)");
 					Assert.AreSame(slider, UiCallout.Target);
 					// Doing needs Configure; pointing does not. The failing line is named.
-					var refused = Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiScript("show Tabs/Page/Go | Then press | 1\nclick Tabs/Page/Go"));
+					var refused = Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiScript("show Tabs/Page/Go | Then press | 1\nclick Tabs/Page/Go"));
 					StringAssert.Contains(refused.Message, "Line 2");
 					StringAssert.Contains(refused.Message, "Configure");
 					McpCatalog.Level = () => AiAccess.Configure;
-					StringAssert.Contains(McpTools.UiScript("set Tabs/Page/Strength | 40\nclick Tabs/Page/Go"), "2 step(s)");
+					StringAssert.Contains(McpUiTools.UiScript("set Tabs/Page/Strength | 40\nclick Tabs/Page/Go"), "2 step(s)");
 					Assert.AreEqual(40, slider.Value);
 					// A sentence may carry a '|' of its own; it is not a fourth part.
-					StringAssert.Contains(McpTools.UiScript("show Tabs/Page/Go | Press A | B, then wait | 1"), "1 step(s)");
+					StringAssert.Contains(McpUiTools.UiScript("show Tabs/Page/Go | Press A | B, then wait | 1"), "1 step(s)");
 					Assert.AreEqual(1, pressed);
-					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiScript("jump Tabs")).Message, "Unknown step");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiScript("jump Tabs")).Message, "Unknown step");
 				}
 				finally
 				{
@@ -148,14 +150,14 @@ namespace x360ce.Tests
 				var regenerate = new Button { Name = "AiAccessRegenerateButton" };
 				form.Controls.AddRange(new Control[] { install, debug, level, regenerate });
 				form.Show();
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiInvoke(install.Name)).Message, "Administer");
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiSet(debug.Name, "true")).Message, "Administer");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(install.Name)).Message, "Administer");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(debug.Name, "true")).Message, "Administer");
 				McpCatalog.Level = () => AiAccess.Administer;
-				Assert.IsNull(McpTools.UiInvoke(install.Name));
-				Assert.IsNull(McpTools.UiSet(debug.Name, "true"));
+				Assert.IsNull(McpUiTools.UiInvoke(install.Name));
+				Assert.IsNull(McpUiTools.UiSet(debug.Name, "true"));
 				// Even at the top level: the level is a person's choice, never the caller's.
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiSet(level.Name, "Off")).Message, "Options page");
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiInvoke(regenerate.Name)).Message, "Options page");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(level.Name, "Off")).Message, "Options page");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(regenerate.Name)).Message, "Options page");
 			});
 		}
 
@@ -166,7 +168,7 @@ namespace x360ce.Tests
 			// The list is what keeps a caller from installing a driver. A name that no longer matches
 			// an element guards nothing, so each name is checked against the designer fields of the
 			// page it belongs to, which a rename changes the same day.
-			foreach (var name in McpTools.AdminControls.Where(x => x != "CleanupVirtualPadsButton"))
+			foreach (var name in McpUiTools.AdminControls.Where(x => x != "CleanupVirtualPadsButton"))
 				AssertField(name, typeof(Button), typeof(CheckBox));
 			// A bar entry is reached by path like any other element now, so the guard has to name it
 			// and the name has to be a real one.
@@ -175,7 +177,7 @@ namespace x360ce.Tests
 			Assert.IsNotNull(cleanup, "CleanupVirtualPadsButton is not an element of the Devices page.");
 			Assert.AreEqual(typeof(ToolStripButton), cleanup.FieldType,
 				"CleanupVirtualPadsButton is not the kind of element the guard expects.");
-			McpCatalog.Load(typeof(McpTools));
+			McpTools.Register();
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
 			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);
 			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));

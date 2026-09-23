@@ -1,4 +1,4 @@
-// @under-test: App.v4/Common/UiTree/UiTreeWalker.cs, App.v4/Common/UiTree/UiText.cs
+// @under-test: Engine/UiTree/UiTreeWalker.cs, Engine/UiTree/UiText.cs, Engine/UiTree/UiGameFlags.cs
 // @area: accessibility   @layer: ui-winforms
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using x360ce.App.UiTree;
+using x360ce.Engine.UiTree;
 
 namespace x360ce.Tests
 {
@@ -155,7 +156,7 @@ namespace x360ce.Tests
 		public void Exported_json_is_readable_by_a_strict_reader()
 		{
 			var folder = Run();
-			var bytes = File.ReadAllBytes(Path.Combine(folder, "ui-tree.json"));
+			var bytes = File.ReadAllBytes(Path.Combine(folder, "ui-tree-v4.json"));
 			// A byte order mark is not part of JSON and a strict reader refuses a document that
 			// starts with one. This file exists to be read by other programs.
 			Assert.IsFalse(bytes.Length > 2 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF,
@@ -182,7 +183,7 @@ namespace x360ce.Tests
 		{
 			if (_tree != null)
 				return _tree;
-			var text = File.ReadAllText(Path.Combine(Run(), "ui-tree.json"));
+			var text = File.ReadAllText(Path.Combine(Run(), "ui-tree-v4.json"));
 			_tree = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromJson<UiNode>(text);
 			Assert.IsNotNull(_tree, "The exported tree could not be read back.");
 			return _tree;
@@ -201,7 +202,7 @@ namespace x360ce.Tests
 			// Long enough for a slow machine to read every device once, which start-up does.
 			Assert.IsTrue(app.WaitForExit(180000),
 				"The program did not finish exporting. It waits for its window to be fully built.");
-			Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree.json")),
+			Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree-v4.json")),
 				"The program exited without writing the navigation tree to " + folder + ".");
 			_folder = folder;
 			return folder;

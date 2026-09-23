@@ -7,7 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Web.Script.Serialization;
 
-namespace x360ce.App.Mcp
+namespace x360ce.Engine.Mcp
 {
 	/// <summary>Marks a public static method as a tool an assistant or a script may call, at the given level or above.</summary>
 	[AttributeUsage(AttributeTargets.Method)]
@@ -91,17 +91,20 @@ namespace x360ce.App.Mcp
 	}
 
 	/// <summary>
-	/// The tools, read once from the attributed methods of one class, and the two things every
-	/// tool needs: which level the program is set to, and a way onto the interface thread.
+	/// The tools, read once from the attributed methods of the program's tool classes, and the two
+	/// things every tool needs: which level the program is set to, and a way onto the interface thread.
 	/// </summary>
 	public static class McpCatalog
 	{
 		static List<McpToolInfo> _tools;
 
-		public static List<McpToolInfo> Tools { get { if (_tools == null) Load(typeof(McpTools)); return _tools; } }
+		/// <summary>The classes whose attributed methods are the tools: the shared interface tools, and the program's own.</summary>
+		public static Type[] Sources = { typeof(McpUiTools) };
 
-		/// <summary>The level the program is set to. Read from the option; a test may point it elsewhere.</summary>
-		public static Func<AiAccess> Level = () => SettingsManager.Options.AiAccess;
+		public static List<McpToolInfo> Tools { get { if (_tools == null) Load(Sources); return _tools; } }
+
+		/// <summary>The level the program is set to. The program points it at its option; a test may point it elsewhere.</summary>
+		public static Func<AiAccess> Level = () => AiAccess.Read;
 
 		/// <summary>Runs an action on the interface thread. A test running there already may make it a plain call.</summary>
 		public static Action<Action> OnUiThread = Marshal;
@@ -122,9 +125,9 @@ namespace x360ce.App.Mcp
 				failure.Throw();
 		}
 
-		public static void Load(Type source)
+		public static void Load(params Type[] sources)
 		{
-			_tools = source.GetMethods(BindingFlags.Public | BindingFlags.Static)
+			_tools = sources.SelectMany(source => source.GetMethods(BindingFlags.Public | BindingFlags.Static))
 				.Select(m => new { Method = m, Tool = m.GetCustomAttribute<McpToolAttribute>() })
 				.Where(x => x.Tool != null)
 				.Select(x => new McpToolInfo { Name = ToolName(x.Method.Name), Description = x.Tool.Description, Level = x.Tool.Level, OnUiThread = x.Tool.OnUiThread, Method = x.Method, Parameters = x.Method.GetParameters() })
@@ -159,6 +162,9 @@ namespace x360ce.App.Mcp
 	public static class McpServer
 	{
 		public const string ProtocolVersion = "2025-06-18";
+
+		/// <summary>The name the server gives itself: x360ce for version 4, x360ce-v3 for version 3, so both can be connected at once.</summary>
+		public static string ServerName = "x360ce";
 
 		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
@@ -200,7 +206,7 @@ namespace x360ce.App.Mcp
 			{
 				{ "protocolVersion", ProtocolVersion },
 				{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
-				{ "serverInfo", new Dictionary<string, object> { { "name", "x360ce" }, { "version", System.Windows.Forms.Application.ProductVersion } } },
+				{ "serverInfo", new Dictionary<string, object> { { "name", ServerName }, { "version", System.Windows.Forms.Application.ProductVersion } } },
 			};
 		}
 
@@ -287,8 +293,22 @@ namespace x360ce.App.Mcp
 	/// <summary>Serves McpServer over HTTP on the loopback address, to callers that present the token.</summary>
 	public static class McpListener
 	{
+		/// <summary>The address that keeps the door on this computer. The default.</summary>
+		public const string LoopbackAddress = "127.0.0.1";
+		/// <summary>The address that opens the door to every network the computer is on.</summary>
+		public const string AnyAddress = "0.0.0.0";
+
 		static System.Net.HttpListener _listener;
 		static string _token;
+
+		/// <summary>A new token: 32 random bytes as 64 lower-case hex digits, the shape the log hides.</summary>
+		public static string NewToken()
+		{
+			var bytes = new byte[32];
+			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+				rng.GetBytes(bytes);
+			return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+		}
 
 		public static bool IsRunning { get { return _listener != null; } }
 
@@ -301,7 +321,7 @@ namespace x360ce.App.Mcp
 		/// <summary>The prefix http.sys is asked for: the loopback name a standard user may bind, or every address, which needs a reservation.</summary>
 		public static string Prefix(string address, int port)
 		{
-			return (address == Options.AnyAddress ? "http://+:" : "http://localhost:") + port + "/mcp/";
+			return (address == AnyAddress ? "http://+:" : "http://localhost:") + port + "/mcp/";
 		}
 
 		/// <summary>Opens the door on the address and port. False, with the reason in LastError, when it cannot.</summary>
@@ -328,7 +348,7 @@ namespace x360ce.App.Mcp
 			{
 				// Another program holds the port, or Windows has no reservation. The Issues tab says
 				// which and what to do; a crash report would say neither.
-				NeedsUrlReservation = address == Options.AnyAddress && ex.ErrorCode == 5;
+				NeedsUrlReservation = address == AnyAddress && ex.ErrorCode == 5;
 				LastError = NeedsUrlReservation
 					? "listening on every network needs a one-time permission from Windows. Press Fix on the Issues tab, or run as Administrator: netsh http add urlacl url=" + Prefix(address, port) + " sddl=D:(A;;GX;;;WD)"
 					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options page.";

@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>The controller page: one of these exists per emulated Xbox controller.</summary>
 		static void AddControllerPanel(Dictionary<string, Text> d)

@@ -1,9 +1,31 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	/// <summary>The name and purpose of each part of this program's interface, given to <see cref="x360ce.Engine.UiTree.UiText"/>.</summary>
+	public static partial class UiCatalog
 	{
+		/// <summary>Every entry, keyed "OwningType.FieldName".</summary>
+		public static Dictionary<string, Text> Build()
+		{
+			var items = new Dictionary<string, Text>();
+			AddMainWindow(items);
+			AddControllerPanel(items);
+			AddInputPanel(items);
+			AddMapping(items);
+			AddOptions(items);
+			AddUpdateOptions(items);
+			AddLists(items);
+
+			AddMappingPickers(items);
+
+			AddDeviceDetails(items);
+
+			AddSwitches(items);
+			return items;
+		}
+
 		/// <summary>The window itself: its tabs, its bar along the top, and the status line.</summary>
 		static void AddMainWindow(Dictionary<string, Text> d)
 		{

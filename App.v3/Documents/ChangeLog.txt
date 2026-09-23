@@ -1,5 +1,7 @@
-﻿## [3.4.25.0] - 2026-09-23
+﻿## [3.4.29.0] - 2026-09-23
 
+- Fixed: The NAME hook mask box was never saved or loaded.
+- Fixed: Startup stopped before the controller pages when debug files sat beside the program and no Windows SDK was installed.
 - Fixed: Force feedback test stopped after a moment.
 - Fixed: Options were ignored when x360ce.ini was saved as UTF-8 with BOM.
 - Fixed: An empty web service address stayed empty instead of using the default.
@@ -8,7 +10,7 @@
 - Fixed: Starting from a protected game folder closed the program.
 - Fixed: Copying text could close the program while another program held the clipboard.
 - Fixed: Crash when a controller was unplugged and plugged back in.
-- Fixed: Error "SetupDiGetDeviceRegistryPropertyW: 122" on some devices (Issue #830, Psychophage).
+- Fixed: Error "SetupDiGetDeviceRegistryPropertyW: 122" on some computers (Issue #830, Psychophage; Issue #1565, ProjectXsent).
 - Fixed: Startup warned that a leak detector was missing whenever a debug symbol file sat beside the program.
 - Fixed: Changes and License text on the About screen ran together as one paragraph.
 - Fixed: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.
@@ -19,6 +21,8 @@
 - Changed: Help pages come from one document each, so both versions show the same text.
 - Changed: Device detection lists attached devices only, instead of every device ever installed.
 - Changed: Interface refreshes up to 10 times per second instead of 20.
+- Added: AI assistant access on the Options page, so an AI assistant or a script can read and operate the program (/Mcp, /Ai).
+- Added: Every control has a name and a purpose, for screen readers and automation tools.
 
 ## [3.2.10.82] - 2015-10-20
 

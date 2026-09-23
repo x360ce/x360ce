@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using x360ce.Engine;
+using x360ce.Engine.Mcp;
 using x360ce.App.Properties;
 
 namespace x360ce.App.Controls
@@ -23,7 +24,73 @@ namespace x360ce.App.Controls
 		public void InitOptions()
 		{
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
+			InitAiAccess();
 		}
+
+		#region AI Assistant Access
+
+		/// <summary>
+		/// Shows the stored AI assistant access settings and applies each change as it is made. These
+		/// controls are the one place the door is changed: the door itself refuses them.
+		/// </summary>
+		void InitAiAccess()
+		{
+			var s = AiAccessSettings.Current;
+			AiAccessComboBox.Items.AddRange(Enum.GetNames(typeof(AiAccess)));
+			AiAccessEnabledCheckBox.Checked = s.Enabled;
+			AiAccessComboBox.SelectedItem = s.Level.ToString();
+			AiAccessPortNumericUpDown.Value = Math.Max(AiAccessPortNumericUpDown.Minimum, Math.Min(AiAccessPortNumericUpDown.Maximum, s.Port));
+			AiAccessTokenTextBox.Text = s.Token ?? "";
+			AiAccessWindowsCheckBox.Checked = s.Windows;
+			// The Windows agent registry ships with newer Windows only.
+			AiAccessWindowsCheckBox.Enabled = WindowsAgentRegistry.IsAvailable;
+			if (!WindowsAgentRegistry.IsAvailable)
+				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
+			AiAccessEnabledCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Enabled = AiAccessEnabledCheckBox.Checked);
+			AiAccessComboBox.SelectedIndexChanged += (sender, e) => ChangeAiAccess(x => x.Level = (AiAccess)Enum.Parse(typeof(AiAccess), (string)AiAccessComboBox.SelectedItem));
+			// Taken when editing ends, and only when it changed: every spin click, or every visit to the
+			// box, would otherwise restart the listener.
+			AiAccessPortNumericUpDown.Validated += (sender, e) =>
+			{
+				if ((int)AiAccessPortNumericUpDown.Value != AiAccessSettings.Current.Port)
+					ChangeAiAccess(x => x.Port = (int)AiAccessPortNumericUpDown.Value);
+			};
+			AiAccessWindowsCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Windows = AiAccessWindowsCheckBox.Checked);
+			AiAccessRegenerateButton.Click += (sender, e) => ChangeAiAccess(x => x.Token = McpListener.NewToken());
+			AiAccessCopyButton.Click += (sender, e) => JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(McpClient.ServerSettings(Application.ExecutablePath));
+			AiAccessLogButton.Click += (sender, e) => McpLog.Open();
+			UpdateAiAccessStatus(true);
+		}
+
+		void ChangeAiAccess(Action<AiAccessSettings> change)
+		{
+			var s = AiAccessSettings.Current;
+			change(s);
+			var saved = s.Save();
+			s.Apply();
+			AiAccessTokenTextBox.Text = s.Token ?? "";
+			UpdateAiAccessStatus(saved);
+		}
+
+		/// <summary>Says whether the door is open, where, and why not when it could not open.</summary>
+		void UpdateAiAccessStatus(bool saved)
+		{
+			var s = AiAccessSettings.Current;
+			string status;
+			if (!saved)
+				status = "x360ce.ini could not be written, so this change is lost when the program closes.";
+			else if (!s.Enabled)
+				status = "Off.";
+			else if (McpListener.LastError == null)
+				status = "Open at " + McpListener.Prefix(McpListener.LoopbackAddress, s.Port) + " with " + s.Level + " access.";
+			else
+				status = "Not open: " + McpListener.LastError;
+			if (s.Enabled && s.Windows && WindowsAgentRegistry.LastError != null)
+				status += " Windows registration: " + WindowsAgentRegistry.LastError;
+			AiAccessStatusLabel.Text = status;
+		}
+
+		#endregion
 
 		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{

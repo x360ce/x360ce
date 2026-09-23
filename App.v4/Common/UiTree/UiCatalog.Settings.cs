@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>The individual settings on the General and Internet pages.</summary>
 		static void AddSwitches(Dictionary<string, Text> d)

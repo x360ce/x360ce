@@ -59,6 +59,23 @@
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
+			this.AiAccessTabPage = new System.Windows.Forms.TabPage();
+			this.AiAccessTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.AiAccessEnabledCheckBox = new System.Windows.Forms.CheckBox();
+			this.AiAccessLabel = new System.Windows.Forms.Label();
+			this.AiAccessComboBox = new System.Windows.Forms.ComboBox();
+			this.AiAccessPortLabel = new System.Windows.Forms.Label();
+			this.AiAccessPortNumericUpDown = new System.Windows.Forms.NumericUpDown();
+			this.AiAccessWindowsCheckBox = new System.Windows.Forms.CheckBox();
+			this.AiAccessTokenLabel = new System.Windows.Forms.Label();
+			this.AiAccessTokenTextBox = new System.Windows.Forms.TextBox();
+			this.AiAccessRegenerateButton = new System.Windows.Forms.Button();
+			this.AiAccessStatusLabel = new System.Windows.Forms.Label();
+			this.AiAccessCopyButton = new System.Windows.Forms.Button();
+			this.AiAccessLogButton = new System.Windows.Forms.Button();
+			this.AiAccessTabPage.SuspendLayout();
+			this.AiAccessTableLayoutPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.AiAccessPortNumericUpDown)).BeginInit();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -231,6 +248,7 @@
 			this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
+			this.ProgramScanLocationsTabControl.Controls.Add(this.AiAccessTabPage);
 			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 118);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
@@ -400,9 +418,149 @@
 			this.MinimizeToTrayCheckBox.TabIndex = 93;
 			this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
 			this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
-			// 
+			//
+			// AiAccessTabPage
+			//
+			this.AiAccessTabPage.Controls.Add(this.AiAccessTableLayoutPanel);
+			this.AiAccessTabPage.Location = new System.Drawing.Point(4, 28);
+			this.AiAccessTabPage.Name = "AiAccessTabPage";
+			this.AiAccessTabPage.Size = new System.Drawing.Size(383, 104);
+			this.AiAccessTabPage.TabIndex = 1;
+			this.AiAccessTabPage.Text = "AI Assistant Access";
+			this.AiAccessTabPage.UseVisualStyleBackColor = true;
+			//
+			// AiAccessTableLayoutPanel
+			//
+			this.AiAccessTableLayoutPanel.ColumnCount = 5;
+			this.AiAccessTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AiAccessTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.AiAccessTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AiAccessTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AiAccessTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessEnabledCheckBox, 0, 0);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessLabel, 0, 1);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessComboBox, 1, 1);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortLabel, 2, 1);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortNumericUpDown, 3, 1);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessWindowsCheckBox, 4, 1);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenLabel, 0, 2);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenTextBox, 1, 2);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessRegenerateButton, 4, 2);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessStatusLabel, 0, 3);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessCopyButton, 3, 3);
+			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessLogButton, 4, 3);
+			this.AiAccessTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AiAccessTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.AiAccessTableLayoutPanel.Name = "AiAccessTableLayoutPanel";
+			this.AiAccessTableLayoutPanel.RowCount = 4;
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.AiAccessTableLayoutPanel.Size = new System.Drawing.Size(383, 104);
+			this.AiAccessTableLayoutPanel.TabIndex = 0;
+			//
+			// AiAccessEnabledCheckBox
+			//
+			this.AiAccessEnabledCheckBox.AutoSize = true;
+			this.AiAccessTableLayoutPanel.SetColumnSpan(this.AiAccessEnabledCheckBox, 5);
+			this.AiAccessEnabledCheckBox.Name = "AiAccessEnabledCheckBox";
+			this.AiAccessEnabledCheckBox.TabIndex = 0;
+			this.AiAccessEnabledCheckBox.Text = "Allow AI assistants and scripts on this computer";
+			this.AiAccessEnabledCheckBox.UseVisualStyleBackColor = true;
+			//
+			// AiAccessLabel
+			//
+			this.AiAccessLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AiAccessLabel.AutoSize = true;
+			this.AiAccessLabel.Name = "AiAccessLabel";
+			this.AiAccessLabel.Text = "Access:";
+			//
+			// AiAccessComboBox
+			//
+			this.AiAccessComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.AiAccessComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.AiAccessComboBox.Name = "AiAccessComboBox";
+			this.AiAccessComboBox.TabIndex = 1;
+			//
+			// AiAccessPortLabel
+			//
+			this.AiAccessPortLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AiAccessPortLabel.AutoSize = true;
+			this.AiAccessPortLabel.Name = "AiAccessPortLabel";
+			this.AiAccessPortLabel.Text = "Port:";
+			//
+			// AiAccessPortNumericUpDown
+			//
+			this.AiAccessPortNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AiAccessPortNumericUpDown.Maximum = new decimal(new int[] { 49151, 0, 0, 0 });
+			this.AiAccessPortNumericUpDown.Minimum = new decimal(new int[] { 1024, 0, 0, 0 });
+			this.AiAccessPortNumericUpDown.Name = "AiAccessPortNumericUpDown";
+			this.AiAccessPortNumericUpDown.Size = new System.Drawing.Size(60, 20);
+			this.AiAccessPortNumericUpDown.TabIndex = 2;
+			this.AiAccessPortNumericUpDown.Value = new decimal(new int[] { 37361, 0, 0, 0 });
+			//
+			// AiAccessWindowsCheckBox
+			//
+			this.AiAccessWindowsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AiAccessWindowsCheckBox.AutoSize = true;
+			this.AiAccessWindowsCheckBox.Name = "AiAccessWindowsCheckBox";
+			this.AiAccessWindowsCheckBox.TabIndex = 3;
+			this.AiAccessWindowsCheckBox.Text = "Register with Windows";
+			this.AiAccessWindowsCheckBox.UseVisualStyleBackColor = true;
+			//
+			// AiAccessTokenLabel
+			//
+			this.AiAccessTokenLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AiAccessTokenLabel.AutoSize = true;
+			this.AiAccessTokenLabel.Name = "AiAccessTokenLabel";
+			this.AiAccessTokenLabel.Text = "Token:";
+			//
+			// AiAccessTokenTextBox
+			//
+			this.AiAccessTableLayoutPanel.SetColumnSpan(this.AiAccessTokenTextBox, 3);
+			this.AiAccessTokenTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AiAccessTokenTextBox.Name = "AiAccessTokenTextBox";
+			this.AiAccessTokenTextBox.ReadOnly = true;
+			this.AiAccessTokenTextBox.TabIndex = 4;
+			//
+			// AiAccessRegenerateButton
+			//
+			this.AiAccessRegenerateButton.AutoSize = true;
+			this.AiAccessRegenerateButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AiAccessRegenerateButton.Name = "AiAccessRegenerateButton";
+			this.AiAccessRegenerateButton.TabIndex = 5;
+			this.AiAccessRegenerateButton.Text = "Regenerate";
+			this.AiAccessRegenerateButton.UseVisualStyleBackColor = true;
+			//
+			// AiAccessStatusLabel
+			//
+			this.AiAccessStatusLabel.AutoEllipsis = true;
+			this.AiAccessTableLayoutPanel.SetColumnSpan(this.AiAccessStatusLabel, 3);
+			this.AiAccessStatusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AiAccessStatusLabel.Name = "AiAccessStatusLabel";
+			this.AiAccessStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			//
+			// AiAccessCopyButton
+			//
+			this.AiAccessCopyButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this.AiAccessCopyButton.AutoSize = true;
+			this.AiAccessCopyButton.Name = "AiAccessCopyButton";
+			this.AiAccessCopyButton.TabIndex = 6;
+			this.AiAccessCopyButton.Text = "Copy MCP Settings";
+			this.AiAccessCopyButton.UseVisualStyleBackColor = true;
+			//
+			// AiAccessLogButton
+			//
+			this.AiAccessLogButton.AutoSize = true;
+			this.AiAccessLogButton.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AiAccessLogButton.Name = "AiAccessLogButton";
+			this.AiAccessLogButton.TabIndex = 7;
+			this.AiAccessLogButton.Text = "Log";
+			this.AiAccessLogButton.UseVisualStyleBackColor = true;
+			//
 			// OptionsControl
-			// 
+			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.OpenSettingsFolderButton);
@@ -430,6 +588,10 @@
 			this.ConfigurationGroupBox.PerformLayout();
 			this.DirectInputDevicesGroupBox.ResumeLayout(false);
 			this.DirectInputDevicesGroupBox.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.AiAccessPortNumericUpDown)).EndInit();
+			this.AiAccessTableLayoutPanel.ResumeLayout(false);
+			this.AiAccessTableLayoutPanel.PerformLayout();
+			this.AiAccessTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -467,5 +629,19 @@
 		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
+		private System.Windows.Forms.TabPage AiAccessTabPage;
+		private System.Windows.Forms.TableLayoutPanel AiAccessTableLayoutPanel;
+		private System.Windows.Forms.CheckBox AiAccessEnabledCheckBox;
+		private System.Windows.Forms.Label AiAccessLabel;
+		private System.Windows.Forms.ComboBox AiAccessComboBox;
+		private System.Windows.Forms.Label AiAccessPortLabel;
+		private System.Windows.Forms.NumericUpDown AiAccessPortNumericUpDown;
+		private System.Windows.Forms.CheckBox AiAccessWindowsCheckBox;
+		private System.Windows.Forms.Label AiAccessTokenLabel;
+		private System.Windows.Forms.TextBox AiAccessTokenTextBox;
+		private System.Windows.Forms.Button AiAccessRegenerateButton;
+		private System.Windows.Forms.Label AiAccessStatusLabel;
+		private System.Windows.Forms.Button AiAccessCopyButton;
+		private System.Windows.Forms.Button AiAccessLogButton;
 	}
 }

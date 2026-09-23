@@ -1,9 +1,10 @@
-// @under-test: App.v4/Common/UiTree/UiTreeWalker.cs, App.v4/Common/UiTree/UiNode.cs
+// @under-test: Engine/UiTree/UiTreeWalker.cs, Engine/UiTree/UiNode.cs
 // @area: accessibility   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.UiTree;
+using x360ce.Engine.UiTree;
 
 namespace x360ce.Tests
 {
@@ -53,7 +54,7 @@ namespace x360ce.Tests
 					var branch = UiTreeWalker.Read(UiTreeWalker.Find(form, "Tabs/Page1"), false, "Tabs/Page1");
 					Assert.AreEqual("Tabs/Page1", branch.Path);
 					Assert.IsNotNull(Find(branch, "Tabs/Page1/Slider"), "A branch read must still carry paths from the window, or ui_set cannot use them.");
-					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; docs/ui-tree.json would change.");
+					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; docs/ui-tree-v4.json would change.");
 				}
 			});
 		}

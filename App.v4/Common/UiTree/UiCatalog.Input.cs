@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>The INPUT column of the General tab: the device's own controls, lit as they are used.</summary>
 		static void AddInputPanel(Dictionary<string, Text> d)

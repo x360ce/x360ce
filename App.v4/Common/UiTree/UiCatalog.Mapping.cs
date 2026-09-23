@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>The controls that shape one mapped value, reused on several pages.</summary>
 		static void AddMapping(Dictionary<string, Text> d)

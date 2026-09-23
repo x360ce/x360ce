@@ -22,6 +22,7 @@ namespace x360ce.App.Controls
 		public NewDeviceForm()
 		{
 			InitializeComponent();
+			Engine.UiTree.UiText.Apply(this);
 		}
 
 		void NewDeviceForm_Load(object sender, EventArgs e)

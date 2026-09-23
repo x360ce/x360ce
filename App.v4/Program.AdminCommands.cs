@@ -135,7 +135,7 @@ namespace x360ce.App
 				// The security descriptor rather than a group name, because "Everyone" is spelt
 				// differently on every localized Windows and the well-known SID is not.
 				var netsh = valid ? System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("netsh",
-					"http add urlacl url=" + Mcp.McpListener.Prefix(Options.AnyAddress, port) + " sddl=D:(A;;GX;;;WD)")
+					"http add urlacl url=" + Engine.Mcp.McpListener.Prefix(Options.AnyAddress, port) + " sddl=D:(A;;GX;;;WD)")
 					{ UseShellExecute = false, CreateNoWindow = true }) : null;
 				if (netsh != null)
 					netsh.WaitForExit();

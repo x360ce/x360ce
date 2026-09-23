@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using static x360ce.Engine.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	public static partial class UiText
+	public static partial class UiCatalog
 	{
 		/// <summary>The pages that are mostly a list: games, devices, cloud, issues, about.</summary>
 		static void AddLists(Dictionary<string, Text> d)
@@ -82,61 +83,18 @@ namespace x360ce.App.UiTree
 			AddHookFlags(d);
 		}
 
-		/// <summary>
-		/// Each flag makes the program answer one question a game asks about the controller. Named
-		/// after the Windows call each one intercepts, which is what the short captions abbreviate.
-		/// </summary>
+		/// <summary>The hook mask and library boxes, shared with version 3, and the auto-map boxes only this version has.</summary>
 		static void AddHookFlags(Dictionary<string, Text> d)
 		{
 			d["GameDetailsUserControl.HookMaskGroupBox"] = new Text("Hook mask",
 				"Which questions a game asks about controllers this program answers for it.");
-			d["GameDetailsUserControl.HookLLCheckBox"] = new Text("Hook Load Library",
-				"Answers when the game loads a library, so the replacement is loaded instead.");
-			d["GameDetailsUserControl.HookCOMCheckBox"] = new Text("Hook COM",
-				"Answers when the game asks Windows for a controller through COM.");
-			d["GameDetailsUserControl.HookDICheckBox"] = new Text("Hook Direct Input",
-				"Answers when the game asks for a controller through Direct Input.");
-			d["GameDetailsUserControl.HookPIDVIDCheckBox"] = new Text("Hook product and vendor codes",
-				"Reports the fake product and vendor codes instead of the real ones.");
-			d["GameDetailsUserControl.HookNAMECheckBox"] = new Text("Hook name",
-				"Reports a different controller name to the game.");
-			d["GameDetailsUserControl.HookSACheckBox"] = new Text("Hook SetupAPI",
-				"Answers when the game asks Windows to list devices.");
-			d["GameDetailsUserControl.HookWTCheckBox"] = new Text("Hook WinVerifyTrust",
-				"Answers when the game checks a file's signature.");
-			d["GameDetailsUserControl.HookSTOPCheckBox"] = new Text("Stop",
-				"Stops answering once the game has started.");
-			d["GameDetailsUserControl.HookDISABLECheckBox"] = new Text("Disable",
-				"Turns every answer off, leaving the game with the real controllers.");
+			Engine.UiTree.UiGameFlags.Add(d, "GameDetailsUserControl");
 			for (var i = 1; i <= 4; i++)
 			{
 				d["GameDetailsUserControl.Controller" + i + "CheckBox"] = new Text(
 					"Auto map controller " + i,
 					"Lets the program assign controller " + i + " to a device when this game starts.");
 			}
-			AddXInputFlags(d, "91", "9.1");
-			AddXInputFlags(d, "11", "1.1");
-			AddXInputFlags(d, "12", "1.2");
-			AddXInputFlags(d, "13", "1.3");
-			AddXInputFlags(d, "14", "1.4");
-			d["GameDetailsUserControl.DInput8_x86CheckBox"] = new Text("DInput 8, 32-bit",
-				"Supplies the 32-bit Direct Input library to the game.");
-			d["GameDetailsUserControl.DInput8_x64CheckBox"] = new Text("DInput 8, 64-bit",
-				"Supplies the 64-bit Direct Input library to the game.");
-		}
-
-		/// <summary>
-		/// Ten identical tick boxes, captioned only "32-bit" or "64-bit", whose meaning comes from
-		/// the version label beside them. Each needs its version in its own name to be told apart.
-		/// </summary>
-		static void AddXInputFlags(Dictionary<string, Text> d, string field, string version)
-		{
-			d["GameDetailsUserControl.XInput" + field + "_x86CheckBox"] = new Text(
-				"XInput " + version + ", 32-bit",
-				"Supplies the 32-bit XInput " + version + " library to the game.");
-			d["GameDetailsUserControl.XInput" + field + "_x64CheckBox"] = new Text(
-				"XInput " + version + ", 64-bit",
-				"Supplies the 64-bit XInput " + version + " library to the game.");
 		}
 
 		static void AddDevices(Dictionary<string, Text> d)

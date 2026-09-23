@@ -20,6 +20,7 @@ namespace x360ce.App
 		public WarningsForm()
 		{
 			InitializeComponent();
+			Engine.UiTree.UiText.Apply(this);
 			checkTimer = new System.Timers.Timer();
 			checkTimer.Interval = 1000;
 			checkTimer.AutoReset = false;

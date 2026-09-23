@@ -440,6 +440,7 @@ namespace x360ce.App
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			Engine.Mcp.McpListener.Stop();
 			if (UpdateTimer != null) UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try
@@ -521,6 +522,12 @@ namespace x360ce.App
 
 		DeviceInstance[] diInstancesOld = new DeviceInstance[4];
 		DeviceInstance[] diInstances = new DeviceInstance[4];
+
+		/// <summary>The device each of the four controllers reads, or null where none is connected.</summary>
+		public DeviceInstance[] PadDevices { get { return (DeviceInstance[])diInstances.Clone(); } }
+
+		/// <summary>The menu behind the tray icon.</summary>
+		public ContextMenuStrip TrayMenu { get { return TrayContextMenuStrip; } }
 
 		Joystick[] diDevices = new Joystick[4];
 		DeviceInfo[] diInfos = new DeviceInfo[4];
@@ -745,6 +752,14 @@ namespace x360ce.App
 				{
 					update2Enabled = false;
 					UpdateForm2();
+					// Started only to describe itself: every page is built now, and reading devices
+					// would open dialogs that nobody is there to answer.
+					if (Program.ExportUiFolder != null)
+					{
+						Program.ExportUi();
+						Close();
+						return;
+					}
 					update3Enabled = true;
 				}
 				if (update3Enabled)
@@ -764,6 +779,10 @@ namespace x360ce.App
 			BusyLoadingCircle.Left = HeaderPictureBox.Left;
 			defaultBody = HelpBodyLabel.Text;
 			//if (DesignMode) return;
+			// Opened before the warnings are checked, so an assistant can help answer them, and before
+			// the Options page, which shows whether it opened.
+			if (Program.ExportUiFolder == null)
+				AiAccessSettings.Current.Apply();
 			OptionsPanel.InitOptions();
 			// Set status.
 			StatusSaveLabel.Visible = false;
@@ -783,6 +802,11 @@ namespace x360ce.App
 			// Hide status values.
 			StatusDllLabel.Text = "";
 			MainStatusStrip.Visible = false;
+			if (Program.ExportUiFolder != null)
+			{
+				update2Enabled = true;
+				return;
+			}
 			// Check if INI and DLL is on disk.
 			WarningsForm.CheckAndOpen();
 		}
@@ -817,6 +841,11 @@ namespace x360ce.App
 			// Update settings map.
 			UpdateSettingsMap();
 			ReloadXinputSettings();
+			// Every page exists now, so every control can be given its name and purpose: first what
+			// the catalogue says, then, for the controls linked to a setting, what the setting says.
+			Engine.UiTree.UiText.Apply(this);
+			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			SettingManager.Current.DescribeControls();
 			//// start capture events.
 			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 		}
