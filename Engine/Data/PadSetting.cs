@@ -189,8 +189,12 @@ namespace x360ce.Engine.Data
 			// If all values are empty or default then...
 			if (list.Count == 0)
 				return Guid.Empty;
-			// Sort list to make sure that categorized order above doesn't matter.
-			var sorted = list.OrderBy(x => x).ToArray();
+			// Sort list to make sure that categorized order above doesn't matter. The order must not
+			// depend on the computer's language: Welsh and Albanian read "th" as one letter, Lithuanian
+			// and Latvian sort "Y" with "I", Azerbaijani puts "X" after "H" and Hawaiian puts vowels
+			// first, and each would give the same settings another checksum there than on the server.
+			// Every checksum the server has stored since 2020 is in this order.
+			var sorted = list.OrderBy(x => x, StringComparer.InvariantCulture).ToArray();
 			// Prepare list for checksum.
 			var s = string.Join("\r\n", sorted);
 			var bytes = System.Text.Encoding.ASCII.GetBytes(s);

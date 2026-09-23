@@ -280,6 +280,106 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The name does not depend on the computer's language")]
+		public void The_name_does_not_depend_on_the_computers_language()
+		{
+			// The server names what it stores, and a program on a computer in another language must
+			// arrive at the same name for the same settings. Sorting by the computer's language gave
+			// ten languages another order: Welsh and Albanian read "th" as one letter, Lithuanian,
+			// Latvian and Western Frisian sort "Y" with "I", Azerbaijani puts "X" after "H" and
+			// Hawaiian puts vowels first. Every language Windows knows is tried.
+			var mapping = new PadSetting
+			{
+				AxisToDPadDeadZone = "100", AxisToDPadEnabled = "1",
+				ButtonA = "1", ButtonB = "2", ButtonX = "3", ButtonY = "4", ButtonBack = "7", ButtonStart = "8",
+				ButtonBDeadZone = "100", LeftThumbAxisX = "1", LeftThumbAxisY = "2", LeftThumbAntiDeadZoneX = "2000",
+				DPad = "1", LeftTrigger = "a-6", RightTrigger = "a-2",
+			};
+			var saved = System.Threading.Thread.CurrentThread.CurrentCulture;
+			try
+			{
+				System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+				var expected = Copy(mapping).CleanAndGetCheckSum();
+				var differ = new List<string>();
+				foreach (var culture in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.SpecificCultures))
+				{
+					System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+					if (Copy(mapping).CleanAndGetCheckSum() != expected)
+						differ.Add(culture.Name);
+				}
+				Assert.AreEqual(0, differ.Count,
+					"The same settings are named differently on computers set to " + string.Join(", ", differ) +
+					", so the server stores them twice and cannot find what those computers ask for.");
+			}
+			finally
+			{
+				System.Threading.Thread.CurrentThread.CurrentCulture = saved;
+			}
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The change script that renames stored settings measures them as the program does")]
+		public void The_change_script_measures_as_the_program_does()
+		{
+			// The database renames its rows in SQL, from a list of settings, their defaults and their
+			// order written into the script. A setting added here and not there, or put in another
+			// order, would rename every stored row to a checksum no program asks for.
+			var path = Path.Combine(Ui.RepoRoot.FullName, "Data", "Change Scripts", "2026-09-23_Rename_PadSettings_To_Current_Checksum.sql");
+			var rows = System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(path),
+				@"\(\s*(\d+), '(\w+)', p\.\[(\w+)\], '(\d+)'\)")
+				.Cast<System.Text.RegularExpressions.Match>()
+				.Select(m => new { Rank = int.Parse(m.Groups[1].Value), Name = m.Groups[2].Value, Column = m.Groups[3].Value, Default = m.Groups[4].Value })
+				.ToList();
+			// The names the program measures, found by giving every setting a value no default has.
+			var all = new PadSetting();
+			foreach (var p in typeof(PadSetting).GetProperties())
+				if (p.PropertyType == typeof(string) && p.CanWrite)
+					p.SetValue(all, "7", null);
+			var lines = new List<string>();
+			all.CleanAndGetCheckSum(lines);
+			var names = lines.Select(x => x.Substring(0, x.IndexOf('='))).OrderBy(x => x, StringComparer.Ordinal).ToArray();
+			CollectionAssert.AreEqual(names, rows.Select(x => x.Name).OrderBy(x => x, StringComparer.Ordinal).ToArray(),
+				"The script and the program measure different settings.");
+			Assert.IsTrue(rows.All(x => x.Name == x.Column), "A line of the script reads another column than it names.");
+			// The order: the program sorts whole lines, and no name is the start of another followed
+			// by "=", so the order of "Name=" is the order of the lines.
+			var order = rows.Select(x => x.Name + "=").OrderBy(x => x, StringComparer.InvariantCulture).ToArray();
+			CollectionAssert.AreEqual(order, rows.OrderBy(x => x.Rank).Select(x => x.Name + "=").ToArray(),
+				"The script puts the lines in another order than the program.");
+			CollectionAssert.AreEqual(Enumerable.Range(1, rows.Count).ToArray(), rows.Select(x => x.Rank).ToArray(),
+				"The ranks are not 1, 2, 3 in the order written.");
+			// The defaults: a setting at its script default must be left out, and any other value kept.
+			foreach (var row in rows)
+			{
+				var property = typeof(PadSetting).GetProperty(row.Name);
+				var atDefault = new PadSetting();
+				property.SetValue(atDefault, row.Default, null);
+				var kept = new List<string>();
+				atDefault.CleanAndGetCheckSum(kept);
+				Assert.AreEqual(0, kept.Count, row.Name + " at the script's default " + row.Default + " is measured by the program.");
+				var changed = new PadSetting();
+				property.SetValue(changed, row.Default == "0" ? "1" : "0", null);
+				kept.Clear();
+				changed.CleanAndGetCheckSum(kept);
+				Assert.AreEqual(1, kept.Count, row.Name + " away from the script's default " + row.Default + " is not measured by the program.");
+			}
+			// And the whole measurement, made the script's way, against every shipped preset.
+			using (var md5 = System.Security.Cryptography.MD5.Create())
+			{
+				foreach (var preset in Presets())
+				{
+					var ps = Copy(preset.Value);
+					var text = string.Join("\r\n", rows.OrderBy(x => x.Rank)
+						.Select(x => new { x.Name, x.Default, Value = (string)typeof(PadSetting).GetProperty(x.Name).GetValue(ps, null) ?? "" })
+						.Where(x => x.Value.Length > 0 && x.Value != x.Default)
+						.Select(x => x.Name + "=" + x.Value));
+					var script = text.Length == 0 ? Guid.Empty : new Guid(md5.ComputeHash(System.Text.Encoding.ASCII.GetBytes(text)));
+					Assert.AreEqual(ps.CleanAndGetCheckSum(), script, "Preset " + preset.Key + " is named differently by the script.");
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
 		[Description("Every setting in the checksum can be read as text")]
 		public void Every_setting_in_the_checksum_can_be_read_as_text()
 		{
