@@ -101,6 +101,28 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, MotorModel.PeriodMs(0, true, 0.5));
 		}
 
+		[TestMethod, TestCategory("force-feedback")]
+		public void The_period_slider_says_what_100_is_and_keeps_milliseconds()
+		{
+			// The slider runs 0 to 100 and the setting 0 to 400 ms. Described only by the setting, the
+			// slider offered 160 as a value it would refuse.
+			using (var slider = new System.Windows.Forms.TrackBar { Maximum = 100 })
+			{
+				var item = SettingsManager.AddMap("PAD1", () => SettingName.LeftMotorPeriod, slider);
+				try
+				{
+					StringAssert.Contains(slider.AccessibleDescription, "100 is 400");
+					SettingsManager.Current.LoadSetting(slider, SettingName.LeftMotorPeriod, "160");
+					Assert.AreEqual(40, slider.Value);
+					Assert.AreEqual("160", SettingsManager.Current.GetSettingValue(slider));
+				}
+				finally
+				{
+					SettingsManager.Current.SettingsMap.Remove(item);
+				}
+			}
+		}
+
 		static PadSetting Pad(string left, string right)
 		{
 			var ps = new PadSetting { LeftMotorPeriod = left, RightMotorPeriod = right, ForceEnable = "1" };

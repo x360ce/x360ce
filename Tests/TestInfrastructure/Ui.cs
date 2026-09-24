@@ -314,13 +314,21 @@ namespace x360ce.Tests
 			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_MINIMIZE);
 		}
 
-		/// <summary>Asks every running copy of the program to show its window, as a second launch does.</summary>
+		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
+		/// <remarks>
+		/// A message posted to HWND_BROADCAST reaches unowned top-level windows only, and in the tray the
+		/// window is owned by the hidden form that keeps it off the task bar, so it never arrived and the
+		/// window stayed in the tray. BroadcastSystemMessage reaches it, which is why a second launch works.
+		/// </remarks>
 		public static void PostRestoreRequest()
 		{
 			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
 				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
-			var message = NativeMethods.RegisterWindowMessage(product);
-			NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
+			Exception error;
+			var message = JocysCom.ClassLibrary.Win32.NativeMethods.RegisterWindowMessage(product, out error);
+			var recipients = (int)JocysCom.ClassLibrary.Win32.BSM.BSM_APPLICATIONS;
+			var flags = JocysCom.ClassLibrary.Win32.BSF.BSF_IGNORECURRENTTASK | JocysCom.ClassLibrary.Win32.BSF.BSF_POSTMESSAGE;
+			JocysCom.ClassLibrary.Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, message, x360ce.App.MainForm.wParam_Restore, 0, out error);
 		}
 
 		/// <summary>Bring the window back into view, from the task bar or from the tray.</summary>
@@ -385,16 +393,9 @@ namespace x360ce.Tests
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
-			public static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool ShowWindow(IntPtr window, int command);
-
-			[System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-			public static extern int RegisterWindowMessage(string name);
-
-			[System.Runtime.InteropServices.DllImport("user32.dll")]
-			public static extern bool PostMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
 		}
 
 		/// <summary>True when an x360ce process other than this one is alive.</summary>

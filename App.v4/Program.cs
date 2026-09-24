@@ -246,6 +246,7 @@ namespace x360ce.App
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
 				return;
 			}
+			MainForm.Current.RegisterInstance();
 			var doNotAllowToRun = SettingsManager.Options.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore);
 			// If one copy is already opened then...
 			if (doNotAllowToRun)

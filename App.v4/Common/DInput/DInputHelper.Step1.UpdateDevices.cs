@@ -132,6 +132,10 @@ namespace x360ce.App.DInput
 			catch (Exception ex)
 			{
 				read.Error = ex;
+				// A failed read hands nothing over, so what it opened is closed here.
+				foreach (var made in read.Made.Values)
+					made.Dispose();
+				read.Made.Clear();
 			}
 			read.Milliseconds = started.ElapsedMilliseconds;
 			return read;
@@ -246,7 +250,17 @@ namespace x360ce.App.DInput
 				// list and the clean-up button can never disagree about what a leftover is.
 				if (!VirtualDriverInstaller.IsVirtualPad(hid, devInfosById))
 					insertDevices.Add(ud);
+				// A pad of ours is never listed, so every read finds it new and opens it again. Left open,
+				// each one keeps its handles for the life of the program: a few more on every read, and a
+				// read follows every device that comes or goes on the machine.
+				else if (ud.Device != null)
+					ud.Device.Dispose();
+				read.Made.Remove(device.InstanceGuid);
 			}
+			// Any the worker opened that nothing here took, such as a device listed while it was reading.
+			foreach (var unclaimed in read.Made.Values)
+				unclaimed.Dispose();
+			read.Made.Clear();
 			//if (insertDevices.Count > 0)
 			//{
 			//	CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray(), true);

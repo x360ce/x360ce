@@ -86,32 +86,46 @@ namespace x360ce.App.DInput
 			Exception error = null;
 			lock (Controller.XInputLock)
 			{
-				for (uint i = 0; i < 4; i++)
+				// Between reads the last one still stands. Falling through here would write an
+				// empty state and "not connected" over it on every pass that does not read, which
+				// is most of them - the controller picture and the formula preview both draw from
+				// these, and would spend their time showing nothing.
+				if (!wanted || due)
 				{
-					var gamePad = LiveXiControllers[i];
-					// Between reads the last one still stands. Falling through here would write an
-					// empty state and "not connected" over it on every pass that does not read, which
-					// is most of them - the controller picture and the formula preview both draw from
-					// these, and would spend their time showing nothing.
-					if (wanted && !due)
-						continue;
-					State state = new State();
-					var success = false;
-					var timeout = false;
+					State[] read = null;
+					bool[] answered = null;
 					if (wanted)
 					{
 						// This can hit CPU hard and used for display only.
-						// Do not use when application is minimized. 
-						timeout = !RanWithin(() => success = gamePad.GetState(out state), 1000);
+						// Do not use when application is minimized.
+						// All four places are read in one hand-over. Each hand-over waits for a worker
+						// to pick it up, and four in a row keep this thread past the time the next pass
+						// is due. The arrays are made for each read, so a read that never returns writes
+						// only into arrays nothing looks at any more.
+						var states = new State[4];
+						var connected = new bool[4];
+						var controllers = LiveXiControllers;
+						if (RanWithin(() =>
+						{
+							for (var p = 0; p < 4; p++)
+								connected[p] = controllers[p].GetState(out states[p]);
+						}, 1000))
+						{
+							read = states;
+							answered = connected;
+						}
+						else
+						{
+							_xiReadPausedUntil = unchecked(Environment.TickCount + XiReadPauseMs);
+							error = new Exception("XInput did not answer for a second; the XInput view rests for "
+								+ (XiReadPauseMs / 1000) + " seconds and then reads again.");
+						}
 					}
-					if (timeout)
+					for (var i = 0; i < 4; i++)
 					{
-						_xiReadPausedUntil = unchecked(Environment.TickCount + XiReadPauseMs);
-						error = new Exception("XInput did not answer for a second; the XInput view rests for "
-							+ (XiReadPauseMs / 1000) + " seconds and then reads again.");
+						LiveXiConnected[i] = answered != null && answered[i];
+						LiveXiStates[i] = read == null ? new State() : read[i];
 					}
-					LiveXiConnected[i] = success && !timeout;
-					LiveXiStates[i] = state;
 				}
 			}
 			NotePadPlaces();

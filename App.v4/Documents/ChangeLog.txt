@@ -26,6 +26,13 @@
 - Fixed: The AI assistant access Copy buttons could close the program while another program held the clipboard.
 - Fixed: Closing the program while a virtual controller was being connected could leave it plugged in until Windows restarted.
 - Fixed: Each Map Device window went on handling every device change after it was closed.
+- Fixed: The /Exit switch did not close a copy running with Allow Only One Copy off.
+- Fixed: Percentage sliders did not say what 100 stands for, so an assistant could not set them.
+- Fixed: Sorting the games list while it showed only enabled or disabled games could close the program.
+- Fixed: Save closed the program when Windows refused a settings file; it now offers to retry or use your own folder.
+- Fixed: With virtual controllers on, every device plugged in or removed left system handles open until the program closed.
+- Fixed: Set to 1000 Hz, the controllers were polled only about 950 times a second.
+- Fixed: On a computer with many old virtual controller records, the controller pages took seconds to appear at start.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.

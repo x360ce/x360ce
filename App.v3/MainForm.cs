@@ -1161,6 +1161,27 @@ namespace x360ce.App
 		public const int wParam_Restore = 1;
 		public const int wParam_Close = 2;
 
+		/// <summary>True when another copy was already running when this one registered.</summary>
+		bool _OtherCopy;
+
+		/// <summary>
+		/// Takes this copy's place among the running copies: the mutex that says one is running, and
+		/// the message id the others reach it by. Every copy registers, whether or not only one copy is
+		/// allowed, or the /Exit switch cannot reach the copy it is meant to close.
+		/// </summary>
+		/// <returns>True when another copy was already running.</returns>
+		public bool RegisterInstance()
+		{
+			if (_Mutex != null)
+				return _OtherCopy;
+			Exception error;
+			var uid = Application.ProductName;
+			_Mutex = new System.Threading.Mutex(false, uid);
+			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out error);
+			_OtherCopy = !_Mutex.WaitOne(1, true);
+			return _OtherCopy;
+		}
+
 		/// <summary>
 		/// Broadcast message to other instances of this application.
 		/// </summary>
@@ -1168,22 +1189,17 @@ namespace x360ce.App
 		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
 		public bool BroadcastMessage(int wParam)
 		{
-			Exception error;
-			// Check for previous instance of this app.
-			var uid = Application.ProductName;
-			_Mutex = new System.Threading.Mutex(false, uid);
-			// Register the windows message
-			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out error);
-			var firsInstance = _Mutex.WaitOne(1, true);
+			var otherCopy = RegisterInstance();
 			// If this is not the first instance then...
-			if (!firsInstance)
+			if (otherCopy)
 			{
 				// Broadcast a message with parameters to another instance.
+				Exception error;
 				var recipients = (int)BSM.BSM_APPLICATIONS;
 				var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
-				var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
+				NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
 			}
-			return !firsInstance;
+			return otherCopy;
 		}
 
 		/// <summary>

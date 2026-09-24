@@ -59,12 +59,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
 		public event EventHandler<DInputEventArgs> XInputReloaded;
 
-		/// <summary>
-		/// Timer which will be used together with ManualResetEvent to limit update refresh frequency.
-		/// </summary>
-		JocysCom.ClassLibrary.HiResTimer _timer;
-
-		// Control when event can continue.
+		/// <summary>Set to end the wait between passes at once, when the thread is asked to stop.</summary>
 		ManualResetEvent _ResetEvent;
 		ThreadStart _ThreadStart;
 		Thread _Thread;
@@ -79,16 +74,14 @@ namespace x360ce.App.DInput
 		{
 			lock (timerLock)
 			{
-				if (_timer != null)
+				if (_AllowThreadToRun)
 					return;
 				watch.Restart();
 				// The clock starts again, so the count and the time of the last sample start again with it;
 				// left over from the previous run, they silenced the rate for as long as that run had lasted.
 				lastTime = 0;
 				currentTick = 0;
-				_timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
-				_timer.Elapsed += Timer_Elapsed;
-				_timer.Start();
+				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
 			}
@@ -100,11 +93,8 @@ namespace x360ce.App.DInput
 		{
 			lock (timerLock)
 			{
-				if (_timer == null)
+				if (!_AllowThreadToRun)
 					return true;
-				_timer.Stop();
-				_timer.Dispose();
-				_timer = null;
 				_AllowThreadToRun = false;
 				_ResetEvent.Set();
 				// Wait for thread to stop. Use a timeout, because this runs on the interface
@@ -135,23 +125,12 @@ namespace x360ce.App.DInput
 
 		public Exception LastException = null;
 
-		/// <summary>Timer ticks since the last frequency sample, for the engine log.</summary>
-		long _timerTicks;
+		/// <summary>Whether the wait between passes is timed by a high-resolution timer, for the engine log.</summary>
+		bool _pacerHighResolution;
 
-		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			try
-			{
-				System.Threading.Interlocked.Increment(ref _timerTicks);
-				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
-				_ResetEvent.Set();
-			}
-			catch (Exception ex)
-			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				LastException = ex;
-			}
-		}
+		/// <summary>Waits since the last frequency sample that ended over half an interval late, and the most any ended late by, in timestamp ticks.</summary>
+		int _lateWaits;
+		long _longestLate;
 
 		object DiUpdatesLock = new object();
 
@@ -179,14 +158,18 @@ namespace x360ce.App.DInput
 			/// Main job of detector is to fire event on device connection (power on) and removal (power off).
 			DirectInput manager = null;
 			DeviceDetector detector = null;
+			JocysCom.ClassLibrary.HiResPacer pacer = null;
 			try
 			{
 				manager = new DirectInput();
 				detector = new DeviceDetector(false);
+				// This thread times its own passes rather than being woken through an event by a timer on
+				// another thread. Such a timer falls a clock tick behind now and then and fires twice to
+				// catch up, and the second lands on an event already set: about one pass in twenty is lost.
+				pacer = new JocysCom.ClassLibrary.HiResPacer(_ResetEvent);
+				_pacerHighResolution = pacer.UsesHighResolution;
 				do
 				{
-					// Sets the state of the event to non-signaled, causing threads to block.
-					_ResetEvent.Reset();
 					// Perform all updates if not suspended.
 					if (!Suspended)
 					{
@@ -202,10 +185,13 @@ namespace x360ce.App.DInput
 							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 						}
 					}
-					// Blocks the current thread until the current WaitHandle receives a signal.
-					// Thread will be release by the timer.
-					// Do not wait longer than 50ms.
-					_ResetEvent.WaitOne(50);
+					// Until the next pass is due, or the thread is asked to stop.
+					var interval = (int)_Frequency;
+					var late = pacer.Wait(interval);
+					if (late > _longestLate)
+						_longestLate = late;
+					if (late * 2000L > System.Diagnostics.Stopwatch.Frequency * interval)
+						_lateWaits++;
 				}
 				// Loop until suspended.
 				while (_AllowThreadToRun);
@@ -218,6 +204,8 @@ namespace x360ce.App.DInput
 			finally
 			{
 				// Native objects must be released even when the loop ended with an error.
+				if (pacer != null)
+					pacer.Dispose();
 				if (detector != null)
 					detector.Dispose();
 				if (manager != null)
@@ -248,6 +236,7 @@ namespace x360ce.App.DInput
 
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
+			var passStarted = StepMark();
 			lock (DiUpdatesLock)
 			{
 				// The places the interface shows are read on a worker, only when something has
@@ -260,23 +249,32 @@ namespace x360ce.App.DInput
 					// Note: Getting XInput states are not required in order to do emulation.
 					// Get states only when form is maximized in order to reduce CPU usage.
 					var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
+					var mark = StepMark();
 					// Best place to unload XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-					StepWatch(0, () => CheckAndUnloadXInputLibrarry(game, getXInputStates));
+					CheckAndUnloadXInputLibrarry(game, getXInputStates);
+					StepDone(0, ref mark);
 					// Update information about connected devices.
-					StepWatch(1, () => UpdateDiDevices(manager));
+					UpdateDiDevices(manager);
+					StepDone(1, ref mark);
 					// Update JoystickStates from devices.
-					StepWatch(2, () => UpdateDiStates(manager, game, detector));
+					UpdateDiStates(manager, game, detector);
+					StepDone(2, ref mark);
 					// Update XInput states from Custom DirectInput states.
-					StepWatch(3, () => UpdateXiStates(game));
+					UpdateXiStates(game);
+					StepDone(3, ref mark);
 					// Combine XInput states of controllers.
-					StepWatch(4, () => CombineXiStates());
+					CombineXiStates();
+					StepDone(4, ref mark);
 					// Update virtual devices from combined states.
-					StepWatch(5, () => UpdateVirtualDevices(game));
+					UpdateVirtualDevices(game);
+					StepDone(5, ref mark);
 					// Load XInput library before retrieving XInput states.
-					StepWatch(6, () => CheckAndLoadXInputLibrary(game, getXInputStates));
+					CheckAndLoadXInputLibrary(game, getXInputStates);
+					StepDone(6, ref mark);
 					// Retrieve XInput states from XInput controllers.
-					StepWatch(7, () => RetrieveXiStates(game, getXInputStates));
+					RetrieveXiStates(game, getXInputStates);
+					StepDone(7, ref mark);
 				}
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();
@@ -284,6 +282,7 @@ namespace x360ce.App.DInput
 				var ev = UpdateCompleted;
 				if (ev != null)
 					ev(this, new DInputEventArgs());
+				PassDone(passStarted);
 			}
 		}
 
@@ -295,43 +294,86 @@ namespace x360ce.App.DInput
 		long currentTick;
 		public long CurrentUpdateFrequency;
 
+		/// <summary>How often a pass runs. The update thread reads it before every wait, so a change applies at once.</summary>
 		public UpdateFrequency Frequency
 		{
 			get { return _Frequency; }
-			set
-			{
-				_Frequency = value;
-				var t = _timer;
-				if (t != null && t.Interval != (int)value)
-					t.Interval = (int)value;
-			}
+			set { _Frequency = value; }
 		}
-		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
+		volatile UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
 		/// <summary>Names of the steps of one update, in the order they run.</summary>
 		static readonly string[] StepNames = {
 			"UnloadXInput", "UpdateDiDevices", "UpdateDiStates", "UpdateXiStates",
 			"CombineXiStates", "UpdateVirtualDevices", "LoadXInput", "RetrieveXiStates" };
 
-		/// <summary>Total microseconds spent in each step since the last rate sample.</summary>
+		/// <summary>Time spent in each step since the last rate sample, in timestamp ticks.</summary>
 		static readonly long[] StepTicks = new long[8];
 
-		/// <summary>Times one step of the update when engine logging is on.</summary>
+		/// <summary>Time each step took in the pass being run, in timestamp ticks.</summary>
+		static readonly long[] PassStepTicks = new long[8];
+
+		/// <summary>Passes since the last rate sample that took longer than the timer interval.</summary>
+		static int _slowPasses;
+
+		/// <summary>The longest pass since the last rate sample, in timestamp ticks, and the step that took most of it.</summary>
+		static long _longestPass;
+		static int _longestPassStep = -1;
+
+		/// <summary>When the last pass started, and the longest time between two pass starts since the last rate sample.</summary>
+		static long _lastPassStart;
+		static long _longestGap;
+
+		/// <summary>The time to measure a step from when engine logging is on, or 0 when it is off.</summary>
 		/// <remarks>
 		/// The rate alone says the loop is slow without saying where. Timing each step says which
 		/// one is holding it, which is the difference between reading a number and knowing what to
-		/// change. Costs a delegate call per step and nothing else when logging is off.
+		/// change. A step is timed from the end of the one before, so the loop allocates nothing
+		/// for it and costs one comparison per step when logging is off.
 		/// </remarks>
-		static void StepWatch(int index, Action step)
+		static long StepMark()
 		{
-			if (string.IsNullOrEmpty(EngineLogPath))
-			{
-				step();
+			return string.IsNullOrEmpty(EngineLogPath) ? 0 : System.Diagnostics.Stopwatch.GetTimestamp();
+		}
+
+		/// <summary>Adds the time since <paramref name="mark"/> to the step, and starts the next step's time there.</summary>
+		static void StepDone(int index, ref long mark)
+		{
+			if (mark == 0)
 				return;
+			var now = System.Diagnostics.Stopwatch.GetTimestamp();
+			var took = now - mark;
+			StepTicks[index] += took;
+			PassStepTicks[index] = took;
+			mark = now;
+		}
+
+		/// <summary>Counts a pass that ran past the interval, and keeps the longest one.</summary>
+		/// <remarks>
+		/// A pass that runs past the interval delays the next one, and one that runs past two drops
+		/// a pass from the second. The count says how many passes did that, and the longest says
+		/// whether a few long stalls or many small overruns are behind it. A long gap between two
+		/// short passes is the wait ending late, which no change to the passes themselves can fix.
+		/// </remarks>
+		void PassDone(long started)
+		{
+			if (started == 0)
+				return;
+			if (_lastPassStart != 0 && started - _lastPassStart > _longestGap)
+				_longestGap = started - _lastPassStart;
+			_lastPassStart = started;
+			var took = System.Diagnostics.Stopwatch.GetTimestamp() - started;
+			if (took * 1000L > System.Diagnostics.Stopwatch.Frequency * (long)_Frequency)
+				_slowPasses++;
+			if (took > _longestPass)
+			{
+				_longestPass = took;
+				_longestPassStep = -1;
+				for (int i = 0; i < PassStepTicks.Length; i++)
+					if (PassStepTicks[i] > 0 && (_longestPassStep < 0 || PassStepTicks[i] > PassStepTicks[_longestPassStep]))
+						_longestPassStep = i;
 			}
-			var started = System.Diagnostics.Stopwatch.GetTimestamp();
-			try { step(); }
-			finally { StepTicks[index] += System.Diagnostics.Stopwatch.GetTimestamp() - started; }
+			Array.Clear(PassStepTicks, 0, PassStepTicks.Length);
 		}
 
 		/// <summary>File the update rate is written to, one sample per second, or null.</summary>
@@ -352,11 +394,13 @@ namespace x360ce.App.DInput
 			{
 				var line = new System.Text.StringBuilder();
 				line.Append(elapsedMilliseconds).Append(',').Append(frequency);
-				// What the timer did, so a slow loop can be told from a slow timer.
-				var timer = _timer;
-				line.Append(",ticks=").Append(System.Threading.Interlocked.Exchange(ref _timerTicks, 0));
-				line.Append(",timer=").Append(timer == null ? "none" : timer.UsesMultimediaTimer ? "mm" : "fallback");
-				line.Append(",interval=").Append(timer == null ? -1 : timer.Interval);
+				// How the wait between passes is timed, and how often it ended late, so a slow loop can be
+				// told from a late timer: waits over half an interval late, and the most any was late by in microseconds.
+				line.Append(",timer=").Append(_pacerHighResolution ? "hires" : "std");
+				line.Append(",interval=").Append((int)_Frequency);
+				line.Append(",late=").Append(_lateWaits).Append('/').Append(_longestLate * 1000000L / System.Diagnostics.Stopwatch.Frequency);
+				_lateWaits = 0;
+				_longestLate = 0;
 				line.Append(",res=").Append(JocysCom.ClassLibrary.HiResTimer.CurrentResolutionMs.ToString("0.0"));
 				line.Append(",throttle=").Append(JocysCom.ClassLibrary.HiResTimer.PowerThrottlingState);
 				// How long the worker took over the last device list read taken in this second, or nothing.
@@ -378,6 +422,15 @@ namespace x360ce.App.DInput
 					.Append(XiStatesRead ? "+read" : "+idle");
 				for (int i = 0; i < 4; i++)
 					line.Append('/').Append(XiPlaceForPad[i]).Append(LiveXiConnected[i] ? "c" : "-");
+				// Passes that ran past the timer interval, and the longest pass in microseconds with the step that held it.
+				line.Append(",slow=").Append(_slowPasses);
+				line.Append(",longest=").Append(_longestPass * 1000000L / System.Diagnostics.Stopwatch.Frequency);
+				line.Append('(').Append(_longestPassStep < 0 ? "-" : StepNames[_longestPassStep]).Append(')');
+				line.Append(",gap=").Append(_longestGap * 1000000L / System.Diagnostics.Stopwatch.Frequency);
+				_slowPasses = 0;
+				_longestPass = 0;
+				_longestPassStep = -1;
+				_longestGap = 0;
 				for (int i = 0; i < StepTicks.Length; i++)
 				{
 					// Milliseconds spent in this step during the second just measured.

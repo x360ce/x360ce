@@ -21,7 +21,8 @@ namespace x360ce.Tests
 	/// with a NullReferenceException - eight of the eighteen crash reports for 4.22.21.0, two of them
 	/// arriving later still as the unobserved fault of that task.
 	///
-	/// This plugs a real controller in, so it needs the virtual bus installed.
+	/// This plugs a real controller in, so it needs the virtual bus installed, and every test here
+	/// takes away what it made: a controller left on the bus holds an XInput place for every test after.
 	/// </remarks>
 	[TestClass]
 	public class PlugWhileLeavingVirtualModeTest
@@ -50,24 +51,48 @@ namespace x360ce.Tests
 			ViGEmClient.DisposeCurrent();
 		}
 
-		[TestMethod]
+		/// <summary>Fails when controllers that were not on the bus before are still there, once Windows has had a moment to take them away.</summary>
+		static void AssertNoNewControllers(System.Collections.Generic.HashSet<string> before, string when)
+		{
+			var deadline = DateTime.UtcNow.AddSeconds(15);
+			var left = XInputPlaces.VirtualHardwareNow();
+			left.ExceptWith(before);
+			while (left.Count > 0 && DateTime.UtcNow < deadline)
+			{
+				Thread.Sleep(250);
+				left = XInputPlaces.VirtualHardwareNow();
+				left.ExceptWith(before);
+			}
+			Assert.AreEqual(0, left.Count, when + ", " + string.Join(", ", left) + " stayed on the bus.");
+		}
+
+		[TestMethod, TestCategory("devices")]
 		public void A_plug_in_flight_when_the_client_is_let_go_answers_instead_of_throwing()
 		{
 			// A plug takes seconds on most machines and about 150 ms here, so no one moment is the
 			// race. The client is let go at every point along the plug instead, ten milliseconds apart.
+			var before = XInputPlaces.VirtualHardwareNow();
 			var helper = new DInputHelper();
 			var answers = new System.Collections.Generic.List<string>();
 			for (var letGoAfterMs = 0; letGoAfterMs <= 120; letGoAfterMs += 10)
 			{
-				Connected();
+				var client = Connected();
 				var plugging = Task.Run(() => helper.EnableFeeding(1));
 				Thread.Sleep(letGoAfterMs);
-				ViGEmClient.DisposeCurrent();
+				// The shared reference is let go of, as the input thread does, while the bus handle is kept
+				// until the plug has finished. A handle freed under a plug leaves that controller on the bus
+				// after the program ends, holding a place for every test after this one.
+				lock (ViGEmClient.ClientLock)
+					ViGEmClient.Current = null;
 				Assert.IsTrue(plugging.Wait(TimeSpan.FromSeconds(30)), "The plug never finished.");
 				Assert.IsFalse(plugging.IsFaulted, string.Format("Let go after {0} ms, the plug threw: {1}",
 					letGoAfterMs, plugging.Exception == null ? "" : plugging.Exception.GetBaseException().Message));
 				answers.Add(letGoAfterMs + "ms=" + plugging.Result);
+				for (uint i = 1; i <= 4; i++)
+					client.UnPlug(i);
+				client.Dispose();
 				After();
+				AssertNoNewControllers(before, "Let go after " + letGoAfterMs + " ms");
 			}
 			Console.WriteLine(string.Join(" ", answers));
 		}
@@ -93,18 +118,7 @@ namespace x360ce.Tests
 				Assert.IsNull(ViGEmClient.Current, "Closing did not let go of the bus client.");
 				if (!plugging.IsFaulted && plugging.Result == VirtualError.None)
 					made++;
-				// Windows takes a moment to remove a controller after it is let go of.
-				var deadline = DateTime.UtcNow.AddSeconds(15);
-				var left = XInputPlaces.VirtualHardwareNow();
-				left.ExceptWith(before);
-				while (left.Count > 0 && DateTime.UtcNow < deadline)
-				{
-					Thread.Sleep(250);
-					left = XInputPlaces.VirtualHardwareNow();
-					left.ExceptWith(before);
-				}
-				Assert.AreEqual(0, left.Count, string.Format("Closed {0} ms into a plug, the program left {1} behind.",
-					closeAfterMs, string.Join(", ", left)));
+				AssertNoNewControllers(before, "Closed " + closeAfterMs + " ms into a plug");
 			}
 			// Nothing was tested if no controller was ever made.
 			Console.WriteLine("Controllers made and taken away: " + made + " of 7.");

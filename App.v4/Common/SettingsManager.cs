@@ -419,8 +419,22 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>Writes the program and game lists, and says so when it cannot rather than ending the program.</summary>
+		public static void Save()
+		{
+			SaveOrAsk(() =>
+			{
+				lock (saveReadFileLock)
+				{
+					Programs.Save();
+					UserGames.Save();
+				}
+			});
+		}
+
 		/// <summary>
-		/// Writes the settings, and says so when it cannot rather than ending the program.
+		/// Runs a save, and when a file cannot be written asks whether to try again, save into this
+		/// user's own folder, or leave it, rather than ending the program.
 		/// </summary>
 		/// <remarks>
 		/// Saving fails for reasons that have nothing to do with this program: the file
@@ -434,22 +448,18 @@ namespace x360ce.App
 		/// Retry comes first because a file held for a moment is the cheaper
 		/// explanation, and trying again costs nothing.
 		/// </remarks>
-		public static void Save()
+		public static void SaveOrAsk(Action save)
 		{
 			while (true)
 			{
 				try
 				{
-					lock (saveReadFileLock)
-					{
-						Programs.Save();
-						UserGames.Save();
-					}
+					save();
 					return;
 				}
 				catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
 				{
-					var answer = AskAboutFailedSave(ex);
+					var answer = AskAfterFailedSave(ex);
 					if (answer == DialogResult.Retry)
 						continue;
 					if (answer == DialogResult.Yes && MoveSettingsToUserFolder())
@@ -458,6 +468,9 @@ namespace x360ce.App
 				}
 			}
 		}
+
+		/// <summary>Asks what to do about a save that failed: Retry, Yes to use this user's own folder, or anything else to leave it. A test replaces it, since the real one opens a window.</summary>
+		public static Func<Exception, DialogResult> AskAfterFailedSave = AskAboutFailedSave;
 
 		/// <summary>Tells the person what stopped the save, and what can be done now.</summary>
 		private static DialogResult AskAboutFailedSave(Exception ex)
@@ -596,6 +609,23 @@ namespace x360ce.App
 		#endregion // Member Variables
 
 		#region Public Methods
+
+		/// <summary>
+		/// The stored value a slider at 100 stands for, for the settings a slider shows as a percentage
+		/// of their range; 0 where the slider shows the value itself.
+		/// </summary>
+		/// <remarks>Motor periods are 4 ms a step, so every motor period preset lands on a step.</remarks>
+		public static int TrackBarFullScale(string key)
+		{
+			if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
+				return 256;
+			if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				return 400;
+			if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				return Int16.MaxValue;
+			return 0;
+		}
+
 		/// <summary>
 		/// Adds an entry in the control-setting map, generates a tool-tip for the setting.
 		/// </summary>
@@ -649,6 +679,11 @@ namespace x360ce.App
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
 			var dval = (string)(descAttr != null ? dvalAttr.Value : null);
+			// A slider that shows the setting as a percentage says so. Otherwise its 0 to 100 reads as
+			// the setting's own range, and a value taken from the description, such as 160 ms, is refused.
+			var fullScale = control is TrackBar ? TrackBarFullScale(keyName) : 0;
+			if (fullScale > 0)
+				desc = (desc + " The slider shows it as a percentage: 100 is " + fullScale + ".").Trim();
 			// The setting says what it is for; that belongs on the control itself, where a screen
 			// reader, the header help and the exported navigation tree all read it from one place.
 			// Anything named deliberately elsewhere keeps its own words.
@@ -863,23 +898,11 @@ namespace x360ce.App
 				TrackBar tc = (TrackBar)control;
 				int n = 0;
 				int.TryParse(value, out n);
-				// convert 256  to 100%
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
-				{
-					if (key == SettingName.AxisToDPadDeadZone && value == "")
-						n = 256;
-					n = System.Convert.ToInt32((float)n / 256F * 100F);
-				}
-				// Convert 400 ms to 100%: 4 ms a step, so every motor period preset lands on a step.
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
-				{
-					n = System.Convert.ToInt32((float)n / 400F * 100F);
-				}
-				// Convert 32767 to 100%
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
-				{
-					n = System.Convert.ToInt32((float)n / ((float)Int16.MaxValue) * 100F);
-				}
+				if (key == SettingName.AxisToDPadDeadZone && value == "")
+					n = 256;
+				var fullScale = TrackBarFullScale(key);
+				if (fullScale > 0)
+					n = System.Convert.ToInt32((float)n / fullScale * 100F);
 				if (n < tc.Minimum)
 					n = tc.Minimum;
 				if (n > tc.Maximum)
@@ -965,23 +988,10 @@ namespace x360ce.App
 			else if (control is TrackBar)
 			{
 				TrackBar tc = (TrackBar)control;
-				// convert 100%  to 256
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
-				}
-				// convert 100% to 400 ms
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 400F).ToString();
-				}
-				// Convert 100% to 32767
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * ((float)Int16.MaxValue)).ToString();
-				}
-				else
-					v = tc.Value.ToString();
+				var fullScale = TrackBarFullScale(key);
+				v = fullScale > 0
+					? System.Convert.ToInt32((float)tc.Value / 100F * fullScale).ToString()
+					: tc.Value.ToString();
 			}
 			else if (control is CheckBox)
 			{

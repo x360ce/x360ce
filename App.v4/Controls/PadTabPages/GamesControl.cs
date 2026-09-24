@@ -239,7 +239,13 @@ namespace x360ce.App.Controls
 
 		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
 		{
-			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
+			// Once whatever bound the list has finished, not during it. Sorting binds the list again
+			// with every row showing and then puts the current cell back; rows hidden in between left
+			// that cell on a hidden row, which Windows Forms refuses by throwing.
+			if (IsHandleCreated)
+				BeginInvoke((Action)(() => ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton)));
+			else
+				ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
 
 		void GamesDataGridView_SelectionChanged(object sender, EventArgs e)

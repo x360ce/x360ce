@@ -49,7 +49,7 @@ namespace x360ce.App.DInput
 			// through XInput and nowhere else, so the force feedback driven below cannot reach one.
 			PassForcesThrough(feedbacks);
 
-			for (int i = 0; i < userDevices.Count(); i++)
+			for (int i = 0; i < userDevices.Length; i++)
 			{
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				var ud = userDevices[i];
@@ -65,7 +65,9 @@ namespace x360ce.App.DInput
 					var device = ud.Device;
 					if (device != null)
 					{
-						var exceptionData = new System.Text.StringBuilder();
+						// The call being made when a device call fails, sent with the report. Set from
+						// literals, so a poll that fails nothing builds no text for a report it never sends.
+						var step = "";
 						try
 						{
 							if (o.UseDeviceBufferedData && device.Properties.BufferSize == 0)
@@ -73,8 +75,11 @@ namespace x360ce.App.DInput
 								// Set BufferSize in order to use buffered data.
 								device.Properties.BufferSize = 128;
 							}
-							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+							// Flags are tested by bit rather than with HasFlag, which boxes both values on every call.
+							var isVirtual = (game.EmulationType & (int)EmulationType.Virtual) != 0;
+							// Read when the device was opened. Asking the device again is a native call that
+							// builds a new answer on every poll.
+							var hasForceFeedback = (ud.CapFlags & (int)DeviceFlags.ForceFeedback) != 0;
 							// What this device is mapped to, and how. Looked up only for a device that
 							// can produce force at all: this runs once per device per poll, at up to a
 							// thousand polls a second, and the lookup copies a shared list under a lock.
@@ -104,17 +109,17 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
 								// Reacquire device in exclusive mode.
-								exceptionData.AppendLine("Unacquire (Exclusive)...");
+								step = "Unacquire (Exclusive)";
 								device.Unacquire();
-								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
+								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								// Holding a wheel this way turns its own centering off. It is kept on unless this
 								// program's spring is to hold the centre, so the wheel's own centering, or the wheel
 								// maker's software, stays in charge whenever ours is off. Set here because it can
 								// only be set while the device is let go of.
-								exceptionData.AppendLine("AutoCenter...");
+								step = "AutoCenter";
 								SetAutoCenter(device, ps == null || ps.ForceSpringEnable != "1");
-								exceptionData.AppendLine("Acquire (Exclusive)...");
+								step = "Acquire (Exclusive)";
 								device.Acquire();
 								ud.IsExclusiveMode = true;
 							}
@@ -123,15 +128,15 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
-								exceptionData.AppendLine("Unacquire (NonExclusive)...");
+								step = "Unacquire (NonExclusive)";
 								device.Unacquire();
-								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
+								step = "SetCooperativeLevel (NonExclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-								exceptionData.AppendLine("Acquire (Acquire)...");
+								step = "Acquire (NonExclusive)";
 								device.Acquire();
 								ud.IsExclusiveMode = false;
 							}
-							exceptionData.AppendFormat("device.GetCurrentState() // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+							step = "device.GetCurrentState()";
 							// Polling - Retrieves data from polled objects on a DirectInput device.
 							// Some devices require pooling (For example original "Xbox Controller S" with XBCD drivers).
 							// If the device does not require polling, calling this method has no effect.
@@ -149,7 +154,7 @@ namespace x360ce.App.DInput
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
-								exceptionData.AppendFormat("AppHelper.GetDeviceObjects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+								step = "AppHelper.GetDeviceObjects(device)";
 								var dos = AppHelper.GetDeviceObjects(device);
 								ud.DeviceObjects = dos;
 								// Update masks.
@@ -174,7 +179,7 @@ namespace x360ce.App.DInput
 							}
 							if (ud.DeviceEffects == null)
 							{
-								exceptionData.AppendFormat("AppHelper.GetDeviceEffects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+								step = "AppHelper.GetDeviceEffects(device)";
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 								// The Direct Input tab draws the objects and effects once, when told the device
 								// changed. Told nothing, it kept what it drew before they were read: a device
@@ -214,7 +219,7 @@ namespace x360ce.App.DInput
 												// var st = ud.Device.GetForceFeedbackState();
 												//st == SharpDX.DirectInput.ForceFeedbackState
 												// ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
-												exceptionData.AppendFormat("ud.FFState.SetDeviceForces(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+												step = "ud.FFState.SetDeviceForces(device)";
 												ud.FFState.SetDeviceForces(ud, device, ps, v);
 											}
 										}
@@ -222,7 +227,7 @@ namespace x360ce.App.DInput
 										else if (ud.FFState != null)
 										{
 											// Stop device forces.
-											exceptionData.AppendFormat("ud.FFState.StopDeviceForces(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+											step = "ud.FFState.StopDeviceForces(device)";
 											ud.FFState.StopDeviceForces(device);
 											ud.FFState = null;
 										}
@@ -246,7 +251,7 @@ namespace x360ce.App.DInput
 							if (!benign)
 							{
 								var cx = new DInputException("UpdateDiStates Exception", ex);
-								cx.Data.Add("FFInfo", exceptionData.ToString());
+								cx.Data.Add("FFInfo", step + " // ud.IsExclusiveMode = " + ud.IsExclusiveMode);
 								JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
 							}
 							ud.IsExclusiveMode = null;
@@ -306,7 +311,8 @@ namespace x360ce.App.DInput
 					ud.DiUpdates = newUpdates;
 					ud.DiStateTime = newTime;
 					// Mouse needs special update.
-					if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
+					// Read when the device was opened. The device's own answer is a native call that builds new text on every poll.
+					if (ud.Device != null && ud.IsMouse)
 					{
 						// If original state is missing then...
 						if (ud.OrgDiState == null)

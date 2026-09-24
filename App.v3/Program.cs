@@ -159,6 +159,7 @@ namespace x360ce.App
 		{
 			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
 			var oneCopy = !ini.File.Exists || ini.GetValue("Options", Engine.SettingName.AllowOnlyOneCopy) == "1";
+			MainForm.Current.RegisterInstance();
 			return (oneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore));
 		}
 
