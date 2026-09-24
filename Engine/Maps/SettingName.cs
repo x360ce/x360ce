@@ -22,7 +22,10 @@ namespace x360ce.Engine
 		public struct SType
 		{
 			public const string None = null;
-			public const string Button = ""; // Button must be 'b' and no prefix for auto.
+			/// <summary>A button in a button field, where a number without a letter is a button.</summary>
+			public const string Button = "";
+			/// <summary>A button in a field whose bare number names another kind of control, such as a stick axis.</summary>
+			public const string ButtonMark = "b";
 			public const string Axis = "a";
 			public const string HAxis = "x";
 			public const string Slider = "s";
@@ -30,6 +33,9 @@ namespace x360ce.Engine
 			public const string POV = "p";
 			public const string POVButton = "d";
 		}
+
+		/// <summary>How far an axis must move to press a button it drives: a quarter of the way.</summary>
+		public const string DefaultButtonDeadZone = "8192";
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 		static public string DefaultVersion { get { return "2"; } }
@@ -238,46 +244,46 @@ namespace x360ce.Engine
 
 		#region Axis To Button / D-Pad
 
-		[DefaultValue("8192"), Description("Axis to A Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to A Button Dead Zone.")]
 		static public string ButtonADeadZone { get { return "A DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to B Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to B Button Dead Zone.")]
 		static public string ButtonBDeadZone { get { return "B DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to X Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to X Button Dead Zone.")]
 		static public string ButtonXDeadZone { get { return "X DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Y Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Y Button Dead Zone.")]
 		static public string ButtonYDeadZone { get { return "Y DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Start Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Start Button Dead Zone.")]
 		static public string ButtonStartDeadZone { get { return "Start DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Back Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Back Button Dead Zone.")]
 		static public string ButtonBackDeadZone { get { return "Back DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Left Bumper Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Left Bumper Dead Zone.")]
 		static public string LeftShoulderDeadZone { get { return "Left Shoulder DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Left Stick Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Left Stick Button Dead Zone.")]
 		static public string LeftThumbButtonDeadZone { get { return "Left Thumb DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Right Bumper Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Right Bumper Dead Zone.")]
 		static public string RightShoulderDeadZone { get { return "Right Shoulder DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Right Stick Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Right Stick Button Dead Zone.")]
 		static public string RightThumbButtonDeadZone { get { return "Right Thumb DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Down Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Down Dead Zone.")]
 		static public string DPadDownDeadZone { get { return "AxisToDPadDownDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Left Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Left Dead Zone.")]
 		static public string DPadLeftDeadZone { get { return "AxisToDPadLeftDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Right Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Right Dead Zone.")]
 		static public string DPadRightDeadZone { get { return "AxisToDPadRightDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Up Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Up Dead Zone.")]
 		static public string DPadUpDeadZone { get { return "AxisToDPadUpDeadZone"; } }
 
 		[DefaultValue("0"), Description("Axis to control DPad. Disabled = 0, Enabled = 1.")]

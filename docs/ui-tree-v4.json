@@ -60,7 +60,7 @@
 								},
 								{
 									"Name":"Dead zone",
-									"Description":"Add deadzone to the left trigger. Range is 0 to 255. Default is 0.",
+									"Description":"Add deadzone to the left trigger. Range is 0 to 255. Default is 0. The slider shows it as a percentage: 100 is 256.",
 									"Role":"Slider",
 									"Id":"DeadZoneTrackBar",
 									"Min":0,
@@ -1079,7 +1079,7 @@
 												},
 												{
 													"Name":"Dead zone",
-													"Description":"Dead zone for axis.",
+													"Description":"Dead zone for axis. The slider shows it as a percentage: 100 is 256.",
 													"Role":"Slider",
 													"Id":"AxisToDPadDeadZoneTrackBar",
 													"Min":0,
@@ -1087,7 +1087,7 @@
 												},
 												{
 													"Name":"Centre offset",
-													"Description":"Axis to D-Pad offset.",
+													"Description":"Axis to D-Pad offset. The slider shows it as a percentage: 100 is 256.",
 													"Role":"Slider",
 													"Id":"AxisToDPadOffsetTrackBar",
 													"Min":0,
@@ -1319,7 +1319,7 @@
 												},
 												{
 													"Name":"Left motor period",
-													"Description":"Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.",
+													"Description":"Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.",
 													"Role":"Slider",
 													"Id":"LeftMotorPeriodTrackBar",
 													"Min":0,
@@ -1375,7 +1375,7 @@
 												},
 												{
 													"Name":"Right motor period",
-													"Description":"Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.",
+													"Description":"Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.",
 													"Role":"Slider",
 													"Id":"RightMotorPeriodTrackBar",
 													"Min":0,
@@ -1505,13 +1505,19 @@
 						},
 						{
 							"Name":"Copy Preset",
-							"Description":"Copies this controller's settings to the clipboard.",
+							"Description":"Copies this controller's settings to the clipboard as YAML, the easiest to read.",
 							"Role":"Button",
 							"Id":"CopyPresetButton"
 						},
 						{
+							"Name":"Copy Preset as",
+							"Description":"Copies this controller's settings in the format you choose: YAML, XML or JSON.",
+							"Role":"Button",
+							"Id":"CopyPresetFormatButton"
+						},
+						{
 							"Name":"Paste Preset",
-							"Description":"Applies settings from the clipboard to this controller.",
+							"Description":"Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.",
 							"Role":"Button",
 							"Id":"PastePresetButton"
 						},
@@ -3262,7 +3268,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-23) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-24) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

@@ -130,11 +130,17 @@ namespace x360ce.App.UiTree
 			d["PadControl.ResetPresetButton"] = new Text("Reset",
 				"Puts every setting on this controller back to its default. Asks first.");
 			d["PadControl.CopyPresetButton"] = new Text("Copy Preset",
-				"Copies this controller's settings to the clipboard.");
+				"Copies this controller's settings to the clipboard as YAML, the easiest to read.");
+			d["PadControl.CopyPresetFormatButton"] = new Text("Copy Preset as",
+				"Copies this controller's settings in the format you choose: YAML, XML or JSON.");
 			d["PadControl.PastePresetButton"] = new Text("Paste Preset",
-				"Applies settings from the clipboard to this controller.");
+				"Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.");
 			d["LoadPresetsForm.OpenFileButton"] = new Text("Open File...",
 				"Loads a preset from a file written by Save Preset.");
+			d["LoadPresetsForm.CopyPresetButton"] = new Text("Copy Preset",
+				"Copies the selected preset to the clipboard as YAML, to read it before loading.");
+			d["LoadPresetsForm.CopyPresetFormatButton"] = new Text("Copy Preset as",
+				"Copies the selected preset in the format you choose: YAML, XML or JSON.");
 		}
 
 		/// <summary>Both motors carry the same settings, so both are described the same way.</summary>

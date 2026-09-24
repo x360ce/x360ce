@@ -801,6 +801,17 @@ namespace x360ce.App
 					//SaveSettings(control);
 				}
 			}
+			ShowComboBoxValue(cbx, text);
+		}
+
+		/// <summary>Shows a mapping in its box and leaves every other box as it is.</summary>
+		/// <remarks>
+		/// Taking a control off the other boxes is for a control chosen by hand. A loaded preset is
+		/// shown as it was saved: it may map one control twice, and clearing a box here emptied a
+		/// mapping the preset holds.
+		/// </remarks>
+		static void ShowComboBoxValue(ComboBox cbx, string text)
+		{
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;
@@ -860,8 +871,8 @@ namespace x360ce.App
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
-					var text = SettingsConverter.FromIniValue(value);
-					SetComboBoxValue(cbx, text);
+					var text = SettingsConverter.FromIniValue(value, map.Code);
+					ShowComboBoxValue(cbx, text);
 				}
 				else
 				{
@@ -960,7 +971,7 @@ namespace x360ce.App
 					// reverts to whatever it was mapped to before.
 					if (MapExpression.IsExpression(control.Text))
 						return control.Text.Trim();
-					v = SettingsConverter.ToIniValue(control.Text);
+					v = SettingsConverter.ToIniValue(control.Text, map.Code);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
 						v = "0";

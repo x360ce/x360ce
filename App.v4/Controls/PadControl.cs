@@ -1028,12 +1028,11 @@ namespace x360ce.App.Controls
 				var map = maps.First(x => x.PropertyName == p.Name);
 				var key = map.IniPath.Split('\\')[1];
 				// Get setting value from the form.
-				var v = SettingsManager.Current.GetSettingValue(map.Control);
+				var v = SettingsManager.Current.GetPresetValue(map);
 				// Set value onto padSetting.
 				p.SetValue(ps, v ?? "", null);
 			}
-			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
+			return SettingsManager.Current.KeepWhatWasNotChanged(MappedTo, ps);
 		}
 
 		object updateFromDirectInputLock = new object();
@@ -1932,9 +1931,12 @@ namespace x360ce.App.Controls
 
 		private void CopyPresetButton_Click(object sender, EventArgs e)
 		{
-			var ps = GetSelectedPadSetting();
-			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
-			ControlsHelper.CopyToClipboardOrWarn(text);
+			SettingsManager.CopyPresetToClipboard(GetSelectedPadSetting());
+		}
+
+		private void CopyPresetFormatButton_Click(object sender, EventArgs e)
+		{
+			SettingsManager.ShowCopyPresetMenu(CopyPresetButton, GetSelectedPadSetting());
 		}
 
 		private void SavePresetButton_Click(object sender, EventArgs e)
@@ -1972,8 +1974,8 @@ namespace x360ce.App.Controls
 		{
 			try
 			{
-				var xml = Clipboard.GetText();
-				var ps = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
+				// XML, JSON or YAML, whichever Copy Preset wrote or a person typed.
+				var ps = SettingsManager.PadSettingFromText(Clipboard.GetText());
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
 			}
 			catch (Exception ex)

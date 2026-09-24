@@ -15,8 +15,35 @@ namespace x360ce.Engine
 		//  D-PAD 1  D-PAD2   D-PAD 3
 		// [1,2,3,4][5,6,7,8][9,10,11,12]...
 		static Regex textValueRegex = new Regex("^(?<type>Axis|IAxis|HAxis|IHAxis|Slider|ISlider|HSlider|IHSlider|Button|IButton|POV|IPOV) (?<num>[1-9][0-9]*)[ ]*(?<ext>Up|Left|Right|Down)?$");
-		// Axis - a, HAxis - x, Slider - s, HSlider - h, Button - none, DPad - p, DPadButton - d;
-		static Regex iniValueRegex = new Regex("^(?<type>[axshpd])?(?<neg>[-]*)?(?<num>[1-9][0-9]*)$");
+		// Axis - a, HAxis - x, Slider - s, HSlider - h, Button - b, DPad - p, DPadButton - d, the field's own kind - none;
+		static Regex iniValueRegex = new Regex("^(?<type>[axshpdb])?(?<neg>[-]*)?(?<num>[1-9][0-9]*)$");
+
+		/// <summary>The kind of control a number without a type letter names in a field.</summary>
+		/// <remarks>
+		/// As the native library reads a mapping: a stick axis takes an axis, the D-Pad takes a D-Pad,
+		/// and every other field a button. Presets written for it store them that way, so reading every
+		/// bare number as a button turned the sticks and the D-Pad of those presets into buttons.
+		/// Outside any field a bare number is a button.
+		/// </remarks>
+		static MapType BareType(MapCode field, bool inverted)
+		{
+			switch (field)
+			{
+				case MapCode.LeftThumbAxisX:
+				case MapCode.LeftThumbAxisY:
+				case MapCode.RightThumbAxisX:
+				case MapCode.RightThumbAxisY:
+					return inverted ? MapType.IAxis : MapType.Axis;
+				case MapCode.DPad:
+					return inverted ? MapType.IPOV : MapType.POV;
+				default:
+					return inverted ? MapType.IButton : MapType.Button;
+			}
+		}
+
+		/// <summary>A button is written bare where a bare number is a button, and marked everywhere else.</summary>
+		static string ButtonPrefix(MapCode field)
+			=> BareType(field, false) == MapType.Button ? SettingName.SType.Button : SettingName.SType.ButtonMark;
 
 		public static bool TryParseTextValue(string value, out MapType type, out int index)
 		{
@@ -57,7 +84,9 @@ namespace x360ce.Engine
 			return m.Success;
 		}
 
-		public static bool TryParseIniValue(string value, out MapType type, out int index)
+		/// <summary>Reads a stored mapping.</summary>
+		/// <param name="field">The field the value is stored in, which says what a number without a type letter names.</param>
+		public static bool TryParseIniValue(string value, out MapType type, out int index, MapCode field = default)
 		{
 			index = 0;
 			type = MapType.None;
@@ -93,8 +122,11 @@ namespace x360ce.Engine
 				case SettingName.SType.POVButton:
 					type = n == "-" ? MapType.IPOVButton : MapType.DPOVButton;
 					break;
-				default:
+				case SettingName.SType.ButtonMark:
 					type = n == "-" ? MapType.IButton : MapType.Button;
+					break;
+				default:
+					type = BareType(field, n == "-");
 					break;
 			}
 			return true;
@@ -103,14 +135,15 @@ namespace x360ce.Engine
 		/// <summary>
 		/// Convert setting to INI value.
 		/// </summary>
-		public static string ToIniValue(MapType type, int index)
+		/// <param name="field">The field the value is written to, which says whether a button needs its letter.</param>
+		public static string ToIniValue(MapType type, int index, MapCode field = default)
 		{
 			switch (type)
 			{
 				case MapType.Button:
-					return string.Format("{0}{1}", SettingName.SType.Button, index);
+					return string.Format("{0}{1}", ButtonPrefix(field), index);
 				case MapType.IButton:
-					return string.Format("{0}{1}", SettingName.SType.Button, -index);
+					return string.Format("{0}{1}", ButtonPrefix(field), -index);
 				case MapType.Axis:
 					return string.Format("{0}{1}", SettingName.SType.Axis, index);
 				case MapType.IAxis:
@@ -141,22 +174,24 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>Convert Text value to INI value.</summary>
-		public static string ToIniValue(string textValue)
+		/// <param name="field">The field the value is written to.</param>
+		public static string ToIniValue(string textValue, MapCode field = default)
 		{
 			var index = 0;
 			var type = MapType.None;
 			return TryParseTextValue(textValue, out type, out index)
-				? ToIniValue(type, index)
+				? ToIniValue(type, index, field)
 				: "";
 		}
 
 
 		/// <summary>Convert INI value to Text value.</summary>
-		public static string FromIniValue(string iniValue)
+		/// <param name="field">The field the value is stored in.</param>
+		public static string FromIniValue(string iniValue, MapCode field = default)
 		{
 			var index = 0;
 			var type = MapType.None;
-			return TryParseIniValue(iniValue, out type, out index)
+			return TryParseIniValue(iniValue, out type, out index, field)
 				? ToTextValue(type, index)
 				: "";
 		}

@@ -208,6 +208,7 @@
             this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.PastePresetButton = new System.Windows.Forms.Button();
             this.CopyPresetButton = new System.Windows.Forms.Button();
+            this.CopyPresetFormatButton = new System.Windows.Forms.Button();
             this.ClearPresetButton = new System.Windows.Forms.Button();
             this.GameControllersButton = new System.Windows.Forms.Button();
             this.AutoPresetButton = new System.Windows.Forms.Button();
@@ -2534,7 +2535,7 @@
             this.PastePresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.PastePresetButton.Name = "PastePresetButton";
             this.PastePresetButton.Size = new System.Drawing.Size(126, 35);
-            this.PastePresetButton.TabIndex = 72;
+            this.PastePresetButton.TabIndex = 73;
             this.PastePresetButton.Text = "Paste Preset";
             this.PastePresetButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.MainToolTip.SetToolTip(this.PastePresetButton, "Paste Preset");
@@ -2547,16 +2548,30 @@
             this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
             this.CopyPresetButton.Location = new System.Drawing.Point(269, 5);
-            this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 0, 5);
             this.CopyPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.CopyPresetButton.Name = "CopyPresetButton";
-            this.CopyPresetButton.Size = new System.Drawing.Size(121, 35);
+            this.CopyPresetButton.Size = new System.Drawing.Size(112, 35);
             this.CopyPresetButton.TabIndex = 71;
             this.CopyPresetButton.Text = "Copy Preset";
             this.CopyPresetButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.MainToolTip.SetToolTip(this.CopyPresetButton, "Copy Preset");
             this.CopyPresetButton.UseVisualStyleBackColor = true;
             this.CopyPresetButton.Click += new System.EventHandler(this.CopyPresetButton_Click);
+            //
+            // CopyPresetFormatButton
+            //
+            this.CopyPresetFormatButton.AutoSize = true;
+            this.CopyPresetFormatButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 5, 4, 5);
+            this.CopyPresetFormatButton.MinimumSize = new System.Drawing.Size(30, 35);
+            this.CopyPresetFormatButton.Name = "CopyPresetFormatButton";
+            this.CopyPresetFormatButton.Size = new System.Drawing.Size(30, 35);
+            this.CopyPresetFormatButton.TabIndex = 72;
+            this.CopyPresetFormatButton.Text = "▾";
+            this.MainToolTip.SetToolTip(this.CopyPresetFormatButton, "Copy Preset as");
+            this.CopyPresetFormatButton.UseVisualStyleBackColor = true;
+            this.CopyPresetFormatButton.Click += new System.EventHandler(this.CopyPresetFormatButton_Click);
             // 
             // ClearPresetButton
             // 
@@ -2657,6 +2672,7 @@
             this.ButtonsRightPanel.Controls.Add(this.LoadPresetButton);
             this.ButtonsRightPanel.Controls.Add(this.SavePresetButton);
             this.ButtonsRightPanel.Controls.Add(this.PastePresetButton);
+            this.ButtonsRightPanel.Controls.Add(this.CopyPresetFormatButton);
             this.ButtonsRightPanel.Controls.Add(this.CopyPresetButton);
             this.ButtonsRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ButtonsRightPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
@@ -3206,6 +3222,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
 		private System.Windows.Forms.Button CopyPresetButton;
+		private System.Windows.Forms.Button CopyPresetFormatButton;
 		private System.Windows.Forms.Button PastePresetButton;
 		private XboxImageUserControl XboxImage;
 		private System.Windows.Forms.Button RemapAllButton;

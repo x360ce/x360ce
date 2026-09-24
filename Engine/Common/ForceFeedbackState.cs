@@ -336,7 +336,7 @@ namespace x360ce.Engine
                 rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
                 // The setting is the period at full drive; a real motor slows as the drive falls, and
                 // so does the period played, along the measured line. Microseconds for the device.
-                rightPeriod = MotorModel.PeriodMs(TryParse(old_RightPeriod), false, Drive(old_RightMotorSpeed)) * 1000;
+                rightPeriod = MotorModel.PeriodMs(ps.GetRightMotorPeriod(), false, Drive(old_RightMotorSpeed)) * 1000;
                 if (actuatorR != null)
                 {
                     // Update force values.
@@ -359,7 +359,7 @@ namespace x360ce.Engine
             {
                 // Convert speed into magnitude/amplitude.
                 leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);
-                leftPeriod = MotorModel.PeriodMs(TryParse(old_LeftPeriod), true, Drive(old_LeftMotorSpeed)) * 1000;
+                leftPeriod = MotorModel.PeriodMs(ps.GetLeftMotorPeriod(), true, Drive(old_LeftMotorSpeed)) * 1000;
                 // If device have only one force feedback actuator (probably wheel).
                 if (combine)
                 {

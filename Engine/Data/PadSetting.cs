@@ -42,20 +42,20 @@ namespace x360ce.Engine.Data
 						var maps = new List<Map>();
 						// Add buttons.
 						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ""));
-						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
-						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
-						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
-						maps.Add(new Map(MapCode.ButtonY, ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
-						maps.Add(new Map(MapCode.ButtonBack, ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
-						maps.Add(new Map(MapCode.ButtonStart, ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
-						maps.Add(new Map(MapCode.DPadUp, DPadUp, GamepadButtonFlags.DPadUp, DPadUpDeadZone));
-						maps.Add(new Map(MapCode.DPadDown, DPadDown, GamepadButtonFlags.DPadDown, DPadDownDeadZone));
-						maps.Add(new Map(MapCode.DPadLeft, DPadLeft, GamepadButtonFlags.DPadLeft, DPadLeftDeadZone));
-						maps.Add(new Map(MapCode.DPadRight, DPadRight, GamepadButtonFlags.DPadRight, DPadRightDeadZone));
-						maps.Add(new Map(MapCode.LeftShoulder, LeftShoulder, GamepadButtonFlags.LeftShoulder, LeftShoulderDeadZone));
-						maps.Add(new Map(MapCode.RightShoulder, RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
-						maps.Add(new Map(MapCode.LeftThumbButton, LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
-						maps.Add(new Map(MapCode.RightThumbButton, RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
+						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, OrDefault(ButtonADeadZone, nameof(ButtonADeadZone))));
+						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, OrDefault(ButtonBDeadZone, nameof(ButtonBDeadZone))));
+						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, OrDefault(ButtonXDeadZone, nameof(ButtonXDeadZone))));
+						maps.Add(new Map(MapCode.ButtonY, ButtonY, GamepadButtonFlags.Y, OrDefault(ButtonYDeadZone, nameof(ButtonYDeadZone))));
+						maps.Add(new Map(MapCode.ButtonBack, ButtonBack, GamepadButtonFlags.Back, OrDefault(ButtonBackDeadZone, nameof(ButtonBackDeadZone))));
+						maps.Add(new Map(MapCode.ButtonStart, ButtonStart, GamepadButtonFlags.Start, OrDefault(ButtonStartDeadZone, nameof(ButtonStartDeadZone))));
+						maps.Add(new Map(MapCode.DPadUp, DPadUp, GamepadButtonFlags.DPadUp, OrDefault(DPadUpDeadZone, nameof(DPadUpDeadZone))));
+						maps.Add(new Map(MapCode.DPadDown, DPadDown, GamepadButtonFlags.DPadDown, OrDefault(DPadDownDeadZone, nameof(DPadDownDeadZone))));
+						maps.Add(new Map(MapCode.DPadLeft, DPadLeft, GamepadButtonFlags.DPadLeft, OrDefault(DPadLeftDeadZone, nameof(DPadLeftDeadZone))));
+						maps.Add(new Map(MapCode.DPadRight, DPadRight, GamepadButtonFlags.DPadRight, OrDefault(DPadRightDeadZone, nameof(DPadRightDeadZone))));
+						maps.Add(new Map(MapCode.LeftShoulder, LeftShoulder, GamepadButtonFlags.LeftShoulder, OrDefault(LeftShoulderDeadZone, nameof(LeftShoulderDeadZone))));
+						maps.Add(new Map(MapCode.RightShoulder, RightShoulder, GamepadButtonFlags.RightShoulder, OrDefault(RightShoulderDeadZone, nameof(RightShoulderDeadZone))));
+						maps.Add(new Map(MapCode.LeftThumbButton, LeftThumbButton, GamepadButtonFlags.LeftThumb, OrDefault(LeftThumbButtonDeadZone, nameof(LeftThumbButtonDeadZone))));
+						maps.Add(new Map(MapCode.RightThumbButton, RightThumbButton, GamepadButtonFlags.RightThumb, OrDefault(RightThumbButtonDeadZone, nameof(RightThumbButtonDeadZone))));
 						// Add triggers.
 						maps.Add(new Map(MapCode.LeftTrigger, LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone, LeftTriggerAntiDeadZone, LeftTriggerLinear));
 						maps.Add(new Map(MapCode.RightTrigger, RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone, RightTriggerAntiDeadZone, RightTriggerLinear));
@@ -176,20 +176,20 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.RightThumbAntiDeadZoneY);
 			AddValue(ref list, x => x.RightThumbLinearY);
 			// Axis to Button dead-zones.
-			AddValue(ref list, x => x.ButtonADeadZone);
-			AddValue(ref list, x => x.ButtonBDeadZone);
-			AddValue(ref list, x => x.ButtonBackDeadZone);
-			AddValue(ref list, x => x.ButtonStartDeadZone);
-			AddValue(ref list, x => x.ButtonXDeadZone);
-			AddValue(ref list, x => x.ButtonYDeadZone);
-			AddValue(ref list, x => x.LeftThumbButtonDeadZone);
-			AddValue(ref list, x => x.RightThumbButtonDeadZone);
-			AddValue(ref list, x => x.LeftShoulderDeadZone);
-			AddValue(ref list, x => x.RightShoulderDeadZone);
-			AddValue(ref list, x => x.DPadDownDeadZone);
-			AddValue(ref list, x => x.DPadLeftDeadZone);
-			AddValue(ref list, x => x.DPadRightDeadZone);
-			AddValue(ref list, x => x.DPadUpDeadZone);
+			AddDeadZone(ref list, x => x.ButtonA, x => x.ButtonADeadZone);
+			AddDeadZone(ref list, x => x.ButtonB, x => x.ButtonBDeadZone);
+			AddDeadZone(ref list, x => x.ButtonBack, x => x.ButtonBackDeadZone);
+			AddDeadZone(ref list, x => x.ButtonStart, x => x.ButtonStartDeadZone);
+			AddDeadZone(ref list, x => x.ButtonX, x => x.ButtonXDeadZone);
+			AddDeadZone(ref list, x => x.ButtonY, x => x.ButtonYDeadZone);
+			AddDeadZone(ref list, x => x.LeftThumbButton, x => x.LeftThumbButtonDeadZone);
+			AddDeadZone(ref list, x => x.RightThumbButton, x => x.RightThumbButtonDeadZone);
+			AddDeadZone(ref list, x => x.LeftShoulder, x => x.LeftShoulderDeadZone);
+			AddDeadZone(ref list, x => x.RightShoulder, x => x.RightShoulderDeadZone);
+			AddDeadZone(ref list, x => x.DPadDown, x => x.DPadDownDeadZone);
+			AddDeadZone(ref list, x => x.DPadLeft, x => x.DPadLeftDeadZone);
+			AddDeadZone(ref list, x => x.DPadRight, x => x.DPadRightDeadZone);
+			AddDeadZone(ref list, x => x.DPadUp, x => x.DPadUpDeadZone);
 			// If all values are empty or default then...
 			if (list.Count == 0)
 				return Guid.Empty;
@@ -204,6 +204,34 @@ namespace x360ce.Engine.Data
 			var bytes = System.Text.Encoding.ASCII.GetBytes(s);
 			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 			return new Guid(md5.ComputeHash(bytes));
+		}
+
+		/// <summary>Adds a button's axis dead zone, which counts only while an axis, a slider or a formula drives the button.</summary>
+		/// <remarks>
+		/// The dead zone is how far an axis must move before it presses the button, so a button driven by
+		/// a button never reads it. A value nothing reads, or the default, is stored as nothing: kept, it
+		/// made presets that differ in nothing look like two. Nought on a button an axis drives is kept;
+		/// it presses the button at the first movement, and people set it.
+		///
+		/// Driven by an axis means the mapping starts with a, x, s or h, or is a formula starting with =.
+		/// The change script that renames stored presets tests the mapping the same way, with
+		/// LIKE '[axsh=]%', which ignores case as the database compares text, so the program and the
+		/// database cannot disagree about which to count.
+		/// </remarks>
+		/// <param name="list">The lines the checksum is made from.</param>
+		/// <param name="button">The button the dead zone belongs to.</param>
+		/// <param name="deadZone">The dead zone.</param>
+		void AddDeadZone(ref List<string> list, Expression<Func<PadSetting, object>> button, Expression<Func<PadSetting, object>> deadZone)
+		{
+			var mapping = (string)((PropertyInfo)((MemberExpression)button.Body).Member).GetValue(this, null) ?? "";
+			if (mapping.Length > 0 && "axshAXSH=".IndexOf(mapping[0]) >= 0)
+			{
+				AddValue(ref list, deadZone, SettingName.DefaultButtonDeadZone);
+				return;
+			}
+			var p = (PropertyInfo)((MemberExpression)deadZone.Body).Member;
+			if ((string)p.GetValue(this, null) != "")
+				p.SetValue(this, "", null);
 		}
 
 		void AddValue(ref List<string> list, Expression<Func<PadSetting, object>> setting, string defaultValue = "0")
@@ -241,6 +269,22 @@ namespace x360ce.Engine.Data
 			return false;
 		}
 
+		/// <summary>A setting's text, or its default when the preset leaves the setting out.</summary>
+		/// <remarks>
+		/// A preset leaves out a setting that is at its default, so whatever reads a preset puts the
+		/// same default back. The defaults are the ones on <see cref="SettingName"/>, which the
+		/// controller page shows; reading a missing number as nought instead ran the engine on other
+		/// settings than the page showed.
+		/// </remarks>
+		/// <param name="value">The setting's text in this preset.</param>
+		/// <param name="settingName">The setting's name, the same here and on <see cref="SettingName"/>.</param>
+		public static string OrDefault(string value, string settingName)
+		{
+			if (!string.IsNullOrEmpty(value))
+				return value;
+			return JocysCom.ClassLibrary.Runtime.Attributes.GetDefaultValue<SettingName, string>(settingName) ?? "";
+		}
+
 		public int GetValue(string s, int defaultValue)
 		{
 			if (string.IsNullOrEmpty(s))
@@ -251,13 +295,17 @@ namespace x360ce.Engine.Data
 		}
 
 		// Get non standard values.
-		public int GetLeftMotorStrength() { return GetValue(LeftMotorStrength, 100); }
-		public int GetRightMotorStrength() { return GetValue(RightMotorStrength, 100); }
-		public int GetForceOverall() { return GetValue(ForceOverall, 100); }
-		/// <summary>Strength of the centering spring, where nought - the default - means no spring.</summary>
-		public int GetForceSpringStrength() { return GetValue(ForceSpringStrength, 0); }
+		public int GetLeftMotorStrength() { return GetValue(OrDefault(LeftMotorStrength, nameof(LeftMotorStrength)), 0); }
+		public int GetRightMotorStrength() { return GetValue(OrDefault(RightMotorStrength, nameof(RightMotorStrength)), 0); }
+		public int GetForceOverall() { return GetValue(OrDefault(ForceOverall, nameof(ForceOverall)), 0); }
+		/// <summary>Strength of the centering spring. It does nothing until the spring is turned on.</summary>
+		public int GetForceSpringStrength() { return GetValue(OrDefault(ForceSpringStrength, nameof(ForceSpringStrength)), 0); }
 		/// <summary>Steering range in degrees sent to a Logitech wheel, where nought - the default - leaves the wheel as it is.</summary>
 		public int GetWheelRange() { return GetValue(WheelRange, 0); }
+		/// <summary>Period of the left, low-frequency motor at full drive, in milliseconds.</summary>
+		public int GetLeftMotorPeriod() { return GetValue(OrDefault(LeftMotorPeriod, nameof(LeftMotorPeriod)), 0); }
+		/// <summary>Period of the right, high-frequency motor at full drive, in milliseconds.</summary>
+		public int GetRightMotorPeriod() { return GetValue(OrDefault(RightMotorPeriod, nameof(RightMotorPeriod)), 0); }
 
 		/// <summary>The force to send a motor, after the strengths this pad is set to.</summary>
 		/// <remarks>
@@ -354,20 +402,20 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeRightMotorStrength() { return !isDefault(RightMotorStrength, "100"); }
 		public bool ShouldSerializeLeftMotorDirection() { return !isDefault(LeftMotorDirection); }
 		public bool ShouldSerializeRightMotorDirection() { return !isDefault(RightMotorDirection); }
-		public bool ShouldSerializeButtonADeadZone() { return !isDefault(ButtonADeadZone); }
-		public bool ShouldSerializeButtonBDeadZone() { return !isDefault(ButtonBDeadZone); }
-		public bool ShouldSerializeButtonBackDeadZone() { return !isDefault(ButtonBackDeadZone); }
-		public bool ShouldSerializeButtonStartDeadZone() { return !isDefault(ButtonStartDeadZone); }
-		public bool ShouldSerializeButtonXDeadZone() { return !isDefault(ButtonXDeadZone); }
-		public bool ShouldSerializeButtonYDeadZone() { return !isDefault(ButtonYDeadZone); }
-		public bool ShouldSerializeLeftThumbButtonDeadZone() { return !isDefault(LeftThumbButtonDeadZone); }
-		public bool ShouldSerializeRightThumbButtonDeadZone() { return !isDefault(RightThumbButtonDeadZone); }
-		public bool ShouldSerializeLeftShoulderDeadZone() { return !isDefault(LeftShoulderDeadZone); }
-		public bool ShouldSerializeRightShoulderDeadZone() { return !isDefault(RightShoulderDeadZone); }
-		public bool ShouldSerializeDPadDownDeadZone() { return !isDefault(DPadDownDeadZone); }
-		public bool ShouldSerializeDPadLeftDeadZone() { return !isDefault(DPadLeftDeadZone); }
-		public bool ShouldSerializeDPadRightDeadZone() { return !isDefault(DPadRightDeadZone); }
-		public bool ShouldSerializeDPadUpDeadZone() { return !isDefault(DPadUpDeadZone); }
+		public bool ShouldSerializeButtonADeadZone() { return !isDefault(ButtonADeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeButtonBDeadZone() { return !isDefault(ButtonBDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeButtonBackDeadZone() { return !isDefault(ButtonBackDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeButtonStartDeadZone() { return !isDefault(ButtonStartDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeButtonXDeadZone() { return !isDefault(ButtonXDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeButtonYDeadZone() { return !isDefault(ButtonYDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeLeftThumbButtonDeadZone() { return !isDefault(LeftThumbButtonDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeRightThumbButtonDeadZone() { return !isDefault(RightThumbButtonDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeLeftShoulderDeadZone() { return !isDefault(LeftShoulderDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeRightShoulderDeadZone() { return !isDefault(RightShoulderDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeDPadDownDeadZone() { return !isDefault(DPadDownDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeDPadLeftDeadZone() { return !isDefault(DPadLeftDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeDPadRightDeadZone() { return !isDefault(DPadRightDeadZone, SettingName.DefaultButtonDeadZone); }
+		public bool ShouldSerializeDPadUpDeadZone() { return !isDefault(DPadUpDeadZone, SettingName.DefaultButtonDeadZone); }
 
 		#endregion
 

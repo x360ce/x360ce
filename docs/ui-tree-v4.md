@@ -33,7 +33,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │       ├── Anti-dead zone                                              # Skips past a dead zone the game applies of its own, so small movements are felt.
 [Value]     │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
 [Slider]    │   │       ├── Anti-dead zone 0..100                                       # Skips past a dead zone the game applies of its own, so small movements are felt.
-[Slider]    │   │       ├── Dead zone 0..100                                            # Add deadzone to the left trigger. Range is 0 to 255. Default is 0.
+[Slider]    │   │       ├── Dead zone 0..100                                            # Add deadzone to the left trigger. Range is 0 to 255. Default is 0. The slider shows it as a percentage: 100 is 256.
 [Number]    │   │       ├── Anti-dead zone                                              # Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.
 [Number]    │   │       ├── Sensitivity -100..100 (hidden)                              # Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.
 [Number]    │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
@@ -180,8 +180,8 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │   │   │       ├── Dead zone                                           # How far the axis must move from the centre before a direction is pressed.
 [Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
-[Slider]    │   │   │   │       ├── Dead zone 0..100                                    # Dead zone for axis.
-[Slider]    │   │   │   │       └── Centre offset 0..100                                # Axis to D-Pad offset.
+[Slider]    │   │   │   │       ├── Dead zone 0..100                                    # Dead zone for axis. The slider shows it as a percentage: 100 is 256.
+[Slider]    │   │   │   │       └── Centre offset 0..100                                # Axis to D-Pad offset. The slider shows it as a percentage: 100 is 256.
 [Tab]       │   │   │   ├── Triggers                                                    # Shapes what the game receives from the two triggers.
 [Group]     │   │   │   │   ├── (LeftTriggerUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (RightTriggerUserControl) -> AxisMapUserControl         # Shapes what the game receives from one control, without changing the device.
@@ -214,7 +214,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │   │   │   │   ├── Test left motor                                     # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Left motor direction                                # Left motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Left motor strength 0..100                          # Left motor strength. Range is 0 to 100. Default is 100.
-[Slider]    │   │   │   │   │   ├── Left motor period 0..100                            # Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.
+[Slider]    │   │   │   │   │   ├── Left motor period 0..100                            # Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test left motor 0..100                              # Runs this motor at the chosen strength, so you can feel it without a game.
 [Section]   │   │   │   │   ├── Right motor                                             # The small, fast motor, which produces the light buzz.
 [Value]     │   │   │   │   │   ├── Right motor strength                                # How hard this motor runs when the game asks for vibration.
@@ -222,7 +222,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Value]     │   │   │   │   │   ├── Test right motor                                    # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Right motor direction                               # Right motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Right motor strength 0..100                         # Right motor strength. Range is 0 to 100. Default is 100.
-[Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.
+[Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
 [Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
@@ -241,8 +241,9 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
 [Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
-[Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard.
-[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller.
+[Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard as YAML, the easiest to read.
+[Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON.
+[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
@@ -505,7 +506,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-23) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-24) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

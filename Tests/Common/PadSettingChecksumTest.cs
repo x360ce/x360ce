@@ -324,17 +324,34 @@ namespace x360ce.Tests
 			// The database renames its rows in SQL, from a list of settings, their defaults and their
 			// order written into the script. A setting added here and not there, or put in another
 			// order, would rename every stored row to a checksum no program asks for.
-			var path = Path.Combine(Ui.RepoRoot.FullName, "Data", "Change Scripts", "2026-09-23_Rename_PadSettings_To_Current_Checksum.sql");
+			// The script is run once on the live database and kept with the plan for it, outside the
+			// repository, so it is checked where it is present.
+			var path = Path.Combine(Ui.RepoRoot.FullName, "docs", "plans", "M-database-update", "6_Rename_PadSettings_To_Current_Checksum.sql");
+			if (!File.Exists(path))
+				Assert.Inconclusive("The rename script is not on this machine: " + path);
+			// A line reads its column, or, for a button's axis dead zone, reads it only while an axis,
+			// a slider or a formula drives that button: IIF(p.[Button] LIKE '[axsh=]%', p.[Column], '').
 			var rows = System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(path),
-				@"\(\s*(\d+), '(\w+)', p\.\[(\w+)\], '(\d+)'\)")
+				@"\(\s*(\d+), '(\w+)', (?:IIF\(p\.\[(\w+)\] LIKE '\[axsh=\]%', )?p\.\[(\w+)\](?:, ''\))?, '(\d+)'\)")
 				.Cast<System.Text.RegularExpressions.Match>()
-				.Select(m => new { Rank = int.Parse(m.Groups[1].Value), Name = m.Groups[2].Value, Column = m.Groups[3].Value, Default = m.Groups[4].Value })
+				.Select(m => new
+				{
+					Rank = int.Parse(m.Groups[1].Value),
+					Name = m.Groups[2].Value,
+					Driver = m.Groups[3].Success ? m.Groups[3].Value : null,
+					Column = m.Groups[4].Value,
+					Default = m.Groups[5].Value,
+				})
 				.ToList();
-			// The names the program measures, found by giving every setting a value no default has.
+			Func<string, bool> drivenByAxis = v => !string.IsNullOrEmpty(v) && "axshAXSH=".IndexOf(v[0]) >= 0;
+			// The names the program measures, found by giving every setting a value no default has, and
+			// every button a dead zone belongs to an axis, so the dead zone is read.
 			var all = new PadSetting();
 			foreach (var p in typeof(PadSetting).GetProperties())
 				if (p.PropertyType == typeof(string) && p.CanWrite)
 					p.SetValue(all, "7", null);
+			foreach (var row in rows.Where(x => x.Driver != null))
+				typeof(PadSetting).GetProperty(row.Driver).SetValue(all, "a7", null);
 			var lines = new List<string>();
 			all.CleanAndGetCheckSum(lines);
 			var names = lines.Select(x => x.Substring(0, x.IndexOf('='))).OrderBy(x => x, StringComparer.Ordinal).ToArray();
@@ -349,19 +366,33 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(Enumerable.Range(1, rows.Count).ToArray(), rows.Select(x => x.Rank).ToArray(),
 				"The ranks are not 1, 2, 3 in the order written.");
 			// The defaults: a setting at its script default must be left out, and any other value kept.
+			// A dead zone is tried on a button an axis drives, and then on one a button drives, where
+			// the script reads nothing and the program must measure nothing either.
+			Func<PadSetting, string, int> measured = (ps, name) =>
+			{
+				var kept = new List<string>();
+				ps.CleanAndGetCheckSum(kept);
+				return kept.Count(x => x.StartsWith(name + "=", StringComparison.Ordinal));
+			};
 			foreach (var row in rows)
 			{
 				var property = typeof(PadSetting).GetProperty(row.Name);
 				var atDefault = new PadSetting();
 				property.SetValue(atDefault, row.Default, null);
-				var kept = new List<string>();
-				atDefault.CleanAndGetCheckSum(kept);
-				Assert.AreEqual(0, kept.Count, row.Name + " at the script's default " + row.Default + " is measured by the program.");
+				if (row.Driver != null)
+					typeof(PadSetting).GetProperty(row.Driver).SetValue(atDefault, "a1", null);
+				Assert.AreEqual(0, measured(atDefault, row.Name), row.Name + " at the script's default " + row.Default + " is measured by the program.");
 				var changed = new PadSetting();
 				property.SetValue(changed, row.Default == "0" ? "1" : "0", null);
-				kept.Clear();
-				changed.CleanAndGetCheckSum(kept);
-				Assert.AreEqual(1, kept.Count, row.Name + " away from the script's default " + row.Default + " is not measured by the program.");
+				if (row.Driver != null)
+					typeof(PadSetting).GetProperty(row.Driver).SetValue(changed, "a1", null);
+				Assert.AreEqual(1, measured(changed, row.Name), row.Name + " away from the script's default " + row.Default + " is not measured by the program.");
+				if (row.Driver == null)
+					continue;
+				var unread = new PadSetting();
+				property.SetValue(unread, "0", null);
+				typeof(PadSetting).GetProperty(row.Driver).SetValue(unread, "1", null);
+				Assert.AreEqual(0, measured(unread, row.Name), row.Name + " is measured while a button drives " + row.Driver + ", which the script does not.");
 			}
 			// And the whole measurement, made the script's way, against every shipped preset.
 			using (var md5 = System.Security.Cryptography.MD5.Create())
@@ -370,7 +401,14 @@ namespace x360ce.Tests
 				{
 					var ps = Copy(preset.Value);
 					var text = string.Join("\r\n", rows.OrderBy(x => x.Rank)
-						.Select(x => new { x.Name, x.Default, Value = (string)typeof(PadSetting).GetProperty(x.Name).GetValue(ps, null) ?? "" })
+						.Select(x => new
+						{
+							x.Name,
+							x.Default,
+							Value = x.Driver != null && !drivenByAxis((string)typeof(PadSetting).GetProperty(x.Driver).GetValue(ps, null))
+								? ""
+								: (string)typeof(PadSetting).GetProperty(x.Name).GetValue(ps, null) ?? "",
+						})
 						.Where(x => x.Value.Length > 0 && x.Value != x.Default)
 						.Select(x => x.Name + "=" + x.Value));
 					var script = text.Length == 0 ? Guid.Empty : new Guid(md5.ComputeHash(System.Text.Encoding.ASCII.GetBytes(text)));
