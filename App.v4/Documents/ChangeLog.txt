@@ -1,4 +1,4 @@
-﻿## [4.23.9.0] - 2026-09-20
+﻿## [4.23.56.0] - 2026-09-25
 
 - Fixed: Online presets lost the wheel and centering spring settings.
 - Fixed: Searching the online database with no devices reported a server error.

@@ -506,7 +506,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.22.21 (Build: 2026-09-24) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.23.56 (Build: 2026-09-25) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.
