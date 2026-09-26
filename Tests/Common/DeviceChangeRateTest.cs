@@ -1,10 +1,10 @@
-﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step1.UpdateDevices.cs, App.v4/MainForm.cs
+﻿// @under-test: Engine/JocysCom/IO/DeviceDetector.cs, App.v4/MainForm.cs, App.v3/MainForm.cs
 // @area: engine   @layer: unit
 using JocysCom.ClassLibrary.Win32;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
-using x360ce.App.DInput;
+using JocysCom.ClassLibrary.IO;
 
 namespace x360ce.Tests
 {
@@ -30,7 +30,7 @@ namespace x360ce.Tests
 		[Description("A device node change does not make the program read every device")]
 		public void A_device_node_change_does_not_make_the_program_read_every_device()
 		{
-			Assert.IsFalse(DInputHelper.IsDeviceListChange(DBT.DBT_DEVNODES_CHANGED),
+			Assert.IsFalse(DeviceDetector.IsDeviceListChange(DBT.DBT_DEVNODES_CHANGED),
 				"Reading every device again in answer to a machine-wide node change costs a second of " +
 				"controller processing, and Windows sends that message constantly.");
 		}
@@ -41,40 +41,44 @@ namespace x360ce.Tests
 		{
 			// The other half of the rule. Ignoring everything would be cheap and would also mean a
 			// controller plugged in never appears until the program is started again.
-			Assert.IsTrue(DInputHelper.IsDeviceListChange(DBT.DBT_DEVICEARRIVAL));
-			Assert.IsTrue(DInputHelper.IsDeviceListChange(DBT.DBT_DEVICEREMOVECOMPLETE));
+			Assert.IsTrue(DeviceDetector.IsDeviceListChange(DBT.DBT_DEVICEARRIVAL));
+			Assert.IsTrue(DeviceDetector.IsDeviceListChange(DBT.DBT_DEVICEREMOVECOMPLETE));
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
-		[Description("Only one place turns a device message into a device read")]
+		[Description("In each program only one place turns a device message into a device read, and it asks the shared rule")]
 		public void Only_one_place_turns_a_device_message_into_a_device_read()
 		{
 			// The rule above was already correct when the rate collapsed. What went wrong was a second
 			// handler, in another file, applying its own looser version of it. One rule is only one rule
-			// while one place applies it.
-			var sources = Directory
-				.GetFiles(Path.Combine(Ui.RepoRoot.FullName, "App.v4"), "*.cs", SearchOption.AllDirectories)
-				.Where(x => !x.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar))
-				.Select(x => new { Path = x, Text = File.ReadAllText(x) })
-				.ToArray();
+			// while one place applies it. Version 3 answered every node change with a read of every
+			// device on its window thread, so a dock whose hub reset every few seconds froze it.
+			foreach (var app in new[] { "App.v3", "App.v4" })
+			{
+				var sources = Directory
+					.GetFiles(Path.Combine(Ui.RepoRoot.FullName, app), "*.cs", SearchOption.AllDirectories)
+					.Where(x => !x.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar))
+					.Select(x => new { Path = x, Text = File.ReadAllText(x) })
+					.ToArray();
 
-			var listeners = sources
-				.Where(x => x.Text.Contains("WM_DEVICECHANGE") || x.Text.Contains("DeviceChanged +="))
-				.Select(x => Path.GetFileName(x.Path))
-				.OrderBy(x => x)
-				.ToArray();
-			Assert.AreEqual(1, listeners.Length,
-				"Device change messages are answered in more than one place: " + string.Join(", ", listeners)
-				+ ". Each one reads every device on the machine, and they cannot be kept in step.");
+				var listeners = sources
+					.Where(x => x.Text.Contains("WM_DEVICECHANGE") || x.Text.Contains("DeviceChanged +="))
+					.ToArray();
+				Assert.AreEqual(1, listeners.Length, app + ": device change messages are answered in "
+					+ listeners.Length + " places: " + string.Join(", ", listeners.Select(x => Path.GetFileName(x.Path)))
+					+ ". Each one reads every device on the machine, and they cannot be kept in step.");
+				Assert.IsTrue(listeners[0].Text.Contains("DeviceDetector.IsDeviceListChange("), app + ": "
+					+ Path.GetFileName(listeners[0].Path) + " answers device change messages without asking the "
+					+ "shared rule, so it reads every device for changes that cannot alter the list.");
 
-			var noisy = sources
-				.Where(x => x.Text.Contains("DBT_DEVNODES_CHANGED"))
-				.Select(x => Path.GetFileName(x.Path))
-				.ToArray();
-			Assert.AreEqual(0, noisy.Length,
-				"The machine-wide node change is named in " + string.Join(", ", noisy)
-				+ ". Windows sends it constantly, so anything that acts on it stops controller "
-				+ "processing for about a second at a time.");
+				var noisy = sources
+					.Where(x => x.Text.Contains("DBT_DEVNODES_CHANGED"))
+					.Select(x => Path.GetFileName(x.Path))
+					.ToArray();
+				Assert.AreEqual(0, noisy.Length, app + ": the machine-wide node change is named in "
+					+ string.Join(", ", noisy) + ". Windows sends it constantly, so anything that acts on it "
+					+ "reads every device on the machine over and over.");
+			}
 		}
 
 	}

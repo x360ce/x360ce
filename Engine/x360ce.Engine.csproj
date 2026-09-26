@@ -158,6 +158,7 @@
     <Compile Include="Common\IChecksum.cs" />
     <Compile Include="Common\IDateTime.cs" />
     <Compile Include="Common\InstanceChannel.cs" />
+    <Compile Include="Common\RateCounter.cs" />
     <Compile Include="Common\IDisplayName.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />

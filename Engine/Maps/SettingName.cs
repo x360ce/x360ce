@@ -37,7 +37,25 @@ namespace x360ce.Engine
 		/// <summary>How far an axis must move to press a button it drives: a quarter of the way.</summary>
 		public const string DefaultButtonDeadZone = "8192";
 
-		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+		public const string DefaultInternetDatabaseUrl = "https://www.x360ce.com/webservices/x360ce.asmx";
+
+		/// <summary>The web service of the Web project, as Visual Studio runs it on this computer.</summary>
+		public const string LocalInternetDatabaseUrl = "https://localhost:44360/webservices/x360ce.asmx";
+
+		/// <summary>The address to use for a saved one: the program's own servers over HTTPS, anything else as it is.</summary>
+		/// <remarks>
+		/// Settings can hold the plain HTTP addresses of the program's own servers. Those are read as the
+		/// HTTPS addresses offered in their place, and an address somebody typed for a server of their own
+		/// is kept as they wrote it.
+		/// </remarks>
+		public static string WithHttps(string url)
+		{
+			if (string.Equals(url, "http://www.x360ce.com/webservices/x360ce.asmx", System.StringComparison.OrdinalIgnoreCase))
+				return DefaultInternetDatabaseUrl;
+			if (string.Equals(url, "http://localhost:20360/webservices/x360ce.asmx", System.StringComparison.OrdinalIgnoreCase))
+				return LocalInternetDatabaseUrl;
+			return url;
+		}
 		static public string DefaultVersion { get { return "2"; } }
 
 		// [Options] section.

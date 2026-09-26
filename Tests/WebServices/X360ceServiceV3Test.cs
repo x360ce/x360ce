@@ -214,5 +214,48 @@ namespace x360ce.Tests
 				}
 			}
 		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v3"), TestCategory("writes")]
+		[Description("Saving again for the same controller replaces its setting with the one just saved")]
+		public void Saving_again_for_the_same_controller_replaces_its_setting()
+		{
+			if (WebServiceTarget.IsLive)
+				Assert.Inconclusive("Writes are not run against the public site.");
+			using (var ws = WebServiceTarget.Client())
+			{
+				// Two fixed mappings, so the server only ever creates these two pad setting rows. The second
+				// adds the right stick axis the first leaves out: a controller saved without it, then saved
+				// again with it, was still loaded without it, because the first save was the one kept.
+				var withoutAxis = new PadSetting { ButtonA = "2", ButtonB = "3", ButtonX = "1", ButtonY = "4", LeftThumbAxisX = "1", DPad = "1" };
+				var withAxis = new PadSetting { ButtonA = "2", ButtonB = "3", ButtonX = "1", ButtonY = "4", LeftThumbAxisX = "1", DPad = "1", RightThumbAxisX = "3" };
+				var expectedChecksum = withAxis.CleanAndGetCheckSum();
+				var setting = new UserSetting
+				{
+					InstanceGuid = Guid.NewGuid(),
+					InstanceName = "x360ce.Tests instance",
+					ProductGuid = WebServiceTarget.LogitechG27ProductGuid,
+					ProductName = "Logitech G27 Racing Wheel USB",
+					FileName = "x360ce.Tests.exe",
+					FileProductName = "x360ce test run",
+					Comment = "Created by X360ceServiceV3Test; safe to delete",
+					IsEnabled = true,
+				};
+				try
+				{
+					Assert.AreEqual("", ws.SaveSetting(setting, withoutAxis), "The first save");
+					Assert.AreEqual("", ws.SaveSetting(setting, withAxis), "The second save");
+					var mine = ws.SearchSettings(new[] { new SearchParameter { InstanceGuid = setting.InstanceGuid } });
+					Assert.AreEqual(1, mine.Settings.Length, "Saving again keeps one setting for the controller");
+					Assert.AreEqual(expectedChecksum, mine.Settings[0].PadSettingChecksum,
+						"The controller's setting still links to the first pad setting saved for it, not the one just saved.");
+					Assert.AreEqual("3", ws.LoadSetting(new[] { expectedChecksum }).PadSettings.Single().RightThumbAxisX,
+						"The right stick axis saved the second time is not what loads.");
+				}
+				finally
+				{
+					ws.DeleteSetting(setting);
+				}
+			}
+		}
 	}
 }

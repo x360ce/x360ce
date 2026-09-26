@@ -55,9 +55,11 @@ namespace x360ce.App.UiTree
 
 			// The line along the bottom.
 			d["MainForm.MainStatusStrip"] = new Text("Status bar",
-				"What the program is doing, and which files it uses.");
+				"What the program is doing, how fast it is doing it, and which files it uses.");
 			d["MainForm.StatusTimerLabel"] = Live("Last action",
-				"The most recent thing the program did, and how many times it has read the controllers.");
+				"The most recent thing the program did.");
+			d["MainForm.InterfaceFrequencyLabel"] = Live("Interface rate",
+				"Times a second the window reads the controllers and redraws them. Games read them on their own, through the emulator library.");
 			d["MainForm.StatusEventsLabel"] = Live("Events",
 				"Whether changes on the pages are being written to x360ce.ini.");
 			d["MainForm.StatusSaveLabel"] = Live("Saves",

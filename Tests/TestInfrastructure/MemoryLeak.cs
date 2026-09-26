@@ -98,13 +98,15 @@ namespace x360ce.Tests
 			public long PrivateBytes;
 			public int GdiHandles;
 			public int UserHandles;
+			/// <summary>Kernel handles: files, events, threads and the devices a read opens.</summary>
+			public int KernelHandles;
 
 			public double PrivateMb { get { return PrivateBytes / 1024d / 1024d; } }
 
 			public override string ToString()
 			{
-				return string.Format("{0,7:N1} MB private, {1,5} GDI, {2,5} USER",
-					PrivateMb, GdiHandles, UserHandles);
+				return string.Format("{0,7:N1} MB private, {1,5} GDI, {2,5} USER, {3,6} kernel",
+					PrivateMb, GdiHandles, UserHandles, KernelHandles);
 			}
 		}
 
@@ -119,6 +121,7 @@ namespace x360ce.Tests
 				PrivateBytes = process.PrivateMemorySize64,
 				GdiHandles = NativeMethods.GetGuiResources(process.Handle, NativeMethods.GR_GDIOBJECTS),
 				UserHandles = NativeMethods.GetGuiResources(process.Handle, NativeMethods.GR_USEROBJECTS),
+				KernelHandles = process.HandleCount,
 			};
 		}
 

@@ -484,6 +484,21 @@ namespace x360ce.Engine
 			null, grid, new object[] { true });
 		}
 
+		/// <summary>Holds a status item at the width of its longest reading.</summary>
+		/// <remarks>
+		/// A rate climbing from one digit to four widens its label, and every item after it slides
+		/// along; the eye follows the movement instead of the number. Padding the text does not fix
+		/// it, because a space is narrower than a digit in this font. Measuring the longest reading
+		/// once and holding that width does, and it holds at any font size the machine is set to.
+		/// </remarks>
+		public static void ReserveWidth(ToolStripItem item, string longest)
+		{
+			var width = TextRenderer.MeasureText(longest, item.Font).Width;
+			item.AutoSize = false;
+			item.Width = width + item.Padding.Horizontal + (item.Image == null ? 8 : item.Image.Width + 12);
+			item.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+		}
+
 
 		#region Comparisons
 

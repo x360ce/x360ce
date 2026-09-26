@@ -23,6 +23,32 @@ namespace x360ce.Tests
 	{
 		const string OwnServer = "http://localhost:8081/webservices/x360ce.asmx";
 
+		[TestMethod, TestCategory("critical")]
+		[Description("Saved plain HTTP addresses of the program's own servers are read as HTTPS; any other address is kept")]
+		public void Saved_plain_http_addresses_of_our_servers_become_https()
+		{
+			var options = new Options
+			{
+				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx",
+				InternetDatabaseUrls = new System.ComponentModel.BindingList<string>
+				{
+					"http://www.x360ce.com/webservices/x360ce.asmx",
+					"https://www.x360ce.com/webservices/x360ce.asmx",
+					"http://localhost:20360/webservices/x360ce.asmx",
+					OwnServer,
+				},
+			};
+			options.InitDefaults();
+			Assert.AreEqual(Engine.SettingName.DefaultInternetDatabaseUrl, options.InternetDatabaseUrl, "The saved address stayed on plain HTTP.");
+			CollectionAssert.AreEqual(new[]
+			{
+				Engine.SettingName.DefaultInternetDatabaseUrl,
+				Engine.SettingName.LocalInternetDatabaseUrl,
+				OwnServer,
+			}, options.InternetDatabaseUrls, "The list still offers plain HTTP, lists an address twice, or lost the person's own server.");
+			StringAssert.StartsWith(Engine.SettingName.DefaultInternetDatabaseUrl, "https://www.x360ce.com/");
+		}
+
 		[TestMethod]
 		public void A_saved_address_missing_from_the_list_is_added_to_it()
 		{

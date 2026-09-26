@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -26,14 +27,22 @@ namespace x360ce.App
 		/// </summary>
 		public void InitDefaults()
 		{
-			if (string.IsNullOrEmpty(InternetDatabaseUrl))
-				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+			InternetDatabaseUrl = string.IsNullOrEmpty(InternetDatabaseUrl)
+				? DefaultInternetDatabaseUrl
+				: SettingName.WithHttps(InternetDatabaseUrl);
 			if (InternetDatabaseUrls == null)
 				InternetDatabaseUrls = new BindingList<string>();
 			if (InternetDatabaseUrls.Count == 0)
 			{
-				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
-				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
+				InternetDatabaseUrls.Add(DefaultInternetDatabaseUrl);
+				InternetDatabaseUrls.Add(SettingName.LocalInternetDatabaseUrl);
+			}
+			var withHttps = InternetDatabaseUrls.Select(SettingName.WithHttps).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (!withHttps.SequenceEqual(InternetDatabaseUrls))
+			{
+				InternetDatabaseUrls.Clear();
+				foreach (var url in withHttps)
+					InternetDatabaseUrls.Add(url);
 			}
 			// The address box shows only what is in its list. A saved address missing from the list
 			// left the box showing the first entry, and the box's first change wrote that entry back
@@ -101,7 +110,7 @@ namespace x360ce.App
 		public bool InternetAutoSave { get { return _InternetAutoSave; } set { _InternetAutoSave = value; OnPropertyChanged(); } }
 		bool _InternetAutoSave;
 
-		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+		public const string DefaultInternetDatabaseUrl = SettingName.DefaultInternetDatabaseUrl;
 
 		[DefaultValue(DefaultInternetDatabaseUrl), Description("Internet settings database URL.")]
 		public string InternetDatabaseUrl

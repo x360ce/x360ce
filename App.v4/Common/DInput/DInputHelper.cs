@@ -149,10 +149,9 @@ namespace x360ce.App.DInput
 				if (_AllowThreadToRun)
 					return;
 				watch.Restart();
-				// The clock starts again, so the count and the time of the last sample start again with it;
-				// left over from the previous run, they silenced the rate for as long as that run had lasted.
-				lastTime = 0;
-				currentTick = 0;
+				// The count starts again with the clock; left over from the previous run, it
+				// silenced the rate for as long as that run had lasted.
+				passRate.Reset();
 				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
@@ -366,12 +365,15 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
-		/// Watch to monitor update frequency.
+		/// Time since the update thread started, for pacing and timing the work within it.
 		/// </summary>
 		System.Diagnostics.Stopwatch watch;
-		long lastTime;
-		long currentTick;
-		public long CurrentUpdateFrequency;
+
+		/// <summary>Counts passes, for the rate the status bar shows.</summary>
+		readonly Engine.RateCounter passRate = new Engine.RateCounter();
+
+		/// <summary>Passes a second, measured over the last second.</summary>
+		public int CurrentUpdateFrequency { get { return passRate.Rate; } }
 
 		/// <summary>How often a pass runs. The update thread reads it before every wait, so a change applies at once.</summary>
 		public UpdateFrequency Frequency
@@ -525,16 +527,10 @@ namespace x360ce.App.DInput
 
 		void UpdateDelayFrequency()
 		{
-			// Calculate update frequency.
-			currentTick++;
-			var currentTime = watch.ElapsedMilliseconds;
 			// If one second elapsed then...
-			if ((currentTime - lastTime) > 1000)
+			if (passRate.Tick())
 			{
-				CurrentUpdateFrequency = currentTick;
-				currentTick = 0;
-				lastTime = currentTime;
-				LogFrequency(currentTime, CurrentUpdateFrequency);
+				LogFrequency(watch.ElapsedMilliseconds, CurrentUpdateFrequency);
 				var ev = FrequencyUpdated;
 				if (ev != null)
 					ev(this, new DInputEventArgs());

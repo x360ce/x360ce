@@ -265,8 +265,8 @@ namespace x360ce.App
 		/// </summary>
 		public void ReadSettingTo(Control control, string key, string value)
 		{
-			if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value))
-				value = SettingName.DefaultInternetDatabaseUrl;
+			if (key == SettingName.InternetDatabaseUrl)
+				value = string.IsNullOrEmpty(value) ? SettingName.DefaultInternetDatabaseUrl : SettingName.WithHttps(value);
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
@@ -308,8 +308,8 @@ namespace x360ce.App
 				}
 				else
 				{
-					var text = SettingsConverter.FromIniValue(value);
-					SetComboBoxValue(cbx, text);
+					var text = SettingsConverter.FromIniValue(value, MapField(key));
+					ShowComboBoxValue(cbx, text);
 				}
 			}
 			else if (control is TextBox)
@@ -508,6 +508,18 @@ namespace x360ce.App
 			return ps;
 		}
 
+		/// <summary>Stores a preset for a device in x360ce.ini and shows it on that controller's pages.</summary>
+		/// <remarks>The one way a preset from the online database is applied, from the new device question and from the Controller Settings page alike.</remarks>
+		public void LoadPadSetting(PadSetting ps, DeviceInstance di, int padIndex)
+		{
+			var padSectionName = GetInstanceSection(di.InstanceGuid);
+			SetPadSetting(padSectionName, di);
+			SetPadSetting(padSectionName, ps);
+			MainForm.Current.SuspendEvents();
+			ReadPadSettings(IniFileName, padSectionName, padIndex);
+			MainForm.Current.ResumeEvents();
+		}
+
 		public void SetPadSetting(string padSectionName, DeviceInstance di)
 		{
 			var ini2 = new Ini(IniFileName);
@@ -672,9 +684,36 @@ namespace x360ce.App
 					//SaveSettings(control);
 				}
 			}
+			ShowComboBoxValue(cbx, text);
+		}
+
+		/// <summary>Shows a mapping in its box and leaves every other box as it is.</summary>
+		/// <remarks>
+		/// Taking a control off the other boxes is for a control chosen by hand. A loaded preset is
+		/// shown as it was saved: it may map one control twice, and clearing a box here emptied a
+		/// mapping the preset holds.
+		/// </remarks>
+		static void ShowComboBoxValue(ComboBox cbx, string text)
+		{
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;
+		}
+
+		/// <summary>The field a setting keeps a mapping in, which decides what a bare number there means.</summary>
+		/// <remarks>
+		/// The emulator library reads a bare number as a control of the field's own kind: an axis on a
+		/// stick axis, a POV on the D-Pad, a button everywhere else. Read as a button in every field, a
+		/// preset's stick axis 3 would show as button 3, the same as its button 3.
+		/// </remarks>
+		static MapCode MapField(string key)
+		{
+			if (key == SettingName.LeftThumbAxisX) return MapCode.LeftThumbAxisX;
+			if (key == SettingName.LeftThumbAxisY) return MapCode.LeftThumbAxisY;
+			if (key == SettingName.RightThumbAxisX) return MapCode.RightThumbAxisX;
+			if (key == SettingName.RightThumbAxisY) return MapCode.RightThumbAxisY;
+			if (key == SettingName.DPad) return MapCode.DPad;
+			return default;
 		}
 
 		/// <summary>
@@ -981,7 +1020,17 @@ namespace x360ce.App
 						f.StartPosition = FormStartPosition.CenterParent;
 						var result = f.ShowDialog(MainForm.Current);
 						f.Dispose();
-						updated = (result == DialogResult.OK);
+						if (result == DialogResult.OK)
+						{
+							updated = true;
+						}
+						else
+						{
+							// Answered No, so no settings were saved for the device. Mapped to them anyway,
+							// the library finds a device with no identity: it shows a message box and tries
+							// to open it on every read. Left unmapped, it is skipped like an empty place.
+							section = "";
+						}
 					}
 				}
 				else

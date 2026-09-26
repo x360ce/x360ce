@@ -151,12 +151,7 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				var padSectionName = SettingManager.Current.GetInstanceSection(_di.InstanceGuid);
-				SettingManager.Current.SetPadSetting(padSectionName, _di);
-				SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
-				MainForm.Current.SuspendEvents();
-				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
-				MainForm.Current.ResumeEvents();
+				SettingManager.Current.LoadPadSetting(result.PadSettings[0], _di, _padIndex);
 				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, (_padIndex + 1) + "." + _di.ProductName), MessageBoxIcon.Information);
 			}
 			this.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -236,28 +231,43 @@ namespace x360ce.App.Controls
 			_sp = new List<SearchParameter>();
 			_sp.Add(new SearchParameter() { InstanceGuid = _di.InstanceGuid, ProductGuid = _di.ProductGuid });
 			MainForm.Current.SettingsDatabasePanel.FillSearchParameterWithFiles(_sp);
-			ws.SearchSettingsAsync(_sp.ToArray(), false);
+			MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Searching online for settings for '{1}'...", DateTime.Now, _di.ProductName), MessageBoxIcon.Information);
+			// Started from a worker, as the other searches are. Before a request goes on its own it looks up
+			// the server's address and proxy on the thread that makes it, and a slow network held the window.
+			var args = _sp.ToArray();
+			System.Threading.ThreadPool.QueueUserWorkItem(state => ws.SearchSettingsAsync(args, false));
 		}
 
 		SearchResult sr;
 
 		void ws_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
-			sr = null;
-			if (e.Error != null)
+			((WebServiceClient)sender).SearchSettingsCompleted -= ws_SearchSettingsCompleted;
+			// Back on the window's thread, which the request was not started from.
+			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
 			{
-				InternetPictureBox.Image = Properties.Resources.delete_16x16;
-				return;
-			}
-			InternetPictureBox.Image = Properties.Resources.check_16x16;
-			InternetLabel.Text += " Done";
-			var result = (SearchResult)e.Result;
-			sr = result;
-			// Reorder summaries
-			sr.Summaries = sr.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-			var s = GetBestSetting(result);
-			if (s != null) configs.Add(s);
-			Complete();
+				if (IsDisposed)
+					return;
+				sr = null;
+				if (e.Error != null)
+				{
+					// Said and finished, rather than left turning with nothing to say it has stopped.
+					InternetPictureBox.Image = Properties.Resources.delete_16x16;
+					MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Online settings could not be reached: {1}", DateTime.Now, e.Error.Message), MessageBoxIcon.Error);
+					Complete();
+					return;
+				}
+				InternetPictureBox.Image = Properties.Resources.check_16x16;
+				InternetLabel.Text += " Done";
+				var result = (SearchResult)e.Result;
+				sr = result;
+				// Reorder summaries
+				sr.Summaries = sr.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
+				var s = GetBestSetting(result);
+				if (s != null) configs.Add(s);
+				MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Online settings for '{1}' received.", DateTime.Now, _di.ProductName), MessageBoxIcon.Information);
+				Complete();
+			});
 		}
 
 

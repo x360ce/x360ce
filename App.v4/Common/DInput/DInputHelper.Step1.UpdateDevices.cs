@@ -15,23 +15,6 @@ namespace x360ce.App.DInput
 		// True, update device list as soon as possible.
 		public bool UpdateDevicesEnabled = true;
 
-		/// <summary>Whether a device change message means the device list has to be read again.</summary>
-		/// <remarks>
-		/// Windows broadcasts a device change for any device node change on the machine, repeatedly and
-		/// for devices which have nothing to do with controllers. Reading every device again costs about
-		/// a second on this thread, and controller processing stops for that long, so the rate falls from
-		/// a thousand a second to one or two. Only a device arriving or leaving can change the list.
-		///
-		/// The rule is kept here, next to the work it decides to pay for, because a second copy of it
-		/// elsewhere has already let the noisy case back in and taken the rate down with it.
-		/// </remarks>
-		/// <param name="change">What Windows says happened.</param>
-		public static bool IsDeviceListChange(JocysCom.ClassLibrary.Win32.DBT change)
-		{
-			return change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEARRIVAL
-				|| change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEREMOVECOMPLETE;
-		}
-
 		#endregion
 
 		object UpdateDevicesLock = new object();

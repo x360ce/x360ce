@@ -92,16 +92,26 @@ namespace x360ce.Engine.Mcp
 			}).ToArray();
 		}
 
-		[McpTool(AiAccess.Read, "What the person is looking at now, as JSON: Window (the path of the window in front, empty for the main one), Tabs (the pages shown, from the top down), Focus (the element with keyboard focus: Path, Role, Name, Value) and Row (the current row, when Focus is a grid). The paths work with the other tools.")]
+		[McpTool(AiAccess.Read, "What the person is looking at now, as JSON: Windows (every open window of the program: Path, Name, Modal, Active), Window (the path of the window in front, empty for the main one), Tabs (the pages shown in it, from the top down), Focus (the element with keyboard focus: Path, Role, Name, Value) and Row (the current row, when Focus is a grid). The paths work with the other tools.")]
 		public static object UiCurrent()
 		{
 			var main = RootWindow;
 			var active = Form.ActiveForm;
-			var window = active != null && OtherWindows().Contains(active) ? active : main;
+			var others = OtherWindows();
+			var window = active != null && others.Contains(active) ? active : main;
 			if (window == null)
 				throw new InvalidOperationException("No window is open.");
 			var prefix = window == main ? "" : window.Name;
-			var answer = new Dictionary<string, object> { { "Window", prefix } };
+			// Every window, because a dialog waiting behind another one is still what the program is waiting on.
+			var windows = new List<object>
+			{
+				new Dictionary<string, object> { { "Path", "" }, { "Name", main == null ? null : main.Text }, { "Modal", false }, { "Active", window == main } },
+			};
+			windows.AddRange(others.Select(x => (object)new Dictionary<string, object>
+			{
+				{ "Path", x.Name }, { "Name", x.Text }, { "Modal", x.Modal }, { "Active", x == window },
+			}));
+			var answer = new Dictionary<string, object> { { "Windows", windows.ToArray() }, { "Window", prefix } };
 			var pages = new List<string>();
 			for (var tabs = FirstTabs(window); tabs != null && tabs.SelectedTab != null; tabs = FirstTabs(tabs.SelectedTab))
 				pages.Add(PathOf(tabs.SelectedTab, window, prefix));

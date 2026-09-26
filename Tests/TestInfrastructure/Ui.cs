@@ -199,6 +199,81 @@ namespace x360ce.Tests
 			}, timeout, "the main window");
 		}
 
+		/// <summary>
+		/// The first element in the window whose name matches, found once. Walking the whole window
+		/// on every reading is itself an expensive call into the interface thread, which lowers the
+		/// very rate being read.
+		/// </summary>
+		public static AutomationElement FindByName(AutomationElement window, System.Text.RegularExpressions.Regex says)
+		{
+			var all = window.FindAll(TreeScope.Descendants, Condition.TrueCondition);
+			foreach (AutomationElement element in all)
+			{
+				if (says.IsMatch(element.Current.Name ?? ""))
+					return element;
+			}
+			return null;
+		}
+
+		/// <summary>The number the element's name shows in the pattern's first group, or -1 when it cannot be read just now.</summary>
+		public static int ReadNumber(AutomationElement element, System.Text.RegularExpressions.Regex says)
+		{
+			try
+			{
+				var match = says.Match(element.Current.Name ?? "");
+				return match.Success ? int.Parse(match.Groups[1].Value) : -1;
+			}
+			catch (ElementNotAvailableException)
+			{
+				return -1;
+			}
+		}
+
+		/// <summary>Presses the control of that name inside the window, the way a click does.</summary>
+		/// <returns>False when no control of that name is there to press.</returns>
+		public static bool Press(AutomationElement window, string name)
+		{
+			var control = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, name));
+			if (control == null || !control.TryGetCurrentPattern(InvokePattern.Pattern, out var pattern))
+				return false;
+			((InvokePattern)pattern).Invoke();
+			return true;
+		}
+
+		/// <summary>Closes every window of the program other than its main one, the way a person answers No.</summary>
+		/// <remarks>
+		/// A dialog the program opens with itself as owner sits under its main window, and one opened
+		/// with no owner, like a message box from a native library, sits beside it, so both are looked for.
+		/// </remarks>
+		/// <returns>The names of the windows closed.</returns>
+		public static string[] CloseDialogs(Process p, AutomationElement mainWindow)
+		{
+			var isWindow = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window);
+			var dialogs = mainWindow.FindAll(TreeScope.Children, isWindow).Cast<AutomationElement>()
+				.Concat(AutomationElement.RootElement.FindAll(TreeScope.Children, new AndCondition(isWindow,
+					new PropertyCondition(AutomationElement.ProcessIdProperty, p.Id))).Cast<AutomationElement>())
+				.Where(x => x.Current.NativeWindowHandle != mainWindow.Current.NativeWindowHandle)
+				.ToArray();
+			var closed = new List<string>();
+			foreach (var dialog in dialogs)
+			{
+				try
+				{
+					if (dialog.TryGetCurrentPattern(WindowPattern.Pattern, out var pattern))
+					{
+						var name = dialog.Current.Name;
+						((WindowPattern)pattern).Close();
+						closed.Add(name);
+					}
+				}
+				catch (ElementNotAvailableException)
+				{
+					// Already gone.
+				}
+			}
+			return closed.ToArray();
+		}
+
 		/// <summary>How long the application is given to shut itself down.</summary>
 		/// <remarks>
 		/// Closing is not instant: the program unplugs the controllers it created before it goes.

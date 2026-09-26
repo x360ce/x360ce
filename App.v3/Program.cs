@@ -214,8 +214,6 @@ namespace x360ce.App
 
 		public static object DeviceLock = new object();
 
-		public static int TimerCount = 0;
-		public static int ReloadCount = 0;
 		public static int ErrorCount = 0;
 
 		public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -224,7 +222,7 @@ namespace x360ce.App
 				return;
 			ErrorCount++;
 			MainForm.Current.UpdateTimer.Stop();
-			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
+			MainForm.Current.StatusTimerLabel.Text = string.Format("Errors: {0} - {1}", ErrorCount, e.Exception.Message);
 			MainForm.Current.UpdateTimer.Start();
 		}
 

@@ -86,6 +86,10 @@ namespace x360ce.Tests
 				grid.CurrentCell = grid.Rows[1].Cells[0];
 				var current = (System.Collections.Generic.Dictionary<string, object>)McpUiTools.UiCurrent();
 				Assert.AreEqual("", current["Window"], "The main window is named, though no path starts with it.");
+				var windows = (object[])current["Windows"];
+				var mainWindow = (System.Collections.Generic.Dictionary<string, object>)windows[0];
+				Assert.AreEqual("", mainWindow["Path"], "The open windows do not start with the main one.");
+				Assert.AreEqual(true, mainWindow["Active"], "The window in front is not said to be.");
 				CollectionAssert.AreEqual(new[] { "Tabs/Second" }, (string[])current["Tabs"], "The page shown is not reported.");
 				var focus = (System.Collections.Generic.Dictionary<string, object>)current["Focus"];
 				Assert.AreEqual("Tabs/Second/Grid", focus["Path"], "The element with focus is not reported by its path.");

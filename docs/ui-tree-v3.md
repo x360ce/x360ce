@@ -181,8 +181,9 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Button]    │                   ├── 40% Controller Anti-DeadZone
 [Button]    │                   └── 20% Controller Anti-DeadZone
 [Section]   ├── App                                                                     # The main window.
-[Toolbar]   │   ├── Status bar                                                          # What the program is doing, and which files it uses.
-[Status]    │   │   ├── Last action                                                     # The most recent thing the program did, and how many times it has read the controllers.
+[Toolbar]   │   ├── Status bar                                                          # What the program is doing, how fast it is doing it, and which files it uses.
+[Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
+[Status]    │   │   ├── Interface rate                                                  # Times a second the window reads the controllers and redraws them. Games read them on their own, through the emulator library.
 [Status]    │   │   ├── Events (hidden)                                                 # Whether changes on the pages are being written to x360ce.ini.
 [Status]    │   │   ├── Saves (hidden)                                                  # How many times the settings were written since the program started.
 [Status]    │   │   ├── Elevated                                                        # Whether the program runs as Administrator.

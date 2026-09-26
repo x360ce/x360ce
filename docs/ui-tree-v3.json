@@ -1026,15 +1026,21 @@
 			"Items":[
 				{
 					"Name":"Status bar",
-					"Description":"What the program is doing, and which files it uses.",
+					"Description":"What the program is doing, how fast it is doing it, and which files it uses.",
 					"Role":"Toolbar",
 					"Id":"MainStatusStrip",
 					"Items":[
 						{
 							"Name":"Last action",
-							"Description":"The most recent thing the program did, and how many times it has read the controllers.",
+							"Description":"The most recent thing the program did.",
 							"Role":"Status",
 							"Id":"StatusTimerLabel"
+						},
+						{
+							"Name":"Interface rate",
+							"Description":"Times a second the window reads the controllers and redraws them. Games read them on their own, through the emulator library.",
+							"Role":"Status",
+							"Id":"InterfaceFrequencyLabel"
 						},
 						{
 							"Name":"Events",

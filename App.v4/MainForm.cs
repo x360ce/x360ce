@@ -1267,7 +1267,7 @@ namespace x360ce.App
 				// not, so the rule is asked for rather than restated here. All this does is raise a flag
 				// which the device thread reads once per pass.
 				var change = (JocysCom.ClassLibrary.Win32.DBT)m.WParam.ToInt32();
-				if (DInput.DInputHelper.IsDeviceListChange(change))
+				if (DeviceDetector.IsDeviceListChange(change))
 					Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
@@ -1750,8 +1750,8 @@ namespace x360ce.App
 
 		private void InitiInterfaceUpdate()
 		{
-			ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
-			ReserveWidth(InterfaceUpdatesButton, "UI Hz: OFF");
+			EngineHelper.ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
+			EngineHelper.ReserveWidth(InterfaceUpdatesButton, "UI Hz: OFF");
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
 			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
@@ -1760,20 +1760,6 @@ namespace x360ce.App
 		}
 
 
-		/// <summary>Holds a status item at the width of its longest reading.</summary>
-		/// <remarks>
-		/// A rate climbing from one digit to four widens its label, and every item after it slides
-		/// along; the eye follows the movement instead of the number. Padding the text does not fix
-		/// it, because a space is narrower than a digit in this font. Measuring the longest reading
-		/// once and holding that width does, and it holds at any font size the machine is set to.
-		/// </remarks>
-		private static void ReserveWidth(ToolStripItem item, string longest)
-		{
-			var width = TextRenderer.MeasureText(longest, item.Font).Width;
-			item.AutoSize = false;
-			item.Width = width + item.Padding.Horizontal + (item.Image == null ? 8 : item.Image.Width + 12);
-			item.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-		}
 		private void DisposeInterfaceUpdate()
 		{
 			Activated -= MainForm_Activated;

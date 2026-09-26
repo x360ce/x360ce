@@ -27,6 +27,9 @@ namespace x360ce.App
 
 		DeviceDetector detector;
 
+		/// <summary>The registration that tells <see cref="detector"/> of HID devices arriving and leaving.</summary>
+		IntPtr deviceNotification;
+
 		public static MainForm Current { get; set; }
 
 		public int oldIndex;
@@ -158,7 +161,8 @@ namespace x360ce.App
 
 		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
-			forceRecountDevices = true;
+			if (DeviceDetector.IsDeviceListChange(e.ChangeType))
+				forceRecountDevices = true;
 		}
 
 		/// <summary>
@@ -540,25 +544,28 @@ namespace x360ce.App
 
 		public DirectInput Manager = new DirectInput();
 
+		/// <summary>The device list being read on another thread, or null while none is.</summary>
+		System.Threading.Tasks.Task<DeviceInstance[]> devicesRead;
+
 		/// <summary>
 		/// Vendor and product identifier of every XInput device attached to the machine.
 		/// </summary>
 		/// <remarks>
-		/// A device is an XInput device when its hardware identifier carries the IG_ marker,
-		/// which is how Microsoft documents telling XInput devices apart during DirectInput
-		/// enumeration. Both real controllers and the virtual pads a driver creates carry it.
+		/// A device is an XInput device when its identifier carries the IG_ marker, which is how
+		/// Microsoft documents telling XInput devices apart during DirectInput enumeration. Both
+		/// real controllers and the virtual pads a driver creates carry it.
+		///
+		/// DirectInput sees game controllers through their HID interfaces, so those are the only
+		/// devices asked, and only the ones carrying the marker are opened and described. Reading
+		/// every device of every class takes about three seconds on a machine with three hundred.
 		/// </remarks>
 		static HashSet<uint> GetXInputIds()
 		{
 			var ids = new HashSet<uint>();
-			foreach (var info in DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT))
-			{
-				if (string.IsNullOrEmpty(info.HardwareIds))
-					continue;
-				if (info.HardwareIds.IndexOf("IG_", StringComparison.OrdinalIgnoreCase) == -1)
-					continue;
+			var infos = DeviceDetector.GetInterfaces((deviceId, devicePath) =>
+				deviceId.IndexOf("IG_", StringComparison.OrdinalIgnoreCase) >= 0);
+			foreach (var info in infos)
 				ids.Add((info.ProductId << 16) | info.VendorId);
-			}
 			return ids;
 		}
 
@@ -574,10 +581,16 @@ namespace x360ce.App
 		/// <summary>
 		/// Get array[4] of direct input devices.
 		/// </summary>
-		DeviceInstance[] GetDevices()
+		/// <remarks>
+		/// Runs off the window's thread, so it has its own DirectInput and is handed the options it
+		/// needs rather than reading them from the pages.
+		/// </remarks>
+		static DeviceInstance[] GetDevices(bool excludeSupplemental, bool excludeVirtual)
 		{
-			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly).ToList();
-			if (SettingManager.Current.ExcludeSuplementalDevices)
+			List<DeviceInstance> devices;
+			using (var manager = new DirectInput())
+				devices = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly).ToList();
+			if (excludeSupplemental)
 			{
 				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
 				// such as pedals used with a wheel.The following subtypes are defined.
@@ -587,7 +600,7 @@ namespace x360ce.App
 					devices.Remove(supplemental);
 				}
 			}
-			if (SettingManager.Current.ExcludeVirtualDevices)
+			if (excludeVirtual)
 			{
 				// Exclude virtual devices so application could feed them.
 				var virtualDevices = devices.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
@@ -660,18 +673,31 @@ namespace x360ce.App
 			bool instancesChanged = false;
 			DeviceInstance[] devices = null;
 			//var types = DeviceType.Driving | DeviceType.Flight | DeviceType.Gamepad | DeviceType.Joystick | DeviceType.FirstPerson;
-			if (forceRecountDevices || forceReload)
+			// Reading the devices can take long enough to freeze the window, so it runs on another
+			// thread and the passes carry on with the devices they have until it is done.
+			if ((forceRecountDevices || forceReload) && devicesRead == null)
 			{
-				devices = GetDevices();
+				forceRecountDevices = false;
+				var excludeSupplemental = SettingManager.Current.ExcludeSuplementalDevices;
+				var excludeVirtual = SettingManager.Current.ExcludeVirtualDevices;
+				devicesRead = System.Threading.Tasks.Task.Run(() => GetDevices(excludeSupplemental, excludeVirtual));
+			}
+			if (devicesRead != null && devicesRead.IsCompleted)
+			{
+				var read = devicesRead;
+				devicesRead = null;
+				// A read that failed is asked for again on the next pass.
+				if (read.IsFaulted)
+					forceRecountDevices = true;
+				// Thrown here as it was thrown there, and reported like any other failure of a pass.
+				devices = read.GetAwaiter().GetResult();
 				// Sore device instances and their order here.
 				deviceInstancesNew = string.Join(",", devices.Select(x => x == null ? "" : x.InstanceGuid.ToString()));
-				forceRecountDevices = false;
 			}
 			//Populate All devices
 			if (deviceInstancesNew != deviceInstancesOld)
 			{
 				deviceInstancesOld = deviceInstancesNew;
-				if (devices == null) devices = GetDevices();
 				var instances = devices;
 				// Dispose from previous list of devices.
 				for (int i = 0; i < 4; i++)
@@ -697,11 +723,12 @@ namespace x360ce.App
 
 						var j = new Joystick(Manager, inst.InstanceGuid);
 						diDevices[i] = j;
-						var classGuid = j.Properties.ClassGuid;
+						// Found by the interface DirectInput opened, among present devices only: the one plugged
+						// in, not an old record of the same model, and no other device's properties are read on
+						// this thread, which is the one that answers the window.
 						var interfacePath = j.Properties.InterfacePath;
-						// Must find better way to find Device than by Vendor ID and Product ID.
-						var devs = DeviceDetector.GetDevices(classGuid, DIGCF.DIGCF_ALLCLASSES, null, j.Properties.VendorId, j.Properties.ProductId, 0);
-						diInfos[i] = devs.FirstOrDefault();
+						diInfos[i] = string.IsNullOrEmpty(interfacePath) ? null : DeviceDetector.GetInterfaces((deviceId, devicePath) =>
+							string.Equals(devicePath, interfacePath, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 					}
 				}
 				SettingsDatabasePanel.BindDevices(instances);
@@ -739,7 +766,6 @@ namespace x360ce.App
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Program.IsClosing) return;
-			Program.TimerCount++;
 			lock (formLoadLock)
 			{
 				if (update1Enabled)
@@ -767,13 +793,32 @@ namespace x360ce.App
 					UpdateForm3();
 				}
 			}
+			// Timed to the next beat rather than from the end of this pass, see passClock.
+			var now = passClock.ElapsedMilliseconds;
+			nextPassMs = Math.Max(nextPassMs + DefaultPoolingInterval, now);
+			UpdateTimer.Interval = Math.Max(1, nextPassMs - now);
 			UpdateTimer.Start();
 		}
+
+		/// <summary>The clock the passes are timed by, so they keep a steady beat of <see cref="DefaultPoolingInterval"/>.</summary>
+		/// <remarks>
+		/// Windows fires timers on its 15.6 ms tick, so waiting 100 ms after each pass ends waits 109 ms
+		/// plus the pass, and the window would read the controllers nine times a second instead of ten. Each
+		/// wait is measured to the next beat instead, which evens the ticks out; a pass that overruns
+		/// starts the next one at once, and never more than one.
+		/// </remarks>
+		readonly System.Diagnostics.Stopwatch passClock = System.Diagnostics.Stopwatch.StartNew();
+
+		/// <summary>When the next pass is due, in milliseconds of <see cref="passClock"/>.</summary>
+		long nextPassMs;
 
 		void UpdateForm1()
 		{
 			detector = new DeviceDetector(false);
 			detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(detector_DeviceChanged);
+			// Told of controllers, mice and keyboards arriving and leaving, which is all that can change
+			// the device list; without asking, the only word of them is the machine-wide node change.
+			deviceNotification = DeviceDetector.RegisterDeviceInterface(detector.DetectorForm.Handle, DeviceDetector.HidInterfaceClass);
 			BusyLoadingCircle.Visible = false;
 			BusyLoadingCircle.Top = HeaderPictureBox.Top;
 			BusyLoadingCircle.Left = HeaderPictureBox.Left;
@@ -814,6 +859,7 @@ namespace x360ce.App
 		void UpdateForm2()
 		{
 			// Set status labels.
+			EngineHelper.ReserveWidth(InterfaceFrequencyLabel, "UI Hz: 10");
 			StatusIsAdminLabel.Text = WinAPI.IsVista
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
@@ -926,13 +972,22 @@ namespace x360ce.App
 					string bullet = string.Format("bullet_square_glass_{0}.png", image);
 					if (ControlPages[i].ImageKey != bullet) ControlPages[i].ImageKey = bullet;
 				}
-				UpdateStatus("");
 			}
+			if (interfaceRate.Tick())
+				InterfaceFrequencyLabel.Text = string.Format("UI Hz: {0}", interfaceRate.Rate);
 		}
+
+		/// <summary>Counts the passes that read the controllers and redraw them, for the rate the status bar shows.</summary>
+		/// <remarks>
+		/// The window only shows the controllers. Games read them on their own, through the emulator
+		/// library, as often as they ask, so this is the only rate this program has. Reading and
+		/// drawing happen in one pass on the window's own thread every 100 ms, so a pass that takes
+		/// long freezes the window and lowers this rate.
+		/// </remarks>
+		readonly RateCounter interfaceRate = new RateCounter();
 
 		public void ReloadLibrary()
 		{
-			Program.ReloadCount++;
 			settingsChanged = false;
 			var dllInfo = EngineHelper.GetDefaultDll();
 			if (dllInfo != null && dllInfo.Exists)
@@ -976,11 +1031,6 @@ namespace x360ce.App
 			}
 		}
 
-		public void UpdateStatus(string message)
-		{
-			StatusTimerLabel.Text = string.Format("Count: {0}, Reloads: {1}, Errors: {2} {3}",
-				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
-		}
 		#endregion
 
 		bool HelpInit = false;
@@ -1246,6 +1296,8 @@ namespace x360ce.App
 					_Mutex.Dispose();
 					_Mutex = null;
 				}
+				DeviceDetector.UnregisterDeviceInterface(deviceNotification);
+				deviceNotification = IntPtr.Zero;
 				if (detector != null)
 				{
 					detector.Dispose();
