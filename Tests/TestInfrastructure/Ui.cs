@@ -199,6 +199,81 @@ namespace x360ce.Tests
 			}, timeout, "the main window");
 		}
 
+		/// <summary>
+		/// The first element in the window whose name matches, found once. Walking the whole window
+		/// on every reading is itself an expensive call into the interface thread, which lowers the
+		/// very rate being read.
+		/// </summary>
+		public static AutomationElement FindByName(AutomationElement window, System.Text.RegularExpressions.Regex says)
+		{
+			var all = window.FindAll(TreeScope.Descendants, Condition.TrueCondition);
+			foreach (AutomationElement element in all)
+			{
+				if (says.IsMatch(element.Current.Name ?? ""))
+					return element;
+			}
+			return null;
+		}
+
+		/// <summary>The number the element's name shows in the pattern's first group, or -1 when it cannot be read just now.</summary>
+		public static int ReadNumber(AutomationElement element, System.Text.RegularExpressions.Regex says)
+		{
+			try
+			{
+				var match = says.Match(element.Current.Name ?? "");
+				return match.Success ? int.Parse(match.Groups[1].Value) : -1;
+			}
+			catch (ElementNotAvailableException)
+			{
+				return -1;
+			}
+		}
+
+		/// <summary>Presses the control of that name inside the window, the way a click does.</summary>
+		/// <returns>False when no control of that name is there to press.</returns>
+		public static bool Press(AutomationElement window, string name)
+		{
+			var control = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, name));
+			if (control == null || !control.TryGetCurrentPattern(InvokePattern.Pattern, out var pattern))
+				return false;
+			((InvokePattern)pattern).Invoke();
+			return true;
+		}
+
+		/// <summary>Closes every window of the program other than its main one, the way a person answers No.</summary>
+		/// <remarks>
+		/// A dialog the program opens with itself as owner sits under its main window, and one opened
+		/// with no owner, like a message box from a native library, sits beside it, so both are looked for.
+		/// </remarks>
+		/// <returns>The names of the windows closed.</returns>
+		public static string[] CloseDialogs(Process p, AutomationElement mainWindow)
+		{
+			var isWindow = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window);
+			var dialogs = mainWindow.FindAll(TreeScope.Children, isWindow).Cast<AutomationElement>()
+				.Concat(AutomationElement.RootElement.FindAll(TreeScope.Children, new AndCondition(isWindow,
+					new PropertyCondition(AutomationElement.ProcessIdProperty, p.Id))).Cast<AutomationElement>())
+				.Where(x => x.Current.NativeWindowHandle != mainWindow.Current.NativeWindowHandle)
+				.ToArray();
+			var closed = new List<string>();
+			foreach (var dialog in dialogs)
+			{
+				try
+				{
+					if (dialog.TryGetCurrentPattern(WindowPattern.Pattern, out var pattern))
+					{
+						var name = dialog.Current.Name;
+						((WindowPattern)pattern).Close();
+						closed.Add(name);
+					}
+				}
+				catch (ElementNotAvailableException)
+				{
+					// Already gone.
+				}
+			}
+			return closed.ToArray();
+		}
+
 		/// <summary>How long the application is given to shut itself down.</summary>
 		/// <remarks>
 		/// Closing is not instant: the program unplugs the controllers it created before it goes.
@@ -300,7 +375,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Beside the application when it is carried around, otherwise the shared folder.</summary>
-		static IEnumerable<string> ErrorFolders(string exePath)
+		public static IEnumerable<string> ErrorFolders(string exePath)
 		{
 			yield return Path.Combine(Path.GetDirectoryName(exePath), "x360ce", "Errors");
 			yield return Path.Combine(
@@ -314,7 +389,23 @@ namespace x360ce.Tests
 			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_MINIMIZE);
 		}
 
-		/// <summary>Restore the main window from minimised.</summary>
+		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
+		/// <remarks>
+		/// A message posted to HWND_BROADCAST reaches unowned top-level windows only, and in the tray the
+		/// window is owned by the hidden form that keeps it off the task bar, so it never arrived and the
+		/// window stayed in the tray. BroadcastSystemMessage reaches it, which is why a second launch works.
+		/// </remarks>
+		public static void PostRestoreRequest()
+		{
+			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
+				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
+			Exception error;
+			var message = JocysCom.ClassLibrary.Win32.NativeMethods.RegisterWindowMessage(product, out error);
+			var recipients = (int)JocysCom.ClassLibrary.Win32.BSM.BSM_APPLICATIONS;
+			var flags = JocysCom.ClassLibrary.Win32.BSF.BSF_IGNORECURRENTTASK | JocysCom.ClassLibrary.Win32.BSF.BSF_POSTMESSAGE;
+			JocysCom.ClassLibrary.Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, message, x360ce.App.MainForm.wParam_Restore, 0, out error);
+		}
+
 		/// <summary>Bring the window back into view, from the task bar or from the tray.</summary>
 		/// <remarks>
 		/// Minimising this program puts it in the tray and takes its window away: the handle becomes
@@ -339,10 +430,7 @@ namespace x360ce.Tests
 			// it was a race: a copy that starts while the first is closing finds nobody to hand off
 			// to, becomes a full instance, plugs its controllers in, and the teardown then finds
 			// them left over and the process still running.
-			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
-				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
-			var message = NativeMethods.RegisterWindowMessage(product);
-			NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, message, new IntPtr(x360ce.App.MainForm.wParam_Restore), IntPtr.Zero);
+			PostRestoreRequest();
 			WaitFor(() =>
 			{
 				p.Refresh();
@@ -380,16 +468,9 @@ namespace x360ce.Tests
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
-			public static readonly IntPtr HWND_BROADCAST = new IntPtr(0xffff);
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool ShowWindow(IntPtr window, int command);
-
-			[System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
-			public static extern int RegisterWindowMessage(string name);
-
-			[System.Runtime.InteropServices.DllImport("user32.dll")]
-			public static extern bool PostMessage(IntPtr window, int message, IntPtr wParam, IntPtr lParam);
 		}
 
 		/// <summary>True when an x360ce process other than this one is alive.</summary>

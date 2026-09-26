@@ -13,6 +13,10 @@ namespace x360ce.App.Controls
 		public AxisToButtonUserControl()
 		{
 			InitializeComponent();
+			// Fifteen of these sit one under another, each laying itself out, so the name column
+			// is given the width of the longest name and every slider starts on the same line.
+			LayoutPanel.ColumnStyles[LayoutPanel.GetColumn(ButtonNameLabel)] =
+				new ColumnStyle(SizeType.Absolute, WidestButtonName(ButtonNameLabel.Font) + ButtonNameLabel.Margin.Horizontal);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, short.MaxValue);
@@ -48,13 +52,29 @@ namespace x360ce.App.Controls
 		private Bitmap enabledImage;
 		private Bitmap disabledImage;
 
-		private void UpdateImage()
+		/// <summary>The name shown for a button, as the label and the accessible name spell it.</summary>
+		static string ButtonName(GamepadButtonFlags button)
 		{
-			var name = GamepadButton.ToString();
+			var name = button.ToString();
 			name = name.Replace("DPad", "D-Pad ");
 			name = name.Replace("Shoulder", " Bumper");
 			name = name.Replace("Thumb", " Stick Button");
 			if (name.Length == 1) name += " Button";
+			return name;
+		}
+
+		/// <summary>The width of the longest button name this row can show, in the given font.</summary>
+		static int WidestButtonName(Font font)
+		{
+			var widest = 0;
+			foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+				widest = Math.Max(widest, TextRenderer.MeasureText(ButtonName(button) + ":", font).Width);
+			return widest;
+		}
+
+		private void UpdateImage()
+		{
+			var name = ButtonName(GamepadButton);
 			ButtonNameLabel.Text = name + ":";
 			// The panel is one of fifteen alike, and only the button it belongs to tells them
 			// apart. Without this a screen reader announces fifteen identical panels, and the

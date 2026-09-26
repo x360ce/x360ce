@@ -46,14 +46,6 @@
 </head>
 <body>
 
-<table style="position: absolute; z-index: 1; margin-left:0; margin-right:auto;">
-<tr>
-<td>
-<a href="http://www.jocys.com/Software" target="_blank" class="GitHubBlack">World of Warcraft Text to Speech Addon and Monitor</a>
-</td>
-</tr>
-</table>
-
     <div style="position: relative;">
 
         <img src="/Images/Background.jpg" style="position: absolute; top: 0; left: 0; z-index: -2; width: 100%; height: 100%;" />
@@ -72,7 +64,7 @@
                             <tr>
                                 <td colspan="2" style="background-color: #2674ec; padding: 10px; text-align: center; border-radius: 14px;">
 
-                                    <p style="font-size: 18pt; vertical-align: middle; margin-top: 0; margin-bottom: 12px; color: #80ceff;">TocaEdit Xbox 360 Controller Emulator</p>
+                                    <p style="font-size: 18pt; vertical-align: middle; margin-top: 0; margin-bottom: 12px; color: #80ceff;">Xbox 360 Controller Emulator</p>
 
                                     <table style="border-collapse: separate; border-spacing: 4px;">
                                         <tr>

@@ -29,6 +29,10 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadPresetsForm));
+			this.RootTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.ButtonsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.CopyPresetButton = new System.Windows.Forms.Button();
+			this.CopyPresetFormatButton = new System.Windows.Forms.Button();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
@@ -40,25 +44,60 @@
 			this.OkButton = new System.Windows.Forms.Button();
 			this.OpenFileButton = new System.Windows.Forms.Button();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
+			this.RootTableLayoutPanel.SuspendLayout();
+			this.ButtonsTableLayoutPanel.SuspendLayout();
 			this.MainTabControl.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			this.SummariesTabPage.SuspendLayout();
 			this.PresetsTabPage.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
+			// RootTableLayoutPanel
+			//
+			this.RootTableLayoutPanel.ColumnCount = 1;
+			this.RootTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootTableLayoutPanel.Controls.Add(this.MainTabControl, 0, 0);
+			this.RootTableLayoutPanel.Controls.Add(this.ButtonsTableLayoutPanel, 0, 1);
+			this.RootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
+			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(9, 3, 9, 9);
+			this.RootTableLayoutPanel.RowCount = 2;
+			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.RootTableLayoutPanel.TabIndex = 0;
+			//
+			// ButtonsTableLayoutPanel
+			//
+			this.ButtonsTableLayoutPanel.AutoSize = true;
+			this.ButtonsTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ButtonsTableLayoutPanel.ColumnCount = 6;
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.ButtonsTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.ButtonsTableLayoutPanel.Controls.Add(this.OpenFileButton, 0, 0);
+			this.ButtonsTableLayoutPanel.Controls.Add(this.CopyPresetButton, 1, 0);
+			this.ButtonsTableLayoutPanel.Controls.Add(this.CopyPresetFormatButton, 2, 0);
+			this.ButtonsTableLayoutPanel.Controls.Add(this.OkButton, 4, 0);
+			this.ButtonsTableLayoutPanel.Controls.Add(this.CloseButton, 5, 0);
+			this.ButtonsTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ButtonsTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ButtonsTableLayoutPanel.Name = "ButtonsTableLayoutPanel";
+			this.ButtonsTableLayoutPanel.RowCount = 1;
+			this.ButtonsTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.ButtonsTableLayoutPanel.TabIndex = 1;
+			//
 			// MainTabControl
-			// 
-			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.SummariesTabPage);
 			this.MainTabControl.Controls.Add(this.PresetsTabPage);
-			this.MainTabControl.Location = new System.Drawing.Point(12, 70);
+			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(600, 330);
-			this.MainTabControl.TabIndex = 19;
+			this.MainTabControl.TabIndex = 0;
 			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
 			// SettingsTabPage
@@ -114,40 +153,66 @@
 			this.PresetsGridPanel.Name = "PresetsGridPanel";
 			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.PresetsGridPanel.TabIndex = 0;
-			// 
+			//
 			// CloseButton
-			// 
-			this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			//
+			this.CloseButton.AutoSize = true;
+			this.CloseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Location = new System.Drawing.Point(537, 406);
+			this.CloseButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CloseButton.Name = "CloseButton";
-			this.CloseButton.Size = new System.Drawing.Size(75, 23);
-			this.CloseButton.TabIndex = 20;
+			this.CloseButton.TabIndex = 4;
 			this.CloseButton.Text = "Cancel";
 			this.CloseButton.UseVisualStyleBackColor = true;
-			// 
+			//
 			// OkButton
-			// 
-			this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OkButton.Location = new System.Drawing.Point(372, 406);
+			//
+			this.OkButton.AutoSize = true;
+			this.OkButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.OkButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.OkButton.Name = "OkButton";
-			this.OkButton.Size = new System.Drawing.Size(159, 23);
-			this.OkButton.TabIndex = 20;
+			this.OkButton.TabIndex = 3;
 			this.OkButton.Text = "Load Selected Preset";
 			this.OkButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.OkButton.UseVisualStyleBackColor = true;
 			this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
-			// 
+			//
 			// OpenFileButton
-			// 
-			this.OpenFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.OpenFileButton.Location = new System.Drawing.Point(12, 406);
+			//
+			this.OpenFileButton.AutoSize = true;
+			this.OpenFileButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.OpenFileButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.OpenFileButton.Name = "OpenFileButton";
-			this.OpenFileButton.Size = new System.Drawing.Size(100, 23);
-			this.OpenFileButton.TabIndex = 21;
+			this.OpenFileButton.TabIndex = 0;
 			this.OpenFileButton.Text = "Open File...";
 			this.OpenFileButton.UseVisualStyleBackColor = true;
 			this.OpenFileButton.Click += new System.EventHandler(this.OpenFileButton_Click);
+			//
+			// CopyPresetButton
+			//
+			this.CopyPresetButton.AutoSize = true;
+			this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
+			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+			this.CopyPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.CopyPresetButton.Name = "CopyPresetButton";
+			this.CopyPresetButton.TabIndex = 1;
+			this.CopyPresetButton.Text = "Copy Preset";
+			this.CopyPresetButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this.CopyPresetButton.UseVisualStyleBackColor = true;
+			this.CopyPresetButton.Click += new System.EventHandler(this.CopyPresetButton_Click);
+			//
+			// CopyPresetFormatButton
+			//
+			this.CopyPresetFormatButton.AutoSize = true;
+			this.CopyPresetFormatButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+			this.CopyPresetFormatButton.MinimumSize = new System.Drawing.Size(20, 23);
+			this.CopyPresetFormatButton.Name = "CopyPresetFormatButton";
+			this.CopyPresetFormatButton.TabIndex = 2;
+			this.CopyPresetFormatButton.Text = "▾";
+			this.CopyPresetFormatButton.UseVisualStyleBackColor = true;
+			this.CopyPresetFormatButton.Click += new System.EventHandler(this.CopyPresetFormatButton_Click);
 			// 
 			// BusyLoadingCircle
 			// 
@@ -168,40 +233,43 @@
 			// LoadPresetsForm
 			// 
 			this.ClientSize = new System.Drawing.Size(624, 441);
-			this.Controls.Add(this.OpenFileButton);
-			this.Controls.Add(this.OkButton);
-			this.Controls.Add(this.CloseButton);
-			this.Controls.Add(this.MainTabControl);
+			this.Controls.Add(this.RootTableLayoutPanel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(640, 480);
 			this.Name = "LoadPresetsForm";
 			this.Text = "X360CE - Load Preset";
-			this.Controls.SetChildIndex(this.MainTabControl, 0);
-			this.Controls.SetChildIndex(this.CloseButton, 0);
-			this.Controls.SetChildIndex(this.OkButton, 0);
-			this.Controls.SetChildIndex(this.OpenFileButton, 0);
+			// In front of the header, so the header docks to the top first and the table fills the rest.
+			this.Controls.SetChildIndex(this.RootTableLayoutPanel, 0);
 			this.MainTabControl.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
 			this.SummariesTabPage.ResumeLayout(false);
 			this.PresetsTabPage.ResumeLayout(false);
+			this.ButtonsTableLayoutPanel.ResumeLayout(false);
+			this.ButtonsTableLayoutPanel.PerformLayout();
+			this.RootTableLayoutPanel.ResumeLayout(false);
+			this.RootTableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.TabControl MainTabControl;
-		private System.Windows.Forms.TabPage SettingsTabPage;
-		private System.Windows.Forms.TabPage SummariesTabPage;
-		private System.Windows.Forms.TabPage PresetsTabPage;
+		private System.Windows.Forms.TableLayoutPanel RootTableLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel ButtonsTableLayoutPanel;
+		public System.Windows.Forms.Button CopyPresetButton;
+		public System.Windows.Forms.Button CopyPresetFormatButton;
+		public System.Windows.Forms.TabControl MainTabControl;
+		public System.Windows.Forms.TabPage SettingsTabPage;
+		public System.Windows.Forms.TabPage SummariesTabPage;
+		public System.Windows.Forms.TabPage PresetsTabPage;
 		private System.Windows.Forms.Button CloseButton;
 		private System.Windows.Forms.Button OpenFileButton;
-		private System.Windows.Forms.Button OkButton;
+		public System.Windows.Forms.Button OkButton;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private SettingsGridUserControl SettingsGridPanel;
-		private SummariesGridUserControl SummariesGridPanel;
-		private PresetsGridUserControl PresetsGridPanel;
+		public SettingsGridUserControl SettingsGridPanel;
+		public SummariesGridUserControl SummariesGridPanel;
+		public PresetsGridUserControl PresetsGridPanel;
 	}
 }

@@ -25,6 +25,10 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
 			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
+			// The device list is the program's and outlives this control. The Map Device window makes
+			// one of these each time it opens, and left subscribed, every later device change was
+			// handled for each control already gone, on whichever thread had made it.
+			Disposed += (sender, e) => SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 		}
 
 		SortableBindingList<UserDevice> _currentData;
@@ -65,6 +69,7 @@ namespace x360ce.App.Controls
 			_currentData = null;
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
+			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
 			if (MapDeviceToControllerMode)
 				RefreshMapDeviceToList();
 			else
@@ -75,12 +80,14 @@ namespace x360ce.App.Controls
 		{
 			var list = new SortableBindingList<UserDevice>();
 			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-			// Exclude Syste/Virtual devices.
+			// Devices Windows files as system devices are left out unless asked for: keyboards and the
+			// like, which nobody means to map. Some game devices are filed there too, the Logitech G13
+			// among them, and the switch is how they are reached.
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				devices = SettingsManager.UserDevices.Items
-					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
+					.Where(x => ShowSystemDevicesButton.Checked || x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
 			}
 			list.AddRange(devices);
 			// If new list, item added or removed then...
@@ -106,6 +113,10 @@ namespace x360ce.App.Controls
 		/// The cells are filled while the table paints, so a place that has changed is not shown
 		/// until something makes the table paint. Nothing does when a controller is plugged in, so
 		/// the list kept saying where things were a moment ago.
+		///
+		/// The column is measured again as well. It sizes itself to its cells, but only when a cell's
+		/// stored value changes, and these cells store nothing: the text is made while painting. So
+		/// the column kept the width of the first paint, and a longer answer was cut off.
 		/// </remarks>
 		public void RefreshPlaces()
 		{
@@ -114,6 +125,7 @@ namespace x360ce.App.Controls
 				BeginInvoke((Action)RefreshPlaces);
 				return;
 			}
+			DevicesDataGridView.AutoResizeColumn(XInputPlaceColumn.Index);
 			DevicesDataGridView.Invalidate();
 		}
 
@@ -123,9 +135,12 @@ namespace x360ce.App.Controls
 				return;
 
 			var grid = (DataGridView)sender;
+			// The list can have shrunk under a row the grid is still painting; such a row shows nothing.
+			var item = AppHelper.BoundItem<UserDevice>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
-			var item = (UserDevice)row.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
@@ -163,6 +178,15 @@ namespace x360ce.App.Controls
 			var grid = DevicesDataGridView;
 			var items = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserDevice)x.DataBoundItem).ToArray();
 			return items;
+		}
+
+		private void ShowSystemDevicesButton_CheckedChanged(object sender, EventArgs e)
+		{
+			ShowSystemDevicesButton.Image = ShowSystemDevicesButton.Checked
+				? Properties.Resources.checkbox_16x16
+				: Properties.Resources.checkbox_unchecked_16x16;
+			if (MapDeviceToControllerMode)
+				RefreshMapDeviceToList();
 		}
 
 		private void RefreshButton_Click(object sender, EventArgs e)
@@ -298,9 +322,10 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var row = grid.Rows[e.RowIndex];
+			var ud = AppHelper.BoundItem<UserDevice>(grid, e.RowIndex);
+			if (ud is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
-			var ud = (UserDevice)row.DataBoundItem;
 			// If user clicked on the CheckBox column then...
 			if (column == IsEnabledColumn)
 			{

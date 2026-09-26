@@ -280,6 +280,144 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The name does not depend on the computer's language")]
+		public void The_name_does_not_depend_on_the_computers_language()
+		{
+			// The server names what it stores, and a program on a computer in another language must
+			// arrive at the same name for the same settings. Sorting by the computer's language gave
+			// ten languages another order: Welsh and Albanian read "th" as one letter, Lithuanian,
+			// Latvian and Western Frisian sort "Y" with "I", Azerbaijani puts "X" after "H" and
+			// Hawaiian puts vowels first. Every language Windows knows is tried.
+			var mapping = new PadSetting
+			{
+				AxisToDPadDeadZone = "100", AxisToDPadEnabled = "1",
+				ButtonA = "1", ButtonB = "2", ButtonX = "3", ButtonY = "4", ButtonBack = "7", ButtonStart = "8",
+				ButtonBDeadZone = "100", LeftThumbAxisX = "1", LeftThumbAxisY = "2", LeftThumbAntiDeadZoneX = "2000",
+				DPad = "1", LeftTrigger = "a-6", RightTrigger = "a-2",
+			};
+			var saved = System.Threading.Thread.CurrentThread.CurrentCulture;
+			try
+			{
+				System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+				var expected = Copy(mapping).CleanAndGetCheckSum();
+				var differ = new List<string>();
+				foreach (var culture in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.SpecificCultures))
+				{
+					System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+					if (Copy(mapping).CleanAndGetCheckSum() != expected)
+						differ.Add(culture.Name);
+				}
+				Assert.AreEqual(0, differ.Count,
+					"The same settings are named differently on computers set to " + string.Join(", ", differ) +
+					", so the server stores them twice and cannot find what those computers ask for.");
+			}
+			finally
+			{
+				System.Threading.Thread.CurrentThread.CurrentCulture = saved;
+			}
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The change script that renames stored settings measures them as the program does")]
+		public void The_change_script_measures_as_the_program_does()
+		{
+			// The database renames its rows in SQL, from a list of settings, their defaults and their
+			// order written into the script. A setting added here and not there, or put in another
+			// order, would rename every stored row to a checksum no program asks for.
+			// The script is run once on the live database and kept with the plan for it, outside the
+			// repository, so it is checked where it is present.
+			var path = Path.Combine(Ui.RepoRoot.FullName, "docs", "plans", "M-database-update", "6_Rename_PadSettings_To_Current_Checksum.sql");
+			if (!File.Exists(path))
+				Assert.Inconclusive("The rename script is not on this machine: " + path);
+			// A line reads its column, or, for a button's axis dead zone, reads it only while an axis,
+			// a slider or a formula drives that button: IIF(p.[Button] LIKE '[axsh=]%', p.[Column], '').
+			var rows = System.Text.RegularExpressions.Regex.Matches(File.ReadAllText(path),
+				@"\(\s*(\d+), '(\w+)', (?:IIF\(p\.\[(\w+)\] LIKE '\[axsh=\]%', )?p\.\[(\w+)\](?:, ''\))?, '(\d+)'\)")
+				.Cast<System.Text.RegularExpressions.Match>()
+				.Select(m => new
+				{
+					Rank = int.Parse(m.Groups[1].Value),
+					Name = m.Groups[2].Value,
+					Driver = m.Groups[3].Success ? m.Groups[3].Value : null,
+					Column = m.Groups[4].Value,
+					Default = m.Groups[5].Value,
+				})
+				.ToList();
+			Func<string, bool> drivenByAxis = v => !string.IsNullOrEmpty(v) && "axshAXSH=".IndexOf(v[0]) >= 0;
+			// The names the program measures, found by giving every setting a value no default has, and
+			// every button a dead zone belongs to an axis, so the dead zone is read.
+			var all = new PadSetting();
+			foreach (var p in typeof(PadSetting).GetProperties())
+				if (p.PropertyType == typeof(string) && p.CanWrite)
+					p.SetValue(all, "7", null);
+			foreach (var row in rows.Where(x => x.Driver != null))
+				typeof(PadSetting).GetProperty(row.Driver).SetValue(all, "a7", null);
+			var lines = new List<string>();
+			all.CleanAndGetCheckSum(lines);
+			var names = lines.Select(x => x.Substring(0, x.IndexOf('='))).OrderBy(x => x, StringComparer.Ordinal).ToArray();
+			CollectionAssert.AreEqual(names, rows.Select(x => x.Name).OrderBy(x => x, StringComparer.Ordinal).ToArray(),
+				"The script and the program measure different settings.");
+			Assert.IsTrue(rows.All(x => x.Name == x.Column), "A line of the script reads another column than it names.");
+			// The order: the program sorts whole lines, and no name is the start of another followed
+			// by "=", so the order of "Name=" is the order of the lines.
+			var order = rows.Select(x => x.Name + "=").OrderBy(x => x, StringComparer.InvariantCulture).ToArray();
+			CollectionAssert.AreEqual(order, rows.OrderBy(x => x.Rank).Select(x => x.Name + "=").ToArray(),
+				"The script puts the lines in another order than the program.");
+			CollectionAssert.AreEqual(Enumerable.Range(1, rows.Count).ToArray(), rows.Select(x => x.Rank).ToArray(),
+				"The ranks are not 1, 2, 3 in the order written.");
+			// The defaults: a setting at its script default must be left out, and any other value kept.
+			// A dead zone is tried on a button an axis drives, and then on one a button drives, where
+			// the script reads nothing and the program must measure nothing either.
+			Func<PadSetting, string, int> measured = (ps, name) =>
+			{
+				var kept = new List<string>();
+				ps.CleanAndGetCheckSum(kept);
+				return kept.Count(x => x.StartsWith(name + "=", StringComparison.Ordinal));
+			};
+			foreach (var row in rows)
+			{
+				var property = typeof(PadSetting).GetProperty(row.Name);
+				var atDefault = new PadSetting();
+				property.SetValue(atDefault, row.Default, null);
+				if (row.Driver != null)
+					typeof(PadSetting).GetProperty(row.Driver).SetValue(atDefault, "a1", null);
+				Assert.AreEqual(0, measured(atDefault, row.Name), row.Name + " at the script's default " + row.Default + " is measured by the program.");
+				var changed = new PadSetting();
+				property.SetValue(changed, row.Default == "0" ? "1" : "0", null);
+				if (row.Driver != null)
+					typeof(PadSetting).GetProperty(row.Driver).SetValue(changed, "a1", null);
+				Assert.AreEqual(1, measured(changed, row.Name), row.Name + " away from the script's default " + row.Default + " is not measured by the program.");
+				if (row.Driver == null)
+					continue;
+				var unread = new PadSetting();
+				property.SetValue(unread, "0", null);
+				typeof(PadSetting).GetProperty(row.Driver).SetValue(unread, "1", null);
+				Assert.AreEqual(0, measured(unread, row.Name), row.Name + " is measured while a button drives " + row.Driver + ", which the script does not.");
+			}
+			// And the whole measurement, made the script's way, against every shipped preset.
+			using (var md5 = System.Security.Cryptography.MD5.Create())
+			{
+				foreach (var preset in Presets())
+				{
+					var ps = Copy(preset.Value);
+					var text = string.Join("\r\n", rows.OrderBy(x => x.Rank)
+						.Select(x => new
+						{
+							x.Name,
+							x.Default,
+							Value = x.Driver != null && !drivenByAxis((string)typeof(PadSetting).GetProperty(x.Driver).GetValue(ps, null))
+								? ""
+								: (string)typeof(PadSetting).GetProperty(x.Name).GetValue(ps, null) ?? "",
+						})
+						.Where(x => x.Value.Length > 0 && x.Value != x.Default)
+						.Select(x => x.Name + "=" + x.Value));
+					var script = text.Length == 0 ? Guid.Empty : new Guid(md5.ComputeHash(System.Text.Encoding.ASCII.GetBytes(text)));
+					Assert.AreEqual(ps.CleanAndGetCheckSum(), script, "Preset " + preset.Key + " is named differently by the script.");
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
 		[Description("Every setting in the checksum can be read as text")]
 		public void Every_setting_in_the_checksum_can_be_read_as_text()
 		{

@@ -56,5 +56,23 @@ namespace x360ce.Tests
 				+ string.Join(", ", strangers.Select(x => x.DeviceId)));
 			Console.WriteLine("{0} leftovers, {1} of them records", leftovers.Length, leftovers.Count(x => !x.IsPresent));
 		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("A second look at the leftovers with nothing changed does not read the records again")]
+		public void A_second_look_with_nothing_changed_does_not_read_the_records_again()
+		{
+			// The issue check asks every few seconds. Reading the records is about ten milliseconds each,
+			// and a machine where many runs ended badly keeps hundreds: seconds, every few seconds, under
+			// the lock the device list read waits on.
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			var first = VirtualDriverInstaller.GetLeftoverVirtualPads();
+			var firstMs = watch.ElapsedMilliseconds;
+			watch.Restart();
+			var second = VirtualDriverInstaller.GetLeftoverVirtualPads();
+			var secondMs = watch.ElapsedMilliseconds;
+			Console.WriteLine("first look {0} ms, second {1} ms, {2} leftovers", firstMs, secondMs, first.Length);
+			Assert.AreSame(first, second, "The second look read the machine again although nothing had changed.");
+			Assert.IsTrue(secondMs < 500, "The second look took " + secondMs + " ms; asking which ids exist should take milliseconds.");
+		}
 	}
 }

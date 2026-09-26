@@ -1,0 +1,1222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://x360ce.com/" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://x360ce.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://x360ce.com/">
+      <s:import namespace="http://microsoft.com/wsdl/types/" />
+      <s:element name="SearchSettings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="args" type="tns:ArrayOfSearchParameter" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfSearchParameter">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SearchParameter" nillable="true" type="tns:SearchParameter" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="SearchParameter">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="ProductGuid" type="s1:guid" />
+          <s:element minOccurs="1" maxOccurs="1" name="InstanceGuid" type="s1:guid" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SearchSettingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchSettingsResult" type="tns:SearchResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SearchResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Settings" type="tns:ArrayOfSetting" />
+          <s:element minOccurs="0" maxOccurs="1" name="Summaries" type="tns:ArrayOfSummary" />
+          <s:element minOccurs="0" maxOccurs="1" name="PadSettings" type="tns:ArrayOfPadSetting" />
+          <s:element minOccurs="0" maxOccurs="1" name="Presets" type="tns:ArrayOfPreset" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSetting">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Setting" nillable="true" type="tns:Setting" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Setting">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="SettingId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="InstanceGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="InstanceName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProductGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DeviceType" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsEnabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="PadSettingChecksum" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateSelected" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="MapTo" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Completion" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="ComputerId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProfileId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="Checksum" type="s1:guid" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="EntityObject" abstract="true">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:StructuralObject">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="EntityKey" type="tns:EntityKey" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="StructuralObject" abstract="true" />
+      <s:complexType name="EntityKey">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="EntitySetName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EntityContainerName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EntityKeyValues" type="tns:ArrayOfEntityKeyMember" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfEntityKeyMember">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="EntityKeyMember" nillable="true" type="tns:EntityKeyMember" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="EntityKeyMember">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PadSetting">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="PadSettingChecksum" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="AxisToDPadDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="AxisToDPadEnabled" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="AxisToDPadOffset" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonA" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonB" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonBack" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonGuide" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonStart" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPad" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadDown" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadLeft" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadRight" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadUp" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ForceEnable" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ForceOverall" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ForceSwapMotor" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ForceType" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="GamePadType" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftMotorPeriod" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftShoulder" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbAntiDeadZoneX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbAntiDeadZoneY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbAxisX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbAxisY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbButton" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbDeadZoneX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbDeadZoneY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbDown" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbLeft" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbRight" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbUp" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftTrigger" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftTriggerDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="PassThrough" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightMotorPeriod" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightShoulder" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbAntiDeadZoneX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbAntiDeadZoneY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbAxisX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbAxisY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbButton" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbDeadZoneX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbDeadZoneY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbDown" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbLeft" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbRight" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbUp" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightTrigger" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightTriggerDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbLinearX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbLinearY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbLinearX" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbLinearY" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftMotorStrength" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightMotorStrength" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftMotorDirection" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightMotorDirection" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonADeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonBDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonBackDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonStartDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonXDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ButtonYDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftThumbButtonDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightThumbButtonDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftShoulderDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightShoulderDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadDownDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadLeftDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadRightDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DPadUpDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftTriggerAntiDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="LeftTriggerLinear" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightTriggerAntiDeadZone" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="RightTriggerLinear" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="Summary">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="SummaryId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="Users" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="PadSettingChecksum" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProductGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="Weight" type="s:int" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfSummary">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Summary" nillable="true" type="tns:Summary" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPadSetting">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PadSetting" nillable="true" type="tns:PadSetting" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPreset">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Preset" nillable="true" type="tns:Preset" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Preset">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="VendorName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProductGuid" type="s1:guid" />
+          <s:element minOccurs="1" maxOccurs="1" name="PadSettingChecksum" type="s1:guid" />
+          <s:element minOccurs="1" maxOccurs="1" name="Users" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LoadSetting">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="checksum" type="tns:ArrayOfGuid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfGuid">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="guid" type="s1:guid" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="LoadSettingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoadSettingResult" type="tns:SearchResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SaveSetting">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="tns:Setting" />
+            <s:element minOccurs="0" maxOccurs="1" name="ps" type="tns:PadSetting" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SaveSettingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SaveSettingResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSetting">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="s" type="tns:Setting" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DeleteSettingResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DeleteSettingResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSettingsData">
+        <s:complexType />
+      </s:element>
+      <s:complexType name="SettingsData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Programs" type="tns:ArrayOfProgram" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfProgram">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Program" nillable="true" type="tns:Program" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Program">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="ProgramId" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileVersion" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProcessorArchitecture" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="EmulationType" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="AutoMapMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="HookMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="XInputMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DInputMask" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="DInputFile" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="FakeVID" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="FakePID" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Timeout" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Weight" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="SettingChecksum" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsEnabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="InstanceCount" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="XInputPath" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GetSettingsDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSettingsDataResult" type="tns:SettingsData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVendors">
+        <s:complexType />
+      </s:element>
+      <s:complexType name="ArrayOfVendor">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Vendor" nillable="true" type="tns:Vendor" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Vendor">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="VendorId" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="VendorName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="ShortName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="WebSite" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GetVendorsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetVendorsResult" type="tns:ArrayOfVendor" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Execute">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="command" type="tns:CloudMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CloudMessage">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" default="0" name="ErrorCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ErrorMessage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" default="None" name="Action" type="tns:CloudAction" />
+          <s:element minOccurs="0" maxOccurs="1" name="Values" type="tns:ArrayOfKeyValue" />
+          <s:element minOccurs="0" maxOccurs="1" name="Checksums" type="tns:ArrayOfGuid" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserDevices" type="tns:ArrayOfUserDevice" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserInstances" type="tns:ArrayOfUserInstance" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserComputers" type="tns:ArrayOfUserComputer" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserSettings" type="tns:ArrayOfSetting" />
+          <s:element minOccurs="0" maxOccurs="1" name="MailMessages" type="tns:ArrayOfMailMessageSerializable" />
+          <s:element minOccurs="0" maxOccurs="1" name="UserGames" type="tns:ArrayOfUserGame" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="CloudAction">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Insert" />
+          <s:enumeration value="Update" />
+          <s:enumeration value="Select" />
+          <s:enumeration value="Delete" />
+          <s:enumeration value="GetPublicRsaKey" />
+          <s:enumeration value="LogIn" />
+          <s:enumeration value="CreateAccount" />
+          <s:enumeration value="CheckUpdates" />
+          <s:enumeration value="SendMailMessage" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfKeyValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="KeyValue" nillable="true" type="tns:KeyValue" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="KeyValue">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfUserDevice">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserDevice" nillable="true" type="tns:UserDevice" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserDevice">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Id" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ComputerId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="InstanceGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="InstanceName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProductGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="ProductName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapAxeCount" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapButtonCount" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapDriverVersion" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapFirmwareRevision" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapFlags" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapForceFeedbackMinimumTimeResolution" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapForceFeedbackSamplePeriod" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapHardwareRevision" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapPovCount" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapIsHumanInterfaceDevice" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapSubtype" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="CapType" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidManufacturer" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="HidVendorId" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="HidProductId" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="HidRevision" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidDescription" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidDeviceId" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidDevicePath" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidParentDeviceId" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="HidClassGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="HidClassDescription" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevManufacturer" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DevVendorId" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DevProductId" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DevRevision" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevDescription" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevDeviceId" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevDevicePath" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevParentDeviceId" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DevClassGuid" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="DevClassDescription" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsEnabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="Checksum" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiAxeMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiSliderMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsHidden" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiActuatorMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DiActuatorCount" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProfileId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ConnectionClass" type="s1:guid" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfUserInstance">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserInstance" nillable="true" type="tns:UserInstance" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserInstance">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Id" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ControllerId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="InstanceGuid" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="Checksum" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="ComputerId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProfileId" type="s1:guid" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfUserComputer">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserComputer" nillable="true" type="tns:UserComputer" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserComputer">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Id" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ApplicationId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="UserId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ComputerId" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="ComputerName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="Checksum" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfMailMessageSerializable">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MailMessageSerializable" nillable="true" type="tns:MailMessageSerializable" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MailMessageSerializable">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsBodyHtml" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Priority" type="tns:MailPriority" />
+          <s:element minOccurs="1" maxOccurs="1" name="BodyTransferEncoding" type="tns:TransferEncoding" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeliveryNotificationOptions" type="tns:DeliveryNotificationOptions" />
+          <s:element minOccurs="0" maxOccurs="1" name="Sender" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="1" name="From" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="To" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CC" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Bcc" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ReplyToList" type="tns:MailAddressSerializable" />
+          <s:element minOccurs="0" maxOccurs="1" name="Subject" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Body" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="MailPriority">
+        <s:restriction base="s:string">
+          <s:enumeration value="Normal" />
+          <s:enumeration value="Low" />
+          <s:enumeration value="High" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="TransferEncoding">
+        <s:restriction base="s:string">
+          <s:enumeration value="QuotedPrintable" />
+          <s:enumeration value="Base64" />
+          <s:enumeration value="SevenBit" />
+          <s:enumeration value="EightBit" />
+          <s:enumeration value="Unknown" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="DeliveryNotificationOptions">
+        <s:list>
+          <s:simpleType>
+            <s:restriction base="s:string">
+              <s:enumeration value="None" />
+              <s:enumeration value="OnSuccess" />
+              <s:enumeration value="OnFailure" />
+              <s:enumeration value="Delay" />
+              <s:enumeration value="Never" />
+            </s:restriction>
+          </s:simpleType>
+        </s:list>
+      </s:simpleType>
+      <s:complexType name="MailAddressSerializable">
+        <s:attribute name="DisplayName" type="s:string" />
+        <s:attribute name="Address" type="s:string" />
+      </s:complexType>
+      <s:complexType name="ArrayOfUserGame">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserGame" nillable="true" type="tns:UserGame" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserGame">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:EntityObject">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="GameId" type="s1:guid" />
+              <s:element minOccurs="1" maxOccurs="1" name="ComputerId" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileProductName" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FileVersion" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="FullPath" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="CompanyName" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProcessorArchitecture" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="HookMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="XInputMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="DInputMask" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="DInputFile" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="FakeVID" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="FakePID" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Timeout" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Weight" type="s:int" />
+              <s:element minOccurs="0" maxOccurs="1" name="Comment" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="IsEnabled" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateCreated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="DateUpdated" type="s:dateTime" />
+              <s:element minOccurs="1" maxOccurs="1" name="AutoMapMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="EnableMask" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="EmulationType" type="s:int" />
+              <s:element minOccurs="1" maxOccurs="1" name="Checksum" type="s1:guid" />
+              <s:element minOccurs="0" maxOccurs="1" name="XInputPath" type="s:string" />
+              <s:element minOccurs="1" maxOccurs="1" name="ProfileId" type="s1:guid" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="ExecuteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ExecuteResult" type="tns:CloudMessage" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgram">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fileProductName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgramResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProgramResult" type="tns:Program" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetProgram">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="p" type="tns:Program" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetProgramResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetProgramResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetProgramsDefault">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetProgramsDefaultResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProgramsDefaultResult" type="tns:ArrayOfProgram" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPrograms">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="isEnabled" type="tns:EnabledState" />
+            <s:element minOccurs="1" maxOccurs="1" name="minInstanceCount" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="EnabledState">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="Enabled" />
+          <s:enumeration value="Disabled" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetProgramsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetProgramsResult" type="tns:ArrayOfProgram" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SettingsData" nillable="true" type="tns:SettingsData" />
+      <s:element name="ArrayOfVendor" nillable="true" type="tns:ArrayOfVendor" />
+      <s:element name="Program" nillable="true" type="tns:Program" />
+      <s:element name="ArrayOfProgram" nillable="true" type="tns:ArrayOfProgram" />
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://microsoft.com/wsdl/types/">
+      <s:simpleType name="guid">
+        <s:restriction base="s:string">
+          <s:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+        </s:restriction>
+      </s:simpleType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SearchSettingsSoapIn">
+    <wsdl:part name="parameters" element="tns:SearchSettings" />
+  </wsdl:message>
+  <wsdl:message name="SearchSettingsSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchSettingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoadSettingSoapIn">
+    <wsdl:part name="parameters" element="tns:LoadSetting" />
+  </wsdl:message>
+  <wsdl:message name="LoadSettingSoapOut">
+    <wsdl:part name="parameters" element="tns:LoadSettingResponse" />
+  </wsdl:message>
+  <wsdl:message name="SaveSettingSoapIn">
+    <wsdl:part name="parameters" element="tns:SaveSetting" />
+  </wsdl:message>
+  <wsdl:message name="SaveSettingSoapOut">
+    <wsdl:part name="parameters" element="tns:SaveSettingResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSettingSoapIn">
+    <wsdl:part name="parameters" element="tns:DeleteSetting" />
+  </wsdl:message>
+  <wsdl:message name="DeleteSettingSoapOut">
+    <wsdl:part name="parameters" element="tns:DeleteSettingResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSettingsDataSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSettingsData" />
+  </wsdl:message>
+  <wsdl:message name="GetSettingsDataSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSettingsDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVendors" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVendorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ExecuteSoapIn">
+    <wsdl:part name="parameters" element="tns:Execute" />
+  </wsdl:message>
+  <wsdl:message name="ExecuteSoapOut">
+    <wsdl:part name="parameters" element="tns:ExecuteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProgramResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetProgramSoapIn">
+    <wsdl:part name="parameters" element="tns:SetProgram" />
+  </wsdl:message>
+  <wsdl:message name="SetProgramSoapOut">
+    <wsdl:part name="parameters" element="tns:SetProgramResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsDefaultSoapIn">
+    <wsdl:part name="parameters" element="tns:GetProgramsDefault" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsDefaultSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProgramsDefaultResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPrograms" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetProgramsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSettingsDataHttpGetIn" />
+  <wsdl:message name="GetSettingsDataHttpGetOut">
+    <wsdl:part name="Body" element="tns:SettingsData" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsHttpGetIn" />
+  <wsdl:message name="GetVendorsHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfVendor" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramHttpGetIn">
+    <wsdl:part name="fileName" type="s:string" />
+    <wsdl:part name="fileProductName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramHttpGetOut">
+    <wsdl:part name="Body" element="tns:Program" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsDefaultHttpGetIn" />
+  <wsdl:message name="GetProgramsDefaultHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsHttpGetIn">
+    <wsdl:part name="isEnabled" type="s:string" />
+    <wsdl:part name="minInstanceCount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsHttpGetOut">
+    <wsdl:part name="Body" element="tns:ArrayOfProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetSettingsDataHttpPostIn" />
+  <wsdl:message name="GetSettingsDataHttpPostOut">
+    <wsdl:part name="Body" element="tns:SettingsData" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsHttpPostIn" />
+  <wsdl:message name="GetVendorsHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfVendor" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramHttpPostIn">
+    <wsdl:part name="fileName" type="s:string" />
+    <wsdl:part name="fileProductName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramHttpPostOut">
+    <wsdl:part name="Body" element="tns:Program" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsDefaultHttpPostIn" />
+  <wsdl:message name="GetProgramsDefaultHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfProgram" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsHttpPostIn">
+    <wsdl:part name="isEnabled" type="s:string" />
+    <wsdl:part name="minInstanceCount" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="GetProgramsHttpPostOut">
+    <wsdl:part name="Body" element="tns:ArrayOfProgram" />
+  </wsdl:message>
+  <wsdl:portType name="x360ceSoap">
+    <wsdl:operation name="SearchSettings">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search controller settings.</wsdl:documentation>
+      <wsdl:input message="tns:SearchSettingsSoapIn" />
+      <wsdl:output message="tns:SearchSettingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="LoadSetting">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Load controller settings.</wsdl:documentation>
+      <wsdl:input message="tns:LoadSettingSoapIn" />
+      <wsdl:output message="tns:LoadSettingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SaveSetting">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Save controller settings.</wsdl:documentation>
+      <wsdl:input message="tns:SaveSettingSoapIn" />
+      <wsdl:output message="tns:SaveSettingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSetting">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Delete controller settings.</wsdl:documentation>
+      <wsdl:input message="tns:DeleteSettingSoapIn" />
+      <wsdl:output message="tns:DeleteSettingSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get default list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetSettingsDataSoapIn" />
+      <wsdl:output message="tns:GetSettingsDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get vendors of controllers.</wsdl:documentation>
+      <wsdl:input message="tns:GetVendorsSoapIn" />
+      <wsdl:output message="tns:GetVendorsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Execute">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Update User Data</wsdl:documentation>
+      <wsdl:input message="tns:ExecuteSoapIn" />
+      <wsdl:output message="tns:ExecuteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramSoapIn" />
+      <wsdl:output message="tns:GetProgramSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Save program settings.</wsdl:documentation>
+      <wsdl:input message="tns:SetProgramSoapIn" />
+      <wsdl:output message="tns:SetProgramSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsDefaultSoapIn" />
+      <wsdl:output message="tns:GetProgramsDefaultSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsSoapIn" />
+      <wsdl:output message="tns:GetProgramsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="x360ceHttpGet">
+    <wsdl:operation name="GetSettingsData">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get default list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetSettingsDataHttpGetIn" />
+      <wsdl:output message="tns:GetSettingsDataHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get vendors of controllers.</wsdl:documentation>
+      <wsdl:input message="tns:GetVendorsHttpGetIn" />
+      <wsdl:output message="tns:GetVendorsHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramHttpGetIn" />
+      <wsdl:output message="tns:GetProgramHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsDefaultHttpGetIn" />
+      <wsdl:output message="tns:GetProgramsDefaultHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsHttpGetIn" />
+      <wsdl:output message="tns:GetProgramsHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="x360ceHttpPost">
+    <wsdl:operation name="GetSettingsData">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get default list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetSettingsDataHttpPostIn" />
+      <wsdl:output message="tns:GetSettingsDataHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get vendors of controllers.</wsdl:documentation>
+      <wsdl:input message="tns:GetVendorsHttpPostIn" />
+      <wsdl:output message="tns:GetVendorsHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Search games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramHttpPostIn" />
+      <wsdl:output message="tns:GetProgramHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsDefaultHttpPostIn" />
+      <wsdl:output message="tns:GetProgramsDefaultHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get list of games.</wsdl:documentation>
+      <wsdl:input message="tns:GetProgramsHttpPostIn" />
+      <wsdl:output message="tns:GetProgramsHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="x360ceSoap" type="tns:x360ceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SearchSettings">
+      <soap:operation soapAction="http://x360ce.com/SearchSettings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoadSetting">
+      <soap:operation soapAction="http://x360ce.com/LoadSetting" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveSetting">
+      <soap:operation soapAction="http://x360ce.com/SaveSetting" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSetting">
+      <soap:operation soapAction="http://x360ce.com/DeleteSetting" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <soap:operation soapAction="http://x360ce.com/GetSettingsData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <soap:operation soapAction="http://x360ce.com/GetVendors" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Execute">
+      <soap:operation soapAction="http://x360ce.com/Execute" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <soap:operation soapAction="http://x360ce.com/GetProgram" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <soap:operation soapAction="http://x360ce.com/SetProgram" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <soap:operation soapAction="http://x360ce.com/GetProgramsDefault" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <soap:operation soapAction="http://x360ce.com/GetPrograms" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="x360ceSoap12" type="tns:x360ceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SearchSettings">
+      <soap12:operation soapAction="http://x360ce.com/SearchSettings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="LoadSetting">
+      <soap12:operation soapAction="http://x360ce.com/LoadSetting" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SaveSetting">
+      <soap12:operation soapAction="http://x360ce.com/SaveSetting" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteSetting">
+      <soap12:operation soapAction="http://x360ce.com/DeleteSetting" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSettingsData">
+      <soap12:operation soapAction="http://x360ce.com/GetSettingsData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <soap12:operation soapAction="http://x360ce.com/GetVendors" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Execute">
+      <soap12:operation soapAction="http://x360ce.com/Execute" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <soap12:operation soapAction="http://x360ce.com/GetProgram" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetProgram">
+      <soap12:operation soapAction="http://x360ce.com/SetProgram" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <soap12:operation soapAction="http://x360ce.com/GetProgramsDefault" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <soap12:operation soapAction="http://x360ce.com/GetPrograms" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="x360ceHttpGet" type="tns:x360ceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="GetSettingsData">
+      <http:operation location="/GetSettingsData" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <http:operation location="/GetVendors" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <http:operation location="/GetProgram" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <http:operation location="/GetProgramsDefault" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <http:operation location="/GetPrograms" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="x360ceHttpPost" type="tns:x360ceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="GetSettingsData">
+      <http:operation location="/GetSettingsData" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendors">
+      <http:operation location="/GetVendors" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgram">
+      <http:operation location="/GetProgram" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProgramsDefault">
+      <http:operation location="/GetProgramsDefault" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPrograms">
+      <http:operation location="/GetPrograms" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="x360ce">
+    <wsdl:port name="x360ceSoap" binding="tns:x360ceSoap">
+      <soap:address location="https://www.x360ce.com/webservices/x360ce.asmx" />
+    </wsdl:port>
+    <wsdl:port name="x360ceSoap12" binding="tns:x360ceSoap12">
+      <soap12:address location="https://www.x360ce.com/webservices/x360ce.asmx" />
+    </wsdl:port>
+    <wsdl:port name="x360ceHttpGet" binding="tns:x360ceHttpGet">
+      <http:address location="https://www.x360ce.com/webservices/x360ce.asmx" />
+    </wsdl:port>
+    <wsdl:port name="x360ceHttpPost" binding="tns:x360ceHttpPost">
+      <http:address location="https://www.x360ce.com/webservices/x360ce.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

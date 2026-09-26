@@ -183,6 +183,7 @@ namespace x360ce.App
 
 		/// <summary>The help page this version shows, as embedded.</summary>
 		public const string HelpV4Resource = "Documents.Help.v4.md";
+		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
 		public static string ReadHelp(string resourceName)

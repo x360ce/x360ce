@@ -1,4 +1,4 @@
-// @under-test: App.v4/Mcp/WindowsAgentRegistry.cs
+// @under-test: Engine/Mcp/WindowsAgentRegistry.cs
 // @area: mcp   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using x360ce.App.Mcp;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.Tests
 {
@@ -49,7 +50,7 @@ namespace x360ce.Tests
 		[Description("The manifest names the program, how to start it, every tool from the catalogue, and the same initialize and tools/list answers the running server gives")]
 		public void Manifest_describes_program_tools_and_static_answers()
 		{
-			McpCatalog.Load(typeof(McpTools));
+			McpTools.Register();
 			var exePath = @"C:\Games\x360ce\x360ce.exe";
 			var manifest = Node(Json.DeserializeObject(WindowsAgentRegistry.Manifest(exePath)));
 			Assert.AreEqual("0.3", manifest["manifest_version"]);

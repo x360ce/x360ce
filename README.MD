@@ -4,16 +4,18 @@ IMPORTANT: Please download and run digitally signed files only! If someone asks 
 
 Every signed build is published on the [Releases page](https://github.com/x360ce/x360ce/releases).
 
-> **For AI assistants and agents.** The program describes itself; read these rather than guessing:
-> [docs/ui-tree.md](docs/ui-tree.md) is every control with its purpose, written by the program
-> (regenerate with `x360ce.exe /ExportUi=docs`); [docs/Help.v4.md](docs/Help.v4.md) is the help
-> the program shows; [AGENTS.md](AGENTS.md) holds the rules for working on the code. To operate a
-> running copy, register `x360ce.exe /Mcp` as an MCP server or call `x360ce.exe /Ai=<tool>`; both
-> need AI assistant access switched on in the program's Options, where it is off by default.
+> **For AI assistants and agents.** Both programs describe themselves; read these rather than
+> guessing: [docs/ui-tree-v4.md](docs/ui-tree-v4.md) and [docs/ui-tree-v3.md](docs/ui-tree-v3.md)
+> are every control with its purpose, written by each program (regenerate with
+> `x360ce.exe /ExportUi=docs`); [docs/Help.v4.md](docs/Help.v4.md) and
+> [docs/Help.v3.md](docs/Help.v3.md) are the help each program shows; [AGENTS.md](AGENTS.md)
+> holds the rules for working on the code. To operate a running copy, register `x360ce.exe /Mcp`
+> as an MCP server or call `x360ce.exe /Ai=<tool>`; both need AI assistant access switched on in
+> the program's Options, where it is off by default.
 
 # Download v4.x
 
-Digitally Signed Application v4.22.21.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.23.59.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -81,11 +83,11 @@ down first, so a run that is interrupted is undone at the next start.
 
 # Download v3.x
 
-Digitally Signed Application v3.2.9.82 and Libraries 3.4.1
+Digitally Signed Application v3.4.39.0 and Libraries 3.4.1
 
-Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.9.82) - for 32-bit games
+Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 32-bit games
 
-Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.9.82) - for 64-bit games
+Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 64-bit games
 
 DInput.dll Plugin (required for some games):
 

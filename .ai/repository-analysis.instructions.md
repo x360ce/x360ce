@@ -28,7 +28,7 @@ History before the 4.18 restore (August 2026) used other folder names; the map i
 | `Documents/` | release pipeline scripts + signing manifest |
 | `Resources/` | one file: `ZipFiles.ps1` |
 | `scripts/ui/` | `Invoke-AppUiCapture.ps1` — screenshot evidence tooling |
-| `docs/` | end-user wiki pages, `ui-tree.*` written by the program, and git-ignored `plans/` working notes |
+| `docs/` | end-user wiki pages, `ui-tree-v3.*` and `ui-tree-v4.*` written by each program, and git-ignored `plans/` working notes |
 | `.ai/` | two instruction files (see §8) |
 
 ## 3. Technology Stack & Key Dependencies
@@ -94,7 +94,7 @@ Tracked prose is small — **14 `.md` files repo-wide**, five of them the end-us
 
 ⚠ **`AGENTS.md` is generated, not authored.** It is the two `.ai/*.instructions.md` files copied in verbatim, so an edit made there is lost the next time it is written — change the `.ai/` file and regenerate. The two therefore cannot disagree with each other, but both are prose and can fall behind the code they describe: when a document and a build script disagree, the script is right (§9.14).
 
-`docs/` holds the end-user documentation as Markdown, laid out as wiki pages: `.order` names the pages in display order (`Home` first), page assets sit in a dot-prefixed folder beside the page (`.HowToBuild/`), and image links are relative. `docs/ui-tree.json` and `docs/ui-tree.md` are written by the program itself — `x360ce.exe /ExportUi=<folder>` (`App.v4/Program.cs`, `App.v4/Common/UiTree/UiTreeMarkdown.cs`), checked by `Tests/Common/UiTreeTest.cs` — so they are regenerated, never hand-edited. `docs/.gitignore` keeps `plans/*` out of the repository: it is the working-notes folder for unshipped work (`developer.instructions.md`, "Plans live in `docs/plans/`").
+`docs/` holds the end-user documentation as Markdown, laid out as wiki pages: `.order` names the pages in display order (`Home` first), page assets sit in a dot-prefixed folder beside the page (`.HowToBuild/`), and image links are relative. `docs/ui-tree-v3.*` and `docs/ui-tree-v4.*` are written by each program itself — `x360ce.exe /ExportUi=<folder>` (`App.v3/Program.cs` and `App.v4/Program.cs` through the shared `Engine/UiTree/UiTreeExporter.cs` and `UiTreeMarkdown.cs`, with each program's names and purposes in its `Common/UiTree/UiCatalog.*.cs`), the v4 tree checked by `Tests/Common/UiTreeTest.cs` — so they are regenerated, never hand-edited. `docs/.gitignore` keeps `plans/*` out of the repository: it is the working-notes folder for unshipped work (`developer.instructions.md`, "Plans live in `docs/plans/`").
 
 The help pages each application shows are those same `docs/*.md` files, embedded as links (`docs\Help.v4.md` and `docs\Help.HidGuardian.md` into v4, `docs\Help.v3.md` into v3) and turned into rich text by `Engine/Common/MarkdownRtf.cs` when the page is opened — so a document is written once and there is no converted copy to keep in step. `App.v3/Documents/` and `App.v4/Documents/` keep the rest (`ChangeLog.txt`, `License.txt`), and `Native/Support/` carries `ReadMe.RTF`, `changelog.txt`, the `x360ce.gdb` game database and `usb-detection.pdf`.
 

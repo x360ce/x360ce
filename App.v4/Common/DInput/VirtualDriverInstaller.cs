@@ -62,9 +62,15 @@ namespace x360ce.App.DInput
 		{
 			// Records of controllers long gone count too: they are left behind exactly as the present
 			// ones are, and the same removal takes them away.
-			var all = ReadControllerTree(true);
+			var ids = ControllerFamilyIds(true);
+			var key = string.Join("|", ids) + "#" + string.Join("|", ControllerFamilyIds(false))
+				+ "#" + string.Join(",", OurSerials().OrderBy(x => x).Select(x => x.ToString()).ToArray());
+			lock (LeftoverLock)
+				if (key == LastLeftoverKey)
+					return LastLeftovers;
+			var all = DeviceDetector.GetDevices(ids, true, false);
 			var byId = IndexById(all);
-			return all
+			var leftovers = all
 				.Where(x => IsVirtualPad(x, byId))
 				// Not the ones this program is using right now. Offering to remove those would break
 				// the very thing somebody pressing the button is trying to repair.
@@ -87,7 +93,25 @@ namespace x360ce.App.DInput
 					?? g.First())
 				.OrderBy(x => x.DeviceId)
 				.ToArray();
+			lock (LeftoverLock)
+			{
+				LastLeftoverKey = key;
+				LastLeftovers = leftovers;
+			}
+			return leftovers;
 		}
+
+		/// <summary>The leftovers at the last look, and what they were judged from.</summary>
+		/// <remarks>
+		/// Judging reads the description of every controller record Windows keeps, and a machine where
+		/// many runs ended badly keeps hundreds: measured at four seconds for 423, on a check that runs
+		/// every five, holding the lock the device list read waits on. The ids alone cost milliseconds,
+		/// and the answer changes only when they change, when one comes or goes, or when the controllers
+		/// this program holds change, so those are the key and the reading is done only when it moves.
+		/// </remarks>
+		static string LastLeftoverKey;
+		static DeviceInfo[] LastLeftovers = new DeviceInfo[0];
+		static readonly object LeftoverLock = new object();
 
 		/// <summary>
 		/// Whether a controller is one this program currently has plugged in.
@@ -324,11 +348,18 @@ namespace x360ce.App.DInput
 		/// </param>
 		public static DeviceInfo[] ReadControllerTree(bool includeRecords = false)
 		{
-			var wanted = DeviceDetector.GetDeviceIds(!includeRecords).Where(id =>
+			return DeviceDetector.GetDevices(ControllerFamilyIds(includeRecords), true, !includeRecords);
+		}
+
+		/// <summary>The ids of the controller family, sorted: every XInput face, every pad of the bus's kind and every root system device.</summary>
+		static string[] ControllerFamilyIds(bool includeRecords)
+		{
+			return DeviceDetector.GetDeviceIds(!includeRecords).Where(id =>
 				CarriesInputGroup(id)
 				|| id.StartsWith("USB\\VID_045E&PID_028E", StringComparison.OrdinalIgnoreCase)
-				|| id.StartsWith("ROOT\\SYSTEM", StringComparison.OrdinalIgnoreCase));
-			return DeviceDetector.GetDevices(wanted, true, !includeRecords);
+				|| id.StartsWith("ROOT\\SYSTEM", StringComparison.OrdinalIgnoreCase))
+				.OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+				.ToArray();
 		}
 
 		/// <summary>

@@ -36,7 +36,7 @@
 			this.XInput91_x86CheckBox = new System.Windows.Forms.CheckBox();
 			this.HookMaskTextBox = new System.Windows.Forms.TextBox();
 			this.HookDISABLECheckBox = new System.Windows.Forms.CheckBox();
-			this.HookNameCheckBox = new System.Windows.Forms.CheckBox();
+			this.HookNAMECheckBox = new System.Windows.Forms.CheckBox();
 			this.HookSTOPCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookPIDVIDCheckBox = new System.Windows.Forms.CheckBox();
 			this.HookDICheckBox = new System.Windows.Forms.CheckBox();
@@ -166,16 +166,16 @@
 			this.HookDISABLECheckBox.Text = "DISABLE";
 			this.HookDISABLECheckBox.UseVisualStyleBackColor = true;
 			// 
-			// HookNameCheckBox
+			// HookNAMECheckBox
 			// 
-			this.HookNameCheckBox.AutoSize = true;
-			this.HookNameCheckBox.Location = new System.Drawing.Point(16, 109);
-			this.HookNameCheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
-			this.HookNameCheckBox.Name = "HookNameCheckBox";
-			this.HookNameCheckBox.Size = new System.Drawing.Size(57, 17);
-			this.HookNameCheckBox.TabIndex = 0;
-			this.HookNameCheckBox.Text = "NAME";
-			this.HookNameCheckBox.UseVisualStyleBackColor = true;
+			this.HookNAMECheckBox.AutoSize = true;
+			this.HookNAMECheckBox.Location = new System.Drawing.Point(16, 109);
+			this.HookNAMECheckBox.Margin = new System.Windows.Forms.Padding(16, 1, 3, 1);
+			this.HookNAMECheckBox.Name = "HookNAMECheckBox";
+			this.HookNAMECheckBox.Size = new System.Drawing.Size(57, 17);
+			this.HookNAMECheckBox.TabIndex = 0;
+			this.HookNAMECheckBox.Text = "NAME";
+			this.HookNAMECheckBox.UseVisualStyleBackColor = true;
 			// 
 			// HookSTOPCheckBox
 			// 
@@ -617,7 +617,7 @@
 			this.Controls.Add(this.DInput8_x86CheckBox);
 			this.Controls.Add(this.XInput11_x64CheckBox);
 			this.Controls.Add(this.XInput91_x86CheckBox);
-			this.Controls.Add(this.HookNameCheckBox);
+			this.Controls.Add(this.HookNAMECheckBox);
 			this.Controls.Add(this.HookSTOPCheckBox);
 			this.Controls.Add(this.HookPIDVIDCheckBox);
 			this.Controls.Add(this.HookCOMCheckBox);
@@ -643,7 +643,7 @@
 		private System.Windows.Forms.CheckBox XInput91_x86CheckBox;
 		private System.Windows.Forms.TextBox HookMaskTextBox;
 		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
-		private System.Windows.Forms.CheckBox HookNameCheckBox;
+		private System.Windows.Forms.CheckBox HookNAMECheckBox;
 		private System.Windows.Forms.CheckBox HookSTOPCheckBox;
 		private System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
 		private System.Windows.Forms.CheckBox HookDICheckBox;

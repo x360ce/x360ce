@@ -255,6 +255,7 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
+			PadSettings.ValidateData = PadSettings_ValidateData;
 			PadSettings.Load();
 			UserDevices.Load();
 			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
@@ -274,6 +275,50 @@ namespace x360ce.App
 					item.SettingId = Guid.NewGuid();
 			}
 			return items;
+		}
+
+		static IList<PadSetting> PadSettings_ValidateData(IList<PadSetting> items)
+		{
+			UpdateOldDefaultMotorPeriods(items, UserSettings.Items);
+			return items;
+		}
+
+		/// <summary>The motor periods versions before 4.23 gave a new mapping.</summary>
+		public const string OldDefaultLeftMotorPeriod = "60";
+		public const string OldDefaultRightMotorPeriod = "120";
+
+		/// <summary>Gives the settings a person's own mappings use the current default motor periods, where they still carry the old ones.</summary>
+		/// <remarks>
+		/// The left motor is the low-frequency one and the right the high-frequency one, so the left
+		/// period is the longer. The form writes the defaults into every mapping it saves, so changing
+		/// the defaults alone would reach nobody who already had a controller set up. The exact old
+		/// pair is what somebody who never touched the sliders has, and nobody chooses that pair on
+		/// purpose; it becomes the current pair, and anything else is left as it was set.
+		///
+		/// Only settings a mapping of this person's points at are touched. A preset from the server
+		/// keeps its checksum, which is how the server knows it, and the mapping is pointed at the
+		/// setting's new checksum so the two stay together.
+		/// </remarks>
+		/// <returns>How many settings were updated.</returns>
+		public static int UpdateOldDefaultMotorPeriods(IList<PadSetting> padSettings, IList<UserSetting> settings)
+		{
+			var updated = 0;
+			foreach (var ps in padSettings)
+			{
+				if (ps.LeftMotorPeriod != OldDefaultLeftMotorPeriod || ps.RightMotorPeriod != OldDefaultRightMotorPeriod)
+					continue;
+				var was = ps.PadSettingChecksum;
+				var users = settings.Where(x => x.PadSettingChecksum == was).ToList();
+				if (users.Count == 0)
+					continue;
+				ps.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
+				ps.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
+				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+				foreach (var user in users)
+					user.PadSettingChecksum = ps.PadSettingChecksum;
+				updated++;
+			}
+			return updated;
 		}
 
 		static IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
@@ -374,8 +419,22 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>Writes the program and game lists, and says so when it cannot rather than ending the program.</summary>
+		public static void Save()
+		{
+			SaveOrAsk(() =>
+			{
+				lock (saveReadFileLock)
+				{
+					Programs.Save();
+					UserGames.Save();
+				}
+			});
+		}
+
 		/// <summary>
-		/// Writes the settings, and says so when it cannot rather than ending the program.
+		/// Runs a save, and when a file cannot be written asks whether to try again, save into this
+		/// user's own folder, or leave it, rather than ending the program.
 		/// </summary>
 		/// <remarks>
 		/// Saving fails for reasons that have nothing to do with this program: the file
@@ -389,22 +448,18 @@ namespace x360ce.App
 		/// Retry comes first because a file held for a moment is the cheaper
 		/// explanation, and trying again costs nothing.
 		/// </remarks>
-		public static void Save()
+		public static void SaveOrAsk(Action save)
 		{
 			while (true)
 			{
 				try
 				{
-					lock (saveReadFileLock)
-					{
-						Programs.Save();
-						UserGames.Save();
-					}
+					save();
 					return;
 				}
 				catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
 				{
-					var answer = AskAboutFailedSave(ex);
+					var answer = AskAfterFailedSave(ex);
 					if (answer == DialogResult.Retry)
 						continue;
 					if (answer == DialogResult.Yes && MoveSettingsToUserFolder())
@@ -413,6 +468,9 @@ namespace x360ce.App
 				}
 			}
 		}
+
+		/// <summary>Asks what to do about a save that failed: Retry, Yes to use this user's own folder, or anything else to leave it. A test replaces it, since the real one opens a window.</summary>
+		public static Func<Exception, DialogResult> AskAfterFailedSave = AskAboutFailedSave;
 
 		/// <summary>Tells the person what stopped the save, and what can be done now.</summary>
 		private static DialogResult AskAboutFailedSave(Exception ex)
@@ -480,6 +538,36 @@ namespace x360ce.App
 			PadSettings.Rebase();
 		}
 
+		/// <summary>The listed game a file added by hand would take over, when that game's own file is still in place elsewhere.</summary>
+		/// <remarks>
+		/// One entry per file name is the rule: every copy of a program on the machine shares one
+		/// configuration, and the scanner, the program's own entry and a moved game all rely on it.
+		/// A second entry under the same name is made only on request, and the request is only worth
+		/// asking for when it can mean something: the file already listed under that name is still
+		/// there, in another folder. An entry whose file is gone is the same game moved, and is taken
+		/// over without a question. Null means there is nothing to ask.
+		/// </remarks>
+		public static UserGame OtherGameWithSameName(string fullPath)
+		{
+			var fi = new FileInfo(fullPath);
+			return UserGames.ItemsToArraySyncronized().FirstOrDefault(x =>
+				string.Equals(x.FileName, fi.Name, StringComparison.OrdinalIgnoreCase)
+				&& !string.Equals(x.FullPath, fi.FullName, StringComparison.OrdinalIgnoreCase)
+				&& File.Exists(x.FullPath));
+		}
+
+		/// <summary>The name a game is listed under; the folder is added only where another entry reads the same.</summary>
+		public static string DisplayNameInList(UserGame game)
+		{
+			var name = game.DisplayName;
+			var twin = UserGames.ItemsToArraySyncronized()
+				.Any(x => !ReferenceEquals(x, game) && string.Equals(x.DisplayName, name, StringComparison.OrdinalIgnoreCase));
+			if (!twin || string.IsNullOrEmpty(game.FullPath))
+				return name;
+			var folder = Path.GetFileName(Path.GetDirectoryName(game.FullPath));
+			return string.IsNullOrEmpty(folder) ? name : name + " (" + folder + ")";
+		}
+
 		public static UserGame ProcessExecutable(string filePath)
 		{
 			var fi = new FileInfo(filePath);
@@ -521,6 +609,23 @@ namespace x360ce.App
 		#endregion // Member Variables
 
 		#region Public Methods
+
+		/// <summary>
+		/// The stored value a slider at 100 stands for, for the settings a slider shows as a percentage
+		/// of their range; 0 where the slider shows the value itself.
+		/// </summary>
+		/// <remarks>Motor periods are 4 ms a step, so every motor period preset lands on a step.</remarks>
+		public static int TrackBarFullScale(string key)
+		{
+			if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
+				return 256;
+			if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				return 400;
+			if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				return Int16.MaxValue;
+			return 0;
+		}
+
 		/// <summary>
 		/// Adds an entry in the control-setting map, generates a tool-tip for the setting.
 		/// </summary>
@@ -574,6 +679,11 @@ namespace x360ce.App
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
 			var dval = (string)(descAttr != null ? dvalAttr.Value : null);
+			// A slider that shows the setting as a percentage says so. Otherwise its 0 to 100 reads as
+			// the setting's own range, and a value taken from the description, such as 160 ms, is refused.
+			var fullScale = control is TrackBar ? TrackBarFullScale(keyName) : 0;
+			if (fullScale > 0)
+				desc = (desc + " The slider shows it as a percentage: 100 is " + fullScale + ".").Trim();
 			// The setting says what it is for; that belongs on the control itself, where a screen
 			// reader, the header help and the exported navigation tree all read it from one place.
 			// Anything named deliberately elsewhere keeps its own words.
@@ -691,6 +801,17 @@ namespace x360ce.App
 					//SaveSettings(control);
 				}
 			}
+			ShowComboBoxValue(cbx, text);
+		}
+
+		/// <summary>Shows a mapping in its box and leaves every other box as it is.</summary>
+		/// <remarks>
+		/// Taking a control off the other boxes is for a control chosen by hand. A loaded preset is
+		/// shown as it was saved: it may map one control twice, and clearing a box here emptied a
+		/// mapping the preset holds.
+		/// </remarks>
+		static void ShowComboBoxValue(ComboBox cbx, string text)
+		{
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;
@@ -750,8 +871,8 @@ namespace x360ce.App
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
-					var text = SettingsConverter.FromIniValue(value);
-					SetComboBoxValue(cbx, text);
+					var text = SettingsConverter.FromIniValue(value, map.Code);
+					ShowComboBoxValue(cbx, text);
 				}
 				else
 				{
@@ -788,23 +909,11 @@ namespace x360ce.App
 				TrackBar tc = (TrackBar)control;
 				int n = 0;
 				int.TryParse(value, out n);
-				// convert 256  to 100%
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
-				{
-					if (key == SettingName.AxisToDPadDeadZone && value == "")
-						n = 256;
-					n = System.Convert.ToInt32((float)n / 256F * 100F);
-				}
-				// Convert 500 to 100%
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
-				{
-					n = System.Convert.ToInt32((float)n / 500F * 100F);
-				}
-				// Convert 32767 to 100%
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
-				{
-					n = System.Convert.ToInt32((float)n / ((float)Int16.MaxValue) * 100F);
-				}
+				if (key == SettingName.AxisToDPadDeadZone && value == "")
+					n = 256;
+				var fullScale = TrackBarFullScale(key);
+				if (fullScale > 0)
+					n = System.Convert.ToInt32((float)n / fullScale * 100F);
 				if (n < tc.Minimum)
 					n = tc.Minimum;
 				if (n > tc.Maximum)
@@ -862,7 +971,7 @@ namespace x360ce.App
 					// reverts to whatever it was mapped to before.
 					if (MapExpression.IsExpression(control.Text))
 						return control.Text.Trim();
-					v = SettingsConverter.ToIniValue(control.Text);
+					v = SettingsConverter.ToIniValue(control.Text, map.Code);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
 						v = "0";
@@ -890,23 +999,10 @@ namespace x360ce.App
 			else if (control is TrackBar)
 			{
 				TrackBar tc = (TrackBar)control;
-				// convert 100%  to 256
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
-				}
-				// convert 100%  to 500
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
-				}
-				// Convert 100% to 32767
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
-				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * ((float)Int16.MaxValue)).ToString();
-				}
-				else
-					v = tc.Value.ToString();
+				var fullScale = TrackBarFullScale(key);
+				v = fullScale > 0
+					? System.Convert.ToInt32((float)tc.Value / 100F * fullScale).ToString()
+					: tc.Value.ToString();
 			}
 			else if (control is CheckBox)
 			{

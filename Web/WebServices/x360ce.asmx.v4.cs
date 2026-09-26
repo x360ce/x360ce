@@ -95,6 +95,12 @@ namespace x360ce.Web.WebServices
 			return data;
 		}
 
+		[WebMethod(EnableSession = true, Description = "Get the service's version and clock, and whether its database answers. For testing the address.")]
+		public ServerInfo GetServerInfo()
+		{
+			return EngineHelper.GetServerInfo();
+		}
+
 		[WebMethod(EnableSession = true, Description = "Get vendors of controllers.")]
 		public List<Vendor> GetVendors()
 		{

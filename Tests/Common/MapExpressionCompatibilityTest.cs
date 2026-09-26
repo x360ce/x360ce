@@ -55,7 +55,7 @@ namespace x360ce.Tests
 		{
 			// An overlap in either direction is a defect. A value both accept would mean the same
 			// configuration behaves differently depending on which version opened it, silently.
-			var mappings = new[] { "1", "12", "a1", "-2", "a-3", "s2", "x4", "h5", "p1", "d2" };
+			var mappings = new[] { "1", "12", "b3", "b-3", "a1", "-2", "a-3", "s2", "x4", "h5", "p1", "d2" };
 			foreach (var text in mappings)
 			{
 				MapType type;

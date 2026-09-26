@@ -21,6 +21,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <!-- The title and error reports show the build date, read from the time the linker writes
+         into the file's header. A deterministic build writes a content hash there instead. -->
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <OutputPath>bin\Debug_x86\</OutputPath>
@@ -82,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AiAccessSettings.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
@@ -95,6 +99,9 @@
     <Compile Include="Common\SettingEventArgs.cs" />
     <Compile Include="Common\SettingManager.cs" />
     <Compile Include="Common\SettingsData.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Lists.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Main.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Pad.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\WarningItem.cs" />
     <Compile Include="Controls\AboutControl.cs">
@@ -175,8 +182,8 @@
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\GdbFileClass.cs" />
     <Compile Include="Issues\IssueSeverity.cs" />
-    <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />
+    <Compile Include="Mcp\McpTools.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controls\WarningsForm.cs">
@@ -387,9 +394,37 @@
     </ItemGroup>
   </Target>
   <!--
+    The native libraries this application embeds, built in its own configuration and in both
+    bitnesses, because both are embedded whatever it is built as. Building this project from a
+    clean tree therefore builds everything it carries, and a Debug build carries Debug libraries
+    with their symbols. The solution's configuration map is left out, and each library keeps
+    the configuration and bitness asked for here for its own references too: inside a solution
+    build, and inside Visual Studio, a reference missing from the map is otherwise built at its
+    project's defaults, Debug and 32 bit, and a Release or 64 bit library fails to link.
+    A library that is already built is not relinked unless its sources changed, so a release
+    that signs the libraries before building this project keeps them signed.
+  -->
+  <ItemGroup>
+    <NativeLibraryProject Include="..\Native\dinput8\dinput8.vcxproj" />
+    <NativeLibraryProject Include="..\Native\x360ce\x360ce.vcxproj" />
+    <!-- A change to the native sources makes Visual Studio build this project again, and so the libraries. -->
+    <UpToDateCheckInput Include="..\Native\**\*.cpp;..\Native\**\*.c;..\Native\**\*.h;..\Native\**\*.def;..\Native\**\*.rc;..\Native\**\*.vcxproj" Exclude="..\Native\**\obj*\**;..\Native\**\bin*\**" Set="Native" />
+  </ItemGroup>
+  <PropertyGroup>
+    <SolutionGlobalProperties>CurrentSolutionConfigurationContents;SolutionDir;SolutionExt;SolutionFileName;SolutionName;SolutionPath</SolutionGlobalProperties>
+    <NativeLibraryProperties>Configuration=$(Configuration);ShouldUnsetParentConfigurationAndPlatform=false</NativeLibraryProperties>
+  </PropertyGroup>
+  <Target Name="BuildNativeLibraries" BeforeTargets="StageGeneratedResources">
+    <MSBuild Projects="@(NativeLibraryProject)" Targets="Build" Properties="$(NativeLibraryProperties);Platform=Win32" RemoveProperties="$(SolutionGlobalProperties)" />
+    <MSBuild Projects="@(NativeLibraryProject)" Targets="Build" Properties="$(NativeLibraryProperties);Platform=x64" RemoveProperties="$(SolutionGlobalProperties)" />
+  </Target>
+  <Target Name="CleanNativeLibraries" AfterTargets="Clean">
+    <MSBuild Projects="@(NativeLibraryProject)" Targets="Clean" Properties="$(NativeLibraryProperties);Platform=Win32" RemoveProperties="$(SolutionGlobalProperties)" />
+    <MSBuild Projects="@(NativeLibraryProject)" Targets="Clean" Properties="$(NativeLibraryProperties);Platform=x64" RemoveProperties="$(SolutionGlobalProperties)" />
+  </Target>
+  <!--
     A Debug build keeps the native libraries beside the executable, so a debugger finds their
-    symbols. Nothing is copied for a Release build or when the native output is not there; the
-    embedding below is what fails, with a hint, when the native libraries are missing.
+    symbols. Nothing is copied for a Release build.
   -->
   <Target Name="CopyNativeDebugLibraries" BeforeTargets="Build" Condition="'$(Configuration)' == 'Debug' And '$(PlatformTarget)' != 'AnyCPU'">
     <PropertyGroup>
@@ -410,7 +445,7 @@
     what the running application looks it up by.
   -->
   <PropertyGroup>
-    <MissingResourceHint>. Build the DLL_x86_v3 and DLL_x64_v3 solution platforms first; Documents\App_0_Release.ps1 builds them in order.</MissingResourceHint>
+    <MissingResourceHint>. The native libraries are built by BuildNativeLibraries above; the build output before this line says why this one was not.</MissingResourceHint>
   </PropertyGroup>
   <ItemGroup>
     <!--

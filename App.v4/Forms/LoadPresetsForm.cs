@@ -16,6 +16,17 @@ namespace x360ce.App.Controls
 			SettingsGridPanel._ParentForm = this;
 			SummariesGridPanel._ParentForm = this;
 			PresetsGridPanel._ParentForm = this;
+			// The lists fill from the server after the form is open, and a row is selected as it
+			// arrives. The button followed the tab only, so a tab opened while its list was still
+			// empty kept the button off however much was selected afterwards.
+			SettingsGridPanel.SettingsDataGridView.SelectionChanged += Grid_SelectionChanged;
+			SummariesGridPanel.SummariesDataGridView.SelectionChanged += Grid_SelectionChanged;
+			PresetsGridPanel.PresetsDataGridView.SelectionChanged += Grid_SelectionChanged;
+		}
+
+		private void Grid_SelectionChanged(object sender, EventArgs e)
+		{
+			UpdateControls();
 		}
 
 		public void InitForm()
@@ -35,7 +46,10 @@ namespace x360ce.App.Controls
 
 		public PadSetting SelectedItem;
 
-		private void OkButton_Click(object sender, EventArgs e)
+		/// <summary>The settings of the row selected on the open tab.</summary>
+		/// <param name="rowSelected">Whether a row is selected at all.</param>
+		/// <returns>Null when no row is selected, or when the server sent no settings for the one that is.</returns>
+		PadSetting GetSelectedPadSetting(out bool rowSelected)
 		{
 			Guid? checksum = null;
 			if (MainTabControl.SelectedTab == PresetsTabPage)
@@ -65,11 +79,56 @@ namespace x360ce.App.Controls
 					checksum = setting.PadSettingChecksum;
 				}
 			}
-			if (checksum.HasValue)
+			rowSelected = checksum.HasValue;
+			return checksum.HasValue
+				? SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value)
+				: null;
+		}
+
+		/// <summary>What the header says when the selected row came without its settings.</summary>
+		const string NoSettingsMessage = "The server sent no settings for this preset. Choose another.";
+
+		private void OkButton_Click(object sender, EventArgs e)
+		{
+			bool rowSelected;
+			var padSetting = GetSelectedPadSetting(out rowSelected);
+			if (rowSelected)
 			{
-				SelectedItem = SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value);
+				SelectedItem = padSetting;
+				// The lists come with their settings, so a missing one is missing on the server too.
+				// Closing with nothing looked like the button did not work; the form stays open and says.
+				if (SelectedItem == null)
+				{
+					SetHeaderError(NoSettingsMessage);
+					return;
+				}
 			}
 			DialogResult = DialogResult.OK;
+		}
+
+		/// <summary>The selected preset to copy as text, so what it holds can be read before it is loaded.</summary>
+		/// <returns>Null, having said so in the header, when the selected row came without its settings.</returns>
+		PadSetting GetPadSettingToCopy()
+		{
+			bool rowSelected;
+			var padSetting = GetSelectedPadSetting(out rowSelected);
+			if (padSetting == null && rowSelected)
+				SetHeaderError(NoSettingsMessage);
+			return padSetting;
+		}
+
+		private void CopyPresetButton_Click(object sender, EventArgs e)
+		{
+			var padSetting = GetPadSettingToCopy();
+			if (padSetting != null)
+				SettingsManager.CopyPresetToClipboard(padSetting);
+		}
+
+		private void CopyPresetFormatButton_Click(object sender, EventArgs e)
+		{
+			var padSetting = GetPadSettingToCopy();
+			if (padSetting != null)
+				SettingsManager.ShowCopyPresetMenu(CopyPresetButton, padSetting);
 		}
 
 		private void OpenFileButton_Click(object sender, EventArgs e)
@@ -108,14 +167,17 @@ namespace x360ce.App.Controls
 			var tab = MainTabControl.SelectedTab;
 			if (tab != null)
 				SetHeaderSubject(tab.Text);
+			// What the buttons load and copy is the selected row, so the selected row is what enables them.
 			var selected = false;
 			if (MainTabControl.SelectedTab == PresetsTabPage)
-				selected = PresetsGridPanel.PresetsDataGridView.Rows.Count > 0;
+				selected = PresetsGridPanel.PresetsDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SummariesTabPage)
-				selected = SummariesGridPanel.SummariesDataGridView.Rows.Count > 0;
+				selected = SummariesGridPanel.SummariesDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SettingsTabPage)
-				selected = SettingsGridPanel.SettingsDataGridView.Rows.Count > 0;
+				selected = SettingsGridPanel.SettingsDataGridView.SelectedRows.Count > 0;
 			ControlsHelper.SetEnabled(OkButton, selected);
+			ControlsHelper.SetEnabled(CopyPresetButton, selected);
+			ControlsHelper.SetEnabled(CopyPresetFormatButton, selected);
 		}
 
 	}

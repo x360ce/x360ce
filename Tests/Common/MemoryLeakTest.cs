@@ -1,9 +1,10 @@
-// @under-test: Tests/TestInfrastructure/MemoryLeak.cs, App.v4/MainForm.cs
+// @under-test: Tests/TestInfrastructure/MemoryLeak.cs, App.v4/MainForm.cs, App.v3/MainForm.cs
 // @area: memory   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -232,6 +233,89 @@ namespace x360ce.Tests
 			SettleAfterWindowStateChange(process);
 			Ui.Restore(process);
 			SettleAfterWindowStateChange(process);
+		}
+
+		/// <summary>
+		/// Version 3 reads and redraws the controllers ten times a second for as long as its window
+		/// is open, so anything one pass leaves behind grows steadily: a minute is six hundred
+		/// passes, and a leak of one handle a pass grows by some two hundred every twenty seconds.
+		/// </summary>
+		/// <remarks>
+		/// What is asserted is growth that goes on, not the largest value seen. Something created once
+		/// while the program runs, such as a tooltip the first time the pointer rests on the window,
+		/// raises the count by a step and stays there. That step is not a leak, yet measured as the
+		/// worst value against the first it would fail. So the minute is cut into thirds, and a count
+		/// fails only when each third grows past the allowance on the one before.
+		/// </remarks>
+		[TestMethod, TestCategory("memory"), TestCategory("ui-interactive")]
+		[Description("Version 3 does not grow while it reads and redraws the controllers")]
+		public void V3_does_not_grow_while_it_runs()
+		{
+			const int warmupSeconds = 15;
+			const int measuredSeconds = 60;
+			const long allowedGrowthMb = 20;
+			const int allowedHandleGrowth = 10;
+			const int allowedKernelHandleGrowth = 50;
+
+			var exe = Ui.FindApp("App.v3");
+			if (exe == null)
+				Assert.Inconclusive("App.v3 is not built. Build it before running UI tests.");
+			var rateText = new System.Text.RegularExpressions.Regex(@"^UI Hz:\s*(\d+)");
+
+			Process process = null;
+			try
+			{
+				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(60));
+				var rate = Ui.WaitFor(() => Ui.FindByName(window, rateText), TimeSpan.FromSeconds(60),
+					"the status bar never reported an interface rate");
+				// Questions about new controllers are answered No; the passes run once they are.
+				Ui.WaitFor(() =>
+				{
+					Ui.CloseDialogs(process, window);
+					return Ui.ReadNumber(rate, rateText) >= 7 ? rate : null;
+				}, TimeSpan.FromSeconds(60), "the program to read the controllers");
+				// The first passes fill caches and load the library, which is growth that stops.
+				Thread.Sleep(warmupSeconds * 1000);
+				var samples = new List<MemoryLeak.Usage>();
+				for (var second = 5; second <= measuredSeconds; second += 5)
+				{
+					Thread.Sleep(5000);
+					var now = MemoryLeak.Measure(process);
+					Console.WriteLine("{0,3} s : {1}", second, now);
+					samples.Add(now);
+				}
+				// Nothing measured means nothing proved: the passes must still have been running.
+				Assert.IsTrue(Ui.ReadNumber(rate, rateText) >= 7, "The program stopped reading the controllers while it was measured.");
+
+				AssertNoSustainedGrowth("Private memory, MB", samples.Select(x => x.PrivateMb).ToArray(), allowedGrowthMb,
+					"memory taken each pass is not given back");
+				AssertNoSustainedGrowth("GDI handles", samples.Select(x => (double)x.GdiHandles).ToArray(), allowedHandleGrowth,
+					"something drawn each pass is not released");
+				AssertNoSustainedGrowth("USER handles", samples.Select(x => (double)x.UserHandles).ToArray(), allowedHandleGrowth,
+					"windows are being created and not destroyed");
+				AssertNoSustainedGrowth("Kernel handles", samples.Select(x => (double)x.KernelHandles).ToArray(), allowedKernelHandleGrowth,
+					"something each pass opens, such as a device, is not closed");
+			}
+			finally
+			{
+				Ui.CloseApp(process);
+			}
+		}
+
+		/// <summary>Fails when a count grows past the allowance from each third of the samples to the next.</summary>
+		private static void AssertNoSustainedGrowth(string what, double[] samples, double allowance, string meaning)
+		{
+			var third = samples.Length / 3;
+			Func<int, double> median = start =>
+			{
+				var part = samples.Skip(start).Take(third).OrderBy(x => x).ToArray();
+				return part[part.Length / 2];
+			};
+			double first = median(0), middle = median(third), last = median(third * 2);
+			Assert.IsFalse(middle - first > allowance && last - middle > allowance, string.Format(
+				"{0} kept growing: {1:N1}, then {2:N1}, then {3:N1} across the run, more than {4} each time. That is {5}.",
+				what, first, middle, last, allowance, meaning));
 		}
 
 		// Minimising and restoring is asynchronous: the state change is posted to the

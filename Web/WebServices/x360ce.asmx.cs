@@ -37,7 +37,9 @@ namespace x360ce.Web.WebServices
 			sr.Summaries = new Summary[0];
 			sr.Settings = new UserSetting[0];
 
-			var hasArgs = args != null && args.Length > 0;
+			// An empty list arrives as null from an older program.
+			args = args ?? new SearchParameter[0];
+			var hasArgs = args.Length > 0;
 			// Workaround fix.
 			args = args.Where(x => !x.IsEmpty()).ToArray();
 			// Create database.

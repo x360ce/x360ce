@@ -19,8 +19,9 @@ namespace x360ce.Tests
 	/// Runs the centering spring itself on an attached wheel, through the same state the program
 	/// uses: the Auto run first, then the spring at the strength it found and at full strength,
 	/// each from a stop. The wheel must come home and stay, not swing from one end to the other,
-	/// which is what a constant force does on its own. And under a light steady push it must
-	/// settle where the push and the spring balance, not pulse between pushed out and pushed back.
+	/// which is what a constant force does on its own. Under a light steady push it must settle
+	/// where the push and the spring balance, not pulse between pushed out and pushed back. And
+	/// pumped into a swing on purpose, it must come out of it by itself once the pumping stops.
 	/// </summary>
 	/// <remarks>
 	/// The wheel is pushed to its stops, so hands stay off it. Needs the wheel free: the program
@@ -30,8 +31,8 @@ namespace x360ce.Tests
 	public class CenteringSpringHardwareTest
 	{
 		const int StopZone = SpringCalibration.AxisMax * 15 / 100;
-		/// <summary>How long the spring is given to bring the wheel home and hold it.</summary>
-		const int SettleMs = 4000;
+		/// <summary>How long the spring is given to bring the wheel home and hold it: the slowest return Auto accepts, and a second to settle.</summary>
+		const int SettleMs = SpringCalibration.ReturnWithinMs + 1000;
 		/// <summary>How long the wheel must have stayed near the centre at the end to count as at rest.</summary>
 		const int RestMs = 1000;
 		/// <summary>How many times the wheel may pass the centre on its way to rest. A swing from end to end passes it every time.</summary>
@@ -48,6 +49,11 @@ namespace x360ce.Tests
 		const int Twitch = 60;
 		/// <summary>How many times the wheel may turn round under the finger. A pulsing wheel turns round on every pulse.</summary>
 		const int ReversalsAllowed = 2;
+		/// <summary>The push that pumps the wheel into a swing, always in the direction it is already moving, and for how long.</summary>
+		const int PumpPercent = 60;
+		const int PumpMs = 2500;
+		/// <summary>How far the pumping must have got the wheel for the recovery to mean anything: past the ramp the spring rises over, where a swing lives. A strong spring lets the pump no further.</summary>
+		const int SwingAtLeast = ForceFeedbackState.SpringRamp;
 
 		/// <summary>What the spring runs against: the device as the program sees it, and a push effect of our own.</summary>
 		sealed class Bench
@@ -87,6 +93,81 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("ui-interactive"), TestCategory("requires-wheel")]
+		[Description("Pumped into a swing, the wheel comes out of it on its own once the pumping stops")]
+		public void The_wheel_comes_out_of_a_swing_on_its_own()
+		{
+			OnTheWheel(b =>
+			{
+				var found = Auto(b);
+				ComesOutOfASwing(b, found);
+				ComesOutOfASwing(b, 50);
+				ComesOutOfASwing(b, 100);
+			});
+		}
+
+		/// <summary>Pumps the wheel as a child pumps a swing, a push the way it is already going, then lets it be and watches it come to rest.</summary>
+		/// <remarks>
+		/// A spring alone stores what the pump puts in and gives it back for ever, like a plane in a
+		/// spin; the damping is what takes it out. The pump is stronger than any hand, so a wheel that
+		/// recovers from this recovers from a knock in a game.
+		/// </remarks>
+		static void ComesOutOfASwing(Bench b, int strength)
+		{
+			SetStrength(b, strength);
+			Run(b, 1500);
+			var watch = Stopwatch.StartNew();
+			var last = Position(b.Device);
+			var lastAt = 0L;
+			var direction = 1;
+			var widest = 0;
+			b.PushForce.Magnitude = -direction * PumpPercent * 100;
+			b.Push.SetParameters(b.PushParameters, EffectParameterFlags.TypeSpecificParameters | EffectParameterFlags.Start);
+			try
+			{
+				while (watch.ElapsedMilliseconds < PumpMs)
+				{
+					var position = Position(b.Device);
+					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds);
+					widest = Math.Max(widest, Math.Abs(position - SpringCalibration.Center));
+					// The push follows the movement, read over a short stretch so the encoder's jitter does not steer it.
+					if (watch.ElapsedMilliseconds - lastAt >= 20)
+					{
+						var moving = Math.Sign(position - last);
+						if (moving != 0 && moving != direction)
+						{
+							direction = moving;
+							b.PushForce.Magnitude = -direction * PumpPercent * 100;
+							b.Push.SetParameters(b.PushParameters, EffectParameterFlags.TypeSpecificParameters | EffectParameterFlags.NoRestart);
+						}
+						last = position;
+						lastAt = watch.ElapsedMilliseconds;
+					}
+					Thread.Sleep(1);
+				}
+			}
+			finally
+			{
+				b.Push.Stop();
+			}
+			var positions = Run(b, SettleMs);
+			var crossings = 0;
+			for (var i = 1; i < positions.Count; i++)
+				if ((positions[i - 1] < SpringCalibration.Center) != (positions[i] < SpringCalibration.Center))
+					crossings++;
+			var perMs = positions.Count / (double)SettleMs;
+			var tail = positions.Skip(positions.Count - (int)(RestMs * perMs)).ToArray();
+			var farthest = tail.Max(x => Math.Abs(x - SpringCalibration.Center));
+			Console.WriteLine("At {0} %: pumped out to {1} ({2} degrees of 900); let be, crossed the centre {3} time(s), at most {4} from it over the last second ({5} degrees); damper on device {6}.",
+				strength, widest, Degrees(widest), crossings, farthest, Degrees(farthest), b.Ff.DamperOnDevice);
+			Assert.IsTrue(widest >= SwingAtLeast, string.Format("At {0} % the pump only got the wheel {1} out, so the recovery proves nothing.", strength, widest));
+			Assert.IsTrue(crossings <= CrossingsAllowed, string.Format(
+				"At {0} % the wheel crossed the centre {1} times in {2} ms after the pumping stopped: it stays in the swing instead of coming out of it.",
+				strength, crossings, SettleMs));
+			Assert.IsTrue(farthest <= ForceFeedbackState.SpringRampFor(strength), string.Format(
+				"At {0} % the wheel was still {1} from the centre in the last second.", strength, farthest));
+		}
+
 		/// <summary>The Auto run, exactly as the button starts it, and the strength it found.</summary>
 		static int Auto(Bench b)
 		{
@@ -98,7 +179,7 @@ namespace x360ce.Tests
 				Thread.Sleep(1);
 			}
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
-			Console.WriteLine("Auto found {0} % (low side {1} %, high side {2} %)", run.Result, run.LowLevel, run.HighLevel);
+			Console.WriteLine("Auto found {0} % (low side {1} %, high side {2} %); its check crossed the centre {3} time(s)", run.Result, run.LowLevel, run.HighLevel, run.Crossings);
 			return run.Result;
 		}
 
@@ -181,7 +262,8 @@ namespace x360ce.Tests
 			var perMs = positions.Count / (double)SettleMs;
 			var tail = positions.Skip(positions.Count - (int)(RestMs * perMs)).ToArray();
 			var farthest = tail.Max(x => Math.Abs(x - SpringCalibration.Center));
-			var arrivedAt = positions.FindIndex(x => Math.Abs(x - SpringCalibration.Center) <= ForceFeedbackState.SpringRamp);
+			var ramp = ForceFeedbackState.SpringRampFor(strength);
+			var arrivedAt = positions.FindIndex(x => Math.Abs(x - SpringCalibration.Center) <= ramp);
 			Console.WriteLine("At {0} %: home after about {1} ms, crossed the centre {2} time(s), at most {3} from it over the last second ({4} degrees of 900).",
 				strength, arrivedAt < 0 ? -1 : (int)(arrivedAt / perMs), crossings, farthest, Degrees(farthest));
 			Assert.IsTrue(crossings <= CrossingsAllowed, string.Format(
@@ -189,7 +271,7 @@ namespace x360ce.Tests
 				strength, crossings, SettleMs));
 			// A spring whose force grows with distance rests where that force equals the friction in
 			// the gears, which is inside the ramp; a wheel still outside it is not being held at all.
-			Assert.IsTrue(farthest <= ForceFeedbackState.SpringRamp, string.Format(
+			Assert.IsTrue(farthest <= ramp, string.Format(
 				"At {0} % the wheel was still {1} from the centre in the last second, outside the ramp the spring rises over.",
 				strength, farthest));
 		}
@@ -244,7 +326,7 @@ namespace x360ce.Tests
 			Assert.IsTrue(reversals <= ReversalsAllowed, string.Format(
 				"At {0} % the wheel turned round {1} times under a steady {2} % push: it is pulsing between pushed out and pushed back instead of settling.",
 				strength, reversals, finger));
-			Assert.IsTrue(span <= ForceFeedbackState.SpringRamp, string.Format(
+			Assert.IsTrue(span <= ForceFeedbackState.SpringRampFor(strength), string.Format(
 				"At {0} % the wheel moved over {1} under a steady {2} % push, more than the ramp the spring rises over.",
 				strength, span, finger));
 		}

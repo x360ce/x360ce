@@ -353,6 +353,25 @@ namespace JocysCom.ClassLibrary.IO
 				NativeMethods.UnregisterDeviceNotification(registration);
 		}
 
+		/// <summary>Whether a device change message means the device list has to be read again.</summary>
+		/// <remarks>
+		/// Windows broadcasts a device change for any device node change on the machine, repeatedly and
+		/// for devices which have nothing to do with controllers: a dock whose hub resets every few
+		/// seconds sends one each time. Reading every device again takes about a second, so answering
+		/// those stops controller processing for that long, and freezes the window when the reading
+		/// runs there. Only a device arriving or leaving can change the list, and a window registered
+		/// with <see cref="RegisterDeviceInterface"/> is told of those for the class it asked about.
+		///
+		/// Both programs ask this one rule, because a second copy of it elsewhere has already let the
+		/// noisy case back in and taken the rate down with it.
+		/// </remarks>
+		/// <param name="change">What Windows says happened.</param>
+		public static bool IsDeviceListChange(DBT change)
+		{
+			return change == DBT.DBT_DEVICEARRIVAL
+				|| change == DBT.DBT_DEVICEREMOVECOMPLETE;
+		}
+
 		#endregion
 
 		#region Cached class icons

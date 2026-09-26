@@ -22,6 +22,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <!-- The title and error reports show the build date, read from the time the linker writes
+         into the file's header. A deterministic build writes a content hash there instead. -->
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <OutputPath>bin\Debug_x86\</OutputPath>
@@ -95,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AdminCommand.cs" />
-    <Compile Include="Common\AiAccess.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
+    <Compile Include="Common\DInput\ElevatedDevices.cs" />
     <Compile Include="Common\DInput\Recorder.cs" />
     <Compile Include="Common\DInput\VirtualDriverInstaller.cs" />
     <Compile Include="Common\DInput\VirtualError.cs" />
@@ -139,22 +142,15 @@
     <Compile Include="Common\SettingsManager.XML.cs" />
     <Compile Include="Common\TaskName.cs" />
     <Compile Include="Common\TestDeviceHelper.cs" />
-    <Compile Include="Common\UiTree\UiNode.cs" />
-    <Compile Include="Common\UiTree\UiCallout.cs" />
     <Compile Include="Common\UiTree\UiHelp.cs" />
-    <Compile Include="Common\UiTree\UiText.cs" />
-    <Compile Include="Common\UiTree\UiText.Devices.cs" />
-    <Compile Include="Common\UiTree\UiText.Input.cs" />
-    <Compile Include="Common\UiTree\UiText.Settings.cs" />
-    <Compile Include="Common\UiTree\UiText.Lists.cs" />
-    <Compile Include="Common\UiTree\UiText.Main.cs" />
-    <Compile Include="Common\UiTree\UiText.Mapping.cs" />
-    <Compile Include="Common\UiTree\UiText.Options.cs" />
-    <Compile Include="Common\UiTree\UiText.Pad.cs" />
-    <Compile Include="Common\UiTree\UiTreeExporter.cs" />
-    <Compile Include="Common\UiTree\UiTreeMarkdown.cs" />
-    <Compile Include="Common\UiTree\UiTreeWalker.cs" />
-    <Compile Include="Common\UiTree\UiTreeWalker.Elements.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Devices.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Input.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Settings.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Lists.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Main.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Mapping.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Options.cs" />
+    <Compile Include="Common\UiTree\UiCatalog.Pad.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
@@ -370,6 +366,7 @@
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
+    <Compile Include="Issues\ForceFeedbackIssue.cs" />
     <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />
@@ -386,11 +383,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Mcp\McpClient.cs" />
-    <Compile Include="Mcp\McpLog.cs" />
-    <Compile Include="Mcp\McpServer.cs" />
     <Compile Include="Mcp\McpTools.cs" />
-    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -518,10 +511,13 @@
     <EmbeddedResource Include="..\docs\Help.HidGuardian.md">
       <Link>Documents\Help.HidGuardian.md</Link>
     </EmbeddedResource>
-    <Compile Include="Common\HotkeyHelper.cs" />
-    <Compile Include="Common\OverlayForm.cs">
+    <EmbeddedResource Include="..\docs\Help.ForceFeedback.md">
+      <Link>Documents\Help.ForceFeedback.md</Link>
+    </EmbeddedResource>
+    <Compile Include="Forms\HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Common\HotkeyHelper.cs" />
     <Compile Include="Common\OverlayNote.cs" />
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">
@@ -620,6 +616,7 @@
     <None Include="Images\folder_16x16.png" />
     <None Include="Images\cloud_computing_refresh_16x16.png" />
     <None Include="Images\fix_16x16.png" />
+    <None Include="Images\information_16x16.png" />
     <None Include="Images\reset_16x16.png" />
     <None Include="Images\checkbox_undefined_16x16.png" />
     <None Include="Images\data_into_16x16.png" />

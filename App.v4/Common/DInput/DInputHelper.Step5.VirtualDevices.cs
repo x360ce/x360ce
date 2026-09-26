@@ -34,7 +34,7 @@ namespace x360ce.App.DInput
 			// The master switch comes first: off means no emulated controller whatever the game asks
 			// for, so a wheel can be swapped for a real pad without leaving the game.
 			var isVirtual = o.XInputEnabled
-				&& game != null && ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+				&& game != null && (game.EmulationType & (int)EmulationType.Virtual) != 0;
 			// If game does not use virtual emulation then...
 			if (!isVirtual)
 			{
@@ -43,6 +43,9 @@ namespace x360ce.App.DInput
 				// native client, repeating the whole cycle at the polling frequency.
 				if (virtualModeActive)
 				{
+					// A plug still under way is left to finish first; a later pass lets go of what it made.
+					if (!SettlePlugging())
+						return;
 					// Each controller is let go of by name first, which is the path that also forgets
 					// the place it held and the hardware that was ours. Disposing the client alone takes
 					// the controllers away and leaves those notes behind.
@@ -70,10 +73,7 @@ namespace x360ce.App.DInput
 			}
 			for (uint i = 1; i <= 4; i++)
 			{
-				var mapTo = (MapTo)i;
-				var flag = AppHelper.GetMapFlag(mapTo);
-				var value = (MapToMask)(game?.EnableMask ?? (int)MapToMask.None);
-				var virtualEnabled = value.HasFlag(flag);
+				var virtualEnabled = WantsVirtual(game, i);
 				var feedingState = FeedingState[i - 1];
 				var plugging = _plugging[i - 1];
 				if (virtualEnabled)
@@ -84,9 +84,7 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
-						if (plugging.IsFaulted)
-							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
-						var result = plugging.IsFaulted ? VirtualError.Other : plugging.Result;
+						var result = PlugOutcome(plugging);
 						VirtualErrors[i - 1] = result;
 						if (result != VirtualError.None)
 						{
@@ -107,6 +105,13 @@ namespace x360ce.App.DInput
 						// wheel fed at that rate swings from side to side.
 						if (unchecked(Environment.TickCount - _NextPlugAttempt[i - 1]) < 0)
 							continue;
+						// Put somewhere else last time: made again only once a controller has come or gone,
+						// or it would be made and taken away every two seconds for nothing.
+						if (VirtualErrors[i - 1] == VirtualError.PlaceWrong && PlacesMask(OccupiedPlaces()) == _misplacedWith[i - 1])
+						{
+							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
+							continue;
+						}
 						// Plugging in waits up to five seconds for Windows to give the controller a place
 						// and reads the device tree twice: three to four seconds a controller, measured.
 						// On this thread that stopped every controller being polled for as long, and a
@@ -115,8 +120,7 @@ namespace x360ce.App.DInput
 						// first, so two at once each undo the other's work and neither arrives.
 						if (_plugging.Any(x => x != null))
 							continue;
-						var index = i;
-						_plugging[i - 1] = System.Threading.Tasks.Task.Run(() => EnableFeeding(index));
+						BeginPlug(i);
 						continue;
 					}
 					// If the virtual target stopped accepting reports then unplug it, so the
@@ -135,6 +139,7 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
+						PlugOutcome(plugging);
 					}
 					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || client.IsControllerConnected(i))
@@ -260,6 +265,64 @@ namespace x360ce.App.DInput
 		/// <summary>The plug of each controller under way on a worker, or null.</summary>
 		readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
 
+		/// <summary>Starts plugging in the controller for one pad on a worker; a later pass takes in the answer.</summary>
+		public System.Threading.Tasks.Task<VirtualError> BeginPlug(uint userIndex)
+		{
+			var plugging = System.Threading.Tasks.Task.Run(() => EnableFeeding(userIndex));
+			_plugging[userIndex - 1] = plugging;
+			return plugging;
+		}
+
+		/// <summary>Takes in every finished plug and forgets it. False, with nothing taken in, while one is still under way.</summary>
+		/// <remarks>
+		/// The bus is never let go of while a plug is under way. The plug would win that race: its
+		/// controller connects after every other one has been taken away, and the bus keeps it after
+		/// the program has ended - a controller nobody owns, holding one of the four places until
+		/// Windows restarts.
+		/// </remarks>
+		bool SettlePlugging()
+		{
+			if (_plugging.Any(x => x != null && !x.IsCompleted))
+				return false;
+			for (var i = 0; i < _plugging.Length; i++)
+			{
+				if (_plugging[i] == null)
+					continue;
+				PlugOutcome(_plugging[i]);
+				_plugging[i] = null;
+			}
+			return true;
+		}
+
+		/// <summary>Waits for every plug under way, up to the time given, then takes in what they did.</summary>
+		/// <remarks>A plug waits up to five seconds for Windows to give its controller a place.</remarks>
+		void WaitForPlugging(TimeSpan timeout)
+		{
+			var until = DateTime.UtcNow + timeout;
+			foreach (var plugging in _plugging)
+			{
+				if (plugging == null)
+					continue;
+				var left = until - DateTime.UtcNow;
+				((IAsyncResult)plugging).AsyncWaitHandle.WaitOne(left > TimeSpan.Zero ? left : TimeSpan.Zero);
+			}
+			SettlePlugging();
+		}
+
+		/// <summary>What a finished plug came to, with a fault written to the log.</summary>
+		/// <remarks>
+		/// Every place a finished plug is let go of reads it through here. A faulted task nobody reads
+		/// is raised again by the finalizer as an unobserved exception, and that reached the person as
+		/// a crash report about a controller that was simply switched off.
+		/// </remarks>
+		static VirtualError PlugOutcome(System.Threading.Tasks.Task<VirtualError> plugging)
+		{
+			if (!plugging.IsFaulted)
+				return plugging.Result;
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
+			return VirtualError.Other;
+		}
+
 		/// <summary>When each controller may next be asked for a place, after a refusal.</summary>
 		readonly int[] _NextPlugAttempt = new int[4];
 		/// <summary>How long a refused controller waits before asking for a place again.</summary>
@@ -317,8 +380,21 @@ namespace x360ce.App.DInput
 		{
 			// Get old and new game pad values.
 			var n = CombinedXiStates[i - 1].Gamepad;
+			// Compare with old state.
+			var o = oldGamepadStates[i - 1];
+			var changed =
+				n.Buttons != o.Buttons ||
+				n.LeftThumbX != o.LeftThumbX ||
+				n.LeftThumbY != o.LeftThumbY ||
+				n.LeftTrigger != o.LeftTrigger ||
+				n.RightThumbX != o.RightThumbX ||
+				n.RightThumbY != o.RightThumbY ||
+				n.RightTrigger != o.RightTrigger;
+			// The report is built only when there is something to send. Built on every pass, it would cost a
+			// new report and thirty boxed flags a controller a millisecond, nearly all of them thrown away.
+			if (!changed)
+				return true;
 			var report = new Xbox360Report();
-			// Update only when change.
 			report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
 			report.SetButtonState(Xbox360Buttons.B, n.Buttons.HasFlag(GamepadButtonFlags.B));
 			report.SetButtonState(Xbox360Buttons.X, n.Buttons.HasFlag(GamepadButtonFlags.X));
@@ -340,62 +416,48 @@ namespace x360ce.App.DInput
 			report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
 			report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
 			report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
-			// Compare with old state.
-			var o = oldGamepadStates[i - 1];
-			var changed =
-				n.Buttons != o.Buttons ||
-				n.LeftThumbX != o.LeftThumbX ||
-				n.LeftThumbY != o.LeftThumbY ||
-				n.LeftTrigger != o.LeftTrigger ||
-				n.RightThumbX != o.RightThumbX ||
-				n.RightThumbY != o.RightThumbY ||
-				n.RightTrigger != o.RightTrigger;
-			// If state changed then...
-			if (changed)
+			// Update controller.
+			try
 			{
-				// Update controller.
-				try
-				{
-					ViGEmClient.Current.Targets[i - 1].SendReport(report);
-				}
-				catch (Nefarius.ViGEm.Client.ViGEmException ex)
-					when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
-						|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
-				{
-					// The controller went away underneath us, which happens when the bus drops one - a driver
-					// update, most often. It is put back on the next pass and nobody sees anything. Saying so
-					// is worth a line in the log and not a fault report to somebody who cannot act on it.
-					return false;
-				}
-				catch (System.Exception ex)
-				{
-					// The virtual bus can drop a target while a game is running, for example
-					// when the driver is updated. Report the failure instead of letting it
-					// escape into the update loop and stop the controller thread.
-					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-					return false;
-				}
-				lock (guideLock)
-				{
-					var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
-					if (isGuidePressed && !IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
-						IsGuideDown = true;
-					}
-					if (!isGuidePressed && IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
-						IsGuideDown = false;
-					}
-				}
-				// Update old state.
-				oldGamepadStates[i - 1] = n;
+				ViGEmClient.Current.Targets[i - 1].SendReport(report);
 			}
+			catch (Nefarius.ViGEm.Client.ViGEmException ex)
+				when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
+					|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+			{
+				// The controller went away underneath us, which happens when the bus drops one - a driver
+				// update, most often. It is put back on the next pass and nobody sees anything. Saying so
+				// is worth a line in the log and not a fault report to somebody who cannot act on it.
+				return false;
+			}
+			catch (System.Exception ex)
+			{
+				// The virtual bus can drop a target while a game is running, for example
+				// when the driver is updated. Report the failure instead of letting it
+				// escape into the update loop and stop the controller thread.
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				return false;
+			}
+			lock (guideLock)
+			{
+				var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
+				if (isGuidePressed && !IsGuideDown)
+				{
+					var keys = GetGuideKeys();
+					if (keys.Count() > 0)
+						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
+					IsGuideDown = true;
+				}
+				if (!isGuidePressed && IsGuideDown)
+				{
+					var keys = GetGuideKeys();
+					if (keys.Count() > 0)
+						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
+					IsGuideDown = false;
+				}
+			}
+			// Update old state.
+			oldGamepadStates[i - 1] = n;
 			return true;
 		}
 
@@ -496,45 +558,57 @@ namespace x360ce.App.DInput
 			return -1;
 		}
 
+		/// <summary>The bus client to work with for the rest of one call, or null when there is none.</summary>
+		/// <remarks>
+		/// Plugging in runs on a worker for seconds, and the client is let go of on the input thread
+		/// whenever the game leaves virtual mode or the program closes. Read once, the reference is
+		/// ours for the call whatever happens to the shared one; read at each step, it was null by
+		/// the time the controller was connected, and the worker died on it.
+		/// </remarks>
+		static ViGEmClient BusClient(bool createIfMissing)
+		{
+			if (!ViGEmClient.isVBusExists(createIfMissing))
+				return null;
+			var client = ViGEmClient.Current;
+			return client == null || client.Disposing || client.IsDisposed ? null : client;
+		}
+
 		public VirtualError EnableFeeding(uint userIndex)
 		{
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!ViGEmClient.isVBusExists(true))
+			var client = BusClient(true);
+			if (client == null)
 				return VirtualError.Missing;
-			if (!ViGEmClient.Current.isControllerExists(userIndex))
+			if (!client.isControllerExists(userIndex))
 				return VirtualError.Other;
-			if (ViGEmClient.Current.IsControllerConnected(userIndex))
+			if (client.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			// Windows cannot be asked for a particular place, and gives neither the one asked for nor
-			// reliably the lowest free one. That was assumed, and a controller landing anywhere else was
-			// taken away again - so a real controller holding the first place stopped a second tab from
-			// getting a controller at all, with a free place sitting there. A tab with nothing behind it
-			// reaches no game whatsoever, which is worse than one whose controller sits somewhere
-			// unexpected and is shown doing so.
-			//
-			// So it is made wherever Windows puts it, and where that was is written down. The device
-			// lists and the tab light all read that, so an unexpected place is visible rather than
-			// silently wrong.
+			// Controller N is XInput N and nothing else. Made while its place was taken, it landed in the
+			// next tab's place and pushed that one along too, so one real controller in the way broke
+			// every tab instead of one. It waits for its own place instead, and asking again is a look at
+			// the four places, answered before the device tree is read, not a controller made and taken away.
 			var before = OccupiedPlaces();
-			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
-			// spent waiting for one to appear. Answered before the device tree is read, which is the
-			// expensive part and would be wasted on a refusal.
-			if (before.All(x => x))
-				return VirtualError.PlaceNotGiven;
+			var own = (int)userIndex - 1;
+			if (before[own])
+				return VirtualError.PlaceTaken;
 			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.
 			var padsBefore = XInputPlaces.VirtualHardwareNow();
-			if (!ViGEmClient.Current.PlugIn(userIndex))
+			if (!client.PlugIn(userIndex))
 				return VirtualError.Other;
 			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
 			// controller, which is not the same as Windows having given it the place we need.
 			var place = WaitForPlace(before);
-			if (place < 0)
+			// Kept only in its own place. Windows cannot be asked for one, and anywhere else it holds
+			// another tab's place. The places it saw are kept, so it is not tried again until they change.
+			if (place != own)
 			{
-				ViGEmClient.Current.UnPlug(userIndex);
-				return VirtualError.PlaceNotGiven;
+				client.UnPlug(userIndex);
+				_misplacedWith[own] = PlacesMask(before);
+				MisplacedIn[own] = place;
+				return place < 0 ? VirtualError.PlaceNotGiven : VirtualError.PlaceWrong;
 			}
 			// Written down now, while it is certain. Nothing reports where a controller was put,
 			// so the only moment the answer exists is the moment it arrives.
@@ -551,13 +625,14 @@ namespace x360ce.App.DInput
 			bool success;
 			if (userIndex < 1 || userIndex > 4)
 				return VirtualError.Index;
-			if (!ViGEmClient.isVBusExists(false))
+			var client = BusClient(false);
+			if (client == null)
 				return VirtualError.Missing;
-			if (!ViGEmClient.Current.isControllerExists(userIndex))
+			if (!client.isControllerExists(userIndex))
 				return VirtualError.None;
-			if (!ViGEmClient.Current.IsControllerConnected(userIndex))
+			if (!client.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			success = ViGEmClient.Current.UnPlug(userIndex);
+			success = client.UnPlug(userIndex);
 			if (success)
 			{
 				// The place it held is nobody's now. Left behind, it would go on being counted against

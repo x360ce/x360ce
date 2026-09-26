@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Automation;
 
 namespace x360ce.Tests
 {
@@ -79,24 +78,24 @@ namespace x360ce.Tests
 			try
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));
-				var label = Ui.WaitFor(() => FindLabel(window, RateText), TimeSpan.FromSeconds(60),
+				var label = Ui.WaitFor(() => Ui.FindByName(window, RateText), TimeSpan.FromSeconds(60),
 					"the status bar never reported an engine rate");
 
 				// Starting up reads every device on the machine, which is slow and is meant to
 				// be. Measuring through it would report a stall that is not one.
-				Ui.WaitFor(() => Read(label, RateText) >= TypicalFloor ? label : null, TimeSpan.FromSeconds(60),
+				Ui.WaitFor(() => Ui.ReadNumber(label, RateText) >= TypicalFloor ? label : null, TimeSpan.FromSeconds(60),
 					"the engine never reached " + TypicalFloor + " cycles a second after starting");
 
-				var devices = Ui.WaitFor(() => FindLabel(window, DeviceText), TimeSpan.FromSeconds(10),
+				var devices = Ui.WaitFor(() => Ui.FindByName(window, DeviceText), TimeSpan.FromSeconds(10),
 					"the status bar never reported a device count");
 				var rates = new List<int>();
 				var skipped = 0;
 				for (var i = 0; i < Samples; i++)
 				{
-					var before = Read(devices, DeviceText);
+					var before = Ui.ReadNumber(devices, DeviceText);
 					Thread.Sleep(SampleMs);
-					var rate = Read(label, RateText);
-					if (Read(devices, DeviceText) != before)
+					var rate = Ui.ReadNumber(label, RateText);
+					if (Ui.ReadNumber(devices, DeviceText) != before)
 					{
 						skipped++;
 						continue;
@@ -136,34 +135,5 @@ namespace x360ce.Tests
 
 		static readonly Regex RateText = new Regex(@"^HW Hz:\s*(\d+)");
 		static readonly Regex DeviceText = new Regex(@"^D:\s*(\d+)");
-
-		/// <summary>
-		/// Finds the label once. Walking the whole window on every sample is itself an expensive
-		/// call into the interface thread, which lowers the very number being measured.
-		/// </summary>
-		static AutomationElement FindLabel(AutomationElement window, Regex says)
-		{
-			var all = window.FindAll(TreeScope.Descendants, Condition.TrueCondition);
-			foreach (AutomationElement element in all)
-			{
-				if (says.IsMatch(element.Current.Name ?? ""))
-					return element;
-			}
-			return null;
-		}
-
-		/// <summary>The number the label is showing, or -1 when it cannot be read just now.</summary>
-		static int Read(AutomationElement label, Regex says)
-		{
-			try
-			{
-				var match = says.Match(label.Current.Name ?? "");
-				return match.Success ? int.Parse(match.Groups[1].Value) : -1;
-			}
-			catch (ElementNotAvailableException)
-			{
-				return -1;
-			}
-		}
 	}
 }

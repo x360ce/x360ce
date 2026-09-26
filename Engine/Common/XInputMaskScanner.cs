@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.IO;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
@@ -156,16 +157,19 @@ namespace x360ce.Engine
 			ReportProgress(e);
         }
 
-        private void ff_FileFound(object sender, FileFinderEventArgs e)
+        private void ff_FileFound(object sender, ProgressEventArgs e)
         {
+			// The finder reports folders as its top level and files as its sub level.
+			var directories = (List<DirectoryInfo>)e.TopData;
+			var files = (List<FileInfo>)e.SubData;
 			var e2 = new XInputMaskScannerEventArgs
 			{
-				DirectoryIndex = e.DirectoryIndex,
-				Directories = e.Directories,
-				FileIndex = e.FileIndex,
-				Files = e.Files,
+				DirectoryIndex = (int)e.TopIndex,
+				Directories = directories,
+				FileIndex = (int)e.SubIndex,
+				Files = files,
 				State = XInputMaskScannerState.DirectoryUpdate,
-				Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", e.Files.Count, e.DirectoryIndex + 1, e.Directories.Count)
+				Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", files.Count, e.TopIndex + 1, e.TopCount)
 			};
 			ReportProgress(e2);
         }
@@ -238,9 +242,10 @@ namespace x360ce.Engine
         public Dictionary<string, XInputMask> GetMasks(string path, SearchOption searchOption, bool is64bit)
         {
             // Check masks inside *.exe and *.dll files.
-            var files = Directory.GetFiles(path, "*.exe", searchOption).ToList();
-            var dlls = Directory.GetFiles(path, "*.dll", searchOption).ToList();
-            files.AddRange(dlls);
+            // A name Windows cannot open - one ending in a space - is listed by the folder but found by
+            // nothing that opens it, and one such file ended the whole scan. Left out here, before the
+            // list is shown or read.
+            var files = ReadableFiles(path, searchOption, "*.exe", "*.dll").Where(x => x.Exists).ToList();
             var mask = Engine.XInputMask.None;
             // Create list to store masks.
             var masks = new Dictionary<string, XInputMask>();
@@ -248,7 +253,7 @@ namespace x360ce.Engine
 			var e = new XInputMaskScannerEventArgs
 			{
 				Level = 1,
-				Files = files.Select(x => new FileInfo(x)).ToList(),
+				Files = files,
 				State = XInputMaskScannerState.FileUpdate
 			};
 			ReportProgress(e);
@@ -257,7 +262,7 @@ namespace x360ce.Engine
 				e.FileIndex = i;
 				e.Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count);
 				ReportProgress(e);
-				var file = files[i];
+				var file = files[i].FullName;
                 // Pause or Stop.
                 while (IsPaused && !IsStopping)
 					// Logical delay without blocking the current thread.
@@ -284,6 +289,35 @@ namespace x360ce.Engine
                 }
             }
             return masks;
+        }
+
+        /// <summary>The files under a folder, leaving out the folders that cannot be read.</summary>
+        /// <remarks>
+        /// Asking the framework for every file below a folder at once stops at the first folder it
+        /// may not enter - the junctions Windows keeps in a profile, such as "My Music", are such
+        /// folders - and the whole game folder went unscanned for one of them. Walked folder by
+        /// folder, one that refuses is left out and the rest are read.
+        /// </remarks>
+        static List<FileInfo> ReadableFiles(string path, SearchOption searchOption, params string[] patterns)
+        {
+            var files = new List<FileInfo>();
+            var folders = new Stack<string>();
+            folders.Push(path);
+            while (folders.Count > 0)
+            {
+                var folder = folders.Pop();
+                try
+                {
+                    foreach (var pattern in patterns)
+                        files.AddRange(Directory.GetFiles(folder, pattern, SearchOption.TopDirectoryOnly).Select(x => new FileInfo(x)));
+                    if (searchOption == SearchOption.AllDirectories)
+                        foreach (var sub in Directory.GetDirectories(folder))
+                            folders.Push(sub);
+                }
+                catch (UnauthorizedAccessException) { }
+                catch (IOException) { }
+            }
+            return files;
         }
 
         /// <summary>

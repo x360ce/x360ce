@@ -20,21 +20,16 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
-			AiAccessSnippetTextBox.Text = "{\"mcpServers\":{\"x360ce\":{\"command\":\"" + Application.ExecutablePath.Replace("\\", "\\\\") + "\",\"args\":[\"/Mcp\"]}}}";
-			AiAccessCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessSnippetTextBox.Text);
-			AiAccessUrlCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessUrlTextBox.Text);
-			AiAccessPromptButton.Click += (s, e) => Clipboard.SetText(AiPrompt());
+			AiAccessSnippetTextBox.Text = Engine.Mcp.McpClient.ServerSettings(Application.ExecutablePath);
+			AiAccessCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessSnippetTextBox.Text);
+			AiAccessUrlCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessUrlTextBox.Text);
+			AiAccessPromptButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiPrompt());
 			// The Windows agent registry ships with newer Windows only. Where its tool is absent the
 			// switch stays off and says why, rather than promising something the machine cannot do.
-			AiAccessWindowsCheckBox.Enabled = Mcp.WindowsAgentRegistry.IsAvailable;
-			if (!Mcp.WindowsAgentRegistry.IsAvailable)
+			AiAccessWindowsCheckBox.Enabled = Engine.Mcp.WindowsAgentRegistry.IsAvailable;
+			if (!Engine.Mcp.WindowsAgentRegistry.IsAvailable)
 				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
-			AiAccessLogButton.Click += (s, e) =>
-			{
-				if (!File.Exists(Mcp.McpLog.Path))
-					Mcp.McpLog.Write("log opened from the Options page");
-				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Mcp.McpLog.Path) { UseShellExecute = true });
-			};
+			AiAccessLogButton.Click += (s, e) => Engine.Mcp.McpLog.Open();
 			UpdateAiAccessUrl();
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
@@ -172,7 +167,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AiAccessEnabled, AiAccessEnabledCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(AiAccess)));
+			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(Engine.Mcp.AiAccess)));
 			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
 			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
 			// LoadAndMonitor has no branch for a number box, and ValueChanged fires on every spin

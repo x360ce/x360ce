@@ -46,6 +46,13 @@ namespace x360ce.Web.WebServices
 				s.PadSettingChecksum = pDB.PadSettingChecksum;
 				db.UserSettings.AddObject(sDB);
 			}
+			else
+			{
+				// Saved again: the controller's setting is the one just sent. Left linked to the first
+				// one ever saved, a later save would report success and change nothing.
+				sDB.PadSettingChecksum = pDB.PadSettingChecksum;
+				sDB.DateUpdated = n;
+			}
 			db.SaveChanges();
 			db.Dispose();
 			db = null;

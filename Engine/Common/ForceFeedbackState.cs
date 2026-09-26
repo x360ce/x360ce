@@ -1,4 +1,4 @@
-﻿using SharpDX.DirectInput;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -83,6 +83,8 @@ namespace x360ce.Engine
         EffectParameters paramsD;
         Effect effectD;
         int damperCoefficient;
+        /// <summary>The damping the device is holding right now, in its units, or nought when it holds none.</summary>
+        public int DamperOnDevice { get { return effectD == null ? 0 : damperCoefficient; } }
         /// <summary>Which axis in the device state the spring's actuator moves, or -1 while unknown.</summary>
         public int SpringAxisIndex = -1;
 
@@ -185,25 +187,22 @@ namespace x360ce.Engine
 			// the effects it makes are the only ones the device holds.
 			if (effectL == null && effectR == null && effectS == null && effectD == null)
 				DisposeDeviceEffects(device);
-			effectL?.Download();
-			effectR?.Download();
-			effectS?.Download();
-			effectD?.Download();
+			Resume(effectL);
+			Resume(effectR);
+			Resume(effectS);
+			Resume(effectD);
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
 
-			ForceEffectType forceType = 0;
+			// Read on every poll, not only when the setting changes: effects that are made again after
+			// the device lost them take their layout from it too, and a '2' type made as its plain type
+			// drives one motor on the pads that need both axes in one effect.
+			var forceType = (ForceEffectType)TryParse(ps.ForceType);
 			if (motorsChanged || forceChanged)
             {
                 // Update values.
-                forceType = (ForceEffectType)TryParse(ps.ForceType);
-				if (forceType.HasFlag(ForceEffectType.PeriodicSine))
-					GUID_Force = EffectGuid.Sine;
-				else if (forceType.HasFlag(ForceEffectType.PeriodicSawtooth))
-					GUID_Force = EffectGuid.SawtoothDown;
-				else
-					GUID_Force = EffectGuid.ConstantForce;
+				GUID_Force = ForceFeedbackDriver.EffectFor(forceType, ud.ForceFeedbackDriver);
                 // Force change requires to dispose old effects.
                 // Stop old effects.
                 if (effectL != null)
@@ -335,7 +334,9 @@ namespace x360ce.Engine
             if (motorsChanged || forceChanged || periodRChanged || speedRChanged || combine)
             {
                 rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
-                rightPeriod = TryParse(old_RightPeriod) * 1000;
+                // The setting is the period at full drive; a real motor slows as the drive falls, and
+                // so does the period played, along the measured line. Microseconds for the device.
+                rightPeriod = MotorModel.PeriodMs(ps.GetRightMotorPeriod(), false, Drive(old_RightMotorSpeed)) * 1000;
                 if (actuatorR != null)
                 {
                     // Update force values.
@@ -358,7 +359,7 @@ namespace x360ce.Engine
             {
                 // Convert speed into magnitude/amplitude.
                 leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);
-                leftPeriod = TryParse(old_LeftPeriod) * 1000;
+                leftPeriod = MotorModel.PeriodMs(ps.GetLeftMotorPeriod(), true, Drive(old_LeftMotorSpeed)) * 1000;
                 // If device have only one force feedback actuator (probably wheel).
                 if (combine)
                 {
@@ -429,8 +430,10 @@ namespace x360ce.Engine
             if (motorsChanged)
                 DropSpring();
             // The range goes to the wheel once per setting and once per device, because a wheel
-            // plugged in again has forgotten it.
-            if (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device)
+            // plugged in again has forgotten it. Not before the device is known by its ids: they
+            // come from a read of the machine that finishes after the first polls, and a range
+            // sent while they were still nought was sent to nothing and never sent again.
+            if (ud.DevVendorId != 0 && (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device))
             {
                 rangeDevice = device;
                 var degrees = ps.GetWheelRange();
@@ -451,11 +454,42 @@ namespace x360ce.Engine
         /// </remarks>
         public const int SpringRampPercent = 2;
 
-        /// <summary>The ramp in axis units.</summary>
+        /// <summary>The ramp in axis units, at strengths up to <see cref="SpringStiffnessLimit"/>.</summary>
         public const int SpringRamp = SpringCalibration.Center * SpringRampPercent / 100;
 
-        /// <summary>How many force levels the ramp is cut into. Each change is a message to the device; a wheel crossing the ramp in thirty milliseconds gets eight, not thirty.</summary>
-        public const int SpringRampSteps = 8;
+        /// <summary>The strength above which the ramp widens, so the spring gets no stiffer than it is here.</summary>
+        /// <remarks>
+        /// The force answers the position a few milliseconds late: the poll, the bus, the device.
+        /// A spring stiff enough that the wheel crosses the ramp in that time chases its own tail:
+        /// pumped into a swing at half strength over the two percent ramp, a G27 stayed in a nine
+        /// hertz shake of ten degrees either side for as long as it was watched, damping and all,
+        /// while at the strength Auto finds for it, a quarter, it came to rest in two crossings.
+        /// Above this the ramp widens in proportion, which keeps the force per degree, and so the
+        /// loop, where it was measured to hold.
+        /// </remarks>
+        public const int SpringStiffnessLimit = 30;
+
+        /// <summary>How far from the centre the spring reaches full strength at a strength, in axis units.</summary>
+        public static int SpringRampFor(int strengthPercent)
+        {
+            return strengthPercent <= SpringStiffnessLimit ? SpringRamp : SpringRamp * strengthPercent / SpringStiffnessLimit;
+        }
+
+        /// <summary>The most one step of the ramp may change the force by, in percent of the device's force.</summary>
+        /// <remarks>
+        /// A wheel held just off the centre sits on a step of the ramp and is knocked across it by
+        /// each change of force. Eight fixed steps made that knock an eighth of the strength, which
+        /// at full strength was a twelve percent blow every poll and a wheel that chattered under a
+        /// finger; a step no larger than this is too small to move it. Each change is still a message
+        /// to the device, so the steps are as few as the cap allows.
+        /// </remarks>
+        public const int SpringStepPercent = 3;
+
+        /// <summary>How many force levels the ramp is cut into at a strength: enough that no step is larger than <see cref="SpringStepPercent"/>.</summary>
+        public static int SpringRampSteps(int strengthPercent)
+        {
+            return Math.Max(1, (strengthPercent + SpringStepPercent - 1) / SpringStepPercent);
+        }
 
         /// <summary>How near the centre the spring asks nothing, as DirectInput counts the axis: a fifth of a percent of the travel.</summary>
         /// <remarks>
@@ -483,37 +517,36 @@ namespace x360ce.Engine
             if (distance <= SpringDeadBand)
                 return 0;
             var percent = strengthPercent;
-            if (distance < SpringRamp)
+            var ramp = SpringRampFor(strengthPercent);
+            if (distance < ramp)
             {
                 // Counted from the edge of the dead band, so the first force outside it is one step.
-                var step = (int)((long)(distance - SpringDeadBand) * SpringRampSteps / (SpringRamp - SpringDeadBand)) + 1;
-                percent = strengthPercent * step / SpringRampSteps;
+                var steps = SpringRampSteps(strengthPercent);
+                var step = (int)((long)(distance - SpringDeadBand) * steps / (ramp - SpringDeadBand)) + 1;
+                percent = strengthPercent * step / steps;
             }
             return offset < 0 ? percent : -percent;
         }
 
-        /// <summary>How much the device resists the wheel's speed while the spring is on, per percent of spring strength, in DirectInput's units.</summary>
+        /// <summary>How much the device resists the wheel's speed while the spring is on, in DirectInput's units.</summary>
         /// <remarks>
         /// A constant force alone swings a wheel from one end to the other: it arrives at the centre
         /// at speed, the force turns round, and it goes back just as far. Resistance in proportion
         /// to speed takes that energy out, and the device computes it itself between polls.
+        ///
+        /// One value, whatever the strength and wherever the wheel is: a wheel's feel must not
+        /// change with the angle unless the game asks it to. Measured on a G27, where a thirty
+        /// percent push crossed the wheel in 0.8 s free, 1.2 s at this much, and could not move it
+        /// at all at 5000: enough to take a swing out, far from enough to hold the wheel against
+        /// its own motor. Scaled with the strength it reached 10000 at full, and the wheel ground
+        /// its way home against its own brake.
         /// </remarks>
-        public const int DamperPerPercent = 100;
+        public const int DamperCoefficient = 2500;
 
-        /// <summary>How far from the centre the damping reaches, as a share of the travel to one side. Beyond it the wheel returns unbraked.</summary>
-        /// <remarks>
-        /// Measured on a G27: damping the whole travel brought the wheel home in 1.1 to 1.5 seconds at
-        /// 60 and 100 percent, damping the inner quarter in 0.3 to 0.45, both settling after one crossing.
-        /// </remarks>
-        public const int DamperZonePercent = 25;
-
-        /// <summary>The damping to ask of the device at a wheel position, for a spring strength in percent.</summary>
-        public static int DamperFor(int position, int strengthPercent)
+        /// <summary>The damping to ask of the device while the spring is on at this strength.</summary>
+        public static int DamperFor(int strengthPercent)
         {
-            if (strengthPercent <= 0)
-                return 0;
-            var reach = (long)SpringCalibration.Center * DamperZonePercent / 100;
-            return Math.Abs(position - SpringCalibration.Center) <= reach ? strengthPercent * DamperPerPercent : 0;
+            return strengthPercent <= 0 ? 0 : DamperCoefficient;
         }
 
         /// <summary>
@@ -538,8 +571,9 @@ namespace x360ce.Engine
             var percent = calibration != null
                 ? calibration.Update(position, nowMs)
                 : SpringForce(position, springStrength);
-            // The damping follows the setting, not the calibration, whose pushes must move the wheel freely.
-            UpdateDamper(device, calibration != null ? 0 : DamperFor(position, springStrength));
+            // The damping follows the setting, or the calibration's own asking: none while its pushes
+            // must move the wheel freely, the answer's own damping while it checks that answer.
+            UpdateDamper(device, calibration != null ? calibration.Damping : DamperFor(springStrength));
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
                 return;
@@ -673,6 +707,43 @@ namespace x360ce.Engine
             }
         }
 
+        /// <summary>Puts an effect back on the device and playing, if the device dropped it.</summary>
+        /// <remarks>
+        /// A device let go of and held again, which the program does whenever it changes how it holds
+        /// the device, forgets what was playing. Downloaded again, an effect is only loaded; nothing
+        /// sets it playing until a game changes the speed, so a game holding a steady rumble got none.
+        /// Every effect this state makes plays from the moment it is made, at nought when it is quiet,
+        /// so one that is not playing was dropped.
+        /// </remarks>
+        void Resume(Effect effect)
+        {
+            if (effect == null || unsupported.Contains(effect))
+                return;
+            effect.Download();
+            if (effect.Status != EffectStatus.Playing)
+                effect.Start(1);
+        }
+
+        /// <summary>What the device refused to play, as a person would name it, or empty when it took everything asked of it.</summary>
+        /// <remarks>
+        /// A refused effect is not asked for again, since the device gives the same answer every time,
+        /// so without this a motor simply stayed silent and nothing said why.
+        /// </remarks>
+        public string[] Refused
+        {
+            get
+            {
+                var list = new List<string>();
+                if (paramsL != null && (effectL == null || unsupported.Contains(effectL)))
+                    list.Add(actuatorR == null ? "the motor" : "the left motor");
+                if (paramsR != null && (effectR == null || unsupported.Contains(effectR)))
+                    list.Add("the right motor");
+                if (springRefused)
+                    list.Add("the centering spring");
+                return list.ToArray();
+            }
+        }
+
         void SetParamaters(Effect effect, EffectParameters parameters, EffectParameterFlags flags)
         {
             if (parameters == null || effect == null || unsupported.Contains(effect))
@@ -695,6 +766,12 @@ namespace x360ce.Engine
             int i;
             int.TryParse(value, out i);
             return i;
+        }
+
+        /// <summary>A motor speed as the game means it, 0 to 1. Speeds are carried as shorts, off at the bottom of the range.</summary>
+        static double Drive(short speed)
+        {
+            return (speed - (double)short.MinValue) / (short.MaxValue - (double)short.MinValue);
         }
 
 		bool Changed(ref ForceEffectType? oldValue, ForceEffectType newValue)

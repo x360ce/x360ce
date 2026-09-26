@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using x360ce.App.Forms;
@@ -55,6 +56,33 @@ namespace x360ce.App.Controls
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
 		{
 			EngineHelper.BrowsePath(EngineHelper.AppDataPath);
+		}
+
+		/// <summary>Asks the service at the address in the box whether it is there and working, and says so in the header.</summary>
+		/// <remarks>
+		/// Off this thread, because an address that does not answer takes the whole timeout to say
+		/// so, and the window must not stand still for it.
+		/// </remarks>
+		private void TestServiceButton_Click(object sender, EventArgs e)
+		{
+			var url = InternetDatabaseUrlComboBox.Text;
+			TestServiceButton.Enabled = false;
+			MainForm.Current.SetHeaderInfo("Testing {0}...", url);
+			System.Threading.Tasks.Task.Run(() =>
+			{
+				bool working;
+				var message = WebServiceClient.Probe(url, out working);
+				return new KeyValuePair<bool, string>(working, message);
+			}).ContinueWith(probe =>
+			{
+				TestServiceButton.Enabled = true;
+				if (probe.IsFaulted)
+					MainForm.Current.SetHeaderError(probe.Exception.GetBaseException().Message);
+				else if (probe.Result.Key)
+					MainForm.Current.SetHeaderInfo(probe.Result.Value);
+				else
+					MainForm.Current.SetHeaderError(probe.Result.Value);
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

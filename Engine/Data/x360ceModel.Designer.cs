@@ -2446,6 +2446,30 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.String ButtonBig
+        {
+            get
+            {
+                return _ButtonBig;
+            }
+            set
+            {
+                OnButtonBigChanging(value);
+                ReportPropertyChanging("ButtonBig");
+                _ButtonBig = StructuralObject.SetValidValue(value, false, "ButtonBig");
+                ReportPropertyChanged("ButtonBig");
+                OnButtonBigChanged();
+            }
+        }
+        private global::System.String _ButtonBig;
+        partial void OnButtonBigChanging(global::System.String value);
+        partial void OnButtonBigChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.String RightMotorPeriod
         {
             get

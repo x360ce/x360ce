@@ -96,12 +96,15 @@ namespace x360ce.Engine
 				hWnd = JocysCom.ClassLibrary.Win32.NativeMethods.GetForegroundWindow();
 			if (hWnd.Value == IntPtr.Zero)
 				return null;
-			var _ = NativeMethods.GetWindowThreadProcessId(hWnd.Value, out var processId);
+			// The public Win32 entry, so this compiles against the class library as a separate
+			// assembly too, where the hook's own copy of the import is internal.
+			var processId = 0;
+			JocysCom.ClassLibrary.Win32.NativeMethods.GetWindowThreadProcessId(hWnd.Value, ref processId);
 			if (processId == 0)
 				return null;
 			try
 			{
-				return Process.GetProcessById((int)processId);
+				return Process.GetProcessById(processId);
 			}
 			catch (ArgumentException)
 			{

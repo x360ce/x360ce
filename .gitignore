@@ -277,5 +277,7 @@ App.v3/Resources/xinput*.dll
 App.v3/Resources/x360ce.Engine*.dll
 App.v4/Resources/x360ce.Engine*.dll
 
-# Stamped from git history by Native/x360ce/genrev.cmd in the native pre-build event.
+# Stamped from git history by Native/x360ce/genrev.cmd in the native pre-build event, with the
+# scratch file each configuration writes first.
 Native/x360ce/svnrev.h
+Native/x360ce/svnrev.h.*.new

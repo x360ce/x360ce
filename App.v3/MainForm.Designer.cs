@@ -37,6 +37,7 @@ namespace x360ce.App
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
 			this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.StatusTimerLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.InterfaceFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusEventsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusSaveLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -226,6 +227,7 @@ namespace x360ce.App
 			// 
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
+            this.InterfaceFrequencyLabel,
             this.toolStripStatusLabel2,
             this.StatusEventsLabel,
             this.StatusSaveLabel,
@@ -244,7 +246,14 @@ namespace x360ce.App
 			this.StatusTimerLabel.Name = "StatusTimerLabel";
 			this.StatusTimerLabel.Size = new System.Drawing.Size(98, 19);
 			this.StatusTimerLabel.Text = "StatusTimerLabel";
-			// 
+			//
+			// InterfaceFrequencyLabel
+			//
+			this.InterfaceFrequencyLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+			this.InterfaceFrequencyLabel.Name = "InterfaceFrequencyLabel";
+			this.InterfaceFrequencyLabel.Size = new System.Drawing.Size(52, 19);
+			this.InterfaceFrequencyLabel.Text = "UI Hz: 0";
+			//
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
@@ -462,6 +471,7 @@ namespace x360ce.App
 		TabPage Pad4TabPage;
 		ImageList BuletImageList;
 		public ToolStripStatusLabel StatusTimerLabel;
+		ToolStripStatusLabel InterfaceFrequencyLabel;
 		ToolStripStatusLabel StatusEventsLabel;
 		ToolStripStatusLabel StatusSaveLabel;
 		ToolStripStatusLabel toolStripStatusLabel2;

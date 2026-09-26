@@ -956,8 +956,8 @@ namespace x360ce.App.Controls
 		public void UpdateForceFeedBack2()
 		{
 			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 5;
-			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 5;
+			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 4;
+			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 4;
 			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
 			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
 		}

@@ -150,6 +150,34 @@ namespace x360ce.App
 
 		static Dictionary<Control, string> Descriptions = new Dictionary<Control, string>();
 
+		/// <summary>
+		/// Names each control linked to a setting after that setting, and describes it with the
+		/// setting's own description, where the interface catalogue said nothing. Without a name a
+		/// mapping box announces its current value, so four boxes holding "Button 1" could not be
+		/// told apart by a screen reader or by an assistant. A name or purpose given on purpose stays.
+		/// </summary>
+		public void DescribeControls()
+		{
+			foreach (var pair in SettingsMap)
+			{
+				var control = pair.Value;
+				var key = pair.Key.Split('\\')[1];
+				if (string.IsNullOrEmpty(control.AccessibleName))
+					control.AccessibleName = Words(key);
+				string description;
+				if (string.IsNullOrEmpty(control.AccessibleDescription) && Descriptions.TryGetValue(control, out description)
+					&& !string.IsNullOrEmpty(description) && description != key)
+					control.AccessibleDescription = description;
+			}
+		}
+
+		/// <summary>A setting's key as words: LeftThumbAxisX becomes "Left Thumb Axis X", DPadUp becomes "D-Pad Up".</summary>
+		public static string Words(string key)
+		{
+			var words = System.Text.RegularExpressions.Regex.Replace(key, "(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
+			return words.Replace("D Pad", "D-Pad");
+		}
+
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
 			MainForm.Current.UpdateHelpHeader();
@@ -237,6 +265,8 @@ namespace x360ce.App
 		/// </summary>
 		public void ReadSettingTo(Control control, string key, string value)
 		{
+			if (key == SettingName.InternetDatabaseUrl)
+				value = string.IsNullOrEmpty(value) ? SettingName.DefaultInternetDatabaseUrl : SettingName.WithHttps(value);
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
@@ -278,8 +308,8 @@ namespace x360ce.App
 				}
 				else
 				{
-					var text = SettingsConverter.FromIniValue(value);
-					SetComboBoxValue(cbx, text);
+					var text = SettingsConverter.FromIniValue(value, MapField(key));
+					ShowComboBoxValue(cbx, text);
 				}
 			}
 			else if (control is TextBox)
@@ -288,7 +318,6 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.DefaultInternetDatabaseUrl;
 				// Always override version.
 				if (key == SettingName.Version) value = SettingName.DefaultVersion;
 				control.Text = value;
@@ -334,10 +363,10 @@ namespace x360ce.App
 					if (key == SettingName.AxisToDPadDeadZone && value == "") n = 256;
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
-				// Convert 500 to 100%
+				// Convert 400 ms to 100%
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					n = System.Convert.ToInt32((float)n / 500F * 100F);
+					n = System.Convert.ToInt32((float)n / 400F * 100F);
 				}
 				// Convert 32767 to 100%
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
@@ -477,6 +506,18 @@ namespace x360ce.App
 			ps.DPadRightDeadZone = ini2.GetValue(padSectionName, SettingName.DPadRightDeadZone);
 			ps.DPadUpDeadZone = ini2.GetValue(padSectionName, SettingName.DPadUpDeadZone);
 			return ps;
+		}
+
+		/// <summary>Stores a preset for a device in x360ce.ini and shows it on that controller's pages.</summary>
+		/// <remarks>The one way a preset from the online database is applied, from the new device question and from the Controller Settings page alike.</remarks>
+		public void LoadPadSetting(PadSetting ps, DeviceInstance di, int padIndex)
+		{
+			var padSectionName = GetInstanceSection(di.InstanceGuid);
+			SetPadSetting(padSectionName, di);
+			SetPadSetting(padSectionName, ps);
+			MainForm.Current.SuspendEvents();
+			ReadPadSettings(IniFileName, padSectionName, padIndex);
+			MainForm.Current.ResumeEvents();
 		}
 
 		public void SetPadSetting(string padSectionName, DeviceInstance di)
@@ -643,9 +684,36 @@ namespace x360ce.App
 					//SaveSettings(control);
 				}
 			}
+			ShowComboBoxValue(cbx, text);
+		}
+
+		/// <summary>Shows a mapping in its box and leaves every other box as it is.</summary>
+		/// <remarks>
+		/// Taking a control off the other boxes is for a control chosen by hand. A loaded preset is
+		/// shown as it was saved: it may map one control twice, and clearing a box here emptied a
+		/// mapping the preset holds.
+		/// </remarks>
+		static void ShowComboBoxValue(ComboBox cbx, string text)
+		{
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;
+		}
+
+		/// <summary>The field a setting keeps a mapping in, which decides what a bare number there means.</summary>
+		/// <remarks>
+		/// The emulator library reads a bare number as a control of the field's own kind: an axis on a
+		/// stick axis, a POV on the D-Pad, a button everywhere else. Read as a button in every field, a
+		/// preset's stick axis 3 would show as button 3, the same as its button 3.
+		/// </remarks>
+		static MapCode MapField(string key)
+		{
+			if (key == SettingName.LeftThumbAxisX) return MapCode.LeftThumbAxisX;
+			if (key == SettingName.LeftThumbAxisY) return MapCode.LeftThumbAxisY;
+			if (key == SettingName.RightThumbAxisX) return MapCode.RightThumbAxisX;
+			if (key == SettingName.RightThumbAxisY) return MapCode.RightThumbAxisY;
+			if (key == SettingName.DPad) return MapCode.DPad;
+			return default;
 		}
 
 		/// <summary>
@@ -802,10 +870,10 @@ namespace x360ce.App
 				{
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
 				}
-				// convert 100%  to 500
+				// convert 100% to 400 ms
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
+					v = System.Convert.ToInt32((float)tc.Value / 100F * 400F).ToString();
 				}
 				// Convert 100% to 32767
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
@@ -952,7 +1020,17 @@ namespace x360ce.App
 						f.StartPosition = FormStartPosition.CenterParent;
 						var result = f.ShowDialog(MainForm.Current);
 						f.Dispose();
-						updated = (result == DialogResult.OK);
+						if (result == DialogResult.OK)
+						{
+							updated = true;
+						}
+						else
+						{
+							// Answered No, so no settings were saved for the device. Mapped to them anyway,
+							// the library finds a device with no identity: it shows a message box and tries
+							// to open it on every read. Left unmapped, it is skipped like an empty place.
+							section = "";
+						}
 					}
 				}
 				else

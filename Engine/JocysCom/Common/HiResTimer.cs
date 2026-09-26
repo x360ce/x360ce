@@ -300,6 +300,15 @@ namespace JocysCom.ClassLibrary
 
 			[DllImport("ntdll.dll")]
 			internal static extern int NtQueryTimerResolution(out uint minimum, out uint maximum, out uint current);
+
+			internal const uint CREATE_WAITABLE_TIMER_HIGH_RESOLUTION = 0x2;
+			internal const uint TIMER_ALL_ACCESS = 0x1F0003;
+
+			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			internal static extern Microsoft.Win32.SafeHandles.SafeWaitHandle CreateWaitableTimerExW(IntPtr lpTimerAttributes, string lpTimerName, uint dwFlags, uint dwDesiredAccess);
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			internal static extern bool SetWaitableTimer(Microsoft.Win32.SafeHandles.SafeWaitHandle hTimer, ref long pDueTime, int lPeriod, IntPtr pfnCompletionRoutine, IntPtr lpArgToCompletionRoutine, bool fResume);
 		}
 
 		static bool _FullResolutionAsked;
@@ -319,7 +328,7 @@ namespace JocysCom.ClassLibrary
 		/// bit set in the control mask and clear in the state mask means. Windows without the
 		/// call carries on as before.
 		/// </remarks>
-		static void AskForFullResolution()
+		internal static void AskForFullResolution()
 		{
 			if (_FullResolutionAsked)
 				return;
@@ -488,5 +497,80 @@ namespace JocysCom.ClassLibrary
 
 		#endregion
 
+	}
+
+	/// <summary>
+	/// Paces a loop on the calling thread: each wait ends one interval after the previous due time.
+	/// </summary>
+	/// <remarks>
+	/// Made for a loop that must run a fixed number of times a second. A periodic timer that sets an
+	/// event loses passes: Windows expires a timer on its clock tick, a one millisecond timer on a one
+	/// millisecond clock now and then falls just past a tick and waits for the next, and the timer then
+	/// fires twice in a row to catch up while the loop can take only one. Measured on a laptop: 945 to
+	/// 975 passes a second from a thousand ticks, with the processor idle and the loop itself taking
+	/// under a tenth of a millisecond.
+	///
+	/// Here the loop's own thread waits on a high-resolution waitable timer, armed for the exact next
+	/// due time, with no timer thread in between. A wait that ends late is followed by a shorter one,
+	/// so the loop keeps its rate; one more than a whole interval late starts the schedule again from
+	/// that moment, so a stall is never followed by a burst. Windows older than 10 version 1803 has no
+	/// high-resolution timer, and gets an ordinary one, as precise as its clock.
+	/// </remarks>
+	public sealed class HiResPacer : IDisposable
+	{
+		/// <summary>The waitable timer, as something a thread can wait on.</summary>
+		sealed class TimerHandle : System.Threading.WaitHandle
+		{
+			public TimerHandle(Microsoft.Win32.SafeHandles.SafeWaitHandle handle) { SafeWaitHandle = handle; }
+		}
+
+		readonly TimerHandle _timer;
+		readonly System.Threading.WaitHandle[] _handles;
+		long _due;
+
+		/// <param name="wake">Ends a wait at once when set, such as a request to stop the loop.</param>
+		public HiResPacer(System.Threading.WaitHandle wake)
+		{
+			HiResTimer.AskForFullResolution();
+			var handle = HiResTimer.NativeMethods.CreateWaitableTimerExW(IntPtr.Zero, null,
+				HiResTimer.NativeMethods.CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, HiResTimer.NativeMethods.TIMER_ALL_ACCESS);
+			UsesHighResolution = !handle.IsInvalid;
+			if (handle.IsInvalid)
+				handle = HiResTimer.NativeMethods.CreateWaitableTimerExW(IntPtr.Zero, null, 0, HiResTimer.NativeMethods.TIMER_ALL_ACCESS);
+			if (handle.IsInvalid)
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+			_timer = new TimerHandle(handle);
+			_handles = new[] { _timer, wake };
+			_due = Stopwatch.GetTimestamp();
+		}
+
+		/// <summary>Whether the timer is the high-resolution one, rather than one as precise as the clock.</summary>
+		public bool UsesHighResolution { get; private set; }
+
+		/// <summary>Waits until the next due time, <paramref name="intervalMs"/> after the last one.</summary>
+		/// <returns>How late the wait ended, in <see cref="Stopwatch"/> ticks; 0 when it ended on time or did not wait.</returns>
+		public long Wait(int intervalMs)
+		{
+			var interval = Stopwatch.Frequency * intervalMs / 1000;
+			_due += interval;
+			var now = Stopwatch.GetTimestamp();
+			if (now - _due > interval)
+				_due = now;
+			var wait = _due - now;
+			// Due times are in 100 nanosecond units, and a negative one is relative to now.
+			var relative = -(wait * 10000000L / Stopwatch.Frequency);
+			if (relative >= 0)
+				return 0;
+			HiResTimer.NativeMethods.SetWaitableTimer(_timer.SafeWaitHandle, ref relative, 0, IntPtr.Zero, IntPtr.Zero, false);
+			if (System.Threading.WaitHandle.WaitAny(_handles, intervalMs + 50) != 0)
+				return 0;
+			var late = Stopwatch.GetTimestamp() - _due;
+			return late > 0 ? late : 0;
+		}
+
+		public void Dispose()
+		{
+			_timer.Dispose();
+		}
 	}
 }

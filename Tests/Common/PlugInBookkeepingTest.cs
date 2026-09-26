@@ -6,18 +6,17 @@ using System.IO;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// What the program takes away afterwards is what it actually made, not what it meant to make.
+	/// Plugging in the controller for a pad connects that controller and nothing else.
 	/// </summary>
 	/// <remarks>
-	/// To put a controller in the third place, the two places below it are filled with placeholders
-	/// first, and those are taken away again afterwards. Each was marked as made before the attempt
-	/// to make it, so a placeholder that failed was still taken away - and taking away what was never
-	/// there fails in its own right. A person who could not get one controller was told about a
-	/// second fault, in the tidying up, which is the report that arrived from 4.19.17.0.
+	/// To put a controller in the third place, the two places below it were filled with brief
+	/// controllers first and taken away again afterwards. With a real controller in the first place
+	/// the brief one took the second, the one wanted landed in the third, and the second was left
+	/// empty - so a pad that belongs in XInput 2 could never get there. Some brief ones were left
+	/// behind as well, holding a place until the program ended.
 	///
 	/// This is checked by reading the source rather than by running it, because making a controller
-	/// needs the bus driver and a machine with it installed. It is a weaker test than driving the
-	/// real thing, and it is the one that would have caught this.
+	/// needs the bus driver and a machine with it installed.
 	/// </remarks>
 	[TestClass]
 	public class PlugInBookkeepingTest
@@ -33,32 +32,15 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("A placeholder is recorded once it exists, not when it is wished for")]
-		public void A_placeholder_is_recorded_after_it_is_made()
+		[Description("Plugging in a pad connects that pad only, never brief ones in the places below it")]
+		public void Plugging_in_connects_only_the_pad_asked_for()
 		{
 			var body = PlugInMethod();
-			var connect = body.IndexOf("t[i].Connect();");
-			var marked = body.IndexOf("tempDevices[i] = true;");
-			Assert.IsTrue(connect >= 0 && marked >= 0,
-				"PlugIn no longer connects a placeholder and records it, so this test is looking at "
-				+ "the wrong thing and should be rewritten rather than deleted.");
-			Assert.IsTrue(connect < marked,
-				"A placeholder is marked as made before the attempt to make it. One that fails is "
-				+ "then taken away anyway, and taking away what was never there fails - so a "
-				+ "controller that could not be made reports a second fault about the tidying up.");
-		}
-
-		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Being told a placeholder is already gone is not reported as a fault")]
-		public void An_already_absent_placeholder_is_not_a_fault()
-		{
-			// The purpose of that loop is that the placeholders are gone. Hearing that one already
-			// is, is the purpose met. The bus can drop a controller between making it and tidying it
-			// away, and nobody needs a report about a wish already granted.
-			var body = PlugInMethod();
-			StringAssert.Contains(body, "VIGEM_ERROR_TARGET_NOT_PLUGGED_IN",
-				"Taking away a placeholder that is already gone is reported as a failure, though it "
-				+ "is the outcome the loop exists to reach.");
+			StringAssert.Contains(body, "t[userIndex - 1].Connect();", "PlugIn no longer connects the pad asked for.");
+			var connects = body.Split(new[] { ".Connect();" }, System.StringSplitOptions.None).Length - 1;
+			Assert.AreEqual(1, connects,
+				"PlugIn connects more than the pad asked for. A controller connected in a place below it takes "
+				+ "another tab's place, and pushes the one asked for out of its own.");
 		}
 	}
 }

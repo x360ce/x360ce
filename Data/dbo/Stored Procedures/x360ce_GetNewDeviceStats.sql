@@ -11,8 +11,8 @@ DECLARE
 
 SELECT @oldHours = DATEDIFF(HOUR, MAX(Created), @now) FROM dbo.x360ce_NewDeviceStats
 
--- If last record is more than 12 hours old then...
-IF @oldHours > 12
+-- If the table is empty (a new or restored database) or the last record is more than 12 hours old then...
+IF @oldHours IS NULL OR @oldHours > 12
 BEGIN
 
 	-- Begin process of updating the table.

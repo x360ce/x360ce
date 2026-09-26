@@ -363,7 +363,7 @@ namespace x360ce.App.Controls
 				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
 				sb.AppendLine();
 			}
-			Clipboard.SetDataObject(sb.ToString());
+			JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(sb.ToString());
 		}
 	}
 

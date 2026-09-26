@@ -112,11 +112,11 @@ namespace x360ce.App
 		public static void ApplyAiAccess()
 		{
 			var o = SettingsManager.Options;
-			Mcp.McpListener.Stop();
+			Engine.Mcp.McpListener.Stop();
 			if (o.AiAccessEnabled)
 			{
 				o.EnsureAiAccessToken();
-				Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
+				Engine.Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
 			}
 			try
 			{
@@ -126,7 +126,7 @@ namespace x360ce.App
 			{
 				// This runs on the interface thread from the options-changed event; an exception here
 				// would be a crash report for a folder that is read-only, which the Issues tab explains better.
-				Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+				Engine.Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
 			}
 		}
 
@@ -155,7 +155,7 @@ namespace x360ce.App
 					ApplyAiAccess();
 					break;
 				case nameof(Options.AiAccessWindows):
-					Mcp.WindowsAgentRegistry.Apply(o.AiAccessWindows);
+					Engine.Mcp.WindowsAgentRegistry.Apply(o.AiAccessWindows);
 					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;

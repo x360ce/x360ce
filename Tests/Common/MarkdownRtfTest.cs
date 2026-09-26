@@ -186,5 +186,38 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, depth, "Groups do not balance, so the document will not open.");
 		}
 
+		[TestMethod, TestCategory("documents")]
+		[Description("A table lines up in the fixed font with a bold header")]
+		public void A_table_lines_up_in_the_fixed_font_with_a_bold_header()
+		{
+			// The Force Feedback document is mostly tables of numbers. Without a fixed font and
+			// padding the columns wander, and without a bold header a reader cannot tell the
+			// heading row from the first row of data.
+			var rtf = Rtf(string.Join("\r\n", new[]
+			{
+				"| Motor | Period |",
+				"| --- | --- |",
+				"| Left | 40 ms |",
+				"| `Right` | 16 ms |",
+			}));
+			// The widest first cell is "Motor", five letters; every first cell is padded to that plus
+			// two. The second column is numbers, so they line up on the right under "Period".
+			StringAssert.Contains(rtf, @"{\f1\b Motor  Period}", "The header row is not bold in the fixed font, padded to its columns.");
+			StringAssert.Contains(rtf, @"{\f1 Left    40 ms}", "A data row is not padded to its column, numbers to the right.");
+			StringAssert.Contains(rtf, @"\cf0 }   16 ms}", "A cell with a code span was padded by its marks rather than its letters.");
+			Assert.IsFalse(rtf.Contains("---"), "The separator row reached the screen.");
+		}
+
+		[TestMethod, TestCategory("documents")]
+		[Description("The fixed font stays inside the fenced block")]
+		public void The_fixed_font_stays_inside_the_fenced_block()
+		{
+			// The font is character formatting, which a new paragraph does not reset. Left open, a
+			// fenced block put everything after it, headings included, in the fixed font.
+			var rtf = Rtf("```\r\nx = 1\r\n```\r\n\r\nAfter.");
+			StringAssert.Contains(rtf, @"{\f1 x = 1}", "The fenced line is not in a group of its own.");
+			Assert.IsFalse(rtf.Contains(@"\f1 After"), "The paragraph after the block is still in the fixed font.");
+		}
+
 	}
 }

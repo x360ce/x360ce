@@ -130,6 +130,29 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>Lets go of the library until the next question loads it again.</summary>
+		/// <remarks>
+		/// XInput keeps open every controller it has answered about for as long as it is loaded, and
+		/// Windows cannot cleanly switch off a controller that anything holds open. Nothing may ask
+		/// while this runs: a question already under way would call into the library as it goes.
+		/// </remarks>
+		/// <returns>False when the library was being loaded and did not finish in the time given.</returns>
+		public static bool Release(TimeSpan limit)
+		{
+			if (!System.Threading.Monitor.TryEnter(LoadLock, limit))
+				return false;
+			try
+			{
+				Unload();
+				_Attempted = false;
+			}
+			finally
+			{
+				System.Threading.Monitor.Exit(LoadLock);
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// Loads the system library on first use. The lock is taken once, on that first call;
 		/// every later call from the device thread reads the delegate and takes nothing.

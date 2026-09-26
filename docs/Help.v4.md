@@ -272,7 +272,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Anything that is not a real number, such as dividing by zero, becomes 0.
 - A decimal point is always a dot, whatever language Windows is set to.
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
-- A formula can be up to 16 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
+- A formula can be up to 128 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
 
 ## AI assistant access
 
@@ -297,6 +297,8 @@ chat and it takes it from there. The two ways, both shown on the page:
   asks once, through the Fix button on the Issues tab, for permission to listen on every network.
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
+
+An assistant can read and answer the other windows the program opens over the main one.
 
 An assistant can also point: ask it where something is and it brings the page to the front,
 frames the control and shows a balloon with its words beside it for a few seconds. It can string

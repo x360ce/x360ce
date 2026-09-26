@@ -91,7 +91,7 @@ namespace x360ce.App.DInput
 				// MAP: D-PAD
 				// --------------------------------------------------------
 
-				success = SettingsConverter.TryParseIniValue(padSetting.DPad, out type, out index);
+				success = SettingsConverter.TryParseIniValue(padSetting.DPad, out type, out index, MapCode.DPad);
 				// If POV index is mapped to the D-PAD
 				if (success && index > 0 && type == MapType.POV)
 				{

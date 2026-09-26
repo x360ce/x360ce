@@ -67,6 +67,25 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("A UTF-8 byte order mark hides the first section until the file is made UTF-16")]
+		public void Utf8_byte_order_mark_hides_first_section_until_converted()
+		{
+			var folder = NewFolder();
+			try
+			{
+				var path = Path.Combine(folder, "x360ce.ini");
+				File.WriteAllText(path, "[Options]\r\nInternetFeatures=1\r\n\r\n[PAD1]\r\nButtonA=1\r\n", new UTF8Encoding(true));
+				var ini = new Ini(path);
+				Assert.AreEqual("", ini.GetValue("Options", "InternetFeatures"), "Windows now reads the first section of such a file; the start-up conversion may no longer be needed.");
+				Assert.AreEqual("1", ini.GetValue("PAD1", "ButtonA"), "Only the first section is affected.");
+				Assert.IsTrue(ini.EnsureUnicode(), "The file was not converted.");
+				Assert.IsTrue(IsUtf16(path), "The file is not UTF-16.");
+				Assert.AreEqual("1", ini.GetValue("Options", "InternetFeatures"), "The first section is still hidden.");
+			}
+			finally { Directory.Delete(folder, true); }
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
 		[Description("A file that cannot be written is reported as not written, and nothing is thrown")]
 		public void Unwritable_file_is_reported_not_thrown()
 		{

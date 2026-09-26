@@ -15,6 +15,8 @@ namespace x360ce.Engine
 		List<Vendor> GetVendors();
 		SettingsData GetSettingsData();
 		CloudMessage Execute(CloudMessage command);
+		// Version 4.23
+		ServerInfo GetServerInfo();
 
     }
 }

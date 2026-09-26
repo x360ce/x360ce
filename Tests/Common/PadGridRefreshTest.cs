@@ -165,5 +165,61 @@ namespace x360ce.Tests
 		{
 			SwitchGames(padTabShown: true, selectRowFirst: true);
 		}
+
+		[TestMethod, TestCategory("mapping")]
+		[Description("A device added to a controller that already has one is selected, not left behind the old one")]
+		public void A_device_just_added_is_selected()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
+				var existingPads = SettingsManager.PadSettings.ItemsToArraySyncronized();
+				var oldGame = SettingsManager.CurrentGame;
+				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				var game = NewGame("GameA");
+				SettingsManager.UserSettings.Items.Clear();
+				try
+				{
+					using (var form = new Form { Width = 900, Height = 700 })
+					using (var pad = new PadControl(MapTo.Controller2) { Dock = DockStyle.Fill })
+					{
+						form.Controls.Add(pad);
+						pad.InitPadControl();
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						form.Show();
+						// A controller that already has a device, selected.
+						var first = NewSetting(game, MapTo.Controller2);
+						SettingsManager.UserSettings.Items.Add(first);
+						SettingsManager.CurrentGame = game;
+						pad.UpdateFromCurrentGame();
+						Application.DoEvents();
+						var grid = pad.MappedDevicesDataGridView;
+						Assert.AreEqual(1, grid.Rows.Count);
+						Assert.AreEqual(first.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid, "The one device is selected to begin with.");
+
+						// A second device, from the list of devices, as Add does after its dialog.
+						var added = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Second pad", InstanceName = "Second pad" };
+						pad.MapDevices(game, new[] { added });
+						Application.DoEvents();
+						Assert.AreEqual(2, grid.Rows.Count, "The device was not added.");
+						Assert.AreEqual(added.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid,
+							"The device just added is not selected; the page still shows the one that was.");
+						Assert.AreEqual(1, grid.SelectedRows.Count, "Only the device just added is selected.");
+					}
+				}
+				finally
+				{
+					SettingsManager.Current.NotifySettingsStatus = oldStatus;
+					SettingsManager.CurrentGame = oldGame;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var setting in existing)
+						SettingsManager.UserSettings.Items.Add(setting);
+					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySyncronized().Except(existingPads).ToArray())
+						SettingsManager.PadSettings.Items.Remove(ps);
+				}
+			});
+		}
 	}
 }

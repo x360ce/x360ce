@@ -38,12 +38,12 @@ namespace x360ce.Engine
 		/// an expression that passes every check and is then silently cut short when it is saved,
 		/// which is worse than refusing it while they are still looking at it.
 		///
-		/// Sixteen is short. It is enough for the simple things people actually write, such as
-		/// "=a5*2" or "=a1*0.5", and not enough to write a dead zone and a curve out in full. The
-		/// column is widened in a later release and this number moves with it; until then the two
-		/// must agree, and a test holds them together.
+		/// A hundred and twenty-eight is room for a dead zone and a curve written out in full, such
+		/// as "=sign(a1)*antideadzone(deadzone(abs(a1),0.24),0.1)", with space to spare. It is the
+		/// width of [dbo].[x360ce_PadSettings]' mapping columns and of the model's facets, and a
+		/// test holds the three together.
 		/// </remarks>
-		public const int MaxLength = 16;
+		public const int MaxLength = 128;
 
 		/// <summary>
 		/// Deepest accepted nesting. Counted by scanning the raw text, then again while parsing.

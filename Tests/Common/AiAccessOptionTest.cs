@@ -1,7 +1,8 @@
-// @under-test: App.v4/Common/Options.cs, App.v4/Common/AiAccess.cs
+// @under-test: App.v4/Common/Options.cs, Engine/Mcp/AiAccess.cs
 // @area: settings   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using x360ce.App;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.Tests
 {

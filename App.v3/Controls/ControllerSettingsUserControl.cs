@@ -425,12 +425,7 @@ namespace x360ce.App.Controls
 			else
 			{
 				var di = _devices[ControllerComboBox.SelectedIndex];
-				var padSectionName = SettingManager.Current.GetInstanceSection(di.InstanceGuid);
-				SettingManager.Current.SetPadSetting(padSectionName, di);
-				SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
-				MainForm.Current.SuspendEvents();
-				SettingManager.Current.ReadPadSettings(SettingManager.IniFileName, padSectionName, ControllerComboBox.SelectedIndex);
-				MainForm.Current.ResumeEvents();
+				SettingManager.Current.LoadPadSetting(result.PadSettings[0], di, ControllerComboBox.SelectedIndex);
 				var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 				mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Settings loaded into '{1}' successfully.", DateTime.Now, name), MessageBoxIcon.Information);
 				// Save setting and notify if value changed.
