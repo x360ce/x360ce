@@ -1,4 +1,4 @@
-﻿## [4.23.58.0] - 2026-09-26
+﻿## [4.23.59.0] - 2026-09-26
 
 - Fixed: Online presets lost the wheel and centering spring settings.
 - Fixed: Searching the online database with no devices reported a server error.
@@ -46,6 +46,7 @@
 - Changed: The period played follows the force, as a real motor slows when driven less.
 - Changed: XInput Devices rows carry their own up and down arrows.
 - Changed: A device added to a controller is selected, ready to set up.
+- Changed: Online settings are reached over HTTPS.
 - Added: Motor Periods presets for wheels, an info button about the motors, and a Defaults button on the Force Feedback page.
 - Added: Options has a Test button for the web service address.
 - Added: The Issues tab names force feedback a device refused or plays differently.
