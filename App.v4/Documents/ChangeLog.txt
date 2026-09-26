@@ -1,4 +1,4 @@
-﻿## [4.23.56.0] - 2026-09-25
+﻿## [4.23.58.0] - 2026-09-26
 
 - Fixed: Online presets lost the wheel and centering spring settings.
 - Fixed: Searching the online database with no devices reported a server error.
@@ -38,6 +38,8 @@
 - Fixed: A preset pasted and copied again came back changed, under another checksum.
 - Fixed: Settings a preset left out ran at nought, not at the defaults the page shows, such as button dead zones and motor periods.
 - Fixed: An axis-to-button dead zone set to 0 came back as the default, 8192.
+- Fixed: A real controller in XInput 1 pushed every virtual controller one place along.
+- Fixed: Putting controllers in order asked for Administrator twice.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
 - Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
