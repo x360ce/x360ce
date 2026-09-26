@@ -1,4 +1,4 @@
-// @under-test: App.v4/Mcp/McpClient.cs
+// @under-test: Engine/Mcp/McpClient.cs
 // @area: mcp   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.IO;
 using System.Net;
 using x360ce.App;
 using x360ce.App.Mcp;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.Tests
 {
@@ -69,6 +70,27 @@ namespace x360ce.Tests
 			StringAssert.Contains(usage, "(Configure)");
 			StringAssert.Contains(usage, "/times=[optional] How many times.");
 			StringAssert.Contains(usage, "/value=What to write.");
+		}
+
+		[TestMethod, TestCategory("mcp")]
+		[Description("The MCP settings an assistant is given name the server and start the program with /Mcp, whatever its path holds")]
+		public void Server_settings_name_the_server_and_the_switch()
+		{
+			var previous = McpServer.ServerName;
+			McpServer.ServerName = "x360ce-v3";
+			try
+			{
+				var exe = @"C:\Games\O'Brien's ""Game""\x360ce.exe";
+				var json = new System.Web.Script.Serialization.JavaScriptSerializer();
+				var settings = (Dictionary<string, object>)json.DeserializeObject(McpClient.ServerSettings(exe));
+				var server = (Dictionary<string, object>)((Dictionary<string, object>)settings["mcpServers"])["x360ce-v3"];
+				Assert.AreEqual(exe, server["command"], "The path must survive quoting unchanged.");
+				CollectionAssert.AreEqual(new object[] { "/Mcp" }, (object[])server["args"]);
+			}
+			finally
+			{
+				McpServer.ServerName = previous;
+			}
 		}
 	}
 }

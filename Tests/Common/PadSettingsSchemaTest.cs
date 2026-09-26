@@ -1,4 +1,4 @@
-// @under-test: Data/dbo/Tables/x360ce_PadSettings.sql, Engine/Data/x360ceModel.edmx, Engine/Common/MapExpression.cs
+// @under-test: Data/dbo/Tables/x360ce_PadSettings.sql, Engine/Data/x360ceModel.edmx, Engine/Data/x360ceModel.csdl, Engine/Data/x360ceModel.ssdl, Engine/Data/x360ceModel.msl, Engine/Common/MapExpression.cs
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -111,6 +111,31 @@ namespace x360ce.Tests
 			int position;
 			Assert.IsTrue(MapExpression.TryParse(seeded, out parsed, out error, out position),
 				"The application seeded a formula it cannot itself read: " + error);
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The model the engine runs from loads, and both of its halves carry every column of the table")]
+		public void The_embedded_model_loads_and_carries_every_column()
+		{
+			// The engine runs from the three files embedded in it, not from the .edmx beside them, and
+			// Entity Framework reads them together on the first query. A mapping naming a property or a
+			// column the other two lack fails there, in a program that is saving; here it fails in a test.
+			var engine = typeof(EngineHelper).Assembly;
+			Func<string, System.Xml.XmlReader> open = name => System.Xml.XmlReader.Create(engine.GetManifestResourceStream(name));
+			var conceptual = new System.Data.Metadata.Edm.EdmItemCollection(new[] { open("Data.x360ceModel.csdl") });
+			var storage = new System.Data.Metadata.Edm.StoreItemCollection(new[] { open("Data.x360ceModel.ssdl") });
+			new System.Data.Mapping.StorageMappingItemCollection(conceptual, storage, new[] { open("Data.x360ceModel.msl") });
+			var table = storage.GetItems<System.Data.Metadata.Edm.EntityType>().Single(x => x.Name == "x360ce_PadSettings");
+			var entity = conceptual.GetItems<System.Data.Metadata.Edm.EntityType>().Single(x => x.Name == "PadSetting");
+			var columns = Regex.Matches(Read("Data/dbo/Tables/x360ce_PadSettings.sql"), @"^\s+\[(?<name>\w+)\]\s", RegexOptions.Multiline)
+				.Cast<Match>().Select(x => x.Groups["name"].Value).ToArray();
+			Assert.IsTrue(columns.Length > 50, "Only " + columns.Length + " column(s) were read from the table.");
+			var missing = columns.Where(x => !table.Properties.Contains(x)).Select(x => "storage: " + x)
+				.Concat(columns.Where(x => !entity.Properties.Contains(x)).Select(x => "program: " + x)).ToArray();
+			Assert.AreEqual(0, missing.Length, "The table has columns the embedded model does not describe, "
+				+ "so the program never reads or writes them:" + Environment.NewLine + string.Join(Environment.NewLine, missing));
+			// Nothing sets this one, and its column refuses null, so a new setting has to start it empty.
+			Assert.AreEqual("", new x360ce.Engine.Data.PadSetting().ButtonBig, "A new setting would save null into ButtonBig.");
 		}
 
 	}

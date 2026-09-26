@@ -150,6 +150,34 @@ namespace x360ce.App
 
 		static Dictionary<Control, string> Descriptions = new Dictionary<Control, string>();
 
+		/// <summary>
+		/// Names each control linked to a setting after that setting, and describes it with the
+		/// setting's own description, where the interface catalogue said nothing. Without a name a
+		/// mapping box announces its current value, so four boxes holding "Button 1" could not be
+		/// told apart by a screen reader or by an assistant. A name or purpose given on purpose stays.
+		/// </summary>
+		public void DescribeControls()
+		{
+			foreach (var pair in SettingsMap)
+			{
+				var control = pair.Value;
+				var key = pair.Key.Split('\\')[1];
+				if (string.IsNullOrEmpty(control.AccessibleName))
+					control.AccessibleName = Words(key);
+				string description;
+				if (string.IsNullOrEmpty(control.AccessibleDescription) && Descriptions.TryGetValue(control, out description)
+					&& !string.IsNullOrEmpty(description) && description != key)
+					control.AccessibleDescription = description;
+			}
+		}
+
+		/// <summary>A setting's key as words: LeftThumbAxisX becomes "Left Thumb Axis X", DPadUp becomes "D-Pad Up".</summary>
+		public static string Words(string key)
+		{
+			var words = System.Text.RegularExpressions.Regex.Replace(key, "(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
+			return words.Replace("D Pad", "D-Pad");
+		}
+
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
 			MainForm.Current.UpdateHelpHeader();
@@ -237,6 +265,8 @@ namespace x360ce.App
 		/// </summary>
 		public void ReadSettingTo(Control control, string key, string value)
 		{
+			if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value))
+				value = SettingName.DefaultInternetDatabaseUrl;
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||
@@ -288,7 +318,6 @@ namespace x360ce.App
 				if (key == SettingName.ProductName) return;
 				if (key == SettingName.ProductGuid) return;
 				if (key == SettingName.InstanceGuid) return;
-				if (key == SettingName.InternetDatabaseUrl && string.IsNullOrEmpty(value)) value = SettingName.DefaultInternetDatabaseUrl;
 				// Always override version.
 				if (key == SettingName.Version) value = SettingName.DefaultVersion;
 				control.Text = value;
@@ -334,10 +363,10 @@ namespace x360ce.App
 					if (key == SettingName.AxisToDPadDeadZone && value == "") n = 256;
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
-				// Convert 500 to 100%
+				// Convert 400 ms to 100%
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					n = System.Convert.ToInt32((float)n / 500F * 100F);
+					n = System.Convert.ToInt32((float)n / 400F * 100F);
 				}
 				// Convert 32767 to 100%
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
@@ -802,10 +831,10 @@ namespace x360ce.App
 				{
 					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
 				}
-				// convert 100%  to 500
+				// convert 100% to 400 ms
 				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
+					v = System.Convert.ToInt32((float)tc.Value / 100F * 400F).ToString();
 				}
 				// Convert 100% to 32767
 				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)

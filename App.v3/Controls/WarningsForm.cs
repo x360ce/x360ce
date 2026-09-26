@@ -20,6 +20,7 @@ namespace x360ce.App
 		public WarningsForm()
 		{
 			InitializeComponent();
+			Engine.UiTree.UiText.Apply(this);
 			checkTimer = new System.Timers.Timer();
 			checkTimer.Interval = 1000;
 			checkTimer.AutoReset = false;
@@ -81,7 +82,6 @@ namespace x360ce.App
 					IssueList = new List<WarningItem>();
 					IssueList.Add(new ExeFileIssue());
 					IssueList.Add(new DirectXIssue());
-					IssueList.Add(new MdkIssue());
 					IssueList.Add(new ArchitectureIssue());
 					IssueList.Add(new GdbFileIssue());
 					IssueList.Add(new IniFileIssue());

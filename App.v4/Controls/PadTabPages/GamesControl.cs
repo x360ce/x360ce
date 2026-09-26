@@ -178,7 +178,8 @@ namespace x360ce.App.Controls
 			if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null && e.FileIndex >= 0 && e.FileIndex < e.Files.Count)
 			{
 				var file = e.Files[e.FileIndex];
-				var size = file.Length / 1024 / 1024;
+				// A name the folder lists but Windows cannot open has no size to give; asking ended the scan.
+				var size = file.Exists ? file.Length / 1024 / 1024 : 0;
 				sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
 			}
 			if (e.Level == 0)
@@ -214,10 +215,18 @@ namespace x360ce.App.Controls
 				paths = new string[] { System.IO.Path.GetDirectoryName(exe) };
 				name = System.IO.Path.GetFileName(exe);
 			}
-			var games = SettingsManager.UserGames.Items;
+			// The scanner updates a listed game of the same name rather than adding one. Shown a list
+			// without that game, it adds this folder as a game of its own, which is what was asked for.
+			IList<UserGame> games = SettingsManager.UserGames.Items;
+			if (_AddSeparateGame && name != null)
+				games = SettingsManager.UserGames.ItemsToArraySyncronized()
+					.Where(x => !string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase)).ToList();
 			var programs = SettingsManager.Programs.Items;
 			GameScanner.ScanGames(paths, games, programs, name);
 		}
+
+		/// <summary>Whether the file being added is to be listed beside a game of the same name rather than update it.</summary>
+		bool _AddSeparateGame;
 
 		#endregion
 
@@ -230,7 +239,13 @@ namespace x360ce.App.Controls
 
 		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
 		{
-			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
+			// Once whatever bound the list has finished, not during it. Sorting binds the list again
+			// with every row showing and then puts the current cell back; rows hidden in between left
+			// that cell on a hidden row, which Windows Forms refuses by throwing.
+			if (IsHandleCreated)
+				BeginInvoke((Action)(() => ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton)));
+			else
+				ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
 
 		void GamesDataGridView_SelectionChanged(object sender, EventArgs e)
@@ -304,6 +319,23 @@ namespace x360ce.App.Controls
 				}
 				else
 				{
+					// A program already listed under this name, and still there in its own folder, is
+					// usually the same game: every copy shares one configuration. It is a different game
+					// only if the person says so, as with the mods of one game that all carry its file.
+					_AddSeparateGame = false;
+					var other = SettingsManager.OtherGameWithSameName(AddGameOpenFileDialog.FileName);
+					if (other != null)
+					{
+						var form = new MessageBoxForm();
+						form.StartPosition = FormStartPosition.CenterParent;
+						ControlsHelper.CheckTopMost(form);
+						var answer = form.ShowForm(
+							string.Format("{0} is already in the list:\r\n{1}\r\n\r\nAdd this folder as a separate game, or use the existing entry?", other.FileName, other.FullPath),
+							"Add Game", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2,
+							new[] { "Add Separate", "Use Existing" });
+						form.Dispose();
+						_AddSeparateGame = answer == DialogResult.Yes;
+					}
 					ScanStarted = DateTime.Now;
 					var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames, AddGameOpenFileDialog.FileName);
 					if (!success)

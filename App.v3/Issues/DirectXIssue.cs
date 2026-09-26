@@ -19,7 +19,8 @@ namespace x360ce.App.Issues
 		{
 			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DirectX"))
 			{
-				string versionString = key.GetValue("Version") as string;
+				// No key means no DirectX 9, which is what the warning is for.
+				string versionString = key == null ? null : key.GetValue("Version") as string;
 				Version version;
 				if (Version.TryParse(versionString, out version))
 				{

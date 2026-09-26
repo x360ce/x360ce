@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -95,7 +96,7 @@ namespace x360ce.Engine
 				}
 				if (inCode)
 				{
-					body.Append(Pard(400)).Append(@"\sa0\f1 ").Append(Escape(line)).Append(@"\par").Append("\r\n");
+					body.Append(Pard(400)).Append(@"\sa0{\f1 ").Append(Escape(line)).Append(@"}\par").Append("\r\n");
 					continue;
 				}
 				var trimmed = line.Trim();
@@ -126,18 +127,26 @@ namespace x360ce.Engine
 					listIndent = 0;
 					continue;
 				}
-				// A table row is shown as its cells, separated. Tables are rare here and a real RTF
-				// table would be a large amount of machinery for the two that exist.
-				if (trimmed.StartsWith("|") && trimmed.EndsWith("|"))
+				// A table: its rows in the fixed font with the columns padded to line up, the header
+				// row bold. A real RTF table would be a large amount of machinery for the few that
+				// exist, and padded columns read the same in every viewer.
+				if (IsTableRow(trimmed))
 				{
-					if (Regex.IsMatch(trimmed, @"^\|[\s:\-\|]+\|$"))
-						continue;
-					var cells = trimmed.Trim('|').Split('|');
-					for (int c = 0; c < cells.Length; c++)
-						cells[c] = cells[c].Trim();
-					body.Append(Pard(200)).Append(@"\sa40 ")
-						.Append(Inline(string.Join("   -   ", cells), style))
-						.Append(@"\par").Append("\r\n");
+					var rows = new List<string[]>();
+					var end = i;
+					for (; end < lines.Length && IsTableRow(lines[end].Trim()); end++)
+					{
+						var row = lines[end].Trim();
+						if (Regex.IsMatch(row, @"^\|[\s:\-\|]+\|$"))
+							continue;
+						var cells = row.Trim('|').Split('|');
+						for (int c = 0; c < cells.Length; c++)
+							cells[c] = cells[c].Trim();
+						rows.Add(cells);
+					}
+					AppendTable(body, rows, style);
+					i = end - 1;
+					listIndent = 0;
 					continue;
 				}
 				// A bullet.
@@ -191,6 +200,51 @@ namespace x360ce.Engine
 
 		/// <summary>Space kept between the text and the edge of the box, in twips.</summary>
 		const int Margin = 120;
+
+		static bool IsTableRow(string trimmed)
+		{
+			return trimmed.StartsWith("|") && trimmed.EndsWith("|");
+		}
+
+		/// <summary>Writes the rows of a table, each cell padded to its column's width so they line up in the fixed font.</summary>
+		static void AppendTable(StringBuilder body, List<string[]> rows, RtfStyle style)
+		{
+			var columns = rows.Count == 0 ? 0 : rows.Max(r => r.Length);
+			var widths = new int[columns];
+			// A column of numbers lines up on the right, as numbers do; every other column on the left.
+			var numeric = new bool[columns];
+			for (int c = 0; c < columns; c++)
+				numeric[c] = rows.Skip(1).Any(r => c < r.Length && r[c].Length > 0)
+					&& rows.Skip(1).All(r => c >= r.Length || r[c].Length == 0 || char.IsDigit(Visible(r[c])[0]));
+			foreach (var row in rows)
+				for (int c = 0; c < row.Length; c++)
+					widths[c] = Math.Max(widths[c], Visible(row[c]).Length);
+			for (int r = 0; r < rows.Count; r++)
+			{
+				var row = rows[r];
+				body.Append(Pard(400)).Append(r == 0 ? @"\sa0{\f1\b " : @"\sa0{\f1 ");
+				for (int c = 0; c < row.Length; c++)
+				{
+					var pad = widths[c] - Visible(row[c]).Length;
+					if (numeric[c])
+						body.Append(' ', pad);
+					body.Append(Inline(row[c], style));
+					if (c < row.Length - 1)
+						body.Append(' ', (numeric[c] ? 0 : pad) + 2);
+				}
+				body.Append(@"}\par").Append("\r\n");
+			}
+			// Room under the table, as a paragraph leaves under itself.
+			if (rows.Count > 0)
+				body.Length -= (@"\par" + "\r\n").Length;
+			body.Append(@"\sa120\par").Append("\r\n");
+		}
+
+		/// <summary>The text of a cell as it will be seen: the marks that become formatting removed.</summary>
+		static string Visible(string cell)
+		{
+			return Regex.Replace(cell, @"[`*_]", "");
+		}
 
 		/// <summary>Starts a paragraph indented by the given amount, inside the document's margins.</summary>
 		/// <remarks>

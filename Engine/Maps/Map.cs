@@ -16,7 +16,7 @@ namespace x360ce.Engine
 		public Map(MapCode code, string value, GamepadButtonFlags flag, string deadZone)
 		{
 			Target = TargetType.Button;
-			Load(value);
+			Load(code, value);
 			ButtonFlag = flag;
 			int.TryParse(deadZone, out DeadZone);
 		}
@@ -27,7 +27,7 @@ namespace x360ce.Engine
 		public Map(MapCode code, string value, TargetType target, string deadZone, string antiDeadZone, string linear)
 		{
 			Target = target;
-			Load(value);
+			Load(code, value);
 			int.TryParse(deadZone, out DeadZone);
 			int.TryParse(antiDeadZone, out AntiDeadZone);
 			int.TryParse(linear, out Linear);
@@ -40,11 +40,12 @@ namespace x360ce.Engine
 		public Map(MapCode code, string value, TargetType target, short axisValue)
 		{
 			Target = target;
-			Load(value);
+			Load(code, value);
 			AxisValue = axisValue;
 		}
 
-		void Load(string value)
+		/// <param name="code">The field the value is stored in, which says what a bare number names.</param>
+		void Load(MapCode code, string value)
 		{
 			// A formula is compiled once here, where a mapping is read, rather than every time the
 			// controller is polled. What follows describes a single control and cannot describe a
@@ -56,7 +57,7 @@ namespace x360ce.Engine
 				MapExpression.TryParse(value, out Expression, out error, out position);
 				return;
 			}
-			SettingsConverter.TryParseIniValue(value, out Type, out Index);
+			SettingsConverter.TryParseIniValue(value, out Type, out Index, code);
 			IsButton = SettingsConverter.IsButton(Type);
 			IsAxis = SettingsConverter.IsAxis(Type);
 			IsSlider = SettingsConverter.IsSlider(Type);

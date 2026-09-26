@@ -105,6 +105,8 @@ namespace x360ce.App
 		/// </summary>
 		public void MinimizeToTray(bool showBalloonTip, bool minimizeToTray)
 		{
+			if (!CanChangeWindowState)
+				return;
 			// Show only first time.
 			if (showBalloonTip)
 			{
@@ -131,11 +133,25 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>Whether the window is still one that can be shown, hidden or resized.</summary>
+		/// <remarks>
+		/// A second copy of the program, the tray icon and the command line all ask this window to
+		/// show or hide itself, and the request can arrive while the window is closing. Rebuilding a
+		/// window whose pages are already gone fails inside the framework and ends the program on a
+		/// fault while closing; the request is simply too late, and is dropped.
+		/// </remarks>
+		bool CanChangeWindowState
+		{
+			get { return !Program.IsClosing && !IsDisposed && !Disposing; }
+		}
+
 		/// <summary>
 		/// Restores the window.
 		/// </summary>
 		public void RestoreFromTray(bool activate = false)
 		{
+			if (!CanChangeWindowState)
+				return;
 			if (activate)
 			{
 				// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:

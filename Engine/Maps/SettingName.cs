@@ -22,7 +22,10 @@ namespace x360ce.Engine
 		public struct SType
 		{
 			public const string None = null;
-			public const string Button = ""; // Button must be 'b' and no prefix for auto.
+			/// <summary>A button in a button field, where a number without a letter is a button.</summary>
+			public const string Button = "";
+			/// <summary>A button in a field whose bare number names another kind of control, such as a stick axis.</summary>
+			public const string ButtonMark = "b";
 			public const string Axis = "a";
 			public const string HAxis = "x";
 			public const string Slider = "s";
@@ -30,6 +33,9 @@ namespace x360ce.Engine
 			public const string POV = "p";
 			public const string POVButton = "d";
 		}
+
+		/// <summary>How far an axis must move to press a button it drives: a quarter of the way.</summary>
+		public const string DefaultButtonDeadZone = "8192";
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 		static public string DefaultVersion { get { return "2"; } }
@@ -238,46 +244,46 @@ namespace x360ce.Engine
 
 		#region Axis To Button / D-Pad
 
-		[DefaultValue("8192"), Description("Axis to A Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to A Button Dead Zone.")]
 		static public string ButtonADeadZone { get { return "A DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to B Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to B Button Dead Zone.")]
 		static public string ButtonBDeadZone { get { return "B DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to X Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to X Button Dead Zone.")]
 		static public string ButtonXDeadZone { get { return "X DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Y Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Y Button Dead Zone.")]
 		static public string ButtonYDeadZone { get { return "Y DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Start Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Start Button Dead Zone.")]
 		static public string ButtonStartDeadZone { get { return "Start DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Back Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Back Button Dead Zone.")]
 		static public string ButtonBackDeadZone { get { return "Back DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Left Bumper Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Left Bumper Dead Zone.")]
 		static public string LeftShoulderDeadZone { get { return "Left Shoulder DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Left Stick Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Left Stick Button Dead Zone.")]
 		static public string LeftThumbButtonDeadZone { get { return "Left Thumb DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Right Bumper Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Right Bumper Dead Zone.")]
 		static public string RightShoulderDeadZone { get { return "Right Shoulder DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to Right Stick Button Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to Right Stick Button Dead Zone.")]
 		static public string RightThumbButtonDeadZone { get { return "Right Thumb DeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Down Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Down Dead Zone.")]
 		static public string DPadDownDeadZone { get { return "AxisToDPadDownDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Left Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Left Dead Zone.")]
 		static public string DPadLeftDeadZone { get { return "AxisToDPadLeftDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Right Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Right Dead Zone.")]
 		static public string DPadRightDeadZone { get { return "AxisToDPadRightDeadZone"; } }
 
-		[DefaultValue("8192"), Description("Axis to D-Pad Up Dead Zone.")]
+		[DefaultValue(DefaultButtonDeadZone), Description("Axis to D-Pad Up Dead Zone.")]
 		static public string DPadUpDeadZone { get { return "AxisToDPadUpDeadZone"; } }
 
 		[DefaultValue("0"), Description("Axis to control DPad. Disabled = 0, Enabled = 1.")]
@@ -362,14 +368,16 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.")]
 		static public string ForceSpringEnable { get { return "SpringEnable"; } }
 
-		[DefaultValue("0"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 0 (off).")]
+		[DefaultValue("30"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.")]
 		static public string ForceSpringStrength { get { return "SpringStrength"; } }
 
 		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
 		static public string WheelRange { get { return "WheelRange"; } }
 
-		[DefaultValue("60"), Description("Left motor period. Range is 0 to 500. Default is 60.")]
+		[DefaultValue(DefaultLeftMotorPeriod), Description("Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.")]
 		static public string LeftMotorPeriod { get { return "LeftMotorPeriod"; } }
+		/// <summary>MotorModel.PeriodAtFullMs(MotorModel.DefaultMultiplier, true), spelt out because an attribute needs a constant.</summary>
+		public const string DefaultLeftMotorPeriod = "160";
 
 		[DefaultValue("100"), Description("Left motor strength. Range is 0 to 100. Default is 100.")]
 		static public string LeftMotorStrength { get { return "LeftMotorStrength"; } }
@@ -377,8 +385,10 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Left motor effect direction. -1, 0, 1.")]
 		static public string LeftMotorDirection { get { return "LeftMotorDirection"; } }
 
-		[DefaultValue("120"), Description("Right motor period. Range is 0 to 500. Default is 120.")]
+		[DefaultValue(DefaultRightMotorPeriod), Description("Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.")]
 		static public string RightMotorPeriod { get { return "RightMotorPeriod"; } }
+		/// <summary>MotorModel.PeriodAtFullMs(MotorModel.DefaultMultiplier, false), spelt out because an attribute needs a constant.</summary>
+		public const string DefaultRightMotorPeriod = "64";
 
 		[DefaultValue("100"), Description("Right motor strength. Range is 0 to 100. Default is 100.")]
 		static public string RightMotorStrength { get { return "RightMotorStrength"; } }

@@ -104,6 +104,11 @@ namespace x360ce.App.DInput
 					string path;
 					if (knownPaths.TryGetValue(instance.InstanceGuid, out path))
 					{
+						// A device written down from an earlier run has no interface path yet: the path is
+						// not saved with it. Asked of DirectInput here, or the device is never matched to
+						// its interface and comes up with no vendor, no id, and a wheel that takes no range.
+						if (string.IsNullOrEmpty(path) && instance.IsHumanInterfaceDevice)
+							path = InterfacePathOf(manager, instance.InstanceGuid);
 						if (!string.IsNullOrEmpty(path))
 							paths.Add(path);
 						continue;
@@ -127,9 +132,27 @@ namespace x360ce.App.DInput
 			catch (Exception ex)
 			{
 				read.Error = ex;
+				// A failed read hands nothing over, so what it opened is closed here.
+				foreach (var made in read.Made.Values)
+					made.Dispose();
+				read.Made.Clear();
 			}
 			read.Milliseconds = started.ElapsedMilliseconds;
 			return read;
+		}
+
+		/// <summary>The HID interface path of a device, read through a joystick made and let go of for the purpose, or empty.</summary>
+		static string InterfacePathOf(DirectInput manager, Guid instanceGuid)
+		{
+			try
+			{
+				using (var joystick = new Joystick(manager, instanceGuid))
+					return joystick.Properties.InterfacePath ?? "";
+			}
+			catch (Exception)
+			{
+				return "";
+			}
 		}
 
 		#endregion
@@ -227,7 +250,17 @@ namespace x360ce.App.DInput
 				// list and the clean-up button can never disagree about what a leftover is.
 				if (!VirtualDriverInstaller.IsVirtualPad(hid, devInfosById))
 					insertDevices.Add(ud);
+				// A pad of ours is never listed, so every read finds it new and opens it again. Left open,
+				// each one keeps its handles for the life of the program: a few more on every read, and a
+				// read follows every device that comes or goes on the machine.
+				else if (ud.Device != null)
+					ud.Device.Dispose();
+				read.Made.Remove(device.InstanceGuid);
 			}
+			// Any the worker opened that nothing here took, such as a device listed while it was reading.
+			foreach (var unclaimed in read.Made.Values)
+				unclaimed.Dispose();
+			read.Made.Clear();
 			//if (insertDevices.Count > 0)
 			//{
 			//	CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray(), true);

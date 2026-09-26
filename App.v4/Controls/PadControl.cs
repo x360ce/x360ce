@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using x360ce.App.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -265,6 +266,20 @@ namespace x360ce.App.Controls
 			return _Imager.Recorder.StopRecording();
 		}
 
+		/// <summary>Keeps a key pressed while recording from pressing a button on this page.</summary>
+		/// <remarks>
+		/// The buttons answer to their underlined letters on their own, without Alt, whenever
+		/// nothing else takes the key. Recording takes keys from the keyboard as a device and
+		/// nothing else, so L, pressed to map it, opened Load Preset over the recording instead.
+		/// R, C and A would have reset, cleared or replaced the preset the same way.
+		/// </remarks>
+		protected override bool ProcessMnemonic(char charCode)
+		{
+			if (_Imager != null && _Imager.Recorder.Recording)
+				return true;
+			return base.ProcessMnemonic(charCode);
+		}
+
 		void StartRecording(SettingsMapItem map = null)
 		{
 			if (map == null)
@@ -394,6 +409,7 @@ namespace x360ce.App.Controls
 			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
 			foreach (var item in effectsTypes)
 				ForceTypeComboBox.Items.Add(item);
+			InitMotorPeriodPresets();
 
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
 			foreach (var item in effectDirections)
@@ -619,8 +635,9 @@ namespace x360ce.App.Controls
 			var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
 			var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
 
-			// If columns will be hidden or shown then...
-			if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
+			// If rows come or go, or a device is asked to be selected, then... The rows of a device just
+			// mapped are usually in place already, put there by the settings list's own change.
+			if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0 || instanceGuid.HasValue)
 			{
 				var selection = instanceGuid.HasValue
 					? new List<Guid>() { instanceGuid.Value }
@@ -1011,12 +1028,11 @@ namespace x360ce.App.Controls
 				var map = maps.First(x => x.PropertyName == p.Name);
 				var key = map.IniPath.Split('\\')[1];
 				// Get setting value from the form.
-				var v = SettingsManager.Current.GetSettingValue(map.Control);
+				var v = SettingsManager.Current.GetPresetValue(map);
 				// Set value onto padSetting.
 				p.SetValue(ps, v ?? "", null);
 			}
-			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
+			return SettingsManager.Current.KeepWhatWasNotChanged(MappedTo, ps);
 		}
 
 		object updateFromDirectInputLock = new object();
@@ -1255,7 +1271,7 @@ namespace x360ce.App.Controls
 				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
 				return;
 			}
-			WheelDescriptionLabel.Text = "Hands off the wheel. It is pushed to each stop, then brought home with a rising force.";
+			WheelDescriptionLabel.Text = "Hands off the wheel.";
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = ud;
@@ -1268,7 +1284,11 @@ namespace x360ce.App.Controls
 			var ud = springAutoDevice;
 			var run = ud?.SpringCalibration;
 			if (run != null && !run.IsFinished)
+			{
+				// The run says what it is doing and what it is after, so the page is not silent for half a minute.
+				WheelDescriptionLabel.Text = run.Status;
 				return;
+			}
 			SpringAutoTimer.Stop();
 			ForceSpringAutoButton.Text = "Auto";
 			ForceSpringAutoButton.Enabled = true;
@@ -1280,8 +1300,8 @@ namespace x360ce.App.Controls
 			{
 				ForceSpringStrengthTrackBar.Value = run.Result;
 				WheelDescriptionLabel.Text = string.Format(
-					"Centering spring set to {0} %: the weakest force that brought the wheel home from both sides, {1} % and {2} %, plus a margin.",
-					run.Result, run.LowLevel, run.HighLevel);
+					"Centering spring set to {0} %. The wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a little is added so it starts every time.",
+					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
 			{
@@ -1298,10 +1318,87 @@ namespace x360ce.App.Controls
 		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 5;
-			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 5;
+			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * PeriodMsPerStep;
+			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * PeriodMsPerStep;
 			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
 			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
+			ShowMotorPeriodPreset(leftMotorPeriod, rightMotorPeriod);
+		}
+
+		/// <summary>Milliseconds per step of the period sliders: 0 to 400, so every preset lands on a step.</summary>
+		const int PeriodMsPerStep = 4;
+
+		/// <summary>Guards the preset box and the sliders against answering each other in a loop.</summary>
+		bool _settingMotorPeriods;
+
+		/// <summary>Shows in the preset box which multiplier the two sliders stand for, or Custom.</summary>
+		void ShowMotorPeriodPreset(int leftMs, int rightMs)
+		{
+			if (_settingMotorPeriods)
+				return;
+			_settingMotorPeriods = true;
+			try
+			{
+				var k = MotorModel.MultiplierOf(leftMs, rightMs);
+				MotorPeriodPresetComboBox.SelectedIndex = k.HasValue ? Array.IndexOf(MotorModel.Multipliers, k.Value) + 1 : 0;
+			}
+			finally
+			{
+				_settingMotorPeriods = false;
+			}
+		}
+
+		/// <summary>Fills the preset box: Custom, then every multiplier the model offers.</summary>
+		void InitMotorPeriodPresets()
+		{
+			MotorPeriodPresetComboBox.Items.Clear();
+			MotorPeriodPresetComboBox.Items.Add("Custom");
+			foreach (var k in MotorModel.Multipliers)
+				MotorPeriodPresetComboBox.Items.Add(MotorModel.Describe(k));
+			MotorPeriodPresetComboBox.SelectedIndex = 0;
+		}
+
+		/// <summary>A chosen multiplier sets both period sliders; Custom changes nothing.</summary>
+		private void MotorPeriodPresetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_settingMotorPeriods || MotorPeriodPresetComboBox.SelectedIndex < 1)
+				return;
+			var k = MotorModel.Multipliers[MotorPeriodPresetComboBox.SelectedIndex - 1];
+			_settingMotorPeriods = true;
+			try
+			{
+				LeftMotorPeriodTrackBar.Value = MotorModel.PeriodAtFullMs(k, true) / PeriodMsPerStep;
+				RightMotorPeriodTrackBar.Value = MotorModel.PeriodAtFullMs(k, false) / PeriodMsPerStep;
+			}
+			finally
+			{
+				_settingMotorPeriods = false;
+			}
+		}
+
+		/// <summary>Shows what the motors do and what the presets mean: the Force Feedback help document.</summary>
+		private void MotorInfoButton_Click(object sender, EventArgs e)
+		{
+			HelpForm.Show(this, "Force Feedback: motors and periods", AppHelper.HelpForceFeedbackResource);
+		}
+
+		/// <summary>Puts every setting on the Force Feedback page back to its default.</summary>
+		/// <remarks>
+		/// Only this page: the mappings, dead zones and the rest of the pad stay as they are. The
+		/// defaults are the ones the settings declare, read the same way a new mapping reads them.
+		/// </remarks>
+		private void ForceDefaultsButton_Click(object sender, EventArgs e)
+		{
+			foreach (var map in SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && IsOnForceFeedbackPage(x.Control)))
+				SettingsManager.Current.LoadSetting(map.Control, map.IniKey, string.Format("{0}", map.DefaultValue ?? ""));
+		}
+
+		bool IsOnForceFeedbackPage(Control control)
+		{
+			for (var c = control; c != null; c = c.Parent)
+				if (c == ForceFeedbackTabPage)
+					return true;
+			return false;
 		}
 
 		public void UpdateForceFeedBack()
@@ -1422,6 +1519,15 @@ namespace x360ce.App.Controls
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				// What these belong to lives as long as the program. Left subscribed, a page made and
+				// let go of went on handling every change afterwards, on whichever thread had made it.
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+				SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
+				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+				SettingsManager.UserSettings.Items.ListChanged -= UserSettings_Items_ListChanged;
+			}
 			if (disposing && (components != null))
 			{
 				_Imager.Dispose();
@@ -1520,11 +1626,22 @@ namespace x360ce.App.Controls
 			// Show form which allows to select device.
 			var selectedUserDevices = MainForm.Current.ShowDeviceForm();
 			// Return if no devices were selected.
-			if (selectedUserDevices == null)
+			if (selectedUserDevices == null || selectedUserDevices.Length == 0)
 				return;
+			MapDevices(game, selectedUserDevices);
+		}
+
+		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
+		/// <remarks>
+		/// A device just added is the one the person means to set up next. The list kept whatever row
+		/// was selected before, so with a device already mapped the new one arrived unselected and the
+		/// page went on showing the old one's settings until it was picked by hand.
+		/// </remarks>
+		public void MapDevices(UserGame game, UserDevice[] devices)
+		{
 			// Check if device already have old settings before adding new ones.
 			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
-			SettingsManager.MapGamePadDevices(game, MappedTo, selectedUserDevices,
+			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
 			// If new devices mapped and button is not enabled then...
@@ -1534,6 +1651,7 @@ namespace x360ce.App.Controls
 				EnableButton_Click(null, null);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
+			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
@@ -1563,6 +1681,24 @@ namespace x360ce.App.Controls
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			RemoveMapButton.Enabled = !auto && grid.SelectedRows.Count > 0;
 			AddMapButton.Enabled = !auto;
+		}
+
+		/// <summary>Shows the XInput places again, sized to what they now say.</summary>
+		/// <remarks>
+		/// The place text is made while the table paints and stored nowhere, so the column that
+		/// sizes itself to its cells never saw a change and kept the width of the first paint; a
+		/// device reaching several places was cut off. Measured again whenever the places can have
+		/// moved, which is whenever the device list has been read.
+		/// </remarks>
+		public void RefreshPlaces()
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke((Action)RefreshPlaces);
+				return;
+			}
+			MappedDevicesDataGridView.AutoResizeColumn(XInputPlaceColumn.Index);
+			MappedDevicesDataGridView.Invalidate();
 		}
 
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -1795,9 +1931,12 @@ namespace x360ce.App.Controls
 
 		private void CopyPresetButton_Click(object sender, EventArgs e)
 		{
-			var ps = GetSelectedPadSetting();
-			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
-			ControlsHelper.CopyToClipboardOrWarn(text);
+			SettingsManager.CopyPresetToClipboard(GetSelectedPadSetting());
+		}
+
+		private void CopyPresetFormatButton_Click(object sender, EventArgs e)
+		{
+			SettingsManager.ShowCopyPresetMenu(CopyPresetButton, GetSelectedPadSetting());
 		}
 
 		private void SavePresetButton_Click(object sender, EventArgs e)
@@ -1814,9 +1953,20 @@ namespace x360ce.App.Controls
 				dialog.DefaultExt = "xml";
 				dialog.AddExtension = true;
 				dialog.FileName = name + ".xml";
+				// The dialog opened in the working folder, which is the game's folder when the program
+				// is started from there, and a game under Program Files refuses the write.
+				dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				if (dialog.ShowDialog(this) != DialogResult.OK)
 					return;
-				SettingsManager.SavePadSetting(dialog.FileName, GetSelectedPadSetting());
+				string refusal;
+				if (SettingsManager.TrySavePadSetting(dialog.FileName, GetSelectedPadSetting(), out refusal))
+					return;
+				// Said where the file was chosen, and the program stays up.
+				var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
+				form.StartPosition = FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				form.ShowForm(refusal);
+				form.Dispose();
 			}
 		}
 
@@ -1824,8 +1974,8 @@ namespace x360ce.App.Controls
 		{
 			try
 			{
-				var xml = Clipboard.GetText();
-				var ps = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
+				// XML, JSON or YAML, whichever Copy Preset wrote or a person typed.
+				var ps = SettingsManager.PadSettingFromText(Clipboard.GetText());
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
 			}
 			catch (Exception ex)

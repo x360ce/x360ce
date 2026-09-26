@@ -776,7 +776,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			Mcp.McpListener.Stop();
+			Engine.Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -992,6 +992,7 @@ namespace x360ce.App
 
 		private void UpdateForm2()
 		{
+			Program.StartupTrace.Mark("UpdateForm2: start");
 			// Set status labels.
 			StatusIsAdminLabel.Text = WinAPI.IsVista
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
@@ -1048,10 +1049,10 @@ namespace x360ce.App
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
 			// navigation tree is built from.
-			UiTree.UiText.Apply(this);
+			Engine.UiTree.UiText.Apply(this);
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
-			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
 			Program.StartupTrace.Mark("UpdateForm2: text applied");
@@ -1194,6 +1195,26 @@ namespace x360ce.App
 		public const int wParam_Restore = 1;
 		public const int wParam_Close = 2;
 
+		/// <summary>True when another copy was already running when this one registered.</summary>
+		private bool _OtherCopy;
+
+		/// <summary>
+		/// Takes this copy's place among the running copies: the mutex that says one is running, and
+		/// the message id the others reach it by. Every copy registers, whether or not only one copy is
+		/// allowed, or the /Exit switch cannot reach the copy it is meant to close.
+		/// </summary>
+		/// <returns>True when another copy was already running.</returns>
+		public bool RegisterInstance()
+		{
+			if (_Mutex != null)
+				return _OtherCopy;
+			var uid = Application.ProductName;
+			_Mutex = new System.Threading.Mutex(false, uid);
+			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
+			_OtherCopy = !_Mutex.WaitOne(1, true);
+			return _OtherCopy;
+		}
+
 		/// <summary>
 		/// Broadcast message to other instances of this application.
 		/// </summary>
@@ -1201,21 +1222,16 @@ namespace x360ce.App
 		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
 		public bool BroadcastMessage(int wParam)
 		{
-			// Check for previous instance of this app.
-			var uid = Application.ProductName;
-			_Mutex = new System.Threading.Mutex(false, uid);
-			// Register the windows message
-			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
-			var firsInstance = _Mutex.WaitOne(1, true);
+			var otherCopy = RegisterInstance();
 			// If this is not the first instance then...
-			if (!firsInstance)
+			if (otherCopy)
 			{
 				// Broadcast a message with parameters to another instance.
 				var recipients = (int)BSM.BSM_APPLICATIONS;
 				var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
-				var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
+				NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out var error);
 			}
-			return !firsInstance;
+			return otherCopy;
 		}
 
 		private const int WM_WININICHANGE = 0x001A;
@@ -1282,7 +1298,8 @@ namespace x360ce.App
 		{
 			lock (issuesPanelLock)
 			{
-				IssuesPanel.AddIssues(
+				var issues = _startupIssues = new JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem[]
+				{
 					new ExeFileIssue(),
 					new ArchitectureIssue(),
 					new CppX86RuntimeInstallIssue(),
@@ -1291,10 +1308,16 @@ namespace x360ce.App
 					new XboxDriversIssue(),
 					new VirtualDeviceDriverIssue(),
 					new LeftoverVirtualPadsIssue(),
+					new ForceFeedbackIssue(),
 					new UnfinishedVirtualPadsIssue(),
 					new RestartToFinishRemovalIssue(),
-					new AiAccessIssue()
-				);
+					new AiAccessIssue(),
+				};
+				IssuesPanel.AddIssues(issues);
+				// The controller pages are built only once the first round of checks is done, so each
+				// check of that round is marked in the start-up trace.
+				foreach (var issue in issues)
+					issue.Checked += Issue_CheckedAtStartup;
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
 				// This will start execution of Tasks Timer.
@@ -1317,11 +1340,27 @@ namespace x360ce.App
 			return !allow;
 		}
 
+		/// <summary>The checks of the first round, marked in the start-up trace until that round is done.</summary>
+		private JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem[] _startupIssues;
+
+		private void Issue_CheckedAtStartup(object sender, EventArgs e)
+		{
+			Program.StartupTrace.Mark("issue checked: " + sender.GetType().Name);
+		}
+
 		// Remember previous has issues status.
 		private int oldCriticalIssueCount;
 
 		private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
 		{
+			var startupIssues = _startupIssues;
+			if (startupIssues != null)
+			{
+				_startupIssues = null;
+				Program.StartupTrace.Mark("issues checked");
+				foreach (var issue in startupIssues)
+					issue.Checked -= Issue_CheckedAtStartup;
+			}
 			var checkDone = IssuesPanel.CriticalIssuesCount != null;
 			// If check completed without issues then...
 			var newCriticalIssuesCount = IssuesPanel.CriticalIssuesCount ?? 00;
@@ -1411,9 +1450,19 @@ namespace x360ce.App
 			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
 			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
+			// Two games listed under one name are told apart by their folders.
+			GameToCustomizeComboBox.ComboBox.FormattingEnabled = true;
+			GameToCustomizeComboBox.ComboBox.Format += GameToCustomizeComboBox_Format;
 			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 			// Select game by manually trigger event.
 			Global.SelectOpenGame();
+		}
+
+		private void GameToCustomizeComboBox_Format(object sender, ListControlConvertEventArgs e)
+		{
+			var game = e.ListItem as UserGame;
+			if (game != null)
+				e.Value = SettingsManager.DisplayNameInList(game);
 		}
 
 		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1496,20 +1545,24 @@ namespace x360ce.App
 		/// <summary>
 		/// This method will be called during manual saving and automatically when form is closing.
 		/// </summary>
+		/// <summary>Writes every settings file, and asks what to do when one cannot be written.</summary>
 		public void SaveAll()
 		{
-			Settings.Default.Save();
-			SettingsManager.OptionsData.Save();
-			SettingsManager.UserSettings.Save();
-			SettingsManager.Summaries.Save();
-			SettingsManager.Programs.Save();
-			SettingsManager.UserGames.Save();
-			SettingsManager.Presets.Save();
-			SettingsManager.Layouts.Save();
-			SettingsManager.UserDevices.Save();
-			SettingsManager.PadSettings.Save();
-			SettingsManager.UserInstances.Save();
-			XInputMaskScanner.FileInfoCache.Save();
+			SettingsManager.SaveOrAsk(() =>
+			{
+				Settings.Default.Save();
+				SettingsManager.OptionsData.Save();
+				SettingsManager.UserSettings.Save();
+				SettingsManager.Summaries.Save();
+				SettingsManager.Programs.Save();
+				SettingsManager.UserGames.Save();
+				SettingsManager.Presets.Save();
+				SettingsManager.Layouts.Save();
+				SettingsManager.UserDevices.Save();
+				SettingsManager.PadSettings.Save();
+				SettingsManager.UserInstances.Save();
+				XInputMaskScanner.FileInfoCache.Save();
+			});
 		}
 
 		public void Save()
@@ -1601,6 +1654,9 @@ namespace x360ce.App
 			x360ce.App.DInput.XInputPlaces.Invalidate();
 			XInputDevicesPanel.ReloadPlaces();
 			DevicesPanel.RefreshPlaces();
+			if (PadControls != null)
+				foreach (var pad in PadControls)
+					pad.RefreshPlaces();
 		}
 
 		private bool UpdateCompletedBusy;
@@ -1976,10 +2032,27 @@ namespace x360ce.App
 		{
 			ControlsHelper.BeginInvoke(new Action(() =>
 			{
-				var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
+				ErrorFilesCount = CountErrorFiles(LogHelper.Current.LogsFolder, LogHelper.Current.FilePattern);
 				UpdateStatusErrorsLabel();
 			}));
+		}
+
+		/// <summary>How many error reports the folder holds, or nought when there is no folder.</summary>
+		/// <remarks>
+		/// The folder can go while the program runs: removed by hand, or by Windows along with the
+		/// temporary folder a program started straight from its zip is unpacked into. Listing it then
+		/// threw, and counting the reports of faults became a fault of its own.
+		/// </remarks>
+		public static int CountErrorFiles(string folder, string pattern)
+		{
+			try
+			{
+				return new DirectoryInfo(folder).GetFiles(pattern).Length;
+			}
+			catch (DirectoryNotFoundException)
+			{
+				return 0;
+			}
 		}
 
 		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>

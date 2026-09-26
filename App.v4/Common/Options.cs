@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -34,6 +35,11 @@ namespace x360ce.App
 				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
 				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
 			}
+			// The address box shows only what is in its list. A saved address missing from the list
+			// left the box showing the first entry, and the box's first change wrote that entry back
+			// over the saved one.
+			if (!InternetDatabaseUrls.Contains(InternetDatabaseUrl))
+				InternetDatabaseUrls.Add(InternetDatabaseUrl);
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>() { };
 			if (string.IsNullOrEmpty(ComputerDisk))
@@ -282,9 +288,9 @@ namespace x360ce.App
 		string _AiAccessAddress = LoopbackAddress;
 
 		/// <summary>The address that keeps the door on this computer. The default.</summary>
-		public const string LoopbackAddress = "127.0.0.1";
+		public const string LoopbackAddress = McpListener.LoopbackAddress;
 		/// <summary>The address that opens the door to every network the computer is on.</summary>
-		public const string AnyAddress = "0.0.0.0";
+		public const string AnyAddress = McpListener.AnyAddress;
 
 		[DefaultValue(37360), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
@@ -308,10 +314,7 @@ namespace x360ce.App
 
 		public string RegenerateAiAccessToken()
 		{
-			var bytes = new byte[32];
-			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-				rng.GetBytes(bytes);
-			AiAccessToken = System.BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			AiAccessToken = McpListener.NewToken();
 			return AiAccessToken;
 		}
 

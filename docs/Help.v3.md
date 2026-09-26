@@ -93,3 +93,35 @@ Many games will work without any of the below set, but it is worth knowing them:
 - **NAME** - Allows x360ce to return a different OEM name than that of the controller installed. In Assassin's Creed, for instance, it changes the name of the XInput device to `Xbox 360 Controller`. While this is generally not required for functionality, the game Mini Ninjas is known to check for "Xbox 360 Controller" in the registry and will not work if the name is anything else.
 - **SA** - Enables the hooking of SetupAPI. Only the Beat Hazard titles are known to require it so far, so it should almost never be needed.
 - **WT** - Enables the hooking of WinVerifyTrust. This is required for games which use WVT for process integrity checking. Only Gears of War is known to use it at this point, so it should almost never be needed.
+
+## AI assistant access
+
+Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
+program. It is off until you tick "Allow AI assistants and scripts on this computer" on the
+AI Assistant Access tab of the Options page, and choose a level:
+
+- **Read**: read the interface, the controllers and this help, and point at things. Changes no setting.
+- **Configure**: everything a person does on the pages, such as mapping, sliders and saving.
+- **Administer**: also switching debug mode.
+
+The level, the port and the token are changed on that tab and only there; an assistant cannot
+change them. The settings are kept in `x360ce.ini` beside the program, so each game folder has its
+own. The door listens on this computer only, on port 37361 unless you choose another.
+
+To connect an assistant that runs commands, press Copy MCP Settings and paste the result into the
+assistant's MCP settings. It starts `x360ce.exe /Mcp`, which finds the running program, starts it
+if need be, and needs no token from you.
+
+An assistant can read and answer the windows that open over the main one, such as the list of
+warnings. It can also point: ask it where something is and it brings the page to the front,
+frames the control and shows a balloon with its words beside it.
+
+Everything done through the door is written down: the Log button shows each call, its arguments
+and what came of it, with the time.
+
+On a Windows that has the agent registry, tick "Register with Windows" and Copilot and other
+agents find the program by themselves. On other Windows the box says it needs a newer Windows.
+
+From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
+one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
+token to shut out everyone who has the old one.

@@ -120,8 +120,10 @@
     <Compile Include="Common\CloudHelper.Security.cs" />
     <Compile Include="Common\ConvertHelper.cs" />
     <Compile Include="Common\MapExpression.cs" />
+    <Compile Include="Common\MotorModel.cs" />
     <Compile Include="Common\MapExpressionUnits.cs" />
     <Compile Include="Common\MarkdownRtf.cs" />
+    <Compile Include="Common\ServerInfo.cs" />
     <Compile Include="Common\SettingsLocation.cs" />
     <Compile Include="Common\SettingsTransfer.cs" />
     <Compile Include="Common\MapExpressionHelp.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
+    <Compile Include="Common\DeviceStatsSvg.cs" />
     <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
@@ -146,6 +149,7 @@
     <Compile Include="Common\Enum\MapToMask.cs" />
     <Compile Include="Common\Enum\XInputMask.cs" />
     <Compile Include="Common\EngineHelper.cs" />
+    <Compile Include="Common\ForceFeedbackDriver.cs" />
     <Compile Include="Common\ForceFeedbackState.cs" />
     <Compile Include="Common\LogitechWheel.cs" />
     <Compile Include="Common\SpringCalibration.cs" />
@@ -153,6 +157,7 @@
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />
     <Compile Include="Common\IDateTime.cs" />
+    <Compile Include="Common\InstanceChannel.cs" />
     <Compile Include="Common\IDisplayName.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
@@ -177,6 +182,23 @@
     <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
+    <Compile Include="Mcp\AiAccess.cs" />
+    <Compile Include="Mcp\McpClient.cs" />
+    <Compile Include="Mcp\McpLog.cs" />
+    <Compile Include="Mcp\McpServer.cs" />
+    <Compile Include="Mcp\McpUiTools.cs" />
+    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
+    <Compile Include="UiTree\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UiTree\UiCallout.cs" />
+    <Compile Include="UiTree\UiGameFlags.cs" />
+    <Compile Include="UiTree\UiNode.cs" />
+    <Compile Include="UiTree\UiText.cs" />
+    <Compile Include="UiTree\UiTreeExporter.cs" />
+    <Compile Include="UiTree\UiTreeMarkdown.cs" />
+    <Compile Include="UiTree\UiTreeWalker.cs" />
+    <Compile Include="UiTree\UiTreeWalker.Elements.cs" />
     <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />
@@ -199,6 +221,8 @@
     <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
+    <Compile Include="JocysCom\Common\ProgressEventArgs.cs" />
+    <Compile Include="JocysCom\Common\ProgressStatus.cs" />
     <Compile Include="JocysCom\Common\Helper.cs" />
     <Compile Include="JocysCom\Common\HiResDateTime.cs" />
     <Compile Include="JocysCom\Common\HiResTimer.cs" />
@@ -277,7 +301,6 @@
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
     <Compile Include="JocysCom\IO\FileFinder.cs" />
-    <Compile Include="JocysCom\IO\FileFinderEventArgs.cs" />
     <Compile Include="JocysCom\IO\HardwareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

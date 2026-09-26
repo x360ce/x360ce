@@ -1,4 +1,4 @@
-// @under-test: App.v4/Mcp/McpServer.cs, App.v4/Mcp/McpTools.cs, App.v4/Program.cs
+// @under-test: Engine/Mcp/McpServer.cs, Engine/Mcp/McpClient.cs, App.v4/Mcp/McpTools.cs, App.v4/Program.cs
 // @area: mcp   @layer: ui-interactive
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Web.Script.Serialization;
 using x360ce.App;
 using x360ce.App.Mcp;
+using x360ce.Engine.Mcp;
 using x360ce.Engine;
 
 namespace x360ce.Tests

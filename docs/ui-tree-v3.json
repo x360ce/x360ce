@@ -1,0 +1,1921 @@
+{
+	"Name":"X360 Controller Emulator",
+	"Role":"Program",
+	"Items":[
+		{
+			"Name":"Controls",
+			"Description":"Controls used in more than one place, described once here.",
+			"Role":"Section",
+			"Items":[
+				{
+					"Name":"AxisToButtonUserControl",
+					"Description":"How far an axis must move before the button mapped to it counts as pressed.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Mapped axis",
+							"Description":"The axis this button is mapped to, from the General page.",
+							"Role":"Value",
+							"Id":"MappedAxisTextBox"
+						},
+						{
+							"Name":"Dead zone",
+							"Description":"How far the axis must move before the button counts as pressed, in per cent.",
+							"Role":"Slider",
+							"Id":"DeadZoneTrackBar",
+							"Min":0,
+							"Max":100
+						},
+						{
+							"Name":"Dead zone value",
+							"Description":"The dead zone slider's setting.",
+							"Role":"Value",
+							"Id":"DeadZoneTextBox"
+						},
+						{
+							"Name":"Dead zone",
+							"Description":"How far the axis must move before the button counts as pressed, in raw units.",
+							"Role":"Number",
+							"Id":"DeadZoneNumericUpDown",
+							"Min":0,
+							"Max":32767
+						}
+					]
+				},
+				{
+					"Name":"GameSettingDetailsUserControl",
+					"Description":"Which libraries the emulator puts in the game's folder, and how it hooks the game.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Hook COM",
+							"Description":"Answers when the game asks Windows for a controller through COM.",
+							"Role":"CheckBox",
+							"Id":"HookCOMCheckBox"
+						},
+						{
+							"Name":"Hook Load Library",
+							"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
+							"Role":"CheckBox",
+							"Id":"HookLLCheckBox"
+						},
+						{
+							"Name":"Hook Direct Input",
+							"Description":"Answers when the game asks for a controller through Direct Input.",
+							"Role":"CheckBox",
+							"Id":"HookDICheckBox"
+						},
+						{
+							"Name":"Hook SetupAPI",
+							"Description":"Answers when the game asks Windows to list devices.",
+							"Role":"CheckBox",
+							"Id":"HookSACheckBox"
+						},
+						{
+							"Name":"Hook product and vendor codes",
+							"Description":"Reports the fake product and vendor codes instead of the real ones.",
+							"Role":"CheckBox",
+							"Id":"HookPIDVIDCheckBox"
+						},
+						{
+							"Name":"Hook WinVerifyTrust",
+							"Description":"Answers when the game checks a file's signature.",
+							"Role":"CheckBox",
+							"Id":"HookWTCheckBox"
+						},
+						{
+							"Name":"Hook name",
+							"Description":"Reports a different controller name to the game.",
+							"Role":"CheckBox",
+							"Id":"HookNAMECheckBox"
+						},
+						{
+							"Name":"Disable",
+							"Description":"Turns every answer off, leaving the game with the real controllers.",
+							"Role":"CheckBox",
+							"Id":"HookDISABLECheckBox"
+						},
+						{
+							"Name":"Stop",
+							"Description":"Stops answering once the game has started.",
+							"Role":"CheckBox",
+							"Id":"HookSTOPCheckBox"
+						},
+						{
+							"Name":"XInput 9.1, 32-bit",
+							"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput91_x86CheckBox"
+						},
+						{
+							"Name":"XInput 9.1, 64-bit",
+							"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput91_x64CheckBox"
+						},
+						{
+							"Name":"XInput 1.1, 32-bit",
+							"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput11_x86CheckBox"
+						},
+						{
+							"Name":"XInput 1.1, 64-bit",
+							"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput11_x64CheckBox"
+						},
+						{
+							"Name":"XInput 1.2, 32-bit",
+							"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput12_x86CheckBox"
+						},
+						{
+							"Name":"XInput 1.2, 64-bit",
+							"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput12_x64CheckBox"
+						},
+						{
+							"Name":"XInput 1.3, 32-bit",
+							"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput13_x86CheckBox"
+						},
+						{
+							"Name":"XInput 1.3, 64-bit",
+							"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput13_x64CheckBox"
+						},
+						{
+							"Name":"XInput 1.4, 32-bit",
+							"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput14_x86CheckBox"
+						},
+						{
+							"Name":"XInput 1.4, 64-bit",
+							"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
+							"Role":"CheckBox",
+							"Id":"XInput14_x64CheckBox"
+						},
+						{
+							"Name":"DInput 8, 32-bit",
+							"Description":"Supplies the 32-bit Direct Input library to the game.",
+							"Role":"CheckBox",
+							"Id":"DInput8_x86CheckBox"
+						},
+						{
+							"Name":"DInput 8, 64-bit",
+							"Description":"Supplies the 64-bit Direct Input library to the game.",
+							"Role":"CheckBox",
+							"Id":"DInput8_x64CheckBox"
+						},
+						{
+							"Name":"Hook modes",
+							"Description":"The hook modes ticked below, as one number.",
+							"Role":"Value",
+							"Id":"HookMaskTextBox"
+						},
+						{
+							"Name":"XInput files",
+							"Description":"The XInput libraries ticked below, as one number.",
+							"Role":"Value",
+							"Id":"XInputMaskTextBox"
+						},
+						{
+							"Name":"DirectInput files",
+							"Description":"The DirectInput libraries ticked below, as one number.",
+							"Role":"Value",
+							"Id":"DInputMaskTextBox"
+						},
+						{
+							"Name":"Architecture",
+							"Description":"Whether the game is a 32-bit or a 64-bit program, which decides the libraries it needs.",
+							"Role":"List",
+							"Id":"ProcessorArchitectureComboBox"
+						},
+						{
+							"Name":"Apply\/Synchronize Settings",
+							"Description":"Copies the ticked libraries and the settings into the game's folder, after listing what differs.",
+							"Role":"Button",
+							"Id":"SynchronizeSettingsButton"
+						},
+						{
+							"Name":"DirectInput file name",
+							"Description":"File name stored with this game for its DirectInput library.",
+							"Role":"Text",
+							"Id":"DInputFileTextBox"
+						},
+						{
+							"Name":"Fake product ID in hex",
+							"Description":"The fake product ID as hexadecimal.",
+							"Role":"Value",
+							"Id":"HookModeFakePidTextBox"
+						},
+						{
+							"Name":"Fake vendor ID in hex",
+							"Description":"The fake vendor ID as hexadecimal.",
+							"Role":"Value",
+							"Id":"HookModeFakeVidTextBox"
+						},
+						{
+							"Name":"Fake vendor ID",
+							"Description":"Vendor number shown to the game in place of the device's own, when PIDVID is ticked.",
+							"Role":"Number",
+							"Id":"HookModeFakeVidNumericUpDown",
+							"Min":0,
+							"Max":65535
+						},
+						{
+							"Name":"Fake product ID",
+							"Description":"Product number shown to the game in place of the device's own, when PIDVID is ticked.",
+							"Role":"Number",
+							"Id":"HookModeFakePidNumericUpDown",
+							"Min":0,
+							"Max":65535
+						},
+						{
+							"Name":"Timeout",
+							"Description":"Timeout stored with this game in the game database.",
+							"Role":"Number",
+							"Id":"TimeoutNumericUpDown",
+							"Min":-1,
+							"Max":65535
+						},
+						{
+							"Name":"Game actions",
+							"Description":"Resets this game's settings, and finds help for it on the web.",
+							"Role":"Toolbar",
+							"Id":"toolStrip1",
+							"Items":[
+								{
+									"Name":"Reset to Default",
+									"Description":"Sets this game back to the default settings for it, after asking.",
+									"Role":"Button",
+									"Id":"ResetToDefaultButton"
+								},
+								{
+									"Name":"Get Help...",
+									"Description":"Searches the web for help with this game.",
+									"Role":"Button",
+									"Id":"HelpButton",
+									"Items":[
+										{
+											"Name":"https:\/\/www.google.co.uk\/?#q=x360ce+X360+Controller+Emulator",
+											"Role":"Button",
+											"Id":"GoogleSearchButton"
+										},
+										{
+											"Name":"Search on NGemu...",
+											"Description":"Searches the NGemu forum for this game.",
+											"Role":"Button",
+											"Id":"NGEmuSearchButton"
+										},
+										{
+											"Name":"Open NGemu...",
+											"Description":"Opens the emulator's thread on the NGemu forum.",
+											"Role":"Button",
+											"Id":"NGEmuThreadButton"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"Name":"PadControl",
+					"Description":"What one emulated Xbox controller is made of: which device feeds it and how each part is mapped.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Controller pages",
+							"Description":"The parts of this controller's settings, one page each.",
+							"Role":"Tabs",
+							"Id":"PadTabControl",
+							"Items":[
+								{
+									"Name":"General",
+									"Description":"Which part of the device each button, trigger and stick of the Xbox controller reads.",
+									"Role":"Tab",
+									"Id":"GeneralTabPage",
+									"Items":[
+										{
+											"Name":"Left trigger now",
+											"Description":"The value the emulated controller reports for the left trigger, 0 to 255.",
+											"Role":"Value",
+											"Id":"LeftTriggerTextBox"
+										},
+										{
+											"Name":"Left stick now",
+											"Description":"The position the emulated controller reports for the left stick, as X;Y.",
+											"Role":"Value",
+											"Id":"LeftThumbTextBox"
+										},
+										{
+											"Name":"Left Trigger",
+											"Description":"Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.",
+											"Role":"List",
+											"Id":"LeftTriggerComboBox"
+										},
+										{
+											"Name":"Left Shoulder",
+											"Description":"Left Shoulder Button . Disable = 0.",
+											"Role":"List",
+											"Id":"LeftShoulderComboBox"
+										},
+										{
+											"Name":"Back",
+											"Description":"Back button.",
+											"Role":"List",
+											"Id":"ButtonBackComboBox"
+										},
+										{
+											"Name":"Start",
+											"Description":"Start button.",
+											"Role":"List",
+											"Id":"ButtonStartComboBox"
+										},
+										{
+											"Name":"Guide Button",
+											"Description":"Guide button.",
+											"Role":"List",
+											"Id":"ButtonGuideComboBox"
+										},
+										{
+											"Name":"D-pad POV",
+											"Description":"Disable = 0, POV Index = N.",
+											"Role":"List",
+											"Id":"DPadComboBox"
+										},
+										{
+											"Name":"Left Analog X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisXComboBox"
+										},
+										{
+											"Name":"Left Analog Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisYComboBox"
+										},
+										{
+											"Name":"Left Thumb",
+											"Description":"Left stick button. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbButtonComboBox"
+										},
+										{
+											"Name":"Left Analog Y+ Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbUpComboBox"
+										},
+										{
+											"Name":"Left Analog X- Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbLeftComboBox"
+										},
+										{
+											"Name":"Left Analog X+ Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbRightComboBox"
+										},
+										{
+											"Name":"Left Analog Y- Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbDownComboBox"
+										},
+										{
+											"Name":"Right trigger now",
+											"Description":"The value the emulated controller reports for the right trigger, 0 to 255.",
+											"Role":"Value",
+											"Id":"RightTriggerTextBox"
+										},
+										{
+											"Name":"Right stick now",
+											"Description":"The position the emulated controller reports for the right stick, as X;Y.",
+											"Role":"Value",
+											"Id":"RightThumbTextBox"
+										},
+										{
+											"Name":"Right Trigger",
+											"Description":"Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.",
+											"Role":"List",
+											"Id":"RightTriggerComboBox"
+										},
+										{
+											"Name":"Right Shoulder",
+											"Description":"Right Shoulder Button. Disable = 0.",
+											"Role":"List",
+											"Id":"RightShoulderComboBox"
+										},
+										{
+											"Name":"Y",
+											"Description":"Button 'Y'",
+											"Role":"List",
+											"Id":"ButtonYComboBox"
+										},
+										{
+											"Name":"X",
+											"Description":"Button 'X'",
+											"Role":"List",
+											"Id":"ButtonXComboBox"
+										},
+										{
+											"Name":"B",
+											"Description":"Button 'B'",
+											"Role":"List",
+											"Id":"ButtonBComboBox"
+										},
+										{
+											"Name":"A",
+											"Description":"Button 'A'",
+											"Role":"List",
+											"Id":"ButtonAComboBox"
+										},
+										{
+											"Name":"Right Analog X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisXComboBox"
+										},
+										{
+											"Name":"Right Analog Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisYComboBox"
+										},
+										{
+											"Name":"Right Thumb",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbButtonComboBox"
+										},
+										{
+											"Name":"Right Analog Y+ Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbUpComboBox"
+										},
+										{
+											"Name":"Right Analog X- Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbLeftComboBox"
+										},
+										{
+											"Name":"Right Analog X+ Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbRightComboBox"
+										},
+										{
+											"Name":"Right Analog Y- Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbDownComboBox"
+										},
+										{
+											"Name":"D-pad Up",
+											"Description":"D-Pad up button.",
+											"Role":"List",
+											"Id":"DPadUpComboBox"
+										},
+										{
+											"Name":"D-pad Left",
+											"Description":"D-Pad left button.",
+											"Role":"List",
+											"Id":"DPadLeftComboBox"
+										},
+										{
+											"Name":"D-pad Right",
+											"Description":"D-Pad right button.",
+											"Role":"List",
+											"Id":"DPadRightComboBox"
+										},
+										{
+											"Name":"D-pad Down",
+											"Description":"D-Pad down button.",
+											"Role":"List",
+											"Id":"DPadDownComboBox"
+										}
+									]
+								},
+								{
+									"Name":"Axis to Button",
+									"Description":"How far an axis must move before a button mapped to it counts as pressed.",
+									"Role":"Tab",
+									"Id":"AxisToButtonTabPage",
+									"Items":[
+										{
+											"Name":"DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):",
+											"Role":"Section",
+											"Id":"AxisToButtonGroupBox",
+											"Items":[
+												{
+													"Name":"Axis to button",
+													"Description":"How far an axis must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonADeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Advanced",
+									"Description":"Device type and pass through, combining several devices into one controller, trigger dead zones, and the D-Pad from an axis.",
+									"Role":"Tab",
+									"Id":"AdvancedTabPage",
+									"Items":[
+										{
+											"Name":"Triggers",
+											"Role":"Section",
+											"Id":"TriggersGroupBox",
+											"Items":[
+												{
+													"Name":"Left trigger dead zone value",
+													"Description":"The left trigger dead zone slider's setting.",
+													"Role":"Value",
+													"Id":"LeftTriggerDeadZoneTextBox"
+												},
+												{
+													"Name":"Right trigger dead zone value",
+													"Description":"The right trigger dead zone slider's setting.",
+													"Role":"Value",
+													"Id":"RightTriggerDeadZoneTextBox"
+												},
+												{
+													"Name":"Left Trigger Dead Zone",
+													"Description":"Add deadzone to the left trigger. Range is 0 to 255. Default is 0.",
+													"Role":"Slider",
+													"Id":"LeftTriggerDeadZoneTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Right Trigger Dead Zone",
+													"Description":"Add deadzone to the right trigger. Range is 0 to 255. Default is 0.",
+													"Role":"Slider",
+													"Id":"RightTriggerDeadZoneTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Combining",
+											"Role":"Section",
+											"Id":"CombineGroupBox",
+											"Items":[
+												{
+													"Name":"Combined",
+													"Description":"Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"CombinedCheckBox"
+												},
+												{
+													"Name":"Combined Index",
+													"Description":"The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.",
+													"Role":"List",
+													"Id":"CombinedIndexComboBox"
+												}
+											]
+										},
+										{
+											"Name":"Device",
+											"Role":"Section",
+											"Id":"DeviceGroupBox",
+											"Items":[
+												{
+													"Name":"Controller Type",
+													"Description":"Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.",
+													"Role":"List",
+													"Id":"DeviceSubTypeComboBox"
+												},
+												{
+													"Name":"Pass Through",
+													"Description":"Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"PassThroughCheckBox"
+												},
+												{
+													"Name":"Forces Pass Through",
+													"Description":"Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForceFeedbackPassThroughCheckBox"
+												},
+												{
+													"Name":"Pass Through Index",
+													"Description":"The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.",
+													"Role":"List",
+													"Id":"PassThroughIndexComboBox"
+												}
+											]
+										},
+										{
+											"Name":"Axis To D-Pad",
+											"Role":"Section",
+											"Id":"AxisToDPadGroupBox",
+											"Items":[
+												{
+													"Name":"D-Pad dead zone value",
+													"Description":"The dead zone slider's setting.",
+													"Role":"Value",
+													"Id":"AxisToDPadDeadZoneTextBox"
+												},
+												{
+													"Name":"D-Pad offset value",
+													"Description":"The offset slider's setting.",
+													"Role":"Value",
+													"Id":"AxisToDPadOffsetTextBox"
+												},
+												{
+													"Name":"Axis To D-Pad",
+													"Description":"Axis to control DPad. Disabled = 0, Enabled = 1.",
+													"Role":"CheckBox",
+													"Id":"AxisToDPadEnabledCheckBox"
+												},
+												{
+													"Name":"Axis To D-Pad Dead Zone",
+													"Description":"Dead zone for axis.",
+													"Role":"Slider",
+													"Id":"AxisToDPadDeadZoneTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Axis To D-Pad Offset",
+													"Description":"Axis to D-Pad offset.",
+													"Role":"Slider",
+													"Id":"AxisToDPadOffsetTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Left Thumb",
+									"Description":"Dead zones and sensitivity of the left stick.",
+									"Role":"Tab",
+									"Id":"LeftThumbTabPage",
+									"Items":[
+										{
+											"Name":"Stick axis",
+											"Description":"Dead zone, anti dead zone and sensitivity of one axis of a stick.",
+											"Role":"Group",
+											"Id":"LeftThumbXUserControl",
+											"Type":"ThumbUserControl",
+											"SameAs":"ThumbUserControl"
+										}
+									]
+								},
+								{
+									"Name":"Right Thumb",
+									"Description":"Dead zones and sensitivity of the right stick.",
+									"Role":"Tab",
+									"Id":"RightThumbTabPage",
+									"Items":[
+										{
+											"Name":"Stick axis",
+											"Description":"Dead zone, anti dead zone and sensitivity of one axis of a stick.",
+											"Role":"Group",
+											"Id":"RightThumbXUserControl",
+											"Type":"ThumbUserControl",
+											"SameAs":"ThumbUserControl"
+										}
+									]
+								},
+								{
+									"Name":"Force Feedback",
+									"Description":"How the game's vibration reaches the device's motors.",
+									"Role":"Tab",
+									"Id":"ForceFeedbackTabPage",
+									"Items":[
+										{
+											"Name":"Force Feedback",
+											"Role":"Section",
+											"Id":"ForceFeedbackGroupBox",
+											"Items":[
+												{
+													"Name":"Overall strength value",
+													"Description":"The overall force feedback strength slider's setting.",
+													"Role":"Value",
+													"Id":"ForceOverallTextBox"
+												},
+												{
+													"Name":"Use Force Feedback",
+													"Description":"Use Force Feedback. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForceEnableCheckBox"
+												},
+												{
+													"Name":"Swap Motor",
+													"Description":"Swap motor. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForceSwapMotorCheckBox"
+												},
+												{
+													"Name":"FFB Type",
+													"Description":"Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth",
+													"Role":"List",
+													"Id":"ForceTypeComboBox"
+												},
+												{
+													"Name":"Force Percent",
+													"Description":"Strength of force feedback. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"ForceOverallTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Left Motor (Big)",
+											"Role":"Section",
+											"Id":"LeftMotorGroupBox",
+											"Items":[
+												{
+													"Name":"Left motor strength value",
+													"Description":"The left motor strength slider's setting.",
+													"Role":"Value",
+													"Id":"LeftMotorStrengthTextBox"
+												},
+												{
+													"Name":"Left motor period value",
+													"Description":"The left motor period slider's setting, in milliseconds.",
+													"Role":"Value",
+													"Id":"LeftMotorPeriodTextBox"
+												},
+												{
+													"Name":"Left Motor Direction",
+													"Description":"Left motor effect direction. -1, 0, 1.",
+													"Role":"List",
+													"Id":"LeftMotorDirectionComboBox"
+												},
+												{
+													"Name":"Left Motor Strength",
+													"Description":"Left motor strength. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"LeftMotorStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Left Motor Period",
+													"Description":"Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.",
+													"Role":"Slider",
+													"Id":"LeftMotorPeriodTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Right Motor (Small)",
+											"Role":"Section",
+											"Id":"groupBox1",
+											"Items":[
+												{
+													"Name":"Right motor strength value",
+													"Description":"The right motor strength slider's setting.",
+													"Role":"Value",
+													"Id":"RightMotorStrengthTextBox"
+												},
+												{
+													"Name":"Right motor period value",
+													"Description":"The right motor period slider's setting, in milliseconds.",
+													"Role":"Value",
+													"Id":"RightMotorPeriodTextBox"
+												},
+												{
+													"Name":"Right Motor Direction",
+													"Description":"Right motor effect direction. -1, 0, 1.",
+													"Role":"List",
+													"Id":"RightMotorDirectionComboBox"
+												},
+												{
+													"Name":"Right Motor Strength",
+													"Description":"Right motor strength. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"RightMotorStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Right Motor Period",
+													"Description":"Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel.",
+													"Role":"Slider",
+													"Id":"RightMotorPeriodTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Test Force Feedback",
+											"Role":"Section",
+											"Id":"TestForceFeedbackGroupBox",
+											"Items":[
+												{
+													"Name":"Start Test",
+													"Description":"Runs both motors at the strengths of the two motor sliders until pressed again.",
+													"Role":"Button",
+													"Id":"TestButton"
+												},
+												{
+													"Name":"Test resend interval",
+													"Description":"Milliseconds between the test strengths being sent again, so a device that stops on its own keeps running.",
+													"Role":"Number",
+													"Id":"TestTimerNumericUpDown",
+													"Min":0,
+													"Max":32767
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Game Controllers...",
+							"Description":"Opens the Windows Game Controllers panel.",
+							"Role":"Button",
+							"Id":"GameControllersButton"
+						},
+						{
+							"Name":"Auto",
+							"Description":"Fills every mapping of this controller from what the device offers, after asking.",
+							"Role":"Button",
+							"Id":"AutoPresetButton"
+						},
+						{
+							"Name":"Clear",
+							"Description":"Empties every mapping of this controller, after asking.",
+							"Role":"Button",
+							"Id":"ClearPresetButton"
+						},
+						{
+							"Name":"Reset",
+							"Description":"Reloads this controller's settings from x360ce.ini, dropping what was not saved, after asking.",
+							"Role":"Button",
+							"Id":"ResetPresetButton"
+						},
+						{
+							"Name":"Save",
+							"Description":"Writes every setting to x360ce.ini now.",
+							"Role":"Button",
+							"Id":"SavePresetButton"
+						}
+					]
+				},
+				{
+					"Name":"ThumbUserControl",
+					"Description":"Dead zone, anti dead zone and sensitivity of one axis of a stick.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"X - Horizontal Axis",
+							"Role":"Section",
+							"Id":"MainGroupBox",
+							"Items":[
+								{
+									"Name":"Sensitivity value",
+									"Description":"The sensitivity slider's setting.",
+									"Role":"Value",
+									"Id":"SensitivityTextBox"
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"How the stick's movement is curved: slower near the centre, or faster.",
+									"Role":"Slider",
+									"Id":"SensitivityTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Anti dead zone value",
+									"Description":"The anti dead zone slider's setting.",
+									"Role":"Value",
+									"Id":"AntiDeadZoneTextBox"
+								},
+								{
+									"Name":"Dead zone value",
+									"Description":"The dead zone slider's setting.",
+									"Role":"Value",
+									"Id":"DeadZoneTextBox"
+								},
+								{
+									"Name":"Anti dead zone",
+									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in per cent.",
+									"Role":"Slider",
+									"Id":"AntiDeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the stick must move before the game sees it move, in per cent.",
+									"Role":"Slider",
+									"Id":"DeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Anti dead zone",
+									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in raw units.",
+									"Role":"Number",
+									"Id":"AntiDeadZoneNumericUpDown",
+									"Min":0,
+									"Max":32767
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"How the stick's movement is curved, as a number.",
+									"Role":"Number",
+									"Id":"SensitivityNumericUpDown",
+									"Min":-100,
+									"Max":100,
+									"Hidden":true
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the stick must move before the game sees it move, in raw units.",
+									"Role":"Number",
+									"Id":"DeadZoneNumericUpDown",
+									"Min":0,
+									"Max":32767
+								},
+								{
+									"Name":"Invert",
+									"Description":"Turns the sensitivity curve the other way.",
+									"Role":"CheckBox",
+									"Id":"SensitivityCheckBox"
+								},
+								{
+									"Name":"Presets",
+									"Description":"Common pairs of dead zone and anti dead zone.",
+									"Role":"Toolbar",
+									"Id":"PresetMenuStrip",
+									"Items":[
+										{
+											"Name":"Apply Preset",
+											"Description":"Sets the dead zone and anti dead zone to one of the common pairs listed.",
+											"Role":"Button",
+											"Id":"ApplyPresetMenuItem",
+											"Items":[
+												{
+													"Name":"5% DeadZone, 100% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_5_100_0_MenuItem"
+												},
+												{
+													"Name":"100% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_0_100_0_MenuItem"
+												},
+												{
+													"Name":"80% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_0_80_0_MenuItem"
+												},
+												{
+													"Name":"60% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_0_60_0_MenuItem"
+												},
+												{
+													"Name":"40% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_0_40_0_MenuItem"
+												},
+												{
+													"Name":"20% Controller Anti-DeadZone",
+													"Role":"Button",
+													"Id":"P_0_20_0_MenuItem"
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name":"App",
+			"Description":"The main window.",
+			"Role":"Section",
+			"Id":"MainForm",
+			"Type":"MainForm",
+			"Items":[
+				{
+					"Name":"Status bar",
+					"Description":"What the program is doing, and which files it uses.",
+					"Role":"Toolbar",
+					"Id":"MainStatusStrip",
+					"Items":[
+						{
+							"Name":"Last action",
+							"Description":"The most recent thing the program did, and how many times it has read the controllers.",
+							"Role":"Status",
+							"Id":"StatusTimerLabel"
+						},
+						{
+							"Name":"Events",
+							"Description":"Whether changes on the pages are being written to x360ce.ini.",
+							"Role":"Status",
+							"Id":"StatusEventsLabel",
+							"Hidden":true
+						},
+						{
+							"Name":"Saves",
+							"Description":"How many times the settings were written since the program started.",
+							"Role":"Status",
+							"Id":"StatusSaveLabel",
+							"Hidden":true
+						},
+						{
+							"Name":"Elevated",
+							"Description":"Whether the program runs as Administrator.",
+							"Role":"Status",
+							"Id":"StatusIsAdminLabel"
+						},
+						{
+							"Name":"Settings file",
+							"Description":"The settings file the pages edit.",
+							"Role":"Status",
+							"Id":"StatusIniLabel"
+						},
+						{
+							"Name":"Library",
+							"Description":"The XInput library the program loaded, and its version.",
+							"Role":"Status",
+							"Id":"StatusDllLabel"
+						}
+					]
+				},
+				{
+					"Name":"Main pages",
+					"Description":"The four controllers, and the pages for everything else.",
+					"Role":"Tabs",
+					"Id":"MainTabControl",
+					"Items":[
+						{
+							"Name":"Controller 1",
+							"Description":"Settings for the first emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad1TabPage",
+							"Items":[
+								{
+									"Name":"Controller page",
+									"Description":"What one emulated Xbox controller is made of: which device feeds it and how each part is mapped.",
+									"Role":"Group",
+									"Id":"ControlPad1",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 2",
+							"Description":"Settings for the second emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad2TabPage",
+							"Items":[
+								{
+									"Name":"Controller page",
+									"Description":"What one emulated Xbox controller is made of: which device feeds it and how each part is mapped.",
+									"Role":"Group",
+									"Id":"ControlPad2",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 3",
+							"Description":"Settings for the third emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad3TabPage",
+							"Items":[
+								{
+									"Name":"Controller page",
+									"Description":"What one emulated Xbox controller is made of: which device feeds it and how each part is mapped.",
+									"Role":"Group",
+									"Id":"ControlPad3",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 4",
+							"Description":"Settings for the fourth emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad4TabPage",
+							"Items":[
+								{
+									"Name":"Controller page",
+									"Description":"What one emulated Xbox controller is made of: which device feeds it and how each part is mapped.",
+									"Role":"Group",
+									"Id":"ControlPad4",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Options",
+							"Description":"Settings for the program itself.",
+							"Role":"Tab",
+							"Id":"OptionsTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Role":"Group",
+									"Id":"OptionsPanel",
+									"Type":"OptionsControl",
+									"Items":[
+										{
+											"Name":"Testing and Logging",
+											"Role":"Section",
+											"Id":"TestingAndLoggingGroupBox",
+											"Items":[
+												{
+													"Name":"Enable XInput",
+													"Description":"Not used by this version of the program.",
+													"Role":"CheckBox",
+													"Id":"XInputEnableCheckBox"
+												},
+												{
+													"Name":"Use Init Beep",
+													"Description":"Beep when initialized. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"UseInitBeepCheckBox"
+												},
+												{
+													"Name":"Log",
+													"Description":"Create a log file in the folder 'x360ce logs'. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"EnableLoggingCheckBox"
+												},
+												{
+													"Name":"Console",
+													"Description":"Display the console window. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ConsoleCheckBox"
+												},
+												{
+													"Name":"Debug Mode",
+													"Description":"Throw or suspend errors. 0 = Suspend, 1 = Throw.",
+													"Role":"CheckBox",
+													"Id":"DebugModeCheckBox"
+												},
+												{
+													"Name":"Combine Enabled",
+													"Description":"Allow multiple controllers to be combined into a virtual controller. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"CombineEnabledCheckBox"
+												}
+											]
+										},
+										{
+											"Name":"Operation",
+											"Role":"Section",
+											"Id":"OperationGroupBox",
+											"Items":[
+												{
+													"Name":"Allow Only One Copy",
+													"Description":"Allow only one instance of the application to run at a time. 0 = Allow multiple instances, 1 = Allow only one instance.",
+													"Role":"CheckBox",
+													"Id":"AllowOnlyOneCopyCheckBox"
+												},
+												{
+													"Name":"Minimize to Tray",
+													"Description":"Hides the window in the notification area instead of the taskbar when it is minimised.",
+													"Role":"CheckBox",
+													"Id":"MinimizeToTrayCheckBox"
+												}
+											]
+										},
+										{
+											"Name":"Direct Input Devices",
+											"Role":"Section",
+											"Id":"DirectInputDevicesGroupBox",
+											"Items":[
+												{
+													"Name":"Exclude Supplemental Devices",
+													"Description":"Leaves supplemental devices, such as the pedals of a wheel, out of the devices the program reads.",
+													"Role":"CheckBox",
+													"Id":"ExcludeSupplementalDevicesCheckBox"
+												},
+												{
+													"Name":"Exclude Virtual Devices",
+													"Description":"Leaves vJoy devices and the controllers this program feeds out of the devices it reads, so its output is not read back as input.",
+													"Role":"CheckBox",
+													"Id":"ExcludeVirtualDevicesCheckBox"
+												}
+											]
+										},
+										{
+											"Name":"Configuration",
+											"Role":"Section",
+											"Id":"ConfigurationGroupBox",
+											"Items":[
+												{
+													"Name":"Settings format version",
+													"Description":"Version of the x360ce.ini layout this program writes.",
+													"Role":"Text",
+													"Id":"ConfigurationVersionTextBox"
+												}
+											]
+										},
+										{
+											"Name":"Internet",
+											"Role":"Section",
+											"Id":"InternetGroupBox",
+											"Items":[
+												{
+													"Name":"Internet Features",
+													"Description":"Enable the use of Internet features like the settings database. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"InternetCheckBox"
+												},
+												{
+													"Name":"Auto Load Settings When Tab Selected",
+													"Description":"Searches the online database for settings for your controllers each time the Controller Settings page is opened.",
+													"Role":"CheckBox",
+													"Id":"InternetAutoloadCheckBox"
+												},
+												{
+													"Name":"Settings database address",
+													"Description":"Web address of the online database the Controller Settings page searches and saves to.",
+													"Role":"List",
+													"Id":"InternetDatabaseUrlComboBox"
+												}
+											]
+										},
+										{
+											"Name":null,
+											"Role":"Tabs",
+											"Id":"ProgramScanLocationsTabControl",
+											"Items":[
+												{
+													"Name":"Game Scan Locations",
+													"Role":"Tab",
+													"Id":"GameScanLocationsTabPage",
+													"Items":[
+														{
+															"Name":"Game scan locations",
+															"Description":"Folders the Scan button searches for games.",
+															"Role":"List",
+															"Id":"GameScanLocationsListBox"
+														},
+														{
+															"Name":"Scan location actions",
+															"Description":"Adds, removes and fills in the folders the Scan button searches.",
+															"Role":"Toolbar",
+															"Id":"LocationsToolStrip",
+															"Items":[
+																{
+																	"Name":"Refresh",
+																	"Description":"Adds the Program Files folders of every fixed drive to the scan locations.",
+																	"Role":"Button",
+																	"Id":"RefreshLocationsButton"
+																},
+																{
+																	"Name":"Remove",
+																	"Description":"Removes the selected folder from the scan locations.",
+																	"Role":"Button",
+																	"Id":"RemoveLocationButton"
+																},
+																{
+																	"Name":"Add...",
+																	"Description":"Adds a folder to the scan locations.",
+																	"Role":"Button",
+																	"Id":"AddLocationButton"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"AI Assistant Access",
+													"Description":"Lets an AI assistant or a script read and operate this program, off unless switched on here.",
+													"Role":"Tab",
+													"Id":"AiAccessTabPage",
+													"Items":[
+														{
+															"Name":"Allow AI assistants",
+															"Description":"Opens the program to an AI assistant or a script on this computer, through the token below.",
+															"Role":"CheckBox",
+															"Id":"AiAccessEnabledCheckBox"
+														},
+														{
+															"Name":"Access",
+															"Description":"How much a connected assistant may do: Read, Configure or Administer.",
+															"Role":"List",
+															"Id":"AiAccessComboBox"
+														},
+														{
+															"Name":"Port",
+															"Description":"Port on this computer the assistant connects to.",
+															"Role":"Number",
+															"Id":"AiAccessPortNumericUpDown",
+															"Min":1024,
+															"Max":49151
+														},
+														{
+															"Name":"Register with Windows",
+															"Description":"Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.",
+															"Role":"CheckBox",
+															"Id":"AiAccessWindowsCheckBox"
+														},
+														{
+															"Name":"Token",
+															"Description":"What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.",
+															"Role":"Value",
+															"Id":"AiAccessTokenTextBox"
+														},
+														{
+															"Name":"Regenerate",
+															"Description":"Makes a new token, which shuts out every caller that has the old one.",
+															"Role":"Button",
+															"Id":"AiAccessRegenerateButton"
+														},
+														{
+															"Name":"Copy MCP Settings",
+															"Description":"Copies what an assistant needs to start the program as an MCP server.",
+															"Role":"Button",
+															"Id":"AiAccessCopyButton"
+														},
+														{
+															"Name":"Log",
+															"Description":"Opens the record of everything done through the door.",
+															"Role":"Button",
+															"Id":"AiAccessLogButton"
+														},
+														{
+															"Name":"Door",
+															"Description":"Whether the door is open, where, and why not when it could not open.",
+															"Role":"Label",
+															"Id":"AiAccessStatusLabel"
+														}
+													]
+												}
+											]
+										},
+										{
+											"Name":"Save",
+											"Description":"Writes every setting to x360ce.ini now.",
+											"Role":"Button",
+											"Id":"SaveSettingsButton"
+										},
+										{
+											"Name":"Open Settings Folder...",
+											"Description":"Opens the folder with the game list and the other files the program keeps.",
+											"Role":"Button",
+											"Id":"OpenSettingsFolderButton"
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Game Settings",
+							"Description":"Games the emulator is set up for, and how it hooks each one.",
+							"Role":"Tab",
+							"Id":"GameSettingsTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Role":"Group",
+									"Id":"GameSettingsPanel",
+									"Type":"GameSettingsUserControl",
+									"Items":[
+										{
+											"Name":"Game lists",
+											"Description":"Your games, the program's defaults for well-known games, and this computer's identity.",
+											"Role":"Tabs",
+											"Id":"GamesTabControl",
+											"Items":[
+												{
+													"Name":"My Game Settings",
+													"Role":"Tab",
+													"Id":"GamesTabPage",
+													"Items":[
+														{
+															"Name":"My games",
+															"Description":"Games the emulator is set up for. Select one to see how it is hooked.",
+															"Role":"Grid",
+															"Id":"GamesDataGridView"
+														},
+														{
+															"Name":"Game list actions",
+															"Description":"Scans for games, adds, starts, saves and deletes them, and chooses which ones the list shows.",
+															"Role":"Toolbar",
+															"Id":"GamesToolStrip",
+															"Items":[
+																{
+																	"Name":"Scan",
+																	"Description":"Searches the scan locations on the Options page for games and adds the ones found.",
+																	"Role":"Button",
+																	"Id":"ScanGamesButton"
+																},
+																{
+																	"Name":"Add...",
+																	"Description":"Adds a game by choosing its program file.",
+																	"Role":"Button",
+																	"Id":"AddGameButton"
+																},
+																{
+																	"Name":"Delete",
+																	"Description":"Removes the selected games from the list.",
+																	"Role":"Button",
+																	"Id":"DeleteGamesButton"
+																},
+																{
+																	"Name":"Save",
+																	"Description":"Writes the game list to disk now.",
+																	"Role":"Button",
+																	"Id":"SaveGamesButton"
+																},
+																{
+																	"Name":"Start",
+																	"Description":"Starts the selected game.",
+																	"Role":"Button",
+																	"Id":"StartGameButton"
+																},
+																{
+																	"Name":"Open...",
+																	"Description":"Opens the selected game's folder.",
+																	"Role":"Button",
+																	"Id":"OpenGameButton"
+																},
+																{
+																	"Name":"Show",
+																	"Description":"Which games the list shows: all, enabled only, or disabled only.",
+																	"Role":"Button",
+																	"Id":"ShowGamesDropDownButton",
+																	"Items":[
+																		{
+																			"Name":"Show: All",
+																			"Role":"Button",
+																			"Id":"ShowAllGamesMenuItem"
+																		},
+																		{
+																			"Name":"Show: Enabled",
+																			"Role":"Button",
+																			"Id":"ShowEnabledGamesMenuItem"
+																		},
+																		{
+																			"Name":"Show: Disabled",
+																			"Role":"Button",
+																			"Id":"ShowDisabledGamesMenuItem"
+																		}
+																	]
+																}
+															]
+														},
+														{
+															"Name":"Game details",
+															"Description":"Which libraries the emulator puts in the game's folder, and how it hooks the game.",
+															"Role":"Group",
+															"Id":"GameDetailsControl",
+															"Type":"GameSettingDetailsUserControl",
+															"SameAs":"GameSettingDetailsUserControl"
+														}
+													]
+												},
+												{
+													"Name":"Default Settings for Most Popular Games",
+													"Role":"Tab",
+													"Id":"GlobalSettingsTabPage",
+													"Items":[
+														{
+															"Name":"Default game settings",
+															"Description":"How the emulator is set up for well-known games when they are added.",
+															"Role":"Grid",
+															"Id":"ProgramsDataGridView"
+														},
+														{
+															"Name":"Default game settings actions",
+															"Description":"Downloads, imports, exports and deletes the default game settings.",
+															"Role":"Toolbar",
+															"Id":"ProgramsToolStrip",
+															"Items":[
+																{
+																	"Name":"Refresh",
+																	"Description":"Downloads the default game settings from the online database.",
+																	"Role":"Button",
+																	"Id":"RefreshProgramsButton"
+																},
+																{
+																	"Name":"Import...",
+																	"Description":"Reads default game settings from a file.",
+																	"Role":"Button",
+																	"Id":"ImportProgramsButton"
+																},
+																{
+																	"Name":"Export...",
+																	"Description":"Writes the default game settings to a file.",
+																	"Role":"Button",
+																	"Id":"ExportProgramsButton"
+																},
+																{
+																	"Name":"Delete",
+																	"Description":"Removes the selected default game settings.",
+																	"Role":"Button",
+																	"Id":"DeleteProgramsButton"
+																}
+															]
+														},
+														{
+															"Name":"Game details",
+															"Description":"Which libraries the emulator puts in the game's folder, and how it hooks the game.",
+															"Role":"Group",
+															"Id":"GameDefaultDetailsControl",
+															"Type":"GameSettingDetailsUserControl",
+															"SameAs":"GameSettingDetailsUserControl"
+														}
+													]
+												},
+												{
+													"Name":"Options",
+													"Role":"Tab",
+													"Id":"SettingsTabPage",
+													"Items":[
+														{
+															"Name":"Include Enabled",
+															"Description":"Which default game settings Refresh downloads: enabled ones, disabled ones, or both.",
+															"Role":"CheckBox",
+															"Id":"IncludeEnabledCheckBox"
+														},
+														{
+															"Name":"Minimum users",
+															"Description":"Refresh downloads only games set up by at least this many people.",
+															"Role":"Number",
+															"Id":"MinimumInstanceCountNumericUpDown",
+															"Min":0,
+															"Max":100
+														},
+														{
+															"Name":"Disk ID",
+															"Description":"Serial number of this computer's system disk, which identifies it to the online database.",
+															"Role":"Text",
+															"Id":"DiskIdTextBox"
+														},
+														{
+															"Name":"Hashed disk ID",
+															"Description":"The disk ID as the online database receives it, hashed so the serial number itself is not sent.",
+															"Role":"Text",
+															"Id":"HashedDiskIdTextBox"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Controller Settings",
+							"Description":"Settings saved for your controllers, and settings other people shared online.",
+							"Role":"Tab",
+							"Id":"ControllerSettingsTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Role":"Group",
+									"Id":"SettingsDatabasePanel",
+									"Type":"ControllerSettingsUserControl",
+									"Items":[
+										{
+											"Name":"Controller",
+											"Description":"Which controller's settings Save sends.",
+											"Role":"List",
+											"Id":"ControllerComboBox"
+										},
+										{
+											"Name":"Game",
+											"Description":"Which game the saved settings are for.",
+											"Role":"List",
+											"Id":"GameComboBox"
+										},
+										{
+											"Name":"Comment",
+											"Description":"A note saved with the settings.",
+											"Role":"Text",
+											"Id":"CommentTextBox"
+										},
+										{
+											"Name":"Save",
+											"Description":"Saves the chosen controller's settings online, for the chosen game.",
+											"Role":"Button",
+											"Id":"MySettingsSaveButton"
+										},
+										{
+											"Name":"Settings lists",
+											"Description":"Your saved settings, the most popular settings for your controllers, and defaults for well-known controllers.",
+											"Role":"Tabs",
+											"Id":"SettingsListTabControl",
+											"Items":[
+												{
+													"Name":"My Device Settings",
+													"Role":"Tab",
+													"Id":"MyDeviceSettingsTabPage",
+													"Items":[
+														{
+															"Name":"My device settings",
+															"Description":"Settings saved online for your controllers.",
+															"Role":"Grid",
+															"Id":"MyDevicesDataGridView"
+														},
+														{
+															"Name":"My device settings actions",
+															"Description":"Reads, loads and deletes your saved settings, and chooses the controller they load into.",
+															"Role":"Toolbar",
+															"Id":"toolStrip1",
+															"Items":[
+																{
+																	"Name":"Refresh",
+																	"Description":"Reads your saved settings from the online database again.",
+																	"Role":"Button",
+																	"Id":"MySettingsRefreshButton"
+																},
+																{
+																	"Name":"Load",
+																	"Description":"Loads the selected settings into their controller.",
+																	"Role":"Button",
+																	"Id":"MySettingsLoadButton"
+																},
+																{
+																	"Name":"Delete",
+																	"Description":"Deletes the selected settings from the online database.",
+																	"Role":"Button",
+																	"Id":"MySettingsDeleteButton"
+																},
+																{
+																	"Name":"Map To",
+																	"Description":"Which controller the selected settings load into.",
+																	"Role":"Button",
+																	"Id":"MapToDropDownButton",
+																	"Items":[
+																		{
+																			"Name":"Disabled",
+																			"Role":"Button",
+																			"Id":"MapToDisabledMenuItem"
+																		},
+																		{
+																			"Name":"Auto",
+																			"Role":"Button",
+																			"Id":"MapToAutoMenuItem"
+																		},
+																		{
+																			"Name":"Controller 1",
+																			"Role":"Button",
+																			"Id":"MapToController1MenuItem"
+																		},
+																		{
+																			"Name":"Controller 2",
+																			"Role":"Button",
+																			"Id":"MapToController2MenuItem"
+																		},
+																		{
+																			"Name":"Controller 3",
+																			"Role":"Button",
+																			"Id":"MapToController3MenuItem"
+																		},
+																		{
+																			"Name":"Controller 4",
+																			"Role":"Button",
+																			"Id":"MapToController4MenuItem"
+																		}
+																	]
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"Most Popular Settings for My Controllers",
+													"Role":"Tab",
+													"Id":"SummariesTabPage",
+													"Items":[
+														{
+															"Name":"Most popular settings",
+															"Description":"The settings other people use most for the controllers you have.",
+															"Role":"Grid",
+															"Id":"SummariesDataGridView"
+														},
+														{
+															"Name":"Most popular settings actions",
+															"Description":"Reads the most popular settings again, and loads the selected one.",
+															"Role":"Toolbar",
+															"Id":"toolStrip2",
+															"Items":[
+																{
+																	"Name":"Refresh",
+																	"Description":"Reads the most popular settings from the online database again.",
+																	"Role":"Button",
+																	"Id":"GlobalSettingsRefreshButton"
+																},
+																{
+																	"Name":"Load",
+																	"Description":"Loads the selected popular settings into the chosen controller.",
+																	"Role":"Button",
+																	"Id":"GlobalSettingsLoadButton"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"Default Settings for Most Popular Controllers",
+													"Role":"Tab",
+													"Id":"PresetsTabPage",
+													"Items":[
+														{
+															"Name":"Controller defaults",
+															"Description":"Default settings for well-known controllers.",
+															"Role":"Grid",
+															"Id":"PresetsDataGridView"
+														},
+														{
+															"Name":"Controller defaults actions",
+															"Description":"Reads the controller defaults again, and loads the selected one.",
+															"Role":"Toolbar",
+															"Id":"toolStrip3",
+															"Items":[
+																{
+																	"Name":"Refresh",
+																	"Description":"Reads the controller defaults from the online database again.",
+																	"Role":"Button",
+																	"Id":"PresetRefreshButton"
+																},
+																{
+																	"Name":"Load",
+																	"Description":"Loads the selected defaults into the chosen controller.",
+																	"Role":"Button",
+																	"Id":"PresetsLoadButton"
+																}
+															]
+														}
+													]
+												}
+											]
+										},
+										{
+											"Name":"Selected comment",
+											"Description":"The note saved with the selected settings.",
+											"Role":"Value",
+											"Id":"CommentSelectedTextBox"
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Help",
+							"Description":"Instructions for setting up a controller, and answers to common problems.",
+							"Role":"Tab",
+							"Id":"HelpTabPage",
+							"Items":[
+								{
+									"Name":"Help text",
+									"Description":"Instructions for setting up a controller, and answers to common problems.",
+									"Role":"Value",
+									"Id":"HelpRichTextBox"
+								}
+							]
+						},
+						{
+							"Name":"About",
+							"Description":"Version, licence, and what changed in each release.",
+							"Role":"Tab",
+							"Id":"AboutTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Role":"Group",
+									"Id":"AboutControl",
+									"Type":"AboutControl",
+									"Items":[
+										{
+											"Name":"http:\/\/www.jocys.com",
+											"Role":"Link",
+											"Id":"AboutJocysLinkLabel"
+										},
+										{
+											"Name":"https:\/\/github.com\/x360ce\/x360ce",
+											"Role":"Link",
+											"Id":"GoogleProjectLinkLabel"
+										},
+										{
+											"Name":"http:\/\/dev.tapek.shst.pl",
+											"Role":"Link",
+											"Id":"AboutVirusLinkLabel"
+										},
+										{
+											"Name":"http:\/\/www.tocaedit.com",
+											"Role":"Link",
+											"Id":"AboutTocaEditLinkLabel"
+										},
+										{
+											"Name":"http:\/\/en.wikipedia.org\/wiki\/Xbox_360_Controller",
+											"Role":"Link",
+											"Id":"AboutWikiLinkLabel"
+										},
+										{
+											"Name":null,
+											"Role":"Tabs",
+											"Id":"AboutTabControl",
+											"Items":[
+												{
+													"Name":"Changes",
+													"Role":"Tab",
+													"Id":"ChangesTabPage",
+													"Items":[
+														{
+															"Name":"Changes",
+															"Description":"What changed in each release of this program.",
+															"Role":"Text",
+															"Id":"ChangeLogTextBox"
+														}
+													]
+												},
+												{
+													"Name":"License",
+													"Role":"Tab",
+													"Id":"LicenseTabPage",
+													"Items":[
+														{
+															"Name":"License",
+															"Description":"The licence this program is released under.",
+															"Role":"Text",
+															"Id":"LicenseTextBox"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"Name":"Help text",
+					"Description":"What whatever the mouse is over is for.",
+					"Role":"Label",
+					"Id":"HelpBodyLabel"
+				},
+				{
+					"Name":"Game",
+					"Description":"Which game the emulator is set up for: the folder whose x360ce.ini the pages below edit.",
+					"Role":"List",
+					"Id":"GameToCustomizeComboBox"
+				}
+			]
+		},
+		{
+			"Name":"Tray",
+			"Description":"The menu behind the icon in the notification area.",
+			"Role":"Section",
+			"Id":"TrayContextMenuStrip",
+			"Hidden":true,
+			"Items":[
+				{
+					"Name":"Open Application",
+					"Description":"Brings the window back from the notification area.",
+					"Role":"Button",
+					"Id":"OpenApplicationToolStripMenuItem"
+				},
+				{
+					"Name":"Exit",
+					"Description":"Closes the program.",
+					"Role":"Button",
+					"Id":"ExitToolStripMenuItem"
+				}
+			]
+		}
+	]
+}

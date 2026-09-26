@@ -89,6 +89,7 @@ namespace x360ce.App
 			}
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			Mcp.McpTools.Register();
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
 			if (ic.Parameters.ContainsKey("Settings"))
@@ -98,13 +99,40 @@ namespace x360ce.App
 				OpenSettingsFolder(Application.LocalUserAppDataPath);
 				return;
 			}
+			// Windows reads an INI file as UTF-16 or ANSI. A UTF-8 byte order mark, which editors
+			// such as Notepad write, becomes part of the first section's name, so [Options] reads
+			// as absent here and in the library the game loads. The file is made UTF-16 before
+			// anything reads it; the first save of every start converts it anyway, and a file in a
+			// protected folder is left as it is.
+			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
+			if (ini.File.Exists)
+				ini.EnsureUnicode();
+			if (Engine.Mcp.McpClient.IsSwitch(ic.Parameters))
+			{
+				var o = AiAccessSettings.Load();
+				o.EnsureToken();
+				Environment.ExitCode = Engine.Mcp.McpClient.RunSwitches(ic.Parameters, o.Enabled, o.Port, o.Token, Application.ExecutablePath);
+				return;
+			}
 			if (!CheckSettings())
 				return;
+			AiAccessSettings.Current = AiAccessSettings.Load();
 			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
+				return;
+			}
+			// Describe the interface and leave. The window is started for real, off-screen, and read
+			// once its pages are built, because the four controller pages are added while it loads.
+			if (ic.Parameters.ContainsKey(arg_ExportUi))
+			{
+				ExportUiFolder = ic.Parameters[arg_ExportUi];
+				MainForm.Current.StartPosition = FormStartPosition.Manual;
+				MainForm.Current.Location = new System.Drawing.Point(-32000, -32000);
+				MainForm.Current.ShowInTaskbar = false;
+				Application.Run(MainForm.Current);
 				return;
 			}
 			if (!IsOneCopyRunningAlready())
@@ -113,10 +141,25 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>Folder to write the interface description into, relative to the program's folder.</summary>
+		public const string arg_ExportUi = "ExportUi";
+
+		/// <summary>Set when the program was started only to describe its interface: the folder to write into.</summary>
+		public static string ExportUiFolder;
+
+		/// <summary>Writes the navigation tree into the folder given, or into docs beside the program.</summary>
+		public static void ExportUi()
+		{
+			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? "docs" : ExportUiFolder;
+			var tree = Engine.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
+			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
+		}
+
 		public static bool IsOneCopyRunningAlready()
 		{
 			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
 			var oneCopy = !ini.File.Exists || ini.GetValue("Options", Engine.SettingName.AllowOnlyOneCopy) == "1";
+			MainForm.Current.RegisterInstance();
 			return (oneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore));
 		}
 

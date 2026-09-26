@@ -58,10 +58,6 @@ namespace Nefarius.ViGEm.Client
 		/// we have let go. In the gap between those two moments the bus says no and Windows says yes,
 		/// and reading that gap as somebody else's leftover made the program offer to remove the very
 		/// controller it had just made.
-		///
-		/// Putting a controller in a chosen XInput place also means connecting the places below it and
-		/// letting them go again, so those brief ones are recorded too. They have the same shape as a
-		/// leftover and were reported as one every time emulation was switched on.
 		/// </remarks>
 		static readonly HashSet<uint> UsedSerialSet = new HashSet<uint>();
 
@@ -103,8 +99,9 @@ namespace Nefarius.ViGEm.Client
 		public bool UnPlug(uint i)
 		{
 			// Not properly implemented yet.
+			// Disposing itself lets every controller go through here, so only a freed handle says no.
 			var t = Targets;
-			if (t == null || !IsValidIndex(i) || i > t.Length)
+			if (IsDisposed || t == null || !IsValidIndex(i) || i > t.Length)
 				return false;
 			try
 			{
@@ -119,8 +116,7 @@ namespace Nefarius.ViGEm.Client
 				// still lost that race.
 				//
 				// Reported as a fault, this filled the support mailbox with wishes already granted:
-				// fifteen of twenty-nine reports over two days said nothing else. The placeholder clean-up
-				// in PlugIn, below, has always treated it this way.
+				// fifteen of twenty-nine reports over two days said nothing else.
 			}
 			catch (Exception ex)
 			{
@@ -132,29 +128,25 @@ namespace Nefarius.ViGEm.Client
 			return true;
 		}
 
+		/// <summary>Connects the controller for this pad, and only that one.</summary>
+		/// <remarks>
+		/// Windows gives out the XInput place, and cannot be asked for one. The places below used to be
+		/// filled with brief controllers first, so this one would land above them. Those took places that
+		/// belong to other tabs: with a real controller in the first place, the brief one took the second,
+		/// this one landed in the third, and the second was left empty. Some were also left behind,
+		/// holding a place until the program ended. Where this one lands is checked by the caller, which
+		/// keeps it only in its own place.
+		/// </remarks>
 		public bool PlugIn(uint userIndex)
 		{
+			// A client being let go of has no bus behind it any more. Its native handle is freed, and a
+			// worker that took this client seconds ago, before the game left virtual mode, must be told
+			// no rather than sent into a handle that no longer exists.
 			var t = Targets;
-			if (t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
+			if (Disposing || IsDisposed || t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
 				return false;
-			// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
-			var tempDevices = new bool[PlaceCount];
 			try
 			{
-				for (int i = 0; i < userIndex - 1; i++)
-				{
-					if (!t[i].IsAttached)
-					{
-						// Recorded after the fact, not before it. Marked first, a placeholder that
-						// failed to connect was still taken away afterwards, and taking away what was
-						// never there fails - so a controller that could not be made reported a second
-						// fault about the tidying up, and that is the one the person saw.
-						t[i].Connect();
-						tempDevices[i] = true;
-						RememberSerial(t[i]);
-					}
-				}
-				// Connect specified device.
 				t[userIndex - 1].Connect();
 				RememberSerial(t[userIndex - 1]);
 				return true;
@@ -163,30 +155,6 @@ namespace Nefarius.ViGEm.Client
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 				return false;
-			}
-			finally
-			{
-				// Disconnect temporary connected devices. Must run when connecting the
-				// requested position failed too, or placeholder controllers stay plugged in.
-				for (int i = 0; i < tempDevices.Length; i++)
-				{
-					if (!tempDevices[i])
-						continue;
-					try
-					{
-						t[i].Disconnect();
-					}
-					catch (ViGEmException ex) when (ex.Code == VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
-					{
-						// The point here is that the placeholder is gone. Being told it is already gone
-						// is that, not a failure - the bus can drop a controller between making it and
-						// tidying it away, and nobody needs a report about a wish already granted.
-					}
-					catch (Exception ex)
-					{
-						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-					}
-				}
 			}
 		}
 

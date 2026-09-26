@@ -10,11 +10,11 @@ namespace x360ce.App.DInput
 {
 	/// <summary>Carries out a plan for putting controllers in a wanted order.</summary>
 	/// <remarks>
-	/// XInput hands out the lowest free place when a device arrives and cannot be asked for a
-	/// particular one. So the order is made by controlling arrivals: take away everything holding a
-	/// place, then bring things back one at a time, waiting for each to land before the next goes in.
-	/// Waiting is not politeness - two arriving together cannot be told apart, and the order would be
-	/// whatever Windows happened to do.
+	/// XInput gives out a place when a device arrives and cannot be asked for a particular one. So the
+	/// order is made by controlling arrivals: take away everything holding a place, then bring things
+	/// back one at a time, waiting for each to land before the next goes in. Two arriving together
+	/// cannot be told apart. Windows does not always give the lowest free place, so where each one
+	/// landed is said rather than assumed.
 	///
 	/// Working out what to do is <see cref="XInputReorderPlan"/>, which touches nothing. This is the
 	/// half that touches real hardware, kept apart from it so the plan can be shown to somebody, and
@@ -22,13 +22,8 @@ namespace x360ce.App.DInput
 	/// </remarks>
 	public class XInputReorderRunner
 	{
-		/// <summary>How long to wait for a place to be given up.</summary>
-		static readonly TimeSpan OffLimit = TimeSpan.FromSeconds(15);
-
-		/// <summary>How long to wait for a place to be taken.</summary>
-		/// <remarks>
-		/// Longer than giving one up, because Windows builds the device again on the way back in.
-		/// </remarks>
+		/// <summary>How long to wait for a real controller switched back on to take a place.</summary>
+		/// <remarks>Windows builds the device again on the way back in, which takes seconds.</remarks>
 		static readonly TimeSpan OnLimit = TimeSpan.FromSeconds(30);
 
 		/// <summary>What happened, in the order it happened, for showing afterwards.</summary>
@@ -161,21 +156,31 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		/// <summary>Waits until one more XInput place is taken than was when this was called.</summary>
-		/// <remarks>
-		/// Used while bringing controllers back one at a time. Their order of arrival is the order of the
-		/// places, so the next must not be switched on until the last has landed.
-		/// </remarks>
-		public static void WaitForOneMorePlace()
-		{
-			var before = Occupied();
-			WaitForChange(before, OnLimit);
-		}
+		/// <summary>Switches real controllers, asking for Administrator at most once in a run.</summary>
+		ElevatedDevices _devices;
 
-		/// <summary>Carries the plan out, one step at a time, stopping at the first that fails.</summary>
+		/// <summary>How long everything in this program that holds a controller has to let go of it.</summary>
+		static readonly TimeSpan StopLimit = TimeSpan.FromSeconds(10);
+
+		/// <summary>How long to wait between the last controller going and the first coming back.</summary>
 		/// <remarks>
-		/// The update loop is held still throughout. It makes and takes away controllers of its own to
-		/// match the game settings, and left running it would undo each step as it was taken.
+		/// Windows keeps a place for a controller that has just gone. Made a moment after the real
+		/// controller in the first place was switched off, Controller 1's was put elsewhere and taken away
+		/// again; made later, it went to the first place. Ten seconds is what others who order
+		/// controllers this way have found enough.
+		/// </remarks>
+		static readonly TimeSpan ForgetWait = TimeSpan.FromSeconds(10);
+
+		/// <summary>Carries the plan out, stopping at the first step that fails.</summary>
+		/// <remarks>
+		/// Always the same four stages, in the order the plan lists them:
+		/// 1. This program stops everything that reads controllers, and takes its own away.
+		/// 2. The copy running as Administrator switches the real ones off.
+		/// 3. After <see cref="ForgetWait"/>, this program makes its own again, Controller 1's first.
+		/// 4. The copy switches the real ones back on, and is told to go.
+		/// Only then does this program read controllers again. Nothing reads them in between: XInput and
+		/// DirectInput hold open every controller they have answered about, and Windows cannot cleanly
+		/// switch off a controller that anything holds.
 		/// </remarks>
 		public bool Run(XInputReorderPlan plan)
 		{
@@ -203,65 +208,73 @@ namespace x360ce.App.DInput
 				return false;
 			}
 			Say(string.Format("Places at the start: {0}", Show(Occupied())));
-			helper.Suspended = true;
 			try
 			{
+				if (!helper.StopForReorder(StopLimit))
+				{
+					Failure = "This program could not let go of the controllers in time, so none was "
+						+ "switched off. Try again in a moment.";
+					return false;
+				}
+				_devices = new ElevatedDevices { Said = Say };
 				var number = 0;
+				var waited = false;
 				foreach (var step in plan.Steps)
 				{
 					number++;
+					// After a step has failed, only switching real controllers back on is still done. Left
+					// off, they would stay off until this program next starts.
+					if (Failure != null && step.Kind != XInputReorderPlan.StepKind.EnableReal)
+						continue;
+					var arrives = step.Kind == XInputReorderPlan.StepKind.CreateVirtual
+						|| step.Kind == XInputReorderPlan.StepKind.EnableReal;
+					if (arrives && !waited)
+					{
+						waited = true;
+						Say(string.Format("Waiting {0} seconds, so Windows forgets which places were held...", ForgetWait.TotalSeconds));
+						Thread.Sleep(ForgetWait);
+					}
 					Say(string.Format("Step {0} of {1}: {2}...", number, plan.Steps.Count, step));
-					if (!RunStep(helper, step))
-						return false;
+					RunStep(helper, step);
 				}
 				Say(string.Format("Places at the end   : {0}", Show(Occupied())));
-				return true;
+				return Failure == null;
 			}
 			finally
 			{
-				// Forgotten rather than assumed, so the next pass makes whatever the game asks for now
-				// instead of trusting a picture taken before any of this happened. This also lets the
-				// loop go again.
+				// The copy running as Administrator goes first, then this program picks everything up
+				// again. Forgotten rather than assumed, so the next pass makes whatever the game asks for
+				// now instead of trusting a picture taken before any of this happened.
+				if (_devices != null)
+					_devices.Dispose();
+				_devices = null;
 				helper.ResumeAfterDeviceRemoval();
 				XInputPlaces.Invalidate();
 			}
 		}
 
+		/// <summary>Adds why a step failed, keeping why any earlier one did.</summary>
+		bool Fail(string why)
+		{
+			Failure = Failure == null ? why : Failure + Environment.NewLine + why;
+			return false;
+		}
+
 		bool RunStep(DInputHelper helper, XInputReorderPlan.Step step)
 		{
-			var before = Occupied();
 			switch (step.Kind)
 			{
 				case XInputReorderPlan.StepKind.RemoveVirtual:
-					return TakeVirtualAway(helper, step, before);
+					// Taken away already, with everything else this program was holding.
+					Say(string.Format("{0} - done", step));
+					return true;
 				case XInputReorderPlan.StepKind.DisableReal:
-					return SwitchRealOff(step, before);
+					return SwitchRealOff(step);
 				case XInputReorderPlan.StepKind.CreateVirtual:
 					return MakeVirtual(helper, step);
 				default:
-					return SwitchRealOn(step, before);
+					return SwitchRealOn(step);
 			}
-		}
-
-		bool TakeVirtualAway(DInputHelper helper, XInputReorderPlan.Step step, bool[] before)
-		{
-			// The tab it belongs to, for the same reason: which place it is in changes, and which tab made
-			// it does not.
-			var pad = step.Pad;
-			if (pad < 1 || pad > 4)
-			{
-				Say(string.Format("{0} - not one of ours to take away", step));
-				return true;
-			}
-			var error = helper.DisableFeeding((uint)pad);
-			if (error != VirtualError.None)
-			{
-				Failure = string.Format("{0} failed: {1}", step, Describe(error, pad));
-				return false;
-			}
-			WaitForChange(before, OffLimit);
-			Say(string.Format("{0} - done", step));
-			return true;
 		}
 
 		bool MakeVirtual(DInputHelper helper, XInputReorderPlan.Step step)
@@ -269,113 +282,57 @@ namespace x360ce.App.DInput
 			// The tab this controller belongs to, which is what carries its mappings. Not the number of the
 			// place it is going into: taking that as the tab handed every tab another tab's controller, so
 			// the order came out right and every tab pointed at the wrong one.
-			//
-			// The order is achieved by when it is made, not by which pad is made. Windows gives the place
-			// out on arrival, so arriving first is what puts a controller first.
 			var pad = step.Pad;
 			if (pad < 1 || pad > 4)
-			{
-				Failure = string.Format("{0} failed: it is not a controller this program made.", step);
-				return false;
-			}
+				return Fail(string.Format("{0} failed: it is not a controller this program made.", step));
+			// Kept only in its own place, so a controller that is made is where it belongs.
 			var error = helper.EnableFeeding((uint)pad);
+			// Where it went is said, not only that it went wrong. The tab's own text is about now, and by
+			// the time this is read the controller may well have been made again in its own place.
+			if (error == VirtualError.PlaceWrong && helper.MisplacedIn[pad - 1] >= 0)
+				return Fail(string.Format("{0} failed: Windows put it in XInput {1}, where it would push out "
+					+ "another controller, so it was taken away again.", step, helper.MisplacedIn[pad - 1] + 1));
 			if (error != VirtualError.None)
-			{
-				Failure = string.Format("{0} failed: {1}", step, Describe(error, pad));
-				return false;
-			}
+				return Fail(string.Format("{0} failed: {1}", step, Describe(error, pad)));
 			Say(string.Format("{0} - done", step));
 			return true;
 		}
 
-		bool SwitchRealOff(XInputReorderPlan.Step step, bool[] before)
+		bool SwitchRealOff(XInputReorderPlan.Step step)
 		{
 			// Written down before it is touched, not after. A step that fails half way through leaves a
 			// controller switched off, and the note is the only thing that knows to put it back.
 			RememberSwitchedOff(step.HardwareId);
-			bool ok;
-			try { ok = Switch(AdminCommand.DisableDevices, step.HardwareId); }
-			catch (Exception ex)
-			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				Failure = string.Format("{0} failed: {1}", step, ex.Message);
-				return false;
-			}
-			if (!ok)
+			string error;
+			if (!_devices.Switch(false, new[] { step.HardwareId }, out error))
 			{
 				ForgetSwitchedOff(step.HardwareId);
-				Failure = string.Format("{0} failed. Switching a controller off needs Administrator.", step);
-				return false;
+				return Fail(string.Format("{0} failed: {1}", step, error));
 			}
-			var after = WaitForChange(before, OffLimit);
-			// It may have held no place at all, which is not a failure. Said rather than passed over.
-			Log.Add(after.SequenceEqual(before)
-				? string.Format("{0} - done, though no place was given up", step)
-				: string.Format("{0} - done, places now {1}", step, Show(after)));
+			// Not watched going: asking XInput would open it again while it is being switched off.
+			Say(string.Format("{0} - done", step));
 			return true;
 		}
 
-		bool SwitchRealOn(XInputReorderPlan.Step step, bool[] before)
+		bool SwitchRealOn(XInputReorderPlan.Step step)
 		{
-			var stillOff = "It is still switched off - switch it on in Device Manager, or start this "
-				+ "program again and it will be put back.";
-			bool ok;
-			try { ok = Switch(AdminCommand.EnableDevices, step.HardwareId); }
-			catch (Exception ex)
-			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				Failure = string.Format("{0} failed: {1}. {2}", step, ex.Message, stillOff);
-				return false;
-			}
-			if (!ok)
-			{
-				Failure = string.Format("{0} failed. {1}", step, stillOff);
-				return false;
-			}
+			var before = Occupied();
+			string error;
+			if (!_devices.Switch(true, new[] { step.HardwareId }, out error))
+				return Fail(string.Format("{0} failed: {1} It is still switched off - switch it on in Device "
+					+ "Manager, or start this program again and it will be put back.", step, error));
 			ForgetSwitchedOff(step.HardwareId);
-			var after = WaitForChange(before, OnLimit);
+			// With all four taken there is no place to wait for.
+			var after = before.All(x => x) ? before : WaitForChange(before, OnLimit);
 			var gained = Enumerable.Range(0, 4).Where(i => !before[i] && after[i]).ToArray();
-			// Not a failure, and not hidden either. The order asked for was not the order given.
-			Log.Add(gained.Length == 1 && gained[0] != step.ExpectedPlace
-				? string.Format("{0} - went to XInput {1} instead", step, gained[0] + 1)
-				: string.Format("{0} - done", step));
+			Say(gained.Length == 0 && step.ExpectedPlace < 0
+				? string.Format("{0} - done", step)
+				: gained.Length == 0
+				? string.Format("{0} - switched on, but Windows has given it no place", step)
+				: gained[0] != step.ExpectedPlace
+					? string.Format("{0} - went to XInput {1} instead", step, gained[0] + 1)
+					: string.Format("{0} - done", step));
 			return true;
-		}
-
-		/// <summary>Switches devices on or off, as Administrator when this program is not.</summary>
-		/// <remarks>
-		/// Windows will not let an ordinary program switch a device off. Rather than asking somebody to
-		/// start the whole program again as Administrator - which loses whatever they were doing, and
-		/// leaves it running afterwards with more power than it needs for anything else - a copy is run
-		/// for this one job and closes again. Running as Administrator already, the same code runs here
-		/// and no copy is made at all.
-		/// </remarks>
-		static bool Switch(AdminCommand command, params string[] deviceIds)
-		{
-			var ids = string.Join(",", deviceIds);
-			// True when it was done here, because this program is already Administrator.
-			if (Program.RunElevated(command, ids))
-				{
-					XInputPlaces.Invalidate();
-					var here = Global.DHelper;
-					if (here != null)
-						here.UpdateDevicesEnabled = true;
-					return true;
-				}
-			// Whatever happened, the machine is not what it was. Nothing else re-reads it: a device switched
-			// off stays in the lists, holding a place it gave up, until something asks again.
-			XInputPlaces.Invalidate();
-			var helper = Global.DHelper;
-			if (helper != null)
-				helper.UpdateDevicesEnabled = true;
-			return Program.LastAdminResult == Program.AdminResult.Done;
-		}
-
-		/// <summary>Where the controller this step acts on is now, or -1 when it holds no place.</summary>
-		static int PlaceOfEntry(XInputReorderPlan.Step step)
-		{
-			XInputPlaces.Read();
-			return XInputPlaces.PlaceFor(step.HardwareId);
 		}
 
 		/// <summary>What the virtual bus said, in words, about the pad it was asked for.</summary>
@@ -396,6 +353,9 @@ namespace x360ce.App.DInput
 			{
 				text.AppendLine();
 				text.AppendLine(Failure);
+				text.AppendLine();
+				text.AppendLine("This is what happened while the order was being made. Since then each controller "
+					+ "has been made again as soon as its own place was free: the list above shows where they are now.");
 			}
 			return text.ToString();
 		}
