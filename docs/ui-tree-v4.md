@@ -463,8 +463,14 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       ├── Devices                                                         # Every controller the program can see, whether mapped or not.
 [Group]     │       │   ├── (XInputDevicesPanel)
 [Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
+[Group]     │       │   │   ├── Order notice (hidden)                                   # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
+[Label]     │       │   │   │   ├── Notice subject                                      # What the notice is about: an order waiting for OK, the order being made, or how it went.
+[Label]     │       │   │   │   ├── Notice text                                         # The steps, what happened at each, and why it stopped when it did.
+[Button]    │       │   │   │   ├── OK                                                  # Puts the controllers in the order shown. Once it is over, closes the notice.
+[Button]    │       │   │   │   └── Cancel                                              # Closes the notice without touching any controller.
 [Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
 [Button]    │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
+[Button]    │       │   │       ├── Auto-Order                                          # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
 [Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
 [Grid]      │       │       ├── Devices                                                 # Every controller the program can see. Unplugged ones are dimmed.

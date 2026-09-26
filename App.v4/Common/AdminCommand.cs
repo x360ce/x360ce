@@ -15,19 +15,13 @@
 		RemoveLeftoverPads,
 		/// <summary>Let every user listen for AI assistants on every network at the given port, which http.sys allows only once an Administrator has said so.</summary>
 		ReserveAiAccessUrl,
-		/// <summary>Switch real controllers off, so the places they hold are given up.</summary>
+		/// <summary>Switch devices on and off for the copy that started this one, until it says to stop.</summary>
 		/// <remarks>
 		/// Windows will not let an ordinary program switch a device off, and putting controllers in a
-		/// chosen order needs exactly that. The parameter is the device identifiers, separated by commas.
+		/// chosen order needs exactly that, more than once. The parameter is the name of the pipe the
+		/// starting copy listens on.
 		/// </remarks>
-		DisableDevices,
-		/// <summary>Switch real controllers back on, one at a time, in the order given.</summary>
-		/// <remarks>
-		/// One at a time and in order, because the order they arrive in is the order XInput gives out the
-		/// places - it is the only lever there is. The parameter is the device identifiers, in the order
-		/// they should come back, separated by commas.
-		/// </remarks>
-		EnableDevices,
+		DeviceHelper,
 #if DEBUG
 		/// <summary>Development builds only. Install is not offered in a release.</summary>
 		InstallHidGuardian,

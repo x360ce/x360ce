@@ -113,8 +113,20 @@ namespace x360ce.App.UiTree
 				"Arrow on each row that moves that controller one place later.");
 			d["XInputDevicesUserControl.ApplyButton"] = new Text("Apply",
 				"Recreates the controllers in the order shown. Needs Administrator.");
+			d["XInputDevicesUserControl.AutoOrderButton"] = new Text("Auto-Order",
+				"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.");
 			d["XInputDevicesUserControl.RefreshButton"] = new Text("Refresh",
 				"Reads the controllers again, for when one has arrived or left.");
+			d["XInputDevicesUserControl.PlanPanel"] = new Text("Order notice",
+				"Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.");
+			d["XInputDevicesUserControl.PlanSubjectLabel"] = new Text("Notice subject",
+				"What the notice is about: an order waiting for OK, the order being made, or how it went.");
+			d["XInputDevicesUserControl.PlanBodyLabel"] = new Text("Notice text",
+				"The steps, what happened at each, and why it stopped when it did.");
+			d["XInputDevicesUserControl.PlanOkButton"] = new Text("OK",
+				"Puts the controllers in the order shown. Once it is over, closes the notice.");
+			d["XInputDevicesUserControl.PlanCancelButton"] = new Text("Cancel",
+				"Closes the notice without touching any controller.");
 			d["UserDevicesUserControl.RefreshButton"] = new Text("Refresh",
 				"Reads every device again.");
 			d["UserDevicesUserControl.ControllerDeleteButton"] = new Text("Delete",

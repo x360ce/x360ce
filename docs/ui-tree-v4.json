@@ -2971,6 +2971,39 @@
 											"Id":"DevicesDataGridView"
 										},
 										{
+											"Name":"Order notice",
+											"Description":"Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.",
+											"Role":"Group",
+											"Id":"PlanPanel",
+											"Hidden":true,
+											"Items":[
+												{
+													"Name":"Notice subject",
+													"Description":"What the notice is about: an order waiting for OK, the order being made, or how it went.",
+													"Role":"Label",
+													"Id":"PlanSubjectLabel"
+												},
+												{
+													"Name":"Notice text",
+													"Description":"The steps, what happened at each, and why it stopped when it did.",
+													"Role":"Label",
+													"Id":"PlanBodyLabel"
+												},
+												{
+													"Name":"OK",
+													"Description":"Puts the controllers in the order shown. Once it is over, closes the notice.",
+													"Role":"Button",
+													"Id":"PlanOkButton"
+												},
+												{
+													"Name":"Cancel",
+													"Description":"Closes the notice without touching any controller.",
+													"Role":"Button",
+													"Id":"PlanCancelButton"
+												}
+											]
+										},
+										{
 											"Name":"Emulated controller actions",
 											"Description":"Buttons that act on the emulated controllers shown below.",
 											"Role":"Toolbar",
@@ -2981,6 +3014,12 @@
 													"Description":"Recreates the controllers in the order shown. Needs Administrator.",
 													"Role":"Button",
 													"Id":"ApplyButton"
+												},
+												{
+													"Name":"Auto-Order",
+													"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
+													"Role":"Button",
+													"Id":"AutoOrderButton"
 												},
 												{
 													"Name":"Refresh",

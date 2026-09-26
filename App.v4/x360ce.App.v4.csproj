@@ -117,6 +117,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
+    <Compile Include="Common\DInput\ElevatedDevices.cs" />
     <Compile Include="Common\DInput\Recorder.cs" />
     <Compile Include="Common\DInput\VirtualDriverInstaller.cs" />
     <Compile Include="Common\DInput\VirtualError.cs" />

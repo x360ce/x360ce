@@ -73,11 +73,7 @@ namespace x360ce.App.DInput
 			}
 			for (uint i = 1; i <= 4; i++)
 			{
-				var mapTo = (MapTo)i;
-				var flag = AppHelper.GetMapFlag(mapTo);
-				var value = (MapToMask)(game?.EnableMask ?? (int)MapToMask.None);
-				// Tested by bit rather than with HasFlag, which boxes both values, and this runs on every pass.
-				var virtualEnabled = (value & flag) != 0;
+				var virtualEnabled = WantsVirtual(game, i);
 				var feedingState = FeedingState[i - 1];
 				var plugging = _plugging[i - 1];
 				if (virtualEnabled)
@@ -109,6 +105,13 @@ namespace x360ce.App.DInput
 						// wheel fed at that rate swings from side to side.
 						if (unchecked(Environment.TickCount - _NextPlugAttempt[i - 1]) < 0)
 							continue;
+						// Put somewhere else last time: made again only once a controller has come or gone,
+						// or it would be made and taken away every two seconds for nothing.
+						if (VirtualErrors[i - 1] == VirtualError.PlaceWrong && PlacesMask(OccupiedPlaces()) == _misplacedWith[i - 1])
+						{
+							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
+							continue;
+						}
 						// Plugging in waits up to five seconds for Windows to give the controller a place
 						// and reads the device tree twice: three to four seconds a controller, measured.
 						// On this thread that stopped every controller being polled for as long, and a
@@ -581,22 +584,14 @@ namespace x360ce.App.DInput
 				return VirtualError.Other;
 			if (client.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			// Windows cannot be asked for a particular place, and gives neither the one asked for nor
-			// reliably the lowest free one. That was assumed, and a controller landing anywhere else was
-			// taken away again - so a real controller holding the first place stopped a second tab from
-			// getting a controller at all, with a free place sitting there. A tab with nothing behind it
-			// reaches no game whatsoever, which is worse than one whose controller sits somewhere
-			// unexpected and is shown doing so.
-			//
-			// So it is made wherever Windows puts it, and where that was is written down. The device
-			// lists and the tab light all read that, so an unexpected place is visible rather than
-			// silently wrong.
+			// Controller N is XInput N and nothing else. Made while its place was taken, it landed in the
+			// next tab's place and pushed that one along too, so one real controller in the way broke
+			// every tab instead of one. It waits for its own place instead, and asking again is a look at
+			// the four places, answered before the device tree is read, not a controller made and taken away.
 			var before = OccupiedPlaces();
-			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
-			// spent waiting for one to appear. Answered before the device tree is read, which is the
-			// expensive part and would be wasted on a refusal.
-			if (before.All(x => x))
-				return VirtualError.PlaceNotGiven;
+			var own = (int)userIndex - 1;
+			if (before[own])
+				return VirtualError.PlaceTaken;
 			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.
@@ -606,10 +601,14 @@ namespace x360ce.App.DInput
 			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
 			// controller, which is not the same as Windows having given it the place we need.
 			var place = WaitForPlace(before);
-			if (place < 0)
+			// Kept only in its own place. Windows cannot be asked for one, and anywhere else it holds
+			// another tab's place. The places it saw are kept, so it is not tried again until they change.
+			if (place != own)
 			{
 				client.UnPlug(userIndex);
-				return VirtualError.PlaceNotGiven;
+				_misplacedWith[own] = PlacesMask(before);
+				MisplacedIn[own] = place;
+				return place < 0 ? VirtualError.PlaceNotGiven : VirtualError.PlaceWrong;
 			}
 			// Written down now, while it is certain. Nothing reports where a controller was put,
 			// so the only moment the answer exists is the moment it arrives.

@@ -70,6 +70,78 @@ namespace x360ce.App.DInput
 		// Suspended is used during re-loading of XInput library.
 		public volatile bool Suspended;
 
+		/// <summary>Held for each pass of the loop, so what a pass is using is not let go of half way through it.</summary>
+		readonly object PassLock = new object();
+
+		/// <summary>The places taken when each controller was last put somewhere other than its own place.</summary>
+		readonly int[] _misplacedWith = new int[4];
+
+		/// <summary>Where Windows last put each controller that was taken away again for not being in its own place.</summary>
+		public readonly int[] MisplacedIn = { -1, -1, -1, -1 };
+
+		/// <summary>Whether this controller tab is to have a virtual controller.</summary>
+		/// <remarks>
+		/// The master switch is on, the game uses virtual emulation, and the tab is enabled for it. Tested
+		/// by bit rather than with HasFlag, which boxes both values, and this runs on every pass.
+		/// </remarks>
+		public static bool WantsVirtual(Engine.Data.UserGame game, uint pad)
+		{
+			return SettingsManager.Options.XInputEnabled && game != null
+				&& (game.EmulationType & (int)Engine.EmulationType.Virtual) != 0
+				&& ((Engine.MapToMask)game.EnableMask & AppHelper.GetMapFlag((Engine.MapTo)pad)) != 0;
+		}
+
+		/// <summary>The places taken, one bit each, for telling whether they have changed.</summary>
+		static int PlacesMask(bool[] places)
+		{
+			var mask = 0;
+			for (var i = 0; i < places.Length; i++)
+				if (places[i])
+					mask |= 1 << i;
+			return mask;
+		}
+
+		/// <summary>Stops everything in this program that holds a controller open, so Windows can switch a real one off.</summary>
+		/// <remarks>
+		/// Windows cannot cleanly switch off a controller that anything holds open, and this program holds
+		/// all of them: its own virtual controllers, both XInput libraries, and a DirectInput device for
+		/// every controller it reads. The pass under way finishes first, then all of it is let go of, and
+		/// <see cref="ResumeAfterDeviceRemoval"/> picks it up again: the loop opens a device for every
+		/// controller that has none, and loads XInput when it is not loaded.
+		/// </remarks>
+		/// <returns>
+		/// False when something did not let go in the time given. Every wait here has a limit: a program
+		/// stuck waiting would leave real controllers switched off with nothing saying why.
+		/// </returns>
+		public bool StopForReorder(TimeSpan limit)
+		{
+			Suspended = true;
+			// Entered only to know the pass under way has finished, and left at once. The loop asks again
+			// inside it and starts nothing more, so nothing needs to be held while the rest is let go of.
+			if (!Monitor.TryEnter(PassLock, limit))
+				return false;
+			Monitor.Exit(PassLock);
+			ReleaseForDeviceRemoval();
+			if (!Monitor.TryEnter(SettingsManager.UserDevices.SyncRoot, limit))
+				return false;
+			try
+			{
+				foreach (var ud in SettingsManager.UserDevices.Items)
+				{
+					var device = ud.Device;
+					if (device == null)
+						continue;
+					ud.Device = null;
+					device.Dispose();
+				}
+			}
+			finally
+			{
+				Monitor.Exit(SettingsManager.UserDevices.SyncRoot);
+			}
+			return SystemXInput.Release(limit);
+		}
+
 		public void Start()
 		{
 			lock (timerLock)
@@ -170,12 +242,15 @@ namespace x360ce.App.DInput
 				_pacerHighResolution = pacer.UsesHighResolution;
 				do
 				{
-					// Perform all updates if not suspended.
-					if (!Suspended)
+					// Perform all updates if not suspended. Asked again inside the lock, so a pass that was
+					// about to start when the loop was stopped does not start after all. Never waited for:
+					// while something is stopping the loop, this pass is simply not run.
+					if (!Suspended && Monitor.TryEnter(PassLock))
 					{
 						try
 						{
-							RefreshAll(manager, detector);
+							if (!Suspended)
+								RefreshAll(manager, detector);
 						}
 						catch (Exception ex)
 						{
@@ -183,6 +258,10 @@ namespace x360ce.App.DInput
 							// device polling and virtual feeding while the window stays alive.
 							LastException = ex;
 							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+						}
+						finally
+						{
+							Monitor.Exit(PassLock);
 						}
 					}
 					// Until the next pass is due, or the thread is asked to stop.
