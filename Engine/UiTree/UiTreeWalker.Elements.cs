@@ -15,7 +15,7 @@ namespace x360ce.Engine.UiTree
 	public static partial class UiTreeWalker
 	{
 		/// <summary>The segment that stands between a grid's path and the index of one of its rows.</summary>
-		const string RowsSegment = "rows";
+		internal const string RowsSegment = "rows";
 
 		#region Addressing
 

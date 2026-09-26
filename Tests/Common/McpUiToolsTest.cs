@@ -65,6 +65,38 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("What the person is looking at is reported by path: the pages shown, the element with focus and its row")]
+		public void The_current_page_and_focus_are_reported_by_path()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var first = new TabPage { Name = "First", Text = "First" };
+				var second = new TabPage { Name = "Second", Text = "Second" };
+				var grid = new DataGridView { Name = "Grid", AllowUserToAddRows = false };
+				grid.Columns.Add("A", "A");
+				grid.Rows.Add("one");
+				grid.Rows.Add("two");
+				second.Controls.Add(grid);
+				tabs.TabPages.AddRange(new[] { first, second });
+				form.Controls.Add(tabs);
+				form.Show();
+				tabs.SelectedTab = second;
+				form.ActiveControl = grid;
+				grid.CurrentCell = grid.Rows[1].Cells[0];
+				var current = (System.Collections.Generic.Dictionary<string, object>)McpUiTools.UiCurrent();
+				Assert.AreEqual("", current["Window"], "The main window is named, though no path starts with it.");
+				CollectionAssert.AreEqual(new[] { "Tabs/Second" }, (string[])current["Tabs"], "The page shown is not reported.");
+				var focus = (System.Collections.Generic.Dictionary<string, object>)current["Focus"];
+				Assert.AreEqual("Tabs/Second/Grid", focus["Path"], "The element with focus is not reported by its path.");
+				Assert.AreEqual("Grid", focus["Role"]);
+				var row = (System.Collections.Generic.Dictionary<string, object>)current["Row"];
+				Assert.AreEqual("Tabs/Second/Grid/rows/1", row["Path"], "The selected row is not reported by its path.");
+				Assert.IsNotNull(UiTreeWalker.Find(form, (string)row["Path"]), "The reported path does not lead back to the row.");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Pointing at an element brings its page to the front and frames it, with the words beside it")]
 		public void Showing_points_at_the_element()
 		{

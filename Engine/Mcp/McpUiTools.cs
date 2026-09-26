@@ -92,6 +92,82 @@ namespace x360ce.Engine.Mcp
 			}).ToArray();
 		}
 
+		[McpTool(AiAccess.Read, "What the person is looking at now, as JSON: Window (the path of the window in front, empty for the main one), Tabs (the pages shown, from the top down), Focus (the element with keyboard focus: Path, Role, Name, Value) and Row (the current row, when Focus is a grid). The paths work with the other tools.")]
+		public static object UiCurrent()
+		{
+			var main = RootWindow;
+			var active = Form.ActiveForm;
+			var window = active != null && OtherWindows().Contains(active) ? active : main;
+			if (window == null)
+				throw new InvalidOperationException("No window is open.");
+			var prefix = window == main ? "" : window.Name;
+			var answer = new Dictionary<string, object> { { "Window", prefix } };
+			var pages = new List<string>();
+			for (var tabs = FirstTabs(window); tabs != null && tabs.SelectedTab != null; tabs = FirstTabs(tabs.SelectedTab))
+				pages.Add(PathOf(tabs.SelectedTab, window, prefix));
+			answer["Tabs"] = pages.Where(x => x != null).ToArray();
+			// Each container remembers which of its children is active, down to the one with focus.
+			Control focus = window;
+			ContainerControl container;
+			while ((container = focus as ContainerControl) != null && container.ActiveControl != null)
+				focus = container.ActiveControl;
+			if (focus == window)
+				return answer;
+			var path = PathOf(focus, window, prefix);
+			answer["Focus"] = Current(focus, path);
+			var grid = focus as DataGridView;
+			if (grid != null && grid.CurrentRow != null && path != null)
+				answer["Row"] = Current(grid.CurrentRow, path + "/" + UiTreeWalker.RowsSegment + "/" + grid.CurrentRow.Index);
+			return answer;
+		}
+
+		/// <summary>An element as ui_current reports it.</summary>
+		static Dictionary<string, object> Current(object element, string path)
+		{
+			var node = UiTreeWalker.Read(element, false, path);
+			return new Dictionary<string, object>
+			{
+				{ "Path", path }, { "Role", node?.Role }, { "Name", node?.Name }, { "Value", node?.Value },
+			};
+		}
+
+		/// <summary>The path of a control from the window it is in, or null when something on the way has no name.</summary>
+		static string PathOf(Control control, Control window, string prefix)
+		{
+			var names = new List<string>();
+			for (var c = control; c != null && c != window; c = c.Parent)
+			{
+				if (string.IsNullOrEmpty(c.Name))
+					return null;
+				names.Insert(0, c.Name);
+			}
+			if (!string.IsNullOrEmpty(prefix))
+				names.Insert(0, prefix);
+			return string.Join("/", names);
+		}
+
+		/// <summary>The nearest tab control inside, looking only in the page each tab control shows.</summary>
+		static TabControl FirstTabs(Control top)
+		{
+			var queue = new Queue<Control>();
+			queue.Enqueue(top);
+			while (queue.Count > 0)
+			{
+				var control = queue.Dequeue();
+				var tabs = control as TabControl;
+				foreach (Control child in control.Controls)
+				{
+					if (tabs != null && child != tabs.SelectedTab)
+						continue;
+					var found = child as TabControl;
+					if (found != null)
+						return found;
+					queue.Enqueue(child);
+				}
+			}
+			return null;
+		}
+
 		[McpTool(AiAccess.Read, "The interface as a tree: every element with its kind, name, purpose, path and current value, as JSON. Pass a path to read one branch; a grid read this way lists its rows and the buttons in them. Sibling controls that read alike are listed once; setting the one shown sets both. A path may start with a window from ui_windows.")]
 		public static string UiRead([Description("Element path from an earlier ui_read; omit for the whole window.")] string path = null)
 		{
