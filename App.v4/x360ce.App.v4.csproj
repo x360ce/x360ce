@@ -107,6 +107,7 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
+    <Compile Include="Common\DInput\DeviceRouting.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
@@ -364,8 +365,10 @@
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
+    <Compile Include="Issues\HidHideIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
+    <Compile Include="Issues\VirtualDriverNotWorkingIssue.cs" />
     <Compile Include="Issues\ForceFeedbackIssue.cs" />
     <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
@@ -394,12 +397,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Service\RemoteService.cs" />
+    <Compile Include="ViGEm\Client\Enums\BusAnswer.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
     <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360Controller.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360FeedbackReceivedEventArgs.cs" />
-    <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360Report.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />

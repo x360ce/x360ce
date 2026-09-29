@@ -85,7 +85,9 @@ namespace x360ce.App
 					if (recordingSnapshot == null)
 					{
 						// Make snapshot out of the first state during recording.
-						recordingSnapshot = state;
+						// A copy: the input thread fills its states again two polls after it replaces them, and a
+						// snapshot kept for the whole recording would change under it.
+						recordingSnapshot = state.Clone();
 						return false;
 					}
 					var actions = state == null
@@ -170,11 +172,49 @@ namespace x360ce.App
 						SettingsManager.Current.SetComboBoxValue(box, action);
 						// Save setting and notify if value changed.
 						SettingsManager.Current.RaiseSettingsChanged(box);
+						// A switch or a stick recorded onto a button presses it where it was moved to, which
+						// is the wrong end when it was moved the other way while recording.
+						var note = PressedPositionNote(code, action);
+						var form = MainForm.Current;
+						if (note != null && form != null)
+							form.StatusTimerLabel.Text = note;
 					}
 					//box.ForeColor = SystemColors.WindowText;
 				}
 				return stop;
 			}
+		}
+
+		/// <summary>What the status bar says once a switch, a stick or a pedal is recorded onto a button: which position of it presses the button.</summary>
+		/// <remarks>
+		/// Recording keeps the way the control was moved, so the button is pressed where the control was
+		/// moved to and released at the other end. The reading named is the one the Input column shows.
+		/// </remarks>
+		/// <param name="code">The box the control was recorded into.</param>
+		/// <param name="action">What was recorded, as the box shows it, such as "ISlider 2".</param>
+		/// <returns>The note, or null when the box is not a button or the control is not an axis or a slider.</returns>
+		public static string PressedPositionNote(MapCode code, string action)
+		{
+			var isButton = SettingsConverter.MainButtonCodes.Contains(code)
+				|| SettingsConverter.MenuButtonCodes.Contains(code)
+				|| SettingsConverter.ShoulderButtonCodes.Contains(code)
+				|| SettingsConverter.DPadDirections.Contains(code)
+				|| code == MapCode.LeftThumbButton
+				|| code == MapCode.RightThumbButton;
+			if (!isButton)
+				return null;
+			MapType type;
+			int index;
+			if (!SettingsConverter.TryParseTextValue(action, out type, out index))
+				return null;
+			if (!SettingsConverter.IsAxis(type) && !SettingsConverter.IsSlider(type))
+				return null;
+			var inverted = SettingsConverter.IsInverted(type);
+			var reading = SettingsConverter.IsHalf(type)
+				? (inverted ? "below the middle" : "above the middle")
+				: (inverted ? "low" : "high");
+			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Invert] in the box's menu.",
+				action, reading);
 		}
 
 		/// <summary>

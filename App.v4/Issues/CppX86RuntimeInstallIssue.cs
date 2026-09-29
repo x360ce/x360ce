@@ -1,9 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace x360ce.App.Issues
 {
@@ -14,31 +11,33 @@ namespace x360ce.App.Issues
 		{
 			Name = "Software";
 			FixName = "Download and Install";
-			MoreInfo = new Uri("https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist");
+			MoreInfo = new Uri(CppRuntimeDetector.LatestUrl);
+			// Microsoft's installer changes the whole machine, so Windows asks for Administrator first.
+			FixNeedsAdmin = true;
 		}
 
-		string program1 = "Microsoft Visual C++ 2015-2022 Redistributable (x86)";
+		string program1 = "Microsoft Visual C++ v14 Redistributable (x86)";
+
+		/// <summary>The installer's exit code from the last Download and Install; null until it has run.</summary>
+		int? LastExitCode;
 
 		public override void CheckTask()
 		{
 			var installed = CppRuntimeDetector.GetInstalledVersion(false) != null;
-			if (!installed)
-			{
-				SetSeverity(
-					IssueSeverity.Critical, 1,
-					string.Format("Install " + program1)
-				);
-				return;
-			}
-			SetSeverity(IssueSeverity.None);
+			string description;
+			bool troubleshoot;
+			var severity = CppRuntimeDetector.ExplainInstall(LastExitCode, installed, program1, out description, out troubleshoot);
+			var page = troubleshoot ? CppRuntimeDetector.TroubleshootUrl : CppRuntimeDetector.LatestUrl;
+			if (MoreInfo == null || MoreInfo.AbsoluteUri != page)
+				MoreInfo = new Uri(page);
+			SetSeverity(severity, 1, description);
 		}
 
 		public override void FixTask()
 		{
-			// Microsoft Visual C++ 2015-2022 Redistributable
-			var uri = new Uri("https://aka.ms/vs/17/release/vc_redist.x86.exe");
-			var localPath = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", uri.Segments.Last());
-			IssueHelper.DownloadAndInstall(uri, localPath, MoreInfo);
+			// Permalink to the latest supported Microsoft Visual C++ v14 Redistributable (Visual Studio 2017-2026).
+			var uri = new Uri("https://aka.ms/vc14/vc_redist.x86.exe");
+			LastExitCode = CppRuntimeDetector.Install(uri, new Uri(CppRuntimeDetector.LatestUrl));
 		}
 
 	}

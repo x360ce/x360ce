@@ -34,7 +34,7 @@ namespace x360ce.App.DInput
 		//
 		// Process 1
 		// limited to [125, 250, 500, 1000Hz]
-		// Lock
+		// PassLock
 		// {
 		//    Acquire:
 		//    DiDevices - when device is detected.
@@ -44,19 +44,12 @@ namespace x360ce.App.DInput
 		//	  XiStates - from converted DiStates
 		// }
 		//
-		// Process 2
-		// limited to [30Hz] (only when visible).
-		// Lock
-		// {
-		//	  DiDevices, DiCapabilities, DiStates, XiStates
-		//	  Update DInput and XInput forms.
-		// }
+		// Process 2: the window's interface timer, 10 a second in front and 5 behind, only when not minimized.
+		// It draws from the states when PassCount has moved, and takes no lock the input thread takes.
 
-		public event EventHandler<DInputEventArgs> FrequencyUpdated;
 		public event EventHandler<DInputEventArgs> DevicesUpdated;
-		public event EventHandler<DInputEventArgs> StatesUpdated;
+		/// <summary>Raised with an error when XInput does not answer: a display read not answered in time, or the controllers not let go of in time.</summary>
 		public event EventHandler<DInputEventArgs> StatesRetrieved;
-		public event EventHandler<DInputEventArgs> UpdateCompleted;
 		public event EventHandler<DInputEventArgs> XInputReloaded;
 
 		/// <summary>Set to end the wait between passes at once, when the thread is asked to stop.</summary>
@@ -121,7 +114,11 @@ namespace x360ce.App.DInput
 			if (!Monitor.TryEnter(PassLock, limit))
 				return false;
 			Monitor.Exit(PassLock);
-			ReleaseForDeviceRemoval();
+			// The pass has finished, so only a display read can hold the XInput library now, and a healthy one lets
+			// go in microseconds. Past the time XInput has to answer it is not answering, and feeding the
+			// controllers is not held up for the rest of the limit.
+			if (!ReleaseForDeviceRemoval(TimeSpan.FromMilliseconds(XiAnswerMs)))
+				return false;
 			if (!Monitor.TryEnter(SettingsManager.UserDevices.SyncRoot, limit))
 				return false;
 			try
@@ -194,16 +191,12 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public VirtualError[] VirtualErrors;
 
-		public Exception LastException = null;
-
 		/// <summary>Whether the wait between passes is timed by a high-resolution timer, for the engine log.</summary>
 		bool _pacerHighResolution;
 
 		/// <summary>Waits since the last frequency sample that ended over half an interval late, and the most any ended late by, in timestamp ticks.</summary>
 		int _lateWaits;
 		long _longestLate;
-
-		object DiUpdatesLock = new object();
 
 		/// <summary>
 		/// Method which will create separate thread which will do all DInput and XInput updates.
@@ -218,6 +211,9 @@ namespace x360ce.App.DInput
 			_Thread.IsBackground = true;
 			_Thread.Start();
 		}
+
+		/// <summary>The kind of exception the last failed pass threw, so a pass failing the same way is written once. Input thread only.</summary>
+		Type _passFault;
 
 		void ThreadAction()
 		{
@@ -249,14 +245,23 @@ namespace x360ce.App.DInput
 						try
 						{
 							if (!Suspended)
+							{
 								RefreshAll(manager, detector);
+								// A pass that went through: the next failure is news.
+								_passFault = null;
+							}
 						}
 						catch (Exception ex)
 						{
 							// One failed update must not end the thread. Losing it stops all
 							// device polling and virtual feeding while the window stays alive.
-							LastException = ex;
-							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+							// Written when it is news: a pass failing the same way a thousand times a second would fill
+							// the log and the error reports.
+							if (_passFault != ex.GetType())
+							{
+								_passFault = ex.GetType();
+								JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+							}
 						}
 						finally
 						{
@@ -276,7 +281,6 @@ namespace x360ce.App.DInput
 			}
 			catch (Exception ex)
 			{
-				LastException = ex;
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 			}
 			finally
@@ -315,53 +319,51 @@ namespace x360ce.App.DInput
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			var passStarted = StepMark();
-			lock (DiUpdatesLock)
+			// The places the interface shows are read on a worker, only when something has
+			// changed, and never waited for here.
+			XInputPlaces.ReadWhenStale();
+			var game = SettingsManager.CurrentGame;
+			// If game is not selected.
+			if (game != null)
 			{
-				// The places the interface shows are read on a worker, only when something has
-				// changed, and never waited for here.
-				XInputPlaces.ReadWhenStale();
-				var game = SettingsManager.CurrentGame;
-				// If game is not selected.
-				if (game != null)
-				{
-					// Note: Getting XInput states are not required in order to do emulation.
-					// Get states only when form is maximized in order to reduce CPU usage.
-					var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
-					var mark = StepMark();
-					// Best place to unload XInput DLL is at the start, because
-					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-					CheckAndUnloadXInputLibrarry(game, getXInputStates);
-					StepDone(0, ref mark);
-					// Update information about connected devices.
-					UpdateDiDevices(manager);
-					StepDone(1, ref mark);
-					// Update JoystickStates from devices.
-					UpdateDiStates(manager, game, detector);
-					StepDone(2, ref mark);
-					// Update XInput states from Custom DirectInput states.
-					UpdateXiStates(game);
-					StepDone(3, ref mark);
-					// Combine XInput states of controllers.
-					CombineXiStates();
-					StepDone(4, ref mark);
-					// Update virtual devices from combined states.
-					UpdateVirtualDevices(game);
-					StepDone(5, ref mark);
-					// Load XInput library before retrieving XInput states.
-					CheckAndLoadXInputLibrary(game, getXInputStates);
-					StepDone(6, ref mark);
-					// Retrieve XInput states from XInput controllers.
-					RetrieveXiStates(game, getXInputStates);
-					StepDone(7, ref mark);
-				}
-				// Update pool frequency value every second.
-				UpdateDelayFrequency();
-				// Fire event.
-				var ev = UpdateCompleted;
-				if (ev != null)
-					ev(this, new DInputEventArgs());
-				PassDone(passStarted);
+				// Which rows each controller reads and where each device's force comes from, read once
+				// for the whole pass. The interface replaces it whole when the mappings change.
+				var routing = DeviceRouting.Current;
+				// Note: Getting XInput states are not required in order to do emulation.
+				// Get states only when form is maximized in order to reduce CPU usage.
+				var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
+				var mark = StepMark();
+				// Best place to unload XInput DLL is at the start, because
+				// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
+				CheckAndUnloadXInputLibrarry(game, getXInputStates);
+				StepDone(0, ref mark);
+				// Update information about connected devices.
+				UpdateDiDevices(manager);
+				StepDone(1, ref mark);
+				// Update JoystickStates from devices.
+				UpdateDiStates(manager, game, detector, routing);
+				StepDone(2, ref mark);
+				// Update XInput states from Custom DirectInput states.
+				UpdateXiStates(routing);
+				StepDone(3, ref mark);
+				// Combine XInput states of controllers.
+				CombineXiStates(routing);
+				StepDone(4, ref mark);
+				// Update virtual devices from combined states.
+				UpdateVirtualDevices(game);
+				StepDone(5, ref mark);
+				// Load XInput library before retrieving XInput states.
+				CheckAndLoadXInputLibrary(game, getXInputStates);
+				StepDone(6, ref mark);
+				// Retrieve XInput states from XInput controllers.
+				RetrieveXiStates(game, getXInputStates);
+				StepDone(7, ref mark);
 			}
+			// Update pool frequency value every second.
+			UpdateDelayFrequency();
+			// Counted last, so the window draws a pass that has finished.
+			Volatile.Write(ref _passCount, _passCount + 1);
+			PassDone(passStarted);
 		}
 
 		/// <summary>
@@ -374,6 +376,11 @@ namespace x360ce.App.DInput
 
 		/// <summary>Passes a second, measured over the last second.</summary>
 		public int CurrentUpdateFrequency { get { return passRate.Rate; } }
+
+		/// <summary>Passes run since the helper was made, for the window to tell whether there is anything new to draw.</summary>
+		/// <remarks>Written by the input thread only, once a pass; read by the window's timer. One field, no lock.</remarks>
+		public int PassCount { get { return Volatile.Read(ref _passCount); } }
+		int _passCount;
 
 		/// <summary>How often a pass runs. The update thread reads it before every wait, so a change applies at once.</summary>
 		public UpdateFrequency Frequency
@@ -529,12 +536,7 @@ namespace x360ce.App.DInput
 		{
 			// If one second elapsed then...
 			if (passRate.Tick())
-			{
 				LogFrequency(watch.ElapsedMilliseconds, CurrentUpdateFrequency);
-				var ev = FrequencyUpdated;
-				if (ev != null)
-					ev(this, new DInputEventArgs());
-			}
 		}
 
 		#region IDisposable
@@ -556,6 +558,9 @@ namespace x360ce.App.DInput
 					return;
 				IsDisposing = true;
 				var stopped = Stop();
+				// The display reader waits between reads; told to end, it ends at its next wake.
+				_displayReaderStop = true;
+				_displayReadWake.Set();
 				// Waited for, so the controller a plug under way makes is taken away with the rest.
 				WaitForPlugging(TimeSpan.FromSeconds(8));
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();

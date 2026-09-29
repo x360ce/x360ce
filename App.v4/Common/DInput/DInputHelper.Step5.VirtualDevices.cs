@@ -52,6 +52,8 @@ namespace x360ce.App.DInput
 					for (uint i = 1; i <= 4; i++)
 						DisableFeeding(i);
 					ViGEmClient.DisposeCurrent();
+					// Nothing is asked of the bus now, so nothing it did before is held against it.
+					ForgetBusHealth();
 				}
 				virtualModeActive = false;
 				return;
@@ -84,8 +86,9 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
-						var result = PlugOutcome(plugging);
+						var result = PlugOutcome(i, plugging);
 						VirtualErrors[i - 1] = result;
+						PlugFailures[i - 1] = NextPlugFailures(PlugFailures[i - 1], result);
 						if (result != VirtualError.None)
 						{
 							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
@@ -103,7 +106,16 @@ namespace x360ce.App.DInput
 						// places and a read of the device tree, and asked on every pass it held the whole
 						// thread to a few passes a second for as long as the places stayed full - and a
 						// wheel fed at that rate swings from side to side.
-						if (unchecked(Environment.TickCount - _NextPlugAttempt[i - 1]) < 0)
+						if (IsWaiting(_NextPlugAttempt[i - 1], Environment.TickCount, PlugRetryMs))
+							continue;
+						// Plugging in waits up to five seconds for Windows to give the controller a place
+						// and reads the device tree twice: three to four seconds a controller, measured.
+						// On this thread that stopped every controller being polled for as long, and a
+						// wheel under a spring ran to its stop. The wait is a worker's now; the answer is
+						// taken in on a later pass. One at a time: plugging in connects the lower places
+						// first, so two at once each undo the other's work and neither arrives. Asked
+						// before the places are, so a pad waiting its turn asks XInput nothing.
+						if (PlugUnderWay(false))
 							continue;
 						// Put somewhere else last time: made again only once a controller has come or gone,
 						// or it would be made and taken away every two seconds for nothing.
@@ -112,14 +124,6 @@ namespace x360ce.App.DInput
 							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
 							continue;
 						}
-						// Plugging in waits up to five seconds for Windows to give the controller a place
-						// and reads the device tree twice: three to four seconds a controller, measured.
-						// On this thread that stopped every controller being polled for as long, and a
-						// wheel under a spring ran to its stop. The wait is a worker's now; the answer is
-						// taken in on a later pass. One at a time: plugging in connects the lower places
-						// first, so two at once each undo the other's work and neither arrives.
-						if (_plugging.Any(x => x != null))
-							continue;
 						BeginPlug(i);
 						continue;
 					}
@@ -127,8 +131,17 @@ namespace x360ce.App.DInput
 					// next update can plug it in again instead of failing on every frame.
 					if (!FeedDevice(i))
 					{
+						var now = Environment.TickCount;
+						var drops = NextFeedDrops(FeedDrops[i - 1], LastFeedDropTick[i - 1], now);
+						// The time before the count, so a reader that reads the count first never pairs a new
+						// count with an old time.
+						LastFeedDropTick[i - 1] = now;
+						FeedDrops[i - 1] = drops;
 						FeedingState[i - 1] = false;
-						client.UnPlug(i);
+						// Still held by the bus when letting go fails. Asked again at once, it would be found
+						// attached and fed straight back, so it waits for the plug gate like a refused plug.
+						if (!client.UnPlug(i))
+							_NextPlugAttempt[i - 1] = unchecked(now + PlugRetryMs);
 					}
 				}
 				else
@@ -139,15 +152,22 @@ namespace x360ce.App.DInput
 						if (!plugging.IsCompleted)
 							continue;
 						_plugging[i - 1] = null;
-						PlugOutcome(plugging);
+						PlugOutcome(i, plugging);
 					}
 					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || client.IsControllerConnected(i))
 					{
+						// A controller the bus would not let go of is asked again after the plug wait, not on
+						// every pass with an exception and a fault report each time.
+						if (IsWaiting(_NextPlugAttempt[i - 1], Environment.TickCount, PlugRetryMs))
+							continue;
 						var result = DisableFeeding(i);
 						VirtualErrors[i - 1] = result;
 						if (result != VirtualError.None)
+						{
+							_NextPlugAttempt[i - 1] = unchecked(Environment.TickCount + PlugRetryMs);
 							continue;
+						}
 						FeedingState[i - 1] = false;
 					}
 				}
@@ -161,31 +181,162 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		readonly int[] _lastPassedForce = new int[] { -1, -1, -1, -1 };
 
+		/// <summary>The force each controller's game asked for last, 0 to 255 for each motor, by pad index.</summary>
+		/// <remarks>
+		/// A game says what it wants when that changes, not on every pass. A device whose force comes from
+		/// several tabs is driven by what each asked for last, so one tab speaking does not silence another.
+		/// Read and written only on the engine thread.
+		/// </remarks>
+		readonly byte[] _lastLargeMotor = new byte[4];
+		readonly byte[] _lastSmallMotor = new byte[4];
+
+		/// <summary>A bit for each pad whose controller was taken away since the last pass, so the devices it drove are told.</summary>
+		int _forcesDropped;
+
+		/// <summary>The routing the devices were last told their force by. Read and written only on the engine thread.</summary>
+		/// <remarks>
+		/// A new routing can take a tab from a device's force sources: the tab switched off, or its Force
+		/// feedback enabled switch. Nothing that tab's game says reaches the device after that, so the device
+		/// is told once, at the force of the tabs it has now, or it would go on playing the tab taken away.
+		/// </remarks>
+		DeviceRouting _forceRouting;
+
+		/// <summary>Where each pad passes its force this pass, the settings whose strengths apply, and the force for each place. Reused, not made each pass.</summary>
+		/// <remarks>The places and the settings are worked out by <see cref="ResolvePassPlaces"/>, only when they can have changed.</remarks>
+		readonly int[] _passPlaces = new int[4];
+		readonly PadSetting[] _passSettings = new PadSetting[4];
+		readonly byte[] _passLarge = new byte[4];
+		readonly byte[] _passSmall = new byte[4];
+
+		/// <summary>The routing, and the version of the XInput place table, the places each pad passes its force to were worked out from. Read and written only on the engine thread.</summary>
+		DeviceRouting _passRouting;
+		int _passVersion;
+
+		/// <summary>Works out where each pad passes its force, when the routing or the XInput place table changed since the last time.</summary>
+		/// <remarks>
+		/// Neither changes on most passes, and then this is two compares. The routing is new when the settings,
+		/// the game or the devices listed change, and the table when the places are read again after a device
+		/// came or went.
+		/// </remarks>
+		/// <param name="routing">The routing of this pass.</param>
+		/// <param name="version">The table's <see cref="XInputPlaces.Version"/>, read before the table.</param>
+		/// <param name="places">The table, as <see cref="XInputPlaces.Current"/> holds it.</param>
+		public void ResolvePassPlaces(DeviceRouting routing, int version, IReadOnlyDictionary<string, int> places)
+		{
+			if (routing == _passRouting && version == _passVersion)
+				return;
+			_passRouting = routing;
+			_passVersion = version;
+			for (var pad = 0; pad < _passPlaces.Length; pad++)
+				_passPlaces[pad] = routing.PassThroughPlace(pad, places, out _passSettings[pad]);
+		}
+
+		/// <summary>Keeps the newest force each pad's game asked for.</summary>
+		/// <param name="feedbacks">What each pad's game asked for this pass, or null for nothing new; by pad index.</param>
+		/// <param name="lastLarge">The large motor each pad's game asked for last; updated.</param>
+		/// <param name="lastSmall">The small motor each pad's game asked for last; updated.</param>
+		/// <returns>A bit for each pad whose game asked for something this pass.</returns>
+		public static int KeepForces(Xbox360FeedbackReceivedEventArgs[] feedbacks, byte[] lastLarge, byte[] lastSmall)
+		{
+			var arrived = 0;
+			for (var pad = 0; pad < feedbacks.Length && pad < lastLarge.Length; pad++)
+			{
+				var force = feedbacks[pad];
+				if (force == null)
+					continue;
+				lastLarge[pad] = force.LargeMotor;
+				lastSmall[pad] = force.SmallMotor;
+				arrived |= 1 << pad;
+			}
+			return arrived;
+		}
+
+		/// <summary>The force for a device whose force comes from these pads: the strongest of each motor, each pad at what its game asked for last.</summary>
+		/// <param name="pads">The pad indexes the force comes from.</param>
+		/// <param name="arrived">A bit for each pad with something new this pass.</param>
+		/// <param name="lastLarge">The large motor each pad's game asked for last.</param>
+		/// <param name="lastSmall">The small motor each pad's game asked for last.</param>
+		/// <param name="large">The large motor to play.</param>
+		/// <param name="small">The small motor to play.</param>
+		/// <returns>True when one of the pads has something new this pass, so the device is told.</returns>
+		public static bool MergeForces(int[] pads, int arrived, byte[] lastLarge, byte[] lastSmall, out byte large, out byte small)
+		{
+			var changed = false;
+			large = 0;
+			small = 0;
+			for (var i = 0; i < pads.Length; i++)
+			{
+				var pad = pads[i];
+				if ((arrived & (1 << pad)) != 0)
+					changed = true;
+				if (lastLarge[pad] > large)
+					large = lastLarge[pad];
+				if (lastSmall[pad] > small)
+					small = lastSmall[pad];
+			}
+			return changed;
+		}
+
+		/// <summary>The force to pass on to each XInput place: the strongest of each motor over the pads passing to it, each pad at what its game asked for last and at its own strengths.</summary>
+		/// <param name="places">The place each pad passes its force to, 0 to 3, or -1 for none; by pad index.</param>
+		/// <param name="settings">The settings whose strengths apply to each pad's force; by pad index.</param>
+		/// <param name="arrived">A bit for each pad with something new this pass.</param>
+		/// <param name="lastLarge">The large motor each pad's game asked for last.</param>
+		/// <param name="lastSmall">The small motor each pad's game asked for last.</param>
+		/// <param name="large">The large motor for each place; written for the places returned.</param>
+		/// <param name="small">The small motor for each place; written for the places returned.</param>
+		/// <returns>A bit for each place with something new to send. Two pads passing to one place are one force there.</returns>
+		public static int MergePassedForces(int[] places, PadSetting[] settings, int arrived, byte[] lastLarge, byte[] lastSmall, byte[] large, byte[] small)
+		{
+			var changed = 0;
+			for (var pad = 0; pad < places.Length; pad++)
+				if (places[pad] >= 0 && places[pad] < 4 && (arrived & (1 << pad)) != 0)
+					changed |= 1 << places[pad];
+			// Nothing new for any place: what was sent last still stands, and the motors are still doing it.
+			if (changed == 0)
+				return 0;
+			for (var place = 0; place < large.Length; place++)
+			{
+				large[place] = 0;
+				small[place] = 0;
+			}
+			for (var pad = 0; pad < places.Length; pad++)
+			{
+				var place = places[pad];
+				if (place < 0 || place > 3 || (changed & (1 << place)) == 0)
+					continue;
+				// The strengths apply here as much as anywhere. Nothing further along applies them: a
+				// controller's own motors are driven by the driver, which knows nothing of this program's settings.
+				var l = settings[pad].ApplyForceStrength(lastLarge[pad], true);
+				var s = settings[pad].ApplyForceStrength(lastSmall[pad], false);
+				if (l > large[place])
+					large[place] = l;
+				if (s > small[place])
+					small[place] = s;
+			}
+			return changed;
+		}
+
 		/// <summary>Sends the force a game asked for on to a real controller, where that is wanted.</summary>
 		/// <remarks>
 		/// An emulated controller has no motors. A game rumbling one reaches nothing, and on an Xbox
 		/// controller there is no other way in: its DirectInput face declares no force feedback at all,
 		/// so the force feedback this program drives itself cannot reach it either.
+		///
+		/// Tabs passing their force to one place are merged there, the strongest of each motor.
 		/// </remarks>
-		void PassForcesThrough(Xbox360FeedbackReceivedEventArgs[] feedbacks)
+		/// <param name="routing">The routing of this pass.</param>
+		/// <param name="arrived">A bit for each pad with something new this pass.</param>
+		public void PassForcesThrough(DeviceRouting routing, int arrived)
 		{
-			for (var pad = 1; pad <= 4; pad++)
-			{
-				PadSetting ps;
-				var place = AppHelper.GetForcePassThroughPlace((MapTo)pad, out ps);
-				if (place < 0)
-					continue;
-				var force = feedbacks[pad - 1];
-				// Nothing new to say. The last thing sent still stands, and the motors are still doing it.
-				if (force == null)
-					continue;
-				// The strengths apply here as much as anywhere. Nothing further along applies them: a
-				// controller's own motors are driven by the driver, which knows nothing of this program's
-				// settings, so a strength turned down had no effect on this route at all.
-				PassForceTo(place,
-					ps.ApplyForceStrength(force.LargeMotor, true),
-					ps.ApplyForceStrength(force.SmallMotor, false));
-			}
+			// No tab passes its force on: nothing to work out, merge or send.
+			if (!routing.PassesForceThrough)
+				return;
+			ResolvePassPlaces(routing, XInputPlaces.Version, XInputPlaces.Current);
+			var places = MergePassedForces(_passPlaces, _passSettings, arrived, _lastLargeMotor, _lastSmallMotor, _passLarge, _passSmall);
+			for (var place = 0; place < 4; place++)
+				if ((places & (1 << place)) != 0)
+					PassForceTo(place, _passLarge[place], _passSmall[place]);
 		}
 
 		/// <summary>Sends one force to one place, and only when it differs from the last.</summary>
@@ -216,46 +367,50 @@ namespace x360ce.App.DInput
 					PassForceTo(place, 0, 0);
 		}
 
-		object FeedbackLock = new object();
+		/// <summary>What each pad's game asked for since the last pass, by pad index, or null for nothing new. Reserved here and filled on every pass.</summary>
+		readonly Xbox360FeedbackReceivedEventArgs[] _feedbacks = new Xbox360FeedbackReceivedEventArgs[4];
 
-		Xbox360FeedbackReceivedEventArgs[] CopyAndClearFeedbacks()
+		/// <summary>Takes what each pad's game asked for since the last pass, and clears it so it is taken once.</summary>
+		/// <remarks>
+		/// The bus's notification thread and the Test sliders on the interface thread each write one reference. Each
+		/// slot is taken and cleared in one atomic step, so nothing written between the two is lost, and no lock is
+		/// shared with either writer.
+		/// </remarks>
+		/// <returns>The engine's own array, filled again on the next call. Read and written only on the engine thread.</returns>
+		public Xbox360FeedbackReceivedEventArgs[] CopyAndClearFeedbacks()
 		{
-			lock (FeedbackLock)
-			{
-				var client = ViGEmClient.Current;
-				if (client == null)
-					return new Xbox360FeedbackReceivedEventArgs[4];
-				var list = client.Feedbacks.ToArray();
-				for (int i = 0; i < 4; i++)
-				{
-					client.Feedbacks[i] = null;
-				}
-				return list;
-			}
+			var client = ViGEmClient.Current;
+			for (var i = 0; i < _feedbacks.Length; i++)
+				_feedbacks[i] = client == null ? null : System.Threading.Interlocked.Exchange(ref client.Feedbacks[i], null);
+			return _feedbacks;
 		}
 
+		/// <summary>Asks for a force on one pad, as the Test sliders do: it arrives where a game's rumble arrives.</summary>
 		public void SetVibration(MapTo userIndex, byte largeMotor, byte smallMotor, byte ledNumber)
 		{
+			// Read once: the engine can let the client go at any moment.
 			var client = ViGEmClient.Current;
 			if (client == null)
 				return;
 			var e = new Xbox360FeedbackReceivedEventArgs(largeMotor, smallMotor, ledNumber);
-			ViGEmClient.Current.Feedbacks[(int)userIndex - 1] = e;
+			System.Threading.Volatile.Write(ref client.Feedbacks[(int)userIndex - 1], e);
 		}
 
 		private void Controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
 		{
-			lock (FeedbackLock)
+			// Read once: the engine can let the client go at any moment.
+			var client = ViGEmClient.Current;
+			var targets = client == null ? null : client.Targets;
+			if (targets == null)
+				return;
+			var controller = (Xbox360Controller)sender;
+			for (int i = 0; i < 4; i++)
 			{
-				var controller = (Xbox360Controller)sender;
-				for (int i = 0; i < 4; i++)
+				if (targets[i] == controller)
 				{
-					if (ViGEmClient.Current.Targets[i] == controller)
-					{
-						// Add force feedback value for processing.
-						ViGEmClient.Current.Feedbacks[i] = e;
-						break;
-					}
+					// Add force feedback value for processing.
+					System.Threading.Volatile.Write(ref client.Feedbacks[i], e);
+					break;
 				}
 			}
 		}
@@ -273,6 +428,19 @@ namespace x360ce.App.DInput
 			return plugging;
 		}
 
+		/// <summary>Whether a plug is under way on a worker; with <paramref name="unfinishedOnly"/>, only one that has not finished counts.</summary>
+		/// <remarks>Asked on every pass while a controller is wanted and a plug runs, so it reads the reserved array and makes nothing.</remarks>
+		bool PlugUnderWay(bool unfinishedOnly)
+		{
+			for (var i = 0; i < _plugging.Length; i++)
+			{
+				var plugging = _plugging[i];
+				if (plugging != null && (!unfinishedOnly || !plugging.IsCompleted))
+					return true;
+			}
+			return false;
+		}
+
 		/// <summary>Takes in every finished plug and forgets it. False, with nothing taken in, while one is still under way.</summary>
 		/// <remarks>
 		/// The bus is never let go of while a plug is under way. The plug would win that race: its
@@ -282,13 +450,13 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		bool SettlePlugging()
 		{
-			if (_plugging.Any(x => x != null && !x.IsCompleted))
+			if (PlugUnderWay(true))
 				return false;
 			for (var i = 0; i < _plugging.Length; i++)
 			{
 				if (_plugging[i] == null)
 					continue;
-				PlugOutcome(_plugging[i]);
+				PlugOutcome((uint)i + 1, _plugging[i]);
 				_plugging[i] = null;
 			}
 			return true;
@@ -309,17 +477,38 @@ namespace x360ce.App.DInput
 			SettlePlugging();
 		}
 
-		/// <summary>What a finished plug came to, with a fault written to the log.</summary>
+		/// <summary>The kind of exception, and the bus's answer, each controller's last faulted plug threw.</summary>
+		/// <remarks>
+		/// Reserved here, so nothing is made per attempt. Read and written through
+		/// <see cref="ViGEmClient.NoteFault"/> in <see cref="PlugOutcome"/>, on the input thread, and by
+		/// <see cref="Dispose(bool)"/> when the program closes, after the input thread is stopped. Cleared by
+		/// <see cref="ForgetBusHealth"/>, on the same threads as <see cref="BusErrors"/>.
+		/// </remarks>
+		readonly Type[] PlugOutcomeFaults = new Type[4];
+		readonly VIGEM_ERROR[] PlugOutcomeFaultCodes = new VIGEM_ERROR[4];
+
+		/// <summary>What a finished plug came to, with a fault written to the log when it is news.</summary>
+		/// <param name="userIndex">The pad, 1 to 4.</param>
+		/// <param name="plugging">The finished plug.</param>
 		/// <remarks>
 		/// Every place a finished plug is let go of reads it through here. A faulted task nobody reads
 		/// is raised again by the finalizer as an unobserved exception, and that reached the person as
 		/// a crash report about a controller that was simply switched off.
+		///
+		/// A fault is written once per change for each controller, by the rule plugging in and letting go
+		/// use. The plug gate tries again every few seconds, and the same fault written each time would bury
+		/// the log. A plug that did not fault clears the record, so a fault after it is written again.
 		/// </remarks>
-		static VirtualError PlugOutcome(System.Threading.Tasks.Task<VirtualError> plugging)
+		public VirtualError PlugOutcome(uint userIndex, System.Threading.Tasks.Task<VirtualError> plugging)
 		{
 			if (!plugging.IsFaulted)
+			{
+				ViGEmClient.NoteFault(PlugOutcomeFaults, PlugOutcomeFaultCodes, userIndex, null);
 				return plugging.Result;
-			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(plugging.Exception.GetBaseException());
+			}
+			var fault = plugging.Exception.GetBaseException();
+			if (ViGEmClient.NoteFault(PlugOutcomeFaults, PlugOutcomeFaultCodes, userIndex, fault))
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(fault);
 			return VirtualError.Other;
 		}
 
@@ -328,6 +517,106 @@ namespace x360ce.App.DInput
 		/// <summary>How long a refused controller waits before asking for a place again.</summary>
 		public const int PlugRetryMs = 2000;
 
+		/// <summary>The last failure the bus answered each controller with, from a plug or a refused report.</summary>
+		/// <remarks>
+		/// VIGEM_ERROR_NONE until one fails. Written by the plug worker and by the input thread, never both at
+		/// once for one controller: reports are sent only while no plug of that controller is under way.
+		/// Cleared by <see cref="ForgetBusHealth"/>, on the input thread when a game leaves virtual emulation
+		/// and on the thread that calls <see cref="ResumeAfterDeviceRemoval"/> before the input thread
+		/// resumes. Read without a lock by the Issues tab's <see cref="Issues.VirtualDriverNotWorkingIssue"/>,
+		/// which names it.
+		/// </remarks>
+		public readonly VIGEM_ERROR[] BusErrors =
+		{
+			VIGEM_ERROR.VIGEM_ERROR_NONE, VIGEM_ERROR.VIGEM_ERROR_NONE,
+			VIGEM_ERROR.VIGEM_ERROR_NONE, VIGEM_ERROR.VIGEM_ERROR_NONE,
+		};
+
+		/// <summary>The kind of exception, and the bus's answer, each controller's last failed send or refused report written to the log gave.</summary>
+		/// <remarks>
+		/// Read and written through <see cref="ViGEmClient.NoteFault(Type[], VIGEM_ERROR[], uint, Exception)"/>,
+		/// so a failure is written when it differs from the last one for that controller, never on every try.
+		/// Reserved here, so nothing is made per pass. Written by the input thread only, and cleared there by a
+		/// report the bus takes. Cleared by <see cref="ForgetBusHealth"/>, on the same threads as <see cref="BusErrors"/>.
+		/// </remarks>
+		readonly Type[] FeedFaults = new Type[4];
+		readonly VIGEM_ERROR[] FeedFaultCodes = new VIGEM_ERROR[4];
+
+		/// <summary>Plugs of each controller in a row that failed while its own XInput place was free.</summary>
+		/// <remarks>
+		/// Written by the input thread when a plug is taken in; see <see cref="NextPlugFailures"/>. Cleared by
+		/// <see cref="ForgetBusHealth"/>, on the same threads as <see cref="BusErrors"/>. Read without a lock
+		/// by the Issues tab.
+		/// </remarks>
+		public readonly int[] PlugFailures = new int[4];
+
+		/// <summary>Reports to each controller the bus refused in a row, each within <see cref="FeedDropWindowMs"/> of the one before.</summary>
+		/// <remarks>
+		/// Written by the input thread after <see cref="LastFeedDropTick"/>, so a reader that reads this first
+		/// never pairs a new count with an old time. Cleared by <see cref="ForgetBusHealth"/>, on the same
+		/// threads as <see cref="BusErrors"/>. Read without a lock by the Issues tab.
+		/// </remarks>
+		public readonly int[] FeedDrops = new int[4];
+
+		/// <summary><see cref="Environment.TickCount"/> at each controller's last refused report.</summary>
+		/// <remarks>Written by the input thread only, before <see cref="FeedDrops"/>. Read without a lock by the Issues tab, after the count.</remarks>
+		public readonly int[] LastFeedDropTick = new int[4];
+
+		/// <summary>How close together refused reports must come to count as one run.</summary>
+		/// <remarks>
+		/// A refused report unplugs the controller, and a worker plugs it in again in three to four
+		/// seconds. A bus that keeps refusing therefore refuses about every five seconds while the pad
+		/// is in use. Thirty seconds holds several of those cycles, so a short pause in play does not
+		/// break the run. A single drop an hour after the last one, which is what a driver update
+		/// does, starts a new run of one.
+		/// </remarks>
+		public const int FeedDropWindowMs = 30000;
+
+		/// <summary>Plugs failed in a row in a free place, after one more plug has finished.</summary>
+		/// <remarks>
+		/// Only an attempt the bus took part in counts. A refusal (Other) and a controller the bus
+		/// accepted but Windows never built (PlaceNotGiven) are the bus failing. A controller that
+		/// arrived, even in the wrong place, is the bus working. A taken place or a missing client never
+		/// reached the bus, so they leave the count as it was.
+		/// </remarks>
+		public static int NextPlugFailures(int failures, VirtualError result)
+		{
+			switch (result)
+			{
+				case VirtualError.None:
+				case VirtualError.PlaceWrong:
+					return 0;
+				case VirtualError.Other:
+				case VirtualError.PlaceNotGiven:
+					return failures + 1;
+				default:
+					return failures;
+			}
+		}
+
+		/// <summary>The run of refused reports after one more, given when the one before it came.</summary>
+		public static int NextFeedDrops(int drops, int lastDropTick, int now)
+		{
+			return drops > 0 && IsRecent(lastDropTick, now, FeedDropWindowMs) ? drops + 1 : 1;
+		}
+
+		/// <summary>Forgets what the bus did to each controller, so what it does next is judged afresh.</summary>
+		void ForgetBusHealth()
+		{
+			for (var i = 0; i < 4; i++)
+			{
+				BusErrors[i] = VIGEM_ERROR.VIGEM_ERROR_NONE;
+				FeedFaults[i] = null;
+				PlugOutcomeFaults[i] = null;
+				PlugFailures[i] = 0;
+				FeedDrops[i] = 0;
+			}
+			// The client outlives a Repair, and so would its record of each failed plug and unplug.
+			var client = ViGEmClient.Current;
+			if (client != null)
+				client.ForgetFaults();
+		}
+
 		/// <summary>Lets go of every controller, so Windows is able to remove one.</summary>
 		/// <remarks>
 		/// Windows will not remove a device that anything still holds open, and this program is the
@@ -335,16 +624,36 @@ namespace x360ce.App.DInput
 		/// removal was therefore refused every time, and each refusal left Windows needing a restart
 		/// before it would finish building any new controller - so pressing Remove broke the very
 		/// thing it was meant to repair, and said nothing.
+		///
+		/// The XInput library is let go of under <see cref="SharpDX.XInput.Controller.XInputLock"/>, which the display
+		/// reader holds while XInput answers. A read that does not come back holds it until it does, so the wait has
+		/// a limit. Past it nothing is let go of, the input thread goes on, and the person is told XInput is not
+		/// answering.
 		/// </remarks>
-		public void ReleaseForDeviceRemoval()
+		/// <param name="limit">How long to wait for the XInput library to be free.</param>
+		/// <returns>False when XInput did not answer in time, and nothing was let go of.</returns>
+		public bool ReleaseForDeviceRemoval(TimeSpan limit)
 		{
 			// A controller passed force feedback is buzzing under its own power; taking an emulated one
 			// away does not stop it, and nothing else will.
 			StopPassedForces();
 			Suspended = true;
-			lock (SharpDX.XInput.Controller.XInputLock)
+			if (!System.Threading.Monitor.TryEnter(SharpDX.XInput.Controller.XInputLock, limit))
+			{
+				Suspended = false;
+				NoteReleaseRefused();
+				return false;
+			}
+			try
+			{
 				if (SharpDX.XInput.Controller.IsLoaded)
 					SharpDX.XInput.Controller.FreeLibrary();
+			}
+			finally
+			{
+				System.Threading.Monitor.Exit(SharpDX.XInput.Controller.XInputLock);
+			}
+			_releaseRefused = false;
 			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
 			if (client != null && client.Targets != null)
 				for (uint i = 1; i <= 4; i++)
@@ -354,6 +663,32 @@ namespace x360ce.App.DInput
 				// Nothing of ours holds a place now, so no note of one should outlive this.
 				XInputPlaces.Forget();
 				XInputPlaces.Invalidate();
+			return true;
+		}
+
+		/// <summary>What the person is told when the controllers could not be let go of because XInput did not answer.</summary>
+		public const string XInputNotAnswering =
+			"XInput is not answering, so the controllers could not be let go of. Try again in a moment.";
+
+		/// <summary>Whether the last attempt to let go of the controllers gave up, so the log says so once until one works.</summary>
+		bool _releaseRefused;
+
+		/// <summary>Tells the window, and the log once per change, that XInput did not answer in time.</summary>
+		/// <remarks>
+		/// Said through <see cref="StatesRetrieved"/>, the way a display read that does not answer is said, so it
+		/// reaches the window's header from whichever worker asked.
+		/// </remarks>
+		void NoteReleaseRefused()
+		{
+			if (!_releaseRefused)
+			{
+				_releaseRefused = true;
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(XInputNotAnswering,
+					System.Diagnostics.EventLogEntryType.Warning);
+			}
+			var ev = StatesRetrieved;
+			if (ev != null)
+				ev(this, new DInputEventArgs(new Exception(XInputNotAnswering)));
 		}
 
 		/// <summary>Picks the controllers back up after a removal.</summary>
@@ -365,17 +700,20 @@ namespace x360ce.App.DInput
 				FeedingState[i] = null;
 				_NextPlugAttempt[i] = Environment.TickCount;
 			}
+			// A bus just repaired, or controllers just removed, are judged on what happens from now on.
+			// Written here while the input thread is still suspended, as the lines above are.
+			ForgetBusHealth();
 			UpdateDevicesEnabled = true;
 			Suspended = false;
 		}
 
 		Gamepad[] oldGamepadStates = new Gamepad[4];
 
-		bool IsGuideDown;
-		object guideLock = new object();
+		/// <summary>Whether the guide button is held, by pad index. Reserved up front: one flag per pad, not one shared by all four.</summary>
+		readonly bool[] IsGuideDown = new bool[4];
 
 		/// <summary>Send the combined state to the virtual controller.</summary>
-		/// <returns>False when the report could not be delivered to the virtual bus.</returns>
+		/// <returns>False when the bus refused the report or it could not be sent; the caller lets the controller go.</returns>
 		public bool FeedDevice(uint i)
 		{
 			// Get old and new game pad values.
@@ -390,70 +728,38 @@ namespace x360ce.App.DInput
 				n.RightThumbX != o.RightThumbX ||
 				n.RightThumbY != o.RightThumbY ||
 				n.RightTrigger != o.RightTrigger;
-			// The report is built only when there is something to send. Built on every pass, it would cost a
-			// new report and thirty boxed flags a controller a millisecond, nearly all of them thrown away.
+			// A report is sent only when there is something new to say, which also keeps the bus from
+			// being asked a thousand times a second a controller for nothing.
 			if (!changed)
 				return true;
-			var report = new Xbox360Report();
-			report.SetButtonState(Xbox360Buttons.A, n.Buttons.HasFlag(GamepadButtonFlags.A));
-			report.SetButtonState(Xbox360Buttons.B, n.Buttons.HasFlag(GamepadButtonFlags.B));
-			report.SetButtonState(Xbox360Buttons.X, n.Buttons.HasFlag(GamepadButtonFlags.X));
-			report.SetButtonState(Xbox360Buttons.Y, n.Buttons.HasFlag(GamepadButtonFlags.Y));
-			report.SetButtonState(Xbox360Buttons.Start, n.Buttons.HasFlag(GamepadButtonFlags.Start));
-			report.SetButtonState(Xbox360Buttons.Back, n.Buttons.HasFlag(GamepadButtonFlags.Back));
-			report.SetButtonState(Xbox360Buttons.LeftThumb, n.Buttons.HasFlag(GamepadButtonFlags.LeftThumb));
-			report.SetButtonState(Xbox360Buttons.RightThumb, n.Buttons.HasFlag(GamepadButtonFlags.RightThumb));
-			report.SetButtonState(Xbox360Buttons.LeftShoulder, n.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder));
-			report.SetButtonState(Xbox360Buttons.RightShoulder, n.Buttons.HasFlag(GamepadButtonFlags.RightShoulder));
-			report.SetButtonState(Xbox360Buttons.Up, n.Buttons.HasFlag(GamepadButtonFlags.DPadUp));
-			report.SetButtonState(Xbox360Buttons.Right, n.Buttons.HasFlag(GamepadButtonFlags.DPadRight));
-			report.SetButtonState(Xbox360Buttons.Down, n.Buttons.HasFlag(GamepadButtonFlags.DPadDown));
-			report.SetButtonState(Xbox360Buttons.Left, n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft));
-			report.SetButtonState(Xbox360Buttons.Guide, n.Buttons.HasFlag(GamepadButtonFlags.Guide));
-			report.SetAxis(Xbox360Axes.LeftTrigger, n.LeftTrigger);
-			report.SetAxis(Xbox360Axes.RightTrigger, n.RightTrigger);
-			report.SetAxis(Xbox360Axes.LeftThumbX, n.LeftThumbX);
-			report.SetAxis(Xbox360Axes.LeftThumbY, n.LeftThumbY);
-			report.SetAxis(Xbox360Axes.RightThumbX, n.RightThumbX);
-			report.SetAxis(Xbox360Axes.RightThumbY, n.RightThumbY);
-			// Update controller.
+			VIGEM_ERROR answer;
 			try
 			{
-				ViGEmClient.Current.Targets[i - 1].SendReport(report);
+				answer = ViGEmClient.Current.Targets[i - 1].SendReport(ToReport(n));
 			}
-			catch (Nefarius.ViGEm.Client.ViGEmException ex)
-				when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
-					|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+			catch (Exception ex)
 			{
-				// The controller went away underneath us, which happens when the bus drops one - a driver
-				// update, most often. It is put back on the next pass and nobody sees anything. Saying so
-				// is worth a line in the log and not a fault report to somebody who cannot act on it.
+				// A send that cannot be made is a refusal with no answer. It is written once while the same
+				// kind repeats, and the controller is let go of like any refusal, so the plug wait paces the
+				// next try and the other controllers are still fed on this pass.
+				if (ViGEmClient.NoteFault(FeedFaults, FeedFaultCodes, i, ex))
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 				return false;
 			}
-			catch (System.Exception ex)
-			{
-				// The virtual bus can drop a target while a game is running, for example
-				// when the driver is updated. Report the failure instead of letting it
-				// escape into the update loop and stop the controller thread.
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			if (!ReportTaken(BusErrors, FeedFaults, FeedFaultCodes, i, answer))
 				return false;
-			}
-			lock (guideLock)
+			// Only the input thread sends reports, so the guide button each pad tracks needs no lock.
+			var isGuidePressed = (n.Buttons & GamepadButtonFlags.Guide) != 0;
+			var pressed = GuideChanged(IsGuideDown, i, isGuidePressed);
+			if (pressed.HasValue)
 			{
-				var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
-				if (isGuidePressed && !IsGuideDown)
+				var keys = GuideKeys(SettingsManager.Options.GuideButtonAction);
+				if (keys.Length > 0)
 				{
-					var keys = GetGuideKeys();
-					if (keys.Count() > 0)
+					if (pressed.Value)
 						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
-					IsGuideDown = true;
-				}
-				if (!isGuidePressed && IsGuideDown)
-				{
-					var keys = GetGuideKeys();
-					if (keys.Count() > 0)
+					else
 						JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
-					IsGuideDown = false;
 				}
 			}
 			// Update old state.
@@ -461,11 +767,107 @@ namespace x360ce.App.DInput
 			return true;
 		}
 
-		private static Keys[] GetGuideKeys()
+		/// <summary>The report the bus takes for an XInput state.</summary>
+		/// <remarks>
+		/// The bus reads the buttons on the same bits as XInput, the guide button included, so the buttons
+		/// are copied whole. A struct, built on the stack: nothing is made for the collector.
+		/// </remarks>
+		public static XUSB_REPORT ToReport(Gamepad state)
+		{
+			return new XUSB_REPORT
+			{
+				wButtons = unchecked((ushort)state.Buttons),
+				bLeftTrigger = state.LeftTrigger,
+				bRightTrigger = state.RightTrigger,
+				sThumbLX = state.LeftThumbX,
+				sThumbLY = state.LeftThumbY,
+				sThumbRX = state.RightThumbX,
+				sThumbRY = state.RightThumbY,
+			};
+		}
+
+		/// <summary>Takes in what the bus answered a report, and says whether the report was taken.</summary>
+		/// <param name="busErrors">The last failure the bus answered each controller with, by pad index. A refusal is written here, and a report taken leaves it.</param>
+		/// <param name="faults">The kind of each controller's last failure written to the log, or null; by pad index.</param>
+		/// <param name="faultCodes">The answer of each controller's last failure written to the log; by pad index.</param>
+		/// <param name="userIndex">The pad, 1 to 4.</param>
+		/// <param name="answer">What the bus answered.</param>
+		/// <returns>True when the bus took the report.</returns>
+		/// <remarks>
+		/// Read on every changed report, so it compares numbers and writes one only when it is set. A refusal
+		/// goes to the log by <see cref="ViGEmClient.NoteFault(Type[], VIGEM_ERROR[], uint, Type, VIGEM_ERROR)"/>'s
+		/// rule: a bus that goes on refusing does so every few seconds while the controller is made again, and a
+		/// line each time would bury the log. A report taken clears the log's record, so a refusal after it is
+		/// written again, while the Issues tab keeps naming the last one. The caller lets the controller go, and
+		/// the plug wait decides when it is made again. A controller that went away is logged as information;
+		/// any other refusal is a warning.
+		/// </remarks>
+		public static bool ReportTaken(VIGEM_ERROR[] busErrors, Type[] faults, VIGEM_ERROR[] faultCodes, uint userIndex, VIGEM_ERROR answer)
+		{
+			var meaning = BusAnswers.Of(answer);
+			if (meaning == BusAnswer.Fine)
+			{
+				if (faults[userIndex - 1] != null)
+					ViGEmClient.NoteFault(faults, faultCodes, userIndex, null);
+				return true;
+			}
+			busErrors[userIndex - 1] = answer;
+			if (ViGEmClient.NoteFault(faults, faultCodes, userIndex, typeof(ViGEmException), answer))
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
+					"Virtual controller " + userIndex + ": the bus refused its report: " + BusAnswers.Name(answer) + ".",
+					meaning == BusAnswer.Gone
+						? System.Diagnostics.EventLogEntryType.Information
+						: System.Diagnostics.EventLogEntryType.Warning);
+			return false;
+		}
+
+		/// <summary>Whether the guide button freshly changed for one pad, updating that pad's held flag to match.</summary>
+		/// <param name="isGuideDown">Each pad's held state, by pad index; the pad's own entry is written here.</param>
+		/// <param name="userIndex">The pad, 1 to 4.</param>
+		/// <param name="isGuidePressed">Whether the guide bit is set in this report.</param>
+		/// <returns>True when freshly pressed, false when freshly released, null when the pad's held state did not change.</returns>
+		public static bool? GuideChanged(bool[] isGuideDown, uint userIndex, bool isGuidePressed)
+		{
+			var i = userIndex - 1;
+			if (isGuidePressed && !isGuideDown[i])
+			{
+				isGuideDown[i] = true;
+				return true;
+			}
+			if (!isGuidePressed && isGuideDown[i])
+			{
+				isGuideDown[i] = false;
+				return false;
+			}
+			return null;
+		}
+
+		/// <summary>The keys the guide button presses, read from the option's text once per change of it.</summary>
+		/// <remarks>
+		/// Asked on every press and release, on the input thread. The same text answers the same array, so a press
+		/// makes nothing; a changed text is read once.
+		/// </remarks>
+		/// <param name="text">The option, such as "{7}{LWin}", or null.</param>
+		public static Keys[] GuideKeys(string text)
+		{
+			if (!ReferenceEquals(text, _guideKeysText))
+			{
+				_guideKeys = ParseGuideKeys(text);
+				_guideKeysText = text;
+			}
+			return _guideKeys;
+		}
+
+		static string _guideKeysText;
+		static Keys[] _guideKeys = new Keys[0];
+
+		/// <summary>Reads keys written as numbers or names in braces.</summary>
+		static Keys[] ParseGuideKeys(string text)
 		{
 			var list = new List<Keys>();
-			var keys = SettingsManager.Options.GuideButtonAction;
-			var matches = rxKeys.Matches(keys);
+			if (string.IsNullOrEmpty(text))
+				return list.ToArray();
+			var matches = rxKeys.Matches(text);
 			foreach (Match m in matches)
 			{
 				var s = m.Groups["key"].Value;
@@ -596,8 +998,15 @@ namespace x360ce.App.DInput
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.
 			var padsBefore = XInputPlaces.VirtualHardwareNow();
-			if (!client.PlugIn(userIndex))
+			VIGEM_ERROR plugError;
+			if (!client.PlugIn(userIndex, out plugError))
+			{
+				// What the bus said, so the Issues tab can name it. A refusal without an answer leaves the
+				// last one standing rather than wiping it.
+				if (plugError != VIGEM_ERROR.VIGEM_ERROR_NONE)
+					BusErrors[own] = plugError;
 				return VirtualError.Other;
+			}
 			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
 			// controller, which is not the same as Windows having given it the place we need.
 			var place = WaitForPlace(before);
@@ -646,6 +1055,11 @@ namespace x360ce.App.DInput
 				XInputPlaces.Forget(OurHardware[userIndex - 1]);
 				OurHardware[userIndex - 1] = null;
 				XInputPlaces.Invalidate();
+				// Its game is gone with it, so what that game last asked for no longer counts towards any
+				// device's force, and the devices it drove are told on the next pass.
+				_lastLargeMotor[userIndex - 1] = 0;
+				_lastSmallMotor[userIndex - 1] = 0;
+				_forcesDropped |= 1 << (int)(userIndex - 1);
 			}
 			return success
 				? VirtualError.None

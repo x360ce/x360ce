@@ -51,6 +51,8 @@ namespace x360ce.App
 					game.PropertyChanged += CurrentGame_PropertyChanged;
 				// Assing new game.
 				CurrentGame = game;
+				// The engine reads the new game's mappings from its next pass.
+				DInput.DeviceRouting.Refresh();
 				Global.DHelper.SettingsChanged = true;
 				// Nobody may be listening: the main window lets go of this event while it closes, and
 				// the foreground window keeps changing after that.
@@ -68,28 +70,37 @@ namespace x360ce.App
 		}
 
 		/// <summary>x360ce Options</summary>
+		/// <remarks>
+		/// The engine reads options several times on every pass. Once they are loaded, reading them is one field
+		/// read and takes no lock, so the engine never waits for the interface. The lock guards only the first
+		/// load, and the options are published only once loaded, so nothing reads them half made.
+		/// </remarks>
 		public static XSettingsData<Options> OptionsData
 		{
 			get
 			{
+				var data = _OptionsData;
+				if (data != null)
+					return data;
 				lock (OptionsLock)
 				{
 					if (_OptionsData == null)
 					{
-						_OptionsData = new XSettingsData<Options>("Options.xml", "x360ce Options");
-						_OptionsData.Load();
-						if (_OptionsData.Items.Count == 0)
+						data = new XSettingsData<Options>("Options.xml", "x360ce Options");
+						data.Load();
+						if (data.Items.Count == 0)
 						{
 							var o = new Options();
-							_OptionsData.Items.Add(o);
+							data.Items.Add(o);
 						}
-						_OptionsData.Items[0].InitDefaults();
+						data.Items[0].InitDefaults();
+						_OptionsData = data;
 					}
 					return _OptionsData;
 				}
 			}
 		}
-		public static XSettingsData<Options> _OptionsData;
+		public static volatile XSettingsData<Options> _OptionsData;
 
 		public static Options Options { get { return OptionsData.Items[0]; } }
 
@@ -262,6 +273,8 @@ namespace x360ce.App
 			UserDevices.Items.AsynchronousInvoke = true;
 			UserInstances.Load();
 			OptionsData.Items.SynchronizingObject = so;
+			// From here on the engine's routing follows the mappings and the settings they point at.
+			DInput.DeviceRouting.Watch();
 		}
 
 		static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
@@ -1154,12 +1167,60 @@ namespace x360ce.App
 			}
 		}
 
-		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidGuardian)
+		/// <summary>Puts devices on a controller tab of the game.</summary>
+		/// <param name="game">The game the tab belongs to.</param>
+		/// <param name="mappedTo">The tab.</param>
+		/// <param name="devices">The devices to put on it.</param>
+		/// <param name="configureHidGuardian">Whether to hide and show devices through HID Guardian to match.</param>
+		/// <param name="keep">
+		/// For a device already on another tab of the game: true leaves it there as well, on a second row that
+		/// starts with the same settings, force feedback included; false moves it here.
+		/// </param>
+		/// <remarks>
+		/// A device already on this tab stays on every tab it is on. A tab that gets its first device is
+		/// switched on, and a tab a move leaves with no device is switched off, so the game is not offered a
+		/// controller nothing drives. Two rows of one device keep their settings apart: settings are stored
+		/// by checksum, and a change on one tab gives that tab's row a new checksum.
+		/// </remarks>
+		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidGuardian, bool keep)
 		{
+			var hadDevices = GetSettings(game.FileName, mappedTo).Count > 0;
+			// The tabs a device moved away from.
+			var left = new List<MapTo>();
 			foreach (var ud in devices)
 			{
-				// Try to get existing setting by instance guid and file name.
-				var setting = GetSetting(ud.InstanceGuid, game.FileName);
+				// Every row of this device for the game, and the ones on another tab, lowest tab first.
+				var rows = GetSettings(game.FileName).Where(x => x.InstanceGuid.Equals(ud.InstanceGuid)).ToArray();
+				var here = rows.FirstOrDefault(x => x.MapTo == (int)mappedTo);
+				var elsewhere = rows
+					.Where(x => x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4 && x.MapTo != (int)mappedTo)
+					.OrderBy(x => x.MapTo)
+					.ToArray();
+				var elsewhereTabs = elsewhere.Select(x => (MapTo)x.MapTo).ToArray();
+				if (here != null)
+				{
+					// Enable if not enabled.
+					if (!here.IsEnabled)
+						here.IsEnabled = true;
+					continue;
+				}
+				if (keep && elsewhere.Length > 0)
+				{
+					// A row of the device left on no tab by an earlier move is reused before a new one is made.
+					var spare = rows.FirstOrDefault(x => x.MapTo < (int)MapTo.Controller1);
+					var copy = spare ?? AppHelper.GetNewSetting(ud, game, mappedTo);
+					if (!copy.IsEnabled)
+						copy.IsEnabled = true;
+					copy.MapTo = (int)mappedTo;
+					copy.PadSettingChecksum = elsewhere[0].PadSettingChecksum;
+					copy.Completion = elsewhere[0].Completion;
+					RefreshDeviceIsOnlineValueOnSettings(copy);
+					if (spare == null)
+						UserSettings.Add(copy);
+					continue;
+				}
+				// A row on another tab moves here with its settings; failing that, a row kept from before.
+				var setting = elsewhere.FirstOrDefault() ?? rows.FirstOrDefault();
 				// If device setting for the game was not found then.
 				if (setting == null)
 				{
@@ -1182,7 +1243,15 @@ namespace x360ce.App
 					// Map setting to current pad.
 					setting.MapTo = (int)mappedTo;
 				}
+				// Moved: off every other tab it was on.
+				foreach (var other in elsewhere)
+					if (other != setting)
+						other.MapTo = (int)MapTo.Disabled;
+				left.AddRange(elsewhereTabs);
 			}
+			if (!hadDevices && devices.Length > 0 && (game.EnableMask & (int)AppHelper.GetMapFlag(mappedTo)) == 0)
+				SetTabEnabled(game, mappedTo, true);
+			SwitchOffEmptyTabs(game, left);
 			if (configureHidGuardian)
 			{
 				var instanceGuids = devices.Select(x => x.InstanceGuid).ToArray();
@@ -1192,11 +1261,68 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>The controller tabs of a game a device is on, lowest first.</summary>
+		public static MapTo[] GetDeviceTabs(string fileName, Guid instanceGuid)
+		{
+			return GetSettings(fileName)
+				.Where(x => x.InstanceGuid.Equals(instanceGuid)
+					&& x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4)
+				.Select(x => (MapTo)x.MapTo)
+				.Distinct()
+				.OrderBy(x => x)
+				.ToArray();
+		}
+
+		/// <summary>Turns a controller tab's switch on or off for a game.</summary>
+		/// <remarks>
+		/// The first switch turned on puts the game on virtual emulation, and the last one turned off takes
+		/// it off again.
+		/// </remarks>
+		public static void SetTabEnabled(UserGame game, MapTo mapTo, bool enabled)
+		{
+			var flag = AppHelper.GetMapFlag(mapTo);
+			var value = (MapToMask)game.EnableMask;
+			var type = game.EmulationType;
+			var enableMask = enabled
+				? (int)(value | flag)
+				: (int)(value & ~flag);
+			// Update emulation type.
+			EmulationType? newType = null;
+			// If emulation enabled and game is not using virual type then...
+			if (enableMask > 0 && type != (int)EmulationType.Virtual)
+				newType = EmulationType.Virtual;
+			// If emulation disabled, but game use virtual emulation then...
+			if (enableMask == 0 && type == (int)EmulationType.Virtual)
+				newType = EmulationType.None;
+			// Set values.
+			game.EnableMask = enableMask;
+			if (newType.HasValue)
+				game.EmulationType = (int)newType.Value;
+		}
+
+		/// <summary>Switches off each of these tabs that is on and has no device of the game left on it.</summary>
+		public static void SwitchOffEmptyTabs(UserGame game, IEnumerable<MapTo> tabs)
+		{
+			foreach (var tab in tabs.Distinct())
+			{
+				var on = (game.EnableMask & (int)AppHelper.GetMapFlag(tab)) != 0;
+				if (on && GetSettings(game.FileName, tab).Count == 0)
+					SetTabEnabled(game, tab, false);
+			}
+		}
+
+		/// <summary>Takes a device's row off its controller tab of the game.</summary>
+		/// <remarks>
+		/// A tab left with no device is switched off, so the game is not offered a controller nothing
+		/// drives, and the last tab switched off takes the game off virtual emulation.
+		/// </remarks>
 		public static void UnMapGamePadDevices(UserGame game, UserSetting setting, bool configureHidGuardian)
 		{
+			var tab = setting == null ? MapTo.None : (MapTo)setting.MapTo;
 			// Disable map.
 			if (setting != null)
 				setting.MapTo = (int)MapTo.Disabled;
+			SwitchOffEmptyTabs(game, new[] { tab });
 			if (configureHidGuardian)
 			{
 				// Unhide device if no longer mapped.

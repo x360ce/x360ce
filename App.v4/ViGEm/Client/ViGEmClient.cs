@@ -9,20 +9,6 @@ namespace Nefarius.ViGEm.Client
     /// </summary>
     public partial class ViGEmClient : IDisposable
     {
-        public ViGEmClient()
-        {
-            NativeHandle = NativeMethods.vigem_alloc();
-            var error = NativeMethods.vigem_connect(NativeHandle);
-            switch (error)
-            {
-                case VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_ACCESS_FAILED:
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_VERSION_MISMATCH:
-                    throw new ViGEmException(error);
-            }
-        }
-
         /// <summary>
         ///     Gets the <see cref="PVIGEM_CLIENT"/> identifying the bus connection.
         /// </summary>

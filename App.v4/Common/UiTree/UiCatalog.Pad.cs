@@ -63,7 +63,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceFeedbackGroupBox"] = new Text("Force feedback",
 				"Vibration settings shared by both motors.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
-				"Passes vibration from the game to the device.");
+				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",
 				"Sends each motor's vibration to the other one.");
 			d["PadControl.ForceTypeComboBox"] = new Text("Effect type",

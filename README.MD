@@ -15,7 +15,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.23.59.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.24.33.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -121,7 +121,7 @@ Games that work with x360ce can be found on the [Compatibility List](https://git
   1. Windows 10 or newer.
   1. [.NET Framework 4.x](http://www.microsoft.com/en-us/download/details.aspx?id=48130) (included in Windows 10 and 11)
   1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=8109) (required regardless of OS)
-  1. [Visual C++ Redistributable 2015-2022](https://aka.ms/vs/17/release/vc_redist.x86.exe) (**for x64 systems install both x86 and x64 redistributables**)
+  1. Microsoft Visual C++ v14 Redistributable (Visual Studio 2017–2026): [x86](https://aka.ms/vc14/vc_redist.x86.exe) and [x64](https://aka.ms/vc14/vc_redist.x64.exe) (**for x64 systems install both x86 and x64 redistributables**)
 
 Notes:
   * Most game's executables are 32-bit and require x86 x360ce and also the x86 redistributable.

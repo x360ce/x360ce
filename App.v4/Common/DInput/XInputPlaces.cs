@@ -250,10 +250,21 @@ namespace x360ce.App.DInput
 		static Dictionary<string, int> _cache = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 		static HashSet<string> _madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		static HashSet<string> _madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-		static bool _stale = true;
-		/// <summary>Counts invalidations, so a read overlapping one does not clear it.</summary>
+		/// <summary>Raised by every <see cref="Invalidate"/>, with no lock.</summary>
 		static int _generation;
-		static bool _reading;
+
+		/// <summary>The <see cref="_generation"/> the last finished read started at; -1 before the first read, so the answers start out of date.</summary>
+		static int _readGeneration = -1;
+
+		/// <summary>1 while a read started by <see cref="ReadWhenStale"/> is under way.</summary>
+		static int _reading;
+
+		/// <summary>The read <see cref="ReadWhenStale"/> starts on a worker, made once.</summary>
+		static readonly Action ReadOnWorker = () =>
+		{
+			try { Read(); }
+			finally { System.Threading.Volatile.Write(ref _reading, 0); }
+		};
 
 		/// <summary>Marks the answers as out of date, so the device thread reads the machine on its next pass.</summary>
 		/// <remarks>
@@ -267,17 +278,13 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static void Invalidate()
 		{
-			lock (SyncRoot)
-			{
-				_stale = true;
-				_generation++;
-			}
+			System.Threading.Interlocked.Increment(ref _generation);
 		}
 
 		/// <summary>Whether the last answer is older than the machine.</summary>
 		public static bool IsStale
 		{
-			get { lock (SyncRoot) return _stale; }
+			get { return System.Threading.Volatile.Read(ref _readGeneration) != System.Threading.Volatile.Read(ref _generation); }
 		}
 
 		/// <summary>Reads the machine now when the answers are out of date, on the calling thread.</summary>
@@ -295,55 +302,45 @@ namespace x360ce.App.DInput
 		/// </summary>
 		public static void ReadWhenStale()
 		{
-			lock (SyncRoot)
-			{
-				if (!_stale || _reading)
-					return;
-				_reading = true;
-			}
-			System.Threading.Tasks.Task.Run(() =>
-			{
-				try { Read(); }
-				finally { lock (SyncRoot) _reading = false; }
-			});
+			// On every pass: two field reads and a compare while the answers are current, and no lock the
+			// interface takes.
+			if (!IsStale)
+				return;
+			if (System.Threading.Interlocked.CompareExchange(ref _reading, 1, 0) != 0)
+				return;
+			System.Threading.Tasks.Task.Run(ReadOnWorker);
 		}
 
-		/// <summary>The place held by whichever of these devices is known, or <see cref="Unknown"/>.</summary>
-		/// <remarks>
-		/// A controller is offered under more than one identifier - the face DirectInput reads and the
-		/// face XInput reads - and a row usually holds one of them without knowing which. Both are
-		/// tried, because both lead to the same piece of hardware and so to the same place.
 		/// <summary>Whether any of these devices was made rather than plugged in.</summary>
 		public static bool IsMadeNotPluggedIn(params string[] deviceIds)
 		{
-			return Known(deviceIds, _madeNotPluggedIn);
+			return Known(deviceIds, System.Threading.Volatile.Read(ref _madeNotPluggedIn));
 		}
 
 		/// <summary>Whether any of these devices was made by this program, which can take it away.</summary>
 		public static bool IsOneOfOurs(params string[] deviceIds)
 		{
-			return Known(deviceIds, _madeByUs);
+			return Known(deviceIds, System.Threading.Volatile.Read(ref _madeByUs));
 		}
 
+		/// <summary>Whether any of these ids is in the set.</summary>
+		/// <remarks>The sets are published whole and never changed, so they are read without a lock.</remarks>
 		static bool Known(string[] deviceIds, HashSet<string> set)
 		{
 			if (deviceIds == null)
 				return false;
-			lock (SyncRoot)
-				foreach (var id in deviceIds)
-					if (!string.IsNullOrEmpty(id) && set.Contains(id))
-						return true;
+			foreach (var id in deviceIds)
+				if (!string.IsNullOrEmpty(id) && set.Contains(id))
+					return true;
 			return false;
 		}
 
 		/// <summary>Reads the machine now. Never from the interface thread; see <see cref="Invalidate"/>.</summary>
 		public static void Read()
 		{
-			int generation;
-			lock (SyncRoot)
-				generation = _generation;
-			// The machine is read outside the lock, so a lookup from the interface is never made to
-			// wait for it; the answers are swapped in whole once they are ready.
+			var generation = System.Threading.Volatile.Read(ref _generation);
+			// The machine is read outside the lock, so nothing that takes it waits for the read; the
+			// answers are swapped in whole once they are ready.
 			Dictionary<string, int> cache = null;
 			HashSet<string> madeNotPluggedIn = null;
 			HashSet<string> madeByUs = null;
@@ -371,29 +368,84 @@ namespace x360ce.App.DInput
 					_cache = cache;
 					_madeNotPluggedIn = madeNotPluggedIn;
 					_madeByUs = madeByUs;
+					// After the table, so whoever reads the new version reads the new table.
+					System.Threading.Interlocked.Increment(ref _version);
 				}
-				// Something invalidated the answers while they were being read: they are already old.
-				_stale = _generation != generation;
+				// Current unless something invalidated the answers while they were read, which the generation it
+				// started at shows. Written under the same lock as the publish, so two overlapping reads cannot
+				// pair an older table with the newer generation.
+				System.Threading.Volatile.Write(ref _readGeneration, generation);
 			}
 		}
 
+		/// <summary>Counts the place tables <see cref="Read"/> has published.</summary>
+		static int _version;
 
+		/// <summary>The version of <see cref="Current"/>: one more with each table <see cref="Read"/> publishes. Read without a lock.</summary>
+		/// <remarks>
+		/// For the engine, which works out where force is passed on to only when this or its routing changes.
+		/// Read it before <see cref="Current"/>. The version is raised after the table is replaced, so a reader
+		/// that sees the new version sees the new table, and one that pairs the old version with the new table
+		/// works the places out again on its next pass.
+		/// </remarks>
+		public static int Version { get { return System.Threading.Volatile.Read(ref _version); } }
+
+		/// <summary>The place table <see cref="Read"/> last published: the XInput place of each device, as <see cref="Resolve()"/> answers. Read without a lock.</summary>
+		/// <remarks>Replaced whole and never changed after it is published, so it is read while the next one is made.</remarks>
+		public static IReadOnlyDictionary<string, int> Current { get { return System.Threading.Volatile.Read(ref _cache); } }
+
+		/// <summary>The place held by whichever of these devices is known, or <see cref="Unknown"/>.</summary>
+		/// <remarks>
+		/// A controller is offered under more than one identifier - the face DirectInput reads and the
+		/// face XInput reads - and a row usually holds one of them without knowing which. Both are
+		/// tried, because both lead to the same piece of hardware and so to the same place.
 		/// </remarks>
 		public static int PlaceFor(params string[] deviceIds)
 		{
-			Dictionary<string, int> places;
-			lock (SyncRoot)
-				places = _cache;
+			var places = Current;
 			if (deviceIds == null)
 				return Unknown;
 			foreach (var id in deviceIds)
 			{
-				int place;
-				if (!string.IsNullOrEmpty(id) && places.TryGetValue(id, out place) && place >= 0)
+				var place = PlaceOf(places, id);
+				if (place >= 0)
 					return place;
 			}
 			return Unknown;
 		}
+
+		/// <summary>The place a table gives either of a device's two ids, or <see cref="Unknown"/>.</summary>
+		/// <remarks>
+		/// For the engine. The two ids are named rather than passed as a list, so the call makes nothing, and
+		/// the table is handed in, so it is the one the caller read with its <see cref="Version"/>. Both ids
+		/// are tried for the reason <see cref="PlaceFor"/> gives.
+		/// </remarks>
+		/// <param name="places">The place table, as <see cref="Current"/> holds it.</param>
+		/// <param name="hidDeviceId">The id of the device's HID face, or null.</param>
+		/// <param name="devDeviceId">The id of the device itself, or null.</param>
+		public static int PlaceOf(IReadOnlyDictionary<string, int> places, string hidDeviceId, string devDeviceId)
+		{
+			var place = PlaceOf(places, hidDeviceId);
+			return place >= 0 ? place : PlaceOf(places, devDeviceId);
+		}
+
+		/// <summary>The place a table gives one id, or <see cref="Unknown"/>.</summary>
+		static int PlaceOf(IReadOnlyDictionary<string, int> places, string deviceId)
+		{
+			int place;
+			return places != null && !string.IsNullOrEmpty(deviceId) && places.TryGetValue(deviceId, out place) && place >= 0
+				? place
+				: Unknown;
+		}
+
+		/// <summary>What <see cref="Holder"/> calls a controller somebody plugged in.</summary>
+		public const string HolderReal = "Real";
+
+		/// <summary>What <see cref="Holder"/> calls a controller this program made.</summary>
+		public const string HolderVirtual = "Virtual";
+
+		/// <summary>What <see cref="Holder"/> calls a virtual controller this program did not make.</summary>
+		public const string HolderLeftover = "Leftover";
 
 		/// <summary>What is holding a place, in one word.</summary>
 		/// <remarks>
@@ -403,7 +455,66 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static string Holder(bool isVirtual, bool isOurs)
 		{
-			return !isVirtual ? "Real" : isOurs ? "Virtual" : "Leftover";
+			return !isVirtual ? HolderReal : isOurs ? HolderVirtual : HolderLeftover;
+		}
+
+		/// <summary>What the last reading of the machine found holding a place, as <see cref="Holder"/> names it, or null when nothing it could name holds it.</summary>
+		/// <remarks>
+		/// For the interface, on every tick. It reads only the answers <see cref="Read"/> last swapped in,
+		/// never the machine, and takes no lock: the answers are replaced whole rather than changed, so reading
+		/// the three references is enough. They can come from two readings a moment apart, which the next tick
+		/// puts right.
+		/// </remarks>
+		/// <param name="place">The place, counting from zero.</param>
+		public static string HolderOf(int place)
+		{
+			return HolderOf(place,
+				System.Threading.Volatile.Read(ref _cache),
+				System.Threading.Volatile.Read(ref _madeNotPluggedIn),
+				System.Threading.Volatile.Read(ref _madeByUs));
+		}
+
+		/// <summary>The same, from given answers, so it can be asked without a machine.</summary>
+		/// <remarks>
+		/// A controller is listed under its piece of hardware and under each of its faces, and only the
+		/// faces are in the lists of made controllers. So one face found virtual settles it, and a place
+		/// whose every entry was plugged in is held by a real controller.
+		/// </remarks>
+		/// <param name="place">The place, counting from zero.</param>
+		/// <param name="places">The place of each device, as <see cref="Resolve()"/> answers.</param>
+		/// <param name="madeNotPluggedIn">Faces of controllers that were made rather than plugged in.</param>
+		/// <param name="madeByUs">Faces of controllers this program made.</param>
+		public static string HolderOf(int place, Dictionary<string, int> places, HashSet<string> madeNotPluggedIn, HashSet<string> madeByUs)
+		{
+			if (places == null || place < 0 || place > 3)
+				return null;
+			string holder = null;
+			foreach (var pair in places)
+			{
+				if (pair.Value != place)
+					continue;
+				if (madeNotPluggedIn != null && madeNotPluggedIn.Contains(pair.Key))
+					return Holder(true, madeByUs != null && madeByUs.Contains(pair.Key));
+				holder = HolderReal;
+			}
+			return holder;
+		}
+
+		/// <summary>What is holding a place, in words a person can act on.</summary>
+		/// <param name="holder">What <see cref="HolderOf(int)"/> answered, or null when that is not known.</param>
+		public static string HolderWords(string holder)
+		{
+			switch (holder)
+			{
+				case HolderReal:
+					return "a real controller";
+				case HolderVirtual:
+					return "another of this program's own virtual controllers";
+				case HolderLeftover:
+					return "a virtual controller this program did not make, such as one from DS4Windows or one left behind (the Devices page lists it as Leftover)";
+				default:
+					return "another controller";
+			}
 		}
 
 		/// <summary>How one place reads to a person, with what is holding it.</summary>

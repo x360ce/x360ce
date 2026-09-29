@@ -3,7 +3,7 @@
 # available, then builds the full x360ce.sln (C++ DLLs + .NET apps).
 #
 # Target OS: Windows 10 or newer (Win 8/8.1/7 dropped). End users need
-# "Visual C++ 2015-2022 Redistributable" installed to load the produced DLLs.
+# the latest "Microsoft Visual C++ v14 Redistributable" installed to load the produced DLLs.
 #
 # Usage:
 #   .\Install_BuildTools.ps1

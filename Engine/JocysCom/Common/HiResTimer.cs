@@ -309,6 +309,9 @@ namespace JocysCom.ClassLibrary
 
 			[DllImport("kernel32.dll", SetLastError = true)]
 			internal static extern bool SetWaitableTimer(Microsoft.Win32.SafeHandles.SafeWaitHandle hTimer, ref long pDueTime, int lPeriod, IntPtr pfnCompletionRoutine, IntPtr lpArgToCompletionRoutine, bool fResume);
+
+			[DllImport("kernel32.dll", SetLastError = true)]
+			internal static extern uint WaitForMultipleObjects(uint nCount, IntPtr[] lpHandles, [MarshalAs(UnmanagedType.Bool)] bool bWaitAll, uint dwMilliseconds);
 		}
 
 		static bool _FullResolutionAsked;
@@ -525,7 +528,11 @@ namespace JocysCom.ClassLibrary
 		}
 
 		readonly TimerHandle _timer;
-		readonly System.Threading.WaitHandle[] _handles;
+		readonly Microsoft.Win32.SafeHandles.SafeWaitHandle _wake;
+		/// <summary>The timer's and the wake handle's raw handles, in the order a wait returns their index. Reserved once, so a wait makes nothing.</summary>
+		readonly IntPtr[] _handles;
+		bool _timerHeld;
+		bool _wakeHeld;
 		long _due;
 
 		/// <param name="wake">Ends a wait at once when set, such as a request to stop the loop.</param>
@@ -540,7 +547,12 @@ namespace JocysCom.ClassLibrary
 			if (handle.IsInvalid)
 				throw new Win32Exception(Marshal.GetLastWin32Error());
 			_timer = new TimerHandle(handle);
-			_handles = new[] { _timer, wake };
+			_wake = wake.SafeWaitHandle;
+			// Both held open for the life of the pacer, so a handle is never closed while a wait uses it. The wake handle
+			// first: it is the one that can fail, and then nothing is held.
+			_wake.DangerousAddRef(ref _wakeHeld);
+			_timer.SafeWaitHandle.DangerousAddRef(ref _timerHeld);
+			_handles = new[] { _timer.SafeWaitHandle.DangerousGetHandle(), _wake.DangerousGetHandle() };
 			_due = Stopwatch.GetTimestamp();
 		}
 
@@ -562,7 +574,9 @@ namespace JocysCom.ClassLibrary
 			if (relative >= 0)
 				return 0;
 			HiResTimer.NativeMethods.SetWaitableTimer(_timer.SafeWaitHandle, ref relative, 0, IntPtr.Zero, IntPtr.Zero, false);
-			if (System.Threading.WaitHandle.WaitAny(_handles, intervalMs + 50) != 0)
+			// 0 is the timer. The wake handle (1), a time-out (258) and a failure all end the wait early. Waited for
+			// natively, because WaitHandle.WaitAny copies its array on every call.
+			if (HiResTimer.NativeMethods.WaitForMultipleObjects(2, _handles, false, (uint)(intervalMs + 50)) != 0)
 				return 0;
 			var late = Stopwatch.GetTimestamp() - _due;
 			return late > 0 ? late : 0;
@@ -570,6 +584,16 @@ namespace JocysCom.ClassLibrary
 
 		public void Dispose()
 		{
+			if (_wakeHeld)
+			{
+				_wakeHeld = false;
+				_wake.DangerousRelease();
+			}
+			if (_timerHeld)
+			{
+				_timerHeld = false;
+				_timer.SafeWaitHandle.DangerousRelease();
+			}
 			_timer.Dispose();
 		}
 	}

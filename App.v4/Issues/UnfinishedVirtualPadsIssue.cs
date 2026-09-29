@@ -49,20 +49,7 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			// Let go first, exactly as removing does: the bus cannot be taken out from under controllers
-			// this program is still holding open.
-			var helper = Global.DHelper;
-			if (helper != null)
-				helper.ReleaseForDeviceRemoval();
-			try
-			{
-				Program.RunElevated(AdminCommand.RepairViGEmBus);
-			}
-			finally
-			{
-				if (helper != null)
-					helper.ResumeAfterDeviceRemoval();
-			}
+			DInput.VirtualDriverInstaller.RepairViGEmBusElevated();
 		}
 
 	}

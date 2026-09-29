@@ -21,16 +21,14 @@ Solution: create a copy of `xinput1_3.dll` with one of the names below, until yo
 - `xinput1_1.dll`
 - `xinput9_1_0.dll`
 
-## Problem: Application has failed to start because MSVCR100.dll was not found.
+## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
 
-Reason: Microsoft Visual C++ 2010 Redistributable Package is missing.
+Reason: Microsoft Visual C++ v14 Redistributable is missing.
 
-Solution: Download and install this package from Microsoft:
+Solution: Download and install the latest Microsoft Visual C++ v14 Redistributable (Visual Studio 2017–2026) from Microsoft:
 
-- Microsoft Visual C++ 2010 Redistributable Package (x86):
-  <http://www.microsoft.com/downloads/details.aspx?FamilyID=a7b7a05e-6de6-4d3a-a423-37bf0912db84>
-- Microsoft Visual C++ 2010 Redistributable Package (x64):
-  <http://www.microsoft.com/downloads/details.aspx?familyID=bd512d9e-43c8-4655-81bf-9350143d5867>
+- (x86): <https://aka.ms/vc14/vc_redist.x86.exe>
+- (x64): <https://aka.ms/vc14/vc_redist.x64.exe>
 
 Note: You must install both packages on Windows 64-bit!
 

@@ -1,6 +1,7 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.Engine;
@@ -35,36 +36,62 @@ namespace x360ce.App.DInput
 		/// <summary>Whether the display reads are resting after XInput failed to answer.</summary>
 		public bool XiReadsPaused
 		{
-			get { return IsPaused(_xiReadPausedUntil, Environment.TickCount); }
+			get { return IsWaiting(_xiReadPausedUntil, Environment.TickCount, XiReadPauseMs); }
 		}
 
-		/// <summary>True while the pause that ends at <paramref name="until"/> is still running at <paramref name="now"/>.</summary>
-		public static bool IsPaused(int until, int now)
-		{
-			return unchecked(now - until) < 0;
-		}
-
-		/// <summary>Runs a native call on a worker and answers whether it returned in time.</summary>
+		/// <summary>True while a wait of at most <paramref name="limit"/> milliseconds that ends at <paramref name="until"/> is still running at <paramref name="now"/>.</summary>
 		/// <remarks>
-		/// XInput can stop answering, and this thread must not stop with it. The call used to go
-		/// through a delegate's BeginInvoke with nothing ever calling EndInvoke, which leaves every
-		/// call's wait handle open: four handles a read, up to sixty reads a second, until a long
-		/// session ran Windows out of handles and the program closed with "Insufficient system
-		/// resources". A task's wait keeps nothing behind. One that runs past its time is left to
-		/// finish on the worker; the next read is what tells whether XInput is answering again.
+		/// Both are <see cref="Environment.TickCount"/> values, which wrap, so only their difference is
+		/// compared. A wait runs while its end lies ahead by no more than its own length. An end never
+		/// set (0) or one left from long ago therefore reads as passed at any uptime, except that a 0 reads
+		/// as running for the last <paramref name="limit"/> milliseconds before the count comes round to 0
+		/// every 49.7 days, which holds it for no longer than that. Judged by the sign of the difference
+		/// alone, a 0 lies ahead for the 24.9 days of every 49.7 that the count is negative.
 		/// </remarks>
-		public static bool RanWithin(Action action, int milliseconds)
+		public static bool IsWaiting(int until, int now, int limit)
 		{
-			return System.Threading.Tasks.Task.Run(action).Wait(milliseconds);
+			var wait = unchecked(until - now);
+			return wait > 0 && wait <= limit;
 		}
+
+		/// <summary>True while <paramref name="now"/> lies less than <paramref name="window"/> milliseconds after <paramref name="last"/>.</summary>
+		/// <remarks>
+		/// Both are <see cref="Environment.TickCount"/> values, which wrap, so only their difference is
+		/// compared, as in <see cref="IsWaiting"/>. The difference turns negative once more than 2^31 ms
+		/// (about 24.9 days) lie between them, so a moment that old reads as long past rather than recent.
+		/// It allocates nothing and takes no lock, so the engine can ask it on every pass.
+		/// </remarks>
+		/// <param name="last">When it happened.</param>
+		/// <param name="now">The time now.</param>
+		/// <param name="window">How long it counts as recent, in milliseconds.</param>
+		public static bool IsRecent(int last, int now, int window)
+		{
+			var elapsed = unchecked(now - last);
+			return elapsed >= 0 && elapsed < window;
+		}
+
+		/// <summary>How long XInput has to answer before it is taken as not answering, in milliseconds.</summary>
+		/// <remarks>
+		/// A healthy read of the four places takes microseconds, and loading the library a few milliseconds. Past a
+		/// second XInput is not answering, which it does while Windows takes controllers away and builds them again.
+		/// The display read rests the view after it, and letting go of the controllers gives up after it.
+		/// </remarks>
+		public const int XiAnswerMs = 1000;
 
 		void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
-			// These states are shown on screen and nowhere else, and a screen cannot show more
-			// than sixty readings a second, while asking for one costs a delegate, a hand-off to
-			// another thread and a wait handle, four times over. Read on every pass it took seven
-			// tenths of every second away from reading the controllers themselves. Paced here and
-			// not by the caller, because the caller uses the same answer to decide whether the
+			// A read the reader has answered is taken at once: four states copied into the arrays kept for them.
+			if (Volatile.Read(ref _displayRead) == DisplayReadAnswered)
+			{
+				for (var i = 0; i < 4; i++)
+				{
+					LiveXiConnected[i] = _displayConnected[i];
+					LiveXiStates[i] = _displayStates[i];
+				}
+				Volatile.Write(ref _displayRead, DisplayReadIdle);
+			}
+			// These states are shown on screen and nowhere else, and a screen cannot show more than sixty readings a
+			// second. Paced here and not by the caller, because the caller uses the same answer to decide whether the
 			// XInput library stays loaded, and pacing that made it load and unload all day.
 			var due = DueForDisplayRead();
 			var wanted = Controller.IsLoaded && getXInputStates;
@@ -72,9 +99,6 @@ namespace x360ce.App.DInput
 			{
 				// Resting: what was read last still stands, and nothing is asked of XInput.
 				NotePadPlaces();
-				var resting = StatesRetrieved;
-				if (resting != null)
-					resting(this, new DInputEventArgs());
 				return;
 			}
 			// Whether the states were actually read, rather than whether somebody asked for them.
@@ -82,56 +106,139 @@ namespace x360ce.App.DInput
 			// read, every place reported empty, and each working controller was accused of being
 			// broken on evidence nobody had gathered.
 			XiStatesRead = wanted;
-			// Allow if not testing or testing with option enabled.
 			Exception error = null;
-			lock (Controller.XInputLock)
+			if (!wanted)
 			{
-				// Between reads the last one still stands. Falling through here would write an
-				// empty state and "not connected" over it on every pass that does not read, which
-				// is most of them - the controller picture and the formula preview both draw from
-				// these, and would spend their time showing nothing.
-				if (!wanted || due)
+				// Nothing is read, so every place reads as empty and not connected.
+				for (var i = 0; i < 4; i++)
 				{
-					State[] read = null;
-					bool[] answered = null;
-					if (wanted)
-					{
-						// This can hit CPU hard and used for display only.
-						// Do not use when application is minimized.
-						// All four places are read in one hand-over. Each hand-over waits for a worker
-						// to pick it up, and four in a row keep this thread past the time the next pass
-						// is due. The arrays are made for each read, so a read that never returns writes
-						// only into arrays nothing looks at any more.
-						var states = new State[4];
-						var connected = new bool[4];
-						var controllers = LiveXiControllers;
-						if (RanWithin(() =>
-						{
-							for (var p = 0; p < 4; p++)
-								connected[p] = controllers[p].GetState(out states[p]);
-						}, 1000))
-						{
-							read = states;
-							answered = connected;
-						}
-						else
-						{
-							_xiReadPausedUntil = unchecked(Environment.TickCount + XiReadPauseMs);
-							error = new Exception("XInput did not answer for a second; the XInput view rests for "
-								+ (XiReadPauseMs / 1000) + " seconds and then reads again.");
-						}
-					}
+					LiveXiConnected[i] = false;
+					LiveXiStates[i] = new State();
+				}
+			}
+			else if (due)
+			{
+				var read = Volatile.Read(ref _displayRead);
+				// Between reads the last one still stands.
+				if (read == DisplayReadIdle)
+					AskDisplayRead();
+				// Not answered in a second: XInput has stopped answering, which it does while Windows takes controllers
+				// away and builds them again. The view rests, and every place reads as empty meanwhile.
+				else if (read == DisplayReadAsked && !IsRecent(_displayReadAskedAt, Environment.TickCount, XiAnswerMs))
+				{
+					_xiReadPausedUntil = unchecked(Environment.TickCount + XiReadPauseMs);
 					for (var i = 0; i < 4; i++)
 					{
-						LiveXiConnected[i] = answered != null && answered[i];
-						LiveXiStates[i] = read == null ? new State() : read[i];
+						LiveXiConnected[i] = false;
+						LiveXiStates[i] = new State();
 					}
+					error = new Exception("XInput did not answer for a second; the XInput view rests for "
+						+ (XiReadPauseMs / 1000) + " seconds and then reads again.");
 				}
 			}
 			NotePadPlaces();
-			var ev = StatesRetrieved;
-			if (ev != null)
-				ev(this, new DInputEventArgs(error));
+			// Raised only with a failure, the one thing the window acts on.
+			if (error != null)
+			{
+				var ev = StatesRetrieved;
+				if (ev != null)
+					ev(this, new DInputEventArgs(error));
+			}
+		}
+
+		/// <summary>The display read's state: nothing asked, a read asked of the reader, or a read answered and not yet taken.</summary>
+		const int DisplayReadIdle = 0;
+		const int DisplayReadAsked = 1;
+		const int DisplayReadAnswered = 2;
+		int _displayRead;
+
+		/// <summary>When the read under way was asked for, as <see cref="Environment.TickCount"/>.</summary>
+		int _displayReadAskedAt;
+
+		/// <summary>What the reader read last: reserved here, written by the reader, copied by the input thread once answered.</summary>
+		readonly State[] _displayStates = new State[4];
+		readonly bool[] _displayConnected = new bool[4];
+
+		/// <summary>Wakes the reader for one read.</summary>
+		readonly AutoResetEvent _displayReadWake = new AutoResetEvent(false);
+
+		/// <summary>The thread the display reads run on, made on the first read, or null before it.</summary>
+		Thread _displayReader;
+
+		/// <summary>Set when the helper is let go of, so the reader ends at its next wake.</summary>
+		volatile bool _displayReaderStop;
+
+		/// <summary>The kind of exception the last failed display read threw, so the same failure is written once.</summary>
+		Type _displayReadFault;
+
+		/// <summary>Asks the reader for one read of the four places, making the reader on the first read.</summary>
+		void AskDisplayRead()
+		{
+			_displayReadAskedAt = Environment.TickCount;
+			Volatile.Write(ref _displayRead, DisplayReadAsked);
+			if (_displayReader == null)
+			{
+				// One thread for the life of the helper, waiting between reads. A read then waits for nothing and makes
+				// nothing: no task, no delegate, no arrays and no wait handle.
+				_displayReader = new Thread(ReadDisplayStatesLoop);
+				_displayReader.IsBackground = true;
+				_displayReader.Name = "XInputDisplayRead";
+				_displayReader.Start();
+			}
+			_displayReadWake.Set();
+		}
+
+		void ReadDisplayStatesLoop()
+		{
+			while (true)
+			{
+				_displayReadWake.WaitOne();
+				if (_displayReaderStop)
+					return;
+				ReadDisplayStates();
+				Volatile.Write(ref _displayRead, DisplayReadAnswered);
+			}
+		}
+
+		/// <summary>Reads the four places into the reserved answer.</summary>
+		/// <remarks>
+		/// Under <see cref="Controller.XInputLock"/>, which the library is loaded and let go of under, so it is never
+		/// let go of in the middle of a read. XInput can stop answering. The input thread then rests the view, and
+		/// since it never waits for this lock, it goes on reading the controllers.
+		/// </remarks>
+		void ReadDisplayStates()
+		{
+			try
+			{
+				lock (Controller.XInputLock)
+				{
+					var loaded = Controller.IsLoaded;
+					for (var p = 0; p < 4; p++)
+					{
+						if (loaded)
+						{
+							_displayConnected[p] = LiveXiControllers[p].GetState(out _displayStates[p]);
+						}
+						else
+						{
+							_displayConnected[p] = false;
+							_displayStates[p] = new State();
+						}
+					}
+				}
+				_displayReadFault = null;
+			}
+			catch (Exception ex)
+			{
+				for (var p = 0; p < 4; p++)
+					_displayConnected[p] = false;
+				// Written when it is news: the view asks sixty times a second.
+				if (_displayReadFault != ex.GetType())
+				{
+					_displayReadFault = ex.GetType();
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				}
+			}
 		}
 
 		/// <summary>

@@ -25,6 +25,17 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public Gamepad XiState;
 
+		/// <summary>Buttons an axis or a slider was holding down on the engine's last pass.</summary>
+		/// <remarks>
+		/// Read and written only by the engine: cleared at the start of the setting's turn on every pass
+		/// and, when the turn runs to the end, set to what that turn pressed. It is what lets a button
+		/// driven by a switch or a stick let go a little below the point that pressed it, rather than at
+		/// that same point, where a reading that wobbles by one step would press and release it on every
+		/// pass.
+		/// </remarks>
+		[XmlIgnore]
+		public GamepadButtonFlags AxisButtons;
+
 		/// <summary>
 		/// Calculate map completion percent based on user device (controller) capabilities.
 		/// </summary>

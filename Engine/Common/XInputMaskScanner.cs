@@ -103,9 +103,12 @@ namespace x360ce.Engine
             // Step 2: Scan files.
             for (var i = 0; i < exes.Count; i++)
             {
+                // The list that reads these reports may have closed since the last one was shown.
+                if (IsStopping)
+                    break;
                 var exe = exes[i];
                 var exeName = exe.Name.ToLower();
-                var program = programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+                var program = programs.FirstOrDefault(x => x.FileName != null && x.FileName.ToLower() == exeName);
 				// If file doesn't exist in the game list then continue.
 				e = new XInputMaskScannerEventArgs
 				{
@@ -131,7 +134,7 @@ namespace x360ce.Engine
 						GameFileInfo = exe
 					};
 					// Get game by executable name.
-					var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+					var game = games.FirstOrDefault(x => x.FileName != null && x.FileName.ToLower() == exeName);
                     // If file doesn't exist in the game list then...
                     if (game == null)
                     {
@@ -259,8 +262,16 @@ namespace x360ce.Engine
 			ReportProgress(e);
 			for (var i = 0; i < files.Count; i++)
 			{
-				e.FileIndex = i;
-				e.Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count);
+				// A new object per file: the window may still be reading the one from the file before,
+				// and a shared one changes under it while it reads.
+				e = new XInputMaskScannerEventArgs
+				{
+					Level = 1,
+					Files = files,
+					FileIndex = i,
+					State = XInputMaskScannerState.FileUpdate,
+					Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count),
+				};
 				ReportProgress(e);
 				var file = files[i].FullName;
                 // Pause or Stop.

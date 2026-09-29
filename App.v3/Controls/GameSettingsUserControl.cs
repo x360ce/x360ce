@@ -10,7 +10,6 @@ using x360ce.Engine;
 using System.IO;
 using System.Reflection;
 using System.Diagnostics;
-using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.ClassLibrary.Controls;
 using x360ce.Engine.Data;
@@ -494,19 +493,17 @@ namespace x360ce.App.Controls
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
 				List<x360ce.Engine.Data.Program> programs;
-				if (dialog.FileName.EndsWith(".gz"))
+				try
 				{
-					var compressedBytes = System.IO.File.ReadAllBytes(dialog.FileName);
-					var bytes = EngineHelper.Decompress(compressedBytes);
-					programs = Serializer.DeserializeFromXmlBytes<List<x360ce.Engine.Data.Program>>(bytes);
+					programs = dialog.FileName.EndsWith(".ini") || dialog.FileName.EndsWith(".gdb")
+						? GameDatabaseManager.GetPrograms(dialog.FileName)
+						: x360ce.Engine.Data.Program.FromFile(dialog.FileName);
 				}
-				else if (dialog.FileName.EndsWith(".ini") || dialog.FileName.EndsWith(".gdb"))
+				catch (Exception ex) when (ex is System.IO.InvalidDataException || ex is System.IO.IOException || ex is UnauthorizedAccessException)
 				{
-					programs = GameDatabaseManager.GetPrograms(dialog.FileName);
-				}
-				else
-				{
-					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
+					// Said where the file was chosen, and the program stays up.
+					MessageBoxForm.Show(ex.Message, dialog.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
 				}
 				ImportAndBindPrograms(programs);
 			}
@@ -531,16 +528,14 @@ namespace x360ce.App.Controls
 					item.EntityKey = null;
 					item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
 				}
-				if (dialog.FileName.EndsWith(".gz"))
+				try
 				{
-					var s = Serializer.SerializeToXmlString(programs, System.Text.Encoding.UTF8, true);
-					var bytes = System.Text.Encoding.UTF8.GetBytes(s);
-					var compressedBytes = EngineHelper.Compress(bytes);
-					System.IO.File.WriteAllBytes(dialog.FileName, compressedBytes);
+					x360ce.Engine.Data.Program.ToFile(programs, dialog.FileName);
 				}
-				else
+				catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException)
 				{
-					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8, true);
+					// A protected or locked destination is said where it was chosen.
+					MessageBoxForm.Show(ex.Message, dialog.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 		}

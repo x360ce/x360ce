@@ -1,4 +1,9 @@
-﻿## [3.4.39.0] - 2026-09-26
+﻿## [3.5.8.0] - 2026-09-27
+
+- Fixed: Importing or exporting games settings could show an error report.
+- Changed: Help names the latest Visual C++ v14 Redistributable.
+
+## [3.4.39.0] - 2026-09-26
 
 - Fixed: The NAME hook mask box was never saved or loaded.
 - Fixed: The /Exit switch did not close a copy running with Allow Only One Copy off.

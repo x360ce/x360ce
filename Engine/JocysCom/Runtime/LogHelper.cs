@@ -117,7 +117,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			get
 			{
 				// if "RunMode" key not found then try "Environment" key.
-				return Configuration.SettingsParser.Current.Parse("RunMode", Configuration.SettingsParser.Current.Parse("Environment", "TEST"));
+				// With neither, the program is a release, as AssemblyInfo.GetTitle also takes it.
+				return Configuration.SettingsParser.Current.Parse("RunMode", Configuration.SettingsParser.Current.Parse("Environment", "LIVE"));
 			}
 		}
 		public static bool IsLive { get { return string.Compare(RunMode, "LIVE", true) == 0; } }

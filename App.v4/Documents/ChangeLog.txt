@@ -1,4 +1,34 @@
-﻿## [4.23.59.0] - 2026-09-26
+﻿## [4.24.33.0] - 2026-09-27
+
+- Fixed: Virtual controllers were not created after Windows ran 25 days.
+- Fixed: Centering spring Auto never finished after Windows ran 25 days.
+- Fixed: Inverted buttons were pressed while held instead of while released.
+- Fixed: Button 128 and POV 4 Left could not be mapped.
+- Fixed: A switch mapped to a button could flicker on and off.
+- Fixed: Importing or exporting games settings could show an error report.
+- Fixed: Scanning for games could close the program.
+- Fixed: Error reports from released versions were marked as test builds.
+- Fixed: The game settings panel could show an error report after it closed.
+- Fixed: Installing, repairing or removing the virtual driver failed when a file was in use.
+- Fixed: A controller that could not be opened could slow the program down.
+- Fixed: Buttons and force feedback could follow another game's settings.
+- Fixed: A virtual controller that stopped taking input was not put back.
+- Fixed: A virtual controller whose vibration the driver refused did not work.
+- Fixed: The guide button could be let go by another controller.
+- Changed: Installs and links the latest Visual C++ v14 Redistributable.
+- Changed: Installing Visual C++ from the Issues tab says what happened.
+- Changed: A controller tab whose place is taken says what is holding it.
+- Changed: The AI assistant can keep a device on several controller tabs.
+- Added: Issues tab reports a virtual driver that is installed but not working.
+- Added: A hint when a game may see the controller twice.
+- Added: Recording a switch onto a button says which position presses it.
+- Added: Invert in the mapping menu turns a button, axis or slider around.
+- Added: Help and a preset for flying with an RC transmitter.
+- Added: A device can drive up to four controllers at once.
+- Added: A device on several tabs takes force feedback from one or more of them.
+- Added: The Force Feedback page names the other controllers a device is on.
+
+## [4.23.59.0] - 2026-09-26
 
 - Fixed: Online presets lost the wheel and centering spring settings.
 - Fixed: Searching the online database with no devices reported a server error.

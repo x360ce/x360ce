@@ -453,8 +453,9 @@ namespace x360ce.App.Controls
 			// window whether each may go; a window waiting here cannot answer, and both wait for ever.
 			System.Threading.Tasks.Task.Run(() =>
 			{
+				// A repair lets go of every controller first and picks them back up afterwards.
 				if (repair)
-					Program.RunElevated(AdminCommand.RepairViGEmBus);
+					DInput.VirtualDriverInstaller.RepairViGEmBusElevated();
 				else
 					DInput.DInputHelper.CheckInstallVirtualDriver();
 			}).ContinueWith(done => RefreshViGEmBusStatus(), System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());

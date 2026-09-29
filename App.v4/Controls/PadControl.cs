@@ -686,6 +686,8 @@ namespace x360ce.App.Controls
 				title += " (Combine)";
 			}
 			ControlsHelper.SetText(EnableButton, title);
+			// Another tab's list can change without this one's rows moving.
+			UpdateForceFeedbackTitle();
 		}
 
 		public void GetAllControls<T>(Control c, ref List<T> l) where T : Control
@@ -764,11 +766,24 @@ namespace x360ce.App.Controls
 			{
 				if (cbx == DPadComboBox)
 					EnableDPadMenu(true);
+				else
+					ShowInvertFor(cbx);
 				MenuTargetCbx = cbx;
 				menu.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
 			}
 			if (cbx.Items.Count > 0)
 				cbx.SelectedIndex = 0;
+		}
+
+		/// <summary>Offers [Invert] in the mapping menu only while the box holds a control that has another way round.</summary>
+		/// <remarks>A button, an axis and a slider each have one. A D-Pad, a formula and an empty box do not.</remarks>
+		/// <param name="cbx">The box the menu is about to open for.</param>
+		public void ShowInvertFor(ComboBox cbx)
+		{
+			var invertible = cbx != null && SettingsConverter.InvertTextValue(cbx.Text) != null;
+			foreach (ToolStripItem item in DiMenuStrip.Items)
+				if (item.Text == cInvert)
+					item.Visible = invertible;
 		}
 
 		#endregion
@@ -1066,6 +1081,7 @@ namespace x360ce.App.Controls
 		}
 
 		string cRecord = "[Record]";
+		string cInvert = "[Invert]";
 		string cEmpty = "<empty>";
 		string cPOVs = "POVs";
 
@@ -1084,6 +1100,10 @@ namespace x360ce.App.Controls
 			// Add [Record] button.
 			mi = new ToolStripMenuItem(cRecord);
 			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
+			mi.Click += new EventHandler(DiMenuStrip_Click);
+			DiMenuStrip.Items.Add(mi);
+			// Add [Invert] button, which reads the box's control the other way round.
+			mi = new ToolStripMenuItem(cInvert);
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
@@ -1205,6 +1225,14 @@ namespace x360ce.App.Controls
 					if (map != null)
 						StartRecording(map);
 				}
+				else if (item.Text == cInvert)
+				{
+					// The same control, read the other way round.
+					var inverted = SettingsConverter.InvertTextValue(cbx.Text);
+					if (inverted != null)
+						SettingsManager.Current.SetComboBoxValue(cbx, inverted);
+					CurrentCbx = null;
+				}
 				else if (item.Text == cEmpty)
 				{
 					SettingsManager.Current.SetComboBoxValue(cbx, string.Empty);
@@ -1269,6 +1297,15 @@ namespace x360ce.App.Controls
 			if (ud == null || ud.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
 			{
 				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
+				return;
+			}
+			// The engine drives the run only for a device the routing forces from this tab. A tab switched
+			// off, or a row unticked in the tab's list, drives nothing, and the run would never end.
+			DInput.DeviceForce route;
+			if (!(DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
+				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0))
+			{
+				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on and this device ticked in its list. Otherwise nothing drives the wheel.";
 				return;
 			}
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
@@ -1444,6 +1481,20 @@ namespace x360ce.App.Controls
 				SystemXInput.SetVibration(place,
 					(ushort)(ps.ApplyForceStrength(largeMotor, true) * 257),
 					(ushort)(ps.ApplyForceStrength(smallMotor, false) * 257));
+		}
+
+		/// <summary>Stops the motors the Test sliders set, through the path the sliders set them by.</summary>
+		/// <remarks>
+		/// Both sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
+		/// by the sliders' own handler, which sends only while a controller tab is shown.
+		/// </remarks>
+		public void StopTestVibration()
+		{
+			if (LeftMotorTestTrackBar.Value == 0 && RightMotorTestTrackBar.Value == 0)
+				return;
+			LeftMotorTestTrackBar.Value = 0;
+			RightMotorTestTrackBar.Value = 0;
+			SendVibration();
 		}
 
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
@@ -1631,25 +1682,67 @@ namespace x360ce.App.Controls
 			MapDevices(game, selectedUserDevices);
 		}
 
+		/// <summary>Asks whether devices already on another tab move here or stay there too: Yes moves them, No keeps them there as well, anything else adds nothing.</summary>
+		/// <remarks>A test replaces it, since the real one opens a window.</remarks>
+		public static Func<string, DialogResult> AskMoveOrKeep = AskAboutSharedDevices;
+
+		static DialogResult AskAboutSharedDevices(string text)
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(form);
+			var answer = form.ShowForm(text, "Device already on a controller",
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+				MessageBoxDefaultButton.Button1,
+				new[] { "&Move here", "&Keep there too" });
+			form.Dispose();
+			return answer;
+		}
+
+		/// <summary>What Add asks about the devices already on another tab of the game, or null when none is.</summary>
+		/// <remarks>A device already on this tab is not asked about: adding it again changes nothing.</remarks>
+		public static string SharedDeviceQuestion(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		{
+			var lines = new List<string>();
+			foreach (var ud in devices)
+			{
+				var tabs = SettingsManager.GetDeviceTabs(game.FileName, ud.InstanceGuid);
+				if (tabs.Length == 0 || tabs.Contains(mappedTo))
+					continue;
+				var name = string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
+				lines.Add(string.Format("{0} is already on {1}.", name,
+					string.Join(" and ", tabs.Select(x => Attributes.GetDescription(x)))));
+			}
+			if (lines.Count == 0)
+				return null;
+			lines.Add("");
+			lines.Add("Move here takes it off every other controller. A controller left with no device is switched off.");
+			lines.Add("Keep there too leaves it there as well. This controller starts with the settings of the lowest-numbered one it is on, force feedback included.");
+			return string.Join(Environment.NewLine, lines);
+		}
+
 		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
 		/// <remarks>
 		/// A device just added is the one the person means to set up next. The list kept whatever row
 		/// was selected before, so with a device already mapped the new one arrived unselected and the
 		/// page went on showing the old one's settings until it was picked by hand.
+		///
+		/// A device already on another tab of the game is asked about first: moved here, kept there too, or
+		/// not added.
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
-			// Check if device already have old settings before adding new ones.
-			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
-			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
-				SettingsManager.Options.HidGuardianConfigureAutomatically);
-			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
-			// If new devices mapped and button is not enabled then...
-			if (noOldSettings && hasNewSettings && !EnableButton.Checked)
+			var keep = false;
+			var question = SharedDeviceQuestion(game, MappedTo, devices);
+			if (question != null)
 			{
-				// Enable mapping.
-				EnableButton_Click(null, null);
+				var answer = AskMoveOrKeep(question);
+				if (answer != DialogResult.Yes && answer != DialogResult.No)
+					return;
+				keep = answer == DialogResult.No;
 			}
+			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
+				SettingsManager.Options.HidGuardianConfigureAutomatically, keep);
 			SettingsManager.Current.RaiseSettingsChanged(null);
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
@@ -1660,17 +1753,9 @@ namespace x360ce.App.Controls
 			// Return if game is not selected.
 			if (game == null)
 				return;
-			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
 			var setting = GetSelectedSetting();
 			SettingsManager.UnMapGamePadDevices(game, setting,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
-			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
-			// if all devices unmapped and mapping is enabled then...
-			if (settingsOld.Count > 0 && settingsNew.Count == 0 && EnableButton.Checked)
-			{
-				// Disable mapping.
-				EnableButton_Click(null, null);
-			}
 		}
 
 		void UpdateGridButtons()
@@ -1765,6 +1850,32 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
 			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			UpdateGridButtons();
+			UpdateForceFeedbackTitle();
+		}
+
+		/// <summary>The Force Feedback page's title, naming the other tabs the selected device is on.</summary>
+		/// <remarks>
+		/// Each tab's Enable switch decides whether that tab's game rumbles the device, so a device on two
+		/// tabs is felt from every switched-on tab where it is on. The title says where else it is.
+		/// </remarks>
+		public static string ForceFeedbackTitle(MapTo[] otherTabs)
+		{
+			if (otherTabs == null || otherTabs.Length == 0)
+				return "Force Feedback";
+			return string.Format("Force Feedback - Also on Controller{0} {1}",
+				otherTabs.Length > 1 ? "s" : "",
+				string.Join(", ", otherTabs.Select(x => ((int)x).ToString())));
+		}
+
+		/// <summary>Shows on the Force Feedback page which other tabs the selected device is on.</summary>
+		void UpdateForceFeedbackTitle()
+		{
+			var game = SettingsManager.CurrentGame;
+			var setting = GetSelectedSetting();
+			var others = game == null || setting == null
+				? new MapTo[0]
+				: SettingsManager.GetDeviceTabs(game.FileName, setting.InstanceGuid).Where(x => x != MappedTo).ToArray();
+			ControlsHelper.SetText(ForceFeedbackGroupBox, "{0}", ForceFeedbackTitle(others));
 		}
 
 		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1814,27 +1925,8 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			var flag = AppHelper.GetMapFlag(MappedTo);
-			var value = (MapToMask)game.EnableMask;
-			var type = game.EmulationType;
-			var autoMap = value.HasFlag(flag);
 			// Invert flag value.
-			var enableMask = autoMap
-				// Remove AUTO.
-				? (int)(value & ~flag)
-				// Add AUTO.	
-				: (int)(value | flag);
-			// Update emulation type.
-			EmulationType? newType = null;
-			// If emulation enabled and game is not using virual type then...
-			if (enableMask > 0 && type != (int)EmulationType.Virtual)
-				newType = EmulationType.Virtual;
-			// If emulation disabled, but game use virtual emulation then...
-			if (enableMask == 0 && type == (int)EmulationType.Virtual)
-				newType = EmulationType.None;
-			// Set values.
-			game.EnableMask = enableMask;
-			if (newType.HasValue)
-				game.EmulationType = (int)newType.Value;
+			SettingsManager.SetTabEnabled(game, MappedTo, ((MapToMask)game.EnableMask & flag) == 0);
 		}
 
 		public void ShowAdvancedTab(bool show)

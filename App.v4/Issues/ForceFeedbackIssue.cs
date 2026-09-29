@@ -1,7 +1,6 @@
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
@@ -48,9 +47,9 @@ namespace x360ce.App.Issues
 
 		static bool AsksForSawtooth(Engine.Data.UserDevice ud)
 		{
-			var setting = SettingsManager.UserSettings.ItemsToArraySyncronized()
-				.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid && x.MapTo > (int)MapTo.None);
-			var ps = setting == null ? null : SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+			// The settings the engine plays the device's effects with, in the current game.
+			DInput.DeviceForce route;
+			var ps = DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route) ? route.PadSetting : null;
 			if (ps == null || ps.ForceEnable != "1")
 				return false;
 			int type;

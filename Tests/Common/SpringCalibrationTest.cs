@@ -1,8 +1,12 @@
-// @under-test: Engine/Common/SpringCalibration.cs
+// @under-test: Engine/Common/SpringCalibration.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Controls/PadControl.cs, App.v4/Common/DInput/DeviceRouting.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using x360ce.App.DInput;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -32,12 +36,12 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>Runs one millisecond at a time until the run finishes, or reaches the phase asked for, or the time runs out.</summary>
+		/// <summary>Runs one millisecond at a time from <paramref name="startMs"/> until the run finishes, or reaches the phase asked for, or the time runs out.</summary>
 		/// <returns>The time reached.</returns>
-		static long Run(SpringCalibration run, Wheel wheel, SpringCalibration.Phase until = SpringCalibration.Phase.Done, long maxMs = 60000)
+		static long Run(SpringCalibration run, Wheel wheel, SpringCalibration.Phase until = SpringCalibration.Phase.Done, long maxMs = 60000, long startMs = 0)
 		{
-			long ms = 0;
-			for (; ms < maxMs && !run.IsFinished && run.Step != until; ms++)
+			var ms = startMs;
+			for (; ms - startMs < maxMs && !run.IsFinished && run.Step != until; ms++)
 			{
 				var force = run.Update(wheel.Position, ms);
 				Assert.IsTrue(Math.Abs(force) <= 100, "Asked for " + force + " %, which is more than the device has.");
@@ -226,6 +230,105 @@ namespace x360ce.Tests
 			Assert.IsTrue(run.IsFinished);
 			Assert.AreEqual(SpringCalibration.Phase.Failed, run.Step);
 			Assert.AreEqual(0, run.Result);
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("The engine times the run with a clock that is never negative and never goes back, read only while a run is under way")]
+		public void The_engine_times_the_run_at_any_uptime()
+		{
+			// The run marks a time not yet taken with -1, so it needs times from 0 up. Environment.TickCount
+			// is negative from 24.9 to 49.7 days after Windows starts: timed by it, no phase ends, and the
+			// wheel is pushed against its stop until the program closes. The engine's own pass clock starts
+			// again whenever the update thread does, which a run under way would read as time going back.
+			// Every force feedback device takes this call on every poll, so the clock is read only for a run,
+			// and the run is read once, so one started between two reads is never handed time 0.
+			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs");
+			var call = Regex.Match(File.ReadAllText(path), @"\.UpdateSpring\((?<args>[^;]*)\);");
+			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
+			var args = call.Groups["args"].Value;
+			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0$"),
+				"The engine times the run with a clock that can be negative or go back, or reads it for every device: " + args);
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("A run finishes the same whatever the time the engine's clock stands at when it starts")]
+		public void A_run_finishes_the_same_at_any_time_the_engine_passes()
+		{
+			// The engine's clock counts up from the program's start and never goes back, so a run can start
+			// seconds in or long past the 24.9 days a tick count holds before it turns negative.
+			foreach (var startMs in new[] { 1000L, 40L * 24 * 60 * 60 * 1000 })
+			{
+				var wheel = new Wheel { FrictionLow = 12, FrictionHigh = 12 };
+				var run = new SpringCalibration();
+				Run(run, wheel, startMs: startMs);
+				Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, "Started at " + startMs + " ms: " + run.Message);
+				Assert.AreEqual(16, run.Result, "Started at " + startMs + " ms.");
+			}
+		}
+
+		/// <summary>The current game, with Controller 1 switched on or off.</summary>
+		static UserGame Game(bool tabOn)
+		{
+			return new UserGame { FileName = "spring.exe", EnableMask = tabOn ? (int)MapToMask.Controller1 : 0 };
+		}
+
+		/// <summary>A wheel's row on Controller 1 with force feedback on, ticked or not in the tab's list.</summary>
+		static UserSetting Row(PadSetting ps, bool ticked)
+		{
+			return new UserSetting
+			{
+				InstanceGuid = Guid.NewGuid(),
+				FileName = "spring.exe",
+				MapTo = (int)MapTo.Controller1,
+				IsEnabled = ticked,
+				PadSettingChecksum = ps.PadSettingChecksum,
+			};
+		}
+
+		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device the routing forces from this tab.</summary>
+		static bool AutoStarts(UserGame game, UserSetting row, PadSetting ps)
+		{
+			DeviceForce route;
+			return DeviceRouting.Build(game, new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route)
+				&& Array.IndexOf(route.ForcePads, row.MapTo - 1) >= 0;
+		}
+
+		/// <summary>Checks that the Auto button asks the routing, and says why, before it starts a run.</summary>
+		static void AssertAutoAsksTheRouting()
+		{
+			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs");
+			var source = File.ReadAllText(path);
+			var click = source.IndexOf("void ForceSpringAutoButton_Click(");
+			var routed = source.IndexOf("DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)", click);
+			var forced = source.IndexOf("Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0", click);
+			var reason = source.IndexOf("WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", click);
+			var start = source.IndexOf("ud.SpringCalibration = new SpringCalibration();", click);
+			Assert.IsTrue(click > 0 && routed > click && forced > routed && reason > forced && start > reason,
+				"Auto starts a run the engine never drives, and the button waits for it forever.");
+			Assert.IsFalse(source.Contains("(game.EnableMask & (int)AppHelper.GetMapFlag(MappedTo)) == 0"),
+				"Auto repeats part of the routing rule instead of asking the routing.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Auto is not started on a controller tab that is switched off")]
+		public void Auto_does_not_start_on_a_tab_switched_off()
+		{
+			// A tab switched off drives nothing, so the engine never drives the run, and the button would
+			// wait, greyed, for a run that can never end. The reason is shown where the other reasons are.
+			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			Assert.IsTrue(AutoStarts(Game(true), Row(ps, true), ps), "Auto does not start where the engine drives it.");
+			Assert.IsFalse(AutoStarts(Game(false), Row(ps, true), ps), "Auto starts on a tab switched off.");
+			AssertAutoAsksTheRouting();
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Auto is not started for a device unticked in the tab's list")]
+		public void Auto_does_not_start_for_an_unticked_row()
+		{
+			// An unticked row reaches nothing, so the engine never drives the run either.
+			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			Assert.IsFalse(AutoStarts(Game(true), Row(ps, false), ps), "Auto starts for a device unticked in the tab's list.");
+			AssertAutoAsksTheRouting();
 		}
 	}
 }

@@ -120,7 +120,7 @@ namespace x360ce.Tests
 				var padsBefore = XInputPlaces.VirtualHardwareNow();
 				Console.WriteLine("making a controller for pad {0}, expecting XInput {0}", pad);
 				Console.WriteLine();
-				if (!client.PlugIn(pad))
+				if (!client.PlugIn(pad, out _))
 					Assert.Inconclusive("The virtual bus would not make a controller.");
 				// Written down the way the program writes it down, so this measures what the program
 				// would see rather than a different arrangement that happens to work.

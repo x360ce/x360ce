@@ -216,6 +216,7 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public long DiStateTime;
 
+		/// <summary>The state shown before <see cref="DiState"/>. The input thread fills this object again on the next poll and shows it, so a state stays unchanged for one whole poll after it is replaced. Whoever keeps a state longer takes a <see cref="CustomDiState.Clone"/>.</summary>
 		[XmlIgnore]
 		public CustomDiState OldDiState;
 
@@ -231,6 +232,19 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public long OrgDiStateTime;
 
+		/// <summary>The two DirectInput states the input thread reads this device into, in turn; <see cref="JoState"/> is the one read last.</summary>
+		/// <remarks>Made on the first two reads and kept, so a poll makes no new state, and the one shown is never the one being read into.</remarks>
+		[XmlIgnore]
+		public JoystickState[] JoStates;
+
+		/// <summary>Which of <see cref="JoStates"/> the next poll reads into.</summary>
+		[XmlIgnore]
+		public int JoStateTurn;
+
+		/// <summary>A mouse's reading, before the state shown is worked out from it. The input thread's own, filled on every poll.</summary>
+		[XmlIgnore]
+		public CustomDiState DiStateRead;
+
 		[XmlIgnore]
 		public ForceFeedbackState FFState;
 
@@ -240,6 +254,19 @@ namespace x360ce.Engine.Data
 
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
+
+		/// <summary>Reads of this device that failed in a row. Set by the engine only.</summary>
+		/// <remarks>After two, the engine rests the device until <see cref="DiReadRetryAt"/>.</remarks>
+		[XmlIgnore]
+		public int DiReadFailures;
+
+		/// <summary>The <see cref="System.Environment.TickCount"/> from which a resting device is read again. Set by the engine only.</summary>
+		[XmlIgnore]
+		public int DiReadRetryAt;
+
+		/// <summary>Whether a fault in this run of failed polls has been reported. Set by the engine only.</summary>
+		[XmlIgnore]
+		public bool DiReadFaultReported;
 
 		[XmlIgnore]
 		public string DevHardwareIds;

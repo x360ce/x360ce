@@ -19,7 +19,7 @@ namespace x360ce.App
 		Index = 6,
 		[Description("Windows did not finish building the virtual controller for Controller {0} in time, so it was taken away again. It is tried again shortly.")]
 		PlaceNotGiven = 8,
-		[Description("XInput {0} is held by another controller, so Controller {0} makes no virtual controller until it is free. Use Auto-Order on the Devices page to move the other controller, or unplug it.")]
+		[Description("XInput {0} is held by {1}, so Controller {0} makes no virtual controller until it is free. Use Auto-Order on the Devices page to move it, or unplug it.")]
 		PlaceTaken = 9,
 		[Description("Windows put the virtual controller for Controller {0} in another XInput place, where it would push out another controller, so it was taken away again. It is tried again when a controller arrives or leaves.")]
 		PlaceWrong = 10,

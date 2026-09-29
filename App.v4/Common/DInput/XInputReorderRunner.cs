@@ -339,7 +339,7 @@ namespace x360ce.App.DInput
 		static string Describe(VirtualError error, int pad)
 		{
 			var text = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(error);
-			try { return string.Format(text, pad); }
+			try { return string.Format(text, pad, XInputPlaces.HolderWords(null)); }
 			catch (FormatException) { return text; }
 		}
 

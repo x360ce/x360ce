@@ -231,7 +231,11 @@ namespace x360ce.App
 					page.ImageKey = bullet;
 				// The colour alone cannot say which half is missing, nor why. A person looking at a light
 				// that is not green needs to be told what is absent and what the bus said about it.
-				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled);
+				// What holds the place is asked only when it is not ours, from the last reading published.
+				var holder = (xiOn && !xiOurs) || busError == VirtualError.PlaceTaken
+					? x360ce.App.DInput.XInputPlaces.HolderOf(i)
+					: null;
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled, busError, holder);
 				if (page.ToolTipText != hint)
 					page.ToolTipText = hint;
 			}
@@ -252,7 +256,9 @@ namespace x360ce.App
 		/// </remarks>
 		/// <param name="ourPlace">Which XInput place this tab's controller is in, or -1 for none.</param>
 		/// <param name="enabled">Whether the emulated controllers are switched on at all.</param>
-		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true)
+		/// <param name="busError">What the virtual bus last said about this tab's controller.</param>
+		/// <param name="holder">What holds this tab's place when it is not ours, as <see cref="x360ce.App.DInput.XInputPlaces.HolderOf(int)"/> names it, or null when that is not known.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null)
 		{
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
@@ -263,6 +269,17 @@ namespace x360ce.App
 					+ "player {0}. Windows gives out the places and cannot be asked for one; use Devices "
 					+ "to put them in the order you want. ", ourPlace + 1, place)
 				: string.Empty;
+			// Named from the last reading of the machine. Not known is said as not known rather than as a
+			// real controller, so nobody goes looking for a pad that is not there.
+			var heldBy = x360ce.App.DInput.XInputPlaces.HolderWords(holder);
+			// Auto-Order refuses a leftover and there is nothing to unplug, so removing it is the one way
+			// to free the place.
+			var removeLeftover = holder == x360ce.App.DInput.XInputPlaces.HolderLeftover
+				? "Remove it with [Remove Leftover Pads] on the Devices page."
+				: null;
+			// The bus's reason names what holds the place and what to do about it, so the state line says
+			// neither again.
+			var taken = busError == VirtualError.PlaceTaken;
 			if (!enabled)
 				// Off on purpose, so the missing controller is the thing that was asked for.
 				state = "Emulation is switched off, so no virtual controller is made and a game sees " +
@@ -279,9 +296,13 @@ namespace x360ce.App
 				// The worst state there is, and the one that looks most like working. A game finds a
 				// controller here and reads it, so nothing appears wrong, while every mapping on this
 				// tab goes nowhere at all.
-				state = "A real controller is holding this place, so the emulated one could not be " +
-					"made. A game reads that controller instead, and nothing mapped on this tab " +
-					"reaches it. Unplug it, or map this device on a tab whose place is free.";
+				state = taken
+					? "A game reads the controller holding this place instead, and nothing mapped on " +
+						"this tab reaches it."
+					: string.Format("This place is held by {0}, so the emulated one could not be " +
+						"made. A game reads that controller instead, and nothing mapped on this tab " +
+						"reaches it. {1}", heldBy,
+						removeLeftover ?? "Unplug it, or map this device on a tab whose place is free.");
 			else if (diOn)
 				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
@@ -290,23 +311,25 @@ namespace x360ce.App
 				state = "A virtual controller exists, but no mapped device is connected, so it " +
 					"reports nothing.";
 			else if (xiOn)
-				state = "A real controller is holding this place. A game already reads it directly, " +
-					"and this program is not emulating anything here. Map a device on this tab only " +
-					"once that controller is unplugged.";
+				state = taken
+					? "A game already reads the controller holding this place directly, and this " +
+						"program is not emulating anything here."
+					: string.Format("This place is held by {0}. A game already reads it directly, " +
+						"and this program is not emulating anything here. {1}", heldBy,
+						removeLeftover ?? "Map a device on this tab only once that controller is unplugged.");
 			else if (!checking)
 				state = "No mapped device. Whether a virtual controller exists has not been checked.";
 			else
 				state = "No mapped device and no virtual controller.";
 			var text = string.Format("Controller {0}: {1}{2}", place, elsewhere, state);
 			// What the bus said, when it said anything. Without this the missing half is named and the
-			// reason for it is not, which leaves nowhere to go.
-			var errors = Global.DHelper?.VirtualErrors;
-			var error = errors == null || place < 1 || place > errors.Length
-				? VirtualError.None
-				: errors[place - 1];
-			if (error != VirtualError.None)
-				text += "\r\n" + string.Format(
-					JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(error), place);
+			// reason for it is not, which leaves nowhere to go. A place taken by a leftover is
+			// PlaceTaken's reason with the leftover's own advice in place of Auto-Order.
+			if (busError != VirtualError.None)
+				text += "\r\n" + string.Format(taken && removeLeftover != null
+					? "XInput {0} is held by {1}, so Controller {0} makes no virtual controller until it is " +
+						"free. " + removeLeftover
+					: JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(busError), place, heldBy);
 			return text;
 		}
 
@@ -387,8 +410,6 @@ namespace x360ce.App
 			DebugPanel = new Forms.DebugForm();
 			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
-			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
-			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
 			SettingsGridPanel._ParentForm = this;
@@ -797,26 +818,15 @@ namespace x360ce.App
 			// Disable force feedback effect before closing application.
 			if (UpdateTimer != null)
 				UpdateTimer.Stop();
-			lock (Controller.XInputLock)
-			{
-				for (var i = 0; i < 4; i++)
-				{
-					if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
-					{
-						var gamePad = Global.DHelper.LiveXiControllers[i];
-						var isConected = Global.DHelper.LiveXiConnected[i];
-						if (Controller.IsLoaded && isConected)
-						{
-							// Stop vibration.
-							gamePad.SetVibration(new Vibration());
-						}
-					}
-				}
-				//BeginInvoke((Action)delegate()
-				//{
-				//	XInput.FreeLibrary();    
-				//});
-			}
+			// The Test sliders' motors are stopped through the path that started them. Nothing here takes a lock the
+			// input thread takes.
+			if (PadControls != null)
+				for (var i = 0; i < PadControls.Length; i++)
+					PadControls[i].StopTestVibration();
+			//BeginInvoke((Action)delegate()
+			//{
+			//	XInput.FreeLibrary();
+			//});
 			// Logical delay without blocking the current thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
 			var tmp = new FileInfo(SettingsManager.TmpFileName);
@@ -1307,10 +1317,12 @@ namespace x360ce.App
 					new HotfixIssue(),
 					new XboxDriversIssue(),
 					new VirtualDeviceDriverIssue(),
+					new VirtualDriverNotWorkingIssue(),
 					new LeftoverVirtualPadsIssue(),
 					new ForceFeedbackIssue(),
 					new UnfinishedVirtualPadsIssue(),
 					new RestartToFinishRemovalIssue(),
+					new HidHideIssue(),
 					new AiAccessIssue(),
 				};
 				IssuesPanel.AddIssues(issues);
@@ -1604,31 +1616,27 @@ namespace x360ce.App
 
 		// Will be used to check it event handlers were called during form update period.
 		private bool FormEventsDevicesUpdated;
-		private bool FormEventsUpdateCompleted;
-		private bool FormEventsFrequencyUpdated;
 
 		private void EnableFormUpdates(bool enable)
 		{
+			var replayDevices = false;
 			lock (LockFormEvents)
 			{
 				if (enable && !FormEventsEnabled)
 				{
 					FormEventsEnabled = true;
-					if (FormEventsDevicesUpdated)
-						DHelper_DevicesUpdated(null, null);
-					if (FormEventsUpdateCompleted)
-						DHelper_UpdateCompleted(null, null);
-					if (FormEventsFrequencyUpdated)
-						DHelper_FrequencyUpdated(null, null);
+					replayDevices = FormEventsDevicesUpdated;
 				}
 				else if (!enable && FormEventsEnabled)
 				{
 					FormEventsEnabled = false;
 					FormEventsDevicesUpdated = false;
-					FormEventsUpdateCompleted = false;
-					FormEventsFrequencyUpdated = false;
 				}
 			}
+			// Outside the lock: the device thread takes it when devices change, and must not wait while the lists
+			// are drawn. The drawing and the rate resume on the interface timer by themselves.
+			if (replayDevices)
+				DHelper_DevicesUpdated(null, null);
 		}
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
@@ -1659,82 +1667,6 @@ namespace x360ce.App
 					pad.RefreshPlaces();
 		}
 
-		private bool UpdateCompletedBusy;
-		private readonly object UpdateCompletedLock = new object();
-		private System.Diagnostics.Stopwatch InterfaceUpdateWatch;
-		private long LastUpdateTime;
-
-		private void DHelper_UpdateCompleted(object sender, EventArgs e)
-		{
-			lock (LockFormEvents)
-			{
-				FormEventsUpdateCompleted = true;
-				if (!FormEventsEnabled)
-					return;
-			}
-			// Turned off, the engine runs with nothing drawing behind it. The rate in the status
-			// bar then says what the engine reaches on its own, and comparing the two numbers says
-			// whether the interface is in the engine's way. Read here, on the engine thread,
-			// before any lock is taken or any work is handed over.
-			if (!SettingsManager.Options.UpdateInterface)
-				return;
-			lock (UpdateCompletedLock)
-			{
-				if (InterfaceUpdateWatch == null)
-				{
-					InterfaceUpdateWatch = new System.Diagnostics.Stopwatch();
-					InterfaceUpdateWatch.Start();
-				}
-				var delay = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
-				var currentTime = InterfaceUpdateWatch.ElapsedMilliseconds;
-				// If not enough time passed then return.
-				if ((currentTime - LastUpdateTime) < delay)
-					return;
-				// If still updating interface then return.
-				if (UpdateCompletedBusy)
-					return;
-				UpdateCompletedBusy = true;
-				LastUpdateTime = currentTime;
-				if (!Program.IsClosing)
-				{
-					// Make sure method is executed on the same thread as this control.
-					ControlsHelper.BeginInvoke(() =>
-					{
-						try
-						{
-							// Check again.
-							if (!Program.IsClosing)
-								UpdateForm3();
-						}
-						finally
-						{
-							// Release the gate even if the update throws. Leaving it held would
-							// block every later frame and stop the interface updating for good.
-							UpdateCompletedBusy = false;
-						}
-					});
-				}
-			}
-		}
-
-		private void DHelper_FrequencyUpdated(object sender, EventArgs e)
-		{
-			lock (LockFormEvents)
-			{
-				FormEventsFrequencyUpdated = true;
-				if (!FormEventsEnabled)
-					return;
-			}
-			// Make sure method is executed on the same thread as this control.
-			if (InvokeRequired)
-			{
-				var method = new EventHandler<EventArgs>(DHelper_FrequencyUpdated);
-				BeginInvoke(method, new object[] { sender, e });
-				return;
-			}
-			ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
-		}
-
 		#endregion
 
 		#region Update Interface
@@ -1748,6 +1680,39 @@ namespace x360ce.App
 		// Allow no more than  5 frames per second in background (save CPU resources).
 		private readonly int interfaceUpdateBackgroundFps = 5;
 
+		/// <summary>Ticks at the interface's rate, which <see cref="ShowInterfaceRate"/> sets.</summary>
+		private System.Windows.Forms.Timer InterfaceTimer;
+		private int _drawnPassCount;
+		private int _shownUpdateFrequency = -1;
+
+		/// <summary>Draws the pads and shows the engine's rate, on the interface thread, at the interface's own rate.</summary>
+		/// <remarks>
+		/// The engine hands the window nothing: it counts its passes in <see cref="DInput.DInputHelper.PassCount"/>. The window
+		/// looks for itself, and draws only when a pass has finished since the last drawing. No lock is shared with the engine
+		/// and nothing is posted per pass.
+		/// </remarks>
+		private void InterfaceTimer_Tick(object sender, EventArgs e)
+		{
+			var helper = Global.DHelper;
+			if (!FormEventsEnabled || Program.IsClosing || helper == null)
+				return;
+			var hz = helper.CurrentUpdateFrequency;
+			if (hz != _shownUpdateFrequency)
+			{
+				_shownUpdateFrequency = hz;
+				ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", hz);
+			}
+			// Turned off, the engine runs with nothing drawing behind it, so the rate beside the switch says what the
+			// engine reaches on its own.
+			if (!SettingsManager.Options.UpdateInterface)
+				return;
+			var passes = helper.PassCount;
+			if (passes == _drawnPassCount)
+				return;
+			_drawnPassCount = passes;
+			UpdateForm3();
+		}
+
 		private void InitiInterfaceUpdate()
 		{
 			EngineHelper.ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
@@ -1756,7 +1721,10 @@ namespace x360ce.App
 			Deactivate += MainForm_Deactivate;
 			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
 			InterfaceUpdatesButton.CheckedChanged += InterfaceUpdatesButton_CheckedChanged;
+			InterfaceTimer = new System.Windows.Forms.Timer();
+			InterfaceTimer.Tick += InterfaceTimer_Tick;
 			ShowInterfaceRate();
+			InterfaceTimer.Start();
 		}
 
 
@@ -1765,6 +1733,12 @@ namespace x360ce.App
 			Activated -= MainForm_Activated;
 			Deactivate -= MainForm_Deactivate;
 			InterfaceUpdatesButton.CheckedChanged -= InterfaceUpdatesButton_CheckedChanged;
+			if (InterfaceTimer != null)
+			{
+				InterfaceTimer.Stop();
+				InterfaceTimer.Tick -= InterfaceTimer_Tick;
+				InterfaceTimer.Dispose();
+			}
 		}
 
 		private void MainForm_Deactivate(object sender, EventArgs e)
@@ -1797,6 +1771,8 @@ namespace x360ce.App
 			var on = SettingsManager.Options.UpdateInterface;
 			var rate = !on ? 0
 				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
+			if (InterfaceTimer != null)
+				InterfaceTimer.Interval = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
 			ControlsHelper.SetText(InterfaceUpdatesButton, "UI Hz: {0}", on ? rate.ToString() : "OFF");
 		}
 

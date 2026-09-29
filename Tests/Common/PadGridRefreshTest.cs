@@ -48,18 +48,8 @@ namespace x360ce.Tests
 		/// <summary>Builds a window with the pad on a tab, shown or not, and runs the game changes.</summary>
 		static void SwitchGames(bool padTabShown, bool selectRowFirst)
 		{
-			Ui.OnUiThread(() =>
+			Ui.OnUiThreadWatched(() =>
 			{
-				// A failure inside the message pump must reach the test, not a dialog that waits
-				// for a person: the grid's own error dialog and the framework's unhandled-exception
-				// dialog both stop the interface thread for good on a machine nobody is watching.
-				Exception pumpError = null;
-				System.Threading.ThreadExceptionEventHandler onPumpError = (s, e) =>
-				{
-					if (pumpError == null)
-						pumpError = e.Exception;
-				};
-				Application.ThreadException += onPumpError;
 				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var a = NewGame("GameA");
@@ -87,6 +77,8 @@ namespace x360ce.Tests
 						pad.UpdateSettingsMap();
 						pad.InitPadData();
 						var grid = pad.MappedDevicesDataGridView;
+						// A data error must reach the test, not the grid's own error dialog, which waits
+						// for a person and stops the interface thread for good on a machine nobody is watching.
 						grid.DataError += (s, e) =>
 						{
 							if (dataError == null)
@@ -129,20 +121,17 @@ namespace x360ce.Tests
 						Assert.AreEqual(2, grid.Rows.Count, "Game A's devices did not come back.");
 						if (dataError != null)
 							throw new AssertFailedException("The list raised a data error: " + dataError, dataError);
-						if (pumpError != null)
-							throw new AssertFailedException("The interface thread threw while drawing: " + pumpError, pumpError);
 					}
 				}
 				finally
 				{
-					Application.ThreadException -= onPumpError;
 					SettingsManager.Current.NotifySettingsStatus = oldStatus;
 					SettingsManager.CurrentGame = oldGame;
 					SettingsManager.UserSettings.Items.Clear();
 					foreach (var setting in existing)
 						SettingsManager.UserSettings.Items.Add(setting);
 				}
-			});
+			}, "Drawing the list");
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
