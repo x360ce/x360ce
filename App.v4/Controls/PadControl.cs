@@ -1685,9 +1685,9 @@ namespace x360ce.App.Controls
 			MapDevices(game, selectedUserDevices);
 		}
 
-		/// <summary>Asks whether devices already on another tab move here or stay there too: Yes moves them, No keeps them there as well, anything else adds nothing.</summary>
-		/// <remarks>Given the question, shown in bold, and the text under it. A test replaces it, since the real one opens a window.</remarks>
-		public static Func<string, string, DialogResult> AskMoveOrKeep = AskAboutSharedDevices;
+		/// <summary>Asks whether devices already on another tab are moved here or copied: Yes moves them, No copies them, anything else adds nothing.</summary>
+		/// <remarks>Given the question, shown in bold, and what each answer does under it. A test replaces it, since the real one opens a window.</remarks>
+		public static Func<string, string, DialogResult> AskMoveOrCopy = AskAboutSharedDevices;
 
 		static DialogResult AskAboutSharedDevices(string heading, string text)
 		{
@@ -1697,24 +1697,23 @@ namespace x360ce.App.Controls
 			var answer = form.ShowForm(text, "Device already on a controller",
 				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button1,
-				new[] { "&Move here", "&Keep there too" }, heading);
+				new[] { "&Move", "&Copy" }, heading);
 			form.Dispose();
 			return answer;
 		}
 
-		/// <summary>The devices already on another tab of the game, each with the tabs it is on, in the words Add asks with.</summary>
+		/// <summary>The devices already on another tab of the game, each with the tabs it is on.</summary>
 		/// <remarks>A device already on this tab is left out: adding it again changes nothing.</remarks>
-		static List<KeyValuePair<string, string>> SharedDevices(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		static List<KeyValuePair<string, MapTo[]>> SharedDevices(UserGame game, MapTo mappedTo, UserDevice[] devices)
 		{
-			var shared = new List<KeyValuePair<string, string>>();
+			var shared = new List<KeyValuePair<string, MapTo[]>>();
 			foreach (var ud in devices)
 			{
 				var tabs = SettingsManager.GetDeviceTabs(game.FileName, ud.InstanceGuid);
 				if (tabs.Length == 0 || tabs.Contains(mappedTo))
 					continue;
 				var name = string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
-				shared.Add(new KeyValuePair<string, string>(name,
-					string.Join(" and ", tabs.Select(x => Attributes.GetDescription(x)))));
+				shared.Add(new KeyValuePair<string, MapTo[]>(name, tabs));
 			}
 			return shared;
 		}
@@ -1723,29 +1722,19 @@ namespace x360ce.App.Controls
 		public static string SharedDeviceHeading(UserGame game, MapTo mappedTo, UserDevice[] devices)
 		{
 			var shared = SharedDevices(game, mappedTo, devices);
-			var here = Attributes.GetDescription(mappedTo);
-			if (shared.Count == 0)
-				return null;
-			return shared.Count == 1
-				? string.Format("Move {0} to {1}, or keep it on {2} too?", shared[0].Key, here, shared[0].Value)
-				: string.Format("Move these devices to {0}, or keep them on their other controllers too?", here);
+			return shared.Count == 0 ? null : string.Format("Move or Copy {0}?", string.Join(", ", shared.Select(x => x.Key)));
 		}
 
-		/// <summary>What Add says under the question: what each button does, and which device is on which tab when there are several. Null when no device is on another tab.</summary>
-		/// <remarks>The question already names a single device and its tab, so that is not said twice.</remarks>
+		/// <summary>What Add says under the question: what each answer does. Null when no device is on another tab.</summary>
 		public static string SharedDeviceQuestion(UserGame game, MapTo mappedTo, UserDevice[] devices)
 		{
 			var shared = SharedDevices(game, mappedTo, devices);
 			if (shared.Count == 0)
 				return null;
-			var lines = shared.Count == 1
-				? new List<string>()
-				: shared.Select(x => string.Format("{0} is already on {1}.", x.Key, x.Value)).ToList();
-			if (lines.Count > 0)
-				lines.Add("");
-			lines.Add("Move here takes it off every other controller. A controller left with no device is switched off.");
-			lines.Add("Keep there too leaves it there as well. This controller starts with the settings of the lowest-numbered one it is on, force feedback included.");
-			return string.Join(Environment.NewLine, lines);
+			var from = string.Join(", ", shared.SelectMany(x => x.Value).Distinct().OrderBy(x => x)
+				.Select(x => Attributes.GetDescription(x)));
+			return string.Format("Move - add here and remove from {0}.", from) + Environment.NewLine
+				+ "Copy - add here and leave others.";
 		}
 
 		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
@@ -1754,22 +1743,22 @@ namespace x360ce.App.Controls
 		/// was selected before, so with a device already mapped the new one arrived unselected and the
 		/// page went on showing the old one's settings until it was picked by hand.
 		///
-		/// A device already on another tab of the game is asked about first: moved here, kept there too, or
+		/// A device already on another tab of the game is asked about first: moved here, copied, or
 		/// not added.
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
-			var keep = false;
+			var copy = false;
 			var question = SharedDeviceQuestion(game, MappedTo, devices);
 			if (question != null)
 			{
-				var answer = AskMoveOrKeep(SharedDeviceHeading(game, MappedTo, devices), question);
+				var answer = AskMoveOrCopy(SharedDeviceHeading(game, MappedTo, devices), question);
 				if (answer != DialogResult.Yes && answer != DialogResult.No)
 					return;
-				keep = answer == DialogResult.No;
+				copy = answer == DialogResult.No;
 			}
 			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
-				SettingsManager.Options.HidGuardianConfigureAutomatically, keep);
+				SettingsManager.Options.HidGuardianConfigureAutomatically, copy);
 			SettingsManager.Current.RaiseSettingsChanged(null);
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}

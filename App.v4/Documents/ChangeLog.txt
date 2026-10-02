@@ -43,7 +43,7 @@
 - Changed: Installing Visual C++ from the Issues tab says what happened.
 - Changed: A controller tab whose place is taken says what is holding it.
 - Changed: The AI assistant can keep a device on several controller tabs.
-- Changed: The question about a device already on another controller is in bold and says what each button does.
+- Changed: The question about a device already on another controller asks Move or Copy, in bold.
 - Added: Issues tab reports a virtual driver that is installed but not working.
 - Added: A hint when a game may see the controller twice.
 - Added: Recording a switch onto a button says which position presses it.

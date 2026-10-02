@@ -192,22 +192,15 @@ namespace x360ce.Tests
 
 			var text = PadControl.SharedDeviceQuestion(game, MapTo.Controller2, new[] { wheel, pad });
 
-			Assert.IsFalse(text.Contains("Pad"), "A device on no other tab is named in the question.");
-			StringAssert.Contains(text, "Move here takes it off every other controller.");
-			StringAssert.Contains(text, "Keep there too leaves it there as well.");
-			Assert.IsFalse(text.Contains("Wheel"), "The one device is named twice: in the question and under it.");
-			// With several, the text under the question says which is on which tab.
+			Assert.AreEqual("Move - add here and remove from Controller 1." + Environment.NewLine + "Copy - add here and leave others.", text);
+			Assert.AreEqual("Move or Copy Wheel?", PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { wheel, pad }),
+				"A device on no other tab is named in the question, or the device is not.");
+			// With several, the question names each and the text says which controllers they leave.
 			var pedals = NewDevice("Pedals");
 			Map(game, pedals, MapTo.Controller3);
-			var several = PadControl.SharedDeviceQuestion(game, MapTo.Controller2, new[] { wheel, pedals });
-			StringAssert.Contains(several, "Wheel is already on Controller 1.");
-			StringAssert.Contains(several, "Pedals is already on Controller 3.");
-			Assert.AreEqual("Move Wheel to Controller 2, or keep it on Controller 1 too?",
-				PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { wheel, pad }),
-				"The question put to the person is not the one the buttons answer.");
-			Assert.AreEqual("Move these devices to Controller 2, or keep them on their other controllers too?",
-				PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { wheel, wheel }),
-				"The question about several devices names one of them.");
+			Assert.AreEqual("Move or Copy Wheel, Pedals?", PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { wheel, pedals }));
+			StringAssert.Contains(PadControl.SharedDeviceQuestion(game, MapTo.Controller2, new[] { wheel, pedals }),
+				"remove from Controller 1, Controller 3.");
 			Assert.IsNull(PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { pad }));
 			Assert.IsNull(PadControl.SharedDeviceQuestion(game, MapTo.Controller2, new[] { pad }),
 				"A device on no other tab is asked about.");
@@ -243,7 +236,7 @@ namespace x360ce.Tests
 			Assert.IsNull(PadControl.SharedDeviceQuestion(game, MapTo.Controller2, new[] { pedals }),
 				"A device mapped only in other games is asked about.");
 			StringAssert.Contains(PadControl.SharedDeviceHeading(game, MapTo.Controller2, new[] { shifter }),
-				"Move Shifter to Controller 2", "A row whose file name differs only in case is not the same game.");
+				"Move or Copy Shifter?", "A row whose file name differs only in case is not the same game.");
 		}
 
 		[TestMethod, TestCategory("mapping")]
@@ -298,12 +291,12 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("Add asks about a device on another tab: Cancel changes nothing, Keep there too puts it here as well")]
+		[Description("Add asks about a device on another tab: Cancel changes nothing, Copy puts it here as well")]
 		public void Add_asks_before_it_takes_a_device_off_another_tab()
 		{
 			Ui.OnUiThread(() =>
 			{
-				var oldAsk = PadControl.AskMoveOrKeep;
+				var oldAsk = PadControl.AskMoveOrCopy;
 				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
 				SettingsManager.Current.NotifySettingsStatus = count => { };
 				var game = NewGame();
@@ -325,26 +318,26 @@ namespace x360ce.Tests
 
 						string asked = null;
 						string heading = null;
-						PadControl.AskMoveOrKeep = (question, text) => { heading = question; asked = text; return DialogResult.Cancel; };
+						PadControl.AskMoveOrCopy = (question, text) => { heading = question; asked = text; return DialogResult.Cancel; };
 						pad.MapDevices(game, new[] { wheel });
 						Application.DoEvents();
 						Assert.IsNotNull(asked, "A device on another tab was added without asking.");
-						StringAssert.Contains(asked, "Move here takes it off every other controller.");
-						Assert.AreEqual("Move Wheel to Controller 2, or keep it on Controller 1 too?", heading);
+						StringAssert.Contains(asked, "Move - add here and remove from Controller 1.");
+						Assert.AreEqual("Move or Copy Wheel?", heading);
 						Assert.AreEqual(1, RowsOf(game, wheel).Length, "Cancel changed the mapping.");
 						Assert.AreEqual((int)MapTo.Controller1, first.MapTo, "Cancel moved the device.");
 
-						PadControl.AskMoveOrKeep = (question, text) => DialogResult.No;
+						PadControl.AskMoveOrCopy = (question, text) => DialogResult.No;
 						pad.MapDevices(game, new[] { wheel });
 						Application.DoEvents();
 						CollectionAssert.AreEqual(new[] { 1, 2 }, RowsOf(game, wheel).Select(x => x.MapTo).ToArray(),
-							"Keep there too did not leave the device on both tabs.");
+							"Copy did not leave the device on both tabs.");
 						Assert.AreEqual(1, pad.MappedDevicesDataGridView.Rows.Count, "The tab does not list the device kept on it.");
 					}
 				}
 				finally
 				{
-					PadControl.AskMoveOrKeep = oldAsk;
+					PadControl.AskMoveOrCopy = oldAsk;
 					SettingsManager.Current.NotifySettingsStatus = oldStatus;
 				}
 			});
@@ -373,11 +366,11 @@ namespace x360ce.Tests
 					};
 					timer.Start();
 					form.ShowForm("Under the question.", "Title", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
-						MessageBoxDefaultButton.Button1, new[] { "&Move here", "&Keep there too" }, "Move it, or keep it?");
-					CollectionAssert.AreEqual(new[] { "&Move here", "&Keep there too", "&Cancel" }, buttons.Select(x => x.Text).ToArray(),
+						MessageBoxDefaultButton.Button1, new[] { "&Move", "&Copy" }, "Move or Copy Wheel?");
+					CollectionAssert.AreEqual(new[] { "&Move", "&Copy", "&Cancel" }, buttons.Select(x => x.Text).ToArray(),
 						"The buttons are named Yes, No and Cancel, which says nothing about what they do.");
 					Assert.IsTrue(heading.Font.Bold, "The question is not in bold.");
-					Assert.AreEqual("Move it, or keep it?", heading.Text);
+					Assert.AreEqual("Move or Copy Wheel?", heading.Text);
 					Assert.IsTrue(text.Top >= heading.Bottom, "The text sits over the question.");
 					foreach (var button in buttons)
 						Assert.IsTrue(TextRenderer.MeasureText(button.Text.Replace("&", ""), button.Font).Width <= button.Width - 8,
