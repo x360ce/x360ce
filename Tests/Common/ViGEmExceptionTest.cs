@@ -31,8 +31,9 @@ namespace x360ce.Tests
 				var ex = new ViGEmException(code);
 				Assert.AreEqual(code, ex.Code, "The exception should carry the code it was built with.");
 				// ToString is what a stack trace, a log line and the crash report all print.
+				// Quoted as the log and the Issues tab quote it.
 				var reported = ex.ToString();
-				Assert.IsTrue(reported.Contains(code.ToString()), string.Format(
+				Assert.IsTrue(reported.Contains(BusAnswers.Name(code)), string.Format(
 					"A report of {0} does not name it. It reads: {1}. Every failure to plug in a "
 					+ "controller then looks alike in the mailbox.", code, ex.Message));
 			}

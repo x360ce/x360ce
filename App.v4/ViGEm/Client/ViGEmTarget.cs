@@ -76,6 +76,7 @@ namespace Nefarius.ViGEm.Client
         /// <summary>
         ///     Brings this device online by attaching it to the bus.
         /// </summary>
+        /// <exception cref="ViGEmException">The bus answered anything but VIGEM_ERROR_NONE.</exception>
         public virtual void Connect()
         {
             if (VendorId > 0 && ProductId > 0)
@@ -85,31 +86,24 @@ namespace Nefarius.ViGEm.Client
             }
 
             var error = ViGEmClient.NativeMethods.vigem_target_add(Client.NativeHandle, NativeHandle);
-            switch (error)
-            {
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                case VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
-                case VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED:
-                case VIGEM_ERROR.VIGEM_ERROR_NO_FREE_SLOT:
-                    throw new ViGEmException(error);
-            }
+            // Every answer but a plain yes is a refusal, including codes this wrapper's enum does not
+            // name: the bus library has more of them than the enum, and a refusal read as success
+            // leaves a controller that was never made, with nothing anywhere saying so.
+            if (BusAnswers.Of(error) != BusAnswer.Fine)
+                throw new ViGEmException(error);
         }
 
         /// <summary>
         ///     Takes this device offline by removing it from the bus.
         /// </summary>
+        /// <exception cref="ViGEmException">The bus answered anything but VIGEM_ERROR_NONE. A
+        ///     <see cref="BusAnswer.Gone"/> answer means the device is off the bus already.</exception>
         public virtual void Disconnect()
         {
             var error = ViGEmClient.NativeMethods.vigem_target_remove(Client.NativeHandle, NativeHandle);
-            switch (error)
-            {
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                case VIGEM_ERROR.VIGEM_ERROR_TARGET_UNINITIALIZED:
-                case VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN:
-                case VIGEM_ERROR.VIGEM_ERROR_REMOVAL_FAILED:
-					throw new ViGEmException(error);
-			}
-		}
+            if (BusAnswers.Of(error) != BusAnswer.Fine)
+                throw new ViGEmException(error);
+        }
 
         #region IDisposable Support
 

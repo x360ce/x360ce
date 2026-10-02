@@ -36,10 +36,10 @@ namespace x360ce.App.DInput
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
 		}
 
-		static void ExtractViGemBusFiles(bool overwrite)
+		static bool ExtractViGemBusFiles()
 		{
 			var target = GetViGEmBusPath();
-			ExtractViGemFiles("ViGEmBus", target, overwrite);
+			return ExtractViGemFiles("ViGEmBus", target);
 		}
 
 		public static string[] ViGEmBusHardwareIds = { "Root\\ViGEmBus", "Nefarius\\ViGEmBus\\Gen1" };
@@ -68,37 +68,81 @@ namespace x360ce.App.DInput
 			lock (LeftoverLock)
 				if (key == LastLeftoverKey)
 					return LastLeftovers;
-			var all = DeviceDetector.GetDevices(ids, true, false);
-			var byId = IndexById(all);
-			var leftovers = all
-				.Where(x => IsVirtualPad(x, byId))
-				// Not the ones this program is using right now. Offering to remove those would break
-				// the very thing somebody pressing the button is trying to repair.
-				.Where(x => !IsOneOfOurs(x, byId))
-				// One entry per controller, not per device. A controller is a small family - the thing
-				// itself and a face for each way of reading it - so counting devices reported one left
-				// behind as three, and named the same controller three times over. Removing the
-				// controller takes its faces with it, so the family is represented by the controller.
-				//
-				// The faces carry the XInput marker and the controller does not, so a face is gathered by
-				// walking up to the first thing without it, and the controller is gathered by itself.
-				// Walking up from the controller as well would take it to the bus that made it, which is
-				// shared by every controller on it - so each one would be filed under its own maker and
-				// counted apart from its own faces.
-				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
-					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
-						? XInputPlaces.HardwareOf(x, byId)
-						: x.DeviceId, StringComparer.OrdinalIgnoreCase)
-				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
-					?? g.First())
-				.OrderBy(x => x.DeviceId)
-				.ToArray();
+			var leftovers = LeftoversOf(DeviceDetector.GetDevices(ids, true, false), OurSerials());
 			lock (LeftoverLock)
 			{
 				LastLeftoverKey = key;
 				LastLeftovers = leftovers;
 			}
 			return leftovers;
+		}
+
+		/// <summary>The same judgement against a device list already read and a given list of bus numbers, so it can be asked without a machine.</summary>
+		/// <param name="all">The controller family, as <see cref="ReadControllerTree"/> reads it.</param>
+		/// <param name="serials">The bus numbers of the controllers this program is holding.</param>
+		public static DeviceInfo[] LeftoversOf(DeviceInfo[] all, ICollection<uint> serials)
+		{
+			// The family is named by the controller, or by its highest face when the controller has gone.
+			return LeftoverGroups(all, IndexById(all), serials)
+				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
+					?? g.First())
+				.OrderBy(x => x.DeviceId)
+				.ToArray();
+		}
+
+		/// <summary>Every device of each leftover controller, one list per controller, each device before its parent: what removing the leftovers removes.</summary>
+		/// <remarks>
+		/// Removing a device does not take its children with it. Removing only the device a leftover is named by leaves its
+		/// faces behind, and the next look finds them as a leftover of their own. So every device of the family goes, the
+		/// deepest first, and the controller counts once, as <see cref="LeftoversOf"/> names it.
+		/// </remarks>
+		/// <param name="all">The controller family with records, as <see cref="ReadControllerTree"/> reads it.</param>
+		/// <param name="serials">The bus numbers of the controllers this program is holding.</param>
+		public static DeviceInfo[][] LeftoverFamiliesOf(DeviceInfo[] all, ICollection<uint> serials)
+		{
+			var byId = IndexById(all);
+			return LeftoverGroups(all, byId, serials)
+				.Select(g => g.OrderByDescending(x => AncestorCount(x, byId)).ToArray())
+				.ToArray();
+		}
+
+		/// <summary>The devices left behind, gathered by the controller each belongs to.</summary>
+		static IEnumerable<IGrouping<string, DeviceInfo>> LeftoverGroups(DeviceInfo[] all, Dictionary<string, DeviceInfo> byId, ICollection<uint> serials)
+		{
+			return all
+				.Where(x => IsVirtualPad(x, byId))
+				// Not the ones this program is using right now. Offering to remove those would break
+				// the very thing somebody pressing the button is trying to repair.
+				.Where(x => !IsOneOfOurs(x, byId, serials))
+				// One entry per controller, not per device. A controller is a small family - the thing
+				// itself and a face for each way of reading it - so counting devices reported one left
+				// behind as three, and named the same controller three times over.
+				//
+				// The faces carry the XInput marker and the controller does not, so a face is gathered by
+				// walking up to the first thing without it, or to the highest face when the chain breaks
+				// before it, and the controller is gathered by itself.
+				// Walking up from the controller as well would take it to the bus that made it, which is
+				// shared by every controller on it - so each one would be filed under its own maker and
+				// counted apart from its own faces.
+				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
+					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
+						? XInputPlaces.HardwareOf(x, byId)
+						: x.DeviceId, StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>How many devices above this one are known, walking up until a parent is missing or seen twice.</summary>
+		static int AncestorCount(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
+		{
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var count = 0;
+			DeviceInfo parent;
+			while (!string.IsNullOrEmpty(device.ParentDeviceId) && seen.Add(device.ParentDeviceId)
+				&& byId.TryGetValue(device.ParentDeviceId, out parent))
+			{
+				count++;
+				device = parent;
+			}
+			return count;
 		}
 
 		/// <summary>The leftovers at the last look, and what they were judged from.</summary>
@@ -128,6 +172,10 @@ namespace x360ce.App.DInput
 		/// matched against the name.
 		/// That is a clear reference to its own, rather than a guess from timing.
 		///
+		/// Only the device the bus made - the one whose parent is the bus - is matched by its number.
+		/// Its faces reach it by walking up. A face whose chain breaks before reaching it, as a pad
+		/// left behind by a run that ended badly does, is never ours, whatever its own name ends in.
+		///
 		/// If the numbers cannot be read, nothing is claimed. Being wrong that way mentions a
 		/// controller that need not be mentioned; being wrong the other way offers to remove the one
 		/// in use.
@@ -145,28 +193,29 @@ namespace x360ce.App.DInput
 			if (serials == null || serials.Count == 0)
 				return false;
 			// A controller is not one device but a small family: the one the bus creates and the two
-			// beneath it that Windows adds. Only the top one carries the number, so the question is
-			// asked of the whole line of ancestors. Matching the name alone catches the top and misses
-			// the rest, and the ones missed are then reported as somebody's leftovers.
+			// beneath it that Windows adds. Only the one the bus made carries the number, so a face walks
+			// up to it and it alone is read. The name of any other device in the family ends in something
+			// that is not a bus number - a pad left behind has a face ending in "&01" - and reading those
+			// would claim somebody else's controller whenever this program holds that number. A chain that
+			// breaks before it reaches the device the bus made has lost its number, and is never ours.
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var current = device;
-			while (current != null)
+			while (true)
 			{
 				// The bus that makes every controller is not one of them. Its own name ends in a number
 				// too, and reading that would claim every controller on the bus for whoever holds that number.
 				if (IsViGEmBus(current))
 					return false;
-				if (serials.Contains(TrailingNumber(current.DeviceId)))
-					return true;
 				var parentId = current.ParentDeviceId;
 				if (string.IsNullOrEmpty(parentId) || !seen.Add(parentId))
 					return false;
 				DeviceInfo parent;
 				if (!byId.TryGetValue(parentId, out parent))
 					return false;
+				if (IsViGEmBus(parent))
+					return serials.Contains(TrailingNumber(current.DeviceId));
 				current = parent;
 			}
-			return false;
 		}
 
 		/// <summary>The number Windows put at the end of a device's name, or zero.</summary>
@@ -439,6 +488,21 @@ namespace x360ce.App.DInput
 				.ToArray();
 		}
 
+		/// <summary>How long removing or repairing waits for the XInput library to be free before giving up.</summary>
+		/// <remarks>
+		/// The time XInput has to answer. A read holds the library for microseconds and a load for milliseconds, so a
+		/// hold past this is a read that is not coming back.
+		/// </remarks>
+		static readonly TimeSpan ReleaseLimit = TimeSpan.FromMilliseconds(DInputHelper.XiAnswerMs);
+
+		/// <summary>How long removing or repairing waits for the pass under way, and then a plug under way, to finish.</summary>
+		/// <remarks>
+		/// A plug that XInput answers ends within about seven seconds: five waiting for its place, and two device tree reads.
+		/// One still running after this is waiting for XInput that is not answering. Removing and repairing run on a
+		/// worker, never on the interface thread, so nothing waits for this but them.
+		/// </remarks>
+		static readonly TimeSpan StopLimit = TimeSpan.FromSeconds(10);
+
 		/// <summary>
 		/// Removes the leftover controllers, through an Administrator copy of this program when this
 		/// one is not, and says what happened in words. Never on the interface thread: Windows asks
@@ -454,10 +518,13 @@ namespace x360ce.App.DInput
 			// this the removal is refused and each refusal leaves Windows needing a restart before it
 			// will finish building any new controller.
 			var helper = Global.DHelper;
-			if (helper != null)
-				helper.ReleaseForDeviceRemoval();
 			try
 			{
+				if (helper != null && !helper.ReleaseForDeviceRemoval(StopLimit, ReleaseLimit))
+				{
+					succeeded = false;
+					return "The controllers could not be let go of in time, so nothing was removed. Try again in a moment.";
+				}
 				if (Program.RunElevated(AdminCommand.RemoveLeftoverPads))
 				{
 					// Already running as Administrator, so the work happened in this program and the
@@ -498,22 +565,31 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>Removes every device of each leftover controller, each before its parent.</summary>
+		/// <returns>How many controllers were removed whole, counted as <see cref="GetLeftoverVirtualPads"/> counts them.</returns>
 		public static int RemoveLeftoverVirtualPads(out bool rebootNeeded, out Exception error)
 		{
 			rebootNeeded = false;
 			error = null;
 			var removed = 0;
-			foreach (var pad in GetLeftoverVirtualPads())
+			// Read now, with the records, as the leftovers are read; see LeftoverFamiliesOf for why every device goes.
+			foreach (var family in LeftoverFamiliesOf(ReadControllerTree(true), OurSerials()))
 			{
-				bool restart;
-				var failure = DeviceDetector.RemoveDevice(pad.DeviceId, 1, out restart);
-				if (failure != null)
+				var whole = true;
+				foreach (var device in family)
 				{
-					error = failure;
-					continue;
+					bool restart;
+					var failure = DeviceDetector.RemoveDevice(device.DeviceId, 1, out restart);
+					if (failure != null)
+					{
+						error = failure;
+						whole = false;
+						continue;
+					}
+					rebootNeeded |= restart;
 				}
-				removed++;
-				rebootNeeded |= restart;
+				if (whole)
+					removed++;
 			}
 			return removed;
 		}
@@ -683,7 +759,10 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static bool RunModernSetup()
 		{
-			ExtractViGemBusFiles(true);
+			// A package that could not be unpacked is treated like a setup that would not start: not run,
+			// and the caller reports the driver it then finds.
+			if (!ExtractViGemBusFiles())
+				return false;
 			var setup = GetModernSetupPath();
 			if (!System.IO.File.Exists(setup))
 				return false;
@@ -721,7 +800,8 @@ namespace x360ce.App.DInput
 			if (TakesModernViGEmBus)
 				return RunModernSetup() && GetInstalledViGEmBusVersion() != null;
 			// Extract files first.
-			ExtractViGemBusFiles(true);
+			if (!ExtractViGemBusFiles())
+				return false;
 			var folder = GetViGEmBusPath();
 			var infFile = GetViGEmBusInfPath();
 			// Use last ID.
@@ -757,6 +837,35 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
+		/// Repairs the virtual bus through an Administrator copy of this program, letting go of every
+		/// controller first and picking them back up afterwards. Never on the interface thread.
+		/// </summary>
+		/// <remarks>
+		/// The bus cannot be taken out from under controllers this program still holds open, so they
+		/// are let go of exactly as removing them does, and picked up again whatever happened. What the
+		/// repair achieved is not reported here: on Windows 10 and later the driver's own setup decides,
+		/// and on older Windows a bus of another version is left for its own installer. The checks that
+		/// follow read the bus afresh.
+		/// </remarks>
+		public static void RepairViGEmBusElevated()
+		{
+			var helper = Global.DHelper;
+			try
+			{
+				// Not repaired while the controllers cannot be let go of: XInput not answering, which the window has already
+				// been told, or the pass under way not finishing.
+				if (helper != null && !helper.ReleaseForDeviceRemoval(StopLimit, ReleaseLimit))
+					return;
+				Program.RunElevated(AdminCommand.RepairViGEmBus);
+			}
+			finally
+			{
+				if (helper != null)
+					helper.ResumeAfterDeviceRemoval();
+			}
+		}
+
+		/// <summary>
 		/// Uninstall the virtual bus driver installed by this application.
 		/// </summary>
 		/// <returns>True when the bus is no longer present.</returns>
@@ -782,7 +891,8 @@ namespace x360ce.App.DInput
 			if (!Equals(installed, EmbeddedViGEmBusVersion))
 				return false;
 			// Extract files first.
-			ExtractViGemBusFiles(false);
+			if (!ExtractViGemBusFiles())
+				return false;
 			var folder = GetViGEmBusPath();
 			// Remove all old instances.
 			foreach (var ViGEmBusHardwareId in ViGEmBusHardwareIds)
@@ -810,10 +920,10 @@ namespace x360ce.App.DInput
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm HidGuardian");
 		}
 
-		static void ExtractHidGuardianFiles(bool overwrite)
+		static bool ExtractHidGuardianFiles()
 		{
 			var target = GetHidGuardianPath();
-			ExtractViGemFiles("HidGuardian", target, overwrite);
+			return ExtractViGemFiles("HidGuardian", target);
 		}
 
 		/// <summary>
@@ -831,7 +941,8 @@ namespace x360ce.App.DInput
 		public static bool UninstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(false);
+			if (!ExtractHidGuardianFiles())
+				return false;
 			var folder = GetHidGuardianPath();
 			// Step 1: remove the HID class filter, then confirm it is gone.
 			if (IsHidGuardianClassFilterPresent())
@@ -867,7 +978,8 @@ namespace x360ce.App.DInput
 		public static bool InstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(true);
+			if (!ExtractHidGuardianFiles())
+				return false;
 			var folder = GetHidGuardianPath();
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			var infFile = string.Format("{0}\\{1}", paString, "HidGuardian.inf");
@@ -901,7 +1013,8 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static string GetHidGuardianRemoveScript()
 		{
-			ExtractHidGuardianFiles(false);
+			if (!ExtractHidGuardianFiles())
+				return null;
 			var path = Path.Combine(GetHidGuardianPath(), "HidGuardian_Remove.ps1");
 			return File.Exists(path) ? path : null;
 		}
@@ -920,7 +1033,8 @@ namespace x360ce.App.DInput
 		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(true);
+			if (!ExtractHidGuardianFiles())
+				return;
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
 			UacHelper.RunElevated(
@@ -940,43 +1054,99 @@ namespace x360ce.App.DInput
 		/// </summary>
 		/// <param name="source">Resource prefix.</param>
 		/// <param name="target">Target folder to extract.</param>
-		/// <param name="overwrite">Overwrite files at target.</param>
-		static void ExtractViGemFiles(string source, string target, bool overwrite)
+		/// <returns>
+		/// True when the folder holds the package. False when it could not be unpacked, because a file that
+		/// has to change is in use or may not be written; the failure is logged and the caller stops.
+		/// </returns>
+		static bool ExtractViGemFiles(string source, string target)
 		{
 			// Get list of resources to extract.
 			var assembly = Assembly.GetEntryAssembly();
 			var pattern = string.Format(".Resources.{0}.zip", source);
 			var resourceName = assembly.GetManifestResourceNames().Where(x => x.Contains(pattern)).First();
-			var sr = assembly.GetManifestResourceStream(resourceName);
-			if (sr == null)
-				return;
-			var bytes = new byte[sr.Length];
-			sr.Read(bytes, 0, bytes.Length);
-			// Open an existing zip file for reading.
-			var zip = ZipStorer.Open(sr, FileAccess.Read);
-			// Read the central directory collection
-			var dir = zip.ReadCentralDir();
-			// Look for the desired file.
-			// The folders first. A package holds folders as well as files, and a folder is not something
-			// to write bytes into: unpacking one as though it were a file failed on any computer where the
-			// destination did not already exist, which is every computer installing the driver for the
-			// first time.
-			Directory.CreateDirectory(target);
-			foreach (ZipStorer.ZipFileEntry entry in dir)
+			using (var sr = assembly.GetManifestResourceStream(resourceName))
 			{
-				var relative = entry.FilenameInZip.Replace("/", "\\");
-				var fileName = System.IO.Path.Combine(target, relative);
-				if (relative.EndsWith("\\"))
+				if (sr == null)
+					return false;
+				try
 				{
-					Directory.CreateDirectory(fileName.TrimEnd('\\'));
-					continue;
+					ExtractZip(sr, target);
 				}
-				var folder = System.IO.Path.GetDirectoryName(fileName);
-				if (!string.IsNullOrEmpty(folder))
-					Directory.CreateDirectory(folder);
-				zip.ExtractFile(entry, fileName);
+				catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+				{
+					// A file of the package that has to change is in use, or may not be written.
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					return false;
+				}
 			}
-			zip.Close();
+			return true;
+		}
+
+		/// <summary>Unpacks a driver package into a folder, writing only the files that differ from what is there.</summary>
+		/// <remarks>
+		/// The package goes to the same folder every time, and a file from the last time can still be in
+		/// use: the driver's own setup, still open or still closing, or a virus scanner reading what was
+		/// just written. Windows refuses to write over a file in use (0x80070020), and the refusal ends the
+		/// install, repair or removal it is part of. A file that already holds the packed bytes is left as
+		/// it is, so only a file that really has to change can be refused, and it still is.
+		/// </remarks>
+		/// <param name="package">The zip package. Left open.</param>
+		/// <param name="target">The folder to unpack into.</param>
+		/// <exception cref="IOException">A file that has to change is in use or cannot be written.</exception>
+		/// <exception cref="UnauthorizedAccessException">A file that has to change may not be written.</exception>
+		public static void ExtractZip(Stream package, string target)
+		{
+			using (var zip = ZipStorer.Open(package, FileAccess.Read, true))
+			{
+				// The folders first. A package holds folders as well as files, and a folder is not something
+				// to write bytes into: unpacking one as though it were a file failed on any computer where the
+				// destination did not already exist, which is every computer installing the driver for the
+				// first time.
+				Directory.CreateDirectory(target);
+				foreach (var entry in zip.ReadCentralDir())
+				{
+					var relative = entry.FilenameInZip.Replace("/", "\\");
+					var fileName = Path.Combine(target, relative);
+					if (relative.EndsWith("\\"))
+					{
+						Directory.CreateDirectory(fileName.TrimEnd('\\'));
+						continue;
+					}
+					var folder = Path.GetDirectoryName(fileName);
+					if (!string.IsNullOrEmpty(folder))
+						Directory.CreateDirectory(folder);
+					var existing = new FileInfo(fileName);
+					byte[] packed;
+					if (existing.Exists && existing.Length == entry.FileSize
+						&& zip.ExtractFile(entry, out packed) && HasContent(fileName, packed))
+						continue;
+					zip.ExtractFile(entry, fileName);
+				}
+			}
+		}
+
+		/// <summary>Whether a file is there and holds exactly these bytes. Read beside whatever else has it open.</summary>
+		static bool HasContent(string path, byte[] bytes)
+		{
+			var file = new FileInfo(path);
+			if (!file.Exists || file.Length != bytes.Length)
+				return false;
+			using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+			{
+				var existing = new byte[bytes.Length];
+				var read = 0;
+				while (read < existing.Length)
+				{
+					var count = stream.Read(existing, read, existing.Length - read);
+					if (count == 0)
+						return false;
+					read += count;
+				}
+				for (var i = 0; i < bytes.Length; i++)
+					if (existing[i] != bytes[i])
+						return false;
+				return true;
+			}
 		}
 
 		static string GetDevConPath()
@@ -1006,12 +1176,15 @@ namespace x360ce.App.DInput
 			return driver.DriverVersion != 0;
 		}
 
+		/// <summary>Registry key HidHide's setup writes its version and its folder to.</summary>
+		const string HidHideRegistryKey = @"SOFTWARE\Nefarius Software Solutions e.U.\HidHide";
+
 		/// <summary>Installed version, or null when HidHide is not installed.</summary>
 		public static string GetHidHideVersion()
 		{
 			foreach (var root in new[] { Registry.LocalMachine, Registry.CurrentUser })
 			{
-				using (var key = root.OpenSubKey(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide"))
+				using (var key = root.OpenSubKey(HidHideRegistryKey))
 				{
 					var value = key?.GetValue("Version") as string;
 					if (!string.IsNullOrEmpty(value))
@@ -1024,18 +1197,24 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// Full path of the HidHide configuration program, or null when it cannot be found.
 		/// </summary>
+		public static string GetHidHideClientPath()
+		{
+			return GetHidHideProgramPath("HidHideClient.exe");
+		}
+
+		/// <summary>Full path of one of HidHide's programs, or null when it cannot be found.</summary>
 		/// <remarks>
 		/// The install location is read from the registry where possible, because the setup lets
 		/// the user choose it. The usual folder is only a fallback for when that key is missing.
 		/// </remarks>
-		public static string GetHidHideClientPath()
+		static string GetHidHideProgramPath(string fileName)
 		{
 			foreach (var folder in GetHidHideFolders())
 			{
 				if (string.IsNullOrEmpty(folder))
 					continue;
 				// The setup places the programs in an architecture sub folder.
-				foreach (var relative in new[] { "HidHideClient.exe", @"x64\HidHideClient.exe" })
+				foreach (var relative in new[] { fileName, Path.Combine("x64", fileName) })
 				{
 					var path = Path.Combine(folder, relative);
 					if (File.Exists(path))
@@ -1045,18 +1224,194 @@ namespace x360ce.App.DInput
 			return null;
 		}
 
+		/// <summary>Folders HidHide may be installed in, most likely first.</summary>
+		/// <remarks>
+		/// HidHide 1.5 records its folder as "Path" beside its version. The longer key name is read as
+		/// well, then the default folder.
+		/// </remarks>
 		static string[] GetHidHideFolders()
 		{
-			string fromRegistry = null;
-			using (var key = Registry.LocalMachine.OpenSubKey(
-				@"SOFTWARE\Nefarius Software Solutions e.U.\Nefarius Software Solutions e.U. HidHide"))
-				fromRegistry = key?.GetValue("Path") as string;
-			return new[]
+			var folders = new List<string>();
+			foreach (var name in new[] { HidHideRegistryKey,
+				@"SOFTWARE\Nefarius Software Solutions e.U.\Nefarius Software Solutions e.U. HidHide" })
 			{
-				fromRegistry,
-				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-					"Nefarius Software Solutions", "HidHide"),
-			};
+				using (var key = Registry.LocalMachine.OpenSubKey(name))
+					folders.Add(key?.GetValue("Path") as string);
+			}
+			folders.Add(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+				"Nefarius Software Solutions", "HidHide"));
+			return folders.ToArray();
+		}
+
+		/// <summary>What HidHide is set to do.</summary>
+		public sealed class HidHideState
+		{
+			/// <summary>The HidHide driver is present.</summary>
+			public bool Installed;
+
+			/// <summary>Its command line program answered. When false, nothing below is known.</summary>
+			public bool Answered;
+
+			/// <summary>Hiding is switched on.</summary>
+			public bool CloakOn;
+
+			/// <summary>The application list names the programs that may not see hidden devices, rather than the ones that may.</summary>
+			public bool Inverse;
+
+			/// <summary>Device instance paths of the hidden devices.</summary>
+			public string[] HiddenDevices = new string[0];
+
+			/// <summary>Full paths of the programs on the application list.</summary>
+			public string[] Applications = new string[0];
+
+			/// <summary>When this was read, in universal time.</summary>
+			public DateTime ReadTime;
+
+			/// <summary>Whether a device instance path is on the hidden list.</summary>
+			/// <remarks>Windows ignores case in device instance paths, so this does too.</remarks>
+			public bool IsHidden(string deviceInstancePath)
+			{
+				if (string.IsNullOrEmpty(deviceInstancePath))
+					return false;
+				var path = deviceInstancePath.Trim();
+				return HiddenDevices.Any(x => string.Equals(x, path, StringComparison.OrdinalIgnoreCase));
+			}
+
+			/// <summary>Whether a program may see the devices HidHide hides.</summary>
+			/// <param name="fileName">The program's full path.</param>
+			public bool IsAllowed(string fileName)
+			{
+				var listed = !string.IsNullOrEmpty(fileName)
+					&& Applications.Any(x => string.Equals(x, fileName, StringComparison.OrdinalIgnoreCase));
+				return Inverse ? !listed : listed;
+			}
+		}
+
+		/// <summary>Longest wait for HidHide's command line program to answer, in milliseconds.</summary>
+		const int HidHideCliTimeout = 3000;
+
+		/// <summary>How long one reading of HidHide's settings is used before it is read again.</summary>
+		/// <remarks>
+		/// The issue check runs every five seconds and every reading starts a process. The settings change
+		/// only when somebody uses HidHide's own program, so a reading a quarter of a minute old is soon enough.
+		/// </remarks>
+		static readonly TimeSpan HidHideStateLifetime = TimeSpan.FromSeconds(15);
+
+		/// <summary>The last reading. Replaced whole and never changed, so any thread may read it.</summary>
+		static HidHideState LastHidHideState;
+
+		/// <summary>What HidHide is set to do, read through its command line program.</summary>
+		/// <remarks>
+		/// HidHide keeps its settings where only an administrator can read them, but HidHideCLI.exe answers
+		/// anybody. Starting a process and waiting up to <see cref="HidHideCliTimeout"/> for it is no work for
+		/// the device thread, so only the issue check calls this, and a reading is reused for
+		/// <see cref="HidHideStateLifetime"/>. It only reads; it never changes HidHide's settings.
+		/// </remarks>
+		public static HidHideState GetHidHideState()
+		{
+			var state = LastHidHideState;
+			if (state != null && DateTime.UtcNow - state.ReadTime < HidHideStateLifetime)
+				return state;
+			var installed = IsHidHideDevicePresent();
+			var cli = installed ? GetHidHideProgramPath("HidHideCLI.exe") : null;
+			var output = cli == null ? null : RunHidHideCli(cli, "--cloak-state --inv-state --dev-list --app-list");
+			state = ParseHidHideCli(output);
+			state.Installed = installed;
+			state.ReadTime = DateTime.UtcNow;
+			LastHidHideState = state;
+			return state;
+		}
+
+		/// <summary>Runs HidHide's command line program and returns what it printed; null when it failed or did not end in time.</summary>
+		static string RunHidHideCli(string fileName, string arguments)
+		{
+			var psi = new ProcessStartInfo(fileName, arguments);
+			psi.UseShellExecute = false;
+			psi.CreateNoWindow = true;
+			psi.RedirectStandardOutput = true;
+			Process process;
+			try
+			{
+				process = Process.Start(psi);
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				// Removed or blocked since it was found: no answer, the same as a program that never replies.
+				return null;
+			}
+			using (process)
+			{
+				// Read while waiting, or a full output pipe would stop the program from ending.
+				var output = process.StandardOutput.ReadToEndAsync();
+				if (!process.WaitForExit(HidHideCliTimeout))
+				{
+					try
+					{
+						process.Kill();
+					}
+					catch (InvalidOperationException)
+					{
+						// It ended between the wait and the kill.
+					}
+					catch (System.ComponentModel.Win32Exception)
+					{
+						// It is already ending.
+					}
+					return null;
+				}
+				if (process.ExitCode != 0 || !output.Wait(HidHideCliTimeout))
+					return null;
+				return output.Result;
+			}
+		}
+
+		/// <summary>
+		/// Reads what HidHideCLI.exe printed for <c>--cloak-state --inv-state --dev-list --app-list</c>.
+		/// </summary>
+		/// <remarks>
+		/// Each fact is printed on its own line as the command that would set it again: <c>--cloak-on</c> or
+		/// <c>--cloak-off</c>, <c>--inv-on</c> or <c>--inv-off</c>, <c>--dev-hide "device instance path"</c> for
+		/// every hidden device and <c>--app-reg "full path"</c> for every program on the list. A bare device
+		/// instance path, a line with a backslash and no spaces, is taken as a hidden device too. Nothing counts
+		/// as an answer unless the cloak state is among the lines, so an error message is never read as settings.
+		/// </remarks>
+		/// <param name="output">Everything the program printed; null or empty when it did not answer.</param>
+		public static HidHideState ParseHidHideCli(string output)
+		{
+			var state = new HidHideState();
+			if (string.IsNullOrEmpty(output))
+				return state;
+			var devices = new List<string>();
+			var applications = new List<string>();
+			foreach (var raw in output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var line = raw.Trim();
+				if (string.Equals(line, "--cloak-on", StringComparison.OrdinalIgnoreCase))
+				{
+					state.Answered = true;
+					state.CloakOn = true;
+				}
+				else if (string.Equals(line, "--cloak-off", StringComparison.OrdinalIgnoreCase))
+					state.Answered = true;
+				else if (string.Equals(line, "--inv-on", StringComparison.OrdinalIgnoreCase))
+					state.Inverse = true;
+				else if (line.StartsWith("--dev-hide ", StringComparison.OrdinalIgnoreCase))
+					AddQuoted(devices, line.Substring("--dev-hide ".Length));
+				else if (line.StartsWith("--app-reg ", StringComparison.OrdinalIgnoreCase))
+					AddQuoted(applications, line.Substring("--app-reg ".Length));
+				else if (!line.StartsWith("-") && line.IndexOf('\\') > 0 && !line.Any(char.IsWhiteSpace))
+					devices.Add(line);
+			}
+			state.HiddenDevices = devices.ToArray();
+			state.Applications = applications.ToArray();
+			return state;
+		}
+
+		static void AddQuoted(List<string> list, string value)
+		{
+			value = value.Trim().Trim('"');
+			if (value.Length > 0)
+				list.Add(value);
 		}
 
 		#endregion

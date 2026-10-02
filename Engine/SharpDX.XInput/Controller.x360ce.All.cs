@@ -121,15 +121,26 @@
 			catch (Exception) { throw; }
 		}
 
+		/// <summary>The loaded library's state function, looked up once when the library is loaded, or null.</summary>
+		/// <remarks>
+		/// Looked up once per load; looking it up per call would make a delegate for every read, four for each reading of
+		/// the places. Cleared before the library is let go of. Reads and frees happen under <see cref="XInputLock"/>, so
+		/// nothing calls into a library that is gone.
+		/// </remarks>
+		static XInputGetStateDelegate _getState;
+
 		[HandleProcessCorruptedStateExceptions]
 		public static unsafe ErrorCode XInputGetState(int dwUserIndex, out State pState)
 		{
-			var functionName = "XInputGetState";
-			if (IsGetStateExSupported) functionName = "XInputGetStateEx";
 			pState = new State();
 			try
 			{
-				var method = GetMethod<XInputGetStateDelegate>(functionName);
+				var method = _getState;
+				if (method == null)
+				{
+					var functionName = IsGetStateExSupported ? "XInputGetStateEx" : "XInputGetState";
+					method = GetMethod<XInputGetStateDelegate>(functionName);
+				}
 				return method(dwUserIndex, out pState);
 			}
 			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
@@ -246,6 +257,7 @@
 			{
 				if (IsLoaded)
 				{
+					_getState = null;
 					Exception freeError;
 					JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out freeError);
 					libHandle = IntPtr.Zero;
@@ -273,6 +285,12 @@
 				// Check if Reset function is supported.
 				procAddress = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle, "Reset", out procException);
 				_IsResetSupported = procAddress != IntPtr.Zero;
+				// The state function, looked up once for this library.
+				var stateProc = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle,
+					_IsGetStateExSupported ? "XInputGetStateEx" : "XInputGetState", out procException);
+				_getState = stateProc == IntPtr.Zero
+					? null
+					: (XInputGetStateDelegate)Marshal.GetDelegateForFunctionPointer(stateProc, typeof(XInputGetStateDelegate));
 			}
 		}
 
@@ -299,6 +317,7 @@
 			lock (loadLock)
 			{
 				if (!IsLoaded) return;
+				_getState = null;
 				Exception error;
 				JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out error);
 				libHandle = IntPtr.Zero;

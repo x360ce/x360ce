@@ -105,6 +105,7 @@ namespace x360ce.Web.WebServices
 		public List<Vendor> GetVendors()
 		{
 			var db = new x360ceModelContainer();
+			// Read first: EF6 refuses to project into the entity type inside the query.
 			var q = db.Vendors.ToList()
 				.Select(x => new Vendor
 				{
@@ -215,6 +216,10 @@ namespace x360ce.Web.WebServices
 							results.ErrorCode = (int)CloudErrorCode.Error;
 						}
 						break;
+					// No program calls this; the updater reads GitHub Releases (UpdateClient).
+					// It echoes the client's own version as ServerVersion, so it never announces
+					// an update, and it names /Files/x360ce_beta.zip, which is not in the
+					// repository.
 					case CloudAction.CheckUpdates:
 						var clientVersion = command.Values.GetValue<string>(CloudKey.ClientVersion);
 						results.Values.Add(CloudKey.ServerVersion, clientVersion);

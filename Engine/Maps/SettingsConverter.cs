@@ -295,12 +295,27 @@ namespace x360ce.Engine
 			return type;
 		}
 
+		/// <summary>A mapping as a box shows it, read the other way round: "Slider 2" becomes "ISlider 2", and back.</summary>
+		/// <remarks>The same control stays mapped; only the I in front of it changes, as <see cref="Invert"/> pairs them.</remarks>
+		/// <param name="textValue">The mapping as a box shows it, such as "Button 3" or "IHSlider 1".</param>
+		/// <returns>The other way round, or null when the mapping has none, such as a D-Pad, a formula or an empty box.</returns>
+		public static string InvertTextValue(string textValue)
+		{
+			MapType type;
+			int index;
+			if (!TryParseTextValue(textValue, out type, out index))
+				return null;
+			var inverted = Invert(type);
+			return inverted == type ? null : ToTextValue(inverted, index);
+		}
+
 		static List<MapType> SettingInverted = new List<MapType>
 		{
 			MapType.IAxis,
 			MapType.IHAxis,
 			MapType.ISlider,
 			MapType.IHSlider,
+			MapType.IButton,
 		};
 
 		static List<MapType> SettingNonInverted = new List<MapType>
@@ -309,6 +324,7 @@ namespace x360ce.Engine
 			MapType.HAxis,
 			MapType.Slider,
 			MapType.HSlider,
+			MapType.Button,
 		};
 
 		#endregion

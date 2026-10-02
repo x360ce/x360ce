@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <!-- The target is net462 on purpose (v5 targets net48). A net462 build runs on the installed
+         .NET Framework 4.8 runtime, an in-place upgrade, so users already get 4.8 behaviour; the
+         target only limits the compile-time API surface. Move to net48 only when a needed API
+         forces it. -->
     <TargetFramework>net462</TargetFramework>
     <OutputType>WinExe</OutputType>
     <RootNamespace>x360ce.App</RootNamespace>
@@ -10,7 +14,13 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- The item lists below are the whole content: nothing on disk is compiled or embedded by
-         being there, so a file dropped into the folder cannot change the build unlisted. -->
+         being there, so a file dropped into the folder cannot change the build unlisted.
+         After any change to this file, compare Assembly.GetManifestResourceNames() of the built
+         program with the one before. A changed name builds green and then throws
+         MissingManifestResourceException in InitializeComponent. The embedded files are named
+         x360ce.App.Resources.* after RootNamespace, which the code looks them up by, and
+         Documents/App_0_Release.ps1 (Test-EmbeddedSignatures) prints them without that prefix,
+         so RootNamespace stays x360ce.App. -->
     <EnableDefaultItems>false</EnableDefaultItems>
     <!-- Properties/AssemblyInfo.cs carries the version and attributes, as before. -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -107,6 +117,7 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
+    <Compile Include="Common\DInput\DeviceRouting.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
@@ -117,6 +128,8 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
+    <Compile Include="Common\DInput\DeviceSwitch.cs" />
+    <Compile Include="Common\DInput\UsbPortCycle.cs" />
     <Compile Include="Common\DInput\ElevatedDevices.cs" />
     <Compile Include="Common\DInput\Recorder.cs" />
     <Compile Include="Common\DInput\VirtualDriverInstaller.cs" />
@@ -364,12 +377,15 @@
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
+    <Compile Include="Issues\HidHideIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
+    <Compile Include="Issues\VirtualDriverNotWorkingIssue.cs" />
     <Compile Include="Issues\ForceFeedbackIssue.cs" />
     <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />
+    <Compile Include="Issues\SwitchedOffControllersIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Hotkey.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -394,12 +410,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Service\RemoteService.cs" />
+    <Compile Include="ViGEm\Client\Enums\BusAnswer.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
     <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360Controller.cs" />
     <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360FeedbackReceivedEventArgs.cs" />
-    <Compile Include="ViGEm\Client\Targets\Xbox360\Xbox360Report.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />

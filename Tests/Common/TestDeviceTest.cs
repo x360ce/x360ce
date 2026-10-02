@@ -70,7 +70,8 @@ namespace x360ce.Tests
 			var device = NewDevice();
 			for (var sample = 0; sample < 25; sample++)
 			{
-				var state = TestDeviceHelper.GetCurrentState(device);
+				var state = new JoystickState();
+				TestDeviceHelper.GetCurrentState(device, state);
 				var held = state.Buttons.Take(device.CapButtonCount).Count(x => x);
 				Assert.AreEqual(1, held,
 					string.Format("{0} buttons were held at once; the pattern presses one at a time.", held));
@@ -86,7 +87,8 @@ namespace x360ce.Tests
 			var device = NewDevice();
 			for (var sample = 0; sample < 25; sample++)
 			{
-				var state = TestDeviceHelper.GetCurrentState(device);
+				var state = new JoystickState();
+				TestDeviceHelper.GetCurrentState(device, state);
 				foreach (var axis in new[] { state.X, state.Y, state.Z, state.RotationX, state.RotationY, state.RotationZ })
 					Assert.IsTrue(axis >= 0 && axis <= 65535,
 						string.Format("An axis reported {0}, outside the range DirectInput allows.", axis));
@@ -107,7 +109,8 @@ namespace x360ce.Tests
 			// A frozen test device would let every mapping test pass while proving nothing, which is
 			// the failure this test exists to catch.
 			var device = NewDevice();
-			var first = TestDeviceHelper.GetCurrentState(device);
+			var first = new JoystickState();
+			TestDeviceHelper.GetCurrentState(device, first);
 			var startedAt = DateTime.UtcNow;
 			var moved = false;
 			// The pattern completes a sweep in four seconds and then rests for two, so a little over
@@ -115,7 +118,8 @@ namespace x360ce.Tests
 			while (!moved && (DateTime.UtcNow - startedAt).TotalSeconds < 7)
 			{
 				Thread.Sleep(50);
-				var now = TestDeviceHelper.GetCurrentState(device);
+				var now = new JoystickState();
+				TestDeviceHelper.GetCurrentState(device, now);
 				moved = now.X != first.X || now.Y != first.Y
 					|| now.PointOfViewControllers[0] != first.PointOfViewControllers[0]
 					|| !now.Buttons.Take(device.CapButtonCount)
@@ -133,7 +137,8 @@ namespace x360ce.Tests
 			var device = NewDevice();
 			for (var sample = 0; sample < 20; sample++)
 			{
-				var state = TestDeviceHelper.GetCurrentState(device);
+				var state = new JoystickState();
+				TestDeviceHelper.GetCurrentState(device, state);
 				var stick = ConvertHelper.GetThumbValue(state.X, 0f, 0f, 0f, false, false, true);
 				Assert.IsTrue(stick >= -32768f && stick <= 32767f,
 					string.Format("A stick mapped to {0}, outside what a game can read.", stick));

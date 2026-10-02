@@ -104,7 +104,7 @@ namespace x360ce.Tests
 						var ud = new UserDevice();
 						ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
 						int axisMask, actuatorMask, actuatorCount;
-						CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount);
+						CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
 						// The reporter's setting: Constant2, the motors pointed opposite ways.
 						var ps = new PadSetting
 						{

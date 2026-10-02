@@ -68,7 +68,7 @@ namespace x360ce.Tests
 			var manager = new DirectInput();
 			try
 			{
-				Assert.IsTrue(client.PlugIn(1), "The test could not plug a controller in.");
+				Assert.IsTrue(client.PlugIn(1, out _), "The test could not plug a controller in.");
 				Ui.WaitFor(() => XInputPlaces.VirtualHardwareNow().Except(padsBefore).Any() ? "arrived" : null,
 					TimeSpan.FromSeconds(15), "our controller to arrive on the bus");
 				// The first read lists the machine's own devices, which stay open as the program keeps them.

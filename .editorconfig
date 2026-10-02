@@ -3,10 +3,19 @@
 # top-most EditorConfig file
 root = true
 
-# Windows-style newlines with a newline ending every file
+# A newline ends every file. The line ending is decided by .gitattributes: the operating system's by default,
+# LF for scripts that run on Linux and macOS, CRLF for Windows command and solution files.
 [*]
-end_of_line = crlf
 insert_final_newline = true
+
+[*.{sh,bash,py,dockerfile}]
+end_of_line = lf
+
+[Dockerfile]
+end_of_line = lf
+
+[*.{sln,slnx,bat,cmd}]
+end_of_line = crlf
 
 # tab indentation
 [*.{c,h,def}]

@@ -1,7 +1,9 @@
-﻿// @under-test: App.v4/MainForm.cs, App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs
+﻿// @under-test: App.v4/MainForm.cs, App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs, App.v4/Common/DInput/XInputPlaces.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using x360ce.App;
+using x360ce.App.DInput;
 
 namespace x360ce.Tests
 {
@@ -63,6 +65,64 @@ namespace x360ce.Tests
 			for (var place = 1; place <= 4; place++)
 				StringAssert.Contains(MainForm.ControllerStateHint(place, true, false, false, true),
 					"Controller " + place);
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A taken place says once what holds it, and gives one piece of advice")]
+		public void A_taken_place_names_what_holds_it_once()
+		{
+			var holders = new[] { XInputPlaces.HolderReal, XInputPlaces.HolderVirtual, XInputPlaces.HolderLeftover, null };
+			var texts = new List<string>();
+			foreach (var holder in holders)
+			{
+				var text = MainForm.ControllerStateHint(1, true, true, false, true, -1, true, VirtualError.PlaceTaken, holder);
+				var words = XInputPlaces.HolderWords(holder);
+				StringAssert.Contains(text, "XInput 1 is held by " + words, "The bus's reason does not name the holder.");
+				Assert.AreEqual(1, Ui.Count(text, words), "The holder is named more than once: " + text);
+				if (holder != XInputPlaces.HolderLeftover)
+					Assert.AreEqual(1, Ui.Count(text.ToLowerInvariant(), "unplug"), "More than one piece of advice: " + text);
+				texts.Add(text);
+			}
+			CollectionAssert.AllItemsAreUnique(texts, "Two different holders are described with the same words.");
+			Assert.IsFalse(texts[2].Contains("a real controller"), "A virtual controller another program made is called real.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A Leftover in the place is to be removed, never moved with Auto-Order or unplugged")]
+		public void A_leftover_is_to_be_removed()
+		{
+			// Auto-Order refuses a Leftover, and there is nothing to unplug.
+			const string remove = "Remove it with [Remove Leftover Pads] on the Devices page.";
+			var leftover = XInputPlaces.HolderLeftover;
+			var texts = new[]
+			{
+				// The bus refused, with a device mapped.
+				MainForm.ControllerStateHint(1, true, true, false, true, -1, true, VirtualError.PlaceTaken, leftover),
+				// Held, with a device mapped, and nothing said by the bus.
+				MainForm.ControllerStateHint(1, true, true, false, true, -1, true, VirtualError.None, leftover),
+				// Held, with no device mapped.
+				MainForm.ControllerStateHint(1, false, true, false, true, -1, true, VirtualError.None, leftover),
+			};
+			foreach (var text in texts)
+			{
+				Assert.AreEqual(1, Ui.Count(text, remove), "A Leftover is not pointed to Remove Leftover Pads once: " + text);
+				Assert.IsFalse(text.Contains("Auto-Order"), "Auto-Order refuses a Leftover: " + text);
+				Assert.IsFalse(text.ToLowerInvariant().Contains("unplug"), "A Leftover cannot be unplugged: " + text);
+			}
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A real controller in the place keeps its advice: Auto-Order, or unplug it")]
+		public void A_real_controller_keeps_its_advice()
+		{
+			var real = XInputPlaces.HolderReal;
+			var taken = MainForm.ControllerStateHint(1, true, true, false, true, -1, true, VirtualError.PlaceTaken, real);
+			StringAssert.Contains(taken, "Use Auto-Order on the Devices page to move it, or unplug it.");
+			Assert.IsFalse(taken.Contains("Remove Leftover Pads"), "A real controller is pointed to Remove Leftover Pads.");
+			StringAssert.Contains(MainForm.ControllerStateHint(1, true, true, false, true, -1, true, VirtualError.None, real),
+				"Unplug it, or map this device on a tab whose place is free.");
+			StringAssert.Contains(MainForm.ControllerStateHint(1, false, true, false, true, -1, true, VirtualError.None, real),
+				"Map a device on this tab only once that controller is unplugged.");
 		}
 
 	}

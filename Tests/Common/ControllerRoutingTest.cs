@@ -1,9 +1,9 @@
-﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step4.CombineXiStates.cs
+﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step4.CombineXiStates.cs, App.v4/Common/DInput/DeviceRouting.cs
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.XInput;
+using System;
 using System.Linq;
-using x360ce.App;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -24,26 +24,24 @@ namespace x360ce.Tests
 	public class ControllerRoutingTest
 	{
 
-		/// <summary>The real list, emptied and put back, so this is the same list the program reads.</summary>
-		static UserSetting[] Replace(params UserSetting[] settings)
+		static readonly UserGame Game = new UserGame { FileName = "routing.exe", FileProductName = "Routing" };
+
+		/// <summary>The rows each controller reads, as the engine is handed them for a pass.</summary>
+		static DeviceRouting Routing(params UserSetting[] settings)
 		{
-			var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
-			SettingsManager.UserSettings.Items.Clear();
-			foreach (var setting in settings)
-				SettingsManager.UserSettings.Items.Add(setting);
-			return existing;
+			return DeviceRouting.Build(Game, settings, new PadSetting[0]);
 		}
 
-		static void Restore(UserSetting[] existing)
-		{
-			SettingsManager.UserSettings.Items.Clear();
-			foreach (var setting in existing)
-				SettingsManager.UserSettings.Items.Add(setting);
-		}
-
+		/// <summary>A row of the current game, switched on, holding the state it was last converted to.</summary>
 		static UserSetting Mapped(MapTo controller, Gamepad state)
 		{
-			var setting = new UserSetting { MapTo = (int)controller };
+			var setting = new UserSetting
+			{
+				MapTo = (int)controller,
+				FileName = Game.FileName,
+				IsEnabled = true,
+				InstanceGuid = Guid.NewGuid(),
+			};
 			setting.XiState = state;
 			return setting;
 		}
@@ -53,37 +51,29 @@ namespace x360ce.Tests
 		public void A_device_drives_the_controller_it_is_mapped_to_and_no_other()
 		{
 			var helper = new DInputHelper();
-			var existing = Replace(Mapped(MapTo.Controller3, new Gamepad
+			helper.CombineXiStates(Routing(Mapped(MapTo.Controller3, new Gamepad
 			{
 				Buttons = GamepadButtonFlags.A,
 				LeftTrigger = 200,
 				LeftThumbX = 12345,
-			}));
-			try
-			{
-				helper.CombineXiStates();
+			})));
 
-				var third = helper.CombinedXiStates[2].Gamepad;
-				Assert.AreEqual(GamepadButtonFlags.A, third.Buttons & GamepadButtonFlags.A,
-					"A device mapped to controller three did not reach controller three, so the game " +
-					"sees nothing while the person is pressing a button.");
-				Assert.AreEqual(200, third.LeftTrigger, "The trigger did not arrive with it.");
-				Assert.AreEqual(12345, third.LeftThumbX, "The stick did not arrive with it.");
-				Assert.IsTrue(helper.CombinedXiConencted[2],
-					"Controller three has a device mapped to it and has to read as connected.");
+			var third = helper.CombinedXiStates[2].Gamepad;
+			Assert.AreEqual(GamepadButtonFlags.A, third.Buttons & GamepadButtonFlags.A,
+				"A device mapped to controller three did not reach controller three, so the game " +
+				"sees nothing while the person is pressing a button.");
+			Assert.AreEqual(200, third.LeftTrigger, "The trigger did not arrive with it.");
+			Assert.AreEqual(12345, third.LeftThumbX, "The stick did not arrive with it.");
+			Assert.IsTrue(helper.CombinedXiConencted[2],
+				"Controller three has a device mapped to it and has to read as connected.");
 
-				foreach (var other in new[] { 0, 1, 3 })
-				{
-					Assert.AreEqual((GamepadButtonFlags)0, helper.CombinedXiStates[other].Gamepad.Buttons,
-						"Controller " + (other + 1) + " answered a device mapped to controller three. " +
-						"A game reading it acts on a control nobody touched.");
-					Assert.IsFalse(helper.CombinedXiConencted[other],
-						"Controller " + (other + 1) + " reads as connected with nothing mapped to it.");
-				}
-			}
-			finally
+			foreach (var other in new[] { 0, 1, 3 })
 			{
-				Restore(existing);
+				Assert.AreEqual((GamepadButtonFlags)0, helper.CombinedXiStates[other].Gamepad.Buttons,
+					"Controller " + (other + 1) + " answered a device mapped to controller three. " +
+					"A game reading it acts on a control nobody touched.");
+				Assert.IsFalse(helper.CombinedXiConencted[other],
+					"Controller " + (other + 1) + " reads as connected with nothing mapped to it.");
 			}
 		}
 
@@ -99,21 +89,13 @@ namespace x360ce.Tests
 				GamepadButtonFlags.X, GamepadButtonFlags.Y,
 			};
 			var helper = new DInputHelper();
-			var existing = Replace(Enumerable.Range(0, 4)
+			helper.CombineXiStates(Routing(Enumerable.Range(0, 4)
 				.Select(i => Mapped((MapTo)(i + 1), new Gamepad { Buttons = buttons[i] }))
-				.ToArray());
-			try
-			{
-				helper.CombineXiStates();
-				for (var i = 0; i < 4; i++)
-					Assert.AreEqual(buttons[i], helper.CombinedXiStates[i].Gamepad.Buttons,
-						"Controller " + (i + 1) + " is carrying the wrong device's controls. Two " +
-						"players in the same game would be driving each other.");
-			}
-			finally
-			{
-				Restore(existing);
-			}
+				.ToArray()));
+			for (var i = 0; i < 4; i++)
+				Assert.AreEqual(buttons[i], helper.CombinedXiStates[i].Gamepad.Buttons,
+					"Controller " + (i + 1) + " is carrying the wrong device's controls. Two " +
+					"players in the same game would be driving each other.");
 		}
 
 		[TestMethod, TestCategory("mapping")]
@@ -123,22 +105,72 @@ namespace x360ce.Tests
 			// Sharing one controller between two devices is a supported arrangement, so the second must
 			// add to the first rather than replace it.
 			var helper = new DInputHelper();
-			var existing = Replace(
+			helper.CombineXiStates(Routing(
 				Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.A, LeftTrigger = 10 }),
-				Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.B, LeftTrigger = 90 }));
-			try
+				Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.B, LeftTrigger = 90 })));
+			var first = helper.CombinedXiStates[0].Gamepad;
+			Assert.AreEqual(GamepadButtonFlags.A | GamepadButtonFlags.B, first.Buttons,
+				"One of the two devices sharing controller one was dropped.");
+			Assert.AreEqual(90, first.LeftTrigger,
+				"The trigger pressed hardest is the one that counts.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A row switched off or of another game reaches no controller, so a button it held is let go")]
+		public void A_row_the_engine_does_not_convert_reaches_no_controller()
+		{
+			// Both keep the state they had when they were last converted: here, button A and a full trigger.
+			var held = new Gamepad { Buttons = GamepadButtonFlags.A, LeftTrigger = 255 };
+			var switchedOff = Mapped(MapTo.Controller1, held);
+			switchedOff.IsEnabled = false;
+			var otherGame = Mapped(MapTo.Controller1, held);
+			otherGame.FileName = "other.exe";
+			var live = Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.B });
+			var helper = new DInputHelper();
+
+			helper.CombineXiStates(Routing(switchedOff, otherGame, live));
+			var first = helper.CombinedXiStates[0].Gamepad;
+			Assert.AreEqual(GamepadButtonFlags.B, first.Buttons, "A row the engine no longer converts still holds its button in the game.");
+			Assert.AreEqual(0, first.LeftTrigger, "A row the engine no longer converts still holds its trigger in the game.");
+
+			helper.CombineXiStates(Routing(switchedOff, otherGame));
+			Assert.IsFalse(helper.CombinedXiConencted[0],
+				"A controller whose only rows are switched off or of another game reads as connected.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Two sticks on one controller pushed apart cancel, and pushed the same way the further one counts")]
+		public void Two_sticks_on_one_controller_are_combined()
+		{
+			var helper = new DInputHelper();
+			helper.CombineXiStates(Routing(
+				Mapped(MapTo.Controller2, new Gamepad { LeftThumbX = 20000, LeftThumbY = -3000, RightThumbX = 500, RightThumbY = -100 }),
+				Mapped(MapTo.Controller2, new Gamepad { LeftThumbX = -5000, LeftThumbY = -9000, RightThumbX = 700, RightThumbY = 0 })));
+			var second = helper.CombinedXiStates[1].Gamepad;
+			Assert.AreEqual(15000, second.LeftThumbX, "Two sticks pushed apart do not cancel each other.");
+			Assert.AreEqual(-9000, second.LeftThumbY, "Two sticks pushed the same way do not give the further one.");
+			Assert.AreEqual(700, second.RightThumbX, "Two sticks pushed the same way do not give the further one.");
+			Assert.AreEqual(-100, second.RightThumbY, "A stick at rest takes the other one's push away.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("performance")]
+		[Description("Combining the controllers hands nothing to the collector")]
+		public void Combining_hands_nothing_to_the_collector()
+		{
+			var routing = Routing(
+				Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.A, LeftThumbX = 100, LeftTrigger = 10 }),
+				Mapped(MapTo.Controller1, new Gamepad { Buttons = GamepadButtonFlags.B, LeftThumbX = -50, RightTrigger = 20 }),
+				Mapped(MapTo.Controller3, new Gamepad { Buttons = GamepadButtonFlags.X, RightThumbY = 300 }));
+			var helper = new DInputHelper();
+			helper.CombineXiStates(routing);
+			const int calls = 20000;
+			var allocated = Allocations.FewestBytes(5, () =>
 			{
-				helper.CombineXiStates();
-				var first = helper.CombinedXiStates[0].Gamepad;
-				Assert.AreEqual(GamepadButtonFlags.A | GamepadButtonFlags.B, first.Buttons,
-					"One of the two devices sharing controller one was dropped.");
-				Assert.AreEqual(90, first.LeftTrigger,
-					"The trigger pressed hardest is the one that counts.");
-			}
-			finally
-			{
-				Restore(existing);
-			}
+				for (var i = 0; i < calls; i++)
+					helper.CombineXiStates(routing);
+			});
+			Assert.IsTrue(allocated < calls,
+				"Combining " + calls + " times handed the collector " + allocated + " bytes; it runs on every pass.");
 		}
 
 	}

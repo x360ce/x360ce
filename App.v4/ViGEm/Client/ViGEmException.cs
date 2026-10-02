@@ -16,9 +16,12 @@ namespace Nefarius.ViGEm.Client
 		/// in whatever language the machine runs - and the code is lost. Every failure to plug in
 		/// a controller then reads alike, so a bus with no free slot, which is a state of the
 		/// machine, cannot be told from a missing driver, which is a fault worth fixing.
+		///
+		/// The code is quoted as the log and the Issues tab quote it, so a code the enum does not name reads
+		/// as its number.
 		/// </remarks>
 		public ViGEmException(VIGEM_ERROR code)
-			: base(code.ToString()) { _Code = code; }
+			: base(BusAnswers.Name(code)) { _Code = code; }
 
 		public ViGEmException(VIGEM_ERROR code, string message)
 			: base(message) { _Code = code; }

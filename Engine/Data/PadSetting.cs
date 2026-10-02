@@ -198,6 +198,11 @@ namespace x360ce.Engine.Data
 			// and Latvian sort "Y" with "I", Azerbaijani puts "X" after "H" and Hawaiian puts vowels
 			// first, and each would give the same settings another checksum there than on the server.
 			// Every checksum the server has stored since 2020 is in this order.
+			// Stored checksums follow three rules. Rows first used in 2011-2015 carry an older one,
+			// rows from 2015-2020 the v3 rule (unnamed values in a fixed order), newer rows the
+			// current one. The server recomputes a checksum when a setting is saved, so a re-saved
+			// old mapping gets a second row and its users are counted apart. Measured on a
+			// 3,000-row sample of a local copy of the settings database.
 			var sorted = list.OrderBy(x => x, StringComparer.InvariantCulture).ToArray();
 			// Prepare list for checksum.
 			var s = string.Join("\r\n", sorted);
@@ -321,9 +326,21 @@ namespace x360ce.Engine.Data
 		/// <param name="leftMotor">True for the large motor, false for the small one.</param>
 		public byte ApplyForceStrength(byte motor, bool leftMotor)
 		{
-			var overall = LimitPercent(GetForceOverall());
-			var strength = LimitPercent(leftMotor ? GetLeftMotorStrength() : GetRightMotorStrength());
-			return (byte)Math.Round(motor * overall * strength / 10000d, MidpointRounding.AwayFromZero);
+			return ApplyForceScale(motor, GetForceScale(leftMotor));
+		}
+
+		/// <summary>The strengths one motor is played at, in ten-thousandths: the overall strength times the motor's own.</summary>
+		/// <remarks>Reads the default of a strength left unset, which takes a lock and makes a little. Worked out once, it is applied by <see cref="ApplyForceScale"/>.</remarks>
+		/// <param name="leftMotor">True for the large motor, false for the small one.</param>
+		public int GetForceScale(bool leftMotor)
+		{
+			return LimitPercent(GetForceOverall()) * LimitPercent(leftMotor ? GetLeftMotorStrength() : GetRightMotorStrength());
+		}
+
+		/// <summary>The force to send a motor at strengths worked out by <see cref="GetForceScale"/>. Makes nothing and takes no lock.</summary>
+		public static byte ApplyForceScale(byte motor, int scale)
+		{
+			return (byte)Math.Round(motor * scale / 10000d, MidpointRounding.AwayFromZero);
 		}
 
 		/// <summary>A percentage, kept inside nought and a hundred whatever was typed into it.</summary>

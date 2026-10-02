@@ -48,6 +48,8 @@ namespace x360ce.Engine
 
         /// <summary>Effects the device said it will never take. Asked once, then left alone, or every poll would ask again and every answer would be reported.</summary>
         readonly HashSet<Effect> unsupported = new HashSet<Effect>();
+        /// <summary>The motor effects the device would not make with the current type, motors and directions. Asked for again when one of those changes, or by a new state.</summary>
+        MotorEffects motorsRefused;
         public PeriodicForce PeriodicForceL;
         public ConstantForce ConstantForceL;
 
@@ -113,6 +115,9 @@ namespace x360ce.Engine
         short old_RightMotorSpeed;
 
         Guid GUID_Force;
+
+        /// <summary>The last force update threw before it finished, so settings it recorded as sent may not have reached the device.</summary>
+        bool interrupted;
 
         public void StopDeviceForces(Joystick device)
         {
@@ -183,9 +188,16 @@ namespace x360ce.Engine
 			if (actuatorL == null)
                 return false;
 
+			// Cleared only when the update finishes. One that threw recorded its settings, the effect type and the motor
+			// swap among them, before the device took them, so the next update makes every effect again with every
+			// setting, as a new type or new motors do, not only what changed since.
+			var resend = interrupted;
+			interrupted = true;
+
 			// A new state on a device still carrying effects from an earlier one starts clean, so
-			// the effects it makes are the only ones the device holds.
-			if (effectL == null && effectR == null && effectS == null && effectD == null)
+			// the effects it makes are the only ones the device holds. A state that remembers a
+			// refusal is not new, even when it holds nothing.
+			if (effectL == null && effectR == null && effectS == null && effectD == null && motorsRefused == MotorEffects.None)
 				DisposeDeviceEffects(device);
 			Resume(effectL);
 			Resume(effectR);
@@ -203,28 +215,38 @@ namespace x360ce.Engine
             {
                 // Update values.
 				GUID_Force = ForceFeedbackDriver.EffectFor(forceType, ud.ForceFeedbackDriver);
-                // Force change requires to dispose old effects.
-                // Stop old effects.
-                if (effectL != null)
-                {
-                    effectL.Stop();
-                    effectL.Dispose();
-                    effectL = null;
-                }
-                // Stop old effects.
-                if (effectR != null)
-                {
-                    effectR.Stop();
-                    effectR.Dispose();
-                    effectR = null;
-                }
+                // A refusal is the answer for the effect that was asked for, so a new type or new
+                // motors are asked for again.
+                motorsRefused = MotorEffects.None;
             }
+            // The directions are part of what was asked for too.
+            var directionLChanged = Changed(ref old_LeftDirection, ps.LeftMotorDirection);
+            var directionRChanged = Changed(ref old_RightDirection, ps.RightMotorDirection);
+            if (directionLChanged)
+                motorsRefused &= ~MotorEffects.Left;
+            if (directionRChanged)
+                motorsRefused &= ~MotorEffects.Right;
 
-            // If the effects this state made are gone then they are made again.
-            if (paramsL != null && effectL == null)
-                forceChanged = true;
-            if (paramsR != null && effectR == null)
-                forceChanged = true;
+            // Which of the effects this state holds are stopped and disposed, and which are made.
+            var motors = actuatorR == null ? MotorEffects.Left : MotorEffects.Left | MotorEffects.Right;
+            var held = (effectL == null ? MotorEffects.None : MotorEffects.Left)
+                | (effectR == null ? MotorEffects.None : MotorEffects.Right);
+            MotorEffects drop, make;
+            PlanEffects(motors, held, motorsRefused, motorsChanged || forceChanged || resend, out drop, out make);
+            if ((drop & MotorEffects.Left) != 0)
+            {
+                effectL.Stop();
+                effectL.Dispose();
+                effectL = null;
+            }
+            if ((drop & MotorEffects.Right) != 0)
+            {
+                effectR.Stop();
+                effectR.Dispose();
+                effectR = null;
+            }
+            // From here on, whether the effects are made again.
+            forceChanged = make != MotorEffects.None;
 
             // Tells which effect parameters to modify.
             var flagsL = EffectParameterFlags.None;
@@ -270,9 +292,6 @@ namespace x360ce.Engine
             // x: -1 = left,     1 = right,   0 - no direction
             // y: -1 = backward, 1 = forward, 0 - no direction
             // z: -1 = down,     1 = up,      0 - no direction
-
-            var directionLChanged = Changed(ref old_LeftDirection, ps.LeftMotorDirection);
-            var directionRChanged = Changed(ref old_RightDirection, ps.RightMotorDirection);
 
             // Direction needs to be updated when force or direction change.
             if (motorsChanged || forceChanged || directionLChanged)
@@ -398,13 +417,24 @@ namespace x360ce.Engine
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce
                     ? ConstantForceL as TypeSpecificParameters : PeriodicForceL;
                 // Note: Device must be acquired in exclusive mode before effect can be created.
-                effectL = CreateEffect(device, GUID_Force, paramsL);
+                // A refused effect is remembered, so it is not asked for on every force update.
+                if ((make & MotorEffects.Left) != 0)
+                {
+                    effectL = CreateEffect(device, GUID_Force, paramsL);
+                    if (effectL == null)
+                        motorsRefused |= MotorEffects.Left;
+                }
                 if (actuatorR != null)
                 {
                     // Update Right force
                     paramsR.Parameters = GUID_Force == EffectGuid.ConstantForce
                         ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
-                    effectR = CreateEffect(device, GUID_Force, paramsR);
+                    if ((make & MotorEffects.Right) != 0)
+                    {
+                        effectR = CreateEffect(device, GUID_Force, paramsR);
+                        if (effectR == null)
+                            motorsRefused |= MotorEffects.Right;
+                    }
                 }
             }
             if (flagsL != EffectParameterFlags.None)
@@ -426,8 +456,9 @@ namespace x360ce.Engine
             springEnabled = wanted;
             if (springStrength == 0)
                 DropSpring();
-            // The actuator the spring sits on may have changed, so the effect is made again on the next poll.
-            if (motorsChanged)
+            // The actuator the spring sits on may have changed, here or in an update that threw, so the effect is made
+            // again on the next poll.
+            if (motorsChanged || resend)
                 DropSpring();
             // The range goes to the wheel once per setting and once per device, because a wheel
             // plugged in again has forgotten it. Not before the device is known by its ids: they
@@ -440,7 +471,49 @@ namespace x360ce.Engine
                 if (degrees > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
                     LogitechWheel.SetRange(ud.HidDevicePath, degrees);
             }
+            interrupted = false;
             return true;
+        }
+
+        /// <summary>The left and right motors' effects, as a set.</summary>
+        [Flags]
+        public enum MotorEffects
+        {
+            None = 0,
+            Left = 1,
+            Right = 2,
+        }
+
+        /// <summary>Which of its motor effects a force update stops and disposes, and which it makes.</summary>
+        /// <remarks>
+        /// Whenever an effect is made, every effect the state still holds is stopped and disposed
+        /// first and made again with it, so the device never holds two for one motor. An effect the
+        /// device refused with the current settings is not asked for again: the answer would be the
+        /// same, and each ask would make the others again. A new type or new motors ask again. Runs
+        /// on every force update, so it allocates nothing.
+        /// </remarks>
+        /// <param name="motors">The motors the state makes effects for: the left, and the right when the device has a second actuator.</param>
+        /// <param name="held">The effects the state holds on the device.</param>
+        /// <param name="refused">The effects the device refused to make with the current settings.</param>
+        /// <param name="changed">The effect type changed, or the motors or which way round they are.</param>
+        /// <param name="drop">The held effects to stop and dispose, before any is made.</param>
+        /// <param name="make">The effects to make.</param>
+        public static void PlanEffects(MotorEffects motors, MotorEffects held, MotorEffects refused, bool changed,
+            out MotorEffects drop, out MotorEffects make)
+        {
+            // The refusal was the answer for the old type or motors.
+            if (changed)
+                refused = MotorEffects.None;
+            // Wanted, not held and not refused: the device lost it, or making it failed.
+            var missing = motors & ~held & ~refused;
+            if (!changed && missing == MotorEffects.None)
+            {
+                drop = MotorEffects.None;
+                make = MotorEffects.None;
+                return;
+            }
+            drop = held;
+            make = motors & ~refused;
         }
 
         /// <summary>How far from the centre the spring reaches full strength, as a share of the travel to one side.</summary>
@@ -451,6 +524,11 @@ namespace x360ce.Engine
         /// nearer that is. A DirectInput spring effect could do this on the device, but its steepest
         /// slope is full force over the whole travel, which on a geared wheel leaves the rest far
         /// out; the loop runs a thousand times a second, which is steep enough to do it here.
+        ///
+        /// On a G27 the friction of the gears is about 29 % of full force. Measured with the ramp at
+        /// 2 % whatever the strength, at the 31 % that Auto chose in that run, the wheel comes home
+        /// within 3 degrees, and within 2 degrees at 100 %; under a steady 39 % push it makes 0
+        /// reversals and no movement over 3 s.
         /// </remarks>
         public const int SpringRampPercent = 2;
 

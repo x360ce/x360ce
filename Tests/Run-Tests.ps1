@@ -2,10 +2,10 @@
 .SYNOPSIS
     Build and run the x360ce test suite.
 .DESCRIPTION
-    Uses Visual Studio MSBuild rather than `dotnet test`. The .NET SDK cannot resolve the
-    Microsoft.mshtml COM reference in x360ce.Engine, so `dotnet test` fails at compile time
-    while VS MSBuild succeeds. The MSTest adapter is passed explicitly because the package
-    does not copy it into a net462 output folder.
+    Uses Visual Studio MSBuild rather than `dotnet test`. The applications' .resx files hold
+    bitmaps, which the .NET SDK's MSBuild cannot serialise in-process (MSB3822), so
+    `dotnet build` stops there while VS MSBuild succeeds. The MSTest adapter is passed
+    explicitly because the package does not copy it into a net462 output folder.
 .PARAMETER Interactive
     Also run tests tagged ui-interactive. These launch the applications and need a desktop
     session, so they are excluded by default and must be skipped on a headless agent.

@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 		public DirectInputUserControl()
 		{
 			oldState = new JoystickState();
-			emptyState = oldState;
+			emptyState = new JoystickState();
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -319,8 +319,25 @@ namespace x360ce.App.Controls
 				DiAxisDataGridView.Columns[i].Visible = !ud.IsMouse;
 		}
 
+		/// <summary>The values the tables show, as the tab's own copy. A cell is written only where the state drawn differs from it.</summary>
 		JoystickState oldState;
 		JoystickState emptyState;
+		/// <summary>The tab's own copy of the state being drawn. It takes turns with <see cref="oldState"/>.</summary>
+		JoystickState drawState = new JoystickState();
+		/// <summary>Axis and slider values on their way from the engine's state to the tab's copy, reserved so a copy makes nothing.</summary>
+		readonly int[] copyAxis = new int[CustomDiState.MaxAxis];
+		readonly int[] copySliders = new int[CustomDiState.MaxSliders];
+
+		/// <summary>Copies every value of a DirectInput state into one of the tab's own.</summary>
+		void CopyState(JoystickState from, JoystickState into)
+		{
+			CustomDiState.FillAxis(from, copyAxis);
+			CustomDiState.SetStateFromAxis(into, copyAxis);
+			CustomDiState.FillSliders(from, copySliders);
+			CustomDiState.SetStateFromSliders(into, copySliders);
+			Array.Copy(from.PointOfViewControllers, into.PointOfViewControllers, into.PointOfViewControllers.Length);
+			Array.Copy(from.Buttons, into.Buttons, into.Buttons.Length);
+		}
 
 		/// <summary>
 		/// Update DirectInput control from DirectInput device.
@@ -329,14 +346,19 @@ namespace x360ce.App.Controls
 		/// <returns>List of buttons/DPad pressed, axis/sliders turned.</returns>
 		void ShowDirectInputState(JoystickState state)
 		{
-			var newState = state ?? emptyState;
-			if (newState.Equals(oldState)) return;
+			// Drawn from the tab's own copy, taken at once. The engine fills its states again two polls after it
+			// replaces them, so the one handed here can change while it is drawn, and one kept as the last drawn
+			// would change under it: a value written into it would read as already shown.
+			var newState = drawState;
+			CopyState(state ?? emptyState, newState);
 
 			UpdateButtonsTable(newState);
 			UpdateAxisTable(newState);
 			UpdateSlidersTable(newState);
 			UpdatePovsTable(newState);
 
+			// The copy just drawn is the one the next draw compares with, and the other takes the next copy.
+			drawState = oldState;
 			oldState = newState;
 
 			var rows = DiAxisTable.Rows;

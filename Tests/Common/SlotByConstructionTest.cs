@@ -135,7 +135,7 @@ namespace x360ce.Tests
 				for (uint pad = 1; pad <= 2; pad++)
 				{
 					var before = Occupied();
-					var plugged = client.PlugIn(pad);
+					var plugged = client.PlugIn(pad, out _);
 					TimeSpan took;
 					var after = WaitForChange(before, TimeSpan.FromSeconds(10), out took);
 					var gained = Gained(before, after);

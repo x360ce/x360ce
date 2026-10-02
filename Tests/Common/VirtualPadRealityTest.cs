@@ -32,7 +32,7 @@ namespace x360ce.Tests
 				client.UnPlug(i);
 			try
 			{
-				var plugged = client.PlugIn(1);
+				var plugged = client.PlugIn(1, out _);
 				var serial = client.Targets[0].Serial;
 				var attached = client.IsControllerConnected(1);
 				Console.WriteLine("PlugIn returned {0}, serial {1}, bus says attached {2}", plugged, serial, attached);

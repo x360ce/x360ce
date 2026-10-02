@@ -242,26 +242,27 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		}
 
 
-		public static bool DownloadAndInstall(Uri uri, string localPath, Uri infoPage, bool runElevated = false)
+		/// <summary>Downloads an installer, runs it and waits for it to finish.</summary>
+		/// <param name="uri">Where the installer is downloaded from.</param>
+		/// <param name="localPath">Where the installer is saved.</param>
+		/// <param name="infoPage">Page offered when the download fails; null offers none.</param>
+		/// <param name="runElevated">Start the installer as Administrator. Windows asks the user first.</param>
+		/// <param name="arguments">Command line for the installer; null for none.</param>
+		/// <returns>
+		/// The installer's exit code. -1 when Windows did not start it, which for an elevated start means
+		/// the user refused administrator permission. Null when the download failed.
+		/// </returns>
+		/// <remarks>
+		/// Waits until the installer ends, so it is called from a worker thread, never from the interface
+		/// thread. The installer's window is shown normally: for an installer told to run without questions,
+		/// its progress bar is the only sign the user gets that something is happening.
+		/// </remarks>
+		public static int? DownloadAndInstall(Uri uri, string localPath, Uri infoPage, bool runElevated = false, string arguments = null)
 		{
+			FileInfo file;
 			try
 			{
-				var file = DownloadFile(uri, localPath);
-				if (runElevated)
-				{
-					var proc = new ProcessStartInfo();
-					proc.UseShellExecute = true;
-					proc.WorkingDirectory = Environment.CurrentDirectory;
-					proc.FileName = file.FullName;
-					proc.Verb = "runas";
-					Process.Start(proc);
-					//Win32.UacHelper.RunElevatedAsync(file.FullName, null);
-				}
-				else
-				{
-					ControlsHelper.OpenPath(file.FullName);
-				}
-				return true;
+				file = DownloadFile(uri, localPath);
 			}
 			catch (Exception ex)
 			{
@@ -272,12 +273,32 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					uri.AbsoluteUri, ex.Message);
 				var result = form.ShowForm(text, "Download Error", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				form.Dispose();
-				if (result == DialogResult.Yes)
+				if (result == DialogResult.Yes && infoPage != null)
 				{
-					ControlsHelper.OpenUrl("https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads");
+					ControlsHelper.OpenUrl(infoPage.AbsoluteUri);
+				}
+				return null;
+			}
+			if (runElevated)
+				return JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(file.FullName, arguments, ProcessWindowStyle.Normal, true);
+			var psi = new ProcessStartInfo(file.FullName, arguments ?? string.Empty);
+			psi.UseShellExecute = true;
+			psi.WorkingDirectory = file.DirectoryName;
+			try
+			{
+				using (var process = Process.Start(psi))
+				{
+					if (process == null)
+						return -1;
+					process.WaitForExit();
+					return process.ExitCode;
 				}
 			}
-			return false;
+			catch (Win32Exception)
+			{
+				// Windows refused to start it: reported the same way RunElevated reports a refused prompt.
+				return -1;
+			}
 		}
 
 		public static FileInfo DownloadFile(Uri uri, string localPath)

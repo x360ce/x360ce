@@ -348,7 +348,8 @@ namespace x360ce.App
 		#region Get Programs 
 
 		[DefaultValue(2)]
-		public int GetProgramsMinInstances { get; set; } = 2;
+		public int GetProgramsMinInstances { get { return _GetProgramsMinInstances; } set { _GetProgramsMinInstances = value; OnPropertyChanged(); } }
+		int _GetProgramsMinInstances = 2;
 
 		[DefaultValue(EnabledState.Enabled)]
 		public EnabledState GetProgramsIncludeEnabled { get; set; } = EnabledState.Enabled;

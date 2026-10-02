@@ -64,26 +64,24 @@ namespace x360ce.App.Mcp
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
-		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controller (1 to 4 for the current game, 0 when unmapped), XInputPlaces.")]
+		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces.")]
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;
-			return SettingsManager.UserDevices.ItemsToArraySyncronized().Select(d =>
+			return SettingsManager.UserDevices.ItemsToArraySyncronized().Select(d => (object)new Dictionary<string, object>
 			{
-				var setting = SettingsManager.GetSetting(d.InstanceGuid, game == null ? null : game.FileName);
-				return (object)new Dictionary<string, object>
-				{
-					{ "InstanceGuid", d.InstanceGuid.ToString() },
-					{ "Product", d.ProductName },
-					{ "Online", d.IsOnline },
-					{ "Controller", setting == null || setting.MapTo < 1 ? 0 : setting.MapTo },
-					{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
-				};
+				{ "InstanceGuid", d.InstanceGuid.ToString() },
+				{ "Product", d.ProductName },
+				{ "Online", d.IsOnline },
+				{ "Controllers", game == null
+					? new int[0]
+					: SettingsManager.GetDeviceTabs(game.FileName, d.InstanceGuid).Select(x => (int)x).ToArray() },
+				{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
 			}).ToArray();
 		}
 
-		[McpTool(AiAccess.Configure, "Maps a device to a controller 1 to 4, or 0 to unmap it, for the current game. The same as the Add and Remove buttons on a controller tab. Below Administer, HID Guardian is left as it is.")]
-		public static string DeviceMap([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("1 to 4, or 0 to unmap.")] int controller)
+		[McpTool(AiAccess.Configure, "Maps a device to a controller 1 to 4 for the current game, or with 0 takes it off every controller. A device already on another controller moves off every other one unless keep is true, which leaves it there as well, the new one starting with the settings of the lowest-numbered controller it is on. A device can be on up to four controllers. The same as the Add and Remove buttons on a controller tab. Below Administer, HID Guardian is left as it is.")]
+		public static string DeviceMap([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("1 to 4, or 0 to unmap.")] int controller, [Description("True keeps the device on the controllers it is already on; false, the default, moves it.")] bool keep = false)
 		{
 			if (controller < 0 || controller > 4)
 				throw new InvalidOperationException("Controller must be 1 to 4, or 0 to unmap.");
@@ -98,12 +96,12 @@ namespace x360ce.App.Mcp
 			var hidGuardian = McpCatalog.Level() >= AiAccess.Administer && SettingsManager.Options.HidGuardianConfigureAutomatically;
 			if (controller == 0)
 			{
-				var setting = SettingsManager.GetSetting(guid, game.FileName);
-				if (setting != null)
+				// Off every controller it is on; UnMapGamePadDevices switches off a tab it leaves empty, as Remove does.
+				foreach (var setting in SettingsManager.GetSettings(game.FileName).Where(x => x.InstanceGuid == guid && x.MapTo > (int)MapTo.None).ToArray())
 					SettingsManager.UnMapGamePadDevices(game, setting, hidGuardian);
 				return null;
 			}
-			SettingsManager.MapGamePadDevices(game, (MapTo)controller, new[] { device }, hidGuardian);
+			SettingsManager.MapGamePadDevices(game, (MapTo)controller, new[] { device }, hidGuardian, keep);
 			return null;
 		}
 
@@ -111,11 +109,11 @@ namespace x360ce.App.Mcp
 		public static object InputWait([Description("How long to wait, 1 to 60 seconds.")] int seconds = 10)
 		{
 			seconds = Math.Max(1, Math.Min(60, seconds));
-			// The engine publishes a fresh state per poll; this reads those states from a device list
-			// taken once, and never touches the engine or the window, so the window keeps drawing
-			// while a person reaches for a button.
+			// The engine fills each device's states again two polls after it replaces them, so the states to compare
+			// with are copied once here. The copies are read from a device list taken once, and nothing waits for the
+			// engine or the window, so the window keeps drawing while a person reaches for a button.
 			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
-			var before = devices.ToDictionary(d => d.InstanceGuid, d => d.DiState);
+			var before = devices.ToDictionary(d => d.InstanceGuid, d => d.DiState == null ? null : d.DiState.Clone());
 			var until = DateTime.Now.AddSeconds(seconds);
 			while (DateTime.Now < until)
 			{

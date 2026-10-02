@@ -127,5 +127,58 @@ namespace x360ce.Engine
 			return val;
 		}
 
+		/// <summary>Whether a mapping to a device button counts as pressed.</summary>
+		/// <remarks>
+		/// The index counts from one, as the mapping names it, so the last button is the one whose index
+		/// equals the count. An inverted button (IButton) counts as pressed while the button is released.
+		/// An index the device does not have counts as released either way round.
+		/// </remarks>
+		/// <param name="buttons">The device's buttons, as its last reading has them.</param>
+		/// <param name="index">The button, counting from one.</param>
+		/// <param name="inverted">Whether the mapping is an inverted button.</param>
+		public static bool IsButtonPressed(bool[] buttons, int index, bool inverted)
+		{
+			if (buttons == null || index < 1 || index > buttons.Length)
+				return false;
+			return buttons[index - 1] != inverted;
+		}
+
+		/// <summary>How far below its press point an axis or a slider must fall before the button it drives lets go.</summary>
+		/// <remarks>
+		/// One sixteenth of the 0 to 32767 scale the press point is set on. A switch on a radio control
+		/// transmitter, or a worn potentiometer, wanders by a few hundred steps, so a reading resting on
+		/// the press point does not press and release the button on every poll, while a stick used as a
+		/// button still lets go after a short way back.
+		/// </remarks>
+		public const int AxisButtonReleaseMargin = 2048;
+
+		/// <summary>Whether a button driven by an axis or a slider is pressed.</summary>
+		/// <remarks>
+		/// Pressed once the reading passes the press point; released only once it falls to the release
+		/// point, <see cref="AxisButtonReleaseMargin"/> below it. A press point smaller than twice the
+		/// margin releases at half of itself, so a button pressed near the start of the travel still lets
+		/// go before the control is back at rest. Takes values and holds nothing, so the engine can ask it
+		/// for every mapped button on every poll.
+		/// </remarks>
+		/// <param name="value">The control's reading, 0 to 65535.</param>
+		/// <param name="inverted">Read the control the other way round (the I prefix).</param>
+		/// <param name="half">Read only the half past the middle (the H prefix).</param>
+		/// <param name="pressPoint">How far the control must move to press the button: the row's dead zone.</param>
+		/// <param name="wasPressed">Whether the button was pressed on the previous poll.</param>
+		public static bool IsAxisButtonPressed(int value, bool inverted, bool half, int pressPoint, bool wasPressed)
+		{
+			var v = (ushort)value;
+			if (inverted)
+				v = (ushort)(ushort.MaxValue - v);
+			if (half)
+				v = v > short.MaxValue ? (ushort)(v + short.MinValue) : (ushort)0;
+			if (v > pressPoint)
+				return true;
+			if (!wasPressed)
+				return false;
+			var release = pressPoint - Math.Min(AxisButtonReleaseMargin, pressPoint / 2);
+			return v > release;
+		}
+
 	}
 }

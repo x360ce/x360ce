@@ -16,6 +16,12 @@
     Attach latest.json to the GitHub release beside x360ce.zip and title the
     release exactly as printed: "X360CE {version}". The updater reads the titles
     when a release has no manifest.
+
+    The updater reaches a release through releases/latest, which skips
+    pre-releases and drafts, so a pre-release is invisible to the update check by
+    construction. That is what keeps the maintained v3 line, when it is published
+    as a pre-release, from reaching v4 users. An option to include pre-releases is
+    not planned. The title fallback drops them with its own filter.
 .PARAMETER ZipPath
     The application zip. Defaults to Files.v4/x360ce.zip beside this script.
 .PARAMETER ExpectedVersion

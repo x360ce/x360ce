@@ -92,7 +92,7 @@ namespace x360ce.Tests
 			{
 				// Third place, so the two below it are connected and let go again on the way. Those are
 				// the ones the program used to report as somebody else's.
-				Assert.IsTrue(client.PlugIn(3), "The controller could not be plugged in.");
+				Assert.IsTrue(client.PlugIn(3, out _), "The controller could not be plugged in.");
 				var whileHeld = Leftovers();
 				Assert.AreEqual(0, whileHeld.Length,
 					"The program is calling a controller it created itself a leftover, and offering to " +
@@ -122,7 +122,7 @@ namespace x360ce.Tests
 			{
 				for (var round = 0; round < 3; round++)
 				{
-					client.PlugIn(1);
+					client.PlugIn(1, out _);
 					client.UnPlug(1);
 				}
 			}

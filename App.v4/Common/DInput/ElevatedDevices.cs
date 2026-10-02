@@ -1,5 +1,5 @@
-using JocysCom.ClassLibrary.IO;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -78,7 +78,7 @@ namespace x360ce.App.DInput
 		public bool Switch(bool on, string[] deviceIds, out string error)
 		{
 			if (_here)
-				return Answered(SwitchHere(on, deviceIds, DeviceDetector.SetDeviceState), deviceIds.Length, out error);
+				return Answered(SwitchHere(on, deviceIds, DeviceSwitch.SetState), deviceIds.Length, out error);
 			if (!Open(out error))
 				return false;
 			var id = (++_requests).ToString(CultureInfo.InvariantCulture);
@@ -214,27 +214,58 @@ namespace x360ce.App.DInput
 		public static void Serve(string pipeName)
 		{
 			using (var channel = InstanceChannel.Connect(pipeName, ConnectLimit))
-				Serve(channel, DeviceDetector.SetDeviceState, IdleLimit);
+				Serve(channel, DeviceSwitch.SetState, IdleLimit);
 		}
 
 		/// <summary>Carries out requests until told to stop, until the other copy goes, or until none come for a while.</summary>
 		/// <remarks>
 		/// A request of a type this copy does not know is passed over, so a newer copy can ask for more
 		/// without an older one stopping.
+		///
+		/// Whatever this copy switched off and was not asked to switch on again is switched on before it ends. The copy that
+		/// asked may have stopped, or forgotten, and a controller left off with nobody to say so is one nobody gets back.
 		/// </remarks>
 		public static void Serve(InstanceChannel channel, Func<string, bool, bool> setState, TimeSpan idle)
 		{
 			if (channel == null)
 				return;
-			InstanceMessage message;
-			while ((message = channel.Receive(idle)) != null && message.Type != Exit)
+			var off = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			Func<string, bool, bool> tracked = (deviceId, on) =>
 			{
-				if (message.Type != SetDevices)
-					continue;
-				var result = SwitchHere(message.Value("On") == "true", SplitIds(message.Value("Devices")), setState);
-				result.Values["Id"] = message.Value("Id");
-				if (!channel.Send(result))
-					return;
+				// Noted before it is tried: a switch that fails half way may still have stopped the device.
+				if (!on)
+					off.Add(deviceId);
+				var done = setState(deviceId, on);
+				if (on && done)
+					off.Remove(deviceId);
+				return done;
+			};
+			try
+			{
+				InstanceMessage message;
+				while ((message = channel.Receive(idle)) != null && message.Type != Exit)
+				{
+					if (message.Type != SetDevices)
+						continue;
+					var result = SwitchHere(message.Value("On") == "true", SplitIds(message.Value("Devices")), tracked);
+					result.Values["Id"] = message.Value("Id");
+					if (!channel.Send(result))
+						return;
+				}
+			}
+			finally
+			{
+				foreach (var deviceId in off.ToArray())
+				{
+					try
+					{
+						setState(deviceId, true);
+					}
+					catch (Exception ex)
+					{
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					}
+				}
 			}
 		}
 

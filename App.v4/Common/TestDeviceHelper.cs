@@ -103,7 +103,12 @@ namespace x360ce.App
 
 		static Stopwatch watch;
 
-		public static JoystickState GetCurrentState(UserDevice ud)
+		/// <summary>Axis and slider values worked out for the test controller, reserved so a state is filled without making anything. Shared, so one thread fills at a time: in the program, the input thread.</summary>
+		static readonly int[] TestAxis = new int[CustomDiState.MaxAxis];
+		static readonly int[] TestSliders = new int[CustomDiState.MaxSliders];
+
+		/// <summary>Fills the test controller's state for now into <paramref name="state"/>, making nothing.</summary>
+		public static void GetCurrentState(UserDevice ud, JoystickState state)
 		{
 			if (watch == null)
 			{
@@ -120,7 +125,6 @@ namespace x360ce.App
 			// Acquire values.
 			var ts = (int)elapsed.TotalSeconds;
 			var tm = (int)elapsed.TotalMilliseconds;
-			var state = new JoystickState();
 			// Set Buttons.
 			for (int i = 0; i < ud.CapButtonCount; i++)
 			{
@@ -159,13 +163,15 @@ namespace x360ce.App
 				state.PointOfViewControllers[i] = degree;
 			}
 			// Set Axis.
-			var axis = CustomDiState.GetAxisFromState(state);
-			// Get information about axis.
-			var axisObjects = ud.DeviceObjects
-				.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis) || x.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis)).ToArray();
-			for (int i = 0; i < axisObjects.Count(); i++)
+			var axis = TestAxis;
+			CustomDiState.FillAxis(state, axis);
+			// How many axes the controller describes, counted without making a list.
+			var axisCount = 0;
+			foreach (var item in ud.DeviceObjects)
+				if ((item.Flags & (DeviceObjectTypeFlags.AbsoluteAxis | DeviceObjectTypeFlags.RelativeAxis)) != 0)
+					axisCount++;
+			for (int i = 0; i < axisCount; i++)
 			{
-				var ao = axisObjects[i];
 				// If axis index is even.
 				var isEven = i % 2 == 0;
 				var position = isEven
@@ -199,7 +205,8 @@ namespace x360ce.App
 			}
 			CustomDiState.SetStateFromAxis(state, axis);
 			// Get sliders array.
-			var sliders = CustomDiState.GetSlidersFromState(state);
+			var sliders = TestSliders;
+			CustomDiState.FillSliders(state, sliders);
 			// Set sliders.
 			for (int i = 0; i < sliders.Length; i++)
 			{
@@ -234,8 +241,6 @@ namespace x360ce.App
 				sliders[i] = position;
 			}
 			CustomDiState.SetStateFromSliders(state, sliders);
-			// Return state.
-			return state;
 		}
 	}
 

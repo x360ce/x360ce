@@ -156,7 +156,7 @@ namespace x360ce.Engine
 
 		/// <summary>One poll. Returns the force to apply, in percent, positive towards the high end of the axis.</summary>
 		/// <param name="position">The steering axis, 0 to <see cref="AxisMax"/>.</param>
-		/// <param name="nowMs">The time, in milliseconds from any fixed point.</param>
+		/// <param name="nowMs">The time, in milliseconds from any fixed point; never negative, since -1 marks a time not yet taken, and never going back.</param>
 		public int Update(int position, long nowMs)
 		{
 			if (IsFinished)

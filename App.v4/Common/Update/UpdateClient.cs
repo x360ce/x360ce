@@ -54,6 +54,11 @@ namespace x360ce.App
 	/// <remarks>
 	/// The transport is a function so every outcome can be exercised without a network: a
 	/// test hands in the answers, the program hands in <see cref="Http"/>.
+	///
+	/// <c>releases/latest</c> skips pre-releases and drafts, so a pre-release is invisible to
+	/// the update check by construction. That is what keeps the maintained v3 line, when it is
+	/// published as a pre-release, from reaching v4 users. An option to include pre-releases
+	/// is not planned. The title fallback drops them with its own filter.
 	/// </remarks>
 	public class UpdateClient
 	{

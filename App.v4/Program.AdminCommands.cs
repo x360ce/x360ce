@@ -74,12 +74,14 @@ namespace x360ce.App
 			// ------------------------------------------------
 			if (ic.Parameters.ContainsKey(AdminCommand.InstallViGEmBus.ToString()))
 			{
-				DInput.VirtualDriverInstaller.InstallViGEmBus();
+				var installed = DInput.VirtualDriverInstaller.InstallViGEmBus();
+				Environment.ExitCode = installed ? (int)AdminResult.Done : (int)AdminResult.Failed;
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallViGEmBus.ToString()))
 			{
-				DInput.VirtualDriverInstaller.UninstallViGEmBus();
+				var removed = DInput.VirtualDriverInstaller.UninstallViGEmBus();
+				Environment.ExitCode = removed ? (int)AdminResult.Done : (int)AdminResult.Failed;
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.RepairViGEmBus.ToString()))

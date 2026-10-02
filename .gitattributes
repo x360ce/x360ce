@@ -1,63 +1,52 @@
-###############################################################################
-# Set default behavior to automatically normalize line endings.
-###############################################################################
+# Line endings: the repository stores text files with LF, and Git writes them with the operating system's line
+# ending (CRLF on Windows, LF on Linux and macOS) whenever it clones, pulls or checks out. Files pinned to LF or
+# CRLF below keep that ending everywhere.
+#
+# Files already on disk are not rewritten when these rules change. To make the repository and every file match
+# the rules, exactly as a fresh clone, commit .gitattributes and your changes, then run once in the repository root:
+#   git add --renormalize .
+#   git commit -m "Normalize line endings"
+#   git rm --cached -r -q .
+#   git reset --hard
+# The script .gitattributes-enforce.ps1 in the repository root runs exactly these commands.
+
+# "text=auto" lets Git decide which files are text, so a file that is not text is never converted: the UTF-16
+# presets (Presets/x360ce*.ini), the UTF-16 GlobalSuppressions.cs and x360ce.rc files and the source files that
+# carry NUL or control characters as test data all have NUL bytes, and stay exactly as they are.
 * text=auto
 
-###############################################################################
-# Set default behavior for command prompt diff.
-#
-# This is need for earlier builds of msysgit that does not have it on by
-# default for csharp files.
-# Note: This is only used by command line
-###############################################################################
-#*.cs     diff=csharp
+# Windows command files and solution files only work with CRLF. Pin it, so a Linux or macOS checkout keeps it.
+*.sln  text eol=crlf
+*.slnx text eol=crlf
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
 
-###############################################################################
-# Set the merge driver for project and solution files
-#
-# Merging from the command prompt will add diff markers to the files if there
-# are conflicts (Merging from VS is not affected by the settings below, in VS
-# the diff markers are never inserted). Diff markers may cause the following 
-# file extensions to fail to load in VS. An alternative would be to treat
-# these files as binary and thus will always conflict and require user
-# intervention with every merge. To do so, just uncomment the entries below
-###############################################################################
-#*.sln       merge=binary
-#*.csproj    merge=binary
-#*.vbproj    merge=binary
-#*.vcxproj   merge=binary
-#*.vcproj    merge=binary
-#*.dbproj    merge=binary
-#*.fsproj    merge=binary
-#*.lsproj    merge=binary
-#*.wixproj   merge=binary
-#*.modelproj merge=binary
-#*.sqlproj   merge=binary
-#*.wwaproj   merge=binary
+# Scripts that run on Linux and macOS MUST stay LF even on Windows checkout: a shebang line that ends in CR makes
+# the kernel look for an interpreter named "bash\r", and the script fails to start.
+*.sh         text eol=lf
+*.bash       text eol=lf
+Dockerfile   text eol=lf
+*.dockerfile text eol=lf
+*.py         text eol=lf
 
-###############################################################################
-# behavior for image files
-#
-# image files are treated as binary by default.
-###############################################################################
-#*.jpg   binary
-#*.png   binary
-#*.gif   binary
-
-###############################################################################
-# diff behavior for common document formats
-# 
-# Convert binary document formats to text before diffing them. This feature
-# is only available from the command line. Turn it on by uncommenting the 
-# entries below.
-###############################################################################
-#*.doc   diff=astextplain
-#*.DOC   diff=astextplain
-#*.docx  diff=astextplain
-#*.DOCX  diff=astextplain
-#*.dot   diff=astextplain
-#*.DOT   diff=astextplain
-#*.pdf   diff=astextplain
-#*.PDF   diff=astextplain
-#*.rtf   diff=astextplain
-#*.RTF   diff=astextplain
+# Mark common binary formats so Git never tries EOL normalization/diff heuristics
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.bmp  binary
+*.cur  binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.7z   binary
+*.gz   binary
+*.tar  binary
+*.cab  binary
+*.msi  binary
+*.dll  binary
+*.exe  binary
+*.lib  binary
+*.pdb  binary
+*.snk  binary
+*.pfx  binary

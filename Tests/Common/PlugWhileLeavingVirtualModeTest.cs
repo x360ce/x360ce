@@ -140,7 +140,7 @@ namespace x360ce.Tests
 			var client = Connected();
 			ViGEmClient.DisposeCurrent();
 			Assert.IsTrue(client.IsDisposed);
-			Assert.IsFalse(client.PlugIn(1));
+			Assert.IsFalse(client.PlugIn(1, out _));
 			Assert.IsFalse(client.UnPlug(1));
 		}
 	}

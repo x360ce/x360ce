@@ -205,7 +205,7 @@ namespace x360ce.App.Controls
 			this.PlaceColumn.HeaderText = "XInput";
 			this.PlaceColumn.Name = "PlaceColumn";
 			this.PlaceColumn.ReadOnly = true;
-			this.PlaceColumn.ToolTipText = "Which of the four XInput places this controller holds. Blank when nothing can say.";
+			this.PlaceColumn.ToolTipText = "What this controller is and which of the four XInput places it holds, such as \"Real 2\". \"Real (place not known)\" when nothing can say which place it holds. \"Virtual N (waiting)\" for Controller N's virtual controller while its place is taken.";
 			//
 			// PadColumn
 			//

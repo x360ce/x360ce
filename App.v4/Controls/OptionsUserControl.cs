@@ -170,8 +170,8 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(Engine.Mcp.AiAccess)));
 			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
 			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
-			// LoadAndMonitor has no branch for a number box, and ValueChanged fires on every spin
-			// click, each of which would restart the listener; the value is taken when editing ends.
+			// Not bound with LoadAndMonitor: ValueChanged fires on every spin click, each of which
+			// would restart the listener, so the value is taken when editing ends.
 			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;
 			AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
 			UpdateAiAccessUrl();
@@ -453,8 +453,9 @@ namespace x360ce.App.Controls
 			// window whether each may go; a window waiting here cannot answer, and both wait for ever.
 			System.Threading.Tasks.Task.Run(() =>
 			{
+				// A repair lets go of every controller first and picks them back up afterwards.
 				if (repair)
-					Program.RunElevated(AdminCommand.RepairViGEmBus);
+					DInput.VirtualDriverInstaller.RepairViGEmBusElevated();
 				else
 					DInput.DInputHelper.CheckInstallVirtualDriver();
 			}).ContinueWith(done => RefreshViGEmBusStatus(), System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());

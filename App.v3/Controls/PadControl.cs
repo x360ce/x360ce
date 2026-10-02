@@ -112,7 +112,7 @@ namespace x360ce.App.Controls
 		#region Recording
 
 		bool Recording;
-		Regex dPadRx = new Regex("(DPad [0-9]+)");
+		Regex dPadRx = new Regex("(POV [0-9]+)");
 		bool drawRecordingImage;
 		object recordingLock = new object();
 
@@ -874,8 +874,9 @@ namespace x360ce.App.Controls
 		void DiMenuStrip_Click(object sender, EventArgs e)
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
-			Regex rx = new Regex("^(DPad [0-9]+)$");
-			// If this DPad parent menu.
+			// A POV's own item, clicked on the way to one of its directions. Only the D-Pad box takes a whole POV; anywhere
+			// else the click only opens the directions.
+			Regex rx = new Regex("^(POV [0-9]+)$");
 			if (rx.IsMatch(item.Text))
 			{
 				if (CurrentCbx == DPadComboBox)

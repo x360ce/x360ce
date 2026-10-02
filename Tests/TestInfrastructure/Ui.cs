@@ -52,6 +52,42 @@ namespace x360ce.Tests
 				throw new AssertFailedException(failure.ToString(), failure);
 		}
 
+		/// <summary>
+		/// Runs <paramref name="body"/> on an interface thread, as <see cref="OnUiThread"/> does, and fails
+		/// the test when work posted to that thread failed meanwhile.
+		/// </summary>
+		/// <remarks>
+		/// Work posted to the interface thread (<c>ControlsHelper.BeginInvoke</c>) that fails is raised again
+		/// on that thread's message loop, not on the thread the test's assertions run on. Unwatched, it is
+		/// dropped in a run nobody watches, or waits behind the framework's error dialog in one somebody does,
+		/// and either way the test does not see it fail.
+		/// </remarks>
+		/// <param name="body">The test's work.</param>
+		/// <param name="what">What the work does, for the failure message, which reads "{what} failed on the interface thread".</param>
+		public static void OnUiThreadWatched(Action body, string what)
+		{
+			OnUiThread(() =>
+			{
+				Exception pumpError = null;
+				ThreadExceptionEventHandler onPumpError = (s, e) =>
+				{
+					if (pumpError == null)
+						pumpError = e.Exception;
+				};
+				Application.ThreadException += onPumpError;
+				try
+				{
+					body();
+					if (pumpError != null)
+						throw new AssertFailedException(what + " failed on the interface thread: " + pumpError, pumpError);
+				}
+				finally
+				{
+					Application.ThreadException -= onPumpError;
+				}
+			});
+		}
+
 		/// <summary>Where a thread that never came back is standing, so a hang names its cause.</summary>
 		/// <remarks>
 		/// Reading another thread's stack is only allowed while that thread is suspended, and both
@@ -477,6 +513,23 @@ namespace x360ce.Tests
 		private static bool AnotherInstanceIsRunning(Process launched)
 		{
 			return Process.GetProcessesByName("x360ce").Any(x => x.Id != launched.Id);
+		}
+
+		/// <summary>How many times <paramref name="part"/> appears in <paramref name="text"/>.</summary>
+		public static int Count(string text, string part)
+		{
+			return text.Split(new[] { part }, StringSplitOptions.None).Length - 1;
+		}
+
+		/// <summary>The text from the first <paramref name="start"/> up to the next <paramref name="end"/> after it.</summary>
+		/// <remarks>Fails the test, naming the marker, when either is not found, so a moved method is reported rather than read wrongly.</remarks>
+		public static string Between(string text, string start, string end)
+		{
+			var from = text.IndexOf(start);
+			Assert.IsTrue(from >= 0, start + " is no longer where this test looks for it.");
+			var to = text.IndexOf(end, from);
+			Assert.IsTrue(to > from, end + " no longer follows " + start + ".");
+			return text.Substring(from, to - from);
 		}
 
 	}

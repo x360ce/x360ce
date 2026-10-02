@@ -164,6 +164,11 @@ namespace x360ce.App.DInput
 		/// <summary>Guards the start of a read, which the window and the device thread can both ask for.</summary>
 		readonly object _deviceListStartLock = new object();
 
+		/// <summary>Takes a finished device list read in when a list is wanted, and asks for one when none is waiting.</summary>
+		/// <remarks>
+		/// Runs on every pass, so it only decides. The take-in is a method of its own: its lambdas share locals, and the
+		/// object that holds them is made on entry to the method that declares them, whether or not a read is waiting.
+		/// </remarks>
 		void UpdateDiDevices(DirectInput manager)
 		{
 			if (!UpdateDevicesPending)
@@ -171,10 +176,18 @@ namespace x360ce.App.DInput
 			var read = _deviceListRead;
 			if (read == null)
 			{
-				// The request stays open until a read comes back; the list stays as it is meanwhile.
-				BeginDeviceListRead();
+				// The request stays open until a read comes back; the list stays as it is meanwhile. A read under way is
+				// not asked for again, so a pass during it takes no lock and makes nothing: asking makes an object on entry.
+				if (!_deviceListReading)
+					BeginDeviceListRead();
 				return;
 			}
+			TakeInDeviceList(manager, read);
+		}
+
+		/// <summary>Takes a finished read of the device list in: lists the devices that came, refreshes those still here, and marks those gone as offline.</summary>
+		void TakeInDeviceList(DirectInput manager, DeviceListRead read)
+		{
 			_deviceListRead = null;
 			_deviceListReading = false;
 			_deviceReadMs = read.Milliseconds;
@@ -269,6 +282,8 @@ namespace x360ce.App.DInput
 			{
 				lock (SettingsManager.UserDevices.SyncRoot)
 					deleteDevices[i].IsOnline = false;
+				// Not read while it is gone, so an Auto run under way on it would never end.
+				EndSpringRun(deleteDevices[i]);
 			}
 			if (evictDevices.Count > 0)
 			{
@@ -281,6 +296,9 @@ namespace x360ce.App.DInput
 				//
 				// Sent rather than waited for, because waiting would put this loop behind whatever the
 				// window happens to be drawing, which is the thing this list was written to avoid.
+				//
+				// An evicted stale virtual-pad record keeps its joystick open, once per record.
+				// Disposing it here would race the engine thread that may still be polling it.
 				var evicted = evictDevices.ToArray();
 				JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
 				{
@@ -341,8 +359,14 @@ namespace x360ce.App.DInput
 			}
 			// If device is set as offline then make it online.
 			if (!ud.IsOnline)
+			{
+				// A device that comes back starts with no failed reads: it is tried again at once, and its
+				// first fault is reported.
+				ud.DiReadFailures = 0;
+				ud.DiReadFaultReported = false;
 				lock (SettingsManager.UserDevices.SyncRoot)
 					ud.IsOnline = true;
+			}
 			// The interface is read first, because the device is then found by the identifier the
 			// interface supplies. Read the other way round, a controller which had just been plugged in
 			// was looked up by an identifier nothing had filled in yet: the lookup found nothing, the

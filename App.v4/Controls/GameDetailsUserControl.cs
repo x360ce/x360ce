@@ -53,6 +53,11 @@ namespace x360ce.App.Controls
 			get { return _CurrentItem; }
 			set
 			{
+				// The lists hand their selection over from work posted to the interface thread, which can
+				// run after this panel has closed. A closed panel has nothing to show a game on: its check
+				// boxes belong to no group any more.
+				if (IsDisposed || Disposing)
+					return;
 				lock (CurrentGameLock)
 				{
 					if (_CurrentItem != null)
@@ -106,6 +111,10 @@ namespace x360ce.App.Controls
 		/// <param name="e"></param>
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			// A game changed after this panel closed still fires this handler while it stays
+			// subscribed: a closed panel has no combo boxes left to show the change on.
+			if (IsDisposed || Disposing)
+				return;
 			var game = CurrentItem;
 			if (game == null)
 				return;

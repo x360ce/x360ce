@@ -95,6 +95,8 @@ namespace x360ce.Engine
 			new MapExpressionExample("Aim", "Less sensitive, for aiming through a scope", "=a1*0.5"),
 			new MapExpressionExample("Aim", "Walk slowly, run when the trigger is held", "=a1*(0.5+a2*0.5)"),
 			new MapExpressionExample("Aim", "Correct a stick that drifts off centre", "=a1-0.05"),
+			new MapExpressionExample("Aim", "Round the corners of a square stick, for Stick X", "=a1*sqrt(1-a2^2/2)"),
+			new MapExpressionExample("Aim", "Round the corners of a square stick, for Stick Y", "=a2*sqrt(1-a1^2/2)"),
 			new MapExpressionExample("Triggers", "Full throttle before the trigger bottoms out", "=a1*1.5"),
 			new MapExpressionExample("Triggers", "A firmer press before anything happens", "=a1*a1"),
 			new MapExpressionExample("Wheels", "One pedal axis split into the accelerator", "=max(a1,0)"),

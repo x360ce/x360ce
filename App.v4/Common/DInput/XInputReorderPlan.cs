@@ -7,9 +7,17 @@ namespace x360ce.App.DInput
 {
 	/// <summary>What has to happen, in order, to put controllers in the places somebody asked for.</summary>
 	/// <remarks>
-	/// XInput cannot be asked for a place. It gives one out when a device arrives, and that is the only
-	/// lever there is. So an order is achieved by making devices arrive in that order: take away
-	/// everything that would be in the way, then bring things back one at a time.
+	/// XInput cannot be asked for a place. It gives one out when a device arrives, and the order of
+	/// arrival is the only lever there is. A virtual controller arrives with a hint, which is how many
+	/// of them are present: the first is given XInput 2, the second XInput 3, the third XInput 4, if
+	/// free. The fourth, and any controller with no hint, such as an Xbox One controller, is given the
+	/// first free place. So XInput 1 is reached last, by the fourth to arrive, and the arrivals that
+	/// belong to no wanted controller are made by temporary controllers that hold their place on the
+	/// way and are taken away before the end.
+	///
+	/// Everything that holds a place is taken away first, then the arrivals are made one at a time in
+	/// an order found by searching that rule, with the fewest temporary controllers. A real controller
+	/// is expected to carry no hint; what XInput shows when the order is made is checked.
 	///
 	/// The plan is worked out before anything is touched, so it can be shown to somebody and refused
 	/// before a controller is switched off rather than after.
@@ -26,6 +34,10 @@ namespace x360ce.App.DInput
 			CreateVirtual,
 			/// <summary>Switch a real controller back on. Windows gives it a place as it arrives.</summary>
 			EnableReal,
+			/// <summary>Make a temporary controller, so the places below the one that arrives next are taken.</summary>
+			CreateDecoy,
+			/// <summary>Take away a temporary controller. Costs nothing and asks nobody.</summary>
+			RemoveDecoy,
 		}
 
 		public class Step
@@ -39,6 +51,8 @@ namespace x360ce.App.DInput
 			public int ExpectedPlace = -1;
 			/// <summary>The controller tab this acts on, one to four, or zero when it is not ours.</summary>
 			public int Pad;
+			/// <summary>The number of the temporary controller, from one, for the steps that make or take one away.</summary>
+			public int Decoy;
 
 			/// <summary>What this acts on, in words: the tab and what is mapped to it for a virtual controller of ours.</summary>
 			/// <remarks>
@@ -65,6 +79,10 @@ namespace x360ce.App.DInput
 					case StepKind.RemoveVirtual: return string.Format("Take away {0}", Subject);
 					case StepKind.DisableReal: return string.Format("Switch off {0}", Name);
 					case StepKind.CreateVirtual: return string.Format("Make {0}, expecting XInput {1}", Subject, ExpectedPlace + 1);
+					case StepKind.CreateDecoy: return ExpectedPlace < 0
+						? string.Format("Make temporary controller {0}", Decoy)
+						: string.Format("Make temporary controller {0}, which holds XInput {1} until the others are in", Decoy, ExpectedPlace + 1);
+					case StepKind.RemoveDecoy: return string.Format("Take away temporary controller {0}", Decoy);
 					default: return ExpectedPlace < 0
 						? string.Format("Switch on {0}, which gets no XInput place while four are taken", Name)
 						: string.Format("Switch on {0}, expecting XInput {1}", Name, ExpectedPlace + 1);
@@ -77,7 +95,7 @@ namespace x360ce.App.DInput
 		/// <remarks>
 		/// Reads the device tree, so it runs on a worker or the device thread, never on the interface.
 		/// One row per piece of hardware, not per face: a controller is several devices and a person
-		/// thinks of it as one thing.
+		/// thinks of it as one thing. None for a controller that <see cref="Entry.TakesNoPart"/>.
 		/// </remarks>
 		public static List<Entry> ReadEntries()
 		{
@@ -92,22 +110,23 @@ namespace x360ce.App.DInput
 				if (!seen.Add(hardware))
 					continue;
 				int place;
-				if (!places.TryGetValue(hardware, out place))
+				if (places == null || !places.TryGetValue(hardware, out place))
 					place = XInputPlaces.Unknown;
 				DeviceInfo hardwareInfo;
 				var name = byId.TryGetValue(hardware, out hardwareInfo) && !string.IsNullOrEmpty(hardwareInfo.Description)
 					? hardwareInfo.Description
 					: device.Description;
-				entries.Add(new Entry
+				var entry = new Entry
 				{
 					HardwareId = hardware,
-					SwitchId = SwitchedPart(device, hardware, byId),
 					Name = name,
 					IsVirtual = VirtualDriverInstaller.IsVirtualPad(device, byId),
 					IsOurs = VirtualDriverInstaller.IsOneOfOurs(device, byId),
 					Pad = PadHolding(place),
 					Place = place,
-				});
+				};
+				if (!entry.TakesNoPart)
+					entries.Add(entry);
 			}
 			// The order XInput has them is the order a game sees, which is the order worth arguing with.
 			entries.Sort((a, b) =>
@@ -131,31 +150,6 @@ namespace x360ce.App.DInput
 						Waiting = true,
 					});
 			return entries;
-		}
-
-		/// <summary>The class of an Xbox 360 controller, which XInput reads through the controller itself.</summary>
-		static readonly Guid Xbox360Class = new Guid("d61ca365-5af4-4486-998b-9db4734c6ca3");
-
-		/// <summary>The part of a real controller that is switched off and on to give up its place.</summary>
-		/// <remarks>
-		/// Only the part XInput reads. For an Xbox 360 controller that is the controller itself. For any
-		/// other, such as an Xbox One controller, it is the input part below it: switching the whole
-		/// controller off turned it off, and switched back on it stayed off - present to Windows, with no
-		/// XInput place and no DirectInput device - until it was plugged in again.
-		/// </remarks>
-		public static string SwitchedPart(DeviceInfo face, string hardware, Dictionary<string, DeviceInfo> byId)
-		{
-			DeviceInfo hardwareInfo;
-			if (face == null || byId.TryGetValue(hardware, out hardwareInfo) && hardwareInfo.ClassGuid == Xbox360Class)
-				return hardware;
-			// Up from the face XInput reads to the highest part that is still an input part, just below
-			// the controller.
-			var part = face;
-			DeviceInfo parent;
-			while (!string.IsNullOrEmpty(part.ParentDeviceId) && byId.TryGetValue(part.ParentDeviceId, out parent)
-				&& (VirtualDriverInstaller.CarriesInputGroup(parent.DeviceId) || VirtualDriverInstaller.CarriesInputGroup(parent.HardwareIds)))
-				part = parent;
-			return part.DeviceId;
 		}
 
 		/// <summary>The product names of the devices mapped to this controller tab for the current game.</summary>
@@ -217,8 +211,6 @@ namespace x360ce.App.DInput
 			public int Place = -1;
 			/// <summary>A virtual controller a tab is set to have, not made yet because its place is taken.</summary>
 			public bool Waiting;
-			/// <summary>The part of a real controller switched off and on to move it, or null to switch the whole.</summary>
-			public string SwitchId;
 
 			/// <summary>The controller tab whose place this holds, one to four, or zero when it holds none.</summary>
 			/// <remarks>
@@ -228,6 +220,18 @@ namespace x360ce.App.DInput
 			public int Controller
 			{
 				get { return Place >= 0 && Place < 4 ? Place + 1 : Waiting ? Pad : 0; }
+			}
+
+			/// <summary>Whether it takes no part in the order: a virtual controller this program did not make, holding no place.</summary>
+			/// <remarks>
+			/// Nothing here can move it: letting go of it does nothing, and a controller made in its stead would not be it.
+			/// Holding no place, it is in nobody's way either. Given a position, it would be given a step to make it, which
+			/// fails at once and stops the order part way, and every controller after it would be expected one place further
+			/// along than it gets. So it is not listed, and a plan leaves it out; the Issues tab lists it for removal.
+			/// </remarks>
+			public bool TakesNoPart
+			{
+				get { return IsVirtual && !IsOurs && Place < 0; }
 			}
 		}
 
@@ -249,6 +253,9 @@ namespace x360ce.App.DInput
 		public static XInputReorderPlan For(IList<Entry> wanted)
 		{
 			var plan = new XInputReorderPlan();
+			// Left out before positions are counted, so the controllers after one are expected in the places they get.
+			if (wanted != null)
+				wanted = wanted.Where(x => !x.TakesNoPart).ToList();
 			if (wanted == null || wanted.Count == 0)
 			{
 				plan.Refusal = "Nothing was asked for.";
@@ -259,8 +266,9 @@ namespace x360ce.App.DInput
 				plan.Refusal = "The same controller was asked for twice.";
 				return plan;
 			}
-			// Controller N's virtual controller is only ever kept in XInput N, so any other place for it is
-			// refused now, before a real controller is switched off for an order that cannot be made.
+			// Controller N's virtual controller is only ever kept in XInput N: measured, any other order of the
+			// controllers comes out in the places a game started later is given as another one, so it is refused
+			// now, before a real controller is switched off for an order that cannot be made.
 			for (var i = 0; i < wanted.Count; i++)
 			{
 				var entry = wanted[i];
@@ -294,28 +302,191 @@ namespace x360ce.App.DInput
 					strays[0].Name);
 				return plan;
 			}
+			var moves = Arrivals(wanted.Take(PlaceCount).ToList());
+			if (moves == null)
+			{
+				plan.Refusal = "No order of arrivals, with temporary controllers holding places on the way, puts them there.";
+				return plan;
+			}
 			foreach (var entry in wanted.Where(x => x.IsVirtual && x.Place >= 0))
 				plan.Steps.Add(new Step { Kind = StepKind.RemoveVirtual, HardwareId = entry.HardwareId, Name = entry.Name, Pad = entry.Pad });
 			// Every real one, including one holding no place: switching on what is already on changes
 			// nothing, and off and on again is what gets it a place.
 			foreach (var entry in wanted.Where(x => !x.IsVirtual))
-				plan.Steps.Add(new Step { Kind = StepKind.DisableReal, HardwareId = entry.SwitchId ?? entry.HardwareId, Name = entry.Name, Pad = entry.Pad });
+				plan.Steps.Add(new Step { Kind = StepKind.DisableReal, HardwareId = entry.HardwareId, Name = entry.Name, Pad = entry.Pad });
 
-			// Then back, one at a time, in the order asked for. The order of arrival is what decides
-			// the order of places.
-			for (var i = 0; i < wanted.Count; i++)
+			// Then back, one at a time. The order of arrival is what decides the order of places.
+			foreach (var move in moves)
 			{
-				var entry = wanted[i];
+				if (move.Wanted < 0)
+				{
+					plan.Steps.Add(new Step
+					{
+						Kind = move.Leaves ? StepKind.RemoveDecoy : StepKind.CreateDecoy,
+						Name = "temporary controller",
+						Decoy = move.Decoy,
+						ExpectedPlace = move.Place,
+					});
+					continue;
+				}
+				var entry = wanted[move.Wanted];
 				plan.Steps.Add(new Step
 				{
 					Kind = entry.IsVirtual ? StepKind.CreateVirtual : StepKind.EnableReal,
-					HardwareId = entry.IsVirtual ? entry.HardwareId : entry.SwitchId ?? entry.HardwareId,
+					HardwareId = entry.HardwareId,
 					Name = entry.Name,
-					ExpectedPlace = PlaceFor(i),
+					ExpectedPlace = move.Place,
 					Pad = entry.Pad,
 				});
 			}
+			// Past the fourth there is no place left to give, so they come back last.
+			foreach (var entry in wanted.Skip(PlaceCount))
+				plan.Steps.Add(new Step
+				{
+					Kind = entry.IsVirtual ? StepKind.CreateVirtual : StepKind.EnableReal,
+					HardwareId = entry.HardwareId,
+					Name = entry.Name,
+					Pad = entry.Pad,
+				});
 			return plan;
+		}
+
+		const int PlaceCount = 4;
+
+		/// <summary>The most temporary controllers one plan makes.</summary>
+		const int MaxDecoys = 3;
+
+		/// <summary>Added to a temporary controller's number to tell it from a wanted controller in a place.</summary>
+		const int DecoyTag = 100;
+
+		/// <summary>One thing that happens while the order is made: a wanted controller arrives, or a temporary one comes or goes.</summary>
+		class Move
+		{
+			/// <summary>The wanted controller that arrives, or -1 for a temporary one.</summary>
+			public int Wanted = -1;
+			public int Decoy;
+			public bool Leaves;
+			/// <summary>The place it takes, or -1 when going away or when none was free.</summary>
+			public int Place = -1;
+		}
+
+		/// <summary>How XInput gives out places to what arrives, as a thing that can be tried without touching a controller.</summary>
+		sealed class Ladder
+		{
+			/// <summary>What holds each place: -1 free, a wanted controller's position, or <see cref="DecoyTag"/> plus a temporary one's number.</summary>
+			public int[] Held = { -1, -1, -1, -1 };
+			/// <summary>How many controllers that arrive with a hint are here.</summary>
+			public int Hinted;
+			/// <summary>A bit for each wanted controller that has arrived.</summary>
+			public int Arrived;
+			/// <summary>A bit for each temporary controller that is here.</summary>
+			public int DecoyOn;
+			public int DecoyMade;
+
+			public Ladder Copy()
+			{
+				var copy = (Ladder)MemberwiseClone();
+				copy.Held = (int[])Held.Clone();
+				return copy;
+			}
+
+			/// <summary>Lets a controller arrive, and says which place it took, or -1 when none was free.</summary>
+			public int Arrive(int tag, bool hinted)
+			{
+				var place = -1;
+				if (hinted)
+				{
+					Hinted++;
+					if (Hinted < PlaceCount && Held[Hinted] < 0)
+						place = Hinted;
+				}
+				if (place < 0)
+					place = Array.IndexOf(Held, -1);
+				if (place >= 0)
+					Held[place] = tag;
+				return place;
+			}
+
+			public void Leave(int tag)
+			{
+				var place = Array.IndexOf(Held, tag);
+				if (place >= 0)
+					Held[place] = -1;
+				Hinted--;
+			}
+
+			public string Key()
+			{
+				return string.Join(",", Held) + "/" + Hinted + "/" + Arrived + "/" + DecoyOn + "/" + DecoyMade;
+			}
+		}
+
+		/// <summary>The fewest moves that put each of these controllers in the place of its position, or null when none do.</summary>
+		/// <remarks>
+		/// Tried with no temporary controller, then with more moves each time. A wanted controller that would land
+		/// anywhere but its own place is never let arrive, since nothing moves it afterwards.
+		/// </remarks>
+		static List<Move> Arrivals(IList<Entry> top)
+		{
+			for (var limit = top.Count; limit <= top.Count + 2 * MaxDecoys; limit++)
+			{
+				var path = new List<Move>();
+				if (Extend(top, new Ladder(), limit, path, new Dictionary<string, int>()))
+					return path;
+			}
+			return null;
+		}
+
+		static bool Extend(IList<Entry> top, Ladder now, int left, List<Move> path, Dictionary<string, int> failed)
+		{
+			if (now.Arrived == (1 << top.Count) - 1 && now.DecoyOn == 0)
+				return true;
+			if (left == 0)
+				return false;
+			int tried;
+			var key = now.Key();
+			if (failed.TryGetValue(key, out tried) && tried >= left)
+				return false;
+			// Real controllers last where it makes no difference: each is switched on while the person waits.
+			foreach (var i in Enumerable.Range(0, top.Count).OrderBy(x => top[x].IsVirtual ? 0 : 1))
+			{
+				if ((now.Arrived & (1 << i)) != 0)
+					continue;
+				var next = now.Copy();
+				var place = next.Arrive(i, top[i].IsVirtual);
+				if (place != i)
+					continue;
+				next.Arrived |= 1 << i;
+				path.Add(new Move { Wanted = i, Place = place });
+				if (Extend(top, next, left - 1, path, failed))
+					return true;
+				path.RemoveAt(path.Count - 1);
+			}
+			if (now.DecoyMade < MaxDecoys)
+			{
+				var next = now.Copy();
+				var number = next.DecoyMade++;
+				var place = next.Arrive(DecoyTag + number, true);
+				next.DecoyOn |= 1 << number;
+				path.Add(new Move { Decoy = number + 1, Place = place });
+				if (Extend(top, next, left - 1, path, failed))
+					return true;
+				path.RemoveAt(path.Count - 1);
+			}
+			for (var number = 0; number < now.DecoyMade; number++)
+			{
+				if ((now.DecoyOn & (1 << number)) == 0)
+					continue;
+				var next = now.Copy();
+				next.Leave(DecoyTag + number);
+				next.DecoyOn &= ~(1 << number);
+				path.Add(new Move { Decoy = number + 1, Leaves = true });
+				if (Extend(top, next, left - 1, path, failed))
+					return true;
+				path.RemoveAt(path.Count - 1);
+			}
+			failed[key] = left;
+			return false;
 		}
 
 		/// <summary>The place the controller at this position in the list gets: none past the fourth.</summary>
@@ -329,11 +500,13 @@ namespace x360ce.App.DInput
 		/// Controller N's virtual controller goes to place N, because a game reading place N gets what is
 		/// mapped on Controller N only then. Everything else fills the places no tab needs, first free
 		/// first, in the order it is in now. So a real controller that arrived first and took place one
-		/// moves out of the way instead of pushing every tab's controller one place along.
+		/// moves out of the way instead of pushing every tab's controller one place along. A controller
+		/// that <see cref="Entry.TakesNoPart"/> is left out.
 		/// </remarks>
 		/// <param name="entries">The controllers on the machine, as <see cref="ReadEntries"/> reads them.</param>
 		public static List<Entry> ByController(IList<Entry> entries)
 		{
+			entries = entries.Where(x => !x.TakesNoPart).ToList();
 			var byPad = entries.Where(x => x.IsVirtual && x.IsOurs && x.Pad >= 1 && x.Pad <= 4)
 				.GroupBy(x => x.Pad).ToDictionary(x => x.Key, x => x.First());
 			var rest = new Queue<Entry>(entries.Where(x => !byPad.Values.Contains(x)));
@@ -360,6 +533,10 @@ namespace x360ce.App.DInput
 				return "The controllers are already in that order.";
 			var lines = Steps.Select((s, i) => string.Format("{0}. {1}", i + 1, s)).ToArray();
 			var text = string.Join(Environment.NewLine, lines);
+			if (Steps.Any(x => x.Kind == StepKind.CreateDecoy))
+				text += Environment.NewLine + Environment.NewLine
+					+ "A temporary controller is made only to hold a place while the others arrive, and is taken "
+					+ "away before the order is done.";
 			if (NeedsElevation)
 				text += Environment.NewLine + Environment.NewLine
 					+ "Windows will ask for Administrator once, before the first real controller is switched "

@@ -495,7 +495,7 @@ namespace x360ce.App
 				carried);
 		}
 
-		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none.</summary>
+		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none, and the settings which said so.</summary>
 		/// <remarks>
 		/// An Xbox controller offers its motors through XInput and nowhere else - its DirectInput face
 		/// declares no force feedback at all - so a game rumbling an emulated controller reaches nothing
@@ -504,50 +504,17 @@ namespace x360ce.App
 		/// Where to send it is either said outright or worked out. Said outright is one of the four
 		/// places. Worked out means the place the mapped device itself holds, which is the sensible
 		/// answer and the only one that stays right when the places move about.
-		/// </remarks>
-		public static int GetForcePassThroughPlace(MapTo mapTo)
-		{
-			PadSetting padSetting;
-			return GetForcePassThroughPlace(mapTo, out padSetting);
-		}
-
-		/// <summary>Where a pad's force is passed on to, and the settings which said so.</summary>
-		/// <remarks>
+		///
 		/// The settings come back with the place because the strengths written on them apply to the
 		/// force being passed on, and the caller has no other way of knowing which of a pad's settings
 		/// answered. Looking them up a second time would be a second answer, free to disagree.
+		///
+		/// Asked of the routing the engine passes force by, with the places last read, so the Test sliders
+		/// send where a game's rumble goes. The rule itself is <see cref="DeviceRouting.PassThroughPlace"/>.
 		/// </remarks>
 		public static int GetForcePassThroughPlace(MapTo mapTo, out PadSetting padSetting)
 		{
-			padSetting = null;
-			var fileName = SettingsManager.CurrentGame?.FileName;
-			if (fileName == null)
-				return -1;
-			foreach (var setting in SettingsManager.GetSettings(fileName, mapTo))
-			{
-				var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-				if (ps == null || ps.ForcePassThrough != "1")
-					continue;
-				int wanted;
-				// One to four names a place outright. Zero, empty, or anything unreadable means work it out.
-				if (int.TryParse(ps.ForcePassThroughIndex, out wanted) && wanted >= 1 && wanted <= 4)
-				{
-					padSetting = ps;
-					return wanted - 1;
-				}
-				var device = SettingsManager.GetDevice(setting.InstanceGuid);
-				if (device == null)
-					continue;
-				// The place the device itself holds. Only a controller with an XInput face has one, which is
-				// exactly the kind whose motors cannot be reached any other way.
-				var place = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
-				if (place >= 0)
-				{
-					padSetting = ps;
-					return place;
-				}
-			}
-			return -1;
+			return DeviceRouting.Current.PassThroughPlace((int)mapTo - 1, XInputPlaces.Current, out padSetting);
 		}
 
 		#region Status lights

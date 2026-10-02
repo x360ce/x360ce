@@ -84,14 +84,24 @@ namespace x360ce.App.Controls
 
 		private void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
 		{
-			if (MainForm.Current.InvokeRequired)
+			var scanner = (XInputMaskScanner)sender;
+			// Posted to the interface thread, never sent. A failure there is reported where it happened,
+			// with its own stack; sent, it is thrown again on this worker, a thread-pool thread, where it
+			// ends the program and the report names only the call that sent it. A game found or updated
+			// is waited for, because the scan looks up its next file in the list that changes.
+			var shown = ControlsHelper.BeginInvoke(() => ShowScanProgress(scanner, e));
+			if (e.State == XInputMaskScannerState.GameFound || e.State == XInputMaskScannerState.GameUpdated)
+				shown.Wait();
+		}
+
+		/// <summary>Shows or applies what the scan reports, on the interface thread. Stops the scan once the list has closed.</summary>
+		void ShowScanProgress(XInputMaskScanner scanner, XInputMaskScannerEventArgs e)
+		{
+			if (IsDisposed)
 			{
-				Invoke(new Action(() => 
-					Scanner_Progress(sender, e)
-				));
+				scanner.IsStopping = true;
 				return;
 			}
-			var scanner = (XInputMaskScanner)sender;
 			var label = e.Level == 0
 				? ScanProgressLevel0Label
 				: ScanProgressLevel1Label;
@@ -105,9 +115,11 @@ namespace x360ce.App.Controls
 					{
 						// Get game to add.
 						var game = e.Game;
-						var dirFullName = e.GameFileInfo.Directory.FullName.ToLower();
-						// Get existing games in the same folder.
-						var oldGames = SettingsManager.UserGames.Items.Where(x => x.FullPath.ToLower().StartsWith(dirFullName)).ToList();
+						var dirFullName = e.GameFileInfo.Directory.FullName;
+						// Get existing games in the same folder. A game listed without a path is in no folder.
+						var oldGames = SettingsManager.UserGames.Items
+							.Where(x => x.FullPath != null && x.FullPath.StartsWith(dirFullName, StringComparison.OrdinalIgnoreCase))
+							.ToList();
 						var oldGame = oldGames.FirstOrDefault(x => x.IsEnabled && x.DateCreated < ScanStarted);
 						var enabledGame = oldGames.FirstOrDefault(x => x.IsEnabled);
 						// If this is 32-bit windows but game is 64-bit then...
@@ -144,7 +156,8 @@ namespace x360ce.App.Controls
 					break;
 				case XInputMaskScannerState.GameUpdated:
 					e.Game.FullPath = e.GameFileInfo.FullName;
-					if (string.IsNullOrEmpty(e.Game.FileProductName) && !string.IsNullOrEmpty(e.Program.FileProductName))
+					// A file added by hand that no default settings name comes with no program to take a name from.
+					if (string.IsNullOrEmpty(e.Game.FileProductName) && e.Program != null && !string.IsNullOrEmpty(e.Program.FileProductName))
 					{
 						e.Game.FileProductName = e.Program.FileProductName;
 					}
@@ -152,7 +165,6 @@ namespace x360ce.App.Controls
 				case XInputMaskScannerState.DirectoryUpdate:
 				case XInputMaskScannerState.FileUpdate:
 					label.Text = ProgressText(e);
-					Application.DoEvents();
 					break;
 				case XInputMaskScannerState.Completed:
 					ScanGamesButton.Enabled = true;
@@ -194,8 +206,10 @@ namespace x360ce.App.Controls
 		void ScanGames(object state)
 		{
 			var exe = state as string;
-			Invoke((Action)delegate ()
+			ControlsHelper.BeginInvoke(() =>
 			{
+				if (IsDisposed)
+					return;
 				ScanProgressLevel0Label.Text = "...";
 				ScanProgressLevel1Label.Text = "";
 				ScanProgressPanel.Visible = true;
@@ -379,17 +393,21 @@ namespace x360ce.App.Controls
 				// Changed check (enabled state) of the current item.
 				item.IsEnabled = !item.IsEnabled;
 				// If game was enabled then...
-				if (item.IsEnabled)
+				if (item.IsEnabled && !string.IsNullOrEmpty(item.FullPath))
 				{
-					var dirFullName = Path.GetDirectoryName(item.FullPath).ToLower();
-					// Get games with different platform in the same folder.
-					var otherGames = SettingsManager.UserGames.Items
-						.Where(x => x.IsEnabled && x.FullPath.ToLower().StartsWith(dirFullName) && x.ProcessorArchitecture != item.ProcessorArchitecture)
-						.ToList();
-					// Disable other games, because used have to choose which 
-					foreach (var g in otherGames)
+					var dirFullName = Path.GetDirectoryName(item.FullPath);
+					// A root path such as "C:\" has no directory name; such a game is in no folder.
+					if (!string.IsNullOrEmpty(dirFullName))
 					{
-						g.IsEnabled = false;
+						// Get games with different platform in the same folder. A game listed without a path is in no folder.
+						var otherGames = SettingsManager.UserGames.Items
+							.Where(x => x.IsEnabled && x.FullPath != null && x.FullPath.StartsWith(dirFullName, StringComparison.OrdinalIgnoreCase) && x.ProcessorArchitecture != item.ProcessorArchitecture)
+							.ToList();
+						// Disable other games, because used have to choose which
+						foreach (var g in otherGames)
+						{
+							g.IsEnabled = false;
+						}
 					}
 				}
 			}

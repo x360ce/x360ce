@@ -39,12 +39,30 @@ If you want `HELP` and have questions about installation or configuration, pleas
 2. Select `[Controller 1]` tab and click on `[Add...]` button.
 3. Select `controller` you want to add-map and click on `[OK]` button.
 4. Enable `controller` by clicking on `[Enable # Mapped Device]` inside `[Controller 1]` tab.
+5. The `[Enabled]` box on a device's row in the list leaves the device out of the game without removing it. The box in front of a device on the `[Devices]` page leaves it out of every game, and greys its rows' `[Enabled]` box. An unticked device is not read, not held and sent no force feedback, so another program can use it. A Pass through that names the XInput place shown for it sends it nothing either. x360ce no longer hides it or asks for it to be hidden. A device you hid in HID Hide stays hidden until you untick it there. The tab's pages no longer show it live, and a centering spring `[Auto]` run on it stops.
+
+An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so x360ce reads one only while its own window is in front. That is a limit of Windows, not something x360ce can change. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
+
+A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can take a wheel over, and then the game does not see what x360ce provides. In the Steam library open the game's `Properties` → `Controller` and choose `Disable Steam Input`.
+
+## One device on several controller tabs
+
+A device can drive up to four emulated controllers at once.
+
+1. Select another `[Controller #]` tab, click `[Add...]` and choose a device that is already on another tab.
+2. `[Move here]` takes it off every other tab. A tab left with no device is switched off.
+3. `[Keep there too]` puts it on this tab as well. This tab starts with the settings of the lowest-numbered tab it is on, force feedback included; after that each tab keeps its own. Do the same on more tabs, up to `[Controller 4]`.
+4. `[Cancel]` changes nothing.
+5. On each tab, `[Force Feedback]` → `[Enable]` says whether that tab's game rumbles the device. On for one tab: that tab's rumble. On for several: the strongest of each motor. The effect type and strengths are those of the lowest-numbered tab with `[Enable]` on.
+6. While the selected device is on other tabs, the `[Force Feedback]` page title names every one of them, for example `Also on Controller 2` or `Also on Controllers 1, 3`.
 
 ## Configuring and Mapping Buttons and Axes
 
 1. Select `[Controller 1]` tab → `[General]` tab.
 2. Click on `[drop-down]` (drop-down menu with options will appear).
 3. Map `button` or `axis` by selecting `[Record]` option and pressing `button` or moving `axis` on your `controller`.
+
+   A switch, stick or pedal recorded onto a button presses it where you moved it to, and the status bar says which way that is. If the button is held the wrong way round, click the box and choose `[Invert]`. How far the control must move is the button's press point on the `[Buttons]` tab; on the way back the button lets go a little before that point, so a switch that wobbles does not flicker.
 4. Or use the `[Input]` column on the left: it lights every button, axis, slider and POV of your device as you use it, with its reading, before anything is mapped. Click a mapping box, then click a chip to put it there, or pick the chip up and drop it on a box; the boxes that can take it turn green while you hold it.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
@@ -107,14 +125,25 @@ whether one exists and says so rather than guessing.
 Hover over a tab to read the same thing in words, including anything the virtual bus
 reported about that controller.
 
+When something else holds a tab's place, the words say what it is: a real controller,
+another of this program's own virtual controllers, or a virtual controller this program did
+not make, such as one from DS4Windows or one left behind, which the `[Devices]` page lists
+as Leftover. `[Auto-Order]` on the `[Devices]` page moves a real controller or another of
+this program's own virtual controllers out of the way; a Leftover has to be removed with
+`[Remove Leftover Pads]` on the same page instead.
+
 ## How to Install or Uninstall ViGEmBus Virtual Gamepad Emulation Driver
 
 - Install: `[Options]` tab → `[Virtual Device]` tab → ViGEm Bus `[Install]` button.
 - Uninstall: `[Options]` tab → `[Virtual Device]` tab → ViGEm Bus `[Uninstall]` button.
+- Repair: when games do not detect the controllers although the driver is installed, the `[Issues]` tab shows "Virtual driver is installed but not working" and says why. Click its `[Repair]` button and allow the Administrator prompt. On Windows 10 and later the driver's own setup opens: choose `Repair` there. Once the driver is installed, the ViGEm Bus button on the `[Virtual Device]` tab also reads `[Repair]`. When the driver refused only a controller's vibration, the row reads "Virtual controller has no vibration" instead; `[Repair]` may restore it.
+- If the message comes back after a repair, close and reopen `X360CE` and click `[Repair]` again. Restart Windows if it still comes back.
 
 ## Hiding the real controller from games (HID Hide)
 
-A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list and tick the controller under Devices.
+Duplicated controller, or the game sees two controllers? A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list, tick the controller under Devices, and make sure hiding is turned on.
+
+While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID Hide` is missing, when hiding is off, when the controller is not hidden, or when `HID Hide` hides it from x360ce as well. Its button opens the download page or `HID Hide`'s own program.
 
 `HID Guardian` is the tool `HID Hide` replaced. Its author stopped it in 2023, and keyboards, mice and USB devices dropping out while it was installed were its known side effects. This version only removes it: `[Options]` tab → `[HID Guardian (obsolete)]` tab → `[Uninstall]`.
 
@@ -123,16 +152,20 @@ A game that sees both the real controller and the emulated one gets every press 
 How to remove `HIDGuardian` if access to your Mouse and Keyboard is lost (GitHub):
 <https://github.com/x360ce/x360ce/wiki/HID-Guardian>
 
-## Problem: Application has failed to start because MSVCR100.dll was not found.
+## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
 
-Reason: Microsoft Visual C++ 2010 Redistributable Package is missing.
+Reason: Microsoft Visual C++ v14 Redistributable is missing.
 
-Solution: Download and install Microsoft Visual C++ 2010 Redistributable Packages:
+Solution: `[Issues]` tab → `[Download and Install]`, or install the latest Microsoft Visual C++ v14 Redistributable (Visual Studio 2017–2026) from Microsoft:
 
-- (x86): <https://www.microsoft.com/en-us/download/details.aspx?id=5555>
-- (x64): <https://www.microsoft.com/en-us/download/details.aspx?id=14632>
+- (x86): <https://aka.ms/vc14/vc_redist.x86.exe>
+- (x64): <https://aka.ms/vc14/vc_redist.x64.exe>
 
 Note: You must install both packages on Windows 64-bit!
+
+`[Download and Install]` asks for administrator permission, runs Microsoft's installer and waits for it. The `[Issues]` tab then says how it went: Windows needs a restart, the installation was cancelled, another installation is running, or the same or a newer version is already registered. In that last case remove every Microsoft Visual C++ v14 Redistributable in Windows Settings → Apps, restart Windows and install again.
+
+If the installer fails, see Microsoft's troubleshooting guide: <https://learn.microsoft.com/cpp/windows/troubleshoot-vc-redistributable-installation-issues>
 
 ## Wheel doesn't work in the game, but it works inside x360ce Application.
 
@@ -179,6 +212,20 @@ Solution 2: If you can't separate pedals:
 - 720° (2.0 x 360°) - Drift cars. Multiple classes of Rally cars (group N).
 - 540° (1.5 x 360°) - GT1 and 3 spec race cars, WRC Rally cars.
 - 360° (1.0 x 360°) - Formula 1 cars.
+
+## Flying an RC transmitter in a game
+
+A radio control transmitter for drones and planes (EdgeTX, OpenTX, RadioMaster, Jumper, DJI and
+others) shows up as a joystick when it is plugged in by USB. x360ce turns it into an Xbox
+controller, so a game that reads only a gamepad can be flown with the real sticks.
+
+1. Plug the radio in by USB and choose its joystick mode. EdgeTX asks when the cable goes in: choose `USB Joystick (HID)`.
+2. Add the radio on the `[Controller 1]` tab, as in "Adding DirectInput Device (Controller)" above.
+3. Start from the preset. Open <https://github.com/x360ce/x360ce/blob/master/docs/.attachments/x360ce-v4-rc-transmitter.xml>, save it with GitHub's `Download raw file` button, then choose `[Load Preset...]` → `[Open File...]` and open it. It puts throttle and yaw on the left stick (Axis 3 up and down, Axis 4 left and right), pitch and roll on the right stick (Axis 2 and Axis 1), and the arm switch (Slider 1) on the left bumper.
+4. Radios send their channels in different orders, so the preset is a starting point. Move each stick and switch and watch the `[Input]` column. When a box names the wrong control, click it, choose `[Record]` and move the right stick. When a stick works backwards, click its box and choose `[Invert]`.
+5. The arm switch works as a button. Record it by flipping the switch into the armed position: the status bar then says which position presses the button. If the bumper is held while you are disarmed, click the box and choose `[Invert]`. The preset presses the bumper only in the last quarter of the switch's travel, so the middle of a three-position switch leaves it released; that point is the Left Bumper's press point on the `[Buttons]` tab.
+6. Hide the radio from the game with HID Hide, as in "Hiding the real controller from games (HID Hide)", so the game reads only the emulated controller.
+7. Click `[Save All]`, then keep x360ce running while you fly. Minimise it rather than closing it: the game sees the controller only while x360ce runs.
 
 ## Expressions: working out a value from other controls
 
@@ -263,6 +310,8 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=a1*0.5` - less sensitive, for aiming through a scope.
 - `=a1*(0.5+a2*0.5)` - walk slowly, run when the trigger is held.
 - `=a1-0.05` - correct a stick that drifts off centre.
+- `=a1*sqrt(1-a2^2/2)` - round the corners of a stick that reaches the corners of a square, so a full diagonal is no stronger than straight ahead. Use it for Stick X; a1 and a2 are the stick's own two axes.
+- `=a2*sqrt(1-a1^2/2)` - the same for Stick Y.
 - `=max(a1,0)` - one pedal axis split into the accelerator.
 - `=-min(a1,0)` - the same axis, its braking half.
 - `=a1-a2` - separate accelerator and brake onto one axis.

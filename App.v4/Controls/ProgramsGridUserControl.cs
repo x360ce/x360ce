@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -108,15 +107,15 @@ namespace x360ce.App.Controls
 			if (result == System.Windows.Forms.DialogResult.OK)
 			{
 				List<x360ce.Engine.Data.Program> programs;
-				if (dialog.FileName.EndsWith(".gz"))
+				try
 				{
-					var compressedBytes = System.IO.File.ReadAllBytes(dialog.FileName);
-					var bytes = EngineHelper.Decompress(compressedBytes);
-					programs = Serializer.DeserializeFromXmlBytes<List<x360ce.Engine.Data.Program>>(bytes);
+					programs = x360ce.Engine.Data.Program.FromFile(dialog.FileName);
 				}
-				else
+				catch (Exception ex) when (ex is System.IO.InvalidDataException || ex is System.IO.IOException || ex is UnauthorizedAccessException)
 				{
-					programs = Serializer.DeserializeFromXmlFile<List<x360ce.Engine.Data.Program>>(dialog.FileName);
+					// Said where the file was chosen, and the program stays up.
+					MessageBoxForm.Show(ex.Message, dialog.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
 				}
 				ImportAndBindItems(programs);
 			}
@@ -146,16 +145,14 @@ namespace x360ce.App.Controls
 					item.EntityKey = null;
 					item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
 				}
-				if (dialog.FileName.EndsWith(".gz"))
+				try
 				{
-					var s = Serializer.SerializeToXmlString(programs, System.Text.Encoding.UTF8, true);
-					var bytes = System.Text.Encoding.UTF8.GetBytes(s);
-					var compressedBytes = EngineHelper.Compress(bytes);
-					System.IO.File.WriteAllBytes(dialog.FileName, compressedBytes);
+					x360ce.Engine.Data.Program.ToFile(programs, dialog.FileName);
 				}
-				else
+				catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException)
 				{
-					Serializer.SerializeToXmlFile(programs, dialog.FileName, System.Text.Encoding.UTF8, true);
+					// A protected or locked destination is said where it was chosen.
+					MessageBoxForm.Show(ex.Message, dialog.Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 

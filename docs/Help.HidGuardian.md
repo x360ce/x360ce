@@ -1,8 +1,8 @@
 # HID Guardian
 
-**IMPORTANT !!! Please read before installing HID Guardian !!!**
+**HID Guardian is obsolete. Use HID Hide to hide the real controller from games.**
 
-Purpose of `HID Guardian` is to hide original controllers from games, so that only virtual controllers are visible. Install `HID Guardian` only if original controller prevents virtual controller functioning properly in the game.
+`HID Guardian` hid original controllers from games, so that only virtual controllers were visible. Its author stopped it in 2023 and `HID Hide` replaced it: `[Options]` tab → `[HID Hide]` tab. This version only removes `HID Guardian`.
 
 - Install: not supported by this version. The installer is disabled for safety, because a misconfigured HID filter driver can lock out keyboard and mouse. Only uninstall is available.
 - Uninstall order: the HID class filter is removed first and checked, and the driver is removed only after the filter is confirmed gone. If the filter cannot be removed, the driver is left in place, because a filter naming a missing driver is what stops keyboard and mouse from working.

@@ -132,5 +132,39 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(new[] { "Windows is removing it" }, said);
 			Assert.IsTrue(serving.Wait(TimeSpan.FromSeconds(5)));
 		}
+
+		[TestMethod, TestCategory("admin"), TestCategory("critical")]
+		[Description("A copy told to go while a controller is still switched off switches it on first")]
+		public void A_copy_told_to_go_switches_on_what_it_switched_off()
+		{
+			var admin = new PretendAdministrator();
+			using (var devices = new ElevatedDevices(admin.Start))
+			{
+				string error;
+				Assert.IsTrue(devices.Switch(false, new[] { A }, out error), "Switching off failed: " + error);
+			}
+			Assert.IsTrue(admin.Serving.Wait(TimeSpan.FromSeconds(5)), "The Administrator copy did not stop when told.");
+			CollectionAssert.AreEqual(new[] { "off " + A, "on " + A }, admin.Switched,
+				"A controller switched off and never switched on again was left off.");
+		}
+
+		[TestMethod, TestCategory("admin"), TestCategory("critical")]
+		[Description("A copy whose program stops without telling it switches on what it switched off")]
+		public void A_copy_whose_program_stops_switches_on_what_it_switched_off()
+		{
+			var admin = new PretendAdministrator();
+			var devices = new ElevatedDevices(admin.Start);
+			string error;
+			Assert.IsTrue(devices.Switch(false, new[] { A, B }, out error), "Switching off failed: " + error);
+			// The program ends as a crash ends it: the channel goes, and nothing says Exit.
+			var channel = (IDisposable)typeof(ElevatedDevices)
+				.GetField("_channel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+				.GetValue(devices);
+			channel.Dispose();
+			Assert.IsTrue(admin.Serving.Wait(TimeSpan.FromSeconds(10)), "The Administrator copy did not stop when its program went.");
+			CollectionAssert.AreEqual(new[] { "off " + A, "off " + B }, admin.Switched.GetRange(0, 2));
+			CollectionAssert.AreEquivalent(new[] { "on " + A, "on " + B }, admin.Switched.GetRange(2, admin.Switched.Count - 2),
+				"Controllers switched off when the program stopped were left off.");
+		}
 	}
 }

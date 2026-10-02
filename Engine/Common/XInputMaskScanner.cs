@@ -103,9 +103,12 @@ namespace x360ce.Engine
             // Step 2: Scan files.
             for (var i = 0; i < exes.Count; i++)
             {
+                // The list that reads these reports may have closed since the last one was shown.
+                if (IsStopping)
+                    break;
                 var exe = exes[i];
                 var exeName = exe.Name.ToLower();
-                var program = programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+                var program = programs.FirstOrDefault(x => x.FileName != null && x.FileName.ToLower() == exeName);
 				// If file doesn't exist in the game list then continue.
 				e = new XInputMaskScannerEventArgs
 				{
@@ -131,7 +134,7 @@ namespace x360ce.Engine
 						GameFileInfo = exe
 					};
 					// Get game by executable name.
-					var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+					var game = games.FirstOrDefault(x => x.FileName != null && x.FileName.ToLower() == exeName);
                     // If file doesn't exist in the game list then...
                     if (game == null)
                     {
@@ -242,9 +245,7 @@ namespace x360ce.Engine
         public Dictionary<string, XInputMask> GetMasks(string path, SearchOption searchOption, bool is64bit)
         {
             // Check masks inside *.exe and *.dll files.
-            // A name Windows cannot open - one ending in a space - is listed by the folder but found by
-            // nothing that opens it, and one such file ended the whole scan. Left out here, before the
-            // list is shown or read.
+            // A file taken away while the folders are walked is left out here, before the list is shown or read.
             var files = ReadableFiles(path, searchOption, "*.exe", "*.dll").Where(x => x.Exists).ToList();
             var mask = Engine.XInputMask.None;
             // Create list to store masks.
@@ -259,8 +260,16 @@ namespace x360ce.Engine
 			ReportProgress(e);
 			for (var i = 0; i < files.Count; i++)
 			{
-				e.FileIndex = i;
-				e.Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count);
+				// A new object per file: the window may still be reading the one from the file before,
+				// and a shared one changes under it while it reads.
+				e = new XInputMaskScannerEventArgs
+				{
+					Level = 1,
+					Files = files,
+					FileIndex = i,
+					State = XInputMaskScannerState.FileUpdate,
+					Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count),
+				};
 				ReportProgress(e);
 				var file = files[i].FullName;
                 // Pause or Stop.
@@ -297,6 +306,9 @@ namespace x360ce.Engine
         /// may not enter - the junctions Windows keeps in a profile, such as "My Music", are such
         /// folders - and the whole game folder went unscanned for one of them. Walked folder by
         /// folder, one that refuses is left out and the rest are read.
+        /// A name ending in a space or a dot is left out as well. The folder lists it, but Windows opens it as the name
+        /// without that ending: the file beside it, which was then scanned twice and ended the scan on the second, or no
+        /// file at all.
         /// </remarks>
         static List<FileInfo> ReadableFiles(string path, SearchOption searchOption, params string[] patterns)
         {
@@ -309,7 +321,10 @@ namespace x360ce.Engine
                 try
                 {
                     foreach (var pattern in patterns)
-                        files.AddRange(Directory.GetFiles(folder, pattern, SearchOption.TopDirectoryOnly).Select(x => new FileInfo(x)));
+                        files.AddRange(Directory.GetFiles(folder, pattern, SearchOption.TopDirectoryOnly)
+                            // Windows opens a name ending in a space or a dot as the name without it: another file, or none.
+                            .Where(x => !x.EndsWith(" ", StringComparison.Ordinal) && !x.EndsWith(".", StringComparison.Ordinal))
+                            .Select(x => new FileInfo(x)));
                     if (searchOption == SearchOption.AllDirectories)
                         foreach (var sub in Directory.GetDirectories(folder))
                             folders.Push(sub);

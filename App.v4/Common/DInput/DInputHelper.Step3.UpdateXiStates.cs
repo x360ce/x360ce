@@ -1,35 +1,45 @@
 ﻿using SharpDX.XInput;
-using System.Linq;
 using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
+		/// <summary>The D-Pad buttons worked out from a row's POVs: four for each of the four POVs a state holds.</summary>
+		/// <remarks>Reserved here and cleared for each row, rather than made for every row on every pass.</remarks>
+		readonly bool[] _dPadButtons = new bool[4 * 4];
+
 		/// <summary>
 		/// Convert DiStates to XInput states.
 		/// </summary>
-		void UpdateXiStates(UserGame game)
+		/// <param name="routing">The rows to convert this pass: the current game's, on a tab and switched on.</param>
+		void UpdateXiStates(DeviceRouting routing)
 		{
-			// Get mapped and enabled game settings.
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized()
-			   // Get only settings mapped to the game.
-			   .Where(x => x.FileName == game?.FileName)
-			   // Get only mapped and enabled settings.
-			   .Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
-			   .ToArray();
+			// The same rows the controllers combine, so no row is combined that was not converted.
+			var settings = routing.Rows;
+			// Each row's device, mappings and D-Pad, found when the routing was built. Found here, the devices list
+			// and the stored settings list would be copied for every row on every pass.
+			var devices = routing.RowDevices;
+			var rowMaps = routing.RowMaps;
+			var dPads = routing.RowDPads;
+			var dPadButtons = _dPadButtons;
 			for (int i = 0; i < settings.Length; i++)
 			{
 				var setting = settings[i];
-				var ud = SettingsManager.GetDevice(setting.InstanceGuid);
+				// Create GamePad to map to.
+				var gp = new Gamepad();
+				// Assing state with default values. Set before anything can end the row's turn, so a row
+				// whose device is gone reaches its controller as nothing rather than as what it last held.
+				setting.XiState = gp;
+				// Buttons an axis or a slider held on the previous pass, which decide where each lets go.
+				// Cleared here, so a device that goes offline or loses its settings lets go of them all.
+				var wasAxisButtons = setting.AxisButtons;
+				setting.AxisButtons = GamepadButtonFlags.None;
+				var axisButtons = GamepadButtonFlags.None;
+				var ud = devices[i];
 				// If device was not found then continue.
 				if (ud == null)
 					continue;
-				// Create GamePad to map to.
-				var gp = new Gamepad();
-				// Assing state with default values.
-				setting.XiState = gp;
 				// If device Direct Input state failed then...
 				if (ud.JoState == null)
 					continue;
@@ -41,29 +51,26 @@ namespace x360ce.App.DInput
 				//if (device == null)
 				//	// Continue loop.
 				//	continue;
-				var padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				// All mapped items, as the routing holds them: none when the row's settings are not stored.
+				var maps = rowMaps[i];
 				// If setting was not found then continue.
-				if (padSetting == null)
+				if (maps == null)
 					continue;
 				var diState = ud.DiState;
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
-				bool success;
 				int index;
-				MapType type;
 
-				var o = SettingsManager.Options;
-
-				// Contains 
+				// Contains
 				//var gamepadUpdates = new List<KeyValue<GamepadKeyCode, int?>>();
 
 				// --------------------------------------------------------
 				// Convert DInput POV Hat value to D-PAD buttons.
 				// --------------------------------------------------------
 
-				// Create array to store 4 buttons for each POV 4 i.e. 16 buttons.
-				var dPadButtons = new bool[4 * diState.Povs.Length];
+				// Four buttons for each POV, sixteen in all, cleared for this row.
+				System.Array.Clear(dPadButtons, 0, dPadButtons.Length);
 				// Loop trough D-Pad button states.
 				for (int p = 0; p < diState.Povs.Length; ++p)
 				{
@@ -91,9 +98,10 @@ namespace x360ce.App.DInput
 				// MAP: D-PAD
 				// --------------------------------------------------------
 
-				success = SettingsConverter.TryParseIniValue(padSetting.DPad, out type, out index, MapCode.DPad);
-				// If POV index is mapped to the D-PAD
-				if (success && index > 0 && type == MapType.POV)
+				// The POV the D-Pad is mapped to, counted from one, read from the settings when the routing was built.
+				index = dPads[i];
+				// If POV index is mapped to the D-PAD. The index counts from one, and a POV number above 4 is rejected.
+				if (index > 0 && index <= diState.Povs.Length)
 				{
 					var dPadIndex = index - 1;
 					// --------------------------------------------------------
@@ -113,9 +121,6 @@ namespace x360ce.App.DInput
 				// MAP:
 				// --------------------------------------------------------
 
-				// Get all mapped items.
-				var maps = padSetting.Maps;
-
 				foreach (var map in maps)
 				{
 					// A row driven by a formula names no single control, so it is worked out here and
@@ -134,47 +139,33 @@ namespace x360ce.App.DInput
 					// --------------------------------------------------------
 					if (map.IsButton)
 					{
-						// If mapped index is in range then...
-						if (map.Index < diState.Buttons.Length)
+						// An inverted button (IButton) counts as pressed while it is released. The
+						// inversion is applied here, once, so every destination below receives a plain press.
+						if (ConvertHelper.IsButtonPressed(diState.Buttons, map.Index, map.IsInverted))
 						{
-							var pressed = diState.Buttons[map.Index - 1];
-							if (pressed)
-							{
-								// --------------------------------------------------------
-								// Target: Button.
-								// --------------------------------------------------------
-								if (map.Target == TargetType.Button)
-									gp.Buttons |= map.ButtonFlag;
-								// --------------------------------------------------------
-								// Target: Trigger.
-								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftTrigger)
-									gp.LeftTrigger = byte.MaxValue;
-								else if (map.Target == TargetType.RightTrigger)
-									gp.RightTrigger = byte.MaxValue;
-								// --------------------------------------------------------
-								// Target: Thumb.
-								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftThumbX)
-									gp.LeftThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.LeftThumbY)
-									gp.LeftThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbX)
-									gp.RightThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbY)
-									gp.RightThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								// --------------------------------------------------------
-								// Target: Max.
-								// --------------------------------------------------------
-							}
+							// --------------------------------------------------------
+							// Target: Button.
+							// --------------------------------------------------------
+							if (map.Target == TargetType.Button)
+								gp.Buttons |= map.ButtonFlag;
+							// --------------------------------------------------------
+							// Target: Trigger.
+							// --------------------------------------------------------
+							else if (map.Target == TargetType.LeftTrigger)
+								gp.LeftTrigger = byte.MaxValue;
+							else if (map.Target == TargetType.RightTrigger)
+								gp.RightTrigger = byte.MaxValue;
+							// --------------------------------------------------------
+							// Target: Thumb.
+							// --------------------------------------------------------
+							else if (map.Target == TargetType.LeftThumbX)
+								gp.LeftThumbX = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
+							else if (map.Target == TargetType.LeftThumbY)
+								gp.LeftThumbY = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
+							else if (map.Target == TargetType.RightThumbX)
+								gp.RightThumbX = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
+							else if (map.Target == TargetType.RightThumbY)
+								gp.RightThumbY = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
 						}
 					}
 					// --------------------------------------------------------
@@ -195,8 +186,8 @@ namespace x360ce.App.DInput
 					// --------------------------------------------------------
 					else if (map.Type == MapType.DPOVButton)
 					{
-						// If mapped index is in range then...
-						if (map.Index < dPadButtons.Length)
+						// If mapped index is in range then... It counts from one, so the last is the length.
+						if (map.Index <= dPadButtons.Length)
 						{
 							var pressed = dPadButtons[map.Index - 1];
 							if (pressed)
@@ -251,17 +242,10 @@ namespace x360ce.App.DInput
 
 						// Get value.
 						var v = (ushort)values[map.Index - 1];
-
-						//// --------------------------------------------------------
-						//// MAP: Axis Positive / Negative Map.
-						//// --------------------------------------------------------
-						//if (map.Target == TargetType.LeftThumbX)
-						//{
-						//	var success2 = SettingsConverter.TryParseIniValue(padSetting.LeftThumbUp, out type, out index);
-						//	if (success2 && index > 0 && type == SettingType.Button)
-						//	{
-						//	}
-						//}
+						// A control that reports movement rests in the middle. A trigger or a button reads only the half past
+						// it, as with H, so at rest it is released; a stick reads it whole and rests centred.
+						var relative = ((map.IsAxis ? ud.DiRelativeAxisMask : ud.DiRelativeSliderMask) & (1 << (map.Index - 1))) != 0;
+						var half = map.IsHalf || relative;
 
 						// Destination range.
 						//var min = short.MinValue; // -32768;
@@ -293,25 +277,13 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						if (map.Target == TargetType.Button)
 						{
-							// If value is inverted (I) then...
-							if (map.IsInverted)
-							{
-								// Convert [0;65535] range to [65535;0] range.
-								v = (ushort)(ushort.MaxValue - v);
-							}
-							// If value is inverted (I) then...
-							if (map.IsHalf)
-							{
-								// Map only if [32768;65535];
-								if (v > short.MaxValue)
-									v = (ushort)(v + short.MinValue);
-								else
-									v = 0;
-							}
-							// If axis reached beyond dead zone then...
-							if (v > map.DeadZone)
+							// Pressed past the press point, released only a little below it, so a reading
+							// resting on the press point does not press and release the button every pass.
+							var wasPressed = (wasAxisButtons & map.ButtonFlag) != GamepadButtonFlags.None;
+							if (ConvertHelper.IsAxisButtonPressed(v, map.IsInverted, half, map.DeadZone, wasPressed))
 							{
 								gp.Buttons |= map.ButtonFlag;
+								axisButtons |= map.ButtonFlag;
 							}
 						}
 						// --------------------------------------------------------
@@ -319,7 +291,7 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
-							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf, false);
+							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, half, false);
 							if (map.Target == TargetType.LeftTrigger)
 								gp.LeftTrigger = triggerValue;
 							if (map.Target == TargetType.RightTrigger)
@@ -346,6 +318,7 @@ namespace x360ce.App.DInput
 					}
 				}
 				setting.XiState = gp;
+				setting.AxisButtons = axisButtons;
 
 				//        [  32768 steps | 32768 steps ]
 				// ushort [      0 32767 | 32768 65535 ] DInput
@@ -366,9 +339,6 @@ namespace x360ce.App.DInput
 				//   To Triger:      0   -    255    scale: 255
 				//   To   Axis: -32768   -  32767    shift: -32768
 			}
-			var ev = StatesUpdated;
-			if (ev != null)
-				ev(this, new DInputEventArgs());
 		}
 
 		/// <summary>

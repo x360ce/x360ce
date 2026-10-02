@@ -1,0 +1,18 @@
+<!--
+  x360ce 4.x preset: a radio control transmitter (EdgeTX, OpenTX, RadioMaster, Jumper, DJI and
+  others) used as a USB joystick. A starting point to adjust, not a finished mapping: radios send
+  their channels in different orders, and some move a stick the other way.
+  Left stick: throttle up and down (Axis 3), yaw left and right (Axis 4).
+  Right stick: pitch up and down (Axis 2), roll left and right (Axis 1).
+  Left bumper: the arm switch (Slider 1), pressed only in the last quarter of its travel.
+  Open it with Load Preset... > Open File... on a controller tab.
+-->
+<PadSetting>
+  <PadSettingChecksum>bcc4a8c6-d8fe-f956-df27-dceb25250b77</PadSettingChecksum>
+  <LeftShoulder>h1</LeftShoulder>
+  <LeftShoulderDeadZone>16384</LeftShoulderDeadZone>
+  <LeftThumbAxisX>a4</LeftThumbAxisX>
+  <LeftThumbAxisY>a3</LeftThumbAxisY>
+  <RightThumbAxisX>a1</RightThumbAxisX>
+  <RightThumbAxisY>a2</RightThumbAxisY>
+</PadSetting>

@@ -78,7 +78,7 @@ namespace x360ce.Tests
 			{
 				Assert.IsFalse(client.IsControllerConnected(1),
 					"A controller is reported before one has been made.");
-				Assert.IsTrue(client.PlugIn(1), "The controller could not be plugged in.");
+				Assert.IsTrue(client.PlugIn(1, out _), "The controller could not be plugged in.");
 				Assert.IsTrue(client.IsControllerConnected(1),
 					"No controller is reported straight after one was made.");
 
@@ -106,13 +106,38 @@ namespace x360ce.Tests
 			var client = Connected();
 			try
 			{
-				client.PlugIn(1);
+				client.PlugIn(1, out _);
 				client.Targets[0].Disconnect();
-				Assert.IsTrue(client.PlugIn(1),
+				Assert.IsTrue(client.PlugIn(1, out _),
 					"A controller taken away could not be replaced.");
 				Assert.IsTrue(client.IsControllerConnected(1),
 					"The replacement is not reported, so the person is left with no controller and no " +
 					"sign of why.");
+			}
+			finally
+			{
+				client.UnPlug(1);
+			}
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("requires-elevation")]
+		[Description("A refused plug says what the bus answered")]
+		public void A_refused_plug_says_what_the_bus_answered()
+		{
+			// The Issues tab can only name a fault the bus named. A plug that swallowed the answer left
+			// every refusal reading alike, and a bus that refuses everything looked like a full one.
+			var client = Connected();
+			try
+			{
+				VIGEM_ERROR first;
+				Assert.IsTrue(client.PlugIn(1, out first), "The controller could not be plugged in.");
+				Assert.AreEqual(VIGEM_ERROR.VIGEM_ERROR_NONE, first,
+					"A controller the bus took reports an error anyway.");
+				VIGEM_ERROR second;
+				Assert.IsFalse(client.PlugIn(1, out second),
+					"Plugging in a controller that is already in was accepted.");
+				Assert.AreEqual(VIGEM_ERROR.VIGEM_ERROR_ALREADY_CONNECTED, second,
+					"The refusal came back without the bus's answer, so nothing can say why.");
 			}
 			finally
 			{
@@ -132,7 +157,7 @@ namespace x360ce.Tests
 			var client = Connected();
 			try
 			{
-				client.PlugIn(1);
+				client.PlugIn(1, out _);
 				client.IsControllerConnected(1);
 				var watch = Stopwatch.StartNew();
 				for (var i = 0; i < Calls; i++)

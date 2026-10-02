@@ -183,7 +183,7 @@ namespace x360ce.App
 		#region Public events
 
 		/// <summary>
-		/// This method called from UpdateTimer on main form.
+		/// Called from the main form's interface timer, when the engine has run a pass since the last drawing.
 		/// </summary>
 		public static void TriggerControlUpdates()
 		{
