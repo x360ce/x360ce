@@ -1,4 +1,4 @@
-﻿## [4.24.57.0] - 2026-10-02
+﻿## [4.24.58.0] - 2026-10-02
 
 - Fixed: Virtual controllers were not created after Windows ran 25 days.
 - Fixed: Centering spring Auto never finished after Windows ran 25 days (Issue #1639, emreyagdan64-prog).
@@ -51,6 +51,7 @@
 - Added: A device on several tabs takes force feedback from one or more of them (Issue #1265, cuteexe).
 - Added: The Force Feedback page names the other controllers a device is on (Issue #1265, cuteexe).
 - Added: The Issues tab says when a controller this program switched off is still off.
+- Added: Help example for rounding the corners of a stick (Issue #1347, 2mg).
 
 ## [4.23.59.0] - 2026-09-26
 

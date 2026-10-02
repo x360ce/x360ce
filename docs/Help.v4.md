@@ -310,6 +310,8 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=a1*0.5` - less sensitive, for aiming through a scope.
 - `=a1*(0.5+a2*0.5)` - walk slowly, run when the trigger is held.
 - `=a1-0.05` - correct a stick that drifts off centre.
+- `=a1*sqrt(1-a2^2/2)` - round the corners of a stick that reaches the corners of a square, so a full diagonal is no stronger than straight ahead. Use it for Stick X; a1 and a2 are the stick's own two axes.
+- `=a2*sqrt(1-a1^2/2)` - the same for Stick Y.
 - `=max(a1,0)` - one pedal axis split into the accelerator.
 - `=-min(a1,0)` - the same axis, its braking half.
 - `=a1-a2` - separate accelerator and brake onto one axis.

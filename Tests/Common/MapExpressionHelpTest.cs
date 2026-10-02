@@ -57,6 +57,50 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("mapping")]
+		[Description("The corner-rounding examples bring the corners of a square stick onto the circle and leave straight movement alone")]
+		public void The_corner_rounding_examples_keep_a_stick_inside_the_circle()
+		{
+			const string forX = "=a1*sqrt(1-a2^2/2)";
+			const string forY = "=a2*sqrt(1-a1^2/2)";
+			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == forX), "The Stick X example is not listed.");
+			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == forY), "The Stick Y example is not listed.");
+			var x1 = Parse(forX, "Stick X");
+			var y1 = Parse(forY, "Stick Y");
+			// A full diagonal of a square stick is 1.41 long; rounded, it must be 1, the same as straight ahead.
+			foreach (var sx in new[] { -1f, 1f })
+			{
+				foreach (var sy in new[] { -1f, 1f })
+				{
+					var x = At(x1, sx, sy);
+					var y = At(y1, sx, sy);
+					Assert.AreEqual(1.0, Math.Sqrt(x * x + y * y), 0.001, string.Format("Corner {0}, {1} came out at {2}, {3}.", sx, sy, x, y));
+				}
+			}
+			Assert.AreEqual(1f, At(x1, 1f, 0f), 0.0001f, "Straight right must stay at full.");
+			Assert.AreEqual(0f, At(y1, 1f, 0f), 0.0001f, "Straight right must leave Y at rest.");
+			Assert.AreEqual(1f, At(y1, 0f, 1f), 0.0001f, "Straight up must stay at full.");
+			// Nowhere in the square may the rounded stick reach past the circle.
+			for (var a = -10; a <= 10; a++)
+			{
+				for (var b = -10; b <= 10; b++)
+				{
+					var x = At(x1, a / 10f, b / 10f);
+					var y = At(y1, a / 10f, b / 10f);
+					Assert.IsTrue(x * x + y * y <= 1.0001, string.Format("At {0}, {1} the stick reached {2}, {3}, past the circle.", a / 10f, b / 10f, x, y));
+				}
+			}
+		}
+
+		/// <summary>Evaluates an expression that reads axes 1 and 2, with axis 1 at x and axis 2 at y.</summary>
+		private static float At(MapExpression e, float x, float y)
+		{
+			var values = new float[e.References.Count];
+			for (int i = 0; i < values.Length; i++)
+				values[i] = e.References[i].Index == 1 ? x : y;
+			return e.Evaluate(values);
+		}
+
 		/// <summary>
 		/// True when moving any control the expression names changes what it produces.
 		/// </summary>
