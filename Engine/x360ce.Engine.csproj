@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <!-- The target is net462 on purpose (v5 targets net48). A net462 build runs on the installed
+         .NET Framework 4.8 runtime, an in-place upgrade, so users already get 4.8 behaviour; the
+         target only limits the compile-time API surface. Move to net48 only when a needed API
+         forces it. -->
     <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
     <RootNamespace>x360ce.Engine</RootNamespace>
@@ -10,7 +14,12 @@
     <LangVersion>8.0</LangVersion>
     <Platforms>AnyCPU;x86;x64</Platforms>
     <!-- The item lists below are the whole content: nothing on disk is compiled or embedded by
-         being there, so a file dropped into the folder cannot change the build unlisted. -->
+         being there, so a file dropped into the folder cannot change the build unlisted. Two
+         files sit on disk that no project compiles (JocysCom/Processes/MouseHookStruct.cs and
+         JocysCom/Processes/ProcessControl.cs); default globs would pull them in silently.
+         After any change to this file, compare Assembly.GetManifestResourceNames() of the built
+         assembly with the one before. A changed name builds green and then throws
+         MissingManifestResourceException in InitializeComponent. -->
     <EnableDefaultItems>false</EnableDefaultItems>
     <!-- Properties/AssemblyInfo.cs carries the version and attributes, as before. -->
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

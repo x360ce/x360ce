@@ -78,6 +78,67 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public const int XiAnswerMs = 1000;
 
+		#region Locks the input thread tries only when free
+
+		/// <summary>Takes a lock within a limit, and says so through <paramref name="busy"/> from before the wait until <see cref="ExitPublished"/>.</summary>
+		/// <remarks>
+		/// On .NET Framework a failed try of a lock another thread holds spins before it gives up: about 0.8 ms on a machine
+		/// with 16 logical processors. The input thread tries its locks once a pass, and a read of XInput that does not come
+		/// back holds one for as long as XInput does not answer. So every holder says it holds the lock, or waits for it, and
+		/// the input thread reads that first through <see cref="TryEnterWhenFree"/>.
+		/// </remarks>
+		/// <param name="gate">The lock.</param>
+		/// <param name="busy">Above 0 while a thread holds <paramref name="gate"/> or waits for it.</param>
+		/// <param name="limit">How long to wait for the lock.</param>
+		internal static bool EnterPublished(object gate, ref int busy, TimeSpan limit)
+		{
+			Interlocked.Increment(ref busy);
+			if (Monitor.TryEnter(gate, limit))
+				return true;
+			Interlocked.Decrement(ref busy);
+			return false;
+		}
+
+		/// <summary>Lets go of a lock taken by <see cref="EnterPublished"/> or <see cref="TryEnterWhenFree"/>.</summary>
+		internal static void ExitPublished(object gate, ref int busy)
+		{
+			Monitor.Exit(gate);
+			Interlocked.Decrement(ref busy);
+		}
+
+		/// <summary>Takes a lock for the input thread without waiting, and without trying while another thread holds it or waits for it.</summary>
+		/// <remarks>
+		/// One field read while the lock is held, and nothing made, so the pass passes it by at its own rate. A holder that
+		/// takes the lock between the read and the try costs one spin, and the next pass reads it held.
+		/// </remarks>
+		internal static bool TryEnterWhenFree(object gate, ref int busy)
+		{
+			return Volatile.Read(ref busy) == 0 && EnterPublished(gate, ref busy, TimeSpan.Zero);
+		}
+
+		/// <summary>Above 0 while a thread holds <see cref="Controller.XInputLock"/> or waits for it.</summary>
+		static int _xinputLockBusy;
+
+		/// <summary>Takes <see cref="Controller.XInputLock"/> within a limit, saying so to the input thread.</summary>
+		static bool EnterXInputLock(TimeSpan limit)
+		{
+			return EnterPublished(Controller.XInputLock, ref _xinputLockBusy, limit);
+		}
+
+		/// <summary>Lets go of <see cref="Controller.XInputLock"/> taken by <see cref="EnterXInputLock"/> or <see cref="TryEnterXInputLockWhenFree"/>.</summary>
+		static void ExitXInputLock()
+		{
+			ExitPublished(Controller.XInputLock, ref _xinputLockBusy);
+		}
+
+		/// <summary>Takes <see cref="Controller.XInputLock"/> for the input thread, only while no other thread holds it or waits for it.</summary>
+		static bool TryEnterXInputLockWhenFree()
+		{
+			return TryEnterWhenFree(Controller.XInputLock, ref _xinputLockBusy);
+		}
+
+		#endregion
+
 		void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
 			// A read the reader has answered is taken at once: four states copied into the arrays kept for them.
@@ -204,13 +265,15 @@ namespace x360ce.App.DInput
 		/// <remarks>
 		/// Under <see cref="Controller.XInputLock"/>, which the library is loaded and let go of under, so it is never
 		/// let go of in the middle of a read. XInput can stop answering. The input thread then rests the view, and
-		/// since it never waits for this lock, it goes on reading the controllers.
+		/// since it never waits for this lock, and reads that it is held rather than trying it, it goes on reading the
+		/// controllers.
 		/// </remarks>
 		void ReadDisplayStates()
 		{
 			try
 			{
-				lock (Controller.XInputLock)
+				EnterXInputLock(Timeout.InfiniteTimeSpan);
+				try
 				{
 					var loaded = Controller.IsLoaded;
 					for (var p = 0; p < 4; p++)
@@ -225,6 +288,10 @@ namespace x360ce.App.DInput
 							_displayStates[p] = new State();
 						}
 					}
+				}
+				finally
+				{
+					ExitXInputLock();
 				}
 				_displayReadFault = null;
 			}

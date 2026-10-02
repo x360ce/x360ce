@@ -52,9 +52,8 @@ clicks) and **`performance`** (timing and memory bounds set at two to three time
 measures, so a busy machine passes and a return to the old behaviour fails). `Run-Tests.ps1`
 excludes only `ui-interactive`.
 
-No test touches a database, and the `Web/` services are not covered. If that changes, the
-allow-list in `Data/Change Scripts/Backup/Restore-Data.ps1` (`^x360ce_Tests(_\w+)?$`) is the
-contract: the live `x360ce` database is never written to.
+Only the web service tests reach a database, through a service you start yourself, and anything
+that writes refuses a non-local address, so the live database is never written to.
 
 Tools considered and not used: Playwright (no browser surface), WinAppDriver, Appium and FlaUI
 (`System.Windows.Automation` is in-box), and Microsoft.Testing.Platform (not available on
@@ -75,7 +74,9 @@ SDK's MSBuild cannot serialise in-process (MSB3822) without the `System.Resource
 package and its runtime library, which a single-file program would have to carry. Visual
 Studio MSBuild compiles those resources itself, so `Run-Tests.ps1` builds with VS MSBuild and
 runs `vstest.console.exe`, passing the MSTest adapter path explicitly because the package
-does not copy the adapter into a `net462` output folder.
+does not copy the adapter into a `net462` output folder. A machine without the .NET Framework
+4.6.2 targeting pack builds after adding `Microsoft.NETFramework.ReferenceAssemblies.net462`
+(`PrivateAssets=all`) to the projects.
 
 ## The crash report tests
 
@@ -93,6 +94,35 @@ the same report becomes a guess. Three tests hold that in place:
 - **`Release_builds_ship_symbols`** checks that every Release binary has its `.pdb` beside
   it. The first two tests run against this assembly and cannot prove what the shipped build
   does; this one can. Verified to fail when a `.pdb` is removed.
+
+## The web service tests
+
+`Tests/WebServices/` holds the contract every released v3 and v4 program was built against. The
+tests call a running service through `WebServiceClient`, as the programs do, and stay
+inconclusive until `X360CE_WEBSERVICE_URL` names an `x360ce.asmx` address. The default run
+therefore stays green with no site.
+
+Tags:
+
+- **`webservice`** is on every test. `v3`, `v4` or `wsdl` names the layer.
+- **`writes`** creates and removes its own rows. It is inconclusive against a non-local address.
+- **`schema-4-23`** needs the 128-character mapping columns and the five wheel columns.
+- **`fixed-4-23`** passes only on a server that has the 4.23 web code.
+
+`live.wsdl` is what the public service answered on 2026-09-19. What the target adds to the
+contract is listed, and only the planned additions pass. A removal, a rename or a retype fails.
+
+To run them against this repository's own site:
+
+1. Build it with Visual Studio's MSBuild: `msbuild Web\x360ce.Web.csproj /p:Configuration=Debug`.
+2. Start it: `iisexpress.exe /config:<repo>\.vs\x360ce.slnx\config\applicationhost.config /site:x360ce.Web`.
+3. Set `X360CE_WEBSERVICE_URL=http://localhost:20360/webservices/x360ce.asmx`.
+4. After every build, stop the site by its exact process id and start it again before the tests.
+
+`Run-Tests.ps1` has no filter switch. To run only these tests, call `vstest.console.exe` on
+`Tests\bin\Debug\net462\x360ce.Tests.dll` with `/TestCaseFilter`, and with the `/TestAdapterPath`
+that `Run-Tests.ps1` passes. Against the public service run `TestCategory=webservice` without
+`writes` and `fixed-4-23`.
 
 ## Adding a test
 

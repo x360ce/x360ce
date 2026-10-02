@@ -39,6 +39,11 @@ If you want `HELP` and have questions about installation or configuration, pleas
 2. Select `[Controller 1]` tab and click on `[Add...]` button.
 3. Select `controller` you want to add-map and click on `[OK]` button.
 4. Enable `controller` by clicking on `[Enable # Mapped Device]` inside `[Controller 1]` tab.
+5. The `[Enabled]` box on a device's row in the list leaves the device out of the game without removing it. The box in front of a device on the `[Devices]` page leaves it out of every game, and greys its rows' `[Enabled]` box. An unticked device is not read, not held and sent no force feedback, so another program can use it. A Pass through that names the XInput place shown for it sends it nothing either. x360ce no longer hides it or asks for it to be hidden. A device you hid in HID Hide stays hidden until you untick it there. The tab's pages no longer show it live, and a centering spring `[Auto]` run on it stops.
+
+An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so x360ce reads one only while its own window is in front. That is a limit of Windows, not something x360ce can change. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
+
+A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can take a wheel over, and then the game does not see what x360ce provides. In the Steam library open the game's `Properties` → `Controller` and choose `Disable Steam Input`.
 
 ## One device on several controller tabs
 

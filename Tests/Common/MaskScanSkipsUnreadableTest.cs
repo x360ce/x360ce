@@ -64,6 +64,22 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("games"), TestCategory("critical")]
+		[Description("A name ending in a space beside the same name without it is scanned once")]
+		public void A_name_ending_in_a_space_beside_its_twin_is_scanned_once()
+		{
+			var source = typeof(XInputMaskScanner).Assembly.Location;
+			File.Copy(source, Path.Combine(folder, "twin.exe"));
+			// Made past the path rules, so the name really ends in a space.
+			File.Copy(source, @"\\?\" + Path.Combine(folder, "twin.exe "));
+			Assert.AreEqual(2, Directory.GetFiles(folder, "*.exe").Length, "The folder does not list both names, so this test proves nothing.");
+
+			// The engine is built for any processor, which the scan reads as 32-bit, so it is read on any test host.
+			var masks = new XInputMaskScanner().GetMasks(folder, SearchOption.AllDirectories, false);
+
+			Assert.AreEqual(1, masks.Count, "The file was not scanned once.");
+		}
+
+		[TestMethod, TestCategory("games"), TestCategory("critical")]
 		[Description("A subfolder that may not be entered is left out; the rest of the folder is scanned")]
 		public void A_barred_subfolder_does_not_end_the_scan()
 		{

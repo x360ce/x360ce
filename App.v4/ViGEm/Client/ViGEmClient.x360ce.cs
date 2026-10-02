@@ -131,8 +131,48 @@ namespace Nefarius.ViGEm.Client
 			return true;
 		}
 
+		/// <summary>Whether the bus refused to let go of this pad's controller the last time one was asked to go, and nothing has cleared it since.</summary>
+		/// <param name="userIndex">The pad, 1 to 4.</param>
+		/// <remarks>
+		/// Read from the unplug record <see cref="NoteFault(Type[], VIGEM_ERROR[], uint, Exception)"/> keeps: set by a
+		/// refused unplug; cleared by one that works, by a plug while the pad keeps no controller (<see cref="HasKept"/>),
+		/// and by <see cref="ForgetFaults"/>, as after a Repair. A controller the bus still holds reaches the plug worker
+		/// only after it was asked to go, so when the plug worker reads this it is about the controller in the slot.
+		/// </remarks>
+		public bool RemovalRefused(uint userIndex)
+		{
+			return IsValidIndex(userIndex) && _unplugFaultTypes[userIndex - 1] != null;
+		}
+
+		/// <summary>The controller the bus would not let go of, taken out of each pad's slot; null for none. One per pad.</summary>
+		/// <remarks>
+		/// Kept, not freed, while the bus holds it: the bus library can still use it and the vibration handler it was given,
+		/// and a freed controller would be used after it was gone. One per pad: while a pad has one, no other is made for
+		/// it, so a bus that lets nothing go holds at most one more controller for each pad. Written by the thread that
+		/// plugs in, and cleared by <see cref="UnPlugKept"/> once the bus lets it go. Letting go of the client closes its
+		/// connection to the bus, which takes away everything the bus still holds for it.
+		/// </remarks>
+		readonly Xbox360Controller[] _keptTargets = new Xbox360Controller[PlaceCount];
+
+		/// <summary>Whether this pad already has a controller the bus would not let go of.</summary>
+		/// <param name="userIndex">The pad, 1 to 4.</param>
+		public bool HasKept(uint userIndex)
+		{
+			return IsValidIndex(userIndex) && System.Threading.Volatile.Read(ref _keptTargets[userIndex - 1]) != null;
+		}
+
+		/// <summary>Puts a new controller in this pad's slot in place of one the bus would not let go of, which is kept.</summary>
+		/// <param name="userIndex">The pad, 1 to 4, which has none kept yet: see <see cref="HasKept"/>.</param>
+		/// <param name="fresh">The new controller, not yet on the bus.</param>
+		public void Replace(uint userIndex, Xbox360Controller fresh)
+		{
+			var t = Targets;
+			System.Threading.Volatile.Write(ref _keptTargets[userIndex - 1], t[userIndex - 1]);
+			t[userIndex - 1] = fresh;
+		}
+
 		/// <summary>The kind of exception, and the bus's answer, each controller's last failed unplug gave.</summary>
-		/// <remarks>Reserved with the client, so nothing is made per attempt. Read and written only through <see cref="NoteFault"/>.</remarks>
+		/// <remarks>Reserved with the client, so nothing is made per attempt. Written only through <see cref="NoteFault"/>, and read there and by <see cref="RemovalRefused"/>.</remarks>
 		readonly Type[] _unplugFaultTypes = new Type[PlaceCount];
 		readonly VIGEM_ERROR[] _unplugFaultCodes = new VIGEM_ERROR[PlaceCount];
 
@@ -263,9 +303,12 @@ namespace Nefarius.ViGEm.Client
 				// controller that is on the bus comes back from here and is remembered as ours at once.
 				t[userIndex - 1].Connect();
 				RememberSerial(t[userIndex - 1]);
-				// A new controller: a failure to plug it in or let go of it later is news, whatever the last one said.
+				// A new controller: a failure to plug it in or let go of it later is news, whatever the last one said. Not
+				// while the bus holds one of this pad's it would not let go of: that refusal was written, and the same
+				// answer about the one made in its place is not news.
 				NoteFault(_plugFaultTypes, _plugFaultCodes, userIndex, null);
-				NoteFault(_unplugFaultTypes, _unplugFaultCodes, userIndex, null);
+				if (!HasKept(userIndex))
+					NoteFault(_unplugFaultTypes, _unplugFaultCodes, userIndex, null);
 				// Kept and working when its vibration is refused, and the Issues tab says so.
 				NoteRumble(RumbleErrors, _rumbleFaultTypes, _rumbleFaultCodes, userIndex, t[userIndex - 1].RumbleError);
 				return true;
@@ -293,6 +336,43 @@ namespace Nefarius.ViGEm.Client
 				// passed by the time it is acted on, and letting go of one that is already gone is no longer
 				// treated as a fault.
 				UnPlug(i);
+			}
+			// And each one the bus would not let go of before, so none is left on the bus.
+			UnPlugKept();
+		}
+
+		/// <summary>Asks the bus once more to let go of each pad's kept controller, and forgets each one it lets go of.</summary>
+		/// <remarks>
+		/// Called after the four slots are let go of: by Repair, Remove and Auto-Order before Windows is asked to change
+		/// anything, and when the client is let go of. One try each, so a bus that still refuses is asked once per attempt,
+		/// and its refusal is written once per change by the unplug record. One the bus lets go of, or has already, is
+		/// dropped, and its native part is freed when it is collected.
+		/// </remarks>
+		public void UnPlugKept()
+		{
+			if (IsDisposed)
+				return;
+			for (uint i = 1; i <= PlaceCount; i++)
+			{
+				var kept = System.Threading.Volatile.Read(ref _keptTargets[i - 1]);
+				if (kept == null)
+					continue;
+				try
+				{
+					kept.Disconnect();
+				}
+				catch (ViGEmException ex) when (BusAnswers.Of(ex.Code) == BusAnswer.Gone)
+				{
+					// Gone already, which is what was asked for.
+				}
+				catch (Exception ex)
+				{
+					if (NoteFault(_unplugFaultTypes, _unplugFaultCodes, i, ex))
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					continue;
+				}
+				// Only the one asked about: a plug worker can keep another here meanwhile.
+				System.Threading.Interlocked.CompareExchange(ref _keptTargets[i - 1], null, kept);
 			}
 		}
 

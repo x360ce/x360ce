@@ -42,6 +42,17 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A real controller whose place is not known is named, not left blank")]
+		public void A_real_controller_whose_place_is_not_known_is_named()
+		{
+			// Seen on the order list: an Xbox One controller XInput gave no place showed an empty cell, which reads as a
+			// row nobody filled in. Not known covers both a controller with no place and one whose place cannot be told
+			// apart from another's, so the text says only what is known.
+			Assert.AreEqual("Real (place not known)", XInputPlaces.Describe(XInputPlaces.Unknown, false, false));
+			Assert.AreEqual("Real 2", XInputPlaces.Describe(1, false, false));
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("This program's own virtual controllers and other programs' are told apart")]
 		public void Ours_and_other_programs_virtual_controllers_are_told_apart()
 		{
@@ -94,7 +105,7 @@ namespace x360ce.Tests
 		{
 			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
 			StringAssert.Contains(source, "XInputPlaces.HolderOf(i)", "The tab hint is not asked about what holds its place.");
-			StringAssert.Contains(source, "checking, ours, enabled, busError, holder)", "The tab hint is not given the holder.");
+			StringAssert.Contains(source, "checking, ours, enabled, busError, holder, keptHolds)", "The tab hint is not given the holder.");
 			Assert.IsFalse(source.Contains("var errors = Global.DHelper?.VirtualErrors;"),
 				"The hint reads the bus errors a second time instead of taking them from its caller.");
 		}

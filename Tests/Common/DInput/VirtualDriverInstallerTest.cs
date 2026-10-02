@@ -3,6 +3,7 @@
 using JocysCom.ClassLibrary.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Linq;
 using x360ce.App.DInput;
 
 namespace x360ce.Tests
@@ -72,6 +73,74 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Only the device the bus made is matched by its number, and a face whose chain breaks before it is never ours")]
+		public void Only_the_device_the_bus_made_is_matched_by_its_number()
+		{
+			var held = new List<uint> { 1 };
+			var bus = Device(ViGEmBusId, null, @"Root\ViGEmBus");
+			// The pad left behind on 27/09: the node the bus made (number 04) has gone, and its USB face ends in "01", which
+			// is not a bus number. Read as one, the pad was this program's own whenever it held controller 1.
+			var usb = Device(@"USB\VID_045E&PID_028E&IG_01\2&2A3F02C7&5&01", @"USB\VID_045E&PID_028E\04", @"USB\VID_045E&PID_028E&IG_01");
+			var hid = Device(@"HID\VID_045E&PID_028E&IG_01\3&1B6A3C2&0&0000", usb.DeviceId, @"HID\VID_045E&PID_028E&IG_01");
+			// A stranger's pad the bus still holds, number 05, with a face ending in "01" as well.
+			var stranger = Device(@"USB\VID_045E&PID_028E\05", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var strangerFace = Device(@"USB\VID_045E&PID_028E&IG_01\2&1A2B3C4D&5&01", stranger.DeviceId, @"USB\VID_045E&PID_028E&IG_01");
+			// Ours, named the current way: the node the bus made carries number 1, with its USB face and the HID face under it.
+			var ours = Device(@"USB\VID_045E&PID_028E\01", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var oursUsb = Device(@"USB\VID_045E&PID_028E&IG_00\2&3C4D5E6F&0&00", ours.DeviceId, @"USB\VID_045E&PID_028E&IG_00");
+			var oursHid = Device(@"HID\VID_045E&PID_028E&IG_00\3&2B33A220&0&0000", oursUsb.DeviceId, @"HID\VID_045E&PID_028E&IG_00");
+			// Ours, named the older way, with the number after an ampersand.
+			var older = Device(@"USB\VID_045E&PID_028E\1&79F5D87&0&01", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var olderFace = Device(@"USB\VID_045E&PID_028E&IG_0F\2&14BB91BF&0&0F", older.DeviceId, @"USB\VID_045E&PID_028E&IG_0F");
+			var world = World(bus, usb, hid, stranger, strangerFace, ours, oursUsb, oursHid, older, olderFace);
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(usb, world, held), "A pad left behind is taken for ours because its face ends in 01.");
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(hid, world, held), "The HID face of a pad left behind is taken for ours.");
+			Assert.IsFalse(VirtualDriverInstaller.IsOneOfOurs(strangerFace, world, held), "A stranger's pad is taken for ours because its face ends in 01.");
+			foreach (var device in new[] { ours, oursUsb, oursHid, older, olderFace })
+				Assert.IsTrue(VirtualDriverInstaller.IsOneOfOurs(device, world, held), "Our own controller is not ours: " + device.DeviceId);
+			// And so the leftover list, which is what Remove Leftover Pads removes, never holds our own while we hold their numbers.
+			var all = new[] { bus, usb, hid, stranger, strangerFace, ours, oursUsb, oursHid, older, olderFace };
+			var leftovers = VirtualDriverInstaller.LeftoversOf(all, held).Select(x => x.DeviceId).ToArray();
+			CollectionAssert.AreEquivalent(new[] { usb.DeviceId, stranger.DeviceId }, leftovers,
+				"The leftovers are not the pad left behind and the stranger's pad alone. Found: " + string.Join(", ", leftovers));
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Removing the leftovers removes every device of each, children first, and counts each controller once")]
+		public void Removing_a_leftover_removes_every_device_of_it_children_first()
+		{
+			// Removing a device does not take its children with it. Removing only the device a leftover is named by left its
+			// HID face behind, which the next look found as a leftover of its own: "Removed 1 of 1", and it was still listed.
+			var bus = Device(ViGEmBusId, null, @"Root\ViGEmBus");
+			var usb = Device(@"USB\VID_045E&PID_028E&IG_01\2&2A3F02C7&5&01", @"USB\VID_045E&PID_028E\04", @"USB\VID_045E&PID_028E&IG_01");
+			var hid = Device(@"HID\VID_045E&PID_028E&IG_01\3&1B6A3C2&0&0000", usb.DeviceId, @"HID\VID_045E&PID_028E&IG_01");
+			// A healthy leftover the bus still holds: the node it made, its USB face and the HID face under that.
+			var stranger = Device(@"USB\VID_045E&PID_028E\05", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var strangerUsb = Device(@"USB\VID_045E&PID_028E&IG_00\2&1A2B3C4D&0&00", stranger.DeviceId, @"USB\VID_045E&PID_028E&IG_00");
+			var strangerHid = Device(@"HID\VID_045E&PID_028E&IG_00\3&5E6F7A8B&0&0000", strangerUsb.DeviceId, @"HID\VID_045E&PID_028E&IG_00");
+			// Ours, with its number held: never removed.
+			var ours = Device(@"USB\VID_045E&PID_028E\01", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var oursHid = Device(@"HID\VID_045E&PID_028E&IG_00\3&2B33A220&0&0000", ours.DeviceId, @"HID\VID_045E&PID_028E&IG_00");
+			// Parents listed before their children, so the order removed in is the rule's and not the list's.
+			var all = new[] { bus, usb, hid, stranger, strangerUsb, strangerHid, ours, oursHid };
+			var held = new List<uint> { 1 };
+			var families = VirtualDriverInstaller.LeftoverFamiliesOf(all, held);
+			var named = VirtualDriverInstaller.LeftoversOf(all, held);
+			Assert.AreEqual(named.Length, families.Length, "Removal does not count the controllers the list names.");
+			foreach (var leftover in named)
+				Assert.AreEqual(1, families.Count(f => f.Contains(leftover)), "Not removed as one controller: " + leftover.DeviceId);
+			CollectionAssert.AreEqual(new[] { hid.DeviceId, usb.DeviceId }, families.Single(f => f.Contains(usb)).Select(x => x.DeviceId).ToArray(),
+				"The pad left behind is not removed whole, its HID face first.");
+			CollectionAssert.AreEqual(new[] { strangerHid.DeviceId, strangerUsb.DeviceId, stranger.DeviceId },
+				families.Single(f => f.Contains(stranger)).Select(x => x.DeviceId).ToArray(),
+				"The healthy leftover is not removed whole, its faces before the node the bus made.");
+			// And Remove Leftover Pads removes those families, counting each controller once.
+			var source = System.IO.File.ReadAllText(System.IO.Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "VirtualDriverInstaller.cs"));
+			var remove = Ui.Between(source, "public static int RemoveLeftoverVirtualPads(", "#endregion");
+			StringAssert.Contains(remove, "LeftoverFamiliesOf(", "Remove Leftover Pads removes one device per controller, not every device of it.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A pad still held by the virtual bus is recognised")]
 		public void A_pad_the_bus_still_holds_is_ours()
 		{
@@ -92,6 +161,29 @@ namespace x360ce.Tests
 			Assert.IsTrue(VirtualDriverInstaller.IsVirtualPad(pad, World(pad)),
 				"A pad whose parent has gone was called real hardware. That is what put fifty of " +
 				"them in the device list and put them back after every restart.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A pad left behind with its parent gone is one controller and one leftover, not one per face")]
+		public void A_pad_left_behind_is_one_controller_not_one_per_face()
+		{
+			// As measured on 29/09: a pad a test run made on 27/09. The bus-numbered node above it has gone, and its USB face
+			// and the HID face under that are still there. Each face was its own controller, so the order list showed it as two
+			// rows with no place and the leftover check counted it twice.
+			var usb = Device(@"USB\VID_045E&PID_028E&IG_01\2&2A3F02C7&5&01", @"USB\VID_045E&PID_028E\04", @"USB\VID_045E&PID_028E&IG_01");
+			var hid = Device(@"HID\VID_045E&PID_028E&IG_01\3&1B6A3C2&0&0000", usb.DeviceId, @"HID\VID_045E&PID_028E&IG_01");
+			// Beside it, a stranger's pad the bus still holds, whose faces must stay its own.
+			var bus = Device(ViGEmBusId, null, @"Root\ViGEmBus");
+			var stranger = Device(@"USB\VID_045E&PID_028E\05", ViGEmBusId, @"USB\VID_045E&PID_028E");
+			var strangerFace = Device(@"HID\VID_045E&PID_028E&IG_00\8&2B33A220&0&0000", stranger.DeviceId, @"HID\VID_045E&PID_028E&IG_00");
+			var all = new[] { usb, hid, bus, stranger, strangerFace };
+			var world = World(all);
+			var leftovers = VirtualDriverInstaller.LeftoversOf(all, new List<uint>()).Select(x => x.DeviceId).ToArray();
+			CollectionAssert.AreEquivalent(new[] { stranger.DeviceId, usb.DeviceId }, leftovers,
+				"Each controller left behind is one leftover, named by its highest face or by itself. Found: " + string.Join(", ", leftovers));
+			Assert.AreEqual(usb.DeviceId, XInputPlaces.HardwareOf(hid, world), "The HID face of the pad left behind is a controller of its own.");
+			Assert.AreEqual(usb.DeviceId, XInputPlaces.HardwareOf(usb, world));
+			Assert.AreEqual(stranger.DeviceId, XInputPlaces.HardwareOf(strangerFace, world), "A face the bus still holds is not gathered under its controller.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

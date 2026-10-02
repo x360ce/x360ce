@@ -149,7 +149,7 @@ namespace x360ce.Tests
 				Assert.IsTrue(HeldLock.Finishes(() =>
 				{
 					var watch = Stopwatch.StartNew();
-					released = helper.ReleaseForDeviceRemoval(TimeSpan.FromMilliseconds(200));
+					released = helper.ReleaseForDeviceRemoval(TimeSpan.FromSeconds(10), TimeSpan.FromMilliseconds(200));
 					took = watch.ElapsedMilliseconds;
 				}, 3000, Controller.XInputLock), "Letting go of the controllers waits for a read that does not come back.");
 				Assert.IsTrue(Controller.IsLoaded, "The library was let go of while a read held it.");
@@ -188,6 +188,156 @@ namespace x360ce.Tests
 			Assert.IsFalse(stopped, "Putting controllers in order says everything was let go of while a read held the library.");
 			Assert.IsTrue(took < 2 * DInputHelper.XiAnswerMs, "Putting controllers in order gave up after " + took + " ms.");
 			Assert.IsFalse(helper.Suspended, "Feeding the controllers is left stopped after putting them in order gave up.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("Putting controllers in order waits for a plug under way: it refuses while the plug runs past its limit, and goes ahead once the plug has finished")]
+		public void Putting_controllers_in_order_waits_for_a_plug_under_way()
+		{
+			var helper = new DInputHelper();
+			var plugging = (System.Threading.Tasks.Task<x360ce.App.VirtualError>[])typeof(DInputHelper)
+				.GetField("_plugging", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(helper);
+			var underWay = new System.Threading.Tasks.TaskCompletionSource<x360ce.App.VirtualError>();
+			plugging[0] = underWay.Task;
+			var stopped = true;
+			long took = -1;
+			// No bus client, so letting go unplugs nothing.
+			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+			Nefarius.ViGEm.Client.ViGEmClient.Current = null;
+			try
+			{
+				BusRefusalFixtures.Logged(() =>
+				{
+					var watch = Stopwatch.StartNew();
+					stopped = helper.StopForReorder(TimeSpan.FromMilliseconds(300));
+					took = watch.ElapsedMilliseconds;
+				});
+				Assert.IsFalse(stopped, "The controllers were let go of while a plug was under way, so its controller can arrive after them.");
+				Assert.IsTrue(took >= 250 && took < 2000, "Putting controllers in order gave up after " + took + " ms, not after the 300 ms it was given.");
+				Assert.IsFalse(helper.Suspended, "Feeding the controllers is left stopped after putting them in order gave up.");
+				Assert.AreSame(underWay.Task, plugging[0], "The plug under way was forgotten.");
+				// Repair and removing leftover controllers let go through the same step, and the person is told why it did not.
+				var told = new List<string>();
+				EventHandler<DInputEventArgs> tell = (sender, e) => told.Add(e.Error.Message);
+				helper.StatesRetrieved += tell;
+				var released = true;
+				BusRefusalFixtures.Logged(() => released = helper.ReleaseForDeviceRemoval(TimeSpan.FromMilliseconds(300), TimeSpan.FromSeconds(1)));
+				helper.StatesRetrieved -= tell;
+				Assert.IsFalse(released, "Repair or removal let go of the controllers while a plug was under way.");
+				Assert.AreEqual(1, told.Count, "The person is not told once why nothing was let go of.");
+				StringAssert.Contains(told[0], "XInput is not answering");
+				// It finishes while the order waits for it.
+				System.Threading.Tasks.Task.Delay(300).ContinueWith(x => underWay.SetResult(x360ce.App.VirtualError.None));
+				BusRefusalFixtures.Logged(() => stopped = helper.StopForReorder(TimeSpan.FromSeconds(5)));
+				Assert.IsTrue(stopped, "Putting controllers in order did not go ahead once the plug had finished.");
+				Assert.IsNull(plugging[0], "The finished plug was not taken in.");
+			}
+			finally
+			{
+				Nefarius.ViGEm.Client.ViGEmClient.Current = client;
+			}
+		}
+
+		/// <summary>How much longer a thousand passes may take while another thread holds the lock, in milliseconds: 20 µs a pass.</summary>
+		/// <remarks>A failed try of a lock another thread holds spins for about 800 µs on .NET Framework before it gives up.</remarks>
+		internal const double HeldSlackMs = 20;
+
+		/// <summary>The fastest of three runs of <paramref name="calls"/> calls, in milliseconds.</summary>
+		internal static double Fastest(int calls, Action call)
+		{
+			var fastest = double.MaxValue;
+			for (var run = 0; run < 3; run++)
+			{
+				var watch = Stopwatch.StartNew();
+				for (var i = 0; i < calls; i++)
+					call();
+				fastest = Math.Min(fastest, watch.Elapsed.TotalMilliseconds);
+			}
+			return fastest;
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("While a read of the places holds the load lock, a pass with a refused force pending costs what a pass costs with the lock free, and makes nothing")]
+		public void A_pass_passes_by_the_load_lock_a_read_holds()
+		{
+			const int passes = 1000;
+			var routing = SharedForcePassThroughTest.PassingToPlaceOne();
+			var helper = new DInputHelper();
+			var last = SharedForcePassThroughTest.LastPassedForce(helper);
+			Assert.IsNotNull(DInputHelper.OccupiedPlaces(), "XInput does not answer, so the library is not loaded before the test.");
+			// The motors at place 1 are running, and the game has asked for them to stop.
+			var running = (100 << 8) | 50;
+			last[0] = running;
+			double held = -1;
+			long bytes = -1;
+			// Held the way a read of the places holds it, saying so.
+			Assert.IsTrue(HeldLock.Finishes(() =>
+			{
+				// Refused, so every pass tries it again.
+				helper.PassForcesThrough(routing, 1 << 0);
+				held = Fastest(passes, () => helper.PassForcesThrough(routing, 0));
+				bytes = Allocations.FewestBytes(5, () =>
+				{
+					for (var i = 0; i < passes; i++)
+						helper.PassForcesThrough(routing, 0);
+				});
+			}, 30000, HeldLock.Enter(typeof(SystemXInput), "EnterLoadLock"), HeldLock.Exit(typeof(SystemXInput), "ExitLoadLock")),
+				"The passes did not finish while a read held the load lock.");
+			Assert.AreEqual(running, last[0], "The stop was sent while a read held the load lock.");
+			// Free: the stop goes on the first pass, and the rest have nothing to send.
+			var free = Fastest(passes, () => helper.PassForcesThrough(routing, 0));
+			Assert.AreEqual(0, last[0], "The stop was not sent once the load lock was free.");
+			Console.WriteLine(passes + " passes: " + held + " ms with the load lock held, " + free + " ms with it free; " + bytes + " bytes held.");
+			Assert.IsTrue(held <= free + HeldSlackMs, passes + " passes took " + held + " ms with the load lock held and " + free + " ms with it free.");
+			Assert.IsTrue(bytes < passes, passes + " passes with the load lock held handed the collector " + bytes + " bytes.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("While the display reader holds the XInput lock, the passes that load or let go of the library cost what they cost with the lock free, and make nothing")]
+		public void Loading_and_letting_go_pass_by_the_xinput_lock_a_read_holds()
+		{
+			const int passes = 1000;
+			var helper = new DInputHelper { UpdateDevicesEnabled = false };
+			var game = new UserGame { FileName = "held-xinput-lock.exe", FileProductName = "Held XInput lock", EmulationType = (int)x360ce.Engine.EmulationType.Virtual };
+			// Held the way the display reader holds it, saying so.
+			var enter = HeldLock.Enter(typeof(DInputHelper), "EnterXInputLock");
+			var exit = HeldLock.Exit(typeof(DInputHelper), "ExitXInputLock");
+			double unloadHeld = -1, loadHeld = -1, unloadFree = -1, loadFree = -1;
+			long unloadBytes = -1, loadBytes = -1;
+			XInputDisplayReadTest.WithSystemXInput(() =>
+			{
+				// Loaded and not wanted: every pass tries to let go of it.
+				Assert.IsTrue(HeldLock.Finishes(() =>
+				{
+					unloadHeld = Fastest(passes, () => helper.CheckAndUnloadXInputLibrarry(game, false));
+					unloadBytes = Allocations.FewestBytes(5, () => { for (var i = 0; i < passes; i++) helper.CheckAndUnloadXInputLibrarry(game, false); });
+				}, 30000, enter, exit), "The passes did not finish while the display reader held the XInput lock.");
+				Assert.IsTrue(Controller.IsLoaded, "The library was let go of while the display reader held it.");
+				helper.CheckAndUnloadXInputLibrarry(game, false);
+				Assert.IsFalse(Controller.IsLoaded, "The library was not let go of once the lock was free.");
+				unloadFree = Fastest(passes, () => helper.CheckAndUnloadXInputLibrarry(game, false));
+				// Not loaded and wanted: every pass tries to load it.
+				Assert.IsTrue(HeldLock.Finishes(() =>
+				{
+					loadHeld = Fastest(passes, () => helper.CheckAndLoadXInputLibrary(game, true));
+					loadBytes = Allocations.FewestBytes(5, () => { for (var i = 0; i < passes; i++) helper.CheckAndLoadXInputLibrary(game, true); });
+				}, 30000, enter, exit), "The passes did not finish while the display reader held the XInput lock.");
+				Assert.IsFalse(Controller.IsLoaded, "The library was loaded while the display reader held the lock.");
+				helper.CheckAndLoadXInputLibrary(game, true);
+				Assert.IsTrue(Controller.IsLoaded, "The library was not loaded once the lock was free.");
+				loadFree = Fastest(passes, () => helper.CheckAndLoadXInputLibrary(game, true));
+			});
+			Console.WriteLine(passes + " passes letting go: " + unloadHeld + " ms held, " + unloadFree + " ms free; loading: " + loadHeld + " ms held, " + loadFree + " ms free.");
+			Assert.IsTrue(unloadHeld <= unloadFree + HeldSlackMs, passes + " passes letting go took " + unloadHeld + " ms with the lock held and " + unloadFree + " ms with it free.");
+			Assert.IsTrue(loadHeld <= loadFree + HeldSlackMs, passes + " passes loading took " + loadHeld + " ms with the lock held and " + loadFree + " ms with it free.");
+			Assert.IsTrue(unloadBytes < passes && loadBytes < passes, "Passes with the lock held handed the collector " + unloadBytes + " and " + loadBytes + " bytes.");
+			// The third try, for a new device's effects, needs a DirectInput device; it goes through the same try.
+			var dir = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput");
+			var library = File.ReadAllText(Path.Combine(dir, "DInputHelper.XInputLibrarry.cs"));
+			var step2 = File.ReadAllText(Path.Combine(dir, "DInputHelper.Step2.UpdateDiStates.cs"));
+			Assert.AreEqual(2, Ui.Count(library, "if (!TryEnterXInputLockWhenFree())"), "Loading or letting go of the library tries the lock without asking whether it is held.");
+			StringAssert.Contains(step2, "ud.DeviceEffects == null && TryEnterXInputLockWhenFree()", "Reading a new device's effects tries the lock without asking whether it is held.");
+			Assert.IsFalse((library + step2).Contains("Monitor.TryEnter(Controller.XInputLock"), "The input thread tries the XInput lock directly.");
 		}
 	}
 }

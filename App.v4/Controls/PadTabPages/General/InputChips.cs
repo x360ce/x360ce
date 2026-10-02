@@ -53,6 +53,11 @@ namespace x360ce.App.Controls
 	/// the mapping list uses, so a stick with X, Y and RZ shows axes 1, 2 and 6 in both places.
 	/// The lit rules are the ones v5's General tab uses, so the two lines agree on what "moved"
 	/// means.
+	///
+	/// v5's General tab over-counts axes from <c>CapAxeCount</c>, numbers a sparse device's axes
+	/// contiguously and reads the wrong POV for the buttons of a second POV
+	/// (<c>PadItem_GeneralControl.xaml.cs</c> lines 449-453). None of that is copied here. v5
+	/// also has a RawInput HID capability parser, which v4 does not.
 	/// </remarks>
 	public static class InputChips
 	{

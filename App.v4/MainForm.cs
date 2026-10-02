@@ -235,7 +235,10 @@ namespace x360ce.App
 				var holder = (xiOn && !xiOurs) || busError == VirtualError.PlaceTaken
 					? x360ce.App.DInput.XInputPlaces.HolderOf(i)
 					: null;
-				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled, busError, holder);
+				// One of ours stays in another tab's place only when the driver would not remove it, and its own tab says so.
+				var keptHolds = holder == x360ce.App.DInput.XInputPlaces.HolderVirtual && errors != null
+					&& Array.IndexOf(errors, VirtualError.RemovalRefused) >= 0;
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled, busError, holder, keptHolds);
 				if (page.ToolTipText != hint)
 					page.ToolTipText = hint;
 			}
@@ -258,7 +261,8 @@ namespace x360ce.App
 		/// <param name="enabled">Whether the emulated controllers are switched on at all.</param>
 		/// <param name="busError">What the virtual bus last said about this tab's controller.</param>
 		/// <param name="holder">What holds this tab's place when it is not ours, as <see cref="x360ce.App.DInput.XInputPlaces.HolderOf(int)"/> names it, or null when that is not known.</param>
-		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null)
+		/// <param name="keptHolds">Whether one of this program's own holding the place is a controller the driver would not remove.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null, bool keptHolds = false)
 		{
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
@@ -271,15 +275,20 @@ namespace x360ce.App
 				: string.Empty;
 			// Named from the last reading of the machine. Not known is said as not known rather than as a
 			// real controller, so nobody goes looking for a pad that is not there.
-			var heldBy = x360ce.App.DInput.XInputPlaces.HolderWords(holder);
+			// One the driver would not remove is named as its own tab names it: moving it asks the driver to remove it,
+			// and a virtual controller cannot be unplugged.
+			var kept = keptHolds && holder == x360ce.App.DInput.XInputPlaces.HolderVirtual;
+			var heldBy = kept
+				? "a virtual controller the driver would not remove"
+				: x360ce.App.DInput.XInputPlaces.HolderWords(holder);
 			// Auto-Order refuses a leftover and there is nothing to unplug, so removing it is the one way
-			// to free the place.
-			var removeLeftover = holder == x360ce.App.DInput.XInputPlaces.HolderLeftover
+			// to free the place; Repair is the one way for a controller the driver would not remove.
+			var onlyWay = holder == x360ce.App.DInput.XInputPlaces.HolderLeftover
 				? "Remove it with [Remove Leftover Pads] on the Devices page."
-				: null;
-			// The bus's reason names what holds the place and what to do about it, so the state line says
-			// neither again.
-			var taken = busError == VirtualError.PlaceTaken;
+				: kept ? "Repair the driver on the Issues tab, or restart x360ce." : null;
+			// The bus's reason names what holds the place, or the controller the driver would not remove, and what
+			// to do about it, so the state line says neither again.
+			var taken = busError == VirtualError.PlaceTaken || busError == VirtualError.RemovalRefused;
 			if (!enabled)
 				// Off on purpose, so the missing controller is the thing that was asked for.
 				state = "Emulation is switched off, so no virtual controller is made and a game sees " +
@@ -302,7 +311,7 @@ namespace x360ce.App
 					: string.Format("This place is held by {0}, so the emulated one could not be " +
 						"made. A game reads that controller instead, and nothing mapped on this tab " +
 						"reaches it. {1}", heldBy,
-						removeLeftover ?? "Unplug it, or map this device on a tab whose place is free.");
+						onlyWay ?? "Unplug it, or map this device on a tab whose place is free.");
 			else if (diOn)
 				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
@@ -316,19 +325,19 @@ namespace x360ce.App
 						"program is not emulating anything here."
 					: string.Format("This place is held by {0}. A game already reads it directly, " +
 						"and this program is not emulating anything here. {1}", heldBy,
-						removeLeftover ?? "Map a device on this tab only once that controller is unplugged.");
+						onlyWay ?? "Map a device on this tab only once that controller is unplugged.");
 			else if (!checking)
 				state = "No mapped device. Whether a virtual controller exists has not been checked.";
 			else
 				state = "No mapped device and no virtual controller.";
 			var text = string.Format("Controller {0}: {1}{2}", place, elsewhere, state);
 			// What the bus said, when it said anything. Without this the missing half is named and the
-			// reason for it is not, which leaves nowhere to go. A place taken by a leftover is
-			// PlaceTaken's reason with the leftover's own advice in place of Auto-Order.
+			// reason for it is not, which leaves nowhere to go. A place taken by a leftover, or by a controller the
+			// driver would not remove, is PlaceTaken's reason with that one's own way out in place of Auto-Order.
 			if (busError != VirtualError.None)
-				text += "\r\n" + string.Format(taken && removeLeftover != null
+				text += "\r\n" + string.Format(busError == VirtualError.PlaceTaken && onlyWay != null
 					? "XInput {0} is held by {1}, so Controller {0} makes no virtual controller until it is " +
-						"free. " + removeLeftover
+						"free. " + onlyWay
 					: JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(busError), place, heldBy);
 			return text;
 		}
@@ -390,8 +399,11 @@ namespace x360ce.App
 			// to switch back on. A controller left off by a program that then stopped is one the
 			// person has to find in a window they never opened, with nothing anywhere saying who
 			// did it. Putting it back is this program's business, not theirs.
-			var restored = DInput.XInputReorderRunner.RestoreAnythingLeftOff();
-			if (restored.Length > 0)
+			string[] stillOff;
+			var restored = DInput.XInputReorderRunner.RestoreAnythingLeftOff(out stillOff);
+			if (stillOff.Length > 0)
+				SetHeaderError("A controller an earlier run switched off is still off. Switch it on in Device Manager, or start this program as Administrator.");
+			else if (restored.Length > 0)
 				SetHeaderInfo("Switched {0} controller(s) back on, left off by an earlier run.", restored.Length);
 			AppHelper.InitializeHidGuardian();
 			// A controller arriving is only reported to a window which asked about that interface class.
@@ -467,11 +479,10 @@ namespace x360ce.App
 			var game = SettingsManager.CurrentGame;
 			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
 			{
-				// Enable Reconfigure HID Guardian.
-				var changed = SettingsManager.AutoHideShowMappedDevices(game);
-				var mappedInstanceGuids = SettingsManager.GetMappedDevices(game?.FileName, true)
-					.Select(x => x.InstanceGuid).ToArray();
-				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
+				// Enable Reconfigure HID Guardian. Every listed device is judged, so one no longer used by the game,
+				// unticked since the last run among them, is shown again as well as each one used is hidden.
+				SettingsManager.AutoHideShowMappedDevices(game);
+				AppHelper.SynchronizeToHidGuardian();
 			}
 			Program.StartupTrace.Mark("MainForm_Load: end");
 		}
@@ -1322,6 +1333,7 @@ namespace x360ce.App
 					new ForceFeedbackIssue(),
 					new UnfinishedVirtualPadsIssue(),
 					new RestartToFinishRemovalIssue(),
+					new SwitchedOffControllersIssue(),
 					new HidHideIssue(),
 					new AiAccessIssue(),
 				};

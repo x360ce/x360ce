@@ -126,8 +126,42 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
-		[Description("Every row of the game on a tab can pass its force on, whatever the tab's switch and the row's own")]
-		public void Pass_through_takes_every_row_of_the_game_on_the_tab()
+		[Description("A place named in Pass through is skipped while a device the person unticked holds it; a device mapped nowhere keeps receiving")]
+		public void A_named_place_held_by_an_unticked_device_is_skipped()
+		{
+			// Every row of the game that maps it is unticked.
+			var unticked = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\1" };
+			// Unticked on the Devices page, with no row of the game.
+			var disabled = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\2", IsEnabled = false };
+			// Known, and mapped nowhere in the game.
+			var stranger = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\3" };
+			// Unticked on one tab and ticked on another.
+			var partly = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\4" };
+			var named = PassThrough(2);
+			var off = Row(unticked.InstanceGuid, MapTo.Controller2);
+			off.IsEnabled = false;
+			var partlyOff = Row(partly.InstanceGuid, MapTo.Controller3);
+			partlyOff.IsEnabled = false;
+			var rows = new[] { Row(Guid.NewGuid(), MapTo.Controller1, named), off, partlyOff, Row(partly.InstanceGuid, MapTo.Controller4) };
+
+			var routing = DeviceRouting.Build(Game, rows, new[] { named }, new[] { unticked, disabled, stranger, partly });
+
+			PadSetting ps;
+			Assert.AreEqual(XInputPlaces.Unknown, routing.PassThroughPlace(0, Places(unticked.HidDeviceId, 1), out ps),
+				"The tab's force is passed on to a controller whose rows are all unticked.");
+			Assert.IsNull(ps, "A place passed over still names the settings that asked for it.");
+			Assert.AreEqual(XInputPlaces.Unknown, routing.PassThroughPlace(0, Places(disabled.HidDeviceId, 1), out ps),
+				"The tab's force is passed on to a controller unticked on the Devices page.");
+			Assert.AreEqual(1, routing.PassThroughPlace(0, Places(stranger.HidDeviceId, 1), out ps),
+				"A controller mapped nowhere in the game no longer receives the force its place was named for.");
+			Assert.AreEqual(1, routing.PassThroughPlace(0, Places(partly.HidDeviceId, 1), out ps),
+				"A controller still ticked on one tab no longer receives the force its place was named for.");
+			Assert.AreEqual(1, routing.PassThroughPlace(0, Places(), out ps), "A place nobody known holds no longer receives the force.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("Every ticked row of the game on a tab can pass its force on, whatever the tab's switch; an unticked row passes nothing on")]
+		public void Pass_through_takes_every_ticked_row_of_the_game_on_the_tab()
 		{
 			var game = new UserGame { FileName = Game.FileName, FileProductName = Game.FileProductName, EnableMask = (int)MapToMask.Controller2 };
 			var ps = PassThrough(4);
@@ -140,8 +174,9 @@ namespace x360ce.Tests
 			PadSetting answered;
 			Assert.AreEqual(3, routing.PassThroughPlace(0, Places(), out answered),
 				"A tab switched off no longer passes its force on, so the stop its unplugging sends never reaches the controller.");
-			Assert.AreEqual(3, routing.PassThroughPlace(1, Places(), out answered),
-				"A row switched off no longer passes its tab's force on; whether it should is the owner's call.");
+			Assert.AreEqual(XInputPlaces.Unknown, routing.PassThroughPlace(1, Places(), out answered),
+				"An unticked row passes its tab's force on.");
+			Assert.AreEqual(0, routing.PadPassThrough[1].Length, "An unticked row is asked where its tab's force is passed on to.");
 		}
 	}
 }

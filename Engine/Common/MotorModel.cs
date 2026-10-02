@@ -18,6 +18,51 @@ namespace x360ce.Engine
 	/// factor, which keeps them apart and inside what the wheel can move. Everything on the Force
 	/// Feedback page that speaks of periods reads its numbers from here; docs/Help.ForceFeedback.md
 	/// tells the person the same, and a test keeps the two in step.
+	///
+	/// The method is scripts/motors/measure_motors.py with --steps 20 --hold 3.0: the two grip
+	/// motors of the controller (VID_045E&amp;PID_02FF) driven through XInput in 5 % steps, 3 s per
+	/// level, and an FFT of the middle of each step from a microphone. The strongest tone in the
+	/// motor's band is the rotation frequency (RPM is Hz x 60). The motors are the same
+	/// eccentric-mass type the Xbox 360 pad uses. The bands are left 8-35 Hz and right 25-120 Hz.
+	/// On a hard surface the shell rattles at 15-19 Hz, which spoilt two runs; a softer placement
+	/// removes it. The frequencies by drive level:
+	/// <code>
+	/// Drive %   Left Hz       Right Hz
+	///     5     not spinning  not spinning
+	///    10     13.5          weak
+	///    15     13.9          41.7
+	///    20     14.3          45.2
+	///    25     14.8          47.4
+	///    30     15.2          48.2
+	///    40     16.1          50.0
+	///    50     18.7          54.3
+	///    60     19.1          56.5
+	///    70     20.9          58.2
+	///    80     22.2          60.0
+	///    90     22.6          61.3
+	///   100     25.2          62.2   (1513 and 3730 RPM)
+	/// </code>
+	/// The fits, with the drive p in percent: left f = 12.2 + 0.13 p for p of 10 or more (it
+	/// starts between 5 and 10 %); right f = 38.1 + 0.24 p for p of 15 or more (it starts between
+	/// 10 and 15 %). At full drive the right motor spins 2.5 times the left; each motor's speed
+	/// changes only 1.5 to 1.9 times across its range.
+	///
+	/// The constants below round these lines to multiples of 8 ms, which the 4 ms step of the
+	/// period sliders reaches: the left motor's 74 -> 40 ms (13.9 -> 25 Hz) becomes 72 -> 40 ms,
+	/// starting at 8 % drive; the right motor's 24 -> 16 ms (41.7 -> 62.5 Hz) stays, starting at
+	/// 16 %. The largest error is the left start, 72 against 74 ms (3 %); the rest is within 1 %.
+	///
+	/// A G27 driven by a sine at 30 % on the X actuator (Tests/Common/WheelSweepScratchTest.cs: 11
+	/// frequencies, 2 s each), with the spring off and the steering read
+	/// at about 500 Hz (328 raw units are 1 degree), swings +/-11.7 degrees at 2 Hz, 3.7 at 4,
+	/// 1.3 at 8, 0.7 at 12 and 0.5 at 16 (it barely follows, 13.5 Hz measured), and 0.3-0.6 at 24-64 Hz (gear
+	/// rattle only); the swing falls about with the square of the frequency. Multiplier 4 gives
+	/// the right motor 10.5-15.5 Hz (+/-0.5-0.7 degrees, a fine buzz: engine) and the left motor
+	/// 3.5-6 Hz (+/-2-4 degrees, a shake: curbs). Multiplier 2 puts the right motor at 21-31 Hz,
+	/// where nothing is felt; multiplier 8 puts the left motor at 1.7-3 Hz with swings of +/-7-12
+	/// degrees, too wide. On a rumble pad a periodic force only modulates the motor's power and
+	/// the pad's motor cannot follow 25-60 Hz, so the faithful imitation there is a Constant
+	/// force whose magnitude is the XInput speed.
 	/// </remarks>
 	public static class MotorModel
 	{

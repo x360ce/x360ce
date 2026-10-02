@@ -293,7 +293,7 @@ namespace x360ce.Tests
 			Assert.IsFalse(File.ReadAllText(Path.Combine(dir, "DInputHelper.XInputLibrarry.cs")).Contains("lock (Controller.XInputLock)"),
 				"Loading or letting go of XInput waits for a read.");
 			StringAssert.Contains(File.ReadAllText(Path.Combine(dir, "DInputHelper.Step2.UpdateDiStates.cs")),
-				"ud.DeviceEffects == null && System.Threading.Monitor.TryEnter(Controller.XInputLock)",
+				"ud.DeviceEffects == null && TryEnterXInputLockWhenFree()",
 				"Reading a new device's effects waits for a read.");
 			var form = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
 			var close = form.Substring(form.IndexOf("private void OnCloseAction("));

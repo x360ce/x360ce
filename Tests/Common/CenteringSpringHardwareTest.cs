@@ -208,7 +208,7 @@ namespace x360ce.Tests
 					var ud = new UserDevice();
 					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
 					int axisMask, actuatorMask, actuatorCount;
-					CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount);
+					CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
 					if (actuatorCount == 0)
 						Assert.Inconclusive(instance.ProductName + " has no actuator on an axis.");
 					ud.DevVendorId = device.Properties.VendorId;

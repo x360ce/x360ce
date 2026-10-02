@@ -293,5 +293,65 @@ namespace x360ce.Tests
 			Assert.IsTrue(client.Contains("DInputHelper.IsRecent(_LastConnectTick, Environment.TickCount, ConnectRetryMs)"),
 				"A refusal 25 days old stops the bus client connecting for the next 25 days.");
 		}
+
+		/// <summary>What the Issues tab reads from a helper whose Controller 1 Windows never built, with that many plugs counted.</summary>
+		/// <param name="heldBack">Whether the pad is held back until a controller comes or goes.</param>
+		static VirtualDriverNotWorkingIssue.Health ReadNeverBuilt(int plugFailures, bool heldBack)
+		{
+			var helper = new DInputHelper();
+			helper.VirtualErrors[0] = VirtualError.PlaceNotGiven;
+			helper.PlugFailures[0] = plugFailures;
+			var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+			((int[])typeof(DInputHelper).GetField("_misplacedWith", flags).GetValue(helper))[0] = heldBack ? 0 : -1;
+			((VirtualError[])typeof(DInputHelper).GetField("_heldAs", flags).GetValue(helper))[0] = VirtualError.PlaceNotGiven;
+			return ReadHealth(helper);
+		}
+
+		/// <summary>What the Issues tab reads while <paramref name="helper"/> is the program's, with Controller 1 wanted and the driver installed.</summary>
+		internal static VirtualDriverNotWorkingIssue.Health ReadHealth(DInputHelper helper)
+		{
+			var game = new UserGame
+			{
+				FileName = "never-built.exe",
+				EmulationType = (int)EmulationType.Virtual,
+				EnableMask = (int)MapToMask.Controller1,
+			};
+			var oldHelper = Global.DHelper;
+			var oldGame = SettingsManager.CurrentGame;
+			var xinputEnabled = SettingsManager.Options.XInputEnabled;
+			try
+			{
+				Global.DHelper = helper;
+				SettingsManager.UpdateCurrentGame(game);
+				SettingsManager.Options.XInputEnabled = true;
+				var health = (VirtualDriverNotWorkingIssue.Health)typeof(VirtualDriverNotWorkingIssue)
+					.GetMethod("Read", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).Invoke(null, null);
+				// Whether this machine has the driver is not what is being tested.
+				health.BusInstalled = true;
+				health.ConnectError = VIGEM_ERROR.VIGEM_ERROR_NONE;
+				return health;
+			}
+			finally
+			{
+				// The game first: changing it tells the helper in place.
+				SettingsManager.UpdateCurrentGame(oldGame);
+				Global.DHelper = oldHelper;
+				SettingsManager.Options.XInputEnabled = xinputEnabled;
+			}
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("critical")]
+		[Description("A controller Windows never built is reported at once while it is held back, since it is not tried again; one that is tried again is reported after three")]
+		public void A_controller_Windows_never_built_is_reported_once_while_held_back()
+		{
+			string message;
+			Assert.AreEqual(IssueSeverity.Moderate, Judge(ReadNeverBuilt(1, true), out message),
+				"A controller Windows never built is held back and never tried again, and the Issues tab says nothing.");
+			StringAssert.Contains(message, "Controller 1: the driver accepted its virtual controller, but Windows never finished building it.");
+			Assert.AreEqual(IssueSeverity.None, Judge(ReadNeverBuilt(1, false), out message),
+				"One failure of a controller that is tried again is reported before it can be a passing moment.");
+			Assert.AreEqual(IssueSeverity.Moderate, Judge(ReadNeverBuilt(3, true), out message));
+			StringAssert.Contains(message, "accepted its virtual controller 3 times in a row");
+		}
 	}
 }

@@ -349,7 +349,7 @@ namespace x360ce.App.Controls
 				var report = finished.IsFaulted
 					? runner.ToString() + Environment.NewLine + finished.Exception.GetBaseException().Message
 					: runner.ToString();
-				ShowNotice(done ? "Done" : "Stopped part way", report.TrimEnd(), false);
+				ShowNotice(done ? "Done" : runner.Started ? "Stopped part way" : "Not started", report.TrimEnd(), false);
 				Reload();
 			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}

@@ -69,6 +69,9 @@ namespace x360ce.App
 			{
 				tbx.TextChanged += Control_Changed;
 			}
+			var nud = control as NumericUpDown;
+			if (nud != null)
+				nud.ValueChanged += Control_Changed;
 		}
 
 		/// <summary>
@@ -125,6 +128,15 @@ namespace x360ce.App
 					if (!Equals(oldValue, comboBox.SelectedItem))
 						pi.SetValue(destination, comboBox.SelectedItem, null);
 				}
+				return;
+			}
+			// Update property from NumericUpDown.
+			var numericUpDown = map.Control as NumericUpDown;
+			if (numericUpDown != null)
+			{
+				var newValue = Convert.ChangeType(numericUpDown.Value, pi.PropertyType);
+				if (!Equals(oldValue, newValue))
+					pi.SetValue(destination, newValue, null);
 				return;
 			}
 		}
@@ -186,6 +198,17 @@ namespace x360ce.App
 					if (!Equals(propValue, comboBox.SelectedItem))
 						comboBox.SelectedItem = propValue;
 				}
+				return;
+			}
+			// Update NumericUpDown from property.
+			var numericUpDown = map.Control as NumericUpDown;
+			if (numericUpDown != null)
+			{
+				// A number outside the range of the box shows as the nearest number in it.
+				var value = Convert.ToDecimal(propValue);
+				value = Math.Max(numericUpDown.Minimum, Math.Min(numericUpDown.Maximum, value));
+				if (numericUpDown.Value != value)
+					numericUpDown.Value = value;
 				return;
 			}
 		}

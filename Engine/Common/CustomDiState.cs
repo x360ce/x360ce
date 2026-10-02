@@ -118,11 +118,12 @@ namespace x360ce.Engine
 		/// bit 3 = 1 - Axis 3 is present
 		/// ...
 		/// </summary>
-		public static void GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int actuatorMask, out int actuatorCount)
+		public static void GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int actuatorMask, out int actuatorCount, out int relativeMask)
 		{
 			axisMask = 0;
 			actuatorMask = 0;
 			actuatorCount = 0;
+			relativeMask = 0;
 			for (int i = 0; i < CustomDiHelper.AxisOffsets.Count; i++)
 			{
 				try
@@ -136,6 +137,9 @@ namespace x360ce.Engine
 						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
 						axisMask |= (int)Math.Pow(2, i);
+						// An axis that reports how far it moved rather than where it is: a trackball's or a spinner's.
+						if (item.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis))
+							relativeMask |= 1 << i;
 						// Create mask to know which axis have force feedback motor.
 						if (item.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator))
 						{
@@ -152,7 +156,7 @@ namespace x360ce.Engine
 			}
 		}
 
-		public static void GetMouseAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask)
+		public static void GetMouseAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int relativeMask)
 		{
 			// Must have same order as in Axis[] property.
 			// Important: These values are not the same as on DeviceObjectInstance.Offset.
@@ -162,6 +166,7 @@ namespace x360ce.Engine
 					MouseOffset.Z,
 				};
 			axisMask = 0;
+			relativeMask = 0;
 			for (int i = 0; i < list.Count; i++)
 			{
 				try
@@ -175,6 +180,9 @@ namespace x360ce.Engine
 						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
 						axisMask |= (int)Math.Pow(2, i);
+						// An axis that reports how far it moved rather than where it is: a mouse's.
+						if (item.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis))
+							relativeMask |= 1 << i;
 					}
 				}
 				catch { }
@@ -210,9 +218,10 @@ namespace x360ce.Engine
 			state.VelocitySliders[1] = sliders[7];
 		}
 
-		public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
+		public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device, out int relativeMask)
 		{
 			int mask = 0;
+			relativeMask = 0;
 			for (int i = 0; i < CustomDiHelper.SliderOffsets.Count; i++)
 			{
 				try
@@ -226,11 +235,43 @@ namespace x360ce.Engine
 						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
 						mask |= (int)Math.Pow(2, i);
+						// A slider that reports how far it moved rather than where it is: a spinner's dial.
+						if (item.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis))
+							relativeMask |= 1 << i;
 					}
 				}
 				catch { }
 			}
 			return mask;
+		}
+
+		#endregion
+
+		#region Relative Axes and Sliders
+
+		/// <summary>The relative axes or sliders of a device that the engine believes: those its objects declare, unless the device is read as a gamepad.</summary>
+		/// <remarks>
+		/// The relative flag is the device's own claim, and a cheap gamepad's driver makes it for sticks that report where
+		/// they are. A control worked out as movement stays at one end until it is moved back, which is right for a mouse
+		/// and pins a stick. So a joystick, gamepad, wheel, flight stick or first-person controller is read as it reports,
+		/// and any other device, such as a mouse, a trackball, a spinner, a screen pointer or a remote, keeps what it
+		/// declares. Decided once, when the device's objects are first read.
+		/// </remarks>
+		/// <param name="capType">The device's DirectInput type, <see cref="x360ce.Engine.Data.UserDevice.CapType"/>.</param>
+		/// <param name="declared">The axes or sliders its objects declare relative, one bit each.</param>
+		public static int TrustedRelativeMask(int capType, int declared)
+		{
+			switch ((SharpDX.DirectInput.DeviceType)capType)
+			{
+				case SharpDX.DirectInput.DeviceType.Joystick:
+				case SharpDX.DirectInput.DeviceType.Gamepad:
+				case SharpDX.DirectInput.DeviceType.Driving:
+				case SharpDX.DirectInput.DeviceType.Flight:
+				case SharpDX.DirectInput.DeviceType.FirstPerson:
+					return 0;
+				default:
+					return declared;
+			}
 		}
 
 		#endregion

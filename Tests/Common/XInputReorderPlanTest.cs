@@ -57,18 +57,109 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Controllers are brought back in the order asked for")]
-		public void They_come_back_in_the_order_asked_for()
+		[Description("A virtual controller arrives with a hint, so the one for the first place is made fourth")]
+		public void The_first_place_is_given_to_the_fourth_controller_to_arrive()
 		{
-			var plan = XInputReorderPlan.For(new[] { Virtual("pad", 2), Real("xbox", 0) });
-			var arrivals = plan.Steps
-				.Where(s => s.Kind == Kind.CreateVirtual || s.Kind == Kind.EnableReal)
-				.ToList();
-			CollectionAssert.AreEqual(new[] { "pad", "xbox" }, arrivals.Select(s => s.HardwareId).ToArray(),
-				"The order things are brought back in is the order of places, so it has to match "
-				+ "what was asked for.");
-			CollectionAssert.AreEqual(new[] { 0, 1 }, arrivals.Select(s => s.ExpectedPlace).ToArray(),
-				"Each arrival takes the lowest free place, so the places expected run upward from one.");
+			// The measured case: the real controller is wanted last, so the three virtual ones come first. XInput gives the
+			// first of them the second place and the second the third, so the third is made as a temporary controller to hold
+			// the fourth, and the one for the first place is the fourth to arrive, which is given the first free place.
+			var plan = XInputReorderPlan.For(new[] { Ours("c1", 1, 1), Ours("c2", 2, 2), Ours("c3", 3, 3), Real("xbox", 0) });
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			CollectionAssert.AreEqual(new[]
+			{
+				Kind.RemoveVirtual, Kind.RemoveVirtual, Kind.RemoveVirtual, Kind.DisableReal,
+				Kind.CreateVirtual, Kind.CreateVirtual, Kind.CreateDecoy, Kind.CreateVirtual, Kind.RemoveDecoy, Kind.EnableReal,
+			}, plan.Steps.Select(s => s.Kind).ToArray(), plan.ToString());
+			var arrivals = plan.Steps.Skip(4).ToList();
+			CollectionAssert.AreEqual(new[] { "c2", "c3", null, "c1", null, "xbox" }, arrivals.Select(s => s.HardwareId).ToArray());
+			CollectionAssert.AreEqual(new[] { 1, 2, 3, 0, -1, 3 }, arrivals.Select(s => s.ExpectedPlace).ToArray());
+			StringAssert.Contains(plan.ToString(), "temporary controller");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A real controller wanted first makes no temporary controller: it is given the first free place")]
+		public void A_real_controller_wanted_first_needs_no_temporary_controller()
+		{
+			var plan = XInputReorderPlan.For(new[] { Real("xbox", 3), Ours("c2", 1, 2), Ours("c3", 2, 3), Ours("c4", -1, 4) });
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			Assert.IsFalse(plan.Steps.Any(s => s.Kind == Kind.CreateDecoy), "A temporary controller is made for nothing:" + System.Environment.NewLine + plan);
+			var arrivals = plan.Steps.Where(s => s.Kind == Kind.CreateVirtual || s.Kind == Kind.EnableReal).ToList();
+			CollectionAssert.AreEqual(new[] { "c2", "c3", "c4", "xbox" }, Ids2(arrivals));
+			CollectionAssert.AreEqual(new[] { 1, 2, 3, 0 }, arrivals.Select(s => s.ExpectedPlace).ToArray());
+		}
+
+		/// <summary>Where each wanted controller lands when the plan's arrivals are made, by the rule XInput gives places out with.</summary>
+		/// <remarks>The rule stated again here, so a plan is held to it and not to itself.</remarks>
+		static int[] Land(XInputReorderPlan plan, IList<XInputReorderPlan.Entry> wanted, out int mostTemporary)
+		{
+			var held = new[] { "", "", "", "" };
+			var hinted = 0;
+			var temporary = 0;
+			mostTemporary = 0;
+			foreach (var step in plan.Steps)
+			{
+				var tag = step.Kind == Kind.CreateDecoy || step.Kind == Kind.RemoveDecoy ? "temporary " + step.Decoy : step.HardwareId;
+				if (step.Kind == Kind.RemoveDecoy)
+				{
+					var at = System.Array.IndexOf(held, tag);
+					if (at >= 0)
+						held[at] = "";
+					hinted--;
+					temporary--;
+				}
+				else if (step.Kind == Kind.CreateVirtual || step.Kind == Kind.EnableReal || step.Kind == Kind.CreateDecoy)
+				{
+					var place = -1;
+					if (step.Kind != Kind.EnableReal)
+					{
+						hinted++;
+						if (hinted < 4 && held[hinted] == "")
+							place = hinted;
+					}
+					if (place < 0)
+						place = System.Array.IndexOf(held, "");
+					if (place >= 0)
+						held[place] = tag;
+					if (step.Kind == Kind.CreateDecoy)
+						mostTemporary = System.Math.Max(mostTemporary, ++temporary);
+				}
+			}
+			return wanted.Select(x => System.Array.IndexOf(held, x.HardwareId)).ToArray();
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Whatever order is asked for, the arrivals put every controller where it was asked, and no temporary controller is left")]
+		public void The_arrivals_put_every_controller_where_it_was_asked()
+		{
+			var orders = new List<XInputReorderPlan.Entry[]>
+			{
+				new[] { Ours("c1", -1, 1), Ours("c2", -1, 2), Ours("c3", -1, 3), Real("x", -1) },
+				new[] { Ours("c1", -1, 1), Ours("c2", -1, 2), Ours("c3", -1, 3), Ours("c4", -1, 4) },
+				new[] { Real("x", -1), Ours("c2", -1, 2), Ours("c3", -1, 3), Ours("c4", -1, 4) },
+				new[] { Ours("c1", -1, 1), Real("x", -1), Ours("c3", -1, 3), Ours("c4", -1, 4) },
+				new[] { Ours("c1", -1, 1), Ours("c2", -1, 2), Real("x", -1), Ours("c4", -1, 4) },
+				new[] { Ours("c1", -1, 1), Ours("c2", -1, 2), Real("x", -1), Real("y", -1) },
+				new[] { Ours("c1", -1, 1), Real("x", -1), Real("y", -1), Ours("c4", -1, 4) },
+				new[] { Real("x", -1), Real("y", -1), Ours("c3", -1, 3), Ours("c4", -1, 4) },
+				new[] { Real("x", -1), Ours("c2", -1, 2), Real("y", -1), Ours("c4", -1, 4) },
+				new[] { Ours("c1", -1, 1), Real("x", -1), Real("y", -1), Real("z", -1) },
+				new[] { Ours("c1", -1, 1), Real("x", -1) },
+				new[] { Real("x", -1), Ours("c2", -1, 2) },
+				new[] { Ours("c1", -1, 1) },
+				new[] { Ours("c1", -1, 1), Ours("c2", -1, 2), Ours("c3", -1, 3), Real("x", -1), Real("y", -1) },
+			};
+			foreach (var wanted in orders)
+			{
+				var plan = XInputReorderPlan.For(wanted);
+				Assert.IsNull(plan.Refusal, plan.Refusal);
+				int most;
+				var landed = Land(plan, wanted, out most);
+				CollectionAssert.AreEqual(Enumerable.Range(0, wanted.Length).Select(i => i < 4 ? i : -1).ToArray(), landed,
+					"Not where asked: " + string.Join(", ", Ids(wanted)) + System.Environment.NewLine + plan);
+				Assert.IsTrue(most <= 3, "More than three temporary controllers at once.");
+				Assert.AreEqual(plan.Steps.Count(s => s.Kind == Kind.CreateDecoy), plan.Steps.Count(s => s.Kind == Kind.RemoveDecoy),
+					"A temporary controller is left on the bus:" + System.Environment.NewLine + plan);
+			}
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -143,9 +234,10 @@ namespace x360ce.Tests
 			Assert.IsNull(plan.Refusal, plan.Refusal);
 			Assert.IsFalse(plan.Steps.Any(s => s.Kind == Kind.RemoveVirtual && s.Pad == 1),
 				"A controller that does not exist is planned to be taken away.");
-			var arrivals = plan.Steps.Where(s => s.Kind == Kind.CreateVirtual || s.Kind == Kind.EnableReal).ToList();
-			CollectionAssert.AreEqual(new[] { "Controller 1", "c2", "c3", "xbox" }, Ids2(arrivals));
-			CollectionAssert.AreEqual(new[] { 0, 1, 2, 3 }, arrivals.Select(s => s.ExpectedPlace).ToArray());
+			var places = plan.Steps.Where(s => s.Kind == Kind.CreateVirtual || s.Kind == Kind.EnableReal)
+				.OrderBy(s => s.ExpectedPlace).ToList();
+			CollectionAssert.AreEqual(new[] { "Controller 1", "c2", "c3", "xbox" }, Ids2(places));
+			CollectionAssert.AreEqual(new[] { 0, 1, 2, 3 }, places.Select(s => s.ExpectedPlace).ToArray());
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -159,28 +251,44 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, Real("fifth", -1).Controller, "A controller holding no place names one.");
 		}
 
-		static JocysCom.ClassLibrary.IO.DeviceInfo Node(string id, string parent, System.Guid classGuid = default(System.Guid))
+		static JocysCom.ClassLibrary.IO.DeviceInfo Node(string id, string parent)
 		{
-			return new JocysCom.ClassLibrary.IO.DeviceInfo { DeviceId = id, HardwareIds = id, ParentDeviceId = parent, ClassGuid = classGuid };
+			return new JocysCom.ClassLibrary.IO.DeviceInfo { DeviceId = id, HardwareIds = id, ParentDeviceId = parent };
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("An Xbox One controller is moved by switching its input part, an Xbox 360 controller by switching itself")]
-		public void Only_the_part_xinput_reads_is_switched()
+		[Description("A real controller is switched off and on as a whole, never by a part of it")]
+		public void A_real_controller_is_switched_as_a_whole()
 		{
-			// Switched off whole, an Xbox One controller turned itself off and stayed off when switched on.
+			// Only its input part switched off, an Xbox One controller could not be switched on again: Windows answers that
+			// the device is not connected, and it had no XInput place until it was unplugged and plugged in.
 			var one = Node(@"USB\VID_045E&PID_02D1\7EED", null);
 			var input = Node(@"USB\VID_045E&PID_02FF&IG_00\00", one.DeviceId);
 			var hid = Node(@"HID\VID_045E&PID_02FF&IG_00\9", input.DeviceId);
-			var byId = new[] { one, input, hid }.ToDictionary(x => x.DeviceId, x => x);
-			Assert.AreEqual(input.DeviceId, XInputReorderPlan.SwitchedPart(hid, one.DeviceId, byId),
-				"The whole Xbox One controller would be switched off, and it does not come back from that.");
-			// An Xbox 360 controller is read by XInput through the controller itself.
-			var x360 = Node(@"USB\VID_045E&PID_028E\01", null, new System.Guid("d61ca365-5af4-4486-998b-9db4734c6ca3"));
-			var x360Input = Node(@"HID\VID_045E&PID_028E&IG_00\3", x360.DeviceId);
-			var byId360 = new[] { x360, x360Input }.ToDictionary(x => x.DeviceId, x => x);
-			Assert.AreEqual(x360.DeviceId, XInputReorderPlan.SwitchedPart(x360Input, x360.DeviceId, byId360),
-				"Switching only an Xbox 360 controller's input part leaves the place XInput reads where it was.");
+			var machine = new[] { one, input, hid };
+			var readMachine = XInputPlaces.ReadMachine;
+			var game = x360ce.App.SettingsManager.CurrentGame;
+			XInputPlaces.ReadMachine = () => machine;
+			x360ce.App.SettingsManager.CurrentGame = null;
+			List<XInputReorderPlan.Entry> entries;
+			try
+			{
+				entries = XInputReorderPlan.ReadEntries();
+			}
+			finally
+			{
+				XInputPlaces.ReadMachine = readMachine;
+				x360ce.App.SettingsManager.CurrentGame = game;
+			}
+			var xbox = entries.Single(x => !x.IsVirtual);
+			Assert.AreEqual(one.DeviceId, xbox.HardwareId, "The controller is not read as the whole device.");
+			var plan = XInputReorderPlan.For(new[] { Virtual("pad", -1), xbox });
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			var switched = plan.Steps.Where(s => s.Kind == Kind.DisableReal || s.Kind == Kind.EnableReal).ToArray();
+			Assert.AreEqual(2, switched.Length, "The controller is not switched off and on again.");
+			foreach (var step in switched)
+				Assert.AreEqual(one.DeviceId, step.HardwareId,
+					"Only a part of the controller is switched, and Windows does not bring that back: " + step);
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -239,7 +347,7 @@ namespace x360ce.Tests
 			// Switching on what is already on changes nothing; off and on again is what it needs.
 			var plan = XInputReorderPlan.For(new[] { Ours("c1", 1, 1), Real("xbox", -1) });
 			CollectionAssert.AreEqual(new[] { Kind.RemoveVirtual, Kind.DisableReal, Kind.CreateVirtual, Kind.EnableReal },
-				plan.Steps.Select(s => s.Kind).ToArray());
+				plan.Steps.Select(s => s.Kind).Where(k => k != Kind.CreateDecoy && k != Kind.RemoveDecoy).ToArray());
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -251,6 +359,68 @@ namespace x360ce.Tests
 			Assert.IsNotNull(plan.Refusal, "Controller 1's virtual controller was planned into XInput 2.");
 			Assert.AreEqual(0, plan.Steps.Count, "A refused plan would still switch the real controller off.");
 			StringAssert.Contains(plan.Refusal, "XInput 1");
+		}
+
+		/// <summary>A virtual controller this program did not make and that holds no place, as a run that ended badly leaves one.</summary>
+		static XInputReorderPlan.Entry LeftBehind(string id)
+		{
+			return new XInputReorderPlan.Entry { HardwareId = id, Name = id, IsVirtual = true, IsOurs = false, Place = -1 };
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A virtual controller left behind with no place takes no part in the order, and the rest keep their places")]
+		public void A_controller_left_behind_with_no_place_is_not_ordered()
+		{
+			// As reported: it was given a position and a step to make it, which failed at once, so the order stopped part way,
+			// and every row after it was expected one place too far along.
+			var plan = XInputReorderPlan.For(new[] { Ours("c1", 1, 1), LeftBehind("orphan"), Real("xbox", 0) });
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			Assert.IsFalse(plan.Steps.Any(s => s.HardwareId == "orphan"), "A step acts on the controller left behind:"
+				+ System.Environment.NewLine + plan);
+			var arrivals = plan.Steps.Where(s => s.Kind == Kind.CreateVirtual || s.Kind == Kind.EnableReal).ToList();
+			CollectionAssert.AreEqual(new[] { "c1", "xbox" }, Ids2(arrivals));
+			CollectionAssert.AreEqual(new[] { 0, 1 }, arrivals.Select(s => s.ExpectedPlace).ToArray(),
+				"The controllers after the one left behind are expected a place further along than they get.");
+			// Auto-Order leaves it out too, rather than giving it the place a real controller should fill.
+			var found = new[] { LeftBehind("orphan"), Real("xbox", 0), Ours("c3", 1, 3), Ours("c1", 2, 1) };
+			CollectionAssert.AreEqual(new[] { "c1", "xbox", "c3" }, Ids(XInputReorderPlan.ByController(found)));
+			// One that holds a place is still refused: it cannot be moved out of the way.
+			var holding = LeftBehind("holding");
+			holding.Place = 2;
+			Assert.IsNotNull(XInputReorderPlan.For(new[] { Ours("c1", 1, 1), holding }).Refusal,
+				"A virtual controller this program did not make, holding a place, was planned around.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The order list leaves out a virtual controller left behind with no place, and still lists a real one")]
+		public void The_list_leaves_out_a_controller_left_behind_with_no_place()
+		{
+			// The measured tree: a real Xbox One controller, and a pad left behind whose parent has gone, with its USB face
+			// and the HID face under it. Two unnamed controllers, so neither is given a place whatever XInput says.
+			var root = Node(@"HTREE\ROOT\0", null);
+			var hub = Node(@"USB\ROOT_HUB30\4&2C4A1B1&0", root.DeviceId);
+			var one = Node(@"USB\VID_045E&PID_02D1\7EED", hub.DeviceId);
+			var input = Node(@"USB\VID_045E&PID_02FF&IG_00\00", one.DeviceId);
+			var oneHid = Node(@"HID\VID_045E&PID_02FF&IG_00\9", input.DeviceId);
+			var usb = Node(@"USB\VID_045E&PID_028E&IG_01\2&2A3F02C7&5&01", @"USB\VID_045E&PID_028E\04");
+			var hid = Node(@"HID\VID_045E&PID_028E&IG_01\3&1B6A3C2&0&0000", usb.DeviceId);
+			var machine = XInputPlaces.ReadMachine;
+			var game = x360ce.App.SettingsManager.CurrentGame;
+			XInputPlaces.ReadMachine = () => new[] { root, hub, one, input, oneHid, usb, hid };
+			// No game, so no tab waits for a controller and every row is one on the machine.
+			x360ce.App.SettingsManager.CurrentGame = null;
+			try
+			{
+				var entries = XInputReorderPlan.ReadEntries();
+				CollectionAssert.AreEqual(new[] { one.DeviceId }, Ids(entries),
+					"The pad left behind is listed for ordering; the Issues tab lists it for removal. Listed: " + string.Join(", ", Ids(entries)));
+				Assert.IsFalse(entries[0].IsVirtual, "The real controller is listed as virtual.");
+			}
+			finally
+			{
+				XInputPlaces.ReadMachine = machine;
+				x360ce.App.SettingsManager.CurrentGame = game;
+			}
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

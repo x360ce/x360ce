@@ -286,10 +286,11 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device the routing forces from this tab.</summary>
-		static bool AutoStarts(UserGame game, UserSetting row, PadSetting ps)
+		/// <param name="device">The row's device as the devices list holds it, or null for none listed.</param>
+		static bool AutoStarts(UserGame game, UserSetting row, PadSetting ps, UserDevice device = null)
 		{
 			DeviceForce route;
-			return DeviceRouting.Build(game, new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route)
+			return DeviceRouting.Build(game, new[] { row }, new[] { ps }, device == null ? null : new[] { device }).TryGetForce(row.InstanceGuid, out route)
 				&& Array.IndexOf(route.ForcePads, row.MapTo - 1) >= 0;
 		}
 
@@ -329,6 +330,22 @@ namespace x360ce.Tests
 			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
 			Assert.IsFalse(AutoStarts(Game(true), Row(ps, false), ps), "Auto starts for a device unticked in the tab's list.");
 			AssertAutoAsksTheRouting();
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Auto is not started for a device unticked on the Devices page, and says so")]
+		public void Auto_does_not_start_for_a_device_unticked_on_the_Devices_page()
+		{
+			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			var row = Row(ps, true);
+			var device = new UserDevice { InstanceGuid = row.InstanceGuid };
+			Assert.IsTrue(AutoStarts(Game(true), row, ps, device), "Auto does not start for a device ticked on the Devices page.");
+			device.IsEnabled = false;
+			Assert.IsFalse(AutoStarts(Game(true), row, ps, device), "Auto starts for a device unticked on the Devices page.");
+			AssertAutoAsksTheRouting();
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
+			StringAssert.Contains(Ui.Between(source, "WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", "\";"), "Devices page",
+				"The reason Auto gives leaves out the tick on the Devices page.");
 		}
 	}
 }

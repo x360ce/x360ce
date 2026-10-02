@@ -1,9 +1,15 @@
-// @under-test: App.v4/Issues/HidHideIssue.cs
+// @under-test: App.v4/Issues/HidHideIssue.cs, App.v4/Common/SettingsManager.cs, App.v4/MainForm.cs, App.v4/Controls/PadControl.cs, App.v4/Controls/UserDevicesUserControl.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using x360ce.App;
 using x360ce.App.DInput;
 using x360ce.App.Issues;
+using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.Tests
@@ -135,6 +141,71 @@ namespace x360ce.Tests
 			foreach (var file in Directory.GetFiles(folder, "DInputHelper*.cs"))
 				Assert.IsFalse(File.ReadAllText(file).Contains("GetHidHideState("),
 					Path.GetFileName(file) + " reads HID Hide. That starts a process and belongs to the issue check.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Only a device on a ticked row, and ticked on the Devices page, is hidden from games or named for HID Hide")]
+		public void Only_a_ticked_device_is_hidden_from_games()
+		{
+			if (Global.DHelper == null)
+				Global.InitDHelperHelper();
+			var oldGame = SettingsManager.CurrentGame;
+			var game = new UserGame
+			{
+				FileName = "hide-ticked.exe",
+				FileProductName = "Hide ticked",
+				EnableMask = (int)MapToMask.Controller1,
+				EmulationType = (int)EmulationType.Virtual,
+			};
+			var ticked = Pad(true, @"HID\VID_046D&PID_C219\A&1AFDDD43&0&0001");
+			var unticked = Pad(true, @"HID\VID_046D&PID_C219\A&1AFDDD43&0&0002");
+			var disabled = Pad(true, @"HID\VID_046D&PID_C219\A&1AFDDD43&0&0003");
+			disabled.IsEnabled = false;
+			var devices = new[] { ticked, unticked, disabled };
+			var rows = new List<UserSetting>();
+			foreach (var ud in devices)
+			{
+				ud.InstanceGuid = Guid.NewGuid();
+				rows.Add(new UserSetting { InstanceGuid = ud.InstanceGuid, FileName = game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = ud != unticked });
+			}
+			var guids = devices.Select(x => x.InstanceGuid).ToArray();
+			try
+			{
+				foreach (var ud in devices)
+					SettingsManager.UserDevices.Items.Add(ud);
+				foreach (var row in rows)
+					SettingsManager.UserSettings.Items.Add(row);
+				SettingsManager.UpdateCurrentGame(game);
+				CollectionAssert.AreEqual(new[] { ticked }, SettingsManager.GetMappedDevices(game.FileName, true),
+					"A device unticked in the tab's list or on the Devices page is hidden from games by HID Guardian.");
+				var named = (UserDevice[])typeof(HidHideIssue).GetMethod("GetVirtualMappedDevices", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+				CollectionAssert.AreEqual(new[] { ticked }, named, "The Issues tab asks for an unticked device to be hidden with HID Hide.");
+				foreach (var ud in devices)
+					ud.IsHidden = ud != ticked;
+				SettingsManager.AutoHideShowMappedDevices(game, guids);
+				Assert.IsTrue(ticked.IsHidden, "A ticked device is not hidden from games.");
+				Assert.IsFalse(unticked.IsHidden, "A device unticked in the tab's list stays hidden from games.");
+				Assert.IsFalse(disabled.IsHidden, "A device unticked on the Devices page stays hidden from games.");
+			}
+			finally
+			{
+				SettingsManager.UpdateCurrentGame(oldGame);
+				foreach (var row in rows)
+					SettingsManager.UserSettings.Items.Remove(row);
+				foreach (var ud in devices)
+					SettingsManager.UserDevices.Items.Remove(ud);
+			}
+			// Each hide follows the rule: at start every device is shown or hidden, and a tick changed in either list is
+			// shown or hidden at once.
+			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
+			StringAssert.Contains(Ui.Between(main, "SettingsManager.AutoHideShowMappedDevices(game);", "MainForm_Load: end"),
+				"AppHelper.SynchronizeToHidGuardian();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+			var pad = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
+			StringAssert.Contains(Ui.Between(pad, "private void MappedDevicesDataGridView_CellClick(", "#endregion"),
+				"SettingsManager.HideMappedDevices(", "Unticking a row leaves its device hidden from games.");
+			var list = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "UserDevicesUserControl.cs"));
+			StringAssert.Contains(Ui.Between(list, "ud.IsEnabled = !ud.IsEnabled;", "else if (column == IsHiddenColumn)"),
+				"SettingsManager.HideMappedDevices(", "Unticking a device on the Devices page leaves it hidden from games.");
 		}
 	}
 }

@@ -24,6 +24,12 @@ namespace x360ce.Tests
 	/// passes and a return to the old behaviour does not. They are held against the trace the
 	/// program writes when X360CE_ENGINE_LOG names a file, because a number read off the window
 	/// one glance at a time can be made to say whatever the reader hoped.
+	///
+	/// The controller pages appear at 1.0-1.5 s and the program is ready at 2.3-2.9 s. The first
+	/// issue round gates the pages, so the leftover-pad read is cached and skipped in that round:
+	/// read there, it puts the pages at 4.6-7.4 s and the program ready at 6-9 s. What remains:
+	/// the pads at 1.3-1.4 s (about 150 ms to construct each, pad 1 initialisation about 440 ms),
+	/// InitializeComponent about 0.4 s, and the first take-in 250-350 ms.
 	/// </remarks>
 	[TestClass]
 	public class StartupPerformanceTest

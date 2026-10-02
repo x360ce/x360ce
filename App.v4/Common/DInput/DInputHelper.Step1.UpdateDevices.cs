@@ -282,6 +282,8 @@ namespace x360ce.App.DInput
 			{
 				lock (SettingsManager.UserDevices.SyncRoot)
 					deleteDevices[i].IsOnline = false;
+				// Not read while it is gone, so an Auto run under way on it would never end.
+				EndSpringRun(deleteDevices[i]);
 			}
 			if (evictDevices.Count > 0)
 			{
@@ -294,6 +296,9 @@ namespace x360ce.App.DInput
 				//
 				// Sent rather than waited for, because waiting would put this loop behind whatever the
 				// window happens to be drawing, which is the thing this list was written to avoid.
+				//
+				// An evicted stale virtual-pad record keeps its joystick open, once per record.
+				// Disposing it here would race the engine thread that may still be polling it.
 				var evicted = evictDevices.ToArray();
 				JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
 				{

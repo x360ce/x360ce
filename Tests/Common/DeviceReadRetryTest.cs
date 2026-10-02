@@ -119,6 +119,22 @@ namespace x360ce.Tests
 				"A poll that failed nothing does not end the run's report, so a later fault goes unreported.");
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A device whose objects or effects cannot be listed fails as a read does, and rests")]
+		public void A_listing_failure_counts_as_a_failed_read()
+		{
+			// Listed once, while the list is not known yet, so one that keeps failing is asked again on every poll. Ended
+			// before it, the run of failures would never reach two: an exception and a re-hold on every poll.
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
+			var objects = source.IndexOf("var dos = AppHelper.GetDeviceObjects(device);");
+			var effects = source.IndexOf("ud.DeviceEffects = AppHelper.GetDeviceEffects(device);");
+			var reset = source.IndexOf("ud.DiReadFailures = 0;");
+			var force = source.IndexOf("if (hasForceFeedback && !IsForceResting(");
+			Assert.IsTrue(objects > 0 && effects > objects && reset > effects,
+				"The run of failed reads ends before the device's objects and effects are listed, so a device that cannot be listed never rests.");
+			Assert.IsTrue(force > reset, "The run of failed reads ends after the force is sent, or the force is sent in the read's run.");
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("A device that comes back online starts with no failed reads")]
 		public void A_device_that_comes_back_starts_a_new_run()

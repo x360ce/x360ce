@@ -151,7 +151,7 @@ namespace x360ce.Tests
 				"The clear must sit at the top of the per-setting loop, before the turn can end early.");
 			StringAssert.Contains(source, "axisButtons |= map.ButtonFlag;", "The engine does not record a pressed axis button as it decides one.");
 			StringAssert.Contains(source, "setting.AxisButtons = axisButtons;", "The engine does not keep what it held for the next pass.");
-			StringAssert.Contains(source, "ConvertHelper.IsAxisButtonPressed(v, map.IsInverted, map.IsHalf, map.DeadZone, wasPressed)",
+			StringAssert.Contains(source, "ConvertHelper.IsAxisButtonPressed(v, map.IsInverted, half, map.DeadZone, wasPressed)",
 				"The engine decides an axis button some other way than the tested rule.");
 			Assert.IsFalse(source.Contains("if (v > map.DeadZone)"), "The single threshold is still in the engine.");
 		}

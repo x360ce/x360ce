@@ -18,10 +18,13 @@ namespace x360ce.Tests
 	/// and nothing in this class means anything while that one is red. On top, v4 talks to the
 	/// cloud through one operation, <c>Execute</c>, with a <see cref="CloudMessage"/> whose
 	/// sensitive values are AES-encrypted under a random password that is itself RSA-encrypted
-	/// with the server's public key. Every message the program sends is rebuilt here the way
+	/// with the server's public key. Every message the program sends but one is rebuilt here the way
 	/// <c>App.v4/Common/CloudClient.cs</c> builds it. The remaining operations of the contract
 	/// (<c>GetProgramsDefault</c>, <c>GetSettingsData</c>, <c>GetVendors</c>, <c>GetProgram</c>,
 	/// <c>SetProgram</c>) are called by no program; they are covered so the WSDL is whole.
+	///
+	/// The one message no test sends is <c>Execute</c> with <c>SendMailMessage</c>: it sends a real
+	/// mail through the server's mail settings.
 	/// </remarks>
 	[TestClass]
 	public class X360ceServiceV4Test

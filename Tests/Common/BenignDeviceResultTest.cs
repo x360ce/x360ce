@@ -26,6 +26,7 @@ namespace x360ce.Tests
 				unchecked((int)0x80070005), // E_ACCESSDENIED, another program holds the device.
 				unchecked((int)0x8007048F), // ERROR_DEVICE_NOT_CONNECTED.
 				unchecked((int)0x80004001), // E_NOTIMPL, effect not implemented.
+				unchecked((int)0x80040205), // DIERR_NOTEXCLUSIVEACQUIRED, the exclusive hold lost to another program.
 			})
 				Assert.IsTrue(DInputHelper.IsBenignDeviceResult(new Result(code)), string.Format("0x{0:X8} is a device condition, yet it would be reported.", code));
 		}

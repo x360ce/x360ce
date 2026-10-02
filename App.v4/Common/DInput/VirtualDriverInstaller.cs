@@ -68,37 +68,81 @@ namespace x360ce.App.DInput
 			lock (LeftoverLock)
 				if (key == LastLeftoverKey)
 					return LastLeftovers;
-			var all = DeviceDetector.GetDevices(ids, true, false);
-			var byId = IndexById(all);
-			var leftovers = all
-				.Where(x => IsVirtualPad(x, byId))
-				// Not the ones this program is using right now. Offering to remove those would break
-				// the very thing somebody pressing the button is trying to repair.
-				.Where(x => !IsOneOfOurs(x, byId))
-				// One entry per controller, not per device. A controller is a small family - the thing
-				// itself and a face for each way of reading it - so counting devices reported one left
-				// behind as three, and named the same controller three times over. Removing the
-				// controller takes its faces with it, so the family is represented by the controller.
-				//
-				// The faces carry the XInput marker and the controller does not, so a face is gathered by
-				// walking up to the first thing without it, and the controller is gathered by itself.
-				// Walking up from the controller as well would take it to the bus that made it, which is
-				// shared by every controller on it - so each one would be filed under its own maker and
-				// counted apart from its own faces.
-				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
-					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
-						? XInputPlaces.HardwareOf(x, byId)
-						: x.DeviceId, StringComparer.OrdinalIgnoreCase)
-				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
-					?? g.First())
-				.OrderBy(x => x.DeviceId)
-				.ToArray();
+			var leftovers = LeftoversOf(DeviceDetector.GetDevices(ids, true, false), OurSerials());
 			lock (LeftoverLock)
 			{
 				LastLeftoverKey = key;
 				LastLeftovers = leftovers;
 			}
 			return leftovers;
+		}
+
+		/// <summary>The same judgement against a device list already read and a given list of bus numbers, so it can be asked without a machine.</summary>
+		/// <param name="all">The controller family, as <see cref="ReadControllerTree"/> reads it.</param>
+		/// <param name="serials">The bus numbers of the controllers this program is holding.</param>
+		public static DeviceInfo[] LeftoversOf(DeviceInfo[] all, ICollection<uint> serials)
+		{
+			// The family is named by the controller, or by its highest face when the controller has gone.
+			return LeftoverGroups(all, IndexById(all), serials)
+				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
+					?? g.First())
+				.OrderBy(x => x.DeviceId)
+				.ToArray();
+		}
+
+		/// <summary>Every device of each leftover controller, one list per controller, each device before its parent: what removing the leftovers removes.</summary>
+		/// <remarks>
+		/// Removing a device does not take its children with it. Removing only the device a leftover is named by leaves its
+		/// faces behind, and the next look finds them as a leftover of their own. So every device of the family goes, the
+		/// deepest first, and the controller counts once, as <see cref="LeftoversOf"/> names it.
+		/// </remarks>
+		/// <param name="all">The controller family with records, as <see cref="ReadControllerTree"/> reads it.</param>
+		/// <param name="serials">The bus numbers of the controllers this program is holding.</param>
+		public static DeviceInfo[][] LeftoverFamiliesOf(DeviceInfo[] all, ICollection<uint> serials)
+		{
+			var byId = IndexById(all);
+			return LeftoverGroups(all, byId, serials)
+				.Select(g => g.OrderByDescending(x => AncestorCount(x, byId)).ToArray())
+				.ToArray();
+		}
+
+		/// <summary>The devices left behind, gathered by the controller each belongs to.</summary>
+		static IEnumerable<IGrouping<string, DeviceInfo>> LeftoverGroups(DeviceInfo[] all, Dictionary<string, DeviceInfo> byId, ICollection<uint> serials)
+		{
+			return all
+				.Where(x => IsVirtualPad(x, byId))
+				// Not the ones this program is using right now. Offering to remove those would break
+				// the very thing somebody pressing the button is trying to repair.
+				.Where(x => !IsOneOfOurs(x, byId, serials))
+				// One entry per controller, not per device. A controller is a small family - the thing
+				// itself and a face for each way of reading it - so counting devices reported one left
+				// behind as three, and named the same controller three times over.
+				//
+				// The faces carry the XInput marker and the controller does not, so a face is gathered by
+				// walking up to the first thing without it, or to the highest face when the chain breaks
+				// before it, and the controller is gathered by itself.
+				// Walking up from the controller as well would take it to the bus that made it, which is
+				// shared by every controller on it - so each one would be filed under its own maker and
+				// counted apart from its own faces.
+				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
+					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
+						? XInputPlaces.HardwareOf(x, byId)
+						: x.DeviceId, StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>How many devices above this one are known, walking up until a parent is missing or seen twice.</summary>
+		static int AncestorCount(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
+		{
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var count = 0;
+			DeviceInfo parent;
+			while (!string.IsNullOrEmpty(device.ParentDeviceId) && seen.Add(device.ParentDeviceId)
+				&& byId.TryGetValue(device.ParentDeviceId, out parent))
+			{
+				count++;
+				device = parent;
+			}
+			return count;
 		}
 
 		/// <summary>The leftovers at the last look, and what they were judged from.</summary>
@@ -128,6 +172,10 @@ namespace x360ce.App.DInput
 		/// matched against the name.
 		/// That is a clear reference to its own, rather than a guess from timing.
 		///
+		/// Only the device the bus made - the one whose parent is the bus - is matched by its number.
+		/// Its faces reach it by walking up. A face whose chain breaks before reaching it, as a pad
+		/// left behind by a run that ended badly does, is never ours, whatever its own name ends in.
+		///
 		/// If the numbers cannot be read, nothing is claimed. Being wrong that way mentions a
 		/// controller that need not be mentioned; being wrong the other way offers to remove the one
 		/// in use.
@@ -145,28 +193,29 @@ namespace x360ce.App.DInput
 			if (serials == null || serials.Count == 0)
 				return false;
 			// A controller is not one device but a small family: the one the bus creates and the two
-			// beneath it that Windows adds. Only the top one carries the number, so the question is
-			// asked of the whole line of ancestors. Matching the name alone catches the top and misses
-			// the rest, and the ones missed are then reported as somebody's leftovers.
+			// beneath it that Windows adds. Only the one the bus made carries the number, so a face walks
+			// up to it and it alone is read. The name of any other device in the family ends in something
+			// that is not a bus number - a pad left behind has a face ending in "&01" - and reading those
+			// would claim somebody else's controller whenever this program holds that number. A chain that
+			// breaks before it reaches the device the bus made has lost its number, and is never ours.
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var current = device;
-			while (current != null)
+			while (true)
 			{
 				// The bus that makes every controller is not one of them. Its own name ends in a number
 				// too, and reading that would claim every controller on the bus for whoever holds that number.
 				if (IsViGEmBus(current))
 					return false;
-				if (serials.Contains(TrailingNumber(current.DeviceId)))
-					return true;
 				var parentId = current.ParentDeviceId;
 				if (string.IsNullOrEmpty(parentId) || !seen.Add(parentId))
 					return false;
 				DeviceInfo parent;
 				if (!byId.TryGetValue(parentId, out parent))
 					return false;
+				if (IsViGEmBus(parent))
+					return serials.Contains(TrailingNumber(current.DeviceId));
 				current = parent;
 			}
-			return false;
 		}
 
 		/// <summary>The number Windows put at the end of a device's name, or zero.</summary>
@@ -446,6 +495,14 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static readonly TimeSpan ReleaseLimit = TimeSpan.FromMilliseconds(DInputHelper.XiAnswerMs);
 
+		/// <summary>How long removing or repairing waits for the pass under way, and then a plug under way, to finish.</summary>
+		/// <remarks>
+		/// A plug that XInput answers ends within about seven seconds: five waiting for its place, and two device tree reads.
+		/// One still running after this is waiting for XInput that is not answering. Removing and repairing run on a
+		/// worker, never on the interface thread, so nothing waits for this but them.
+		/// </remarks>
+		static readonly TimeSpan StopLimit = TimeSpan.FromSeconds(10);
+
 		/// <summary>
 		/// Removes the leftover controllers, through an Administrator copy of this program when this
 		/// one is not, and says what happened in words. Never on the interface thread: Windows asks
@@ -463,10 +520,10 @@ namespace x360ce.App.DInput
 			var helper = Global.DHelper;
 			try
 			{
-				if (helper != null && !helper.ReleaseForDeviceRemoval(ReleaseLimit))
+				if (helper != null && !helper.ReleaseForDeviceRemoval(StopLimit, ReleaseLimit))
 				{
 					succeeded = false;
-					return "XInput is not answering, so nothing was removed. Try again in a moment.";
+					return "The controllers could not be let go of in time, so nothing was removed. Try again in a moment.";
 				}
 				if (Program.RunElevated(AdminCommand.RemoveLeftoverPads))
 				{
@@ -508,22 +565,31 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>Removes every device of each leftover controller, each before its parent.</summary>
+		/// <returns>How many controllers were removed whole, counted as <see cref="GetLeftoverVirtualPads"/> counts them.</returns>
 		public static int RemoveLeftoverVirtualPads(out bool rebootNeeded, out Exception error)
 		{
 			rebootNeeded = false;
 			error = null;
 			var removed = 0;
-			foreach (var pad in GetLeftoverVirtualPads())
+			// Read now, with the records, as the leftovers are read; see LeftoverFamiliesOf for why every device goes.
+			foreach (var family in LeftoverFamiliesOf(ReadControllerTree(true), OurSerials()))
 			{
-				bool restart;
-				var failure = DeviceDetector.RemoveDevice(pad.DeviceId, 1, out restart);
-				if (failure != null)
+				var whole = true;
+				foreach (var device in family)
 				{
-					error = failure;
-					continue;
+					bool restart;
+					var failure = DeviceDetector.RemoveDevice(device.DeviceId, 1, out restart);
+					if (failure != null)
+					{
+						error = failure;
+						whole = false;
+						continue;
+					}
+					rebootNeeded |= restart;
 				}
-				removed++;
-				rebootNeeded |= restart;
+				if (whole)
+					removed++;
 			}
 			return removed;
 		}
@@ -786,8 +852,9 @@ namespace x360ce.App.DInput
 			var helper = Global.DHelper;
 			try
 			{
-				// Not repaired while XInput is not answering; the window has already been told.
-				if (helper != null && !helper.ReleaseForDeviceRemoval(ReleaseLimit))
+				// Not repaired while the controllers cannot be let go of: XInput not answering, which the window has already
+				// been told, or the pass under way not finishing.
+				if (helper != null && !helper.ReleaseForDeviceRemoval(StopLimit, ReleaseLimit))
 					return;
 				Program.RunElevated(AdminCommand.RepairViGEmBus);
 			}

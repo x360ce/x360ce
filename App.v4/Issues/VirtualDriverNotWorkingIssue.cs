@@ -9,8 +9,9 @@ namespace x360ce.App.Issues
 {
 	/// <summary>
 	/// The virtual bus driver is installed but does not work. Connecting to it fails, a controller keeps
-	/// failing to plug in while its XInput place is free, or the bus keeps refusing its reports. A
-	/// controller whose vibration it refused is said too, as information, since that controller works.
+	/// failing to plug in while its XInput place is free, the bus keeps refusing its reports, or it will not
+	/// remove a controller, so no other is made for that tab. A controller whose vibration it refused is said
+	/// too, as information, since that controller works.
 	/// </summary>
 	/// <remarks>
 	/// Nothing else says so. Device Manager shows the driver as healthy, the driver issue sees it
@@ -34,6 +35,9 @@ namespace x360ce.App.Issues
 		/// during a driver update, another program plugging one in at the same instant, or Windows slow
 		/// to build one. Two can still be that moment straddling a retry. Three cannot. With checks
 		/// every five seconds, the issue appears about ten seconds after a refusing bus starts refusing.
+		///
+		/// For plugs that are tried again. A controller that was never seen, because Windows never built it or XInput did not
+		/// answer, is held back until a controller comes or goes, so it is not tried again and is said at once.
 		/// </remarks>
 		public const int PlugFailuresToReport = 3;
 
@@ -92,6 +96,8 @@ namespace x360ce.App.Issues
 			public VIGEM_ERROR RumbleError;
 			/// <summary>Plugs in a row that failed while its own XInput place was free.</summary>
 			public int PlugFailures;
+			/// <summary>What held it back until a controller comes or goes, or None. Held back, it is not tried again and its count does not grow.</summary>
+			public VirtualError HeldAs;
 			/// <summary>Reports in a row the bus refused, each within <see cref="DInputHelper.FeedDropWindowMs"/> of the one before.</summary>
 			public int FeedDrops;
 			/// <summary><see cref="Environment.TickCount"/> at the last refused report.</summary>
@@ -164,6 +170,7 @@ namespace x360ce.App.Issues
 						RumbleError = rumble == null ? VIGEM_ERROR.VIGEM_ERROR_NONE : rumble[i],
 						LastError = helper.BusErrors[i],
 						PlugFailures = helper.PlugFailures[i],
+						HeldAs = helper.HeldAs(i),
 						// The count before its time: the input thread stores the time first, so a new count
 						// read here is never paired with an older time. Volatile.Read makes that order formal.
 						FeedDrops = Volatile.Read(ref helper.FeedDrops[i]),
@@ -205,11 +212,29 @@ namespace x360ce.App.Issues
 					continue;
 				var number = i + 1;
 				var said = lines.Count;
-				if (pad.PlugFailures >= PlugFailuresToReport)
-					lines.Add(pad.LastResult == VirtualError.PlaceNotGiven
-						? string.Format(
-							"Controller {0}: the driver accepted its virtual controller {1} times in a row, " +
-							"but Windows never finished building it.", number, pad.PlugFailures)
+				// Nothing else is made for it until the driver lets go, which Repair or a restart brings about. Said instead of
+				// the failed plugs counted before it, whose kind its last result no longer tells.
+				if (pad.LastResult == VirtualError.RemovalRefused)
+					lines.Add(string.Format(
+						"Controller {0}: the driver would not remove its virtual controller, so no other is made for it.",
+						number));
+				// A pad held back is not tried again while the places stay the same, so its count cannot grow. When the attempt
+				// that held it back never saw its controller, it is said at once, in the words of what that attempt found. One
+				// Windows put in another place was seen, and the driver works. One tried again is said after enough failures
+				// that no passing moment explains.
+				else if (pad.HeldAs == VirtualError.NotAnswering)
+					lines.Add(string.Format(
+						"Controller {0}: XInput did not answer while its virtual controller was being made, so it was taken " +
+						"away again. It is tried again when a controller arrives or leaves.", number));
+				else if (pad.HeldAs == VirtualError.PlaceNotGiven || pad.PlugFailures >= PlugFailuresToReport)
+					lines.Add(pad.HeldAs == VirtualError.PlaceNotGiven || pad.LastResult == VirtualError.PlaceNotGiven
+						? pad.PlugFailures <= 1
+							? string.Format(
+								"Controller {0}: the driver accepted its virtual controller, but Windows never finished building it.",
+								number)
+							: string.Format(
+								"Controller {0}: the driver accepted its virtual controller {1} times in a row, " +
+								"but Windows never finished building it.", number, pad.PlugFailures)
 						: string.Format(
 							"Controller {0}: the driver refused to make its virtual controller {1} times in a " +
 							"row while XInput {0} was free (driver answer: {2}).",

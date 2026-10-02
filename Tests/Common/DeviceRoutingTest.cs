@@ -186,16 +186,16 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
-		[Description("The routing carries each routed row's device, settings, mappings and D-Pad, and every device the game maps")]
+		[Description("The routing carries each routed row's device, settings, mappings and D-Pad, and every device the game's ticked rows map")]
 		public void The_routing_carries_what_the_engine_looks_up()
 		{
 			var first = new UserDevice { InstanceGuid = Guid.NewGuid() };
-			var offTab = new UserDevice { InstanceGuid = Guid.NewGuid() };
+			var unticked = new UserDevice { InstanceGuid = Guid.NewGuid() };
 			var otherGame = new UserDevice { InstanceGuid = Guid.NewGuid() };
 			var ps = new PadSetting { DPad = "p2", ButtonA = "b1", PadSettingChecksum = Guid.NewGuid() };
 			var buttonDPad = new PadSetting { DPad = "b3", PadSettingChecksum = Guid.NewGuid() };
 			var live = Row(first.InstanceGuid, MapTo.Controller1, ps);
-			var switchedOff = Row(offTab.InstanceGuid, MapTo.Controller2, ps);
+			var switchedOff = Row(unticked.InstanceGuid, MapTo.Controller2, ps);
 			switchedOff.IsEnabled = false;
 			var elsewhere = Row(otherGame.InstanceGuid, MapTo.Controller1, ps);
 			elsewhere.FileName = "other.exe";
@@ -203,10 +203,10 @@ namespace x360ce.Tests
 			var noSettings = Row(first.InstanceGuid, MapTo.Controller4);
 
 			var routing = DeviceRouting.Build(Game, new[] { live, switchedOff, elsewhere, noDevice, noSettings },
-				new[] { ps, buttonDPad }, new[] { otherGame, offTab, first });
+				new[] { ps, buttonDPad }, new[] { otherGame, unticked, first });
 
-			CollectionAssert.AreEqual(new[] { offTab, first }, routing.MappedDevices,
-				"The engine reads other devices than the game maps, or not in the order of the devices list.");
+			CollectionAssert.AreEqual(new[] { first }, routing.MappedDevices,
+				"The engine reads other devices than the game's ticked rows map, or not in the order of the devices list.");
 			CollectionAssert.AreEqual(new[] { live, noDevice, noSettings }, routing.Rows);
 			CollectionAssert.AreEqual(new[] { first, null, first }, routing.RowDevices, "A row reads another device than its own.");
 			Assert.AreSame(ps.Maps, routing.RowMaps[0], "A row converts with other mappings than its settings hold.");
@@ -214,6 +214,55 @@ namespace x360ce.Tests
 			Assert.IsNull(routing.RowMaps[2], "A row whose settings are not stored has mappings.");
 			CollectionAssert.AreEqual(new[] { 2, 0, 0 }, routing.RowDPads,
 				"The D-Pad is read from another POV than the settings name, or a button is read as a POV.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("A device whose rows of the game are all unticked is not read, not forced and passed no force, beside a ticked device on the same tab")]
+		public void An_unticked_device_takes_part_in_nothing()
+		{
+			var unticked = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\1" };
+			var ticked = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\2" };
+			// Both pass the tab's force on to the place their own device holds, and the unticked row comes first.
+			var own = PassThrough(0);
+			own.ForceEnable = "1";
+			var off = Row(unticked.InstanceGuid, MapTo.Controller1, own);
+			off.IsEnabled = false;
+			var on = Row(ticked.InstanceGuid, MapTo.Controller1, own);
+
+			var routing = DeviceRouting.Build(Game, new[] { off, on }, new[] { own }, new[] { unticked, ticked });
+
+			CollectionAssert.AreEqual(new[] { ticked }, routing.MappedDevices, "An unticked device is read, and held, on every pass.");
+			Assert.AreEqual(1, routing.PadPassThrough[0].Length, "An unticked row is asked where the tab's force is passed on to.");
+			Assert.AreSame(ticked, routing.PadPassThrough[0][0].Device, "The tab's force is passed on to an unticked device.");
+			var places = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { { unticked.HidDeviceId, 1 }, { ticked.HidDeviceId, 3 } };
+			PadSetting answered;
+			Assert.AreEqual(3, routing.PassThroughPlace(0, places, out answered), "The game's rumble is passed on to the unticked device's place.");
+			DeviceForce force;
+			Assert.IsFalse(routing.TryGetForce(unticked.InstanceGuid, out force), "An unticked device is sent force feedback.");
+			Assert.IsTrue(routing.TryGetForce(ticked.InstanceGuid, out force), "The ticked device beside it is sent no force feedback.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("A device unticked on the Devices page takes part in nothing, as an unticked row does, beside a ticked device on the same tab")]
+		public void A_device_unticked_on_the_Devices_page_takes_part_in_nothing()
+		{
+			var disabled = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\1", IsEnabled = false };
+			var enabled = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\2" };
+			var own = PassThrough(0);
+			own.ForceEnable = "1";
+			// Both rows are ticked; the first device is switched off on the Devices page.
+			var off = Row(disabled.InstanceGuid, MapTo.Controller1, own);
+			var on = Row(enabled.InstanceGuid, MapTo.Controller1, own);
+
+			var routing = DeviceRouting.Build(Game, new[] { off, on }, new[] { own }, new[] { disabled, enabled });
+
+			CollectionAssert.AreEqual(new[] { enabled }, routing.MappedDevices, "A device switched off on the Devices page is read, and held, on every pass.");
+			CollectionAssert.AreEqual(new[] { on }, routing.Rows, "A device switched off on the Devices page reaches its controller.");
+			Assert.AreEqual(1, routing.PadPassThrough[0].Length, "A device switched off on the Devices page is asked where the tab's force is passed on to.");
+			Assert.AreSame(enabled, routing.PadPassThrough[0][0].Device, "The tab's force is passed on to a device switched off on the Devices page.");
+			DeviceForce force;
+			Assert.IsFalse(routing.TryGetForce(disabled.InstanceGuid, out force), "A device switched off on the Devices page is sent force feedback.");
+			Assert.IsTrue(routing.TryGetForce(enabled.InstanceGuid, out force), "The device beside it is sent no force feedback.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("performance")]

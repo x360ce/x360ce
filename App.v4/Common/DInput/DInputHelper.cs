@@ -66,8 +66,42 @@ namespace x360ce.App.DInput
 		/// <summary>Held for each pass of the loop, so what a pass is using is not let go of half way through it.</summary>
 		readonly object PassLock = new object();
 
-		/// <summary>The places taken when each controller was last put somewhere other than its own place.</summary>
-		readonly int[] _misplacedWith = new int[4];
+		/// <summary>The places taken, one bit each, when each controller was last put somewhere other than its own place, or given none; -1 while it is not held back.</summary>
+		/// <remarks>
+		/// While the places are the same, the plug worker makes nothing for that pad. Kept until a controller is made in its
+		/// own place, the places differ, or <see cref="ForgetBusHealth"/> forgets it with the rest of what the bus did: when
+		/// the game leaves virtual emulation, and after a Repair, Remove or Auto-Order. Whatever the attempts in between came
+		/// to, so XInput not answering once does not let it go. Written by the plug worker; by the reorder runner and
+		/// <see cref="ResumeAfterDeviceRemoval"/> while the input thread is stopped and no plug is under way; and by the input
+		/// thread while no plug is under way. Read by <see cref="BeginPlug"/> on the input thread, which starts a plug only
+		/// once the last one has been taken in.
+		/// </remarks>
+		readonly int[] _misplacedWith = { -1, -1, -1, -1 };
+
+		/// <summary>What the attempt that held each controller back came to: PlaceWrong, PlaceNotGiven or NotAnswering.</summary>
+		/// <remarks>Written with <see cref="_misplacedWith"/>, and meaningful only while it is set. Each held attempt repeats it.</remarks>
+		readonly VirtualError[] _heldAs = new VirtualError[4];
+
+		/// <summary>Whether each controller's last plug was held back by <see cref="_misplacedWith"/>, so it reached no bus.</summary>
+		/// <remarks>Written by the plug worker before its plug finishes; read by the input thread when it takes the plug in.</remarks>
+		readonly bool[] _heldBack = new bool[4];
+
+		/// <summary>Whether each controller's last plug took its controller away: off the bus again, as it was not in its own place, or replaced by a new one while the bus keeps it.</summary>
+		/// <remarks>
+		/// Written by the plug worker before its plug finishes, and by the reorder runner's own call, which nothing reads:
+		/// <see cref="ResumeAfterDeviceRemoval"/> drops every pad after it. Cleared when the next plug starts. Read by
+		/// <see cref="PlugOutcome"/> when the plug is taken in, which then drops what the pad's game asked for meanwhile: the
+		/// worker leaves that to the thread whose fields hold it.
+		/// </remarks>
+		readonly bool[] _takenAgain = new bool[4];
+
+		/// <summary>What held this pad back until a controller comes or goes, or None while it is not held back.</summary>
+		/// <param name="padIndex">The pad, 0 to 3.</param>
+		/// <remarks>A pad held back is not tried again meanwhile. Read without a lock by the Issues tab: two whole numbers.</remarks>
+		public VirtualError HeldAs(int padIndex)
+		{
+			return _misplacedWith[padIndex] >= 0 ? _heldAs[padIndex] : VirtualError.None;
+		}
 
 		/// <summary>Where Windows last put each controller that was taken away again for not being in its own place.</summary>
 		public readonly int[] MisplacedIn = { -1, -1, -1, -1 };
@@ -98,8 +132,8 @@ namespace x360ce.App.DInput
 		/// <remarks>
 		/// Windows cannot cleanly switch off a controller that anything holds open, and this program holds
 		/// all of them: its own virtual controllers, both XInput libraries, and a DirectInput device for
-		/// every controller it reads. The pass under way finishes first, then all of it is let go of, and
-		/// <see cref="ResumeAfterDeviceRemoval"/> picks it up again: the loop opens a device for every
+		/// every controller it reads. The pass under way and a plug under way finish first, then all of it is let go
+		/// of, and <see cref="ResumeAfterDeviceRemoval"/> picks it up again: the loop opens a device for every
 		/// controller that has none, and loads XInput when it is not loaded.
 		/// </remarks>
 		/// <returns>
@@ -108,16 +142,10 @@ namespace x360ce.App.DInput
 		/// </returns>
 		public bool StopForReorder(TimeSpan limit)
 		{
-			Suspended = true;
-			// Entered only to know the pass under way has finished, and left at once. The loop asks again
-			// inside it and starts nothing more, so nothing needs to be held while the rest is let go of.
-			if (!Monitor.TryEnter(PassLock, limit))
-				return false;
-			Monitor.Exit(PassLock);
-			// The pass has finished, so only a display read can hold the XInput library now, and a healthy one lets
-			// go in microseconds. Past the time XInput has to answer it is not answering, and feeding the
+			// Once the pass and any plug have finished, only a display read can hold the XInput library, and a healthy
+			// one lets go in microseconds. Past the time XInput has to answer it is not answering, and feeding the
 			// controllers is not held up for the rest of the limit.
-			if (!ReleaseForDeviceRemoval(TimeSpan.FromMilliseconds(XiAnswerMs)))
+			if (!ReleaseForDeviceRemoval(limit, TimeSpan.FromMilliseconds(XiAnswerMs)))
 				return false;
 			if (!Monitor.TryEnter(SettingsManager.UserDevices.SyncRoot, limit))
 				return false;
@@ -359,6 +387,14 @@ namespace x360ce.App.DInput
 				RetrieveXiStates(game, getXInputStates);
 				StepDone(7, ref mark);
 			}
+			else
+			{
+				// No game: no device is read and no force is passed on. The devices the last game read are let go of, and
+				// a force it passed on is stopped, once, on the first pass without it.
+				var routing = DeviceRouting.Current;
+				TakeRouting(routing);
+				PassForcesThrough(routing, 0);
+			}
 			// Update pool frequency value every second.
 			UpdateDelayFrequency();
 			// Counted last, so the window draws a pass that has finished.
@@ -374,8 +410,9 @@ namespace x360ce.App.DInput
 		/// <summary>Counts passes, for the rate the status bar shows.</summary>
 		readonly Engine.RateCounter passRate = new Engine.RateCounter();
 
-		/// <summary>Passes a second, measured over the last second.</summary>
-		public int CurrentUpdateFrequency { get { return passRate.Rate; } }
+		/// <summary>Passes a second, measured over the last second, and zero while the loop is stopped.</summary>
+		/// <remarks>The counter keeps its last rate while no pass arrives, and a stopped loop must read as stopped.</remarks>
+		public int CurrentUpdateFrequency { get { return Suspended ? 0 : passRate.Rate; } }
 
 		/// <summary>Passes run since the helper was made, for the window to tell whether there is anything new to draw.</summary>
 		/// <remarks>Written by the input thread only, once a pass; read by the window's timer. One field, no lock.</remarks>

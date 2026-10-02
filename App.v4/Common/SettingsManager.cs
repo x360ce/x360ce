@@ -173,21 +173,23 @@ namespace x360ce.App
 				);
 		}
 
+		/// <summary>The devices a game uses: on a row of the game mapped to a controller, ticked in the tab's list and on the Devices page.</summary>
+		/// <remarks>A device unticked in either list takes part in nothing, so it is not hidden from games either.</remarks>
 		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
 			// Get all mapped user instances.
 			var instanceGuids = UserSettings.ItemsToArraySyncronized()
 				// Filter by game.
 				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
-				// Include only mapped devices.
-				.Where(x => x.MapTo > (int)MapTo.None)
+				// Include only mapped devices, on rows ticked in the tab's list.
+				.Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
 				// Select device instances only.
 				.Select(x => x.InstanceGuid)
 				.ToArray();
 			// Get all connected devices.
 			var userDevices = UserDevices.ItemsToArraySyncronized()
-				// Filter by instance.
-				.Where(x => instanceGuids.Contains(x.InstanceGuid))
+				// Filter by instance, ticked on the Devices page.
+				.Where(x => instanceGuids.Contains(x.InstanceGuid) && x.IsEnabled)
 				// Include only currently connected devices.
 				.Where(x => includeOffline || x.IsOnline)
 				.ToArray();
@@ -1253,12 +1255,17 @@ namespace x360ce.App
 				SetTabEnabled(game, mappedTo, true);
 			SwitchOffEmptyTabs(game, left);
 			if (configureHidGuardian)
-			{
-				var instanceGuids = devices.Select(x => x.InstanceGuid).ToArray();
-				var changed = AutoHideShowMappedDevices(game, instanceGuids);
-				if (changed)
-					AppHelper.SynchronizeToHidGuardian(instanceGuids);
-			}
+				HideMappedDevices(game, devices.Select(x => x.InstanceGuid).ToArray());
+		}
+
+		/// <summary>Hides through HID Guardian those of these devices the game uses, and shows the others, as <see cref="AutoHideShowMappedDevices"/> judges them.</summary>
+		/// <remarks>Called when a device is put on a tab or taken off it, and when its tick in a tab's list or on the Devices page changes.</remarks>
+		/// <param name="game">The game.</param>
+		/// <param name="instanceGuids">The devices whose hiding may have changed.</param>
+		public static void HideMappedDevices(UserGame game, params Guid[] instanceGuids)
+		{
+			if (AutoHideShowMappedDevices(game, instanceGuids))
+				AppHelper.SynchronizeToHidGuardian(instanceGuids);
 		}
 
 		/// <summary>The controller tabs of a game a device is on, lowest first.</summary>
@@ -1323,17 +1330,14 @@ namespace x360ce.App
 			if (setting != null)
 				setting.MapTo = (int)MapTo.Disabled;
 			SwitchOffEmptyTabs(game, new[] { tab });
+			// Unhide device if no longer mapped.
 			if (configureHidGuardian)
-			{
-				// Unhide device if no longer mapped.
-				var changed = SettingsManager.AutoHideShowMappedDevices(game, new Guid[] { setting.InstanceGuid });
-				if (changed)
-					AppHelper.SynchronizeToHidGuardian(setting.InstanceGuid);
-			}
+				HideMappedDevices(game, setting.InstanceGuid);
 		}
 
 		/// <summary>
 		/// Hide devices if they are mapped to the game, unhide devices if they are not mapped.
+		/// A device unticked in a tab's list or on the Devices page counts as not mapped (<see cref="GetMappedDevices"/>).
 		/// </summary>
 		/// <returns>True if device hide/show state changed.</returns>
 		public static bool AutoHideShowMappedDevices(UserGame game, Guid[] instanceGuids = null)

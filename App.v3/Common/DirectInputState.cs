@@ -86,11 +86,11 @@ namespace x360ce.App
 					if (Pows[i] != state.Pows[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-                        var v = state.Pows[0];
-                        if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Up.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Right.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Down.ToString()));
-                        if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("DPad {0} {1}", i + 1, DPadEnum.Left.ToString()));
+                        var v = state.Pows[i];
+                        if ((DPadEnum)v == DPadEnum.Up) list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Up.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Right) list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Right.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Down) list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Down.ToString()));
+                        if ((DPadEnum)v == DPadEnum.Left) list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Left.ToString()));
                     }
                 }
 			};

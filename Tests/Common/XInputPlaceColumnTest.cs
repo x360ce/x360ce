@@ -14,7 +14,7 @@ namespace x360ce.Tests
 	/// </summary>
 	/// <remarks>
 	/// Both faces of one controller must answer the same, because a person reading the list is
-	/// looking at one thing however many devices Windows built for it. A blank is a real answer:
+	/// looking at one thing however many devices Windows built for it. Not known is a real answer:
 	/// where two controllers share the places left over, neither can be named, and naming one
 	/// anyway would have somebody map a controller against a place it does not hold.
 	/// </remarks>
@@ -28,6 +28,8 @@ namespace x360ce.Tests
 			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
 			var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
 			var places = XInputPlaces.Resolve(all, byId);
+			if (places == null)
+				Assert.Inconclusive("XInput did not answer, so no place is known.");
 			var capable = all.Where(XInputPlaces.IsXInputCapable).OrderBy(x => x.DeviceId).ToList();
 			if (capable.Count == 0)
 				Assert.Inconclusive("No controller XInput could see is attached.");
@@ -36,13 +38,13 @@ namespace x360ce.Tests
 			Console.WriteLine();
 			foreach (var device in capable)
 			{
+				// A face with no answer is not known, as the order list reads it.
 				int place;
-				var shown = places.TryGetValue(device.DeviceId, out place)
-					? XInputPlaces.Describe(place, VirtualDriverInstaller.IsVirtualPad(device, byId), VirtualDriverInstaller.IsOneOfOurs(device, byId))
-					: string.Empty;
-				Console.WriteLine("  column shows : {0,-10}  {1}",
-					string.IsNullOrEmpty(shown) ? "(blank)" : shown, device.Description);
-				Console.WriteLine("                             {0}", device.DeviceId);
+				if (!places.TryGetValue(device.DeviceId, out place))
+					place = XInputPlaces.Unknown;
+				var shown = XInputPlaces.Describe(place, VirtualDriverInstaller.IsVirtualPad(device, byId), VirtualDriverInstaller.IsOneOfOurs(device, byId));
+				Console.WriteLine("  column shows : {0,-25}  {1}", shown, device.Description);
+				Console.WriteLine("                                         {0}", device.DeviceId);
 			}
 
 			// Every face of one controller has to give the same answer, whatever that answer is.

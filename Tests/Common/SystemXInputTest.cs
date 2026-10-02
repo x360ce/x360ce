@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using x360ce.App.DInput;
 
 namespace x360ce.Tests
@@ -17,6 +18,9 @@ namespace x360ce.Tests
 	[TestClass]
 	public class SystemXInputTest
 	{
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+		static extern IntPtr GetModuleHandle(string moduleName);
+
 		/// <summary>The system folder holding libraries of the other bitness than this process.</summary>
 		static string OtherBitnessSystemFolder()
 		{
@@ -46,6 +50,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Letting go of XInput unloads it, so the controllers it had open are closed")]
+		public void Release_unloads_the_library()
+		{
+			if (SharpDX.XInput.Controller.IsLoaded)
+				Assert.Inconclusive("Another part of this process holds the XInput library.");
+			SystemXInput.IsConnected(0);
+			var path = SystemXInput.LibraryPath;
+			if (path == null)
+				Assert.Inconclusive("This machine has no XInput library: " + SystemXInput.LoadError);
+			Assert.IsTrue(SystemXInput.Release(TimeSpan.FromSeconds(5)));
+			Assert.AreEqual(IntPtr.Zero, GetModuleHandle(path),
+				"XInput stayed loaded, and with it every controller it had answered about, so Windows could not give their places away.");
+			// The next question loads it again.
+			SystemXInput.IsConnected(0);
+			Assert.IsNotNull(SystemXInput.LibraryPath, "The library did not load again after being let go of: " + SystemXInput.LoadError);
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A library of the wrong bitness is refused and reported, and the probe keeps answering")]
 		public void Wrong_bitness_library_is_refused_without_an_exception()
 		{
@@ -60,7 +82,7 @@ namespace x360ce.Tests
 				Assert.IsNull(SystemXInput.LibraryPath);
 				// Nothing to ask, so nothing is connected and nothing throws.
 				Assert.IsFalse(SystemXInput.IsConnected(0));
-				Assert.IsFalse(SystemXInput.SetVibration(0, 0, 0));
+				Assert.AreEqual(false, SystemXInput.SetVibration(0, 0, 0, TimeSpan.FromSeconds(1)));
 			}
 			finally
 			{

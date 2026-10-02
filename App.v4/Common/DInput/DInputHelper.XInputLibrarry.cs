@@ -46,8 +46,8 @@ namespace x360ce.App.DInput
 			if (!unload || !Controller.IsLoaded)
 				return;
 			// Let go of only while nothing reads through it. The display read holds this lock for its four reads, and
-			// the input thread never waits for it: while it is held, the library is let go of on a later pass.
-			if (!System.Threading.Monitor.TryEnter(Controller.XInputLock))
+			// the input thread never waits for it, nor tries it while it is held: the library is let go of on a later pass.
+			if (!TryEnterXInputLockWhenFree())
 				return;
 			try
 			{
@@ -57,7 +57,7 @@ namespace x360ce.App.DInput
 			}
 			finally
 			{
-				System.Threading.Monitor.Exit(Controller.XInputLock);
+				ExitXInputLock();
 			}
 			var ev = XInputReloaded;
 			if (ev != null)
@@ -86,7 +86,7 @@ namespace x360ce.App.DInput
 			if (emType == EmulationType.Library && !MainForm.Current.FormEventsEnabled)
 				return;
 			// Loaded only while nothing reads through it; never waited for, as above.
-			if (!System.Threading.Monitor.TryEnter(Controller.XInputLock))
+			if (!TryEnterXInputLockWhenFree())
 				return;
 			try
 			{
@@ -128,7 +128,7 @@ namespace x360ce.App.DInput
 			}
 			finally
 			{
-				System.Threading.Monitor.Exit(Controller.XInputLock);
+				ExitXInputLock();
 			}
 		}
 

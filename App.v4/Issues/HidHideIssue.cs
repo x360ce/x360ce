@@ -78,21 +78,22 @@ namespace x360ce.App.Issues
 				ControlsHelper.OpenPath(client);
 		}
 
-		/// <summary>Mapped devices, online or not, on the current game's tabs that have a virtual controller.</summary>
+		/// <summary>Mapped devices, online or not, on the current game's tabs that have a virtual controller, ticked in the tab's list and on the Devices page.</summary>
+		/// <remarks>An unticked device is not used by the game, so it is never named for hiding.</remarks>
 		static UserDevice[] GetVirtualMappedDevices()
 		{
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return new UserDevice[0];
 			var instanceGuids = SettingsManager.GetSettings(game.FileName)
-				.Where(x => x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4
+				.Where(x => x.IsEnabled && x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4
 					&& DInputHelper.WantsVirtual(game, (uint)x.MapTo))
 				.Select(x => x.InstanceGuid)
 				.ToArray();
 			if (instanceGuids.Length == 0)
 				return new UserDevice[0];
 			return SettingsManager.UserDevices.ItemsToArraySyncronized()
-				.Where(x => instanceGuids.Contains(x.InstanceGuid))
+				.Where(x => x.IsEnabled && instanceGuids.Contains(x.InstanceGuid))
 				.ToArray();
 		}
 

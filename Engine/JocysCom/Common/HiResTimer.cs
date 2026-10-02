@@ -518,6 +518,11 @@ namespace JocysCom.ClassLibrary
 	/// so the loop keeps its rate; one more than a whole interval late starts the schedule again from
 	/// that moment, so a stall is never followed by a burst. Windows older than 10 version 1803 has no
 	/// high-resolution timer, and gets an ordinary one, as precise as its clock.
+	///
+	/// The cause of the lost passes is proven by the engine log's per-pass breakdown, a spin loop
+	/// (1000.0 passes a second) and a Windows Performance Recorder trace: timer DPC gaps of 1.1 to
+	/// 5 ms, ready-to-run under 50 microseconds, no long DPC or ISR. With the pacer the rate is 1000
+	/// and 999 passes a second minimized, 1000 and 991 shown (median and 5th percentile).
 	/// </remarks>
 	public sealed class HiResPacer : IDisposable
 	{

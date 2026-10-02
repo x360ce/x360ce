@@ -331,6 +331,10 @@ namespace x360ce.App.Controls
 			{
 				// Changed check (enabled state) of the current item.
 				ud.IsEnabled = !ud.IsEnabled;
+				// An unticked device is not used by any game, so it is not hidden from one either.
+				var game = SettingsManager.CurrentGame;
+				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+					SettingsManager.HideMappedDevices(game, ud.InstanceGuid);
 			}
 			else if (column == IsHiddenColumn)
 			{

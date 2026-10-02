@@ -242,6 +242,10 @@ namespace x360ce.App.DInput
 
 						// Get value.
 						var v = (ushort)values[map.Index - 1];
+						// A control that reports movement rests in the middle. A trigger or a button reads only the half past
+						// it, as with H, so at rest it is released; a stick reads it whole and rests centred.
+						var relative = ((map.IsAxis ? ud.DiRelativeAxisMask : ud.DiRelativeSliderMask) & (1 << (map.Index - 1))) != 0;
+						var half = map.IsHalf || relative;
 
 						// Destination range.
 						//var min = short.MinValue; // -32768;
@@ -276,7 +280,7 @@ namespace x360ce.App.DInput
 							// Pressed past the press point, released only a little below it, so a reading
 							// resting on the press point does not press and release the button every pass.
 							var wasPressed = (wasAxisButtons & map.ButtonFlag) != GamepadButtonFlags.None;
-							if (ConvertHelper.IsAxisButtonPressed(v, map.IsInverted, map.IsHalf, map.DeadZone, wasPressed))
+							if (ConvertHelper.IsAxisButtonPressed(v, map.IsInverted, half, map.DeadZone, wasPressed))
 							{
 								gp.Buttons |= map.ButtonFlag;
 								axisButtons |= map.ButtonFlag;
@@ -287,7 +291,7 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
-							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf, false);
+							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, half, false);
 							if (map.Target == TargetType.LeftTrigger)
 								gp.LeftTrigger = triggerValue;
 							if (map.Target == TargetType.RightTrigger)

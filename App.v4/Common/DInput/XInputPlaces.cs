@@ -22,7 +22,7 @@ namespace x360ce.App.DInput
 	///
 	/// Where that leaves one real controller and one unexplained place, they name each other. Where
 	/// it leaves two of either, the pairing is open, and this says it does not know. A place stated
-	/// wrongly is worse than a place left blank: somebody would map a controller against it.
+	/// wrongly is worse than a place said to be not known: somebody would map a controller against it.
 	/// </remarks>
 	public static class XInputPlaces
 	{
@@ -75,12 +75,21 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Remembers where a controller this program made was put.</summary>
+		/// <param name="hardwareId">The controller, or null when which one arrived could not be told. It holds the place either way.</param>
+		/// <remarks>
+		/// A place holds one controller, so any other note for it is out of date and goes. A controller the bus would not
+		/// let go of is still ours and still listed; its note would claim the place of the one made in its stead, and a
+		/// place claimed twice is shown as not known.
+		/// </remarks>
 		public static void Remember(string hardwareId, int place)
 		{
-			if (string.IsNullOrEmpty(hardwareId))
-				return;
 			lock (SyncRoot)
-				OursByHardware[hardwareId] = place;
+			{
+				foreach (var stale in OursByHardware.Where(x => x.Value == place).Select(x => x.Key).ToArray())
+					OursByHardware.Remove(stale);
+				if (!string.IsNullOrEmpty(hardwareId))
+					OursByHardware[hardwareId] = place;
+			}
 		}
 
 		/// <summary>Forgets one controller, for when it is taken away.</summary>
@@ -119,6 +128,12 @@ namespace x360ce.App.DInput
 		/// reading it. Only the faces carry the XInput marker in their identifier, so the first
 		/// ancestor without it is the controller a person would point at. Gathering by it means the
 		/// DirectInput face of a controller and its XInput face are recognised as one device.
+		///
+		/// A controller left behind by a run that ended badly has lost the thing itself: the chain
+		/// stops at a parent that is no longer there. The highest face the walk reached then stands
+		/// for it, so all its faces are still one controller. Answering with the face the walk started
+		/// from would make each face a controller of its own, and one left behind would be listed and
+		/// counted once per face.
 		/// </remarks>
 		public static string HardwareOf(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
 		{
@@ -143,7 +158,7 @@ namespace x360ce.App.DInput
 					return parent.DeviceId;
 				current = parent;
 			}
-			return device.DeviceId;
+			return current.DeviceId;
 		}
 
 		/// <summary>Whether XInput could ever see this device.</summary>
@@ -156,7 +171,7 @@ namespace x360ce.App.DInput
 
 		/// <summary>
 		/// The XInput place each piece of hardware holds, or <see cref="Unknown"/> where it cannot
-		/// be worked out.
+		/// be worked out, or null when XInput did not answer in time.
 		/// </summary>
 		public static Dictionary<string, int> Resolve()
 		{
@@ -165,16 +180,26 @@ namespace x360ce.App.DInput
 			return Resolve(all, byId);
 		}
 
-		/// <summary>The same, against a device list already gathered.</summary>
+		/// <summary>The same, against a device list already gathered, or null when XInput did not answer in time.</summary>
 		public static Dictionary<string, int> Resolve(DeviceInfo[] all, Dictionary<string, DeviceInfo> byId)
 		{
-			var answer = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 			if (all == null || byId == null)
-				return answer;
+				return new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+			// Read under the library's load lock, so the library is never let go of under the read, and waited for no
+			// longer than XInput has to answer.
+			return Resolve(all, byId, DInputHelper.OccupiedPlaces());
+		}
 
-			var taken = new bool[4];
-			for (var i = 0; i < 4; i++)
-				taken[i] = SystemXInput.IsConnected(i);
+		/// <summary>The same, from the places XInput answered were taken, or null when it did not answer in time.</summary>
+		/// <param name="all">The device list, not null.</param>
+		/// <param name="byId">The same devices by id, not null.</param>
+		/// <param name="taken">What <see cref="DInputHelper.OccupiedPlaces()"/> answered: null when XInput did not answer.</param>
+		static Dictionary<string, int> Resolve(DeviceInfo[] all, Dictionary<string, DeviceInfo> byId, bool[] taken)
+		{
+			// Not known while XInput does not answer: no table, and the last one stands until the places are read again.
+			if (taken == null)
+				return null;
+			var answer = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
 			// Gather the faces into the hardware each belongs to, and sort them by what can be known.
 			//
@@ -212,9 +237,9 @@ namespace x360ce.App.DInput
 
 			// Ours are known, because the place each took was noted as it arrived.
 			// A place can hold one controller. Two notes pointing at one place means a note is wrong and
-			// there is no way to tell which, so neither is used: a blank says "not known", and that is what
-			// this is. Showing both was showing something that cannot happen, which is worse than showing
-			// nothing, because it invites somebody to map a controller against it.
+			// there is no way to tell which, so neither is used: both are shown as not known, and that is what
+			// this is. Showing both would show something that cannot happen, which is worse than saying it is
+			// not known, because it invites somebody to map a controller against it.
 			foreach (var place in known.Values.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToArray())
 				foreach (var hardware in known.Where(x => x.Value == place).Select(x => x.Key).ToArray())
 					known[hardware] = Unknown;
@@ -306,6 +331,11 @@ namespace x360ce.App.DInput
 			// interface takes.
 			if (!IsStale)
 				return;
+			// After a read that published nothing, the next waits for as long as XInput has to answer. An XInput that does
+			// not answer, a library that cannot be loaded or a machine that cannot be read is then asked about once in that
+			// time, and not on every pass.
+			if (DInputHelper.IsWaiting(System.Threading.Volatile.Read(ref _nextReadAt), Environment.TickCount, DInputHelper.XiAnswerMs))
+				return;
 			if (System.Threading.Interlocked.CompareExchange(ref _reading, 1, 0) != 0)
 				return;
 			System.Threading.Tasks.Task.Run(ReadOnWorker);
@@ -346,9 +376,13 @@ namespace x360ce.App.DInput
 			HashSet<string> madeByUs = null;
 			try
 			{
+				// The places are asked first. Asking them is what loads Windows' XInput, on the places reader, and the input
+				// thread sends a force passed on to a real controller only once it is loaded, so a device tree that cannot be
+				// read does not keep it from loading. Asked once a read, and the table is worked out from that answer.
+				var taken = DInputHelper.OccupiedPlaces();
 				var all = ReadMachine();
 				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
-				cache = Resolve(all, byId);
+				cache = Resolve(all, byId, taken);
 				madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				foreach (var device in all.Where(IsXInputCapable))
@@ -360,7 +394,12 @@ namespace x360ce.App.DInput
 						madeByUs.Add(device.DeviceId);
 				}
 			}
-			catch (Exception ex) { JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex); }
+			catch (Exception ex)
+			{
+				// Written once, and again only after a read has published a table, however often it is tried in between.
+				if (System.Threading.Interlocked.Exchange(ref _readFaultWritten, 1) == 0)
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
 			lock (SyncRoot)
 			{
 				if (cache != null)
@@ -370,13 +409,25 @@ namespace x360ce.App.DInput
 					_madeByUs = madeByUs;
 					// After the table, so whoever reads the new version reads the new table.
 					System.Threading.Interlocked.Increment(ref _version);
+					// Current unless something invalidated the answers while they were read, which the generation it
+					// started at shows. Written under the same lock as the publish, so two overlapping reads cannot
+					// pair an older table with the newer generation.
+					System.Threading.Volatile.Write(ref _readGeneration, generation);
+					System.Threading.Volatile.Write(ref _readFaultWritten, 0);
+					System.Threading.Volatile.Write(ref _nextReadAt, Environment.TickCount);
 				}
-				// Current unless something invalidated the answers while they were read, which the generation it
-				// started at shows. Written under the same lock as the publish, so two overlapping reads cannot
-				// pair an older table with the newer generation.
-				System.Threading.Volatile.Write(ref _readGeneration, generation);
+				else
+					// Nothing published, because XInput did not answer or the machine could not be read. The answers stay
+					// out of date, and the device thread reads again once XInput has had its time to answer.
+					System.Threading.Volatile.Write(ref _nextReadAt, unchecked(Environment.TickCount + DInputHelper.XiAnswerMs));
 			}
 		}
+
+		/// <summary>1 once a failed read has been written to the log, until a read publishes a table.</summary>
+		static int _readFaultWritten;
+
+		/// <summary>The <see cref="Environment.TickCount"/> before which <see cref="ReadWhenStale"/> starts no read, after a read that published nothing.</summary>
+		static int _nextReadAt;
 
 		/// <summary>Counts the place tables <see cref="Read"/> has published.</summary>
 		static int _version;
@@ -523,6 +574,11 @@ namespace x360ce.App.DInput
 		/// The places carry no "XInput" of their own: every column that shows them is headed with it
 		/// already, and repeating it in each cell says the same word down the whole column while the
 		/// values it is there to compare sit behind it.
+		///
+		/// Without a known place it still says what it is, as "Real (place not known)": a blank cell
+		/// reads as a row nobody filled in. Not known, rather than none, because <see cref="Unknown"/>
+		/// covers both a controller XInput gave no place and one whose place cannot be told apart from
+		/// another's. Either way, switching it off and on in the order is what settles it.
 		/// </remarks>
 		/// <param name="place">The place, counting from zero, or <see cref="Unknown"/>.</param>
 		/// <param name="isVirtual">Whether the thing in the place was made rather than plugged in.</param>
@@ -531,7 +587,7 @@ namespace x360ce.App.DInput
 		{
 			return place >= 0 && place <= 3
 				? string.Format("{0} {1}", Holder(isVirtual, isOurs), place + 1)
-				: string.Empty;
+				: string.Format("{0} (place not known)", Holder(isVirtual, isOurs));
 		}
 
 		/// <summary>How the places a device reaches read to a person, as one line.</summary>

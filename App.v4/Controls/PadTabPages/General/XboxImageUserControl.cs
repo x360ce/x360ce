@@ -298,22 +298,39 @@ namespace x360ce.App.Controls
 
 			var top = _Enabled ? _Top : _TopDisabled;
 			var front = _Enabled ? _Front : _FrontDisabled;
-			e.Graphics.DrawImage(top, new Rectangle(0, 0,
-				(int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale)));
-			e.Graphics.DrawImage(front, new Rectangle(0,
-				(int)Math.Round((TopImageHeight + ImageGap) * scale),
-				(int)Math.Round(CanvasWidth * scale),
-				(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale)));
+			try
+			{
+				e.Graphics.DrawImage(top, new Rectangle(0, 0,
+					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale)));
+				e.Graphics.DrawImage(front, new Rectangle(0,
+					(int)Math.Round((TopImageHeight + ImageGap) * scale),
+					(int)Math.Round(CanvasWidth * scale),
+					(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale)));
 
-			if (_Infos != null)
-				foreach (var info in _Infos)
-					DrawGlyph(e.Graphics, info);
+				if (_Infos != null)
+					foreach (var info in _Infos)
+						DrawGlyph(e.Graphics, info);
 
-			if (_Enabled)
-				DrawIndicators(e.Graphics);
+				if (_Enabled)
+					DrawIndicators(e.Graphics);
 
-			DrawHelpText(e.Graphics);
+				DrawHelpText(e.Graphics);
+			}
+			// GDI+ reports a draw it found no memory for as out of memory. Left to escape, it makes Windows Forms draw a
+			// red cross here for the rest of the session. This paint is skipped; the next one draws again.
+			catch (OutOfMemoryException ex)
+			{
+				// Once for all four pictures: while memory is short, every paint of every tab fails the same way.
+				if (!_PaintFaultWritten)
+				{
+					_PaintFaultWritten = true;
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				}
+			}
 		}
+
+		/// <summary>Whether a paint that ran out of memory has been written to the log: once for every controller picture.</summary>
+		static bool _PaintFaultWritten;
 
 		void DrawGlyph(Graphics g, ImageInfo info)
 		{

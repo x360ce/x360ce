@@ -173,6 +173,47 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("The routing is built again when a device is ticked or unticked on the Devices page")]
+		public void The_routing_follows_the_Devices_page_tick()
+		{
+			if (Global.DHelper == null)
+				Global.InitDHelperHelper();
+			var oldGame = SettingsManager.CurrentGame;
+			var game = new UserGame { FileName = "routing-device-tick.exe", FileProductName = "Routing device tick", EnableMask = (int)MapToMask.Controller1 };
+			var device = new UserDevice { InstanceGuid = Guid.NewGuid() };
+			var row = Row(device.InstanceGuid, MapTo.Controller1);
+			row.FileName = game.FileName;
+			DeviceRouting.Watch();
+			try
+			{
+				SettingsManager.UserDevices.Items.Add(device);
+				SettingsManager.UserSettings.Items.Add(row);
+				SettingsManager.UpdateCurrentGame(game);
+				CollectionAssert.Contains(DeviceRouting.Current.MappedDevices, device, "A ticked device is not read.");
+				device.IsEnabled = false;
+				CollectionAssert.DoesNotContain(DeviceRouting.Current.MappedDevices, device,
+					"A device unticked on the Devices page is read until some setting changes.");
+				CollectionAssert.DoesNotContain(DeviceRouting.Current.Rows, row, "A device unticked on the Devices page reaches its controller.");
+				device.IsEnabled = true;
+				CollectionAssert.Contains(DeviceRouting.Current.MappedDevices, device,
+					"A device ticked again on the Devices page is not read until some setting changes.");
+			}
+			finally
+			{
+				SettingsManager.UpdateCurrentGame(oldGame);
+				SettingsManager.UserSettings.Items.Remove(row);
+				SettingsManager.UserDevices.Items.Remove(device);
+			}
+			// The tab's list shows it: the row's Enabled box is greyed, with the reason as its tooltip, from the same tick.
+			var pad = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
+			var format = Ui.Between(pad, "private void MappedDevicesDataGridView_CellFormatting(", "public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;");
+			StringAssert.Contains(format, "column == IsEnabledColumn", "A row whose device is unticked on the Devices page looks like any other.");
+			StringAssert.Contains(format, "!device.IsEnabled", "The row's Enabled box is greyed by something other than the tick the routing reads.");
+			StringAssert.Contains(format, "SwitchedOffOnDevicesPage", "The row's Enabled box does not say why it is greyed.");
+			StringAssert.Contains(pad, "SwitchedOffOnDevicesPage = \"Switched off on the Devices page\"", "The tooltip says something else.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
 		[Description("The routing follows an edited mapping, and a reset of the devices list")]
 		public void The_routing_follows_an_edited_mapping_and_a_reset()
 		{

@@ -1204,8 +1204,9 @@ namespace x360ce.App.Controls
 			var cbx = MenuTargetCbx;
 			if (cbx == null || cbx.IsDisposed)
 				return;
-			Regex rx = new Regex("^(DPad [0-9]+)$");
-			// If this DPad parent menu.
+			// A POV's own item, clicked on the way to one of its directions. Only the D-Pad box takes a whole POV; anywhere
+			// else the click only opens the directions.
+			Regex rx = new Regex("^(POV [0-9]+)$");
 			if (rx.IsMatch(item.Text))
 			{
 				if (cbx == DPadComboBox)
@@ -1300,12 +1301,13 @@ namespace x360ce.App.Controls
 				return;
 			}
 			// The engine drives the run only for a device the routing forces from this tab. A tab switched
-			// off, or a row unticked in the tab's list, drives nothing, and the run would never end.
+			// off, or a device unticked in the tab's list or on the Devices page, drives nothing, and the run
+			// would never end.
 			DInput.DeviceForce route;
 			if (!(DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
 				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0))
 			{
-				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on and this device ticked in its list. Otherwise nothing drives the wheel.";
+				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, and this device ticked in its list and on the Devices page. Otherwise nothing drives the wheel.";
 				return;
 			}
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
@@ -1480,7 +1482,8 @@ namespace x360ce.App.Controls
 				// motors do something they will not do once a game is running.
 				SystemXInput.SetVibration(place,
 					(ushort)(ps.ApplyForceStrength(largeMotor, true) * 257),
-					(ushort)(ps.ApplyForceStrength(smallMotor, false) * 257));
+					(ushort)(ps.ApplyForceStrength(smallMotor, false) * 257),
+					TimeSpan.FromMilliseconds(DInputHelper.XiAnswerMs));
 		}
 
 		/// <summary>Stops the motors the Test sliders set, through the path the sliders set them by.</summary>
@@ -1786,6 +1789,9 @@ namespace x360ce.App.Controls
 			MappedDevicesDataGridView.Invalidate();
 		}
 
+		/// <summary>The tooltip of a row's Enabled box when its device is unticked on the Devices page.</summary>
+		const string SwitchedOffOnDevicesPage = "Switched off on the Devices page";
+
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -1798,6 +1804,18 @@ namespace x360ce.App.Controls
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
+			}
+			else if (column == IsEnabledColumn)
+			{
+				// A device unticked on the Devices page is left out of every game, whatever its box here says.
+				var device = SettingsManager.GetDevice(item.InstanceGuid);
+				var off = device != null && !device.IsEnabled;
+				grid.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = off ? SwitchedOffOnDevicesPage : "";
+				if (off)
+				{
+					e.CellStyle.BackColor = SystemColors.Control;
+					e.CellStyle.SelectionBackColor = SystemColors.ControlDark;
+				}
 			}
 			else if (column == XInputPlaceColumn)
 			{
@@ -1891,6 +1909,10 @@ namespace x360ce.App.Controls
 				var item = (Engine.Data.UserSetting)row.DataBoundItem;
 				// Changed check (enabled state) of the current item.
 				item.IsEnabled = !item.IsEnabled;
+				// An unticked device is not used by the game, so it is not hidden from it either.
+				var game = SettingsManager.CurrentGame;
+				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+					SettingsManager.HideMappedDevices(game, item.InstanceGuid);
 			}
 		}
 

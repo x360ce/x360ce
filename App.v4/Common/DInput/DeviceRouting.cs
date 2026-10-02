@@ -18,12 +18,13 @@ namespace x360ce.App.DInput
 	/// stored settings' mappings, and its D-Pad.
 	///
 	/// Only the rows the engine converts count: rows of the current game, on a controller tab, switched on
-	/// in the tab's list. A row of another game, or one switched off, reaches nothing. A row on a tab whose
-	/// switch is off is still combined, for the tab's own page, but gives no force.
+	/// (ticked) in the tab's list, of a device ticked on the Devices page. A row of another game, or one
+	/// unticked in either list, reaches nothing: its device is not read, not held, not forced and not passed
+	/// force on to. A row on a tab whose switch is off is still combined, for the tab's own page, but gives no
+	/// force.
 	///
-	/// Force passed on to a real controller takes every row of the current game on the tab, whatever its
-	/// own switch or the tab's. A tab switched off still passes on the stop that unplugging its controller
-	/// sends.
+	/// Force passed on to a real controller takes every ticked row of the current game on the tab, whatever
+	/// the tab's switch. A tab switched off still passes on the stop that unplugging its controller sends.
 	/// </remarks>
 	public sealed class DeviceRouting
 	{
@@ -43,8 +44,12 @@ namespace x360ce.App.DInput
 		/// <summary>True when a controller passes its force on, so the engine has places to work out.</summary>
 		public readonly bool PassesForceThrough;
 
-		/// <summary>The devices on the current game's rows mapped to a controller, switched on or off, in the order of the devices list: the devices the engine reads.</summary>
-		/// <remarks>The engine reads only those online, and checks that itself on every pass.</remarks>
+		/// <summary>The devices on the current game's ticked rows mapped to a controller, in the order of the devices list: the devices the engine reads.</summary>
+		/// <remarks>
+		/// The engine reads only those online, and checks that itself on every pass. A device that drops out of
+		/// this list, unticked in a tab's list or on the Devices page, taken off its tabs or of another game, is
+		/// let go of by the engine on the first pass of the routing without it.
+		/// </remarks>
 		public readonly UserDevice[] MappedDevices;
 
 		/// <summary>For each of <see cref="Rows"/>, the device it reads, or null when that device is not listed.</summary>
@@ -59,9 +64,14 @@ namespace x360ce.App.DInput
 
 		readonly Dictionary<Guid, DeviceForce> _forces = new Dictionary<Guid, DeviceForce>();
 
-		DeviceRouting(UserSetting[] rows, UserSetting[] gameRows, IList<PadSetting> padSettings, IList<UserDevice> devices, int enableMask)
+		/// <summary>The listed devices the person has unticked: on the Devices page, or on every row of the game that maps them to a controller.</summary>
+		/// <remarks>A place named in Pass through is passed over while one of these holds it. A device mapped nowhere in the game is not one of them.</remarks>
+		readonly UserDevice[] _unticked;
+
+		DeviceRouting(UserSetting[] rows, IList<PadSetting> padSettings, IList<UserDevice> devices, int enableMask, UserDevice[] unticked)
 		{
 			Rows = rows;
+			_unticked = unticked;
 			for (var pad = 0; pad < PadRows.Length; pad++)
 				PadRows[pad] = rows.Where(x => x.MapTo == pad + 1).ToArray();
 			foreach (var device in rows.GroupBy(x => x.InstanceGuid))
@@ -90,7 +100,7 @@ namespace x360ce.App.DInput
 			}
 			for (var pad = 0; pad < PadPassThrough.Length; pad++)
 			{
-				PadPassThrough[pad] = PassThroughSources(gameRows.Where(x => x.MapTo == pad + 1), padSettings, devices);
+				PadPassThrough[pad] = PassThroughSources(PadRows[pad], padSettings, devices);
 				if (PadPassThrough[pad].Length > 0)
 					PassesForceThrough = true;
 			}
@@ -101,7 +111,7 @@ namespace x360ce.App.DInput
 			foreach (var device in devices)
 				if (device != null && !byInstance.ContainsKey(device.InstanceGuid))
 					byInstance.Add(device.InstanceGuid, device);
-			var mapped = new HashSet<Guid>(gameRows.Where(x => x.MapTo > (int)MapTo.None).Select(x => x.InstanceGuid));
+			var mapped = new HashSet<Guid>(rows.Select(x => x.InstanceGuid));
 			MappedDevices = devices.Where(x => x != null && mapped.Contains(x.InstanceGuid)).ToArray();
 			RowDevices = new UserDevice[rows.Length];
 			RowMaps = new List<Map>[rows.Length];
@@ -137,29 +147,53 @@ namespace x360ce.App.DInput
 		/// place, or one whose device holds a place in the table. The settings come back with the place because
 		/// the strengths written on them apply to the force passed on.
 		///
-		/// It allocates nothing and takes no lock. The engine asks only when this routing or the table is new.
+		/// A named place is passed over while the table has it held by a device the person has unticked, so an
+		/// unticked controller is sent no force this way either. A place held by a device mapped nowhere in the
+		/// game, or by one the table does not know, is still sent force: that is what naming a place is for.
+		///
+		/// It allocates nothing and takes no lock.
 		/// </remarks>
 		/// <param name="pad">The pad index, 0 to 3.</param>
 		/// <param name="places">The XInput place of each device, as <see cref="XInputPlaces.Current"/> holds it.</param>
 		/// <param name="padSetting">The settings whose strengths apply to the force passed on, or null.</param>
 		public int PassThroughPlace(int pad, IReadOnlyDictionary<string, int> places, out PadSetting padSetting)
 		{
-			padSetting = null;
+			PassThroughSource source;
+			var place = PassThroughPlace(pad, places, out source);
+			padSetting = source == null ? null : source.PadSetting;
+			return place;
+		}
+
+		/// <summary>The same, with the row that answered, whose strengths were worked out when this routing was built; null for nowhere.</summary>
+		/// <remarks>For the engine, which applies the strengths with no lock and makes nothing. The engine asks only when this routing or the table is new.</remarks>
+		public int PassThroughPlace(int pad, IReadOnlyDictionary<string, int> places, out PassThroughSource source)
+		{
+			source = null;
 			if (pad < 0 || pad >= PadPassThrough.Length)
 				return XInputPlaces.Unknown;
 			var sources = PadPassThrough[pad];
 			for (var i = 0; i < sources.Length; i++)
 			{
-				var source = sources[i];
-				var place = source.Device == null
-					? source.Place
-					: XInputPlaces.PlaceOf(places, source.Device.HidDeviceId, source.Device.DevDeviceId);
-				if (place < 0)
+				var candidate = sources[i];
+				var place = candidate.Device == null
+					? candidate.Place
+					: XInputPlaces.PlaceOf(places, candidate.Device.HidDeviceId, candidate.Device.DevDeviceId);
+				if (place < 0 || (candidate.Device == null && IsHeldByUnticked(place, places)))
 					continue;
-				padSetting = source.PadSetting;
+				source = candidate;
 				return place;
 			}
 			return XInputPlaces.Unknown;
+		}
+
+		/// <summary>Whether the table has this place held by a device the person has unticked.</summary>
+		/// <remarks>Asked only for a named place, when the places are worked out. It allocates nothing and takes no lock.</remarks>
+		bool IsHeldByUnticked(int place, IReadOnlyDictionary<string, int> places)
+		{
+			for (var i = 0; i < _unticked.Length; i++)
+				if (XInputPlaces.PlaceOf(places, _unticked[i].HidDeviceId, _unticked[i].DevDeviceId) == place)
+					return true;
+			return false;
 		}
 
 		/// <summary>The rows of one controller that pass its force on, in the order they are asked.</summary>
@@ -169,7 +203,7 @@ namespace x360ce.App.DInput
 		/// is known only once the places are read, and when it is not known the next row is asked. A row whose
 		/// device is not in the list is passed over.
 		/// </remarks>
-		/// <param name="padRows">The game's rows on the controller's tab, in the order of the settings list.</param>
+		/// <param name="padRows">The game's ticked rows on the controller's tab, in the order of the settings list.</param>
 		/// <param name="padSettings">The stored settings the rows point at by checksum.</param>
 		/// <param name="devices">The devices the rows point at.</param>
 		static PassThroughSource[] PassThroughSources(IEnumerable<UserSetting> padRows, IList<PadSetting> padSettings, IList<UserDevice> devices)
@@ -203,15 +237,24 @@ namespace x360ce.App.DInput
 		/// <param name="devices">The devices the rows point at, or null for none, when no row can pass force on to the place its device holds.</param>
 		public static DeviceRouting Build(UserGame game, IList<UserSetting> settings, IList<PadSetting> padSettings, IList<UserDevice> devices = null)
 		{
-			var gameRows = game == null
+			devices = devices ?? new UserDevice[0];
+			// The game's rows on a controller tab, ticked or not.
+			var tabRows = game == null
 				? new UserSetting[0]
 				: settings
-					.Where(x => x != null && string.Compare(x.FileName, game.FileName, true) == 0)
+					.Where(x => x != null && string.Compare(x.FileName, game.FileName, true) == 0
+						&& x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4)
 					.ToArray();
-			var rows = gameRows
-				.Where(x => x.IsEnabled && x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4)
+			// A device unticked on the Devices page is left out of every game, as a row unticked in a tab's list is.
+			var disabled = new HashSet<Guid>(devices.Where(x => x != null && !x.IsEnabled).Select(x => x.InstanceGuid));
+			var rows = tabRows.Where(x => x.IsEnabled && !disabled.Contains(x.InstanceGuid)).ToArray();
+			// The devices left out that way. One on no row of the game is not among them, unless unticked on the Devices page.
+			var routed = new HashSet<Guid>(rows.Select(x => x.InstanceGuid));
+			var onTabs = new HashSet<Guid>(tabRows.Select(x => x.InstanceGuid));
+			var unticked = devices
+				.Where(x => x != null && !routed.Contains(x.InstanceGuid) && (!x.IsEnabled || onTabs.Contains(x.InstanceGuid)))
 				.ToArray();
-			return new DeviceRouting(rows, gameRows, padSettings, devices ?? new UserDevice[0], game == null ? 0 : game.EnableMask);
+			return new DeviceRouting(rows, padSettings, devices, game == null ? 0 : game.EnableMask, unticked);
 		}
 
 		/// <summary>Builds the routing from the settings as they are now and hands it to the engine.</summary>
@@ -235,7 +278,7 @@ namespace x360ce.App.DInput
 
 		static bool _watching;
 
-		/// <summary>Builds the routing again whenever a mapping, the settings it points at, a game's tab switches, or the devices listed change. Called once, when the settings are loaded.</summary>
+		/// <summary>Builds the routing again whenever a mapping, the settings it points at, a game's tab switches, the devices listed, or a device's tick on the Devices page change. Called once, when the settings are loaded.</summary>
 		public static void Watch()
 		{
 			if (_watching)
@@ -245,12 +288,15 @@ namespace x360ce.App.DInput
 			SettingsManager.PadSettings.Items.ListChanged += (sender, e) => Refresh();
 			SettingsManager.UserGames.Items.ListChanged += (sender, e) => Refresh();
 			// A device coming into the list or leaving it changes which devices the engine reads and which rows can
-			// pass force on to the place it holds, and a reset of the list may have done either. A change to a
-			// listed device does not: its state is read on every pass, and its ids when the places are worked out.
+			// pass force on to the place it holds, and a reset of the list may have done either. So does its tick on
+			// the Devices page. Any other change to a listed device does not: its state is read on every pass, and
+			// its ids when the places are worked out.
 			SettingsManager.UserDevices.Items.ListChanged += (sender, e) =>
 			{
 				if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted
-					|| e.ListChangedType == ListChangedType.Reset)
+					|| e.ListChangedType == ListChangedType.Reset
+					|| (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor != null
+						&& e.PropertyDescriptor.Name == nameof(UserDevice.IsEnabled)))
 					Refresh();
 			};
 			Refresh();
@@ -265,10 +311,20 @@ namespace x360ce.App.DInput
 			PadSetting = padSetting;
 			Place = place;
 			Device = device;
+			// Worked out here, with the routing, whenever the settings change. Reading a strength left unset reads
+			// its default, which takes the lock the interface reads defaults under and makes a little.
+			LargeScale = padSetting.GetForceScale(true);
+			SmallScale = padSetting.GetForceScale(false);
 		}
 
 		/// <summary>The settings which asked for it, whose strengths apply to the force passed on.</summary>
 		public readonly PadSetting PadSetting;
+
+		/// <summary>The strengths the large motor is played at, as <see cref="PadSetting.GetForceScale"/> gives them.</summary>
+		public readonly int LargeScale;
+
+		/// <summary>The strengths the small motor is played at, as <see cref="PadSetting.GetForceScale"/> gives them.</summary>
+		public readonly int SmallScale;
 
 		/// <summary>The place the settings name, 0 to 3, or <see cref="XInputPlaces.Unknown"/> when they name none and the place <see cref="Device"/> holds is used.</summary>
 		public readonly int Place;

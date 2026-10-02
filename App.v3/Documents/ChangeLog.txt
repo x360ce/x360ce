@@ -1,6 +1,8 @@
-﻿## [3.5.8.0] - 2026-09-27
+﻿## [3.5.10.0] - 2026-09-27
 
 - Fixed: Importing or exporting games settings could show an error report.
+- Fixed: Mapping a POV direction from the menu could map the whole POV.
+- Fixed: Recording a D-Pad direction did not work.
 - Changed: Help names the latest Visual C++ v14 Redistributable.
 
 ## [3.4.39.0] - 2026-09-26
