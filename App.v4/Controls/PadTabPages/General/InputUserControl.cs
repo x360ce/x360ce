@@ -32,7 +32,9 @@ namespace x360ce.App.Controls
 				ColumnCount = 1,
 				AutoScroll = true,
 				Margin = new Padding(0),
-				Padding = new Padding(0),
+				// The right edge keeps the room the vertical scroll bar takes, so the sections never
+				// stay wider than the column that is left once the bar appears.
+				Padding = new Padding(0, 0, SystemInformation.VerticalScrollBarWidth, 0),
 			};
 			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			SourceLabel = new Label
@@ -51,8 +53,6 @@ namespace x360ce.App.Controls
 			AxesGroupBox = AddGroup(table, "AxesGroupBox", "AXIS", "AxisChips", out AxisChips, true);
 			SlidersGroupBox = AddGroup(table, "SlidersGroupBox", "SLIDER", "SliderChips", out SliderChips, true);
 			PovsGroupBox = AddGroup(table, "PovsGroupBox", "POV", "PovChips", out PovChips, true);
-			// A last, greedy row keeps the sections at the top when the column is taller than they are.
-			table.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 			table.RowCount = table.RowStyles.Count;
 			Controls.Add(table);
 			ResumeLayout(false);

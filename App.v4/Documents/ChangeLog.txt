@@ -1,4 +1,4 @@
-﻿## [4.24.55.0] - 2026-10-02
+﻿## [4.24.57.0] - 2026-10-02
 
 - Fixed: Virtual controllers were not created after Windows ran 25 days.
 - Fixed: Centering spring Auto never finished after Windows ran 25 days (Issue #1639, emreyagdan64-prog).
@@ -36,6 +36,8 @@
 - Fixed: Putting controllers in order left an Xbox One controller dead until it was replugged.
 - Fixed: Putting controllers in order could leave a controller switched off, and a stored mark that hid it for good.
 - Fixed: A controller left switched off by an interrupted reorder was reported as switched back on.
+- Fixed: The General tab input list did not scroll to its last buttons.
+- Fixed: General tab mapping boxes cut off text such as POV 1 Down.
 - Changed: Installs and links the latest Visual C++ v14 Redistributable.
 - Changed: Installing Visual C++ from the Issues tab says what happened.
 - Changed: A controller tab whose place is taken says what is holding it.

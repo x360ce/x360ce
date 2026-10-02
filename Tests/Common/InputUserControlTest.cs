@@ -138,6 +138,77 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("A device with more chips than the column is tall scrolls, so its last chip can be reached")]
+		public void Input_panel_scrolls_to_the_last_chip_of_a_keyboard_sized_device()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var panel = new InputUserControl())
+				{
+					panel.Size = new Size(384, 300);
+					panel.CreateControl();
+					panel.UpdateFrom(Device(128, 0, 0, 0));
+					panel.PerformLayout();
+					var table = (ScrollableControl)panel.Controls.Find("LayoutTable", false).Single();
+					var group = panel.ButtonChips;
+					Assert.IsTrue(group.Height > table.ClientSize.Height, "The test device must be taller than the column.");
+					table.AutoScrollPosition = new Point(0, int.MaxValue / 2);
+					var bottom = table.PointToClient(group.PointToScreen(new Point(0, group.Height))).Y;
+					Assert.IsTrue(bottom <= table.ClientSize.Height, string.Format(
+						"Scrolled as far as it goes, the last chip row ends at {0} but the column shows only {1}.",
+						bottom, table.ClientSize.Height));
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("A list taller than the column scrolls up and down only, and every section fits the width the scroll bar leaves")]
+		public void Input_panel_scrolls_up_and_down_without_scrolling_sideways()
+		{
+			Ui.OnUiThread(() =>
+			{
+				foreach (var width in new[] { 200, 260, 384 })
+				{
+					using (var panel = new InputUserControl())
+					{
+						panel.Size = new Size(width, 300);
+						panel.CreateControl();
+						panel.UpdateFrom(Device(128, 0xFFFFFF, 0xFF, 4));
+						panel.PerformLayout();
+						var table = (ScrollableControl)panel.Controls.Find("LayoutTable", false).Single();
+						Assert.IsTrue(table.VerticalScroll.Visible, width + " px wide: a device taller than the column must scroll up and down.");
+						Assert.IsFalse(table.HorizontalScroll.Visible, string.Format(
+							"{0} px wide: the column scrolls sideways; its sections are {1} px wide in {2}.",
+							width, panel.ButtonsGroupBox.Width, table.ClientSize.Width));
+						foreach (var section in new Control[] { panel.ButtonsGroupBox, panel.AxesGroupBox, panel.SlidersGroupBox, panel.PovsGroupBox })
+							Assert.IsTrue(section.Right <= table.ClientSize.Width, string.Format(
+								"{0} px wide: {1} ends at {2} but the column shows {3}.",
+								width, section.Name, section.Right, table.ClientSize.Width));
+					}
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("A device with few chips leaves the sections packed at the top of a tall column")]
+		public void Input_panel_keeps_sections_at_the_top_of_a_tall_column()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var panel = new InputUserControl())
+				{
+					panel.Size = new Size(384, 671);
+					panel.CreateControl();
+					panel.UpdateFrom(Device(4, 0x1, 0, 0));
+					panel.PerformLayout();
+					Assert.IsTrue(panel.PovsGroupBox.Bottom < panel.Height / 2, string.Format(
+						"The last section ends at {0} of {1}; the sections must not stretch to fill the column.",
+						panel.PovsGroupBox.Bottom, panel.Height));
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
 		[Description("No two controls of the input panel cover each other, at any width, with a full-size device")]
 		public void Input_panel_keeps_every_control_clear_of_the_others()
 		{
