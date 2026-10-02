@@ -1686,10 +1686,10 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Asks whether devices already on another tab move here or stay there too: Yes moves them, No keeps them there as well, anything else adds nothing.</summary>
-		/// <remarks>A test replaces it, since the real one opens a window.</remarks>
-		public static Func<string, DialogResult> AskMoveOrKeep = AskAboutSharedDevices;
+		/// <remarks>Given the question, shown in bold, and the text under it. A test replaces it, since the real one opens a window.</remarks>
+		public static Func<string, string, DialogResult> AskMoveOrKeep = AskAboutSharedDevices;
 
-		static DialogResult AskAboutSharedDevices(string text)
+		static DialogResult AskAboutSharedDevices(string heading, string text)
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -1697,28 +1697,52 @@ namespace x360ce.App.Controls
 			var answer = form.ShowForm(text, "Device already on a controller",
 				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button1,
-				new[] { "&Move here", "&Keep there too" });
+				new[] { "&Move here", "&Keep there too" }, heading);
 			form.Dispose();
 			return answer;
 		}
 
-		/// <summary>What Add asks about the devices already on another tab of the game, or null when none is.</summary>
-		/// <remarks>A device already on this tab is not asked about: adding it again changes nothing.</remarks>
-		public static string SharedDeviceQuestion(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		/// <summary>The devices already on another tab of the game, each with the tabs it is on, in the words Add asks with.</summary>
+		/// <remarks>A device already on this tab is left out: adding it again changes nothing.</remarks>
+		static List<KeyValuePair<string, string>> SharedDevices(UserGame game, MapTo mappedTo, UserDevice[] devices)
 		{
-			var lines = new List<string>();
+			var shared = new List<KeyValuePair<string, string>>();
 			foreach (var ud in devices)
 			{
 				var tabs = SettingsManager.GetDeviceTabs(game.FileName, ud.InstanceGuid);
 				if (tabs.Length == 0 || tabs.Contains(mappedTo))
 					continue;
 				var name = string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
-				lines.Add(string.Format("{0} is already on {1}.", name,
+				shared.Add(new KeyValuePair<string, string>(name,
 					string.Join(" and ", tabs.Select(x => Attributes.GetDescription(x)))));
 			}
-			if (lines.Count == 0)
+			return shared;
+		}
+
+		/// <summary>The question Add asks, shown in bold, or null when no device is on another tab.</summary>
+		public static string SharedDeviceHeading(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		{
+			var shared = SharedDevices(game, mappedTo, devices);
+			var here = Attributes.GetDescription(mappedTo);
+			if (shared.Count == 0)
 				return null;
-			lines.Add("");
+			return shared.Count == 1
+				? string.Format("Move {0} to {1}, or keep it on {2} too?", shared[0].Key, here, shared[0].Value)
+				: string.Format("Move these devices to {0}, or keep them on their other controllers too?", here);
+		}
+
+		/// <summary>What Add says under the question: what each button does, and which device is on which tab when there are several. Null when no device is on another tab.</summary>
+		/// <remarks>The question already names a single device and its tab, so that is not said twice.</remarks>
+		public static string SharedDeviceQuestion(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		{
+			var shared = SharedDevices(game, mappedTo, devices);
+			if (shared.Count == 0)
+				return null;
+			var lines = shared.Count == 1
+				? new List<string>()
+				: shared.Select(x => string.Format("{0} is already on {1}.", x.Key, x.Value)).ToList();
+			if (lines.Count > 0)
+				lines.Add("");
 			lines.Add("Move here takes it off every other controller. A controller left with no device is switched off.");
 			lines.Add("Keep there too leaves it there as well. This controller starts with the settings of the lowest-numbered one it is on, force feedback included.");
 			return string.Join(Environment.NewLine, lines);
@@ -1739,7 +1763,7 @@ namespace x360ce.App.Controls
 			var question = SharedDeviceQuestion(game, MappedTo, devices);
 			if (question != null)
 			{
-				var answer = AskMoveOrKeep(question);
+				var answer = AskMoveOrKeep(SharedDeviceHeading(game, MappedTo, devices), question);
 				if (answer != DialogResult.Yes && answer != DialogResult.No)
 					return;
 				keep = answer == DialogResult.No;

@@ -1,4 +1,4 @@
-﻿## [4.24.58.0] - 2026-10-02
+﻿## [4.24.60.0] - 2026-10-02
 
 - Fixed: Virtual controllers were not created after Windows ran 25 days.
 - Fixed: Centering spring Auto never finished after Windows ran 25 days (Issue #1639, emreyagdan64-prog).
@@ -25,6 +25,7 @@
 - Fixed: A controller that Windows put in the wrong place was made again every few seconds.
 - Fixed: Reordering stopped part way when a virtual controller left behind by another run was listed.
 - Fixed: Putting controllers in order left controllers in the wrong XInput places.
+- Fixed: A question with its own button wording, such as the settings folder one, showed Yes, No and Cancel.
 - Fixed: The Devices page listed a virtual controller left behind by another run twice, with no place.
 - Fixed: The Devices page left the place blank for a real controller whose place was not known.
 - Fixed: Remove Leftover Pads could miss a virtual controller left behind, or leave part of one.
@@ -42,6 +43,7 @@
 - Changed: Installing Visual C++ from the Issues tab says what happened.
 - Changed: A controller tab whose place is taken says what is holding it.
 - Changed: The AI assistant can keep a device on several controller tabs.
+- Changed: The question about a device already on another controller is in bold and says what each button does.
 - Added: Issues tab reports a virtual driver that is installed but not working.
 - Added: A hint when a game may see the controller twice.
 - Added: Recording a switch onto a button says which position presses it.

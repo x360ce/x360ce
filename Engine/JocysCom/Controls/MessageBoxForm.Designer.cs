@@ -34,6 +34,7 @@
 			this.Button1 = new System.Windows.Forms.Button();
 			this.IconPictureBox = new System.Windows.Forms.PictureBox();
 			this.TextLabel = new System.Windows.Forms.Label();
+			this.HeadingLabel = new System.Windows.Forms.Label();
 			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panel1 = new System.Windows.Forms.Panel();
@@ -93,6 +94,18 @@
 			this.TextLabel.TabIndex = 5;
 			this.TextLabel.Text = "[TextLabel]";
 			// 
+			// HeadingLabel
+			// 
+			this.HeadingLabel.AutoSize = true;
+			this.HeadingLabel.ContextMenuStrip = this.CopyContextMenuStrip;
+			this.HeadingLabel.Location = new System.Drawing.Point(50, 12);
+			this.HeadingLabel.MaximumSize = new System.Drawing.Size(640, 0);
+			this.HeadingLabel.Name = "HeadingLabel";
+			this.HeadingLabel.Size = new System.Drawing.Size(76, 13);
+			this.HeadingLabel.TabIndex = 13;
+			this.HeadingLabel.Text = "[HeadingLabel]";
+			this.HeadingLabel.Visible = false;
+			// 
 			// CopyContextMenuStrip
 			// 
 			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -117,6 +130,7 @@
 			this.panel1.Controls.Add(this.textBox1);
 			this.panel1.Controls.Add(this.IconPictureBox);
 			this.panel1.Controls.Add(this.TextLabel);
+			this.panel1.Controls.Add(this.HeadingLabel);
 			this.panel1.Location = new System.Drawing.Point(0, 0);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(340, 57);
@@ -178,6 +192,7 @@
 		internal System.Windows.Forms.Button Button1;
 		internal System.Windows.Forms.PictureBox IconPictureBox;
 		internal System.Windows.Forms.Label TextLabel;
+		internal System.Windows.Forms.Label HeadingLabel;
 		System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
 		System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
 		System.Windows.Forms.Panel panel1;

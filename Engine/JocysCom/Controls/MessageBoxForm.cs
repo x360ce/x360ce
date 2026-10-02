@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -14,6 +15,10 @@ namespace JocysCom.ClassLibrary.Controls
 		public bool PlaySounds { get; set; }
 		int h;
 		int w;
+		/// <summary>The room the heading takes above the text, or 0 without one.</summary>
+		int headingOffset;
+		/// <summary>The width of the heading, or 0 without one.</summary>
+		int headingWidth;
 
 		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
 		/// <param name="text">The text to display in the message box.</param>
@@ -37,6 +42,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
 		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
 		/// <param name="buttonText">Wording for the buttons, left to right, in place of the names of the results they return.</param>
+		/// <param name="heading">The question, shown in bold above the text, or null for none.</param>
 		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
 		/// <remarks>
 		/// The wording matters when the question is not a yes or a no. "Retry", "Abort"
@@ -44,8 +50,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// to know is what it does to their settings. The result each button returns is
 		/// unchanged, so a caller reads the answer exactly as before.
 		/// </remarks>
-		public DialogResult ShowForm(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, string[] buttonText = null)
+		public DialogResult ShowForm(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, string[] buttonText = null, string heading = null)
 		{
+			ShowHeading(heading);
 			AddResizeEvents();
 			TextLabel.Text = text;
 			Text = caption;
@@ -77,9 +84,11 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var order = new[] { Button1, Button2, Button3 };
 				for (var i = 0; i < order.Length && i < buttonText.Length; i++)
-					if (order[i].Visible && !string.IsNullOrEmpty(buttonText[i]))
+					if (order[i].DialogResult != DialogResult.None && !string.IsNullOrEmpty(buttonText[i]))
 						order[i].Text = buttonText[i];
 			}
+			LayoutButtons();
+			Message_Resize(this, EventArgs.Empty);
 			var resources = new System.ComponentModel.ComponentResourceManager(GetType());
 			var image = (Bitmap)resources.GetObject("MessageBoxIcon_Information_32x32");
 			switch (icon)
@@ -120,9 +129,56 @@ namespace JocysCom.ClassLibrary.Controls
 			return ShowDialog();
 		}
 
+		/// <summary>Shows the heading in bold above the text and moves the text below it.</summary>
+		void ShowHeading(string heading)
+		{
+			headingOffset = 0;
+			headingWidth = 0;
+			// Asked of the text, not of Visible: a control inside a form that is not shown yet reads as not visible.
+			var shown = !string.IsNullOrEmpty(heading);
+			HeadingLabel.Visible = shown;
+			if (!shown)
+				return;
+			HeadingLabel.Font = new Font(Font, FontStyle.Bold);
+			HeadingLabel.Text = heading;
+			var size = HeadingLabel.GetPreferredSize(new Size(HeadingLabel.MaximumSize.Width, 0));
+			headingWidth = size.Width;
+			headingOffset = size.Height + HeadingGap;
+			TextLabel.Top = HeadingLabel.Top + headingOffset;
+		}
+
+		/// <summary>The space between the heading and the text.</summary>
+		const int HeadingGap = 10;
+
+		/// <summary>The space between the buttons, and between the buttons and the edge.</summary>
+		const int ButtonGap = 6;
+		const int ButtonMargin = 12;
+
+		/// <summary>The width the buttons need, with the room on each side, or 0 before they are laid out.</summary>
+		int buttonsWidth;
+
+		/// <summary>Sizes each button to its wording and lines them up against the right edge.</summary>
+		/// <remarks>Wording longer than a button's own width wrapped onto a second line, so a button is as wide as its wording needs.</remarks>
+		void LayoutButtons()
+		{
+			var shown = new[] { Button1, Button2, Button3 }.Where(x => x.DialogResult != DialogResult.None).ToArray();
+			var right = ClientSize.Width - ButtonMargin;
+			var total = ButtonMargin;
+			for (var i = shown.Length - 1; i >= 0; i--)
+			{
+				var button = shown[i];
+				var wording = TextRenderer.MeasureText(button.Text.Replace("&", ""), button.Font).Width + 2 * ButtonMargin;
+				button.Width = Math.Max(button.Width, wording);
+				button.Left = right - button.Width;
+				right = button.Left - ButtonGap;
+				total += button.Width + ButtonGap;
+			}
+			buttonsWidth = total + ButtonMargin - ButtonGap;
+		}
+
 		public void AddResizeEvents()
 		{
-			h = Height - TextLabel.Height;
+			h = Height - TextLabel.Height + headingOffset;
 			w = Width - TextLabel.Width;
 			TextLabel.AutoSize = true;
 			TextLabel.Resize += Message_Resize;
@@ -190,7 +246,7 @@ namespace JocysCom.ClassLibrary.Controls
 		void Message_Resize(object sender, EventArgs e)
 		{
 			Height = Math.Max(h + TextLabel.Height, MinimumSize.Height);
-			Width = Math.Max(w + TextLabel.Width, MinimumSize.Width);
+			Width = Math.Max(Math.Max(w + Math.Max(TextLabel.Width, headingWidth), MinimumSize.Width), buttonsWidth + Width - ClientSize.Width);
 			if (TextLabel.Width + 1 >= TextLabel.MaximumSize.Width && TextLabel.Height + 1 >= TextLabel.MaximumSize.Height)
 			{
 				textBox1.Text = TextLabel.Text;
