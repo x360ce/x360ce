@@ -103,14 +103,6 @@ Report only crashes or other bugs, note that the Issue tracker is not a help des
 
 **If you have questions about installation or configuration, please go to our [forum @NGemu](http://ngemu.com/forums/x360ce.140)**
 
-# Guides [OUTDATED!]
-
-[x360ce Libraries Tutorial](http://ngemu.com/threads/x360ce-libraries-tutorial-by-resolutespider5.155310/)
-
-[x360ce Application Tutorial](http://ngemu.com/threads/tutorial-by-resolutespider5.155011/)
-
-[Various x360ce Guides](http://ngemu.com/threads/various-x360ce-guides-by-resolutespider5.156807/)
-
 # Compatibility
 Games that work with x360ce can be found on the [Compatibility List](https://github.com/x360ce/x360ce/wiki/Compatibility-List). If you would like to add to that list or provide updated information place see [Reporting Compatibility](https://github.com/x360ce/x360ce/wiki/Reporting-Compatibility).
 
