@@ -43,9 +43,7 @@ the row, red while it is written down and not. Point at a red one to read what i
 A formula replaces the dead zone, anti dead zone and sensitivity for its row rather than being
 applied on top of them.
 
-**A formula is limited to 16 characters**, which is the width a mapping is stored in. That is
-enough for the examples above and not enough to write a dead zone or a curve out in full. The
-limit is raised in a later release.
+**A formula is limited to 128 characters**, which is the width a mapping is stored in.
 
 The Help page lists every operator, function and source.
 
