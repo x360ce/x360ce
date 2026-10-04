@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -12,11 +14,11 @@ namespace JocysCom.ClassLibrary.Web.Services
 	/// <summary>
 	/// Wrapper class to clone read/write bytes.
 	/// </summary>
-	public class SoapHttpClientSpy : Stream
+	public class SoapHttpClientLogger : Stream
 	{
-		#region Stream Spy
+		#region Stream Logger
 
-		public SoapHttpClientSpy(Stream wrappedStream, HttpWebRequest request, bool isResponse = false)
+		public SoapHttpClientLogger(Stream wrappedStream, HttpWebRequest request, bool isResponse = false)
 		{
 			_wrappedStream = wrappedStream;
 			_Request = request;
@@ -85,7 +87,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		public string GetClonedDataAsText(Encoding encoding = null)
 		{
-			var enc = encoding == null ? System.Text.Encoding.UTF8 : encoding;
+			var enc = encoding is null ? System.Text.Encoding.UTF8 : encoding;
 			string doc = null;
 			lock (clonedStreamLock)
 			{
@@ -115,30 +117,30 @@ namespace JocysCom.ClassLibrary.Web.Services
 		#region Methods for SoapHttpClientProtocol
 
 		/// <summary>Get Writer for Request</summary>
-		public static XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize, Encoding requestEncoding, HttpWebRequest request, out SoapHttpClientSpy writerStreamSpy)
+		public static XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize, Encoding requestEncoding, HttpWebRequest request, out SoapHttpClientLogger writerStreamLogger)
 		{
-			writerStreamSpy = new SoapHttpClientSpy(message.Stream, request);
+			writerStreamLogger = new SoapHttpClientLogger(message.Stream, request);
 			if (bufferSize < 0x200)
 				bufferSize = 0x200;
-			return new XmlTextWriter(new StreamWriter(writerStreamSpy, (requestEncoding != null) ? requestEncoding : new UTF8Encoding(false), bufferSize));
+			return new XmlTextWriter(new StreamWriter(writerStreamLogger, (requestEncoding != null) ? requestEncoding : new UTF8Encoding(false), bufferSize));
 		}
 
 		/// <summary>Get Reader for Response</summary>
-		public static XmlReader GetReaderForMessage(SoapClientMessage message, int bufferSize, HttpWebRequest request, out SoapHttpClientSpy readerStreamSpy)
+		public static XmlReader GetReaderForMessage(SoapClientMessage message, int bufferSize, HttpWebRequest request, out SoapHttpClientLogger readerStreamLogger)
 		{
-			readerStreamSpy = new SoapHttpClientSpy(message.Stream, request, true);
+			readerStreamLogger = new SoapHttpClientLogger(message.Stream, request, true);
 			Encoding encoding = null;
 			// Set encoding.
 			var charset = GetParameter(message.ContentType, "charset");
 			if (!string.IsNullOrEmpty(charset))
 				encoding = Encoding.GetEncoding(charset);
-			if (encoding == null && !(message.SoapVersion == SoapProtocolVersion.Soap12 && IsApplication(message.ContentType)))
+			if (encoding is null && !(message.SoapVersion == SoapProtocolVersion.Soap12 && IsApplication(message.ContentType)))
 				encoding = Encoding.ASCII;
 			if (bufferSize < 0x200)
 				bufferSize = 0x200;
-			var reader = encoding == null
-				? new XmlTextReader(readerStreamSpy)
-				: new XmlTextReader(new StreamReader(readerStreamSpy, encoding, true, bufferSize));
+			var reader = encoding is null
+				? new XmlTextReader(readerStreamLogger)
+				: new XmlTextReader(new StreamReader(readerStreamLogger, encoding, true, bufferSize));
 			reader.DtdProcessing = DtdProcessing.Prohibit;
 			reader.Normalization = true;
 			reader.XmlResolver = null;
@@ -195,10 +197,10 @@ namespace JocysCom.ClassLibrary.Web.Services
 				/>
 			  </diagnostics>
 			  </system.serviceModel>
-			  <!-- Enabling Tracing in SoapHttpClientSpy -->
+			  <!-- Enabling Tracing in SoapHttpClientLogger -->
 			  <system.diagnostics>
 				<sources>
-				  <source name="JocysCom.ClassLibrary.Web.Services.SoapHttpClientSpy" switchValue="All">
+				  <source name="JocysCom.ClassLibrary.Web.Services.SoapHttpClientLogger" switchValue="All">
 					<listeners>
 					  <add name="WebServiceLogs"/>
 					</listeners>
@@ -222,7 +224,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 			var list = new List<string>();
 			for (int i = 0; i < headers.Count; ++i)
 			{
-				if (headers[i] == null)
+				if (headers[i] is null)
 					continue;
 				var header = headers.GetKey(i);
 				foreach (string value in headers.GetValues(i))
@@ -233,7 +235,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		NameValueCollection ToCollection(HttpWebRequest message)
 		{
-			if (message == null)
+			if (message is null)
 				return null;
 			var nvc = new NameValueCollection();
 			nvc.Add("Type", message.GetType().FullName);
@@ -253,7 +255,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		NameValueCollection ToCollection(WebResponse message, int? requestHshCode = null)
 		{
-			if (message == null)
+			if (message is null)
 				return null;
 			var nvc = new NameValueCollection();
 			nvc.Add("Type", message.GetType().FullName);

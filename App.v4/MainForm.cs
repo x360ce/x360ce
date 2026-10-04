@@ -36,6 +36,9 @@ namespace x360ce.App
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)
 			{
+				// The released program carries no configuration file, so it has no RunMode setting:
+				// without one it is a release, not a test build.
+				LogHelper.DefaultRunMode = "LIVE";
 				// Initialize exception handlers
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;

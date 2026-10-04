@@ -53,10 +53,11 @@ namespace x360ce.App
 			else
 			{
 				// Run copy of x360ce as Administrator. It waits, so what Windows said is available.
-				var exitCode = JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				var exitCode = JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 					Application.ExecutablePath,
 					argument,
-					System.Diagnostics.ProcessWindowStyle.Hidden
+					isElevated: true,
+					windowStyle: System.Diagnostics.ProcessWindowStyle.Hidden
 				);
 				LastAdminResult = System.Enum.IsDefined(typeof(AdminResult), exitCode)
 					? (AdminResult)exitCode

@@ -362,8 +362,8 @@ namespace JocysCom.ClassLibrary.IO
 		/// runs there. Only a device arriving or leaving can change the list, and a window registered
 		/// with <see cref="RegisterDeviceInterface"/> is told of those for the class it asked about.
 		///
-		/// Both programs ask this one rule, because a second copy of it elsewhere has already let the
-		/// noisy case back in and taken the rate down with it.
+		/// Callers ask this one rule rather than keeping a copy of their own: a copy elsewhere has already
+		/// let the noisy case back in and taken the polling rate down with it.
 		/// </remarks>
 		/// <param name="change">What Windows says happened.</param>
 		public static bool IsDeviceListChange(DBT change)
@@ -692,7 +692,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// <remarks>
 		/// A device id is one call to the configuration manager; the rest of a device's description is a
 		/// dozen. Asked for ids alone, seven hundred devices answer in a few milliseconds, and a caller can
-		/// then read the description of the few it wants with <see cref="GetDevices(IEnumerable{string}, bool)"/>.
+		/// then read the description of the few it wants with <see cref="GetDevices(IEnumerable{string}, bool, bool)"/>.
 		/// </remarks>
 		public static string[] GetDeviceIds(bool presentOnly = true)
 		{

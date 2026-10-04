@@ -204,7 +204,7 @@ namespace x360ce.App.DInput
 					// so reporting turned an ordinary delay into an error report for the user.
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
-						System.Diagnostics.EventLogEntryType.Warning);
+						System.Diagnostics.TraceLevel.Warning);
 					return false;
 				}
 				return true;

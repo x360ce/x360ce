@@ -19,7 +19,7 @@ namespace x360ce.App
 			// Snapshot under the collection lock. This runs on the device refresh thread
 			// while the interface thread can add or remove devices, and enumerating the
 			// live list throws "Collection was modified".
-			var items = SettingsManager.UserDevices.ItemsToArraySyncronized()
+			var items = SettingsManager.UserDevices.ItemsToArraySynchronized()
 				.Where(x => x.ProductGuid == ProductGuid).ToArray();
 			foreach (var item in items)
 			{
@@ -65,7 +65,7 @@ namespace x360ce.App
 			var instanceName = "";
 			var productName = "Test Device";
 			// Snapshot once, for the same reason as above.
-			var existing = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var existing = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			for (int i = 1; ; i++)
 			{
 				instanceName = string.Format("{0} {1}", productName, i);

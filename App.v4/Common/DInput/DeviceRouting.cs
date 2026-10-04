@@ -271,9 +271,9 @@ namespace x360ce.App.DInput
 		public static void Refresh()
 		{
 			_current = Build(SettingsManager.CurrentGame,
-				SettingsManager.UserSettings.ItemsToArraySyncronized(),
-				SettingsManager.PadSettings.ItemsToArraySyncronized(),
-				SettingsManager.UserDevices.ItemsToArraySyncronized());
+				SettingsManager.UserSettings.ItemsToArraySynchronized(),
+				SettingsManager.PadSettings.ItemsToArraySynchronized(),
+				SettingsManager.UserDevices.ItemsToArraySynchronized());
 		}
 
 		static bool _watching;

@@ -626,7 +626,7 @@ namespace x360ce.App.Controls
 			var grid = MappedDevicesDataGridView;
 			var game = SettingsManager.CurrentGame;
 			// Get rows which must be displayed on the list.
-			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
+			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
 				// Filter devices by controller.
 				.Where(x => x.MapTo == (int)MappedTo)
 				// Filter devices by selected game (no items will be shown if game is not selected).

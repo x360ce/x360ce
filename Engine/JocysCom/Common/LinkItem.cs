@@ -1,9 +1,15 @@
-﻿using System;
+#nullable disable
+
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace JocysCom.WebSites.Engine
+namespace JocysCom.ClassLibrary
 {
+	/// <summary>
+	/// Represents a reference to a named business object, identified by a GUID and categorized by ItemType.
+	/// Supports change notification for data binding.
+	/// </summary>
 	[Serializable]
 	public partial class LinkItem : IEquatable<LinkItem>, INotifyPropertyChanged
 	{
@@ -27,24 +33,30 @@ namespace JocysCom.WebSites.Engine
 			Type = ItemType.None;
 		}
 
+		/// <summary>Business object category this LinkItem refers to (e.g., Book, Member).</summary>
 		public ItemType Type { get { return _Type; } set { _Type = value; OnPropertyChanged(); } }
 		[NonSerialized]
 		ItemType _Type;
 
+		/// <summary>Unique identifier (GUID) of the referenced business object.</summary>
 		public Guid Id { get { return _Id; } set { _Id = value; OnPropertyChanged(); } }
 		[NonSerialized]
 		Guid _Id;
 
+		/// <summary>Display name of the referenced business object.</summary>
 		public string Name { get { return _Name; } set { _Name = value; OnPropertyChanged(); } }
 		[NonSerialized]
 		string _Name;
 
+		/// <summary>Read-only empty LinkItem instance (no Id, Name, or Type).</summary>
 		public static readonly LinkItem Empty = new LinkItem();
 
+		/// <summary>True if this instance represents an empty/default link (no Id, Name, or Type).</summary>
 		public bool IsEmpty { get { return Id == Guid.Empty && string.IsNullOrEmpty(Name) && Type == ItemType.None; } }
 
 		#region IEquatable
 
+		/// <summary>Determines whether two LinkItem instances are equal based on Id, Name, and Type, handling nulls.</summary>
 		public static bool operator ==(LinkItem a, LinkItem b)
 		{
 			// If both are null, or both are same instance, return true.
@@ -57,11 +69,18 @@ namespace JocysCom.WebSites.Engine
 			return a.Id == b.Id && a.Name == b.Name && a.Type == b.Type;
 		}
 
+		/// <summary>Determines whether two LinkItem instances are not equal.</summary>
 		public static bool operator !=(LinkItem a, LinkItem b)
 		{
 			return !(a == b);
 		}
 
+		/// <summary>
+		/// Returns a hash code for this instance using default reference-based implementation.
+		/// </summary>
+		/// <remarks>
+		/// This implementation does not consider Id, Name, or Type; two LinkItem instances considered equal by == may produce different hash codes, leading to inconsistent behavior in hash-based collections.
+		/// </remarks>
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
@@ -74,7 +93,7 @@ namespace JocysCom.WebSites.Engine
 
 		public override bool Equals(object o)
 		{
-			if (o == null)
+			if (o is null)
 				return false;
 			return this == o as LinkItem;
 		}
@@ -83,7 +102,7 @@ namespace JocysCom.WebSites.Engine
 
 		#region INotifyPropertyChanged
 
-		// CWE-502: Deserialization of Untrusted Data
+		// SUPPRESS: CWE-502: Deserialization of Untrusted Data
 		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serializable] attribute.
 		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -97,4 +116,3 @@ namespace JocysCom.WebSites.Engine
 
 	}
 }
-

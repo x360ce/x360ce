@@ -50,7 +50,7 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThreadWatched(() =>
 			{
-				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var a = NewGame("GameA");
 				var b = NewGame("GameB");
@@ -161,8 +161,8 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThread(() =>
 			{
-				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
-				var existingPads = SettingsManager.PadSettings.ItemsToArraySyncronized();
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var existingPads = SettingsManager.PadSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
 				SettingsManager.Current.NotifySettingsStatus = count => { };
@@ -205,7 +205,7 @@ namespace x360ce.Tests
 					SettingsManager.UserSettings.Items.Clear();
 					foreach (var setting in existing)
 						SettingsManager.UserSettings.Items.Add(setting);
-					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySyncronized().Except(existingPads).ToArray())
+					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySynchronized().Except(existingPads).ToArray())
 						SettingsManager.PadSettings.Items.Remove(ps);
 				}
 			});

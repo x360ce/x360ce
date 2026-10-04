@@ -260,7 +260,7 @@ namespace Nefarius.ViGEm.Client
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual controller " + userIndex + " works, but the bus refused its vibration: " +
 					BusAnswers.Name(answer) + ".",
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 		}
 
 		/// <summary>Forgets each controller's last plug and unplug failure and its refused vibration, so the next one is written.</summary>
@@ -445,11 +445,11 @@ namespace Nefarius.ViGEm.Client
 			if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual bus connected again after " + BusAnswers.Name(previous) + ".",
-					System.Diagnostics.EventLogEntryType.Information);
+					System.Diagnostics.TraceLevel.Info);
 			else
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual bus refused the connection: " + BusAnswers.Name(error) + ".",
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 		}
 
 		public static void DisposeCurrent()
@@ -611,7 +611,7 @@ namespace Nefarius.ViGEm.Client
 			else
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"The virtual bus library loaded after failing to load before.",
-					System.Diagnostics.EventLogEntryType.Information);
+					System.Diagnostics.TraceLevel.Info);
 		}
 
 		public static string LibraryName { get { return _LibraryName; } }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,10 +25,10 @@ namespace JocysCom.ClassLibrary.Security
 			var d = date.HasValue ? date.Value : DateTime.Now;
 			switch (unit)
 			{
-				case TimeUnitType.Seconds: return (long)d.Subtract(DateTime.MinValue).TotalSeconds;
-				case TimeUnitType.Minutes: return (long)d.Subtract(DateTime.MinValue).TotalMinutes;
-				case TimeUnitType.Hours: return (long)d.Subtract(DateTime.MinValue).TotalHours;
-				case TimeUnitType.Days: return (long)d.Subtract(DateTime.MinValue).TotalDays;
+				case TimeUnitType.Second: return (long)d.Subtract(DateTime.MinValue).TotalSeconds;
+				case TimeUnitType.Minute: return (long)d.Subtract(DateTime.MinValue).TotalMinutes;
+				case TimeUnitType.Hour: return (long)d.Subtract(DateTime.MinValue).TotalHours;
+				case TimeUnitType.Day: return (long)d.Subtract(DateTime.MinValue).TotalDays;
 			}
 			return 0;
 		}
@@ -101,7 +103,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Check if token key is valid.
 		/// </summary>
 		/// <param name="token">Token to check.</param>
-		/// <param name="userId">User id (Integer or GUID).</param>
+		/// <param name="id">User id (Integer or GUID).</param>
 		/// <param name="password">Password or secure key/hash.</param>
 		/// <param name="unit">Time unit type.</param>
 		/// <param name="count">How many units in past mus be checked.</param>
@@ -117,7 +119,7 @@ namespace JocysCom.ClassLibrary.Security
 			// If there is no expiry then...
 			if (u == 0) return (token == GetSecurityToken(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
-			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
+			var bias = unit == TimeUnitType.Second ? 5 : 1;
 			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...
@@ -155,10 +157,10 @@ namespace JocysCom.ClassLibrary.Security
 		/// Check if token is valid.
 		/// </summary>
 		/// <param name="token">Token to check.</param>
-		/// <param name="userId">User id (Integer or GUID).</param>
-		/// <param name="password">Password or secure key/hash.</param>
+		/// <param name="value">Value which will be used to make token.</param>
 		/// <param name="unit">Time unit type.</param>
 		/// <param name="count">How many units in past mus be checked.</param>
+		/// <param name="hmacHashKey">HMAC hash key.</param>
 		/// <returns>True if token is valid, False if not valid.</returns>
 		public static bool CheckUnlockToken(string token, string value, TimeUnitType unit, int count, string hmacHashKey = null)
 		{
@@ -181,7 +183,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Id.</returns>
 		public static T GetData<T>(string token, string hmacHashKey = null)
 		{
-			if (token == null)
+			if (token is null)
 				throw new ArgumentNullException(nameof(token));
 			var tokenPrefix = token.Substring(checkSumSize, securityHashSize);
 			var tokenData = token.Substring(checkSumSize + securityHashSize);
@@ -216,9 +218,9 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static byte[] ExclusiveOR(byte[] value, byte[] key)
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			var result = new byte[value.Length];
 			for (var i = 0; i < value.Length; i++)
@@ -265,11 +267,11 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		public static byte[] ObjectToBytes(object value, Type type = null)
 		{
-			if (value == null) return new byte[0];
+			if (value is null) return new byte[0];
 			var o = value;
 			var t = type ?? value.GetType();
 			var typeCode = Type.GetTypeCode(t);
-			// CWE-404: Improper Resource Shutdown or Release
+			// SUPPRESS: CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			var writer = new BinaryWriter(stream, Encoding.UTF8, false);
@@ -332,7 +334,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <remarks>byte[0] is empty/default value.</remarks>
 		private static object BytesToObject(byte[] bytes, Type type, int? index = null, int? count = null)
 		{
-			if (bytes == null)
+			if (bytes is null)
 			{
 				return type.IsValueType ? Activator.CreateInstance(type) : null;
 			}
@@ -378,7 +380,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		private static object Deserialize(byte[] bytes, Type type)
 		{
-			if (bytes == null || bytes.Length == 0) return null;
+			if (bytes is null || bytes.Length == 0) return null;
 			var list = new List<PropertyInfo>();
 			var infos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			var stream = new MemoryStream(bytes);
@@ -406,7 +408,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Check if token key is valid.
 		/// </summary>
 		/// <param name="token">Token to check.</param>
-		/// <param name="userId">User id (Integer or GUID).</param>
+		/// <param name="id">User id (Integer or GUID).</param>
 		/// <param name="password">Password or secure key/hash.</param>
 		/// <param name="unit">Time unit type.</param>
 		/// <param name="count">How many units in past mus be checked.</param>
@@ -418,7 +420,7 @@ namespace JocysCom.ClassLibrary.Security
 			// If there is no expiry then...
 			if (u == 0) return (token == GetSecurityTokenOld(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
-			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
+			var bias = unit == TimeUnitType.Second ? 5 : 1;
 			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...

@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Security;
 
 namespace JocysCom.WebSites.Engine.Security.Data
 {

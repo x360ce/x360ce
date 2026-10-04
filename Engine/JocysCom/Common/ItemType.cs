@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 
-namespace JocysCom.WebSites.Engine
+namespace JocysCom.ClassLibrary
 {
-	/// <summary>
-	/// Business Item Type
-	/// </summary>
+	/// <summary>Specifies the type of business domain items, such as books, members, events, and forum entities.</summary>
 	/// <remarks>
 	/// Convert the string to an enum object:
 	/// MemberType mt = (MemberType)Enum.Parse(typeof(MemberType), "Friend", true);

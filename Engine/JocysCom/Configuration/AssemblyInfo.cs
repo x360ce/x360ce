@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -6,9 +8,16 @@ using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
+	/// <summary>
+	/// Encapsulates assembly metadata and utilities, including entry assembly detection,
+	/// build timestamps, version/title formatting, and application data path resolution.
+	/// </summary>
 	public partial class AssemblyInfo
 	{
-
+		/// <summary>
+		/// Initializes AssemblyInfo for the entry assembly by using GetEntryAssembly and fallbacks
+		/// (stack scan, AppDomain scan, calling/executing assemblies).
+		/// </summary>
 		public AssemblyInfo()
 		{
 			Assembly =
@@ -19,20 +28,30 @@ namespace JocysCom.ClassLibrary.Configuration
 				Assembly.GetExecutingAssembly();
 		}
 
-		public static AssemblyInfo _Entry;
 		public static object _EntryLock = new object();
+		/// <summary>
+		/// Gets or sets the singleton entry AssemblyInfo instance; thread-safe.
+		/// </summary>
 		public static AssemblyInfo Entry
 		{
 			get
 			{
 				lock (_EntryLock)
 				{
-					if (_Entry == null)
+					if (_Entry is null)
 						_Entry = new AssemblyInfo();
 					return _Entry;
 				}
 			}
+			set
+			{
+				lock (_EntryLock)
+				{
+					_Entry = value;
+				}
+			}
 		}
+		static AssemblyInfo _Entry;
 
 		public AssemblyInfo(string strValFile)
 		{
@@ -55,6 +74,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		public sealed class EntryAssemblyAttribute : Attribute { }
 
 		// Method 1 better works on multiple assemblies marked as entry.
+		/// <summary>
+		/// Finds entry assembly by scanning reversed call stack for EntryAssemblyAttribute markers.
+		/// </summary>
 		Assembly FindEntryAssembly1()
 		{
 			var frames = new StackTrace().GetFrames();
@@ -70,8 +92,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			return null;
 		}
 
-
 		// Find on current domain.
+		/// <summary>
+		/// Finds entry assembly by scanning loaded AppDomain assemblies for EntryAssemblyAttribute markers.
+		/// </summary>
 		Assembly FindEntryAssembly2()
 		{
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -91,6 +115,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		DateTime? _BuildDateTime;
 		object BuildDateTimeLock = new object();
 
+		/// <summary>
+		/// Gets the assembly's build timestamp from metadata, cached per instance (thread-safe).
+		/// </summary>
 		public DateTime BuildDateTime
 		{
 			get
@@ -106,6 +133,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		object FullTitleLock = new object();
 		string _FullTitle;
+
+		/// <summary>
+		/// Gets the full application title including version, build metadata, run mode, architecture, and description (thread-safe).
+		/// </summary>
 		public string FullTitle
 		{
 			get
@@ -119,19 +150,34 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		//public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
-		//{
-		//	return new AssemblyInfo().GetTitle(showBuild, showRunMode, showBuildDate, showArchitecture, showDescription, versionNumbers);
-		//}
+		/// <summary>
+		/// Gets the configured runtime mode; currently returns empty until configuration provider is standardized.
+		/// </summary>
+		public string RunMode
+		{
+			get
+			{
+				if (_RunMode is null)
+					// TODO: Standardize configuration provider XML, JSON, INI, Registry, etc...
+					// https://docs.microsoft.com/en-us/dotnet/core/extensions/configuration-providers
+					//_RunMode = SettingsParser.Current.Parse("RunMode", "");
+					return "";
+				return _RunMode;
+			}
+		}
+		public string _RunMode;
 
-
+		/// <summary>
+		/// Builds a descriptive title string for the assembly, including version, release stage (Alpha/Beta/RC/RTM/GA),
+		/// optional run mode, build date, architecture, description, and user context.
+		/// </summary>
 		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
 		{
-			var s = string.Format("{0} {1} {2}", Company, Product, this.Version.ToString(versionNumbers));
+			var s = string.Format("{0} {1} {2}", Company, Product, Version.ToString(versionNumbers));
 			if (showBuild)
 			{
 				// Version = major.minor.build.revision
-				switch (this.Version.Build)
+				switch (Version.Build)
 				{
 					case 0: s += " Alpha"; break;  // Alpha Release (AR)
 					case 1: s += " Beta 1"; break; // Master Beta (MB)
@@ -142,16 +188,16 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;                // General Availability (GA) - Gold
 				}
 			}
-			var runMode = SettingsParser.Current.Parse("RunMode", "");
-			var haveRunMode = !string.IsNullOrEmpty(runMode);
+
+			var haveRunMode = !string.IsNullOrEmpty(RunMode);
 			// If run mode is not specified then assume live.
-			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;
+			var nonLive = haveRunMode && string.Compare(RunMode, "LIVE", true) != 0;
 			if (showBuildDate || (showRunMode && nonLive))
 			{
 				s += " (";
 				if (showRunMode && nonLive)
 				{
-					s += string.Format("{0}", runMode);
+					s += string.Format("{0}", RunMode);
 					if (showBuildDate) s += " ";
 				}
 				if (showBuildDate)
@@ -162,27 +208,14 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 			if (showArchitecture)
 			{
-				switch (Assembly.GetEntryAssembly().GetName().ProcessorArchitecture)
-				{
-					case ProcessorArchitecture.Amd64:
-					case ProcessorArchitecture.IA64:
-						s += " 64-bit";
-						break;
-					case ProcessorArchitecture.X86:
-						s += " 32-bit";
-						break;
-					default: // Default is MSIL: Any CPU, show nothing/
-						break;
-				}
+				s += Environment.Is64BitProcess ? " 64-bit" : " 32-bit";
 			}
 			if (showDescription && !string.IsNullOrEmpty(Description) && !s.Contains(Description))
 			{
 				s += " - " + Description;
 			}
 
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 			// Add elevated tag.
 			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -196,10 +229,12 @@ namespace JocysCom.ClassLibrary.Configuration
 				s += string.Format(" ({0}\\{1})", processDomain, processUser);
 			else if (isElevated)
 				s += " (Administrator)";
-			// if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+			// if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) Text += " (Administrator)";
 #endif
 			return s.Trim();
 		}
+
+#if NETFRAMEWORK // .NET Framework
 
 		internal partial class NativeMethods
 		{
@@ -214,10 +249,19 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		}
 
+		/// <summary>
+		/// Retrieves the current Windows session domain name via WTSQuerySessionInformationW.
+		/// </summary>
 		public string GetWindowsDomainName() { return GetInformation(7); }
 
+		/// <summary>
+		/// Retrieves the current Windows session user name via WTSQuerySessionInformationW.
+		/// </summary>
 		public string GetWindowsUserName() { return GetInformation(5); }
 
+		/// <summary>
+		/// Invokes WTSQuerySessionInformation to query session-specific information (e.g., domain or user name).
+		/// </summary>
 		private static string GetInformation(int WTSInfoClass)
 		{
 			// Use current context.
@@ -236,15 +280,17 @@ namespace JocysCom.ClassLibrary.Configuration
 			return Marshal.PtrToStringUni(AnswerBytes);
 		}
 
+#endif
+
 		/// <summary>
-		/// Read build time from the file. This won't work with deterministic builds.
+		/// Reads the PE header timestamp from the specified file to determine its build time; not valid for deterministic builds.
 		/// </summary>
 		/// <remarks>
 		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
 		/// This means that compiling assemblies under the same conditions (permalink)
 		/// would produce byte-for-byte equivalent binaries.
 		/// </remarks>
-		public static DateTime GetBuildDateTime(string filePath, TimeZoneInfo tzi = null)
+		public static DateTime GetBuildDateTime(string filePath)
 		{
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60; // 0x3C
@@ -255,7 +301,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			try
 			{
 				s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-				s.Read(b, 0, 2048);
+				var bytesToRead = (int)Math.Min(s.Length, b.Length);
+#if NET7_0_OR_GREATER
+				s.ReadExactly(b, 0, bytesToRead);
+#else
+				s.Read(b, 0, bytesToRead);
+#endif
 			}
 			finally
 			{
@@ -269,24 +320,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			return dt;
 		}
 
-
 		/// <summary>
-		/// Read build time from the assembly. Workaround is required to work with deterministic builds.
+		/// Reads build time from an assembly, using embedded resource fallback; requires workaround for deterministic builds.
 		/// </summary>
 		/// <remarks>
 		/// You have two options:
 		/// 
 		/// Option 1: Disable Deterministic build by adding
 		/// 
-		///     &gt;Deterministic&lt;False&gt;/Deterministic&lt; inside a &gt;PropertyGroup&lt section  of .csproj
+		///      &lt;Deterministic&gt;False&lt;/Deterministic&gt; inside a &lt;PropertyGroup&gt; section of .csproj
 		///
 		/// Option 2:
 		/// 
 		///     Create "Resources\BuildDate.txt" and set its "Build Action: Embedded Resource"
 		///     Add to pre-build event to work with latest .NET builds:
-		///     
-		///     IF NOT EXIST "$(ProjectDir)Resources" MKDIR "$(ProjectDir)Resources" 2>nul
-		///     PowerShell.exe -Command "(Get-Date).ToString(\"o\") | Out-File "$(ProjectDir)Resources\BuildDate.txt"
+		///
+		///     PowerShell.exe -Command "New-Item -ItemType Directory -Force -Path \"$(ProjectDir)Resources\" | Out-Null"
+		///     PowerShell.exe -Command "(Get-Date).ToString(\"o\") | Out-File \"$(ProjectDir)Resources\BuildDate.txt\""
 		///
 		/// Note:
 		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
@@ -295,7 +345,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </remarks>
 		public static DateTime GetBuildDateTime(Assembly assembly, TimeZoneInfo tzi = null)
 		{
-			if (assembly == null)
+			if (assembly is null)
 				throw new ArgumentNullException(nameof(assembly));
 			var names = assembly.GetManifestResourceNames();
 			var dt = default(DateTime);
@@ -312,9 +362,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					return dt;
 				}
 			}
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;
@@ -333,7 +381,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Convert the TimeStamp to a DateTime
+		/// Converts seconds since Unix epoch to a DateTime in the specified timezone.
 		/// </summary>
 		static DateTime GetDateTime(int secondsSince1970, TimeZoneInfo tzi = null)
 		{
@@ -342,20 +390,25 @@ namespace JocysCom.ClassLibrary.Configuration
 			return TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tzi ?? TimeZoneInfo.Local);
 		}
 
+		/// <summary>
+		/// Gets the unescaped local file path of the loaded assembly.
+		/// </summary>
 		public string AssemblyPath
 		{
 			get
 			{
-				string codeBase = Assembly.CodeBase;
-				UriBuilder uri = new UriBuilder(codeBase);
-				string path = Uri.UnescapeDataString(uri.Path);
+				var codeBase = Assembly.Location;
+				if (string.IsNullOrEmpty(codeBase))
+					return codeBase;
+				var uri = new UriBuilder(codeBase);
+				var path = Uri.UnescapeDataString(uri.Path);
 				return path;
 			}
 		}
 
 		public string AssemblyFullName { get { return Assembly.GetName().FullName.ToString(); } }
 		public string AssemblyName { get { return Assembly.GetName().Name.ToString(); } }
-		public string CodeBase { get { return Assembly.CodeBase; } }
+		public string CodeBase { get { return Assembly.Location; } }
 
 		public string Company { get { return GetAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
 		public string Product { get { return GetAttribute<AssemblyProductAttribute>(a => a.Product); } }
@@ -372,12 +425,15 @@ namespace JocysCom.ClassLibrary.Configuration
 		string GetAttribute<T>(Func<T, string> value) where T : Attribute
 		{
 			T attribute = (T)Attribute.GetCustomAttribute(Assembly, typeof(T));
-			return attribute == null
-				? "" 
+			return attribute is null
+				? ""
 				: value.Invoke(attribute);
 		}
 
-		public string GetAppDataPath(bool userLevel, string format, params object[] args)
+		/// <summary>
+		/// Constructs a path under user or common application data folder for this assembly's Company/Product and optional file name.
+		/// </summary>
+		public string GetAppDataPath(bool userLevel = false, string format = "", params object[] args)
 		{
 			// Get writable application folder.
 			var specialFolder = userLevel
@@ -393,7 +449,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
-		public FileInfo GetAppDataFile(bool userLevel, string format, params object[] args)
+		/// <summary>
+		/// Creates a FileInfo for a file in the application data directory for this assembly.
+		/// </summary>
+		public FileInfo GetAppDataFile(bool userLevel = false, string format = "", params object[] args)
 		{
 			var path = GetAppDataPath(userLevel, format, args);
 			return new FileInfo(path);

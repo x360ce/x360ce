@@ -233,7 +233,7 @@ namespace x360ce.App.Controls
 			// without that game, it adds this folder as a game of its own, which is what was asked for.
 			IList<UserGame> games = SettingsManager.UserGames.Items;
 			if (_AddSeparateGame && name != null)
-				games = SettingsManager.UserGames.ItemsToArraySyncronized()
+				games = SettingsManager.UserGames.ItemsToArraySynchronized()
 					.Where(x => !string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase)).ToList();
 			var programs = SettingsManager.Programs.Items;
 			GameScanner.ScanGames(paths, games, programs, name);

@@ -458,15 +458,8 @@ namespace x360ce.Tests
 					pass();
 			});
 			Assert.IsTrue(bytes < passes, passes + " passes, each with a new force passed on, handed the collector " + bytes + " bytes.");
-			var free = XInputReadPauseTest.Fastest(passes, pass);
-			// The interface reads a setting's default under this lock.
-			var defaults = typeof(JocysCom.ClassLibrary.Runtime.Attributes).GetField("DefaultValuesLock", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-			double held = -1;
-			Assert.IsTrue(HeldLock.Finishes(() => held = XInputReadPauseTest.Fastest(passes, pass), 5000, defaults),
-				"A new force passed on waits for the lock the interface reads a setting's default under.");
-			Console.WriteLine(passes + " passes: " + bytes + " bytes; " + held + " ms with the defaults lock held, " + free + " ms free.");
-			Assert.IsTrue(held <= free + XInputReadPauseTest.HeldSlackMs,
-				passes + " passes took " + held + " ms with the defaults lock held and " + free + " ms with it free.");
+			// A setting's default is read without a lock (Attributes keeps them in a concurrent
+			// dictionary), so the interface reading one cannot hold up a pass.
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]

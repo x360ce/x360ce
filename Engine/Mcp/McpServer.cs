@@ -395,7 +395,7 @@ namespace x360ce.Engine.Mcp
 			}
 			catch (Exception ex)
 			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog("AI assistant access request failed: " + ex.Message, System.Diagnostics.EventLogEntryType.Warning);
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog("AI assistant access request failed: " + ex.Message, System.Diagnostics.TraceLevel.Warning);
 				try { Write(context.Response, 500, McpServer.Error(null, -32603, "Internal error.")); }
 				catch (Exception) { }
 			}

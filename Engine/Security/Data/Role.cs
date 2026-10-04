@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.Security;
 
 namespace JocysCom.WebSites.Engine.Security.Data
 {

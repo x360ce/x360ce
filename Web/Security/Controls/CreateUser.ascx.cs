@@ -10,6 +10,7 @@ using System.Web.Security;
 using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
 using JocysCom.WebSites.Engine.Security;
+using JocysCom.ClassLibrary.Security;
 using System.Web.UI.HtmlControls;
 using System.Security.Cryptography;
 

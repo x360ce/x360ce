@@ -103,6 +103,7 @@
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -171,6 +172,7 @@
     <Compile Include="Common\IDisplayName.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
+    <Compile Include="Common\JsonIgnoreAttribute.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\Preset.cs" />
@@ -227,6 +229,7 @@
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />
+    <Compile Include="JocysCom\Collections\IKeyValue.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
@@ -242,18 +245,23 @@
     <Compile Include="JocysCom\ComponentModel\BindingListInvoked.cs" />
     <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
     <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
+    <Compile Include="JocysCom\Configuration\Arguments.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
+    <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
     <Compile Include="JocysCom\Configuration\ISettingsData.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsFileItem.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsItem.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsListFileItem.cs" />
     <Compile Include="JocysCom\Configuration\SettingsData.cs" />
     <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Configuration\SettingsParser.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.WPF.cs" />
-    <Compile Include="JocysCom\Controls\ErrorReportUserControl.cs">
+    <Compile Include="Controls\ErrorReportUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="JocysCom\Controls\ErrorReportUserControl.Designer.cs">
+    <Compile Include="Controls\ErrorReportUserControl.Designer.cs">
       <DependentUpon>ErrorReportUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Controls\PositionSettings.cs" />
@@ -288,10 +296,10 @@
     </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
+    <Compile Include="JocysCom\Data\SqlHelper.ConvertTable.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
-    <Compile Include="JocysCom\Data\TlvSerializer.cs" />
-    <Compile Include="JocysCom\Data\TlvSerializerError.cs" />
     <Compile Include="JocysCom\Diagnostics\RawDataLogHttpModule.cs" />
+    <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
     <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
     <Compile Include="JocysCom\Drawing\Basic.cs" />
@@ -318,6 +326,7 @@
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
+    <Compile Include="JocysCom\IO\PathHelper.cs" />
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailHelper.cs" />
@@ -364,17 +373,17 @@
     <Compile Include="JocysCom\Security\AESHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
-    <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="Security\Check.cs" />
     <Compile Include="JocysCom\Security\CRC32.cs" />
-    <Compile Include="JocysCom\Security\Data\Membership.cs" />
-    <Compile Include="JocysCom\Security\Data\Role.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
+    <Compile Include="Security\Data\Membership.cs" />
+    <Compile Include="Security\Data\Role.cs" />
+    <Compile Include="Security\Data\SecurityEntities.cs" />
+    <Compile Include="Security\Data\SecurityModel.Designer.cs">
       <DependentUpon>SecurityModel.edmx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="Security\Data\User.cs" />
     <Compile Include="JocysCom\Security\HashHelper.cs" />
     <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\PermissionHelper.cs" />
@@ -410,7 +419,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="JocysCom\Web\Services\SoapHttpClientEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\SoapHttpClientSpy.cs" />
+    <Compile Include="JocysCom\Web\Services\SoapHttpClientLogger.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />
@@ -469,10 +478,11 @@
     <Compile Include="JocysCom\Win32\TOKEN_ELEVATION_TYPE.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
-    <Compile Include="JocysCom\Win32\UacHelper.cs" />
+    <Compile Include="JocysCom\Win32\UacHelper.Win32.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
     <Compile Include="JocysCom\Win32\WinAPI.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />
+    <Compile Include="JocysCom\Windows\UacHelper.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapEventType.cs" />
     <Compile Include="Maps\MapRpmType.cs" />
@@ -532,14 +542,14 @@
     <EmbeddedResource Include="Data\x360ceModel.msl">
       <LogicalName>Data.x360ceModel.msl</LogicalName>
     </EmbeddedResource>
-    <None Include="JocysCom\Security\Data\SecurityModel.edmx" />
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.csdl">
+    <None Include="Security\Data\SecurityModel.edmx" />
+    <EmbeddedResource Include="Security\Data\SecurityModel.csdl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.csdl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.ssdl">
+    <EmbeddedResource Include="Security\Data\SecurityModel.ssdl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.ssdl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.msl">
+    <EmbeddedResource Include="Security\Data\SecurityModel.msl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.msl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>

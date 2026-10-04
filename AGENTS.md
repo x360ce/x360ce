@@ -31,7 +31,7 @@ against this list:
 - **No work moved above the guard that used to skip it.** Hoisting a lookup out of an
   `if (hasForceFeedback)` or `if (mapped)` makes every device pay it on every cycle. A call
   that was cheap once a second is not cheap a thousand times a second.
-- **No allocation or copy added per cycle.** `ItemsToArraySyncronized()` locks and copies the
+- **No allocation or copy added per cycle.** `ItemsToArraySynchronized()` locks and copies the
   whole list. Calling it once per device per cycle is a cost; calling it for devices that do
   not need the answer is waste.
 - **No exception thrown per cycle**, and no cost that grows with the number of devices.

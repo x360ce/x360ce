@@ -68,7 +68,7 @@ namespace x360ce.App.Mcp
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;
-			return SettingsManager.UserDevices.ItemsToArraySyncronized().Select(d => (object)new Dictionary<string, object>
+			return SettingsManager.UserDevices.ItemsToArraySynchronized().Select(d => (object)new Dictionary<string, object>
 			{
 				{ "InstanceGuid", d.InstanceGuid.ToString() },
 				{ "Product", d.ProductName },
@@ -112,7 +112,7 @@ namespace x360ce.App.Mcp
 			// The engine fills each device's states again two polls after it replaces them, so the states to compare
 			// with are copied once here. The copies are read from a device list taken once, and nothing waits for the
 			// engine or the window, so the window keeps drawing while a person reaches for a button.
-			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var before = devices.ToDictionary(d => d.InstanceGuid, d => d.DiState == null ? null : d.DiState.Clone());
 			var until = DateTime.Now.AddSeconds(seconds);
 			while (DateTime.Now < until)
@@ -143,7 +143,7 @@ namespace x360ce.App.Mcp
 		{
 			if (controller < 1 || controller > 4)
 				throw new InvalidOperationException("Controller must be 1 to 4.");
-			var preset = SettingsManager.Presets.ItemsToArraySyncronized()
+			var preset = SettingsManager.Presets.ItemsToArraySynchronized()
 				.FirstOrDefault(p => string.Equals(p.ProductName, productName, StringComparison.OrdinalIgnoreCase));
 			var ps = preset == null ? null : SettingsManager.GetPadSetting(preset.PadSettingChecksum);
 			if (ps == null)

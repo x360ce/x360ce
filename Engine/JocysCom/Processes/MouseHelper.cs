@@ -1,6 +1,9 @@
+#nullable disable
+
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Processes
@@ -54,6 +57,9 @@ namespace JocysCom.ClassLibrary.Processes
 
 			[DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 			internal static extern int DeleteObject(IntPtr hObject);
+
+			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 		}
 
 		public static void MoveMouse(int x, int y)
@@ -62,6 +68,32 @@ namespace JocysCom.ClassLibrary.Processes
 			LastX = x;
 			LastY = y;
 		}
+
+		public static void MoveMouse(int startX, int startY, int endX, int endY, double stepSize, int millisecondsDelay, CancellationToken cancellationToken = default)
+		{
+			double deltaX = endX - startX;
+			double deltaY = endY - startY;
+			double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+			double steps = distance / stepSize;
+			double stepX = deltaX / steps;
+			double stepY = deltaY / steps;
+			double currentX = startX;
+			double currentY = startY;
+			int stepsInt = (int)Math.Ceiling(steps);
+
+			for (int i = 0; i < stepsInt; i++)
+			{
+				if (cancellationToken.IsCancellationRequested)
+					return;
+				NativeMethods.SetCursorPos((int)Math.Round(currentX), (int)Math.Round(currentY));
+				Thread.Sleep(millisecondsDelay);
+				currentX += stepX;
+				currentY += stepY;
+			}
+			// Ensure the cursor ends at the exact end position
+			NativeMethods.SetCursorPos(endX, endY);
+		}
+
 
 		public const uint WM_LBUTTONUP = 0x202;
 		public const uint WM_RBUTTONUP = 0x205;
@@ -106,7 +138,7 @@ namespace JocysCom.ClassLibrary.Processes
 				return;
 			uint dWord = MakeDWord((ushort)(LastX - LastRectX), (ushort)(LastY - LastRectY));
 			NativeMethods.SendMessage(mainWindowHandle, button1, (IntPtr)MK_LBUTTON, (IntPtr)dWord);
-			// Logical delay without blocking the current thread.
+			// Logical delay without blocking the current hardware thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
 			NativeMethods.SendMessage(mainWindowHandle, button2, (IntPtr)0, (IntPtr)dWord);
 
@@ -227,6 +259,56 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 		}
 
+		private static MouseEventFlags GetMouseEventArgs(MouseButtons button, bool isDown, out int buttons)
+		{
+			switch (button)
+			{
+				case MouseButtons.Left:
+					buttons = 0;
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_LEFTDOWN
+						: MouseEventFlags.MOUSEEVENTF_LEFTUP;
+				case MouseButtons.Right:
+					buttons = 0;
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_RIGHTDOWN
+						: MouseEventFlags.MOUSEEVENTF_RIGHTUP;
+				case MouseButtons.Middle:
+					buttons = 0;
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_MIDDLEDOWN
+						: MouseEventFlags.MOUSEEVENTF_MIDDLEUP;
+				case MouseButtons.XButton1:
+					buttons = 1;
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP;
+				case MouseButtons.XButton2:
+					buttons = 2;
+					return isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(button), button, null);
+			}
+		}
+
+		public static void MouseDown(MouseButtons button)
+		{
+			var flags = GetMouseEventArgs(button, true, out var buttons);
+			NativeMethods.mouse_event((int)flags, 0, 0, buttons, 0);
+		}
+
+		public static void MouseUp(MouseButtons button)
+		{
+			var flags = GetMouseEventArgs(button, false, out var buttons);
+			NativeMethods.mouse_event((int)flags, 0, 0, buttons, 0);
+		}
+
+		public static void Scroll(int delta)
+		{
+			NativeMethods.mouse_event((int)MouseEventFlags.MOUSEEVENTF_WHEEL, 0, 0, delta, 0);
+		}
 
 	}
 }

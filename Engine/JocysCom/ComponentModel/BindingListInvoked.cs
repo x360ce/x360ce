@@ -1,4 +1,4 @@
-﻿#nullable disable
+#nullable disable
 
 using System;
 using System.Collections.Generic;
@@ -53,7 +53,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		public bool AsynchronousInvoke { get; set; }
 
 		// Dispatches the delegate to SynchronizingObject's TaskScheduler when required; respects AsynchronousInvoke for async vs sync execution.
-		void Invoke(Delegate method, params object[] args)
+		protected void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
 			if (so is null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)

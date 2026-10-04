@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
+using System;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -8,30 +6,30 @@ using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Win32
 {
-	public class UacHelper
+	public partial class UacHelper
 	{
 		/// <summary>Enables the UAC shield icon for the given button control</summary>
-		/// <param name="ButtonToEnable">Button to display shield icon on.</param>
+		/// <param name="button">Button to display shield icon on.</param>
 		public static void EnableShieldIcon(Button button)
 		{
 			// See http://msdn2.microsoft.com/en-us/library/aa361904.aspx
 			int BCM_FIRST = 0x1600; // Normal button
 			int BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
 													// Input validation
-			if (button == null) return;
+			if (button is null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
 			NativeMethods.SendMessage(button.Handle, BCM_SETSHIELD, new IntPtr(0), new IntPtr(1));
 		}
 
 		/// <summary>Disable the UAC shield icon for the given button control</summary>
-		/// <param name="ButtonToEnable">Button to remove shield icon.</param>
+		/// <param name="button">Button to remove shield icon.</param>
 		public static void DisableShieldIcon(Button button)
 		{
 			int BCM_FIRST = 0x1600; // Normal button
 			int BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
 													// Input validation
-			if (button == null) return;
+			if (button is null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
 			NativeMethods.SendMessage(button.Handle, BCM_SETSHIELD, new IntPtr(0), new IntPtr(0));
@@ -150,80 +148,6 @@ namespace JocysCom.ClassLibrary.Win32
 			{
 				return false;
 			}
-		}
-
-
-		public static Process CreateElevatedProcess(string fileName, string arguments = null, bool useFileWorkingFolder = false)
-		{
-			ProcessStartInfo psi = new ProcessStartInfo();
-			psi.UseShellExecute = true;
-			psi.WorkingDirectory = useFileWorkingFolder
-				? new System.IO.FileInfo(fileName).DirectoryName
-				: Environment.CurrentDirectory;
-			psi.FileName = fileName;
-			if (arguments != null) psi.Arguments = arguments;
-			psi.CreateNoWindow = true;
-			psi.Verb = "runas";
-			var process = new Process();
-			// Must enable Exited event for both sync and async scenarios.
-			process.EnableRaisingEvents = true;
-			process.StartInfo = psi;
-			return process;
-		}
-
-		/// <summary>
-		/// Start program in elevated mode.
-		/// </summary>
-		/// <param name="fileName"></param>
-		public static int RunElevated(string fileName, string arguments, ProcessWindowStyle style, bool useFileWorkingFolder = false)
-		{
-			int exitCode = -1;
-			if (String.IsNullOrEmpty(fileName))
-				throw new ArgumentNullException("Executable file name must be specified");
-			using (Process process = CreateElevatedProcess(fileName, arguments, useFileWorkingFolder))
-			{
-				try
-				{
-					process.StartInfo.WindowStyle = style;
-					process.Start();
-				}
-				catch (Win32Exception)
-				{
-					// The user refused to allow privileges elevation
-					// or other error happened. Do nothing and return...
-					return exitCode;
-				}
-				process.WaitForExit();
-				exitCode = process.ExitCode;
-			}
-			return exitCode;
-		}
-
-		public static void RunElevatedAsync(string fileName, EventHandler exitedEventHandler)
-		{
-			if (String.IsNullOrEmpty(fileName)) throw new ArgumentNullException("Executable file name must be specified");
-			using (Process process = CreateElevatedProcess(fileName))
-			{
-				if (exitedEventHandler != null) process.Exited += exitedEventHandler;
-				try
-				{
-					process.Start();
-				}
-				catch (Win32Exception)
-				{
-					// The user refused to allow privileges elevation
-					// or other error happend. Do nothing and return...
-				}
-			}
-		}
-
-		// Restart curent app in elevated mode.
-		public static void RunElevated()
-		{
-			if (IsElevated) throw new ApplicationException("Elevated already");
-			RunElevatedAsync(Application.ExecutablePath, null);
-			//Close this instance because we have an elevated instance
-			Application.Exit();
 		}
 
 	}

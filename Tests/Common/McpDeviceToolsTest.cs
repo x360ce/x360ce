@@ -53,7 +53,7 @@ namespace x360ce.Tests
 			// Configure, so the unmap leaves HID Guardian alone, which would elevate.
 			var level = McpCatalog.Level;
 			McpCatalog.Level = () => AiAccess.Configure;
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var oldGame = SettingsManager.CurrentGame;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
@@ -104,7 +104,7 @@ namespace x360ce.Tests
 			McpCatalog.Level = () => AiAccess.Configure;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;
 			var twoTabs = new UserGame
 			{
@@ -149,7 +149,7 @@ namespace x360ce.Tests
 			McpCatalog.Level = () => AiAccess.Configure;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;
 			var keepMove = new UserGame
 			{
