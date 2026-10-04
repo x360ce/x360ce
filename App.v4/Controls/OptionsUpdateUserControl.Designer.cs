@@ -92,9 +92,7 @@ namespace x360ce.App.Controls
 			//
 			// LogTextBox
 			//
-			this.LogTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LogTextBox.Location = new System.Drawing.Point(9, 84);
 			this.LogTextBox.Multiline = true;
 			this.LogTextBox.Name = "LogTextBox";
@@ -115,6 +113,7 @@ namespace x360ce.App.Controls
 			this.Controls.Add(this.PrivacyLabel);
 			this.Controls.Add(this.CheckForUpdatesCheckBox);
 			this.Name = "OptionsUpdateUserControl";
+			this.Padding = new System.Windows.Forms.Padding(9, 84, 9, 9);
 			this.Size = new System.Drawing.Size(644, 410);
 			this.ResumeLayout(false);
 			this.PerformLayout();

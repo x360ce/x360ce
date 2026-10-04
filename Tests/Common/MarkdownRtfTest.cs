@@ -204,7 +204,7 @@ namespace x360ce.Tests
 			// two. The second column is numbers, so they line up on the right under "Period".
 			StringAssert.Contains(rtf, @"{\f1\b Motor  Period}", "The header row is not bold in the fixed font, padded to its columns.");
 			StringAssert.Contains(rtf, @"{\f1 Left    40 ms}", "A data row is not padded to its column, numbers to the right.");
-			StringAssert.Contains(rtf, @"\cf0 }   16 ms}", "A cell with a code span was padded by its marks rather than its letters.");
+			StringAssert.Contains(rtf, @"\cf5 }   16 ms}", "A cell with a code span was padded by its marks rather than its letters.");
 			Assert.IsFalse(rtf.Contains("---"), "The separator row reached the screen.");
 		}
 

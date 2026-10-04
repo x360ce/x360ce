@@ -222,6 +222,8 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			StartupTrace.Mark("StartApp: services ready");
+			// Before the first window, so every colour it is made with is already the theme's.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(SettingsManager.Options.Theme);
 			MainForm.Current = new MainForm();
 			StartupTrace.Mark("StartApp: main form built");
 			// Describe the interface and leave. The program is the only accurate account of its own

@@ -204,6 +204,11 @@ namespace x360ce.App
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
 			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			// The colours are written into the document, so it is written again in the new ones, for as
+			// long as the box exists: the event outlives it.
+			EventHandler reload = (s, e) => box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += reload;
+			box.Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= reload;
 			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
 			{
 				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);
@@ -538,6 +543,16 @@ namespace x360ce.App
 		public const string StatusBlue = "#6FA8DC";
 		public const string StatusGrey = "#CFD4D8";
 
+		/// <summary>Grey in the dark theme: kept close to the dark backgrounds, as the light grey is kept close to the light ones.</summary>
+		public const string StatusGreyDark = "#4B5056";
+
+		/// <summary>The grey of a light in the window, which follows its theme: nothing set up, or switched off.</summary>
+		/// <remarks>The note shown over a game is dark whatever the theme, and keeps <see cref="StatusGrey"/>.</remarks>
+		public static string StatusOff
+		{
+			get { return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? StatusGreyDark : StatusGrey; }
+		}
+
 		/// <summary>The warm ramp, mildest first. A light is somewhere along it.</summary>
 		static readonly string[] Ramp = { StatusGreen, StatusAmber, StatusOrange, StatusRed };
 
@@ -657,7 +672,7 @@ namespace x360ce.App
 		{
 			return online
 				? GetStatusIcon(StatusGreen)
-				: GetStatusIcon(StatusGrey);
+				: GetStatusIcon(StatusOff);
 		}
 
 		/// <summary>The icon of the port a device is attached through, or a blank of the same size.</summary>

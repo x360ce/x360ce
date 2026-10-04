@@ -57,6 +57,8 @@ namespace x360ce.App.UiTree
 				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
+			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",
+				"Light or dark colours. System follows the Windows setting for apps.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
 				"Folders searched when looking for installed games.");
 			d["OptionsUserControl.GameScanLocationsTabPage"] = new Text("Game Scan Locations",

@@ -148,9 +148,9 @@ namespace x360ce.App.Controls
 			HelpBodyLabel.Text = body;
 			// Update body colors.
 			if (icon == MessageBoxIcon.Error)
-				HelpBodyLabel.ForeColor = Color.DarkRed;
+				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", Color.DarkRed);
 			else if (icon == MessageBoxIcon.Information)
-				HelpBodyLabel.ForeColor = Color.DarkGreen;
+				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.DarkGreen);
 			else
 				HelpBodyLabel.ForeColor = SystemColors.ControlText;
 		}

@@ -76,7 +76,7 @@ namespace x360ce.Tests
 					var returned = Fore(grid, 1);
 					form.Close();
 
-					Assert.AreEqual(SystemColors.ControlDark.ToArgb(), dimmed,
+					Assert.AreEqual(SystemColors.GrayText.ToArgb(), dimmed,
 						"The row of an absent device is drawn at full strength, so a person cannot tell " +
 						"which of their controllers is actually plugged in.");
 					Assert.AreNotEqual(dimmed, present,

@@ -1844,6 +1844,12 @@
 																	"Description":"Windows State when program starts with Windows.",
 																	"Role":"List",
 																	"Id":"StartWithWindowsStateComboBox"
+																},
+																{
+																	"Name":"Theme",
+																	"Description":"Light or dark colours. System follows the Windows setting for apps.",
+																	"Role":"List",
+																	"Id":"ThemeComboBox"
 																}
 															]
 														},
@@ -3307,7 +3313,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.23.56 (Build: 2026-09-25) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.24.60 (Build: 2026-10-04) 64-bit - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

@@ -292,7 +292,8 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │       │           │   │   ├── Minimize to Tray                            # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │       │           │   │   ├── Always on Top                               # Make program Top Window
 [CheckBox]  │       │           │   │   ├── Start with Windows:                         # Start with Windows.
-[List]      │       │           │   │   └── Start with Windows                          # Windows State when program starts with Windows.
+[List]      │       │           │   │   ├── Start with Windows                          # Windows State when program starts with Windows.
+[List]      │       │           │   │   └── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
 [Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
 [CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
 [CheckBox]  │       │           │   │   └── Show [Test...] Button                       # Show [Test...] Button.
@@ -512,7 +513,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.23.56 (Build: 2026-09-25) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.24.60 (Build: 2026-10-04) 64-bit - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

@@ -71,6 +71,7 @@ namespace x360ce.App
 
 			// Map event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			// Fix Images
 			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
 			BuletImageList.ImageStream = null;
@@ -80,7 +81,7 @@ namespace x360ce.App
 			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
 			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
 			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusGrey));
+			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
 			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
 			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
 			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
@@ -191,16 +192,16 @@ namespace x360ce.App
 				if (!mapped && !xiOurs && !xiOn)
 				{
 					// Nothing is set up on this tab, which is not a fault and should not look like one.
-					left = AppHelper.StatusGrey;
-					right = AppHelper.StatusGrey;
+					left = AppHelper.StatusOff;
+					right = AppHelper.StatusOff;
 				}
 				else
 				{
 					// A device mapped here and not connected is worth a look; none mapped is simply nothing.
-					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusGrey;
+					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusOff;
 					if (!enabled)
 						// Switched off on purpose, which is not a fault and must not be lit as one.
-						right = AppHelper.StatusGrey;
+						right = AppHelper.StatusOff;
 					else if (!checking)
 						// Not looking is not the same as looking and finding nothing.
 						right = AppHelper.StatusBlue;
@@ -1535,6 +1536,7 @@ namespace x360ce.App
 		protected override void OnFormClosed(FormClosedEventArgs e)
 		{
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
 			DeviceDetector.UnregisterDeviceInterface(_DeviceNotification);
 			_DeviceNotification = IntPtr.Zero;
 			base.OnFormClosed(e);
@@ -2057,7 +2059,7 @@ namespace x360ce.App
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			var colour = ErrorFilesCount > 0
-				? System.Drawing.Color.DarkRed
+				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed)
 				: System.Drawing.SystemColors.ControlDark;
 			StatusErrorsLabel.ForeColor = colour;
 			// The count is a link so that it can be clicked at all, which also means its colour
@@ -2076,6 +2078,12 @@ namespace x360ce.App
 		}
 
 		#region Exception Handling and Reporting
+
+		/// <summary>The error count takes its colour from the theme, so it is coloured again when the theme changes.</summary>
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			UpdateStatusErrorsLabel();
+		}
 
 		private void LogHelper_Current_NewException(object sender, EventArgs e)
 		{

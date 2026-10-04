@@ -754,7 +754,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
-			grid.BackgroundColor = Color.White;
+			grid.BackgroundColor = SystemColors.Window;
 			grid.BorderStyle = BorderStyle.None;
 			grid.EnableHeadersVisualStyles = false;
 			grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
@@ -846,7 +846,7 @@ namespace JocysCom.ClassLibrary.Controls
 				? row.DataBoundItem
 				: e.RowIndex < list.Count ? list[e.RowIndex] : null;
 			var available = IsItemAvailable(item);
-			var fore = available ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
+			var fore = available ? grid.DefaultCellStyle.ForeColor : SystemColors.GrayText;
 			var selectedBack = available ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
 			// Apply style to row header.
 			if (row.HeaderCell.Style.ForeColor != fore)

@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs
+﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs, App.v4/Images/xboxControllerTopDark.png, App.v4/Images/xboxControllerFrontDark.png
 // @area: pad-images   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
@@ -34,6 +34,39 @@ namespace x360ce.Tests
 					Assert.IsTrue(drawn, "Nothing of the controller was drawn.");
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("pad-images")]
+		[Description("A dark controller picture is its light picture in other colours: the same size and outline")]
+		public void Dark_pictures_keep_the_light_outline()
+		{
+			// The program's own assembly carries the pictures; naming a type in it loads it.
+			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
+			foreach (var view in new[] { "Top", "Front" })
+			{
+				var lightStream = x360ce.Engine.EngineHelper.GetResourceStream("Images.xboxController" + view + ".png");
+				var darkStream = x360ce.Engine.EngineHelper.GetResourceStream("Images.xboxController" + view + "Dark.png");
+				Assert.IsNotNull(darkStream, "Images.xboxController" + view + "Dark.png is not in the program.");
+				using (var light = new Bitmap(lightStream))
+				using (var dark = new Bitmap(darkStream))
+				{
+					Assert.AreEqual(light.Size, dark.Size, view + ": the dark picture is another size, so the marks would land elsewhere.");
+					int both = 0, either = 0;
+					for (var y = 0; y < light.Height; y++)
+						for (var x = 0; x < light.Width; x++)
+						{
+							var inLight = light.GetPixel(x, y).A > 127;
+							var inDark = dark.GetPixel(x, y).A > 127;
+							if (inLight && inDark)
+								both++;
+							if (inLight || inDark)
+								either++;
+						}
+					var overlap = both / (double)either;
+					Assert.IsTrue(overlap > 0.97, view + ": the outlines overlap " + overlap.ToString("P1") +
+						"; the dark picture must show the same controller in the same place.");
+				}
+			}
 		}
 
 		[TestMethod, TestCategory("pad-images"), TestCategory("critical")]

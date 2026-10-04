@@ -27,7 +27,7 @@ namespace x360ce.Tests
 		static readonly string[] All =
 		{
 			AppHelper.StatusGreen, AppHelper.StatusRed, AppHelper.StatusAmber, AppHelper.StatusOrange,
-			AppHelper.StatusBlue, AppHelper.StatusGrey,
+			AppHelper.StatusBlue, AppHelper.StatusGrey, AppHelper.StatusGreyDark,
 		};
 
 		/// <summary>How much of the icon is drawn on at all.</summary>
@@ -94,12 +94,35 @@ namespace x360ce.Tests
 			// what the person presses, grey means nothing is set up at all. Told apart by lightness as
 			// well as by hue, so they still differ for somebody who cannot separate the two colours.
 			var green = AppHelper.GetStatusIcon(AppHelper.StatusGreen).GetPixel(8, 9);
-			var grey = AppHelper.GetStatusIcon(AppHelper.StatusGrey).GetPixel(8, 9);
-			var apart = Math.Abs(Lightness(green) - Lightness(grey));
-			Assert.IsTrue(apart > 0.15,
-				"Working and nothing-set-up are within " + apart.ToString("0.00") + " of each other in " +
-				"lightness, so they are one smudge at a distance and identical to somebody who does " +
-				"not separate green from grey.");
+			foreach (var hex in new[] { AppHelper.StatusGrey, AppHelper.StatusGreyDark })
+			{
+				var grey = AppHelper.GetStatusIcon(hex).GetPixel(8, 9);
+				var apart = Math.Abs(Lightness(green) - Lightness(grey));
+				Assert.IsTrue(apart > 0.15,
+					"Working and nothing-set-up (" + hex + ") are within " + apart.ToString("0.00") + " of each other in " +
+					"lightness, so they are one smudge at a distance and identical to somebody who does " +
+					"not separate green from grey.");
+			}
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("Nothing set up is pale grey in the light theme and dark grey in the dark theme")]
+		public void Nothing_set_up_follows_the_theme()
+		{
+			// Pale grey reads as absence beside light backgrounds and as a lit light beside dark ones.
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark);
+					Assert.AreEqual(AppHelper.StatusGreyDark, AppHelper.StatusOff, "The dark theme lights nothing-set-up pale.");
+				}
+				finally
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light);
+				}
+				Assert.AreEqual(AppHelper.StatusGrey, AppHelper.StatusOff, "The light theme lights nothing-set-up dark.");
+			});
 		}
 
 		[TestMethod, TestCategory("ui")]

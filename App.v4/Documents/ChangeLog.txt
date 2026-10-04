@@ -1,4 +1,11 @@
-﻿## [4.24.60.0] - 2026-10-02
+﻿## [4.25.10.0] - 2026-10-04
+
+- Fixed: The update log ran past the bottom of the Options page.
+- Changed: Sharper controller pictures.
+- Changed: The window title shows 64-bit or 32-bit.
+- Added: Light and dark themes; System follows Windows.
+
+## [4.24.60.0] - 2026-10-02
 
 - Fixed: Virtual controllers were not created after Windows ran 25 days.
 - Fixed: Centering spring Auto never finished after Windows ran 25 days (Issue #1639, emreyagdan64-prog).

@@ -303,7 +303,7 @@ namespace x360ce.App
 			// 
 			// HelpRichTextBox
 			// 
-			this.HelpRichTextBox.BackColor = System.Drawing.Color.White;
+			this.HelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HelpRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HelpRichTextBox.Location = new System.Drawing.Point(0, 0);

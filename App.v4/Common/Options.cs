@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.Themes;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -92,6 +93,10 @@ namespace x360ce.App
 		[DefaultValue(FormWindowState.Minimized), Description("Windows State when program starts with Windows.")]
 		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; OnPropertyChanged(); } }
 		FormWindowState _StartWithWindowsState;
+
+		[DefaultValue(ThemeType.Auto), Description("Light or dark colours. System follows the Windows setting for apps.")]
+		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
+		ThemeType _Theme;
 
 		public bool ShowProgramsTab { get; set; }
 		public bool ShowSettingsTab { get; set; }

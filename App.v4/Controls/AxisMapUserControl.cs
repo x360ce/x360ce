@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Threading;
 using SharpDX.XInput;
 using System;
@@ -163,7 +164,7 @@ namespace x360ce.App.Controls
 		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
 		{
 			MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			MainPictureBox.BackColor = Enabled ? System.Drawing.Color.White : System.Drawing.SystemColors.Control;
+			MainPictureBox.BackColor = Enabled ? System.Drawing.SystemColors.Window : System.Drawing.SystemColors.Control;
 		}
 
 		// Half and Invert values are only in creating xinput path - red line.
@@ -196,13 +197,17 @@ namespace x360ce.App.Controls
 			// Dead zones turn the path into near-right angles. Round the joins so those
 			// corners do not grow mitre spikes.
 			xInputPath.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
-			// The dot is black: it marks a DInput and an XInput value at once, so it
+			// The dot is the text colour: it marks a DInput and an XInput value at once, so it
 			// belongs to neither axis colour. The thin lines carry the per-axis colour.
-			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Black));
+			xInputPoint = new SolidBrush(SystemColors.WindowText);
 			// Create thin lines. Each marker line uses the same colour as the value label
-			// it belongs to, so XI is blue and DI is green.
-			xInputLine = new Pen(Color.Blue, 1f);
-			dInputLine = new Pen(Color.Green, 1f);
+			// it belongs to, so XI is blue and DI is green, in the dark theme's own blue and green.
+			var xColor = FormsTheme.GetColor("ColorBrand", Color.Blue);
+			var dColor = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
+			XInputValueLabel.ForeColor = xColor;
+			DInputValueLabel.ForeColor = dColor;
+			xInputLine = new Pen(xColor, 1f);
+			dInputLine = new Pen(dColor, 1f);
 			var nInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Gray));
 			nInputLine = new Pen(nInputLineBrush, 1f);
 		}

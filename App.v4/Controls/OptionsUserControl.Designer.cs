@@ -38,6 +38,8 @@
 			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
 			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
 			this.StartWithWindowsStateComboBox = new System.Windows.Forms.ComboBox();
+			this.ThemeLabel = new System.Windows.Forms.Label();
+			this.ThemeComboBox = new System.Windows.Forms.ComboBox();
 			this.StartWithWindowsCheckBox = new System.Windows.Forms.CheckBox();
 			this.AlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
@@ -183,7 +185,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 117);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 141);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 117);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -267,6 +269,8 @@
 			// 
 			// OperationGroupBox
 			// 
+			this.OperationGroupBox.Controls.Add(this.ThemeComboBox);
+			this.OperationGroupBox.Controls.Add(this.ThemeLabel);
 			this.OperationGroupBox.Controls.Add(this.StartWithWindowsStateComboBox);
 			this.OperationGroupBox.Controls.Add(this.StartWithWindowsCheckBox);
 			this.OperationGroupBox.Controls.Add(this.AlwaysOnTopCheckBox);
@@ -274,7 +278,7 @@
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(254, 108);
+			this.OperationGroupBox.Size = new System.Drawing.Size(254, 132);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -291,6 +295,24 @@
 			this.StartWithWindowsStateComboBox.Name = "StartWithWindowsStateComboBox";
 			this.StartWithWindowsStateComboBox.Size = new System.Drawing.Size(90, 21);
 			this.StartWithWindowsStateComboBox.TabIndex = 95;
+			//
+			// ThemeLabel
+			//
+			this.ThemeLabel.AutoSize = true;
+			this.ThemeLabel.Location = new System.Drawing.Point(6, 103);
+			this.ThemeLabel.Name = "ThemeLabel";
+			this.ThemeLabel.Size = new System.Drawing.Size(43, 13);
+			this.ThemeLabel.TabIndex = 96;
+			this.ThemeLabel.Text = "Theme:";
+			//
+			// ThemeComboBox
+			//
+			this.ThemeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ThemeComboBox.FormattingEnabled = true;
+			this.ThemeComboBox.Location = new System.Drawing.Point(124, 99);
+			this.ThemeComboBox.Name = "ThemeComboBox";
+			this.ThemeComboBox.Size = new System.Drawing.Size(90, 21);
+			this.ThemeComboBox.TabIndex = 97;
 			// 
 			// StartWithWindowsCheckBox
 			// 
@@ -467,7 +489,7 @@
 			this.DirectInputDevicesGroupBox.Controls.Add(this.UseDeviceBufferedDataCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 240);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 264);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 91);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -846,7 +868,7 @@
 			// 
 			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
 			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
-			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 337);
+			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 361);
 			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
 			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.GuideButtonGroupBox.TabIndex = 31;
@@ -874,7 +896,7 @@
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationOverlayCheckBox);
-			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 390);
+			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 414);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
 			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 70);
 			this.HotkeysGroupBox.TabIndex = 32;
@@ -1345,7 +1367,7 @@
 			this.HelpRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.HelpRichTextBox.BackColor = System.Drawing.Color.White;
+			this.HelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HelpRichTextBox.Location = new System.Drawing.Point(3, 86);
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
@@ -1532,6 +1554,8 @@
 		private System.Windows.Forms.Button ViGEmBusInstallButton;
 		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
 		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
+		private System.Windows.Forms.Label ThemeLabel;
+		private System.Windows.Forms.ComboBox ThemeComboBox;
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
 		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
 		private System.Windows.Forms.GroupBox AllowRemoteControllersGroupBox;

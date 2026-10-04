@@ -37,13 +37,17 @@ namespace x360ce.Engine
 		/// <summary>Colour of a warning.</summary>
 		public Color Warning = new Color(255, 0, 0);
 
-		/// <summary>Colour of a link.</summary>
-		public Color Link = new Color(0, 0, 255);
+		/// <summary>Colour of a link: blue, or the theme's link colour when the theme is dark.</summary>
+		public Color Link = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorBrand", System.Drawing.Color.FromArgb(0, 0, 255)));
+
+		/// <summary>Colour of the text: the window text colour, so it follows the theme.</summary>
+		public Color Text = new Color(System.Drawing.SystemColors.WindowText);
 
 		/// <summary>A colour, as RTF counts them.</summary>
 		public struct Color
 		{
 			public Color(int r, int g, int b) { R = r; G = g; B = b; }
+			public Color(System.Drawing.Color color) : this(color.R, color.G, color.B) { }
 			public readonly int R, G, B;
 		}
 	}
@@ -288,10 +292,12 @@ namespace x360ce.Engine
 			sb.Append(@"{\fonttbl{\f0\fswiss\fcharset0 ").Append(style.FontName).Append(@";}");
 			sb.Append(@"{\f1\fmodern\fcharset0 ").Append(style.CodeFontName).Append(@";}}");
 			sb.Append(@"{\colortbl ;");
-			foreach (var c in new[] { style.Literal, style.Control, style.Warning, style.Link })
+			foreach (var c in new[] { style.Literal, style.Control, style.Warning, style.Link, style.Text })
 				sb.Append(@"\red").Append(c.R).Append(@"\green").Append(c.G).Append(@"\blue").Append(c.B).Append(';');
 			sb.Append('}');
-			sb.Append(@"\viewkind4\uc1\f0\fs").Append(half).Append(' ');
+			// The text is given its colour by number: the automatic colour, number 0, is drawn black
+			// whatever the box behind it.
+			sb.Append(@"\viewkind4\uc1\f0\cf").Append(TextColour).Append(@"\fs").Append(half).Append(' ');
 			return sb.ToString();
 		}
 
@@ -300,6 +306,7 @@ namespace x360ce.Engine
 		const int Control = 2;
 		const int Warning = 3;
 		const int LinkColour = 4;
+		const int TextColour = 5;
 
 		/// <summary>Renders the marks that appear inside a line.</summary>
 		/// <remarks>
@@ -317,7 +324,7 @@ namespace x360ce.Engine
 				// A span written in square brackets names something on screen, so it is coloured as
 				// one. Everything else in a code span is a literal value.
 				var colour = inner.StartsWith("[") && inner.EndsWith("]") ? Control : Literal;
-				spans.Add(@"{\cf" + colour + " " + Escape(inner) + @"\cf0 }");
+				spans.Add(@"{\cf" + colour + " " + Escape(inner) + @"\cf" + TextColour + " }");
 				return "\u0001" + (spans.Count - 1) + "\u0002";
 			});
 			// Links, before emphasis, so a link's text may be emphasised but its address is not read.
@@ -342,8 +349,8 @@ namespace x360ce.Engine
 			});
 			text = Escape(text);
 			// Bold is a warning. Headings are written as headings, so nothing else needs bold.
-			text = Regex.Replace(text, @"\*\*(.+?)\*\*", @"{\b\cf" + Warning + " $1" + @"\cf0\b0 }");
-			text = Regex.Replace(text, @"__(.+?)__", @"{\b\cf" + Warning + " $1" + @"\cf0\b0 }");
+			text = Regex.Replace(text, @"\*\*(.+?)\*\*", @"{\b\cf" + Warning + " $1" + @"\cf" + TextColour + @"\b0 }");
+			text = Regex.Replace(text, @"__(.+?)__", @"{\b\cf" + Warning + " $1" + @"\cf" + TextColour + @"\b0 }");
 			text = Regex.Replace(text, @"(?<![\*\w])\*(?!\s)(.+?)(?<!\s)\*(?![\*\w])", @"{\i $1\i0 }");
 			text = Regex.Replace(text, @"(?<![_\w])_(?!\s)(.+?)(?<!\s)_(?![_\w])", @"{\i $1\i0 }");
 			// The held-aside spans go back exactly as they were.
@@ -359,7 +366,7 @@ namespace x360ce.Engine
 			// partially, and a result nested inside a group of its own came out with that group's
 			// boundaries drawn on screen, either side of every link.
 			return @"{\field{\*\fldinst HYPERLINK " + Escape(url) + @" }{\fldrslt \cf"
-				+ LinkColour + @"\ul " + Escape(label) + @"\ulnone\cf0 }}";
+				+ LinkColour + @"\ul " + Escape(label) + @"\ulnone\cf" + TextColour + " }}";
 		}
 
 		/// <summary>

@@ -1,6 +1,7 @@
 #nullable disable
 
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
@@ -329,13 +330,14 @@ namespace JocysCom.ClassLibrary.IO
 		/// <summary>
 		/// Determines the text color for a device row: dark red for hidden, default for present, or gray for absent devices.
 		/// </summary>
+		/// <remarks>In the dark theme the red is the theme's warning colour, which reads on dark.</remarks>
 		Color GetForeColor(DeviceInfo di)
 		{
 			return di.IsHidden
-					? Color.DarkRed
+					? FormsTheme.GetColor("ForegroundWarning", Color.DarkRed)
 					: di.IsPresent
 						? ForeColor
-						: SystemColors.ControlDarkDark;
+						: SystemColors.GrayText;
 		}
 
 		/// <summary>

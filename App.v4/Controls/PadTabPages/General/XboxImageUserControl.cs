@@ -1,4 +1,5 @@
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -42,13 +43,34 @@ namespace x360ce.App.Controls
 			BackColor = SystemColors.Control;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			_Top = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-			_Front = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
+			LoadPictures(FormsTheme.IsDark);
+		}
+
+		Bitmap _Top, _Front, _TopDisabled, _FrontDisabled;
+
+		/// <summary>True when the pictures held are the dark theme's.</summary>
+		bool _PicturesDark;
+
+		/// <summary>Loads the controller pictures of the light or the dark theme in place of those held.</summary>
+		/// <remarks>The dark pictures are the light ones in other colours: the same size and outline, every part in the same place.</remarks>
+		void LoadPictures(bool dark)
+		{
+			DisposePictures();
+			_PicturesDark = dark;
+			var theme = dark ? "Dark" : "";
+			_Top = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop" + theme + ".png"));
+			_Front = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront" + theme + ".png"));
 			_TopDisabled = AppHelper.GetDisabledImage(_Top);
 			_FrontDisabled = AppHelper.GetDisabledImage(_Front);
 		}
 
-		Bitmap _Top, _Front, _TopDisabled, _FrontDisabled;
+		void DisposePictures()
+		{
+			if (_Top != null) _Top.Dispose();
+			if (_Front != null) _Front.Dispose();
+			if (_TopDisabled != null) _TopDisabled.Dispose();
+			if (_FrontDisabled != null) _FrontDisabled.Dispose();
+		}
 
 		PadControlImager _Imager;
 		ImageInfos _Infos;
@@ -292,6 +314,9 @@ namespace x360ce.App.Controls
 			base.OnPaint(e);
 			if (_Top == null || _Front == null)
 				return;
+			// The theme repaints every window when it changes, so the pictures follow it here.
+			if (_PicturesDark != FormsTheme.IsDark)
+				LoadPictures(FormsTheme.IsDark);
 			var scale = CanvasScale;
 			e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
@@ -534,12 +559,7 @@ namespace x360ce.App.Controls
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-			{
-				if (_Top != null) _Top.Dispose();
-				if (_Front != null) _Front.Dispose();
-				if (_TopDisabled != null) _TopDisabled.Dispose();
-				if (_FrontDisabled != null) _FrontDisabled.Dispose();
-			}
+				DisposePictures();
 			base.Dispose(disposing);
 		}
 

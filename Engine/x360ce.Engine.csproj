@@ -294,6 +294,8 @@
     <Compile Include="JocysCom\Controls\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\Themes\Default.Forms.cs" />
+    <Compile Include="JocysCom\Controls\Themes\ThemeType.cs" />
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.ConvertTable.cs" />
@@ -569,6 +571,7 @@
     <EmbeddedResource Include="JocysCom\Controls\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Controls\Themes\Default_DarkTheme.xaml" />
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </EmbeddedResource>

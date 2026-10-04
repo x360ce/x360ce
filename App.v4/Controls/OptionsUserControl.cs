@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -31,6 +32,8 @@ namespace x360ce.App.Controls
 				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
 			AiAccessLogButton.Click += (s, e) => Engine.Mcp.McpLog.Open();
 			UpdateAiAccessUrl();
+			// The theme that follows Windows is named the way Windows names it.
+			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
 			EmulationHotkeyTextBox.ReadOnly = true;
@@ -163,6 +166,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			SettingsManager.LoadAndMonitor(x => x.Theme, ThemeComboBox, Enum.GetValues(typeof(ThemeType)));
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
@@ -212,6 +216,9 @@ namespace x360ce.App.Controls
 				case nameof(Options.RemoteControllers):
 					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
 					break;
+				case nameof(Options.Theme):
+					FormsTheme.SetTheme(o.Theme);
+					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 					break;
@@ -221,7 +228,7 @@ namespace x360ce.App.Controls
 					var held = MainForm.Current.ApplyEmulationHotkey();
 					EmulationHotkeyTextBox.ForeColor = held || !o.EmulationHotkeyEnabled || string.IsNullOrEmpty(o.EmulationHotkey)
 						? System.Drawing.SystemColors.WindowText
-						: System.Drawing.Color.Firebrick;
+						: FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.Firebrick);
 					break;
 				case nameof(Options.AiAccess):
 				case nameof(Options.AiAccessAddress):
