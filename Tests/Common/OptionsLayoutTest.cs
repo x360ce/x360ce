@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs
+﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, App.v4/Controls/OptionsUpdateUserControl.Designer.cs
 // @area: options-layout   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -76,6 +76,74 @@ namespace x360ce.Tests
 						"The note box " + note.Bounds + " runs past the panel, which is " + group.ClientSize + ".");
 				});
 			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
+		public void Update_log_follows_the_rows_above_it_at_every_zoom()
+		{
+			Ui.OnUiThread(() =>
+			{
+				// The zooms Windows offers; the page was drawn at 100 %.
+				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 2f })
+				{
+					var update = new OptionsUpdateUserControl();
+					using (var page = UpdatePageAt(update, zoom))
+					{
+						page.CreateControl();
+						// What a window does when it is shown: the page fills its place, then lays out what it holds.
+						page.PerformLayout();
+						update.PerformLayout();
+						// Measured on the page, wherever each control is held.
+						Func<string, Rectangle> on = name =>
+						{
+							var control = update.Controls.Find(name, true).Single();
+							return update.RectangleToClient(control.Parent.RectangleToScreen(control.Bounds));
+						};
+						var log = on("LogTextBox");
+						var above = new[] { "CheckForUpdatesCheckBox", "PrivacyLabel", "CheckButton", "CheckDigitalSignatureCheckBox", "CheckVersionCheckBox" }
+							.Max(x => on(x).Bottom);
+						// The space between rows is the controls' own margins: less than a row of controls.
+						var room = on("CheckButton").Height;
+						Assert.IsTrue(log.Top >= above && log.Top - above < room, string.Format(
+							"At {0:P0} the log starts at {1}, and the rows above it end at {2}.", zoom, log.Top, above));
+						var below = update.ClientSize.Height - log.Bottom;
+						Assert.IsTrue(below >= 0 && below < room, string.Format(
+							"At {0:P0} the log ends {1} px from the bottom of the page.", zoom, below));
+						var covered = ControlOverlapTest.Covered(update).ToList();
+						Assert.AreEqual(0, covered.Count, string.Format("At {0:P0}:{1}{2}",
+							zoom, Environment.NewLine, string.Join(Environment.NewLine, covered)));
+					}
+				}
+			});
+		}
+
+		/// <summary>
+		/// The Update page held the way the Options page's designer code holds it, at a zoom.
+		/// </summary>
+		/// <remarks>
+		/// The screen's zoom reaches the controls as a larger font, which is what auto-scaling reads.
+		/// On a screen at that zoom the page scales its own controls as it is made, from the font, and
+		/// the holder then scales the page's place, size and padding from 100 % units, as the designer
+		/// recorded them. The log was once held down by a padding sized to the rows above it: scaled by
+		/// the page and again by the holder, it left a gap the height of the rows.
+		/// </remarks>
+		static UserControl UpdatePageAt(OptionsUpdateUserControl update, float zoom)
+		{
+			var font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom);
+			update.Font = font;
+			var page = new UserControl();
+			page.SuspendLayout();
+			page.Font = font;
+			page.Controls.Add(update);
+			update.Location = new Point(3, 3);
+			update.Size = new Size(644, 410);
+			update.Dock = DockStyle.Fill;
+			page.AutoScaleDimensions = new SizeF(6F, 13F);
+			page.AutoScaleMode = AutoScaleMode.Font;
+			page.Size = new Size(650, 416);
+			page.ResumeLayout(false);
+			return page;
 		}
 
 		/// <summary>

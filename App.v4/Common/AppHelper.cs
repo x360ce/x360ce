@@ -223,16 +223,21 @@ namespace x360ce.App
 		/// <summary>
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
+		/// <remarks>
+		/// Made from the image as it was drawn at 100% and then enlarged to the size of the one given, so
+		/// a grey version of an image enlarged for the screen is known as enlarged, and not enlarged again.
+		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
 			lock (DisabledImageLock)
 			{
 				if (!DisabledImageCache.ContainsKey(image))
 				{
-					var newImage = (Bitmap)image.Clone();
+					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
+					var newImage = (Bitmap)original.Clone();
 					JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
 					JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
-					DisabledImageCache.Add(image, newImage);
+					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(newImage, image.Size));
 				}
 				return DisabledImageCache[image];
 			}
@@ -597,8 +602,8 @@ namespace x360ce.App
 		/// single paint is never given back.
 		/// </remarks>
 		/// <param name="hex">The colour, as "#RRGGBB" or "RRGGBB".</param>
-		/// <param name="size">Width and height in pixels.</param>
-		public static Bitmap GetStatusIcon(string hex, int size = 16)
+		/// <param name="size">Width and height in pixels; when not given, a small icon's size on this screen.</param>
+		public static Bitmap GetStatusIcon(string hex, int size = 0)
 		{
 			return GetStatusIcon(hex, hex, size);
 		}
@@ -613,8 +618,11 @@ namespace x360ce.App
 		/// Two halves say it without words: your device on the left, the emulated controller on the right.
 		/// Both green and it is working, and looks exactly as a single green light always did.
 		/// </remarks>
-		public static Bitmap GetStatusIcon(string leftHex, string rightHex, int size = 16)
+		public static Bitmap GetStatusIcon(string leftHex, string rightHex, int size = 0)
 		{
+			// Drawn at the screen's size rather than enlarged after, so a light is as sharp at 150% as at 100%.
+			if (size == 0)
+				size = System.Windows.Forms.SystemInformation.SmallIconSize.Width;
 			var key = leftHex + "|" + rightHex + "@" + size;
 			lock (StatusIcons)
 			{
@@ -685,10 +693,12 @@ namespace x360ce.App
 		{
 			if (connectionClass == Guid.Empty)
 				return BlankIcon;
-			return JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, 16)?.ToBitmap() ?? BlankIcon;
+			return JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, BlankIcon.Width)?.ToBitmap() ?? BlankIcon;
 		}
 
-		private static readonly Bitmap BlankIcon = new Bitmap(16, 16);
+		private static readonly Bitmap BlankIcon = new Bitmap(
+			System.Windows.Forms.SystemInformation.SmallIconSize.Width,
+			System.Windows.Forms.SystemInformation.SmallIconSize.Height);
 
 		#endregion
 

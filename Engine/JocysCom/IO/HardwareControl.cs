@@ -22,6 +22,9 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			InitializeComponent();
 			ControlsHelper.InitInvokeContext();
+			// The tree's icons are Windows' own, which come in every size, so they are taken at a small
+			// icon's size on this screen rather than enlarged.
+			TreeImageList.ImageSize = SystemInformation.SmallIconSize;
 		}
 
 		private DeviceDetector detector;
@@ -314,7 +317,7 @@ namespace JocysCom.ClassLibrary.IO
 			TreeImageList.Images.Clear();
 			foreach (var cl in classes)
 			{
-				var icon = DeviceDetector.GetClassIcon(cl, 16);
+				var icon = DeviceDetector.GetClassIcon(cl, TreeImageList.ImageSize.Width);
 				if (icon != null)
 					TreeImageList.Images.Add(cl.ToString(), icon.ToBitmap());
 			}

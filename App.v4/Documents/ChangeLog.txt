@@ -1,8 +1,9 @@
-﻿## [4.25.10.0] - 2026-10-04
+﻿## [4.25.11.0] - 2026-10-05
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Changed: Sharper controller pictures.
 - Changed: The window title shows 64-bit or 32-bit.
+- Changed: Sharp text and icons on screens set above 100%.
 - Added: Light and dark themes; System follows Windows.
 
 ## [4.24.60.0] - 2026-10-02

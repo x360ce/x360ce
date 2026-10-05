@@ -28,10 +28,6 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
-			AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			//AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			//AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ControlsHelper.InitInvokeContext();
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)
@@ -76,6 +72,8 @@ namespace x360ce.App
 			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
 			BuletImageList.ImageStream = null;
 			BuletImageList.Images.Clear();
+			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
+			BuletImageList.ImageSize = SystemInformation.SmallIconSize;
 			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
 			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
 			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
@@ -1078,6 +1076,10 @@ namespace x360ce.App
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
 			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
+			// too, now that every panel that shows one exists.
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleImages(TrayContextMenuStrip);
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
 			Program.StartupTrace.Mark("UpdateForm2: text applied");
@@ -1882,7 +1884,9 @@ namespace x360ce.App
 		{
 			win = new Forms.ErrorReportForm();
 			ControlsHelper.CheckTopMost(win);
-			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
+			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
+			var scale = ControlsHelper.DpiScale;
+			win.Width = Math.Min((int)Math.Round(1450 * scale), Screen.FromControl(this).WorkingArea.Width - (int)Math.Round(200 * scale));
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
@@ -2072,9 +2076,9 @@ namespace x360ce.App
 				: "No error reports";
 			StatusErrorsLabel.AccessibleDescription = "Opens the error report window";
 			StatusErrorsLabel.AccessibleRole = AccessibleRole.PushButton;
-			StatusErrorsLabel.Image = ErrorFilesCount > 0
+			ControlsHelper.SetImage(StatusErrorsLabel, ErrorFilesCount > 0
 				? Resources.error_16x16
-				: AppHelper.GetDisabledImage(Resources.error_16x16);
+				: AppHelper.GetDisabledImage(Resources.error_16x16));
 		}
 
 		#region Exception Handling and Reporting

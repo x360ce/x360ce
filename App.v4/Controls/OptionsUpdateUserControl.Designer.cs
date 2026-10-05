@@ -28,17 +28,44 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.LayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.CheckForUpdatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.PrivacyLabel = new System.Windows.Forms.Label();
 			this.CheckButton = new System.Windows.Forms.Button();
 			this.CheckDigitalSignatureCheckBox = new System.Windows.Forms.CheckBox();
 			this.CheckVersionCheckBox = new System.Windows.Forms.CheckBox();
 			this.LogTextBox = new System.Windows.Forms.TextBox();
+			this.LayoutPanel.SuspendLayout();
 			this.SuspendLayout();
+			//
+			// LayoutPanel
+			//
+			this.LayoutPanel.ColumnCount = 3;
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LayoutPanel.Controls.Add(this.CheckForUpdatesCheckBox, 0, 0);
+			this.LayoutPanel.Controls.Add(this.PrivacyLabel, 0, 1);
+			this.LayoutPanel.Controls.Add(this.CheckButton, 0, 2);
+			this.LayoutPanel.Controls.Add(this.CheckDigitalSignatureCheckBox, 1, 2);
+			this.LayoutPanel.Controls.Add(this.CheckVersionCheckBox, 2, 2);
+			this.LayoutPanel.Controls.Add(this.LogTextBox, 0, 3);
+			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.LayoutPanel.Name = "LayoutPanel";
+			this.LayoutPanel.Padding = new System.Windows.Forms.Padding(6);
+			this.LayoutPanel.RowCount = 4;
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LayoutPanel.Size = new System.Drawing.Size(644, 410);
+			this.LayoutPanel.TabIndex = 0;
 			//
 			// CheckForUpdatesCheckBox
 			//
 			this.CheckForUpdatesCheckBox.AutoSize = true;
+			this.LayoutPanel.SetColumnSpan(this.CheckForUpdatesCheckBox, 3);
 			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(9, 9);
 			this.CheckForUpdatesCheckBox.Name = "CheckForUpdatesCheckBox";
 			this.CheckForUpdatesCheckBox.Size = new System.Drawing.Size(163, 17);
@@ -49,8 +76,10 @@ namespace x360ce.App.Controls
 			// PrivacyLabel
 			//
 			this.PrivacyLabel.AutoSize = true;
+			this.LayoutPanel.SetColumnSpan(this.PrivacyLabel, 3);
 			this.PrivacyLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.PrivacyLabel.Location = new System.Drawing.Point(26, 29);
+			this.PrivacyLabel.Margin = new System.Windows.Forms.Padding(20, 0, 3, 3);
 			this.PrivacyLabel.Name = "PrivacyLabel";
 			this.PrivacyLabel.Size = new System.Drawing.Size(360, 13);
 			this.PrivacyLabel.TabIndex = 1;
@@ -59,6 +88,7 @@ namespace x360ce.App.Controls
 			// CheckButton
 			//
 			this.CheckButton.Location = new System.Drawing.Point(9, 52);
+			this.CheckButton.Margin = new System.Windows.Forms.Padding(3, 7, 3, 3);
 			this.CheckButton.Name = "CheckButton";
 			this.CheckButton.Size = new System.Drawing.Size(90, 23);
 			this.CheckButton.TabIndex = 2;
@@ -68,10 +98,12 @@ namespace x360ce.App.Controls
 			//
 			// CheckDigitalSignatureCheckBox
 			//
+			this.CheckDigitalSignatureCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.CheckDigitalSignatureCheckBox.AutoSize = true;
 			this.CheckDigitalSignatureCheckBox.Checked = true;
 			this.CheckDigitalSignatureCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckDigitalSignatureCheckBox.Location = new System.Drawing.Point(108, 56);
+			this.CheckDigitalSignatureCheckBox.Location = new System.Drawing.Point(108, 57);
+			this.CheckDigitalSignatureCheckBox.Margin = new System.Windows.Forms.Padding(6, 7, 3, 3);
 			this.CheckDigitalSignatureCheckBox.Name = "CheckDigitalSignatureCheckBox";
 			this.CheckDigitalSignatureCheckBox.Size = new System.Drawing.Size(137, 17);
 			this.CheckDigitalSignatureCheckBox.TabIndex = 3;
@@ -80,10 +112,12 @@ namespace x360ce.App.Controls
 			//
 			// CheckVersionCheckBox
 			//
+			this.CheckVersionCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.CheckVersionCheckBox.AutoSize = true;
 			this.CheckVersionCheckBox.Checked = true;
 			this.CheckVersionCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckVersionCheckBox.Location = new System.Drawing.Point(251, 56);
+			this.CheckVersionCheckBox.Location = new System.Drawing.Point(251, 57);
+			this.CheckVersionCheckBox.Margin = new System.Windows.Forms.Padding(3, 7, 3, 3);
 			this.CheckVersionCheckBox.Name = "CheckVersionCheckBox";
 			this.CheckVersionCheckBox.Size = new System.Drawing.Size(95, 17);
 			this.CheckVersionCheckBox.TabIndex = 4;
@@ -92,8 +126,10 @@ namespace x360ce.App.Controls
 			//
 			// LogTextBox
 			//
+			this.LayoutPanel.SetColumnSpan(this.LogTextBox, 3);
 			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LogTextBox.Location = new System.Drawing.Point(9, 84);
+			this.LogTextBox.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
 			this.LogTextBox.Multiline = true;
 			this.LogTextBox.Name = "LogTextBox";
 			this.LogTextBox.ReadOnly = true;
@@ -106,22 +142,18 @@ namespace x360ce.App.Controls
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.LogTextBox);
-			this.Controls.Add(this.CheckVersionCheckBox);
-			this.Controls.Add(this.CheckDigitalSignatureCheckBox);
-			this.Controls.Add(this.CheckButton);
-			this.Controls.Add(this.PrivacyLabel);
-			this.Controls.Add(this.CheckForUpdatesCheckBox);
+			this.Controls.Add(this.LayoutPanel);
 			this.Name = "OptionsUpdateUserControl";
-			this.Padding = new System.Windows.Forms.Padding(9, 84, 9, 9);
 			this.Size = new System.Drawing.Size(644, 410);
+			this.LayoutPanel.ResumeLayout(false);
+			this.LayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
 		#endregion
 
+		private System.Windows.Forms.TableLayoutPanel LayoutPanel;
 		public System.Windows.Forms.CheckBox CheckForUpdatesCheckBox;
 		private System.Windows.Forms.Label PrivacyLabel;
 		private System.Windows.Forms.Button CheckButton;

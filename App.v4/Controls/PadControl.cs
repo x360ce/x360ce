@@ -363,9 +363,9 @@ namespace x360ce.App.Controls
 				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
-				GetXInputStatesCheckBox.Image = o.GetXInputStates
+				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
 				   ? Properties.Resources.checkbox_16x16
-				   : Properties.Resources.checkbox_unchecked_16x16;
+				   : Properties.Resources.checkbox_unchecked_16x16);
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -532,17 +532,17 @@ namespace x360ce.App.Controls
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
-			EnableButton.Image = virt
+			ControlsHelper.SetImage(EnableButton, virt
 				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
 			// Update emulation type.
 			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapButton.Checked = auto;
-			AutoMapButton.Image = auto
+			ControlsHelper.SetImage(AutoMapButton, auto
 				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
 			MappedDevicesDataGridView.Enabled = !auto;
 			MappedDevicesDataGridView.BackgroundColor = auto
 				? SystemColors.Control
@@ -1099,9 +1099,9 @@ namespace x360ce.App.Controls
 				return;
 			// Add [Record] button.
 			mi = new ToolStripMenuItem(cRecord);
-			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
+			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_16x16);
 			// Add [Invert] button, which reads the box's control the other way round.
 			mi = new ToolStripMenuItem(cInvert);
 			mi.Click += new EventHandler(DiMenuStrip_Click);

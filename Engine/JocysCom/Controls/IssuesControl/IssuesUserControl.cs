@@ -16,6 +16,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public IssuesUserControl()
 		{
 			InitializeComponent();
+			// Taken from the list once, at the screen's size: the list hands out a new copy at its own
+			// size each time it is asked, and a cell asks on every paint.
+			SeverityImages = SeverityImageList.Images.Keys.Cast<string>()
+				.ToDictionary(x => x, x => ControlsHelper.ScaleImage(SeverityImageList.Images[x]));
 			if (IsDesignMode)
 				return;
 			// Set tool strip to the same font.
@@ -332,6 +336,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			e.Graphics.DrawIcon(System.Drawing.SystemIcons.Shield, bounds);
 		}
 
+		/// <summary>The severity icons by name, at the screen's size.</summary>
+		readonly System.Collections.Generic.Dictionary<string, System.Drawing.Image> SeverityImages;
+
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -348,16 +355,16 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 						e.Value = null;
 						break;
 					case IssueSeverity.Low:
-						e.Value = SeverityImageList.Images["Information"];
+						e.Value = SeverityImages["Information"];
 						break;
 					case IssueSeverity.Important:
-						e.Value = SeverityImageList.Images["Warning"];
+						e.Value = SeverityImages["Warning"];
 						break;
 					case IssueSeverity.Moderate:
-						e.Value = SeverityImageList.Images["Warning"];
+						e.Value = SeverityImages["Warning"];
 						break;
 					case IssueSeverity.Critical:
-						e.Value = SeverityImageList.Images["Error"];
+						e.Value = SeverityImages["Error"];
 						break;
 					default:
 						break;

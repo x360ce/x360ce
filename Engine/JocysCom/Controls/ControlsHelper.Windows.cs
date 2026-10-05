@@ -764,12 +764,35 @@ namespace JocysCom.ClassLibrary.Controls
 			grid.RowHeadersDefaultCellStyle.BackColor = SystemColors.Control;
 			grid.BackColor = SystemColors.Window;
 			grid.DefaultCellStyle.BackColor = SystemColors.Window;
+			ScaleGrid(grid);
 			grid.CellPainting += Grid_CellPainting;
 			grid.SelectionChanged += Grid_SelectionChanged;
 			grid.CellFormatting += Grid_CellFormatting;
 			grid.DataError += Grid_DataError;
 			if (updateEnabledProperty)
 				grid.CellClick += Grid_CellClick;
+		}
+
+		/// <summary>Enlarges what a grid keeps in pixels at 100%: fixed column widths, and the margin of new rows.</summary>
+		/// <remarks>
+		/// Windows Forms scales a grid's size and font with the screen, but leaves a column of fixed width as
+		/// it is: on a screen set to 150% a check box no longer fits the column made for it, and the grid
+		/// leaves the cell empty. A new row is as tall as the font and a 9-pixel margin, and the margin
+		/// stays 9, so the rows close in on their text. Nothing is enlarged twice.
+		/// </remarks>
+		private static void ScaleGrid(DataGridView grid)
+		{
+			if (DpiScale == 1f || ScaledControls.TryGetValue(grid, out _))
+				return;
+			ScaledControls.Add(grid, null);
+			grid.RowTemplate.Height = Math.Max(grid.RowTemplate.Height, Control.DefaultFont.Height + (int)Math.Round(9 * DpiScale));
+			foreach (DataGridViewColumn column in grid.Columns)
+			{
+				// The width before the minimum: a larger minimum widens the column, which would then be enlarged again.
+				if (column.InheritedAutoSizeMode == DataGridViewAutoSizeColumnMode.None)
+					column.Width = (int)Math.Round(column.Width * DpiScale);
+				column.MinimumWidth = (int)Math.Round(column.MinimumWidth * DpiScale);
+			}
 		}
 
 		/// <summary>Lets a grid finish painting a row whose item the list no longer has.</summary>
@@ -1189,6 +1212,193 @@ namespace JocysCom.ClassLibrary.Controls
 					box.SelectedIndex = i;
 					return;
 				}
+			}
+		}
+
+		#endregion
+
+		#region Scaling
+
+		/// <summary>How much Windows Forms enlarges this program's windows, as a multiple of 96 dots to the inch.</summary>
+		/// <remarks>
+		/// A program that tells Windows it knows the screen's scale is scaled once, at start, to the scale
+		/// of the main screen, and this is that scale. A program that does not is drawn at 100% and
+		/// stretched by Windows, and for it this is 1.
+		/// </remarks>
+		public static float DpiScale
+		{
+			get
+			{
+				if (_DpiScale == 0f)
+				{
+					using (var g = Graphics.FromHwnd(IntPtr.Zero))
+						_DpiScale = g.DpiX / 96f;
+				}
+				return _DpiScale;
+			}
+		}
+		private static float _DpiScale;
+
+		/// <summary>The original of every copy made here, so a copy is never enlarged again.</summary>
+		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Image, Image> Originals =
+			new System.Runtime.CompilerServices.ConditionalWeakTable<Image, Image>();
+
+		/// <summary>The copies made of each original, by size, so each is made once.</summary>
+		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Image, Dictionary<Size, Image>> Copies =
+			new System.Runtime.CompilerServices.ConditionalWeakTable<Image, Dictionary<Size, Image>>();
+
+		/// <summary>Tool strips and grids whose pixel sizes were enlarged already.</summary>
+		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Control, object> ScaledControls =
+			new System.Runtime.CompilerServices.ConditionalWeakTable<Control, object>();
+
+		/// <summary>An image at <see cref="DpiScale"/> times the size it was made at.</summary>
+		/// <remarks>At 100% the image itself is returned; given a copy made here, the size is taken from its original.</remarks>
+		public static Image ScaleImage(Image image)
+		{
+			if (image is null || DpiScale == 1f)
+				return image;
+			var original = GetOriginal(image);
+			return ScaleImage(original, new Size(
+				(int)Math.Round(original.Width * DpiScale),
+				(int)Math.Round(original.Height * DpiScale)));
+		}
+
+		/// <summary>The image a copy made by <see cref="ScaleImage(Image, Size)"/> was made from, or the image itself.</summary>
+		/// <remarks>
+		/// For anything made from an enlarged image, such as a grey version of it: made from the original
+		/// and then enlarged, it is known as a copy and is never enlarged a second time.
+		/// </remarks>
+		public static Image GetOriginal(Image image)
+		{
+			Image original;
+			return image != null && Originals.TryGetValue(image, out original) ? original : image;
+		}
+
+		/// <summary>An image at the size given, its edges as sharp as an enlargement keeps them.</summary>
+		/// <remarks>
+		/// Each pixel is first repeated up to the next whole multiple of the size wanted, which keeps every
+		/// edge hard, and that is brought down to the size wanted with the smoothest filter, which softens
+		/// only what a part of a pixel cannot show. Enlarged straight to 150%, every edge blurs. A copy is
+		/// always made from the original, never from another copy, and once for each size. The copy keeps
+		/// the original's size in inches.
+		/// </remarks>
+		public static Image ScaleImage(Image image, Size size)
+		{
+			if (image is null)
+				return null;
+			var original = GetOriginal(image);
+			if (original.Size == size)
+				return original;
+			var copies = Copies.GetOrCreateValue(original);
+			lock (copies)
+			{
+				Image copy;
+				if (copies.TryGetValue(size, out copy))
+					return copy;
+				var times = Math.Max(1, (int)Math.Ceiling(Math.Max(
+					size.Width / (float)original.Width, size.Height / (float)original.Height)));
+				var bitmap = new Bitmap(size.Width, size.Height);
+				bitmap.SetResolution(
+					original.HorizontalResolution * size.Width / original.Width,
+					original.VerticalResolution * size.Height / original.Height);
+				using (var repeated = new Bitmap(original.Width * times, original.Height * times))
+				{
+					using (var g = Graphics.FromImage(repeated))
+					{
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+						g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+						g.DrawImage(original, new Rectangle(0, 0, repeated.Width, repeated.Height));
+					}
+					using (var g = Graphics.FromImage(bitmap))
+					using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+					{
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+						g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+						// The filter reads past the edge; mirrored there, the edge pixels are not mixed with nothing.
+						attributes.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+						g.DrawImage(repeated, new Rectangle(0, 0, size.Width, size.Height),
+							0, 0, repeated.Width, repeated.Height, GraphicsUnit.Pixel, attributes);
+					}
+				}
+				copies.Add(size, bitmap);
+				Originals.Add(bitmap, original);
+				return bitmap;
+			}
+		}
+
+		/// <summary>Gives a tool strip item an image at the size the item shows it.</summary>
+		/// <remarks>
+		/// An item that fits its image to the strip shows it at the strip's image size, which
+		/// <see cref="ScaleImages(ToolStrip)"/> enlarges with the screen; any other shows it at
+		/// <see cref="DpiScale"/> times its own size. Made at that size, the image is drawn as it is
+		/// rather than stretched by the strip. At 100% the image is given as it is.
+		/// </remarks>
+		public static void SetImage(ToolStripItem item, Image image)
+		{
+			if (item is null)
+				throw new ArgumentNullException(nameof(item));
+			var owner = item.Owner;
+			item.Image = DpiScale == 1f || image is null
+				? image
+				: item.ImageScaling == ToolStripItemImageScaling.SizeToFit && owner != null
+					? ScaleImage(image, owner.ImageScalingSize)
+					: ScaleImage(image);
+		}
+
+		/// <summary>Enlarges the images on a control, and on everything on it, by <see cref="DpiScale"/>.</summary>
+		/// <remarks>
+		/// Windows Forms scales the size and place of every control to the screen, but draws each image at
+		/// the size it was made, so at 150% a 16-pixel icon fills two thirds of the space it was given.
+		/// Buttons, labels and pictures that show an image at its own size get an enlarged copy, and tool
+		/// strips are enlarged with their images, menus included. Images shown from an image list are left
+		/// to the list. Call it once a window or control is built; nothing is enlarged twice, so calling it
+		/// again for the parts added since changes nothing else.
+		/// </remarks>
+		public static void ScaleImages(Control control)
+		{
+			if (control is null || DpiScale == 1f)
+				return;
+			foreach (var c in GetAll(control, null, true))
+			{
+				if (c is ToolStrip strip)
+					ScaleImages(strip);
+				if (c.ContextMenuStrip != null)
+					ScaleImages(c.ContextMenuStrip);
+				if (c is ButtonBase button && button.ImageList is null)
+					button.Image = ScaleImage(button.Image);
+				else if (c is Label label && label.ImageList is null)
+					label.Image = ScaleImage(label.Image);
+				else if (c is PictureBox picture && picture.SizeMode != PictureBoxSizeMode.StretchImage && picture.SizeMode != PictureBoxSizeMode.Zoom)
+					picture.Image = ScaleImage(picture.Image);
+			}
+		}
+
+		/// <summary>Enlarges the size a tool strip fits images to, and its items' images with it, drop-downs included.</summary>
+		public static void ScaleImages(ToolStrip strip)
+		{
+			if (strip is null || DpiScale == 1f)
+				return;
+			var resized = !ScaledControls.TryGetValue(strip, out _);
+			if (resized)
+			{
+				ScaledControls.Add(strip, null);
+				var size = strip.ImageScalingSize;
+				strip.ImageScalingSize = new Size((int)Math.Round(size.Width * DpiScale), (int)Math.Round(size.Height * DpiScale));
+			}
+			foreach (ToolStripItem item in strip.Items)
+			{
+				// An image taken from the strip's image list belongs to the list.
+				if (item.ImageIndex < 0 && string.IsNullOrEmpty(item.ImageKey) && item.Image != null)
+				{
+					var image = item.Image;
+					// An item measures itself again only when a property of its own changes, and the strip's
+					// image size is not one: an item given back the image it had would keep the old size.
+					if (resized)
+						item.Image = null;
+					SetImage(item, image);
+				}
+				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
+					ScaleImages(dropDownItem.DropDown);
 			}
 		}
 

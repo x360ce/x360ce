@@ -20,6 +20,15 @@ namespace x360ce.App.Controls
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
+		protected override void OnLoad(EventArgs e)
+		{
+			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
+			// before the window is first shown.
+			if (!IsDesignMode)
+				JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImages(this);
+			base.OnLoad(e);
+		}
+
 		#region WebService loading circle
 
 		private void InitLoadingCircle()
@@ -64,12 +73,14 @@ namespace x360ce.App.Controls
 			var value = Tasks.Count > 0;
 			if (value && !BusyLoadingCircle.Active)
 			{
+				// In pixels, so enlarged with the screen like the box the circle is drawn in.
+				var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
 				BusyLoadingCircle.Color = Color.SteelBlue;
-				BusyLoadingCircle.InnerCircleRadius = 12;
+				BusyLoadingCircle.InnerCircleRadius = (int)Math.Round(12 * scale);
 				BusyLoadingCircle.NumberSpoke = 100;
-				BusyLoadingCircle.OuterCircleRadius = 18;
+				BusyLoadingCircle.OuterCircleRadius = (int)Math.Round(18 * scale);
 				BusyLoadingCircle.RotationSpeed = 10;
-				BusyLoadingCircle.SpokeThickness = 3;
+				BusyLoadingCircle.SpokeThickness = (int)Math.Round(3 * scale);
 				BusyLoadingCircle.Active = value;
 				BusyLoadingCircle.Visible = value;
 			}
