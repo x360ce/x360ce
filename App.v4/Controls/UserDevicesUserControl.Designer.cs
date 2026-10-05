@@ -34,7 +34,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
 			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
 			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.ConnectionClassColumn = new System.Windows.Forms.DataGridViewImageColumn();

@@ -28,7 +28,6 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutControl));
 			this.ChangeLogTextBox = new System.Windows.Forms.TextBox();
 			this.AboutDescriptionLabel = new System.Windows.Forms.Label();
 			this.AboutWikiLinkLabel = new System.Windows.Forms.LinkLabel();
@@ -165,7 +164,7 @@
 			// 
 			// ProductPictureBox
 			// 
-			this.ProductPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("ProductPictureBox.Image")));
+			this.ProductPictureBox.Image = global::x360ce.App.Properties.Resources.app_128x128;
 			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
 			this.ProductPictureBox.Name = "ProductPictureBox";
 			this.ProductPictureBox.Size = new System.Drawing.Size(128, 128);

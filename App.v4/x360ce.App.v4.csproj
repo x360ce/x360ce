@@ -11,7 +11,7 @@
     <LangVersion>7.3</LangVersion>
     <Platforms>AnyCPU;x86;x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>..\Resources\Images\shared\app\app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- The item lists below are the whole content: nothing on disk is compiled or embedded by
          being there, so a file dropped into the folder cannot change the build unlisted.
@@ -540,27 +540,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="Images\Nav\NavActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavAxisActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavDownActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavDownNormal.png" />
-    <EmbeddedResource Include="Images\Nav\NavDownRecord.png" />
-    <EmbeddedResource Include="Images\Nav\NavLeftActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavLeftNormal.png" />
-    <EmbeddedResource Include="Images\Nav\NavLeftRecord.png" />
-    <EmbeddedResource Include="Images\Nav\NavNormal.png" />
-    <EmbeddedResource Include="Images\Nav\NavRecord.png" />
-    <EmbeddedResource Include="Images\Nav\NavRightActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavRightNormal.png" />
-    <EmbeddedResource Include="Images\Nav\NavRightRecord.png" />
-    <EmbeddedResource Include="Images\Nav\NavTriggerActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavUpActive.png" />
-    <EmbeddedResource Include="Images\Nav\NavUpNormal.png" />
-    <EmbeddedResource Include="Images\Nav\NavUpRecord.png" />
-    <EmbeddedResource Include="Images\xboxControllerFront.png" />
-    <EmbeddedResource Include="Images\xboxControllerFrontDark.png" />
-    <EmbeddedResource Include="Images\xboxControllerTop.png" />
-    <EmbeddedResource Include="Images\xboxControllerTopDark.png" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -582,27 +561,13 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Images\MarkButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app.ico" />
-    <Content Include="Forms\app.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <EmbeddedResource Include="Resources\DXTweak\DXTweak2.exe" />
     <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
-    <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
-    <None Include="Images\app_16x16.png" />
-    <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
     <EmbeddedResource Include="Resources\HidGuardian.zip" />
@@ -612,88 +577,8 @@
     <EmbeddedResource Include="Presets\Vendors.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
-    <None Include="Images\delete_16x16.png" />
-    <None Include="Images\empty_16x16.png" />
-    <None Include="Images\load_16x16.png" />
-    <None Include="Images\refresh_16x16.png" />
-    <None Include="Images\nav_up_16x16.png" />
-    <None Include="Images\nav_down_16x16.png" />
-    <None Include="Images\save_16x16.png" />
-    <None Include="Images\save_add_16x16.png" />
-    <None Include="Images\arrow_right_16x16.png" />
-    <None Include="Images\check_16x16.png" />
-    <None Include="Images\check_disabled_16x16.png" />
-    <None Include="Images\remove_16x16.png" />
-    <None Include="Images\folder_view_16x16.png" />
-    <None Include="Images\enable_16x16.png" />
-    <None Include="Images\launch_16x16.png" />
-    <None Include="Images\checkbox_16x16.png" />
-    <None Include="Images\checkbox_disabled_16x16.png" />
-    <None Include="Images\checkbox_unchecked_16x16.png" />
-    <None Include="Images\checkbox_unchecked_disabled_16x16.png" />
-    <None Include="Images\folder_16x16.png" />
-    <None Include="Images\cloud_computing_refresh_16x16.png" />
-    <None Include="Images\fix_16x16.png" />
-    <None Include="Images\information_16x16.png" />
-    <None Include="Images\reset_16x16.png" />
-    <None Include="Images\checkbox_undefined_16x16.png" />
-    <None Include="Images\data_into_16x16.png" />
-    <None Include="Images\data_out_16x16.png" />
-    <None Include="Images\Button_A.png" />
-    <None Include="Images\Button_B.png" />
-    <None Include="Images\Button_Back.png" />
-    <None Include="Images\Button_DPadDown.png" />
-    <None Include="Images\Button_DPadLeft.png" />
-    <None Include="Images\Button_DPadRight.png" />
-    <None Include="Images\Button_DPadUp.png" />
-    <None Include="Images\Button_LeftShoulder.png" />
-    <None Include="Images\Button_LeftThumb.png" />
-    <None Include="Images\Button_LeftTrigger.png" />
-    <None Include="Images\Button_RightShoulder.png" />
-    <None Include="Images\Button_RightThumb.png" />
-    <None Include="Images\Button_RightTrigger.png" />
-    <None Include="Images\Button_Start.png" />
-    <None Include="Images\Button_X.png" />
-    <None Include="Images\Button_Y.png" />
-    <None Include="Images\arrow_right_gray_16x16.png" />
-    <None Include="Images\online_help_16x16.png" />
-    <None Include="Images\exit_16x16.png" />
-    <None Include="Images\map_to_16x16.png" />
-    <None Include="Images\cloud_computing_upload_16x16.png" />
-    <None Include="Images\cloud_computing_download_16x16.png" />
-    <None Include="Images\edit_note_16x16.png" />
-    <None Include="Images\emulation_library_16x16.png" />
-    <None Include="Images\emulation_none_16x16.png" />
-    <None Include="Images\emulation_virtual_16x16.png" />
-    <None Include="Images\test_16x16.png" />
-    <None Include="Images\save_ok_16x16.png" />
-    <None Include="Images\save_warning_16x16.png" />
-    <None Include="Images\hardware_16x16.png" />
-    <None Include="Images\copy_16x16.png" />
-    <None Include="Images\paste_16x16.png" />
-    <None Include="Images\error_16x16.png" />
-    <None Include="Images\ok_16x16.png" />
-    <None Include="Images\ok_off_16x16.png" />
-    <None Include="Images\fix_off_16x16.png" />
-    <Content Include="Images\tip_24x24.png" />
-    <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
-    <EmbeddedResource Include="Images\MarkController.png" />
-    <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_red.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
-    <Content Include="Images\xboxControllerDPad.png" />
-    <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="Images\xboxControllerLeftTrigger.png" />
-    <Content Include="Images\xboxControllerRightThumbstick.png" />
-    <None Include="Images\xboxControllerRightTrigger.png" />
-    <Content Include="Images\xboxControllerSpriteFont.png" />
-    <EmbeddedResource Include="Images\MarkAxis.png" />
     <EmbeddedResource Include="Documents\ChangeLog.txt" />
-    <None Include="Images\app_128x128.png" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
@@ -704,6 +589,86 @@
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The pictures live once, under Resources\Images: shared by both programs, or this
+         program's own. The ones the code loads by name keep their Images\ names through Link. -->
+    <EmbeddedResource Include="..\Resources\Images\shared\icons\bullet_ball_glass_red_16x16.png">
+      <Link>Images\bullet_ball_glass_red_16x16.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkAxis.png">
+      <Link>Images\MarkAxis.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkButton.png">
+      <Link>Images\MarkButton.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkController.png">
+      <Link>Images\MarkController.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFront.png">
+      <Link>Images\xboxControllerFront.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFrontDark.png">
+      <Link>Images\xboxControllerFrontDark.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTop.png">
+      <Link>Images\xboxControllerTop.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark.png">
+      <Link>Images\xboxControllerTopDark.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavActive.png">
+      <Link>Images\Nav\NavActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavAxisActive.png">
+      <Link>Images\Nav\NavAxisActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownActive.png">
+      <Link>Images\Nav\NavDownActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownNormal.png">
+      <Link>Images\Nav\NavDownNormal.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavDownRecord.png">
+      <Link>Images\Nav\NavDownRecord.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftActive.png">
+      <Link>Images\Nav\NavLeftActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftNormal.png">
+      <Link>Images\Nav\NavLeftNormal.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavLeftRecord.png">
+      <Link>Images\Nav\NavLeftRecord.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavNormal.png">
+      <Link>Images\Nav\NavNormal.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRecord.png">
+      <Link>Images\Nav\NavRecord.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightActive.png">
+      <Link>Images\Nav\NavRightActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightNormal.png">
+      <Link>Images\Nav\NavRightNormal.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavRightRecord.png">
+      <Link>Images\Nav\NavRightRecord.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavTriggerActive.png">
+      <Link>Images\Nav\NavTriggerActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpActive.png">
+      <Link>Images\Nav\NavUpActive.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpNormal.png">
+      <Link>Images\Nav\NavUpNormal.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\v4\xbox\nav\NavUpRecord.png">
+      <Link>Images\Nav\NavUpRecord.png</Link>
+    </EmbeddedResource>
+    <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\x360ce.Engine.csproj" />

@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs, App.v4/Images/xboxControllerTopDark.png, App.v4/Images/xboxControllerFrontDark.png
+﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs, Resources/Images/shared/xbox/xboxControllerTopDark.png, Resources/Images/shared/xbox/xboxControllerFrontDark.png
 // @area: pad-images   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;

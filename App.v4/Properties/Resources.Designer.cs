@@ -71,6 +71,16 @@ namespace x360ce.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon app {
+            get {
+                object obj = ResourceManager.GetObject("app", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap app_128x128 {
@@ -86,6 +96,16 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap app_16x16 {
             get {
                 object obj = ResourceManager.GetObject("app_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap app_48x48 {
+            get {
+                object obj = ResourceManager.GetObject("app_48x48", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -116,56 +136,6 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap bullet_ball_glass_red_16x16 {
             get {
                 object obj = ResourceManager.GetObject("bullet_ball_glass_red_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap bullet_square_glass_blue {
-            get {
-                object obj = ResourceManager.GetObject("bullet_square_glass_blue", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap bullet_square_glass_green {
-            get {
-                object obj = ResourceManager.GetObject("bullet_square_glass_green", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap bullet_square_glass_grey {
-            get {
-                object obj = ResourceManager.GetObject("bullet_square_glass_grey", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap bullet_square_glass_red {
-            get {
-                object obj = ResourceManager.GetObject("bullet_square_glass_red", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap bullet_square_glass_yellow {
-            get {
-                object obj = ResourceManager.GetObject("bullet_square_glass_yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -263,16 +233,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Button_LeftTrigger {
-            get {
-                object obj = ResourceManager.GetObject("Button_LeftTrigger", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap Button_RightShoulder {
             get {
                 object obj = ResourceManager.GetObject("Button_RightShoulder", resourceCulture);
@@ -286,16 +246,6 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap Button_RightThumb {
             get {
                 object obj = ResourceManager.GetObject("Button_RightThumb", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Button_RightTrigger {
-            get {
-                object obj = ResourceManager.GetObject("Button_RightTrigger", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -363,29 +313,9 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap checkbox_disabled_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("checkbox_disabled_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap checkbox_unchecked_16x16 {
             get {
                 object obj = ResourceManager.GetObject("checkbox_unchecked_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap checkbox_unchecked_disabled_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("checkbox_unchecked_disabled_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -413,16 +343,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap cloud_computing_refresh_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("cloud_computing_refresh_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap cloud_computing_upload_16x16 {
             get {
                 object obj = ResourceManager.GetObject("cloud_computing_upload_16x16", resourceCulture);
@@ -436,16 +356,6 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap copy_16x16 {
             get {
                 object obj = ResourceManager.GetObject("copy_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap copy_16x161 {
-            get {
-                object obj = ResourceManager.GetObject("copy_16x161", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -503,36 +413,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap emulation_library_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("emulation_library_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap emulation_none_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("emulation_none_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap emulation_virtual_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("emulation_virtual_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap enable_16x16 {
             get {
                 object obj = ResourceManager.GetObject("enable_16x16", resourceCulture);
@@ -573,16 +453,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap information_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("information_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap fix_off_16x16 {
             get {
                 object obj = ResourceManager.GetObject("fix_off_16x16", resourceCulture);
@@ -611,11 +481,31 @@ namespace x360ce.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon hardware {
+            get {
+                object obj = ResourceManager.GetObject("hardware", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap hardware_16x16 {
             get {
                 object obj = ResourceManager.GetObject("hardware_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap information_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("information_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -633,16 +523,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap load_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("load_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap map_to_16x16 {
             get {
                 object obj = ResourceManager.GetObject("map_to_16x16", resourceCulture);
@@ -653,9 +533,9 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Error_32x32 {
+        public static System.Drawing.Bitmap nav_down_16x16 {
             get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Error_32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("nav_down_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -663,29 +543,9 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Information_32x32 {
+        public static System.Drawing.Bitmap nav_up_16x16 {
             get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Information_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Question_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Question_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Warning_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Warning_32x32", resourceCulture);
+                object obj = ResourceManager.GetObject("nav_up_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -739,18 +599,6 @@ namespace x360ce.App.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        public static System.Drawing.Bitmap nav_down_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("nav_down_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        public static System.Drawing.Bitmap nav_up_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("nav_up_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
@@ -785,36 +633,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap save_add_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("save_add_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap save_ok_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("save_ok_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap save_warning_16x16 {
-            get {
-                object obj = ResourceManager.GetObject("save_warning_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap test_16x16 {
             get {
                 object obj = ResourceManager.GetObject("test_16x16", resourceCulture);
@@ -825,59 +643,9 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap update_16x16 {
+        public static System.Drawing.Bitmap tip_24x24 {
             get {
-                object obj = ResourceManager.GetObject("update_16x16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap xboxControllerDPad {
-            get {
-                object obj = ResourceManager.GetObject("xboxControllerDPad", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap xboxControllerLeftThumbstick {
-            get {
-                object obj = ResourceManager.GetObject("xboxControllerLeftThumbstick", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap xboxControllerLeftTrigger {
-            get {
-                object obj = ResourceManager.GetObject("xboxControllerLeftTrigger", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap xboxControllerRightThumbstick {
-            get {
-                object obj = ResourceManager.GetObject("xboxControllerRightThumbstick", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap xboxControllerRightTrigger {
-            get {
-                object obj = ResourceManager.GetObject("xboxControllerRightTrigger", resourceCulture);
+                object obj = ResourceManager.GetObject("tip_24x24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

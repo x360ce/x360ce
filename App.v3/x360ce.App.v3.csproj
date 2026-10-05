@@ -7,7 +7,7 @@
     <LangVersion>7.3</LangVersion>
     <Platforms>AnyCPU;x86;x64</Platforms>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>..\Resources\Images\shared\app\app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- The item lists below are the whole content: nothing on disk is compiled or embedded by
          being there, so a file dropped into the folder cannot change the build unlisted.
@@ -266,8 +266,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="Images\xboxControllerFront.png" />
-    <EmbeddedResource Include="Images\xboxControllerTop.png" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -286,22 +284,9 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Images\MarkButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
-    <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
-    <None Include="Images\app_16x16.png" />
-    <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <None Include="Resources\SharpDX\SharpDX.DirectInput.xml">
       <SubType>Designer</SubType>
@@ -313,73 +298,12 @@
     <EmbeddedResource Include="Presets\Vendors.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
-    <None Include="Images\delete_16x16.png" />
-    <None Include="Images\empty_16x16.png" />
-    <None Include="Images\load_16x16.png" />
-    <None Include="Images\refresh_16x16.png" />
-    <None Include="Images\save_16x16.png" />
-    <None Include="Images\save_add_16x16.png" />
-    <None Include="Images\arrow_right_16x16.png" />
-    <None Include="Images\check_16x16.png" />
-    <None Include="Images\check_disabled_16x16.png" />
-    <None Include="Images\remove_16x16.png" />
-    <None Include="Images\folder_view_16x16.png" />
-    <None Include="Images\enable_16x16.png" />
-    <None Include="Images\launch_16x16.png" />
-    <None Include="Images\checkbox_16x16.png" />
-    <None Include="Images\checkbox_disabled_16x16.png" />
-    <None Include="Images\checkbox_unchecked_16x16.png" />
-    <None Include="Images\checkbox_unchecked_disabled_16x16.png" />
-    <None Include="Images\folder_16x16.png" />
-    <None Include="Images\cloud_computing_refresh_16x16.png" />
-    <None Include="Images\fix_16x16.png" />
-    <None Include="Images\reset_16x16.png" />
-    <None Include="Images\checkbox_undefined_16x16.png" />
-    <None Include="Images\data_into_16x16.png" />
-    <None Include="Images\data_out_16x16.png" />
-    <None Include="Images\Button_A.png" />
-    <None Include="Images\Button_B.png" />
-    <None Include="Images\Button_Back.png" />
-    <None Include="Images\Button_DPadDown.png" />
-    <None Include="Images\Button_DPadLeft.png" />
-    <None Include="Images\Button_DPadRight.png" />
-    <None Include="Images\Button_DPadUp.png" />
-    <None Include="Images\Button_LeftShoulder.png" />
-    <None Include="Images\Button_LeftThumb.png" />
-    <None Include="Images\Button_LeftTrigger.png" />
-    <None Include="Images\Button_RightShoulder.png" />
-    <None Include="Images\Button_RightThumb.png" />
-    <None Include="Images\Button_RightTrigger.png" />
-    <None Include="Images\Button_Start.png" />
-    <None Include="Images\Button_X.png" />
-    <None Include="Images\Button_Y.png" />
-    <None Include="Images\arrow_right_gray_16x16.png" />
-    <None Include="Images\online_help_16x16.png" />
-    <None Include="Images\exit_16x16.png" />
-    <None Include="Images\map_to_16x16.png" />
-    <Content Include="Images\tip_24x24.png" />
-    <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
-    <EmbeddedResource Include="Images\MarkController.png" />
-    <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
     <!-- The documents live once, under docs, and are rendered when shown. -->
     <EmbeddedResource Include="..\docs\Help.v3.md">
       <Link>Documents\Help.v3.md</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_red.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
-    <Content Include="Images\xboxControllerDPad.png" />
-    <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="Images\xboxControllerLeftTrigger.png" />
-    <Content Include="Images\xboxControllerRightThumbstick.png" />
-    <None Include="Images\xboxControllerRightTrigger.png" />
-    <Content Include="Images\xboxControllerSpriteFont.png" />
-    <EmbeddedResource Include="Images\MarkAxis.png" />
     <EmbeddedResource Include="Documents\ChangeLog.txt" />
-    <None Include="Images\app_128x128.png" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
@@ -390,6 +314,29 @@
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The pictures live once, under Resources\Images: shared by both programs, or this
+         program's own. The ones the code loads by name keep their Images\ names through Link. -->
+    <EmbeddedResource Include="..\Resources\Images\shared\icons\bullet_ball_glass_red_16x16.png">
+      <Link>Images\bullet_ball_glass_red_16x16.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkAxis.png">
+      <Link>Images\MarkAxis.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkButton.png">
+      <Link>Images\MarkButton.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\MarkController.png">
+      <Link>Images\MarkController.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFront.png">
+      <Link>Images\xboxControllerFront.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTop.png">
+      <Link>Images\xboxControllerTop.png</Link>
+    </EmbeddedResource>
+    <None Include="..\Resources\Images\shared\**;..\Resources\Images\v3\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\x360ce.Engine.csproj">

@@ -19,7 +19,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarningsForm));
 			this.WarningsTabControl = new System.Windows.Forms.TabControl();
 			this.WarningsTabPage = new System.Windows.Forms.TabPage();
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
@@ -181,7 +180,7 @@
 			this.Controls.Add(this.IgnoreButton);
 			this.Controls.Add(this.Closebutton);
 			this.Controls.Add(this.WarningsTabControl);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "WarningsForm";
 			this.Text = "Warnings Form";
 			this.WarningsTabControl.ResumeLayout(false);

@@ -1,4 +1,8 @@
-﻿## [3.5.10.0] - 2026-09-27
+﻿## [3.6.7.0] - 2026-10-05
+
+- Changed: Sharper controller pictures and the newer add, delete and warning icons.
+
+## [3.5.10.0] - 2026-09-27
 
 - Fixed: Importing or exporting games settings could show an error report.
 - Fixed: Mapping a POV direction from the menu could map the whole POV.

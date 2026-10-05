@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugForm));
 			this.performanceTestUserControl1 = new x360ce.App.Controls.DebugUserControl();
 			this.SuspendLayout();
 			// 
@@ -48,7 +47,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(258, 193);
 			this.Controls.Add(this.performanceTestUserControl1);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "DebugForm";
 			this.Text = "Debug Form";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugForm_FormClosing);

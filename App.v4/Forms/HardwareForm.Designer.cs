@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HardwareForm));
 			this.HardwarePanel = new JocysCom.ClassLibrary.IO.HardwareControl();
 			this.SuspendLayout();
 			// 
@@ -46,7 +45,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(744, 501);
 			this.Controls.Add(this.HardwarePanel);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.hardware;
 			this.Name = "HardwareForm";
 			this.Padding = new System.Windows.Forms.Padding(3);
 			this.Text = "Hardware";

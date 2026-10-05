@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeveloperToolsForm));
 			this.CompressXmlResourcesButton = new System.Windows.Forms.Button();
 			this.LogTextBox = new System.Windows.Forms.TextBox();
 			this.WorkingFolderTextBox = new System.Windows.Forms.TextBox();
@@ -83,7 +82,7 @@
 			this.Controls.Add(this.WorkingFolderTextBox);
 			this.Controls.Add(this.LogTextBox);
 			this.Controls.Add(this.CompressXmlResourcesButton);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "DeveloperToolsForm";
 			this.Text = "Developer Tools";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeveloperToolsForm_FormClosing);
