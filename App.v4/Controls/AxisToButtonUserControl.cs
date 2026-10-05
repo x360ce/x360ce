@@ -21,11 +21,6 @@ namespace x360ce.App.Controls
 				return;
 			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
-			arrowEnabledImage = ArrowPictureBox.Image;
-			if (arrowEnabledImage != null)
-			{
-				arrowDisabledImage = AppHelper.GetDisabledImage((Bitmap)arrowEnabledImage);
-			}
 		}
 
 		private void controlsLink_ValueChanged(object sender, EventArgs e)
@@ -47,8 +42,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private readonly Image arrowEnabledImage;
-		private readonly Image arrowDisabledImage;
 		private Bitmap enabledImage;
 		private Bitmap disabledImage;
 
@@ -174,7 +167,9 @@ namespace x360ce.App.Controls
 
 		private void ArrowPictureBox_EnabledChanged(object sender, EventArgs e)
 		{
-			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrowEnabledImage : arrowDisabledImage;
+			// Taken from the resources each time rather than kept, so it is the theme's.
+			var arrow = Properties.Resources.arrow_right_gray_16x16;
+			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrow : AppHelper.GetDisabledImage(arrow);
 		}
 
 		private State _gamepadState;

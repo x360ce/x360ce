@@ -1,6 +1,6 @@
 ﻿## [3.6.7.0] - 2026-10-05
 
-- Changed: Sharper controller pictures and the newer add, delete and warning icons.
+- Changed: Pastel icons and sharper controller pictures.
 
 ## [3.5.10.0] - 2026-09-27
 

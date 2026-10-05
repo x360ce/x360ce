@@ -511,6 +511,8 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <!-- Written by scripts\art\build_icons.py: the icons at larger sizes and for the dark theme. -->
+    <EmbeddedResource Include="Properties\Icons.resx" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
     <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />

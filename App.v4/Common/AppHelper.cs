@@ -224,8 +224,9 @@ namespace x360ce.App
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
 		/// <remarks>
-		/// Made from the image as it was drawn at 100% and then enlarged to the size of the one given, so
-		/// a grey version of an image enlarged for the screen is known as enlarged, and not enlarged again.
+		/// Made grey from the image as it was drawn at 100% and at each larger size it was drawn at, and then
+		/// scaled to the size of the one given, so a grey icon is as sharp as the coloured one and is known as
+		/// enlarged, never enlarged again.
 		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
@@ -234,13 +235,22 @@ namespace x360ce.App
 				if (!DisabledImageCache.ContainsKey(image))
 				{
 					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
-					var newImage = (Bitmap)original.Clone();
-					JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
-					JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
-					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(newImage, image.Size));
+					var grey = Greyed(original);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(grey,
+						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(Greyed).ToArray());
+					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(grey, image.Size));
 				}
 				return DisabledImageCache[image];
 			}
+		}
+
+		/// <summary>A grey, half see-through copy of an image.</summary>
+		static Image Greyed(Image image)
+		{
+			var copy = (Bitmap)image.Clone();
+			JocysCom.ClassLibrary.Drawing.Effects.GrayScale(copy);
+			JocysCom.ClassLibrary.Drawing.Effects.Transparent(copy, 50);
+			return copy;
 		}
 
 		/// <summary>

@@ -169,39 +169,6 @@ namespace x360ce.App
 			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
 		}
 
-		/// <summary>Hands out the images of <see cref="Properties.Resources"/> at the screen's scale.</summary>
-		/// <remarks>
-		/// The designer code and the program take their images from that file, and Windows Forms draws
-		/// each at the size it was made, 16 pixels for most, however much the window around it was
-		/// scaled. Put in place of the file's own manager before the first window is made, this one
-		/// enlarges each image the first time it is asked for, and hands out that copy from then on.
-		/// </remarks>
-		class ScaledResourceManager : System.Resources.ResourceManager
-		{
-			public ScaledResourceManager(System.Resources.ResourceManager source)
-				: base(source.BaseName, typeof(Properties.Resources).Assembly)
-			{
-			}
-
-			readonly System.Collections.Generic.Dictionary<string, object> _Images = new System.Collections.Generic.Dictionary<string, object>();
-
-			public override object GetObject(string name, System.Globalization.CultureInfo culture)
-			{
-				lock (_Images)
-				{
-					object scaled;
-					if (_Images.TryGetValue(name, out scaled))
-						return scaled;
-					var value = base.GetObject(name, culture);
-					if (!(value is System.Drawing.Image image))
-						return value;
-					scaled = JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(image);
-					_Images.Add(name, scaled);
-					return scaled;
-				}
-			}
-		}
-
 		static void StartApp(string[] args)
 		{
 			if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
@@ -247,10 +214,8 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			StartupTrace.Mark("StartApp: services ready");
-			// Before the first window, so every image it is made with is already the screen's size.
-			if (JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale != 1f)
-				typeof(Properties.Resources).GetField("resourceMan", BindingFlags.NonPublic | BindingFlags.Static)?
-					.SetValue(null, new ScaledResourceManager(Properties.Resources.ResourceManager));
+			// Before the first window, so every image it is made with is already the theme's and the screen's size.
+			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
 			// Before the first window, so every colour it is made with is already the theme's.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(SettingsManager.Options.Theme);
 			MainForm.Current = new MainForm();

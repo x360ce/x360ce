@@ -1247,6 +1247,10 @@ namespace JocysCom.ClassLibrary.Controls
 		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Image, Dictionary<Size, Image>> Copies =
 			new System.Runtime.CompilerServices.ConditionalWeakTable<Image, Dictionary<Size, Image>>();
 
+		/// <summary>The versions of an original drawn at larger sizes, smallest first.</summary>
+		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Image, Image[]> Drawn =
+			new System.Runtime.CompilerServices.ConditionalWeakTable<Image, Image[]>();
+
 		/// <summary>Tool strips and grids whose pixel sizes were enlarged already.</summary>
 		private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<Control, object> ScaledControls =
 			new System.Runtime.CompilerServices.ConditionalWeakTable<Control, object>();
@@ -1274,13 +1278,50 @@ namespace JocysCom.ClassLibrary.Controls
 			return image != null && Originals.TryGetValue(image, out original) ? original : image;
 		}
 
+		/// <summary>Gives an image the versions of it drawn at larger sizes, which its copies are made from.</summary>
+		/// <remarks>
+		/// <see cref="ScaleImage(Image, Size)"/> then hands out the version drawn at the size asked for, makes
+		/// a copy from the smallest version drawn larger, and enlarges only past the largest: a version drawn
+		/// at a size keeps detail that no enlargement of the small image brings back. Each version takes the
+		/// image's size in inches and counts as its copy, so it is never enlarged again. Copies made before
+		/// are made again from the versions.
+		/// </remarks>
+		public static void SetDrawnSizes(Image image, params Image[] sizes)
+		{
+			if (image is null || sizes is null)
+				return;
+			var drawn = sizes.Where(x => x != null && x.Width > image.Width).OrderBy(x => x.Width).ToArray();
+			foreach (var version in drawn)
+			{
+				if (version is Bitmap bitmap)
+					bitmap.SetResolution(
+						image.HorizontalResolution * version.Width / image.Width,
+						image.VerticalResolution * version.Height / image.Height);
+				Originals.Remove(version);
+				Originals.Add(version, image);
+			}
+			Copies.Remove(image);
+			Drawn.Remove(image);
+			Drawn.Add(image, drawn);
+		}
+
+		/// <summary>The versions of an image drawn at larger sizes (<see cref="SetDrawnSizes"/>), smallest first; empty when it has none.</summary>
+		/// <remarks>For anything made from an image, such as a grey version of it, to be made from each version too.</remarks>
+		public static Image[] GetDrawnSizes(Image image)
+		{
+			Image[] drawn;
+			return image != null && Drawn.TryGetValue(GetOriginal(image), out drawn) ? drawn : new Image[0];
+		}
+
 		/// <summary>An image at the size given, its edges as sharp as an enlargement keeps them.</summary>
 		/// <remarks>
-		/// Each pixel is first repeated up to the next whole multiple of the size wanted, which keeps every
-		/// edge hard, and that is brought down to the size wanted with the smoothest filter, which softens
-		/// only what a part of a pixel cannot show. Enlarged straight to 150%, every edge blurs. A copy is
-		/// always made from the original, never from another copy, and once for each size. The copy keeps
-		/// the original's size in inches.
+		/// The copy is made from the version of the image drawn nearest above the size wanted, when it has
+		/// any (<see cref="SetDrawnSizes"/>), otherwise from the image. Each pixel is first repeated up to the
+		/// next whole multiple of the size wanted, which keeps every edge hard, and that is brought down to the
+		/// size wanted with the smoothest filter, which softens only what a part of a pixel cannot show.
+		/// Enlarged straight to 150%, every edge blurs. A copy is always made from the original or its drawn
+		/// versions, never from another copy, and once for each size. The copy keeps the original's size in
+		/// inches.
 		/// </remarks>
 		public static Image ScaleImage(Image image, Size size)
 		{
@@ -1295,19 +1336,30 @@ namespace JocysCom.ClassLibrary.Controls
 				Image copy;
 				if (copies.TryGetValue(size, out copy))
 					return copy;
+				var source = original;
+				Image[] drawn;
+				if (Drawn.TryGetValue(original, out drawn) && drawn.Length > 0)
+				{
+					source = drawn.FirstOrDefault(x => x.Width >= size.Width && x.Height >= size.Height) ?? drawn[drawn.Length - 1];
+					if (source.Size == size)
+					{
+						copies.Add(size, source);
+						return source;
+					}
+				}
 				var times = Math.Max(1, (int)Math.Ceiling(Math.Max(
-					size.Width / (float)original.Width, size.Height / (float)original.Height)));
+					size.Width / (float)source.Width, size.Height / (float)source.Height)));
 				var bitmap = new Bitmap(size.Width, size.Height);
 				bitmap.SetResolution(
 					original.HorizontalResolution * size.Width / original.Width,
 					original.VerticalResolution * size.Height / original.Height);
-				using (var repeated = new Bitmap(original.Width * times, original.Height * times))
+				using (var repeated = new Bitmap(source.Width * times, source.Height * times))
 				{
 					using (var g = Graphics.FromImage(repeated))
 					{
 						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 						g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-						g.DrawImage(original, new Rectangle(0, 0, repeated.Width, repeated.Height));
+						g.DrawImage(source, new Rectangle(0, 0, repeated.Width, repeated.Height));
 					}
 					using (var g = Graphics.FromImage(bitmap))
 					using (var attributes = new System.Drawing.Imaging.ImageAttributes())
@@ -1400,6 +1452,59 @@ namespace JocysCom.ClassLibrary.Controls
 				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
 					ScaleImages(dropDownItem.DropDown);
 			}
+		}
+
+		/// <summary>Puts other images in place of the ones on a control and on everything on it.</summary>
+		/// <param name="control">The control, a window for one.</param>
+		/// <param name="replace">Takes an image and gives the one to show instead, or the same image to keep it.</param>
+		/// <remarks>
+		/// Reaches what <see cref="ScaleImages(Control)"/> reaches: tool strips and menus with their drop-downs,
+		/// buttons, labels and pictures, and the background image of every control. Images shown from an image
+		/// list belong to the list and are left to it.
+		/// </remarks>
+		public static void ReplaceImages(Control control, Func<Image, Image> replace)
+		{
+			if (control is null || replace is null)
+				return;
+			foreach (var c in GetAll(control, null, true))
+			{
+				if (c is ToolStrip strip)
+					ReplaceImages(strip, replace);
+				if (c.ContextMenuStrip != null)
+					ReplaceImages(c.ContextMenuStrip, replace);
+				Image image;
+				if (Replaced(c.BackgroundImage, replace, out image))
+					c.BackgroundImage = image;
+				if (c is ButtonBase button && button.ImageList is null && Replaced(button.Image, replace, out image))
+					button.Image = image;
+				else if (c is Label label && label.ImageList is null && Replaced(label.Image, replace, out image))
+					label.Image = image;
+				else if (c is PictureBox picture && Replaced(picture.Image, replace, out image))
+					picture.Image = image;
+			}
+		}
+
+		/// <summary>Puts other images in place of the ones on a tool strip's items, drop-downs included.</summary>
+		public static void ReplaceImages(ToolStrip strip, Func<Image, Image> replace)
+		{
+			if (strip is null || replace is null)
+				return;
+			foreach (ToolStripItem item in strip.Items)
+			{
+				Image image;
+				// An image taken from the strip's image list belongs to the list.
+				if (item.ImageIndex < 0 && string.IsNullOrEmpty(item.ImageKey) && Replaced(item.Image, replace, out image))
+					item.Image = image;
+				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
+					ReplaceImages(dropDownItem.DropDown, replace);
+			}
+		}
+
+		/// <summary>True when there is an image and the replacement differs from it: setting the same one lays out again for nothing.</summary>
+		static bool Replaced(Image image, Func<Image, Image> replace, out Image replacement)
+		{
+			replacement = image is null ? null : replace(image);
+			return replacement != null && !ReferenceEquals(replacement, image);
 		}
 
 		#endregion

@@ -295,6 +295,7 @@
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Controls\Themes\Default.Forms.cs" />
+    <Compile Include="JocysCom\Controls\Themes\ThemeResourceManager.cs" />
     <Compile Include="JocysCom\Controls\Themes\ThemeType.cs" />
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />

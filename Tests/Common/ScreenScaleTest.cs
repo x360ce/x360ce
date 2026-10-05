@@ -101,5 +101,33 @@ namespace x360ce.Tests
 			foreach (var corner in new[] { copy.GetPixel(0, 0), copy.GetPixel(23, 0), copy.GetPixel(0, 23), copy.GetPixel(23, 23) })
 				Assert.AreEqual(255, corner.A, "A corner faded into the outside of the picture.");
 		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("An image drawn at larger sizes is handed out as drawn, and reduced from the nearest larger rather than enlarged")]
+		public void Drawn_sizes_are_used_before_enlarging()
+		{
+			// Each size is one colour, so a copy shows which one it was made from.
+			var original = Filled(16, Color.Red);
+			var at24 = Filled(24, Color.Lime);
+			var at32 = Filled(32, Color.Blue);
+			ControlsHelper.SetDrawnSizes(original, at32, at24);
+			Assert.AreSame(at24, ControlsHelper.ScaleImage(original, new Size(24, 24)), "The version drawn at 24 pixels was not used.");
+			Assert.AreSame(at32, ControlsHelper.ScaleImage(original, new Size(32, 32)), "The version drawn at 32 pixels was not used.");
+			Assert.AreSame(original, ControlsHelper.GetOriginal(at24), "A drawn version is not known as a copy, so it could be enlarged again.");
+			CollectionAssert.AreEqual(new Image[] { at24, at32 }, ControlsHelper.GetDrawnSizes(at24));
+			var at20 = (Bitmap)ControlsHelper.ScaleImage(original, new Size(20, 20));
+			Assert.AreSame(original, ControlsHelper.GetOriginal(at20));
+			Assert.AreEqual(Color.Lime.ToArgb(), at20.GetPixel(10, 10).ToArgb(), "20 pixels was not reduced from the version drawn at 24.");
+			var at48 = (Bitmap)ControlsHelper.ScaleImage(original, new Size(48, 48));
+			Assert.AreEqual(Color.Blue.ToArgb(), at48.GetPixel(24, 24).ToArgb(), "48 pixels was not enlarged from the largest version.");
+		}
+
+		static Bitmap Filled(int size, Color color)
+		{
+			var bitmap = new Bitmap(size, size);
+			using (var g = Graphics.FromImage(bitmap))
+				g.Clear(color);
+			return bitmap;
+		}
 	}
 }

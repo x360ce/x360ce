@@ -68,23 +68,7 @@ namespace x360ce.App
 			// Map event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
-			// Fix Images
-			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
-			BuletImageList.ImageStream = null;
-			BuletImageList.Images.Clear();
-			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
-			BuletImageList.ImageSize = SystemInformation.SmallIconSize;
-			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
-			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
-			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
-			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
-			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
-			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
-			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
-			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
-			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
+			FillBuletImageList();
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			GameToCustomizeComboBox.Font = Font;
@@ -108,6 +92,29 @@ namespace x360ce.App
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
 			o.WindowPosition?.LoadPosition(this);
+		}
+
+		/// <summary>Fills the tab image list with the status lights and the icons of the theme in use.</summary>
+		/// <remarks>
+		/// Filled again when the theme changes: a list keeps copies of its images, so it does not follow the
+		/// resources. The lights of two colours are put back by the next status update (<see cref="StatusImageKey"/>).
+		/// </remarks>
+		void FillBuletImageList()
+		{
+			BuletImageList.Images.Clear();
+			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
+			BuletImageList.ImageSize = SystemInformation.SmallIconSize;
+			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
+			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
+			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
+			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
+			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
+			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
+			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
+			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
+			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
+			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
+			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
 		}
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
@@ -2083,10 +2090,17 @@ namespace x360ce.App
 
 		#region Exception Handling and Reporting
 
-		/// <summary>The error count takes its colour from the theme, so it is coloured again when the theme changes.</summary>
+		/// <summary>
+		/// The error count takes its colour from the theme, so it is coloured again when the theme changes. The
+		/// open windows get the theme's icons from the resources; the tab list and the tray menu, which no window
+		/// holds, are given them here.
+		/// </summary>
 		void FormsTheme_ThemeChanged(object sender, EventArgs e)
 		{
 			UpdateStatusErrorsLabel();
+			FillBuletImageList();
+			if (Resources.ResourceManager is JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager manager)
+				ControlsHelper.ReplaceImages(TrayContextMenuStrip, manager.Themed);
 		}
 
 		private void LogHelper_Current_NewException(object sender, EventArgs e)
