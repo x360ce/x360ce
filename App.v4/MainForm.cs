@@ -1889,6 +1889,12 @@ namespace x360ce.App
 
 		private void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
+			ShowErrorReport();
+		}
+
+		/// <summary>Shows the error reports the program has written, to read, send or clear.</summary>
+		public void ShowErrorReport()
+		{
 			win = new Forms.ErrorReportForm();
 			ControlsHelper.CheckTopMost(win);
 			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.

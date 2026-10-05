@@ -13,7 +13,13 @@ Each icon is written at the size the program asks for (16 pixels; the help bulb 
 times that: light under Resources/Images/{shared,v3,v4}/icons, dark under icons/dark, with the same
 file names. The light icon at the asked size is the one Properties/Resources.resx and the designer
 know. Every other size and every dark icon is listed in Properties/Icons.resx of each program, which
-this script writes, and the program picks from that list by screen scale and theme.
+this script writes, and the program picks from that list by screen scale and theme. The list also
+holds the versions of the controller glyphs that build_controller.py writes, so run that one first.
+
+The controls of the JocysCom class library (the issues list, the hardware list and the message box)
+take their icons from the library itself. Those are written the same way under Controls/Themes/Images
+of the library, every size and both themes listed in Controls/Themes/ThemeResourceManager.resx: into
+the copy of the library in Engine/JocysCom, and with --core into the library's own folder as well.
 
 A colour moves in OKLCH: lightness rises towards white by K_L of the distance, chroma is multiplied
 by K_C, and the hue stays. Four icons G2 does not have are put together from G2 parts: a folder with
@@ -79,6 +85,25 @@ ICONS = {
     "test_16x16": ("v4", "window_oscillograph"),
     "load_16x16": ("v3", "inbox_out"),
     "save_add_16x16": ("v3", "@save_add"),
+}
+
+# Library icon -> G2 icon, for the controls of the JocysCom class library.
+LIBRARY_ICONS = {
+    "clean_16x16": "broom",
+    "device_list_16x16": "list_style_bullets",
+    "device_tree_16x16": "text_tree",
+    "disable_16x16": "switch_off",
+    "enable_16x16": "switch_on",
+    "exception_16x16": "window_warning",
+    "ignore_16x16": "@ignore",
+    "logs_16x16": "document_text",
+    "MessageBoxIcon_Error_32x32": "error",
+    "MessageBoxIcon_Information_32x32": "information",
+    "MessageBoxIcon_Question_32x32": "question",
+    "MessageBoxIcon_Warning_32x32": "sign_warning",
+    "refresh_16x16": "refresh",
+    "remove_16x16": "delete",
+    "scan_16x16": "magnifying_glass",
 }
 
 # Soft pastel for the light theme, pastel for the dark one: (K_L, K_C).
@@ -233,6 +258,8 @@ class G2:
             return self.overlay(self.icon("folder", size), "magnifying_glass", size, 0.6875)
         if recipe == "@save_add":
             return self.overlay(self.icon("floppy_disk", size), "plus", size)
+        if recipe == "@ignore":
+            return self.overlay(self.icon("document_text", size), "sign_forbidden", size)
         return self.icon(recipe.replace("@off:", ""), size)
 
 
@@ -273,21 +300,68 @@ def write_icons_resx(repo, app):
                     continue
                 path = f"..\\..\\Resources\\Images\\{folder}\\icons\\" + ("dark\\" if dark else "") + file_name(key, size)
                 entries.append((name + ("_dark" if dark else ""), path))
+    entries += glyph_entries(repo, resources)
+    write_resx(properties / "Icons.resx", header, entries)
+    return len(entries)
+
+
+def glyph_entries(repo, resources):
+    """The versions build_controller.py writes of the controller glyphs Resources.resx names: the larger
+    sizes beside each glyph, and the dark theme's glyphs in xbox/dark."""
+    xbox = repo / "Resources" / "Images" / "shared" / "xbox"
+    entries = []
+    pattern = r'<data name="(\w+)" type="System\.Resources\.ResXFileRef[^>]*>\s*<value>[^;<]*\\xbox\\(\w+)\.png;'
+    for name, stem in re.findall(pattern, resources):
+        for folder, suffix in ((xbox, ""), (xbox / "dark", "_dark")):
+            for path in sorted(folder.glob(f"{stem}*.png")):
+                size = path.stem[len(stem):]
+                # The glyph itself is the one Resources.resx names; other files only share the start of its name.
+                if (size == "" and suffix == "") or not re.fullmatch(r"(_\d+x\d+)?", size):
+                    continue
+                file = "..\\..\\Resources\\Images\\shared\\xbox\\" + ("dark\\" if suffix else "") + path.name
+                entries.append((name + size + suffix, file))
+    return entries
+
+
+def write_library(g2, root):
+    """The library's icons under Controls/Themes/Images, and all of them in ThemeResourceManager.resx."""
+    themes = root / "Controls" / "Themes"
+    images = themes / "Images"
+    (images / "dark").mkdir(parents=True, exist_ok=True)
+    entries = []
+    for key, recipe in LIBRARY_ICONS.items():
+        for size in sizes_of(key):
+            name = file_name(key, size)
+            build(g2, recipe, size, False).save(images / name)
+            build(g2, recipe, size, True).save(images / "dark" / name)
+            entries.append((name[:-4], f"Images\\{name}"))
+            entries.append((name[:-4] + "_dark", f"Images\\dark\\{name}"))
+    # The standard header of the library's resource files, up to its last resheader.
+    text = (root / "Controls" / "MessageBoxForm.resx").read_text(encoding="utf-8-sig")
+    header = text[:text.index("\n", text.rindex("</resheader>")) + 1] + \
+        '  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, ' \
+        'Culture=neutral, PublicKeyToken=b77a5c561934e089" />\n'
+    write_resx(themes / "ThemeResourceManager.resx", header, entries)
+    return len(entries)
+
+
+def write_resx(path, header, entries):
+    """A resource file of the header and a file reference to each (name, path) entry, by name."""
     lines = [header.rstrip("\r\n")]
-    for name, path in sorted(entries, key=lambda e: e[0].lower()):
+    for name, file in sorted(entries, key=lambda e: e[0].lower()):
         lines += [f'  <data name="{name}" type="System.Resources.ResXFileRef, System.Windows.Forms">',
-                  f"    <value>{path};System.Drawing.Bitmap, {DRAWING}</value>",
+                  f"    <value>{file};System.Drawing.Bitmap, {DRAWING}</value>",
                   "  </data>"]
     lines.append("</root>")
     text = "\r\n".join(line.replace("\r", "") for line in "\n".join(lines).split("\n")) + "\r\n"
-    (properties / "Icons.resx").write_bytes(b"\xef\xbb\xbf" + text.encode("utf-8"))
-    return len(entries)
+    path.write_bytes(b"\xef\xbb\xbf" + text.encode("utf-8"))
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--g2", required=True, help="G2 PNG folder of the standard style (holds 16x16, 24x24, ...)")
     parser.add_argument("--repo", default=str(Path(__file__).resolve().parents[2]), help="x360ce repository root")
+    parser.add_argument("--core", help="the JocysCom class library's Core folder, to write its icons there too")
     args = parser.parse_args()
     g2, repo = G2(args.g2), Path(args.repo)
     if not (g2.folder / "16x16").is_dir():
@@ -303,6 +377,8 @@ def main():
     print(f"{count} icons written")
     for app in ("v3", "v4"):
         print(f"App.{app}/Properties/Icons.resx: {write_icons_resx(repo, app)} entries")
+    for root in [repo / "Engine" / "JocysCom"] + ([Path(args.core)] if args.core else []):
+        print(f"{root}: {write_library(g2, root)} library icons")
 
 
 if __name__ == "__main__":

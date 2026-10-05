@@ -193,7 +193,7 @@ namespace x360ce.App
 			// 
 			// HelpRichTextBox
 			// 
-			this.HelpRichTextBox.BackColor = System.Drawing.Color.White;
+			this.HelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HelpRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HelpRichTextBox.Location = new System.Drawing.Point(0, 0);
@@ -427,7 +427,8 @@ namespace x360ce.App
 			// 
 			// MainForm
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(684, 669);
 			this.Controls.Add(this.GameToCustomizeComboBox);

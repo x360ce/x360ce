@@ -19,12 +19,27 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (DesignMode) return;
+			// System until the file says otherwise; a file without the setting leaves it there.
+			ThemeComboBox.SelectedIndex = 0;
+			ThemeComboBox.SelectedIndexChanged += (s, e) =>
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(ToTheme(ThemeComboBox.Text));
 		}
 
 		public void InitOptions()
 		{
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			InitAiAccess();
+		}
+
+		/// <summary>The theme a Theme value of x360ce.ini names: Light, Dark, or anything else for System.</summary>
+		/// <remarks>System follows the Windows setting for apps.</remarks>
+		public static JocysCom.ClassLibrary.Controls.Themes.ThemeType ToTheme(string value)
+		{
+			if (string.Equals(value, "Light", StringComparison.OrdinalIgnoreCase))
+				return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light;
+			if (string.Equals(value, "Dark", StringComparison.OrdinalIgnoreCase))
+				return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark;
+			return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Auto;
 		}
 
 		#region AI Assistant Access
@@ -113,6 +128,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
 			SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
 			SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			SettingManager.AddMap(section, () => SettingName.Theme, ThemeComboBox);
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);

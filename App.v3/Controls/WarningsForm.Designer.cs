@@ -39,7 +39,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.WarningsTabControl.Controls.Add(this.WarningsTabPage);
-			this.WarningsTabControl.ItemSize = new System.Drawing.Size(116, 18);
 			this.WarningsTabControl.Location = new System.Drawing.Point(12, 12);
 			this.WarningsTabControl.Name = "WarningsTabControl";
 			this.WarningsTabControl.SelectedIndex = 0;
@@ -64,7 +63,7 @@
 			this.WarningsDataGridView.AllowUserToOrderColumns = true;
 			this.WarningsDataGridView.AllowUserToResizeRows = false;
 			this.WarningsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.WarningsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.WarningsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.WarningsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.WarningsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;

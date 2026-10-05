@@ -780,9 +780,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// leaves the cell empty. A new row is as tall as the font and a 9-pixel margin, and the margin
 		/// stays 9, so the rows close in on their text. Nothing is enlarged twice.
 		/// </remarks>
-		private static void ScaleGrid(DataGridView grid)
+		public static void ScaleGrid(DataGridView grid)
 		{
-			if (DpiScale == 1f || ScaledControls.TryGetValue(grid, out _))
+			if (grid is null || DpiScale == 1f || ScaledControls.TryGetValue(grid, out _))
 				return;
 			ScaledControls.Add(grid, null);
 			grid.RowTemplate.Height = Math.Max(grid.RowTemplate.Height, Control.DefaultFont.Height + (int)Math.Round(9 * DpiScale));
@@ -1042,6 +1042,8 @@ namespace JocysCom.ClassLibrary.Controls
 				MakeImageTransparent(disabledImage, 128);
 				list.Images.Add(key + ApplyImageStyleDisabledSuffix, disabledImage);
 			}
+			// Once only, however often a list filled again is styled again.
+			control.SelectedIndexChanged -= ApplyImageStyle_TabControl_SelectedIndexChanged;
 			control.SelectedIndexChanged += ApplyImageStyle_TabControl_SelectedIndexChanged;
 			ApplyImageStyle_TabControl_SelectedIndexChanged(control, new EventArgs());
 		}
@@ -1313,6 +1315,20 @@ namespace JocysCom.ClassLibrary.Controls
 			return image != null && Drawn.TryGetValue(GetOriginal(image), out drawn) ? drawn : new Image[0];
 		}
 
+		/// <summary>The version of an image to draw at a size: the smallest of it and its versions drawn at larger sizes that is at least that large, else the largest.</summary>
+		/// <remarks>For drawing at a size that changes, such as a picture that fills a control as it is resized, where a copy made for each size would be kept for nothing.</remarks>
+		public static Image GetDrawnSize(Image image, Size size)
+		{
+			var original = GetOriginal(image);
+			if (original is null)
+				return null;
+			Image[] drawn;
+			if (!Drawn.TryGetValue(original, out drawn) || drawn.Length == 0)
+				return original;
+			return new[] { original }.Concat(drawn).FirstOrDefault(x => x.Width >= size.Width && x.Height >= size.Height)
+				?? drawn[drawn.Length - 1];
+		}
+
 		/// <summary>An image at the size given, its edges as sharp as an enlargement keeps them.</summary>
 		/// <remarks>
 		/// The copy is made from the version of the image drawn nearest above the size wanted, when it has
@@ -1336,16 +1352,11 @@ namespace JocysCom.ClassLibrary.Controls
 				Image copy;
 				if (copies.TryGetValue(size, out copy))
 					return copy;
-				var source = original;
-				Image[] drawn;
-				if (Drawn.TryGetValue(original, out drawn) && drawn.Length > 0)
+				var source = GetDrawnSize(original, size);
+				if (source.Size == size)
 				{
-					source = drawn.FirstOrDefault(x => x.Width >= size.Width && x.Height >= size.Height) ?? drawn[drawn.Length - 1];
-					if (source.Size == size)
-					{
-						copies.Add(size, source);
-						return source;
-					}
+					copies.Add(size, source);
+					return source;
 				}
 				var times = Math.Max(1, (int)Math.Ceiling(Math.Max(
 					size.Width / (float)source.Width, size.Height / (float)source.Height)));

@@ -58,8 +58,8 @@ namespace x360ce.App.Controls
 			DisposePictures();
 			_PicturesDark = dark;
 			var theme = dark ? "Dark" : "";
-			_Top = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop" + theme + ".png"));
-			_Front = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront" + theme + ".png"));
+			_Top = EngineHelper.GetResourcePicture("Images.xboxControllerTop" + theme + ".png");
+			_Front = EngineHelper.GetResourcePicture("Images.xboxControllerFront" + theme + ".png");
 			_TopDisabled = AppHelper.GetDisabledImage(_Top);
 			_FrontDisabled = AppHelper.GetDisabledImage(_Front);
 		}
@@ -325,12 +325,15 @@ namespace x360ce.App.Controls
 			var front = _Enabled ? _Front : _FrontDisabled;
 			try
 			{
-				e.Graphics.DrawImage(top, new Rectangle(0, 0,
-					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale)));
-				e.Graphics.DrawImage(front, new Rectangle(0,
+				var topBounds = new Rectangle(0, 0,
+					(int)Math.Round(CanvasWidth * scale), (int)Math.Round(TopImageHeight * scale));
+				var frontBounds = new Rectangle(0,
 					(int)Math.Round((TopImageHeight + ImageGap) * scale),
 					(int)Math.Round(CanvasWidth * scale),
-					(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale)));
+					(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale));
+				// Each picture from its version drawn nearest above the size it fills, so it is reduced rather than enlarged.
+				e.Graphics.DrawImage(ControlsHelper.GetDrawnSize(top, topBounds.Size), topBounds);
+				e.Graphics.DrawImage(ControlsHelper.GetDrawnSize(front, frontBounds.Size), frontBounds);
 
 				if (_Infos != null)
 					foreach (var info in _Infos)

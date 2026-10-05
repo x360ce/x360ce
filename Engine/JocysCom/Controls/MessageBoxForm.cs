@@ -91,23 +91,23 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			LayoutButtons();
 			Message_Resize(this, EventArgs.Empty);
-			var resources = new System.ComponentModel.ComponentResourceManager(GetType());
-			var image = (Bitmap)resources.GetObject("MessageBoxIcon_Information_32x32");
+			var icons = Themes.ThemeResourceManager.Library;
+			var image = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
 			switch (icon)
 			{
 				case MessageBoxIcon.None:
 					if (PlaySounds) System.Media.SystemSounds.Beep.Play();
 					break;
 				case MessageBoxIcon.Error: // Same as 'Hand' and 'Stop'.
-					image = (Bitmap)resources.GetObject("MessageBoxIcon_Error_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Error_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Hand.Play();
 					break;
 				case MessageBoxIcon.Question:
-					image = (Bitmap)resources.GetObject("MessageBoxIcon_Question_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Question_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Question.Play();
 					break;
 				case MessageBoxIcon.Warning: // Same as 'Exclamation'.
-					image = (Bitmap)resources.GetObject("MessageBoxIcon_Warning_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Exclamation.Play();
 					break;
 				case MessageBoxIcon.Information: // Same as 'Asterisk'.

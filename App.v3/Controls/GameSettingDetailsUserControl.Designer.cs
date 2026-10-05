@@ -461,8 +461,6 @@
 			// 
 			// DInputFileTextBox
 			// 
-			this.DInputFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.DInputFileTextBox.Location = new System.Drawing.Point(85, 315);
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
 			this.DInputFileTextBox.Size = new System.Drawing.Size(126, 20);
@@ -508,8 +506,7 @@
 			// 
 			// SynchronizeSettingsButton
 			// 
-			this.SynchronizeSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.SynchronizeSettingsButton.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
 			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(3, 449);
@@ -622,6 +619,7 @@
 			this.Controls.Add(this.HookPIDVIDCheckBox);
 			this.Controls.Add(this.HookCOMCheckBox);
 			this.Name = "GameSettingDetailsUserControl";
+			this.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
 			this.Size = new System.Drawing.Size(216, 476);
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).EndInit();

@@ -122,6 +122,25 @@ namespace x360ce.Tests
 			Assert.AreEqual(Color.Blue.ToArgb(), at48.GetPixel(24, 24).ToArgb(), "48 pixels was not enlarged from the largest version.");
 		}
 
+		[TestMethod, TestCategory("ui")]
+		[Description("A picture drawn at a changing size is drawn from the smallest version at least that large, the picture itself included, else the largest")]
+		public void The_version_drawn_nearest_above_a_size_is_picked()
+		{
+			var original = Filled(16, Color.Red);
+			var at24 = Filled(24, Color.Lime);
+			var at32 = Filled(32, Color.Blue);
+			ControlsHelper.SetDrawnSizes(original, at32, at24);
+			Assert.AreSame(original, ControlsHelper.GetDrawnSize(original, new Size(12, 12)), "A size below the picture's own was not drawn from the picture.");
+			Assert.AreSame(original, ControlsHelper.GetDrawnSize(original, new Size(16, 16)));
+			Assert.AreSame(at24, ControlsHelper.GetDrawnSize(original, new Size(20, 20)), "20 pixels was not drawn from the version drawn at 24.");
+			Assert.AreSame(at32, ControlsHelper.GetDrawnSize(original, new Size(30, 30)));
+			Assert.AreSame(at32, ControlsHelper.GetDrawnSize(original, new Size(48, 48)), "Past the largest version, the largest was not used.");
+			var copy = ControlsHelper.ScaleImage(original, new Size(18, 18));
+			Assert.AreSame(at24, ControlsHelper.GetDrawnSize(copy, new Size(20, 20)), "A copy was not traced back to the versions of its original.");
+			var plain = Filled(16, Color.Red);
+			Assert.AreSame(plain, ControlsHelper.GetDrawnSize(plain, new Size(32, 32)), "A picture without versions was not drawn as it is.");
+		}
+
 		static Bitmap Filled(int size, Color color)
 		{
 			var bitmap = new Bitmap(size, size);

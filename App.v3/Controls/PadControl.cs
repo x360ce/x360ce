@@ -52,19 +52,22 @@ namespace x360ce.App.Controls
 		public void InitPadControl()
 		{
 			// Initialize images.
-			this.TopPictureBox.Image = topDisabledImage;
-			this.FrontPictureBox.Image = frontDisabledImage;
+			ShowPictures(false);
+			// The pictures are the theme's, so they are shown again in the new one.
+			EventHandler themeChanged = (s, e) =>
+			{
+				_topImage = null;
+				_frontImage = null;
+				_topDisabledImage = null;
+				_frontDisabledImage = null;
+				ShowPictures(gamePadStateIsConnected);
+			};
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
 			this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
 			this.markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
-			float rH = topDisabledImage.HorizontalResolution;
-			float rV = topDisabledImage.VerticalResolution;
-			// Make sure resolution is same everywhere so images won't be resized.
-			this.markB.SetResolution(rH, rV);
-			this.markA.SetResolution(rH, rV);
-			this.markC.SetResolution(rH, rV);
-			this.markR.SetResolution(rH, rV);
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
@@ -125,7 +128,7 @@ namespace x360ce.App.Controls
 		{
 			int rW = -this.markR.Width / 2;
 			int rH = -this.markR.Height / 2;
-			e.Graphics.DrawImage(this.markR, position.X + rW, position.Y + rH);
+			DrawMark(e.Graphics, this.markR, position.X + rW, position.Y + rH);
 		}
 
 		void StartRecording()
@@ -284,15 +287,43 @@ namespace x360ce.App.Controls
 
 		Bitmap topImage
 		{
-			get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png")); }
+			get { return _topImage = _topImage ?? LoadPicture("Top"); }
 		}
 		Bitmap _topImage;
 
 		Bitmap frontImage
 		{
-			get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png")); }
+			get { return _frontImage = _frontImage ?? LoadPicture("Front"); }
 		}
 		Bitmap _frontImage;
+
+		/// <summary>A controller picture of the theme in use, as drawn at 100%, with its versions drawn at larger sizes.</summary>
+		static Bitmap LoadPicture(string view)
+		{
+			var theme = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? "Dark" : "";
+			return EngineHelper.GetResourcePicture("Images.xboxController" + view + theme + ".png");
+		}
+
+		/// <summary>Shows the controller pictures in colour while a controller is connected, grey otherwise, at the screen's size.</summary>
+		void ShowPictures(bool connected)
+		{
+			FrontPictureBox.Image = ControlsHelper.ScaleImage(connected ? frontImage : frontDisabledImage);
+			TopPictureBox.Image = ControlsHelper.ScaleImage(connected ? topImage : topDisabledImage);
+		}
+
+		/// <summary>Lets the marks be placed in the picture's own pixels, as it is drawn at 100%, on a screen at any scale.</summary>
+		static void ScaleMarks(Graphics g)
+		{
+			var scale = ControlsHelper.DpiScale;
+			g.ScaleTransform(scale, scale);
+			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+		}
+
+		/// <summary>Draws a mark at its own size in the picture's pixels, whatever resolution the file gave it.</summary>
+		static void DrawMark(Graphics g, Image mark, float x, float y)
+		{
+			g.DrawImage(mark, x, y, mark.Width, mark.Height);
+		}
 
 		Bitmap _topDisabledImage;
 		Bitmap topDisabledImage
@@ -325,14 +356,15 @@ namespace x360ce.App.Controls
 			// Display controller.
 			bool on = gamePadStateIsConnected;
 			if (!on) return;
+			ScaleMarks(e.Graphics);
 			// Half mark position adjust.
 			int mW = -this.markB.Width / 2;
 			int mH = -this.markB.Height / 2;
-			// Button coordinates.
+			// Button coordinates, in the picture's pixels.
 			Point shoulderLeft = new Point(43, 66);
-			Point shoulderRight = new Point(this.FrontPictureBox.Width - shoulderLeft.X, shoulderLeft.Y);
+			Point shoulderRight = new Point(topImage.Width - shoulderLeft.X, shoulderLeft.Y);
 			Point triggerLeft = new Point(63, 27);
-			Point triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
+			Point triggerRight = new Point(topImage.Width - triggerLeft.X - 1, triggerLeft.Y);
 			if (!Recording)
 			{
 				var tl = gamePadState.Gamepad.LeftTrigger;
@@ -349,17 +381,17 @@ namespace x360ce.App.Controls
 					UpdateControl(RightTriggerTextBox, tr.ToString());
 					on = tl > 0;
 					setLabelColor(on, LeftTriggerLabel);
-					if (on) e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
+					if (on) DrawMark(e.Graphics, this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
 					on = tr > 0;
 					setLabelColor(on, RightTriggerLabel);
-					if (on) e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
+					if (on) DrawMark(e.Graphics, this.markB, triggerRight.X + mW, triggerRight.Y + mH);
 				}
 				on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
 				setLabelColor(on, LeftShoulderLabel);
-				if (on) e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
+				if (on) DrawMark(e.Graphics, this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
 				on = gamePadState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 				setLabelColor(on, RightShoulderLabel);
-				if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
+				if (on) DrawMark(e.Graphics, this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
 			// If recording is in progress and recording image must be drawn then...
 			else if (drawRecordingImage)
@@ -397,10 +429,11 @@ namespace x360ce.App.Controls
 			// Display controller.
 			bool on = gamePadStateIsConnected;
 			if (!on) return;
+			ScaleMarks(e.Graphics);
 			// Display controller index light.
 			int mW = -this.markC.Width / 2;
 			int mH = -this.markC.Height / 2;
-			e.Graphics.DrawImage(this.markC, pads[ControllerIndex].X + mW, pads[ControllerIndex].Y + mH);
+			DrawMark(e.Graphics, this.markC, pads[ControllerIndex].X + mW, pads[ControllerIndex].Y + mH);
 
 			float padSize = 22F / (float)(ushort.MaxValue);
 
@@ -409,14 +442,15 @@ namespace x360ce.App.Controls
 
 			if (!Recording)
 			{
+				var negative = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", Color.DarkRed);
 				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
-				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
+				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = negative;
 				setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
-				if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
+				if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = negative;
 				setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
-				if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = Color.DarkRed;
+				if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = negative;
 				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
-				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
+				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = negative;
 				// Draw button state green led image.
 				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
 				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
@@ -432,8 +466,8 @@ namespace x360ce.App.Controls
 				DrawState(GamepadButtonFlags.RightThumb, thumbRight, RightThumbButtonLabel, e);
 				DrawState(GamepadButtonFlags.LeftThumb, thumbLeft, LeftThumbButtonLabel, e);
 				// Draw axis state green cross image.
-				e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (_rightX * padSize)), (float)((thumbRight.Y + mH) + (-_rightY * padSize)));
-				e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (_leftX * padSize)), (float)((thumbLeft.Y + mH) + (-_leftY * padSize)));
+				DrawMark(e.Graphics, this.markA, (float)((thumbRight.X + mW) + (_rightX * padSize)), (float)((thumbRight.Y + mH) + (-_rightY * padSize)));
+				DrawMark(e.Graphics, this.markA, (float)((thumbLeft.X + mW) + (_leftX * padSize)), (float)((thumbLeft.Y + mH) + (-_leftY * padSize)));
 			}
 			// If recording is in progress and recording image must be drawn then...
 			else if (drawRecordingImage)
@@ -462,13 +496,13 @@ namespace x360ce.App.Controls
 			var mW = -this.markB.Width / 2;
 			var mH = -this.markB.Height / 2;
 			var on = gamePadState.Gamepad.Buttons.HasFlag(button);
-			if (on) e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
+			if (on) DrawMark(e.Graphics, this.markB, location.X + mW, location.Y + mH);
 			if (label != null) setLabelColor(on, label);
 		}
 
 		void setLabelColor(bool on, Label label)
 		{
-			Color c = on ? Color.Green : SystemColors.ControlText;
+			Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
 			if (label.ForeColor != c) label.ForeColor = c;
 		}
 
@@ -709,19 +743,7 @@ namespace x360ce.App.Controls
 			// If device connection changed then...
 			if (wasConnected != nowConnected)
 			{
-				if (nowConnected)
-				{
-					// Enable form.
-					this.FrontPictureBox.Image = frontImage;
-					this.TopPictureBox.Image = topImage;
-				}
-				else
-				{
-					// Disable form.
-					this.FrontPictureBox.Image = frontDisabledImage;
-					this.TopPictureBox.Image = topDisabledImage;
-
-				}
+				ShowPictures(nowConnected);
 			}
 			if (nowConnected)
 			{

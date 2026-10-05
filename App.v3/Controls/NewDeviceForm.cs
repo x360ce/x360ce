@@ -13,6 +13,7 @@ using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
@@ -23,6 +24,8 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			Engine.UiTree.UiText.Apply(this);
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleGrid(MySettingsDataGridView);
 		}
 
 		void NewDeviceForm_Load(object sender, EventArgs e)
@@ -372,12 +375,14 @@ namespace x360ce.App.Controls
 			{
 				if (value)
 				{
+					// Drawn in pixels, so its sizes are scaled with the window around it.
+					var scale = ControlsHelper.DpiScale;
 					BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-					BusyLoadingCircle.InnerCircleRadius = 12;
+					BusyLoadingCircle.InnerCircleRadius = (int)Math.Round(12 * scale);
 					BusyLoadingCircle.NumberSpoke = 100;
-					BusyLoadingCircle.OuterCircleRadius = 18;
+					BusyLoadingCircle.OuterCircleRadius = (int)Math.Round(18 * scale);
 					BusyLoadingCircle.RotationSpeed = 10;
-					BusyLoadingCircle.SpokeThickness = 3;
+					BusyLoadingCircle.SpokeThickness = (int)Math.Round(3 * scale);
 				}
 				BusyLoadingCircle.Active = value;
 				BusyLoadingCircle.Visible = value;

@@ -3313,7 +3313,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.25.11 (Build: 2026-10-05) 64-bit - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.25.13 (Build: 2026-10-05) 64-bit - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

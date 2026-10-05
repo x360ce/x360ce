@@ -1217,6 +1217,12 @@
 													"Description":"Hides the window in the notification area instead of the taskbar when it is minimised.",
 													"Role":"CheckBox",
 													"Id":"MinimizeToTrayCheckBox"
+												},
+												{
+													"Name":"Theme",
+													"Description":"Light or dark colours. System follows the Windows setting for apps.",
+													"Role":"List",
+													"Id":"ThemeComboBox"
 												}
 											]
 										},
@@ -1251,6 +1257,18 @@
 													"Id":"ConfigurationVersionTextBox"
 												}
 											]
+										},
+										{
+											"Name":"Save",
+											"Description":"Writes every setting to x360ce.ini now.",
+											"Role":"Button",
+											"Id":"SaveSettingsButton"
+										},
+										{
+											"Name":"Open Settings Folder...",
+											"Description":"Opens the folder with the game list and the other files the program keeps.",
+											"Role":"Button",
+											"Id":"OpenSettingsFolderButton"
 										},
 										{
 											"Name":"Internet",
@@ -1386,18 +1404,6 @@
 													]
 												}
 											]
-										},
-										{
-											"Name":"Save",
-											"Description":"Writes every setting to x360ce.ini now.",
-											"Role":"Button",
-											"Id":"SaveSettingsButton"
-										},
-										{
-											"Name":"Open Settings Folder...",
-											"Description":"Opens the folder with the game list and the other files the program keeps.",
-											"Role":"Button",
-											"Id":"OpenSettingsFolderButton"
 										}
 									]
 								}
@@ -1626,16 +1632,16 @@
 											"Id":"GameComboBox"
 										},
 										{
-											"Name":"Comment",
-											"Description":"A note saved with the settings.",
-											"Role":"Text",
-											"Id":"CommentTextBox"
-										},
-										{
 											"Name":"Save",
 											"Description":"Saves the chosen controller's settings online, for the chosen game.",
 											"Role":"Button",
 											"Id":"MySettingsSaveButton"
+										},
+										{
+											"Name":"Comment",
+											"Description":"A note saved with the settings.",
+											"Role":"Text",
+											"Id":"CommentTextBox"
 										},
 										{
 											"Name":"Settings lists",

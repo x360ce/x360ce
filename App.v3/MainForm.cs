@@ -14,6 +14,7 @@ using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 
 namespace x360ce.App
 {
@@ -23,6 +24,15 @@ namespace x360ce.App
 		{
             ControlsHelper.InitInvokeContext();
 			InitializeComponent();
+			if (IsDesignMode)
+				return;
+			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+		}
+
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+			base.OnFormClosed(e);
 		}
 
 		DeviceDetector detector;
@@ -843,6 +853,7 @@ namespace x360ce.App
 			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
 			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
 			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
+			ScaleBuletImageList();
 			foreach (var item in ControlPages) item.ImageKey = "bullet_square_glass_grey.png";
 			// Hide status values.
 			StatusDllLabel.Text = "";
@@ -854,6 +865,21 @@ namespace x360ce.App
 			}
 			// Check if INI and DLL is on disk.
 			WarningsForm.CheckAndOpen();
+		}
+
+		/// <summary>Puts the tab lights in the list at the size of a small icon on this screen.</summary>
+		/// <remarks>A list draws every image at its own size, so at 150% the 16-pixel lights would shrink beside the text.</remarks>
+		void ScaleBuletImageList()
+		{
+			var size = SystemInformation.SmallIconSize;
+			if (BuletImageList.ImageSize == size)
+				return;
+			var keys = BuletImageList.Images.Keys.Cast<string>().ToArray();
+			var images = keys.Select((key, i) => ControlsHelper.ScaleImage(BuletImageList.Images[i], size)).ToArray();
+			BuletImageList.Images.Clear();
+			BuletImageList.ImageSize = size;
+			for (var i = 0; i < keys.Length; i++)
+				BuletImageList.Images.Add(keys[i], images[i]);
 		}
 
 		void UpdateForm2()
@@ -892,6 +918,11 @@ namespace x360ce.App
 			Engine.UiTree.UiText.Apply(this);
 			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			SettingManager.Current.DescribeControls();
+			// Every page exists now, so every image and fixed grid column on them is enlarged with the screen once.
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleImages(TrayContextMenuStrip);
+			foreach (var grid in ControlsHelper.GetAll<DataGridView>(this))
+				ControlsHelper.ScaleGrid(grid);
 			//// start capture events.
 			if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
 		}
@@ -1035,6 +1066,23 @@ namespace x360ce.App
 
 		bool HelpInit = false;
 
+		/// <summary>The help page as Markdown, kept to be written again in the colours of a new theme.</summary>
+		string helpText;
+
+		/// <summary>
+		/// The help page and the help header write their colours into what they show, so they are written
+		/// again. The open windows get the theme's icons from the resources; the tray menu, which no window
+		/// holds, is given them here.
+		/// </summary>
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			if (helpText != null)
+				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(helpText);
+			ColorHelpBody();
+			if (Properties.Resources.ResourceManager is ThemeResourceManager manager)
+				ControlsHelper.ReplaceImages(TrayContextMenuStrip, manager.Themed);
+		}
+
 		void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (MainTabControl.SelectedTab == HelpTabPage && !HelpInit)
@@ -1046,7 +1094,8 @@ namespace x360ce.App
 				// The document is Markdown and there is only one copy of it. It becomes what this box
 				// can show here, when it is opened, so nothing has to be generated, committed, or kept
 				// in step with anything else.
-				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(sr.ReadToEnd());
+				helpText = sr.ReadToEnd();
+				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(helpText);
 				// The addresses in the page are drawn as links, so they have to behave like them.
 				HelpRichTextBox.LinkClicked += (object s, LinkClickedEventArgs le) =>
 				{
@@ -1076,8 +1125,17 @@ namespace x360ce.App
 				HelpSubjectLabel.Text += " - " + currentPadControl.PadTabControl.SelectedTab.Text;
 			}
 			HelpBodyLabel.Text = string.IsNullOrEmpty(message) ? defaultBody : message;
-			if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = System.Drawing.Color.DarkRed;
-			else if (icon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = System.Drawing.Color.DarkGreen;
+			helpIcon = icon;
+			ColorHelpBody();
+		}
+
+		MessageBoxIcon helpIcon;
+
+		/// <summary>The help text red for an error and green for information, in the theme's shades.</summary>
+		void ColorHelpBody()
+		{
+			if (helpIcon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed);
+			else if (helpIcon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess", System.Drawing.Color.DarkGreen);
 			else HelpBodyLabel.ForeColor = System.Drawing.SystemColors.ControlText;
 		}
 
@@ -1175,12 +1233,14 @@ namespace x360ce.App
 			{
 				if (value)
 				{
+					// Drawn in pixels, so its sizes are scaled with the window around it.
+					var scale = ControlsHelper.DpiScale;
 					BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-					BusyLoadingCircle.InnerCircleRadius = 12;
+					BusyLoadingCircle.InnerCircleRadius = (int)Math.Round(12 * scale);
 					BusyLoadingCircle.NumberSpoke = 100;
-					BusyLoadingCircle.OuterCircleRadius = 18;
+					BusyLoadingCircle.OuterCircleRadius = (int)Math.Round(18 * scale);
 					BusyLoadingCircle.RotationSpeed = 10;
-					BusyLoadingCircle.SpokeThickness = 3;
+					BusyLoadingCircle.SpokeThickness = (int)Math.Round(3 * scale);
 					//this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 					BusyLoadingCircle.Active = value;
 					BusyLoadingCircle.Visible = value;

@@ -118,6 +118,10 @@ namespace x360ce.App
 				return;
 			AiAccessSettings.Current = AiAccessSettings.Load();
 			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+			// Before the first window, so every image it is made with is already the theme's and the screen's size.
+			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
+			// Before the first window, so every colour it is made with is already the theme's.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(Controls.OptionsControl.ToTheme(ini.GetValue("Options", Engine.SettingName.Theme)));
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{

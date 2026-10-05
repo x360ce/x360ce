@@ -227,6 +227,28 @@ namespace x360ce.Engine
 			return null;
 		}
 
+		/// <summary>An embedded picture as drawn at 100%, with the versions of it drawn at 1.5 and 2 times its size.</summary>
+		/// <param name="name">The picture's resource name, such as "Images.xboxControllerTop.png".</param>
+		/// <remarks>
+		/// A version is embedded beside the picture under its name and its own size, such as
+		/// "Images.xboxControllerTop_384x158.png". On a screen set above 100% the picture is drawn from the version
+		/// nearest above the size needed (<see cref="JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes"/>)
+		/// rather than enlarged.
+		/// </remarks>
+		public static System.Drawing.Bitmap GetResourcePicture(string name)
+		{
+			var picture = new System.Drawing.Bitmap(GetResourceStream(name));
+			var stem = Path.ChangeExtension(name, null);
+			var extension = Path.GetExtension(name);
+			var versions = new[] { 1.5, 2.0 }
+				.Select(m => GetResourceStream(stem + "_" + (int)Math.Round(picture.Width * m) + "x" + (int)Math.Round(picture.Height * m) + extension))
+				.Where(x => x != null)
+				.Select(x => (System.Drawing.Image)new System.Drawing.Bitmap(x))
+				.ToArray();
+			JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(picture, versions);
+			return picture;
+		}
+
 		/// <summary>
 		/// Assemblies that may carry embedded resources, in the order they are searched.
 		/// </summary>

@@ -178,6 +178,216 @@
   <data name="bullet_ball_glass_red_32x32_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\dark\bullet_ball_glass_red_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Button_A_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_A_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_A_30x30_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_A_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_A_40x40" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_A_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_A_40x40_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_A_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_A_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_B_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B_30x30_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_B_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B_40x40" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_B_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B_40x40_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_B_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_B_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Back_42x36" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Back_42x36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Back_42x36_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Back_42x36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Back_56x48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Back_56x48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Back_56x48_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Back_56x48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Back_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadDown_42x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadDown_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadDown_42x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadDown_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadDown_56x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadDown_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadDown_56x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadDown_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadDown_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadLeft_42x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadLeft_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadLeft_42x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadLeft_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadLeft_56x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadLeft_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadLeft_56x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadLeft_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadLeft_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight_42x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadRight_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight_42x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadRight_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight_56x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadRight_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight_56x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadRight_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadRight_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp_42x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadUp_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp_42x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadUp_42x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp_56x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_DPadUp_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp_56x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadUp_56x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_DPadUp_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_DPadUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder_42x18" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_LeftShoulder_42x18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder_42x18_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftShoulder_42x18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder_56x24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_LeftShoulder_56x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder_56x24_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftShoulder_56x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftShoulder_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftThumb_40x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_LeftThumb_40x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftThumb_40x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftThumb_40x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftThumb_54x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_LeftThumb_54x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftThumb_54x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftThumb_54x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_LeftThumb_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_LeftThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder_42x18" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_RightShoulder_42x18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder_42x18_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightShoulder_42x18.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder_56x24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_RightShoulder_56x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder_56x24_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightShoulder_56x24.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightShoulder_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightThumb_40x42" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_RightThumb_40x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightThumb_40x42_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightThumb_40x42.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightThumb_54x56" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_RightThumb_54x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightThumb_54x56_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightThumb_54x56.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_RightThumb_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_RightThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Start_42x36" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Start_42x36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Start_42x36_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Start_42x36.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Start_56x48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Start_56x48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Start_56x48_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Start_56x48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Start_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_X_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_X_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_X_30x30_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_X_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_X_40x40" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_X_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_X_40x40_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_X_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_X_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_X.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Y_30x30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Y_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Y_30x30_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Y_30x30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Y_40x40" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\Button_Y_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Y_40x40_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Y_40x40.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Button_Y_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\Resources\Images\shared\xbox\dark\Button_Y.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="check_16x16_dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\dark\check_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

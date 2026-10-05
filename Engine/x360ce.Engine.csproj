@@ -573,6 +573,9 @@
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\Controls\Themes\Default_DarkTheme.xaml" />
+    <EmbeddedResource Include="JocysCom\Controls\Themes\ThemeResourceManager.resx">
+      <DependentUpon>ThemeResourceManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </EmbeddedResource>

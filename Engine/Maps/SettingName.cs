@@ -86,6 +86,9 @@ namespace x360ce.Engine
 		[DefaultValue("1"), Description("Allow only one instance of the application to run at a time. 0 = Allow multiple instances, 1 = Allow only one instance.")]
 		static public string AllowOnlyOneCopy { get { return "AllowOnlyOneCopy"; } }
 
+		[DefaultValue("System"), Description("Light or dark colours. System follows the Windows setting for apps.")]
+		static public string Theme { get { return "Theme"; } }
+
 		[DefaultValue(""), Description("The locations to scan for games, separated by semicolon (;).")]
 		static public string ProgramScanLocations { get { return "ProgramScanLocations"; } }
 

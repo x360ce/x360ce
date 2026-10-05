@@ -1,6 +1,8 @@
-﻿## [3.6.7.0] - 2026-10-05
+﻿## [3.6.9.0] - 2026-10-05
 
-- Changed: Pastel icons and sharper controller pictures.
+- Changed: Pastel icons, sharper controller pictures and button glyphs.
+- Changed: Sharp text and icons on screens set above 100%.
+- Added: Light and dark themes; System follows Windows.
 
 ## [3.5.10.0] - 2026-09-27
 

@@ -16,13 +16,18 @@ namespace x360ce.App.Controls
 		public AxisToButtonUserControl()
 		{
 			InitializeComponent();
+			// Fifteen of these sit one under another, each laying itself out, so the name column
+			// is given the width of the longest name and every slider starts on the same line.
+			LayoutPanel.ColumnStyles[LayoutPanel.GetColumn(ButtonNameLabel)] =
+				new ColumnStyle(SizeType.Absolute, WidestButtonName(ButtonNameLabel.Font) + ButtonNameLabel.Margin.Horizontal);
 			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
-			arrowEnabledImage = ArrowPictureBox.Image;
-			if (arrowEnabledImage != null)
-			{
-				arrowDisabledImage = AppHelper.GetDisabledImage((Bitmap)arrowEnabledImage);
-			}
+			if (JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this))
+				return;
+			// The button's picture is the theme's, so it is taken again in a new one.
+			EventHandler themeChanged = (s, e) => UpdateImage();
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
 		}
 
 		void controlsLink_ValueChanged(object sender, EventArgs e)
@@ -45,20 +50,32 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		Image arrowEnabledImage;
-		Image arrowDisabledImage;
-
 		Bitmap enabledImage;
 		Bitmap disabledImage;
 
-		void UpdateImage()
+		/// <summary>The name shown for a button, as the label spells it.</summary>
+		static string ButtonName(GamepadButtonFlags button)
 		{
-			var name = GamepadButton.ToString();
+			var name = button.ToString();
 			name = name.Replace("DPad", "D-Pad ");
 			name = name.Replace("Shoulder", " Bumper");
 			name = name.Replace("Thumb", " Stick Button");
 			if (name.Length == 1) name += " Button";
-			ButtonNameLabel.Text = name + ":";
+			return name;
+		}
+
+		/// <summary>The width of the longest button name this row can show, in the given font.</summary>
+		static int WidestButtonName(Font font)
+		{
+			var widest = 0;
+			foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
+				widest = Math.Max(widest, TextRenderer.MeasureText(ButtonName(button) + ":", font).Width);
+			return widest;
+		}
+
+		void UpdateImage()
+		{
+			ButtonNameLabel.Text = ButtonName(GamepadButton) + ":";
 			switch (GamepadButton)
 			{
 				case GamepadButtonFlags.A: enabledImage = Properties.Resources.Button_A; break;
@@ -151,12 +168,15 @@ namespace x360ce.App.Controls
 
 		private void ButtonImagePictureBox_EnabledChanged(object sender, EventArgs e)
 		{
-			ButtonImagePictureBox.BackgroundImage = ButtonImagePictureBox.Enabled ? enabledImage : disabledImage;
+			// Taken from the resources each time rather than kept, so it is the theme's.
+			UpdateImage();
 		}
 
 		private void ArrowPictureBox_EnabledChanged(object sender, EventArgs e)
 		{
-			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrowEnabledImage : arrowDisabledImage;
+			// Taken from the resources each time rather than kept, so it is the theme's.
+			var arrow = Properties.Resources.arrow_right_gray_16x16;
+			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrow : AppHelper.GetDisabledImage(arrow);
 		}
 
 		State _gamepadState;
@@ -173,13 +193,15 @@ namespace x360ce.App.Controls
 		{
 			if (_markB != null)
 			{
-				var mW = -_markB.Width / 2;
-				var mH = -_markB.Height / 2;
-				var x = ButtonImagePictureBox.Width / 2;
-				var y = ButtonImagePictureBox.Height / 2;
+				// The mark at the screen's scale, in the middle of the picture.
+				var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+				var w = _markB.Width * scale;
+				var h = _markB.Height * scale;
+				var x = ButtonImagePictureBox.Width / 2f;
+				var y = ButtonImagePictureBox.Height / 2f;
 				var on = _gamepadState.Gamepad.Buttons.HasFlag(_GamepadButton);
-				if (on) e.Graphics.DrawImage(_markB, x + mW, y + mH);
-				Color c = on ? Color.Green : SystemColors.ControlText;
+				if (on) e.Graphics.DrawImage(_markB, x - w / 2, y - h / 2, w, h);
+				Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
 				if (ButtonNameLabel.ForeColor != c) ButtonNameLabel.ForeColor = c;
 			}
 		}

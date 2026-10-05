@@ -21,9 +21,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// Windows Forms draws each at the size it was made, 16 pixels for most, in either theme. Put in place of
 	/// the class's own manager before the first window is made (<see cref="Install"/>), this one also looks each
 	/// image up in a second resource file of versions. For an image named "add_16x16", "add_16x16_dark" is the
-	/// icon for the dark theme, and "add_24x24" or "add_32x32_dark" are versions drawn at larger sizes. The image
-	/// handed out is the theme's, at <see cref="ControlsHelper.DpiScale"/> times its size, made from the version
-	/// drawn nearest that size (<see cref="ControlsHelper.SetDrawnSizes"/>).
+	/// icon for the dark theme, and "add_24x24" or "add_32x32_dark" are versions drawn at larger sizes. An image
+	/// whose name carries no size, such as "Button_A", has versions named by adding theirs, such as
+	/// "Button_A_30x30". The image handed out is the theme's, at <see cref="ControlsHelper.DpiScale"/> times its
+	/// size, made from the version drawn nearest that size (<see cref="ControlsHelper.SetDrawnSizes"/>).
 	/// </para>
 	/// <para>
 	/// When the theme changes, the images on the open windows are swapped for the new theme's. Images a program
@@ -53,6 +54,23 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			FormsTheme.ThemeChanged += manager.FormsTheme_ThemeChanged;
 			return manager;
 		}
+
+		/// <summary>The icons of this library's own controls, in the theme in use, at the screen's scale.</summary>
+		/// <remarks>
+		/// Each icon is listed in the resource file beside this class with its dark version and the versions
+		/// drawn at larger sizes, such as "refresh_16x16", "refresh_16x16_dark" and "refresh_24x24". The
+		/// controls take their icons from here rather than from their own designer files, so a program shows
+		/// them in its theme without installing anything.
+		/// </remarks>
+		public static ThemeResourceManager Library => _Library.Value;
+
+		static readonly Lazy<ThemeResourceManager> _Library = new Lazy<ThemeResourceManager>(() =>
+		{
+			var type = typeof(ThemeResourceManager);
+			var manager = new ThemeResourceManager(type.FullName, type.Assembly, type.FullName);
+			FormsTheme.ThemeChanged += manager.FormsTheme_ThemeChanged;
+			return manager;
+		});
 
 		ThemeResourceManager(string baseName, Assembly assembly, string versionsName)
 			: base(baseName, assembly)
@@ -104,7 +122,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					string known;
 					if (!_Names.TryGetValue(original, out known))
 					{
-						ControlsHelper.SetDrawnSizes(original, GetDrawnSizes(name, suffix, culture));
+						ControlsHelper.SetDrawnSizes(original, GetDrawnSizes(name, original.Size, suffix, culture));
 						_Names.Add(original, name);
 					}
 					value = ControlsHelper.ScaleImage(original);
@@ -133,17 +151,26 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return _Versions?.GetObject(name, culture) as Image;
 		}
 
-		/// <summary>The versions of a sized image drawn at larger sizes, for the theme the suffix names.</summary>
-		Image[] GetDrawnSizes(string name, string suffix, CultureInfo culture)
+		/// <summary>The versions of an image drawn at larger sizes, for the theme the suffix names.</summary>
+		/// <param name="name">The image's name: "add_16x16", whose versions take the place of its size, or "Button_A", whose versions add theirs.</param>
+		/// <param name="size">The image's own size, for a name that carries none.</param>
+		/// <param name="suffix">"_dark" for the dark theme's versions, or empty.</param>
+		/// <param name="culture">The culture to look the versions up in.</param>
+		Image[] GetDrawnSizes(string name, Size size, string suffix, CultureInfo culture)
 		{
-			var match = SizedName.Match(name);
-			if (_Versions is null || !match.Success)
+			if (_Versions is null)
 				return new Image[0];
-			var stem = match.Groups["name"].Value;
-			var width = int.Parse(match.Groups["width"].Value, CultureInfo.InvariantCulture);
-			var height = int.Parse(match.Groups["height"].Value, CultureInfo.InvariantCulture);
+			var stem = name;
+			var match = SizedName.Match(name);
+			if (match.Success)
+			{
+				stem = match.Groups["name"].Value;
+				size = new Size(
+					int.Parse(match.Groups["width"].Value, CultureInfo.InvariantCulture),
+					int.Parse(match.Groups["height"].Value, CultureInfo.InvariantCulture));
+			}
 			return Multiples
-				.Select(m => GetVersion(stem + "_" + (int)Math.Round(width * m) + "x" + (int)Math.Round(height * m) + suffix, culture))
+				.Select(m => GetVersion(stem + "_" + (int)Math.Round(size.Width * m) + "x" + (int)Math.Round(size.Height * m) + suffix, culture))
 				.Where(x => x != null)
 				.ToArray();
 		}

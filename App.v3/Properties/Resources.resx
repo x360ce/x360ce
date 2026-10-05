@@ -154,9 +154,6 @@
   <data name="remove_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\remove_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MessageBoxIcon_Warning_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Engine\JocysCom\Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="fix_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\fix_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -181,17 +178,11 @@
   <data name="Button_Back" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\xbox\Button_Back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="MessageBoxIcon_Information_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Engine\JocysCom\Controls\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Button_Start" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\xbox\Button_Start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="check_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\check_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MessageBoxIcon_Question_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Engine\JocysCom\Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow_right_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\icons\arrow_right_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -243,9 +234,6 @@
   </data>
   <data name="load_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\v3\icons\load_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="MessageBoxIcon_Error_32x32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Engine\JocysCom\Controls\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Button_DPadRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Resources\Images\shared\xbox\Button_DPadRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

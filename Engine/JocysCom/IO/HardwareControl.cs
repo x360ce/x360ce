@@ -25,6 +25,32 @@ namespace JocysCom.ClassLibrary.IO
 			// The tree's icons are Windows' own, which come in every size, so they are taken at a small
 			// icon's size on this screen rather than enlarged.
 			TreeImageList.ImageSize = SystemInformation.SmallIconSize;
+			var icons = ThemeResourceManager.Library;
+			RefreshStripButton.Image = (Image)icons.GetObject("refresh_16x16");
+			DisableButton.Image = (Image)icons.GetObject("disable_16x16");
+			EnableButton.Image = (Image)icons.GetObject("enable_16x16");
+			RemoveButton.Image = (Image)icons.GetObject("remove_16x16");
+			CleanButton.Image = (Image)icons.GetObject("clean_16x16");
+			ScanButton.Image = (Image)icons.GetObject("scan_16x16");
+		}
+
+		/// <summary>Puts the tab icons in the list, in the theme in use, at a small icon's size on this screen.</summary>
+		/// <remarks>A list draws every image at its own size, so it is given each at the size it shows it.</remarks>
+		void FillTabsImageList()
+		{
+			TabsImageList.Images.Clear();
+			TabsImageList.ImageSize = SystemInformation.SmallIconSize;
+			foreach (var key in new[] { "device_list", "device_tree", "logs" })
+			{
+				var image = (Image)ThemeResourceManager.Library.GetObject(key + "_16x16");
+				TabsImageList.Images.Add(key, ControlsHelper.ScaleImage(image, TabsImageList.ImageSize));
+			}
+			ControlsHelper.ApplyImageStyle(MainTabControl);
+		}
+
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			FillTabsImageList();
 		}
 
 		private DeviceDetector detector;
@@ -39,7 +65,9 @@ namespace JocysCom.ClassLibrary.IO
 			if (IsDesignMode)
 				return;
 			ControlsHelper.ApplyBorderStyle(MainToolStrip);
-			ControlsHelper.ApplyImageStyle(MainTabControl);
+			FillTabsImageList();
+			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+			Disposed += (s, a) => FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
 			ControlsHelper.ApplyBorderStyle(DeviceDataGridView);
 			UpdateButtons();
 			detector = new DeviceDetector(false);

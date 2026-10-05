@@ -1,11 +1,12 @@
-﻿## [4.25.12.0] - 2026-10-05
+﻿## [4.25.13.0] - 2026-10-05
 
 - Fixed: The update log ran past the bottom of the Options page.
-- Changed: Sharper controller pictures.
+- Changed: Sharper controller pictures and button glyphs.
 - Changed: The window title shows 64-bit or 32-bit.
 - Changed: Sharp text and icons on screens set above 100%.
 - Changed: Pastel icons, drawn for every screen zoom, with dark versions for the dark theme.
 - Added: Light and dark themes; System follows Windows.
+- Added: Developer Tools buttons that open each kind of message window, to test them.
 
 ## [4.24.60.0] - 2026-10-02
 

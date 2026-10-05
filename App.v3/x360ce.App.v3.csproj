@@ -243,6 +243,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <!-- Written by scripts\art\build_icons.py: the icons at larger sizes and for the dark theme. -->
+    <EmbeddedResource Include="Properties\Icons.resx" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -333,8 +335,38 @@
     <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFront.png">
       <Link>Images\xboxControllerFront.png</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFront_384x264.png">
+      <Link>Images\xboxControllerFront_384x264.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFront_512x352.png">
+      <Link>Images\xboxControllerFront_512x352.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFrontDark.png">
+      <Link>Images\xboxControllerFrontDark.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFrontDark_384x264.png">
+      <Link>Images\xboxControllerFrontDark_384x264.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerFrontDark_512x352.png">
+      <Link>Images\xboxControllerFrontDark_512x352.png</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTop.png">
       <Link>Images\xboxControllerTop.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTop_384x158.png">
+      <Link>Images\xboxControllerTop_384x158.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTop_512x210.png">
+      <Link>Images\xboxControllerTop_512x210.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark.png">
+      <Link>Images\xboxControllerTopDark.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark_384x158.png">
+      <Link>Images\xboxControllerTopDark_384x158.png</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Images\shared\xbox\xboxControllerTopDark_512x210.png">
+      <Link>Images\xboxControllerTopDark_512x210.png</Link>
     </EmbeddedResource>
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v3\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>

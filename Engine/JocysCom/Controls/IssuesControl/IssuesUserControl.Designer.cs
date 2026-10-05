@@ -23,7 +23,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssuesUserControl));
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
 			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -39,7 +38,6 @@
 			this.NextRunLabel = new System.Windows.Forms.ToolStripLabel();
 			this.RunStateLabel = new System.Windows.Forms.ToolStripLabel();
 			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
-			this.SeverityImageList = new System.Windows.Forms.ImageList(this.components);
 			this.NoIssuesPanel = new System.Windows.Forms.Panel();
 			this.NoIssuesLabel = new System.Windows.Forms.Label();
 			this.LinePanel = new System.Windows.Forms.Panel();
@@ -174,7 +172,6 @@
 			// GamesToolStrip
 			// 
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.IgnoreAllButton,
             this.IgnoreButton,
@@ -193,7 +190,6 @@
 			// IgnoreAllButton
 			// 
 			this.IgnoreAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.IgnoreAllButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreAllButton.Image")));
 			this.IgnoreAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.IgnoreAllButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.IgnoreAllButton.Name = "IgnoreAllButton";
@@ -204,7 +200,6 @@
 			// IgnoreButton
 			// 
 			this.IgnoreButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.IgnoreButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreButton.Image")));
 			this.IgnoreButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.IgnoreButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.IgnoreButton.Name = "IgnoreButton";
@@ -214,7 +209,6 @@
 			// 
 			// ExceptionInfoButton
 			// 
-			this.ExceptionInfoButton.Image = ((System.Drawing.Image)(resources.GetObject("ExceptionInfoButton.Image")));
 			this.ExceptionInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ExceptionInfoButton.Name = "ExceptionInfoButton";
 			this.ExceptionInfoButton.Size = new System.Drawing.Size(190, 36);
@@ -253,14 +247,6 @@
 			// 
 			this.QueueMonitorTimer.Interval = 500;
 			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
-			// 
-			// SeverityImageList
-			// 
-			this.SeverityImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("SeverityImageList.ImageStream")));
-			this.SeverityImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.SeverityImageList.Images.SetKeyName(0, "Error");
-			this.SeverityImageList.Images.SetKeyName(1, "Information");
-			this.SeverityImageList.Images.SetKeyName(2, "Warning");
 			// 
 			// NoIssuesPanel
 			// 
@@ -323,7 +309,6 @@
         private System.Windows.Forms.Timer QueueMonitorTimer;
         private System.Windows.Forms.ToolStripLabel RunStateLabel;
         private System.Windows.Forms.ToolStripButton ExceptionInfoButton;
-        private System.Windows.Forms.ImageList SeverityImageList;
         private System.Windows.Forms.Panel NoIssuesPanel;
         private System.Windows.Forms.Label NoIssuesLabel;
         private System.Windows.Forms.Panel LinePanel;

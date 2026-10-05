@@ -345,7 +345,7 @@
 			this.MySettingsDataGridView.AllowUserToAddRows = false;
 			this.MySettingsDataGridView.AllowUserToDeleteRows = false;
 			this.MySettingsDataGridView.AllowUserToResizeRows = false;
-			this.MySettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.MySettingsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.MySettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MySettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;

@@ -209,35 +209,36 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │   │   │       │   └── Combine Enabled                                     # Allow multiple controllers to be combined into a virtual controller. 0 = OFF, 1 = ON.
 [Section]   │   │   │       ├── Operation
 [CheckBox]  │   │   │       │   ├── Allow Only One Copy                                 # Allow only one instance of the application to run at a time. 0 = Allow multiple instances, 1 = Allow only one instance.
-[CheckBox]  │   │   │       │   └── Minimize to Tray                                    # Hides the window in the notification area instead of the taskbar when it is minimised.
+[CheckBox]  │   │   │       │   ├── Minimize to Tray                                    # Hides the window in the notification area instead of the taskbar when it is minimised.
+[List]      │   │   │       │   └── Theme                                               # Light or dark colours. System follows the Windows setting for apps.
 [Section]   │   │   │       ├── Direct Input Devices
 [CheckBox]  │   │   │       │   ├── Exclude Supplemental Devices                        # Leaves supplemental devices, such as the pedals of a wheel, out of the devices the program reads.
 [CheckBox]  │   │   │       │   └── Exclude Virtual Devices                             # Leaves vJoy devices and the controllers this program feeds out of the devices it reads, so its output is not read back as input.
 [Section]   │   │   │       ├── Configuration
 [Text]      │   │   │       │   └── Settings format version                             # Version of the x360ce.ini layout this program writes.
+[Button]    │   │   │       ├── Save                                                    # Writes every setting to x360ce.ini now.
+[Button]    │   │   │       ├── Open Settings Folder...                                 # Opens the folder with the game list and the other files the program keeps.
 [Section]   │   │   │       ├── Internet
 [CheckBox]  │   │   │       │   ├── Internet Features                                   # Enable the use of Internet features like the settings database. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │       │   ├── Auto Load Settings When Tab Selected                # Searches the online database for settings for your controllers each time the Controller Settings page is opened.
 [List]      │   │   │       │   └── Settings database address                           # Web address of the online database the Controller Settings page searches and saves to.
-[Tabs]      │   │   │       ├── (ProgramScanLocationsTabControl)
-[Tab]       │   │   │       │   ├── Game Scan Locations
-[List]      │   │   │       │   │   ├── Game scan locations                             # Folders the Scan button searches for games.
-[Toolbar]   │   │   │       │   │   └── Scan location actions                           # Adds, removes and fills in the folders the Scan button searches.
-[Button]    │   │   │       │   │       ├── Refresh                                     # Adds the Program Files folders of every fixed drive to the scan locations.
-[Button]    │   │   │       │   │       ├── Remove                                      # Removes the selected folder from the scan locations.
-[Button]    │   │   │       │   │       └── Add...                                      # Adds a folder to the scan locations.
-[Tab]       │   │   │       │   └── AI Assistant Access                                 # Lets an AI assistant or a script read and operate this program, off unless switched on here.
-[CheckBox]  │   │   │       │       ├── Allow AI assistants                             # Opens the program to an AI assistant or a script on this computer, through the token below.
-[List]      │   │   │       │       ├── Access                                          # How much a connected assistant may do: Read, Configure or Administer.
-[Number]    │   │   │       │       ├── Port 1024..49151                                # Port on this computer the assistant connects to.
-[CheckBox]  │   │   │       │       ├── Register with Windows                           # Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.
-[Value]     │   │   │       │       ├── Token                                           # What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.
-[Button]    │   │   │       │       ├── Regenerate                                      # Makes a new token, which shuts out every caller that has the old one.
-[Button]    │   │   │       │       ├── Copy MCP Settings                               # Copies what an assistant needs to start the program as an MCP server.
-[Button]    │   │   │       │       ├── Log                                             # Opens the record of everything done through the door.
-[Label]     │   │   │       │       └── Door                                            # Whether the door is open, where, and why not when it could not open.
-[Button]    │   │   │       ├── Save                                                    # Writes every setting to x360ce.ini now.
-[Button]    │   │   │       └── Open Settings Folder...                                 # Opens the folder with the game list and the other files the program keeps.
+[Tabs]      │   │   │       └── (ProgramScanLocationsTabControl)
+[Tab]       │   │   │           ├── Game Scan Locations
+[List]      │   │   │           │   ├── Game scan locations                             # Folders the Scan button searches for games.
+[Toolbar]   │   │   │           │   └── Scan location actions                           # Adds, removes and fills in the folders the Scan button searches.
+[Button]    │   │   │           │       ├── Refresh                                     # Adds the Program Files folders of every fixed drive to the scan locations.
+[Button]    │   │   │           │       ├── Remove                                      # Removes the selected folder from the scan locations.
+[Button]    │   │   │           │       └── Add...                                      # Adds a folder to the scan locations.
+[Tab]       │   │   │           └── AI Assistant Access                                 # Lets an AI assistant or a script read and operate this program, off unless switched on here.
+[CheckBox]  │   │   │               ├── Allow AI assistants                             # Opens the program to an AI assistant or a script on this computer, through the token below.
+[List]      │   │   │               ├── Access                                          # How much a connected assistant may do: Read, Configure or Administer.
+[Number]    │   │   │               ├── Port 1024..49151                                # Port on this computer the assistant connects to.
+[CheckBox]  │   │   │               ├── Register with Windows                           # Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.
+[Value]     │   │   │               ├── Token                                           # What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.
+[Button]    │   │   │               ├── Regenerate                                      # Makes a new token, which shuts out every caller that has the old one.
+[Button]    │   │   │               ├── Copy MCP Settings                               # Copies what an assistant needs to start the program as an MCP server.
+[Button]    │   │   │               ├── Log                                             # Opens the record of everything done through the door.
+[Label]     │   │   │               └── Door                                            # Whether the door is open, where, and why not when it could not open.
 [Tab]       │   │   ├── Game Settings                                                   # Games the emulator is set up for, and how it hooks each one.
 [Group]     │   │   │   └── (GameSettingsPanel)
 [Tabs]      │   │   │       └── Game lists                                              # Your games, the program's defaults for well-known games, and this computer's identity.
@@ -272,8 +273,8 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Group]     │   │   │   └── (SettingsDatabasePanel)
 [List]      │   │   │       ├── Controller                                              # Which controller's settings Save sends.
 [List]      │   │   │       ├── Game                                                    # Which game the saved settings are for.
-[Text]      │   │   │       ├── Comment                                                 # A note saved with the settings.
 [Button]    │   │   │       ├── Save                                                    # Saves the chosen controller's settings online, for the chosen game.
+[Text]      │   │   │       ├── Comment                                                 # A note saved with the settings.
 [Tabs]      │   │   │       ├── Settings lists                                          # Your saved settings, the most popular settings for your controllers, and defaults for well-known controllers.
 [Tab]       │   │   │       │   ├── My Device Settings
 [Grid]      │   │   │       │   │   ├── My device settings                              # Settings saved online for your controllers.

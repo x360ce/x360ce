@@ -1,13 +1,18 @@
-﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs, Resources/Images/shared/xbox/xboxControllerTopDark.png, Resources/Images/shared/xbox/xboxControllerFrontDark.png
+﻿// @under-test: App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs, Resources/Images/shared/xbox/xboxControllerTopDark.png, Resources/Images/shared/xbox/xboxControllerFrontDark.png, Engine/Common/EngineHelper.cs, scripts/art/build_controller.py
 // @area: pad-images   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
-	/// <summary>The controller picture keeps painting when GDI+ runs short of memory.</summary>
+	/// <summary>
+	/// The controller pictures: the same controller in both themes and at every size they are drawn at, and the
+	/// picture keeps painting when GDI+ runs short of memory.
+	/// </summary>
 	/// <remarks>
 	/// An exception that leaves a paint makes Windows Forms draw a red cross in that control for the rest of the session.
 	/// GDI+ reports a scaled draw it found no memory for as out of memory, and a person reported the red cross that
@@ -65,6 +70,47 @@ namespace x360ce.Tests
 					var overlap = both / (double)either;
 					Assert.IsTrue(overlap > 0.97, view + ": the outlines overlap " + overlap.ToString("P1") +
 						"; the dark picture must show the same controller in the same place.");
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("pad-images")]
+		[Description("Every controller picture comes with its versions drawn at 1.5 and 2 times its size, showing the controller in the same place")]
+		public void Pictures_come_with_versions_drawn_at_larger_sizes()
+		{
+			// The program's own assembly carries the pictures; naming a type in it loads it.
+			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
+			foreach (var name in new[] { "Top", "Front", "TopDark", "FrontDark" })
+			{
+				using (var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png"))
+				{
+					var drawn = JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture);
+					var expected = new[] { 1.5, 2.0 }
+						.Select(m => new Size((int)Math.Round(picture.Width * m), (int)Math.Round(picture.Height * m))).ToArray();
+					CollectionAssert.AreEqual(expected, drawn.Select(x => x.Size).ToArray(),
+						name + ": a version drawn at a larger size is missing or of the wrong size.");
+					// The largest version, reduced to the picture's size, must cover the same outline, or the marks land elsewhere.
+					using (var reduced = new Bitmap(picture.Width, picture.Height))
+					{
+						using (var g = Graphics.FromImage(reduced))
+						{
+							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+							g.DrawImage(drawn[drawn.Length - 1], new Rectangle(Point.Empty, reduced.Size));
+						}
+						int both = 0, either = 0;
+						for (var y = 0; y < picture.Height; y++)
+							for (var x = 0; x < picture.Width; x++)
+							{
+								var inPicture = picture.GetPixel(x, y).A > 127;
+								var inReduced = reduced.GetPixel(x, y).A > 127;
+								if (inPicture && inReduced)
+									both++;
+								if (inPicture || inReduced)
+									either++;
+							}
+						var overlap = both / (double)either;
+						Assert.IsTrue(overlap > 0.98, name + ": the largest version overlaps the picture " + overlap.ToString("P1") + " only.");
+					}
 				}
 			}
 		}
