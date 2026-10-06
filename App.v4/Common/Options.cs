@@ -228,6 +228,16 @@ namespace x360ce.App
 		}
 		bool _EmulationHotkeyOverlay = true;
 
+		/// <summary>Extra resistance to a wheel's speed near its centre while the centering spring is on, in percent.</summary>
+		/// <remarks>The same for every controller: one wheel is usually on one tab, and its swing is the wheel's own.</remarks>
+		[DefaultValue(0), Description("Extra resistance to the wheel's speed near the centre, where the centering spring fades, in percent. Calms a wheel that swings past the centre and back.")]
+		public int ForceSpringCentreDamping
+		{
+			get { return _ForceSpringCentreDamping; }
+			set { _ForceSpringCentreDamping = value; OnPropertyChanged(); }
+		}
+		int _ForceSpringCentreDamping;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

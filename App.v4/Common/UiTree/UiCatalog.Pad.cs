@@ -86,6 +86,10 @@ namespace x360ce.App.UiTree
 				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
 			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
 				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
+			d["PadControl.ForceSpringDampingTextBox"] = new Text("Centre damping",
+				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
+			d["PadControl.ForceSpringDampingTrackBar"] = new Text("Centre damping",
+				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
 				"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",

@@ -204,10 +204,12 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
 [Section]   │   │   │   │   ├── Wheel                                                   # Settings only a wheel has: the centering spring and the steering range.
 [Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
+[Value]     │   │   │   │   │   ├── Centre damping                                      # Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.
 [CheckBox]  │   │   │   │   │   ├── Centering spring                                    # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
 [Slider]    │   │   │   │   │   ├── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.
 [Button]    │   │   │   │   │   ├── Auto                                                # Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.
-[List]      │   │   │   │   │   └── Wheel range                                         # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
+[List]      │   │   │   │   │   ├── Wheel range                                         # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
+[Slider]    │   │   │   │   │   └── Centre damping 0..100                               # Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
@@ -513,7 +515,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.13 (Build: 2026-10-05) 64-bit - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.23 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

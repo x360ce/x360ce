@@ -176,6 +176,9 @@
             this.ForceSpringStrengthTrackBar = new System.Windows.Forms.TrackBar();
             this.ForceSpringAutoButton = new System.Windows.Forms.Button();
             this.WheelRangeLabel = new System.Windows.Forms.Label();
+            this.ForceSpringDampingLabel = new System.Windows.Forms.Label();
+            this.ForceSpringDampingTrackBar = new System.Windows.Forms.TrackBar();
+            this.ForceSpringDampingTextBox = new System.Windows.Forms.TextBox();
             this.WheelRangeComboBox = new System.Windows.Forms.ComboBox();
             this.WheelDescriptionLabel = new System.Windows.Forms.Label();
             this.ForceDefaultsButton = new System.Windows.Forms.Button();
@@ -265,6 +268,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
             this.WheelGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).BeginInit();
             this.LeftMotorGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
@@ -2095,6 +2099,9 @@
             this.WheelGroupBox.Controls.Add(this.ForceSpringAutoButton);
             this.WheelGroupBox.Controls.Add(this.WheelRangeLabel);
             this.WheelGroupBox.Controls.Add(this.WheelRangeComboBox);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingLabel);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingTrackBar);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingTextBox);
             this.WheelGroupBox.Controls.Add(this.WheelDescriptionLabel);
             this.WheelGroupBox.Location = new System.Drawing.Point(552, 5);
             this.WheelGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -2179,15 +2186,52 @@
             this.WheelRangeComboBox.Size = new System.Drawing.Size(335, 28);
             this.WheelRangeComboBox.TabIndex = 11;
             // 
+            // ForceSpringDampingLabel
+            // 
+            this.ForceSpringDampingLabel.AutoSize = true;
+            this.ForceSpringDampingLabel.Location = new System.Drawing.Point(8, 128);
+            this.ForceSpringDampingLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ForceSpringDampingLabel.Name = "ForceSpringDampingLabel";
+            this.ForceSpringDampingLabel.Size = new System.Drawing.Size(117, 20);
+            this.ForceSpringDampingLabel.TabIndex = 0;
+            this.ForceSpringDampingLabel.Text = "Centre Damping:";
+            // 
+            // ForceSpringDampingTrackBar
+            // 
+            this.ForceSpringDampingTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForceSpringDampingTrackBar.AutoSize = false;
+            this.ForceSpringDampingTrackBar.LargeChange = 10;
+            this.ForceSpringDampingTrackBar.Location = new System.Drawing.Point(129, 122);
+            this.ForceSpringDampingTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSpringDampingTrackBar.Maximum = 100;
+            this.ForceSpringDampingTrackBar.Name = "ForceSpringDampingTrackBar";
+            this.ForceSpringDampingTrackBar.Size = new System.Drawing.Size(335, 43);
+            this.ForceSpringDampingTrackBar.TabIndex = 11;
+            this.ForceSpringDampingTrackBar.TickFrequency = 2;
+            this.ForceSpringDampingTrackBar.ValueChanged += new System.EventHandler(this.ForceSpringDampingTrackBar_ValueChanged);
+            // 
+            // ForceSpringDampingTextBox
+            // 
+            this.ForceSpringDampingTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForceSpringDampingTextBox.Location = new System.Drawing.Point(472, 122);
+            this.ForceSpringDampingTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSpringDampingTextBox.Name = "ForceSpringDampingTextBox";
+            this.ForceSpringDampingTextBox.ReadOnly = true;
+            this.ForceSpringDampingTextBox.Size = new System.Drawing.Size(62, 26);
+            this.ForceSpringDampingTextBox.TabIndex = 0;
+            this.ForceSpringDampingTextBox.TabStop = false;
+            this.ForceSpringDampingTextBox.Text = "0 % ";
+            this.ForceSpringDampingTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // WheelDescriptionLabel
             // 
             this.WheelDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.WheelDescriptionLabel.Location = new System.Drawing.Point(8, 115);
+            this.WheelDescriptionLabel.Location = new System.Drawing.Point(8, 168);
             this.WheelDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.WheelDescriptionLabel.Name = "WheelDescriptionLabel";
-            this.WheelDescriptionLabel.Size = new System.Drawing.Size(526, 140);
+            this.WheelDescriptionLabel.Size = new System.Drawing.Size(526, 87);
             this.WheelDescriptionLabel.TabIndex = 0;
             this.WheelDescriptionLabel.Text = "With the spring off, the wheel\'s own centering, or its maker\'s software, is left " +
     "in charge. Auto finds the weakest spring that brings this wheel home.";
@@ -2988,6 +3032,7 @@
             this.WheelGroupBox.ResumeLayout(false);
             this.WheelGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).EndInit();
             this.LeftMotorGroupBox.ResumeLayout(false);
             this.LeftMotorGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).EndInit();
@@ -3125,6 +3170,9 @@
 		public System.Windows.Forms.Button ForceSpringAutoButton;
 		System.Windows.Forms.GroupBox WheelGroupBox;
 		System.Windows.Forms.Label WheelRangeLabel;
+		System.Windows.Forms.Label ForceSpringDampingLabel;
+		System.Windows.Forms.TrackBar ForceSpringDampingTrackBar;
+		System.Windows.Forms.TextBox ForceSpringDampingTextBox;
 		System.Windows.Forms.Label WheelDescriptionLabel;
 		public System.Windows.Forms.ComboBox WheelRangeComboBox;
 		System.Windows.Forms.Timer SpringAutoTimer;

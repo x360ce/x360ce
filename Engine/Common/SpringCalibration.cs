@@ -81,6 +81,7 @@ namespace x360ce.Engine
 		volatile int result;
 		volatile string message = "";
 		volatile bool cancel;
+		volatile string cancelReason;
 
 		public Phase Step { get { return (Phase)phase; } }
 		/// <summary>The strength found, in percent, or nought when nothing was found.</summary>
@@ -149,8 +150,10 @@ namespace x360ce.Engine
 		int side;
 
 		/// <summary>Stops the run. The next call answers with no force and Failed.</summary>
-		public void Cancel()
+		/// <param name="reason">What stopped the run, which becomes its <see cref="Message"/>; "Stopped." when not given.</param>
+		public void Cancel(string reason = null)
 		{
+			cancelReason = reason;
 			cancel = true;
 		}
 
@@ -163,7 +166,7 @@ namespace x360ce.Engine
 				return 0;
 			if (cancel)
 			{
-				Fail("Stopped.");
+				Fail(cancelReason ?? "Stopped.");
 				return 0;
 			}
 			if (phaseStart < 0)

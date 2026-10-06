@@ -246,7 +246,7 @@ namespace x360ce.Tests
 			var call = Regex.Match(File.ReadAllText(path), @"\.UpdateSpring\((?<args>[^;]*)\);");
 			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
 			var args = call.Groups["args"].Value;
-			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0$"),
+			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*SettingsManager\.Options\.ForceSpringCentreDamping$"),
 				"The engine times the run with a clock that can be negative or go back, or reads it for every device: " + args);
 		}
 
@@ -300,12 +300,14 @@ namespace x360ce.Tests
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs");
 			var source = File.ReadAllText(path);
 			var click = source.IndexOf("void ForceSpringAutoButton_Click(");
-			var routed = source.IndexOf("DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)", click);
-			var forced = source.IndexOf("Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0", click);
+			var routed = source.IndexOf("if (!ForcesFromThisTab(ud))", click);
 			var reason = source.IndexOf("WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", click);
 			var start = source.IndexOf("ud.SpringCalibration = new SpringCalibration();", click);
-			Assert.IsTrue(click > 0 && routed > click && forced > routed && reason > forced && start > reason,
+			Assert.IsTrue(click > 0 && routed > click && reason > routed && start > reason,
 				"Auto starts a run the engine never drives, and the button waits for it forever.");
+			var rule = Ui.Between(source, "bool ForcesFromThisTab(UserDevice ud)", "public static string SpringNote(");
+			StringAssert.Contains(rule, "DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)", "Auto does not ask the routing.");
+			StringAssert.Contains(rule, "Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0", "Auto does not ask whether the routing forces from this tab.");
 			Assert.IsFalse(source.Contains("(game.EnableMask & (int)AppHelper.GetMapFlag(MappedTo)) == 0"),
 				"Auto repeats part of the routing rule instead of asking the routing.");
 		}

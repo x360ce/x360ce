@@ -1,4 +1,4 @@
-﻿## [4.25.20.0] - 2026-10-06
+﻿## [4.25.23.0] - 2026-10-06
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: A controller going away could show an error report.
@@ -8,12 +8,15 @@
 - Fixed: A damaged virtual bus library file stopped virtual controllers until it was deleted.
 - Fixed: A network change could show an error report.
 - Fixed: Recording a direction on POV 2, 3 or 4 recorded nothing.
+- Fixed: The Force Feedback page did not say why the centering spring did nothing (Issue #1639, emreyagdan64-prog).
 - Changed: Sharper controller pictures and button glyphs.
 - Changed: The window title shows 64-bit or 32-bit.
 - Changed: Sharp text and icons on screens set above 100%.
 - Changed: Pastel icons, drawn for every screen zoom, with dark versions for the dark theme.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
+- Added: [Recentre] in a mapping box's menu sets where a stick rests as its middle (Issue #1638, FlogramMatt).
+- Added: Centre Damping calms a wheel that swings past the centre (Issue #1643, Rusty-Gere).
 
 ## [4.24.60.0] - 2026-10-02
 

@@ -283,7 +283,7 @@ namespace x360ce.App.DInput
 				lock (SettingsManager.UserDevices.SyncRoot)
 					deleteDevices[i].IsOnline = false;
 				// Not read while it is gone, so an Auto run under way on it would never end.
-				EndSpringRun(deleteDevices[i]);
+				EndSpringRun(deleteDevices[i], SpringStopUnplugged);
 			}
 			if (evictDevices.Count > 0)
 			{

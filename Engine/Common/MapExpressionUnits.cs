@@ -217,7 +217,7 @@ namespace x360ce.Engine
 		private static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <summary>Raw 0 to 65535 as -1 to 1, with the middle at nought.</summary>
-		private static float Centred(int raw)
+		public static float Centred(int raw)
 		{
 			return Clamp((raw - RawCentre) / (float)RawCentre, -1f, 1f);
 		}

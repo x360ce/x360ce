@@ -78,6 +78,8 @@ namespace x360ce.App.Controls
 		{
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
+			UpdateSpringNote();
+			SyncCentreDamping();
 		}
 
 		private void UpdateControlFromDInput()
@@ -1082,6 +1084,7 @@ namespace x360ce.App.Controls
 
 		string cRecord = "[Record]";
 		string cInvert = "[Invert]";
+		string cRecentre = "[Recentre]";
 		string cEmpty = "<empty>";
 		string cPOVs = "POVs";
 
@@ -1104,6 +1107,11 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_16x16);
 			// Add [Invert] button, which reads the box's control the other way round.
 			mi = new ToolStripMenuItem(cInvert);
+			mi.Click += new EventHandler(DiMenuStrip_Click);
+			DiMenuStrip.Items.Add(mi);
+			// Add [Recentre] button, which makes where the box's axis rests now read as its middle.
+			mi = new ToolStripMenuItem(cRecentre);
+			mi.ToolTipText = "Leave the stick at rest, then pick this: where it rests now reads as the middle.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
@@ -1234,6 +1242,16 @@ namespace x360ce.App.Controls
 						SettingsManager.Current.SetComboBoxValue(cbx, inverted);
 					CurrentCbx = null;
 				}
+				else if (item.Text == cRecentre)
+				{
+					var recentred = RecentredText(cbx.Text, GetSelectedDevice()?.SourceState?.Axis);
+					if (recentred != null)
+						SettingsManager.Current.SetComboBoxValue(cbx, recentred);
+					MainForm.Current.StatusTimerLabel.Text = recentred == null
+						? "[Recentre] works on a box mapped to an axis of a connected device."
+						: "Recentred: where the stick rests now reads as the middle (" + recentred + ").";
+					CurrentCbx = null;
+				}
 				else if (item.Text == cEmpty)
 				{
 					SettingsManager.Current.SetComboBoxValue(cbx, string.Empty);
@@ -1245,6 +1263,32 @@ namespace x360ce.App.Controls
 					CurrentCbx = null;
 				}
 			}
+		}
+
+		/// <summary>The mapping that reads a stick's axis from where it rests now, or null when the box maps no axis.</summary>
+		/// <remarks>
+		/// A formula subtracts the resting reading, in the units formulas use for a stick: -1 to 1 with the middle at
+		/// nought. An axis read the other way round is turned round in the formula as well.
+		/// </remarks>
+		/// <param name="text">The box's mapping: "Axis N", "IAxis N", or a formula "=aN" or "=-aN" with or without an offset.</param>
+		/// <param name="axes">The device's axes as they read now, 0 to 65535.</param>
+		public static string RecentredText(string text, int[] axes)
+		{
+			if (string.IsNullOrEmpty(text) || axes == null)
+				return null;
+			var m = Regex.Match(text.Trim(), @"^(?:(?<inv>I?)Axis (?<n>\d+)|=(?<inv>-?)a(?<n>\d+)\s*(?:[+-]\s*[0-9.]+)?)$");
+			if (!m.Success)
+				return null;
+			var index = int.Parse(m.Groups["n"].Value);
+			if (index < 1 || index > axes.Length)
+				return null;
+			var inverted = m.Groups["inv"].Value.Length > 0;
+			var rest = MapExpressionUnits.Centred(axes[index - 1]) * (inverted ? -1 : 1);
+			var offset = Math.Round(rest, 3);
+			if (offset == 0)
+				return (inverted ? "IAxis " : "Axis ") + index;
+			return "=" + (inverted ? "-a" : "a") + index + (offset > 0 ? "-" : "+")
+				+ Math.Abs(offset).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		public void EnableDPadMenu(bool enable)
@@ -1283,6 +1327,20 @@ namespace x360ce.App.Controls
 			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
+		void ForceSpringDampingTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			ForceSpringDampingTextBox.Text = string.Format("{0} % ", ForceSpringDampingTrackBar.Value);
+			SettingsManager.Options.ForceSpringCentreDamping = ForceSpringDampingTrackBar.Value;
+		}
+
+		/// <summary>Shows the centre damping, which every controller tab shares and any of them can set.</summary>
+		void SyncCentreDamping()
+		{
+			var value = Math.Max(0, Math.Min(ForceSpringDampingTrackBar.Maximum, SettingsManager.Options.ForceSpringCentreDamping));
+			if (ForceSpringDampingTrackBar.Value != value)
+				ForceSpringDampingTrackBar.Value = value;
+		}
+
 		/// <summary>The device the Auto button's run is on, held here because the tab can be switched to another while it runs.</summary>
 		UserDevice springAutoDevice;
 
@@ -1303,9 +1361,7 @@ namespace x360ce.App.Controls
 			// The engine drives the run only for a device the routing forces from this tab. A tab switched
 			// off, or a device unticked in the tab's list or on the Devices page, drives nothing, and the run
 			// would never end.
-			DInput.DeviceForce route;
-			if (!(DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
-				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0))
+			if (!ForcesFromThisTab(ud))
 			{
 				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, and this device ticked in its list and on the Devices page. Otherwise nothing drives the wheel.";
 				return;
@@ -1316,6 +1372,55 @@ namespace x360ce.App.Controls
 			springAutoDevice = ud;
 			ud.SpringCalibration = new SpringCalibration();
 			SpringAutoTimer.Start();
+		}
+
+		/// <summary>Whether the engine sends this tab's force feedback, the centering spring included, to the device.</summary>
+		/// <remarks>Only for a device on this tab, with the tab switched on for the current game and the device ticked in its list and on the Devices page.</remarks>
+		bool ForcesFromThisTab(UserDevice ud)
+		{
+			DInput.DeviceForce route;
+			return DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
+				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0;
+		}
+
+		/// <summary>What the page says while the centering spring is ticked but nothing reaches the wheel, or null.</summary>
+		/// <param name="forceOn">Whether force feedback is ticked on this tab.</param>
+		/// <param name="springOn">Whether the centering spring is ticked.</param>
+		/// <param name="reachesWheel">Whether the engine sends this tab's force feedback to the device (<see cref="ForcesFromThisTab"/>).</param>
+		public static string SpringNote(bool forceOn, bool springOn, bool reachesWheel)
+		{
+			return forceOn && springOn && !reachesWheel
+				? "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page."
+				: null;
+		}
+
+		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
+		bool springNoteShown;
+		string springNoteHid;
+
+		/// <summary>Shows or takes away the note that the spring reaches nothing, when that changes.</summary>
+		/// <remarks>
+		/// The spring's strength changes nothing while the tab is switched off for the current game, so the page says
+		/// why. Left alone while Auto runs, which writes the same line.
+		/// </remarks>
+		void UpdateSpringNote()
+		{
+			if (springAutoDevice != null)
+				return;
+			var ud = GetSelectedDevice();
+			var note = ud == null ? null : SpringNote(ForceEnableCheckBox.Checked, ForceSpringEnableCheckBox.Checked, ForcesFromThisTab(ud));
+			if ((note != null) == springNoteShown)
+				return;
+			springNoteShown = note != null;
+			if (springNoteShown)
+			{
+				springNoteHid = WheelDescriptionLabel.Text;
+				WheelDescriptionLabel.Text = note;
+			}
+			else
+			{
+				WheelDescriptionLabel.Text = springNoteHid;
+			}
 		}
 
 		void SpringAutoTimer_Tick(object sender, EventArgs e)

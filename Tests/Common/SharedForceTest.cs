@@ -271,7 +271,7 @@ namespace x360ce.Tests
 			Assert.IsNull(wheel.FFState, "An unticked device keeps its force state, so what it was playing goes on.");
 			Assert.IsNull(wheel.IsExclusiveMode, "An unticked device keeps its exclusive hold, so no other program can use it.");
 			Assert.IsTrue(run.IsFinished, "Auto goes on waiting for a wheel unticked while it ran.");
-			Assert.AreEqual("Stopped.", run.Message, "An ended run says something other than a stopped run says.");
+			Assert.AreEqual(DInputHelper.SpringStopReleased, run.Message, "An ended run does not say why it stopped.");
 			Assert.AreSame(padForce, pad.FFState, "The ticked device beside it lost its force state.");
 			Assert.AreEqual(true, pad.IsExclusiveMode, "The ticked device beside it was let go of.");
 			// Once: a pass of the same routing leaves the device alone.
@@ -336,14 +336,14 @@ namespace x360ce.Tests
 			Assert.IsTrue(run.IsFinished, "Auto goes on waiting for a wheel nothing drives any more, and its button stays on Wait.");
 			Assert.AreEqual(SpringCalibration.Phase.Failed, run.Step, "An ended run hands over a strength.");
 			Assert.AreEqual(0, run.Result, "An ended run hands over a strength.");
-			Assert.AreEqual("Stopped.", run.Message, "An ended run says something other than a stopped run says.");
+			Assert.AreEqual(DInputHelper.SpringStopReleased, run.Message, "An ended run does not say why it stopped.");
 			// Every other way the engine stops driving a device's spring ends its run too: every tab switched off or its
 			// force feedback switched off, and the device going away.
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var poll = step2.Substring(step2.IndexOf("if (mapped)"), step2.IndexOf("ud.FFState.UpdateSpring(") - step2.IndexOf("if (mapped)"));
 			Assert.AreEqual(2, Ui.Count(poll, "ud.FFState = null;"), "The force block's stops are not where the test expects them.");
-			Assert.AreEqual(2, Ui.Count(poll, "EndSpringRun(ud);"), "A run whose device's tab or force feedback is switched off goes on waiting.");
-			StringAssert.Contains(Body(step2, "void ReleaseDroppedDevices("), "EndSpringRun(ud);", "A run whose device is unticked goes on waiting.");
+			Assert.AreEqual(2, Ui.Count(poll, "EndSpringRun(ud, "), "A run whose device's tab or force feedback is switched off goes on waiting.");
+			StringAssert.Contains(Body(step2, "void ReleaseDroppedDevices("), "EndSpringRun(ud, SpringStopReleased);", "A run whose device is unticked goes on waiting.");
 			var step1 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step1.UpdateDevices.cs"));
 			StringAssert.Contains(Ui.Between(step1, "// Remove disconnected devices.", "if (evictDevices.Count > 0)"), "EndSpringRun(",
 				"A run whose device went away goes on waiting.");

@@ -63,6 +63,8 @@ A device can drive up to four emulated controllers at once.
 3. Map `button` or `axis` by selecting `[Record]` option and pressing `button` or moving `axis` on your `controller`.
 
    A switch, stick or pedal recorded onto a button presses it where you moved it to, and the status bar says which way that is. If the button is held the wrong way round, click the box and choose `[Invert]`. How far the control must move is the button's press point on the `[Buttons]` tab; on the way back the button lets go a little before that point, so a switch that wobbles does not flicker.
+
+   If a stick rests off centre, leave it at rest, click its box and choose `[Recentre]`. Where it rests now then reads as the middle; the box shows the formula that does it, such as `=a1-0.05`.
 4. Or use the `[Input]` column on the left: it lights every button, axis, slider and POV of your device as you use it, with its reading, before anything is mapped. Click a mapping box, then click a chip to put it there, or pick the chip up and drop it on a box; the boxes that can take it turn green while you hold it.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
@@ -213,6 +215,14 @@ Solution 2: If you can't separate pedals:
 - 540° (1.5 x 360°) - GT1 and 3 spec race cars, WRC Rally cars.
 - 360° (1.0 x 360°) - Formula 1 cars.
 
+## Wheel centering spring
+
+A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. `[Force Feedback]` → `[Wheel]` → `[Centering]` holds it at its centre. Take your hands off the wheel and press `[Auto]` to find the weakest spring that brings it home.
+
+The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
+
+If the wheel swings past the centre and back, raise `[Centre Damping]`. It resists the wheel's speed only near the centre, where the spring fades, and is the same for every controller tab.
+
 ## Flying an RC transmitter in a game
 
 A radio control transmitter for drones and planes (EdgeTX, OpenTX, RadioMaster, Jumper, DJI and
@@ -309,7 +319,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=a1*1.5` - more sensitive everywhere.
 - `=a1*0.5` - less sensitive, for aiming through a scope.
 - `=a1*(0.5+a2*0.5)` - walk slowly, run when the trigger is held.
-- `=a1-0.05` - correct a stick that drifts off centre.
+- `=a1-0.05` - correct a stick that drifts off centre. `[Recentre]` in the box's menu measures the offset and writes it.
 - `=a1*sqrt(1-a2^2/2)` - round the corners of a stick that reaches the corners of a square, so a full diagonal is no stronger than straight ahead. Use it for Stick X; a1 and a2 are the stick's own two axes.
 - `=a2*sqrt(1-a1^2/2)` - the same for Stick Y.
 - `=max(a1,0)` - one pedal axis split into the accelerator.

@@ -363,7 +363,7 @@ namespace x360ce.App.DInput
 											step = "ud.FFState.StopDeviceForces(device)";
 											ud.FFState.StopDeviceForces(device);
 											ud.FFState = null;
-											EndSpringRun(ud);
+											EndSpringRun(ud, SpringStopForceOff);
 										}
 									}
 									// Every tab it is on switched off: what was playing is stopped, or the effect, which
@@ -374,7 +374,7 @@ namespace x360ce.App.DInput
 										step = "ud.FFState.StopDeviceForces(device)";
 										ud.FFState.StopDeviceForces(device);
 										ud.FFState = null;
-										EndSpringRun(ud);
+										EndSpringRun(ud, SpringStopTabOff);
 									}
 									// The centering spring follows the wheel every poll, and the Auto button's run
 									// drives the wheel through the same effect. A device with no force state, or
@@ -385,7 +385,7 @@ namespace x360ce.App.DInput
 									{
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
-										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0);
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0, SettingsManager.Options.ForceSpringCentreDamping);
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -593,7 +593,7 @@ namespace x360ce.App.DInput
 				ud.IsExclusiveMode = null;
 				ud.ForceFailures = 0;
 				ud.ForceFault = 0;
-				EndSpringRun(ud);
+				EndSpringRun(ud, SpringStopReleased);
 			}
 		}
 
@@ -608,6 +608,18 @@ namespace x360ce.App.DInput
 			faultStep = step;
 		}
 
+		/// <summary>Why a centering spring Auto run stopped: the wheel was unplugged.</summary>
+		public const string SpringStopUnplugged = "Stopped: the wheel was unplugged.";
+
+		/// <summary>Why a centering spring Auto run stopped: force feedback was switched off on the tabs the wheel is on.</summary>
+		public const string SpringStopForceOff = "Stopped: force feedback was switched off on this controller tab.";
+
+		/// <summary>Why a centering spring Auto run stopped: every controller tab the wheel is on was switched off for the current game.</summary>
+		public const string SpringStopTabOff = "Stopped: this controller tab was switched off for the current game.";
+
+		/// <summary>Why a centering spring Auto run stopped: no ticked row of the current game uses the wheel any more.</summary>
+		public const string SpringStopReleased = "Stopped: the wheel was unticked, or the current game changed.";
+
 		/// <summary>Ends a centering spring Auto run under way on a device the engine stops driving: unticked, its tab or force feedback switched off, or gone.</summary>
 		/// <remarks>
 		/// A run moves on only when the engine polls it while it drives the wheel's spring, so with nothing driving it
@@ -616,12 +628,13 @@ namespace x360ce.App.DInput
 		/// poll: no force, no strength, and the run's own word for a stop. Nothing is made.
 		/// </remarks>
 		/// <param name="ud">The device.</param>
-		static void EndSpringRun(UserDevice ud)
+		/// <param name="reason">What stopped the run, shown on the page in place of the run's result.</param>
+		static void EndSpringRun(UserDevice ud, string reason)
 		{
 			var run = ud.SpringCalibration;
 			if (run == null || run.IsFinished)
 				return;
-			run.Cancel();
+			run.Cancel(reason);
 			run.Update(SpringCalibration.Center, 0);
 		}
 
