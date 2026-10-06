@@ -7,7 +7,7 @@ If you want `HELP` and have questions about installation or configuration, pleas
 - Solutions and tutorials on Google: <https://www.google.com/search?q=x360ce>
 - Solutions and tutorials on YouTube: <https://www.youtube.com/results?search_query=x360ce>
 - ViGEm Homepage: <https://github.com/nefarius/ViGEmBus>
-- HIDGuardian Homepage: <https://github.com/nefarius/HidGuardian>
+- HidHide Homepage: <https://github.com/nefarius/HidHide>
 
 ## IMPORTANT Notes
 
@@ -76,7 +76,7 @@ The program can look for a newer release and install it, but only when asked to.
 
 1. `[Options]` tab → `[Update]` → `[Check now]` looks now, downloads the newest release, checks its size, hash, digital signature and version, and asks before restarting if a game is using the emulated controllers. Each step is written on the page.
 2. `[Check for updates on startup]` is off by default. When on, the program looks once a day, at a random moment within the first hour after it starts, and shows "version X available" at the top of the window. Nothing is installed until you click `[Check now]`.
-3. The look is one request to `github.com` for the file `latest.json` of the newest release. It sends the program's name and version and the tag of the file last seen, and nothing else about you or the computer.
+3. The look is one request to `api.github.com` for the list of the newest releases. It sends the program's name and version, and at start-up the tag of the list last seen, and nothing else about you or the computer.
 
 ## Turning emulation on and off
 
@@ -86,6 +86,7 @@ The emulated controllers can be switched off without closing the program, so a g
 2. The same switch is in the tray menu: right-click the `X360CE` icon in the notification area.
 3. `[Options]` tab → `[General]` → `[Hotkeys]`: tick `[Emulation]` to turn the hotkey on. The field beside it holds `Ctrl + Alt + X`; click it and press other keys to change them. The keys need `Ctrl`, `Alt` or `Shift` in them, `Backspace` clears the field, and red means another program already holds those keys.
 4. Pressing the hotkey shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. Untick `[Show a note on the screen when pressed]` to have the tray notification instead, which Windows hides while a full-screen game runs.
+5. The same kind of note names a device mapped to the current game when it disconnects or connects again, so a pad that drops out mid-game is not mistaken for a game that stopped answering. Untick `[Show a note when a device disconnects]` to turn it off.
 
 ## Saving and loading a preset as a file
 
@@ -153,6 +154,12 @@ While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID
 
 How to remove `HIDGuardian` if access to your Mouse and Keyboard is lost (GitHub):
 <https://github.com/x360ce/x360ce/wiki/HID-Guardian>
+
+## Games with anti-cheat
+
+With the usual emulation, `Virtual`, `X360CE 4.x` puts nothing into the game or its folder: the game sees an Xbox 360 controller made by the `ViGEmBus` driver. The `Library` emulation, a game's `[Emulation]` setting on the `[Games]` tab, writes XInput files into the game's folder instead, and anti-cheat and copy protection such as Denuvo can refuse to run with them. Keep such games on `Virtual`.
+
+Some anti-cheat systems refuse virtual controllers too, and some refuse to start a game while a program that makes them is running. If a game with anti-cheat ignores the emulated controller, or will not start while `X360CE` runs, that game does not allow virtual controllers, and `X360CE` does not try to get around it. Before playing online, check the game's rules: some ban controller remapping programs.
 
 ## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
 
@@ -339,7 +346,7 @@ Lets an AI assistant that speaks the Model Context Protocol, or a script, inspec
 program. It is off until you tick AI assistant access on the Options page and choose a level.
 **Read**: read the interface, the
 devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
-may still ask, as it asks a person, when HID Guardian is set to configure automatically.
+may still ask for an administrator, as it asks a person, when a step needs one.
 **Administer**: also the actions that install or remove drivers and switch on debug mode. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
 
@@ -376,3 +383,16 @@ From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devi
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
 token to revoke access. The token is kept with the program's settings, which every account on
 this computer can read, so it tells one program from another, not one person from another.
+
+## Command-line switches
+
+Write a switch after the program's name, for example `x360ce.exe /WindowState=Minimized`.
+
+- `/WindowState=Minimized` starts the program minimised, to the notification area when `[Minimize to Tray]` is ticked. `/WindowState=Maximized` starts it maximised. `[Options]` tab → `[General]` → `[Start with Windows]` uses this switch.
+- `/Exit` closes the program where it is already running, for example from a script that runs when a game ends.
+- `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
+- `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
+- `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `docs` when none is given, then closes. The window is built off the screen while it does this.
+- `/Mcp` and `/Ai`: see AI assistant access above.
+
+The program also starts a copy of itself with other switches when it needs an administrator, for example to install the driver. Those are not meant to be typed.

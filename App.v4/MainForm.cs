@@ -1687,6 +1687,10 @@ namespace x360ce.App
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
 		{
+			// Ahead of the check below, which skips the rest while the window is minimised, as it is while a game
+			// runs. Only the device thread's call asks: the same change comes through here again on the interface thread.
+			if (InvokeRequired)
+				ControlsHelper.BeginInvoke(NoteMappedDeviceChanges);
 			lock (LockFormEvents)
 			{
 				FormEventsDevicesUpdated = true;
@@ -1711,6 +1715,60 @@ namespace x360ce.App
 			if (PadControls != null)
 				foreach (var pad in PadControls)
 					pad.RefreshPlaces();
+		}
+
+		/// <summary>Whether each listed device was connected at the last change of the device list, by instance.</summary>
+		readonly Dictionary<Guid, bool> _deviceOnline = new Dictionary<Guid, bool>();
+
+		/// <summary>Says over the game when a device it uses disconnects or connects again.</summary>
+		/// <remarks>
+		/// The window is usually minimised while a game runs, so its lights are not seen there, and a pad that drops
+		/// out mid-game otherwise shows only as a game that stopped answering. Runs once per change of the device
+		/// list, never per engine pass.
+		/// </remarks>
+		void NoteMappedDeviceChanges()
+		{
+			if (Program.IsClosing || IsDisposed)
+				return;
+			var game = SettingsManager.CurrentGame;
+			var mapped = game == null ? new UserDevice[0] : SettingsManager.GetMappedDevices(game.FileName, true);
+			bool anyGone;
+			var note = DeviceChangeNote(_deviceOnline, SettingsManager.UserDevices.ItemsToArraySynchronized(), mapped, out anyGone);
+			if (note == null || !SettingsManager.Options.DeviceChangeOverlay)
+				return;
+			// Amber is what the left half of a controller tab's light shows for a mapped device that is not connected.
+			OverlayNote.Show(note, ColorTranslator.FromHtml(anyGone ? AppHelper.StatusAmber : AppHelper.StatusGreen),
+				anyGone ? 4 : OverlayNote.DefaultSeconds);
+		}
+
+		/// <summary>The note for the mapped devices whose connection changed since the last look, or null when none did.</summary>
+		/// <remarks>
+		/// Every device's state is written into <paramref name="last"/>, mapped or not, so a device mapped later is
+		/// judged from its real last state. A device not in it yet changes nothing, so a start says nothing.
+		/// </remarks>
+		/// <param name="last">Whether each device was connected at the last look, by instance; updated here.</param>
+		/// <param name="devices">Every listed device.</param>
+		/// <param name="mapped">The devices the current game uses.</param>
+		/// <param name="anyGone">Whether a mapped device disconnected.</param>
+		public static string DeviceChangeNote(IDictionary<Guid, bool> last, UserDevice[] devices, UserDevice[] mapped, out bool anyGone)
+		{
+			var gone = new List<string>();
+			var back = new List<string>();
+			foreach (var ud in devices)
+			{
+				bool was;
+				var known = last.TryGetValue(ud.InstanceGuid, out was);
+				last[ud.InstanceGuid] = ud.IsOnline;
+				if (known && was != ud.IsOnline && mapped.Contains(ud))
+					(ud.IsOnline ? back : gone).Add(string.IsNullOrEmpty(ud.InstanceName) ? ud.ProductName : ud.InstanceName);
+			}
+			anyGone = gone.Count > 0;
+			var parts = new List<string>();
+			if (gone.Count > 0)
+				parts.Add(string.Join(", ", gone) + " disconnected");
+			if (back.Count > 0)
+				parts.Add(string.Join(", ", back) + " connected");
+			return parts.Count == 0 ? null : string.Join(". ", parts);
 		}
 
 		#endregion

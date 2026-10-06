@@ -196,9 +196,7 @@ namespace x360ce.App
 			// ------------------------------------------------
 			if (ic.Parameters.ContainsKey("Settings"))
 			{
-				OpenSettingsFolder(Application.UserAppDataPath);
-				OpenSettingsFolder(Application.CommonAppDataPath);
-				OpenSettingsFolder(Application.LocalUserAppDataPath);
+				OpenSettingsFolder();
 				return;
 			}
 			if (Engine.Mcp.McpClient.IsSwitch(ic.Parameters))
@@ -294,15 +292,15 @@ namespace x360ce.App
 			MainForm.Current.UpdateTimer.Start();
 		}
 
-		static void OpenSettingsFolder(string path)
+		/// <summary>Opens the folder the settings are kept in, the one the Options page names.</summary>
+		public static void OpenSettingsFolder()
 		{
-			var di = new DirectoryInfo(path);
-			//if (!di.Exists) return;
-			//if (di.GetFiles().Length == 0) return;
-			var psi = new ProcessStartInfo(di.Parent.Parent.FullName);
-			psi.UseShellExecute = true;
-			psi.ErrorDialog = true;
-			Process.Start(psi);
+			var folder = Path.Combine(Engine.EngineHelper.AppDataPath, "Settings");
+			// The folder is made when the first setting is saved, so a fresh install has
+			// nothing to open yet. Opening the one above it still shows where it will be.
+			if (!Directory.Exists(folder))
+				folder = Engine.EngineHelper.AppDataPath;
+			Engine.EngineHelper.BrowsePath(folder);
 		}
 
 		static bool CheckSettings()
@@ -330,9 +328,8 @@ namespace x360ce.App
 				}
 				else
 				{
-					OpenSettingsFolder(Application.UserAppDataPath);
-					OpenSettingsFolder(Application.CommonAppDataPath);
-					OpenSettingsFolder(Application.LocalUserAppDataPath);
+					// Shows the damaged file itself, for the repair the person chose.
+					Engine.EngineHelper.BrowsePath(filename);
 					return false;
 				}
 			}

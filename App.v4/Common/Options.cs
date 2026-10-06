@@ -228,6 +228,15 @@ namespace x360ce.App
 		}
 		bool _EmulationHotkeyOverlay = true;
 
+		/// <summary>Whether a device the current game uses disconnecting or connecting again is said with a note on the screen.</summary>
+		[DefaultValue(true), Description("Shows a short note on the screen when a device mapped to the current game disconnects or connects again.")]
+		public bool DeviceChangeOverlay
+		{
+			get { return _DeviceChangeOverlay; }
+			set { _DeviceChangeOverlay = value; OnPropertyChanged(); }
+		}
+		bool _DeviceChangeOverlay = true;
+
 		/// <summary>Extra resistance to a wheel's speed near its centre while the centering spring is on, in percent.</summary>
 		/// <remarks>The same for every controller: one wheel is usually on one tab, and its swing is the wheel's own.</remarks>
 		[DefaultValue(0), Description("Extra resistance to the wheel's speed near the centre, where the centering spring fades, in percent. Calms a wheel that swings past the centre and back.")]
@@ -286,7 +295,7 @@ namespace x360ce.App
 		[Description("When the program last looked for a newer version; the start-up look runs at most once a day.")]
 		public DateTime LastUpdateCheck { get; set; }
 
-		[Description("Tag of the release manifest last seen, so an unchanged one is answered without a download.")]
+		[Description("Tag of the releases list last seen with nothing newer on it, so the start-up look at an unchanged list downloads nothing.")]
 		public string UpdateEtag { get; set; }
 
 		// Remote Control

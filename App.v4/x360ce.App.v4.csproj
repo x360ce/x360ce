@@ -113,7 +113,7 @@
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
     <Compile Include="Common\Update\UpdateClient.cs" />
-    <Compile Include="Common\Update\UpdateManifest.cs" />
+    <Compile Include="Common\Update\UpdateRelease.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />

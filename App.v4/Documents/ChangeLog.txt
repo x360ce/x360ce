@@ -1,6 +1,8 @@
-﻿## [4.25.25.0] - 2026-10-06
+﻿## [4.25.29.0] - 2026-10-06
 
 - Fixed: The update log ran past the bottom of the Options page.
+- Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
+- Fixed: The /Settings switch opened folders other than the one the settings are kept in.
 - Fixed: A controller going away could show an error report.
 - Fixed: Closing the program could show an error report.
 - Fixed: Sorting the games list while it was filtered could show an error report.
@@ -19,6 +21,8 @@
 - Added: Developer Tools buttons that open each kind of message window, to test them.
 - Added: [Recentre] in a mapping box's menu sets where a stick rests as its middle (Issue #1638, FlogramMatt).
 - Added: Centre Damping calms a wheel that swings past the centre (Issue #1643, Rusty-Gere).
+- Added: Help on the command-line switches and on games with anti-cheat.
+- Added: A note over the game when a device it uses disconnects or connects again.
 
 ## [4.24.60.0] - 2026-10-02
 

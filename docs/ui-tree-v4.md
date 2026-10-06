@@ -312,7 +312,8 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
 [CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
 [Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
-[CheckBox]  │       │           │   │   └── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
+[CheckBox]  │       │           │   │   ├── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
+[CheckBox]  │       │           │   │   └── Show a note when a device disconnects       # Shows a short note on the screen when a device mapped to the current game disconnects or connects again.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
 [Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
 [List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
@@ -515,7 +516,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.25 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.29 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

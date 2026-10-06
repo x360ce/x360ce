@@ -55,6 +55,8 @@ namespace x360ce.App.UiTree
 				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them. Backspace clears it.");
 			d["OptionsUserControl.EmulationOverlayCheckBox"] = new Text("Show a note on the screen when pressed",
 				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden.");
+			d["OptionsUserControl.DeviceChangeOverlayCheckBox"] = new Text("Show a note when a device disconnects",
+				"Shows a short note at the top of the screen, over the game, when a device mapped to the current game disconnects or connects again.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows.");
 			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",

@@ -83,7 +83,7 @@ namespace x360ce.App.Controls
 			this.PrivacyLabel.Name = "PrivacyLabel";
 			this.PrivacyLabel.Size = new System.Drawing.Size(360, 13);
 			this.PrivacyLabel.TabIndex = 1;
-			this.PrivacyLabel.Text = "Once a day, at a random moment in the first hour. One request to github.com carrying only this program\'s version.";
+			this.PrivacyLabel.Text = "Once a day, at a random moment in the first hour. One request to api.github.com carrying only this program\'s version.";
 			//
 			// CheckButton
 			//

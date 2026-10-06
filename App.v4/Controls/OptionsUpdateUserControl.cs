@@ -69,8 +69,8 @@ namespace x360ce.App.Controls
 			Log("Check Online...");
 			var o = SettingsManager.Options;
 			var client = new UpdateClient(new Version(Application.ProductVersion));
-			var etag = o.UpdateEtag;
-			Task.Run(() => client.Check(etag)).ContinueWith(t =>
+			// Asked now, so asked afresh: a stored tag could have been stored by another version of the program.
+			Task.Run(() => client.Check(null)).ContinueWith(t =>
 			{
 				var check = t.Result;
 				o.LastUpdateCheck = DateTime.Now;
@@ -88,8 +88,8 @@ namespace x360ce.App.Controls
 						return;
 				}
 				Append(string.Format(" Version {0} is available.", check.Version));
-				if (check.Manifest != null && !string.IsNullOrEmpty(check.Manifest.Notes))
-					Log("{0}", check.Manifest.Notes);
+				if (!string.IsNullOrEmpty(check.Release.Page))
+					Log("{0}", check.Release.Page);
 				_Check = check;
 				Step2Download(client, check);
 			}, TaskScheduler.FromCurrentSynchronizationContext());
@@ -97,7 +97,7 @@ namespace x360ce.App.Controls
 
 		void Step2Download(UpdateClient client, UpdateCheck check)
 		{
-			Log("Download... {0}", UpdateClient.ZipUrl);
+			Log("Download... {0}", check.Release.Url);
 			Task.Run(() => client.Download(check)).ContinueWith(t =>
 			{
 				if (t.IsFaulted)
@@ -108,8 +108,7 @@ namespace x360ce.App.Controls
 				}
 				var data = t.Result;
 				Append(string.Format(" Done, {0:N1} MB", data.Length / 1024m / 1024m));
-				if (check.Manifest != null)
-					Log("Size and SHA-256 match the release manifest.");
+				Log("Size and SHA-256 match what GitHub publishes for the release.");
 				Log("Saving File...");
 				var zipFileName = processFileName + ".zip";
 				File.WriteAllBytes(zipFileName, data);

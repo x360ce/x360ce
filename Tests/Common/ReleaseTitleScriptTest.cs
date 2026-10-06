@@ -1,26 +1,28 @@
-// @under-test: Documents/App_5_Manifest.ps1
+// @under-test: Documents/App_5_ReleaseTitle.ps1
 // @area: update   @layer: integration
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using x360ce.App;
 
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The manifest the release script writes is the file the updater reads, so the two are
-	/// held to one contract here: the script's output must parse in the program, carry the
-	/// version of the program inside the zip, and refuse a zip whose version is not the one
-	/// being released.
+	/// The updater finds a release by the title the release script prints, so the two are held to one
+	/// contract here: the printed title must parse in the program and carry the version of the program
+	/// inside the zip, and a zip whose version is not the one being released must stop the release.
 	/// </summary>
 	[TestClass]
-	public class ReleaseManifestScriptTest
+	public class ReleaseTitleScriptTest
 	{
+		const string TitleLine = "Release title: ";
+
 		static string Script
 		{
-			get { return Path.Combine(Ui.RepoRoot.FullName, "Documents", "App_5_Manifest.ps1"); }
+			get { return Path.Combine(Ui.RepoRoot.FullName, "Documents", "App_5_ReleaseTitle.ps1"); }
 		}
 
 		/// <summary>A release-shaped zip holding the program built for these tests.</summary>
@@ -55,10 +57,10 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("The script's manifest parses in the program and names the version of the exe in the zip")]
-		public void Manifest_written_by_the_script_is_the_one_the_program_reads()
+		[Description("The script prints the title the program reads, carrying the version of the exe in the zip, and the zip's SHA-256")]
+		public void Title_printed_by_the_script_is_the_one_the_program_reads()
 		{
-			var folder = Path.Combine(Path.GetTempPath(), "x360ce-manifest-" + Guid.NewGuid().ToString("N"));
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce-release-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(folder);
 			try
 			{
@@ -67,11 +69,12 @@ namespace x360ce.Tests
 				string output;
 				var code = Run("-ZipPath \"" + zip + "\" -ExpectedVersion " + version, out output);
 				Assert.AreEqual(0, code, output);
-				var manifest = UpdateManifest.Parse(File.ReadAllText(Path.Combine(folder, "latest.json")));
-				Assert.AreEqual(new Version(version), manifest.ParsedVersion);
-				Assert.AreEqual("x360ce.zip", manifest.File);
-				Assert.IsTrue(manifest.Describes(File.ReadAllBytes(zip)), "Size and hash must be those of the zip.");
-				StringAssert.Contains(output, "X360CE " + version, "The release title is printed in the fixed form.");
+				var line = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(x => x.StartsWith(TitleLine));
+				Assert.IsNotNull(line, output);
+				Version parsed;
+				Assert.IsTrue(UpdateRelease.TryParseTitle(line.Substring(TitleLine.Length), out parsed), "The title has the fixed form: " + line);
+				Assert.AreEqual(new Version(version), parsed);
+				StringAssert.Contains(output, "SHA-256 " + UpdateRelease.Sha256Of(File.ReadAllBytes(zip)), "The hash printed is the one GitHub shows for the zip.");
 			}
 			finally { Directory.Delete(folder, true); }
 		}
@@ -80,7 +83,7 @@ namespace x360ce.Tests
 		[Description("A zip carrying a version other than the one being released stops the script")]
 		public void Wrong_version_in_the_zip_fails_the_release()
 		{
-			var folder = Path.Combine(Path.GetTempPath(), "x360ce-manifest-" + Guid.NewGuid().ToString("N"));
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce-release-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(folder);
 			try
 			{
@@ -89,7 +92,7 @@ namespace x360ce.Tests
 				var code = Run("-ZipPath \"" + zip + "\" -ExpectedVersion 0.0.0.1", out output);
 				Assert.AreNotEqual(0, code, "A wrong version must fail.");
 				StringAssert.Contains(output, "Rebuild before publishing");
-				Assert.IsFalse(File.Exists(Path.Combine(folder, "latest.json")), "Nothing is written for a wrong version.");
+				Assert.IsFalse(output.Contains(TitleLine), "No title is printed for a wrong version.");
 			}
 			finally { Directory.Delete(folder, true); }
 		}
