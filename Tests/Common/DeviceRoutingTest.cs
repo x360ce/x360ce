@@ -269,7 +269,7 @@ namespace x360ce.Tests
 		[Description("Converting a row, and passing over a mapped device that is not connected, hand nothing to the collector")]
 		public void The_lookups_hand_nothing_to_the_collector()
 		{
-			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), JoState = new JoystickState(), DiState = new CustomDiState(new JoystickState()) };
+			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), JoState = new JoystickState(), SourceState = new SourceState(new JoystickState()) };
 			ud.IsOnline = true;
 			var offline = new UserDevice { InstanceGuid = Guid.NewGuid() };
 			var ps = new PadSetting { ButtonA = "b1", LeftThumbAxisX = "a1", LeftTrigger = "x5", DPad = "p1", PadSettingChecksum = Guid.NewGuid() };

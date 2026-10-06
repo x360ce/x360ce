@@ -208,29 +208,29 @@ namespace x360ce.Engine.Data
 
 		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
 		[XmlIgnore]
-		public CustomDiState DiState;
+		public SourceState SourceState;
 
 		[XmlIgnore]
-		public CustomDiUpdate[] DiUpdates;
+		public SourceStateUpdate[] SourceUpdates;
 
 		[XmlIgnore]
-		public long DiStateTime;
+		public long SourceStateTime;
 
-		/// <summary>The state shown before <see cref="DiState"/>. The input thread fills this object again on the next poll and shows it, so a state stays unchanged for one whole poll after it is replaced. Whoever keeps a state longer takes a <see cref="CustomDiState.Clone"/>.</summary>
+		/// <summary>The state shown before <see cref="SourceState"/>. The input thread fills this object again on the next poll and shows it, so a state stays unchanged for one whole poll after it is replaced. Whoever keeps a state longer takes a <see cref="SourceState.Clone"/>.</summary>
 		[XmlIgnore]
-		public CustomDiState OldDiState;
-
-		[XmlIgnore]
-		public CustomDiUpdate[] OldDiUpdates;
+		public SourceState OldSourceState;
 
 		[XmlIgnore]
-		public long OldDiStateTime;
+		public SourceStateUpdate[] OldSourceUpdates;
 
 		[XmlIgnore]
-		public CustomDiState OrgDiState;
+		public long OldSourceStateTime;
 
 		[XmlIgnore]
-		public long OrgDiStateTime;
+		public SourceState OriginSourceState;
+
+		[XmlIgnore]
+		public long OriginSourceStateTime;
 
 		/// <summary>The two DirectInput states the input thread reads this device into, in turn; <see cref="JoState"/> is the one read last.</summary>
 		/// <remarks>Made on the first two reads and kept, so a poll makes no new state, and the one shown is never the one being read into.</remarks>
@@ -243,10 +243,10 @@ namespace x360ce.Engine.Data
 
 		/// <summary>The reading of a device with axes that report movement, before the state shown is worked out from it. The input thread's own, filled on every poll.</summary>
 		[XmlIgnore]
-		public CustomDiState DiStateRead;
+		public SourceState SourceStateRead;
 
 		/// <summary>The axes, one bit each as in <see cref="DiAxeMask"/>, that report how far they moved rather than where they are: a mouse's, a trackball's, a spinner's.</summary>
-		/// <remarks>Set by the input thread when the device's objects are first read; none for a device read as a gamepad (<see cref="CustomDiState.TrustedRelativeMask"/>). The state shown works these axes out from where they were first read.</remarks>
+		/// <remarks>Set by the input thread when the device's objects are first read; none for a device read as a gamepad (<see cref="SourceState.TrustedRelativeMask"/>). The state shown works these axes out from where they were first read.</remarks>
 		[XmlIgnore]
 		public int DiRelativeAxisMask;
 

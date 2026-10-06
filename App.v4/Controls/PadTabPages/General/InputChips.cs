@@ -84,16 +84,16 @@ namespace x360ce.App.Controls
 		public static List<InputChip> Create(int buttonCount, int axisMask, int sliderMask, int povCount)
 		{
 			var chips = new List<InputChip>();
-			var buttons = System.Math.Min(System.Math.Max(buttonCount, 0), CustomDiHelper.ButtonOffsets.Count);
+			var buttons = System.Math.Min(System.Math.Max(buttonCount, 0), DirectInputLayout.ButtonOffsets.Count);
 			for (var i = 0; i < buttons; i++)
 				chips.Add(New(InputChipKind.Button, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Button, i + 1)));
-			for (var i = 0; i < CustomDiState.MaxAxis; i++)
+			for (var i = 0; i < SourceState.MaxAxis; i++)
 				if ((axisMask & (1 << i)) != 0)
 					chips.Add(New(InputChipKind.Axis, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Axis, i + 1)));
-			for (var i = 0; i < CustomDiState.MaxSliders; i++)
+			for (var i = 0; i < SourceState.MaxSliders; i++)
 				if ((sliderMask & (1 << i)) != 0)
 					chips.Add(New(InputChipKind.Slider, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Slider, i + 1)));
-			var povs = System.Math.Min(System.Math.Max(povCount, 0), CustomDiHelper.PovOffsets.Count);
+			var povs = System.Math.Min(System.Math.Max(povCount, 0), DirectInputLayout.PovOffsets.Count);
 			for (var i = 0; i < povs; i++)
 			{
 				chips.Add(New(InputChipKind.Pov, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.POV, i + 1)));
@@ -112,7 +112,7 @@ namespace x360ce.App.Controls
 		/// Brings every chip in line with the state. Returns true when any chip's light or reading
 		/// changed, so the caller repaints only then. A null state puts every chip at rest.
 		/// </summary>
-		public static bool Update(IList<InputChip> chips, CustomDiState state)
+		public static bool Update(IList<InputChip> chips, SourceState state)
 		{
 			var changed = false;
 			for (var i = 0; i < chips.Count; i++)
@@ -131,7 +131,7 @@ namespace x360ce.App.Controls
 			return changed;
 		}
 
-		static void Read(InputChip chip, CustomDiState state, out int value, out bool lit)
+		static void Read(InputChip chip, SourceState state, out int value, out bool lit)
 		{
 			switch (chip.Kind)
 			{

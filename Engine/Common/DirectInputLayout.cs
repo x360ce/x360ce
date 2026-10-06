@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace x360ce.Engine
 {
-	public static class CustomDiHelper
+	public static class DirectInputLayout
 	{
 		/// <summary>
 		/// Must have same order as in axis.

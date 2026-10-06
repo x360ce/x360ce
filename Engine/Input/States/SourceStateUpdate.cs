@@ -9,35 +9,35 @@ namespace x360ce.Engine
 	/// <summary>
 	///  Custom X360CE direct input update class used for configuration.
 	/// </summary>
-	public partial class CustomDiUpdate
+	public partial class SourceStateUpdate
 	{
 
 		public MapType Type;
 		public int Index;
 		public int Value;
 
-		public CustomDiUpdate(JoystickUpdate update)
+		public SourceStateUpdate(JoystickUpdate update)
 		{
 			Value = update.Value;
-			Index = CustomDiHelper.AxisOffsets.IndexOf(update.Offset);
+			Index = DirectInputLayout.AxisOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
 				Type = MapType.Axis;
 				return;
 			}
-			Index = CustomDiHelper.SliderOffsets.IndexOf(update.Offset);
+			Index = DirectInputLayout.SliderOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
 				Type = MapType.Slider;
 				return;
 			}
-			Index = CustomDiHelper.PovOffsets.IndexOf(update.Offset);
+			Index = DirectInputLayout.PovOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
 				Type = MapType.POV;
 				return;
 			}
-			Index = CustomDiHelper.ButtonOffsets.IndexOf(update.Offset);
+			Index = DirectInputLayout.ButtonOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
 				Type = MapType.Button;

@@ -138,9 +138,10 @@
     <Compile Include="Common\SettingsTransfer.cs" />
     <Compile Include="Common\MapExpressionHelp.cs" />
     <Compile Include="Common\MapExpressionSeed.cs" />
-    <Compile Include="Common\CustomDiHelper.cs" />
-    <Compile Include="Common\CustomDiState.cs" />
-    <Compile Include="Common\CustomDiUpdate.cs" />
+    <Compile Include="Common\DirectInputLayout.cs" />
+    <Compile Include="Common\InputSourceType.cs" />
+    <Compile Include="Input\States\SourceState.cs" />
+    <Compile Include="Input\States\SourceStateUpdate.cs" />
     <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />

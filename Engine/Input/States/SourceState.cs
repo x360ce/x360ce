@@ -8,13 +8,13 @@ namespace x360ce.Engine
 	/// <summary>
 	///  Custom X360CE direct input state class used for configuration.
 	/// </summary>
-	public class CustomDiState
+	public class SourceState
 	{
 
 		/// <summary>A state at rest, its arrays made once, for the input thread to fill again and again with <see cref="Load"/>.</summary>
-		public CustomDiState() { }
+		public SourceState() { }
 
-		public CustomDiState(JoystickState state)
+		public SourceState(JoystickState state)
 		{
 			Load(state);
 		}
@@ -34,9 +34,9 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>A copy that nothing else writes, for whoever keeps a state while the input thread goes on filling its own.</summary>
-		public CustomDiState Clone()
+		public SourceState Clone()
 		{
-			var copy = new CustomDiState();
+			var copy = new SourceState();
 			Array.Copy(Axis, copy.Axis, Axis.Length);
 			Array.Copy(Sliders, copy.Sliders, Sliders.Length);
 			Array.Copy(Povs, copy.Povs, Povs.Length);
@@ -124,13 +124,13 @@ namespace x360ce.Engine
 			actuatorMask = 0;
 			actuatorCount = 0;
 			relativeMask = 0;
-			for (int i = 0; i < CustomDiHelper.AxisOffsets.Count; i++)
+			for (int i = 0; i < DirectInputLayout.AxisOffsets.Count; i++)
 			{
 				try
 				{
 					// This function accepts JoystickOffset enumeration values.
 					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.AxisOffsets[i]);
+					var o = device.GetObjectInfoByOffset((int)DirectInputLayout.AxisOffsets[i]);
 					if (o != null)
 					{
 						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
@@ -222,13 +222,13 @@ namespace x360ce.Engine
 		{
 			int mask = 0;
 			relativeMask = 0;
-			for (int i = 0; i < CustomDiHelper.SliderOffsets.Count; i++)
+			for (int i = 0; i < DirectInputLayout.SliderOffsets.Count; i++)
 			{
 				try
 				{
 					// This function accepts JoystickOffset enumeration values.
 					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.SliderOffsets[i]);
+					var o = device.GetObjectInfoByOffset((int)DirectInputLayout.SliderOffsets[i]);
 					if (o != null)
 					{
 						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).

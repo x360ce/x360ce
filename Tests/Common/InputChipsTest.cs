@@ -16,9 +16,9 @@ namespace x360ce.Tests
 	[TestClass]
 	public class InputChipsTest
 	{
-		static CustomDiState Rest()
+		static SourceState Rest()
 		{
-			var state = new CustomDiState(new JoystickState());
+			var state = new SourceState(new JoystickState());
 			for (var i = 0; i < state.Axis.Length; i++)
 				state.Axis[i] = InputChips.AxisCentre;
 			for (var i = 0; i < state.Povs.Length; i++)
@@ -120,8 +120,8 @@ namespace x360ce.Tests
 		public void Counts_are_capped_to_the_state_arrays()
 		{
 			var chips = InputChips.Create(500, 0, 0, 9);
-			Assert.AreEqual(CustomDiHelper.ButtonOffsets.Count, chips.Count(c => c.Kind == InputChipKind.Button));
-			Assert.AreEqual(CustomDiHelper.PovOffsets.Count, chips.Count(c => c.Kind == InputChipKind.Pov));
+			Assert.AreEqual(DirectInputLayout.ButtonOffsets.Count, chips.Count(c => c.Kind == InputChipKind.Button));
+			Assert.AreEqual(DirectInputLayout.PovOffsets.Count, chips.Count(c => c.Kind == InputChipKind.Pov));
 			// Reading a rest state into chips that start at rest changes nothing, and throws nothing.
 			Assert.IsFalse(InputChips.Update(chips, Rest()));
 			Assert.IsFalse(chips.Any(c => c.Lit));

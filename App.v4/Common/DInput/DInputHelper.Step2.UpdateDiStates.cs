@@ -276,24 +276,24 @@ namespace x360ce.App.DInput
 								int relativeMask = 0;
 								if (ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse)
 								{
-									CustomDiState.GetMouseAxisMask(dos, device, out axisMask, out relativeMask);
+									SourceState.GetMouseAxisMask(dos, device, out axisMask, out relativeMask);
 								}
 								else
 								{
-									CustomDiState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
+									SourceState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
 								}
 								ud.DiAxeMask = axisMask;
 								// Axes that report how far they moved rather than where they are. The state shown works them out below.
 								// A gamepad's sticks are read as they report, whatever its objects declare.
-								ud.DiRelativeAxisMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeMask);
+								ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, relativeMask);
 								// Contains information about which axis have force feedback actuator attached.
 								ud.DiActuatorMask = actuatorMask;
 								ud.DiActuatorCount = actuatorCount;
 								// Which of the eight slider slots the device answers to. The mapping list and
 								// the input panel offer a slider only when its bit is set here.
 								int relativeSliderMask;
-								ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device, out relativeSliderMask);
-								ud.DiRelativeSliderMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeSliderMask);
+								ud.DiSliderMask = SourceState.GetJoystickSlidersMask(dos, device, out relativeSliderMask);
+								ud.DiRelativeSliderMask = SourceState.TrustedRelativeMask(ud.CapType, relativeSliderMask);
 							}
 							// Reading the effects lets go of the XInput library for a moment, which happens only while no
 							// display read holds it. Otherwise they are read on a later poll.
@@ -380,11 +380,11 @@ namespace x360ce.App.DInput
 									// no actuator on an axis, pays nothing here. The clock is read only while a run is
 									// under way, and the run is read once, so one started between two reads is never
 									// handed time 0.
-									if (ud.FFState != null && ud.DiState != null && ud.FFState.SpringAxisIndex >= 0)
+									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
-										ud.FFState.UpdateSpring(device, ud.DiState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0);
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0);
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -451,21 +451,21 @@ namespace x360ce.App.DInput
 				{
 					// Filled into the state shown before the current one, rather than a new one each poll. A state is not
 					// written until one whole poll after it stops being shown.
-					var newState = ud.OldDiState ?? new CustomDiState();
+					var newState = ud.OldSourceState ?? new SourceState();
 					// Axes and sliders that report movement are worked out from where they were first read. Known since the
 					// device's objects were read, so this is two field reads.
 					var moving = ud.Device != null && (ud.DiRelativeAxisMask | ud.DiRelativeSliderMask) != 0;
 					// Such a device is read into its own reserved state, and the one shown is worked out from it below.
-					var read = moving ? ud.DiStateRead ?? (ud.DiStateRead = new CustomDiState()) : newState;
+					var read = moving ? ud.SourceStateRead ?? (ud.SourceStateRead = new SourceState()) : newState;
 					read.Load(ud.JoState);
-					var newUpdates = update?.Select(x=> new CustomDiUpdate(x)).ToArray();
+					var newUpdates = update?.Select(x=> new SourceStateUpdate(x)).ToArray();
 					// If updates from buffer supplied and old state is available then...
-					if (newUpdates != null && newUpdates.Count(x=>x.Type == MapType.Button) > 1 && ud.DiState != null)
+					if (newUpdates != null && newUpdates.Count(x=>x.Type == MapType.Button) > 1 && ud.SourceState != null)
 					{
 						// Analyse if state must be modified.
 						for (int b = 0; b < read.Buttons.Length; b++)
 						{
-							var oldPresseed = ud.DiState.Buttons[b];
+							var oldPresseed = ud.SourceState.Buttons[b];
 							var newPresseed = read.Buttons[b];
 							// If button state was not changed.
 							if (oldPresseed == newPresseed)
@@ -484,13 +484,13 @@ namespace x360ce.App.DInput
 					if (moving)
 						ToMouseState(ud, read, newState, newTime);
 					// Remember old state.
-					ud.OldDiState = ud.DiState;
-					ud.OldDiUpdates = ud.DiUpdates;
-					ud.OldDiStateTime = ud.DiStateTime;
+					ud.OldSourceState = ud.SourceState;
+					ud.OldSourceUpdates = ud.SourceUpdates;
+					ud.OldSourceStateTime = ud.SourceStateTime;
 					// Update state.
-					ud.DiState = newState;
-					ud.DiUpdates = newUpdates;
-					ud.DiStateTime = newTime;
+					ud.SourceState = newState;
+					ud.SourceUpdates = newUpdates;
+					ud.SourceStateTime = newTime;
 				}
 
 			}
@@ -655,25 +655,25 @@ namespace x360ce.App.DInput
 		const int HalfTravel = (ushort.MaxValue + 1) / 2 / MovementScale;
 
 		/// <summary>Works out the state shown for a device whose axes or sliders report movement: each such control shows how far it has moved from where it was first read, starting in the middle, as a wheel's axis would. Every other control is shown as read.</summary>
-		/// <param name="ud">The device. <see cref="UserDevice.DiRelativeAxisMask"/> and <see cref="UserDevice.DiRelativeSliderMask"/> say which controls move. Its first reading, and its first after each acquire (<see cref="UserDevice.DiRelativeRestart"/>), is kept half a travel back as <see cref="UserDevice.OrgDiState"/>.</param>
+		/// <param name="ud">The device. <see cref="UserDevice.DiRelativeAxisMask"/> and <see cref="UserDevice.DiRelativeSliderMask"/> say which controls move. Its first reading, and its first after each acquire (<see cref="UserDevice.DiRelativeRestart"/>), is kept half a travel back as <see cref="UserDevice.OriginSourceState"/>.</param>
 		/// <param name="read">This poll's reading.</param>
 		/// <param name="into">The state to show, filled here.</param>
 		/// <param name="time">When the reading was taken, in the engine's ticks.</param>
-		public static void ToMouseState(UserDevice ud, CustomDiState read, CustomDiState into, long time)
+		public static void ToMouseState(UserDevice ud, SourceState read, SourceState into, long time)
 		{
 			var axes = ud.DiRelativeAxisMask;
 			var sliders = ud.DiRelativeSliderMask;
 			// The first reading, or the first since the device was acquired again, when the running totals may start anywhere.
-			if (ud.OrgDiState == null || ud.DiRelativeRestart)
+			if (ud.OriginSourceState == null || ud.DiRelativeRestart)
 			{
 				// Made once and filled in place after that. Each control starts half a travel back, so one that has not
 				// moved shows the middle, as a stick at rest does. Only the moving ones are read back.
-				var origin = ud.OrgDiState ?? (ud.OrgDiState = new CustomDiState());
+				var origin = ud.OriginSourceState ?? (ud.OriginSourceState = new SourceState());
 				for (int a = 0; a < origin.Axis.Length; a++)
 					origin.Axis[a] = unchecked(read.Axis[a] - HalfTravel);
 				for (int s = 0; s < origin.Sliders.Length; s++)
 					origin.Sliders[s] = unchecked(read.Sliders[s] - HalfTravel);
-				ud.OrgDiStateTime = time;
+				ud.OriginSourceStateTime = time;
 				ud.DiRelativeRestart = false;
 			}
 			// The state shown is reused, so everything in it is set again on every poll.
@@ -685,18 +685,18 @@ namespace x360ce.App.DInput
 			//	//--------------------------------------------------------
 
 			//	// This parts needs to be worked on.
-			//	//var ticks = (int)(newTime - ud.DiStateTime);
+			//	//var ticks = (int)(newTime - ud.SourceStateTime);
 			//	// Update axis with delta.
 			//	//for (int a = 0; a < newState.Axis.Length; a++)
-			//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
+			//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldSourceState.Axis[a]) - short.MinValue;
 			//	// Update sliders with delta.
 			//	//for (int s = 0; s < newState.Sliders.Length; s++)
-			//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+			//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldSourceState.Sliders[s]) - short.MinValue;
 
 			//--------------------------------------------------------
 			// Map mouse position to axis position. Good for car wheel controls.
 			//--------------------------------------------------------
-			var origins = ud.OrgDiState;
+			var origins = ud.OriginSourceState;
 			for (int a = 0; a < into.Axis.Length; a++)
 				into.Axis[a] = (axes & (1 << a)) != 0 ? Travel(origins.Axis, read.Axis, a) : read.Axis[a];
 			for (int s = 0; s < into.Sliders.Length; s++)

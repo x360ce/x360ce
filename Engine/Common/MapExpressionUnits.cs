@@ -35,7 +35,7 @@ namespace x360ce.Engine
 		/// <param name="isThumb">
 		/// True when the answer drives a stick, false when it drives a trigger or a button.
 		/// </param>
-		public static bool TryFill(MapExpression expression, CustomDiState state, float[] values, bool isThumb)
+		public static bool TryFill(MapExpression expression, SourceState state, float[] values, bool isThumb)
 		{
 			if (expression == null || state == null || values == null)
 				return false;
@@ -55,7 +55,7 @@ namespace x360ce.Engine
 		/// was switched on. Asking the same question in one place is the point.
 		/// </remarks>
 		/// <param name="buffer">Room for the sources, at least MaxReferences long.</param>
-		public static bool TryEvaluate(MapExpression expression, CustomDiState state, bool isThumb, float[] buffer, out float value)
+		public static bool TryEvaluate(MapExpression expression, SourceState state, bool isThumb, float[] buffer, out float value)
 		{
 			value = 0f;
 			if (!TryFill(expression, state, buffer, isThumb))
@@ -141,7 +141,7 @@ namespace x360ce.Engine
 		/// fully down while nobody was touching it: at rest it read minus one, which doubled to minus
 		/// two, which is past the end.
 		/// </param>
-		public static float Read(MapReference reference, CustomDiState state, bool isThumb)
+		public static float Read(MapReference reference, SourceState state, bool isThumb)
 		{
 			if (state == null)
 				return 0f;

@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/Common/CustomDiState.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs
+﻿// @under-test: Engine/Input/States/SourceState.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs
 // @area: engine   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -28,25 +28,25 @@ namespace x360ce.Tests
 		static readonly DeviceType[] Believed = { DeviceType.Device, DeviceType.Mouse, DeviceType.Keyboard, DeviceType.ControlDevice, DeviceType.ScreenPointer, DeviceType.Remote, DeviceType.Supplemental };
 
 		/// <summary>Every axis, and every slider, declared relative.</summary>
-		const int AllAxes = (1 << CustomDiState.MaxAxis) - 1;
-		const int AllSliders = (1 << CustomDiState.MaxSliders) - 1;
+		const int AllAxes = (1 << SourceState.MaxAxis) - 1;
+		const int AllSliders = (1 << SourceState.MaxSliders) - 1;
 
 		static readonly UserGame Game = new UserGame { FileName = "relative-guard.exe", FileProductName = "Relative guard", EnableMask = (int)MapToMask.Controller1 };
 
 		/// <summary>The row Controller 1 converts for a device of <paramref name="type"/> whose objects declare axis 1 and slider 1 relative, every control at rest in the middle.</summary>
 		static UserSetting Converted(EngineSteps.XiStates convert, DeviceType type)
 		{
-			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), CapType = (int)type, JoState = new JoystickState(), DiState = new CustomDiState() };
+			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), CapType = (int)type, JoState = new JoystickState(), SourceState = new SourceState() };
 			ud.IsOnline = true;
 			// As the engine sets them once, when the device's objects are first read.
-			ud.DiRelativeAxisMask = CustomDiState.TrustedRelativeMask(ud.CapType, 0x1);
-			ud.DiRelativeSliderMask = CustomDiState.TrustedRelativeMask(ud.CapType, 0x1);
+			ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, 0x1);
+			ud.DiRelativeSliderMask = SourceState.TrustedRelativeMask(ud.CapType, 0x1);
 			var ps = new PadSetting { LeftTrigger = "a1", ButtonA = "a1", ButtonX = "s1", RightTrigger = "a2", PadSettingChecksum = Guid.NewGuid() };
 			var row = new UserSetting { InstanceGuid = ud.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
 			var routing = DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { ud });
-			ud.DiState.Axis[0] = -short.MinValue;
-			ud.DiState.Axis[1] = -short.MinValue;
-			ud.DiState.Sliders[0] = -short.MinValue;
+			ud.SourceState.Axis[0] = -short.MinValue;
+			ud.SourceState.Axis[1] = -short.MinValue;
+			ud.SourceState.Sliders[0] = -short.MinValue;
 			convert(routing);
 			return row;
 		}
@@ -57,9 +57,9 @@ namespace x360ce.Tests
 		{
 			foreach (var type in GamepadLike)
 			{
-				Assert.AreEqual(0, CustomDiState.TrustedRelativeMask((int)type, 0x1 | 0x2), type + " keeps an axis its objects declare relative.");
-				Assert.AreEqual(0, CustomDiState.TrustedRelativeMask((int)type, AllAxes), type + " keeps an axis when its objects declare every one relative.");
-				Assert.AreEqual(0, CustomDiState.TrustedRelativeMask((int)type, AllSliders), type + " keeps a slider when its objects declare every one relative.");
+				Assert.AreEqual(0, SourceState.TrustedRelativeMask((int)type, 0x1 | 0x2), type + " keeps an axis its objects declare relative.");
+				Assert.AreEqual(0, SourceState.TrustedRelativeMask((int)type, AllAxes), type + " keeps an axis when its objects declare every one relative.");
+				Assert.AreEqual(0, SourceState.TrustedRelativeMask((int)type, AllSliders), type + " keeps a slider when its objects declare every one relative.");
 			}
 		}
 
@@ -71,13 +71,13 @@ namespace x360ce.Tests
 				"A DirectInput type is neither read as a gamepad nor believed here: decide which.");
 			foreach (var type in Believed)
 			{
-				Assert.AreEqual(0x1 | 0x4, CustomDiState.TrustedRelativeMask((int)type, 0x1 | 0x4), type + " loses an axis its objects declare relative.");
-				Assert.AreEqual(AllAxes, CustomDiState.TrustedRelativeMask((int)type, AllAxes), type + " loses an axis when its objects declare every one relative.");
-				Assert.AreEqual(AllSliders, CustomDiState.TrustedRelativeMask((int)type, AllSliders), type + " loses a slider when its objects declare every one relative.");
-				Assert.AreEqual(0, CustomDiState.TrustedRelativeMask((int)type, 0), type + " gains an axis its objects do not declare relative.");
+				Assert.AreEqual(0x1 | 0x4, SourceState.TrustedRelativeMask((int)type, 0x1 | 0x4), type + " loses an axis its objects declare relative.");
+				Assert.AreEqual(AllAxes, SourceState.TrustedRelativeMask((int)type, AllAxes), type + " loses an axis when its objects declare every one relative.");
+				Assert.AreEqual(AllSliders, SourceState.TrustedRelativeMask((int)type, AllSliders), type + " loses a slider when its objects declare every one relative.");
+				Assert.AreEqual(0, SourceState.TrustedRelativeMask((int)type, 0), type + " gains an axis its objects do not declare relative.");
 			}
-			Assert.AreEqual(0x5, CustomDiState.TrustedRelativeMask(0, 0x5), "A type not named is not read as a gamepad.");
-			Assert.AreEqual(0x5, CustomDiState.TrustedRelativeMask(99, 0x5), "A type not named is not read as a gamepad.");
+			Assert.AreEqual(0x5, SourceState.TrustedRelativeMask(0, 0x5), "A type not named is not read as a gamepad.");
+			Assert.AreEqual(0x5, SourceState.TrustedRelativeMask(99, 0x5), "A type not named is not read as a gamepad.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
@@ -108,8 +108,8 @@ namespace x360ce.Tests
 		{
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var objects = Ui.Between(step2, "var dos = AppHelper.GetDeviceObjects(device);", "// Reading the effects lets go of the XInput library");
-			StringAssert.Contains(objects, "ud.DiRelativeAxisMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeMask);");
-			StringAssert.Contains(objects, "ud.DiRelativeSliderMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeSliderMask);");
+			StringAssert.Contains(objects, "ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, relativeMask);");
+			StringAssert.Contains(objects, "ud.DiRelativeSliderMask = SourceState.TrustedRelativeMask(ud.CapType, relativeSliderMask);");
 			Assert.AreEqual(1, Ui.Count(step2, "ud.DiRelativeAxisMask ="), "The relative axes are set somewhere else than where the objects are read.");
 			Assert.AreEqual(1, Ui.Count(step2, "ud.DiRelativeSliderMask ="), "The relative sliders are set somewhere else than where the objects are read.");
 			StringAssert.Contains(step2, "var moving = ud.Device != null && (ud.DiRelativeAxisMask | ud.DiRelativeSliderMask) != 0;",
@@ -125,7 +125,7 @@ namespace x360ce.Tests
 			var allocated = Allocations.FewestBytes(5, () =>
 			{
 				for (var i = 0; i < calls; i++)
-					kept |= CustomDiState.TrustedRelativeMask(20 + i % 3, 0x7) | CustomDiState.TrustedRelativeMask(18 + i % 2, 0x7);
+					kept |= SourceState.TrustedRelativeMask(20 + i % 3, 0x7) | SourceState.TrustedRelativeMask(18 + i % 2, 0x7);
 			});
 			Assert.AreEqual(0x7, kept);
 			Assert.IsTrue(allocated < calls, calls + " decisions handed the collector " + allocated + " bytes.");

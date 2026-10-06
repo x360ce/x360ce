@@ -104,8 +104,8 @@ namespace x360ce.App
 		static Stopwatch watch;
 
 		/// <summary>Axis and slider values worked out for the test controller, reserved so a state is filled without making anything. Shared, so one thread fills at a time: in the program, the input thread.</summary>
-		static readonly int[] TestAxis = new int[CustomDiState.MaxAxis];
-		static readonly int[] TestSliders = new int[CustomDiState.MaxSliders];
+		static readonly int[] TestAxis = new int[SourceState.MaxAxis];
+		static readonly int[] TestSliders = new int[SourceState.MaxSliders];
 
 		/// <summary>Fills the test controller's state for now into <paramref name="state"/>, making nothing.</summary>
 		public static void GetCurrentState(UserDevice ud, JoystickState state)
@@ -164,7 +164,7 @@ namespace x360ce.App
 			}
 			// Set Axis.
 			var axis = TestAxis;
-			CustomDiState.FillAxis(state, axis);
+			SourceState.FillAxis(state, axis);
 			// How many axes the controller describes, counted without making a list.
 			var axisCount = 0;
 			foreach (var item in ud.DeviceObjects)
@@ -203,10 +203,10 @@ namespace x360ce.App
 				}
 				axis[i] = position;
 			}
-			CustomDiState.SetStateFromAxis(state, axis);
+			SourceState.SetStateFromAxis(state, axis);
 			// Get sliders array.
 			var sliders = TestSliders;
-			CustomDiState.FillSliders(state, sliders);
+			SourceState.FillSliders(state, sliders);
 			// Set sliders.
 			for (int i = 0; i < sliders.Length; i++)
 			{
@@ -240,7 +240,7 @@ namespace x360ce.App
 				}
 				sliders[i] = position;
 			}
-			CustomDiState.SetStateFromSliders(state, sliders);
+			SourceState.SetStateFromSliders(state, sliders);
 		}
 	}
 

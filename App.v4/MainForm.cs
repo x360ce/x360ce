@@ -2123,7 +2123,7 @@ namespace x360ce.App
 			if (d != null)
 			{
 				// If exception when getting Joystic properties in
-				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
+				// SourceState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
 				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
 					d.Module == "SharpDX.DirectInput" &&
 					d.NativeApiCode == "DIERR_NOTFOUND"

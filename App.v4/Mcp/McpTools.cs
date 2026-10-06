@@ -113,7 +113,7 @@ namespace x360ce.App.Mcp
 			// with are copied once here. The copies are read from a device list taken once, and nothing waits for the
 			// engine or the window, so the window keeps drawing while a person reaches for a button.
 			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
-			var before = devices.ToDictionary(d => d.InstanceGuid, d => d.DiState == null ? null : d.DiState.Clone());
+			var before = devices.ToDictionary(d => d.InstanceGuid, d => d.SourceState == null ? null : d.SourceState.Clone());
 			var until = DateTime.Now.AddSeconds(seconds);
 			while (DateTime.Now < until)
 			{
@@ -121,7 +121,7 @@ namespace x360ce.App.Mcp
 				foreach (var device in devices)
 				{
 					var old = before[device.InstanceGuid];
-					var now = device.DiState;
+					var now = device.SourceState;
 					if (old == null || now == null)
 						continue;
 					var moved = Recorder.CompareTo(old, now, default(MapCode));

@@ -94,7 +94,7 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
+				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
 				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
 				for (int p = 0; p < pages.Length; p++)
 				{
@@ -116,16 +116,16 @@ namespace x360ce.App.Controls
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
-					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
+					var stopped = _Imager.Recorder.StopRecording(ud.SourceState);
 					// If value was found and recording stopped then...
 					if (stopped)
 					{
 						// Device not initialized yet.
-						if (ud.DiState == null)
+						if (ud.SourceState == null)
 							RecordAllMaps.Clear();
 						if (RecordAllMaps.Count == 0)
 						{
-							if (ud.DiState != null)
+							if (ud.SourceState != null)
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.SetHelpText("");
@@ -193,13 +193,13 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = GetSelectedDevice();
-			if (ud != null && ud.DiState != null)
+			if (ud != null && ud.SourceState != null)
 			{
 				// Get current pad setting.
 				var ps = GetSelectedPadSetting();
 				Map map;
 				// LeftThumbX
-				var axis = ud.DiState.Axis;
+				var axis = ud.SourceState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				DrawMappedPoint(LeftThumbXUserControl, map, axis, newState.Gamepad.LeftThumbX);
 				// LeftThumbY
@@ -1120,10 +1120,10 @@ namespace x360ce.App.Controls
 					// Add Axes.
 					mi = new ToolStripMenuItem("Axes");
 					DiMenuStrip.Items.Add(mi);
-					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Half", "HAxis {0}", "x{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Axis {0}", "a{0}", SourceState.MaxAxis, ud.DiAxeMask);
 				}
 				if (ud.DiSliderMask > 0)
 				{
@@ -1131,10 +1131,10 @@ namespace x360ce.App.Controls
 					mi = new ToolStripMenuItem("Sliders");
 					DiMenuStrip.Items.Add(mi);
 					// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Half", "HSlider {0}", "h{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Slider {0}", "s{0}", SourceState.MaxSliders, ud.DiSliderMask);
 				}
 				// Add D-Pads.
 				if (ud.CapPovCount > 0)

@@ -56,7 +56,7 @@ namespace x360ce.App.DInput
 				// If setting was not found then continue.
 				if (maps == null)
 					continue;
-				var diState = ud.DiState;
+				var diState = ud.SourceState;
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
@@ -366,7 +366,7 @@ namespace x360ce.App.DInput
 		/// a result neither of them describes. Switching a row over writes the settings out as part
 		/// of the formula, so nothing is lost by them no longer being read.
 		/// </remarks>
-		void ApplyExpression(Map map, CustomDiState diState, ref Gamepad gp)
+		void ApplyExpression(Map map, SourceState diState, ref Gamepad gp)
 		{
 			// A stick is read from the middle, a trigger and a button from one end, exactly as the
 			// ordinary mapping path already does through GetThumbValue's own thumb flag.

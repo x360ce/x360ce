@@ -172,7 +172,7 @@ namespace x360ce.Tests
 		static void AssertMeasured(UserDevice ud, int rows)
 		{
 			Assert.AreEqual(rows, DeviceRouting.Current.Rows.Length, "The rows were not routed, so converting them was not measured.");
-			Assert.IsNotNull(ud.DiState, "The test controller was not read, so reading it was not measured.");
+			Assert.IsNotNull(ud.SourceState, "The test controller was not read, so reading it was not measured.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("performance")]

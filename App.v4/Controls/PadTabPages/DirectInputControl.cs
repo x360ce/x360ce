@@ -325,16 +325,16 @@ namespace x360ce.App.Controls
 		/// <summary>The tab's own copy of the state being drawn. It takes turns with <see cref="oldState"/>.</summary>
 		JoystickState drawState = new JoystickState();
 		/// <summary>Axis and slider values on their way from the engine's state to the tab's copy, reserved so a copy makes nothing.</summary>
-		readonly int[] copyAxis = new int[CustomDiState.MaxAxis];
-		readonly int[] copySliders = new int[CustomDiState.MaxSliders];
+		readonly int[] copyAxis = new int[SourceState.MaxAxis];
+		readonly int[] copySliders = new int[SourceState.MaxSliders];
 
 		/// <summary>Copies every value of a DirectInput state into one of the tab's own.</summary>
 		void CopyState(JoystickState from, JoystickState into)
 		{
-			CustomDiState.FillAxis(from, copyAxis);
-			CustomDiState.SetStateFromAxis(into, copyAxis);
-			CustomDiState.FillSliders(from, copySliders);
-			CustomDiState.SetStateFromSliders(into, copySliders);
+			SourceState.FillAxis(from, copyAxis);
+			SourceState.SetStateFromAxis(into, copyAxis);
+			SourceState.FillSliders(from, copySliders);
+			SourceState.SetStateFromSliders(into, copySliders);
 			Array.Copy(from.PointOfViewControllers, into.PointOfViewControllers, into.PointOfViewControllers.Length);
 			Array.Copy(from.Buttons, into.Buttons, into.Buttons.Length);
 		}
