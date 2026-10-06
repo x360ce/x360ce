@@ -396,12 +396,13 @@ namespace x360ce.App
 		/// <summary>
 		/// Must be executed before program close.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>False when HID Guardian's list cannot be written, in which case nothing is changed.</returns>
 		public static bool UnhideAllDevices()
 		{
 			var affected = ViGEm.HidGuardianHelper.GetAffected();
 			// Clear list of hidden devices.
-			ViGEm.HidGuardianHelper.ClearAffected();
+			if (!ViGEm.HidGuardianHelper.ClearAffected())
+				return false;
 			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			// Unhide all devices.
 			for (int i = 0; i < devices.Length; i++)

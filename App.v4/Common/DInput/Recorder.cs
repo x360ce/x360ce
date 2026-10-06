@@ -248,7 +248,7 @@ namespace x360ce.App
 					if (oldState.Povs[i] != newState.Povs[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-						var v = newState.Povs[0];
+						var v = newState.Povs[i];
 						if ((DPadEnum)v == DPadEnum.Up)
 							list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Up.ToString()));
 						if ((DPadEnum)v == DPadEnum.Right)

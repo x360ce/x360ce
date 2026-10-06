@@ -1454,6 +1454,23 @@ namespace x360ce.App
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				// Static events keep this window alive and call into its disposed controls, also when it
+				// is disposed without being closed.
+				SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+				SettingsManager.Current.ConfigLoaded -= Current_ConfigLoaded;
+				SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
+				if (Global.DHelper != null)
+				{
+					Global.DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
+					Global.DHelper.StatesRetrieved -= DHelper_StatesRetrieved;
+					Global.DHelper.XInputReloaded -= DHelper_XInputReloaded;
+				}
+			}
 			if (disposing && (components != null))
 			{
 				if (_Mutex != null)
@@ -1512,6 +1529,9 @@ namespace x360ce.App
 		{
 			// If pad controls not initializes yet then return.
 			if (PadControls == null)
+				return;
+			// The event is static and can arrive while the window is going away; its controls are gone then.
+			if (IsDisposed || Disposing || GameToCustomizeComboBox.ComboBox == null)
 				return;
 			var game = SettingsManager.CurrentGame;
 			if (game == null)

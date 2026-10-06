@@ -117,5 +117,18 @@ namespace x360ce.Tests
 			Assert.IsFalse(load.Contains("LogHelper.Current.Write"),
 				"LoadLibrary writes its own failure, so a library that keeps failing is written on every gated attempt.");
 		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A copy of the library that will not load is written again, and its failure names the file")]
+		public void A_damaged_copy_is_written_again()
+		{
+			// A copy cut short kept its name and was never written again, so every start failed with
+			// "%1 is not a valid Win32 application" and a report that named no file (4.24.60.0 report).
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "ViGEm", "Client", "ViGEmClient.x360ce.cs"));
+			var load = Ui.Between(source, "static void LoadLibrary()", "public static void FreeLibrary()");
+			StringAssert.Contains(load, "File.Move(partName, fileName);", "The copy is written under its own name, so one cut short keeps it.");
+			StringAssert.Contains(load, "File.Delete(fileName);", "A copy that fails to load stays and fails every time.");
+			StringAssert.Contains(load, "\"Could not load \" + fileName", "The failure does not name the file.");
+		}
 	}
 }

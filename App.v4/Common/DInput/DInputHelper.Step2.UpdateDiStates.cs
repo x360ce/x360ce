@@ -27,6 +27,7 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80004001), // E_NOTIMPL, the device does not implement the effect it was asked for
 			unchecked((int)0x80070057), // E_INVALIDARG, the device refuses the effect's settings; ForceFeedbackState does not ask again
 			unchecked((int)0x80004005), // E_FAIL, the driver's answer while a device is going away or resetting; a read that gets it acquires the device again on the next poll
+			unchecked((int)0x800703E3), // ERROR_OPERATION_ABORTED, Windows cancelled the device's I/O as it went away or reset
 		};
 
 		/// <summary>Whether a device call's failure is a device condition, handled by the next poll, rather than a fault to report.</summary>

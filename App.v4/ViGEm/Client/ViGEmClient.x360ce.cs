@@ -636,25 +636,25 @@ namespace Nefarius.ViGEm.Client
 					var sr = Program.GetResourceStream(name);
 					if (sr == null)
 						return;
-					FileStream sw = null;
-					sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-					var buffer = new byte[1024];
-					while (true)
-					{
-						var count = sr.Read(buffer, 0, buffer.Length);
-						if (count == 0)
-							break;
-						sw.Write(buffer, 0, count);
-					}
-					sr.Close();
-					sw.Close();
+					// Written under another name and then moved, so a copy cut short never takes the file's name.
+					var partName = fileName + ".part";
+					using (sr)
+					using (var sw = new FileStream(partName, FileMode.Create, FileAccess.Write))
+						sr.CopyTo(sw);
+					File.Move(partName, fileName);
 				}
 				_LibraryName = fileName;
 				// Load library into memory.
 				Exception loadException;
 				libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary(_LibraryName, out loadException);
 				if (libHandle == IntPtr.Zero)
-					LastLoadException = loadException;
+				{
+					LastLoadException = new Exception("Could not load " + fileName + ": " + loadException.Message, loadException);
+					// A damaged copy is never written again while it is there, so it goes, and the next attempt writes it anew.
+					try { File.Delete(fileName); }
+					catch (IOException) { }
+					catch (UnauthorizedAccessException) { }
+				}
 			}
 			catch (Exception ex)
 			{

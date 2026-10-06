@@ -2,8 +2,10 @@
 // @area: games   @layer: unit
 using JocysCom.ClassLibrary.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.Engine.Data;
@@ -40,6 +42,10 @@ namespace x360ce.Tests
 					for (var i = 0; i < 8; i++)
 						games.Add(new UserGame { FileName = "game" + i + ".exe", FullPath = @"C:\Games\game" + i + ".exe", IsEnabled = i % 2 == 0 });
 					grid.DataSource = games;
+					// The program listens to its game list as well, and sorting raises that list's change too.
+					var listChanged = (ListChangedEventHandler)Delegate.CreateDelegate(typeof(ListChangedEventHandler), panel,
+						typeof(GamesGridUserControl).GetMethod("Games_Items_ListChanged", BindingFlags.Instance | BindingFlags.NonPublic));
+					games.ListChanged += listChanged;
 					Application.DoEvents();
 					Assert.IsTrue(grid.Rows.Cast<DataGridViewRow>().Any(x => !x.Visible), "The filter hid nothing, so this measured nothing.");
 					// The current cell on the last game shown, so sorting moves the row it stands on.

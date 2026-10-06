@@ -52,7 +52,7 @@
 				var method = GetMethod<XInputEnableDelegate>("XInputEnable");
 				method(enable);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -65,7 +65,7 @@
 				var method = GetMethod<XInputGetBatteryInformationDelegate>("XInputGetBatteryInformation");
 				return method(userIndex, (int)devType, out batteryInformation);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -77,7 +77,7 @@
 				var method = GetMethod<XInputGetAudioDeviceIdsDelegate>("XInputGetAudioDeviceIds");
 				return method(dwUserIndex, renderDeviceIdRef, renderCountRef, captureDeviceIdRef, captureCountRef);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -90,7 +90,7 @@
 				var method = GetMethod<XInputGetCapabilitiesDelegate>("XInputGetCapabilities");
 				return method(dwUserIndex, (int)dwFlags, out pCapabilities);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -104,7 +104,7 @@
 				var method = GetMethod<XInputGetDSoundAudioDeviceGuidsDelegate>("XInputGetDSoundAudioDeviceGuids");
 				return method(dwUserIndex, out dSoundRenderGuid, out dSoundCaptureGuid);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -117,7 +117,7 @@
 				var method = GetMethod<XInputGetKeystrokeDelegate>("XInputGetKeystroke");
 				return method(dwUserIndex, dwReserved, out pKeystroke);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -143,7 +143,7 @@
 				}
 				return method(dwUserIndex, out pState);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -155,7 +155,7 @@
 				var method = GetMethod<XInputSetStateDelegate>("XInputSetState");
 				return method(dwUserIndex, ref pVibration);
 			}
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -212,7 +212,7 @@
 		{
 			if (!IsResetSupported) return ErrorCode.NotSupported;
 			try { return GetMethod<ResetDelegate>("Reset")(); }
-			catch (AccessViolationException ex) { throw new Exception(ex.Message); }
+			catch (AccessViolationException ex) { throw LibraryFault(ex); }
 			catch (Exception) { throw; }
 		}
 
@@ -234,6 +234,36 @@
 
 		internal static IntPtr libHandle;
 		public static bool IsLoaded { get { return libHandle != IntPtr.Zero; } }
+
+		/// <summary>A fault inside the loaded XInput library, as an exception that names the library.</summary>
+		/// <remarks>
+		/// The fault is in another program's code, often a replacement XInput file a game or tool left behind. A report that
+		/// names the file and its version says which one, and support can tell the user to remove it.
+		/// </remarks>
+		/// <param name="fault">The fault, kept as the inner exception.</param>
+		public static Exception LibraryFault(Exception fault)
+		{
+			var library = string.IsNullOrEmpty(_LibraryName) ? "(none loaded)" : _LibraryName;
+			var handle = libHandle;
+			if (handle != IntPtr.Zero)
+			{
+				try
+				{
+					using (var process = System.Diagnostics.Process.GetCurrentProcess())
+						foreach (System.Diagnostics.ProcessModule module in process.Modules)
+							if (module.BaseAddress == handle)
+							{
+								library = module.FileName + " " + module.FileVersionInfo.FileVersion;
+								break;
+							}
+				}
+				catch (System.ComponentModel.Win32Exception)
+				{
+					// The module list could not be read; the library's name is still known.
+				}
+			}
+			return new Exception("The XInput library " + library + " failed: " + fault.Message, fault);
+		}
 
 		internal static T GetMethod<T>(string methodName)
 		{

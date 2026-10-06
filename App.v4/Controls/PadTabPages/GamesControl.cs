@@ -248,14 +248,21 @@ namespace x360ce.App.Controls
 
 		private void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
+			ShowHideRowsAfterBinding();
 		}
 
 		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
 		{
-			// Once whatever bound the list has finished, not during it. Sorting binds the list again
-			// with every row showing and then puts the current cell back; rows hidden in between left
-			// that cell on a hidden row, which Windows Forms refuses by throwing.
+			ShowHideRowsAfterBinding();
+		}
+
+		/// <summary>Shows the games the filter lets through, once whatever changed the list has finished.</summary>
+		/// <remarks>
+		/// Sorting changes the list and binds it again with every row showing, then puts the current cell back.
+		/// Rows hidden in between leave that cell on a hidden row, which Windows Forms refuses by throwing.
+		/// </remarks>
+		void ShowHideRowsAfterBinding()
+		{
 			if (IsHandleCreated)
 				BeginInvoke((Action)(() => ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton)));
 			else

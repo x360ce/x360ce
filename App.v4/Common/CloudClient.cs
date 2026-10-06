@@ -220,14 +220,30 @@ namespace x360ce.App
 
 		private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
 		{
-			IsNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+			RefreshNetworkAvailable();
 		}
 
 		public bool IsNetworkAvailable;
 
 		public void NetworkInformation_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
 		{
-			IsNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+			RefreshNetworkAvailable();
+		}
+
+		/// <summary>Reads whether a network is up, keeping the last answer when Windows cannot list its network adapters.</summary>
+		/// <remarks>
+		/// Windows can fail the list while it is changing it ("The pipe is being closed"). The change that follows
+		/// asks again.
+		/// </remarks>
+		void RefreshNetworkAvailable()
+		{
+			try
+			{
+				IsNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+			}
+			catch (System.Net.NetworkInformation.NetworkInformationException)
+			{
+			}
 		}
 
 		#endregion

@@ -388,18 +388,22 @@ namespace x360ce.App.Controls
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			AppHelper.UnhideAllDevices();
+			if (!AppHelper.UnhideAllDevices())
+				ShowHidGuardianPermissionDenied();
 		}
 
 		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			var canModify = AppHelper.SynchronizeToHidGuardian();
-			if (!canModify)
-			{
-				var form = new MessageBoxForm();
-				form.StartPosition = FormStartPosition.CenterParent;
-				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
+			if (!AppHelper.SynchronizeToHidGuardian())
+				ShowHidGuardianPermissionDenied();
+		}
+
+		/// <summary>Says that HID Guardian's settings cannot be written and how to allow it.</summary>
+		void ShowHidGuardianPermissionDenied()
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]
