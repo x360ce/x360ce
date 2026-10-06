@@ -1,4 +1,4 @@
-﻿## [4.25.23.0] - 2026-10-06
+﻿## [4.25.25.0] - 2026-10-06
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: A controller going away could show an error report.
@@ -9,6 +9,8 @@
 - Fixed: A network change could show an error report.
 - Fixed: Recording a direction on POV 2, 3 or 4 recorded nothing.
 - Fixed: The Force Feedback page did not say why the centering spring did nothing (Issue #1639, emreyagdan64-prog).
+- Fixed: A diagonal on a POV lit neither of its directions in the Source panel.
+- Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
 - Changed: The window title shows 64-bit or 32-bit.
 - Changed: Sharp text and icons on screens set above 100%.

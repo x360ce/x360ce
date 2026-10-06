@@ -76,21 +76,11 @@ namespace x360ce.App.DInput
 				{
 					// Get degree value from the POV.
 					int povdeg = diState.Povs[p];
-					// If POV is pressed into one of the directions then...
+					// If POV is pressed into one of the directions then up, right, down and left, a diagonal pressing two.
 					if (povdeg >= 0)
 					{
-						// Split PoV degrees into 8 groups by
-						// converting PoV degree from 0 to 36000 to number from 0 to 7.
-						// This will allow to have more flexible degree values mapped to buttons.
-						var y = ((2250 + povdeg) / 4500) % 8;
-						// XINPUT_GAMEPAD_DPAD_UP
-						dPadButtons[p * 4 + 0] = (y >= 0 && y <= 1) || y == 7;
-						// XINPUT_GAMEPAD_DPAD_RIGHT
-						dPadButtons[p * 4 + 1] = (y >= 1 && y <= 3);
-						// XINPUT_GAMEPAD_DPAD_DOWN
-						dPadButtons[p * 4 + 2] = (y >= 3 && y <= 5);
-						// XINPUT_GAMEPAD_DPAD_LEFT
-						dPadButtons[p * 4 + 3] = (y >= 5 && y <= 7);
+						for (var d = 0; d < 4; d++)
+							dPadButtons[p * 4 + d] = ConvertHelper.IsPovDirectionPressed(povdeg, d);
 					}
 				}
 

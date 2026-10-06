@@ -122,7 +122,7 @@ namespace x360ce.App.Controls
 		/// <summary>Repaints only when a reading changed, which the model reports.</summary>
 		public void Refresh(Engine.SourceState state)
 		{
-			if (InputChips.Update(_Chips, state))
+			if (InputChips.Update(_Chips, state, InputChips.Now))
 				Invalidate();
 		}
 

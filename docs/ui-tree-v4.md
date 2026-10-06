@@ -81,9 +81,9 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
 [Section]   │   │   ├── Buttons                                                         # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
 [Group]     │   │   │   └── Button chips -> InputChipGroup                              # The device's buttons, numbered as the mapping list numbers them.
-[Section]   │   │   ├── Axes                                                            # One chip per axis with its reading, lit while it is away from the centre.
+[Section]   │   │   ├── Axes                                                            # One chip per axis with its reading, lit while it moves and for a second after.
 [Group]     │   │   │   └── Axis chips -> InputChipGroup                                # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
-[Section]   │   │   ├── Sliders                                                         # One chip per slider with its reading, lit while it is moved from zero.
+[Section]   │   │   ├── Sliders                                                         # One chip per slider with its reading, lit while it moves and for a second after.
 [Group]     │   │   │   └── Slider chips -> InputChipGroup                              # The device's sliders, numbered as the mapping list numbers them.
 [Section]   │   │   └── POVs                                                            # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
 [Group]     │   │       └── POV chips -> InputChipGroup                                 # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
@@ -515,7 +515,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.23 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.25 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

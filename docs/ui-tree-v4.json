@@ -375,7 +375,7 @@
 						},
 						{
 							"Name":"Axes",
-							"Description":"One chip per axis with its reading, lit while it is away from the centre.",
+							"Description":"One chip per axis with its reading, lit while it moves and for a second after.",
 							"Role":"Section",
 							"Id":"AxesGroupBox",
 							"Items":[
@@ -391,7 +391,7 @@
 						},
 						{
 							"Name":"Sliders",
-							"Description":"One chip per slider with its reading, lit while it is moved from zero.",
+							"Description":"One chip per slider with its reading, lit while it moves and for a second after.",
 							"Role":"Section",
 							"Id":"SlidersGroupBox",
 							"Items":[
@@ -3327,7 +3327,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.25.23 (Build: 2026-10-06) 64-bit - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.25.25 (Build: 2026-10-06) 64-bit - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",
