@@ -64,7 +64,7 @@ namespace x360ce.App.Controls
 	/// An axis or a slider lights while it moves and for <see cref="HoldMs"/> after, wherever it rests.
 	/// A pedal or a throttle rests at one end, a stick in the middle and a switch anywhere, and nothing
 	/// says which, so a rule about where a control rests lit pedals and sliders all the time. Wobble
-	/// smaller than <see cref="ConvertHelper.AxisButtonReleaseMargin"/> is not movement. v5's General tab
+	/// smaller than <see cref="MoveStep"/> is not movement. v5's General tab
 	/// still lights an axis away from the middle and a slider above an eighth of its travel.
 	///
 	/// v5's General tab over-counts axes from <c>CapAxeCount</c>, numbers a sparse device's axes
@@ -81,8 +81,18 @@ namespace x360ce.App.Controls
 		public const int PovRest = -1;
 
 		/// <summary>How long an axis or a slider stays lit after it last moved, in milliseconds.</summary>
-		/// <remarks>Long enough to span two interface ticks while the window is behind, so a moving control does not blink.</remarks>
-		public const int HoldMs = 1000;
+		/// <remarks>
+		/// The time Windows blinks the text cursor by default. It still spans two interface ticks while the window is
+		/// behind, five a second, so a control moving slowly does not blink.
+		/// </remarks>
+		public const int HoldMs = 530;
+
+		/// <summary>How far an axis or a slider must go from where it last moved from to count as moving, of 65535.</summary>
+		/// <remarks>
+		/// Just over two steps of an 8-bit axis, 257 each, so a reading that wobbles a step either side of where it rests
+		/// never reaches it, while a slow turn or press does: on a 900-degree wheel it is about 7 degrees.
+		/// </remarks>
+		public const int MoveStep = 520;
 
 		static readonly string[] PovDirectionCaptions = { "U", "R", "D", "L" };
 
@@ -177,7 +187,7 @@ namespace x360ce.App.Controls
 
 		/// <summary>Whether an axis or a slider has moved within the last <see cref="HoldMs"/>.</summary>
 		/// <remarks>
-		/// A move is a reading further than <see cref="ConvertHelper.AxisButtonReleaseMargin"/> from where the control
+		/// A move is a reading further than <see cref="MoveStep"/> from where the control
 		/// last moved from, which then becomes the new place to move from. A slow slide adds up until it is a move; a
 		/// wobble around one place never is. The first reading only sets that place.
 		/// </remarks>
@@ -188,7 +198,7 @@ namespace x360ce.App.Controls
 				chip.Anchor = value;
 				chip.Anchored = true;
 			}
-			else if (System.Math.Abs(value - chip.Anchor) > ConvertHelper.AxisButtonReleaseMargin)
+			else if (System.Math.Abs(value - chip.Anchor) > MoveStep)
 			{
 				chip.Anchor = value;
 				chip.MovedAt = nowMs;

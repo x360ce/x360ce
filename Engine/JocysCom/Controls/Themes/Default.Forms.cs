@@ -25,7 +25,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// that use <see cref="SystemColors"/> follow without change. <see cref="Apply"/> covers what Windows
 	/// draws itself: native backgrounds, buttons, check boxes, drop-down lists, tab strips, sliders, scrollbars and
 	/// title bars.
-	/// The light theme is the Windows colours.
+	/// The light theme is the Windows colours. Its tab strips are painted with the Windows tab artwork, so that the
+	/// text of the tabs not chosen can be dimmer, as the WPF programs draw it.
 	/// <para>
 	/// The colours are read as XML from Default_DarkTheme.xaml, embedded in the program as a resource, and no
 	/// WPF type is named here: loading WPF makes a Windows Forms process DPI aware mid-run.
@@ -267,6 +268,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public ControlStyles? PaintStyles;
 			public List<KeyValuePair<DataGridViewButtonColumn, FlatStyle>> ButtonColumns;
 			public bool NativeDark;
+			/// <summary>The tab under the mouse on a tab strip painted in the light theme, or -1.</summary>
+			public int HotTab = -1;
 		}
 
 		static readonly ConditionalWeakTable<Control, State> States = new ConditionalWeakTable<Control, State>();
@@ -299,8 +302,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 			if (state.Dark == IsDark)
 				return;
-			// A control the dark theme never changed is left exactly as it is.
-			if (state.Dark == null && !IsDark)
+			// A control the dark theme never changed is left exactly as it is, but for a tab strip, which the light
+			// theme paints too.
+			if (state.Dark == null && !IsDark && !PaintsTabs(control))
 			{
 				state.Dark = false;
 				return;
@@ -455,7 +459,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					strip.RenderMode = state.RenderMode;
 			}
 			if (control is TabControl tabs && tabs.Alignment == TabAlignment.Top)
-				SetPaintedHere(tabs, state, IsDark, Tabs_Paint);
+			{
+				SetPaintedHere(tabs, state, PaintsTabs(tabs), Tabs_Paint);
+				// Windows lights the tab under the mouse; painted here in the light theme, the strip does it itself.
+				tabs.MouseMove -= Tabs_MouseMove;
+				tabs.MouseLeave -= Tabs_MouseLeave;
+				if (!IsDark && PaintsTabs(tabs))
+				{
+					tabs.MouseMove += Tabs_MouseMove;
+					tabs.MouseLeave += Tabs_MouseLeave;
+				}
+			}
 			if (control is TrackBar)
 				SetPaintedHere(control, state, IsDark, Track_Paint);
 		}
@@ -473,7 +487,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				return;
 			// Windows Forms gives no font to the window of a control painted here, and a tab strip
 			// without one measures its tabs in the larger system font.
-			if (control is TabControl && IsDark)
+			if (PaintsTabs(control))
 				SetWindowFontMethod?.Invoke(control, null);
 			if (WindowsBuild < 17763)
 				return;
@@ -633,9 +647,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// The tab strip and the slider have no dark Windows style, so in the dark theme they are painted here,
-		/// double buffered.
+		/// double buffered. The light theme paints the tab strip too, with the Windows artwork, to dim the text of
+		/// the tabs not chosen.
 		/// </summary>
-		/// <remarks>The light theme puts back the styles the control had, flag by flag.</remarks>
+		/// <remarks>A control no longer painted here gets back the styles it had, flag by flag.</remarks>
 		static void SetPaintedHere(Control control, State state, bool paintHere, PaintEventHandler paint)
 		{
 			if (state.PaintStyles == null)
@@ -651,10 +666,36 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			control.Invalidate();
 		}
 
+		/// <summary>The text of a tab not chosen in the light theme: ForegroundTab in Default.xaml, as the WPF programs draw it.</summary>
+		static readonly Color LightTabText = Color.FromArgb(0x5A, 0x5A, 0x5A);
+
+		static readonly PropertyInfo ShowFocusCuesProperty = typeof(Control).GetProperty("ShowFocusCues", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>Whether Windows draws tabs in a visual style, whose artwork the light theme paints a tab strip with.</summary>
+		static bool HasTabArtwork
+		{
+			get { return VisualStyleRenderer.IsSupported && VisualStyleRenderer.IsElementDefined(VisualStyleElement.Tab.TabItem.Normal); }
+		}
+
+		/// <summary>
+		/// Whether a tab strip is painted here: in the dark theme, and in the light theme wherever Windows has tab artwork
+		/// and the program draws no tabs of its own.
+		/// </summary>
+		static bool PaintsTabs(Control control)
+		{
+			return control is TabControl tabs && tabs.Alignment == TabAlignment.Top
+				&& (IsDark || (HasTabArtwork && tabs.Appearance == TabAppearance.Normal && tabs.DrawMode == TabDrawMode.Normal));
+		}
+
 		static void Tabs_Paint(object sender, PaintEventArgs e)
 		{
 			var tabs = (TabControl)sender;
 			var g = e.Graphics;
+			if (!IsDark && HasTabArtwork)
+			{
+				PaintTabArtwork(tabs, g);
+				return;
+			}
 			var back = tabs.Parent?.BackColor ?? SystemColors.Control;
 			var border = GetColor("BorderDark", SystemColors.ControlDark);
 			using (var brush = new SolidBrush(back))
@@ -696,6 +737,109 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
 			}
+		}
+
+		/// <summary>
+		/// The light tab strip as Windows draws it, with the tab artwork of its visual style, but for the text of the tabs
+		/// not chosen, which is dimmer.
+		/// </summary>
+		/// <remarks>
+		/// The parts, sizes and offsets are those Windows uses, compared pixel by pixel with strips Windows drew in one row
+		/// and in several, with each tab chosen, under the mouse and with the keyboard focus. The first tab of a row, and
+		/// the last tab while it is not chosen, have artwork of their own. The chosen tab is two pixels larger each way
+		/// and two more at the bottom, where it opens into the page; its content sits a pixel higher and that of the
+		/// others a pixel lower.
+		/// </remarks>
+		static void PaintTabArtwork(TabControl tabs, Graphics g)
+		{
+			using (var brush = new SolidBrush(tabs.Parent?.BackColor ?? SystemColors.Control))
+				g.FillRectangle(brush, tabs.ClientRectangle);
+			if (tabs.TabCount == 0)
+				return;
+			State state;
+			var hot = States.TryGetValue(tabs, out state) ? state.HotTab : -1;
+			var rects = new Rectangle[tabs.TabCount];
+			var bottom = 0;
+			for (var i = 0; i < rects.Length; i++)
+			{
+				rects[i] = tabs.GetTabRect(i);
+				bottom = Math.Max(bottom, rects[i].Bottom);
+			}
+			TabRenderer.DrawTabPage(g, new Rectangle(0, bottom, tabs.ClientSize.Width, tabs.ClientSize.Height - bottom));
+			var renderer = new VisualStyleRenderer(VisualStyleElement.Tab.TabItem.Normal);
+			// The chosen tab is drawn last, over the others.
+			for (var pass = 0; pass < 2; pass++)
+				for (var i = 0; i < rects.Length; i++)
+				{
+					var selected = i == tabs.SelectedIndex;
+					if (selected != (pass == 1))
+						continue;
+					var first = true;
+					for (var j = 0; j < rects.Length; j++)
+						if (rects[j].Y == rects[i].Y)
+							first &= rects[j].X >= rects[i].X;
+					var last = i == rects.Length - 1 && !selected;
+					var bounds = rects[i];
+					if (selected)
+						bounds = new Rectangle(bounds.X - 2, bounds.Y - 2, bounds.Width + 4, bounds.Height + 4);
+					var itemState = !tabs.Enabled ? TabItemState.Disabled
+						: selected ? TabItemState.Selected
+						: i == hot ? TabItemState.Hot
+						: TabItemState.Normal;
+					// TABP_TABITEM, or TABP_TOPTABITEM for the chosen tab, then its left, right or both edges variant.
+					renderer.SetParameters("TAB", (selected ? 5 : 1) + (first ? 1 : 0) + (last ? 2 : 0), (int)itemState);
+					renderer.DrawBackground(g, bounds);
+					var content = renderer.GetBackgroundContentRectangle(g, bounds);
+					content.Offset(0, selected ? -1 : 1);
+					var page = tabs.TabPages[i];
+					var index = GetTabImageIndex(tabs, page);
+					if (index >= 0)
+					{
+						// Drawn by the list itself, as in the dark strip.
+						var size = tabs.ImageList.ImageSize;
+						tabs.ImageList.Draw(g, content.X + 6 + (selected ? 2 : 0), content.Y + (content.Height - size.Height) / 2, index);
+						content = new Rectangle(content.X + size.Width + 6, content.Y, content.Width - size.Width - 6, content.Height);
+					}
+					content.Offset(1, 0);
+					var text = !tabs.Enabled ? SystemColors.GrayText
+						: selected || SystemInformation.HighContrast ? SystemColors.ControlText
+						: LightTabText;
+					TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
+						TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
+				}
+			// Windows marks the chosen tab while the strip has the keyboard focus and focus is being shown.
+			if (tabs.SelectedIndex >= 0 && tabs.Focused && (bool)(ShowFocusCuesProperty?.GetValue(tabs, null) ?? false))
+			{
+				var focus = rects[tabs.SelectedIndex];
+				focus.Inflate(-1, -1);
+				ControlPaint.DrawFocusRectangle(g, focus);
+			}
+		}
+
+		static void Tabs_MouseMove(object sender, MouseEventArgs e)
+		{
+			SetHotTab((TabControl)sender, e.Location);
+		}
+
+		static void Tabs_MouseLeave(object sender, EventArgs e)
+		{
+			SetHotTab((TabControl)sender, null);
+		}
+
+		/// <summary>Lights the tab under the mouse, as Windows does, and repaints the strip only when that tab changes.</summary>
+		static void SetHotTab(TabControl tabs, Point? mouse)
+		{
+			State state;
+			if (!States.TryGetValue(tabs, out state))
+				return;
+			var hot = -1;
+			for (var i = 0; mouse.HasValue && i < tabs.TabCount; i++)
+				if (tabs.GetTabRect(i).Contains(mouse.Value))
+					hot = i;
+			if (hot == state.HotTab)
+				return;
+			state.HotTab = hot;
+			tabs.Invalidate();
 		}
 
 		/// <summary>The place of a page's image in its tab control's list, or -1 when it has none.</summary>

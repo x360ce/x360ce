@@ -17,11 +17,11 @@ namespace x360ce.App.UiTree
 			d["InputUserControl.ButtonChips"] = new Text("Button chips",
 				"The device's buttons, numbered as the mapping list numbers them.");
 			d["InputUserControl.AxesGroupBox"] = new Text("Axes",
-				"One chip per axis with its reading, lit while it moves and for a second after.");
+				"One chip per axis with its reading, lit while it moves and for half a second after.");
 			d["InputUserControl.AxisChips"] = new Text("Axis chips",
 				"The device's axes, numbered by the slot each answers to, as the mapping list numbers them.");
 			d["InputUserControl.SlidersGroupBox"] = new Text("Sliders",
-				"One chip per slider with its reading, lit while it moves and for a second after.");
+				"One chip per slider with its reading, lit while it moves and for half a second after.");
 			d["InputUserControl.SliderChips"] = new Text("Slider chips",
 				"The device's sliders, numbered as the mapping list numbers them.");
 			d["InputUserControl.PovsGroupBox"] = new Text("POVs",

@@ -1,7 +1,8 @@
-﻿## [3.6.9.0] - 2026-10-05
+﻿## [3.6.10.0] - 2026-10-06
 
 - Changed: Pastel icons, sharper controller pictures and button glyphs.
 - Changed: Sharp text and icons on screens set above 100%.
+- Changed: In the light theme, the tabs not chosen have dimmer text.
 - Added: Light and dark themes; System follows Windows.
 
 ## [3.5.10.0] - 2026-09-27

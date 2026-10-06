@@ -84,16 +84,16 @@ namespace x360ce.Tests
 			Assert.IsFalse(chips.Any(c => c.Lit), "Everything at rest lights nothing.");
 
 			state.Buttons[2] = true;
-			state.Axis[0] = InputChips.AxisCentre + ConvertHelper.AxisButtonReleaseMargin + 1;
-			state.Axis[1] = InputChips.AxisCentre - ConvertHelper.AxisButtonReleaseMargin;
-			state.Sliders[0] = ConvertHelper.AxisButtonReleaseMargin + 1;
+			state.Axis[0] = InputChips.AxisCentre + InputChips.MoveStep + 1;
+			state.Axis[1] = InputChips.AxisCentre - InputChips.MoveStep;
+			state.Sliders[0] = InputChips.MoveStep + 1;
 			state.Povs[0] = 9000;
 			Assert.IsTrue(InputChips.Update(chips, state, 20));
 			Assert.IsTrue(chips.Single(c => c.Kind == InputChipKind.Button && c.Index == 2).Lit);
 			Assert.IsFalse(chips.Single(c => c.Kind == InputChipKind.Button && c.Index == 1).Lit);
 			Assert.IsTrue(chips.Single(c => c.Kind == InputChipKind.Axis && c.Index == 0).Lit, "A move past the margin lights.");
 			Assert.IsFalse(chips.Single(c => c.Kind == InputChipKind.Axis && c.Index == 1).Lit, "A move within the margin is wobble.");
-			Assert.AreEqual(InputChips.AxisCentre + ConvertHelper.AxisButtonReleaseMargin + 1, chips.Single(c => c.Kind == InputChipKind.Axis && c.Index == 0).Value);
+			Assert.AreEqual(InputChips.AxisCentre + InputChips.MoveStep + 1, chips.Single(c => c.Kind == InputChipKind.Axis && c.Index == 0).Value);
 			Assert.IsTrue(chips.Single(c => c.Kind == InputChipKind.Slider).Lit);
 			Assert.IsTrue(chips.Single(c => c.Kind == InputChipKind.Pov).Lit);
 			var directions = chips.Where(c => c.Kind == InputChipKind.PovDirection).ToList();
@@ -128,8 +128,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("A moved axis stays lit while it moves and for a second after, wherever it stops")]
-		public void A_moved_axis_goes_dark_a_second_after_it_stops()
+		[Description("A moved axis stays lit while it moves and for half a second after, wherever it stops")]
+		public void A_moved_axis_goes_dark_half_a_second_after_it_stops()
 		{
 			var chips = InputChips.Create(0, 0x1, 0, 0);
 			var axis = chips.Single();
@@ -139,7 +139,7 @@ namespace x360ce.Tests
 			InputChips.Update(chips, state, 100);
 			Assert.IsTrue(axis.Lit, "A moved axis is dark.");
 			InputChips.Update(chips, state, 100 + InputChips.HoldMs - 1);
-			Assert.IsTrue(axis.Lit, "A moved axis goes dark before the second is up.");
+			Assert.IsTrue(axis.Lit, "A moved axis goes dark before the hold is up.");
 			InputChips.Update(chips, state, 100 + InputChips.HoldMs);
 			Assert.IsFalse(axis.Lit, "An axis left away from the middle stays lit.");
 		}
@@ -176,6 +176,29 @@ namespace x360ce.Tests
 				lit = slider.Lit;
 			}
 			Assert.IsTrue(lit, "A slider moved 300 steps a tick never lights.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A wheel turned slowly lights soon and stays lit while it turns")]
+		public void A_slow_wheel_turn_stays_lit()
+		{
+			// 15 degrees a second on a 900-degree wheel, read ten times a second.
+			const int perTick = 65535 * 15 / 900 / 10;
+			var chips = InputChips.Create(0, 0x1, 0, 0);
+			var wheel = chips.Single();
+			var state = Rest();
+			InputChips.Update(chips, state, 0);
+			var litFrom = -1;
+			for (var i = 1; i <= 50; i++)
+			{
+				state.Axis[0] = InputChips.AxisCentre + i * perTick;
+				InputChips.Update(chips, state, i * 100);
+				if (litFrom < 0 && wheel.Lit)
+					litFrom = i;
+				else if (litFrom >= 0)
+					Assert.IsTrue(wheel.Lit, "A turning wheel went dark at " + i * 100 + " ms.");
+			}
+			Assert.IsTrue(litFrom > 0 && litFrom <= 5, "A slow turn took " + litFrom + " ticks to light.");
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

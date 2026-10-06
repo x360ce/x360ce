@@ -1,4 +1,4 @@
-﻿## [4.25.29.0] - 2026-10-06
+﻿## [4.25.30.0] - 2026-10-06
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -17,6 +17,7 @@
 - Changed: The window title shows 64-bit or 32-bit.
 - Changed: Sharp text and icons on screens set above 100%.
 - Changed: Pastel icons, drawn for every screen zoom, with dark versions for the dark theme.
+- Changed: In the light theme, the tabs not chosen have dimmer text.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
 - Added: [Recentre] in a mapping box's menu sets where a stick rests as its middle (Issue #1638, FlogramMatt).
