@@ -19,7 +19,7 @@ namespace x360ce.Engine.Mcp
 		/// <summary>The log's file name. Each program sets its own, because both keep their settings in one folder.</summary>
 		public static string FileName = "x360ce.AiAccess.log";
 
-		/// <summary>Beside the settings, so it travels with them and the Options page can open it.</summary>
+		/// <summary>Beside the settings, so it travels with them and the Options tab can open it.</summary>
 		public static string Path
 		{
 			get { return System.IO.Path.Combine(Folder ?? EngineHelper.AppDataPath, FileName); }
@@ -52,7 +52,7 @@ namespace x360ce.Engine.Mcp
 		public static void Open()
 		{
 			if (!File.Exists(Path))
-				Write("log opened from the Options page");
+				Write("log opened from the Options tab");
 			System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Path) { UseShellExecute = true });
 		}
 
@@ -65,7 +65,7 @@ namespace x360ce.Engine.Mcp
 			return text.Length <= max ? text : text.Substring(0, max) + "... (" + text.Length + " chars)";
 		}
 
-		/// <summary>One line, and never the token: a read of the Options page carries it, and a log is for reading afterwards by anyone.</summary>
+		/// <summary>One line, and never the token: a read of the Options tab carries it, and a log is for reading afterwards by anyone.</summary>
 		static string Flat(string text)
 		{
 			return Token.Replace(text.Replace("\r", " ").Replace("\n", " ").Replace("\t", " "), "<token>");

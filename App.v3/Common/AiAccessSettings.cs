@@ -31,9 +31,6 @@ namespace x360ce.App
 		/// <summary>Token a caller must present. Made by the program; regenerate to revoke.</summary>
 		public string Token;
 
-		/// <summary>Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.</summary>
-		public bool Windows;
-
 		/// <summary>The settings as the file holds them, with the defaults for what it does not say.</summary>
 		public static AiAccessSettings Load()
 		{
@@ -48,7 +45,6 @@ namespace x360ce.App
 				s.Port = port;
 			var token = ini.GetValue(Section, "AiAccessToken");
 			s.Token = string.IsNullOrEmpty(token) ? null : token;
-			s.Windows = ini.GetValue(Section, "AiAccessWindows") == "1";
 			return s;
 		}
 
@@ -59,8 +55,7 @@ namespace x360ce.App
 			return ini.SetValue(Section, "AiAccessEnabled", Enabled ? "1" : "0") != 0
 				&& ini.SetValue(Section, "AiAccess", Level.ToString()) != 0
 				&& ini.SetValue(Section, "AiAccessPort", Port.ToString()) != 0
-				&& ini.SetValue(Section, "AiAccessToken", Token ?? "") != 0
-				&& ini.SetValue(Section, "AiAccessWindows", Windows ? "1" : "0") != 0;
+				&& ini.SetValue(Section, "AiAccessToken", Token ?? "") != 0;
 		}
 
 		/// <summary>
@@ -75,14 +70,13 @@ namespace x360ce.App
 			Save();
 		}
 
-		/// <summary>Opens or closes the door and the Windows registration to match. The door listens on this computer only.</summary>
+		/// <summary>Opens or closes the door to match. The door listens on this computer only.</summary>
 		public void Apply()
 		{
 			McpListener.Stop();
 			EnsureToken();
 			if (Enabled)
 				McpListener.Start(McpListener.LoopbackAddress, Port, Token);
-			WindowsAgentRegistry.Apply(Enabled && Windows);
 		}
 	}
 }

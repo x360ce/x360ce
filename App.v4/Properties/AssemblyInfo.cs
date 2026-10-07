@@ -7,7 +7,7 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Jocys.com X360 Controller Emulator")]
-[assembly: AssemblyDescription("Wrapper library that translates XInput calls to DirectInput calls, for support old, no XInput compatible gamepads.")]
+[assembly: AssemblyDescription("Maps controllers, wheels and pedals to virtual Xbox 360 controllers that games read. x360ce.exe /? lists its switches; AI agents start with x360ce.exe -Skill.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jocys.com")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
@@ -32,7 +32,7 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.25.30.0")]
-[assembly: AssemblyFileVersion("4.25.30.0")]
+[assembly: AssemblyVersion("4.25.43.0")]
+[assembly: AssemblyFileVersion("4.25.43.0")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: NeutralResourcesLanguageAttribute("en")]

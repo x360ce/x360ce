@@ -24,7 +24,7 @@ namespace x360ce.App.Mcp
 		/// <summary>The door's own controls on the Options page, which no caller may touch at any level.</summary>
 		public static readonly string[] DoorControls =
 		{
-			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
+			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton",
 		};
 
 		/// <summary>
@@ -39,8 +39,6 @@ namespace x360ce.App.Mcp
 			UiTreeExporter.BaseName = "ui-tree-v3";
 			McpServer.ServerName = "x360ce-v3";
 			McpLog.FileName = "x360ce.v3.AiAccess.log";
-			WindowsAgentRegistry.DisplayName = "Jocys.com X360 Controller Emulator 3";
-			WindowsAgentRegistry.Description = "Inspect and operate the X360 Controller Emulator 3: read its interface, point at controls, answer its warnings, change its settings.";
 			McpCatalog.Sources = new[] { typeof(McpUiTools), typeof(McpTools) };
 			McpCatalog.Level = () => AiAccessSettings.Current.Level;
 			McpUiTools.MainWindow = () => MainForm.Current;

@@ -123,8 +123,6 @@ namespace x360ce.App.UiTree
 				"What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.");
 			d["OptionsControl.AiAccessRegenerateButton"] = new Text("Regenerate",
 				"Makes a new token, which shuts out every caller that has the old one.");
-			d["OptionsControl.AiAccessWindowsCheckBox"] = new Text("Register with Windows",
-				"Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.");
 			d["OptionsControl.AiAccessCopyButton"] = new Text("Copy MCP Settings",
 				"Copies what an assistant needs to start the program as an MCP server.");
 			d["OptionsControl.AiAccessLogButton"] = new Text("Log",

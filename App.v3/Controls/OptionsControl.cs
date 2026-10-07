@@ -56,11 +56,6 @@ namespace x360ce.App.Controls
 			AiAccessComboBox.SelectedItem = s.Level.ToString();
 			AiAccessPortNumericUpDown.Value = Math.Max(AiAccessPortNumericUpDown.Minimum, Math.Min(AiAccessPortNumericUpDown.Maximum, s.Port));
 			AiAccessTokenTextBox.Text = s.Token ?? "";
-			AiAccessWindowsCheckBox.Checked = s.Windows;
-			// The Windows agent registry ships with newer Windows only.
-			AiAccessWindowsCheckBox.Enabled = WindowsAgentRegistry.IsAvailable;
-			if (!WindowsAgentRegistry.IsAvailable)
-				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
 			AiAccessEnabledCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Enabled = AiAccessEnabledCheckBox.Checked);
 			AiAccessComboBox.SelectedIndexChanged += (sender, e) => ChangeAiAccess(x => x.Level = (AiAccess)Enum.Parse(typeof(AiAccess), (string)AiAccessComboBox.SelectedItem));
 			// Taken when editing ends, and only when it changed: every spin click, or every visit to the
@@ -70,7 +65,6 @@ namespace x360ce.App.Controls
 				if ((int)AiAccessPortNumericUpDown.Value != AiAccessSettings.Current.Port)
 					ChangeAiAccess(x => x.Port = (int)AiAccessPortNumericUpDown.Value);
 			};
-			AiAccessWindowsCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Windows = AiAccessWindowsCheckBox.Checked);
 			AiAccessRegenerateButton.Click += (sender, e) => ChangeAiAccess(x => x.Token = McpListener.NewToken());
 			AiAccessCopyButton.Click += (sender, e) => JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(McpClient.ServerSettings(Application.ExecutablePath));
 			AiAccessLogButton.Click += (sender, e) => McpLog.Open();
@@ -100,8 +94,6 @@ namespace x360ce.App.Controls
 				status = "Open at " + McpListener.Prefix(McpListener.LoopbackAddress, s.Port) + " with " + s.Level + " access.";
 			else
 				status = "Not open: " + McpListener.LastError;
-			if (s.Enabled && s.Windows && WindowsAgentRegistry.LastError != null)
-				status += " Windows registration: " + WindowsAgentRegistry.LastError;
 			AiAccessStatusLabel.Text = status;
 		}
 

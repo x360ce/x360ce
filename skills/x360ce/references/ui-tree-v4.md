@@ -1,8 +1,8 @@
 # X360 Controller Emulator navigation tree
 
+Version 4.25.43.0, built 2026-10-07.
 Written by the program itself, so it describes the build it came from.
-Regenerate with `x360ce.exe /ExportUi=<folder>`. A relative folder is taken
-from the program's own folder, because that is where the program works from.
+Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
 - **Controls** describes each control that appears in more than one place, once.
 - **App** is the main window. A `-> Name` line stands for a control described above.
@@ -321,21 +321,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Button]    │       │           │   │           ├── Refresh                             # Reads the folder list again.
 [Button]    │       │           │   │           ├── Remove                              # Stops searching the selected folder.
 [Button]    │       │           │   │           └── Add...                              # Adds a folder to search for games.
-[Button]    │       │           │   ├── Developer Tools...                              # Opens a window of aids for working on the program.
-[Section]   │       │           │   └── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[List]      │       │           │       ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
-[List]      │       │           │       ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
-[Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
-[Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
-[Button]    │       │           │       ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │           │       ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
-[Button]    │       │           │       ├── Copy URL                                    # Copies the URL to the clipboard.
-[Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
-[Button]    │       │           │       ├── Copy snippet                                # Copies the registration snippet to the clipboard.
-[CheckBox]  │       │           │       ├── Register with Windows                       # Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.
-[Button]    │       │           │       ├── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
-[CheckBox]  │       │           │       ├── AI assistant access                         # Whether an AI assistant or a script may reach the program at all.
-[Button]    │       │           │       └── Copy prompt                                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.
+[Button]    │       │           │   └── Developer Tools...                              # Opens a window of aids for working on the program.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
@@ -396,14 +382,36 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [List]      │       │           │       ├── Keep settings in                            # Which folder to keep settings in. Your own user folder cannot be locked by another account.
 [List]      │       │           │       ├── What to do with existing settings           # Whether the settings you have are copied to the new folder, or left behind.
 [Button]    │       │           │       └── Apply                                       # Moves the settings to the chosen folder and starts using it.
-[Tab]       │       │           └── Update                                              # Looks for a newer version of the program and installs it.
-[Group]     │       │               └── Update                                          # Looks for a newer version of the program and installs it, step by step, in the log below.
-[CheckBox]  │       │                   ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
-[Label]     │       │                   ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
-[Button]    │       │                   ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
-[CheckBox]  │       │                   ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
-[CheckBox]  │       │                   ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
-[Value]     │       │                   └── Update log                                  # Each step of the last check and what it found.
+[Tab]       │       │           ├── Update                                              # Looks for a newer version of the program and installs it.
+[Group]     │       │           │   └── Update                                          # Looks for a newer version of the program and installs it, step by step, in the log below.
+[CheckBox]  │       │           │       ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
+[Label]     │       │           │       ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
+[Button]    │       │           │       ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
+[CheckBox]  │       │           │       ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
+[CheckBox]  │       │           │       ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
+[Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
+[Tab]       │       │           └── AI                                                  # AI assistant access, and the skill that teaches AI agents to use this program.
+[Section]   │       │               ├── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[List]      │       │               │   ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
+[List]      │       │               │   ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
+[Number]    │       │               │   ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
+[Value]     │       │               │   ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
+[Button]    │       │               │   ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │               │   ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
+[Button]    │       │               │   ├── Copy URL                                    # Copies the URL to the clipboard.
+[Value]     │       │               │   ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
+[Button]    │       │               │   ├── Copy snippet                                # Copies the registration snippet to the clipboard.
+[Button]    │       │               │   ├── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[CheckBox]  │       │               │   ├── AI assistant access                         # Whether an AI assistant or a script may reach the program at all.
+[Button]    │       │               │   └── Copy prompt                                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.
+[Section]   │       │               └── AI skill                                        # Installs the x360ce skill, which teaches an AI agent what this program does and how to use it, where agents read skills.
+[Value]     │       │                   ├── Claude Code skills folder                   # Where Claude Code reads skills.
+[Label]     │       │                   ├── Claude Code skill                           # Whether the skill is in that folder, and whether it is this program's version.
+[Button]    │       │                   ├── Install for Claude Code                     # Writes the skill with the help and a description of this interface into the Claude Code folder, replacing only the x360ce skill.
+[Value]     │       │                   ├── Other agents' skills folder                 # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
+[Label]     │       │                   ├── Other agents' skill                         # Whether the skill is in that folder, and whether it is this program's version.
+[Button]    │       │                   ├── Install for other agents                    # Writes the skill with the help and a description of this interface into the folder the other agents share, replacing only the x360ce skill.
+[Button]    │       │                   └── Save as ZIP                                 # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -516,7 +524,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.25.30 (Build: 2026-10-06) 64-bit - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Issues list                                                 # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.

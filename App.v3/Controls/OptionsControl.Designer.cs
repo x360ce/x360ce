@@ -71,7 +71,6 @@
 			this.AiAccessComboBox = new System.Windows.Forms.ComboBox();
 			this.AiAccessPortLabel = new System.Windows.Forms.Label();
 			this.AiAccessPortNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.AiAccessWindowsCheckBox = new System.Windows.Forms.CheckBox();
 			this.AiAccessTokenLabel = new System.Windows.Forms.Label();
 			this.AiAccessTokenTextBox = new System.Windows.Forms.TextBox();
 			this.AiAccessRegenerateButton = new System.Windows.Forms.Button();
@@ -521,7 +520,6 @@
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessComboBox, 1, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortLabel, 2, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortNumericUpDown, 3, 1);
-			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessWindowsCheckBox, 4, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenLabel, 0, 2);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenTextBox, 1, 2);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessRegenerateButton, 4, 2);
@@ -578,15 +576,6 @@
 			this.AiAccessPortNumericUpDown.Size = new System.Drawing.Size(60, 20);
 			this.AiAccessPortNumericUpDown.TabIndex = 2;
 			this.AiAccessPortNumericUpDown.Value = new decimal(new int[] { 37361, 0, 0, 0 });
-			//
-			// AiAccessWindowsCheckBox
-			//
-			this.AiAccessWindowsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.AiAccessWindowsCheckBox.AutoSize = true;
-			this.AiAccessWindowsCheckBox.Name = "AiAccessWindowsCheckBox";
-			this.AiAccessWindowsCheckBox.TabIndex = 3;
-			this.AiAccessWindowsCheckBox.Text = "Register with Windows";
-			this.AiAccessWindowsCheckBox.UseVisualStyleBackColor = true;
 			//
 			// AiAccessTokenLabel
 			//
@@ -717,7 +706,6 @@
 		private System.Windows.Forms.ComboBox AiAccessComboBox;
 		private System.Windows.Forms.Label AiAccessPortLabel;
 		private System.Windows.Forms.NumericUpDown AiAccessPortNumericUpDown;
-		private System.Windows.Forms.CheckBox AiAccessWindowsCheckBox;
 		private System.Windows.Forms.Label AiAccessTokenLabel;
 		private System.Windows.Forms.TextBox AiAccessTokenTextBox;
 		private System.Windows.Forms.Button AiAccessRegenerateButton;

@@ -25,12 +25,16 @@ namespace x360ce.App.Controls
 			AiAccessCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessSnippetTextBox.Text);
 			AiAccessUrlCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessUrlTextBox.Text);
 			AiAccessPromptButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiPrompt());
-			// The Windows agent registry ships with newer Windows only. Where its tool is absent the
-			// switch stays off and says why, rather than promising something the machine cannot do.
-			AiAccessWindowsCheckBox.Enabled = Engine.Mcp.WindowsAgentRegistry.IsAvailable;
-			if (!Engine.Mcp.WindowsAgentRegistry.IsAvailable)
-				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
 			AiAccessLogButton.Click += (s, e) => Engine.Mcp.McpLog.Open();
+			AiSkillClaudeFolderTextBox.Text = AiSkill.ClaudeFolder;
+			AiSkillAgentsFolderTextBox.Text = AiSkill.AgentsFolder;
+			AiSkillClaudeButton.Click += (s, e) => InstallAiSkill(AiSkill.ClaudeFolder, AiSkillClaudeStatusLabel);
+			AiSkillAgentsButton.Click += (s, e) => InstallAiSkill(AiSkill.AgentsFolder, AiSkillAgentsStatusLabel);
+			AiSkillZipButton.Click += (s, e) => SaveAiSkillZip();
+			// Another program, or the person, may install or remove the skill at any time, so the page looks again
+			// each time it is shown.
+			MainTabControl.SelectedIndexChanged += (s, e) => { if (MainTabControl.SelectedTab == AiTabPage) UpdateAiSkill(); };
+			UpdateAiSkill();
 			UpdateAiAccessUrl();
 			// The theme that follows Windows is named the way Windows names it.
 			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
@@ -173,7 +177,6 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AiAccessEnabled, AiAccessEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(Engine.Mcp.AiAccess)));
 			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
-			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
 			// Not bound with LoadAndMonitor: ValueChanged fires on every spin click, each of which
 			// would restart the listener, so the value is taken when editing ends.
 			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;
@@ -380,8 +383,9 @@ namespace x360ce.App.Controls
 			sb.AppendLine("with the header: Authorization: Bearer " + o.AiAccessToken);
 			sb.AppendLine();
 			sb.AppendLine("Start by calling the tool devices_list and tell me what you found. Use ui_find with a word to locate any control, ui_show to point at one for me, and help for the manual.");
+			sb.AppendLine("If you can run commands, \"" + Application.ExecutablePath + "\" -Skill prints full instructions for using this program.");
 			if (!o.AiAccessEnabled)
-				sb.AppendLine("Note: AI assistant access is not switched on yet; I will tick it on the Options page first.");
+				sb.AppendLine("Note: AI assistant access is not switched on yet; I will tick it on the Options tab's AI page first.");
 			return sb.ToString();
 		}
 
@@ -392,6 +396,76 @@ namespace x360ce.App.Controls
 			var host = o.AiAccessAddress == Options.AnyAddress ? Environment.MachineName.ToLowerInvariant() : Options.LoopbackAddress;
 			AiAccessUrlTextBox.Text = "http://" + host + ":" + o.AiAccessPort + "/mcp/";
 		}
+
+		#region AI skill
+
+		/// <summary>Says for each folder whether the skill is there and current, and names the button for what it would do.</summary>
+		void UpdateAiSkill()
+		{
+			ShowAiSkill(AiSkill.ClaudeFolder, AiSkillClaudeStatusLabel, AiSkillClaudeButton);
+			ShowAiSkill(AiSkill.AgentsFolder, AiSkillAgentsStatusLabel, AiSkillAgentsButton);
+		}
+
+		static void ShowAiSkill(string folder, Label status, Button button)
+		{
+			Version installed;
+			var state = AiSkill.Check(folder, AiSkill.ProgramVersion, out installed);
+			// A copy a newer program wrote is left alone: this program's copy would describe fewer tools.
+			button.Enabled = state != AiSkill.State.Newer;
+			switch (state)
+			{
+				case AiSkill.State.NotInstalled:
+					status.Text = "Not installed.";
+					button.Text = "Install";
+					break;
+				case AiSkill.State.UpToDate:
+					status.Text = "Installed, this version.";
+					button.Text = "Reinstall";
+					break;
+				case AiSkill.State.Older:
+					status.Text = installed == null ? "An older copy." : "Version " + installed + ", older.";
+					button.Text = "Update";
+					break;
+				default:
+					status.Text = "Version " + installed + ", from a newer program.";
+					button.Text = "Install";
+					break;
+			}
+		}
+
+		void InstallAiSkill(string folder, Label status)
+		{
+			try
+			{
+				AiSkill.Install(folder);
+			}
+			catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+			{
+				status.Text = "Not written: " + ex.Message;
+				return;
+			}
+			UpdateAiSkill();
+		}
+
+		void SaveAiSkillZip()
+		{
+			using (var dialog = new System.Windows.Forms.SaveFileDialog { FileName = AiSkill.Name + "-skill.zip", Filter = "ZIP files (*.zip)|*.zip", DefaultExt = "zip" })
+			{
+				if (dialog.ShowDialog(this) != DialogResult.OK)
+					return;
+				try
+				{
+					AiSkill.SaveZip(dialog.FileName);
+					AiSkillZipNoteLabel.Text = "Saved. In Claude, add " + Path.GetFileName(dialog.FileName) + " under Customize, Skills.";
+				}
+				catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
+				{
+					AiSkillZipNoteLabel.Text = "Not saved: " + ex.Message;
+				}
+			}
+		}
+
+		#endregion
 
 		private void OptionsData_Saving(object sender, EventArgs e)
 		{

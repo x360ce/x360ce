@@ -32,24 +32,33 @@ namespace x360ce.Engine.Mcp
 			return parameters.ContainsKey(McpArgument) || parameters.ContainsKey(AiArgument);
 		}
 
-		/// <summary>The two switches that talk to the running program on a caller's behalf.</summary>
+		/// <summary>Standard output and error for a switch that answers the caller and stops.</summary>
 		/// <remarks>
 		/// The program is a windowed executable, so a person typing the command gets no console and no
-		/// standard output handle. When there is no handle, the parent console is attached, so /Ai
-		/// prints where it was typed; an assistant's pipe is a real handle and is used as it is.
-		/// Both streams are UTF-8, so a device name reaches the caller as written. Failures are
-		/// printed and become exit codes, because an exception here would open the crash reporter
-		/// for what is a script's mistake.
+		/// standard output handle. When there is no handle, the parent console is attached, so the
+		/// answer is printed where it was typed; an assistant's pipe is a real handle and is used as it
+		/// is. Both streams are UTF-8, so a device name reaches the caller as written.
+		/// </remarks>
+		public static void OpenConsole(out TextWriter output, out TextWriter error)
+		{
+			var stdout = GetStdHandle(-11);
+			if (stdout == IntPtr.Zero || stdout == new IntPtr(-1))
+				AttachConsole(-1);
+			output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true };
+			error = new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true };
+		}
+
+		/// <summary>The two switches that talk to the running program on a caller's behalf.</summary>
+		/// <remarks>
+		/// Failures are printed and become exit codes, because an exception here would open the crash
+		/// reporter for what is a script's mistake.
 		/// </remarks>
 		/// <param name="parameters">The command line, as the install context reads it.</param>
 		/// <param name="enabled">Whether AI assistant access is switched on in the program's options.</param>
 		public static int RunSwitches(System.Collections.Specialized.StringDictionary parameters, bool enabled, int port, string token, string exePath)
 		{
-			var stdout = GetStdHandle(-11);
-			if (stdout == IntPtr.Zero || stdout == new IntPtr(-1))
-				AttachConsole(-1);
-			var output = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true };
-			var error = new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true };
+			TextWriter output, error;
+			OpenConsole(out output, out error);
 			if (parameters.ContainsKey(AiArgument) && string.IsNullOrEmpty(parameters[AiArgument]))
 			{
 				output.Write(Usage());
@@ -66,8 +75,9 @@ namespace x360ce.Engine.Mcp
 				Func<string, string> post = body => Post(port, token, body);
 				if (parameters.ContainsKey(McpArgument))
 					return RunStdio(new StreamReader(Console.OpenStandardInput(), Encoding.UTF8), output, post);
+				// Profile picks whose settings, so whose port and token, the call uses; it is not the tool's.
 				var arguments = parameters.Keys.Cast<string>()
-					.Where(k => k != AiArgument.ToLowerInvariant())
+					.Where(k => k != AiArgument.ToLowerInvariant() && k != "profile")
 					.ToDictionary(k => k, k => parameters[k]);
 				return RunCommand(parameters[AiArgument], arguments, output, post);
 			}
@@ -193,7 +203,7 @@ namespace x360ce.Engine.Mcp
 			var sb = new StringBuilder();
 			sb.AppendLine("x360ce.exe /Ai=<tool> [/<argument>=<value> ...]   calls one tool of the running program");
 			sb.AppendLine("x360ce.exe /Mcp                                  speaks MCP over stdio for an assistant");
-			sb.AppendLine("The level in brackets is the AI assistant access the tool needs, chosen on the Options page.");
+			sb.AppendLine("The level in brackets is the AI assistant access the tool needs, chosen on the Options tab.");
 			sb.AppendLine("From a batch file that needs the exit code, run: start /wait x360ce.exe /Ai=...");
 			sb.AppendLine();
 			foreach (var tool in McpCatalog.Tools)

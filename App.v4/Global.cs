@@ -154,9 +154,6 @@ namespace x360ce.App
 				case nameof(Options.AiAccessPort):
 					ApplyAiAccess();
 					break;
-				case nameof(Options.AiAccessWindows):
-					Engine.Mcp.WindowsAgentRegistry.Apply(o.AiAccessWindows);
-					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;
 					break;

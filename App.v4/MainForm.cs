@@ -1349,6 +1349,7 @@ namespace x360ce.App
 					new SwitchedOffControllersIssue(),
 					new HidHideIssue(),
 					new AiAccessIssue(),
+					new AiSkillIssue(),
 				};
 				IssuesPanel.AddIssues(issues);
 				// The controller pages are built only once the first round of checks is done, so each

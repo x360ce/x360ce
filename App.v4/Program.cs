@@ -73,7 +73,6 @@ namespace x360ce.App
 		{
 			StartupTrace.Mark("Main");
 			StartupTrace.WatchAssemblyLoads();
-			StartJitProfile();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// Set here rather than in a configuration file, because the program ships as one file
@@ -90,6 +89,7 @@ namespace x360ce.App
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.2", false);
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.3", false);
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.4", false);
+			CallerFolder = Environment.CurrentDirectory;
 			// First: Set working folder to the path of executable.
 			var fi = new FileInfo(Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);
@@ -130,7 +130,16 @@ namespace x360ce.App
 
 		public const string arg_WindowState = "WindowState";
 
-		/// <summary>Folder to write the interface description into. Defaults to docs beside the source.</summary>
+		/// <summary>Prints the x360ce skill for AI agents, one of its files, or installs it into a folder.</summary>
+		public const string arg_Skill = "Skill";
+
+		/// <summary>/?, -h, /help and --help, as the command line reads them.</summary>
+		static readonly string[] HelpSwitches = { "?", "h", "help", "-help" };
+
+		/// <summary>The folder the command was given in, before the program moved to its own: a relative folder on the command line is taken from it.</summary>
+		static string CallerFolder;
+
+		/// <summary>Folder to write the interface description into. Defaults to the skill's references beside the source.</summary>
 		public const string arg_ExportUi = "ExportUi";
 
 		/// <summary>
@@ -164,9 +173,9 @@ namespace x360ce.App
 		static void ExportUi(string folder)
 		{
 			if (string.IsNullOrWhiteSpace(folder))
-				folder = "docs";
+				folder = Path.Combine("skills", AiSkill.Name, "references");
 			var tree = Engine.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
-			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
+			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(Path.Combine(CallerFolder, folder)));
 		}
 
 		static void StartApp(string[] args)
@@ -194,6 +203,18 @@ namespace x360ce.App
 			if (executed)
 				return;
 			// ------------------------------------------------
+			// Answered and done, with nothing started: a person at a console, or an AI agent meeting the
+			// program for the first time, would otherwise get a window and a command that never returns.
+			if (ic.Parameters.ContainsKey(arg_Skill) || HelpSwitches.Any(ic.Parameters.ContainsKey))
+			{
+				TextWriter output, error;
+				Engine.Mcp.McpClient.OpenConsole(out output, out error);
+				if (ic.Parameters.ContainsKey(arg_Skill))
+					Environment.ExitCode = AiSkill.RunSwitch(ic.Parameters[arg_Skill], CallerFolder, output, error);
+				else
+					output.Write(AppHelper.Usage());
+				return;
+			}
 			if (ic.Parameters.ContainsKey("Settings"))
 			{
 				OpenSettingsFolder();
@@ -205,6 +226,11 @@ namespace x360ce.App
 				Environment.ExitCode = Engine.Mcp.McpClient.RunSwitches(ic.Parameters, o.AiAccessEnabled, o.AiAccessPort, o.AiAccessToken, Application.ExecutablePath);
 				return;
 			}
+			// Recorded only by a start that goes on to build the window. The record is replaced by whatever run
+			// ends last, and a switch that answers and stops would leave its own few methods in it, so the next
+			// start would compile ahead nothing the window needs.
+			if (!ic.Parameters.ContainsKey("Exit"))
+				StartJitProfile();
 			StartupTrace.Mark("StartApp: before CheckSettings");
 			if (!CheckSettings())
 				return;

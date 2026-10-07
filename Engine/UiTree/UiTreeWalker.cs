@@ -124,6 +124,9 @@ namespace x360ce.Engine.UiTree
 			if (list != null) return list.SelectedItem == null ? "" : list.GetItemText(list.SelectedItem);
 			var tabs = control as TabControl;
 			if (tabs != null) return tabs.SelectedTab == null ? "" : tabs.SelectedTab.Name;
+			// A controller tab's light says in its hint what is connected and what is missing; the colour alone says neither.
+			var page = control as TabPage;
+			if (page != null) return string.IsNullOrEmpty(page.ToolTipText) ? null : page.ToolTipText;
 			var grid = control as DataGridView;
 			if (grid != null) return grid.CurrentRow == null ? "" : grid.CurrentRow.Index.ToString();
 			// A password is not read out, and the help and log boxes are pages, not values.

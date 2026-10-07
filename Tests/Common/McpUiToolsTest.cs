@@ -132,6 +132,69 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A walk opens and frames each tab on the way by its header, outermost first, then points at the element")]
+		public void Walking_opens_each_tab_on_the_way()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var other = new TabPage { Name = "Other", Text = "Options" };
+				var pad = new TabPage { Name = "Pad", Text = "Controller 1" };
+				var pages = new TabControl { Name = "Pages", Dock = DockStyle.Fill };
+				var general = new TabPage { Name = "General", Text = "General" };
+				var force = new TabPage { Name = "Force", Text = "Force Feedback" };
+				var go = new Button { Name = "Go", Text = "Go" };
+				force.Controls.Add(go);
+				pages.TabPages.AddRange(new[] { general, force });
+				pad.Controls.Add(pages);
+				tabs.TabPages.AddRange(new[] { other, pad });
+				form.Controls.Add(tabs);
+				form.Show();
+				CollectionAssert.AreEqual(new[] { pad, force }, McpUiTools.TabsOnTheWay(go), "The tabs on the way are not outermost first.");
+				// Each step on the UI thread leaves a frame; recording them gives the walk as the person saw it.
+				var seen = new System.Collections.Generic.List<Control>();
+				var selected = new System.Collections.Generic.List<TabPage>();
+				var around = new System.Collections.Generic.List<System.Drawing.Rectangle>();
+				McpCatalog.OnUiThread = a =>
+				{
+					a();
+					if (UiCallout.Target == null)
+						return;
+					seen.Add(UiCallout.Target);
+					selected.Add(tabs.SelectedTab);
+					around.Add(UiCallout.Around);
+				};
+				var stepMs = McpUiTools.WalkStepMs;
+				McpUiTools.WalkStepMs = 1;
+				try
+				{
+					Assert.IsNull(McpUiTools.UiShow("Tabs/Pad/Pages/Force/Go", "Strength is here", 1, walk: true));
+					CollectionAssert.AreEqual(new Control[] { pad, force, go }, seen, "The walk did not frame the tabs in turn, then the element.");
+					Assert.AreSame(pad, selected[0], "The outer tab was not open while it was pointed at.");
+					Assert.AreEqual(tabs.RectangleToScreen(tabs.GetTabRect(1)), around[0], "A tab page is not framed by its tab.");
+					Assert.AreEqual(pages.RectangleToScreen(pages.GetTabRect(1)), around[1], "An inner tab page is not framed by its tab.");
+					Assert.AreSame(force, pages.SelectedTab, "The walk did not end on the element's page.");
+					UiCallout.Hide();
+					tabs.SelectedTab = other;
+					pages.SelectedTab = general;
+					seen.Clear();
+					Assert.IsNull(McpUiTools.UiShow("Tabs/Pad/Pages/Force/Go", "Strength is here", 1));
+					CollectionAssert.AreEqual(new Control[] { go }, seen, "Without walk only the element is framed.");
+					UiCallout.Hide();
+					tabs.SelectedTab = other;
+					seen.Clear();
+					StringAssert.Contains(McpUiTools.UiScript("walk Tabs/Pad/Pages/Force/Go | Strength is here | 1"), "1 step(s)");
+					CollectionAssert.AreEqual(new Control[] { pad, force, go }, seen, "A script's walk step does not walk.");
+				}
+				finally
+				{
+					McpUiTools.WalkStepMs = stepMs;
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Finding by words lists matching paths, and a script runs its steps in order and names the line that fails")]
 		public void Finding_and_scripting_work_by_path()
 		{
@@ -152,6 +215,9 @@ namespace x360ce.Tests
 					var hits = ((object[])McpUiTools.UiFind("vibration")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
 					Assert.AreEqual(1, hits.Count, "One element speaks of vibration.");
 					Assert.AreEqual("Tabs/Page/Strength", hits[0]["Path"]);
+					// Each word is looked for on its own, anywhere in the element, so a page name narrows a search.
+					Assert.AreEqual(1, ((object[])McpUiTools.UiFind("Page all VIBRATION")).Length, "Words in any order, case and field.");
+					Assert.AreEqual(0, ((object[])McpUiTools.UiFind("Other vibration")).Length, "Every word must be there.");
 					StringAssert.Contains(McpUiTools.UiScript("# a walkthrough\nshow Tabs/Page/Strength | This one | 1\nwait 1"), "2 step(s)");
 					Assert.AreSame(slider, UiCallout.Target);
 					// Doing needs Configure; pointing does not. The failing line is named.
@@ -174,6 +240,33 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Finding puts an element named by the words before one that only mentions them, and says how many it left out")]
+		public void Finding_ranks_names_first_and_says_what_it_left_out()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var page = new TabPage { Name = "Page", Text = "Page" };
+				// First in the tree, and the word only in its purpose.
+				var calm = new Button { Name = "Calm", Text = "Calm", TabIndex = 0, AccessibleDescription = "Stops the dead zone drifting." };
+				var zone = new TrackBar { Name = "Zone", TabIndex = 1, AccessibleName = "Dead zone", AccessibleDescription = "How far before anything moves." };
+				page.Controls.AddRange(new Control[] { calm, zone });
+				for (var i = 0; i < McpUiTools.FindLimit + 5; i++)
+					page.Controls.Add(new CheckBox { Name = "Option" + i, Text = "Option " + i, TabIndex = 2 + i, AccessibleDescription = "One of many." });
+				tabs.Controls.Add(page);
+				form.Controls.Add(tabs);
+				form.Show();
+				var hits = ((object[])McpUiTools.UiFind("dead zone")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
+				Assert.AreEqual(2, hits.Count);
+				Assert.AreEqual("Tabs/Page/Zone", hits[0]["Path"], "The element named by the words comes first.");
+				var many = ((object[])McpUiTools.UiFind("many")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
+				Assert.AreEqual(McpUiTools.FindLimit + 1, many.Count, "The first ones, and a note.");
+				Assert.AreEqual("Note", many.Last()["Role"]);
+				StringAssert.Contains((string)many.Last()["Name"], McpUiTools.FindLimit + " of " + (McpUiTools.FindLimit + 5));
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("A control that administers is refused below Administer, and the door's own controls at every level")]
 		public void Administering_and_door_controls_are_refused()
 		{
@@ -192,8 +285,8 @@ namespace x360ce.Tests
 				Assert.IsNull(McpUiTools.UiInvoke(install.Name));
 				Assert.IsNull(McpUiTools.UiSet(debug.Name, "true"));
 				// Even at the top level: the level is a person's choice, never the caller's.
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(level.Name, "Off")).Message, "Options page");
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(regenerate.Name)).Message, "Options page");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(level.Name, "Off")).Message, "Options tab");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(regenerate.Name)).Message, "Options tab");
 			});
 		}
 

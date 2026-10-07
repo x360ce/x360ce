@@ -79,6 +79,33 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("Every caption and button of the AI skill panel is whole and inside the panel, with its longest status")]
+		public void Ai_skill_rows_stay_inside_the_panel()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				WithOptionsPage(factor, page =>
+				{
+					var table = Descendants(page).FirstOrDefault(x => x.Name == "AiSkillTableLayoutPanel");
+					Assert.IsNotNull(table, "AiSkillTableLayoutPanel was not found on the Options page.");
+					Show(table);
+					// The longest status the page writes: a copy from a newer program, with a version of full width.
+					foreach (var name in new[] { "AiSkillClaudeStatusLabel", "AiSkillAgentsStatusLabel" })
+						table.Controls.Find(name, false).Single().Text = "Version 4.25.300.0, from a newer program.";
+					table.PerformLayout();
+					var boxes = table.Controls.Cast<Control>().Where(x => x.Visible && ReadOrClicked(x))
+						.ToDictionary(x => x.Name, x => x.Bounds);
+					Assert.IsTrue(boxes.Count >= 10, "Expected the whole AI skill panel, measured " + boxes.Count + " controls.");
+					AssertNoOverlap(boxes, factor);
+					foreach (var box in boxes)
+						Assert.IsTrue(box.Value.Right <= table.ClientSize.Width && box.Value.Bottom <= table.ClientSize.Height,
+							box.Key + " " + box.Value + " runs past the panel, which is " + table.ClientSize +
+							", with the page " + factor + " times its designed width.");
+				});
+			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
 		public void Update_log_follows_the_rows_above_it_at_every_zoom()
 		{

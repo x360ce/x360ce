@@ -133,8 +133,24 @@ namespace x360ce.App.UiTree
 				"Settings to paste into an assistant so it can reach this program.");
 			d["OptionsUserControl.AiAccessCopyButton"] = new Text("Copy snippet",
 				"Copies the registration snippet to the clipboard.");
-			d["OptionsUserControl.AiAccessWindowsCheckBox"] = new Text("Register with Windows",
-				"Lists this program in the Windows agent registry, so Copilot and other agents find it by themselves without being told where it is. Needs a Windows that has the registry; elsewhere the box stays off and says so.");
+			d["OptionsUserControl.AiTabPage"] = new Text("AI",
+				"AI assistant access, and the skill that teaches AI agents to use this program.");
+			d["OptionsUserControl.AiSkillGroupBox"] = new Text("AI skill",
+				"Installs the x360ce skill, which teaches an AI agent what this program does and how to use it, where agents read skills.");
+			d["OptionsUserControl.AiSkillClaudeFolderTextBox"] = new Text("Claude Code skills folder",
+				"Where Claude Code reads skills.");
+			d["OptionsUserControl.AiSkillClaudeStatusLabel"] = new Text("Claude Code skill",
+				"Whether the skill is in that folder, and whether it is this program's version.");
+			d["OptionsUserControl.AiSkillClaudeButton"] = new Text("Install for Claude Code",
+				"Writes the skill with the help and a description of this interface into the Claude Code folder, replacing only the x360ce skill.");
+			d["OptionsUserControl.AiSkillAgentsFolderTextBox"] = new Text("Other agents' skills folder",
+				"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.");
+			d["OptionsUserControl.AiSkillAgentsStatusLabel"] = new Text("Other agents' skill",
+				"Whether the skill is in that folder, and whether it is this program's version.");
+			d["OptionsUserControl.AiSkillAgentsButton"] = new Text("Install for other agents",
+				"Writes the skill with the help and a description of this interface into the folder the other agents share, replacing only the x360ce skill.");
+			d["OptionsUserControl.AiSkillZipButton"] = new Text("Save as ZIP",
+				"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.");
 			d["OptionsUserControl.AiAccessLogButton"] = new Text("Open log",
 				"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.");
 

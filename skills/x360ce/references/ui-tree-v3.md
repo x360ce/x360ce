@@ -1,8 +1,8 @@
 # X360 Controller Emulator navigation tree
 
+Version 3.6.15.0, built 2026-10-07.
 Written by the program itself, so it describes the build it came from.
-Regenerate with `x360ce.exe /ExportUi=<folder>`. A relative folder is taken
-from the program's own folder, because that is where the program works from.
+Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
 - **Controls** describes each control that appears in more than one place, once.
 - **App** is the main window. A `-> Name` line stands for a control described above.
@@ -233,7 +233,6 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │   │   │               ├── Allow AI assistants                             # Opens the program to an AI assistant or a script on this computer, through the token below.
 [List]      │   │   │               ├── Access                                          # How much a connected assistant may do: Read, Configure or Administer.
 [Number]    │   │   │               ├── Port 1024..49151                                # Port on this computer the assistant connects to.
-[CheckBox]  │   │   │               ├── Register with Windows                           # Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.
 [Value]     │   │   │               ├── Token                                           # What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.
 [Button]    │   │   │               ├── Regenerate                                      # Makes a new token, which shuts out every caller that has the old one.
 [Button]    │   │   │               ├── Copy MCP Settings                               # Copies what an assistant needs to start the program as an MCP server.

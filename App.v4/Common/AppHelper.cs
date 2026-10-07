@@ -192,6 +192,22 @@ namespace x360ce.App
 				return stream == null ? "" : new StreamReader(stream).ReadToEnd();
 		}
 
+		/// <summary>What /?, -h and --help print: the program in one line, then its switches as the help describes them.</summary>
+		public static string Usage()
+		{
+			const string heading = "## Command-line switches";
+			var help = ReadHelp(HelpV4Resource).Replace("\r\n", "\n");
+			var start = help.IndexOf(heading, StringComparison.Ordinal);
+			var section = "";
+			if (start >= 0)
+			{
+				var end = help.IndexOf("\n## ", start + heading.Length, StringComparison.Ordinal);
+				section = (end < 0 ? help.Substring(start) : help.Substring(start, end - start)).Trim();
+			}
+			var text = "X360CE " + typeof(AppHelper).Assembly.GetName().Version + ", the Xbox 360 Controller Emulator: maps controllers, wheels and pedals to virtual Xbox 360 controllers that games read.\n\n" + section + "\n";
+			return text.Replace("\n", Environment.NewLine);
+		}
+
 		public static void LoadHelp(System.Windows.Forms.RichTextBox box, string resourceName)
 		{
 			var text = ReadHelp(resourceName);
@@ -502,18 +518,25 @@ namespace x360ce.App
 			if (device == null)
 				return string.Empty;
 			var carried = new List<int>();
+			var waiting = new List<int>();
 			var helper = Global.DHelper;
-			var fileName = SettingsManager.CurrentGame?.FileName;
+			var game = SettingsManager.CurrentGame;
+			var fileName = game?.FileName;
 			if (helper != null && fileName != null)
 				foreach (var setting in SettingsManager.GetSettings(fileName))
 					if (setting.InstanceGuid == device.InstanceGuid
 						&& setting.MapTo >= 1 && setting.MapTo <= helper.XiPlaceForPad.Length)
-						carried.Add(helper.XiPlaceForPad[setting.MapTo - 1]);
+					{
+						var place = helper.XiPlaceForPad[setting.MapTo - 1];
+						carried.Add(place);
+						if ((place < 0 || place > 3) && DInputHelper.WantsVirtual(game, (uint)setting.MapTo))
+							waiting.Add(setting.MapTo);
+					}
 			var own = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
 			return XInputPlaces.Describe(own,
 				XInputPlaces.IsMadeNotPluggedIn(device.HidDeviceId, device.DevDeviceId),
 				XInputPlaces.IsOneOfOurs(device.HidDeviceId, device.DevDeviceId),
-				carried);
+				carried, waiting);
 		}
 
 		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none, and the settings which said so.</summary>

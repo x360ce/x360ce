@@ -18,6 +18,8 @@ namespace x360ce.Engine.Mcp
 		public readonly string Description;
 		/// <summary>False for a tool that waits, so the window keeps drawing while it does.</summary>
 		public bool OnUiThread = true;
+		/// <summary>True for a tool of the Read level that can still change things when the level allows, such as a script.</summary>
+		public bool Changes;
 	}
 
 	/// <summary>One tool as the catalogue knows it: read once from the method, used by every door.</summary>
@@ -27,8 +29,26 @@ namespace x360ce.Engine.Mcp
 		public string Description;
 		public AiAccess Level;
 		public bool OnUiThread;
+		public bool Changes;
 		public MethodInfo Method;
 		public ParameterInfo[] Parameters;
+
+		/// <summary>True for a tool that changes nothing: one of the Read level that cannot change things at any level.</summary>
+		public bool ReadOnly { get { return Level == AiAccess.Read && !Changes; } }
+
+		/// <summary>
+		/// The hints a client shows the person before a call: whether the tool changes anything, and whether a change
+		/// replaces what was set. Neither leaves the computer.
+		/// </summary>
+		public Dictionary<string, object> Annotations()
+		{
+			return new Dictionary<string, object>
+			{
+				{ "readOnlyHint", ReadOnly },
+				{ "destructiveHint", !ReadOnly },
+				{ "openWorldHint", false },
+			};
+		}
 
 		/// <summary>JSON Schema for the arguments, from the parameters: string, integer or boolean; required unless defaulted. The one reading of the parameters, which the command-line usage walks too.</summary>
 		public Dictionary<string, object> InputSchema()
@@ -55,6 +75,12 @@ namespace x360ce.Engine.Mcp
 		public object[] Bind(Dictionary<string, object> arguments)
 		{
 			var byName = new Dictionary<string, object>(arguments ?? new Dictionary<string, object>(), StringComparer.OrdinalIgnoreCase);
+			// An argument the tool does not take is refused rather than dropped: dropped, a misspelt or invented
+			// one looks as if it worked, and the caller acts on an answer to a question it did not ask.
+			var unknown = byName.Keys.Where(k => !Parameters.Any(p => string.Equals(p.Name, k, StringComparison.OrdinalIgnoreCase))).ToArray();
+			if (unknown.Length > 0)
+				throw new ArgumentException("Unknown argument: " + string.Join(", ", unknown) + ". " + Name + " takes " +
+					(Parameters.Length == 0 ? "no arguments" : string.Join(", ", Parameters.Select(p => p.Name))) + ".");
 			var values = new object[Parameters.Length];
 			for (var i = 0; i < Parameters.Length; i++)
 			{
@@ -130,7 +156,7 @@ namespace x360ce.Engine.Mcp
 			_tools = sources.SelectMany(source => source.GetMethods(BindingFlags.Public | BindingFlags.Static))
 				.Select(m => new { Method = m, Tool = m.GetCustomAttribute<McpToolAttribute>() })
 				.Where(x => x.Tool != null)
-				.Select(x => new McpToolInfo { Name = ToolName(x.Method.Name), Description = x.Tool.Description, Level = x.Tool.Level, OnUiThread = x.Tool.OnUiThread, Method = x.Method, Parameters = x.Method.GetParameters() })
+				.Select(x => new McpToolInfo { Name = ToolName(x.Method.Name), Description = x.Tool.Description, Level = x.Tool.Level, OnUiThread = x.Tool.OnUiThread, Changes = x.Tool.Changes, Method = x.Method, Parameters = x.Method.GetParameters() })
 				.OrderBy(t => t.Level).ThenBy(t => t.Name)
 				.ToList();
 		}
@@ -151,7 +177,7 @@ namespace x360ce.Engine.Mcp
 		/// <summary>The one sentence a caller reads when the level is too low.</summary>
 		public static string Refusal(AiAccess needed)
 		{
-			return "This needs " + needed + " access; the program is set to " + Level() + ". Change it on the Options page.";
+			return "This needs " + needed + " access; the program is set to " + Level() + ". The person changes it under AI assistant access on the Options tab.";
 		}
 	}
 
@@ -165,6 +191,9 @@ namespace x360ce.Engine.Mcp
 
 		/// <summary>The name the server gives itself: x360ce for version 4, x360ce-v3 for version 3, so both can be connected at once.</summary>
 		public static string ServerName = "x360ce";
+
+		/// <summary>A few sentences an assistant is given on connecting: what the program is and how to begin. Set by each program; none when empty.</summary>
+		public static string Instructions;
 
 		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
@@ -199,24 +228,27 @@ namespace x360ce.Engine.Mcp
 			}
 		}
 
-		/// <summary>What initialize answers. Also written into the Windows registration, which checks the two agree.</summary>
+		/// <summary>What initialize answers.</summary>
 		public static Dictionary<string, object> InitializeResult()
 		{
-			return new Dictionary<string, object>
+			var result = new Dictionary<string, object>
 			{
 				{ "protocolVersion", ProtocolVersion },
 				{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
 				{ "serverInfo", new Dictionary<string, object> { { "name", ServerName }, { "version", System.Windows.Forms.Application.ProductVersion } } },
 			};
+			if (!string.IsNullOrEmpty(Instructions))
+				result["instructions"] = Instructions;
+			return result;
 		}
 
 		/// <summary>
-		/// Every tool, whatever the level: the list never changes, which the Windows registration
-		/// requires, and a tool above the level says so when called.
+		/// Every tool, whatever the level, so an assistant sees what more access would allow; a tool above the
+		/// level says so when called.
 		/// </summary>
 		public static Dictionary<string, object> ToolsList()
 		{
-			return new Dictionary<string, object> { { "tools", McpCatalog.Tools.Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() } }).ToArray() } };
+			return new Dictionary<string, object> { { "tools", McpCatalog.Tools.Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() }, { "annotations", t.Annotations() } }).ToArray() } };
 		}
 
 		static string CallTool(object id, Dictionary<string, object> p, AiAccess level)
@@ -233,7 +265,9 @@ namespace x360ce.Engine.Mcp
 			if (tool.Level > level)
 			{
 				McpLog.Write(shown + " -> refused, needs " + tool.Level + " and the level is " + level);
-				return Error(id, -32001, McpCatalog.Refusal(tool.Level));
+				// A tool result rather than a protocol error: many clients hide those from the model, and the
+				// sentence tells it what the person can do.
+				return Result(id, Content(McpCatalog.Refusal(tool.Level), true));
 			}
 			object[] values;
 			try { values = tool.Bind(arguments); }
@@ -301,6 +335,16 @@ namespace x360ce.Engine.Mcp
 		static System.Net.HttpListener _listener;
 		static string _token;
 
+		/// <summary>What every program tells a caller without the token.</summary>
+		public const string NoToken = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
+			+ "A program on this computer can call x360ce.exe -Ai instead, which needs no token.";
+
+		/// <summary>
+		/// What a caller without the token is told, as the body of the refusal. A program that finds the door without
+		/// the token is pointed at the command line, which needs none, rather than left to look for the token on disk.
+		/// </summary>
+		public static string Unauthorised = NoToken;
+
 		/// <summary>A new token: 32 random bytes as 64 lower-case hex digits, the shape the log hides.</summary>
 		public static string NewToken()
 		{
@@ -331,7 +375,7 @@ namespace x360ce.Engine.Mcp
 			NeedsUrlReservation = false;
 			if (port < 1024 || port > 49151)
 			{
-				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range on the Options page.";
+				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range on the Options tab.";
 				return false;
 			}
 			var listener = new System.Net.HttpListener();
@@ -351,7 +395,7 @@ namespace x360ce.Engine.Mcp
 				NeedsUrlReservation = address == AnyAddress && ex.ErrorCode == 5;
 				LastError = NeedsUrlReservation
 					? "listening on every network needs a one-time permission from Windows. Press Fix on the Issues tab, or run as Administrator: netsh http add urlacl url=" + Prefix(address, port) + " sddl=D:(A;;GX;;;WD)"
-					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options page.";
+					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options tab.";
 				return false;
 			}
 			_token = token;
@@ -401,14 +445,31 @@ namespace x360ce.Engine.Mcp
 			}
 		}
 
+		/// <summary>
+		/// Whether a request's Origin is a page on this computer. A browser names the page that sends a request, so a
+		/// web site the person has open cannot reach the door through a name that points here.
+		/// </summary>
+		public static bool IsLocalOrigin(string origin)
+		{
+			Uri uri;
+			return Uri.TryCreate(origin, UriKind.Absolute, out uri) && uri.IsLoopback;
+		}
+
 		static void Answer(System.Net.HttpListenerContext context)
 		{
+			var origin = context.Request.Headers["Origin"];
+			if (!string.IsNullOrEmpty(origin) && !IsLocalOrigin(origin))
+			{
+				McpLog.Write("refused: origin " + McpLog.Clip(origin, 100) + ", from " + context.Request.RemoteEndPoint);
+				Write(context.Response, 403, "");
+				return;
+			}
 			var authorised = (context.Request.Headers["Authorization"] ?? "") == "Bearer " + _token;
 			if (!authorised || context.Request.HttpMethod != "POST")
 			{
 				if (!authorised)
 					McpLog.Write("refused: no valid token, from " + context.Request.RemoteEndPoint);
-				Write(context.Response, authorised ? 405 : 401, "");
+				Write(context.Response, authorised ? 405 : 401, authorised ? "" : new JavaScriptSerializer().Serialize(new Dictionary<string, object> { { "error", Unauthorised } }));
 				return;
 			}
 			string body;

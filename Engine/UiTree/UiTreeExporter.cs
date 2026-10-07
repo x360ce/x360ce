@@ -18,6 +18,19 @@ namespace x360ce.Engine.UiTree
 		public static string BaseName = "ui-tree";
 
 		public static string JsonFileName { get { return BaseName + ".json"; } }
+
+		static readonly System.Text.RegularExpressions.Regex MarkdownStamp = new System.Text.RegularExpressions.Regex(@"(?m)^Version \S+, built \S+\.(?=\r?$)");
+		static readonly System.Text.RegularExpressions.Regex JsonVersion = new System.Text.RegularExpressions.Regex("\"Version\":\"[^\"]*\"");
+		static readonly System.Text.RegularExpressions.Regex JsonBuilt = new System.Text.RegularExpressions.Regex("\"Built\":\"[^\"]*\"");
+
+		/// <summary>A written document, Markdown or JSON, with another version and build day in place of its own.</summary>
+		/// <remarks>Lets a copy installed by a later build of the same interface name the build that installed it.</remarks>
+		public static string Restamp(string document, string version, string built)
+		{
+			document = MarkdownStamp.Replace(document, UiTreeMarkdown.Stamp(version, built), 1);
+			document = JsonVersion.Replace(document, "\"Version\":\"" + version + "\"", 1);
+			return JsonBuilt.Replace(document, "\"Built\":\"" + built + "\"", 1);
+		}
 		public static string MarkdownFileName { get { return BaseName + ".md"; } }
 
 		/// <summary>Describes the whole program: its shared controls, its window, and its tray menu.</summary>
@@ -26,7 +39,15 @@ namespace x360ce.Engine.UiTree
 		/// <param name="raw">True keeps every arranging panel, for looking at what is there.</param>
 		public static UiNode Read(Form window, ContextMenuStrip trayMenu, bool raw = false)
 		{
-			var root = new UiNode { Name = Application.ProductName, Role = "Program" };
+			// The version and build day of the program that owns the window, so a reader can tell whether this is current.
+			var program = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(window.GetType().Assembly);
+			var root = new UiNode
+			{
+				Name = Application.ProductName,
+				Role = "Program",
+				Version = program.Version.ToString(),
+				Built = program.BuildDateTime.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+			};
 			var app = UiTreeWalker.Read(window, raw);
 			app.Name = "App";
 			app.Role = "Section";

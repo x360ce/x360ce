@@ -25,14 +25,21 @@ namespace x360ce.Engine.UiTree
 		const int NameWidth = 76;
 
 		/// <summary>The whole document: a short preamble, then the tree.</summary>
+		/// <summary>The line under the title that names the build: version and the day it was built.</summary>
+		public static string Stamp(string version, string built)
+		{
+			return "Version " + version + ", built " + built + ".";
+		}
+
 		public static string Write(UiNode root)
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("# " + root.Name + " navigation tree");
 			sb.AppendLine();
+			if (!string.IsNullOrEmpty(root.Version))
+				sb.AppendLine(Stamp(root.Version, root.Built));
 			sb.AppendLine("Written by the program itself, so it describes the build it came from.");
-			sb.AppendLine("Regenerate with `x360ce.exe /ExportUi=<folder>`. A relative folder is taken");
-			sb.AppendLine("from the program's own folder, because that is where the program works from.");
+			sb.AppendLine("Regenerate with `x360ce.exe /ExportUi=<folder>`.");
 			sb.AppendLine();
 			sb.AppendLine("- **Controls** describes each control that appears in more than one place, once.");
 			sb.AppendLine("- **App** is the main window. A `-> Name` line stands for a control described above.");

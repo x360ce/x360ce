@@ -1,4 +1,4 @@
-﻿# Xbox 360 Controller Emulator 4.x (uses ViGEmBus Virtual Gamepad Emulation Driver)
+# Xbox 360 Controller Emulator 4.x (uses ViGEmBus Virtual Gamepad Emulation Driver)
 
 If you want `HELP` and have questions about installation or configuration, please go to:
 

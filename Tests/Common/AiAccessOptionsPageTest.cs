@@ -38,10 +38,7 @@ namespace x360ce.Tests
 					McpUiToolsTest.AssertField("AiAccessAddressComboBox", typeof(ComboBox));
 					McpUiToolsTest.AssertField("AiAccessPortNumericUpDown", typeof(NumericUpDown));
 					McpUiToolsTest.AssertField("AiAccessRegenerateButton", typeof(Button));
-					McpUiToolsTest.AssertField("AiAccessWindowsCheckBox", typeof(CheckBox));
-					CollectionAssert.AreEquivalent(new[] { "AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox" }, x360ce.App.Mcp.McpTools.DoorControls);
-					var windows = page.Controls.Find("AiAccessWindowsCheckBox", true).OfType<CheckBox>().First();
-					Assert.AreEqual(x360ce.Engine.Mcp.WindowsAgentRegistry.IsAvailable, windows.Enabled, "The Windows switch is usable exactly where the registry tool exists.");
+					CollectionAssert.AreEquivalent(new[] { "AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton" }, x360ce.App.Mcp.McpTools.DoorControls);
 					Assert.AreEqual(1, page.Controls.Find("AiAccessLogButton", true).Length);
 					Assert.AreEqual(1, page.Controls.Find("AiAccessPromptButton", true).Length);
 					Assert.AreEqual(1, page.Controls.Find("AiAccessEnabledCheckBox", true).Length);
@@ -63,7 +60,7 @@ namespace x360ce.Tests
 		public void Readme_points_an_ai_reader_at_the_sources()
 		{
 			var readme = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "README.MD"));
-			foreach (var pointer in new[] { "docs/ui-tree-v4.md", "docs/ui-tree-v3.md", "docs/Help.v4.md", "docs/Help.v3.md", "AGENTS.md", "/Mcp", "/Ai" })
+			foreach (var pointer in new[] { "skills/x360ce", "skills/x360ce/references/ui-tree-v4.md", "skills/x360ce/references/ui-tree-v3.md", "docs/Help.v4.md", "docs/Help.v3.md", "AGENTS.md", "/Mcp", "/Ai" })
 				StringAssert.Contains(readme, pointer, "README does not point at " + pointer);
 		}
 	}

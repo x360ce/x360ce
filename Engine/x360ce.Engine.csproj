@@ -200,7 +200,6 @@
     <Compile Include="Mcp\McpLog.cs" />
     <Compile Include="Mcp\McpServer.cs" />
     <Compile Include="Mcp\McpUiTools.cs" />
-    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
     <Compile Include="UiTree\OverlayForm.cs">
       <SubType>Form</SubType>
     </Compile>

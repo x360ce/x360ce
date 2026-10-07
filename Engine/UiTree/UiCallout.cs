@@ -16,6 +16,20 @@ namespace x360ce.Engine.UiTree
 		/// <summary>The control being pointed at, or null.</summary>
 		public static Control Target { get; private set; }
 
+		/// <summary>The screen rectangle the frame is drawn around, before its margin.</summary>
+		public static Rectangle Around { get; private set; }
+
+		/// <summary>Where a control is on screen for a person: a tab page by its tab, which is what they click, any other control by itself.</summary>
+		public static Rectangle AroundOf(Control target)
+		{
+			var page = target as TabPage;
+			var tabs = page == null ? null : page.Parent as TabControl;
+			var index = tabs == null ? -1 : tabs.TabPages.IndexOf(page);
+			return index >= 0
+				? tabs.RectangleToScreen(tabs.GetTabRect(index))
+				: target.RectangleToScreen(target.ClientRectangle);
+		}
+
 		/// <summary>
 		/// Frames the control and shows the words beside it for the given seconds. A new call
 		/// replaces the last. The overlay is made afresh each time and disposed when hidden, so it
@@ -28,7 +42,8 @@ namespace x360ce.Engine.UiTree
 			_frame = new Frame();
 			_timer = new Timer();
 			_timer.Tick += (s, e) => Hide();
-			var around = target.RectangleToScreen(target.ClientRectangle);
+			Around = AroundOf(target);
+			var around = Around;
 			around.Inflate(4, 4);
 			_frame.Point(around, text);
 			_timer.Interval = seconds * 1000;

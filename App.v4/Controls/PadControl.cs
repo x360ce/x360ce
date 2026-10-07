@@ -389,6 +389,10 @@ namespace x360ce.App.Controls
 			{
 				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
 				MapNameComboBox.DisplayMember = "Name";
+				// A list selects its first row by itself only once its tab has been shown. Selected here, the
+				// page holds its device's settings from the start, so whatever reads a tab nobody has opened,
+				// an AI assistant among them, gets the real values rather than blank defaults.
+				ControlsHelper.RestoreSelection(MappedDevicesDataGridView, nameof(UserSetting.InstanceGuid), new List<Guid>());
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
 			});

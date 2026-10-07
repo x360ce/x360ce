@@ -5,7 +5,7 @@ namespace x360ce.Engine.UiTree
 {
 	/// <summary>One element of the interface, as a screen reader or an automation tool sees it.</summary>
 	/// <remarks>
-	/// Written to <c>docs/ui-tree-v3.json</c> and <c>docs/ui-tree-v4.json</c> by each program itself,
+	/// Written to <c>skills/x360ce/references/ui-tree-v3.json</c> and <c>ui-tree-v4.json</c> by each program itself,
 	/// so the answer always describes the build it came from rather than a document somebody
 	/// remembered to update.
 	/// </remarks>
@@ -24,12 +24,20 @@ namespace x360ce.Engine.UiTree
 		[DataMember(Order = 3)]
 		public string Role { get; set; }
 
-		/// <summary>Field name in the source, so a reader can find the element in the code.</summary>
+		/// <summary>The program's version, on the program's own node only, so a reader can tell whether the description is current.</summary>
 		[DataMember(Order = 4, EmitDefaultValue = false)]
+		public string Version { get; set; }
+
+		/// <summary>The day the program was built, as yyyy-MM-dd, on the program's own node only.</summary>
+		[DataMember(Order = 5, EmitDefaultValue = false)]
+		public string Built { get; set; }
+
+		/// <summary>Field name in the source, so a reader can find the element in the code.</summary>
+		[DataMember(Order = 6, EmitDefaultValue = false)]
 		public string Id { get; set; }
 
 		/// <summary>Type that supplies this element, when it is a control the program defines.</summary>
-		[DataMember(Order = 5, EmitDefaultValue = false)]
+		[DataMember(Order = 7, EmitDefaultValue = false)]
 		public string Type { get; set; }
 
 		/// <summary>Name of the shared control this node stands for, in place of repeating it.</summary>
@@ -37,11 +45,11 @@ namespace x360ce.Engine.UiTree
 		/// A control placed four times - one per controller - is described once under Controls and
 		/// referred to here, so the document says each thing once.
 		/// </remarks>
-		[DataMember(Order = 6, EmitDefaultValue = false)]
+		[DataMember(Order = 8, EmitDefaultValue = false)]
 		public string SameAs { get; set; }
 
 		/// <summary>Lowest value the element accepts, when it holds a number.</summary>
-		[DataMember(Order = 7, EmitDefaultValue = false)]
+		[DataMember(Order = 9, EmitDefaultValue = false)]
 		public int? Min { get; set; }
 
 		/// <summary>Highest value the element accepts, when it holds a number.</summary>
@@ -49,23 +57,23 @@ namespace x360ce.Engine.UiTree
 		/// Left empty where one setting is offered through controls that disagree - a slider in per
 		/// cent beside a box in raw units - because naming one of the two would misdescribe the other.
 		/// </remarks>
-		[DataMember(Order = 8, EmitDefaultValue = false)]
+		[DataMember(Order = 10, EmitDefaultValue = false)]
 		public int? Max { get; set; }
 
 		/// <summary>False when the element is present but not shown in this state of the program.</summary>
-		[DataMember(Order = 9, EmitDefaultValue = false)]
+		[DataMember(Order = 11, EmitDefaultValue = false)]
 		public bool Hidden { get; set; }
 
 		/// <summary>Elements inside this one.</summary>
-		[DataMember(Order = 10, EmitDefaultValue = false)]
+		[DataMember(Order = 12, EmitDefaultValue = false)]
 		public List<UiNode> Items { get; set; }
 
 		/// <summary>Control names from the main window's children down, joined by '/'. Filled only when the tree is read with a path.</summary>
-		[DataMember(Order = 11, EmitDefaultValue = false)]
+		[DataMember(Order = 13, EmitDefaultValue = false)]
 		public string Path { get; set; }
 
 		/// <summary>What the element holds right now, as text. Filled only when the tree is read with a path.</summary>
-		[DataMember(Order = 12, EmitDefaultValue = false)]
+		[DataMember(Order = 14, EmitDefaultValue = false)]
 		public string Value { get; set; }
 
 		public void Add(UiNode child)

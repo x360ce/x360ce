@@ -69,6 +69,16 @@ versioned on its own: v4 in `App.v4/Properties/AssemblyInfo.cs`, v3 in
 changelog line the release carries, so the changelog, the assembly version and the version line
 in `README.MD` are written together.
 
+## The AI skill in `skills/x360ce/`
+
+`skills/x360ce/` is the skill the program installs for AI agents, kept where skill sites and installers find it in
+the repository. Only `SKILL.md` is written by hand. Every v4 build runs `x360ce.exe -Skill=skills`, which writes
+the program's version into `SKILL.md` and both programs' help into `references/help-v3.md` and `help-v4.md`; each
+program's `x360ce.exe /ExportUi` writes its `references/ui-tree-v3.*` or `ui-tree-v4.*`. The v4 program carries all
+of them (`App.v4/Common/AiSkill.cs`) and removes from the folder any file it does not write, so a new reference goes
+into `AiSkill.References` first. Change the help in `docs/Help.v3.md` or `docs/Help.v4.md`, never in `references/`. `Tests/Common/SkillTest.cs` checks the folder against what the program
+installs.
+
 ## Plans live in `docs/plans/`
 
 Design notes, requirements and to-do lists for unshipped work live in

@@ -134,7 +134,7 @@ namespace x360ce.App.Controls
 					i > 0 ? Properties.Resources.nav_up_16x16 : null,
 					i < _entries.Count - 1 ? Properties.Resources.nav_down_16x16 : null,
 					entry.Waiting
-						? string.Format("Virtual {0} (waiting)", entry.Pad)
+						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
 					entry.Controller > 0 ? string.Format("Controller {0}", entry.Controller) : "",
 					entry.Name,

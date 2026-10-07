@@ -112,6 +112,7 @@
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
+    <Compile Include="Common\AiSkill.cs" />
     <Compile Include="Common\Update\UpdateClient.cs" />
     <Compile Include="Common\Update\UpdateRelease.cs" />
     <Compile Include="Common\CloudItem.cs" />
@@ -372,6 +373,7 @@
     <Compile Include="Global.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Issues\AiAccessIssue.cs" />
+    <Compile Include="Issues\AiSkillIssue.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppRuntimeDetector.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
@@ -525,6 +527,25 @@
     <!-- The documents live once, under docs, and are rendered when shown. -->
     <EmbeddedResource Include="..\docs\Help.v4.md">
       <Link>Documents\Help.v4.md</Link>
+    </EmbeddedResource>
+    <!-- The rest of the skill: v3's help, and both programs' interface descriptions. -->
+    <EmbeddedResource Include="..\docs\Help.v3.md">
+      <Link>Documents\Help.v3.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v4.md">
+      <Link>Documents\x360ce.ui-tree-v4.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v4.json">
+      <Link>Documents\x360ce.ui-tree-v4.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v3.md">
+      <Link>Documents\x360ce.ui-tree-v3.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v3.json">
+      <Link>Documents\x360ce.ui-tree-v3.json</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\skills\x360ce\SKILL.md">
+      <Link>Documents\x360ce.SKILL.md</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\docs\Help.HidGuardian.md">
       <Link>Documents\Help.HidGuardian.md</Link>
@@ -734,5 +755,13 @@
         <LogicalName>$(RootNamespace).Resources.%(GeneratedResource.EmbeddedName)</LogicalName>
       </EmbeddedResource>
     </ItemGroup>
+  </Target>
+  <!--
+    The skill in the repository is the one the program installs: its version set, the help and the interface
+    description beside it. Skill directories and installers find it there, so every build writes it again. A file
+    that is already right keeps its time, so the build this starts from its own sources does not start another.
+  -->
+  <Target Name="WriteSkill" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="&quot;$(TargetPath)&quot; -Skill=&quot;$(MSBuildProjectDirectory)\..\skills&quot;" ContinueOnError="true" />
   </Target>
 </Project>

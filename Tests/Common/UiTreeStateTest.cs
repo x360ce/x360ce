@@ -54,7 +54,7 @@ namespace x360ce.Tests
 					var branch = UiTreeWalker.Read(UiTreeWalker.Find(form, "Tabs/Page1"), false, "Tabs/Page1");
 					Assert.AreEqual("Tabs/Page1", branch.Path);
 					Assert.IsNotNull(Find(branch, "Tabs/Page1/Slider"), "A branch read must still carry paths from the window, or ui_set cannot use them.");
-					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; docs/ui-tree-v4.json would change.");
+					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; the committed ui-tree-v4.json would change.");
 				}
 			});
 		}
@@ -85,6 +85,11 @@ namespace x360ce.Tests
 					Assert.IsTrue(pressed, "The button on the other page was not pressed.");
 					var tabs = (TabControl)UiTreeWalker.Find(form, "Tabs");
 					Assert.AreEqual("Page2", UiTreeWalker.GetValue(tabs));
+					// A controller tab's light says in its hint what is missing; read as the page's value.
+					var page2 = (TabPage)UiTreeWalker.Find(form, "Tabs/Page2");
+					Assert.IsNull(UiTreeWalker.GetValue(page2), "A page without a hint holds nothing.");
+					page2.ToolTipText = "Controller 2: virtual controller waiting for its place.";
+					Assert.AreEqual(page2.ToolTipText, UiTreeWalker.GetValue(page2));
 					Assert.IsNotNull(UiTreeWalker.Invoke(slider), "A slider is set, not pressed.");
 					tabs.SelectedTab = (TabPage)UiTreeWalker.Find(form, "Tabs/Page1");
 					button.Enabled = false;

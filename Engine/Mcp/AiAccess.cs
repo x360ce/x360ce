@@ -1,6 +1,6 @@
 namespace x360ce.Engine.Mcp
 {
-	/// <summary>How much an AI assistant or a script may do through the program's tools, once access is switched on. Chosen on the Options page, never by the caller.</summary>
+	/// <summary>How much an AI assistant or a script may do through the program's tools, once access is switched on. Chosen on the Options tab, never by the caller.</summary>
 	public enum AiAccess
 	{
 		/// <summary>Read the interface, the devices and the help, and point at things. Changes no setting.</summary>

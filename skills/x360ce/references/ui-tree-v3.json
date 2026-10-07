@@ -1,6 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
+	"Version":"3.6.15.0",
+	"Built":"2026-10-07",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1364,12 +1366,6 @@
 															"Id":"AiAccessPortNumericUpDown",
 															"Min":1024,
 															"Max":49151
-														},
-														{
-															"Name":"Register with Windows",
-															"Description":"Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.",
-															"Role":"CheckBox",
-															"Id":"AiAccessWindowsCheckBox"
 														},
 														{
 															"Name":"Token",

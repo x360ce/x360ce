@@ -37,10 +37,11 @@ namespace x360ce.App.Mcp
 			"CleanupVirtualPadsButton",
 		};
 
-		/// <summary>The door's own controls on the Options page, which no caller may touch at any level.</summary>
+		/// <summary>The door's own controls on the Options tab's AI page, which no caller may touch at any level.</summary>
 		public static readonly string[] DoorControls =
 		{
-			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
+			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton",
+			"AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton",
 		};
 
 		/// <summary>
@@ -50,8 +51,12 @@ namespace x360ce.App.Mcp
 		public static void Register()
 		{
 			UiText.Catalog = UiCatalog.Build;
-			UiTreeExporter.BaseName = "ui-tree-v4";
 			McpServer.ServerName = "x360ce";
+			UiTreeExporter.BaseName = "ui-tree-v4";
+			McpServer.Instructions = "X360CE (Xbox 360 Controller Emulator) maps real controllers, wheels and pedals to virtual Xbox 360 controllers that games read. "
+				+ "Begin with devices_list and ui_current; find a setting with ui_find, point the person at it with ui_show, change it with ui_set, and keep changes with settings_save. "
+				+ "A refusal names the access level the person must choose on the Options tab's AI page; the AI access controls themselves are the person's alone to change.";
+			McpListener.Unauthorised = McpListener.NoToken + " x360ce.exe -Skill explains how to use the program.";
 			McpLog.FileName = "x360ce.AiAccess.log";
 			McpCatalog.Sources = new[] { typeof(McpUiTools), typeof(McpTools) };
 			McpCatalog.Level = () => SettingsManager.Options.AiAccess;
@@ -64,7 +69,7 @@ namespace x360ce.App.Mcp
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
-		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces.")]
+		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place).")]
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;

@@ -44,7 +44,7 @@ namespace x360ce.Engine.Mcp
 		public static string[] AdminControls = new string[0];
 
 		/// <summary>
-		/// Field names of the door's own controls on the Options page. No caller may touch them at
+		/// Field names of the door's own controls on the Options tab. No caller may touch them at
 		/// any level: the level is a person's choice, the port is where the door is, and the token
 		/// is what lets the caller in.
 		/// </summary>
@@ -208,22 +208,54 @@ namespace x360ce.Engine.Mcp
 			return null;
 		}
 
-		[McpTool(AiAccess.Read, "Points at an element for the person: brings its page to the front, restores the window from the tray if need be, frames the element and shows a balloon with your words beside it. Waits the seconds before answering, so several calls in a row make a paced walkthrough.", OnUiThread = false)]
-		public static string UiShow([Description("Element path from ui_read.")] string path, [Description("What to say beside it, in the person's language.")] string text = null, [Description("How long to point, 1 to 60 seconds.")] int seconds = 5)
+		/// <summary>How long a walk points at each tab on the way, in milliseconds.</summary>
+		public static int WalkStepMs = 1500;
+
+		/// <summary>The tab pages that hold a control, outermost first: the tabs a person opens, in order, to reach it.</summary>
+		public static List<TabPage> TabsOnTheWay(Control control)
+		{
+			var pages = new List<TabPage>();
+			for (var c = control == null ? null : control.Parent; c != null; c = c.Parent)
+				if (c is TabPage && c.Parent is TabControl)
+					pages.Insert(0, (TabPage)c);
+			return pages;
+		}
+
+		[McpTool(AiAccess.Read, "Points at an element for the person: brings its page to the front, restores the window from the tray if need be, frames the element and shows a balloon with your words beside it. A tab page is framed by its tab. With walk, first opens and points at each tab on the way, outermost first, a moment each, so the person learns the way there. Waits the seconds before answering, so several calls in a row make a paced walkthrough.", OnUiThread = false)]
+		public static string UiShow([Description("Element path from ui_read.")] string path, [Description("What to say beside it, in the person's language.")] string text = null, [Description("How long to point, 1 to 60 seconds.")] int seconds = 5,
+			[Description("True opens and points at each tab on the way first, so the person learns the way there.")] bool walk = false)
 		{
 			seconds = Math.Max(1, Math.Min(60, seconds));
+			object element = null;
+			Control control = null;
+			var way = new List<TabPage>();
 			McpCatalog.OnUiThread(() =>
 			{
-				var element = FindElement(path);
+				element = FindElement(path);
 				if (element == null)
 					throw new InvalidOperationException("No element at " + path + ".");
 				// A frame is drawn around a control, so an entry on a bar is pointed at by its bar and
 				// a row by its grid, which is where the person has to look anyway.
-				var control = UiTreeWalker.ControlOf(element);
+				control = UiTreeWalker.ControlOf(element);
 				// "Show me" means the window too: a person asking cannot see a tray icon's insides.
 				var main = MainWindow();
 				if (main != null && control != null && control.FindForm() == main && (main.WindowState == FormWindowState.Minimized || !main.Visible))
 					Restore(main);
+				if (walk)
+					way = TabsOnTheWay(control);
+			});
+			// A tab at a time, as the person would click them, each balloon naming the click.
+			foreach (var page in way)
+			{
+				McpCatalog.OnUiThread(() =>
+				{
+					((TabControl)page.Parent).SelectedTab = page;
+					UiCallout.Show(page, "Open the " + page.Text.Trim() + " tab", Math.Max(1, (WalkStepMs + 999) / 1000));
+				});
+				Thread.Sleep(WalkStepMs);
+			}
+			McpCatalog.OnUiThread(() =>
+			{
 				UiTreeWalker.Reveal(element);
 				var window = control == null ? null : control.FindForm();
 				if (control == null || !control.Visible || window == null || !window.Visible || window.WindowState == FormWindowState.Minimized)
@@ -235,28 +267,48 @@ namespace x360ce.Engine.Mcp
 			return null;
 		}
 
-		[McpTool(AiAccess.Read, "Finds elements whose name, purpose, field name or path contains the words, as JSON: Path, Role, Name, Description, Value. Cheaper than reading the whole tree; use the Path with the other tools.")]
-		public static object UiFind([Description("Words to look for, any case.")] string query)
+		/// <summary>The most elements one search returns: a common word matches hundreds across the four controllers' pages.</summary>
+		public const int FindLimit = 40;
+
+		[McpTool(AiAccess.Read, "Finds elements with every word somewhere in their name, purpose, field name or path, in any order and case, as JSON: Path, Role, Name, Description, Value. Best matches first, a word in the name counting most; at most 40, and when there are more a last element with Role Note says how many. Each controller's page is PadNTabPage, so Pad2 among the words keeps to controller 2. Cheaper than reading the whole tree; use the Path with the other tools.")]
+		public static object UiFind([Description("Words to look for, any order and case.")] string query)
 		{
 			if (string.IsNullOrWhiteSpace(query))
 				throw new InvalidOperationException("Give a word to look for.");
-			var found = new List<object>();
-			Collect(UiTreeWalker.Read(RootWindow, false, ""), query.Trim(), found);
+			var words = query.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+			var found = new List<KeyValuePair<int, object>>();
+			Collect(UiTreeWalker.Read(RootWindow, false, ""), words, found);
 			foreach (var window in OtherWindows())
-				Collect(UiTreeWalker.Read(window, false, window.Name), query.Trim(), found);
-			return found.ToArray();
+				Collect(UiTreeWalker.Read(window, false, window.Name), words, found);
+			// The sort keeps the tree's order among equal matches.
+			var shown = found.OrderByDescending(x => x.Key).Select(x => x.Value).Take(FindLimit).ToList();
+			// Cut off without a word, a search reads as complete, and the setting that was left out is
+			// reported as one the program does not have.
+			if (found.Count > FindLimit)
+				shown.Add(new Dictionary<string, object>
+				{
+					{ "Path", null }, { "Role", "Note" },
+					{ "Name", FindLimit + " of " + found.Count + " shown, best matches first. Add a word, such as Pad2 or a page's name, to narrow the search." },
+				});
+			return shown.ToArray();
 		}
 
-		static void Collect(UiNode node, string query, List<object> found)
+		static void Collect(UiNode node, string[] words, List<KeyValuePair<int, object>> found)
 		{
-			if (node.Path != null && (Has(node.Name, query) || Has(node.Description, query) || Has(node.Id, query) || Has(node.Path, query)))
-				found.Add(new Dictionary<string, object>
+			if (node.Path != null && words.All(w => Has(node.Name, w) || Has(node.Description, w) || Has(node.Id, w) || Has(node.Path, w)))
+				found.Add(new KeyValuePair<int, object>(Score(node, words), new Dictionary<string, object>
 				{
 					{ "Path", node.Path }, { "Role", node.Role }, { "Name", node.Name }, { "Description", node.Description }, { "Value", node.Value },
-				});
+				}));
 			if (node.Items != null)
 				foreach (var child in node.Items)
-					Collect(child, query, found);
+					Collect(child, words, found);
+		}
+
+		/// <summary>How well an element answers the words: each counts most in the name a person reads, then in its purpose, then in its field name, and nothing when only the path has it.</summary>
+		static int Score(UiNode node, string[] words)
+		{
+			return words.Sum(w => Has(node.Name, w) ? 3 : Has(node.Description, w) ? 2 : Has(node.Id, w) ? 1 : 0);
 		}
 
 		static bool Has(string text, string query)
@@ -264,7 +316,7 @@ namespace x360ce.Engine.Mcp
 			return text != null && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
-		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. show and wait need Read access; click and set need Configure.", OnUiThread = false)]
+		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element; 'walk <path> | <words> | <seconds>' does the same after opening and pointing at each tab on the way; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. show and wait need Read access; click and set need Configure.", OnUiThread = false, Changes = true)]
 		public static string UiScript([Description("The steps, one per line.")] string script)
 		{
 			var lines = (script ?? "").Replace("\r", "").Split('\n');
@@ -283,8 +335,9 @@ namespace x360ce.Engine.Mcp
 					switch (verb)
 					{
 						case "show":
+						case "walk":
 							int showFor;
-							UiShow(parts[0], parts.Length > 1 ? parts[1] : null, parts.Length > 2 && int.TryParse(parts[2], out showFor) ? showFor : 5);
+							UiShow(parts[0], parts.Length > 1 ? parts[1] : null, parts.Length > 2 && int.TryParse(parts[2], out showFor) ? showFor : 5, verb == "walk");
 							break;
 						case "wait":
 							int waitFor;
@@ -301,7 +354,7 @@ namespace x360ce.Engine.Mcp
 							McpCatalog.OnUiThread(() => UiSet(parts[0], parts[1]));
 							break;
 						default:
-							throw new InvalidOperationException("Unknown step '" + verb + "'. Steps are show, click, set and wait.");
+							throw new InvalidOperationException("Unknown step '" + verb + "'. Steps are show, walk, click, set and wait.");
 					}
 				}
 				catch (Exception ex)
@@ -339,7 +392,7 @@ namespace x360ce.Engine.Mcp
 				throw new InvalidOperationException("No element at " + path + ".");
 			var name = UiTreeWalker.IdOf(element);
 			if (DoorControls.Contains(name))
-				throw new InvalidOperationException("AI assistant access is changed by a person on the Options page, not through this door.");
+				throw new InvalidOperationException("This control is the person's alone, on the Options tab; it cannot be changed or pressed through this door.");
 			if (McpCatalog.Level() < AiAccess.Administer && AdminControls.Contains(name))
 				throw new InvalidOperationException(McpCatalog.Refusal(AiAccess.Administer));
 			return element;

@@ -154,7 +154,7 @@ namespace x360ce.App
 		/// <summary>Writes the navigation tree into the folder given, or into docs beside the program.</summary>
 		public static void ExportUi()
 		{
-			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? "docs" : ExportUiFolder;
+			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? Path.Combine("skills", "x360ce", "references") : ExportUiFolder;
 			var tree = Engine.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
 			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
 		}

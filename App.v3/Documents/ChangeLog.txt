@@ -1,9 +1,14 @@
-﻿## [3.6.10.0] - 2026-10-06
+﻿## [3.6.15.0] - 2026-10-07
 
+- Fixed: AI tools silently ignored arguments they do not take.
+- Removed: The Register with Windows box of AI assistant access.
 - Changed: Pastel icons, sharper controller pictures and button glyphs.
 - Changed: Sharp text and icons on screens set above 100%.
 - Changed: In the light theme, the tabs not chosen have dimmer text.
+- Changed: AI search takes several words and lists best matches first.
+- Changed: The AI door refuses web pages and explains its refusals.
 - Added: Light and dark themes; System follows Windows.
+- Added: AI assistants can walk the person to a setting, one tab at a time.
 
 ## [3.5.10.0] - 2026-09-27
 
