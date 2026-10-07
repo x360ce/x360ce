@@ -102,9 +102,9 @@ namespace x360ce.App
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
 		/// <remarks>
-		/// Made grey from the image as it was drawn at 100% and at each larger size it was drawn at, and then
-		/// scaled to the size of the one given, so a grey picture is as sharp as the coloured one and is known
-		/// as enlarged, never enlarged again.
+		/// Made faded (<see cref="EngineHelper.Faded"/>) from the image as it was drawn at 100% and at each larger size
+		/// it was drawn at, and then scaled to the size of the one given, so a faded picture is as sharp as the full one
+		/// and is known as enlarged, never enlarged again.
 		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
@@ -113,22 +113,13 @@ namespace x360ce.App
 				if (!DisabledImageCache.ContainsKey(image))
 				{
 					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
-					var grey = Greyed(original);
-					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(grey,
-						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(Greyed).ToArray());
-					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(grey, image.Size));
+					var faded = EngineHelper.Faded(original);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(faded,
+						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(EngineHelper.Faded).ToArray());
+					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(faded, image.Size));
 				}
 				return DisabledImageCache[image];
 			}
-		}
-
-		/// <summary>A grey, half see-through copy of an image.</summary>
-		static Image Greyed(Image image)
-		{
-			var copy = (Bitmap)image.Clone();
-			JocysCom.ClassLibrary.Drawing.Effects.GrayScale(copy);
-			JocysCom.ClassLibrary.Drawing.Effects.Transparent(copy, 50);
-			return copy;
 		}
 
 		// Use special function or comparison fails.

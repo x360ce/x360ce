@@ -249,6 +249,29 @@ namespace x360ce.Engine
 			return picture;
 		}
 
+		/// <summary>The opacity a picture of something switched off is drawn at.</summary>
+		public const float DisabledOpacity = 0.5f;
+
+		/// <summary>A copy of an image at <see cref="DisabledOpacity"/>, for a control that shows an image rather than drawing one.</summary>
+		/// <remarks>
+		/// GDI+ applies the opacity in one native draw (<see cref="JocysCom.ClassLibrary.Controls.ControlsHelper.DrawImageWithOpacity"/>).
+		/// A control that paints its own picture draws it at that opacity instead and keeps no copy.
+		/// </remarks>
+		public static System.Drawing.Bitmap Faded(System.Drawing.Image image)
+		{
+			var copy = new System.Drawing.Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+			using (var g = System.Drawing.Graphics.FromImage(copy))
+			{
+				// Pixel for pixel: the copy is the image's own size, and nothing is under it to blend with.
+				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+				g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+				JocysCom.ClassLibrary.Controls.ControlsHelper.DrawImageWithOpacity(g, image,
+					new System.Drawing.Rectangle(0, 0, image.Width, image.Height), DisabledOpacity);
+			}
+			return copy;
+		}
+
 		/// <summary>
 		/// Assemblies that may carry embedded resources, in the order they are searched.
 		/// </summary>

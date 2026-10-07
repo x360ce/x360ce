@@ -154,15 +154,21 @@ namespace x360ce.Tests
 			// properties understates it by an order of magnitude and lets the defect through.
 			var item = new x360ce.Engine.Data.UserDevice();
 			ControlsHelper.IsItemAvailable(item);
-			var watch = Stopwatch.StartNew();
-			for (var i = 0; i < Calls; i++)
-				ControlsHelper.IsItemAvailable(item);
-			watch.Stop();
-			Console.WriteLine("{0} judgements in {1} ms", Calls, watch.ElapsedMilliseconds);
+			string machine;
+			Stopwatch watch;
+			using (var power = new MachinePower())
+			{
+				watch = Stopwatch.StartNew();
+				for (var i = 0; i < Calls; i++)
+					ControlsHelper.IsItemAvailable(item);
+				watch.Stop();
+				machine = power.ToString();
+			}
+			Console.WriteLine("{0} judgements in {1} ms; {2}", Calls, watch.ElapsedMilliseconds, machine);
 			Assert.IsTrue(watch.ElapsedMilliseconds < BudgetMs,
 				Calls + " judgements took " + watch.ElapsedMilliseconds + " ms, over the " + BudgetMs
-				+ " ms budget. Something in here is searching the item's type on every call, and the "
-				+ "device polling rate is paying for it.");
+				+ " ms budget, on " + machine + ". Something in here is searching the item's type on every call, "
+				+ "and the device polling rate is paying for it; a slow clock is not.");
 		}
 
 		static int Fore(DataGridView grid, int rowIndex)
