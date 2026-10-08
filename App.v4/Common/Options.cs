@@ -160,13 +160,14 @@ namespace x360ce.App
 		bool _UpdateInterface = true;
 
 
-		[Description("Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().")]
-		public bool UseDeviceBufferedData
+		/// <summary>True: a press or release that comes and goes between two engine passes reaches the controller, for one pass, on every device. False: each pass reads only where each control is then.</summary>
+		[DefaultValue(true), Description("Read every change a device reports, not only its state at each pass.")]
+		public bool ReadEveryChange
 		{
-			get { return _UseDeviceBufferedData; }
-			set { _UseDeviceBufferedData = value; OnPropertyChanged(); }
+			get { return _ReadEveryChange; }
+			set { _ReadEveryChange = value; OnPropertyChanged(); }
 		}
-		bool _UseDeviceBufferedData;
+		bool _ReadEveryChange = true;
 
 
 		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]

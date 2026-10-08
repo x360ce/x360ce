@@ -1,4 +1,4 @@
-﻿## [4.25.48.0] - 2026-10-08
+﻿## [4.25.51.0] - 2026-10-08
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -31,6 +31,7 @@
 - Changed: AI assistant access has its own AI page in Options.
 - Changed: AI search takes several words and lists best matches first.
 - Changed: Device lists show a controller waiting for its XInput place.
+- Changed: A press, hat tap or stick flick shorter than one read of the device still reaches the controller; Read Every Change on the Options tab turns this off.
 - Changed: The AI door refuses web pages and explains its refusals.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
@@ -42,6 +43,8 @@
 - Added: x360ce.exe /Skill prints that skill; /? prints the switches.
 - Added: AI assistants can walk the person to a setting, one tab at a time.
 - Added: Raw Input devices, listed beside their DirectInput rows, which read an Xbox One controller while a game has the focus.
+- Added: The Logitech G13's stick and keys, read without Logitech's software.
+- Added: AI assistants can log every press and movement the engine reads.
 
 ## [4.24.60.0] - 2026-10-02
 

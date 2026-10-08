@@ -40,6 +40,9 @@ namespace x360ce.Engine
 		/// <summary>Registration flag: stop delivering the usage; the window handle must be zero.</summary>
 		public const uint RIDEV_REMOVE = 0x00000001;
 
+		/// <summary>Registration flag: every top-level collection on the usage page; the usage must be zero.</summary>
+		public const uint RIDEV_PAGEONLY = 0x00000020;
+
 		/// <summary>The size of RID_DEVICE_INFO in bytes, in 32-bit and 64-bit processes alike.</summary>
 		public const int RID_DEVICE_INFO_Size = 32;
 

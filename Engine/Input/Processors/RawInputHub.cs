@@ -184,7 +184,8 @@ namespace x360ce.Engine
 	/// <para>
 	/// Windows delivers a top-level collection's input to one window in a process, the one registered for it last, so
 	/// the hub is the only code in the program that registers Raw Input. Its thread owns a message-only window,
-	/// registered for joysticks (1:04), gamepads (1:05) and multi-axis controllers (1:08) with RIDEV_INPUTSINK, which
+	/// registered for joysticks (1:04), gamepads (1:05), multi-axis controllers (1:08) and the vendor pages of
+	/// <see cref="RawInputDevice.Descriptions"/> with RIDEV_INPUTSINK, which
 	/// delivers input while another program is in front, and RIDEV_DEVNOTIFY, which reports each device arriving and
 	/// leaving, those attached at registration included.
 	/// </para>
@@ -366,12 +367,21 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>Registers, or with <see cref="RawInputNative.RIDEV_REMOVE"/> and no window unregisters, the game controller usages.</summary>
+		/// <remarks>
+		/// A device of <see cref="RawInputDevice.Descriptions"/> reports on its vendor's page, whose usage Windows will not
+		/// take alone, so the page is registered whole; what the other collections on it send is ignored, as input from
+		/// any device the hub does not read is.
+		/// </remarks>
 		static bool Register(IntPtr hwnd, uint flags)
 		{
-			var list = new RawInputNative.RAWINPUTDEVICE[Usages.Length];
-			for (var i = 0; i < list.Length; i++)
-				list[i] = new RawInputNative.RAWINPUTDEVICE { usUsagePage = GenericDesktopPage, usUsage = Usages[i], dwFlags = flags, hwndTarget = hwnd };
-			return RawInputNative.RegisterRawInputDevices(list, (uint)list.Length, (uint)Marshal.SizeOf(typeof(RawInputNative.RAWINPUTDEVICE)));
+			var list = new List<RawInputNative.RAWINPUTDEVICE>();
+			foreach (var usage in Usages)
+				list.Add(new RawInputNative.RAWINPUTDEVICE { usUsagePage = GenericDesktopPage, usUsage = usage, dwFlags = flags, hwndTarget = hwnd });
+			foreach (var description in RawInputDevice.Descriptions)
+				if (!list.Exists(x => x.usUsagePage == description.UsagePage))
+					list.Add(new RawInputNative.RAWINPUTDEVICE { usUsagePage = (ushort)description.UsagePage, dwFlags = flags | RawInputNative.RIDEV_PAGEONLY, hwndTarget = hwnd });
+			var array = list.ToArray();
+			return RawInputNative.RegisterRawInputDevices(array, (uint)array.Length, (uint)Marshal.SizeOf(typeof(RawInputNative.RAWINPUTDEVICE)));
 		}
 
 		/// <summary>The hub's message-only window: hands each message to the hub, on the hub thread.</summary>

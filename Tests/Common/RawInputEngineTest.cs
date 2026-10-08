@@ -132,7 +132,6 @@ namespace x360ce.Tests
 				Assert.IsTrue(gp.LeftThumbX > short.MinValue / 2 && gp.LeftThumbX < short.MaxValue / 2, "The stick does not follow the wheel back near the centre: " + gp.LeftThumbX);
 				// What a DirectInput read leaves that a Raw Input read has no part in.
 				Assert.IsNull(ud.JoState, "A Raw Input device was given a DirectInput state.");
-				Assert.IsNull(ud.SourceUpdates, "A Raw Input device has buffered updates.");
 				// Force feedback is on for its tab, and nothing of it is touched: no device, no hold, no force state.
 				Assert.IsNull(ud.Device, "A Raw Input device was given a DirectInput device.");
 				Assert.IsNull(ud.IsExclusiveMode, "A Raw Input device was held.");
@@ -142,6 +141,89 @@ namespace x360ce.Tests
 				// What the engine log counts: four reads, three of them finding a state the hub published since the read
 				// before: the twin's layout, at rest, and two reports.
 				CollectionAssert.AreEqual(new[] { 4, 3, 0 }, Counts(helper), "Reads, fresh states and missing devices counted.");
+			}
+			finally
+			{
+				helper.Dispose();
+			}
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("devices"), TestCategory("critical")]
+		[Description("A button pressed and let go between two engine passes reaches its controller for one pass, whether the reports came in one input or two, and the engine's log has each change in order")]
+		public void A_press_between_two_passes_reaches_the_controller()
+		{
+			var helper = new DInputHelper();
+			try
+			{
+				var ud = Wheel(helper);
+				var routing = Routing(ud);
+				var read = EngineSteps.UpdateDiStates(helper);
+				var convert = EngineSteps.UpdateXiStates(helper);
+				helper.RawInput.ReadInput(RawInputTest.RawInput(Left.Bytes()));
+				read(null, Game, null, routing);
+				var log = helper.StartInputLog(100);
+				var twoInputs = new[] { RawInputTest.RawInput(Pressed.Bytes()), RawInputTest.RawInput(Left.Bytes()) };
+				var oneInput = new[] { RawInputTest.RawInput(Pressed.Bytes(), Left.Bytes()) };
+				foreach (var inputs in new[] { twoInputs, oneInput })
+				{
+					foreach (var input in inputs)
+						helper.RawInput.ReadInput(input);
+					read(null, Game, null, routing);
+					convert(routing);
+					Assert.AreEqual(GamepadButtonFlags.A, routing.Rows[0].XiState.Buttons, "A press that came and went between two passes did not reach the controller.");
+					read(null, Game, null, routing);
+					convert(routing);
+					Assert.AreEqual(GamepadButtonFlags.None, routing.Rows[0].XiState.Buttons, "The press was held past the one pass it is shown for.");
+				}
+				helper.StopInputLog();
+				var lines = x360ce.App.Mcp.McpTools.DescribeChanges(log);
+				var button = lines.Where(x => x.Contains("Button 7")).Select(x => x.Substring(x.LastIndexOf(' ') + 1)).ToArray();
+				CollectionAssert.AreEqual(new[] { "down", "up", "down", "up" }, button, "The log does not have each press and release in order: " + string.Join("; ", lines));
+				Assert.AreEqual(0, log.Dropped);
+				// Turned off, a pass reads the state alone, and a tap between two passes is not shown.
+				x360ce.App.SettingsManager.Options.ReadEveryChange = false;
+				try
+				{
+					foreach (var input in oneInput)
+						helper.RawInput.ReadInput(input);
+					read(null, Game, null, routing);
+					convert(routing);
+					Assert.AreEqual(GamepadButtonFlags.None, routing.Rows[0].XiState.Buttons, "A tap between two passes was shown with reading every change off.");
+				}
+				finally
+				{
+					x360ce.App.SettingsManager.Options.ReadEveryChange = true;
+				}
+			}
+			finally
+			{
+				helper.Dispose();
+			}
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("devices"), TestCategory("critical")]
+		[Description("A wheel flicked fully one way and back between two engine passes reaches its controller's stick for one pass")]
+		public void A_flick_between_two_passes_reaches_the_controller()
+		{
+			var helper = new DInputHelper();
+			try
+			{
+				var ud = Wheel(helper);
+				var routing = Routing(ud);
+				var read = EngineSteps.UpdateDiStates(helper);
+				var convert = EngineSteps.UpdateXiStates(helper);
+				var centre = Fixture.Samples.Single(x => x.Shows == "Wheel axis 1:30 = 8193").Bytes();
+				helper.RawInput.ReadInput(RawInputTest.RawInput(centre));
+				read(null, Game, null, routing);
+				convert(routing);
+				Assert.IsTrue(Math.Abs((int)routing.Rows[0].XiState.LeftThumbX) < 100, "The wheel at the centre does not centre the stick.");
+				helper.RawInput.ReadInput(RawInputTest.RawInput(Left.Bytes(), centre));
+				read(null, Game, null, routing);
+				convert(routing);
+				Assert.AreEqual(short.MinValue, routing.Rows[0].XiState.LeftThumbX, "A flick between two passes did not reach the controller.");
+				read(null, Game, null, routing);
+				convert(routing);
+				Assert.IsTrue(Math.Abs((int)routing.Rows[0].XiState.LeftThumbX) < 100, "The flick was held past the one pass it is shown for.");
 			}
 			finally
 			{

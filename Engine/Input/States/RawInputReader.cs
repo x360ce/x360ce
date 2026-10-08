@@ -33,6 +33,13 @@ namespace x360ce.Engine
 		/// <summary>The button slots each report ID carries, which a report of that ID clears before setting those that are on.</summary>
 		readonly int[][] buttonsByReport = new int[256][];
 
+		/// <summary>What the buttons of a report's ID read before the report, so each one it changes is counted in <see cref="SourceState.ButtonChanges"/>.</summary>
+		readonly bool[] wasOn;
+
+		/// <summary>The direction each axis and slider last moved in, so a turn back is counted in <see cref="SourceState.AxisTurns"/> and <see cref="SourceState.SliderTurns"/>.</summary>
+		readonly sbyte[] axisDirections = new sbyte[SourceState.MaxAxis];
+		readonly sbyte[] sliderDirections = new sbyte[SourceState.MaxSliders];
+
 		public RawInputReader(RawInputDevice device, RawInputLayout layout)
 		{
 			this.device = device;
@@ -64,9 +71,14 @@ namespace x360ce.Engine
 					ranges[i] = ValueRange.Of(c);
 				}
 			}
+			var most = 0;
 			for (var id = 0; id < buttons.Length; id++)
 				if (buttons[id] != null)
+				{
 					buttonsByReport[id] = buttons[id].ToArray();
+					most = Math.Max(most, buttons[id].Count);
+				}
+			wasOn = new bool[most];
 			var max = (int)RawInputNative.HidP_MaxDataListLength(RawInputNative.HidP_Input, device.PreparsedData);
 			data = new RawInputNative.HIDP_DATA[Math.Max(1, max)];
 		}
@@ -104,14 +116,20 @@ namespace x360ce.Engine
 		/// <remarks>
 		/// Every control the report carries is written. The buttons of the report's ID are cleared and those that are on
 		/// set, since HidP_GetData lists only the buttons that are on; controls of other report IDs keep their values.
+		/// Each button and hat the report changes is counted, and each axis or slider that turns back
+		/// (<see cref="SourceState.ButtonChanges"/>, <see cref="SourceState.PovChanges"/>, <see cref="SourceState.AxisTurns"/>),
+		/// so the engine can tell a change that came and went between two of its reads. A device whose own description
+		/// names no controls is read from its <see cref="RawInputDevice.Description"/>.
 		/// </remarks>
 		/// <param name="buffer">Holds the report, which starts with its report ID, or 0 when the device numbers no reports.</param>
-		/// <returns>False when the HID parser refuses the report, which leaves the state as it was.</returns>
+		/// <returns>False when the HID parser refuses the report, or a described device's report has another ID, which leaves the state as it was.</returns>
 		public unsafe bool ReadReport(byte[] buffer, int offset, int length, SourceState state)
 		{
 			var preparsedData = device.PreparsedData;
 			if (preparsedData == IntPtr.Zero || buffer == null || offset < 0 || length <= 0 || length > buffer.Length - offset)
 				return false;
+			if (device.Description != null)
+				return ReadBits(buffer, offset, length, state);
 			var count = (uint)data.Length;
 			int status;
 			fixed (RawInputNative.HIDP_DATA* list = data)
@@ -122,7 +140,10 @@ namespace x360ce.Engine
 			var buttons = buttonsByReport[buffer[offset]];
 			if (buttons != null)
 				for (var i = 0; i < buttons.Length; i++)
+				{
+					wasOn[i] = state.Buttons[buttons[i]];
 					state.Buttons[buttons[i]] = false;
+				}
 			var n = (int)count;
 			for (var i = 0; i < n; i++)
 			{
@@ -132,20 +153,103 @@ namespace x360ce.Engine
 				switch (types[index])
 				{
 					case MapType.Axis:
-						state.Axis[indexes[index]] = ranges[index].ToAxis(data[i].RawValue);
+						Move(state.Axis, state.AxisTurns, state.AxisTurnValues, axisDirections, indexes[index], ranges[index].ToAxis(data[i].RawValue));
 						break;
 					case MapType.Slider:
-						state.Sliders[indexes[index]] = ranges[index].ToAxis(data[i].RawValue);
+						Move(state.Sliders, state.SliderTurns, state.SliderTurnValues, sliderDirections, indexes[index], ranges[index].ToAxis(data[i].RawValue));
 						break;
 					case MapType.POV:
-						state.Povs[indexes[index]] = ranges[index].ToPov(data[i].RawValue);
+						MoveHat(state, indexes[index], ranges[index].ToPov(data[i].RawValue));
 						break;
 					case MapType.Button:
 						state.Buttons[indexes[index]] = true;
 						break;
 				}
 			}
+			if (buttons != null)
+				for (var i = 0; i < buttons.Length; i++)
+					if (state.Buttons[buttons[i]] != wasOn[i])
+						state.ButtonChanges[buttons[i]]++;
 			return true;
+		}
+
+		/// <summary>Writes a described device's report into <paramref name="state"/>, each control from the bits its <see cref="RawInputControl.BitOffset"/> names.</summary>
+		/// <remarks>Every control is in every report of the description's ID, so each is written, a button off as well as on.</remarks>
+		bool ReadBits(byte[] buffer, int offset, int length, SourceState state)
+		{
+			if (buffer[offset] != device.Description.ReportId)
+				return false;
+			var controls = device.Controls;
+			for (var i = 0; i < types.Length; i++)
+			{
+				if (types[i] == MapType.None)
+					continue;
+				var c = controls[i];
+				var value = Bits(buffer, offset, length, c.BitOffset, c.IsButton ? 1 : c.BitSize);
+				switch (types[i])
+				{
+					case MapType.Axis:
+						Move(state.Axis, state.AxisTurns, state.AxisTurnValues, axisDirections, indexes[i], ranges[i].ToAxis(value));
+						break;
+					case MapType.Slider:
+						Move(state.Sliders, state.SliderTurns, state.SliderTurnValues, sliderDirections, indexes[i], ranges[i].ToAxis(value));
+						break;
+					case MapType.POV:
+						MoveHat(state, indexes[i], ranges[i].ToPov(value));
+						break;
+					case MapType.Button:
+						var on = value != 0;
+						if (state.Buttons[indexes[i]] != on)
+						{
+							state.Buttons[indexes[i]] = on;
+							state.ButtonChanges[indexes[i]]++;
+						}
+						break;
+				}
+			}
+			return true;
+		}
+
+		/// <summary>Writes an axis or slider, and counts a turn back, at the value it turned at, where its direction reverses.</summary>
+		/// <param name="directions">The direction each slot last moved in: 1 up, -1 down, 0 not yet. The reader's own.</param>
+		static void Move(int[] values, int[] turns, int[] turnValues, sbyte[] directions, int slot, int value)
+		{
+			var from = values[slot];
+			if (value == from)
+				return;
+			var direction = (sbyte)(value > from ? 1 : -1);
+			if (directions[slot] != 0 && directions[slot] != direction)
+			{
+				turns[slot]++;
+				turnValues[slot] = from;
+			}
+			directions[slot] = direction;
+			values[slot] = value;
+		}
+
+		/// <summary>Writes a hat, and counts each move with where it was before.</summary>
+		static void MoveHat(SourceState state, int slot, int value)
+		{
+			if (state.Povs[slot] == value)
+				return;
+			state.PovsBefore[slot] = state.Povs[slot];
+			state.PovChanges[slot]++;
+			state.Povs[slot] = value;
+		}
+
+		/// <summary>The <paramref name="size"/> bits from <paramref name="bit"/> on, lowest first as HID packs them; bits past the report read 0.</summary>
+		static uint Bits(byte[] buffer, int offset, int length, int bit, int size)
+		{
+			uint value = 0;
+			for (var i = 0; i < size && i < 32; i++)
+			{
+				var at = bit + i;
+				if (at < 0 || (at >> 3) >= length)
+					break;
+				if ((buffer[offset + (at >> 3)] & (1 << (at & 7))) != 0)
+					value |= 1u << i;
+			}
+			return value;
 		}
 
 		/// <summary>Writes every report one WM_INPUT carries into <paramref name="state"/>, in the order they came, so the last one wins.</summary>

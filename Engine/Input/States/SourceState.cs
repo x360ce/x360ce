@@ -49,6 +49,13 @@ namespace x360ce.Engine
 			Array.Copy(Sliders, state.Sliders, Sliders.Length);
 			Array.Copy(Povs, state.Povs, Povs.Length);
 			Array.Copy(Buttons, state.Buttons, Buttons.Length);
+			Array.Copy(ButtonChanges, state.ButtonChanges, ButtonChanges.Length);
+			Array.Copy(PovChanges, state.PovChanges, PovChanges.Length);
+			Array.Copy(PovsBefore, state.PovsBefore, PovsBefore.Length);
+			Array.Copy(AxisTurns, state.AxisTurns, AxisTurns.Length);
+			Array.Copy(AxisTurnValues, state.AxisTurnValues, AxisTurnValues.Length);
+			Array.Copy(SliderTurns, state.SliderTurns, SliderTurns.Length);
+			Array.Copy(SliderTurnValues, state.SliderTurnValues, SliderTurnValues.Length);
 		}
 
 		public const int MaxAxis = 24;
@@ -58,6 +65,32 @@ namespace x360ce.Engine
 		public int[] Sliders = new int[MaxSliders];
 		public int[] Povs = new int[4];
 		public bool[] Buttons = new bool[128];
+
+		/// <summary>How many times each button has been pressed or let go, counted by a reader that sees every report; 0 in a state read by polling.</summary>
+		/// <remarks>
+		/// A count that grew by two or more since the state read before, while the button reads the same, is a press and
+		/// release, or a release and press, that came and went between the two reads.
+		/// </remarks>
+		public int[] ButtonChanges = new int[128];
+
+		/// <summary>How many times each hat has moved, counted as <see cref="ButtonChanges"/> are; 0 in a state read by polling.</summary>
+		public int[] PovChanges = new int[4];
+
+		/// <summary>Where each hat was before its latest move: the direction a tap that came and went between two reads was held in.</summary>
+		public int[] PovsBefore = new int[4];
+
+		/// <summary>How many times each axis has turned back, counted by a reader that sees every report; 0 in a state read by polling.</summary>
+		/// <remarks>A count that grew since the state read before, with <see cref="AxisTurnValues"/> far out while the axis is back, is a flick that came and went between the two reads.</remarks>
+		public int[] AxisTurns = new int[MaxAxis];
+
+		/// <summary>Where each axis last turned back.</summary>
+		public int[] AxisTurnValues = new int[MaxAxis];
+
+		/// <summary>How many times each slider has turned back, as <see cref="AxisTurns"/>.</summary>
+		public int[] SliderTurns = new int[MaxSliders];
+
+		/// <summary>Where each slider last turned back.</summary>
+		public int[] SliderTurnValues = new int[MaxSliders];
 
 		#region Get/Set Axis Array and Existence Mask
 

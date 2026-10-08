@@ -237,16 +237,9 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public JoystickState JoState;
 
-		/// <summary>DInput JoystickUpdate States.</summary>
-		[XmlIgnore]
-		public JoystickUpdate[] JoUpdate;
-
 		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
 		[XmlIgnore]
 		public SourceState SourceState;
-
-		[XmlIgnore]
-		public SourceStateUpdate[] SourceUpdates;
 
 		[XmlIgnore]
 		public long SourceStateTime;
@@ -254,9 +247,6 @@ namespace x360ce.Engine.Data
 		/// <summary>The state shown before <see cref="SourceState"/>. The input thread fills this object again on the next poll and shows it, so a state stays unchanged for one whole poll after it is replaced. Whoever keeps a state longer takes a <see cref="SourceState.Clone"/>.</summary>
 		[XmlIgnore]
 		public SourceState OldSourceState;
-
-		[XmlIgnore]
-		public SourceStateUpdate[] OldSourceUpdates;
 
 		[XmlIgnore]
 		public long OldSourceStateTime;

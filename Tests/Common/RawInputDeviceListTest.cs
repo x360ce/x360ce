@@ -600,9 +600,17 @@ namespace x360ce.Tests
 					var device = Field<RawInputDevice>(listing, "Device");
 					var twin = Field<DeviceInstance>(listing, "Twin");
 					Console.WriteLine("{0}: \"{1}\" {2}, twin \"{3}\"", what, device.ProductName, device.InterfacePath, twin == null ? null : twin.InstanceName);
-					Assert.IsNotNull(twin, what + ": \"" + device.ProductName + "\" has no DirectInput twin.");
 					Assert.IsNotNull(Field<DeviceInfo>(listing, "Interface"), what + ": \"" + device.ProductName + "\" has no interface.");
 					var entry = hub.Devices[device.InstanceGuid];
+					// A device read from its row has no twin, since DirectInput lists it as no game controller: its usages place it.
+					if (device.Description != null)
+					{
+						Assert.IsNull(twin, what + ": \"" + device.ProductName + "\" has a DirectInput twin.");
+						Assert.IsFalse(layouts.ContainsKey(entry), what + ": \"" + device.ProductName + "\" took a layout from a twin it does not have.");
+						Assert.AreSame(entry.Layout, Field<RawInputLayout>(listing, "Layout"), what + ": the listing's layout is not the one the hub reads it by.");
+						continue;
+					}
+					Assert.IsNotNull(twin, what + ": \"" + device.ProductName + "\" has no DirectInput twin.");
 					Assert.IsTrue(layouts.ContainsKey(entry), what + ": \"" + device.ProductName + "\" did not take its twin's layout.");
 					Assert.AreSame(layouts[entry], Field<RawInputLayout>(listing, "Layout"), what + ": the listing's layout is not the twin's.");
 				}

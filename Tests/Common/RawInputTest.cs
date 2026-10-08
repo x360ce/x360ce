@@ -14,7 +14,7 @@ namespace x360ce.Tests
 	/// slots, so a mapping made on either works for the other.
 	/// </summary>
 	/// <remarks>
-	/// The recorded tests replay reports three real controllers sent (see <see cref="RawInputFixtures"/>) and need no
+	/// The recorded tests replay reports real controllers sent (see <see cref="RawInputFixtures"/>) and need no
 	/// hardware. The attached-controller test only lists devices and reads their paths: it opens no device for
 	/// reading, acquires nothing and sends nothing.
 	/// </remarks>
@@ -271,6 +271,106 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Each report that presses or lets go of a button counts one change, so the engine can tell a press that came and went between two of its reads")]
+		public void Each_button_change_is_counted()
+		{
+			var fixture = RawInputFixtures.G27;
+			var pressed = Sample(fixture, "Button 6 9:07 pressed").Bytes();
+			var left = Sample(fixture, "Wheel axis 1:30 = 0").Bytes();
+			using (var wheel = Device(fixture))
+			{
+				var reader = TwinReader(wheel, fixture);
+				var state = new SourceState();
+				RawInputReader.Reset(state);
+				reader.ReadReport(pressed, 0, pressed.Length, state);
+				reader.ReadReport(pressed, 0, pressed.Length, state);
+				Assert.AreEqual(1, state.ButtonChanges[6], "A button held through two reports changed once.");
+				// A press and release in one input, as Windows batches reports it has not delivered yet.
+				Assert.AreEqual(3, reader.ReadRawInput(RawInput(left, pressed, left), state));
+				Assert.IsFalse(state.Buttons[6], "The last report lets the button go.");
+				Assert.AreEqual(4, state.ButtonChanges[6], "Changes inside one input were not each counted.");
+				Assert.AreEqual(0, state.ButtonChanges.Where((x, i) => i != 6).Sum(), "A button that did not move was counted.");
+				var copy = new SourceState();
+				state.CopyTo(copy);
+				CollectionAssert.AreEqual(state.ButtonChanges, copy.ButtonChanges, "A copy of a state loses its counts, which the engine reads them from.");
+			}
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Each hat move is counted with where the hat was before, and each axis turning back with where it turned")]
+		public void Each_hat_move_and_axis_turn_is_counted()
+		{
+			var fixture = RawInputFixtures.RumblePad2;
+			var rest = Sample(fixture, "Y Axis 1:31 = 128").Bytes();
+			var right = Sample(fixture, "Hat Switch 1:39 = 2").Bytes();
+			var centre = Sample(fixture, "X Axis 1:30 = 128").Bytes();
+			var left = Sample(fixture, "X Axis 1:30 = 0").Bytes();
+			using (var pad = Device(fixture))
+			{
+				var reader = TwinReader(pad, fixture);
+				var state = new SourceState();
+				reader.Rest(state);
+				Assert.AreEqual(3, reader.ReadRawInput(RawInput(rest, right, rest), state));
+				Assert.AreEqual(-1, state.Povs[0], "The hat is back at the centre.");
+				Assert.AreEqual(2, state.PovChanges[0], "The hat's move there and back is not two moves.");
+				Assert.AreEqual(9000, state.PovsBefore[0], "Where the hat was before it came back is not kept.");
+				var turns = state.AxisTurns[0];
+				Assert.AreEqual(3, reader.ReadRawInput(RawInput(centre, left, centre), state));
+				Assert.AreEqual(32767, state.Axis[0], "The stick is back at the centre.");
+				Assert.AreEqual(turns + 1, state.AxisTurns[0], "The stick flicked left and back did not turn once.");
+				Assert.AreEqual(0, state.AxisTurnValues[0], "The turn is not where the stick went.");
+			}
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A device whose description names no control is read from its row: the G13's stick as X and Y, its keys as buttons")]
+		public void An_undescribed_device_is_read_from_its_row()
+		{
+			var fixture = RawInputFixtures.G13;
+			// Why the row exists: the G13 describes its report as seven vendor bytes and nothing else.
+			using (var own = RawInputDevice.FromPreparsedData(fixture.PreparsedBytes()))
+				Assert.IsTrue(own.Controls.All(x => x == null || x.UsagePage == 0xFF00), "The G13 names a control of its own now; read it by its description.");
+			Assert.IsNotNull(fixture.Description, "The G13 has no row.");
+			Assert.IsNull(RawInputDevice.DescriptionOf(0x046D, 0xC21C, GenericDesktopPage),
+				"A collection that describes itself, such as a joystick the maker's software adds, is read by its own description.");
+			using (var g13 = fixture.Device(1, @"\\?\HID#VID_046D&PID_C21C#test", "G13", 0))
+			{
+				Assert.AreSame(fixture.Description, g13.Description);
+				Assert.AreEqual(2 + 40, g13.Controls.Length, "The stick's two axes and the 40 key bits.");
+				Assert.AreEqual(8, Control(g13, GenericDesktopPage, 0x30).BitOffset, "X is the byte after the report ID.");
+				Assert.AreEqual(16, Control(g13, GenericDesktopPage, 0x31).BitOffset);
+				Assert.AreEqual(24, Control(g13, ButtonPage, 1, true).BitOffset, "The keys start after the stick.");
+				Assert.AreEqual(63, Control(g13, ButtonPage, 40, true).BitOffset);
+				// No DirectInput twin: the usages place it, as they place any device without one.
+				var layout = RawInputLayout.Standard(g13.Controls);
+				CollectionAssert.AreEqual(new[] { "X Axis", "Y Axis" }, layout.GetDeviceObjects().Take(2).Select(x => x.Name).ToArray());
+				Assert.AreEqual(40, layout.GetDeviceObjects().Count(x => x.Type == ObjectGuid.Button));
+				var reader = new RawInputReader(g13, layout);
+				foreach (var sample in fixture.Samples)
+					AssertState(fixture, sample, Read(reader, sample));
+				// Every report carries every key, so one let go reads as up, and both changes are counted.
+				var state = Read(reader, Sample(fixture, "G1 pressed"));
+				var rest = Sample(fixture, "at rest").Bytes();
+				Assert.IsTrue(reader.ReadReport(rest, 0, rest.Length, state));
+				AssertState(fixture, Sample(fixture, "at rest"), state);
+				Assert.AreEqual(2, state.ButtonChanges[0], "A press and its release are not counted as two changes.");
+				Assert.AreEqual(0, state.ButtonChanges[1], "A key that did not move was counted.");
+				var other = new byte[] { 2, 0, 0, 0, 0, 0, 0, 0 };
+				Assert.IsFalse(reader.ReadReport(other, 0, other.Length, state), "A report of another ID was read as the stick and keys.");
+				AssertState(fixture, Sample(fixture, "at rest"), state);
+				var pressed = Sample(fixture, "G1 pressed").Bytes();
+				Assert.AreEqual(0L, Allocations.FewestBytes(5, () =>
+				{
+					for (var i = 0; i < 1000; i++)
+					{
+						reader.ReadReport(pressed, 0, pressed.Length, state);
+						reader.ReadReport(rest, 0, rest.Length, state);
+					}
+				}), "Bytes handed to the collector by 2000 reports of a described device.");
+			}
+		}
+
 		#endregion
 
 		#region Conversions
@@ -418,13 +518,20 @@ namespace x360ce.Tests
 				{
 					Console.WriteLine("{0:X4}:{1:X4} usage {2:X}:{3:X2} {4} controls, \"{5}\" {6}", device.VendorId, device.ProductId,
 						device.UsagePage, device.Usage, device.Controls.Length, device.ProductName, device.InterfacePath);
-					DeviceInstance twin;
-					Assert.IsTrue(twins.TryGetValue(device.InterfacePath, out twin), device.InterfacePath + " has no DirectInput device with its path.");
-					Assert.AreEqual(twin.ProductGuid, device.ProductGuid, twin.ProductName + ": product GUID.");
 					var again = second.SingleOrDefault(x => x.InterfacePath == device.InterfacePath);
 					Assert.IsNotNull(again, device.InterfacePath + " was not listed the second time.");
-					Assert.AreEqual(device.InstanceGuid, again.InstanceGuid, twin.ProductName + ": instance GUID changed between two listings.");
-					Assert.IsTrue(device.Controls.Length > 0, twin.ProductName + " has no controls.");
+					Assert.AreEqual(device.InstanceGuid, again.InstanceGuid, device.InterfacePath + ": instance GUID changed between two listings.");
+					Assert.IsTrue(device.Controls.Length > 0, device.InterfacePath + " has no controls.");
+					DeviceInstance twin;
+					var listed = twins.TryGetValue(device.InterfacePath, out twin);
+					// A device read from its row is one DirectInput lists as no game controller, which is why it has a row.
+					if (device.Description != null)
+					{
+						Assert.IsFalse(listed, twin?.ProductName + " is a game controller to DirectInput, so it can be read by its own description.");
+						continue;
+					}
+					Assert.IsTrue(listed, device.InterfacePath + " has no DirectInput device with its path.");
+					Assert.AreEqual(twin.ProductGuid, device.ProductGuid, twin.ProductName + ": product GUID.");
 				}
 				foreach (var path in twins.Keys.Where(x => x.StartsWith(@"\\?\hid#", StringComparison.OrdinalIgnoreCase)))
 					Assert.IsTrue(first.Any(x => string.Equals(x.InterfacePath, path, StringComparison.OrdinalIgnoreCase)), twins[path].ProductName + " is not listed by Raw Input.");

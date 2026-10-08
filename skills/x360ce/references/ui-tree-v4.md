@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.25.48.0, built 2026-10-08.
+Version 4.25.51.0, built 2026-10-08.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -303,7 +303,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Section]   │       │           │   ├── Direct Input Devices                            # Which devices the program lists and reads.
 [CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # Leaves out the extra parts a device reports beside its main controls.
 [CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # Leaves out the controllers this program creates, so they are not mapped to themselves.
-[CheckBox]  │       │           │   │   └── Use Device Buffered Data                    # Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().
+[CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
 [Section]   │       │           │   ├── Configuration                                   # What the settings file written for games contains.
 [Text]      │       │           │   │   ├── Configuration version                       # The configuration file version.
 [CheckBox]  │       │           │   │   ├── Include [Products]                          # Writes the device list into the settings file games read.

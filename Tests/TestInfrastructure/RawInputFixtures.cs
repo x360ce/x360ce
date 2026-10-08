@@ -39,6 +39,8 @@ namespace x360ce.Tests
 		public int ProductId;
 		/// <summary>The device's preparsed data (RIDI_PREPARSEDDATA), in Base64.</summary>
 		public string Preparsed;
+		/// <summary>The device's row of <see cref="RawInputDevice.Descriptions"/>, for one whose own description names no control; null otherwise.</summary>
+		public RawInputDescription Description;
 		/// <summary>The twin's controls as the engine keeps them once it has read the device: axes and sliders carry the slot DirectInput reports, buttons their order, and hats the instance number less one, which is not a slot.</summary>
 		public DeviceObjectItem[] Objects;
 		public RawInputSample[] Samples;
@@ -52,17 +54,17 @@ namespace x360ce.Tests
 		/// <param name="handle">Its Raw Input handle, which the hub keys it by. A recorded report's hDevice is 0.</param>
 		/// <param name="path">Its interface path, which its instance GUID is made from.</param>
 		/// <param name="productName">The name it reports, or null for none.</param>
-		/// <param name="usage">Its top-level collection: 0x04 joystick, 0x05 gamepad.</param>
+		/// <param name="usage">Its top-level collection: 0x04 joystick, 0x05 gamepad, or its vendor's usage for a device with a <see cref="Description"/>.</param>
 		public RawInputDevice Device(long handle, string path, string productName, int usage)
 		{
-			var device = RawInputDevice.FromPreparsedData(PreparsedBytes());
+			var device = RawInputDevice.FromPreparsedData(PreparsedBytes(), Description);
 			Assert.IsNotNull(device, Name + ": the HID parser refused the recorded preparsed data.");
 			Set(device, "Handle", new IntPtr(handle));
 			Set(device, "InterfacePath", path);
 			Set(device, "VendorId", VendorId);
 			Set(device, "ProductId", ProductId);
 			Set(device, "Version", 0x0100);
-			Set(device, "UsagePage", 1);
+			Set(device, "UsagePage", Description == null ? 1 : Description.UsagePage);
 			Set(device, "Usage", usage);
 			Set(device, "ProductName", productName);
 			Set(device, "InstanceGuid", RawInputDevice.GetInstanceGuid(path));
@@ -76,7 +78,7 @@ namespace x360ce.Tests
 		}
 	}
 
-	/// <summary>Three controllers recorded on one machine through Raw Input, with the state DirectInput read for each one's twin.</summary>
+	/// <summary>Controllers recorded on one machine through Raw Input, with the state DirectInput read for each one's twin; the G13 has none.</summary>
 	/// <remarks>
 	/// Chosen from a recording of the three read at once through Raw Input and DirectInput: each one at rest, each
 	/// axis at both ends, at its centre and on either side of it, and each hat direction and button the recording
@@ -351,6 +353,41 @@ namespace x360ce.Tests
 				S("Wheel axis 1:30 ~ 4095", "00080000FC3FFFFF807D679CFF", new[] { 16380, 65535, 0, 0, 0, 65535 }, new[] { 32767, 65535 }, new[] { -1, -1, -1, -1 }),
 				S("Wheel axis 1:30 ~ 12291", "000800000CC0FFFF807D689CFF", new[] { 49164, 65535, 0, 0, 0, 65535 }, new[] { 32767, 65535 }, new[] { -1, -1, -1, -1 }),
 				S("Button 22 9:17 pressed", "00080000D47EFFFF807D689DFF", new[] { 32467, 65535, 0, 0, 0, 65535 }, new[] { 32767, 65535 }, new[] { -1, -1, -1, -1 }, 22),
+			},
+		};
+		/// <summary>Logitech G13, 046D:C21C, top-level collection on the vendor page 0xFF00: its description names no control, so it is read from its row of <see cref="RawInputDevice.Descriptions"/>.</summary>
+		/// <remarks>
+		/// DirectInput lists it only as a device of no kind and reads nothing from it, so its samples carry the state its
+		/// row gives, not a DirectInput reading. The reports are laid out as a recording of it showed: report 1, the
+		/// stick's X and Y from 0 to 255, then 40 key bits, one key at a time.
+		/// </remarks>
+		public static readonly RawInputFixture G13 = new RawInputFixture
+		{
+			Name = "Logitech G13",
+			VendorId = 0x046D,
+			ProductId = 0xC21C,
+			Description = RawInputDevice.DescriptionOf(0x046D, 0xC21C, 0xFF00),
+			Preparsed =
+				"SGlkUCBLRFIAAAD/AAAAAAAAAQABAAgAAQABAAIA4AMCAAQABgACAXACAQAA/wEACAAHAAEAOAACAAAACAAAAAD/AAAIAAAAAAAA" +
+				"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAD/" +
+				"AwAIAN8DAQD4HgIAAADgAwAAAP8AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAgAAAAAAAAAAAAAAAAAA" +
+				"AAAAAAAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAP8HAAgABAABACAAAgAAAAUAAAAA/wAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+				"AAAAAAAAAAAAAAAAAwADAAAAAAAAAAAAAAAAAAAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAA/wQACAAEAAEAIAACAAAABQAA" +
+				"AAD/AAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAQAAAAAAAAAAAABAAEAAAAAAAAAAAD/AAAAAAAAAAAA" +
+				"AAAAAAAAAAAAAAD/BQAIAAQAAQAgAAIAAAAFAAAAAP8AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUABQAA" +
+				"AAAAAAAAAAIAAgAAAAAAAAAAAP8AAAAAAAAAAAAAAAAAAAAAAAAAAP8GAAgAAQEBAAgIAgAAAAIBAAAA/wAACAAAAAAAAAAAAAAA" +
+				"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAGAAAAAAAAAAAAAwADAAAAAAAAAAAA/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAA" +
+				"AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+				"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+			Samples = new[]
+			{
+				S("at rest", "0180800000000000", new[] { 32767, 32767, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }),
+				S("Stick left and up", "0100000000000000", new[] { 0, 0, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }),
+				S("Stick right and down", "01FFFF0000000000", new[] { 65535, 65535, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }),
+				S("Stick a quarter of the way", "0140800000000000", new[] { 16384, 32767, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }),
+				S("G1 pressed", "0180800100000000", new[] { 32767, 32767, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }, 0),
+				S("The two buttons beside the stick pressed", "0180800000000006", new[] { 32767, 32767, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }, 33, 34),
+				S("The last key bit on", "0180800000000080", new[] { 32767, 32767, 0, 0, 0, 0 }, new[] { 0, 0 }, new[] { -1, -1, -1, -1 }, 39),
 			},
 		};
 	}

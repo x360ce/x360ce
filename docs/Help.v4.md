@@ -54,6 +54,10 @@ x360ce reads a controller in two ways and lists it once for each, so a controlle
 
 Both rows of a controller read every button and axis into the same place, so a mapping made on one works on the other. Adding one to a controller tab where the other is mapped starts it with the other's settings. Map one of them: if both are ticked in the tab's list, both drive the controller, so untick the `[Enabled]` box of the one you do not use.
 
+Every press, hat tap and stick flick reaches the controller, even one shorter than the time between two reads of the device. A worn button whose contacts chatter can then send extra presses; for it, turn off `[Read Every Change]` on the `[Options]` tab.
+
+A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are buttons 0 to 39.
+
 ## One device on several controller tabs
 
 A device can drive up to four emulated controllers at once.

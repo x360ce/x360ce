@@ -9,7 +9,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.25.48.0"
+  version: "4.25.51.0"
 ---
 
 # X360CE
@@ -62,7 +62,8 @@ Use the first way that works:
 | `help` | none | The program's help as Markdown, about 29 KB |
 | `ui_set`, `ui_invoke` | `path`, and `value` to set | Sets a value, presses a button (Configure) |
 
-`device_map`, `preset_apply`, `input_wait` and `settings_save` need Configure; the tool list gives their arguments.
+`device_map`, `preset_apply`, `input_wait`, `input_log` and `settings_save` need Configure; the tool list gives their
+arguments.
 
 Answers are JSON. A compact way to look at a search:
 
@@ -104,7 +105,8 @@ it needs, and let them decide; do not look for a way around it.
    each tab on the way and points at it, a moment each, so they see the clicks they would make.
    `ui_script` chains several such steps into a walkthrough.
 5. **Change** (Configure). `ui_set` sets a value, `ui_invoke` presses a button, `device_map` puts a device on a
-   controller, `preset_apply` loads a preset, `input_wait` waits for the person to press or move something.
+   controller, `preset_apply` loads a preset, `input_wait` waits for the person to press or move something, and
+   `input_log` lists every press and movement the engine read over some seconds, in order, to check what a device sends.
    In a list (Role `Grid`), `ui_set` on the grid with a row index selects that row, which the pages below show;
    a row's check box, such as a mapped device's Enabled, is ticked with `ui_set` on `<grid>/rows/<n>/<column>` and
    `true` or `false`; a row's button is pressed with `ui_invoke` on the same kind of path. `ui_read` on the grid

@@ -144,6 +144,67 @@ namespace x360ce.App.Mcp
 			return "Nothing moved in " + seconds + " seconds.";
 		}
 
+		/// <summary>The engine whose passes <see cref="InputLog"/> logs. The program's own unless a test says otherwise.</summary>
+		public static Func<DInput.DInputHelper> Engine = () => Global.DHelper;
+
+		[McpTool(AiAccess.Configure, "Logs every change the engine reads from the controllers on the tabs for the seconds given, in order, as JSON: Changes, one line each, with the milliseconds since the log began, the device and the control, named as the Record button names them: each button pressed and let go, each hat direction, and each axis or slider as it reaches another eighth of its range. Logged inside each engine pass, so even a press shorter than a pass is there, as the controller got it. Dropped counts changes that did not fit.", OnUiThread = false)]
+		public static object InputLog([Description("How long to log, 1 to 60 seconds.")] int seconds = 10, [Description("InstanceGuid from devices_list to log one device; omit for all.")] string instanceGuid = null)
+		{
+			seconds = Math.Max(1, Math.Min(60, seconds));
+			Guid only = Guid.Empty;
+			if (!string.IsNullOrEmpty(instanceGuid) && !Guid.TryParse(instanceGuid, out only))
+				throw new InvalidOperationException("instanceGuid is not a GUID. Take it from devices_list.");
+			var engine = Engine();
+			if (engine == null)
+				throw new InvalidOperationException("The engine is not running.");
+			var log = engine.StartInputLog(100000);
+			try
+			{
+				Thread.Sleep(seconds * 1000);
+			}
+			finally
+			{
+				engine.StopInputLog();
+			}
+			return new Dictionary<string, object>
+			{
+				{ "Changes", DescribeChanges(log, only == Guid.Empty ? (Guid?)null : only) },
+				{ "Dropped", log.Dropped },
+			};
+		}
+
+		/// <summary>The log's changes as lines: milliseconds since it began, the device, the control and what it did.</summary>
+		public static string[] DescribeChanges(DInput.DInputHelper.InputLog log, Guid? onlyDevice = null)
+		{
+			var count = Volatile.Read(ref log.Count);
+			var lines = new List<string>(count);
+			for (var i = 0; i < count; i++)
+			{
+				var c = log.Changes[i];
+				if (onlyDevice.HasValue && c.Device.InstanceGuid != onlyDevice.Value)
+					continue;
+				var ms = (c.Ticks - log.StartTicks) * 1000 / System.Diagnostics.Stopwatch.Frequency;
+				string what;
+				switch (c.Type)
+				{
+					case MapType.Button:
+						what = "Button " + (c.Index + 1) + (c.Value != 0 ? " down" : " up");
+						break;
+					case MapType.POV:
+						what = "POV " + (c.Index + 1) + (c.Value < 0 ? " centred" : " " + (c.Value / 100) + "°");
+						break;
+					case MapType.Slider:
+						what = "Slider " + (c.Index + 1) + " " + c.Value;
+						break;
+					default:
+						what = "Axis " + (c.Index + 1) + " " + c.Value;
+						break;
+				}
+				lines.Add(ms + " ms " + c.Device.ProductName + " (" + c.Device.InputSource + "): " + what);
+			}
+			return lines.ToArray();
+		}
+
 		[McpTool(AiAccess.Configure, "Applies a preset to the device selected on controller 1 to 4's tab, as the Load Preset button does, by the product name the Load Preset window lists. Select a row with ui_set on the tab's grid first.")]
 		public static string PresetApply([Description("1 to 4.")] int controller, [Description("Product name of the preset, as listed.")] string productName)
 		{

@@ -184,7 +184,7 @@ namespace x360ce.App.Controls
 			UpdateAiAccessUrl();
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.ReadEveryChange, ReadEveryChangeCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);

@@ -58,7 +58,7 @@
 			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
-			this.UseDeviceBufferedDataCheckBox = new System.Windows.Forms.CheckBox();
+			this.ReadEveryChangeCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
@@ -504,7 +504,7 @@
 			// 
 			// DirectInputDevicesGroupBox
 			// 
-			this.DirectInputDevicesGroupBox.Controls.Add(this.UseDeviceBufferedDataCheckBox);
+			this.DirectInputDevicesGroupBox.Controls.Add(this.ReadEveryChangeCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 264);
@@ -514,15 +514,15 @@
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
 			// 
-			// UseDeviceBufferedDataCheckBox
+			// ReadEveryChangeCheckBox
 			// 
-			this.UseDeviceBufferedDataCheckBox.AutoSize = true;
-			this.UseDeviceBufferedDataCheckBox.Location = new System.Drawing.Point(6, 65);
-			this.UseDeviceBufferedDataCheckBox.Name = "UseDeviceBufferedDataCheckBox";
-			this.UseDeviceBufferedDataCheckBox.Size = new System.Drawing.Size(151, 17);
-			this.UseDeviceBufferedDataCheckBox.TabIndex = 0;
-			this.UseDeviceBufferedDataCheckBox.Text = "Use Device Buffered Data";
-			this.UseDeviceBufferedDataCheckBox.UseVisualStyleBackColor = true;
+			this.ReadEveryChangeCheckBox.AutoSize = true;
+			this.ReadEveryChangeCheckBox.Location = new System.Drawing.Point(6, 65);
+			this.ReadEveryChangeCheckBox.Name = "ReadEveryChangeCheckBox";
+			this.ReadEveryChangeCheckBox.Size = new System.Drawing.Size(151, 17);
+			this.ReadEveryChangeCheckBox.TabIndex = 0;
+			this.ReadEveryChangeCheckBox.Text = "Read Every Change";
+			this.ReadEveryChangeCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// ExcludeVirtualDevicesCheckBox
 			// 
@@ -1794,7 +1794,7 @@
 		private System.Windows.Forms.GroupBox DevelopingGroupBox;
 		private System.Windows.Forms.CheckBox ShowFormInfoCheckBox;
 		private System.Windows.Forms.CheckBox ShowTestButtonCheckBox;
-		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
+		private System.Windows.Forms.CheckBox ReadEveryChangeCheckBox;
 		public System.Windows.Forms.TabControl MainTabControl;
 		public System.Windows.Forms.TabPage VirtualDeviceTabPage;
 		private System.Windows.Forms.GroupBox groupBox1;
