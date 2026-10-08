@@ -32,7 +32,7 @@ namespace JocysCom.ClassLibrary.Win32
 		public static extern bool HidD_GetPreparsedData(SafeFileHandle HidDeviceObject, ref IntPtr PreparsedData);
 
 		[DllImport("hid.dll", SetLastError = true)]
-		public static extern bool HidD_FreePreparsedData(ref IntPtr PreparsedData);
+		public static extern bool HidD_FreePreparsedData(IntPtr PreparsedData);
 
 		[DllImport("hid.dll", SetLastError = true)]
 		public static extern int HidP_GetCaps(IntPtr preparsedData, ref HIDP_CAPS capabilities);

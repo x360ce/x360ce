@@ -1062,11 +1062,18 @@ namespace x360ce.App.Controls
 
 		void UpdateDirectInputTabPage(UserDevice diDevice)
 		{
+			ControlsHelper.SetText(DirectInputTabPage, DirectInputTabTitle(diDevice));
+		}
+
+		/// <summary>The Direct Input tab's title: the source the device is read through, its instance, and whether it is offline or online with no state yet.</summary>
+		/// <remarks>A Raw Input device has no DirectInput device; its state is the one the engine reads it into.</remarks>
+		public static string DirectInputTabTitle(UserDevice diDevice)
+		{
 			var isOnline = diDevice != null && diDevice.IsOnline;
-			var hasState = isOnline && diDevice.Device != null;
+			var hasState = isOnline && (diDevice.IsDirectInput ? diDevice.Device != null : diDevice.SourceState != null);
+			var source = diDevice != null && !diDevice.IsDirectInput ? AppHelper.GetInputSourceName(diDevice) : "Direct Input";
 			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
-			ControlsHelper.SetText(DirectInputTabPage, text);
+			return source + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
 		}
 
 		#endregion
@@ -1662,7 +1669,7 @@ namespace x360ce.App.Controls
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
-			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
+			if (!AutoMapHelper.CanGetAutoPreset(ud))
 			{
 				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
 				buttons = MessageBoxButtons.OK;
@@ -1955,6 +1962,10 @@ namespace x360ce.App.Controls
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(item.InstanceGuid);
 			}
+			else if (column == SourceColumn)
+			{
+				e.Value = AppHelper.GetInputSourceName(SettingsManager.GetDevice(item.InstanceGuid));
+			}
 			else if (column == SettingIdColumn)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
@@ -1991,6 +2002,7 @@ namespace x360ce.App.Controls
 			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			UpdateGridButtons();
 			UpdateForceFeedbackTitle();
+			UpdateEffectDescription();
 		}
 
 		/// <summary>The Force Feedback page's title, naming the other tabs the selected device is on.</summary>
@@ -2140,6 +2152,35 @@ namespace x360ce.App.Controls
 
 		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			UpdateEffectDescription();
+		}
+
+		/// <summary>What the Force Feedback page says for a device read through Raw Input, which carries no force feedback, or null.</summary>
+		/// <remarks>Pass Through goes to an XInput place, not through the device's source, so it reaches an Xbox controller from either row.</remarks>
+		public static string RawInputForceNote(UserDevice ud)
+		{
+			return ud != null && ud.InputSource == InputSourceType.RawInput ? RawInputForceNoteText : null;
+		}
+
+		const string RawInputForceNoteText = "Raw Input sends no vibration or wheel forces. The same controller's DirectInput row does; Pass Through reaches an Xbox controller from either.";
+
+		/// <summary>Shows what the chosen effect type does, or <see cref="RawInputForceNote"/> in its place for a Raw Input device.</summary>
+		/// <remarks>Written when the effect type changes and when another device is selected, so neither leaves the other's text.</remarks>
+		void UpdateEffectDescription()
+		{
+			var note = RawInputForceNote(GetSelectedDevice());
+			if (note != null)
+			{
+				EffectDescriptionLabel.Text = note;
+				return;
+			}
+			if (ForceTypeComboBox.SelectedItem == null)
+			{
+				// No effect type to describe yet; the note of a Raw Input device selected before goes.
+				if (EffectDescriptionLabel.Text == RawInputForceNoteText)
+					EffectDescriptionLabel.Text = string.Empty;
+				return;
+			}
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
 			var list = new List<string>();
 			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)

@@ -124,8 +124,7 @@ namespace x360ce.App
 					// Add computer and profile ID.
 					item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true, true);
 					item.Message.Values.Add(CloudKey.ProfileId, o.ProfileId, true, true);
-					// Add version so it will be possible distinguish between Library (v3.x) and Virtual (v4.x) settings.
-					item.Message.Values.Add(CloudKey.ClientVersion, Application.ProductVersion, false, true);
+					AddClientValues(item.Message);
 					// Call web service.
 					result = ws.Execute(item.Message);
 					if (result.ErrorCode != 0)
@@ -166,6 +165,18 @@ namespace x360ce.App
 			}
 			// Exit thread (queue will be processed later)
 			e.Cancel = !success;
+		}
+
+		/// <summary>
+		/// Adds to a message what the web service needs to know about this program: its version and the kinds of
+		/// device it reads, so that the service returns no device of another kind.
+		/// </summary>
+		public static void AddClientValues(CloudMessage message)
+		{
+			// Add version so it will be possible distinguish between Library (v3.x) and Virtual (v4.x) settings.
+			message.Values.Add(CloudKey.ClientVersion, Application.ProductVersion, false, true);
+			// A number travels as one; the enumeration itself would be sent as XML text.
+			message.Values.Add(CloudKey.InputSourceTypes, (int)(InputSourceType.DirectInput | InputSourceType.RawInput), false, true);
 		}
 
 		private void Data_ListChanged(object sender, ListChangedEventArgs e)

@@ -42,7 +42,11 @@ namespace x360ce.App.DInput
 					continue;
 				// If device Direct Input state failed then...
 				if (ud.JoState == null)
-					continue;
+				{
+					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
+					if (ud.InputSourceType != (int)InputSourceType.RawInput || ud.RawInputMissing)
+						continue;
+				}
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;

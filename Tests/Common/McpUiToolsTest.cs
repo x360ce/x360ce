@@ -1,10 +1,12 @@
-// @under-test: Engine/Mcp/McpUiTools.cs
+// @under-test: Engine/Mcp/McpUiTools.cs, Engine/Mcp/McpServer.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Mcp;
@@ -65,6 +67,93 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A press that opens a window answers while the window waits, naming the buttons that answer it, and the window is then answered by path")]
+		public void A_press_that_opens_a_window_answers_with_the_window()
+		{
+			McpTools.Register();
+			McpCatalog.Level = () => AiAccess.Configure;
+			Form form = null;
+			Exception failure = null;
+			var shown = new ManualResetEventSlim();
+			var answered = new ManualResetEventSlim();
+			var answer = DialogResult.None;
+			// As in the program: the interface thread runs a message loop, and the door's caller is another thread.
+			var ui = new Thread(() =>
+			{
+				try
+				{
+					SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
+					Ui.ReleaseInvokeContext();
+					JocysCom.ClassLibrary.Controls.ControlsHelper.InitInvokeContext();
+					form = new Form { Name = "Main" };
+					var ask = new Button { Name = "Ask", Text = "Ask" };
+					ask.Click += (s, e) =>
+					{
+						using (var question = new Form { Name = "Question", Text = "Fill all settings?" })
+						{
+							question.Controls.Add(new Button { Name = "Yes", Text = "Yes", DialogResult = DialogResult.Yes });
+							// As a message box keeps a third button for questions that need one.
+							question.Controls.Add(new Button { Name = "Later", Text = "Later", Visible = false });
+							answer = question.ShowDialog(form);
+						}
+						answered.Set();
+					};
+					form.Controls.Add(ask);
+					form.Shown += (s, e) => shown.Set();
+					Application.Run(form);
+				}
+				catch (Exception ex)
+				{
+					failure = ex;
+					shown.Set();
+				}
+			});
+			ui.SetApartmentState(ApartmentState.STA);
+			ui.Start();
+			var onUiThread = McpCatalog.OnUiThread;
+			try
+			{
+				Assert.IsTrue(shown.Wait(TimeSpan.FromSeconds(30)) && failure == null, "The window did not open. " + failure);
+				McpUiTools.Root = form;
+				McpCatalog.OnUiThread = McpCatalog.Marshal;
+				var press = McpCatalog.Tools.First(t => t.Name == "ui_invoke");
+				var call = Task.Run(() => press.Call(new object[] { "Ask" }));
+				Assert.IsTrue(call.Wait(TimeSpan.FromSeconds(10)), "The press held its caller while the window it opened waited for an answer.");
+				StringAssert.Contains((string)call.Result, "Question/Yes (Yes)", "The answer does not name the button that answers the window.");
+				Assert.IsFalse(((string)call.Result).Contains("Later"), "The answer offers a button the window does not show.");
+				Assert.IsFalse(answered.IsSet, "The window was answered before anyone pressed its button.");
+				var reply = Task.Run(() => press.Call(new object[] { "Question/Yes" }));
+				Assert.IsTrue(reply.Wait(TimeSpan.FromSeconds(10)), "Pressing the window's button did not answer.");
+				Assert.IsNull(reply.Result, "Answering the window is an ordinary press.");
+				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)), "The press that opened the window did not carry on once it was answered.");
+				Assert.AreEqual(DialogResult.Yes, answer);
+				// A script goes on past a click that opens a window, so its next line can answer it, and one
+				// that ends with the window waiting says so.
+				var script = McpCatalog.Tools.First(t => t.Name == "ui_script");
+				answered.Reset();
+				var both = Task.Run(() => script.Call(new object[] { "click Ask\nclick Question/Yes" }));
+				Assert.IsTrue(both.Wait(TimeSpan.FromSeconds(10)), "A script held its caller on the window its click opened.");
+				Assert.AreEqual("2 step(s) done.", both.Result);
+				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)), "The script's second line did not answer the window.");
+				answered.Reset();
+				var one = Task.Run(() => script.Call(new object[] { "click Ask" }));
+				Assert.IsTrue(one.Wait(TimeSpan.FromSeconds(10)), "A script held its caller on the window its click opened.");
+				StringAssert.Contains((string)one.Result, "Question/Yes (Yes)", "A script that ends with a window waiting does not name it.");
+				Assert.IsNull(Task.Run(() => press.Call(new object[] { "Question/Yes" })).Result);
+				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)));
+			}
+			finally
+			{
+				McpCatalog.OnUiThread = onUiThread;
+				McpUiTools.Root = null;
+				// Ends every message loop on that thread, a dialog's too, and closes its windows.
+				if (form != null && form.IsHandleCreated)
+					form.BeginInvoke((Action)Application.ExitThread);
+				ui.Join(TimeSpan.FromSeconds(30));
+			}
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("What the person is looking at is reported by path: the pages shown, the element with focus and its row")]
 		public void The_current_page_and_focus_are_reported_by_path()
 		{
@@ -120,6 +209,11 @@ namespace x360ce.Tests
 					Assert.IsNull(McpUiTools.UiShow("Tabs/Two/Go", "Press this to start", 1));
 					Assert.AreSame(two, tabs.SelectedTab, "The page holding the element must come to the front.");
 					Assert.AreSame(go, UiCallout.Target, "The frame is not around the element.");
+					// A page itself, while another is in front: it comes to the front and is framed by its tab.
+					Assert.IsNull(McpUiTools.UiShow("Tabs/One", "This page", 1));
+					Assert.AreSame(one, tabs.SelectedTab, "A page that was not in front is not brought to the front.");
+					Assert.AreSame(one, UiCallout.Target, "The frame is not around the page.");
+					Assert.AreEqual(tabs.RectangleToScreen(tabs.GetTabRect(0)), UiCallout.Around, "A page is not framed by its tab.");
 					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiShow("Nowhere", null, 1)).Message, "No element");
 					go.Visible = false;
 					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiShow("Tabs/Two/Go", null, 1)).Message, "hidden");

@@ -91,6 +91,8 @@ namespace x360ce.App
 					Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
 					DiIndex = o.ObjectId.InstanceNumber - 1,
+					UsagePage = (ushort)o.UsagePage,
+					Usage = (ushort)o.Usage,
 				};
 				var isAxis = o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.Axis);
 				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis);
@@ -484,6 +486,15 @@ namespace x360ce.App
 			if (items is null || rowIndex < 0 || rowIndex >= items.Count || rowIndex >= grid.Rows.Count)
 				return null;
 			return grid.Rows[rowIndex].DataBoundItem as T;
+		}
+
+		/// <summary>The source a device is read through, as the Source column of the device lists names it.</summary>
+		/// <remarks>Microsoft's names for the two: DirectInput and Raw Input.</remarks>
+		public static string GetInputSourceName(Engine.Data.UserDevice device)
+		{
+			if (device == null)
+				return string.Empty;
+			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
 		}
 
 		/// <summary>Every XInput place a game can feel a device through, as it reads in a list.</summary>

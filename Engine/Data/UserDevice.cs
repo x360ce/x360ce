@@ -26,6 +26,41 @@ namespace x360ce.Engine.Data
 			}
 		}
 
+		/// <summary>
+		/// Whether <see cref="InputSourceType"/> is written to x360ce.UserDevices.xml and sent to the web service:
+		/// only for a device the program does not read through DirectInput.
+		/// </summary>
+		/// <remarks>
+		/// The program keeps a DirectInput device at 0, so a file written before the property existed reads back
+		/// unchanged, and the device's checksum, which leaves out a value at 0, stays what it was. 1 is DirectInput
+		/// too and is left out the same way. The database stores both as 1 (<see cref="DatabaseHelper.StoreInputSource"/>).
+		/// </remarks>
+		public bool ShouldSerializeInputSourceType()
+		{
+			return !IsDirectInput;
+		}
+
+		/// <summary>Whether the program reads the device through DirectInput: <see cref="InputSourceType"/> 0, as the program keeps it, or 1.</summary>
+		[XmlIgnore]
+		public bool IsDirectInput => InputSourceType == 0 || InputSourceType == (int)Engine.InputSourceType.DirectInput;
+
+		/// <summary>The source the program reads the device through, DirectInput whether <see cref="InputSourceType"/> holds 0 or 1.</summary>
+		[XmlIgnore]
+		public Engine.InputSourceType InputSource => IsDirectInput ? Engine.InputSourceType.DirectInput : (Engine.InputSourceType)InputSourceType;
+
+		/// <summary>Whether <paramref name="other"/> is this device's twin: the same controller, read through another source.</summary>
+		/// <remarks>
+		/// Twins have the same HID interface path, which DirectInput and Raw Input report in different letter case, so the
+		/// paths are compared without regard to case. Both read each control into the same place.
+		/// </remarks>
+		public bool IsTwinOf(UserDevice other)
+		{
+			return other != null
+				&& other.InputSource != InputSource
+				&& !string.IsNullOrEmpty(HidDevicePath)
+				&& string.Equals(HidDevicePath, other.HidDevicePath, StringComparison.OrdinalIgnoreCase);
+		}
+
 		public void LoadInstance(DeviceInstance ins)
 		{
 			// Names from the driver are cleaned on the way in, so the settings file stays writable.
@@ -282,6 +317,16 @@ namespace x360ce.Engine.Data
 		/// <summary>Whether a fault in this run of failed polls has been reported. Set by the engine only.</summary>
 		[XmlIgnore]
 		public bool DiReadFaultReported;
+
+		/// <summary>Whether the Raw Input hub did not have this Raw Input device when the engine last read it. Set by the engine only.</summary>
+		/// <remarks>
+		/// Written when it changes: set by the read that does not find the device, which puts its state at rest once, and
+		/// cleared by the next that does. While it is set the device reaches its controller as nothing, as a DirectInput
+		/// device whose read failed does. The hub loses a device when it is unplugged, a moment before the device list
+		/// marks it offline.
+		/// </remarks>
+		[XmlIgnore]
+		public bool RawInputMissing;
 
 		/// <summary>Attempts at this device's force feedback that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the force rests until <see cref="ForceRetryAt"/> and is then sent again. The device is read all the while.</remarks>

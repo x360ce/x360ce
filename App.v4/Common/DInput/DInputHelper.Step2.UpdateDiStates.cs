@@ -157,6 +157,14 @@ namespace x360ce.App.DInput
 				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				if (!ud.IsOnline)
 					continue;
+				// A Raw Input device is copied from the hub, which has its newest state ready. It has no DirectInput device
+				// to hold or poll and no force feedback, so none of what follows applies to it, and the test option that
+				// stops DirectInput reads does not stop it.
+				if (ud.InputSourceType == (int)InputSourceType.RawInput)
+				{
+					ReadRawInputState(ud);
+					continue;
+				}
 				JoystickState state = null;
 				JoystickUpdate[] update = null;
 				if (allow)
@@ -495,6 +503,63 @@ namespace x360ce.App.DInput
 				}
 
 			}
+		}
+
+		/// <summary>Raw Input devices read since the last engine log sample. Input thread only.</summary>
+		int _rawInputReads;
+
+		/// <summary>Of <see cref="_rawInputReads"/>, the reads that found a state the hub had published since the read before.</summary>
+		int _rawInputFresh;
+
+		/// <summary>Of <see cref="_rawInputReads"/>, the reads that found the device missing from the hub.</summary>
+		int _rawInputMissing;
+
+		/// <summary>Copies a Raw Input device's newest state from the hub into the device's own states, as a DirectInput poll fills them, so the steps after this one see it as they see a DirectInput device.</summary>
+		/// <remarks>
+		/// <para>
+		/// The state is copied into the one shown before the current one, and the two change places: the two are made on
+		/// the device's first two reads and kept, so a read makes nothing, and a state is not written until one whole pass
+		/// after it stops being shown. There are no buffered updates. The copy takes no lock and never waits for the hub
+		/// thread (<see cref="Engine.RawInputHub.TryCopyState"/>).
+		/// </para>
+		/// <para>
+		/// A device the hub does not have, unplugged a moment before the device list marks it offline or with the hub
+		/// stopped, is noted once in <see cref="UserDevice.RawInputMissing"/>: its state is put at rest and shown, once,
+		/// and it reaches its controller as nothing until the hub has it again, as a DirectInput device whose read failed
+		/// does. Nothing is written to the error log, as nothing is for an unplugged DirectInput device; the engine log
+		/// counts it.
+		/// </para>
+		/// </remarks>
+		void ReadRawInputState(UserDevice ud)
+		{
+			_rawInputReads++;
+			// Found missing before, and at rest since: nothing is made or changed until the hub has the device again.
+			if (ud.RawInputMissing && !RawInput.Devices.ContainsKey(ud.InstanceGuid))
+			{
+				_rawInputMissing++;
+				return;
+			}
+			var newState = ud.OldSourceState ?? new SourceState();
+			bool fresh;
+			if (RawInput.TryCopyState(ud.InstanceGuid, newState, out fresh))
+			{
+				if (fresh)
+					_rawInputFresh++;
+				if (ud.RawInputMissing)
+					ud.RawInputMissing = false;
+			}
+			else
+			{
+				_rawInputMissing++;
+				ud.RawInputMissing = true;
+				RawInputReader.Reset(newState);
+			}
+			ud.OldSourceState = ud.SourceState;
+			ud.OldSourceUpdates = ud.SourceUpdates;
+			ud.OldSourceStateTime = ud.SourceStateTime;
+			ud.SourceState = newState;
+			ud.SourceUpdates = null;
+			ud.SourceStateTime = watch.ElapsedTicks;
 		}
 
 		/// <summary>Takes in the routing a pass reads: when it is new, lets go of each device it no longer reads.</summary>

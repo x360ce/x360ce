@@ -40,6 +40,12 @@ namespace x360ce.Engine
 		public DeviceObjectTypeFlags Flags { get; set; }
 		public Guid Type { get; set; }
 
+		/// <summary>The HID usage page DirectInput reports for the object; 0 when the device is not HID or the object has none.</summary>
+		public int UsagePage { get; set; }
+
+		/// <summary>The HID usage DirectInput reports for the object; 0 when the device is not HID or the object has none.</summary>
+		public int Usage { get; set; }
+
 		public string AspectName
 		{
 			get

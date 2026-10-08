@@ -146,8 +146,11 @@ namespace x360ce.Engine.UiTree
 				return SetValue(item, value);
 			if (element is DataGridViewRow)
 				return "A row is selected by setting the grid it is in to the row's index.";
+			var checkCell = element as DataGridViewCheckBoxCell;
+			if (checkCell != null)
+				return SetValue(checkCell, value);
 			if (element is DataGridViewCell)
-				return "A cell is not set. Use ui_invoke for a button in a row.";
+				return "Only a check box in a row is set. A button in a row is pressed with ui_invoke, and a row is selected by setting the grid to its index.";
 			var control = element as Control;
 			if (control == null)
 				return "There is nothing here to set.";
@@ -189,13 +192,13 @@ namespace x360ce.Engine.UiTree
 			return "This element is not one that is set. Use ui_invoke for buttons.";
 		}
 
-		/// <summary>Brings the pages above an element to the front, so the element is the one on screen.</summary>
+		/// <summary>Brings the pages above an element to the front, so the element is the one on screen; a page itself comes to the front too.</summary>
 		public static void Reveal(object element)
 		{
 			var control = ControlOf(element);
 			if (control == null)
 				return;
-			for (var c = control.Parent; c != null; c = c.Parent)
+			for (var c = control; c != null; c = c.Parent)
 			{
 				var page = c as TabPage;
 				var tabs = page == null ? null : page.Parent as TabControl;

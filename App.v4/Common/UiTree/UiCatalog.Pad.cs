@@ -25,7 +25,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceFeedbackTabPage"] = new Text("Force Feedback",
 				"Turns vibration on and sets how strong it is.");
 			d["PadControl.DirectInputTabPage"] = new Text("Direct Input",
-				"What the mapped device reports about itself, and its values as they change.");
+				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 
 			// General page.
 			d["PadControl.LeftTriggerTextBox"] = new Text("Left trigger value",
@@ -62,6 +62,8 @@ namespace x360ce.App.UiTree
 			// Force feedback page.
 			d["PadControl.ForceFeedbackGroupBox"] = new Text("Force feedback",
 				"Vibration settings shared by both motors.");
+			d["PadControl.EffectDescriptionLabel"] = Live("Effect description",
+				"What the chosen effect type does, or, for a device read through Raw Input, that it sends no force feedback.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
 				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",

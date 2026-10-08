@@ -85,6 +85,8 @@ namespace x360ce.App
                     ObjectId = (int)o.ObjectId,
                     Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
+					UsagePage = (ushort)o.UsagePage,
+					Usage = (ushort)o.Usage,
 
 				};
 				items.Add(item);

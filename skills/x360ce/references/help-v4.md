@@ -41,9 +41,18 @@ If you want `HELP` and have questions about installation or configuration, pleas
 4. Enable `controller` by clicking on `[Enable # Mapped Device]` inside `[Controller 1]` tab.
 5. The `[Enabled]` box on a device's row in the list leaves the device out of the game without removing it. The box in front of a device on the `[Devices]` page leaves it out of every game, and greys its rows' `[Enabled]` box. An unticked device is not read, not held and sent no force feedback, so another program can use it. A Pass through that names the XInput place shown for it sends it nothing either. x360ce no longer hides it or asks for it to be hidden. A device you hid in HID Hide stays hidden until you untick it there. The tab's pages no longer show it live, and a centering spring `[Auto]` run on it stops.
 
-An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so x360ce reads one only while its own window is in front. That is a limit of Windows, not something x360ce can change. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
+An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so through DirectInput x360ce reads one only while its own window is in front. For an Xbox One controller, map its `Raw Input` row instead: see DirectInput and Raw Input below. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
 
 A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can take a wheel over, and then the game does not see what x360ce provides. In the Steam library open the game's `Properties` → `Controller` and choose `Disable Steam Input`.
+
+## DirectInput and Raw Input
+
+x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens, on rows next to each other. The `[Source]` column says how each row is read.
+
+- `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
+- `DirectInput` sends force feedback: vibration and wheel forces. Raw Input sends none. `[Pass Through]` on the `[Force Feedback]` page reaches an Xbox controller's motors from either row.
+
+Both rows of a controller read every button and axis into the same place, so a mapping made on one works on the other. Adding one to a controller tab where the other is mapped starts it with the other's settings. Map one of them: if both are ticked in the tab's list, both drive the controller, so untick the `[Enabled]` box of the one you do not use.
 
 ## One device on several controller tabs
 

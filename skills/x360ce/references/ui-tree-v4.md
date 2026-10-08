@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.25.43.0, built 2026-10-07.
+Version 4.25.48.0, built 2026-10-08.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -198,6 +198,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input, that it sends no force feedback.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
 [List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
@@ -228,7 +229,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
 [Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
-[Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change.
+[Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
@@ -485,7 +486,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Button]    │       │   │       ├── Auto-Order                                          # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
 [Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
-[Grid]      │       │       ├── Devices                                                 # Every controller the program can see. Unplugged ones are dimmed.
+[Grid]      │       │       ├── Devices                                                 # Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
 [Button]    │       │           ├── Refresh                                             # Reads every device again.
 [Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.

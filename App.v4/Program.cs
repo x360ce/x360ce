@@ -425,7 +425,6 @@ namespace x360ce.App
 				case "x360ce.Engine.XmlSerializers":
 				case "SharpDX":
 				case "SharpDX.DirectInput":
-				case "SharpDX.RawInput":
 					sr = GetResourceStream(dllName + ".dll");
 					break;
 				default:

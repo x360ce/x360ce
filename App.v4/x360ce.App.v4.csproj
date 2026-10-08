@@ -80,10 +80,6 @@
       <HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SharpDX.RawInput">
-      <HintPath>Resources\SharpDX\SharpDX.RawInput.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System.Xaml" />
@@ -589,7 +585,6 @@
     <EmbeddedResource Include="Resources\DXTweak\DXTweak2.exe" />
     <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Documents\License.txt" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />

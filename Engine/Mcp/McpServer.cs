@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Threading;
 using System.Web.Script.Serialization;
 
 namespace x360ce.Engine.Mcp
@@ -99,7 +100,10 @@ namespace x360ce.Engine.Mcp
 			return values;
 		}
 
-		/// <summary>Calls the method, on the interface thread unless the tool said otherwise. Whatever the method throws comes out as itself.</summary>
+		/// <summary>
+		/// Calls the method, on the interface thread unless the tool said otherwise. Whatever the method throws comes out as
+		/// itself, except a window left waiting for an answer, which is the answer.
+		/// </summary>
 		public object Call(object[] values)
 		{
 			object result = null;
@@ -108,12 +112,28 @@ namespace x360ce.Engine.Mcp
 				try { result = Method.Invoke(null, values); }
 				catch (TargetInvocationException ex) { ExceptionDispatchInfo.Capture(ex.InnerException).Throw(); }
 			};
-			if (OnUiThread)
-				McpCatalog.OnUiThread(run);
-			else
-				run();
+			try
+			{
+				if (OnUiThread)
+					McpCatalog.OnUiThread(run);
+				else
+					run();
+			}
+			catch (WindowWaitingException ex)
+			{
+				return ex.Message;
+			}
 			return result;
 		}
+	}
+
+	/// <summary>
+	/// A call that is still running because a window it opened waits for an answer. The message names the window and
+	/// the buttons that answer it, so the caller answers it like any other window.
+	/// </summary>
+	public sealed class WindowWaitingException : Exception
+	{
+		public WindowWaitingException(string message) : base(message) { }
 	}
 
 	/// <summary>
@@ -136,17 +156,52 @@ namespace x360ce.Engine.Mcp
 		public static Action<Action> OnUiThread = Marshal;
 
 		/// <summary>
-		/// ControlsHelper.Invoke runs the action elsewhere and never looks at what became of it,
-		/// so a failure inside would be lost and the caller told nothing. Caught inside, thrown outside.
+		/// Runs an action on the interface thread and waits until it is done, or until it waits on a window: a press
+		/// that opens a dialog answers with the dialog, as <see cref="WindowWaitingException"/>, rather than holding the
+		/// caller until a person closes it. The helper runs the action elsewhere and never looks at what became of it,
+		/// so a failure inside is caught there and thrown here.
 		/// </summary>
 		public static void Marshal(Action action)
 		{
+			if (!JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
+			{
+				action();
+				return;
+			}
 			ExceptionDispatchInfo failure = null;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.Invoke(() =>
+			string waiting = null;
+			var finished = false;
+			var settled = new ManualResetEventSlim();
+			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
 			{
 				try { action(); }
-				catch (Exception ex) { failure = ExceptionDispatchInfo.Capture(ex); }
+				// The caller told of the window has gone, so a later failure goes to the program's error
+				// handler, as one after a person's click does.
+				catch (Exception ex) when (waiting == null) { failure = ExceptionDispatchInfo.Capture(ex); }
+				finally
+				{
+					finished = true;
+					settled.Set();
+				}
 			});
+			// Queued behind the action, the look runs once it is done, or while it waits inside a window's own
+			// message loop, which keeps answering the queue. A loop with no window waiting, such as DoEvents,
+			// is looked at again a moment later.
+			Action look = null;
+			look = () =>
+			{
+				if (finished)
+					return;
+				waiting = McpUiTools.WindowWaiting();
+				if (waiting != null)
+					settled.Set();
+				else
+					JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(look, 100);
+			};
+			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(look);
+			settled.Wait();
+			if (waiting != null)
+				throw new WindowWaitingException(waiting);
 			if (failure != null)
 				failure.Throw();
 		}

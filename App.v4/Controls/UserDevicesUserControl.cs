@@ -70,42 +70,72 @@ namespace x360ce.App.Controls
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
-			if (MapDeviceToControllerMode)
-				RefreshMapDeviceToList();
-			else
-				AttachDataSource(SettingsManager.UserDevices.Items);
+			RefreshList();
 		}
 
-		void RefreshMapDeviceToList()
+		/// <summary>Brings the list shown in line with the program's devices when a device has come or gone.</summary>
+		/// <remarks>
+		/// The list shown is this control's own copy, in <see cref="TwinsTogether"/> order, on the Devices page as in the
+		/// list Add opens. The program's list stays in the order devices were found, which is the order they are saved in.
+		/// Only a device that comes or goes changes the copy, so a sort chosen by a click on a heading stays.
+		/// </remarks>
+		void RefreshList()
 		{
-			var list = new SortableBindingList<UserDevice>();
-			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-			// Devices Windows files as system devices are left out unless asked for: keyboards and the
-			// like, which nobody means to map. Some game devices are filed there too, the Logitech G13
-			// among them, and the switch is how they are reached.
+			// Devices Windows files as system devices are left out of the list Add opens unless asked for: keyboards
+			// and the like, which nobody means to map. Some game devices are filed there too, the Logitech G13 among
+			// them, and the switch is how they are reached. The Devices page lists them all.
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				devices = SettingsManager.UserDevices.Items
-					.Where(x => ShowSystemDevicesButton.Checked || x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
+					.Where(x => !MapDeviceToControllerMode || ShowSystemDevicesButton.Checked || x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
 			}
-			list.AddRange(devices);
-			// If new list, item added or removed then...
+			var ordered = TwinsTogether(devices);
 			if (_currentData == null)
+			{
+				var list = new SortableBindingList<UserDevice>();
+				list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
+				list.AddRange(ordered);
 				AttachDataSource(list);
-			else if (_currentData.Count != list.Count)
-				CollectionsHelper.Synchronize(list, _currentData);
+			}
+			else if (_currentData.Count != ordered.Length || ordered.Any(x => !_currentData.Contains(x)))
+			{
+				CollectionsHelper.Synchronize(ordered, _currentData);
+			}
+		}
+
+		/// <summary>The devices in the order given, with each device's twins moved up beside it, DirectInput first.</summary>
+		/// <remarks>
+		/// A controller read through DirectInput and through Raw Input is two devices, usually with the same name, and the
+		/// two rows next to each other are how a person sees which is which (<see cref="UserDevice.IsTwinOf"/>).
+		/// </remarks>
+		public static UserDevice[] TwinsTogether(IList<UserDevice> devices)
+		{
+			var ordered = new List<UserDevice>(devices.Count);
+			for (var i = 0; i < devices.Count; i++)
+			{
+				var device = devices[i];
+				if (ordered.Contains(device))
+					continue;
+				var group = new List<UserDevice> { device };
+				for (var j = i + 1; j < devices.Count; j++)
+					if (device.IsTwinOf(devices[j]))
+						group.Add(devices[j]);
+				ordered.AddRange(group.OrderBy(x => x.IsDirectInput ? 0 : 1));
+			}
+			return ordered.ToArray();
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			// If item added or deleted from original list then...
+			// If item added or deleted from original list then... Several changes delivered together arrive as a reset.
 			if (
 				e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted
+				e.ListChangedType == ListChangedType.ItemDeleted ||
+				e.ListChangedType == ListChangedType.Reset
 			)
 				// Update list.
-				RefreshMapDeviceToList();
+				RefreshList();
 		}
 
 		/// <summary>Paints the places again, for when a controller has arrived or left.</summary>
@@ -153,6 +183,10 @@ namespace x360ce.App.Controls
 			{
 				e.Value = AppHelper.GetXInputPlaces(item);
 			}
+			else if (column == SourceColumn)
+			{
+				e.Value = AppHelper.GetInputSourceName(item);
+			}
 			else if (column == IsHiddenColumn)
 			{
 				var left = row.Cells[e.ColumnIndex].OwningColumn.Width;
@@ -186,7 +220,7 @@ namespace x360ce.App.Controls
 				? Properties.Resources.checkbox_16x16
 				: Properties.Resources.checkbox_unchecked_16x16);
 			if (MapDeviceToControllerMode)
-				RefreshMapDeviceToList();
+				RefreshList();
 		}
 
 		private void RefreshButton_Click(object sender, EventArgs e)
@@ -236,7 +270,6 @@ namespace x360ce.App.Controls
 			var list = SettingsManager.UserDevices.Items;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
 			var newItems = items.ToArray();
-			AttachDataSource(null);
 			foreach (var newItem in newItems)
 			{
 				// Try to find existing item inside the list.
@@ -248,7 +281,7 @@ namespace x360ce.App.Controls
 				list.Add(newItem);
 			}
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
-			AttachDataSource(list);
+			RefreshList();
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
 		}

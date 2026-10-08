@@ -83,6 +83,43 @@ namespace x360ce.Engine.Mcp
 			return slash < 0 ? window : UiTreeWalker.Find(window, path.Substring(slash + 1));
 		}
 
+		/// <summary>
+		/// The window the program waits on, told to the caller left waiting: the dialog in front and the buttons that
+		/// answer it. Null when nothing waits. While a dialog waits, every other shown window of the program is
+		/// disabled, so the dialog still enabled is the one in front, and a shown main window that is disabled with no
+		/// such dialog waits on a system window.
+		/// </summary>
+		public static string WindowWaiting()
+		{
+			var front = OtherWindows().LastOrDefault(x => x.Modal && x.IsHandleCreated && JocysCom.ClassLibrary.Win32.NativeMethods.IsWindowEnabled(x.Handle));
+			if (front == null)
+			{
+				var main = RootWindow;
+				if (main == null || !main.Visible || !main.IsHandleCreated || JocysCom.ClassLibrary.Win32.NativeMethods.IsWindowEnabled(main.Handle))
+					return null;
+				return "A window the door cannot read waits for an answer, such as a file chooser or a system message box. What was asked carries on once the person answers it.";
+			}
+			var buttons = new List<UiNode>();
+			CollectButtons(UiTreeWalker.Read(front, false, front.Name), buttons);
+			var said = "The window " + front.Name + " (\"" + front.Text + "\") waits for an answer, and what was asked carries on once it has one.";
+			if (buttons.Count > 0)
+				said += " Its buttons, pressed with ui_invoke: " + string.Join(", ", buttons.Select(x => x.Path + " (" + x.Name + ")")) + ".";
+			return said + " ui_read " + front.Name + " reads what it asks.";
+		}
+
+		/// <summary>The buttons a window shows, leaving out those in a grid's rows, which are its data rather than its answers.</summary>
+		static void CollectButtons(UiNode node, List<UiNode> buttons)
+		{
+			if (node.Hidden)
+				return;
+			if (node.Role == "Button" && node.Path != null)
+				buttons.Add(node);
+			if (node.Items == null || node.Role == "Row")
+				return;
+			foreach (var child in node.Items)
+				CollectButtons(child, buttons);
+		}
+
 		[McpTool(AiAccess.Read, "The program's windows that are open besides the main one, such as a dialog waiting for an answer, as JSON: Path, Name, Modal. Read one with ui_read and its Path; the other tools take paths that start with it.")]
 		public static object UiWindows()
 		{
@@ -199,7 +236,7 @@ namespace x360ce.Engine.Mcp
 			return null;
 		}
 
-		[McpTool(AiAccess.Configure, "Presses a Button by path, whether it stands on its own, on a bar, or in a grid row; the tabs above it are selected first. A button that opens a window answers when that window is closed. Buttons that install drivers need Administer access.")]
+		[McpTool(AiAccess.Configure, "Presses a Button by path, whether it stands on its own, on a bar, or in a grid row; the tabs above it are selected first. A press that opens a window answers as soon as the window waits, with its path and the buttons that answer it; press one with ui_invoke, and the press that opened it carries on. Buttons that install drivers need Administer access.")]
 		public static string UiInvoke([Description("Element path from ui_read.")] string path)
 		{
 			var refused = UiTreeWalker.Invoke(Resolve(path));
@@ -316,11 +353,12 @@ namespace x360ce.Engine.Mcp
 			return text != null && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
-		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element; 'walk <path> | <words> | <seconds>' does the same after opening and pointing at each tab on the way; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. show and wait need Read access; click and set need Configure.", OnUiThread = false, Changes = true)]
+		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element; 'walk <path> | <words> | <seconds>' does the same after opening and pointing at each tab on the way; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. A click that opens a window goes on to the next line, which may answer it, and a window still waiting at the end is named with its buttons. show and wait need Read access; click and set need Configure.", OnUiThread = false, Changes = true)]
 		public static string UiScript([Description("The steps, one per line.")] string script)
 		{
 			var lines = (script ?? "").Replace("\r", "").Split('\n');
 			var done = 0;
+			var opened = false;
 			for (var i = 0; i < lines.Length; i++)
 			{
 				var line = lines[i].Trim();
@@ -357,13 +395,21 @@ namespace x360ce.Engine.Mcp
 							throw new InvalidOperationException("Unknown step '" + verb + "'. Steps are show, walk, click, set and wait.");
 					}
 				}
+				catch (WindowWaitingException)
+				{
+					// The step is done, and the window it opened waits for a later line to answer it.
+					opened = true;
+				}
 				catch (Exception ex)
 				{
 					throw new InvalidOperationException("Line " + (i + 1) + " failed after " + done + " step(s): " + ex.Message);
 				}
 				done++;
 			}
-			return done + " step(s) done.";
+			string waiting = null;
+			if (opened)
+				McpCatalog.OnUiThread(() => waiting = WindowWaiting());
+			return done + " step(s) done." + (waiting == null ? "" : " " + waiting);
 		}
 
 		static void RequireConfigure()

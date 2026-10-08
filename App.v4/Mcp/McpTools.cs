@@ -69,7 +69,7 @@ namespace x360ce.App.Mcp
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
-		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place).")]
+		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place), Source (how the program reads it: DirectInput, which sends force feedback, or RawInput, which reads an Xbox One controller while a game has the focus; a controller read both ways is listed once for each, so map one of the two).")]
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;
@@ -82,6 +82,7 @@ namespace x360ce.App.Mcp
 					? new int[0]
 					: SettingsManager.GetDeviceTabs(game.FileName, d.InstanceGuid).Select(x => (int)x).ToArray() },
 				{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
+				{ "Source", d.InputSource.ToString() },
 			}).ToArray();
 		}
 

@@ -95,7 +95,7 @@ namespace x360ce.Engine.Mcp
 			// Straight to this machine. A system proxy that does not bypass local addresses would
 			// otherwise carry a loopback call out and back, or nowhere.
 			request.Proxy = null;
-			// A call lasts as long as the action: a button that opens a window answers when it closes.
+			// A call lasts as long as the action, and some actions take a while.
 			request.Timeout = System.Threading.Timeout.Infinite;
 			request.ReadWriteTimeout = System.Threading.Timeout.Infinite;
 			request.Method = "POST";

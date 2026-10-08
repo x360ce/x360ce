@@ -290,7 +290,7 @@ namespace x360ce.Engine.UiTree
 			}
 		}
 
-		/// <summary>One row, named and read from the cells a person can see, with its buttons under it.</summary>
+		/// <summary>One row, named and read from the cells a person can see, with the cells a person acts on under it: its buttons and check boxes.</summary>
 		static UiNode Read(DataGridViewRow row, string path)
 		{
 			var node = new UiNode
@@ -302,20 +302,22 @@ namespace x360ce.Engine.UiTree
 				Path = path,
 				Value = RowValue(row),
 			};
-			foreach (var cell in row.Cells.Cast<DataGridViewCell>().Where(x => x is DataGridViewButtonCell && IsShown(x)))
+			foreach (var cell in row.Cells.Cast<DataGridViewCell>().Where(x => (x is DataGridViewButtonCell || x is DataGridViewCheckBoxCell) && IsShown(x)))
 				node.Add(Read(cell, ChildPath(path, cell.OwningColumn.Name)));
 			return node;
 		}
 
-		/// <summary>One cell: a button to press, or a value to read.</summary>
+		/// <summary>One cell: a button to press, a check box to tick, or a value to read.</summary>
 		static UiNode Read(DataGridViewCell cell, string path)
 		{
 			var column = cell.OwningColumn;
 			var text = TextOf(cell);
+			var isCheck = cell is DataGridViewCheckBoxCell;
 			return new UiNode
 			{
-				Name = text ?? Clean(column == null ? null : column.HeaderText),
-				Role = cell is DataGridViewButtonCell ? "Button" : "Value",
+				// A check box is named by its column, as a person reads it: its value says whether it is ticked.
+				Name = isCheck ? Clean(column == null ? null : column.HeaderText) ?? (column == null ? null : column.Name) : text ?? Clean(column == null ? null : column.HeaderText),
+				Role = cell is DataGridViewButtonCell ? "Button" : isCheck ? "CheckBox" : "Value",
 				Id = column == null ? null : column.Name,
 				Hidden = !IsShown(cell),
 				Path = path,
@@ -398,7 +400,59 @@ namespace x360ce.Engine.UiTree
 		static string Invoke(DataGridViewCell cell)
 		{
 			if (!(cell is DataGridViewButtonCell))
-				return "This cell is not pressed. Use ui_set on the grid to select a row.";
+				return cell is DataGridViewCheckBoxCell
+					? "A check box in a row is ticked with ui_set and true or false."
+					: "This cell is not pressed. Use ui_set on the grid to select a row.";
+			return Press(cell);
+		}
+
+		/// <summary>
+		/// Ticks or unticks the check box drawn in a cell, as a click does. The program's grids show a box and let a
+		/// handler of the cell's click change what it stands for, so the box is clicked when it differs from what is
+		/// asked; a grid that edits the box itself gets the value set instead. Returns null when done, otherwise why not.
+		/// </summary>
+		static string SetValue(DataGridViewCheckBoxCell cell, string value)
+		{
+			bool wanted;
+			if (!bool.TryParse(value, out wanted))
+				return "Expected true or false.";
+			if (IsTicked(cell) == wanted)
+				return null;
+			var grid = cell.DataGridView;
+			var rowIndex = cell.RowIndex;
+			var columnIndex = cell.ColumnIndex;
+			var refused = Press(cell);
+			if (refused != null)
+				return refused;
+			if (rowIndex >= grid.Rows.Count || columnIndex >= grid.Columns.Count)
+				return "The grid changed while the box was clicked. Read it again.";
+			cell = grid.Rows[rowIndex].Cells[columnIndex] as DataGridViewCheckBoxCell;
+			if (cell == null)
+				return "The grid changed while the box was clicked. Read it again.";
+			if (IsTicked(cell) == wanted)
+				return null;
+			// No handler took the click: the box is the grid's own to edit.
+			if (cell.ReadOnly)
+				return "This box did not change when clicked, and it cannot be edited.";
+			cell.Value = wanted;
+			grid.EndEdit();
+			return IsTicked(cell) == wanted ? null : "This box did not change.";
+		}
+
+		/// <summary>Whether a check box cell shows a tick, whatever the value it is bound to is made of.</summary>
+		static bool IsTicked(DataGridViewCheckBoxCell cell)
+		{
+			var value = cell.FormattedValue;
+			if (value is bool)
+				return (bool)value;
+			if (value is CheckState)
+				return (CheckState)value == CheckState.Checked;
+			return string.Equals(value as string, "True", StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>Clicks a cell as a person does: the click events the grid raises, whose handlers do the work.</summary>
+		static string Press(DataGridViewCell cell)
+		{
 			var grid = cell.DataGridView;
 			if (grid == null)
 				return "This cell is no longer in a grid.";
@@ -417,11 +471,12 @@ namespace x360ce.Engine.UiTree
 			// grid. The press goes to whatever now sits at the same place, or to nothing.
 			if (rowIndex >= grid.Rows.Count || columnIndex >= grid.Columns.Count)
 				return "The grid changed while the page was brought to the front. Read it again.";
+			var kind = cell.GetType();
 			cell = grid.Rows[rowIndex].Cells[columnIndex];
-			if (!(cell is DataGridViewButtonCell))
+			if (cell.GetType() != kind)
 				return "The grid changed while the page was brought to the front. Read it again.";
 			if (!IsShown(cell) || !cell.OwningRow.Visible)
-				return "This button is not shown now.";
+				return "This cell is not shown now.";
 			grid.CurrentCell = cell;
 			Raise(grid, "OnCellClick", cell);
 			Raise(grid, "OnCellContentClick", cell);

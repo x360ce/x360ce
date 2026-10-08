@@ -1,4 +1,4 @@
-﻿## [4.25.43.0] - 2026-10-07
+﻿## [4.25.48.0] - 2026-10-08
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -17,6 +17,10 @@
 - Fixed: Wheel help pointed at a page most games do not show.
 - Fixed: /ExportUi put a relative folder beside the program.
 - Fixed: A command-line call, such as /Exit, replaced the record that speeds up the next start.
+- Fixed: Reading the device list leaked a little memory each time.
+- Fixed: A controller arriving or leaving removed devices Windows files as system devices, such as the Logitech G13, from the device list.
+- Fixed: AI assistants could not tick or untick a box in a list's row.
+- Fixed: An AI assistant's press that opened a question waited until a person answered it.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
@@ -37,6 +41,7 @@
 - Added: The AI page installs the x360ce skill for AI agents.
 - Added: x360ce.exe /Skill prints that skill; /? prints the switches.
 - Added: AI assistants can walk the person to a setting, one tab at a time.
+- Added: Raw Input devices, listed beside their DirectInput rows, which read an Xbox One controller while a game has the focus.
 
 ## [4.24.60.0] - 2026-10-02
 

@@ -37,11 +37,18 @@ namespace x360ce.Engine
 		public SourceState Clone()
 		{
 			var copy = new SourceState();
-			Array.Copy(Axis, copy.Axis, Axis.Length);
-			Array.Copy(Sliders, copy.Sliders, Sliders.Length);
-			Array.Copy(Povs, copy.Povs, Povs.Length);
-			Array.Copy(Buttons, copy.Buttons, Buttons.Length);
+			CopyTo(copy);
 			return copy;
+		}
+
+		/// <summary>Writes every value of this state into <paramref name="state"/>, into the arrays it already has.</summary>
+		/// <remarks>Makes nothing, so a thread can hand its state on once a report or a cycle.</remarks>
+		public void CopyTo(SourceState state)
+		{
+			Array.Copy(Axis, state.Axis, Axis.Length);
+			Array.Copy(Sliders, state.Sliders, Sliders.Length);
+			Array.Copy(Povs, state.Povs, Povs.Length);
+			Array.Copy(Buttons, state.Buttons, Buttons.Length);
 		}
 
 		public const int MaxAxis = 24;

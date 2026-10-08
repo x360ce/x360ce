@@ -9,7 +9,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.25.43.0"
+  version: "4.25.48.0"
 ---
 
 # X360CE
@@ -53,7 +53,7 @@ Use the first way that works:
 
 | Tool | Arguments | What it gives |
 |---|---|---|
-| `devices_list` | none | Every controller: Product, Online, Controllers (1 to 4 for the current game), XInputPlaces |
+| `devices_list` | none | Every controller: Product, Online, Controllers (1 to 4 for the current game), XInputPlaces, Source |
 | `ui_current` | none | The window and page on screen, in a few hundred bytes |
 | `ui_find` | `query` | Elements whose name, purpose, field name or path holds every word; best first, at most 40 |
 | `ui_read` | `path` | That branch of the interface with its current values |
@@ -105,6 +105,14 @@ it needs, and let them decide; do not look for a way around it.
    `ui_script` chains several such steps into a walkthrough.
 5. **Change** (Configure). `ui_set` sets a value, `ui_invoke` presses a button, `device_map` puts a device on a
    controller, `preset_apply` loads a preset, `input_wait` waits for the person to press or move something.
+   In a list (Role `Grid`), `ui_set` on the grid with a row index selects that row, which the pages below show;
+   a row's check box, such as a mapped device's Enabled, is ticked with `ui_set` on `<grid>/rows/<n>/<column>` and
+   `true` or `false`; a row's button is pressed with `ui_invoke` on the same kind of path. `ui_read` on the grid
+   lists its rows with these paths.
+   A call that opens a window, such as a question before a preset fills a controller, answers as soon as the
+   window waits, with its path and the buttons that answer it: read it with `ui_read` and that path, then press
+   one with `ui_invoke`, and what you asked carries on. A file chooser or a system message box cannot be read
+   through the door; the answer says so, and the person answers it.
 6. **Keep.** Changes are saved only by `settings_save`, the same as the Save All button. Read the value back
    afterwards to confirm it took.
 
@@ -132,6 +140,9 @@ again before calling it a fault.
   from it. `Virtual N (waiting)` is a controller tab whose virtual controller has no place yet, because something
   else holds place N. Many games read only place 1, so a real Xbox controller there hides Controller 1's virtual
   one; Auto-Order on the Devices page moves it out of the way.
+- **Source**, in `devices_list` and on the Devices page: a controller can appear twice, once per source. `RawInput`
+  reads an Xbox One controller while a game has the focus; `DirectInput` gives force feedback. Map one of them, not
+  both.
 - **Options** pages: General (start-up, theme, Enable XInput, hotkeys), Internet, Virtual Device (the ViGEmBus
   driver), HID Hide, HID Guardian (obsolete), Settings, Update, AI.
 - **Games**: the games with their own settings. **Devices**: every device the program knows, with the XInput place

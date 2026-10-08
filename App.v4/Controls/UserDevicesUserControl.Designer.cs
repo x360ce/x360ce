@@ -39,6 +39,7 @@
 			this.ConnectionClassColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.SourceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -82,6 +83,7 @@
             this.XInputPlaceColumn,
             this.IsEnabledColumn,
             this.MySidColumn,
+            this.SourceColumn,
             this.MyDeviceColumn,
             this.MyFileColumn,
             this.DeviceIdColumn,
@@ -158,6 +160,16 @@
 			this.MySidColumn.Name = "MySidColumn";
 			this.MySidColumn.ReadOnly = true;
 			this.MySidColumn.Width = 87;
+			// 
+			// SourceColumn
+			// 
+			this.SourceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SourceColumn.DataPropertyName = "InputSource";
+			this.SourceColumn.HeaderText = "Source";
+			this.SourceColumn.Name = "SourceColumn";
+			this.SourceColumn.ReadOnly = true;
+			this.SourceColumn.ToolTipText = "How the program reads the device: DirectInput or Raw Input.";
+			this.SourceColumn.Width = 66;
 			// 
 			// MyDeviceColumn
 			// 
@@ -358,6 +370,7 @@
 		private System.Windows.Forms.DataGridViewImageColumn ConnectionClassColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn SourceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;

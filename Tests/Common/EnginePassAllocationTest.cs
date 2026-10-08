@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Common/DInput/DInputHelper.cs, App.v4/Common/DInput/DInputHelper.Step1.UpdateDevices.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/DInputHelper.Step4.CombineXiStates.cs, App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs, App.v4/Common/DInput/DInputHelper.Step6.RetrieveXiStates.cs, App.v4/Common/DInput/DInputHelper.XInputLibrarry.cs, App.v4/Common/DInput/DeviceRouting.cs, App.v4/Common/DInput/XInputPlaces.cs, Engine/JocysCom/Common/HiResTimer.cs
+﻿// @under-test: App.v4/Common/DInput/DInputHelper.cs, App.v4/Common/DInput/DInputHelper.Step1.UpdateDevices.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/DInputHelper.Step4.CombineXiStates.cs, App.v4/Common/DInput/DInputHelper.Step5.VirtualDevices.cs, App.v4/Common/DInput/DInputHelper.Step6.RetrieveXiStates.cs, App.v4/Common/DInput/DInputHelper.XInputLibrarry.cs, App.v4/Common/DInput/DeviceRouting.cs, App.v4/Common/DInput/XInputPlaces.cs, Engine/JocysCom/Common/HiResTimer.cs, Engine/Input/Processors/RawInputHub.cs
 // @area: engine   @layer: unit
 using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.IO;
@@ -8,6 +8,7 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -52,6 +53,9 @@ namespace x360ce.Tests
 		EngineSteps.Pass _pass;
 		ManualResetEvent _wake;
 		HiResPacer _pacer;
+
+		/// <summary>Run before each turn, as another thread works beside the engine, or null.</summary>
+		Action _beside;
 
 		internal static readonly UserGame Game = new UserGame
 		{
@@ -116,6 +120,8 @@ namespace x360ce.Tests
 			SettingsManager.Options.XInputEnabled = _oldXInputEnabled;
 			XInputPlaces.ReadMachine = _oldReadMachine;
 			ViGEmClient.Current = _oldClient;
+			// No hub thread runs, so this lets go of the devices a test gave the hub.
+			_helper.RawInput.Stop();
 			_pacer.Dispose();
 			_wake.Dispose();
 		}
@@ -148,6 +154,8 @@ namespace x360ce.Tests
 		/// <summary>One turn of the engine's loop: the pass, then the wait until the next one is due.</summary>
 		void Turn()
 		{
+			if (_beside != null)
+				_beside();
 			_pass(null, null);
 			_pacer.Wait((int)_helper.Frequency);
 		}
@@ -281,6 +289,48 @@ namespace x360ce.Tests
 			EngineSteps.DeviceListReadUnderWay(_helper);
 			AssertNothingPerPass("While the device list is read", "32 bytes");
 			AssertMeasured(ud, 1);
+		}
+
+		/// <summary>A Raw Input controller, listed as the device list lists one.</summary>
+		UserDevice RawInputRow(Guid instanceGuid)
+		{
+			var ud = new UserDevice { InstanceGuid = instanceGuid, InputSourceType = (int)InputSourceType.RawInput, IsOnline = true };
+			_devices.Add(ud);
+			SettingsManager.UserDevices.Items.Add(ud);
+			return ud;
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("performance")]
+		[Description("A pass with two Raw Input controllers, one the hub reads as its reports arrive and one it does not have, hands the collector nothing")]
+		public void Raw_Input_controllers()
+		{
+			var fixture = RawInputFixtures.G27;
+			var wheel = fixture.Device(0, @"\\?\HID#VID_046D&PID_C29B#pass-allocation#{4d1e55b2-f16f-11cf-88cb-001111000030}", null, 0x04);
+			// No hub thread runs: the test stands in for it, beside the passes.
+			var entry = _helper.RawInput.Add(wheel);
+			_helper.RawInput.SetLayout(wheel.InstanceGuid, RawInputLayout.FromTwin(wheel.Controls, fixture.Objects));
+			entry.ApplyLayout();
+			var read = RawInputRow(wheel.InstanceGuid);
+			var missing = RawInputRow(Guid.NewGuid());
+			Map(read, MapTo.Controller1, Stored(Typical()));
+			Map(missing, MapTo.Controller2, Stored(Typical()));
+			SettingsManager.UpdateCurrentGame(Game);
+			// A report before every other pass, so passes find a new state and the same one in turn.
+			var left = RawInputTest.RawInput(fixture.Samples.Single(x => x.Shows == "Wheel axis 1:30 = 0").Bytes());
+			var pressed = RawInputTest.RawInput(fixture.Samples.Single(x => x.Shows == "Button 6 9:07 pressed").Bytes());
+			var turn = 0;
+			_beside = () =>
+			{
+				if ((turn & 1) == 0)
+					_helper.RawInput.ReadInput((turn & 2) == 0 ? left : pressed);
+				turn++;
+			};
+			AssertNothingPerPass("Raw Input controllers", null);
+			AssertMeasured(read, 2);
+			Assert.IsTrue(entry.ReportCount > Passes, "The hub's reports did not arrive beside the passes, so reading new states was not measured.");
+			Assert.IsFalse(read.RawInputMissing, "The wheel the hub reads is taken for missing.");
+			Assert.IsTrue(missing.RawInputMissing, "The controller the hub does not have was read, so passing over it was not measured.");
+			Assert.IsNotNull(missing.SourceState, "The controller the hub does not have was not put at rest.");
 		}
 
 		static T HelperField<T>(DInputHelper helper, string name)

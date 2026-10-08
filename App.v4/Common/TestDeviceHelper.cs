@@ -34,22 +34,22 @@ namespace x360ce.App
 		public static DeviceObjectItem[] GetDeviceObjects()
 		{
 			var list = new List<DeviceObjectItem>();
-			list.Add(new DeviceObjectItem((int)JoystickOffset.X, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Y, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Z, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationY, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationX, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons0, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons1, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons2, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons3, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons4, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons5, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons6, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons7, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons8, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons9, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.PointOfViewControllers0, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.X, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis") { UsagePage = 1, Usage = 0x30 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Y, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis") { UsagePage = 1, Usage = 0x31 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Z, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis") { UsagePage = 1, Usage = 0x32 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationY, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation") { UsagePage = 1, Usage = 0x33 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationX, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation") { UsagePage = 1, Usage = 0x34 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons0, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0") { UsagePage = 9, Usage = 1 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons1, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1") { UsagePage = 9, Usage = 2 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons2, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2") { UsagePage = 9, Usage = 3 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons3, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3") { UsagePage = 9, Usage = 4 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons4, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4") { UsagePage = 9, Usage = 5 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons5, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5") { UsagePage = 9, Usage = 6 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons6, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6") { UsagePage = 9, Usage = 7 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons7, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7") { UsagePage = 9, Usage = 8 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons8, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8") { UsagePage = 9, Usage = 9 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons9, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9") { UsagePage = 9, Usage = 10 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.PointOfViewControllers0, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch") { UsagePage = 1, Usage = 0x39 });
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 0, "Collection 0 - Game Pad"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 1, "Collection 1"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 2, "Collection 2"));

@@ -567,7 +567,7 @@ namespace JocysCom.ClassLibrary.IO
 					// feed that to GetCaps.
 					NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
 					// Free the 'pre-parsed data'.
-					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
+					NativeMethods.HidD_FreePreparsedData(preparsedDataPtr);
 					// This could fail if the device was recently attached.
 					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
 					var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);

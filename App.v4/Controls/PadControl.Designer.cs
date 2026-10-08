@@ -228,6 +228,7 @@
             this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CompletionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SourceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -2762,6 +2763,7 @@
             this.SettingIdColumn,
             this.CompletionColumn,
             this.InstanceIdColumn,
+            this.SourceColumn,
             this.VendorNameColumn,
             this.ProductNameColumn,
             this.MapToColumn});
@@ -2878,6 +2880,17 @@
             this.InstanceIdColumn.ReadOnly = true;
             this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.InstanceIdColumn.Width = 97;
+            // 
+            // SourceColumn
+            // 
+            this.SourceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.SourceColumn.HeaderText = "Source";
+            this.SourceColumn.MinimumWidth = 6;
+            this.SourceColumn.Name = "SourceColumn";
+            this.SourceColumn.ReadOnly = true;
+            this.SourceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.SourceColumn.ToolTipText = "How the program reads the device: DirectInput or Raw Input.";
+            this.SourceColumn.Width = 66;
             // 
             // VendorNameColumn
             // 
@@ -3266,6 +3279,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn SettingIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn CompletionColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn SourceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;

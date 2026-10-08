@@ -1183,6 +1183,9 @@ namespace x360ce.App
 		/// switched on, and a tab a move leaves with no device is switched off, so the game is not offered a
 		/// controller nothing drives. Two rows of one device keep their settings apart: settings are stored
 		/// by checksum, and a change on one tab gives that tab's row a new checksum.
+		///
+		/// A device new to the game starts with the settings of its twin on this tab (<see cref="GetTwinSetting"/>),
+		/// or with an automatic preset. The twin stays: if both are ticked, both drive the controller.
 		/// </remarks>
 		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidGuardian, bool keep)
 		{
@@ -1228,8 +1231,14 @@ namespace x360ce.App
 				{
 					// Create new setting.
 					setting = AppHelper.GetNewSetting(ud, game, mappedTo);
-					// Get auto-configured pad setting.
-					var ps = AutoMapHelper.GetAutoPreset(ud);
+					// The settings of its twin on this tab, the same controller read through its other source, which puts
+					// each control in the same place; failing that, an auto-configured pad setting.
+					var twin = GetTwinSetting(game, mappedTo, ud);
+					var ps = twin == null ? null : GetPadSetting(twin.PadSettingChecksum);
+					if (ps != null)
+						setting.Completion = twin.Completion;
+					else
+						ps = AutoMapHelper.GetAutoPreset(ud);
 					Current.LoadPadSettingAndCleanup(setting, ps, true);
 					Current.SyncFormFromPadSetting(mappedTo, ps);
 					// Refresh online status
@@ -1266,6 +1275,15 @@ namespace x360ce.App
 		{
 			if (AutoHideShowMappedDevices(game, instanceGuids))
 				AppHelper.SynchronizeToHidGuardian(instanceGuids);
+		}
+
+		/// <summary>The row of the device's twin on a controller tab of the game, or null when its twin is not on that tab.</summary>
+		/// <remarks>The twin is the same controller read through another source (<see cref="UserDevice.IsTwinOf"/>).</remarks>
+		public static UserSetting GetTwinSetting(UserGame game, MapTo mappedTo, UserDevice ud)
+		{
+			var devices = UserDevices.ItemsToArraySynchronized();
+			return GetSettings(game.FileName, mappedTo)
+				.FirstOrDefault(x => ud.IsTwinOf(devices.FirstOrDefault(d => d.InstanceGuid.Equals(x.InstanceGuid))));
 		}
 
 		/// <summary>The controller tabs of a game a device is on, lowest first.</summary>

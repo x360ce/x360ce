@@ -339,18 +339,31 @@ namespace x360ce.App.Controls
 			Array.Copy(from.Buttons, into.Buttons, into.Buttons.Length);
 		}
 
+		/// <summary>Copies every value of the engine's state of a device into one of the tab's own, in DirectInput's places.</summary>
+		void CopyState(SourceState from, JoystickState into)
+		{
+			SourceState.SetStateFromAxis(into, from.Axis);
+			SourceState.SetStateFromSliders(into, from.Sliders);
+			Array.Copy(from.Povs, into.PointOfViewControllers, into.PointOfViewControllers.Length);
+			Array.Copy(from.Buttons, into.Buttons, into.Buttons.Length);
+		}
+
 		/// <summary>
 		/// Update DirectInput control from DirectInput device.
 		/// </summary>
-		/// <param name="device">DirectInput device.</param>
+		/// <param name="ud">The device: a DirectInput device is drawn from its DirectInput state, a Raw Input device, which has none, from the state the engine reads it into, which keeps DirectInput's places and ranges.</param>
 		/// <returns>List of buttons/DPad pressed, axis/sliders turned.</returns>
-		void ShowDirectInputState(JoystickState state)
+		void ShowDirectInputState(UserDevice ud)
 		{
 			// Drawn from the tab's own copy, taken at once. The engine fills its states again two polls after it
 			// replaces them, so the one handed here can change while it is drawn, and one kept as the last drawn
 			// would change under it: a value written into it would read as already shown.
 			var newState = drawState;
-			CopyState(state ?? emptyState, newState);
+			var sourceState = ud == null || ud.IsDirectInput ? null : ud.SourceState;
+			if (sourceState != null)
+				CopyState(sourceState, newState);
+			else
+				CopyState(ud?.JoState ?? emptyState, newState);
 
 			UpdateButtonsTable(newState);
 			UpdateAxisTable(newState);
@@ -465,7 +478,7 @@ namespace x360ce.App.Controls
 				isWheel = ud == null
 					? false : ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
 			}
-			ShowDirectInputState(ud?.JoState);
+			ShowDirectInputState(ud);
 		}
 
 		private void DirectInputControl_Load(object sender, EventArgs e)
