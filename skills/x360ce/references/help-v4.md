@@ -166,8 +166,8 @@ While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID
 
 **DO NOT** attempt to remove `HIDGuardian` by simply deleting it from Windows OS `Device Manager`. This can result in **losing access** to your `Mouse` and `Keyboard` and you will be forced to follow Manual Uninstall Instructions below.
 
-How to remove `HIDGuardian` if access to your Mouse and Keyboard is lost (GitHub):
-<https://github.com/x360ce/x360ce/wiki/HID-Guardian>
+How to remove `HIDGuardian` if access to your Mouse and Keyboard is lost:
+[How to Uninstall HID Guardian When Access to Keyboard and Mouse is Lost](https://github.com/x360ce/x360ce/wiki/Help.HidGuardian#how-to-uninstall-hid-guardian-when-access-to-keyboard-and-mouse-is-lost)
 
 ## Games with anti-cheat
 
@@ -252,7 +252,7 @@ controller, so a game that reads only a gamepad can be flown with the real stick
 
 1. Plug the radio in by USB and choose its joystick mode. EdgeTX asks when the cable goes in: choose `USB Joystick (HID)`.
 2. Add the radio on the `[Controller 1]` tab, as in "Adding DirectInput Device (Controller)" above.
-3. Start from the preset. Open <https://github.com/x360ce/x360ce/blob/master/docs/.attachments/x360ce-v4-rc-transmitter.xml>, save it with GitHub's `Download raw file` button, then choose `[Load Preset...]` → `[Open File...]` and open it. It puts throttle and yaw on the left stick (Axis 3 up and down, Axis 4 left and right), pitch and roll on the right stick (Axis 2 and Axis 1), and the arm switch (Slider 1) on the left bumper.
+3. Start from the preset. Open [x360ce-v4-rc-transmitter.xml](https://github.com/x360ce/x360ce/blob/master/docs/.attachments/x360ce-v4-rc-transmitter.xml), save it with GitHub's `Download raw file` button, then choose `[Load Preset...]` → `[Open File...]` and open it. It puts throttle and yaw on the left stick (Axis 3 up and down, Axis 4 left and right), pitch and roll on the right stick (Axis 2 and Axis 1), and the arm switch (Slider 1) on the left bumper.
 4. Radios send their channels in different orders, so the preset is a starting point. Move each stick and switch and watch the `[Input]` column. When a box names the wrong control, click it, choose `[Record]` and move the right stick. When a stick works backwards, click its box and choose `[Invert]`.
 5. The arm switch works as a button. Record it by flipping the switch into the armed position: the status bar then says which position presses the button. If the bumper is held while you are disarmed, click the box and choose `[Invert]`. The preset presses the bumper only in the last quarter of the switch's travel, so the middle of a three-position switch leaves it released; that point is the Left Bumper's press point on the `[Buttons]` tab.
 6. Hide the radio from the game with HID Hide, as in "Hiding the real controller from games (HID Hide)", so the game reads only the emulated controller.

@@ -93,6 +93,19 @@ only plan folder: a skill that writes to `docs/superpowers/` has its output move
 `Tests/ReadMe.md`, and what is still open goes into `docs/TODO.md` as one line. The code and its
 tests are the record of what was built.
 
+## The documents live in `docs/`, and the wiki is made from them
+
+`docs/` is the only place a user document is written. Both programs show its `Help.*.md` as their
+help, every v4 build copies the help into `skills/x360ce/references/`, and
+`.github/workflows/publish-wiki.yml` writes the GitHub wiki from the folder with
+`.github/scripts/Publish-Wiki.ps1` each time `docs/` changes on `master`. Never edit the wiki: the
+next publish overwrites it. Link between documents by paths relative to `docs/`, such as
+`[Help.v3](Help.v3.md#what-do-hookmasks-do)` or `![...](.attachments/picture.png)`; the publish and
+`MarkdownRtf.ResolveLinks` make them into addresses where there is no folder to be relative to. An
+old wiki page name that links elsewhere may still use goes into `docs/.moved`, and a page's place in
+the wiki's sidebar into `docs/.order`. `Tests/Common/PublishWikiScriptTest.cs` publishes the folder
+and fails on a link to any page, heading or file it does not hold.
+
 ==== END OF INSTRUCTIONS FROM: developer.instructions.md ====
 
 ==== START OF INSTRUCTIONS FROM: repository-analysis.instructions.md ====

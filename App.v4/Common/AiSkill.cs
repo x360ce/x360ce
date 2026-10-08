@@ -80,6 +80,9 @@ namespace x360ce.App
 		/// <summary>The start of this program's own interface description among the references, which an install stamps with its version and build day.</summary>
 		const string OwnTree = "references/ui-tree-v4";
 
+		/// <summary>The start of the help documents among the references, whose links are made into addresses: see <see cref="Engine.MarkdownRtf.ResolveLinks"/>.</summary>
+		const string HelpPrefix = "references/help-";
+
 		/// <summary>The skill as the program ships it, its version set to the program's.</summary>
 		/// <remarks>Written with LF line endings whatever the checkout it was built from, so every install is the same.</remarks>
 		public static string Text(Version version)
@@ -101,6 +104,9 @@ namespace x360ce.App
 				// so an agent can tell from the file alone whether it is current. Version 3's keeps its own.
 				if (reference.Key.StartsWith(OwnTree, StringComparison.OrdinalIgnoreCase))
 					text = Engine.UiTree.UiTreeExporter.Restamp(text, version.ToString(), ProgramBuilt);
+				// The help links to the other pages and files of the docs folder, which the skill's folder does not hold.
+				if (reference.Key.StartsWith(HelpPrefix, StringComparison.OrdinalIgnoreCase))
+					text = Engine.MarkdownRtf.ResolveLinks(text);
 				files.Add(reference.Key, text);
 			}
 			return files;

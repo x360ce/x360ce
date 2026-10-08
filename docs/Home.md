@@ -2,7 +2,8 @@
 
 Xbox 360 Controller Emulator. These pages are the source the application itself shows — the
 help inside the program is rendered from the same Markdown, so there is one copy of every
-document and no second version to keep in step.
+document and no second version to keep in step. The project wiki is published from them each
+time a release reaches `master`, so a page is changed here, never in the wiki.
 
 ## Using the application
 
@@ -10,7 +11,8 @@ document and no second version to keep in step.
 | --- | --- |
 | [Help.v4](Help.v4.md) | Version 4.x, which creates a virtual controller through ViGEmBus. Includes the full expressions reference. |
 | [Help.v3](Help.v3.md) | Version 3.x, which replaces the game's XInput library and runs from the game folder. |
-| [Help.HidGuardian](Help.HidGuardian.md) | Hiding original controllers from games, and how to recover if keyboard and mouse stop working. |
+| [Help.ForceFeedback](Help.ForceFeedback.md) | Which motor a game uses for what, as the Force Feedback page shows it. |
+| [Help.HidGuardian](Help.HidGuardian.md) | Removing the obsolete HID Guardian, and how to recover if keyboard and mouse stop working. |
 
 ## For the project
 

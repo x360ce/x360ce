@@ -184,6 +184,31 @@ namespace x360ce.Tests
 			return exe?.FullName;
 		}
 
+		/// <summary>Runs a PowerShell script of the repository, as a person or a workflow runs it, and returns its exit code.</summary>
+		/// <param name="script">The script's path.</param>
+		/// <param name="arguments">The command line after the script.</param>
+		/// <param name="output">What it wrote, its errors after its output.</param>
+		/// <remarks>PowerShell 7 when it is installed, as the workflows run; Windows PowerShell otherwise.</remarks>
+		public static int RunScript(string script, string arguments, out string output)
+		{
+			var host = "pwsh";
+			try { Process.Start(new ProcessStartInfo(host, "-v") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true }).WaitForExit(); }
+			catch (Exception) { host = "powershell"; }
+			var info = new ProcessStartInfo(host, "-NoProfile -NonInteractive -File \"" + script + "\" " + arguments)
+			{
+				UseShellExecute = false,
+				CreateNoWindow = true,
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+			};
+			using (var p = Process.Start(info))
+			{
+				output = p.StandardOutput.ReadToEnd() + p.StandardError.ReadToEnd();
+				p.WaitForExit();
+				return p.ExitCode;
+			}
+		}
+
 		/// <summary>Configuration this test assembly was built in, read from its own path.</summary>
 		static string TestConfiguration
 		{

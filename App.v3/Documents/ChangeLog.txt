@@ -1,10 +1,11 @@
-﻿## [3.6.19.0] - 2026-10-08
+﻿## [3.6.20.0] - 2026-10-09
 
 - Fixed: AI tools silently ignored arguments they do not take.
 - Fixed: Reading the device list leaked a little memory each time.
 - Fixed: AI assistants could not tick boxes in lists.
 - Fixed: An AI assistant's press waited until its question was answered.
 - Fixed: The program left an empty x360ce folder beside itself.
+- Fixed: The help's link to the version 4 help did nothing.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: Pastel icons, sharper controller pictures and button glyphs.
 - Changed: Sharp text and icons on screens set above 100%.

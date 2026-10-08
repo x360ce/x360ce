@@ -1,7 +1,7 @@
 # Xbox 360 Controller Emulator 3.x
 
 Version 3 replaces the game's XInput library. Version 4 creates a virtual controller instead
-and does not need to sit beside the game — see [Help.v4](Help.v4.md).
+and does not need to sit beside the game — see [Help.v4](https://github.com/x360ce/x360ce/wiki/Help.v4).
 
 ## How To Use - Installation
 
@@ -91,6 +91,22 @@ Many games will work without any of the below set, but it is worth knowing them:
 - **NAME** - Allows x360ce to return a different OEM name than that of the controller installed. In Assassin's Creed, for instance, it changes the name of the XInput device to `Xbox 360 Controller`. While this is generally not required for functionality, the game Mini Ninjas is known to check for "Xbox 360 Controller" in the registry and will not work if the name is anything else.
 - **SA** - Enables the hooking of SetupAPI. Only the Beat Hazard titles are known to require it so far, so it should almost never be needed.
 - **WT** - Enables the hooking of WinVerifyTrust. This is required for games which use WVT for process integrity checking. Only Gears of War is known to use it at this point, so it should almost never be needed.
+
+### Where HookMasks are set
+
+A game listed in the game database, `x360ce.gdb`, takes the HookMask from its section there, named after the game's executable file: `[game.exe]` with `HookMask=0x00000002`. Any other game reads the `[InputHook]` section of `x360ce.ini`. There `HookMask=` sets every hook at once. Without it, COM is on, and each of `HookLL=1`, `HookCOM=1`, `HookDI=1`, `HookPIDVID=1`, `HookNAME=1`, `HookSA=1` and `HookWT=1` adds one more. `FakeVID=` and `FakePID=` in the same section are the IDs PIDVID reports.
+
+A HookMask is the sum of the values of the hooks it turns on:
+
+| Hook | Value |
+| --- | --- |
+| LL | `0x00000001` |
+| COM | `0x00000002` |
+| DI | `0x00000004` |
+| PIDVID | `0x00000008` |
+| NAME | `0x00000010` |
+| SA | `0x00000020` |
+| WT | `0x10000000` |
 
 ## AI assistant access
 

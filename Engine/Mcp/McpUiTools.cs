@@ -425,7 +425,8 @@ namespace x360ce.Engine.Mcp
 		[McpTool(AiAccess.Read, "The help page the program shows, as Markdown.")]
 		public static string Help()
 		{
-			return HelpText();
+			// The page links to the docs folder's other pages and files, which the caller does not have.
+			return MarkdownRtf.ResolveLinks(HelpText());
 		}
 
 		[McpTool(AiAccess.Read, "Every element of the running program's interface with its purpose, as Markdown.")]

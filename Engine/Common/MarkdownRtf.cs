@@ -73,6 +73,57 @@ namespace x360ce.Engine
 	public static class MarkdownRtf
 	{
 
+		#region Links between documents
+
+		/// <summary>Where a page of the docs folder is published: the project wiki, made from that folder.</summary>
+		public const string WikiUrl = "https://github.com/x360ce/x360ce/wiki/";
+
+		/// <summary>Where any other file of the docs folder is shown, such as a preset to download.</summary>
+		public const string DocsUrl = "https://github.com/x360ce/x360ce/blob/master/docs/";
+
+		/// <summary>Where a picture of the docs folder is served as the picture itself.</summary>
+		public const string DocsRawUrl = "https://raw.githubusercontent.com/x360ce/x360ce/master/docs/";
+
+		/// <summary>A link or a picture: its text or description, and its target.</summary>
+		static readonly Regex Link = new Regex(@"!?\[([^\]]*)\]\(([^)\s]+)(?:\s+""[^""]*"")?\)");
+
+		/// <summary>A link target as written in a document, made into an address that opens wherever the document is shown.</summary>
+		/// <param name="target">The target, such as <c>Help.HidGuardian.md#how-to</c>, <c>.attachments/preset.xml</c> or an address.</param>
+		/// <param name="picture">True for a picture, which is served as itself rather than shown in a page.</param>
+		/// <remarks>
+		/// The documents link to each other and to their files by paths relative to the docs folder, which work where
+		/// GitHub shows the folder. Inside the program, or copied beside the AI skill, there is no folder to be relative
+		/// to, so a page goes to its wiki page and a file to the repository. An address, or an anchor in the same page,
+		/// is left as it is.
+		/// </remarks>
+		public static string ResolveLink(string target, bool picture = false)
+		{
+			if (string.IsNullOrEmpty(target) || target.StartsWith("#", StringComparison.Ordinal) || Regex.IsMatch(target, @"^[A-Za-z][A-Za-z0-9+.-]*:"))
+				return target;
+			var hash = target.IndexOf('#');
+			var path = hash < 0 ? target : target.Substring(0, hash);
+			if (picture)
+				return DocsRawUrl + path;
+			if (path.EndsWith(".md", StringComparison.OrdinalIgnoreCase) && path.IndexOf('/') < 0)
+				return WikiUrl + path.Substring(0, path.Length - 3) + (hash < 0 ? "" : target.Substring(hash));
+			return DocsUrl + target;
+		}
+
+		/// <summary>The document with every link and picture target made into an address: see <see cref="ResolveLink"/>.</summary>
+		public static string ResolveLinks(string markdown)
+		{
+			if (string.IsNullOrEmpty(markdown))
+				return markdown;
+			return Link.Replace(markdown, m =>
+			{
+				var target = m.Groups[2];
+				var resolved = ResolveLink(target.Value, m.Value.StartsWith("!", StringComparison.Ordinal));
+				return m.Value.Substring(0, target.Index - m.Index) + resolved + m.Value.Substring(target.Index - m.Index + target.Length);
+			});
+		}
+
+		#endregion
+
 		/// <summary>Renders a Markdown document as RTF.</summary>
 		/// <param name="markdown">The document.</param>
 		/// <param name="style">How it should look, or null for the standard look.</param>
@@ -328,7 +379,7 @@ namespace x360ce.Engine
 				return "\u0001" + (spans.Count - 1) + "\u0002";
 			});
 			// Links, before emphasis, so a link's text may be emphasised but its address is not read.
-			text = Regex.Replace(text, @"!?\[([^\]]*)\]\(([^)\s]+)(?:\s+""[^""]*"")?\)", m =>
+			text = Link.Replace(text, m =>
 			{
 				var label = m.Groups[1].Value;
 				var url = m.Groups[2].Value;
@@ -338,7 +389,7 @@ namespace x360ce.Engine
 					spans.Add(@"{\i " + Escape("[picture: " + (label.Length > 0 ? label : url) + "]") + @"\i0 }");
 					return "\u0001" + (spans.Count - 1) + "\u0002";
 				}
-				spans.Add(Hyperlink(url, label.Length > 0 ? label : url));
+				spans.Add(Hyperlink(ResolveLink(url), label.Length > 0 ? label : url));
 				return "\u0001" + (spans.Count - 1) + "\u0002";
 			});
 			// A bare address in angle brackets, which is how these documents write most of theirs.

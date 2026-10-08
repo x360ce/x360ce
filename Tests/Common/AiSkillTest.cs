@@ -71,7 +71,11 @@ namespace x360ce.Tests
 				var embedded = AppHelper.ReadHelp(reference.Value);
 				Assert.IsTrue(embedded.Length > 0, "The program does not carry " + reference.Key + ".");
 				var written = File.ReadAllText(Path.Combine(own, reference.Key.Replace('/', Path.DirectorySeparatorChar)));
-				Assert.AreEqual(Unstamped(embedded), Unstamped(written), reference.Key);
+				// The help's links are relative to the docs folder, which the skill's folder is not.
+				var help = reference.Key.StartsWith("references/help-", StringComparison.Ordinal);
+				Assert.AreEqual(Unstamped(help ? x360ce.Engine.MarkdownRtf.ResolveLinks(embedded) : embedded), Unstamped(written), reference.Key);
+				if (help)
+					Assert.IsFalse(Regex.IsMatch(written, @"\]\((?![A-Za-z][A-Za-z0-9+.-]*:|#)"), reference.Key + " links to a file the skill's folder does not hold.");
 			}
 			// Version 4's own description names the build that installed it; version 3's keeps its own.
 			StringAssert.Contains(File.ReadAllText(Path.Combine(own, "references", "ui-tree-v4.md")), "Version " + Program + ", built ");
@@ -162,7 +166,7 @@ namespace x360ce.Tests
 			string printed, failed;
 			Assert.AreEqual(0, Skill("", out printed, out failed));
 			Assert.AreEqual(AiSkill.Text(AiSkill.ProgramVersion), printed, "Alone, the switch prints the skill as the program would install it.");
-			var help = AppHelper.ReadHelp(AppHelper.HelpV4Resource);
+			var help = x360ce.Engine.MarkdownRtf.ResolveLinks(AppHelper.ReadHelp(AppHelper.HelpV4Resource));
 			// PowerShell splits an unquoted -Skill=references/help.md at the dot and passes references/help.
 			foreach (var name in new[] { "help", "HELP.md", "help-v4", "references\\help-v4.md", "references/help-v4" })
 			{
@@ -174,7 +178,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, Skill("references/ui-tree-v3.json", out printed, out failed));
 			Assert.AreEqual(AppHelper.ReadHelp(AiSkill.References["references/ui-tree-v3.json"]), printed);
 			Assert.AreEqual(0, Skill("help-v3", out printed, out failed));
-			Assert.AreEqual(AppHelper.ReadHelp(AiSkill.HelpV3Resource), printed);
+			Assert.AreEqual(x360ce.Engine.MarkdownRtf.ResolveLinks(AppHelper.ReadHelp(AiSkill.HelpV3Resource)), printed);
 			// A name that is neither a file nor a folder that exists makes no folder, and says what the switch takes.
 			foreach (var name in new[] { "references/manual.md", "skills", "<folder>" })
 			{

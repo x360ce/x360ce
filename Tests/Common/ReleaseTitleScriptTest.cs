@@ -38,22 +38,7 @@ namespace x360ce.Tests
 
 		static int Run(string arguments, out string output)
 		{
-			var host = "pwsh";
-			try { Process.Start(new ProcessStartInfo(host, "-v") { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true }).WaitForExit(); }
-			catch (Exception) { host = "powershell"; }
-			var info = new ProcessStartInfo(host, "-NoProfile -NonInteractive -File \"" + Script + "\" " + arguments)
-			{
-				UseShellExecute = false,
-				CreateNoWindow = true,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-			};
-			using (var p = Process.Start(info))
-			{
-				output = p.StandardOutput.ReadToEnd() + p.StandardError.ReadToEnd();
-				p.WaitForExit();
-				return p.ExitCode;
-			}
+			return Ui.RunScript(Script, arguments, out output);
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]

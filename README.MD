@@ -20,7 +20,7 @@ Digitally Signed Application v4.25.53.0 and Virtual Gamepad Emulation Bus 1.21.4
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
-Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
+Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: [Help.v4](docs/Help.v4.md)
 
 ## Mapping formulas (v4.x)
 
@@ -105,7 +105,7 @@ Report only crashes or other bugs, note that the Issue tracker is not a help des
 **If you have questions about installation or configuration, please go to our [forum @NGemu](http://ngemu.com/forums/x360ce.140)**
 
 # Compatibility
-Games that work with x360ce can be found on the [Compatibility List](https://github.com/x360ce/x360ce/wiki/Compatibility-List). If you would like to add to that list or provide updated information place see [Reporting Compatibility](https://github.com/x360ce/x360ce/wiki/Reporting-Compatibility).
+Version 3 works inside each game, and some games need a HookMask: see [What do HookMasks do?](docs/Help.v3.md#what-do-hookmasks-do)
 
 # System Requirements
 
@@ -153,7 +153,7 @@ HID Guardian can no longer be installed. If an older version installed it, remov
 
 ### How to remove HID Guardian if access to your Mouse and Keyboard is lost (X360CE v4.x)
 
-Instructions: https://github.com/x360ce/x360ce/wiki/HID-Guardian
+Instructions: [How to Uninstall HID Guardian When Access to Keyboard and Mouse is Lost](docs/Help.HidGuardian.md#how-to-uninstall-hid-guardian-when-access-to-keyboard-and-mouse-is-lost)
 
 # Troubleshooting
 
