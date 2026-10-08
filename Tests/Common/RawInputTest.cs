@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/Input/Devices/RawInputDevice.cs, Engine/Input/Devices/RawInputNative.cs, Engine/Input/States/RawInputLayout.cs, Engine/Input/States/RawInputReader.cs
+﻿// @under-test: Engine/Input/Devices/RawInputDevice.cs, Engine/Input/Native/RawInputNative.cs, Engine/Input/Layouts/RawInputLayout.cs, Engine/Input/Processors/RawInputReader.cs, Engine/Input/Devices/RawInputControl.cs, Engine/Input/Devices/RawInputDescription.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -332,7 +332,7 @@ namespace x360ce.Tests
 			using (var own = RawInputDevice.FromPreparsedData(fixture.PreparsedBytes()))
 				Assert.IsTrue(own.Controls.All(x => x == null || x.UsagePage == 0xFF00), "The G13 names a control of its own now; read it by its description.");
 			Assert.IsNotNull(fixture.Description, "The G13 has no row.");
-			Assert.IsNull(RawInputDevice.DescriptionOf(0x046D, 0xC21C, GenericDesktopPage),
+			Assert.IsNull(RawInputDescription.Find(0x046D, 0xC21C, GenericDesktopPage),
 				"A collection that describes itself, such as a joystick the maker's software adds, is read by its own description.");
 			using (var g13 = fixture.Device(1, @"\\?\HID#VID_046D&PID_C21C#test", "G13", 0))
 			{

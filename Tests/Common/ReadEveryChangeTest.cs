@@ -1,4 +1,4 @@
-// @under-test: App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/Options.cs
+// @under-test: Engine/Input/Processors/DirectInputChanges.cs, Engine/Input/Devices/DirectInputDevice.cs, Engine/Input/States/SourceState.cs, App.v4/Common/Options.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -6,7 +6,6 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App;
-using x360ce.App.DInput;
 using x360ce.Engine;
 
 namespace x360ce.Tests
@@ -31,67 +30,64 @@ namespace x360ce.Tests
 		[Description("A button that reads as before while DirectInput kept a change of it to the other value is shown changed for one pass; one that changed, or did not move, is shown as read")]
 		public void A_kept_change_the_state_missed_is_shown()
 		{
-			using (var helper = new DInputHelper())
-			{
-				// Button 0: pressed and let go between two passes. Button 1: let go and pressed again while held.
-				// Button 2: pressed and still held, which the state shows by itself. Button 3: did not move.
-				helper._bufferedPresses[0] = true;
-				helper._bufferedReleases[0] = true;
-				helper._bufferedReleases[1] = true;
-				helper._bufferedPresses[1] = true;
-				helper._bufferedPresses[2] = true;
-				var previous = State(1);
-				var state = State(1, 2);
-				helper.ShowBufferedChanges(previous, state, true);
-				Assert.IsTrue(state.Buttons[0], "A tap between two passes was lost.");
-				Assert.IsFalse(state.Buttons[1], "A release and press while held was lost.");
-				Assert.IsTrue(state.Buttons[2], "A press the state shows was undone.");
-				Assert.IsFalse(state.Buttons[3], "A button that did not move was shown pressed.");
-				// A press the state caught after the buffer was last read: it is in the next buffer, and the state shows it already.
-				previous = State(0);
-				state = State(0);
-				Array.Clear(helper._bufferedReleases, 0, helper._bufferedReleases.Length);
-				helper.ShowBufferedChanges(previous, state, true);
-				Assert.IsTrue(state.Buttons[0], "A press already shown was shown let go.");
-			}
+			var kept = new DirectInputChanges();
+			// Button 0: pressed and let go between two passes. Button 1: let go and pressed again while held.
+			// Button 2: pressed and still held, which the state shows by itself. Button 3: did not move.
+			kept.Presses[0] = true;
+			kept.Releases[0] = true;
+			kept.Releases[1] = true;
+			kept.Presses[1] = true;
+			kept.Presses[2] = true;
+			var previous = State(1);
+			var state = State(1, 2);
+			Assert.AreEqual(2, kept.ShowIn(previous, state, true), "The two changes the state missed are not counted.");
+			Assert.IsTrue(state.Buttons[0], "A tap between two passes was lost.");
+			Assert.IsFalse(state.Buttons[1], "A release and press while held was lost.");
+			Assert.IsTrue(state.Buttons[2], "A press the state shows was undone.");
+			Assert.IsFalse(state.Buttons[3], "A button that did not move was shown pressed.");
+			// A press the state caught after the buffer was last read: it is in the next buffer, and the state shows it already.
+			previous = State(0);
+			state = State(0);
+			kept.Clear();
+			kept.Presses[0] = true;
+			Assert.AreEqual(0, kept.ShowIn(previous, state, true), "A press the state caught was counted as missed.");
+			Assert.IsTrue(state.Buttons[0], "A press already shown was shown let go.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A hat tapped and a stick flicked between two passes, which DirectInput kept, are shown for one pass; jitter and a device whose axes report movement are not")]
 		public void A_kept_hat_tap_and_stick_flick_are_shown()
 		{
-			using (var helper = new DInputHelper())
-			{
-				var previous = State();
-				var state = State();
-				previous.Povs[0] = state.Povs[0] = -1;
-				previous.Povs[1] = state.Povs[1] = -1;
-				previous.Axis[0] = state.Axis[0] = 32767;
-				previous.Axis[1] = state.Axis[1] = 32767;
-				// Hat 1: right and back. Hat 2: did not move.
-				helper._bufferedPovMoved[0] = true;
-				helper._bufferedPovLast[0] = -1;
-				helper._bufferedPovOther[0] = 9000;
-				helper._bufferedPovHasOther[0] = true;
-				// X: flicked fully left and back. Y: jitter around the centre.
-				helper._bufferedMoved[0] = true;
-				helper._bufferedLow[0] = 0;
-				helper._bufferedHigh[0] = 32767;
-				helper._bufferedMoved[1] = true;
-				helper._bufferedLow[1] = 32700;
-				helper._bufferedHigh[1] = 32900;
-				helper.ShowBufferedChanges(previous, state, false);
-				Assert.AreEqual(9000, state.Povs[0], "A hat tap between two passes was lost.");
-				Assert.AreEqual(32767, state.Axis[0], "A device whose axes report movement was shown a kept value as a place.");
-				helper.ShowBufferedChanges(previous, state, true);
-				Assert.AreEqual(-1, state.Povs[1], "A hat that did not move was moved.");
-				Assert.AreEqual(0, state.Axis[0], "A flick between two passes was lost.");
-				Assert.AreEqual(32767, state.Axis[1], "Jitter was shown as a flick.");
-			}
+			var kept = new DirectInputChanges();
+			var previous = State();
+			var state = State();
+			previous.Povs[0] = state.Povs[0] = -1;
+			previous.Povs[1] = state.Povs[1] = -1;
+			previous.Axis[0] = state.Axis[0] = 32767;
+			previous.Axis[1] = state.Axis[1] = 32767;
+			// Hat 1: right and back. Hat 2: did not move.
+			kept.PovMoved[0] = true;
+			kept.PovLast[0] = -1;
+			kept.PovOther[0] = 9000;
+			kept.PovHasOther[0] = true;
+			// X: flicked fully left and back. Y: jitter around the centre.
+			kept.Moved[0] = true;
+			kept.Low[0] = 0;
+			kept.High[0] = 32767;
+			kept.Moved[1] = true;
+			kept.Low[1] = 32700;
+			kept.High[1] = 32900;
+			kept.ShowIn(previous, state, false);
+			Assert.AreEqual(9000, state.Povs[0], "A hat tap between two passes was lost.");
+			Assert.AreEqual(32767, state.Axis[0], "A device whose axes report movement was shown a kept value as a place.");
+			kept.ShowIn(previous, state, true);
+			Assert.AreEqual(-1, state.Povs[1], "A hat that did not move was moved.");
+			Assert.AreEqual(0, state.Axis[0], "A flick between two passes was lost.");
+			Assert.AreEqual(32767, state.Axis[1], "Jitter was shown as a flick.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("A Raw Input button whose count grew by two or more while it reads the same is shown changed for one pass")]
+		[Description("A Raw Input control whose count grew while it reads the same is shown changed for one pass: a button tapped, a hat tapped, a stick flicked; jitter is not")]
 		public void A_counted_change_the_state_missed_is_shown()
 		{
 			var previous = State(1);
@@ -109,7 +105,7 @@ namespace x360ce.Tests
 			previous.Axis[1] = state.Axis[1] = 32767;
 			state.AxisTurns[1] = 5;
 			state.AxisTurnValues[1] = 32900;
-			DInputHelper.ShowChangesBetweenPasses(previous, state);
+			Assert.AreEqual(4, state.ShowChangesSince(previous), "Two buttons, a hat and a stick the newest values missed are not counted.");
 			Assert.IsTrue(state.Buttons[0], "A tap between two passes was lost.");
 			Assert.IsFalse(state.Buttons[1], "A release and press while held was lost.");
 			Assert.IsTrue(state.Buttons[2], "A press the state shows was undone.");
@@ -127,7 +123,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("An attached DirectInput controller keeps its changes for the engine, and reading them makes nothing")]
+		[Description("An attached DirectInput controller names itself as the other sources do, keeps its changes for the engine, and reading them makes nothing")]
 		public void An_attached_controller_keeps_its_changes()
 		{
 			Ui.OnUiThread(() =>
@@ -138,26 +134,34 @@ namespace x360ce.Tests
 					if (instance == null)
 						Assert.Inconclusive("No DirectInput controller is attached.");
 					using (var window = new Form())
-					using (var joystick = new Joystick(manager, instance.InstanceGuid))
-					using (var helper = new DInputHelper())
+					using (var device = new DirectInputDevice(manager, instance.InstanceGuid))
 					{
-						DInputHelper.KeepDeviceChanges(joystick);
-						Assert.AreEqual(DInputHelper.DeviceBufferSize, joystick.Properties.BufferSize, instance.InstanceName + " does not keep its changes.");
-						joystick.SetCooperativeLevel(window.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-						joystick.Acquire();
+						IInputSourceDevice named = device;
+						Assert.AreEqual(InputSourceType.DirectInput, named.Source);
+						Assert.AreEqual(instance.InstanceGuid, named.InstanceGuid);
+						Assert.AreEqual(instance.ProductGuid, named.ProductGuid);
+						if (instance.IsHumanInterfaceDevice)
+						{
+							StringAssert.StartsWith(named.InterfacePath, @"\\?\", instance.InstanceName + " has no interface path.");
+							Assert.AreEqual(instance.ProductGuid, RawInputDevice.GetProductGuid(named.VendorId, named.ProductId), instance.InstanceName + ": vendor and product IDs are not those of its product GUID.");
+						}
+						device.KeepChanges();
+						Assert.AreEqual(DirectInputDevice.BufferSize, device.Joystick.Properties.BufferSize, instance.InstanceName + " does not keep its changes.");
+						device.Joystick.SetCooperativeLevel(window.Handle, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+						device.Joystick.Acquire();
 						try
 						{
-							Assert.IsTrue(helper.ReadBufferedChanges(joystick), instance.InstanceName + ": the kept changes could not be read.");
+							Assert.IsTrue(device.ReadChanges(), instance.InstanceName + ": the kept changes could not be read.");
 							var allocated = Allocations.FewestBytes(5, () =>
 							{
 								for (var i = 0; i < 1000; i++)
-									helper.ReadBufferedChanges(joystick);
+									device.ReadChanges();
 							});
 							Assert.AreEqual(0L, allocated, "Bytes handed to the collector by 1000 reads of kept changes.");
 						}
 						finally
 						{
-							joystick.Unacquire();
+							device.Joystick.Unacquire();
 						}
 					}
 				}

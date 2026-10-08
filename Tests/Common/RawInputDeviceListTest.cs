@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step1.UpdateDevices.cs, App.v4/Common/DInput/DInputHelper.cs, Engine/Data/UserDevice.cs, Engine/Input/States/RawInputLayout.cs, App.v4/Common/AutoMapHelper.cs
+﻿// @under-test: App.v4/Common/DInput/DInputHelper.Step1.UpdateDevices.cs, App.v4/Common/DInput/DInputHelper.cs, Engine/Data/UserDevice.cs, Engine/Input/Layouts/RawInputLayout.cs, App.v4/Common/AutoMapHelper.cs, Engine/Input/Devices/DirectInputDevice.cs
 // @area: devices   @layer: unit
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
@@ -587,7 +587,7 @@ namespace x360ce.Tests
 		{
 			var layouts = new Dictionary<RawInputHubDevice, RawInputLayout>();
 			var read = Call(null, "ReadDeviceList", known, hub, layouts);
-			var made = (Dictionary<Guid, Joystick>)ReadType.GetField("Made").GetValue(read);
+			var made = (Dictionary<Guid, DirectInputDevice>)ReadType.GetField("Made").GetValue(read);
 			try
 			{
 				var error = (Exception)ReadType.GetField("Error").GetValue(read);
@@ -615,7 +615,7 @@ namespace x360ce.Tests
 					Assert.AreSame(layouts[entry], Field<RawInputLayout>(listing, "Layout"), what + ": the listing's layout is not the twin's.");
 				}
 				// Every device the read made for the list, twins among them when new, is handed over as it was opened: not acquired.
-				foreach (var joystick in made.Values)
+				foreach (var joystick in made.Values.Select(x => x.Joystick))
 				{
 					try
 					{
@@ -630,8 +630,8 @@ namespace x360ce.Tests
 			}
 			finally
 			{
-				foreach (var joystick in made.Values)
-					joystick.Dispose();
+				foreach (var device in made.Values)
+					device.Dispose();
 			}
 		}
 

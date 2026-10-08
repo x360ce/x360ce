@@ -2,8 +2,8 @@
 
 - Fixed: AI tools silently ignored arguments they do not take.
 - Fixed: Reading the device list leaked a little memory each time.
-- Fixed: AI assistants could not tick or untick a box in a list's row.
-- Fixed: An AI assistant's press that opened a question waited until a person answered it.
+- Fixed: AI assistants could not tick boxes in lists.
+- Fixed: An AI assistant's press waited until its question was answered.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: Pastel icons, sharper controller pictures and button glyphs.
 - Changed: Sharp text and icons on screens set above 100%.

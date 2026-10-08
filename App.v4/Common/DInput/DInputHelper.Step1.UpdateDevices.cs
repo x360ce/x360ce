@@ -30,7 +30,7 @@ namespace x360ce.App.DInput
 			public DeviceInfo[] DevInfos;
 			public DeviceInfo[] IntInfos;
 			/// <summary>The DirectInput device made for each instance not yet listed, for the device thread to keep.</summary>
-			public Dictionary<Guid, Joystick> Made = new Dictionary<Guid, Joystick>();
+			public Dictionary<Guid, DirectInputDevice> Made = new Dictionary<Guid, DirectInputDevice>();
 			/// <summary>The Raw Input game controllers the hub read that are not pads of ours, for the device thread to list.</summary>
 			public List<RawInputListing> RawInputDevices = new List<RawInputListing>();
 			/// <summary>Why the read gave nothing, or null when it succeeded.</summary>
@@ -130,13 +130,13 @@ namespace x360ce.App.DInput
 						continue;
 					}
 					// Not listed yet: the device is made here, and handed over to be kept.
-					Joystick made;
-					try { made = new Joystick(manager, instance.InstanceGuid); }
+					DirectInputDevice made;
+					try { made = new DirectInputDevice(manager, instance.InstanceGuid); }
 					catch (Exception) { continue; }
 					read.Made[instance.InstanceGuid] = made;
 					if (instance.IsHumanInterfaceDevice)
 					{
-						path = made.Properties.InterfacePath ?? "";
+						path = made.InterfacePath;
 						paths.Add(path);
 						if (path.Length > 0)
 							twins[path] = instance;
@@ -234,10 +234,11 @@ namespace x360ce.App.DInput
 		/// and <see cref="SourceState.GetJoystickSlidersMask"/> set each axis's and slider's <see cref="DeviceObjectItem.DiIndex"/>.
 		/// A device this read made for the list is used as it is; any other is opened for the purpose and let go of.
 		/// </remarks>
-		static DeviceObjectItem[] ReadTwinObjects(DirectInput manager, Guid instanceGuid, Dictionary<Guid, Joystick> made)
+		static DeviceObjectItem[] ReadTwinObjects(DirectInput manager, Guid instanceGuid, Dictionary<Guid, DirectInputDevice> made)
 		{
-			Joystick joystick;
-			var opened = !made.TryGetValue(instanceGuid, out joystick);
+			DirectInputDevice kept;
+			var opened = !made.TryGetValue(instanceGuid, out kept);
+			var joystick = opened ? null : kept.Joystick;
 			try
 			{
 				if (opened)
@@ -369,12 +370,12 @@ namespace x360ce.App.DInput
 			{
 				var device = addedDevices[i];
 				var ud = new UserDevice();
-				Joystick made;
+				DirectInputDevice made;
 				if (read.Made.TryGetValue(device.InstanceGuid, out made))
 				{
 					ud.Device = made;
 					ud.IsExclusiveMode = null;
-					ud.LoadCapabilities(made.Capabilities);
+					ud.LoadCapabilities(made.Joystick.Capabilities);
 				}
 				DeviceInfo hid;
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
@@ -482,10 +483,10 @@ namespace x360ce.App.DInput
 					lock (SettingsManager.UserDevices.SyncRoot)
 					{
 						// Getting state can fail.
-						var joystick = new Joystick(manager, device.InstanceGuid);
-						ud.Device = joystick;
+						var opened = new DirectInputDevice(manager, device.InstanceGuid);
+						ud.Device = opened;
 						ud.IsExclusiveMode = null;
-						ud.LoadCapabilities(joystick.Capabilities);
+						ud.LoadCapabilities(opened.Joystick.Capabilities);
 					}
 				}
 				catch (Exception) { }
@@ -513,7 +514,7 @@ namespace x360ce.App.DInput
 			// same controller could arrive named, unnamed, or named differently in each list.
 			if (device.IsHumanInterfaceDevice && ud.Device != null)
 			{
-				hid = FindInterface(allInterfaces, ud.Device.Properties.InterfacePath);
+				hid = FindInterface(allInterfaces, ud.Device.InterfacePath);
 				// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
 				lock (SettingsManager.UserDevices.SyncRoot)
 					ud.LoadHidDeviceInfo(hid);

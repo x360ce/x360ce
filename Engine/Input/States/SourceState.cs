@@ -92,6 +92,56 @@ namespace x360ce.Engine
 		/// <summary>Where each slider last turned back.</summary>
 		public int[] SliderTurnValues = new int[MaxSliders];
 
+		#region Changes between two reads
+
+		/// <summary>How much farther out than where an axis is now a turned-at or kept value must be to be shown: an eighth of the range, so a stick's jitter shows nothing.</summary>
+		public const int TurnShown = 8192;
+
+		/// <summary>Shows in this state, for one pass, a change that came and went since <paramref name="previous"/> was shown, which the newest values alone would miss: a button pressed and let go, a hat tapped, a stick flicked and back.</summary>
+		/// <remarks>
+		/// The counts of a reader that sees every report (<see cref="ButtonChanges"/>, <see cref="PovChanges"/>,
+		/// <see cref="AxisTurns"/>) say a control changed and came back while it reads as it did. It is shown as it was
+		/// between the two reads, and the next read shows it as it is again. A state read by polling has no counts, so
+		/// nothing in it changes. Makes nothing.
+		/// </remarks>
+		/// <returns>How many controls the newest values alone missed.</returns>
+		public int ShowChangesSince(SourceState previous)
+		{
+			var shown = 0;
+			for (var b = 0; b < Buttons.Length; b++)
+				if (ButtonChanges[b] - previous.ButtonChanges[b] > 1 && Buttons[b] == previous.Buttons[b])
+				{
+					Buttons[b] = !Buttons[b];
+					shown++;
+				}
+			// A hat tapped and let go, or turned and back: shown where it was before its last move.
+			for (var h = 0; h < Povs.Length; h++)
+				if (PovChanges[h] - previous.PovChanges[h] > 1 && Povs[h] == previous.Povs[h])
+				{
+					Povs[h] = PovsBefore[h];
+					shown++;
+				}
+			shown += ShowTurns(previous.Axis, Axis, previous.AxisTurns, AxisTurns, AxisTurnValues);
+			shown += ShowTurns(previous.Sliders, Sliders, previous.SliderTurns, SliderTurns, SliderTurnValues);
+			return shown;
+		}
+
+		/// <summary>Shows where an axis or slider turned back since the read before, when that is <see cref="TurnShown"/> farther out than where it is now.</summary>
+		/// <returns>How many were shown so.</returns>
+		static int ShowTurns(int[] previousValues, int[] values, int[] previousTurns, int[] turns, int[] turnValues)
+		{
+			var shown = 0;
+			for (var i = 0; i < values.Length; i++)
+				if (turns[i] != previousTurns[i] && Math.Abs(turnValues[i] - previousValues[i]) >= Math.Abs(values[i] - previousValues[i]) + TurnShown)
+				{
+					values[i] = turnValues[i];
+					shown++;
+				}
+			return shown;
+		}
+
+		#endregion
+
 		#region Get/Set Axis Array and Existence Mask
 
 		/// <summary>Writes a DirectInput state's 24 axes into <paramref name="axis"/>, in the order <see cref="SetStateFromAxis"/> reads them back.</summary>

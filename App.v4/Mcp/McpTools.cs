@@ -147,7 +147,7 @@ namespace x360ce.App.Mcp
 		/// <summary>The engine whose passes <see cref="InputLog"/> logs. The program's own unless a test says otherwise.</summary>
 		public static Func<DInput.DInputHelper> Engine = () => Global.DHelper;
 
-		[McpTool(AiAccess.Configure, "Logs every change the engine reads from the controllers on the tabs for the seconds given, in order, as JSON: Changes, one line each, with the milliseconds since the log began, the device and the control, named as the Record button names them: each button pressed and let go, each hat direction, and each axis or slider as it reaches another eighth of its range. Logged inside each engine pass, so even a press shorter than a pass is there, as the controller got it. Dropped counts changes that did not fit.", OnUiThread = false)]
+		[McpTool(AiAccess.Configure, "Logs every change the engine reads from the controllers on the tabs for the seconds given, in order, as JSON: Changes, one line each, with the milliseconds since the log began, the device and the control, named as the Record button names them: each button pressed and let go, each hat direction, and each axis or slider as it reaches another eighth of its range. Logged inside each engine pass, so even a press shorter than a pass is there, as the controller got it. ShownBetweenPasses counts, by source, the changes that came and went between two passes, which reading each pass's state alone would have missed. Dropped counts changes that did not fit.", OnUiThread = false)]
 		public static object InputLog([Description("How long to log, 1 to 60 seconds.")] int seconds = 10, [Description("InstanceGuid from devices_list to log one device; omit for all.")] string instanceGuid = null)
 		{
 			seconds = Math.Max(1, Math.Min(60, seconds));
@@ -169,6 +169,7 @@ namespace x360ce.App.Mcp
 			return new Dictionary<string, object>
 			{
 				{ "Changes", DescribeChanges(log, only == Guid.Empty ? (Guid?)null : only) },
+				{ "ShownBetweenPasses", new Dictionary<string, object> { { "DirectInput", log.ShownDirectInput }, { "RawInput", log.ShownRawInput } } },
 				{ "Dropped", log.Dropped },
 			};
 		}

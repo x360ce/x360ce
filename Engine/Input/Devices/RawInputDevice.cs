@@ -7,123 +7,18 @@ using System.Text;
 
 namespace x360ce.Engine
 {
-	/// <summary>One control of a HID device as the HID parser describes it: one data index.</summary>
-	public class RawInputControl
-	{
-		/// <summary>The index HidP_GetData reports the control by.</summary>
-		public int DataIndex { get; set; }
-
-		/// <summary>True for a button, which is on or off; false for a value.</summary>
-		public bool IsButton { get; set; }
-
-		public int UsagePage { get; set; }
-
-		public int Usage { get; set; }
-
-		/// <summary>The link collection that holds the control; 0 is the top-level collection.</summary>
-		public int LinkCollection { get; set; }
-
-		/// <summary>The ID of the report that carries the control; 0 when the device numbers no reports.</summary>
-		public int ReportId { get; set; }
-
-		/// <summary>The size of the value in bits; 0 for a button.</summary>
-		public int BitSize { get; set; }
-
-		/// <summary>The fields the control has in its report. More than one is a usage value array, which HidP_GetData does not return.</summary>
-		public int ReportCount { get; set; }
-
-		/// <summary>The smallest value the device declares; 0 for a button.</summary>
-		public int LogicalMin { get; set; }
-
-		/// <summary>The largest value the device declares; 0 for a button. Less than <see cref="LogicalMin"/> when the device declares an unsigned range as signed numbers.</summary>
-		public int LogicalMax { get; set; }
-
-		/// <summary>The bit the control starts at in its report, the report ID's eight bits first; -1 for a control the HID parser reads.</summary>
-		public int BitOffset { get; set; } = -1;
-	}
-
-	/// <summary>
-	/// Where a device whose HID description names none of its controls carries them in its report: the description it
-	/// should have given. Its axes are X, Y, Z, X Rotation, Y Rotation and Z Rotation in that order, then a run of
-	/// buttons one bit each, so it is read like any device that describes itself.
-	/// </summary>
-	public sealed class RawInputDescription
-	{
-		public int VendorId;
-		public int ProductId;
-		/// <summary>The usage page of the top-level collection the report comes from, which Raw Input is registered for whole.</summary>
-		public int UsagePage;
-		public int ReportId;
-		/// <summary>The bit each axis starts at, X first; the report ID is bits 0 to 7.</summary>
-		public int[] AxisBits;
-		/// <summary>The size of each axis in bits, an unsigned value from 0.</summary>
-		public int AxisBitSize;
-		/// <summary>The bit the first button is at; the others follow it.</summary>
-		public int ButtonBit;
-		public int ButtonCount;
-
-		/// <summary>The controls as the HID parser would have listed them, each with its place in the report.</summary>
-		public RawInputControl[] Controls()
-		{
-			var controls = new List<RawInputControl>();
-			for (var i = 0; i < AxisBits.Length; i++)
-				controls.Add(new RawInputControl
-				{
-					DataIndex = controls.Count,
-					UsagePage = 0x01,
-					Usage = 0x30 + i,
-					ReportId = ReportId,
-					ReportCount = 1,
-					BitSize = AxisBitSize,
-					LogicalMax = (1 << AxisBitSize) - 1,
-					BitOffset = AxisBits[i],
-				});
-			for (var i = 0; i < ButtonCount; i++)
-				controls.Add(new RawInputControl
-				{
-					DataIndex = controls.Count,
-					IsButton = true,
-					UsagePage = 0x09,
-					Usage = i + 1,
-					ReportId = ReportId,
-					ReportCount = 1,
-					BitOffset = ButtonBit + i,
-				});
-			return controls.ToArray();
-		}
-	}
-
 	/// <summary>A HID game controller as Raw Input lists it: who it is, and its controls.</summary>
 	/// <remarks>
 	/// The device owns a copy of its preparsed data, which the HID parser reads every report with, and frees it when
 	/// disposed. Nothing else is held open: the device itself is opened only for a moment, to read its product name.
 	/// </remarks>
-	public sealed class RawInputDevice : IDisposable
+	public sealed class RawInputDevice : IInputSourceDevice, IDisposable
 	{
 		/// <summary>The Generic Desktop page, on which the game controller collections are.</summary>
 		const int GenericDesktopPage = 0x01;
 		const int JoystickUsage = 0x04;
 		const int GamepadUsage = 0x05;
 		const int MultiAxisControllerUsage = 0x08;
-
-		/// <summary>
-		/// The devices whose HID description names none of their controls, with where their reports carry them. One row
-		/// a device: a device that is not here and does not describe itself is not read.
-		/// </summary>
-		public static readonly RawInputDescription[] Descriptions =
-		{
-			// Logitech G13: the stick, then 40 key bits, as the Linux G13 driver reads them.
-			new RawInputDescription { VendorId = 0x046D, ProductId = 0xC21C, UsagePage = 0xFF00, ReportId = 1, AxisBits = new[] { 8, 16 }, AxisBitSize = 8, ButtonBit = 24, ButtonCount = 40 },
-		};
-
-		/// <summary>The row of <see cref="Descriptions"/> for a device with that identity and top-level collection page, or null when it has none.</summary>
-		public static RawInputDescription DescriptionOf(int vendorId, int productId, int usagePage)
-		{
-			foreach (var d in Descriptions)
-				if (d.VendorId == vendorId && d.ProductId == productId && d.UsagePage == usagePage)
-					return d;
-			return null;
-		}
 
 		/// <summary>A device described by its preparsed data alone, as recorded from a real one; it has no handle, path or name.</summary>
 		/// <param name="description">Where the controls are, for a device whose preparsed data names none; null for one that describes itself.</param>
@@ -176,6 +71,8 @@ namespace x360ce.Engine
 
 		#region Identity
 
+		public InputSourceType Source { get { return InputSourceType.RawInput; } }
+
 		/// <summary>The handle Raw Input gives the device for this session. It changes when the device is reconnected.</summary>
 		public IntPtr Handle { get; private set; }
 
@@ -191,7 +88,7 @@ namespace x360ce.Engine
 		/// <summary>The usage page of the device's top-level collection.</summary>
 		public int UsagePage { get; private set; }
 
-		/// <summary>The usage of the device's top-level collection: joystick, gamepad or multi-axis controller, or its vendor's for a device of <see cref="Descriptions"/>.</summary>
+		/// <summary>The usage of the device's top-level collection: joystick, gamepad or multi-axis controller, or its vendor's for a device of <see cref="RawInputDescription.Known"/>.</summary>
 		public int Usage { get; private set; }
 
 		/// <summary>The product name the device reports, or null when it reports none.</summary>
@@ -340,7 +237,7 @@ namespace x360ce.Engine
 
 		#region Enumeration
 
-		/// <summary>The HID game controllers attached: devices whose top-level collection is a joystick, a gamepad or a multi-axis controller, and those of <see cref="Descriptions"/>.</summary>
+		/// <summary>The HID game controllers attached: devices whose top-level collection is a joystick, a gamepad or a multi-axis controller, and those of <see cref="RawInputDescription.Known"/>.</summary>
 		/// <remarks>Nothing else is listed, keyboards and mice included. The caller disposes the devices.</remarks>
 		public static List<RawInputDevice> GetGameControllers()
 		{
@@ -368,7 +265,7 @@ namespace x360ce.Engine
 			var productId = BitConverter.ToInt32(info, 12);
 			var usagePage = BitConverter.ToUInt16(info, 20);
 			var usage = BitConverter.ToUInt16(info, 22);
-			var description = DescriptionOf(vendorId, productId, usagePage);
+			var description = RawInputDescription.Find(vendorId, productId, usagePage);
 			if (description == null && (usagePage != GenericDesktopPage || (usage != JoystickUsage && usage != GamepadUsage && usage != MultiAxisControllerUsage)))
 				return null;
 			var path = GetDeviceName(handle);

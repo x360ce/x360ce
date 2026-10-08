@@ -223,9 +223,9 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public string ForceFeedbackDriver = "";
 
-		/// <summary>DInput Device State.</summary>
+		/// <summary>The DirectInput device it is read and driven through; null for a Raw Input device, or one not opened yet.</summary>
 		[XmlIgnore]
-		public Joystick Device;
+		public DirectInputDevice Device;
 
 		[XmlIgnore]
 		public DeviceObjectItem[] DeviceObjects;

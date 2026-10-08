@@ -166,10 +166,11 @@ namespace x360ce.App.DInput
 					continue;
 				}
 				JoystickState state = null;
-				var buffered = false;
+				DirectInputChanges kept = null;
 				if (allow)
 				{
-					var device = ud.Device;
+					var directInput = ud.Device;
+					var device = directInput == null ? null : directInput.Joystick;
 					// A device resting after failing twice in a row is not asked this poll. It reads as a
 					// failed read does: no state.
 					if (device != null && !IsDeviceReadResting(ud, Environment.TickCount))
@@ -219,7 +220,7 @@ namespace x360ce.App.DInput
 								// Reacquire device in exclusive mode.
 								step = "Unacquire (Exclusive)";
 								device.Unacquire();
-								KeepDeviceChanges(device);
+								directInput.KeepChanges();
 								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								// Holding a wheel this way turns its own centering off. It is kept on unless this
@@ -242,7 +243,7 @@ namespace x360ce.App.DInput
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
 								step = "Unacquire (NonExclusive)";
 								device.Unacquire();
-								KeepDeviceChanges(device);
+								directInput.KeepChanges();
 								step = "SetCooperativeLevel (NonExclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								step = "Acquire (NonExclusive)";
@@ -265,7 +266,8 @@ namespace x360ce.App.DInput
 							device.GetCurrentState(ref reading);
 							state = reading;
 							step = "GetDeviceData";
-							buffered = o.ReadEveryChange && ReadBufferedChanges(device);
+							if (o.ReadEveryChange && directInput.ReadChanges())
+								kept = directInput.Changes;
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
@@ -464,8 +466,8 @@ namespace x360ce.App.DInput
 					if (moving)
 						ToMouseState(ud, read, newState, newTime);
 					// A press or release that came and went between two passes is shown for this one, so the game has a chance to see it.
-					if (buffered && ud.SourceState != null)
-						ShowBufferedChanges(ud.SourceState, newState, !moving);
+					if (kept != null && ud.SourceState != null)
+						CountShown(InputSourceType.DirectInput, kept.ShowIn(ud.SourceState, newState, !moving));
 					LogChanges(ud, ud.SourceState, newState, newTime);
 					// Remember old state.
 					ud.OldSourceState = ud.SourceState;
@@ -493,7 +495,7 @@ namespace x360ce.App.DInput
 		/// The state is copied into the one shown before the current one, and the two change places: the two are made on
 		/// the device's first two reads and kept, so a read makes nothing, and a state is not written until one whole pass
 		/// after it stops being shown. The hub reads every report, and a button that changed and changed back since the
-		/// last pass is shown changed for this one (<see cref="ShowChangesBetweenPasses"/>).
+		/// last pass is shown changed for this one (<see cref="SourceState.ShowChangesSince"/>).
 		/// The copy takes no lock and never waits for the hub thread (<see cref="Engine.RawInputHub.TryCopyState"/>).
 		/// </para>
 		/// <para>
@@ -524,7 +526,7 @@ namespace x360ce.App.DInput
 					ud.RawInputMissing = false;
 				var previous = ud.SourceState;
 				if (readEveryChange && previous != null)
-					ShowChangesBetweenPasses(previous, newState);
+					CountShown(InputSourceType.RawInput, newState.ShowChangesSince(previous));
 			}
 			else
 			{
@@ -538,151 +540,6 @@ namespace x360ce.App.DInput
 			ud.SourceState = newState;
 			ud.SourceStateTime = watch.ElapsedTicks;
 		}
-
-		#region Buffered reads
-
-		/// <summary>How many changes DirectInput keeps for a device between two passes; more are dropped, which only a pass held up for a long while would see.</summary>
-		public const int DeviceBufferSize = 256;
-
-		/// <summary>IDirectInputDevice8::GetDeviceData, called through the device's own table: SharpDX's GetBufferedData makes a new array on every call.</summary>
-		[System.Runtime.InteropServices.UnmanagedFunctionPointer(System.Runtime.InteropServices.CallingConvention.StdCall)]
-		delegate int GetDeviceDataMethod(IntPtr device, int objectDataSize, IntPtr objectData, ref int count, int flags);
-
-		/// <summary>The place of GetDeviceData in the table of IDirectInputDevice8: after IUnknown's three methods, GetCapabilities, EnumObjects, GetProperty, SetProperty, Acquire, Unacquire and GetDeviceState.</summary>
-		const int GetDeviceDataSlot = 10;
-
-		/// <summary>The size of DIDEVICEOBJECTDATA: four DWORDs and a UINT_PTR, aligned to 8 bytes in a 64-bit process.</summary>
-		static readonly int ObjectDataSize = IntPtr.Size == 8 ? 24 : 20;
-
-		GetDeviceDataMethod _getDeviceData;
-		IntPtr _getDeviceDataPointer;
-
-		/// <summary>Where each device's buffered changes are read into, one device at a time. Input thread only; made on the first read and freed with the helper.</summary>
-		IntPtr _deviceBuffer;
-
-		/// <summary>Asks DirectInput to keep the device's changes between passes. Called while the device is let go of, which is when DirectInput takes it.</summary>
-		/// <remarks>A device that refuses is read by its state alone.</remarks>
-		public static void KeepDeviceChanges(Joystick device)
-		{
-			try
-			{
-				device.Properties.BufferSize = DeviceBufferSize;
-			}
-			catch (SharpDXException)
-			{
-				// Read by its state alone.
-			}
-		}
-
-		/// <summary>Reads what DirectInput kept for the device since the last read: which buttons were pressed and which let go, where each hat went, and how far each axis and slider went either way. Input thread only.</summary>
-		/// <remarks>Read after the device's state, so a change the state has not caught yet is in the buffer. Makes nothing after the first call.</remarks>
-		/// <returns>False when the device keeps no changes, so only its state is known.</returns>
-		public bool ReadBufferedChanges(Joystick device)
-		{
-			Array.Clear(_bufferedPresses, 0, _bufferedPresses.Length);
-			Array.Clear(_bufferedReleases, 0, _bufferedReleases.Length);
-			Array.Clear(_bufferedPovMoved, 0, _bufferedPovMoved.Length);
-			Array.Clear(_bufferedPovHasOther, 0, _bufferedPovHasOther.Length);
-			Array.Clear(_bufferedMoved, 0, _bufferedMoved.Length);
-			var native = device.NativePointer;
-			var method = System.Runtime.InteropServices.Marshal.ReadIntPtr(System.Runtime.InteropServices.Marshal.ReadIntPtr(native), GetDeviceDataSlot * IntPtr.Size);
-			if (method != _getDeviceDataPointer)
-			{
-				_getDeviceData = System.Runtime.InteropServices.Marshal.GetDelegateForFunctionPointer<GetDeviceDataMethod>(method);
-				_getDeviceDataPointer = method;
-			}
-			if (_deviceBuffer == IntPtr.Zero)
-				_deviceBuffer = System.Runtime.InteropServices.Marshal.AllocHGlobal(DeviceBufferSize * ObjectDataSize);
-			var count = DeviceBufferSize;
-			// A failure, such as a device that keeps no buffer, leaves the state as the whole answer.
-			if (_getDeviceData(native, ObjectDataSize, _deviceBuffer, ref count, 0) < 0)
-				return false;
-			for (var i = 0; i < count; i++)
-			{
-				var offset = System.Runtime.InteropServices.Marshal.ReadInt32(_deviceBuffer, i * ObjectDataSize);
-				var value = System.Runtime.InteropServices.Marshal.ReadInt32(_deviceBuffer, i * ObjectDataSize + 4);
-				var button = offset - (int)JoystickOffset.Buttons0;
-				if (button >= 0 && button < _bufferedPresses.Length)
-				{
-					if ((value & 0x80) != 0)
-						_bufferedPresses[button] = true;
-					else
-						_bufferedReleases[button] = true;
-				}
-				else if (offset >= (int)JoystickOffset.PointOfViewControllers0 && offset < (int)JoystickOffset.Buttons0)
-				{
-					var hat = (offset - (int)JoystickOffset.PointOfViewControllers0) / 4;
-					if (!_bufferedPovMoved[hat])
-					{
-						_bufferedPovMoved[hat] = true;
-						_bufferedPovLast[hat] = value;
-					}
-					else if (value != _bufferedPovLast[hat])
-					{
-						_bufferedPovOther[hat] = _bufferedPovLast[hat];
-						_bufferedPovHasOther[hat] = true;
-						_bufferedPovLast[hat] = value;
-					}
-				}
-				else if (offset >= 0 && offset < (int)JoystickOffset.PointOfViewControllers0)
-				{
-					var slot = offset / 4;
-					if (!_bufferedMoved[slot])
-					{
-						_bufferedMoved[slot] = true;
-						_bufferedLow[slot] = value;
-						_bufferedHigh[slot] = value;
-					}
-					else if (value < _bufferedLow[slot])
-						_bufferedLow[slot] = value;
-					else if (value > _bufferedHigh[slot])
-						_bufferedHigh[slot] = value;
-				}
-			}
-			return true;
-		}
-
-		/// <summary>Shows for this pass a change DirectInput kept that the state, reading as it did the pass before, missed: a button pressed and let go, a hat tapped, a stick flicked and back.</summary>
-		/// <param name="axes">False for a device whose axes report movement rather than position, whose kept values are steps, not places.</param>
-		public void ShowBufferedChanges(SourceState previous, SourceState state, bool axes)
-		{
-			for (var b = 0; b < state.Buttons.Length; b++)
-				if (state.Buttons[b] == previous.Buttons[b] && (state.Buttons[b] ? _bufferedReleases[b] : _bufferedPresses[b]))
-					state.Buttons[b] = !state.Buttons[b];
-			for (var h = 0; h < state.Povs.Length; h++)
-			{
-				if (!_bufferedPovMoved[h] || state.Povs[h] != previous.Povs[h])
-					continue;
-				if (_bufferedPovLast[h] != state.Povs[h])
-					state.Povs[h] = _bufferedPovLast[h];
-				else if (_bufferedPovHasOther[h])
-					state.Povs[h] = _bufferedPovOther[h];
-			}
-			if (!axes)
-				return;
-			for (var slot = 0; slot < _bufferedMoved.Length; slot++)
-			{
-				if (!_bufferedMoved[slot])
-					continue;
-				var values = slot < 6 ? state.Axis : state.Sliders;
-				var i = slot < 6 ? slot : slot - 6;
-				var from = slot < 6 ? previous.Axis[i] : previous.Sliders[i];
-				var far = Math.Abs(_bufferedLow[slot] - from) >= Math.Abs(_bufferedHigh[slot] - from) ? _bufferedLow[slot] : _bufferedHigh[slot];
-				if (Math.Abs(far - from) >= Math.Abs(values[i] - from) + TurnShown)
-					values[i] = far;
-			}
-		}
-
-		/// <summary>Frees the memory buffered changes are read into.</summary>
-		void FreeDeviceBuffer()
-		{
-			if (_deviceBuffer == IntPtr.Zero)
-				return;
-			System.Runtime.InteropServices.Marshal.FreeHGlobal(_deviceBuffer);
-			_deviceBuffer = IntPtr.Zero;
-		}
-
-		#endregion
 
 		#region Input log
 
@@ -719,6 +576,10 @@ namespace x360ce.App.DInput
 			/// <summary>The engine's tick when the log started.</summary>
 			public long StartTicks;
 
+			/// <summary>Changes the engine showed that came and went between two passes, which the state read at each pass alone missed, by source.</summary>
+			public int ShownDirectInput;
+			public int ShownRawInput;
+
 			internal void Add(long ticks, UserDevice device, MapType type, int index, int value)
 			{
 				var n = Count;
@@ -747,6 +608,20 @@ namespace x360ce.App.DInput
 		public void StopInputLog()
 		{
 			System.Threading.Volatile.Write(ref _inputLog, null);
+		}
+
+		/// <summary>Adds to the running log, if any, the changes a pass showed that came and went between two passes. Input thread only.</summary>
+		void CountShown(InputSourceType source, int shown)
+		{
+			if (shown == 0)
+				return;
+			var log = System.Threading.Volatile.Read(ref _inputLog);
+			if (log == null)
+				return;
+			if (source == InputSourceType.RawInput)
+				log.ShownRawInput += shown;
+			else
+				log.ShownDirectInput += shown;
 		}
 
 		/// <summary>The width of the steps an axis or slider is logged in: an eighth of its range, so a stick resting at the centre or an end logs nothing.</summary>
@@ -783,38 +658,6 @@ namespace x360ce.App.DInput
 		}
 
 		#endregion
-
-		/// <summary>Shows for this pass a change that came and went since the pass before, which the newest state alone would miss: a button pressed and let go, a hat tapped, a stick flicked and back.</summary>
-		/// <remarks>
-		/// The hub reads every report and counts each button's and hat's changes and each axis's turns back
-		/// (<see cref="SourceState.ButtonChanges"/>, <see cref="SourceState.PovChanges"/>, <see cref="SourceState.AxisTurns"/>),
-		/// so a count that grew while the control reads as it did is a change that came and went between two passes. It
-		/// is shown for this one pass, as a DirectInput device's kept changes show it, and the control reads as it is
-		/// again on the next. Makes nothing.
-		/// </remarks>
-		public static void ShowChangesBetweenPasses(SourceState previous, SourceState state)
-		{
-			for (var b = 0; b < state.Buttons.Length; b++)
-				if (state.ButtonChanges[b] - previous.ButtonChanges[b] > 1 && state.Buttons[b] == previous.Buttons[b])
-					state.Buttons[b] = !state.Buttons[b];
-			// A hat tapped and let go, or turned and back: shown where it was before its last move.
-			for (var h = 0; h < state.Povs.Length; h++)
-				if (state.PovChanges[h] - previous.PovChanges[h] > 1 && state.Povs[h] == previous.Povs[h])
-					state.Povs[h] = state.PovsBefore[h];
-			ShowTurns(previous.Axis, state.Axis, previous.AxisTurns, state.AxisTurns, state.AxisTurnValues);
-			ShowTurns(previous.Sliders, state.Sliders, previous.SliderTurns, state.SliderTurns, state.SliderTurnValues);
-		}
-
-		/// <summary>How much farther out than where an axis is now a kept or turned-at value must be to be shown: an eighth of the range, so a stick's jitter shows nothing.</summary>
-		public const int TurnShown = 8192;
-
-		/// <summary>Shows for this pass where an axis or slider turned back since the pass before, when that is <see cref="TurnShown"/> farther out than where it is now: a flick that came and went.</summary>
-		static void ShowTurns(int[] previousValues, int[] values, int[] previousTurns, int[] turns, int[] turnValues)
-		{
-			for (var i = 0; i < values.Length; i++)
-				if (turns[i] != previousTurns[i] && Math.Abs(turnValues[i] - previousValues[i]) >= Math.Abs(values[i] - previousValues[i]) + TurnShown)
-					values[i] = turnValues[i];
-		}
 
 		/// <summary>Takes in the routing a pass reads: when it is new, lets go of each device it no longer reads.</summary>
 		/// <remarks>
@@ -864,7 +707,7 @@ namespace x360ce.App.DInput
 					kept = ReferenceEquals(now[n], ud);
 				if (kept)
 					continue;
-				var device = ud.Device;
+				var device = ud.Device == null ? null : ud.Device.Joystick;
 				// A device that is not connected plays nothing and nothing holds it; only what is noted about it goes.
 				if (device != null && ud.IsOnline)
 				{

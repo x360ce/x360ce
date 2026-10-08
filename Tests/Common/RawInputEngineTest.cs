@@ -179,6 +179,9 @@ namespace x360ce.Tests
 				var lines = x360ce.App.Mcp.McpTools.DescribeChanges(log);
 				var button = lines.Where(x => x.Contains("Button 7")).Select(x => x.Substring(x.LastIndexOf(' ') + 1)).ToArray();
 				CollectionAssert.AreEqual(new[] { "down", "up", "down", "up" }, button, "The log does not have each press and release in order: " + string.Join("; ", lines));
+				// Each time: button 6 tapped, and the wheel, which these recorded reports also move from fully left to near the centre and back.
+				Assert.AreEqual(4, log.ShownRawInput, "The log does not count the two taps and two flicks the state alone would have missed.");
+				Assert.AreEqual(0, log.ShownDirectInput);
 				Assert.AreEqual(0, log.Dropped);
 				// Turned off, a pass reads the state alone, and a tap between two passes is not shown.
 				x360ce.App.SettingsManager.Options.ReadEveryChange = false;

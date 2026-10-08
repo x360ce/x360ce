@@ -18,9 +18,9 @@
 - Fixed: /ExportUi put a relative folder beside the program.
 - Fixed: A command-line call, such as /Exit, replaced the record that speeds up the next start.
 - Fixed: Reading the device list leaked a little memory each time.
-- Fixed: A controller arriving or leaving removed devices Windows files as system devices, such as the Logitech G13, from the device list.
-- Fixed: AI assistants could not tick or untick a box in a list's row.
-- Fixed: An AI assistant's press that opened a question waited until a person answered it.
+- Fixed: Some devices, such as the Logitech G13, vanished from the device list.
+- Fixed: AI assistants could not tick boxes in lists.
+- Fixed: An AI assistant's press waited until its question was answered.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
@@ -31,7 +31,7 @@
 - Changed: AI assistant access has its own AI page in Options.
 - Changed: AI search takes several words and lists best matches first.
 - Changed: Device lists show a controller waiting for its XInput place.
-- Changed: A press, hat tap or stick flick shorter than one read of the device still reaches the controller; Read Every Change on the Options tab turns this off.
+- Changed: Quick presses, hat taps and stick flicks are never missed.
 - Changed: The AI door refuses web pages and explains its refusals.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
@@ -42,9 +42,9 @@
 - Added: The AI page installs the x360ce skill for AI agents.
 - Added: x360ce.exe /Skill prints that skill; /? prints the switches.
 - Added: AI assistants can walk the person to a setting, one tab at a time.
-- Added: Raw Input devices, listed beside their DirectInput rows, which read an Xbox One controller while a game has the focus.
-- Added: The Logitech G13's stick and keys, read without Logitech's software.
-- Added: AI assistants can log every press and movement the engine reads.
+- Added: Raw Input devices, which read an Xbox One controller in the background.
+- Added: Logitech G13 stick and keys, without Logitech's software.
+- Added: AI assistants can log every press and movement.
 
 ## [4.24.60.0] - 2026-10-02
 

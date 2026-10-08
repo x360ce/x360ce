@@ -164,21 +164,6 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		readonly bool[] _takenAgain = new bool[4];
 
-		/// <summary>The buttons the device being read was pressed on, and let go of, since the pass before, by button: what <see cref="ReadBufferedChanges"/> found. Input thread only.</summary>
-		public readonly bool[] _bufferedPresses = new bool[128];
-		public readonly bool[] _bufferedReleases = new bool[128];
-
-		/// <summary>Each hat's latest kept value, whether it moved at all, and the latest kept value before that differs from it.</summary>
-		public readonly int[] _bufferedPovLast = new int[4];
-		public readonly bool[] _bufferedPovMoved = new bool[4];
-		public readonly int[] _bufferedPovOther = new int[4];
-		public readonly bool[] _bufferedPovHasOther = new bool[4];
-
-		/// <summary>The lowest and highest kept value of X, Y, Z, X Rotation, Y Rotation, Z Rotation and the two sliders, in the order of their offsets in DirectInput's joystick state.</summary>
-		public readonly int[] _bufferedLow = new int[8];
-		public readonly int[] _bufferedHigh = new int[8];
-		public readonly bool[] _bufferedMoved = new bool[8];
-
 		/// <summary>What held this pad back until a controller comes or goes, or None while it is not held back.</summary>
 		/// <param name="padIndex">The pad, 0 to 3.</param>
 		/// <remarks>A pad held back is not tried again meanwhile. Read without a lock by the Issues tab: two whole numbers.</remarks>
@@ -701,10 +686,7 @@ namespace x360ce.App.DInput
 				// while closing. Left alone the handle costs nothing: the thread runs in the
 				// background and both it and the handle go when the process does.
 				if (stopped)
-				{
 					_ResetEvent.Dispose();
-					FreeDeviceBuffer();
-				}
 			}
 		}
 

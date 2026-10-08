@@ -39,7 +39,7 @@ namespace x360ce.Tests
 		public int ProductId;
 		/// <summary>The device's preparsed data (RIDI_PREPARSEDDATA), in Base64.</summary>
 		public string Preparsed;
-		/// <summary>The device's row of <see cref="RawInputDevice.Descriptions"/>, for one whose own description names no control; null otherwise.</summary>
+		/// <summary>The device's row of <see cref="RawInputDescription.Known"/>, for one whose own description names no control; null otherwise.</summary>
 		public RawInputDescription Description;
 		/// <summary>The twin's controls as the engine keeps them once it has read the device: axes and sliders carry the slot DirectInput reports, buttons their order, and hats the instance number less one, which is not a slot.</summary>
 		public DeviceObjectItem[] Objects;
@@ -355,7 +355,7 @@ namespace x360ce.Tests
 				S("Button 22 9:17 pressed", "00080000D47EFFFF807D689DFF", new[] { 32467, 65535, 0, 0, 0, 65535 }, new[] { 32767, 65535 }, new[] { -1, -1, -1, -1 }, 22),
 			},
 		};
-		/// <summary>Logitech G13, 046D:C21C, top-level collection on the vendor page 0xFF00: its description names no control, so it is read from its row of <see cref="RawInputDevice.Descriptions"/>.</summary>
+		/// <summary>Logitech G13, 046D:C21C, top-level collection on the vendor page 0xFF00: its description names no control, so it is read from its row of <see cref="RawInputDescription.Known"/>.</summary>
 		/// <remarks>
 		/// DirectInput lists it only as a device of no kind and reads nothing from it, so its samples carry the state its
 		/// row gives, not a DirectInput reading. The reports are laid out as a recording of it showed: report 1, the
@@ -366,7 +366,7 @@ namespace x360ce.Tests
 			Name = "Logitech G13",
 			VendorId = 0x046D,
 			ProductId = 0xC21C,
-			Description = RawInputDevice.DescriptionOf(0x046D, 0xC21C, 0xFF00),
+			Description = RawInputDescription.Find(0x046D, 0xC21C, 0xFF00),
 			Preparsed =
 				"SGlkUCBLRFIAAAD/AAAAAAAAAQABAAgAAQABAAIA4AMCAAQABgACAXACAQAA/wEACAAHAAEAOAACAAAACAAAAAD/AAAIAAAAAAAA" +
 				"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAD/" +
