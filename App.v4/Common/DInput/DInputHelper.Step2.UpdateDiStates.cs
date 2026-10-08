@@ -524,8 +524,10 @@ namespace x360ce.App.DInput
 					_rawInputFresh++;
 				if (ud.RawInputMissing)
 					ud.RawInputMissing = false;
+				// Only a state the hub published since the last pass can hold a change that came and went: an older one
+				// is the state shown last pass, counts and all.
 				var previous = ud.SourceState;
-				if (readEveryChange && previous != null)
+				if (readEveryChange && fresh && previous != null)
 					CountShown(InputSourceType.RawInput, newState.ShowChangesSince(previous));
 			}
 			else

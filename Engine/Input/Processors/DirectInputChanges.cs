@@ -29,14 +29,20 @@ namespace x360ce.Engine
 		public readonly int[] High = new int[8];
 		public readonly bool[] Moved = new bool[8];
 
+		/// <summary>True when the last read kept anything. A device kept nothing on most passes, which then cost no more than this.</summary>
+		public bool Any { get; private set; }
+
 		/// <summary>Forgets every change, as for a device that kept none.</summary>
 		public void Clear()
 		{
+			if (!Any)
+				return;
 			Array.Clear(Presses, 0, Presses.Length);
 			Array.Clear(Releases, 0, Releases.Length);
 			Array.Clear(PovMoved, 0, PovMoved.Length);
 			Array.Clear(PovHasOther, 0, PovHasOther.Length);
 			Array.Clear(Moved, 0, Moved.Length);
+			Any = false;
 		}
 
 		/// <summary>Takes in the DIDEVICEOBJECTDATA entries DirectInput gave, in the order the changes happened.</summary>
@@ -45,6 +51,9 @@ namespace x360ce.Engine
 		public void Load(byte[] data, int count, int entrySize)
 		{
 			Clear();
+			if (count <= 0)
+				return;
+			Any = true;
 			for (var i = 0; i < count; i++)
 			{
 				var offset = BitConverter.ToInt32(data, i * entrySize);
@@ -94,6 +103,8 @@ namespace x360ce.Engine
 		/// <returns>How many controls the state alone missed.</returns>
 		public int ShowIn(SourceState previous, SourceState state, bool axes)
 		{
+			if (!Any)
+				return 0;
 			var shown = 0;
 			for (var b = 0; b < state.Buttons.Length; b++)
 				if (state.Buttons[b] == previous.Buttons[b] && (state.Buttons[b] ? Releases[b] : Presses[b]))

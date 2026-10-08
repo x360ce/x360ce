@@ -26,18 +26,35 @@ namespace x360ce.Tests
 			return state;
 		}
 
+		/// <summary>The size of DIDEVICEOBJECTDATA in a 64-bit process, which the test laid entries out as.</summary>
+		const int EntrySize = 24;
+
+		/// <summary>What DirectInput kept, as it hands it over: each change as the control's offset in DirectInput's joystick state, then its value.</summary>
+		static DirectInputChanges Kept(params int[] offsetsAndValues)
+		{
+			var count = offsetsAndValues.Length / 2;
+			var data = new byte[Math.Max(1, count) * EntrySize];
+			for (var i = 0; i < count; i++)
+			{
+				BitConverter.GetBytes(offsetsAndValues[i * 2]).CopyTo(data, i * EntrySize);
+				BitConverter.GetBytes(offsetsAndValues[i * 2 + 1]).CopyTo(data, i * EntrySize + 4);
+			}
+			var kept = new DirectInputChanges();
+			kept.Load(data, count, EntrySize);
+			return kept;
+		}
+
+		const int Button0 = (int)JoystickOffset.Buttons0;
+		const int Hat0 = (int)JoystickOffset.PointOfViewControllers0;
+		const int Pressed = 0x80;
+
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A button that reads as before while DirectInput kept a change of it to the other value is shown changed for one pass; one that changed, or did not move, is shown as read")]
 		public void A_kept_change_the_state_missed_is_shown()
 		{
-			var kept = new DirectInputChanges();
 			// Button 0: pressed and let go between two passes. Button 1: let go and pressed again while held.
 			// Button 2: pressed and still held, which the state shows by itself. Button 3: did not move.
-			kept.Presses[0] = true;
-			kept.Releases[0] = true;
-			kept.Releases[1] = true;
-			kept.Presses[1] = true;
-			kept.Presses[2] = true;
+			var kept = Kept(Button0, Pressed, Button0, 0, Button0 + 1, 0, Button0 + 1, Pressed, Button0 + 2, Pressed);
 			var previous = State(1);
 			var state = State(1, 2);
 			Assert.AreEqual(2, kept.ShowIn(previous, state, true), "The two changes the state missed are not counted.");
@@ -48,35 +65,29 @@ namespace x360ce.Tests
 			// A press the state caught after the buffer was last read: it is in the next buffer, and the state shows it already.
 			previous = State(0);
 			state = State(0);
-			kept.Clear();
-			kept.Presses[0] = true;
+			kept = Kept(Button0, Pressed);
 			Assert.AreEqual(0, kept.ShowIn(previous, state, true), "A press the state caught was counted as missed.");
 			Assert.IsTrue(state.Buttons[0], "A press already shown was shown let go.");
+			// A pass on which DirectInput kept nothing, as most are: nothing is left of the read before.
+			kept.Load(new byte[EntrySize], 0, EntrySize);
+			Assert.IsFalse(kept.Any);
+			Assert.IsFalse(kept.Presses[0], "A change of the read before was kept into this one.");
+			Assert.AreEqual(0, kept.ShowIn(State(), State(), true));
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A hat tapped and a stick flicked between two passes, which DirectInput kept, are shown for one pass; jitter and a device whose axes report movement are not")]
 		public void A_kept_hat_tap_and_stick_flick_are_shown()
 		{
-			var kept = new DirectInputChanges();
 			var previous = State();
 			var state = State();
 			previous.Povs[0] = state.Povs[0] = -1;
 			previous.Povs[1] = state.Povs[1] = -1;
 			previous.Axis[0] = state.Axis[0] = 32767;
 			previous.Axis[1] = state.Axis[1] = 32767;
-			// Hat 1: right and back. Hat 2: did not move.
-			kept.PovMoved[0] = true;
-			kept.PovLast[0] = -1;
-			kept.PovOther[0] = 9000;
-			kept.PovHasOther[0] = true;
-			// X: flicked fully left and back. Y: jitter around the centre.
-			kept.Moved[0] = true;
-			kept.Low[0] = 0;
-			kept.High[0] = 32767;
-			kept.Moved[1] = true;
-			kept.Low[1] = 32700;
-			kept.High[1] = 32900;
+			// Hat 1: right and back; hat 2 did not move. X: flicked fully left and back. Y: jitter around the centre.
+			var kept = Kept(Hat0, 9000, Hat0, -1, (int)JoystickOffset.X, 0, (int)JoystickOffset.X, 32767,
+				(int)JoystickOffset.Y, 32700, (int)JoystickOffset.Y, 32900);
 			kept.ShowIn(previous, state, false);
 			Assert.AreEqual(9000, state.Povs[0], "A hat tap between two passes was lost.");
 			Assert.AreEqual(32767, state.Axis[0], "A device whose axes report movement was shown a kept value as a place.");

@@ -154,6 +154,33 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A window given its answer is closing, so nothing is said to wait on it while it goes")]
+		public void A_window_given_its_answer_does_not_wait()
+		{
+			string before = null, during = null;
+			WithWindow(AiAccess.Configure, form =>
+			{
+				form.Show();
+				using (var question = new Form { Name = "Question", Text = "Fill all settings?" })
+				{
+					var yes = new Button { Name = "Yes", Text = "Yes", DialogResult = DialogResult.Yes };
+					question.Controls.Add(yes);
+					// A button gives the window its answer before its Click handlers run, and the window closes only
+					// after they return: the moment a call that follows a press can arrive.
+					yes.Click += (s, e) => during = McpUiTools.WindowWaiting();
+					question.Shown += (s, e) =>
+					{
+						before = McpUiTools.WindowWaiting();
+						yes.PerformClick();
+					};
+					Assert.AreEqual(DialogResult.Yes, question.ShowDialog(form));
+				}
+			});
+			StringAssert.Contains(before, "Question/Yes", "The window waiting for its answer was not named.");
+			Assert.IsNull(during, "A window already answered was said to wait: " + during);
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("What the person is looking at is reported by path: the pages shown, the element with focus and its row")]
 		public void The_current_page_and_focus_are_reported_by_path()
 		{

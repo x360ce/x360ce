@@ -82,37 +82,63 @@ namespace x360ce.Tests
 			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
 			foreach (var name in new[] { "Top", "Front", "TopDark", "FrontDark" })
 			{
-				using (var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png"))
+				var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png");
+				var drawn = JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture);
+				var expected = new[] { 1.5, 2.0 }
+					.Select(m => new Size((int)Math.Round(picture.Width * m), (int)Math.Round(picture.Height * m))).ToArray();
+				CollectionAssert.AreEqual(expected, drawn.Select(x => x.Size).ToArray(),
+					name + ": a version drawn at a larger size is missing or of the wrong size.");
+				// The largest version, reduced to the picture's size, must cover the same outline, or the marks land elsewhere.
+				using (var reduced = new Bitmap(picture.Width, picture.Height))
 				{
-					var drawn = JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture);
-					var expected = new[] { 1.5, 2.0 }
-						.Select(m => new Size((int)Math.Round(picture.Width * m), (int)Math.Round(picture.Height * m))).ToArray();
-					CollectionAssert.AreEqual(expected, drawn.Select(x => x.Size).ToArray(),
-						name + ": a version drawn at a larger size is missing or of the wrong size.");
-					// The largest version, reduced to the picture's size, must cover the same outline, or the marks land elsewhere.
-					using (var reduced = new Bitmap(picture.Width, picture.Height))
+					using (var g = Graphics.FromImage(reduced))
 					{
-						using (var g = Graphics.FromImage(reduced))
-						{
-							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-							g.DrawImage(drawn[drawn.Length - 1], new Rectangle(Point.Empty, reduced.Size));
-						}
-						int both = 0, either = 0;
-						for (var y = 0; y < picture.Height; y++)
-							for (var x = 0; x < picture.Width; x++)
-							{
-								var inPicture = picture.GetPixel(x, y).A > 127;
-								var inReduced = reduced.GetPixel(x, y).A > 127;
-								if (inPicture && inReduced)
-									both++;
-								if (inPicture || inReduced)
-									either++;
-							}
-						var overlap = both / (double)either;
-						Assert.IsTrue(overlap > 0.98, name + ": the largest version overlaps the picture " + overlap.ToString("P1") + " only.");
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+						g.DrawImage(drawn[drawn.Length - 1], new Rectangle(Point.Empty, reduced.Size));
 					}
+					int both = 0, either = 0;
+					for (var y = 0; y < picture.Height; y++)
+						for (var x = 0; x < picture.Width; x++)
+						{
+							var inPicture = picture.GetPixel(x, y).A > 127;
+							var inReduced = reduced.GetPixel(x, y).A > 127;
+							if (inPicture && inReduced)
+								both++;
+							if (inPicture || inReduced)
+								either++;
+						}
+					var overlap = both / (double)either;
+					Assert.IsTrue(overlap > 0.98, name + ": the largest version overlaps the picture " + overlap.ToString("P1") + " only.");
 				}
 			}
+		}
+
+		[TestMethod, TestCategory("pad-images"), TestCategory("memory")]
+		[Description("Every controller page draws one shared copy of each picture, and closing a page leaves it to the others")]
+		public void Pages_share_one_copy_of_each_picture()
+		{
+			// The program's own assembly carries the pictures; naming a type in it loads it.
+			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
+			var name = "Images.xboxControllerTop.png";
+			Assert.AreSame(x360ce.Engine.EngineHelper.GetResourcePicture(name), x360ce.Engine.EngineHelper.GetResourcePicture(name),
+				"Each page loaded its own copy of the pictures and their versions.");
+			Ui.OnUiThread(() =>
+			{
+				using (var closed = new XboxImageUserControl())
+				using (var bitmap = new Bitmap(closed.Width, closed.Height))
+					closed.DrawToBitmap(bitmap, new Rectangle(Point.Empty, closed.Size));
+				using (var open = new XboxImageUserControl())
+				using (var bitmap = new Bitmap(open.Width, open.Height))
+				{
+					open.DrawToBitmap(bitmap, new Rectangle(Point.Empty, open.Size));
+					var back = open.BackColor.ToArgb();
+					var drawn = false;
+					for (var x = 0; x < bitmap.Width && !drawn; x += 4)
+						for (var y = 0; y < bitmap.Height && !drawn; y += 4)
+							drawn = bitmap.GetPixel(x, y).ToArgb() != back;
+					Assert.IsTrue(drawn, "A page opened after another closed drew nothing of the controller.");
+				}
+			});
 		}
 
 		[TestMethod, TestCategory("pad-images"), TestCategory("critical")]
@@ -123,30 +149,28 @@ namespace x360ce.Tests
 			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
 			foreach (var name in new[] { "Top", "Front", "TopDark", "FrontDark" })
 			{
-				using (var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png"))
+				var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png");
+				foreach (Bitmap source in new Image[] { picture }.Concat(JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture)))
 				{
-					foreach (Bitmap source in new Image[] { picture }.Concat(JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture)))
+					using (var faded = x360ce.Engine.EngineHelper.Faded(source))
 					{
-						using (var faded = x360ce.Engine.EngineHelper.Faded(source))
-						{
-							Assert.AreEqual(source.Size, faded.Size, name + ": the faded picture is another size.");
-							int worstAlpha = 0, worstColour = 0;
-							for (var y = 0; y < faded.Height; y++)
-								for (var x = 0; x < faded.Width; x++)
-								{
-									var p = source.GetPixel(x, y);
-									var f = faded.GetPixel(x, y);
-									var alpha = p.A * x360ce.Engine.EngineHelper.DisabledOpacity;
-									worstAlpha = Math.Max(worstAlpha, (int)Math.Round(Math.Abs(f.A - alpha)));
-									// What a pixel adds to the screen is its colour times its opacity, so a faint pixel's
-									// colour, which GDI+ keeps with less precision, is held to what it shows.
-									worstColour = Math.Max(worstColour, (int)Math.Round(new[] { f.R * f.A - p.R * alpha, f.G * f.A - p.G * alpha, f.B * f.A - p.B * alpha }
-										.Max(d => Math.Abs(d)) / 255.0));
-								}
-							Console.WriteLine("{0} {1}: alpha within {2}, colour on screen within {3}", name, source.Size, worstAlpha, worstColour);
-							Assert.IsTrue(worstAlpha <= 1 && worstColour <= 1, name + " " + source.Size + ": the faded picture is off by "
-								+ worstAlpha + " in opacity and " + worstColour + " in colour on screen from the picture at half its opacity.");
-						}
+						Assert.AreEqual(source.Size, faded.Size, name + ": the faded picture is another size.");
+						int worstAlpha = 0, worstColour = 0;
+						for (var y = 0; y < faded.Height; y++)
+							for (var x = 0; x < faded.Width; x++)
+							{
+								var p = source.GetPixel(x, y);
+								var f = faded.GetPixel(x, y);
+								var alpha = p.A * x360ce.Engine.EngineHelper.DisabledOpacity;
+								worstAlpha = Math.Max(worstAlpha, (int)Math.Round(Math.Abs(f.A - alpha)));
+								// What a pixel adds to the screen is its colour times its opacity, so a faint pixel's
+								// colour, which GDI+ keeps with less precision, is held to what it shows.
+								worstColour = Math.Max(worstColour, (int)Math.Round(new[] { f.R * f.A - p.R * alpha, f.G * f.A - p.G * alpha, f.B * f.A - p.B * alpha }
+									.Max(d => Math.Abs(d)) / 255.0));
+							}
+						Console.WriteLine("{0} {1}: alpha within {2}, colour on screen within {3}", name, source.Size, worstAlpha, worstColour);
+						Assert.IsTrue(worstAlpha <= 1 && worstColour <= 1, name + " " + source.Size + ": the faded picture is off by "
+							+ worstAlpha + " in opacity and " + worstColour + " in colour on screen from the picture at half its opacity.");
 					}
 				}
 			}

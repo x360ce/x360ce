@@ -46,26 +46,26 @@ namespace x360ce.App.Controls
 			LoadPictures(FormsTheme.IsDark);
 		}
 
+		/// <summary>The controller pictures, shared by every controller page: see <see cref="EngineHelper.GetResourcePicture"/>.</summary>
 		Bitmap _Top, _Front;
 
 		/// <summary>True when the pictures held are the dark theme's.</summary>
 		bool _PicturesDark;
 
-		/// <summary>Loads the controller pictures of the light or the dark theme in place of those held.</summary>
+		/// <summary>Takes the controller pictures of the light or the dark theme in place of those held.</summary>
 		/// <remarks>The dark pictures are the light ones in other colours: the same size and outline, every part in the same place.</remarks>
 		void LoadPictures(bool dark)
 		{
-			DisposePictures();
+			DisposePainted();
 			_PicturesDark = dark;
 			var theme = dark ? "Dark" : "";
 			_Top = EngineHelper.GetResourcePicture("Images.xboxControllerTop" + theme + ".png");
 			_Front = EngineHelper.GetResourcePicture("Images.xboxControllerFront" + theme + ".png");
 		}
 
-		void DisposePictures()
+		/// <summary>Disposes this page's painted copies; the pictures they were made from are shared and stay.</summary>
+		void DisposePainted()
 		{
-			if (_Top != null) _Top.Dispose();
-			if (_Front != null) _Front.Dispose();
 			foreach (var painted in _Painted.Values)
 				painted.Dispose();
 			_Painted.Clear();
@@ -588,7 +588,7 @@ namespace x360ce.App.Controls
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
-				DisposePictures();
+				DisposePainted();
 			base.Dispose(disposing);
 		}
 

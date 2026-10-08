@@ -1,4 +1,4 @@
-﻿## [4.25.51.0] - 2026-10-08
+﻿## [4.25.53.0] - 2026-10-08
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -21,6 +21,8 @@
 - Fixed: Some devices, such as the Logitech G13, vanished from the device list.
 - Fixed: AI assistants could not tick boxes in lists.
 - Fixed: An AI assistant's press waited until its question was answered.
+- Fixed: The program left an empty x360ce folder beside itself.
+- Fixed: A /Profile start kept its start-up record in the shared folder.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.

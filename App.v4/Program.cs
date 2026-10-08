@@ -381,7 +381,7 @@ namespace x360ce.App
 				return;
 			try
 			{
-				var folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "X360CE");
+				var folder = Engine.EngineHelper.AppDataPath;
 				Directory.CreateDirectory(folder);
 				System.Runtime.ProfileOptimization.SetProfileRoot(folder);
 				System.Runtime.ProfileOptimization.StartProfile("x360ce.startup.profile");

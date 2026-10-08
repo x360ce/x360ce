@@ -87,11 +87,15 @@ namespace x360ce.Engine.Mcp
 		/// The window the program waits on, told to the caller left waiting: the dialog in front and the buttons that
 		/// answer it. Null when nothing waits. While a dialog waits, every other shown window of the program is
 		/// disabled, so the dialog still enabled is the one in front, and a shown main window that is disabled with no
-		/// such dialog waits on a system window.
+		/// such dialog waits on a system window. A dialog given its answer is closing, and nothing waits on it: it
+		/// stays shown until the press that answered it returns, and a call queued behind that press can arrive first.
 		/// </summary>
 		public static string WindowWaiting()
 		{
-			var front = OtherWindows().LastOrDefault(x => x.Modal && x.IsHandleCreated && JocysCom.ClassLibrary.Win32.NativeMethods.IsWindowEnabled(x.Handle));
+			var dialogs = OtherWindows().Where(x => x.Modal && x.IsHandleCreated).ToList();
+			if (dialogs.Any(x => x.DialogResult != DialogResult.None))
+				return null;
+			var front = dialogs.LastOrDefault(x => JocysCom.ClassLibrary.Win32.NativeMethods.IsWindowEnabled(x.Handle));
 			if (front == null)
 			{
 				var main = RootWindow;
