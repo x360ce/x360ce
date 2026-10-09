@@ -1,4 +1,4 @@
-﻿namespace JocysCom.ClassLibrary.Services.SimpleService
+namespace JocysCom.ClassLibrary.Services.SimpleService
 {
 	/// <summary>
 	/// An enumerated type for the control messages sent to the handler routine.

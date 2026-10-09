@@ -1,4 +1,4 @@
-﻿namespace JocysCom.ClassLibrary.Services.SimpleService
+namespace JocysCom.ClassLibrary.Services.SimpleService
 {
 	/// <summary>Defines the contract for simple Windows service implementations.</summary>
 	public interface ISimpleService
