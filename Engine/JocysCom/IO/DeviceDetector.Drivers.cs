@@ -1,4 +1,4 @@
-﻿#nullable disable
+#nullable disable
 
 using JocysCom.ClassLibrary.Win32;
 using System;
