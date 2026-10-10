@@ -13,6 +13,7 @@ time a release reaches `master`, so a page is changed here, never in the wiki.
 | [Help.v3](Help.v3.md) | Version 3.x, which replaces the game's XInput library and runs from the game folder. |
 | [Help.ForceFeedback](Help.ForceFeedback.md) | Which motor a game uses for what, as the Force Feedback page shows it. |
 | [Help.HidGuardian](Help.HidGuardian.md) | Removing the obsolete HID Guardian, and how to recover if keyboard and mouse stop working. |
+| [Help.AiAssistants](Help.AiAssistants.md) | Letting an AI assistant set up x360ce, with a worked example, and checking what it did. |
 
 ## For the project
 

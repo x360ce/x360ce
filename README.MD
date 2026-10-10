@@ -80,6 +80,13 @@ the first one. Switching a real controller off and on again needs Administrator,
 starts one elevated copy for that step and closes it again. Anything it switches off is written
 down first, so a run that is interrupted is undone at the next start.
 
+## AI assistants (v4.x)
+
+An AI assistant can map and tune your controllers for you, through the program's own AI assistant
+access rather than your screen, mouse or keyboard. It is off until you switch it on, on the
+Options tab's AI page. [AI assistants](docs/Help.AiAssistants.md) shows how to set it up, with a
+worked example, and how to check what the assistant did.
+
 # Download v3.x
 
 Digitally Signed Application v3.4.39.0 and Libraries 3.4.1
