@@ -45,7 +45,7 @@ namespace x360ce.Tests
 
 		/// <summary>One poll's worth of work: read the mappings and work out every formula.</summary>
 		[MethodImpl(MethodImplOptions.NoInlining)]
-		private static float PollOnce(PadSetting pad, CustomDiState state, float[] values)
+		private static float PollOnce(PadSetting pad, SourceState state, float[] values)
 		{
 			var total = 0f;
 			foreach (var map in pad.Maps)
@@ -58,9 +58,9 @@ namespace x360ce.Tests
 			return total;
 		}
 
-		private static CustomDiState Resting()
+		private static SourceState Resting()
 		{
-			return new CustomDiState(new SharpDX.DirectInput.JoystickState());
+			return new SourceState(new SharpDX.DirectInput.JoystickState());
 		}
 
 		private static long Collected()

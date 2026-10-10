@@ -85,6 +85,8 @@ namespace x360ce.App
                     ObjectId = (int)o.ObjectId,
                     Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
+					UsagePage = (ushort)o.UsagePage,
+					Usage = (ushort)o.Usage,
 
 				};
 				items.Add(item);
@@ -94,13 +96,32 @@ namespace x360ce.App
 
 		#endregion
 
+		// Use cache so same image won't processed multiple times.
+		static readonly Dictionary<Bitmap, Bitmap> DisabledImageCache = new Dictionary<Bitmap, Bitmap>();
+		static readonly object DisabledImageLock = new object();
+
+		/// <summary>
+		/// Generates disabled Image. Images are cached so do not use method for random images.
+		/// </summary>
+		/// <remarks>
+		/// Made faded (<see cref="EngineHelper.Faded"/>) from the image as it was drawn at 100% and at each larger size
+		/// it was drawn at, and then scaled to the size of the one given, so a faded picture is as sharp as the full one
+		/// and is known as enlarged, never enlarged again.
+		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
-			var effects = new JocysCom.ClassLibrary.Drawing.Effects();
-			var newImage = (Bitmap)image.Clone();
-			JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
-			JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
-			return newImage;
+			lock (DisabledImageLock)
+			{
+				if (!DisabledImageCache.ContainsKey(image))
+				{
+					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
+					var faded = EngineHelper.Faded(original);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(faded,
+						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(EngineHelper.Faded).ToArray());
+					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(faded, image.Size));
+				}
+				return DisabledImageCache[image];
+			}
 		}
 
 		// Use special function or comparison fails.

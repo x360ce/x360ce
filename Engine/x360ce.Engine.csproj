@@ -103,6 +103,7 @@
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
@@ -137,9 +138,21 @@
     <Compile Include="Common\SettingsTransfer.cs" />
     <Compile Include="Common\MapExpressionHelp.cs" />
     <Compile Include="Common\MapExpressionSeed.cs" />
-    <Compile Include="Common\CustomDiHelper.cs" />
-    <Compile Include="Common\CustomDiState.cs" />
-    <Compile Include="Common\CustomDiUpdate.cs" />
+    <Compile Include="Input\Devices\DirectInputDevice.cs" />
+    <Compile Include="Input\Devices\IInputSourceDevice.cs" />
+    <Compile Include="Input\Devices\RawInputControl.cs" />
+    <Compile Include="Input\Devices\RawInputDescription.cs" />
+    <Compile Include="Input\Devices\RawInputDevice.cs" />
+    <Compile Include="Input\Layouts\DirectInputLayout.cs" />
+    <Compile Include="Input\Layouts\RawInputLayout.cs" />
+    <Compile Include="Input\Native\RawInputNative.cs" />
+    <Compile Include="Input\Processors\DirectInputChanges.cs" />
+    <Compile Include="Input\Processors\RawInputHub.cs" />
+    <Compile Include="Input\Processors\RawInputHubDevice.cs" />
+    <Compile Include="Input\Processors\RawInputReader.cs" />
+    <Compile Include="Input\Processors\TripleBuffer.cs" />
+    <Compile Include="Input\States\SourceState.cs" />
+    <Compile Include="Common\InputSourceType.cs" />
     <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
@@ -171,6 +184,7 @@
     <Compile Include="Common\IDisplayName.cs" />
     <Compile Include="Common\Ini.cs" />
     <Compile Include="Common\IWebService.cs" />
+    <Compile Include="Common\JsonIgnoreAttribute.cs" />
     <Compile Include="Common\KeyValue.cs" />
     <Compile Include="Common\KeyValueList.cs" />
     <Compile Include="Common\Preset.cs" />
@@ -192,23 +206,7 @@
     <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
-    <Compile Include="Mcp\AiAccess.cs" />
-    <Compile Include="Mcp\McpClient.cs" />
-    <Compile Include="Mcp\McpLog.cs" />
-    <Compile Include="Mcp\McpServer.cs" />
-    <Compile Include="Mcp\McpUiTools.cs" />
-    <Compile Include="Mcp\WindowsAgentRegistry.cs" />
-    <Compile Include="UiTree\OverlayForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UiTree\UiCallout.cs" />
     <Compile Include="UiTree\UiGameFlags.cs" />
-    <Compile Include="UiTree\UiNode.cs" />
-    <Compile Include="UiTree\UiText.cs" />
-    <Compile Include="UiTree\UiTreeExporter.cs" />
-    <Compile Include="UiTree\UiTreeMarkdown.cs" />
-    <Compile Include="UiTree\UiTreeWalker.cs" />
-    <Compile Include="UiTree\UiTreeWalker.Elements.cs" />
     <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />
@@ -227,6 +225,7 @@
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />
+    <Compile Include="JocysCom\Collections\IKeyValue.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
@@ -242,18 +241,23 @@
     <Compile Include="JocysCom\ComponentModel\BindingListInvoked.cs" />
     <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
     <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
+    <Compile Include="JocysCom\Configuration\Arguments.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
+    <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
     <Compile Include="JocysCom\Configuration\ISettingsData.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsFileItem.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsItem.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsListFileItem.cs" />
     <Compile Include="JocysCom\Configuration\SettingsData.cs" />
     <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Configuration\SettingsParser.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.WPF.cs" />
-    <Compile Include="JocysCom\Controls\ErrorReportUserControl.cs">
+    <Compile Include="Controls\ErrorReportUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="JocysCom\Controls\ErrorReportUserControl.Designer.cs">
+    <Compile Include="Controls\ErrorReportUserControl.Designer.cs">
       <DependentUpon>ErrorReportUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Controls\PositionSettings.cs" />
@@ -286,12 +290,27 @@
     <Compile Include="JocysCom\Controls\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\Themes\Default.Forms.cs" />
+    <Compile Include="JocysCom\Controls\Themes\ThemeResourceManager.cs" />
+    <Compile Include="JocysCom\Controls\Themes\ThemeType.cs" />
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\UiTree\UiCallout.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiNode.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiText.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiText.Forms.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeExporter.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeMarkdown.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.Forms.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.Forms.Elements.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
+    <Compile Include="JocysCom\Data\SqlHelper.ConvertTable.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
-    <Compile Include="JocysCom\Data\TlvSerializer.cs" />
-    <Compile Include="JocysCom\Data\TlvSerializerError.cs" />
     <Compile Include="JocysCom\Diagnostics\RawDataLogHttpModule.cs" />
+    <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
     <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
     <Compile Include="JocysCom\Drawing\Basic.cs" />
@@ -318,12 +337,31 @@
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
+    <Compile Include="JocysCom\IO\PathHelper.cs" />
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailHelper.cs" />
     <Compile Include="JocysCom\Mail\MailMessageSerializable.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccess.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessModel.Catalog.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessModel.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Mcp\AiAccessUserControl.Designer.cs">
+      <DependentUpon>AiAccessUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Mcp\AiSkill.cs" />
+    <Compile Include="JocysCom\Mcp\IAiAccessSettings.cs" />
+    <Compile Include="JocysCom\Mcp\McpClient.cs" />
+    <Compile Include="JocysCom\Mcp\McpListener.cs" />
+    <Compile Include="JocysCom\Mcp\McpLog.cs" />
+    <Compile Include="JocysCom\Mcp\McpServer.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.Forms.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.Windows.cs" />
     <Compile Include="JocysCom\Network\CheckNetworkState.cs" />
     <Compile Include="JocysCom\Network\NetStatInfo.cs" />
     <Compile Include="JocysCom\Network\NetworkHelper.cs" />
@@ -364,17 +402,17 @@
     <Compile Include="JocysCom\Security\AESHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
-    <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="Security\Check.cs" />
     <Compile Include="JocysCom\Security\CRC32.cs" />
-    <Compile Include="JocysCom\Security\Data\Membership.cs" />
-    <Compile Include="JocysCom\Security\Data\Role.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
+    <Compile Include="Security\Data\Membership.cs" />
+    <Compile Include="Security\Data\Role.cs" />
+    <Compile Include="Security\Data\SecurityEntities.cs" />
+    <Compile Include="Security\Data\SecurityModel.Designer.cs">
       <DependentUpon>SecurityModel.edmx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="JocysCom\Security\Data\User.cs" />
+    <Compile Include="Security\Data\User.cs" />
     <Compile Include="JocysCom\Security\HashHelper.cs" />
     <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\PermissionHelper.cs" />
@@ -410,7 +448,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="JocysCom\Web\Services\SoapHttpClientEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\SoapHttpClientSpy.cs" />
+    <Compile Include="JocysCom\Web\Services\SoapHttpClientLogger.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />
@@ -469,10 +507,11 @@
     <Compile Include="JocysCom\Win32\TOKEN_ELEVATION_TYPE.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
     <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
-    <Compile Include="JocysCom\Win32\UacHelper.cs" />
+    <Compile Include="JocysCom\Win32\UacHelper.Win32.cs" />
     <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
     <Compile Include="JocysCom\Win32\WinAPI.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />
+    <Compile Include="JocysCom\Windows\UacHelper.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapEventType.cs" />
     <Compile Include="Maps\MapRpmType.cs" />
@@ -532,14 +571,14 @@
     <EmbeddedResource Include="Data\x360ceModel.msl">
       <LogicalName>Data.x360ceModel.msl</LogicalName>
     </EmbeddedResource>
-    <None Include="JocysCom\Security\Data\SecurityModel.edmx" />
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.csdl">
+    <None Include="Security\Data\SecurityModel.edmx" />
+    <EmbeddedResource Include="Security\Data\SecurityModel.csdl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.csdl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.ssdl">
+    <EmbeddedResource Include="Security\Data\SecurityModel.ssdl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.ssdl</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Security\Data\SecurityModel.msl">
+    <EmbeddedResource Include="Security\Data\SecurityModel.msl">
       <LogicalName>JocysCom.Security.Data.SecurityModel.msl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
@@ -558,6 +597,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\Controls\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Controls\Themes\Default_DarkTheme.xaml" />
+    <EmbeddedResource Include="JocysCom\Controls\Themes\ThemeResourceManager.resx">
+      <DependentUpon>ThemeResourceManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>

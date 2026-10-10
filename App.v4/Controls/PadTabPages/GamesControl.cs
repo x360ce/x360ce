@@ -233,7 +233,7 @@ namespace x360ce.App.Controls
 			// without that game, it adds this folder as a game of its own, which is what was asked for.
 			IList<UserGame> games = SettingsManager.UserGames.Items;
 			if (_AddSeparateGame && name != null)
-				games = SettingsManager.UserGames.ItemsToArraySyncronized()
+				games = SettingsManager.UserGames.ItemsToArraySynchronized()
 					.Where(x => !string.Equals(x.FileName, name, StringComparison.OrdinalIgnoreCase)).ToList();
 			var programs = SettingsManager.Programs.Items;
 			GameScanner.ScanGames(paths, games, programs, name);
@@ -248,14 +248,21 @@ namespace x360ce.App.Controls
 
 		private void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
+			ShowHideRowsAfterBinding();
 		}
 
 		private void GamesDataGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
 		{
-			// Once whatever bound the list has finished, not during it. Sorting binds the list again
-			// with every row showing and then puts the current cell back; rows hidden in between left
-			// that cell on a hidden row, which Windows Forms refuses by throwing.
+			ShowHideRowsAfterBinding();
+		}
+
+		/// <summary>Shows the games the filter lets through, once whatever changed the list has finished.</summary>
+		/// <remarks>
+		/// Sorting changes the list and binds it again with every row showing, then puts the current cell back.
+		/// Rows hidden in between leave that cell on a hidden row, which Windows Forms refuses by throwing.
+		/// </remarks>
+		void ShowHideRowsAfterBinding()
+		{
 			if (IsHandleCreated)
 				BeginInvoke((Action)(() => ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton)));
 			else
@@ -486,7 +493,7 @@ namespace x360ce.App.Controls
 		private void ShowGamesMenuItem_Click(object sender, EventArgs e)
 		{
 			var item = (ToolStripMenuItem)sender;
-			ShowGamesDropDownButton.Image = item.Image;
+			ControlsHelper.SetImage(ShowGamesDropDownButton, item.Image);
 			ShowGamesDropDownButton.Text = item.Text;
 			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton);
 		}
@@ -503,7 +510,8 @@ namespace x360ce.App.Controls
 			var isCurrent = GameDetailsControl.CurrentItem == item;
 			if (column == MyIconColumn)
 			{
-				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
+				// The button's image is the size the tool strip shows it; a cell shows it at the screen's.
+				e.Value = isCurrent ? ControlsHelper.ScaleImage(SaveGamesButton.Image) : Properties.Resources.empty_16x16;
 			}
 			else if (column == FileFolderColumn)
 			{

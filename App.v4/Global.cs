@@ -64,7 +64,7 @@ namespace x360ce.App
 				.Distinct()
 				.ToArray();
 			// Get list of all configured user games.
-			var userGames = SettingsManager.UserGames.ItemsToArraySyncronized().ToList();
+			var userGames = SettingsManager.UserGames.ItemsToArraySynchronized().ToList();
 			var currentApp = userGames.FirstOrDefault(x => x.IsCurrentApp());
 			if (currentApp != null)
 				userGames.Remove(currentApp);
@@ -112,11 +112,11 @@ namespace x360ce.App
 		public static void ApplyAiAccess()
 		{
 			var o = SettingsManager.Options;
-			Engine.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
 			if (o.AiAccessEnabled)
 			{
 				o.EnsureAiAccessToken();
-				Engine.Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken);
+				JocysCom.ClassLibrary.Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken, o.AiAccessTrustLocal);
 			}
 			try
 			{
@@ -126,7 +126,7 @@ namespace x360ce.App
 			{
 				// This runs on the interface thread from the options-changed event; an exception here
 				// would be a crash report for a folder that is read-only, which the Issues tab explains better.
-				Engine.Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+				JocysCom.ClassLibrary.Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
 			}
 		}
 
@@ -151,11 +151,9 @@ namespace x360ce.App
 				case nameof(Options.AiAccessEnabled):
 				case nameof(Options.AiAccess):
 				case nameof(Options.AiAccessAddress):
+				case nameof(Options.AiAccessTrustLocal):
 				case nameof(Options.AiAccessPort):
 					ApplyAiAccess();
-					break;
-				case nameof(Options.AiAccessWindows):
-					Engine.Mcp.WindowsAgentRegistry.Apply(o.AiAccessWindows);
 					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;

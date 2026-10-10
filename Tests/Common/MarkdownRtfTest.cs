@@ -59,6 +59,25 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("documents"), TestCategory("critical")]
+		[Description("A link relative to the docs folder opens where the document is shown: a page on the wiki, a file in the repository")]
+		public void A_relative_link_opens_its_page_or_file()
+		{
+			// Relative links work where GitHub shows the docs folder. In the program's help box, and in the copies
+			// beside the AI skill, there is no folder, and a link left relative opens nothing.
+			StringAssert.Contains(Rtf("See [the recovery](Help.HidGuardian.md#how-to) steps."),
+				MarkdownRtf.WikiUrl + "Help.HidGuardian#how-to", "A page link does not open the page's wiki page at its heading.");
+			Assert.AreEqual(MarkdownRtf.DocsUrl + ".attachments/preset.xml", MarkdownRtf.ResolveLink(".attachments/preset.xml"),
+				"A file link does not open the file in the repository.");
+			Assert.AreEqual(MarkdownRtf.DocsRawUrl + ".attachments/a.png", MarkdownRtf.ResolveLink(".attachments/a.png", true),
+				"A picture is not served as itself.");
+			foreach (var kept in new[] { "https://www.x360ce.com", "#a-heading", "mailto:someone@example.com" })
+				Assert.AreEqual(kept, MarkdownRtf.ResolveLink(kept), "An address or an anchor in the same page was changed.");
+			Assert.AreEqual("Read [Help.v4](" + MarkdownRtf.WikiUrl + "Help.v4) and ![a picture](" + MarkdownRtf.DocsRawUrl + "a.png \"title\").",
+				MarkdownRtf.ResolveLinks("Read [Help.v4](Help.v4.md) and ![a picture](a.png \"title\")."),
+				"Resolving a whole document changed more than the targets.");
+		}
+
+		[TestMethod, TestCategory("documents"), TestCategory("critical")]
 		[Description("A formula in a code span is not read as emphasis")]
 		public void A_formula_in_a_code_span_is_not_read_as_emphasis()
 		{
@@ -204,7 +223,7 @@ namespace x360ce.Tests
 			// two. The second column is numbers, so they line up on the right under "Period".
 			StringAssert.Contains(rtf, @"{\f1\b Motor  Period}", "The header row is not bold in the fixed font, padded to its columns.");
 			StringAssert.Contains(rtf, @"{\f1 Left    40 ms}", "A data row is not padded to its column, numbers to the right.");
-			StringAssert.Contains(rtf, @"\cf0 }   16 ms}", "A cell with a code span was padded by its marks rather than its letters.");
+			StringAssert.Contains(rtf, @"\cf5 }   16 ms}", "A cell with a code span was padded by its marks rather than its letters.");
 			Assert.IsFalse(rtf.Contains("---"), "The separator row reached the screen.");
 		}
 

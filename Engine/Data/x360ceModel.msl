@@ -186,6 +186,7 @@
     <EntitySetMapping Name="UserDevices">
       <EntityTypeMapping TypeName="x360ceModel.UserDevice">
         <MappingFragment StoreEntitySet="x360ce_UserDevices">
+          <ScalarProperty Name="InputSourceType" ColumnName="InputSourceType" />
           <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
           <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
           <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />

@@ -21,10 +21,11 @@ namespace x360ce.Tests
 		/// Every XAML file still expected to exist, repository relative and forward slashed.
 		/// </summary>
 		/// <remarks>
-		/// Empty, and meant to stay that way. Adding an entry here means reintroducing WPF, which
-		/// costs about 90 MB for the life of the process.
+		/// An entry here must never bring WPF back, which costs about 90 MB for the life of the process.
+		/// The one entry holds the dark theme's colours, embedded as a resource and read as plain XML by
+		/// Windows Forms; WPF never loads it.
 		/// </remarks>
-		static readonly string[] Expected = new string[0];
+		static readonly string[] Expected = { "Engine/JocysCom/Controls/Themes/Default_DarkTheme.xaml" };
 
 		static string[] ActualXamlFiles()
 		{

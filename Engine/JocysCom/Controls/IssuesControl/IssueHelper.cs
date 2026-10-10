@@ -1,15 +1,17 @@
-﻿using Microsoft.Win32;
+﻿#nullable disable
+
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Management;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Environment;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
@@ -56,41 +58,39 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			{
 				using (var key = arg.Key.OpenSubKey(arg.Path))
 				{
-					if (key == null)
+					if (key is null)
 						continue;
 					foreach (string subkey_name in key.GetSubKeyNames())
 					{
 						using (var subKey = key.OpenSubKey(subkey_name))
 						{
-							if (subKey == null)
+							if (subKey is null)
 								continue;
 							var displayName = (string)subKey.GetValue(arg.ProductKeyName, "");
 							// If product found then...
 							if (nameRx.IsMatch(displayName))
 							{
-								if (uninstall)
+								if (!uninstall)
+									return true;
+								string uninstallCommand = null;
+								if (!string.IsNullOrEmpty(arg.UninstallKeyName1))
+									uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName1, "");
+								// If uninstall command was not found then try other key.
+								if (!string.IsNullOrEmpty(arg.UninstallKeyName2) && string.IsNullOrEmpty(uninstallCommand))
+									uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName2, "");
+								// If uninstall command was found then...
+								if (!string.IsNullOrEmpty(uninstallCommand))
 								{
-									string uninstallCommand = null;
-									if (!string.IsNullOrEmpty(arg.UninstallKeyName1))
-										uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName1, "");
-									// If uninstall command was not found then try other key.
-									if (!string.IsNullOrEmpty(arg.UninstallKeyName2) && string.IsNullOrEmpty(uninstallCommand))
-										uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName2, "");
-									// If uninstall command was found then...
-									if (!string.IsNullOrEmpty(uninstallCommand))
-									{
-										// Get first space.
-										var splitIndex = uninstallCommand.StartsWith("\"")
-											// Split from second quote.
-											? uninstallCommand.IndexOf('\"', 1)
-											// Split from first space.
-											: uninstallCommand.IndexOf(' ');
-										var upath = uninstallCommand.Substring(0, splitIndex);
-										var uargs = uninstallCommand.Substring(splitIndex);
-										ControlsHelper.OpenPath(upath, uargs);
-									}
+									// Get first space.
+									var splitIndex = uninstallCommand.StartsWith("\"")
+										// Split from second quote.
+										? uninstallCommand.IndexOf('\"', 1)
+										// Split from first space.
+										: uninstallCommand.IndexOf(' ');
+									var upath = uninstallCommand.Substring(0, splitIndex);
+									var uargs = uninstallCommand.Substring(splitIndex);
+									ControlsHelper.OpenPath(upath, uargs);
 								}
-								return true;
 							}
 						}
 					}
@@ -105,16 +105,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// </summary>
 		public static Version GetRealOSVersion()
 		{
-			if (OSVersion == null)
-			{
-				OSVersion = GetFileVersion(SpecialFolder.System, "kernel32.dll");
-			}
+			if (OSVersion is null)
+				OSVersion = GetFileVersion(Environment.SpecialFolder.System, "kernel32.dll");
 			return OSVersion;
 		}
 
-		public static Version GetFileVersion(SpecialFolder folder, string name)
+		public static Version GetFileVersion(Environment.SpecialFolder folder, string name)
 		{
-			if (OSVersion == null)
+			if (OSVersion is null)
 			{
 				var system = Environment.GetFolderPath(folder);
 				var file = Path.Combine(system, name);
@@ -262,56 +260,48 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			FileInfo file;
 			try
 			{
-				file = DownloadFile(uri, localPath);
+				// Run DownloadFile synchronously and without locking.
+				file = Task.Run(() => DownloadFile(uri, localPath)).GetAwaiter().GetResult();
 			}
 			catch (Exception ex)
 			{
+				var text = string.Format("Unable to download {0} file:\r\n\r\n{1}\r\n\r\nOpen source web page?",
+					uri.AbsoluteUri, ex.Message);
+#if NETFRAMEWORK // .NET Framework
+				// This is a WinForms host, so the prompt is a WinForms dialog and picks up the
+				// top-most state of the application windows it has to sit above.
 				var form = new MessageBoxForm();
 				form.StartPosition = FormStartPosition.CenterParent;
 				ControlsHelper.CheckTopMost(form);
-				var text = string.Format("Unable to download {0} file:\r\n\r\n{1}\r\n\r\nOpen source web page?",
-					uri.AbsoluteUri, ex.Message);
 				var result = form.ShowForm(text, "Download Error", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				form.Dispose();
 				if (result == DialogResult.Yes && infoPage != null)
+#else
+				var result = System.Windows.MessageBox.Show(text, "Download Error", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+				if (result == System.Windows.MessageBoxResult.Yes && infoPage != null)
+#endif
 				{
 					ControlsHelper.OpenUrl(infoPage.AbsoluteUri);
 				}
 				return null;
 			}
-			if (runElevated)
-				return JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(file.FullName, arguments, ProcessWindowStyle.Normal, true);
-			var psi = new ProcessStartInfo(file.FullName, arguments ?? string.Empty);
-			psi.UseShellExecute = true;
-			psi.WorkingDirectory = file.DirectoryName;
-			try
-			{
-				using (var process = Process.Start(psi))
-				{
-					if (process == null)
-						return -1;
-					process.WaitForExit();
-					return process.ExitCode;
-				}
-			}
-			catch (Win32Exception)
-			{
-				// Windows refused to start it: reported the same way RunElevated reports a refused prompt.
-				return -1;
-			}
+			return JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
+				file.FullName, arguments, true, runElevated, ProcessWindowStyle.Normal);
 		}
 
-		public static FileInfo DownloadFile(Uri uri, string localPath)
+		public static async Task<FileInfo> DownloadFile(Uri uri, string localPath)
 		{
-			var fileName = uri.Segments.Last();
-			var webClient = new System.Net.WebClient();
 			var localFile = new FileInfo(localPath);
 			if (localFile.Exists)
 				localFile.Delete();
+			// HttpClient reads only web addresses. A file address, on this computer or a network
+			// share, is read directly.
+			using (var client = uri.IsFile ? null : new HttpClient())
+			using (var s = uri.IsFile ? File.OpenRead(uri.LocalPath) : await client.GetStreamAsync(uri))
+			using (var fs = new FileStream(localFile.FullName, FileMode.CreateNew))
+				await s.CopyToAsync(fs);
 			//AddLog("Downloading File: {0}", MoreInfo.AbsoluteUri);
-			webClient.DownloadFile(uri, localFile.FullName);
 			localFile.Refresh();
-			webClient.Dispose();
 			// AddLog("Done");
 			return localFile;
 		}

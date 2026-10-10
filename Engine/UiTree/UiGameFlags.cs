@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.Engine.UiTree
 {

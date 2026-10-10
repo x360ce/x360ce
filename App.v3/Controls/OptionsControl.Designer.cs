@@ -28,6 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+			this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.LeftFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.ButtonsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
 			this.CombineEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
@@ -59,6 +62,8 @@
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
+			this.ThemeLabel = new System.Windows.Forms.Label();
+			this.ThemeComboBox = new System.Windows.Forms.ComboBox();
 			this.AiAccessTabPage = new System.Windows.Forms.TabPage();
 			this.AiAccessTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.AiAccessEnabledCheckBox = new System.Windows.Forms.CheckBox();
@@ -66,7 +71,6 @@
 			this.AiAccessComboBox = new System.Windows.Forms.ComboBox();
 			this.AiAccessPortLabel = new System.Windows.Forms.Label();
 			this.AiAccessPortNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.AiAccessWindowsCheckBox = new System.Windows.Forms.CheckBox();
 			this.AiAccessTokenLabel = new System.Windows.Forms.Label();
 			this.AiAccessTokenTextBox = new System.Windows.Forms.TextBox();
 			this.AiAccessRegenerateButton = new System.Windows.Forms.Button();
@@ -84,8 +88,62 @@
 			this.LocationsToolStrip.SuspendLayout();
 			this.ConfigurationGroupBox.SuspendLayout();
 			this.DirectInputDevicesGroupBox.SuspendLayout();
+			this.MainLayoutPanel.SuspendLayout();
+			this.LeftFlowPanel.SuspendLayout();
+			this.ButtonsFlowPanel.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
+			// MainLayoutPanel
+			//
+			this.MainLayoutPanel.ColumnCount = 2;
+			this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainLayoutPanel.Controls.Add(this.LeftFlowPanel, 0, 0);
+			this.MainLayoutPanel.Controls.Add(this.InternetGroupBox, 1, 0);
+			this.MainLayoutPanel.Controls.Add(this.ProgramScanLocationsTabControl, 1, 1);
+			this.MainLayoutPanel.Controls.Add(this.ButtonsFlowPanel, 0, 2);
+			this.MainLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainLayoutPanel.Name = "MainLayoutPanel";
+			this.MainLayoutPanel.RowCount = 3;
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.Size = new System.Drawing.Size(644, 410);
+			this.MainLayoutPanel.TabIndex = 0;
+			//
+			// LeftFlowPanel
+			//
+			this.LeftFlowPanel.AutoSize = true;
+			this.LeftFlowPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.LeftFlowPanel.Controls.Add(this.OperationGroupBox);
+			this.LeftFlowPanel.Controls.Add(this.TestingAndLoggingGroupBox);
+			this.LeftFlowPanel.Controls.Add(this.DirectInputDevicesGroupBox);
+			this.LeftFlowPanel.Controls.Add(this.ConfigurationGroupBox);
+			this.LeftFlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.LeftFlowPanel.Location = new System.Drawing.Point(0, 0);
+			this.LeftFlowPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.LeftFlowPanel.Name = "LeftFlowPanel";
+			this.MainLayoutPanel.SetRowSpan(this.LeftFlowPanel, 2);
+			this.LeftFlowPanel.Size = new System.Drawing.Size(247, 377);
+			this.LeftFlowPanel.TabIndex = 0;
+			this.LeftFlowPanel.WrapContents = false;
+			//
+			// ButtonsFlowPanel
+			//
+			this.ButtonsFlowPanel.AutoSize = true;
+			this.ButtonsFlowPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.MainLayoutPanel.SetColumnSpan(this.ButtonsFlowPanel, 2);
+			this.ButtonsFlowPanel.Controls.Add(this.SaveSettingsButton);
+			this.ButtonsFlowPanel.Controls.Add(this.OpenSettingsFolderButton);
+			this.ButtonsFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ButtonsFlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this.ButtonsFlowPanel.Location = new System.Drawing.Point(0, 377);
+			this.ButtonsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ButtonsFlowPanel.Name = "ButtonsFlowPanel";
+			this.ButtonsFlowPanel.Size = new System.Drawing.Size(644, 29);
+			this.ButtonsFlowPanel.TabIndex = 3;
+			//
 			// TestingAndLoggingGroupBox
 			// 
 			this.TestingAndLoggingGroupBox.Controls.Add(this.CombineEnabledCheckBox);
@@ -94,7 +152,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 86);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 110);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(241, 136);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -167,11 +225,13 @@
 			// 
 			// OperationGroupBox
 			// 
+			this.OperationGroupBox.Controls.Add(this.ThemeComboBox);
+			this.OperationGroupBox.Controls.Add(this.ThemeLabel);
 			this.OperationGroupBox.Controls.Add(this.MinimizeToTrayCheckBox);
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(241, 77);
+			this.OperationGroupBox.Size = new System.Drawing.Size(241, 101);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -245,11 +305,9 @@
 			// 
 			// ProgramScanLocationsTabControl
 			// 
-			this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
 			this.ProgramScanLocationsTabControl.Controls.Add(this.AiAccessTabPage);
-			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
+			this.ProgramScanLocationsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(250, 118);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
@@ -327,7 +385,7 @@
 			// 
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 319);
+			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 343);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(241, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
@@ -353,7 +411,6 @@
 			// 
 			// SaveSettingsButton
 			// 
-			this.SaveSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.SaveSettingsButton.Location = new System.Drawing.Point(566, 354);
 			this.SaveSettingsButton.Name = "SaveSettingsButton";
 			this.SaveSettingsButton.Size = new System.Drawing.Size(75, 23);
@@ -364,7 +421,6 @@
 			// 
 			// OpenSettingsFolderButton
 			// 
-			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(397, 354);
@@ -379,7 +435,7 @@
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 228);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 252);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(241, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -419,6 +475,28 @@
 			this.MinimizeToTrayCheckBox.Text = "Minimize to Tray";
 			this.MinimizeToTrayCheckBox.CheckedChanged += new System.EventHandler(this.MinimizeToTrayCheckBox_CheckedChanged);
 			//
+			// ThemeLabel
+			//
+			this.ThemeLabel.AutoSize = true;
+			this.ThemeLabel.Location = new System.Drawing.Point(6, 78);
+			this.ThemeLabel.Name = "ThemeLabel";
+			this.ThemeLabel.Size = new System.Drawing.Size(43, 13);
+			this.ThemeLabel.TabIndex = 94;
+			this.ThemeLabel.Text = "Theme:";
+			//
+			// ThemeComboBox
+			//
+			this.ThemeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ThemeComboBox.FormattingEnabled = true;
+			this.ThemeComboBox.Items.AddRange(new object[] {
+            "System",
+            "Light",
+            "Dark"});
+			this.ThemeComboBox.Location = new System.Drawing.Point(55, 75);
+			this.ThemeComboBox.Name = "ThemeComboBox";
+			this.ThemeComboBox.Size = new System.Drawing.Size(100, 21);
+			this.ThemeComboBox.TabIndex = 95;
+			//
 			// AiAccessTabPage
 			//
 			this.AiAccessTabPage.Controls.Add(this.AiAccessTableLayoutPanel);
@@ -442,7 +520,6 @@
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessComboBox, 1, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortLabel, 2, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessPortNumericUpDown, 3, 1);
-			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessWindowsCheckBox, 4, 1);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenLabel, 0, 2);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessTokenTextBox, 1, 2);
 			this.AiAccessTableLayoutPanel.Controls.Add(this.AiAccessRegenerateButton, 4, 2);
@@ -500,15 +577,6 @@
 			this.AiAccessPortNumericUpDown.TabIndex = 2;
 			this.AiAccessPortNumericUpDown.Value = new decimal(new int[] { 37361, 0, 0, 0 });
 			//
-			// AiAccessWindowsCheckBox
-			//
-			this.AiAccessWindowsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.AiAccessWindowsCheckBox.AutoSize = true;
-			this.AiAccessWindowsCheckBox.Name = "AiAccessWindowsCheckBox";
-			this.AiAccessWindowsCheckBox.TabIndex = 3;
-			this.AiAccessWindowsCheckBox.Text = "Register with Windows";
-			this.AiAccessWindowsCheckBox.UseVisualStyleBackColor = true;
-			//
 			// AiAccessTokenLabel
 			//
 			this.AiAccessTokenLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -563,16 +631,9 @@
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.OpenSettingsFolderButton);
-			this.Controls.Add(this.SaveSettingsButton);
-			this.Controls.Add(this.TestingAndLoggingGroupBox);
-			this.Controls.Add(this.DirectInputDevicesGroupBox);
-			this.Controls.Add(this.ConfigurationGroupBox);
-			this.Controls.Add(this.OperationGroupBox);
-			this.Controls.Add(this.InternetGroupBox);
-			this.Controls.Add(this.ProgramScanLocationsTabControl);
+			this.Controls.Add(this.MainLayoutPanel);
 			this.Name = "OptionsControl";
-			this.Size = new System.Drawing.Size(644, 380);
+			this.Size = new System.Drawing.Size(644, 410);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
@@ -592,12 +653,19 @@
 			this.AiAccessTableLayoutPanel.ResumeLayout(false);
 			this.AiAccessTableLayoutPanel.PerformLayout();
 			this.AiAccessTabPage.ResumeLayout(false);
+			this.LeftFlowPanel.ResumeLayout(false);
+			this.ButtonsFlowPanel.ResumeLayout(false);
+			this.MainLayoutPanel.ResumeLayout(false);
+			this.MainLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 
         }
 
         #endregion
 
+		private System.Windows.Forms.TableLayoutPanel MainLayoutPanel;
+		private System.Windows.Forms.FlowLayoutPanel LeftFlowPanel;
+		private System.Windows.Forms.FlowLayoutPanel ButtonsFlowPanel;
         private System.Windows.Forms.GroupBox TestingAndLoggingGroupBox;
         private System.Windows.Forms.CheckBox XInputEnableCheckBox;
         private System.Windows.Forms.CheckBox UseInitBeepCheckBox;
@@ -629,6 +697,8 @@
 		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
+		private System.Windows.Forms.Label ThemeLabel;
+		public System.Windows.Forms.ComboBox ThemeComboBox;
 		private System.Windows.Forms.TabPage AiAccessTabPage;
 		private System.Windows.Forms.TableLayoutPanel AiAccessTableLayoutPanel;
 		private System.Windows.Forms.CheckBox AiAccessEnabledCheckBox;
@@ -636,7 +706,6 @@
 		private System.Windows.Forms.ComboBox AiAccessComboBox;
 		private System.Windows.Forms.Label AiAccessPortLabel;
 		private System.Windows.Forms.NumericUpDown AiAccessPortNumericUpDown;
-		private System.Windows.Forms.CheckBox AiAccessWindowsCheckBox;
 		private System.Windows.Forms.Label AiAccessTokenLabel;
 		private System.Windows.Forms.TextBox AiAccessTokenTextBox;
 		private System.Windows.Forms.Button AiAccessRegenerateButton;

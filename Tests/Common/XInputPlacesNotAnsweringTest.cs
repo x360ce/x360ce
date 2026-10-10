@@ -185,7 +185,7 @@ namespace x360ce.Tests
 			Assert.IsNull(second, "A read that did not come back was taken as an answer.");
 			Assert.AreEqual(1, lines.Count, "Two unanswered questions wrote " + lines.Count + " log lines.");
 			StringAssert.Contains(lines[0].Key, "XInput");
-			Assert.AreEqual(EventLogEntryType.Warning, lines[0].Value);
+			Assert.AreEqual(TraceLevel.Warning, lines[0].Value);
 			Assert.IsNotNull(DInputHelper.OccupiedPlaces(), "The places are not read once XInput answers again.");
 			lines = Logged(() => Assert.IsTrue(HeldLock.Finishes(() => DInputHelper.OccupiedPlaces(), 5000, LoadLock()),
 				"Asking which places are taken waits for a read that does not come back."));

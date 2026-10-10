@@ -53,10 +53,11 @@ namespace x360ce.App
 			else
 			{
 				// Run copy of x360ce as Administrator. It waits, so what Windows said is available.
-				var exitCode = JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				var exitCode = JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 					Application.ExecutablePath,
 					argument,
-					System.Diagnostics.ProcessWindowStyle.Hidden
+					isElevated: true,
+					windowStyle: System.Diagnostics.ProcessWindowStyle.Hidden
 				);
 				LastAdminResult = System.Enum.IsDefined(typeof(AdminResult), exitCode)
 					? (AdminResult)exitCode
@@ -124,7 +125,7 @@ namespace x360ce.App
 				// The security descriptor rather than a group name, because "Everyone" is spelt
 				// differently on every localized Windows and the well-known SID is not.
 				var netsh = valid ? System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("netsh",
-					"http add urlacl url=" + Engine.Mcp.McpListener.Prefix(Options.AnyAddress, port) + " sddl=D:(A;;GX;;;WD)")
+					"http add urlacl url=" + JocysCom.ClassLibrary.Mcp.McpListener.Prefix(Options.AnyAddress, port) + " sddl=D:(A;;GX;;;WD)")
 					{ UseShellExecute = false, CreateNoWindow = true }) : null;
 				if (netsh != null)
 					netsh.WaitForExit();

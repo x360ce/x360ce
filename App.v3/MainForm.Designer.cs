@@ -193,7 +193,7 @@ namespace x360ce.App
 			// 
 			// HelpRichTextBox
 			// 
-			this.HelpRichTextBox.BackColor = System.Drawing.Color.White;
+			this.HelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HelpRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HelpRichTextBox.Location = new System.Drawing.Point(0, 0);
@@ -338,7 +338,7 @@ namespace x360ce.App
 			// 
 			// HelpPictureBox
 			// 
-			this.HelpPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HelpPictureBox.Image")));
+			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_24x24;
 			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
 			this.HelpPictureBox.Name = "HelpPictureBox";
 			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
@@ -360,7 +360,7 @@ namespace x360ce.App
 			// HeaderPictureBox
 			// 
 			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HeaderPictureBox.Image")));
+			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_48x48;
 			this.HeaderPictureBox.Location = new System.Drawing.Point(630, 9);
 			this.HeaderPictureBox.Name = "HeaderPictureBox";
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
@@ -374,7 +374,7 @@ namespace x360ce.App
 			// TrayNotifyIcon
 			// 
 			this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
-			this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
+			this.TrayNotifyIcon.Icon = global::x360ce.App.Properties.Resources.app;
 			this.TrayNotifyIcon.Text = "X360CE 3 Controller Emulator";
 			this.TrayNotifyIcon.Visible = true;
 			this.TrayNotifyIcon.DoubleClick += new System.EventHandler(this.TrayNotifyIcon_DoubleClick);
@@ -427,7 +427,8 @@ namespace x360ce.App
 			// 
 			// MainForm
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(684, 669);
 			this.Controls.Add(this.GameToCustomizeComboBox);
@@ -435,7 +436,7 @@ namespace x360ce.App
 			this.Controls.Add(this.TopPanel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.KeyPreview = true;
 			this.MinimumSize = new System.Drawing.Size(700, 680);
 			this.Name = "MainForm";

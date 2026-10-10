@@ -20,14 +20,14 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Runs the action and returns every log line it wrote, which goes nowhere else meanwhile.</summary>
-		public static List<KeyValuePair<string, EventLogEntryType>> Logged(Action action)
+		public static List<KeyValuePair<string, TraceLevel>> Logged(Action action)
 		{
-			var lines = new List<KeyValuePair<string, EventLogEntryType>>();
+			var lines = new List<KeyValuePair<string, TraceLevel>>();
 			var log = LogHelper.Current;
 			var custom = log.WriteLogCustom;
 			var console = log.WriteLogConsole;
 			var file = log.WriteLogFile;
-			log.WriteLogCustom = (message, type) => lines.Add(new KeyValuePair<string, EventLogEntryType>(message, type));
+			log.WriteLogCustom = (message, type) => lines.Add(new KeyValuePair<string, TraceLevel>(message, type));
 			log.WriteLogConsole = null;
 			log.WriteLogFile = null;
 			try

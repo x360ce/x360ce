@@ -100,7 +100,7 @@ namespace x360ce.Engine
 			}
 			finally
 			{
-				NativeMethods.HidD_FreePreparsedData(ref preparsed);
+				NativeMethods.HidD_FreePreparsedData(preparsed);
 			}
 		}
 	}

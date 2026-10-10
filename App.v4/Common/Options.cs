@@ -1,10 +1,11 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Mcp;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -93,6 +94,10 @@ namespace x360ce.App
 		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; OnPropertyChanged(); } }
 		FormWindowState _StartWithWindowsState;
 
+		[DefaultValue(ThemeType.Auto), Description("Light or dark colours. System follows the Windows setting for apps.")]
+		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
+		ThemeType _Theme;
+
 		public bool ShowProgramsTab { get; set; }
 		public bool ShowSettingsTab { get; set; }
 		public bool ShowDevicesTab { get; set; }
@@ -155,13 +160,14 @@ namespace x360ce.App
 		bool _UpdateInterface = true;
 
 
-		[Description("Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().")]
-		public bool UseDeviceBufferedData
+		/// <summary>True: a press or release that comes and goes between two engine passes reaches the controller, for one pass, on every device. False: each pass reads only where each control is then.</summary>
+		[DefaultValue(true), Description("Read every change a device reports, not only its state at each pass.")]
+		public bool ReadEveryChange
 		{
-			get { return _UseDeviceBufferedData; }
-			set { _UseDeviceBufferedData = value; OnPropertyChanged(); }
+			get { return _ReadEveryChange; }
+			set { _ReadEveryChange = value; OnPropertyChanged(); }
 		}
-		bool _UseDeviceBufferedData;
+		bool _ReadEveryChange = true;
 
 
 		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
@@ -223,6 +229,25 @@ namespace x360ce.App
 		}
 		bool _EmulationHotkeyOverlay = true;
 
+		/// <summary>Whether a device the current game uses disconnecting or connecting again is said with a note on the screen.</summary>
+		[DefaultValue(true), Description("Shows a short note on the screen when a device mapped to the current game disconnects or connects again.")]
+		public bool DeviceChangeOverlay
+		{
+			get { return _DeviceChangeOverlay; }
+			set { _DeviceChangeOverlay = value; OnPropertyChanged(); }
+		}
+		bool _DeviceChangeOverlay = true;
+
+		/// <summary>Extra resistance to a wheel's speed near its centre while the centering spring is on, in percent.</summary>
+		/// <remarks>The same for every controller: one wheel is usually on one tab, and its swing is the wheel's own.</remarks>
+		[DefaultValue(0), Description("Extra resistance to the wheel's speed near the centre, where the centering spring fades, in percent. Calms a wheel that swings past the centre and back.")]
+		public int ForceSpringCentreDamping
+		{
+			get { return _ForceSpringCentreDamping; }
+			set { _ForceSpringCentreDamping = value; OnPropertyChanged(); }
+		}
+		int _ForceSpringCentreDamping;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
@@ -271,7 +296,7 @@ namespace x360ce.App
 		[Description("When the program last looked for a newer version; the start-up look runs at most once a day.")]
 		public DateTime LastUpdateCheck { get; set; }
 
-		[Description("Tag of the release manifest last seen, so an unchanged one is answered without a download.")]
+		[Description("Tag of the releases list last seen with nothing newer on it, so the start-up look at an unchanged list downloads nothing.")]
 		public string UpdateEtag { get; set; }
 
 		// Remote Control
@@ -301,13 +326,13 @@ namespace x360ce.App
 		/// <summary>The address that opens the door to every network the computer is on.</summary>
 		public const string AnyAddress = McpListener.AnyAddress;
 
+		[DefaultValue(false), Description("Whether programs on this computer reach the door without the token while it listens on 127.0.0.1 only.")]
+		public bool AiAccessTrustLocal { get { return _AiAccessTrustLocal; } set { _AiAccessTrustLocal = value; OnPropertyChanged(); } }
+		bool _AiAccessTrustLocal;
+
 		[DefaultValue(37360), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
 		int _AiAccessPort = 37360;
-
-		[DefaultValue(false), Description("Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.")]
-		public bool AiAccessWindows { get { return _AiAccessWindows; } set { _AiAccessWindows = value; OnPropertyChanged(); } }
-		bool _AiAccessWindows;
 
 		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
 		public string AiAccessToken { get; set; }

@@ -21,6 +21,22 @@ namespace x360ce.Tests
 	[TestClass]
 	public class XInputDisplayReadTest
 	{
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("A fault inside the XInput library names the library's file and version, so a report says whose code failed")]
+		public void A_fault_in_the_library_names_the_library()
+		{
+			WithSystemXInput(() =>
+			{
+				var fault = new AccessViolationException("Attempted to read or write protected memory.");
+				var reported = Controller.LibraryFault(fault);
+				Assert.AreSame(fault, reported.InnerException, "The fault itself is lost.");
+				StringAssert.Contains(reported.Message, fault.Message);
+				var file = EngineHelper.GetMsXInputLocation();
+				StringAssert.Contains(reported.Message.ToLowerInvariant(), file.Name.ToLowerInvariant(), "The report does not name the library.");
+				StringAssert.Contains(reported.Message, FileVersionInfo.GetVersionInfo(file.FullName).FileVersion, "The report does not give the library's version.");
+			});
+		}
+
 		internal static void WithSystemXInput(Action action)
 		{
 			lock (Controller.XInputLock)

@@ -298,7 +298,7 @@ namespace x360ce.Tests
 			StringAssert.Contains(main, "UpdateXiStates(routing);");
 			StringAssert.Contains(main, "CombineXiStates(routing);");
 			foreach (var step in new[] { "DInputHelper.Step2.UpdateDiStates.cs", "DInputHelper.Step3.UpdateXiStates.cs", "DInputHelper.Step4.CombineXiStates.cs" })
-				Assert.IsFalse(File.ReadAllText(Path.Combine(dir, step)).Contains("UserSettings.ItemsToArraySyncronized()"),
+				Assert.IsFalse(File.ReadAllText(Path.Combine(dir, step)).Contains("UserSettings.ItemsToArraySynchronized()"),
 					step + " copies the settings list on every pass, under the lock the interface holds while it draws.");
 			var step2 = File.ReadAllText(Path.Combine(dir, "DInputHelper.Step2.UpdateDiStates.cs"));
 			StringAssert.Contains(step2, "mapped = routing.TryGetForce(ud.InstanceGuid, out route);", "Force feedback is looked up some other way than the routing.");

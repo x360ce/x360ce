@@ -40,6 +40,15 @@ namespace x360ce.App.Controls
 		/// <summary>The raw reading. Buttons read 0 or 1.</summary>
 		public int Value;
 
+		/// <summary>For an axis or a slider: the reading it last moved from.</summary>
+		public int Anchor;
+
+		/// <summary>Whether <see cref="Anchor"/> has been taken from a reading.</summary>
+		public bool Anchored;
+
+		/// <summary>For an axis or a slider: when it last moved, in milliseconds of <see cref="InputChips.Now"/>.</summary>
+		public long MovedAt = long.MinValue / 2;
+
 		/// <summary>Whether the reading is drawn under the chip. A button's is not: lit says it all.</summary>
 		public bool ShowsValue { get { return Kind != InputChipKind.Button; } }
 	}
@@ -51,8 +60,12 @@ namespace x360ce.App.Controls
 	/// Which chips exist comes from the device, not from fixed maximums: buttons and POVs are
 	/// counted, axes and sliders are the slots the device answers to, read from the same masks
 	/// the mapping list uses, so a stick with X, Y and RZ shows axes 1, 2 and 6 in both places.
-	/// The lit rules are the ones v5's General tab uses, so the two lines agree on what "moved"
-	/// means.
+	///
+	/// An axis or a slider lights while it moves and for <see cref="HoldMs"/> after, wherever it rests.
+	/// A pedal or a throttle rests at one end, a stick in the middle and a switch anywhere, and nothing
+	/// says which, so a rule about where a control rests lit pedals and sliders all the time. Wobble
+	/// smaller than <see cref="MoveStep"/> is not movement. v5's General tab
+	/// still lights an axis away from the middle and a slider above an eighth of its travel.
 	///
 	/// v5's General tab over-counts axes from <c>CapAxeCount</c>, numbers a sparse device's axes
 	/// contiguously and reads the wrong POV for the buttons of a second POV
@@ -61,20 +74,32 @@ namespace x360ce.App.Controls
 	/// </remarks>
 	public static class InputChips
 	{
-		/// <summary>An axis at rest reads 32767 in the middle of its 0 to 65535 travel.</summary>
+		/// <summary>What an axis chip shows with no device: the middle of the 0 to 65535 travel.</summary>
 		public const int AxisCentre = 32767;
-
-		/// <summary>How far from the centre an axis must move to light up.</summary>
-		public const int AxisDeadZone = 8000;
-
-		/// <summary>How far a slider must move from zero to light up.</summary>
-		public const int SliderThreshold = 8000;
 
 		/// <summary>A POV reads -1 while it is not pressed.</summary>
 		public const int PovRest = -1;
 
-		static readonly int[] PovDirectionValues = { 0, 9000, 18000, 27000 };
+		/// <summary>How long an axis or a slider stays lit after it last moved, in milliseconds.</summary>
+		/// <remarks>
+		/// The time Windows blinks the text cursor by default. It still spans two interface ticks while the window is
+		/// behind, five a second, so a control moving slowly does not blink.
+		/// </remarks>
+		public const int HoldMs = 530;
+
+		/// <summary>How far an axis or a slider must go from where it last moved from to count as moving, of 65535.</summary>
+		/// <remarks>
+		/// Just over two steps of an 8-bit axis, 257 each, so a reading that wobbles a step either side of where it rests
+		/// never reaches it, while a slow turn or press does: on a 900-degree wheel it is about 7 degrees.
+		/// </remarks>
+		public const int MoveStep = 520;
+
 		static readonly string[] PovDirectionCaptions = { "U", "R", "D", "L" };
+
+		static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();
+
+		/// <summary>The time chips are lit by, in milliseconds since the panel first asked.</summary>
+		public static long Now { get { return Clock.ElapsedMilliseconds; } }
 
 		/// <summary>The chips for a device with these controls, in the order the panel shows them.</summary>
 		/// <param name="buttonCount">Buttons, from the device's capabilities.</param>
@@ -84,16 +109,16 @@ namespace x360ce.App.Controls
 		public static List<InputChip> Create(int buttonCount, int axisMask, int sliderMask, int povCount)
 		{
 			var chips = new List<InputChip>();
-			var buttons = System.Math.Min(System.Math.Max(buttonCount, 0), CustomDiHelper.ButtonOffsets.Count);
+			var buttons = System.Math.Min(System.Math.Max(buttonCount, 0), DirectInputLayout.ButtonOffsets.Count);
 			for (var i = 0; i < buttons; i++)
 				chips.Add(New(InputChipKind.Button, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Button, i + 1)));
-			for (var i = 0; i < CustomDiState.MaxAxis; i++)
+			for (var i = 0; i < SourceState.MaxAxis; i++)
 				if ((axisMask & (1 << i)) != 0)
 					chips.Add(New(InputChipKind.Axis, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Axis, i + 1)));
-			for (var i = 0; i < CustomDiState.MaxSliders; i++)
+			for (var i = 0; i < SourceState.MaxSliders; i++)
 				if ((sliderMask & (1 << i)) != 0)
 					chips.Add(New(InputChipKind.Slider, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.Slider, i + 1)));
-			var povs = System.Math.Min(System.Math.Max(povCount, 0), CustomDiHelper.PovOffsets.Count);
+			var povs = System.Math.Min(System.Math.Max(povCount, 0), DirectInputLayout.PovOffsets.Count);
 			for (var i = 0; i < povs; i++)
 			{
 				chips.Add(New(InputChipKind.Pov, i, 0, (i + 1).ToString(), SettingsConverter.ToTextValue(MapType.POV, i + 1)));
@@ -112,7 +137,8 @@ namespace x360ce.App.Controls
 		/// Brings every chip in line with the state. Returns true when any chip's light or reading
 		/// changed, so the caller repaints only then. A null state puts every chip at rest.
 		/// </summary>
-		public static bool Update(IList<InputChip> chips, CustomDiState state)
+		/// <param name="nowMs">The time, in milliseconds that never go back: <see cref="Now"/>.</param>
+		public static bool Update(IList<InputChip> chips, SourceState state, long nowMs)
 		{
 			var changed = false;
 			for (var i = 0; i < chips.Count; i++)
@@ -120,7 +146,7 @@ namespace x360ce.App.Controls
 				var chip = chips[i];
 				int value;
 				bool lit;
-				Read(chip, state, out value, out lit);
+				Read(chip, state, nowMs, out value, out lit);
 				if (chip.Value != value || chip.Lit != lit)
 				{
 					chip.Value = value;
@@ -131,7 +157,7 @@ namespace x360ce.App.Controls
 			return changed;
 		}
 
-		static void Read(InputChip chip, CustomDiState state, out int value, out bool lit)
+		static void Read(InputChip chip, SourceState state, long nowMs, out int value, out bool lit)
 		{
 			switch (chip.Kind)
 			{
@@ -141,11 +167,11 @@ namespace x360ce.App.Controls
 					return;
 				case InputChipKind.Axis:
 					value = state != null && chip.Index < state.Axis.Length ? state.Axis[chip.Index] : AxisCentre;
-					lit = state != null && (value < AxisCentre - AxisDeadZone || value > AxisCentre + AxisDeadZone);
+					lit = state != null && Moved(chip, value, nowMs);
 					return;
 				case InputChipKind.Slider:
 					value = state != null && chip.Index < state.Sliders.Length ? state.Sliders[chip.Index] : 0;
-					lit = value > SliderThreshold;
+					lit = state != null && Moved(chip, value, nowMs);
 					return;
 				case InputChipKind.Pov:
 					value = state != null && chip.Index < state.Povs.Length ? state.Povs[chip.Index] : PovRest;
@@ -153,10 +179,31 @@ namespace x360ce.App.Controls
 					return;
 				default:
 					var pov = state != null && chip.Index < state.Povs.Length ? state.Povs[chip.Index] : PovRest;
-					lit = pov == PovDirectionValues[chip.Direction];
+					lit = ConvertHelper.IsPovDirectionPressed(pov, chip.Direction);
 					value = lit ? pov : PovRest;
 					return;
 			}
+		}
+
+		/// <summary>Whether an axis or a slider has moved within the last <see cref="HoldMs"/>.</summary>
+		/// <remarks>
+		/// A move is a reading further than <see cref="MoveStep"/> from where the control
+		/// last moved from, which then becomes the new place to move from. A slow slide adds up until it is a move; a
+		/// wobble around one place never is. The first reading only sets that place.
+		/// </remarks>
+		static bool Moved(InputChip chip, int value, long nowMs)
+		{
+			if (!chip.Anchored)
+			{
+				chip.Anchor = value;
+				chip.Anchored = true;
+			}
+			else if (System.Math.Abs(value - chip.Anchor) > MoveStep)
+			{
+				chip.Anchor = value;
+				chip.MovedAt = nowMs;
+			}
+			return nowMs - chip.MovedAt < HoldMs;
 		}
 	}
 }

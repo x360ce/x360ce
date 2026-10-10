@@ -118,5 +118,26 @@ namespace x360ce.Tests
 			Assert.AreEqual(ForceFeedbackState.DamperFor(28), ForceFeedbackState.DamperFor(100), "A stronger spring must not brake the wheel harder.");
 			Assert.IsTrue(ForceFeedbackState.DamperCoefficient * 2 <= 10000, "The damping is a fraction of what the device can do, not all of it.");
 		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Centre damping adds resistance only where the spring fades, and only when it is asked for (issue #1643)")]
+		public void Centre_damping_acts_only_near_the_centre()
+		{
+			const int strength = 28;
+			var band = ForceFeedbackState.SpringRampFor(strength);
+			var centre = SpringCalibration.Center;
+			var inside = false;
+			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre, strength, 0, ref inside), "Off adds nothing.");
+			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre, 0, 50, ref inside), "No spring, no centre damping.");
+			Assert.AreEqual(ForceFeedbackState.CentreDamperMax / 2, ForceFeedbackState.CentreDamping(centre + band / 2, strength, 50, ref inside));
+			Assert.IsTrue(inside);
+			Assert.AreEqual(ForceFeedbackState.CentreDamperMax, ForceFeedbackState.CentreDamping(centre, strength, 100, ref inside));
+			Assert.IsTrue(ForceFeedbackState.DamperCoefficient + ForceFeedbackState.CentreDamperMax <= 10000, "More than the device can do is asked.");
+			// Out past the edge by less than a quarter of the band, a wheel already inside stays inside.
+			Assert.AreNotEqual(0, ForceFeedbackState.CentreDamping(centre + band + band / 8, strength, 50, ref inside), "A wheel resting on the edge switches the damper on every poll.");
+			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre - band - band / 2, strength, 50, ref inside), "The damping follows the wheel out of the centre.");
+			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre + band + band / 8, strength, 50, ref inside), "A wheel coming back takes the damping before it reaches the band.");
+			Assert.AreNotEqual(0, ForceFeedbackState.CentreDamping(centre + band - 1, strength, 50, ref inside));
+		}
 	}
 }

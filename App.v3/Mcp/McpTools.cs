@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JocysCom.ClassLibrary.Controls.UiTree;
+using JocysCom.ClassLibrary.Mcp;
 using x360ce.App.UiTree;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
-using x360ce.Engine.UiTree;
 
 namespace x360ce.App.Mcp
 {
@@ -24,8 +24,11 @@ namespace x360ce.App.Mcp
 		/// <summary>The door's own controls on the Options page, which no caller may touch at any level.</summary>
 		public static readonly string[] DoorControls =
 		{
-			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton", "AiAccessWindowsCheckBox",
+			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton",
 		};
+
+		/// <summary>The elements whose value is a secret, never read out through the door nor written to its log.</summary>
+		public static readonly string[] SecretControls = { "AiAccessTokenTextBox" };
 
 		/// <summary>
 		/// Points the shared interface description, the door and its tools at this program. Called
@@ -36,11 +39,19 @@ namespace x360ce.App.Mcp
 		public static void Register()
 		{
 			UiText.Catalog = UiCatalog.Build;
+			UiTreeWalker.OwnNamespaces = new[] { "x360ce", "JocysCom" };
 			UiTreeExporter.BaseName = "ui-tree-v3";
+			UiTreeMarkdown.ExportCommand = "x360ce.exe /ExportUi=<folder>";
 			McpServer.ServerName = "x360ce-v3";
+			McpServer.ServerVersion = System.Windows.Forms.Application.ProductVersion;
+			McpCatalog.SettingsPlace = "under AI assistant access on the Options tab";
+			McpListener.Unauthorised = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
+				+ "A program on this computer can call x360ce.exe -Ai instead, which needs no token.";
+			McpClient.SwitchPrefix = "/";
+			// Profile picks whose settings, so whose port and token, the call uses; it is not the tool's.
+			McpClient.IgnoredArguments = new[] { "profile" };
+			McpLog.Folder = EngineHelper.AppDataPath;
 			McpLog.FileName = "x360ce.v3.AiAccess.log";
-			WindowsAgentRegistry.DisplayName = "Jocys.com X360 Controller Emulator 3";
-			WindowsAgentRegistry.Description = "Inspect and operate the X360 Controller Emulator 3: read its interface, point at controls, answer its warnings, change its settings.";
 			McpCatalog.Sources = new[] { typeof(McpUiTools), typeof(McpTools) };
 			McpCatalog.Level = () => AiAccessSettings.Current.Level;
 			McpUiTools.MainWindow = () => MainForm.Current;
@@ -51,8 +62,11 @@ namespace x360ce.App.Mcp
 				using (var reader = new StreamReader(EngineHelper.GetResourceStream("Documents.Help.v3.md")))
 					return reader.ReadToEnd();
 			};
+			// The help links to the docs folder's other pages and files, which a caller does not have.
+			McpUiTools.ResolveLinks = MarkdownRtf.ResolveLinks;
 			McpUiTools.AdminControls = AdminControls;
 			McpUiTools.DoorControls = DoorControls;
+			McpUiTools.SecretControls = SecretControls;
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 

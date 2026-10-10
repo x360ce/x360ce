@@ -168,7 +168,7 @@ namespace x360ce.App.Controls
 				PovChips.Chips = chips.Where(c => c.Kind == InputChipKind.Pov || c.Kind == InputChipKind.PovDirection).ToList();
 				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}
-			var state = ud == null ? null : ud.DiState;
+			var state = ud == null ? null : ud.SourceState;
 			foreach (var group in Groups)
 				group.Refresh(state);
 		}

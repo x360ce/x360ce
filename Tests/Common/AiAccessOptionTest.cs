@@ -1,8 +1,12 @@
-// @under-test: App.v4/Common/Options.cs, Engine/Mcp/AiAccess.cs
+// @under-test: App.v4/Common/Options.cs, Engine/JocysCom/Mcp/AiAccess.cs
 // @area: settings   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text;
 using x360ce.App;
-using x360ce.Engine.Mcp;
+using x360ce.Engine;
+using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Mcp;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.Tests
 {
@@ -20,6 +24,32 @@ namespace x360ce.Tests
 			Assert.IsTrue(string.IsNullOrEmpty(o.AiAccessToken), "A token exists before anyone asked for access.");
 			Assert.AreEqual(37360, o.AiAccessPort);
 			Assert.AreEqual(Options.LoopbackAddress, o.AiAccessAddress, "The door must stay on this computer until somebody opens it wider.");
+			Assert.IsFalse(o.AiAccessTrustLocal, "Local connections must need the token until a person says otherwise.");
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("The access settings, Trust local connections included, are written to the options file and read back")]
+		public void Access_settings_round_trip_through_the_options_file()
+		{
+			var o = new Options
+			{
+				AiAccessEnabled = true,
+				AiAccess = AiAccess.Configure,
+				AiAccessTrustLocal = true,
+				AiAccessPort = 37365,
+			};
+			o.EnsureAiAccessToken();
+			var data = new XSettingsData<Options> { Items = new SortableBindingList<Options> { o } };
+			// Written and read the way the options file is, without touching the person's own file.
+			var loaded = data.DeserializeData(Serializer.SerializeToXmlBytes(data, Encoding.UTF8, true), false).Items[0];
+			Assert.IsTrue(loaded.AiAccessTrustLocal, "Trust local connections was not kept.");
+			Assert.IsTrue(loaded.AiAccessEnabled);
+			Assert.AreEqual(AiAccess.Configure, loaded.AiAccess);
+			Assert.AreEqual(37365, loaded.AiAccessPort);
+			Assert.AreEqual(o.AiAccessToken, loaded.AiAccessToken);
+			o.AiAccessTrustLocal = false;
+			loaded = data.DeserializeData(Serializer.SerializeToXmlBytes(data, Encoding.UTF8, true), false).Items[0];
+			Assert.IsFalse(loaded.AiAccessTrustLocal, "Trust local connections, once switched off, came back on.");
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
@@ -52,6 +82,8 @@ namespace x360ce.Tests
 			Assert.AreEqual(nameof(Options.AiAccessPort), changed);
 			o.AiAccessAddress = Options.AnyAddress;
 			Assert.AreEqual(nameof(Options.AiAccessAddress), changed);
+			o.AiAccessTrustLocal = true;
+			Assert.AreEqual(nameof(Options.AiAccessTrustLocal), changed);
 		}
 	}
 }

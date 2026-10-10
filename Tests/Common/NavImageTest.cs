@@ -28,7 +28,7 @@ namespace x360ce.Tests
 
 		static DirectoryInfo GlyphFolder()
 		{
-			return new DirectoryInfo(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Images", "Nav"));
+			return new DirectoryInfo(Path.Combine(Ui.RepoRoot.FullName, "Resources", "Images", "v4", "xbox", "nav"));
 		}
 
 		[TestMethod, TestCategory("pad-images"), TestCategory("smoke")]

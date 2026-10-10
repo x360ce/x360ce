@@ -19,7 +19,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HardwareControl));
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.DeviceTreeTabPage = new System.Windows.Forms.TabPage();
 			this.TreeSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -537,11 +536,8 @@
 			// 
 			// TabsImageList
 			// 
-			this.TabsImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("TabsImageList.ImageStream")));
+			this.TabsImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 			this.TabsImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.TabsImageList.Images.SetKeyName(0, "device_list");
-			this.TabsImageList.Images.SetKeyName(1, "device_tree");
-			this.TabsImageList.Images.SetKeyName(2, "logs");
 			// 
 			// MainToolStrip
 			// 
@@ -581,7 +577,6 @@
 			// RefreshStripButton
 			// 
 			this.RefreshStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshStripButton.Image = ((System.Drawing.Image)(resources.GetObject("RefreshStripButton.Image")));
 			this.RefreshStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshStripButton.Name = "RefreshStripButton";
 			this.RefreshStripButton.Size = new System.Drawing.Size(66, 22);
@@ -601,7 +596,6 @@
 			// 
 			// DisableButton
 			// 
-			this.DisableButton.Image = ((System.Drawing.Image)(resources.GetObject("DisableButton.Image")));
 			this.DisableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DisableButton.Name = "DisableButton";
 			this.DisableButton.Size = new System.Drawing.Size(65, 22);
@@ -610,7 +604,6 @@
 			// 
 			// EnableButton
 			// 
-			this.EnableButton.Image = ((System.Drawing.Image)(resources.GetObject("EnableButton.Image")));
 			this.EnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.EnableButton.Name = "EnableButton";
 			this.EnableButton.Size = new System.Drawing.Size(62, 22);
@@ -619,7 +612,6 @@
 			// 
 			// RemoveButton
 			// 
-			this.RemoveButton.Image = ((System.Drawing.Image)(resources.GetObject("RemoveButton.Image")));
 			this.RemoveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RemoveButton.Name = "RemoveButton";
 			this.RemoveButton.Size = new System.Drawing.Size(70, 22);
@@ -633,7 +625,6 @@
 			// 
 			// CleanButton
 			// 
-			this.CleanButton.Image = ((System.Drawing.Image)(resources.GetObject("CleanButton.Image")));
 			this.CleanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.CleanButton.Name = "CleanButton";
 			this.CleanButton.Size = new System.Drawing.Size(57, 22);
@@ -647,7 +638,6 @@
 			// 
 			// ScanButton
 			// 
-			this.ScanButton.Image = ((System.Drawing.Image)(resources.GetObject("ScanButton.Image")));
 			this.ScanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ScanButton.Name = "ScanButton";
 			this.ScanButton.Size = new System.Drawing.Size(52, 22);

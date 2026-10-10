@@ -45,7 +45,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(1, lines.Count, "10,000 refusals with one answer wrote " + lines.Count + " log lines.");
 			StringAssert.Contains(lines[0].Key, "Virtual controller 2");
 			StringAssert.Contains(lines[0].Key, "0xE0000015", "The log quotes the code otherwise than the Issues tab does.");
-			Assert.AreEqual(EventLogEntryType.Warning, lines[0].Value);
+			Assert.AreEqual(TraceLevel.Warning, lines[0].Value);
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -67,7 +67,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET, errors[0],
 				"A report taken wiped the last refusal, which the Issues tab names while refusals keep coming.");
 			Assert.AreEqual(2, lines.Count, string.Join(Environment.NewLine, lines.Select(x => x.Key)));
-			Assert.AreEqual(EventLogEntryType.Information, lines[1].Value,
+			Assert.AreEqual(TraceLevel.Info, lines[1].Value,
 				"A controller that went away is made again by itself; it is no warning.");
 		}
 

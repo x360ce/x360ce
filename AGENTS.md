@@ -31,7 +31,7 @@ against this list:
 - **No work moved above the guard that used to skip it.** Hoisting a lookup out of an
   `if (hasForceFeedback)` or `if (mapped)` makes every device pay it on every cycle. A call
   that was cheap once a second is not cheap a thousand times a second.
-- **No allocation or copy added per cycle.** `ItemsToArraySyncronized()` locks and copies the
+- **No allocation or copy added per cycle.** `ItemsToArraySynchronized()` locks and copies the
   whole list. Calling it once per device per cycle is a cost; calling it for devices that do
   not need the answer is waste.
 - **No exception thrown per cycle**, and no cost that grows with the number of devices.
@@ -73,6 +73,16 @@ versioned on its own: v4 in `App.v4/Properties/AssemblyInfo.cs`, v3 in
 changelog line the release carries, so the changelog, the assembly version and the version line
 in `README.MD` are written together.
 
+## The AI skill in `skills/x360ce/`
+
+`skills/x360ce/` is the skill the program installs for AI agents, kept where skill sites and installers find it in
+the repository. Only `SKILL.md` is written by hand. Every v4 build runs `x360ce.exe -Skill=skills`, which writes
+the program's version into `SKILL.md` and both programs' help into `references/help-v3.md` and `help-v4.md`; each
+program's `x360ce.exe /ExportUi` writes its `references/ui-tree-v3.*` or `ui-tree-v4.*`. The v4 program carries all
+of them (`App.v4/Mcp/McpTools.cs` points the shared `AiSkill` at them) and removes from the folder any file it does not write, so a new reference goes
+into `McpTools.SkillReferences` first. Change the help in `docs/Help.v3.md` or `docs/Help.v4.md`, never in `references/`. `Tests/Common/SkillTest.cs` checks the folder against what the program
+installs.
+
 ## Plans live in `docs/plans/`
 
 Design notes, requirements and to-do lists for unshipped work live in
@@ -82,6 +92,19 @@ only plan folder: a skill that writes to `docs/superpowers/` has its output move
 `docs/Help.*.md`, what a maintainer needs goes into a doc-comment beside the code or into
 `Tests/ReadMe.md`, and what is still open goes into `docs/TODO.md` as one line. The code and its
 tests are the record of what was built.
+
+## The documents live in `docs/`, and the wiki is made from them
+
+`docs/` is the only place a user document is written. Both programs show its `Help.*.md` as their
+help, every v4 build copies the help into `skills/x360ce/references/`, and
+`.github/workflows/publish-wiki.yml` writes the GitHub wiki from the folder with
+`.github/scripts/Publish-Wiki.ps1` each time `docs/` changes on `master`. Never edit the wiki: the
+next publish overwrites it. Link between documents by paths relative to `docs/`, such as
+`[Help.v3](Help.v3.md#what-do-hookmasks-do)` or `![...](.attachments/picture.png)`; the publish and
+`MarkdownRtf.ResolveLinks` make them into addresses where there is no folder to be relative to. An
+old wiki page name that links elsewhere may still use goes into `docs/.moved`, and a page's place in
+the wiki's sidebar into `docs/.order`. `Tests/Common/PublishWikiScriptTest.cs` publishes the folder
+and fails on a link to any page, heading or file it does not hold.
 
 ==== END OF INSTRUCTIONS FROM: developer.instructions.md ====
 
@@ -119,7 +142,8 @@ History before the 4.18 restore (August 2026) used other folder names; the map i
 | `Documents/` | release pipeline scripts + signing manifest |
 | `Resources/` | one file: `ZipFiles.ps1` |
 | `scripts/ui/` | `Invoke-AppUiCapture.ps1` — screenshot evidence tooling |
-| `docs/` | end-user wiki pages, `ui-tree-v3.*` and `ui-tree-v4.*` written by each program, and git-ignored `plans/` working notes |
+| `docs/` | end-user wiki pages and git-ignored `plans/` working notes |
+| `skills/x360ce/` | the AI skill v4 installs: hand-written `SKILL.md`, and `references/` with each program's help and `ui-tree-v3.*` / `ui-tree-v4.*`, written by the programs |
 | `.ai/` | two instruction files (see §8) |
 
 ## 3. Technology Stack & Key Dependencies
@@ -167,7 +191,7 @@ Supporting pieces: `MinHook_Update.cmd` (`git submodule update --init MinHook`);
 
 **UI evidence.** `scripts/ui/Invoke-AppUiCapture.ps1` drives an already-running `x360ce.exe`: it selects tabs by posting `TCM_SETCURFOCUS` to native `SysTabControl32` children and captures with `PrintWindow(PW_RENDERFULLCONTENT)`, so it neither steals focus nor needs the window unoccluded (`-NoResize -Capture pad1.png`, `-SelectTabs 0,6 …`). Output goes to the git-ignored `scripts/ui/captures/`. Each invocation needs a fresh PowerShell process — `Add-Type` types cannot be redefined in-session.
 
-**Release.** Numbered scripts in `Documents/`, run in order. `App_0_Release.ps1` goes from a clean tree to signed zips, reading everything project-specific from the declarative `App_1_Sign_and_Zip.json` (solution, configuration, and the ordered `Library → Engine → App` stages — files embedded into an application must be signed *before* the application embedding them is compiled, so the App stage sets `BuildProjectReferences=false` to avoid overwriting the signed engine). Flags: `-NoClean`, `-SkipSign`, `-WhatIf`; requires `SIGN_MODULE_PATH` pointing at the USB-token signing module. `App_1_Sign_and_Zip.ps1` performs Sign/Zip/Copy per file, skipping already-trusted signatures and delegating compression to `Resources/ZipFiles.ps1`. `App_2_VirusTotal.ps1` is the publish gate: SHA-256 lookup of every shipped file (`VIRUSTOTAL_API_KEY`, `-Upload`, `-ListOnly`, `-UpdateBaseline`), exiting non-zero on an unknown file or a detection outside the baseline. Output lands in `Documents/Files.v3/` and `Files.v4/`. `App_5_Manifest.ps1` (called last by `App_0_Release.ps1`) writes `Files.v4/latest.json` from the zip's own `x360ce.exe` version, size and SHA-256, and fails when that version differs from `AssemblyInfo.cs`; the maintainer attaches `latest.json` beside `x360ce.zip` on the GitHub release titled `X360CE {version}`, which `App.v4/Common/Update/UpdateClient.cs` reads via `releases/latest/download/latest.json` (release titles are the fallback). `Solution_Cleanup.ps1` self-elevates and removes `bin`/`obj`, IIS Express config, and user-specific solution files.
+**Release.** Numbered scripts in `Documents/`, run in order. `App_0_Release.ps1` goes from a clean tree to signed zips, reading everything project-specific from the declarative `App_1_Sign_and_Zip.json` (solution, configuration, and the ordered `Library → Engine → App` stages — files embedded into an application must be signed *before* the application embedding them is compiled, so the App stage sets `BuildProjectReferences=false` to avoid overwriting the signed engine). Flags: `-NoClean`, `-SkipSign`, `-WhatIf`; requires `SIGN_MODULE_PATH` pointing at the USB-token signing module. `App_1_Sign_and_Zip.ps1` performs Sign/Zip/Copy per file, skipping already-trusted signatures and delegating compression to `Resources/ZipFiles.ps1`. `App_2_VirusTotal.ps1` is the publish gate: SHA-256 lookup of every shipped file (`VIRUSTOTAL_API_KEY`, `-Upload`, `-ListOnly`, `-UpdateBaseline`), exiting non-zero on an unknown file or a detection outside the baseline. Output lands in `Documents/Files.v3/` and `Files.v4/`. `App_5_ReleaseTitle.ps1` (called last by `App_0_Release.ps1`) reads the version of the `x360ce.exe` inside `Files.v4/x360ce.zip`, fails when it differs from `AssemblyInfo.cs`, and prints the release title `X360CE {version}` and the zip's SHA-256. `App.v4/Common/Update/UpdateClient.cs` reads the GitHub releases list, takes the newest full release whose title carries its own major version, and downloads that release's own `x360ce.zip`, checked against the size and SHA-256 digest GitHub publishes for the asset. `Solution_Cleanup.ps1` self-elevates and removes `bin`/`obj`, IIS Express config, and user-specific solution files.
 
 ## 7. Testing
 
@@ -185,7 +209,7 @@ Tracked prose is small — **14 `.md` files repo-wide**, five of them the end-us
 
 ⚠ **`AGENTS.md` is generated, not authored.** It is the two `.ai/*.instructions.md` files copied in verbatim, so an edit made there is lost the next time it is written — change the `.ai/` file and regenerate. The two therefore cannot disagree with each other, but both are prose and can fall behind the code they describe: when a document and a build script disagree, the script is right (§9.14).
 
-`docs/` holds the end-user documentation as Markdown, laid out as wiki pages: `.order` names the pages in display order (`Home` first), page assets sit in a dot-prefixed folder beside the page (`.HowToBuild/`), and image links are relative. `docs/ui-tree-v3.*` and `docs/ui-tree-v4.*` are written by each program itself — `x360ce.exe /ExportUi=<folder>` (`App.v3/Program.cs` and `App.v4/Program.cs` through the shared `Engine/UiTree/UiTreeExporter.cs` and `UiTreeMarkdown.cs`, with each program's names and purposes in its `Common/UiTree/UiCatalog.*.cs`), the v4 tree checked by `Tests/Common/UiTreeTest.cs` — so they are regenerated, never hand-edited. `docs/.gitignore` keeps `plans/*` out of the repository: it is the working-notes folder for unshipped work (`developer.instructions.md`, "Plans live in `docs/plans/`").
+`docs/` holds the end-user documentation as Markdown, laid out as wiki pages: `.order` names the pages in display order (`Home` first), page assets sit in a dot-prefixed folder beside the page (`.HowToBuild/`), and image links are relative. `skills/x360ce/references/ui-tree-v3.*` and `ui-tree-v4.*` are written by each program itself — `x360ce.exe /ExportUi=<folder>` (`App.v3/Program.cs` and `App.v4/Program.cs` through the shared `Engine/JocysCom/Controls/UiTree/UiTreeExporter.cs` and `UiTreeMarkdown.cs`, projected from the Jocys.com Core library, with each program's names and purposes in its `Common/UiTree/UiCatalog.*.cs`), the v4 tree checked by `Tests/Common/UiTreeTest.cs` — so they are regenerated, never hand-edited. `docs/.gitignore` keeps `plans/*` out of the repository: it is the working-notes folder for unshipped work (`developer.instructions.md`, "Plans live in `docs/plans/`").
 
 The help pages each application shows are those same `docs/*.md` files, embedded as links (`docs\Help.v4.md` and `docs\Help.HidGuardian.md` into v4, `docs\Help.v3.md` into v3) and turned into rich text by `Engine/Common/MarkdownRtf.cs` when the page is opened — so a document is written once and there is no converted copy to keep in step. `App.v3/Documents/` and `App.v4/Documents/` keep the rest (`ChangeLog.txt`, `License.txt`), and `Native/Support/` carries `ReadMe.RTF`, `changelog.txt`, the `x360ce.gdb` game database and `usb-detection.pdf`.
 

@@ -21,12 +21,13 @@
     </security>
   </trustInfo>
 
-  <!-- Keep the process DPI-unaware so Windows scales the whole UI on high-DPI
-       monitors. The declaration also locks awareness at process start, so the
-       hosted WPF content cannot flip the process to DPI-aware mid-run. -->
+  <!-- DPI-aware at the system scale: Windows Forms scales every window once, at start, to
+       the scale of the main monitor, and draws it sharp. A DPI-unaware window is drawn at
+       100% and stretched by Windows, which blurs it on a monitor set to 150%. Declared here,
+       the setting holds from process start, so hosted WPF content cannot change it mid-run. -->
   <asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
     <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
-      <dpiAware>false</dpiAware>
+      <dpiAware>true</dpiAware>
     </asmv3:windowsSettings>
   </asmv3:application>
 

@@ -128,7 +128,7 @@ namespace x360ce.Tests
 				while (watch.ElapsedMilliseconds < PumpMs)
 				{
 					var position = Position(b.Device);
-					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds);
+					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0);
 					widest = Math.Max(widest, Math.Abs(position - SpringCalibration.Center));
 					// The push follows the movement, read over a short stretch so the encoder's jitter does not steer it.
 					if (watch.ElapsedMilliseconds - lastAt >= 20)
@@ -175,7 +175,7 @@ namespace x360ce.Tests
 			var watch = Stopwatch.StartNew();
 			while (!run.IsFinished && watch.ElapsedMilliseconds < 60000)
 			{
-				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds);
+				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, 0);
 				Thread.Sleep(1);
 			}
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
@@ -208,7 +208,7 @@ namespace x360ce.Tests
 					var ud = new UserDevice();
 					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
 					int axisMask, actuatorMask, actuatorCount;
-					CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
+					SourceState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
 					if (actuatorCount == 0)
 						Assert.Inconclusive(instance.ProductName + " has no actuator on an axis.");
 					ud.DevVendorId = device.Properties.VendorId;
@@ -340,7 +340,7 @@ namespace x360ce.Tests
 			{
 				var position = Position(b.Device);
 				positions.Add(position);
-				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds);
+				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0);
 				Thread.Sleep(1);
 			}
 			return positions;
@@ -350,7 +350,7 @@ namespace x360ce.Tests
 		{
 			b.Ps.ForceSpringStrength = strength.ToString();
 			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence);
-			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0);
+			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, 0);
 		}
 
 		static int Degrees(int axisUnits)

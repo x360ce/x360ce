@@ -1,6 +1,6 @@
 using System;
+using JocysCom.ClassLibrary.Mcp;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -25,14 +25,14 @@ namespace x360ce.App
 		/// <summary>How much a connected assistant may do.</summary>
 		public AiAccess Level = AiAccess.Read;
 
+		/// <summary>Whether programs on this computer reach the door without the token. Off unless a person switches it on.</summary>
+		public bool TrustLocal;
+
 		/// <summary>Local port the assistant connects to.</summary>
 		public int Port = DefaultPort;
 
 		/// <summary>Token a caller must present. Made by the program; regenerate to revoke.</summary>
 		public string Token;
-
-		/// <summary>Registered with the Windows agent registry, so agents such as Copilot find the program by themselves.</summary>
-		public bool Windows;
 
 		/// <summary>The settings as the file holds them, with the defaults for what it does not say.</summary>
 		public static AiAccessSettings Load()
@@ -43,12 +43,12 @@ namespace x360ce.App
 			AiAccess level;
 			if (Enum.TryParse(ini.GetValue(Section, "AiAccess"), true, out level) && Enum.IsDefined(typeof(AiAccess), level))
 				s.Level = level;
+			s.TrustLocal = ini.GetValue(Section, "AiAccessTrustLocal") == "1";
 			int port;
 			if (int.TryParse(ini.GetValue(Section, "AiAccessPort"), out port))
 				s.Port = port;
 			var token = ini.GetValue(Section, "AiAccessToken");
 			s.Token = string.IsNullOrEmpty(token) ? null : token;
-			s.Windows = ini.GetValue(Section, "AiAccessWindows") == "1";
 			return s;
 		}
 
@@ -58,9 +58,9 @@ namespace x360ce.App
 			var ini = new Ini(SettingManager.IniFileName);
 			return ini.SetValue(Section, "AiAccessEnabled", Enabled ? "1" : "0") != 0
 				&& ini.SetValue(Section, "AiAccess", Level.ToString()) != 0
+				&& ini.SetValue(Section, "AiAccessTrustLocal", TrustLocal ? "1" : "0") != 0
 				&& ini.SetValue(Section, "AiAccessPort", Port.ToString()) != 0
-				&& ini.SetValue(Section, "AiAccessToken", Token ?? "") != 0
-				&& ini.SetValue(Section, "AiAccessWindows", Windows ? "1" : "0") != 0;
+				&& ini.SetValue(Section, "AiAccessToken", Token ?? "") != 0;
 		}
 
 		/// <summary>
@@ -75,14 +75,13 @@ namespace x360ce.App
 			Save();
 		}
 
-		/// <summary>Opens or closes the door and the Windows registration to match. The door listens on this computer only.</summary>
+		/// <summary>Opens or closes the door to match. The door listens on this computer only.</summary>
 		public void Apply()
 		{
 			McpListener.Stop();
 			EnsureToken();
 			if (Enabled)
-				McpListener.Start(McpListener.LoopbackAddress, Port, Token);
-			WindowsAgentRegistry.Apply(Enabled && Windows);
+				McpListener.Start(McpListener.LoopbackAddress, Port, Token, TrustLocal);
 		}
 	}
 }

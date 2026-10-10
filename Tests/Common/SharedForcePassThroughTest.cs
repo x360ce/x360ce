@@ -276,8 +276,7 @@ namespace x360ce.Tests
 			var exit = HeldLock.Exit(typeof(SystemXInput), "ExitLoadLock");
 			Assert.IsTrue(HeldLock.Finishes(() => helper.PassForcesThrough(routing, 1 << 0), 5000, enter, exit), "The pass waits for the load lock.");
 			Assert.AreEqual(running, last[0], "The stop was sent while a read held the load lock.");
-			// The interface reads a setting's default under this lock; the strengths left unset are read that way.
-			var defaults = typeof(JocysCom.ClassLibrary.Runtime.Attributes).GetField("DefaultValuesLock", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			// The strengths left unset are read as their defaults, which takes no lock.
 			const int passes = 20000;
 			long bytes = -1;
 			Assert.IsTrue(HeldLock.Finishes(() =>
@@ -287,7 +286,7 @@ namespace x360ce.Tests
 					for (var i = 0; i < passes; i++)
 						helper.PassForcesThrough(routing, 0);
 				});
-			}, 10000, enter, exit, defaults), "A retry waits for the lock the interface reads a setting's default under.");
+			}, 10000, enter, exit), "A retry waits for the load lock.");
 			Assert.IsTrue(bytes < passes, passes + " retries handed the collector " + bytes + " bytes.");
 			Assert.AreEqual(running, last[0], "The stop was sent while a read held the load lock.");
 			// Free: the stop is sent as it was worked out.

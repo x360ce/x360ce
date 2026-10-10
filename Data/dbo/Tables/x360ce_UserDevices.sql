@@ -48,6 +48,7 @@
     [IsHidden]                              BIT              CONSTRAINT [DF_x360ce_UserDevices_IsHidden] DEFAULT ((0)) NOT NULL,
     [IsEnabled]                             BIT              CONSTRAINT [DF_x360ce_UserDevices_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
+    [InputSourceType]                       INT              CONSTRAINT [DF_x360ce_UserDevices_InputSourceType] DEFAULT ((1)) NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

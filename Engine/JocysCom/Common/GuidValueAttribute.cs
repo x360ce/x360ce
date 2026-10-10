@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JocysCom.WebSites.Engine
+namespace JocysCom.ClassLibrary
 {
 	public class GuidValueAttribute : System.Attribute
 	{

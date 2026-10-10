@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -25,7 +25,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceFeedbackTabPage"] = new Text("Force Feedback",
 				"Turns vibration on and sets how strong it is.");
 			d["PadControl.DirectInputTabPage"] = new Text("Direct Input",
-				"What the mapped device reports about itself, and its values as they change.");
+				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 
 			// General page.
 			d["PadControl.LeftTriggerTextBox"] = new Text("Left trigger value",
@@ -62,6 +62,8 @@ namespace x360ce.App.UiTree
 			// Force feedback page.
 			d["PadControl.ForceFeedbackGroupBox"] = new Text("Force feedback",
 				"Vibration settings shared by both motors.");
+			d["PadControl.EffectDescriptionLabel"] = Live("Effect description",
+				"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
 				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",
@@ -86,6 +88,10 @@ namespace x360ce.App.UiTree
 				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
 			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
 				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
+			d["PadControl.ForceSpringDampingTextBox"] = new Text("Centre damping",
+				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
+			d["PadControl.ForceSpringDampingTrackBar"] = new Text("Centre damping",
+				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
 				"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",

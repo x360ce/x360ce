@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -78,7 +78,7 @@ namespace x360ce.App.UiTree
 				"Every controller the program can see.");
 			d["CloudUserControl"] = new Text(null,
 				"Settings waiting to be sent to or fetched from the online database.");
-			d["IssuesUserControl"] = new Text(null,
+			d["IssuesUserControl"] = new Text("Issues list",
 				"Problems the program found, and what to do about each one.");
 			d["AboutControl"] = new Text(null,
 				"Version, licence, and what changed in each release.");

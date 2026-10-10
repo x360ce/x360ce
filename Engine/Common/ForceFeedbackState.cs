@@ -627,6 +627,36 @@ namespace x360ce.Engine
             return strengthPercent <= 0 ? 0 : DamperCoefficient;
         }
 
+        /// <summary>The most damping the centre may add, so that with <see cref="DamperCoefficient"/> it reaches DirectInput's full scale.</summary>
+        public const int CentreDamperMax = DI_FFNOMINALMAX - DamperCoefficient;
+
+        /// <summary>Whether the wheel is in the extra damping near the centre (<see cref="CentreDamping"/>).</summary>
+        bool inCentreDamping;
+
+        /// <summary>The damping added near the centre, in DirectInput's units.</summary>
+        /// <remarks>
+        /// A wheel pulled home by the spring arrives with speed and can swing past the centre and back. More resistance
+        /// to speed where the spring's force fades, its ramp, takes that swing out where it happens and leaves the rest of
+        /// the travel as it was. A wheel leaves the band a quarter further out than it enters it, so one resting on the
+        /// edge does not switch the device's damper on every poll.
+        /// </remarks>
+        /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
+        /// <param name="strengthPercent">The spring's strength, which sets the width of its ramp.</param>
+        /// <param name="centrePercent">How much damping to add, 0 to 100.</param>
+        /// <param name="inside">Whether the wheel was inside the band on the last poll; set to whether it is now.</param>
+        public static int CentreDamping(int position, int strengthPercent, int centrePercent, ref bool inside)
+        {
+            if (strengthPercent <= 0 || centrePercent <= 0)
+            {
+                inside = false;
+                return 0;
+            }
+            var distance = Math.Abs(position - SpringCalibration.Center);
+            var band = SpringRampFor(strengthPercent);
+            inside = inside ? distance <= band + band / 4 : distance < band;
+            return inside ? CentreDamperMax * Math.Min(100, centrePercent) / 100 : 0;
+        }
+
         /// <summary>
         /// A DirectInput direction names where a force comes from, so a positive magnitude along the
         /// positive axis pushes towards the low end. A force towards the high end is the negative one.
@@ -644,14 +674,17 @@ namespace x360ce.Engine
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
         /// <param name="calibration">The Auto button's run, or null.</param>
         /// <param name="nowMs">The time, for the calibration.</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs)
+        /// <param name="centreDamping">The damping to add near the centre, 0 to 100 (<see cref="CentreDamping"/>).</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int centreDamping)
         {
             var percent = calibration != null
                 ? calibration.Update(position, nowMs)
                 : SpringForce(position, springStrength);
             // The damping follows the setting, or the calibration's own asking: none while its pushes
             // must move the wheel freely, the answer's own damping while it checks that answer.
-            UpdateDamper(device, calibration != null ? calibration.Damping : DamperFor(springStrength));
+            UpdateDamper(device, calibration != null
+                ? calibration.Damping
+                : DamperFor(springStrength) + CentreDamping(position, springStrength, centreDamping, ref inCentreDamping));
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
                 return;

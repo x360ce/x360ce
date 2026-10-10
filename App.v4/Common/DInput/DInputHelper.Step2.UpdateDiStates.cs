@@ -27,6 +27,7 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80004001), // E_NOTIMPL, the device does not implement the effect it was asked for
 			unchecked((int)0x80070057), // E_INVALIDARG, the device refuses the effect's settings; ForceFeedbackState does not ask again
 			unchecked((int)0x80004005), // E_FAIL, the driver's answer while a device is going away or resetting; a read that gets it acquires the device again on the next poll
+			unchecked((int)0x800703E3), // ERROR_OPERATION_ABORTED, Windows cancelled the device's I/O as it went away or reset
 		};
 
 		/// <summary>Whether a device call's failure is a device condition, handled by the next poll, rather than a fault to report.</summary>
@@ -156,11 +157,21 @@ namespace x360ce.App.DInput
 				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				if (!ud.IsOnline)
 					continue;
+				// A Raw Input device is copied from the hub, which has its newest state ready. It has no DirectInput device
+				// to hold or poll, so none of what follows applies to it, and the test option that stops DirectInput reads
+				// does not stop it. Raw Input sends nothing back: its force goes to its DirectInput twin, which the routing
+				// adds to the devices read here (DeviceRouting.MappedDevices).
+				if (ud.InputSourceType == (int)InputSourceType.RawInput)
+				{
+					ReadRawInputState(ud, o.ReadEveryChange);
+					continue;
+				}
 				JoystickState state = null;
-				JoystickUpdate[] update = null;
+				DirectInputChanges kept = null;
 				if (allow)
 				{
-					var device = ud.Device;
+					var directInput = ud.Device;
+					var device = directInput == null ? null : directInput.Joystick;
 					// A device resting after failing twice in a row is not asked this poll. It reads as a
 					// failed read does: no state.
 					if (device != null && !IsDeviceReadResting(ud, Environment.TickCount))
@@ -170,11 +181,6 @@ namespace x360ce.App.DInput
 						var step = "";
 						try
 						{
-							if (o.UseDeviceBufferedData && device.Properties.BufferSize == 0)
-							{
-								// Set BufferSize in order to use buffered data.
-								device.Properties.BufferSize = 128;
-							}
 							// Flags are tested by bit rather than with HasFlag, which boxes both values on every call.
 							var isVirtual = (game.EmulationType & (int)EmulationType.Virtual) != 0;
 							// Read when the device was opened. Asking the device again is a native call that
@@ -215,6 +221,7 @@ namespace x360ce.App.DInput
 								// Reacquire device in exclusive mode.
 								step = "Unacquire (Exclusive)";
 								device.Unacquire();
+								directInput.KeepChanges();
 								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								// Holding a wheel this way turns its own centering off. It is kept on unless this
@@ -237,6 +244,7 @@ namespace x360ce.App.DInput
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
 								step = "Unacquire (NonExclusive)";
 								device.Unacquire();
+								directInput.KeepChanges();
 								step = "SetCooperativeLevel (NonExclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								step = "Acquire (NonExclusive)";
@@ -252,17 +260,15 @@ namespace x360ce.App.DInput
 							// Calling this method causes DirectInput to update the device state, generate input
 							// events (if buffered data is enabled), and set notification events (if notification is enabled).
 							device.Poll();
-							if (o.UseDeviceBufferedData && device.Properties.BufferSize > 0)
-							{
-								// Get buffered data.
-								update = device.GetBufferedData();
-							}
 							// Get device state.
 							// Into the device's reserved state, so a poll makes no new one. Named the poll's state only
 							// once read, so a read that fails leaves no state, and one from two polls ago is not shown as new.
 							var reading = NextJoState(ud);
 							device.GetCurrentState(ref reading);
 							state = reading;
+							step = "GetDeviceData";
+							if (o.ReadEveryChange && directInput.ReadChanges())
+								kept = directInput.Changes;
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
@@ -276,24 +282,24 @@ namespace x360ce.App.DInput
 								int relativeMask = 0;
 								if (ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse)
 								{
-									CustomDiState.GetMouseAxisMask(dos, device, out axisMask, out relativeMask);
+									SourceState.GetMouseAxisMask(dos, device, out axisMask, out relativeMask);
 								}
 								else
 								{
-									CustomDiState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
+									SourceState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
 								}
 								ud.DiAxeMask = axisMask;
 								// Axes that report how far they moved rather than where they are. The state shown works them out below.
 								// A gamepad's sticks are read as they report, whatever its objects declare.
-								ud.DiRelativeAxisMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeMask);
+								ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, relativeMask);
 								// Contains information about which axis have force feedback actuator attached.
 								ud.DiActuatorMask = actuatorMask;
 								ud.DiActuatorCount = actuatorCount;
 								// Which of the eight slider slots the device answers to. The mapping list and
 								// the input panel offer a slider only when its bit is set here.
 								int relativeSliderMask;
-								ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device, out relativeSliderMask);
-								ud.DiRelativeSliderMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeSliderMask);
+								ud.DiSliderMask = SourceState.GetJoystickSlidersMask(dos, device, out relativeSliderMask);
+								ud.DiRelativeSliderMask = SourceState.TrustedRelativeMask(ud.CapType, relativeSliderMask);
 							}
 							// Reading the effects lets go of the XInput library for a moment, which happens only while no
 							// display read holds it. Otherwise they are read on a later poll.
@@ -362,7 +368,7 @@ namespace x360ce.App.DInput
 											step = "ud.FFState.StopDeviceForces(device)";
 											ud.FFState.StopDeviceForces(device);
 											ud.FFState = null;
-											EndSpringRun(ud);
+											EndSpringRun(ud, SpringStopForceOff);
 										}
 									}
 									// Every tab it is on switched off: what was playing is stopped, or the effect, which
@@ -373,18 +379,18 @@ namespace x360ce.App.DInput
 										step = "ud.FFState.StopDeviceForces(device)";
 										ud.FFState.StopDeviceForces(device);
 										ud.FFState = null;
-										EndSpringRun(ud);
+										EndSpringRun(ud, SpringStopTabOff);
 									}
 									// The centering spring follows the wheel every poll, and the Auto button's run
 									// drives the wheel through the same effect. A device with no force state, or
 									// no actuator on an axis, pays nothing here. The clock is read only while a run is
 									// under way, and the run is read once, so one started between two reads is never
 									// handed time 0.
-									if (ud.FFState != null && ud.DiState != null && ud.FFState.SpringAxisIndex >= 0)
+									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
-										ud.FFState.UpdateSpring(device, ud.DiState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0);
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0, SettingsManager.Options.ForceSpringCentreDamping);
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -446,55 +452,215 @@ namespace x360ce.App.DInput
 					}
 				}
 				ud.JoState = state;
-				ud.JoUpdate = update;
 				if (state != null)
 				{
 					// Filled into the state shown before the current one, rather than a new one each poll. A state is not
 					// written until one whole poll after it stops being shown.
-					var newState = ud.OldDiState ?? new CustomDiState();
+					var newState = ud.OldSourceState ?? new SourceState();
 					// Axes and sliders that report movement are worked out from where they were first read. Known since the
 					// device's objects were read, so this is two field reads.
 					var moving = ud.Device != null && (ud.DiRelativeAxisMask | ud.DiRelativeSliderMask) != 0;
 					// Such a device is read into its own reserved state, and the one shown is worked out from it below.
-					var read = moving ? ud.DiStateRead ?? (ud.DiStateRead = new CustomDiState()) : newState;
+					var read = moving ? ud.SourceStateRead ?? (ud.SourceStateRead = new SourceState()) : newState;
 					read.Load(ud.JoState);
-					var newUpdates = update?.Select(x=> new CustomDiUpdate(x)).ToArray();
-					// If updates from buffer supplied and old state is available then...
-					if (newUpdates != null && newUpdates.Count(x=>x.Type == MapType.Button) > 1 && ud.DiState != null)
-					{
-						// Analyse if state must be modified.
-						for (int b = 0; b < read.Buttons.Length; b++)
-						{
-							var oldPresseed = ud.DiState.Buttons[b];
-							var newPresseed = read.Buttons[b];
-							// If button state was not changed.
-							if (oldPresseed == newPresseed)
-							{
-								// But buffer contains press then...
-								var wasPressed = newUpdates.Count(x => x.Type == MapType.Button && x.Index == b) > 1;
-								if (wasPressed)
-								{
-									// Invert state and give chance for the game to recognize the press.
-									read.Buttons[b] = !read.Buttons[b];
-								}
-							}
-						}
-					}
 					var newTime = watch.ElapsedTicks;
 					if (moving)
 						ToMouseState(ud, read, newState, newTime);
+					// A press or release that came and went between two passes is shown for this one, so the game has a chance to see it.
+					if (kept != null && ud.SourceState != null)
+						CountShown(InputSourceType.DirectInput, kept.ShowIn(ud.SourceState, newState, !moving));
+					LogChanges(ud, ud.SourceState, newState, newTime);
 					// Remember old state.
-					ud.OldDiState = ud.DiState;
-					ud.OldDiUpdates = ud.DiUpdates;
-					ud.OldDiStateTime = ud.DiStateTime;
+					ud.OldSourceState = ud.SourceState;
+					ud.OldSourceStateTime = ud.SourceStateTime;
 					// Update state.
-					ud.DiState = newState;
-					ud.DiUpdates = newUpdates;
-					ud.DiStateTime = newTime;
+					ud.SourceState = newState;
+					ud.SourceStateTime = newTime;
 				}
 
 			}
 		}
+
+		/// <summary>Raw Input devices read since the last engine log sample. Input thread only.</summary>
+		int _rawInputReads;
+
+		/// <summary>Of <see cref="_rawInputReads"/>, the reads that found a state the hub had published since the read before.</summary>
+		int _rawInputFresh;
+
+		/// <summary>Of <see cref="_rawInputReads"/>, the reads that found the device missing from the hub.</summary>
+		int _rawInputMissing;
+
+		/// <summary>Copies a Raw Input device's newest state from the hub into the device's own states, as a DirectInput poll fills them, so the steps after this one see it as they see a DirectInput device.</summary>
+		/// <remarks>
+		/// <para>
+		/// The state is copied into the one shown before the current one, and the two change places: the two are made on
+		/// the device's first two reads and kept, so a read makes nothing, and a state is not written until one whole pass
+		/// after it stops being shown. The hub reads every report, and a button that changed and changed back since the
+		/// last pass is shown changed for this one (<see cref="SourceState.ShowChangesSince"/>).
+		/// The copy takes no lock and never waits for the hub thread (<see cref="Engine.RawInputHub.TryCopyState"/>).
+		/// </para>
+		/// <para>
+		/// A device the hub does not have, unplugged a moment before the device list marks it offline or with the hub
+		/// stopped, is noted once in <see cref="UserDevice.RawInputMissing"/>: its state is put at rest and shown, once,
+		/// and it reaches its controller as nothing until the hub has it again, as a DirectInput device whose read failed
+		/// does. Nothing is written to the error log, as nothing is for an unplugged DirectInput device; the engine log
+		/// counts it.
+		/// </para>
+		/// </remarks>
+		/// <param name="readEveryChange">Whether a change that came and went since the last pass is shown (<see cref="Options.ReadEveryChange"/>).</param>
+		void ReadRawInputState(UserDevice ud, bool readEveryChange)
+		{
+			_rawInputReads++;
+			// Found missing before, and at rest since: nothing is made or changed until the hub has the device again.
+			if (ud.RawInputMissing && !RawInput.Devices.ContainsKey(ud.InstanceGuid))
+			{
+				_rawInputMissing++;
+				return;
+			}
+			var newState = ud.OldSourceState ?? new SourceState();
+			bool fresh;
+			if (RawInput.TryCopyState(ud.InstanceGuid, newState, out fresh))
+			{
+				if (fresh)
+					_rawInputFresh++;
+				if (ud.RawInputMissing)
+					ud.RawInputMissing = false;
+				// Only a state the hub published since the last pass can hold a change that came and went: an older one
+				// is the state shown last pass, counts and all.
+				var previous = ud.SourceState;
+				if (readEveryChange && fresh && previous != null)
+					CountShown(InputSourceType.RawInput, newState.ShowChangesSince(previous));
+			}
+			else
+			{
+				_rawInputMissing++;
+				ud.RawInputMissing = true;
+				RawInputReader.Reset(newState);
+			}
+			LogChanges(ud, ud.SourceState, newState, watch.ElapsedTicks);
+			ud.OldSourceState = ud.SourceState;
+			ud.OldSourceStateTime = ud.SourceStateTime;
+			ud.SourceState = newState;
+			ud.SourceStateTime = watch.ElapsedTicks;
+		}
+
+		#region Input log
+
+		/// <summary>One change the engine read from a device in a pass.</summary>
+		public struct InputChange
+		{
+			/// <summary>When the pass read it, in the engine's <see cref="System.Diagnostics.Stopwatch"/> ticks.</summary>
+			public long Ticks;
+			public UserDevice Device;
+			/// <summary><see cref="MapType.Button"/>, <see cref="MapType.POV"/>, <see cref="MapType.Axis"/> or <see cref="MapType.Slider"/>.</summary>
+			public MapType Type;
+			/// <summary>The control's place in its array of <see cref="SourceState"/>, from 0.</summary>
+			public int Index;
+			/// <summary>1 pressed or 0 let go; a hat's hundredths of a degree or -1 centred; an axis's or slider's 0 to 65535.</summary>
+			public int Value;
+		}
+
+		/// <summary>The changes of a log that runs, made before it starts, so the engine writes into it and makes nothing.</summary>
+		public sealed class InputLog
+		{
+			public InputLog(int capacity)
+			{
+				Changes = new InputChange[capacity];
+			}
+
+			public readonly InputChange[] Changes;
+
+			/// <summary>The changes written. Read with <see cref="System.Threading.Volatile"/> from another thread.</summary>
+			public int Count;
+
+			/// <summary>The changes that did not fit.</summary>
+			public int Dropped;
+
+			/// <summary>The engine's tick when the log started.</summary>
+			public long StartTicks;
+
+			/// <summary>Changes the engine showed that came and went between two passes, which the state read at each pass alone missed, by source.</summary>
+			public int ShownDirectInput;
+			public int ShownRawInput;
+
+			internal void Add(long ticks, UserDevice device, MapType type, int index, int value)
+			{
+				var n = Count;
+				if (n >= Changes.Length)
+				{
+					Dropped++;
+					return;
+				}
+				Changes[n] = new InputChange { Ticks = ticks, Device = device, Type = type, Index = index, Value = value };
+				System.Threading.Volatile.Write(ref Count, n + 1);
+			}
+		}
+
+		InputLog _inputLog;
+
+		/// <summary>Starts logging every change the engine reads from a device, up to <paramref name="capacity"/> changes. Any thread.</summary>
+		/// <remarks>Logged where each pass sets a device's state, so a change shown for a single pass is in it, as the controller got it.</remarks>
+		public InputLog StartInputLog(int capacity)
+		{
+			var log = new InputLog(capacity) { StartTicks = watch.ElapsedTicks };
+			System.Threading.Volatile.Write(ref _inputLog, log);
+			return log;
+		}
+
+		/// <summary>Stops the log. A pass under way may still finish writing into it, so its changes are read after <see cref="InputLog.Count"/>.</summary>
+		public void StopInputLog()
+		{
+			System.Threading.Volatile.Write(ref _inputLog, null);
+		}
+
+		/// <summary>Adds to the running log, if any, the changes a pass showed that came and went between two passes. Input thread only.</summary>
+		void CountShown(InputSourceType source, int shown)
+		{
+			if (shown == 0)
+				return;
+			var log = System.Threading.Volatile.Read(ref _inputLog);
+			if (log == null)
+				return;
+			if (source == InputSourceType.RawInput)
+				log.ShownRawInput += shown;
+			else
+				log.ShownDirectInput += shown;
+		}
+
+		/// <summary>The width of the steps an axis or slider is logged in: an eighth of its range, so a stick resting at the centre or an end logs nothing.</summary>
+		const int LogAxisStep = 8192;
+
+		/// <summary>Writes what changed between a device's state of the pass before and this pass's into the log, when one runs. Input thread only.</summary>
+		/// <remarks>
+		/// Every button and hat change is written. An axis or slider is written when the nearest eighth of its range
+		/// changes, so a moving stick writes a handful of lines on its way and none at rest. Makes nothing.
+		/// </remarks>
+		void LogChanges(UserDevice ud, SourceState previous, SourceState state, long ticks)
+		{
+			var log = System.Threading.Volatile.Read(ref _inputLog);
+			if (log == null || previous == null)
+				return;
+			for (var i = 0; i < state.Buttons.Length; i++)
+				if (state.Buttons[i] != previous.Buttons[i])
+					log.Add(ticks, ud, MapType.Button, i, state.Buttons[i] ? 1 : 0);
+			for (var i = 0; i < state.Povs.Length; i++)
+				if (state.Povs[i] != previous.Povs[i])
+					log.Add(ticks, ud, MapType.POV, i, state.Povs[i]);
+			for (var i = 0; i < state.Axis.Length; i++)
+				if (Step(state.Axis[i]) != Step(previous.Axis[i]))
+					log.Add(ticks, ud, MapType.Axis, i, state.Axis[i]);
+			for (var i = 0; i < state.Sliders.Length; i++)
+				if (Step(state.Sliders[i]) != Step(previous.Sliders[i]))
+					log.Add(ticks, ud, MapType.Slider, i, state.Sliders[i]);
+		}
+
+		/// <summary>The nearest eighth of the range a value is at: 0 at 0, 4 at the centre, 8 at 65535.</summary>
+		static int Step(int value)
+		{
+			return (value + LogAxisStep / 2) / LogAxisStep;
+		}
+
+		#endregion
 
 		/// <summary>Takes in the routing a pass reads: when it is new, lets go of each device it no longer reads.</summary>
 		/// <remarks>
@@ -544,7 +710,7 @@ namespace x360ce.App.DInput
 					kept = ReferenceEquals(now[n], ud);
 				if (kept)
 					continue;
-				var device = ud.Device;
+				var device = ud.Device == null ? null : ud.Device.Joystick;
 				// A device that is not connected plays nothing and nothing holds it; only what is noted about it goes.
 				if (device != null && ud.IsOnline)
 				{
@@ -592,7 +758,7 @@ namespace x360ce.App.DInput
 				ud.IsExclusiveMode = null;
 				ud.ForceFailures = 0;
 				ud.ForceFault = 0;
-				EndSpringRun(ud);
+				EndSpringRun(ud, SpringStopReleased);
 			}
 		}
 
@@ -607,6 +773,18 @@ namespace x360ce.App.DInput
 			faultStep = step;
 		}
 
+		/// <summary>Why a centering spring Auto run stopped: the wheel was unplugged.</summary>
+		public const string SpringStopUnplugged = "Stopped: the wheel was unplugged.";
+
+		/// <summary>Why a centering spring Auto run stopped: force feedback was switched off on the tabs the wheel is on.</summary>
+		public const string SpringStopForceOff = "Stopped: force feedback was switched off on this controller tab.";
+
+		/// <summary>Why a centering spring Auto run stopped: every controller tab the wheel is on was switched off for the current game.</summary>
+		public const string SpringStopTabOff = "Stopped: this controller tab was switched off for the current game.";
+
+		/// <summary>Why a centering spring Auto run stopped: no ticked row of the current game uses the wheel any more.</summary>
+		public const string SpringStopReleased = "Stopped: the wheel was unticked, or the current game changed.";
+
 		/// <summary>Ends a centering spring Auto run under way on a device the engine stops driving: unticked, its tab or force feedback switched off, or gone.</summary>
 		/// <remarks>
 		/// A run moves on only when the engine polls it while it drives the wheel's spring, so with nothing driving it
@@ -615,12 +793,13 @@ namespace x360ce.App.DInput
 		/// poll: no force, no strength, and the run's own word for a stop. Nothing is made.
 		/// </remarks>
 		/// <param name="ud">The device.</param>
-		static void EndSpringRun(UserDevice ud)
+		/// <param name="reason">What stopped the run, shown on the page in place of the run's result.</param>
+		static void EndSpringRun(UserDevice ud, string reason)
 		{
 			var run = ud.SpringCalibration;
 			if (run == null || run.IsFinished)
 				return;
-			run.Cancel();
+			run.Cancel(reason);
 			run.Update(SpringCalibration.Center, 0);
 		}
 
@@ -655,25 +834,25 @@ namespace x360ce.App.DInput
 		const int HalfTravel = (ushort.MaxValue + 1) / 2 / MovementScale;
 
 		/// <summary>Works out the state shown for a device whose axes or sliders report movement: each such control shows how far it has moved from where it was first read, starting in the middle, as a wheel's axis would. Every other control is shown as read.</summary>
-		/// <param name="ud">The device. <see cref="UserDevice.DiRelativeAxisMask"/> and <see cref="UserDevice.DiRelativeSliderMask"/> say which controls move. Its first reading, and its first after each acquire (<see cref="UserDevice.DiRelativeRestart"/>), is kept half a travel back as <see cref="UserDevice.OrgDiState"/>.</param>
+		/// <param name="ud">The device. <see cref="UserDevice.DiRelativeAxisMask"/> and <see cref="UserDevice.DiRelativeSliderMask"/> say which controls move. Its first reading, and its first after each acquire (<see cref="UserDevice.DiRelativeRestart"/>), is kept half a travel back as <see cref="UserDevice.OriginSourceState"/>.</param>
 		/// <param name="read">This poll's reading.</param>
 		/// <param name="into">The state to show, filled here.</param>
 		/// <param name="time">When the reading was taken, in the engine's ticks.</param>
-		public static void ToMouseState(UserDevice ud, CustomDiState read, CustomDiState into, long time)
+		public static void ToMouseState(UserDevice ud, SourceState read, SourceState into, long time)
 		{
 			var axes = ud.DiRelativeAxisMask;
 			var sliders = ud.DiRelativeSliderMask;
 			// The first reading, or the first since the device was acquired again, when the running totals may start anywhere.
-			if (ud.OrgDiState == null || ud.DiRelativeRestart)
+			if (ud.OriginSourceState == null || ud.DiRelativeRestart)
 			{
 				// Made once and filled in place after that. Each control starts half a travel back, so one that has not
 				// moved shows the middle, as a stick at rest does. Only the moving ones are read back.
-				var origin = ud.OrgDiState ?? (ud.OrgDiState = new CustomDiState());
+				var origin = ud.OriginSourceState ?? (ud.OriginSourceState = new SourceState());
 				for (int a = 0; a < origin.Axis.Length; a++)
 					origin.Axis[a] = unchecked(read.Axis[a] - HalfTravel);
 				for (int s = 0; s < origin.Sliders.Length; s++)
 					origin.Sliders[s] = unchecked(read.Sliders[s] - HalfTravel);
-				ud.OrgDiStateTime = time;
+				ud.OriginSourceStateTime = time;
 				ud.DiRelativeRestart = false;
 			}
 			// The state shown is reused, so everything in it is set again on every poll.
@@ -685,18 +864,18 @@ namespace x360ce.App.DInput
 			//	//--------------------------------------------------------
 
 			//	// This parts needs to be worked on.
-			//	//var ticks = (int)(newTime - ud.DiStateTime);
+			//	//var ticks = (int)(newTime - ud.SourceStateTime);
 			//	// Update axis with delta.
 			//	//for (int a = 0; a < newState.Axis.Length; a++)
-			//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
+			//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldSourceState.Axis[a]) - short.MinValue;
 			//	// Update sliders with delta.
 			//	//for (int s = 0; s < newState.Sliders.Length; s++)
-			//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+			//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldSourceState.Sliders[s]) - short.MinValue;
 
 			//--------------------------------------------------------
 			// Map mouse position to axis position. Good for car wheel controls.
 			//--------------------------------------------------------
-			var origins = ud.OrgDiState;
+			var origins = ud.OriginSourceState;
 			for (int a = 0; a < into.Axis.Length; a++)
 				into.Axis[a] = (axes & (1 << a)) != 0 ? Travel(origins.Axis, read.Axis, a) : read.Axis[a];
 			for (int s = 0; s < into.Sliders.Length; s++)

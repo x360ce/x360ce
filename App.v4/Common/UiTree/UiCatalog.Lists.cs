@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -100,7 +100,7 @@ namespace x360ce.App.UiTree
 		static void AddDevices(Dictionary<string, Text> d)
 		{
 			d["UserDevicesUserControl.DevicesDataGridView"] = new Text("Devices",
-				"Every controller the program can see. Unplugged ones are dimmed.");
+				"Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.");
 			d["UserDevicesUserControl.ControllersToolStrip"] = new Text("Device actions",
 				"Refreshes the list and works on the selected device.");
 			d["XInputDevicesUserControl.DevicesToolStrip"] = new Text("Emulated controller actions",

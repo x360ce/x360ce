@@ -5,21 +5,22 @@ IMPORTANT: Please download and run digitally signed files only! If someone asks 
 Every signed build is published on the [Releases page](https://github.com/x360ce/x360ce/releases).
 
 > **For AI assistants and agents.** Both programs describe themselves; read these rather than
-> guessing: [docs/ui-tree-v4.md](docs/ui-tree-v4.md) and [docs/ui-tree-v3.md](docs/ui-tree-v3.md)
-> are every control with its purpose, written by each program (regenerate with
-> `x360ce.exe /ExportUi=docs`); [docs/Help.v4.md](docs/Help.v4.md) and
-> [docs/Help.v3.md](docs/Help.v3.md) are the help each program shows; [AGENTS.md](AGENTS.md)
-> holds the rules for working on the code. To operate a running copy, register `x360ce.exe /Mcp`
+> guessing: [skills/x360ce](skills/x360ce) is the skill, and its `references/` hold the help and
+> every control with its purpose for each program, written by the programs
+> ([ui-tree-v4.md](skills/x360ce/references/ui-tree-v4.md),
+> [ui-tree-v3.md](skills/x360ce/references/ui-tree-v3.md); `x360ce.exe /Skill` prints the copy for
+> the version you run); [docs/Help.v4.md](docs/Help.v4.md) and [docs/Help.v3.md](docs/Help.v3.md)
+> are the help each program shows; [AGENTS.md](AGENTS.md) holds the rules for working on the code. To operate a running copy, register `x360ce.exe /Mcp`
 > as an MCP server or call `x360ce.exe /Ai=<tool>`; both need AI assistant access switched on in
 > the program's Options, where it is off by default.
 
 # Download v4.x
 
-Digitally Signed Application v4.24.60.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.25.64.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
-Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
+Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: [Help.v4](docs/Help.v4.md)
 
 ## Mapping formulas (v4.x)
 
@@ -104,7 +105,7 @@ Report only crashes or other bugs, note that the Issue tracker is not a help des
 **If you have questions about installation or configuration, please go to our [forum @NGemu](http://ngemu.com/forums/x360ce.140)**
 
 # Compatibility
-Games that work with x360ce can be found on the [Compatibility List](https://github.com/x360ce/x360ce/wiki/Compatibility-List). If you would like to add to that list or provide updated information place see [Reporting Compatibility](https://github.com/x360ce/x360ce/wiki/Reporting-Compatibility).
+Version 3 works inside each game, and some games need a HookMask: see [What do HookMasks do?](docs/Help.v3.md#what-do-hookmasks-do)
 
 # System Requirements
 
@@ -152,7 +153,7 @@ HID Guardian can no longer be installed. If an older version installed it, remov
 
 ### How to remove HID Guardian if access to your Mouse and Keyboard is lost (X360CE v4.x)
 
-Instructions: https://github.com/x360ce/x360ce/wiki/HID-Guardian
+Instructions: [How to Uninstall HID Guardian When Access to Keyboard and Mouse is Lost](docs/Help.HidGuardian.md#how-to-uninstall-hid-guardian-when-access-to-keyboard-and-mouse-is-lost)
 
 # Troubleshooting
 

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -43,9 +43,10 @@ namespace x360ce.App.UiTree
 				"Leaves out the extra parts a device reports beside its main controls.");
 			d["OptionsUserControl.ExcludeVirtualDevicesCheckBox"] = new Text(null,
 				"Leaves out the controllers this program creates, so they are not mapped to themselves.");
-			d["OptionsUserControl.UseDeviceBufferedDataCheckBox"] = new Text(null,
-				"Reads every change a device reported, rather than only its position now. " +
-				"Catches a quick tap that falls between two reads.");
+			d["OptionsUserControl.ReadEveryChangeCheckBox"] = new Text(null,
+				"Reads every change a device reported, rather than only its position at each pass, on DirectInput and Raw Input devices alike, " +
+				"so a tap that comes and goes between two passes still reaches the controller. " +
+				"Turn it off only for a worn button whose chatter then comes through as extra presses.");
 
 			// Internet page.
 			d["OptionsInternetUserControl.InternetFeaturesCheckBox"] = new Text(null,

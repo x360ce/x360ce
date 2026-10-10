@@ -37,13 +37,17 @@ namespace x360ce.Engine
 		/// <summary>Colour of a warning.</summary>
 		public Color Warning = new Color(255, 0, 0);
 
-		/// <summary>Colour of a link.</summary>
-		public Color Link = new Color(0, 0, 255);
+		/// <summary>Colour of a link: blue, or the theme's link colour when the theme is dark.</summary>
+		public Color Link = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorBrand", System.Drawing.Color.FromArgb(0, 0, 255)));
+
+		/// <summary>Colour of the text: the window text colour, so it follows the theme.</summary>
+		public Color Text = new Color(System.Drawing.SystemColors.WindowText);
 
 		/// <summary>A colour, as RTF counts them.</summary>
 		public struct Color
 		{
 			public Color(int r, int g, int b) { R = r; G = g; B = b; }
+			public Color(System.Drawing.Color color) : this(color.R, color.G, color.B) { }
 			public readonly int R, G, B;
 		}
 	}
@@ -68,6 +72,57 @@ namespace x360ce.Engine
 	/// </remarks>
 	public static class MarkdownRtf
 	{
+
+		#region Links between documents
+
+		/// <summary>Where a page of the docs folder is published: the project wiki, made from that folder.</summary>
+		public const string WikiUrl = "https://github.com/x360ce/x360ce/wiki/";
+
+		/// <summary>Where any other file of the docs folder is shown, such as a preset to download.</summary>
+		public const string DocsUrl = "https://github.com/x360ce/x360ce/blob/master/docs/";
+
+		/// <summary>Where a picture of the docs folder is served as the picture itself.</summary>
+		public const string DocsRawUrl = "https://raw.githubusercontent.com/x360ce/x360ce/master/docs/";
+
+		/// <summary>A link or a picture: its text or description, and its target.</summary>
+		static readonly Regex Link = new Regex(@"!?\[([^\]]*)\]\(([^)\s]+)(?:\s+""[^""]*"")?\)");
+
+		/// <summary>A link target as written in a document, made into an address that opens wherever the document is shown.</summary>
+		/// <param name="target">The target, such as <c>Help.HidGuardian.md#how-to</c>, <c>.attachments/preset.xml</c> or an address.</param>
+		/// <param name="picture">True for a picture, which is served as itself rather than shown in a page.</param>
+		/// <remarks>
+		/// The documents link to each other and to their files by paths relative to the docs folder, which work where
+		/// GitHub shows the folder. Inside the program, or copied beside the AI skill, there is no folder to be relative
+		/// to, so a page goes to its wiki page and a file to the repository. An address, or an anchor in the same page,
+		/// is left as it is.
+		/// </remarks>
+		public static string ResolveLink(string target, bool picture = false)
+		{
+			if (string.IsNullOrEmpty(target) || target.StartsWith("#", StringComparison.Ordinal) || Regex.IsMatch(target, @"^[A-Za-z][A-Za-z0-9+.-]*:"))
+				return target;
+			var hash = target.IndexOf('#');
+			var path = hash < 0 ? target : target.Substring(0, hash);
+			if (picture)
+				return DocsRawUrl + path;
+			if (path.EndsWith(".md", StringComparison.OrdinalIgnoreCase) && path.IndexOf('/') < 0)
+				return WikiUrl + path.Substring(0, path.Length - 3) + (hash < 0 ? "" : target.Substring(hash));
+			return DocsUrl + target;
+		}
+
+		/// <summary>The document with every link and picture target made into an address: see <see cref="ResolveLink"/>.</summary>
+		public static string ResolveLinks(string markdown)
+		{
+			if (string.IsNullOrEmpty(markdown))
+				return markdown;
+			return Link.Replace(markdown, m =>
+			{
+				var target = m.Groups[2];
+				var resolved = ResolveLink(target.Value, m.Value.StartsWith("!", StringComparison.Ordinal));
+				return m.Value.Substring(0, target.Index - m.Index) + resolved + m.Value.Substring(target.Index - m.Index + target.Length);
+			});
+		}
+
+		#endregion
 
 		/// <summary>Renders a Markdown document as RTF.</summary>
 		/// <param name="markdown">The document.</param>
@@ -288,10 +343,12 @@ namespace x360ce.Engine
 			sb.Append(@"{\fonttbl{\f0\fswiss\fcharset0 ").Append(style.FontName).Append(@";}");
 			sb.Append(@"{\f1\fmodern\fcharset0 ").Append(style.CodeFontName).Append(@";}}");
 			sb.Append(@"{\colortbl ;");
-			foreach (var c in new[] { style.Literal, style.Control, style.Warning, style.Link })
+			foreach (var c in new[] { style.Literal, style.Control, style.Warning, style.Link, style.Text })
 				sb.Append(@"\red").Append(c.R).Append(@"\green").Append(c.G).Append(@"\blue").Append(c.B).Append(';');
 			sb.Append('}');
-			sb.Append(@"\viewkind4\uc1\f0\fs").Append(half).Append(' ');
+			// The text is given its colour by number: the automatic colour, number 0, is drawn black
+			// whatever the box behind it.
+			sb.Append(@"\viewkind4\uc1\f0\cf").Append(TextColour).Append(@"\fs").Append(half).Append(' ');
 			return sb.ToString();
 		}
 
@@ -300,6 +357,7 @@ namespace x360ce.Engine
 		const int Control = 2;
 		const int Warning = 3;
 		const int LinkColour = 4;
+		const int TextColour = 5;
 
 		/// <summary>Renders the marks that appear inside a line.</summary>
 		/// <remarks>
@@ -317,11 +375,11 @@ namespace x360ce.Engine
 				// A span written in square brackets names something on screen, so it is coloured as
 				// one. Everything else in a code span is a literal value.
 				var colour = inner.StartsWith("[") && inner.EndsWith("]") ? Control : Literal;
-				spans.Add(@"{\cf" + colour + " " + Escape(inner) + @"\cf0 }");
+				spans.Add(@"{\cf" + colour + " " + Escape(inner) + @"\cf" + TextColour + " }");
 				return "\u0001" + (spans.Count - 1) + "\u0002";
 			});
 			// Links, before emphasis, so a link's text may be emphasised but its address is not read.
-			text = Regex.Replace(text, @"!?\[([^\]]*)\]\(([^)\s]+)(?:\s+""[^""]*"")?\)", m =>
+			text = Link.Replace(text, m =>
 			{
 				var label = m.Groups[1].Value;
 				var url = m.Groups[2].Value;
@@ -331,7 +389,7 @@ namespace x360ce.Engine
 					spans.Add(@"{\i " + Escape("[picture: " + (label.Length > 0 ? label : url) + "]") + @"\i0 }");
 					return "\u0001" + (spans.Count - 1) + "\u0002";
 				}
-				spans.Add(Hyperlink(url, label.Length > 0 ? label : url));
+				spans.Add(Hyperlink(ResolveLink(url), label.Length > 0 ? label : url));
 				return "\u0001" + (spans.Count - 1) + "\u0002";
 			});
 			// A bare address in angle brackets, which is how these documents write most of theirs.
@@ -342,8 +400,8 @@ namespace x360ce.Engine
 			});
 			text = Escape(text);
 			// Bold is a warning. Headings are written as headings, so nothing else needs bold.
-			text = Regex.Replace(text, @"\*\*(.+?)\*\*", @"{\b\cf" + Warning + " $1" + @"\cf0\b0 }");
-			text = Regex.Replace(text, @"__(.+?)__", @"{\b\cf" + Warning + " $1" + @"\cf0\b0 }");
+			text = Regex.Replace(text, @"\*\*(.+?)\*\*", @"{\b\cf" + Warning + " $1" + @"\cf" + TextColour + @"\b0 }");
+			text = Regex.Replace(text, @"__(.+?)__", @"{\b\cf" + Warning + " $1" + @"\cf" + TextColour + @"\b0 }");
 			text = Regex.Replace(text, @"(?<![\*\w])\*(?!\s)(.+?)(?<!\s)\*(?![\*\w])", @"{\i $1\i0 }");
 			text = Regex.Replace(text, @"(?<![_\w])_(?!\s)(.+?)(?<!\s)_(?![_\w])", @"{\i $1\i0 }");
 			// The held-aside spans go back exactly as they were.
@@ -359,7 +417,7 @@ namespace x360ce.Engine
 			// partially, and a result nested inside a group of its own came out with that group's
 			// boundaries drawn on screen, either side of every link.
 			return @"{\field{\*\fldinst HYPERLINK " + Escape(url) + @" }{\fldrslt \cf"
-				+ LinkColour + @"\ul " + Escape(label) + @"\ulnone\cf0 }}";
+				+ LinkColour + @"\ul " + Escape(label) + @"\ulnone\cf" + TextColour + " }}";
 		}
 
 		/// <summary>

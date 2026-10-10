@@ -12,6 +12,11 @@
         public const string User = nameof(User);
 		public const string Checksum = nameof(Checksum);
         public const string ClientVersion = nameof(ClientVersion);
+        /// <summary>
+        /// The kinds of device a program reads, as <see cref="InputSourceType"/> flags in an <see cref="int"/>.
+        /// The web service returns a program only devices of those kinds; a program that sends none reads DirectInput only.
+        /// </summary>
+        public const string InputSourceTypes = nameof(InputSourceTypes);
         public const string ServerVersion = nameof(ServerVersion);
         public const string UpdateUrl = nameof(UpdateUrl);
     }

@@ -476,7 +476,9 @@ namespace x360ce.App.Controls
 			var s = checksum.HasValue ? checksum.Value.ToString().Substring(0, 8).ToUpper() : null;
 			var match = v == s;
 			e.Value = e.Value.ToString().Substring(0, 8).ToUpper();
-			e.CellStyle.BackColor = match ? System.Drawing.Color.FromArgb(255, 222, 225, 231) : e.CellStyle.BackColor = grid.DefaultCellStyle.BackColor;
+			e.CellStyle.BackColor = match
+				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("BackgroundDark", System.Drawing.Color.FromArgb(255, 222, 225, 231))
+				: grid.DefaultCellStyle.BackColor;
 		}
 
 		#region Settings Grid

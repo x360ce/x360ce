@@ -24,61 +24,7 @@ namespace x360ce.Engine
 			get
 			{
 				if (string.IsNullOrEmpty(_AppDataPath))
-				{
-					// Where settings are kept is decided by SettingsLocation, which knows the
-					// folders they may be in and, more to the point, which of them this user
-					// can actually write. The folder for all users stays the first choice, so
-					// a version that does not know about any of this still finds them.
-					_AppDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
-					// An older portable layout kept the files loose in the folder rather than
-					// in a Settings sub-folder. It still wins when it is there: somebody
-					// carrying the program on a stick chose that explicitly.
-					var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
-					// If local configuration was found then use it.
-					if (fi.Exists)
-					{
-						_AppDataPath = fi.Directory.FullName;
-					}
-					else
-					{
-						var args = Environment.GetCommandLineArgs();
-						// Requires System.Configuration.Installl reference.
-						var ic = new System.Configuration.Install.InstallContext(null, args);
-						if (ic.Parameters.ContainsKey("Profile"))
-						{
-							var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
-							if (string.IsNullOrEmpty(name))
-							{
-								// Name is invalid.
-							}
-							else
-							{
-								var path = Environment.ExpandEnvironmentVariables(name);
-								// Get invalid path and file name chars.
-								var ipc = Path.GetInvalidPathChars();
-								var ifc = Path.GetInvalidFileNameChars();
-								// If path is valid file name then...
-								if (!name.ToCharArray().Any(x => ifc.Contains(x)))
-								{
-									// Use Profiles sub-folder.
-									_AppDataPath += "\\Profiles\\" + name;
-								}
-								// If name is valid path then...
-								else if (!name.ToCharArray().Any(x => ipc.Contains(x)))
-								{
-									var di = new DirectoryInfo(path);
-									path = di.FullName;
-									var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-									// If path is not inside windows folder then...
-									if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
-									{
-										_AppDataPath = path;
-									}
-								}
-							}
-						}
-					}
-				}
+					_AppDataPath = ResolveAppDataPath(Environment.GetCommandLineArgs());
 				return _AppDataPath;
 			}
 			set
@@ -87,6 +33,52 @@ namespace x360ce.Engine
 			}
 		}
 		static string _AppDataPath;
+
+		/// <summary>The settings folder of a copy of this program started with these arguments, /Profile included.</summary>
+		public static string ResolveAppDataPath(string[] args)
+		{
+			// Where settings are kept is decided by SettingsLocation, which knows the
+			// folders they may be in and, more to the point, which of them this user
+			// can actually write. The folder for all users stays the first choice, so
+			// a version that does not know about any of this still finds them.
+			var appDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
+			// An older portable layout kept the files loose in the folder rather than
+			// in a Settings sub-folder. It still wins when it is there: somebody
+			// carrying the program on a stick chose that explicitly.
+			var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
+			// If local configuration was found then use it.
+			if (fi.Exists)
+				return fi.Directory.FullName;
+			// Requires System.Configuration.Installl reference.
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			if (!ic.Parameters.ContainsKey("Profile"))
+				return appDataPath;
+			var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
+			// Name is invalid.
+			if (string.IsNullOrEmpty(name))
+				return appDataPath;
+			var path = Environment.ExpandEnvironmentVariables(name);
+			// Get invalid path and file name chars.
+			var ipc = Path.GetInvalidPathChars();
+			var ifc = Path.GetInvalidFileNameChars();
+			// If path is valid file name then...
+			if (!name.ToCharArray().Any(x => ifc.Contains(x)))
+			{
+				// Use Profiles sub-folder.
+				return appDataPath + "\\Profiles\\" + name;
+			}
+			// If name is valid path then...
+			if (!name.ToCharArray().Any(x => ipc.Contains(x)))
+			{
+				var di = new DirectoryInfo(path);
+				path = di.FullName;
+				var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				// If path is not inside windows folder then...
+				if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+					return path;
+			}
+			return appDataPath;
+		}
 
 		/// <summary>
 		/// Get information about XInput located on the disk.
@@ -225,6 +217,64 @@ namespace x360ce.Engine
 					return assembly.GetManifestResourceStream(path);
 			}
 			return null;
+		}
+
+		/// <summary>An embedded picture as drawn at 100%, with the versions of it drawn at 1.5 and 2 times its size, shared by every caller and never disposed.</summary>
+		/// <param name="name">The picture's resource name, such as "Images.xboxControllerTop.png".</param>
+		/// <remarks>
+		/// A version is embedded beside the picture under its name and its own size, such as
+		/// "Images.xboxControllerTop_384x158.png". On a screen set above 100% the picture is drawn from the version
+		/// nearest above the size needed (<see cref="JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes"/>)
+		/// rather than enlarged.
+		///
+		/// Each picture is loaded once: the four controller pages draw the same pictures, and a copy for each page would
+		/// hold the pictures and their versions four times over, about 10 MB more.
+		/// </remarks>
+		public static System.Drawing.Bitmap GetResourcePicture(string name)
+		{
+			lock (Pictures)
+			{
+				System.Drawing.Bitmap picture;
+				if (Pictures.TryGetValue(name, out picture))
+					return picture;
+				picture = new System.Drawing.Bitmap(GetResourceStream(name));
+				var stem = Path.ChangeExtension(name, null);
+				var extension = Path.GetExtension(name);
+				var versions = new[] { 1.5, 2.0 }
+					.Select(m => GetResourceStream(stem + "_" + (int)Math.Round(picture.Width * m) + "x" + (int)Math.Round(picture.Height * m) + extension))
+					.Where(x => x != null)
+					.Select(x => (System.Drawing.Image)new System.Drawing.Bitmap(x))
+					.ToArray();
+				JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(picture, versions);
+				Pictures.Add(name, picture);
+				return picture;
+			}
+		}
+
+		/// <summary>The pictures <see cref="GetResourcePicture"/> loaded, by resource name.</summary>
+		static readonly Dictionary<string, System.Drawing.Bitmap> Pictures = new Dictionary<string, System.Drawing.Bitmap>();
+
+		/// <summary>The opacity a picture of something switched off is drawn at.</summary>
+		public const float DisabledOpacity = 0.5f;
+
+		/// <summary>A copy of an image at <see cref="DisabledOpacity"/>, for a control that shows an image rather than drawing one.</summary>
+		/// <remarks>
+		/// GDI+ applies the opacity in one native draw (<see cref="JocysCom.ClassLibrary.Controls.ControlsHelper.DrawImageWithOpacity"/>).
+		/// A control that paints its own picture draws it at that opacity instead and keeps no copy.
+		/// </remarks>
+		public static System.Drawing.Bitmap Faded(System.Drawing.Image image)
+		{
+			var copy = new System.Drawing.Bitmap(image.Width, image.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			copy.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+			using (var g = System.Drawing.Graphics.FromImage(copy))
+			{
+				// Pixel for pixel: the copy is the image's own size, and nothing is under it to blend with.
+				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+				g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+				JocysCom.ClassLibrary.Controls.ControlsHelper.DrawImageWithOpacity(g, image,
+					new System.Drawing.Rectangle(0, 0, image.Width, image.Height), DisabledOpacity);
+			}
+			return copy;
 		}
 
 		/// <summary>

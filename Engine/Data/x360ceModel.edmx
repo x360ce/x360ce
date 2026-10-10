@@ -273,6 +273,7 @@
           <Property Name="IsHidden" Type="bit" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="InputSourceType" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_UserGames">
           <Key>
@@ -621,6 +622,7 @@
           <Property Name="DiActuatorCount" Type="Int32" Nullable="false" />
           <Property Name="ProfileId" Type="Guid" Nullable="false" />
           <Property Name="ConnectionClass" Type="Guid" Nullable="false" />
+          <Property Name="InputSourceType" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserGame">
           <Key>
@@ -942,6 +944,7 @@
           <EntitySetMapping Name="UserDevices">
             <EntityTypeMapping TypeName="x360ceModel.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
+                <ScalarProperty Name="InputSourceType" ColumnName="InputSourceType" />
                 <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />

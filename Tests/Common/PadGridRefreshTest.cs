@@ -50,7 +50,7 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThreadWatched(() =>
 			{
-				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var a = NewGame("GameA");
 				var b = NewGame("GameB");
@@ -155,14 +155,82 @@ namespace x360ce.Tests
 			SwitchGames(padTabShown: true, selectRowFirst: true);
 		}
 
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A controller tab nobody has opened shows its device's settings, so what reads it gets the real values")]
+		public void A_tab_never_shown_shows_its_device_settings()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var existingPads = SettingsManager.PadSettings.ItemsToArraySynchronized();
+				var oldGame = SettingsManager.CurrentGame;
+				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				// A page adds its boxes to the settings map and nothing takes them out, so the boxes of a page
+				// built earlier in this process would receive the load instead of this one.
+				var settingsMap = SettingsManager.Current.SettingsMap;
+				var earlier = settingsMap.Where(x => x.MapTo == MapTo.Controller2).ToArray();
+				settingsMap.RemoveAll(x => x.MapTo == MapTo.Controller2);
+				var game = NewGame("GameA");
+				SettingsManager.UserSettings.Items.Clear();
+				try
+				{
+					// Mapped before the page is built, as the settings file has it when the program starts.
+					var ps = new PadSetting { LeftThumbAxisX = "1" };
+					ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+					SettingsManager.PadSettings.Items.Add(ps);
+					var setting = NewSetting(game, MapTo.Controller2);
+					setting.PadSettingChecksum = ps.PadSettingChecksum;
+					SettingsManager.UserSettings.Items.Add(setting);
+					SettingsManager.CurrentGame = game;
+					using (var form = new Form { Width = 900, Height = 700 })
+					using (var tabs = new TabControl { Dock = DockStyle.Fill })
+					using (var first = new TabPage("First"))
+					using (var second = new TabPage("Second"))
+					using (var pad = new PadControl(MapTo.Controller2) { Dock = DockStyle.Fill })
+					{
+						tabs.TabPages.Add(first);
+						tabs.TabPages.Add(second);
+						form.Controls.Add(tabs);
+						// The window is up before the pages are added, as the main window's is.
+						form.Show();
+						Application.DoEvents();
+						second.Controls.Add(pad);
+						pad.InitPadControl();
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						Application.DoEvents();
+						Assert.IsFalse(pad.MappedDevicesDataGridView.IsHandleCreated,
+							"The page's list has a window, so its tab was shown and this is not the state under test.");
+						Assert.AreEqual(setting.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid,
+							"The device is not selected on a tab nobody has opened.");
+						Assert.AreEqual("Axis 1", pad.Controls.Find("LeftThumbAxisXComboBox", true).Single().Text,
+							"The page shows its blank defaults instead of the device's mapping until its tab is opened.");
+					}
+				}
+				finally
+				{
+					SettingsManager.Current.NotifySettingsStatus = oldStatus;
+					SettingsManager.CurrentGame = oldGame;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var item in existing)
+						SettingsManager.UserSettings.Items.Add(item);
+					foreach (var item in SettingsManager.PadSettings.ItemsToArraySynchronized().Except(existingPads).ToArray())
+						SettingsManager.PadSettings.Items.Remove(item);
+					settingsMap.RemoveAll(x => x.MapTo == MapTo.Controller2);
+					settingsMap.AddRange(earlier);
+				}
+			});
+		}
+
 		[TestMethod, TestCategory("mapping")]
 		[Description("A device added to a controller that already has one is selected, not left behind the old one")]
 		public void A_device_just_added_is_selected()
 		{
 			Ui.OnUiThread(() =>
 			{
-				var existing = SettingsManager.UserSettings.ItemsToArraySyncronized();
-				var existingPads = SettingsManager.PadSettings.ItemsToArraySyncronized();
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var existingPads = SettingsManager.PadSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
 				SettingsManager.Current.NotifySettingsStatus = count => { };
@@ -205,7 +273,7 @@ namespace x360ce.Tests
 					SettingsManager.UserSettings.Items.Clear();
 					foreach (var setting in existing)
 						SettingsManager.UserSettings.Items.Add(setting);
-					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySyncronized().Except(existingPads).ToArray())
+					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySynchronized().Except(existingPads).ToArray())
 						SettingsManager.PadSettings.Items.Remove(ps);
 				}
 			});

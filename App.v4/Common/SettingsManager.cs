@@ -167,7 +167,7 @@ namespace x360ce.App
 			// Read a snapshot. Locking here would not exclude a change arriving through
 			// the list itself, and holding a lock across a query puts the interface behind
 			// the device thread.
-			return UserSettings.ItemsToArraySyncronized().FirstOrDefault(x =>
+			return UserSettings.ItemsToArraySynchronized().FirstOrDefault(x =>
 					x.InstanceGuid.Equals(instanceGuid) &&
 					string.Compare(x.FileName, fileName, true) == 0
 				);
@@ -178,7 +178,7 @@ namespace x360ce.App
 		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
 			// Get all mapped user instances.
-			var instanceGuids = UserSettings.ItemsToArraySyncronized()
+			var instanceGuids = UserSettings.ItemsToArraySynchronized()
 				// Filter by game.
 				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
 				// Include only mapped devices, on rows ticked in the tab's list.
@@ -187,7 +187,7 @@ namespace x360ce.App
 				.Select(x => x.InstanceGuid)
 				.ToArray();
 			// Get all connected devices.
-			var userDevices = UserDevices.ItemsToArraySyncronized()
+			var userDevices = UserDevices.ItemsToArraySynchronized()
 				// Filter by instance, ticked on the Devices page.
 				.Where(x => instanceGuids.Contains(x.InstanceGuid) && x.IsEnabled)
 				// Include only currently connected devices.
@@ -201,7 +201,7 @@ namespace x360ce.App
 		/// </summary>
 		public static List<UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
-			return UserSettings.ItemsToArraySyncronized()
+			return UserSettings.ItemsToArraySynchronized()
 				// Filter by game.
 				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
 				// Filter by map.
@@ -211,14 +211,14 @@ namespace x360ce.App
 
 		public static UserDevice GetDevice(Guid instanceGuid)
 		{
-			return UserDevices.ItemsToArraySyncronized().FirstOrDefault(x =>
+			return UserDevices.ItemsToArraySynchronized().FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
 			// Convert to array in order to prevent selection while modified.
-			return PadSettings.ItemsToArraySyncronized()
+			return PadSettings.ItemsToArraySynchronized()
 				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
 		}
 
@@ -229,7 +229,7 @@ namespace x360ce.App
 			var instances = settings
 				.Where(x => x.MapTo == (int)mapTo)
 				.Select(x => x.InstanceGuid).ToArray();
-			var devices = UserDevices.ItemsToArraySyncronized()
+			var devices = UserDevices.ItemsToArraySynchronized()
 				.Where(x => instances.Contains(x.InstanceGuid))
 				.ToList();
 			// Return available devices.
@@ -551,6 +551,8 @@ namespace x360ce.App
 			UserInstances.Rebase();
 			UserSettings.Rebase();
 			PadSettings.Rebase();
+			// The AI assistant access log lives beside the settings, so it moves with them.
+			JocysCom.ClassLibrary.Mcp.McpLog.Folder = EngineHelper.AppDataPath;
 		}
 
 		/// <summary>The listed game a file added by hand would take over, when that game's own file is still in place elsewhere.</summary>
@@ -565,7 +567,7 @@ namespace x360ce.App
 		public static UserGame OtherGameWithSameName(string fullPath)
 		{
 			var fi = new FileInfo(fullPath);
-			return UserGames.ItemsToArraySyncronized().FirstOrDefault(x =>
+			return UserGames.ItemsToArraySynchronized().FirstOrDefault(x =>
 				string.Equals(x.FileName, fi.Name, StringComparison.OrdinalIgnoreCase)
 				&& !string.Equals(x.FullPath, fi.FullName, StringComparison.OrdinalIgnoreCase)
 				&& File.Exists(x.FullPath));
@@ -575,7 +577,7 @@ namespace x360ce.App
 		public static string DisplayNameInList(UserGame game)
 		{
 			var name = game.DisplayName;
-			var twin = UserGames.ItemsToArraySyncronized()
+			var twin = UserGames.ItemsToArraySynchronized()
 				.Any(x => !ReferenceEquals(x, game) && string.Equals(x.DisplayName, name, StringComparison.OrdinalIgnoreCase));
 			if (!twin || string.IsNullOrEmpty(game.FullPath))
 				return name;
@@ -1136,7 +1138,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
 		{
 			// Select user devices as parameters to search.
-			var userDevices = UserSettings.ItemsToArraySyncronized()
+			var userDevices = UserSettings.ItemsToArraySynchronized()
 				.Select(x => x.InstanceGuid).Distinct()
 				// Do not add empty records.
 				.Where(x => x != Guid.Empty)
@@ -1148,7 +1150,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
 		{
 			// Select enabled user game/device as parameters to search.
-			var settings = UserSettings.ItemsToArraySyncronized()
+			var settings = UserSettings.ItemsToArraySynchronized()
 				.Where(x => x.MapTo > 0).ToArray();
 			foreach (var setting in settings)
 			{
@@ -1183,6 +1185,9 @@ namespace x360ce.App
 		/// switched on, and a tab a move leaves with no device is switched off, so the game is not offered a
 		/// controller nothing drives. Two rows of one device keep their settings apart: settings are stored
 		/// by checksum, and a change on one tab gives that tab's row a new checksum.
+		///
+		/// A device new to the game starts with the settings of its twin on this tab (<see cref="GetTwinSetting"/>),
+		/// or with an automatic preset. The twin stays: if both are ticked, both drive the controller.
 		/// </remarks>
 		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidGuardian, bool keep)
 		{
@@ -1228,8 +1233,14 @@ namespace x360ce.App
 				{
 					// Create new setting.
 					setting = AppHelper.GetNewSetting(ud, game, mappedTo);
-					// Get auto-configured pad setting.
-					var ps = AutoMapHelper.GetAutoPreset(ud);
+					// The settings of its twin on this tab, the same controller read through its other source, which puts
+					// each control in the same place; failing that, an auto-configured pad setting.
+					var twin = GetTwinSetting(game, mappedTo, ud);
+					var ps = twin == null ? null : GetPadSetting(twin.PadSettingChecksum);
+					if (ps != null)
+						setting.Completion = twin.Completion;
+					else
+						ps = AutoMapHelper.GetAutoPreset(ud);
 					Current.LoadPadSettingAndCleanup(setting, ps, true);
 					Current.SyncFormFromPadSetting(mappedTo, ps);
 					// Refresh online status
@@ -1266,6 +1277,15 @@ namespace x360ce.App
 		{
 			if (AutoHideShowMappedDevices(game, instanceGuids))
 				AppHelper.SynchronizeToHidGuardian(instanceGuids);
+		}
+
+		/// <summary>The row of the device's twin on a controller tab of the game, or null when its twin is not on that tab.</summary>
+		/// <remarks>The twin is the same controller read through another source (<see cref="UserDevice.IsTwinOf"/>).</remarks>
+		public static UserSetting GetTwinSetting(UserGame game, MapTo mappedTo, UserDevice ud)
+		{
+			var devices = UserDevices.ItemsToArraySynchronized();
+			return GetSettings(game.FileName, mappedTo)
+				.FirstOrDefault(x => ud.IsTwinOf(devices.FirstOrDefault(d => d.InstanceGuid.Equals(x.InstanceGuid))));
 		}
 
 		/// <summary>The controller tabs of a game a device is on, lowest first.</summary>

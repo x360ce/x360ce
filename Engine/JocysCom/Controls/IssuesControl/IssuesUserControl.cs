@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Threading;
 using System;
 using System.ComponentModel;
@@ -16,6 +17,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public IssuesUserControl()
 		{
 			InitializeComponent();
+			var icons = ThemeResourceManager.Library;
+			IgnoreAllButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
+			IgnoreButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
+			ExceptionInfoButton.Image = (System.Drawing.Image)icons.GetObject("exception_16x16");
 			if (IsDesignMode)
 				return;
 			// Set tool strip to the same font.
@@ -332,6 +337,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			e.Graphics.DrawIcon(System.Drawing.SystemIcons.Shield, bounds);
 		}
 
+		/// <summary>A severity icon of the theme in use, at the screen's size.</summary>
+		/// <remarks>The library hands out the same image every time it is asked, and a cell asks on every paint.</remarks>
+		static System.Drawing.Image SeverityImage(string name)
+		{
+			return (System.Drawing.Image)ThemeResourceManager.Library.GetObject("MessageBoxIcon_" + name + "_32x32");
+		}
+
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -348,16 +360,16 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 						e.Value = null;
 						break;
 					case IssueSeverity.Low:
-						e.Value = SeverityImageList.Images["Information"];
+						e.Value = SeverityImage("Information");
 						break;
 					case IssueSeverity.Important:
-						e.Value = SeverityImageList.Images["Warning"];
+						e.Value = SeverityImage("Warning");
 						break;
 					case IssueSeverity.Moderate:
-						e.Value = SeverityImageList.Images["Warning"];
+						e.Value = SeverityImage("Warning");
 						break;
 					case IssueSeverity.Critical:
-						e.Value = SeverityImageList.Images["Error"];
+						e.Value = SeverityImage("Error");
 						break;
 					default:
 						break;

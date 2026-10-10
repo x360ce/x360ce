@@ -39,7 +39,7 @@ namespace JocysCom.Web.Security
 					return;
 				}
 				// Key will expire after 5 minutes.
-				if (!JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minutes, 5))
+				if (!JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minute, 5))
 				{
 					ErrorLabel.Text = "Error 3: Password reset key expired!";
 					ErrorLabel.Visible = true;

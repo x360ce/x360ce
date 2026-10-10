@@ -1,3 +1,5 @@
+#nullable disable
+
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -21,11 +23,6 @@ namespace JocysCom.ClassLibrary.Drawing
 			return b;
 		}
 
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-
-
 		/// <summary>
 		/// Take screenshot.
 		/// </summary>
@@ -47,12 +44,10 @@ namespace JocysCom.ClassLibrary.Drawing
 			);
 		}
 
-#endif
-
 		public static void CaptureImage(ref Bitmap b, int x, int y, int w, int h)
 		{
 			var format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-			if (b == null || b.Width != w || b.Height != h || b.PixelFormat != format)
+			if (b is null || b.Width != w || b.Height != h || b.PixelFormat != format)
 				b = new Bitmap(w, h, format);
 			using (var g = Graphics.FromImage(b))
 			{
@@ -106,7 +101,7 @@ namespace JocysCom.ClassLibrary.Drawing
 		/// <summary>
 		/// Get color bytes. Native bitmap color byte order for 32bpp: [B,G,R,A...], 24bpp: [B,G,R...].
 		/// </summary>
-		/// <param name="destination">Allow to supply array buffer in case </param>
+		/// <param name="b">Bitmap to get bytes from</param>
 		/// <param name="count">Number of bytes to get</param>
 		public static byte[] GetImageBytes(Bitmap b, int? count = null)
 		{
@@ -119,6 +114,7 @@ namespace JocysCom.ClassLibrary.Drawing
 		/// Get color bytes. Native bitmap color byte order for 32bpp: [B,G,R,A...], 24bpp: [B,G,R...].
 		/// </summary>
 		/// <param name="destination">Allow to supply array buffer in case </param>
+		/// <param name="b">Bitmap to get bytes from</param>
 		/// <param name="count">Number of bytes to get</param>
 		public static void GetImageBytes(ref byte[] destination, Bitmap b, int? count = null)
 		{
@@ -134,7 +130,7 @@ namespace JocysCom.ClassLibrary.Drawing
 			int bytesPerPixel = depth / 8;
 			var maxLength = b.Width * b.Height * bytesPerPixel;
 			var length = count ?? maxLength;
-			if (destination == null)
+			if (destination is null)
 				destination = new byte[length];
 			if (destination.Length != length)
 				Array.Resize(ref destination, length);
@@ -245,7 +241,7 @@ namespace JocysCom.ClassLibrary.Drawing
 					break;
 				case ".png":
 					// Png is special. You can't use the Bitmap Save() method with a "non-seekable" stream. Some image formats require that the stream can seek.
-					// CWE-73: External Control of File Name or Path
+					// SUPPRESS: CWE-73: External Control of File Name or Path
 					// Note: False Positive. File path is not externally controlled by the user.
 					var fs = System.IO.File.OpenWrite(file.FullName);
 					image.Save(fs, ImageFormat.Png);
@@ -297,6 +293,8 @@ namespace JocysCom.ClassLibrary.Drawing
 			// Draw text
 			var rect = new RectangleF(0, 0, width, height);
 			g.DrawString(text, font, brush, rect, format);
+			font.Dispose();
+			brush.Dispose();
 			return image;
 		}
 

@@ -152,6 +152,28 @@ namespace x360ce.Engine
 		/// </remarks>
 		public const int AxisButtonReleaseMargin = 2048;
 
+		/// <summary>Whether a POV reading presses one of its four directions.</summary>
+		/// <remarks>
+		/// The circle is cut into eight equal parts centred on the four directions and the four diagonals, so a
+		/// reading a little off a direction still presses it, and a diagonal presses the two directions beside it.
+		/// The virtual controller's D-pad and the input panel's direction chips both follow this.
+		/// </remarks>
+		/// <param name="pov">The reading, 0 to 35999 hundredths of a degree clockwise from up, or -1 when nothing is pressed.</param>
+		/// <param name="direction">0 up, 1 right, 2 down, 3 left.</param>
+		public static bool IsPovDirectionPressed(int pov, int direction)
+		{
+			if (pov < 0)
+				return false;
+			var part = ((2250 + pov) / 4500) % 8;
+			switch (direction)
+			{
+				case 0: return part <= 1 || part == 7;
+				case 1: return part >= 1 && part <= 3;
+				case 2: return part >= 3 && part <= 5;
+				default: return part >= 5 && part <= 7;
+			}
+		}
+
 		/// <summary>Whether a button driven by an axis or a slider is pressed.</summary>
 		/// <remarks>
 		/// Pressed once the reading passes the press point; released only once it falls to the release

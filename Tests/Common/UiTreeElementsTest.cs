@@ -1,10 +1,10 @@
-// @under-test: Engine/UiTree/UiTreeWalker.Elements.cs, Engine/UiTree/UiTreeWalker.cs
+// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.Forms.Elements.cs, Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs
 // @area: accessibility   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.UiTree;
-using x360ce.Engine.UiTree;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.Tests
 {
@@ -129,6 +129,68 @@ namespace x360ce.Tests
 					Assert.AreEqual(1, clicks, "A refused press must not reach the grid.");
 					Assert.IsNull(UiTreeWalker.Find(form, "Grid/rows/7"), "A row that is not there names nothing.");
 					Assert.IsNull(UiTreeWalker.Find(form, "Grid/rows"), "A grid's rows are named one at a time.");
+				}
+			});
+		}
+
+		/// <summary>A row of a bound grid, as a controller tab's list of mapped devices holds one.</summary>
+		public class Row
+		{
+			public string Name { get; set; }
+			public bool Enabled { get; set; }
+			public bool Hidden { get; set; }
+		}
+
+		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
+		[Description("A check box in a row is described, ticked and unticked as a click does, whether the program or the grid changes it")]
+		public void Row_check_boxes_are_read_and_set()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var form = new Form { Name = "Main" })
+				{
+					var rows = new System.ComponentModel.BindingList<Row> { new Row { Name = "Pad", Enabled = true } };
+					var grid = new DataGridView { Name = "Grid", AllowUserToAddRows = false, AutoGenerateColumns = false };
+					grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "NameColumn", HeaderText = "Name", DataPropertyName = "Name" });
+					// As on a controller tab: the box only shows the value, and a handler of the click changes it.
+					var enabled = new DataGridViewCheckBoxColumn { Name = "IsEnabledColumn", HeaderText = "Enabled", DataPropertyName = "Enabled", ReadOnly = true };
+					grid.Columns.Add(enabled);
+					// A box the grid edits itself, with no handler behind it.
+					grid.Columns.Add(new DataGridViewCheckBoxColumn { Name = "HiddenColumn", HeaderText = "Hidden", DataPropertyName = "Hidden" });
+					var clicks = 0;
+					grid.CellClick += (s, e) =>
+					{
+						if (e.RowIndex < 0 || grid.Columns[e.ColumnIndex] != enabled)
+							return;
+						clicks++;
+						var item = (Row)grid.Rows[e.RowIndex].DataBoundItem;
+						item.Enabled = !item.Enabled;
+					};
+					grid.DataSource = rows;
+					form.Controls.Add(grid);
+					form.Show();
+
+					var node = Find(UiTreeWalker.Read(form, false, ""), "Grid/rows/0/IsEnabledColumn");
+					Assert.IsNotNull(node, "A row's check box has no path, so nothing can tick it.");
+					Assert.AreEqual("CheckBox", node.Role);
+					Assert.AreEqual("Enabled", node.Name, "A check box in a row is named by its column.");
+					Assert.AreEqual("True", node.Value, "A check box that does not say whether it is ticked is half described.");
+
+					var cell = UiTreeWalker.Find(form, "Grid/rows/0/IsEnabledColumn");
+					Assert.IsNull(UiTreeWalker.SetValue(cell, "false"));
+					Assert.AreEqual(1, clicks, "Unticking must go through the click the program's handler hangs off.");
+					Assert.IsFalse(rows[0].Enabled, "The row the box stands for was not changed.");
+					Assert.IsNull(UiTreeWalker.SetValue(cell, "false"), "Setting what is already set is done, not refused.");
+					Assert.AreEqual(1, clicks, "A box already as asked must not be clicked again.");
+					Assert.IsNull(UiTreeWalker.SetValue(cell, "true"));
+					Assert.IsTrue(rows[0].Enabled);
+					Assert.IsNotNull(UiTreeWalker.SetValue(cell, "maybe"), "Anything but true or false must be refused.");
+					StringAssert.Contains(UiTreeWalker.Invoke(cell), "ui_set", "Pressing a check box must say how it is set.");
+
+					var hidden = UiTreeWalker.Find(form, "Grid/rows/0/HiddenColumn");
+					Assert.IsNull(UiTreeWalker.SetValue(hidden, "true"));
+					Assert.IsTrue(rows[0].Hidden, "A box the grid edits itself was not set.");
+					Assert.IsNotNull(UiTreeWalker.SetValue(UiTreeWalker.Find(form, "Grid/rows/0/NameColumn"), "x"), "A text cell is not set.");
 				}
 			});
 		}

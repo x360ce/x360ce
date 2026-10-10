@@ -55,7 +55,7 @@ namespace x360ce.Tests
 				Assert.Inconclusive("The virtual bus is not installed on this machine.");
 			var updateDiDevices = typeof(DInputHelper).GetMethod("UpdateDiDevices", BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.IsNotNull(updateDiDevices, "DInputHelper.UpdateDiDevices was not found.");
-			var listed = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var listed = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var padsBefore = XInputPlaces.VirtualHardwareNow();
 			var client = ViGEmClient.Current;
 			if (client.Targets == null)
@@ -89,7 +89,7 @@ namespace x360ce.Tests
 			{
 				client.UnPlug(1);
 				ViGEmClient.DisposeCurrent();
-				foreach (var ud in SettingsManager.UserDevices.ItemsToArraySyncronized().Except(listed).ToArray())
+				foreach (var ud in SettingsManager.UserDevices.ItemsToArraySynchronized().Except(listed).ToArray())
 				{
 					lock (SettingsManager.UserDevices.SyncRoot)
 						SettingsManager.UserDevices.Items.Remove(ud);

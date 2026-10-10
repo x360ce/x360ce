@@ -76,6 +76,19 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
+		[Description("A tab waiting for its place is named as the Devices page names it")]
+		public void A_tab_waiting_for_its_place_is_named()
+		{
+			// Blank, the device read as carried nowhere, and an assistant reading the device list took
+			// fourteen calls to find the one fact that mattered: its controller's place was taken.
+			Assert.AreEqual("Virtual 1 (waiting)",
+				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown }, new[] { 1 }));
+			Assert.AreEqual("Virtual 2, Virtual 1 (waiting)",
+				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown, 1 }, new[] { 1 }));
+			Assert.AreEqual(XInputPlaces.Waiting(3), "Virtual 3 (waiting)");
+		}
+
+		[TestMethod, TestCategory("devices")]
 		[Description("Every list showing this column gets its answer from the same place")]
 		public void Every_list_showing_this_column_gets_one_answer()
 		{

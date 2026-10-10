@@ -19,7 +19,7 @@ namespace x360ce.Tests
 	{
 
 		/// <summary>A controller reporting nothing but one axis at the value given.</summary>
-		private static CustomDiState StateWithAxis(int index, int raw)
+		private static SourceState StateWithAxis(int index, int raw)
 		{
 			var state = Resting();
 			state.Axis[index - 1] = raw;
@@ -27,10 +27,10 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>A controller nobody is touching.</summary>
-		private static CustomDiState Resting()
+		private static SourceState Resting()
 		{
 			// Built from an empty DirectInput state, which is how the program itself makes one.
-			return new CustomDiState(new SharpDX.DirectInput.JoystickState());
+			return new SourceState(new SharpDX.DirectInput.JoystickState());
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

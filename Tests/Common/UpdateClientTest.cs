@@ -1,4 +1,4 @@
-// @under-test: App.v4/Common/Update/UpdateClient.cs, App.v4/Common/Update/UpdateManifest.cs
+// @under-test: App.v4/Common/Update/UpdateClient.cs, App.v4/Common/Update/UpdateRelease.cs
 // @area: update   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -12,23 +12,48 @@ using x360ce.App;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The updater reads one small file from the newest GitHub release and trusts nothing it
-	/// did not verify. Every answer the network can give is played back here through the
-	/// client's transport seam, so the outcomes are pinned without a connection.
+	/// The updater reads the list of the newest GitHub releases, picks one by its title, and trusts no
+	/// download it did not check against what GitHub publishes for that release. Every answer the network
+	/// can give is played back here through the client's transport seam, so the outcomes are pinned
+	/// without a connection.
 	/// </summary>
 	[TestClass]
 	public class UpdateClientTest
 	{
 		static readonly Version Local = new Version("4.22.8.0");
 
-		static string ManifestJson(string version, byte[] file)
+		static readonly byte[] Zip = Encoding.ASCII.GetBytes("not really a zip, but bytes with a hash");
+		static readonly byte[] Tampered = Encoding.ASCII.GetBytes("not really a zip, but bytes with a hasX");
+
+		static string ZipUrl(string version)
 		{
-			return string.Format(
-				"{{\"version\":\"{0}\",\"file\":\"x360ce.zip\",\"size\":{1},\"sha256\":\"{2}\",\"published\":\"2026-10-01T12:00:00Z\",\"notes\":\"https://example.invalid/notes\"}}",
-				version, file.Length, UpdateManifest.Sha256Of(file));
+			return "https://github.com/x360ce/x360ce/releases/download/" + version + "/x360ce.zip";
 		}
 
-		static readonly byte[] Zip = Encoding.ASCII.GetBytes("not really a zip, but bytes with a hash");
+		/// <summary>The x360ce.zip asset of a release, as the GitHub releases list shows it.</summary>
+		static string ZipAsset(string version, bool withDigest = true)
+		{
+			return string.Format(
+				"{{\"name\":\"x360ce.zip\",\"size\":{0},\"digest\":{1},\"browser_download_url\":\"{2}\"}}",
+				Zip.Length, withDigest ? "\"sha256:" + UpdateRelease.Sha256Of(Zip) + "\"" : "null", ZipUrl(version));
+		}
+
+		/// <summary>The assets of a v3 release, which carries no x360ce.zip.</summary>
+		const string V3Assets =
+			"{\"name\":\"x360ce_x64.zip\",\"size\":10,\"digest\":null,\"browser_download_url\":\"https://example.invalid/x360ce_x64.zip\"},"
+			+ "{\"name\":\"x360ce_x86.zip\",\"size\":10,\"digest\":null,\"browser_download_url\":\"https://example.invalid/x360ce_x86.zip\"}";
+
+		static string Release(string title, string assets, bool prerelease = false, bool draft = false)
+		{
+			return string.Format(
+				"{{\"name\":\"{0}\",\"prerelease\":{1},\"draft\":{2},\"html_url\":\"https://github.com/x360ce/x360ce/releases/tag/{3}\",\"assets\":[{4}]}}",
+				title, prerelease ? "true" : "false", draft ? "true" : "false", title.Replace(' ', '-'), assets);
+		}
+
+		static string List(params string[] releases)
+		{
+			return "[" + string.Join(",", releases) + "]";
+		}
 
 		/// <summary>A transport that answers from a script and remembers what was asked.</summary>
 		class Fake
@@ -48,53 +73,68 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("A manifest is read whole, and one missing any field it needs is refused")]
-		public void Manifest_parses_and_a_broken_one_is_refused()
-		{
-			var m = UpdateManifest.Parse(ManifestJson("4.23.1.0", Zip));
-			Assert.AreEqual(new Version("4.23.1.0"), m.ParsedVersion);
-			Assert.AreEqual("x360ce.zip", m.File);
-			Assert.AreEqual(Zip.Length, m.Size);
-			Assert.IsTrue(m.Describes(Zip));
-			Assert.IsFalse(m.Describes(Encoding.ASCII.GetBytes("tampered")));
-			foreach (var broken in new[] { "", "{}", "{\"version\":\"soon\"}", "<html>", "{\"version\":\"4.23.1.0\",\"file\":\"x\",\"size\":1,\"sha256\":\"short\"}" })
-			{
-				try { UpdateManifest.Parse(broken); Assert.Fail("Accepted: " + broken); }
-				catch (FormatException) { }
-			}
-		}
-
-		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("Release titles of the fixed form give their version; anything else is ignored, and the highest wins")]
+		[Description("Release titles of the fixed form give their version; anything else is ignored")]
 		public void Titles_are_parsed_on_the_real_form_only()
 		{
 			Version v;
-			Assert.IsTrue(UpdateManifest.TryParseTitle("X360CE 4.21.30.0", out v));
+			Assert.IsTrue(UpdateRelease.TryParseTitle("X360CE 4.21.30.0", out v));
 			Assert.AreEqual(new Version("4.21.30.0"), v);
-			Assert.IsFalse(UpdateManifest.TryParseTitle("X360CE 4.21", out v));
-			Assert.IsFalse(UpdateManifest.TryParseTitle("Release 4.21.30.0", out v));
-			Assert.IsFalse(UpdateManifest.TryParseTitle("X360CE 4.21.30.0 beta", out v));
-			Assert.IsFalse(UpdateManifest.TryParseTitle(null, out v));
-			var highest = UpdateManifest.HighestTitle(new[] { "X360CE 4.20.43.0", "X360CE 4.21.30.0", "Notes", "X360CE 4.9.99.0" });
-			Assert.AreEqual(new Version("4.21.30.0"), highest);
-			Assert.IsNull(UpdateManifest.HighestTitle(new[] { "nothing" }));
+			Assert.IsFalse(UpdateRelease.TryParseTitle("X360CE 4.21", out v));
+			Assert.IsFalse(UpdateRelease.TryParseTitle("Release 4.21.30.0", out v));
+			Assert.IsFalse(UpdateRelease.TryParseTitle("X360CE 4.21.30.0 beta", out v));
+			Assert.IsFalse(UpdateRelease.TryParseTitle(null, out v));
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("A newer manifest says available, an equal or older one says current")]
-		public void Version_compare_decides_the_outcome()
+		[Description("A GitHub asset digest gives its SHA-256 only in the form GitHub writes it")]
+		public void Digest_is_read_only_in_its_known_form()
 		{
-			var fake = new Fake { Answer = r => Ok(ManifestJson("4.23.0.0", Zip), "\"etag-1\"") };
-			var check = new UpdateClient(Local, fake.Send).Check(null);
-			Assert.AreEqual(UpdateOutcome.Available, check.Outcome);
-			Assert.AreEqual(new Version("4.23.0.0"), check.Version);
-			Assert.AreEqual("\"etag-1\"", check.ETag, "The tag is kept for the next look.");
-			Assert.IsNotNull(check.Manifest);
+			var hex = UpdateRelease.Sha256Of(Zip);
+			Assert.AreEqual(hex, UpdateRelease.Sha256OfDigest("sha256:" + hex));
+			Assert.AreEqual(hex, UpdateRelease.Sha256OfDigest("sha256:" + hex.ToUpperInvariant()));
+			Assert.IsNull(UpdateRelease.Sha256OfDigest(null));
+			Assert.IsNull(UpdateRelease.Sha256OfDigest(hex), "No algorithm named.");
+			Assert.IsNull(UpdateRelease.Sha256OfDigest("sha512:" + hex));
+			Assert.IsNull(UpdateRelease.Sha256OfDigest("sha256:" + hex.Substring(1)), "Too short.");
+		}
 
-			fake.Answer = r => Ok(ManifestJson("4.22.8.0", Zip));
-			Assert.AreEqual(UpdateOutcome.Current, new UpdateClient(Local, fake.Send).Check(null).Outcome);
-			fake.Answer = r => Ok(ManifestJson("4.21.30.0", Zip));
-			Assert.AreEqual(UpdateOutcome.Current, new UpdateClient(Local, fake.Send).Check(null).Outcome);
+		[TestMethod, TestCategory("update"), TestCategory("critical")]
+		[Description("The newest full release of this major version is chosen by its title, with its own zip, size and SHA-256")]
+		public void Newest_release_of_this_major_version_is_chosen()
+		{
+			var releases = List(
+				Release("X360CE 4.26.0.0", ZipAsset("4.26.0.0"), prerelease: true),
+				Release("X360CE 4.25.99.0", ZipAsset("4.25.99.0"), draft: true),
+				Release("X360CE 5.0.0.0", ZipAsset("5.0.0.0")),
+				Release("X360CE 3.6.0.0", V3Assets),
+				Release("Notes", ""),
+				Release("X360CE 4.21.30.0", ZipAsset("4.21.30.0")),
+				Release("X360CE 4.23.2.0", ZipAsset("4.23.2.0")));
+			var fake = new Fake { Answer = r => Ok(releases, "\"etag-2\"") };
+			var check = new UpdateClient(Local, fake.Send).Check("\"etag-1\"");
+			Assert.AreEqual(UpdateOutcome.Available, check.Outcome, check.Error);
+			Assert.AreEqual(new Version("4.23.2.0"), check.Version, "Pre-releases, drafts and other major versions are invisible; the highest version wins, not the first listed.");
+			Assert.AreEqual(UpdateClient.ReleasesUrl, fake.Requests[0].Url);
+			Assert.AreEqual("\"etag-1\"", fake.Requests[0].ETag);
+			Assert.AreEqual(ZipUrl("4.23.2.0"), check.Release.Url, "The zip of the release chosen, never \"latest\".");
+			Assert.AreEqual(Zip.Length, check.Release.Size);
+			Assert.AreEqual(UpdateRelease.Sha256Of(Zip), check.Release.Sha256);
+			Assert.AreEqual("https://github.com/x360ce/x360ce/releases/tag/X360CE-4.23.2.0", check.Release.Page);
+			Assert.IsNull(check.ETag, "A newer release found is never hidden by a later 304.");
+		}
+
+		[TestMethod, TestCategory("update"), TestCategory("critical")]
+		[Description("An equal or older newest release says current and keeps the list's tag for the next look")]
+		public void Equal_or_older_release_is_current_and_keeps_the_tag()
+		{
+			var fake = new Fake { Answer = r => Ok(List(Release("X360CE 4.22.8.0", ZipAsset("4.22.8.0"))), "\"etag-1\"") };
+			var check = new UpdateClient(Local, fake.Send).Check(null);
+			Assert.AreEqual(UpdateOutcome.Current, check.Outcome, check.Error);
+			Assert.AreEqual(Local, check.Version);
+			Assert.AreEqual("\"etag-1\"", check.ETag);
+
+			fake.Answer = r => Ok(List(Release("X360CE 4.21.30.0", V3Assets)));
+			Assert.AreEqual(UpdateOutcome.Current, new UpdateClient(Local, fake.Send).Check(null).Outcome, "An older release is not looked at further.");
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
@@ -106,26 +146,27 @@ namespace x360ce.Tests
 			Assert.AreEqual(UpdateOutcome.Current, check.Outcome);
 			Assert.AreEqual(1, fake.Requests.Count);
 			Assert.AreEqual("\"etag-1\"", fake.Requests[0].ETag);
-			Assert.AreEqual(UpdateClient.ManifestUrl, fake.Requests[0].Url);
+			Assert.AreEqual(UpdateClient.ReleasesUrl, fake.Requests[0].Url);
 			Assert.AreEqual("\"etag-1\"", check.ETag);
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("A release without a manifest is found by the titles of the full releases")]
-		public void Missing_manifest_falls_back_to_release_titles()
+		[Description("A newer release without x360ce.zip and its SHA-256 is not offered, and neither is an older one in its place")]
+		public void Release_without_a_verifiable_zip_is_not_offered()
 		{
-			const string releases = "[{\"name\":\"X360CE 4.23.5.0\",\"prerelease\":true,\"draft\":false},"
-				+ "{\"name\":\"X360CE 4.23.2.0\",\"prerelease\":false,\"draft\":false},"
-				+ "{\"name\":\"X360CE 4.21.30.0\",\"prerelease\":false,\"draft\":false}]";
-			var fake = new Fake
-			{
-				Answer = r => r.Url == UpdateClient.ManifestUrl ? new UpdateResponse { StatusCode = 404 } : Ok(releases)
-			};
+			var fake = new Fake { Answer = r => Ok(List(Release("X360CE 4.23.2.0", V3Assets), Release("X360CE 4.23.1.0", ZipAsset("4.23.1.0")))) };
 			var check = new UpdateClient(Local, fake.Send).Check(null);
-			Assert.AreEqual(UpdateOutcome.Available, check.Outcome);
-			Assert.AreEqual(new Version("4.23.2.0"), check.Version, "The pre-release is invisible.");
-			Assert.IsNull(check.Manifest, "Nothing to verify the zip against; the signature and version checks remain.");
-			Assert.AreEqual(UpdateClient.ReleasesUrl, fake.Requests[1].Url);
+			Assert.AreEqual(UpdateOutcome.Failed, check.Outcome);
+			StringAssert.Contains(check.Error, "4.23.2.0");
+			StringAssert.Contains(check.Error, UpdateClient.ZipName);
+
+			fake.Answer = r => Ok(List(Release("X360CE 4.23.2.0", ZipAsset("4.23.2.0", withDigest: false))));
+			Assert.AreEqual(UpdateOutcome.Failed, new UpdateClient(Local, fake.Send).Check(null).Outcome, "No digest, nothing to check the zip against.");
+
+			fake.Answer = r => Ok(List(Release("X360CE 3.6.0.0", V3Assets), Release("Notes", "")));
+			check = new UpdateClient(Local, fake.Send).Check(null);
+			Assert.AreEqual(UpdateOutcome.Failed, check.Outcome, "No release of this major version is not the same as nothing newer.");
+			StringAssert.Contains(check.Error, "4.x");
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
@@ -143,18 +184,26 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("A download whose hash differs from the manifest is refused; a matching one is returned")]
-		public void Download_is_checked_against_the_manifest()
+		[Description("The zip comes from the release chosen; one whose hash differs from GitHub's is refused, a matching one is returned")]
+		public void Download_comes_from_the_chosen_release_and_is_checked()
 		{
-			var manifest = UpdateManifest.Parse(ManifestJson("4.23.0.0", Zip));
-			var check = new UpdateCheck { Outcome = UpdateOutcome.Available, Version = manifest.ParsedVersion, Manifest = manifest };
-			var fake = new Fake { Answer = r => new UpdateResponse { StatusCode = 200, Body = Encoding.ASCII.GetBytes("not really a zip, but bytes with a hasX") } };
-			try { new UpdateClient(Local, fake.Send).Download(check); Assert.Fail("A tampered download was accepted."); }
+			var fake = new Fake { Answer = r => Ok(List(Release("X360CE 4.23.2.0", ZipAsset("4.23.2.0")))) };
+			var client = new UpdateClient(Local, fake.Send);
+			var check = client.Check(null);
+			Assert.AreEqual(UpdateOutcome.Available, check.Outcome, check.Error);
+
+			fake.Answer = r => new UpdateResponse { StatusCode = 200, Body = Tampered };
+			try { client.Download(check); Assert.Fail("A tampered download was accepted."); }
 			catch (InvalidDataException) { }
-			Assert.AreEqual(UpdateClient.ZipUrl, fake.Requests[0].Url);
+			Assert.AreEqual(ZipUrl("4.23.2.0"), fake.Requests[1].Url);
+			Assert.AreEqual(UpdateClient.DownloadTimeoutMs, fake.Requests[1].TimeoutMs);
 
 			fake.Answer = r => new UpdateResponse { StatusCode = 200, Body = Zip };
-			CollectionAssert.AreEqual(Zip, new UpdateClient(Local, fake.Send).Download(check));
+			CollectionAssert.AreEqual(Zip, client.Download(check));
+
+			try { client.Download(new UpdateCheck { Outcome = UpdateOutcome.Current }); Assert.Fail("A download without a release was attempted."); }
+			catch (InvalidOperationException) { }
+			Assert.AreEqual(3, fake.Requests.Count, "Nothing chosen, nothing fetched.");
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]
@@ -196,13 +245,18 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("network")]
-		[Description("The real transport reaches GitHub and comes back with an answer, not an exception")]
+		[Description("The real transport reaches GitHub, and the release it finds publishes its zip with a SHA-256")]
 		public void Live_probe_reaches_github()
 		{
 			var check = new UpdateClient(Local).Check(null);
 			Assert.AreNotEqual(UpdateOutcome.Failed, check.Outcome, check.Error);
 			Assert.IsNotNull(check.Version);
-			Console.WriteLine("{0}: {1} (manifest: {2}, etag: {3})", check.Outcome, check.Version, check.Manifest != null, check.ETag);
+			if (check.Outcome == UpdateOutcome.Available)
+			{
+				StringAssert.EndsWith(check.Release.Url, "/" + UpdateClient.ZipName);
+				Assert.IsNotNull(check.Release.Sha256);
+			}
+			Console.WriteLine("{0}: {1} ({2}, etag: {3})", check.Outcome, check.Version, check.Release == null ? null : check.Release.Url, check.ETag);
 		}
 
 		[TestMethod, TestCategory("update")]

@@ -1,0 +1,138 @@
+# Xbox 360 Controller Emulator 3.x
+
+Version 3 replaces the game's XInput library. Version 4 creates a virtual controller instead
+and does not need to sit beside the game — see [Help.v4](https://github.com/x360ce/x360ce/wiki/Help.v4).
+
+## How To Use - Installation
+
+Run this program from the game executable directory.
+
+## Uninstallation
+
+Delete `x360ce.*` files, `xbox360cemu.ini` (if used) and `dinput8.dll` (if used) from the game executable directory.
+
+## Problem: Game can't detect your controller
+
+Reason: the game executable can look for the XInput DLL by different names.
+
+Solution: create a copy of `xinput1_3.dll` with one of the names below, until you find one that works:
+
+- `xinput1_2.dll`
+- `xinput1_1.dll`
+- `xinput9_1_0.dll`
+
+## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
+
+Reason: Microsoft Visual C++ v14 Redistributable is missing.
+
+Solution: Download and install the latest Microsoft Visual C++ v14 Redistributable (Visual Studio 2017–2026) from Microsoft:
+
+- (x86): <https://aka.ms/vc14/vc_redist.x86.exe>
+- (x64): <https://aka.ms/vc14/vc_redist.x64.exe>
+
+Note: You must install both packages on Windows 64-bit!
+
+## Wheel doesn't work in the game, but it works inside x360ce Application.
+
+Some games work only when the controller is disguised as a GamePad, even if it is a wheel. Try to:
+
+1. Run `x360ce.exe`.
+2. Select the tab with your `Wheel Controller`.
+3. Open the `[Advanced]` tab page.
+4. Set the "Device Type" drop-down list value to: `GamePad`.
+5. Click the `[Save]` button.
+6. Close the x360ce application and run the game.
+
+## How to reduce wheel dead zone?
+
+1. Run `x360ce.exe`.
+2. Select the tab with your `Wheel Controller`.
+3. Open the `[Advanced]` tab page.
+4. Select `"Enabled (XInput, 80%)"` from the `"AntiDeadZone"` drop-down to reduce the dead zone by `80%`.
+5. Click the `[Save]` button.
+6. Close the x360ce application and run the game.
+
+Note: Some games have control issues when the dead zone is reduced by `100%`.
+
+## Gas and brake pedals are combined. How can I separate them?
+
+Solution 1: If you have a `Logitech wheel`:
+
+1. Open the `"Logitech Profiler"` tool.
+2. From the menu open: Device → Game Controllers...
+3. Select your controller and click the `[Properties]` button.
+4. Select the `[Test]` tab and click the `[Settings]` button.
+5. Check the `"[x] Combined (single axis - used for most games)"` option.
+6. Click `[Close]`, `[OK]`, `[OK]` buttons.
+
+Solution 2: If you can't separate pedals:
+
+1. Open Xbox 360 Controller Emulator.
+2. Set LEFT "Trigger" value to `"HSlider 1"` (Sliders → Half → HSlider 1).
+3. Set RIGHT "Trigger" value to `"IHSlider 1"` (Sliders → Inverted Half → IHSlider 1).
+4. Test pedals.
+
+## What are real life steering wheel degrees?
+
+- 1080° (3.0 x 360°) - Heavy cars, trucks.
+- 900° (2.5 x 360°) - Average road cars, sports cars.
+- 720° (2.0 x 360°) - Drift cars. Multiple classes of Rally cars (group N).
+- 540° (1.5 x 360°) - GT1 and 3 spec race cars, WRC Rally cars.
+- 360° (1.0 x 360°) - Formula 1 cars.
+
+## What do HookMasks do?
+
+Many games will work without any of the below set, but it is worth knowing them:
+
+- **LL** - Many XACT games (the Xbox 360 / PC cross-platform games) require HookLL to run properly. As they do not load the XInput runtime directly, the `dinput8` wrapper is required to redirect back to the local x360ce binary instead of loading the default `xinput1/9_x` binary.
+- **COM** - Games that support both DirectInput and XInput may end up displaying both controllers in game, resulting in ghosted input or being able to start a two player game using a single control (SF4/SSF4 and DMC, for example). HookCOM allows the game to mask the controller's DirectInput capabilities, which Microsoft themselves advise on TechNet. HookCOM is the method required in most cases of games not working.
+- **DI** - Allows the wrapper to trick some games that detect the controller GUID via DirectInput. The first Assassin's Creed is one such title.
+- **PIDVID** - Works in conjunction with `FakePID=` and `FakeVID=`. Without these it defaults to the wired Xbox 360 Controller, which are `0x28E` and `0x45E` respectively.
+- **NAME** - Allows x360ce to return a different OEM name than that of the controller installed. In Assassin's Creed, for instance, it changes the name of the XInput device to `Xbox 360 Controller`. While this is generally not required for functionality, the game Mini Ninjas is known to check for "Xbox 360 Controller" in the registry and will not work if the name is anything else.
+- **SA** - Enables the hooking of SetupAPI. Only the Beat Hazard titles are known to require it so far, so it should almost never be needed.
+- **WT** - Enables the hooking of WinVerifyTrust. This is required for games which use WVT for process integrity checking. Only Gears of War is known to use it at this point, so it should almost never be needed.
+
+### Where HookMasks are set
+
+A game listed in the game database, `x360ce.gdb`, takes the HookMask from its section there, named after the game's executable file: `[game.exe]` with `HookMask=0x00000002`. Any other game reads the `[InputHook]` section of `x360ce.ini`. There `HookMask=` sets every hook at once. Without it, COM is on, and each of `HookLL=1`, `HookCOM=1`, `HookDI=1`, `HookPIDVID=1`, `HookNAME=1`, `HookSA=1` and `HookWT=1` adds one more. `FakeVID=` and `FakePID=` in the same section are the IDs PIDVID reports.
+
+A HookMask is the sum of the values of the hooks it turns on:
+
+| Hook | Value |
+| --- | --- |
+| LL | `0x00000001` |
+| COM | `0x00000002` |
+| DI | `0x00000004` |
+| PIDVID | `0x00000008` |
+| NAME | `0x00000010` |
+| SA | `0x00000020` |
+| WT | `0x10000000` |
+
+## AI assistant access
+
+Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
+program. It is off until you tick "Allow AI assistants and scripts on this computer" on the
+AI Assistant Access tab of the Options page, and choose a level:
+
+- **Read**: read the interface, the controllers and this help, and point at things. Changes no setting.
+- **Configure**: everything a person does on the pages, such as mapping, sliders and saving.
+- **Administer**: also switching debug mode.
+
+The level, the port and the token are changed on that tab and only there; an assistant cannot
+change them. The settings are kept in `x360ce.ini` beside the program, so each game folder has its
+own. The door listens on this computer only, on port 37361 unless you choose another.
+
+To connect an assistant that runs commands, press Copy MCP Settings and paste the result into the
+assistant's MCP settings. It starts `x360ce.exe /Mcp`, which finds the running program, starts it
+if need be, and needs no token from you.
+
+An assistant can read and answer the windows that open over the main one, such as the list of
+warnings. It can also point: ask it where something is and it brings the page to the front,
+frames the control and shows a balloon with its words beside it.
+
+Everything done through the door is written down: the Log button shows each call, its arguments
+and what came of it, with the time.
+
+From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
+one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
+token to shut out everyone who has the old one.

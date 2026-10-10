@@ -46,6 +46,9 @@ namespace x360ce.App.DInput
 
 		/// <summary>The devices on the current game's ticked rows mapped to a controller, in the order of the devices list: the devices the engine reads.</summary>
 		/// <remarks>
+		/// Also the DirectInput twin of each Raw Input device sent force, which the engine reads and holds to drive the motors
+		/// Raw Input cannot reach; it is on no row, so its input reaches no controller.
+		///
 		/// The engine reads only those online, and checks that itself on every pass. A device that drops out of
 		/// this list, unticked in a tab's list or on the Devices page, taken off its tabs or of another game, is
 		/// let go of by the engine on the first pass of the routing without it.
@@ -63,6 +66,9 @@ namespace x360ce.App.DInput
 		public readonly int[] RowDPads;
 
 		readonly Dictionary<Guid, DeviceForce> _forces = new Dictionary<Guid, DeviceForce>();
+
+		/// <summary>The DirectInput twin each Raw Input device sent force drives its motors through, by the Raw Input device.</summary>
+		readonly Dictionary<Guid, UserDevice> _forceDevices = new Dictionary<Guid, UserDevice>();
 
 		/// <summary>The listed devices the person has unticked: on the Devices page, or on every row of the game that maps them to a controller.</summary>
 		/// <remarks>A place named in Pass through is passed over while one of these holds it. A device mapped nowhere in the game is not one of them.</remarks>
@@ -98,6 +104,31 @@ namespace x360ce.App.DInput
 					: tabs.Select(x => x.Settings).FirstOrDefault(x => x != null);
 				_forces[device.Key] = new DeviceForce(settings, forcing.Select(x => x.Pad).Distinct().ToArray());
 			}
+			// Raw Input sends nothing back: Windows reads a device through it and offers no way to write to one. So the force
+			// of a Raw Input device goes to its DirectInput twin whose driver takes force feedback (UserDevice.ForceTwin),
+			// which the engine then reads and holds for that force alone. The twin's own ticks do not decide this: here it is
+			// the Raw Input device's way to its motors, not a device of its own, and a person who reads the controller through
+			// Raw Input alone unticks it.
+			var forceTwins = new List<UserDevice>();
+			foreach (var raw in devices)
+			{
+				DeviceForce force;
+				if (raw == null || raw.InputSource != InputSourceType.RawInput
+					|| !_forces.TryGetValue(raw.InstanceGuid, out force) || force.ForcePads.Length == 0)
+					continue;
+				var twin = raw.ForceTwin(devices);
+				if (twin == null)
+					continue;
+				// The twin on a forcing tab of its own: both tabs' force reaches the motors, and the effects are made with
+				// the settings of the lowest forcing tab, as for any device.
+				DeviceForce own;
+				if (_forces.TryGetValue(twin.InstanceGuid, out own) && own.ForcePads.Length > 0)
+					force = new DeviceForce(own.ForcePads[0] < force.ForcePads[0] ? own.PadSetting : force.PadSetting,
+						own.ForcePads.Concat(force.ForcePads).Distinct().OrderBy(x => x).ToArray());
+				_forces[twin.InstanceGuid] = force;
+				_forceDevices[raw.InstanceGuid] = twin;
+				forceTwins.Add(twin);
+			}
 			for (var pad = 0; pad < PadPassThrough.Length; pad++)
 			{
 				PadPassThrough[pad] = PassThroughSources(PadRows[pad], padSettings, devices);
@@ -112,7 +143,7 @@ namespace x360ce.App.DInput
 				if (device != null && !byInstance.ContainsKey(device.InstanceGuid))
 					byInstance.Add(device.InstanceGuid, device);
 			var mapped = new HashSet<Guid>(rows.Select(x => x.InstanceGuid));
-			MappedDevices = devices.Where(x => x != null && mapped.Contains(x.InstanceGuid)).ToArray();
+			MappedDevices = devices.Where(x => x != null && (mapped.Contains(x.InstanceGuid) || forceTwins.Contains(x))).ToArray();
 			RowDevices = new UserDevice[rows.Length];
 			RowMaps = new List<Map>[rows.Length];
 			RowDPads = new int[rows.Length];
@@ -132,6 +163,14 @@ namespace x360ce.App.DInput
 				if (SettingsConverter.TryParseIniValue(ps.DPad, out type, out index, MapCode.DPad) && type == MapType.POV)
 					RowDPads[i] = index;
 			}
+		}
+
+		/// <summary>The device the engine drives this device's force feedback through: for a Raw Input device sent force, its DirectInput twin; otherwise the device itself.</summary>
+		/// <remarks>Where the centering spring's Auto run goes, so the engine finds it on the device whose motors it drives.</remarks>
+		public UserDevice ForceDevice(UserDevice device)
+		{
+			UserDevice twin;
+			return device != null && _forceDevices.TryGetValue(device.InstanceGuid, out twin) ? twin : device;
 		}
 
 		/// <summary>Where a device's force feedback comes from; false when the device is on no routed row of a switched-on tab.</summary>
@@ -271,9 +310,9 @@ namespace x360ce.App.DInput
 		public static void Refresh()
 		{
 			_current = Build(SettingsManager.CurrentGame,
-				SettingsManager.UserSettings.ItemsToArraySyncronized(),
-				SettingsManager.PadSettings.ItemsToArraySyncronized(),
-				SettingsManager.UserDevices.ItemsToArraySyncronized());
+				SettingsManager.UserSettings.ItemsToArraySynchronized(),
+				SettingsManager.PadSettings.ItemsToArraySynchronized(),
+				SettingsManager.UserDevices.ItemsToArraySynchronized());
 		}
 
 		static bool _watching;
@@ -289,14 +328,15 @@ namespace x360ce.App.DInput
 			SettingsManager.UserGames.Items.ListChanged += (sender, e) => Refresh();
 			// A device coming into the list or leaving it changes which devices the engine reads and which rows can
 			// pass force on to the place it holds, and a reset of the list may have done either. So does its tick on
-			// the Devices page. Any other change to a listed device does not: its state is read on every pass, and
-			// its ids when the places are worked out.
+			// the Devices page, and its interface path, which pairs a Raw Input device with the DirectInput twin its
+			// force goes to. Any other change to a listed device does not: its state is read on every pass, and its
+			// ids when the places are worked out.
 			SettingsManager.UserDevices.Items.ListChanged += (sender, e) =>
 			{
 				if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted
 					|| e.ListChangedType == ListChangedType.Reset
 					|| (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor != null
-						&& e.PropertyDescriptor.Name == nameof(UserDevice.IsEnabled)))
+						&& (e.PropertyDescriptor.Name == nameof(UserDevice.IsEnabled) || e.PropertyDescriptor.Name == nameof(UserDevice.HidDevicePath))))
 					Refresh();
 			};
 			Refresh();

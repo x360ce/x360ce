@@ -241,6 +241,7 @@
     <Property Name="DiActuatorCount" Type="Int32" Nullable="false" />
     <Property Name="ProfileId" Type="Guid" Nullable="false" />
     <Property Name="ConnectionClass" Type="Guid" Nullable="false" />
+    <Property Name="InputSourceType" Type="Int32" Nullable="false" />
   </EntityType>
   <EntityType Name="UserGame">
     <Key>
