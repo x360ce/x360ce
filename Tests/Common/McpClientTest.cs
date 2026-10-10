@@ -1,12 +1,11 @@
-// @under-test: Engine/Mcp/McpClient.cs
+// @under-test: Engine/JocysCom/Mcp/McpClient.cs
 // @area: mcp   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using x360ce.App;
 using x360ce.App.Mcp;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -24,7 +23,7 @@ namespace x360ce.Tests
 			var code = McpClient.RunStdio(input, output, body =>
 			{
 				sent.Add(body);
-				if (body.Contains("\"id\":7")) throw new WebException("401");
+				if (body.Contains("\"id\":7")) throw new McpHttpException(401, "{\"error\":\"no token\"}");
 				return body.Contains("ping") ? "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{}}" : "";
 			});
 			Assert.AreEqual(0, code);

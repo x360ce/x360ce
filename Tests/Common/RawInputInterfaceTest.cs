@@ -13,15 +13,15 @@ using x360ce.App.Controls;
 using x360ce.App.Mcp;
 using x360ce.Engine;
 using x360ce.Engine.Data;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
 	/// <summary>
 	/// A controller read through DirectInput and through Raw Input is two rows, usually with the same name. The lists say
 	/// which source each row is read through and keep the two rows next to each other, the Direct Input tab shows a Raw
-	/// Input row's values, the Force Feedback page says it sends no force feedback, and a row added to a tab where its
-	/// twin is mapped starts with the twin's settings.
+	/// Input row's values, the Force Feedback page says when no force feedback reaches it, and a row added to a tab where
+	/// its twin is mapped starts with the twin's settings.
 	/// </summary>
 	[TestClass]
 	public class RawInputInterfaceTest
@@ -344,12 +344,15 @@ namespace x360ce.Tests
 						Assert.AreEqual("Raw Input", SourceShown(grid, rawRow));
 
 						// The wheel's Raw Input row, just added, is the one selected.
+						// Its DirectInput twin takes no force feedback, so the page says none reaches it.
 						var effect = (Label)pad.Controls.Find("EffectDescriptionLabel", true).Single();
-						Assert.AreEqual(PadControl.RawInputForceNote(rawWheel), effect.Text, "The Force Feedback page does not say a Raw Input row sends no force feedback.");
+						var note = PadControl.RawInputForceNote(rawWheel, SettingsManager.UserDevices.ItemsToArraySynchronized());
+						Assert.IsNotNull(note);
+						Assert.AreEqual(note, effect.Text, "The Force Feedback page does not say no force feedback reaches the Raw Input row.");
 						grid.Rows[RowOf(grid, twinRow)].Selected = true;
 						Application.DoEvents();
 						Assert.AreSame(twinRow, pad.GetSelectedSetting(), "The pad's DirectInput row was not selected.");
-						Assert.AreNotEqual(PadControl.RawInputForceNote(rawWheel), effect.Text, "The note stayed for a DirectInput row.");
+						Assert.AreNotEqual(note, effect.Text, "The note stayed for a DirectInput row.");
 					}
 				}
 				finally
@@ -369,13 +372,18 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The Force Feedback note is for Raw Input rows only")]
-		public void The_force_note_is_for_raw_input_rows_only()
+		[Description("The Force Feedback note is for Raw Input rows that no force feedback reaches: with no DirectInput twin that takes it")]
+		public void The_force_note_is_for_raw_input_rows_no_force_reaches()
 		{
-			Assert.IsNotNull(PadControl.RawInputForceNote(RawInputRow("Pad", PadPath)));
-			Assert.IsNull(PadControl.RawInputForceNote(DirectInputRow("Pad", PadPath)));
-			Assert.IsNull(PadControl.RawInputForceNote(new UserDevice { InputSourceType = (int)InputSourceType.DirectInput }));
-			Assert.IsNull(PadControl.RawInputForceNote(null));
+			var raw = RawInputRow("Pad", PadPath);
+			var twin = DirectInputRow("Pad", PadPath);
+			Assert.IsNotNull(PadControl.RawInputForceNote(raw, new[] { raw, twin }), "No note for a Raw Input row whose twin takes no force feedback.");
+			twin.CapFlags = (int)DeviceFlags.ForceFeedback;
+			Assert.IsNull(PadControl.RawInputForceNote(raw, new[] { raw, twin }), "The note says no force reaches a Raw Input row whose twin carries it.");
+			Assert.IsNotNull(PadControl.RawInputForceNote(raw, new[] { raw }), "No note for a Raw Input row with no twin.");
+			Assert.IsNull(PadControl.RawInputForceNote(twin, new[] { raw, twin }), "A note for a DirectInput row.");
+			Assert.IsNull(PadControl.RawInputForceNote(new UserDevice { InputSourceType = (int)InputSourceType.DirectInput }, new UserDevice[0]));
+			Assert.IsNull(PadControl.RawInputForceNote(null, new UserDevice[0]));
 		}
 
 		#endregion

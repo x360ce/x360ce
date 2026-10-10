@@ -1,3 +1,4 @@
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -5,10 +6,16 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
-using System.Threading;
+#if NETFRAMEWORK
 using System.Web.Script.Serialization;
+#else
+using System.Text.Encodings.Web;
+using System.Text.Json;
+#endif
+using System.Threading;
+using JocysCom.ClassLibrary.Controls;
 
-namespace x360ce.Engine.Mcp
+namespace JocysCom.ClassLibrary.Mcp
 {
 	/// <summary>Marks a public static method as a tool an assistant or a script may call, at the given level or above.</summary>
 	[AttributeUsage(AttributeTargets.Method)]
@@ -89,7 +96,7 @@ namespace x360ce.Engine.Mcp
 				object raw;
 				if (byName.TryGetValue(p.Name, out raw) && raw != null)
 				{
-					try { values[i] = Convert.ChangeType(raw, p.ParameterType, System.Globalization.CultureInfo.InvariantCulture); }
+					try { values[i] = System.Convert.ChangeType(raw, p.ParameterType, System.Globalization.CultureInfo.InvariantCulture); }
 					catch (Exception ex) { throw new ArgumentException("Argument " + p.Name + ": " + ex.Message); }
 				}
 				else if (p.HasDefaultValue)
@@ -152,6 +159,9 @@ namespace x360ce.Engine.Mcp
 		/// <summary>The level the program is set to. The program points it at its option; a test may point it elsewhere.</summary>
 		public static Func<AiAccess> Level = () => AiAccess.Read;
 
+		/// <summary>Where the person chooses the level, as the end of a sentence, such as "on the AI tab". Each refusal names it, so the caller can say where to look.</summary>
+		public static string SettingsPlace = "in the program's AI assistant access settings";
+
 		/// <summary>Runs an action on the interface thread. A test running there already may make it a plain call.</summary>
 		public static Action<Action> OnUiThread = Marshal;
 
@@ -163,7 +173,7 @@ namespace x360ce.Engine.Mcp
 		/// </summary>
 		public static void Marshal(Action action)
 		{
-			if (!JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
+			if (!ControlsHelper.InvokeRequired)
 			{
 				action();
 				return;
@@ -172,7 +182,7 @@ namespace x360ce.Engine.Mcp
 			string waiting = null;
 			var finished = false;
 			var settled = new ManualResetEventSlim();
-			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
+			ControlsHelper.BeginInvoke(() =>
 			{
 				try { action(); }
 				// The caller told of the window has gone, so a later failure goes to the program's error
@@ -196,9 +206,9 @@ namespace x360ce.Engine.Mcp
 				if (waiting != null)
 					settled.Set();
 				else
-					JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(look, 100);
+					ControlsHelper.BeginInvoke(look, 100);
 			};
-			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(look);
+			ControlsHelper.BeginInvoke(look);
 			settled.Wait();
 			if (waiting != null)
 				throw new WindowWaitingException(waiting);
@@ -232,7 +242,7 @@ namespace x360ce.Engine.Mcp
 		/// <summary>The one sentence a caller reads when the level is too low.</summary>
 		public static string Refusal(AiAccess needed)
 		{
-			return "This needs " + needed + " access; the program is set to " + Level() + ". The person changes it under AI assistant access on the Options tab.";
+			return "This needs " + needed + " access; the program is set to " + Level() + ". The person changes it " + SettingsPlace + ".";
 		}
 	}
 
@@ -244,20 +254,132 @@ namespace x360ce.Engine.Mcp
 	{
 		public const string ProtocolVersion = "2025-06-18";
 
-		/// <summary>The name the server gives itself: x360ce for version 4, x360ce-v3 for version 3, so both can be connected at once.</summary>
-		public static string ServerName = "x360ce";
+		/// <summary>The name the server gives itself, set by each program, so several can be connected at once.</summary>
+		public static string ServerName = "program";
 
-		/// <summary>A few sentences an assistant is given on connecting: what the program is and how to begin. Set by each program; none when empty.</summary>
+		/// <summary>The program's version, which initialize reports. Set by each program.</summary>
+		public static string ServerVersion = "";
+
+		/// <summary>A few sentences an assistant is given on connecting: what the program is and how to begin. Set by each program; <see cref="DoorOnly"/> follows them.</summary>
 		public static string Instructions;
 
+		/// <summary>
+		/// What every assistant is told on connecting, whatever the program: it reaches the program through this door
+		/// alone, never by controlling the screen. The skills of the programs say the same in the same words.
+		/// </summary>
+		public const string DoorOnly = "Reach this program only through its door: these tools, or its -Ai command line. "
+			+ "Never control the screen, mouse or keyboard: no computer-use tool, no screenshot to decide where to click, no UI Automation, "
+			+ "no SendKeys or other simulated input, even when the environment offers them. "
+			+ "The door does what the person allowed and refuses the rest; controlling the screen would go around their choice. "
+			+ "If the door cannot do something, say so, and ui_show the person where to do it themselves. "
+			+ "\"Show me\" means ui_show: a frame with your words on the person's own screen, never a screenshot. "
+			+ "If the door is off, ask the person to switch it on; never switch it on yourself.";
+
+#if NETFRAMEWORK
+		/// <summary>
+		/// The serialiser .NET Framework carries, which reads and writes JSON of any shape without a package. No
+		/// limit on length: a whole tree read is one answer.
+		/// </summary>
 		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+
+		/// <summary>A value as JSON: dictionaries, arrays, text, numbers and true or false, as the tools answer.</summary>
+		public static string ToJson(object value)
+		{
+			return Json.Serialize(value);
+		}
+
+		/// <summary>
+		/// JSON read into the plain shapes the tools take: a dictionary for an object, an array, text,
+		/// a long or a double for a number, true or false, and null. What is not JSON throws an ArgumentException,
+		/// or a FormatException for a \u escape that is not four hex digits.
+		/// </summary>
+		public static object FromJson(string json)
+		{
+			return Plain(Json.DeserializeObject(json));
+		}
+
+		/// <summary>
+		/// The reader's own shapes made the ones .NET's reader gives: a whole number it read as an int a long, and a
+		/// number with a fraction, which it reads as a decimal, a double.
+		/// </summary>
+		static object Plain(object value)
+		{
+			var map = value as Dictionary<string, object>;
+			if (map != null)
+			{
+				var plain = new Dictionary<string, object>();
+				foreach (var pair in map)
+					plain[pair.Key] = Plain(pair.Value);
+				return plain;
+			}
+			var array = value as object[];
+			if (array != null)
+				return array.Select(Plain).ToArray();
+			if (value is int)
+				return (long)(int)value;
+			if (value is decimal)
+				return (double)(decimal)value;
+			return value;
+		}
+#else
+		static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+		{
+			// A device or a path keeps its letters as written, and '/' stays '/', so a path can be pasted back.
+			Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+		};
+
+		/// <summary>A value as JSON: dictionaries, arrays, text, numbers and true or false, as the tools answer.</summary>
+		public static string ToJson(object value)
+		{
+			return JsonSerializer.Serialize(value, JsonOptions);
+		}
+
+		/// <summary>
+		/// JSON read into the plain shapes the tools take: a dictionary for an object, an array, text,
+		/// a long or a double for a number, true or false, and null. What is not JSON throws.
+		/// </summary>
+		public static object FromJson(string json)
+		{
+			using (var document = JsonDocument.Parse(json))
+				return Plain(document.RootElement);
+		}
+
+		static object Plain(JsonElement element)
+		{
+			switch (element.ValueKind)
+			{
+				case JsonValueKind.Object:
+					var map = new Dictionary<string, object>();
+					foreach (var property in element.EnumerateObject())
+						map[property.Name] = Plain(property.Value);
+					return map;
+				case JsonValueKind.Array:
+					return element.EnumerateArray().Select(Plain).ToArray();
+				case JsonValueKind.String:
+					return element.GetString();
+				case JsonValueKind.Number:
+					long whole;
+					return element.TryGetInt64(out whole) ? (object)whole : element.GetDouble();
+				case JsonValueKind.True:
+					return true;
+				case JsonValueKind.False:
+					return false;
+				default:
+					return null;
+			}
+		}
+#endif
 
 		/// <summary>Handles one JSON-RPC message. Returns the response, or an empty string for a notification.</summary>
 		public static string Handle(string requestJson)
 		{
 			Dictionary<string, object> request;
-			try { request = Json.DeserializeObject(requestJson) as Dictionary<string, object>; }
-			catch (Exception ex) { return Error(null, -32700, "Parse error: " + ex.Message); }
+			try { request = FromJson(requestJson) as Dictionary<string, object>; }
+#if NETFRAMEWORK
+			catch (Exception ex) when (ex is ArgumentException || ex is FormatException) { return Error(null, -32700, "Parse error: " + ex.Message); }
+#else
+			catch (JsonException ex) { return Error(null, -32700, "Parse error: " + ex.Message); }
+#endif
 			if (request == null)
 				return Error(null, -32600, "Not a request object.");
 			object id;
@@ -290,10 +412,9 @@ namespace x360ce.Engine.Mcp
 			{
 				{ "protocolVersion", ProtocolVersion },
 				{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
-				{ "serverInfo", new Dictionary<string, object> { { "name", ServerName }, { "version", System.Windows.Forms.Application.ProductVersion } } },
+				{ "serverInfo", new Dictionary<string, object> { { "name", ServerName }, { "version", ServerVersion } } },
 			};
-			if (!string.IsNullOrEmpty(Instructions))
-				result["instructions"] = Instructions;
+			result["instructions"] = string.IsNullOrEmpty(Instructions) ? DoorOnly : Instructions + " " + DoorOnly;
 			return result;
 		}
 
@@ -310,7 +431,7 @@ namespace x360ce.Engine.Mcp
 		{
 			var name = p != null && p.ContainsKey("name") ? p["name"] as string : null;
 			var arguments = p != null && p.ContainsKey("arguments") ? p["arguments"] as Dictionary<string, object> : null;
-			var shown = name + " " + McpLog.Clip(Redact(name, arguments == null ? "" : Json.Serialize(arguments)), 300);
+			var shown = name + " " + McpLog.Clip(Redact(name, arguments), 300);
 			var tool = McpCatalog.Tools.FirstOrDefault(t => t.Name == name);
 			if (tool == null)
 			{
@@ -339,24 +460,48 @@ namespace x360ce.Engine.Mcp
 				McpLog.Write(shown + " -> failed after " + watch.ElapsedMilliseconds + " ms: " + McpLog.Clip(ex.Message, 300));
 				return Result(id, Content(ex.Message, true));
 			}
-			var text = result == null ? "Done." : result as string ?? Json.Serialize(result);
+			var text = result == null ? "Done." : result as string ?? ToJson(result);
 			McpLog.Write(shown + " -> " + McpLog.Clip(text, 200) + " in " + watch.ElapsedMilliseconds + " ms");
 			return Result(id, Content(text, false));
 		}
 
 		/// <summary>
-		/// A password typed through the door must not be readable in the log afterwards. The reader
-		/// already refuses to read a password box out; the writer's argument is masked the same way.
+		/// A password or a secret typed through the door must not be readable in the log afterwards.
+		/// The reader already refuses to read a password box or a secret out; the writer's argument is
+		/// masked the same way: the value a ui_set or a script's set step gives a control whose path
+		/// names a password, or that <see cref="McpUiTools.SecretControls"/> lists, whatever its type.
 		/// </summary>
-		static string Redact(string tool, string argumentsJson)
+		static string Redact(string tool, Dictionary<string, object> arguments)
 		{
-			if (argumentsJson.IndexOf("password", StringComparison.OrdinalIgnoreCase) < 0)
-				return argumentsJson;
-			if (tool == "ui_set")
-				return System.Text.RegularExpressions.Regex.Replace(argumentsJson, "\"value\":\"[^\"]*\"", "\"value\":\"***\"");
+			if (arguments == null)
+				return "";
+			// Masked in a copy before it becomes JSON, so the call itself still gets what was sent, and
+			// the mask does not depend on how the writer escapes the value.
+			if (tool == "ui_set" && arguments.Any(x => Is(x.Key, "path") && NamesSecret(x.Value as string)))
+				arguments = arguments.ToDictionary(x => x.Key, x => Is(x.Key, "value") ? "***" : x.Value);
 			if (tool == "ui_script")
-				return System.Text.RegularExpressions.Regex.Replace(argumentsJson, "(set [^|\\]*password[^|\\]*\\|)[^\\]*", "$1 ***", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-			return argumentsJson;
+				arguments = arguments.ToDictionary(x => x.Key, x => Is(x.Key, "script") && x.Value is string
+					? SecretStep.Replace((string)x.Value, m => NamesSecret(m.Groups[2].Value) ? m.Groups[1].Value + m.Groups[2].Value + "| ***" : m.Value)
+					: x.Value);
+			return ToJson(arguments);
+		}
+
+		/// <summary>A script's set step, as UiScript reads one: the verb, the path up to the first '|', then the value.</summary>
+		static readonly System.Text.RegularExpressions.Regex SecretStep = new System.Text.RegularExpressions.Regex(
+			"^([ \\t]*set )([^|\\r\\n]*)\\|[^\\r\\n]*", System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Multiline);
+
+		/// <summary>True when a path names a password, or its last segment is a control whose value is a secret.</summary>
+		static bool NamesSecret(string path)
+		{
+			if ((path ?? "").IndexOf("password", StringComparison.OrdinalIgnoreCase) >= 0)
+				return true;
+			var last = (path ?? "").Split('/').LastOrDefault(x => x.Trim().Length > 0);
+			return last != null && McpUiTools.SecretControls.Contains(last.Trim(), StringComparer.OrdinalIgnoreCase);
+		}
+
+		static bool Is(string key, string name)
+		{
+			return string.Equals(key, name, StringComparison.OrdinalIgnoreCase);
 		}
 
 		static Dictionary<string, object> Content(string text, bool isError)
@@ -369,180 +514,13 @@ namespace x360ce.Engine.Mcp
 
 		static string Result(object id, object result)
 		{
-			return Json.Serialize(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", id }, { "result", result } });
+			return ToJson(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", id }, { "result", result } });
 		}
 
 		/// <summary>A JSON-RPC error envelope. Internal so the transport answers a fault in the same shape.</summary>
 		internal static string Error(object id, int code, string message)
 		{
-			return Json.Serialize(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", id }, { "error", new Dictionary<string, object> { { "code", code }, { "message", message } } } });
-		}
-	}
-
-	/// <summary>Serves McpServer over HTTP on the loopback address, to callers that present the token.</summary>
-	public static class McpListener
-	{
-		/// <summary>The address that keeps the door on this computer. The default.</summary>
-		public const string LoopbackAddress = "127.0.0.1";
-		/// <summary>The address that opens the door to every network the computer is on.</summary>
-		public const string AnyAddress = "0.0.0.0";
-
-		static System.Net.HttpListener _listener;
-		static string _token;
-
-		/// <summary>What every program tells a caller without the token.</summary>
-		public const string NoToken = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
-			+ "A program on this computer can call x360ce.exe -Ai instead, which needs no token.";
-
-		/// <summary>
-		/// What a caller without the token is told, as the body of the refusal. A program that finds the door without
-		/// the token is pointed at the command line, which needs none, rather than left to look for the token on disk.
-		/// </summary>
-		public static string Unauthorised = NoToken;
-
-		/// <summary>A new token: 32 random bytes as 64 lower-case hex digits, the shape the log hides.</summary>
-		public static string NewToken()
-		{
-			var bytes = new byte[32];
-			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
-				rng.GetBytes(bytes);
-			return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
-		}
-
-		public static bool IsRunning { get { return _listener != null; } }
-
-		/// <summary>Why the door is not usable, as one sentence with its own remedy, for the Issues tab. Null after a start that worked.</summary>
-		public static string LastError;
-
-		/// <summary>True when the last start failed only because Windows has no URL reservation for every network; the Issues tab can make one.</summary>
-		public static bool NeedsUrlReservation;
-
-		/// <summary>The prefix http.sys is asked for: the loopback name a standard user may bind, or every address, which needs a reservation.</summary>
-		public static string Prefix(string address, int port)
-		{
-			return (address == AnyAddress ? "http://+:" : "http://localhost:") + port + "/mcp/";
-		}
-
-		/// <summary>Opens the door on the address and port. False, with the reason in LastError, when it cannot.</summary>
-		public static bool Start(string address, int port, string token)
-		{
-			Stop();
-			NeedsUrlReservation = false;
-			if (port < 1024 || port > 49151)
-			{
-				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range on the Options tab.";
-				return false;
-			}
-			var listener = new System.Net.HttpListener();
-			// localhost is the host a standard user may bind without a URL reservation, where
-			// 127.0.0.1 is refused on some Windows versions, and it stays on this machine. Every
-			// network is the + wildcard, the only form http.sys takes for that, and it needs a
-			// reservation made once as Administrator.
-			listener.Prefixes.Add(Prefix(address, port));
-			try
-			{
-				listener.Start();
-			}
-			catch (System.Net.HttpListenerException ex)
-			{
-				// Another program holds the port, or Windows has no reservation. The Issues tab says
-				// which and what to do; a crash report would say neither.
-				NeedsUrlReservation = address == AnyAddress && ex.ErrorCode == 5;
-				LastError = NeedsUrlReservation
-					? "listening on every network needs a one-time permission from Windows. Press Fix on the Issues tab, or run as Administrator: netsh http add urlacl url=" + Prefix(address, port) + " sddl=D:(A;;GX;;;WD)"
-					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port on the Options tab.";
-				return false;
-			}
-			_token = token;
-			_listener = listener;
-			LastError = null;
-			listener.BeginGetContext(OnRequest, listener);
-			McpLog.Write("door opened at " + Prefix(address, port) + " with " + McpCatalog.Level() + " access");
-			return true;
-		}
-
-		public static void Stop()
-		{
-			var listener = _listener;
-			_listener = null;
-			if (listener != null)
-			{
-				listener.Close();
-				McpLog.Write("door closed");
-			}
-		}
-
-		/// <summary>
-		/// Runs on a pool thread, which the crash reporter does not watch. Everything is caught and
-		/// answered, so a broken client, a fault in a tool, or a stop that lands mid-request ends in
-		/// a response or in silence rather than in the program.
-		/// </summary>
-		static void OnRequest(IAsyncResult ar)
-		{
-			var listener = (System.Net.HttpListener)ar.AsyncState;
-			System.Net.HttpListenerContext context;
-			try
-			{
-				context = listener.EndGetContext(ar);
-				listener.BeginGetContext(OnRequest, listener);
-			}
-			catch (ObjectDisposedException) { return; }
-			catch (System.Net.HttpListenerException) { return; }
-			try
-			{
-				Answer(context);
-			}
-			catch (Exception ex)
-			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog("AI assistant access request failed: " + ex.Message, System.Diagnostics.TraceLevel.Warning);
-				try { Write(context.Response, 500, McpServer.Error(null, -32603, "Internal error.")); }
-				catch (Exception) { }
-			}
-		}
-
-		/// <summary>
-		/// Whether a request's Origin is a page on this computer. A browser names the page that sends a request, so a
-		/// web site the person has open cannot reach the door through a name that points here.
-		/// </summary>
-		public static bool IsLocalOrigin(string origin)
-		{
-			Uri uri;
-			return Uri.TryCreate(origin, UriKind.Absolute, out uri) && uri.IsLoopback;
-		}
-
-		static void Answer(System.Net.HttpListenerContext context)
-		{
-			var origin = context.Request.Headers["Origin"];
-			if (!string.IsNullOrEmpty(origin) && !IsLocalOrigin(origin))
-			{
-				McpLog.Write("refused: origin " + McpLog.Clip(origin, 100) + ", from " + context.Request.RemoteEndPoint);
-				Write(context.Response, 403, "");
-				return;
-			}
-			var authorised = (context.Request.Headers["Authorization"] ?? "") == "Bearer " + _token;
-			if (!authorised || context.Request.HttpMethod != "POST")
-			{
-				if (!authorised)
-					McpLog.Write("refused: no valid token, from " + context.Request.RemoteEndPoint);
-				Write(context.Response, authorised ? 405 : 401, authorised ? "" : new JavaScriptSerializer().Serialize(new Dictionary<string, object> { { "error", Unauthorised } }));
-				return;
-			}
-			string body;
-			// JSON is UTF-8 whatever the request says; a missing charset would otherwise mean the system code page.
-			using (var reader = new System.IO.StreamReader(context.Request.InputStream, Encoding.UTF8))
-				body = reader.ReadToEnd();
-			var answer = McpServer.Handle(body);
-			Write(context.Response, answer.Length == 0 ? 202 : 200, answer);
-		}
-
-		static void Write(System.Net.HttpListenerResponse response, int status, string body)
-		{
-			var bytes = Encoding.UTF8.GetBytes(body);
-			response.StatusCode = status;
-			response.ContentType = "application/json; charset=utf-8";
-			response.ContentLength64 = bytes.Length;
-			response.OutputStream.Write(bytes, 0, bytes.Length);
-			response.Close();
+			return ToJson(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", id }, { "error", new Dictionary<string, object> { { "code", code }, { "message", message } } } });
 		}
 	}
 }

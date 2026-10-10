@@ -1,4 +1,4 @@
-// @under-test: Engine/Mcp/McpUiTools.cs, Engine/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpServer.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,8 +11,8 @@ using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Mcp;
 using x360ce.App.UiTree;
-using x360ce.Engine.Mcp;
-using x360ce.Engine.UiTree;
+using JocysCom.ClassLibrary.Mcp;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.Tests
 {
@@ -281,7 +281,7 @@ namespace x360ce.Tests
 					a();
 					if (UiCallout.Target == null)
 						return;
-					seen.Add(UiCallout.Target);
+					seen.Add((Control)UiCallout.Target);
 					selected.Add(tabs.SelectedTab);
 					around.Add(UiCallout.Around);
 				};
@@ -408,6 +408,84 @@ namespace x360ce.Tests
 				// Even at the top level: the level is a person's choice, never the caller's.
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(level.Name, "Off")).Message, "Options tab");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(regenerate.Name)).Message, "Options tab");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The token box's value is never read out: not by a read, a branch read, a search or the focus, while other boxes still are")]
+		public void The_token_is_withheld_from_reads()
+		{
+			var token = McpListener.NewToken();
+			WithWindow(AiAccess.Read, form =>
+			{
+				var group = new GroupBox { Name = "Ai" };
+				var tokenBox = new TextBox { Name = "AiAccessTokenTextBox", Text = token, ReadOnly = true, AccessibleName = "Token", AccessibleDescription = "What a caller presents." };
+				var port = new TextBox { Name = "Port", Text = "37360", AccessibleName = "Port", AccessibleDescription = "Where the door listens." };
+				group.Controls.AddRange(new Control[] { tokenBox, port });
+				form.Controls.Add(group);
+				form.Show();
+				form.ActiveControl = tokenBox;
+				Assert.IsFalse(McpUiTools.UiRead().Contains(token), "A read of the window carries the token.");
+				Assert.IsFalse(McpUiTools.UiRead("Ai/AiAccessTokenTextBox").Contains(token), "A read of the token box carries the token.");
+				Assert.IsFalse(McpServer.ToJson(McpUiTools.UiFind("token")).Contains(token), "A search carries the token.");
+				Assert.IsFalse(McpServer.ToJson(McpUiTools.UiCurrent()).Contains(token), "The element with focus carries the token.");
+				StringAssert.Contains(McpUiTools.UiRead("Ai/Port"), "37360", "Withholding the token withheld another box's value too.");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A disabled control is not set, as a person cannot set it either, and stays as it was")]
+		public void A_disabled_control_is_not_set()
+		{
+			WithWindow(AiAccess.Configure, form =>
+			{
+				var box = new CheckBox { Name = "Box", Text = "Box", Enabled = false };
+				var slider = new TrackBar { Name = "Slider", Maximum = 100, Value = 10, Enabled = false };
+				form.Controls.AddRange(new Control[] { box, slider });
+				form.Show();
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Box", "true")).Message, "disabled");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Slider", "50")).Message, "disabled");
+				Assert.IsFalse(box.Checked, "The disabled check box was changed.");
+				Assert.AreEqual(10, slider.Value, "The disabled slider was changed.");
+				slider.Enabled = true;
+				Assert.IsNull(McpUiTools.UiSet("Slider", "50"));
+				Assert.AreEqual(50, slider.Value);
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("With 0 seconds the frame answers at once and stays until taken away; ui_hide and a script's hide step take it away")]
+		public void A_frame_kept_until_hidden()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var go = new Button { Name = "Go", Text = "Go" };
+				form.Controls.Add(go);
+				form.Show();
+				try
+				{
+					var watch = System.Diagnostics.Stopwatch.StartNew();
+					Assert.IsNull(McpUiTools.UiShow("Go", "Take the screenshot now", 0));
+					Assert.IsTrue(watch.ElapsedMilliseconds < 1000, "Pointing for 0 seconds waited " + watch.ElapsedMilliseconds + " ms before answering.");
+					Assert.AreSame(go, UiCallout.Target, "The frame is not around the element.");
+					// Several of the callout's own checks go by while nobody acts.
+					var until = DateTime.Now.AddMilliseconds(700);
+					while (DateTime.Now < until)
+					{
+						Application.DoEvents();
+						Thread.Sleep(20);
+					}
+					Assert.AreSame(go, UiCallout.Target, "The frame went before anyone acted or took it away.");
+					Assert.IsNull(McpUiTools.UiHide());
+					Assert.IsNull(UiCallout.Target, "ui_hide left the frame.");
+					Assert.AreEqual("Nothing is pointed at.", McpUiTools.UiHide());
+					StringAssert.Contains(McpUiTools.UiScript("show Go | Here | 0\nhide"), "2 step(s)");
+					Assert.IsNull(UiCallout.Target, "The script's hide step left the frame.");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
 			});
 		}
 

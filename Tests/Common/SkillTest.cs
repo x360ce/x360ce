@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using x360ce.App;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -73,6 +73,25 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The skill and the instructions the door sends keep an agent to the door: never the screen, mouse or keyboard, and \"show me\" means ui_show; the skill says so in its description and before it says how to connect")]
+		public void Skill_and_instructions_keep_an_agent_to_the_door()
+		{
+			var text = Text();
+			var flat = Regex.Replace(text, @"\s+", " ");
+			var description = Regex.Replace(Regex.Match(Frontmatter(text), @"(?ms)^description: >-\n(.*?)(?=^\S)").Groups[1].Value, @"\s+", " ");
+			StringAssert.Contains(description, "never by controlling the screen, mouse or keyboard", "An agent choosing how to act reads the description first.");
+			var rule = flat.IndexOf("Never control the screen, mouse or keyboard", StringComparison.Ordinal);
+			Assert.IsTrue(rule > 0 && rule < flat.IndexOf("## Connecting", StringComparison.Ordinal), "The rule must come before the skill says how to connect.");
+			foreach (var words in new[] { "only through its door", "\"Show me\" means `ui_show`", "never a screenshot", "If the door cannot do something, say so", "never switch it on yourself" })
+				StringAssert.Contains(flat, words, "The skill does not say: " + words);
+			// What an assistant connecting as an MCP client is told, as this program sends it.
+			App.Mcp.McpTools.Register();
+			var instructions = (string)McpServer.InitializeResult()["instructions"];
+			foreach (var words in new[] { "only through its door", "Never control the screen, mouse or keyboard", "\"Show me\" means ui_show", "never a screenshot", "If the door cannot do something, say so", "never switch it on yourself" })
+				StringAssert.Contains(instructions, words, "The door's instructions do not say: " + words);
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("SKILL.md stays under 500 lines, the size agents load whole")]
 		public void Skill_is_short_enough_to_load_whole()
 		{
@@ -125,7 +144,7 @@ namespace x360ce.Tests
 			var pairs = new[]
 			{
 				new[] { AppHelper.HelpV4Resource, "docs/Help.v4.md" },
-				new[] { AiSkill.HelpV3Resource, "docs/Help.v3.md" },
+				new[] { AppHelper.HelpV3Resource, "docs/Help.v3.md" },
 				new[] { AiSkill.References["references/ui-tree-v4.md"], "skills/x360ce/references/ui-tree-v4.md" },
 				new[] { AiSkill.References["references/ui-tree-v4.json"], "skills/x360ce/references/ui-tree-v4.json" },
 				new[] { AiSkill.References["references/ui-tree-v3.md"], "skills/x360ce/references/ui-tree-v3.md" },
@@ -166,7 +185,7 @@ namespace x360ce.Tests
 		/// <summary>An interface description without its version and build day, which every build writes anew.</summary>
 		static string Unstamped(string text)
 		{
-			return x360ce.Engine.UiTree.UiTreeExporter.Restamp(Normalise(text), "0", "0");
+			return JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Restamp(Normalise(text), "0", "0");
 		}
 
 		/// <summary>The text with its version line blank: the build writes the program's version into the repository's copy.</summary>

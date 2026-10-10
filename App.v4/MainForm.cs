@@ -817,7 +817,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			Engine.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -891,7 +891,9 @@ namespace x360ce.App
 				// delete temp.
 				tmp.Delete();
 			}
-			SaveAll();
+			// An export only describes the window, so it leaves the settings as it found them.
+			if (Program.ExportUiFolder == null)
+				SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}
 
@@ -1079,10 +1081,10 @@ namespace x360ce.App
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
 			// navigation tree is built from.
-			Engine.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
-			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
 			// too, now that every panel that shows one exists.
 			ControlsHelper.ScaleImages(this);

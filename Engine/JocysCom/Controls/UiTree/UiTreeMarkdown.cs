@@ -1,8 +1,9 @@
+#nullable disable
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace x360ce.Engine.UiTree
+namespace JocysCom.ClassLibrary.Controls.UiTree
 {
 	/// <summary>Draws the tree as text, in the shape a person reads in a terminal.</summary>
 	public static class UiTreeMarkdown
@@ -24,13 +25,16 @@ namespace x360ce.Engine.UiTree
 		/// </remarks>
 		const int NameWidth = 76;
 
-		/// <summary>The whole document: a short preamble, then the tree.</summary>
+		/// <summary>The command that writes the document again, shown under its title. Set by each program.</summary>
+		public static string ExportCommand = "<program>.exe -ExportUi=<folder>";
+
 		/// <summary>The line under the title that names the build: version and the day it was built.</summary>
 		public static string Stamp(string version, string built)
 		{
 			return "Version " + version + ", built " + built + ".";
 		}
 
+		/// <summary>The whole document: a short preamble, then the tree.</summary>
 		public static string Write(UiNode root)
 		{
 			var sb = new StringBuilder();
@@ -39,11 +43,15 @@ namespace x360ce.Engine.UiTree
 			if (!string.IsNullOrEmpty(root.Version))
 				sb.AppendLine(Stamp(root.Version, root.Built));
 			sb.AppendLine("Written by the program itself, so it describes the build it came from.");
-			sb.AppendLine("Regenerate with `x360ce.exe /ExportUi=<folder>`.");
+			sb.AppendLine("Regenerate with `" + ExportCommand + "`.");
 			sb.AppendLine();
-			sb.AppendLine("- **Controls** describes each control that appears in more than one place, once.");
-			sb.AppendLine("- **App** is the main window. A `-> Name` line stands for a control described above.");
-			sb.AppendLine("- **Tray** is the menu behind the icon in the notification area.");
+			var hasControls = HasSection(root, "Controls");
+			if (hasControls)
+				sb.AppendLine("- **Controls** describes each control that appears in more than one place, once.");
+			sb.AppendLine("- **App** is the main window."
+				+ (hasControls ? " A `-> Name` line stands for a control described above." : ""));
+			if (HasSection(root, "Tray"))
+				sb.AppendLine("- **Tray** is the menu behind the icon in the notification area.");
 			sb.AppendLine();
 			sb.AppendLine("Every line carries three things in columns of their own, so each can be read");
 			sb.AppendLine("straight down: what kind of element it is, where it sits and what it is called,");
@@ -54,9 +62,13 @@ namespace x360ce.Engine.UiTree
 			sb.AppendLine("accept different ranges - a slider in per cent beside a box in raw units are two");
 			sb.AppendLine("different things to set, so both are kept.");
 			sb.AppendLine();
-			sb.AppendLine("Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button` and");
-			sb.AppendLine("`Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`, `Number` and `Text`");
-			sb.AppendLine("are set. `Value`, `Status` and `Grid` are read, not typed in.");
+			sb.AppendLine("Kinds: `Tab`, `Tabs`, `Section`, `Group`, `Toolbar` and `Control` hold other");
+			sb.AppendLine("elements. `Button` and `Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`,");
+			sb.AppendLine("`Number` and `Text` are set. `Value`, `Status`, `Label`, `Picture`, `Progress` and");
+			sb.AppendLine("`Grid` are read, not typed in.");
+			sb.AppendLine();
+			sb.AppendLine("A name followed by `(hidden)` stands for an element that is present but");
+			sb.AppendLine("not shown in this state of the program.");
 			sb.AppendLine();
 			sb.AppendLine("```");
 			sb.AppendLine(Columns("[Kind]", "Where it sits and what it is called", "What it is for"));
@@ -64,6 +76,12 @@ namespace x360ce.Engine.UiTree
 			WriteChildren(sb, root, "");
 			sb.AppendLine("```");
 			return sb.ToString();
+		}
+
+		/// <summary>True when the program's node holds a section of that name, so the preamble speaks only of what the document has.</summary>
+		static bool HasSection(UiNode root, string name)
+		{
+			return root.Items != null && root.Items.Any(x => x.Name == name);
 		}
 
 		static void WriteChildren(StringBuilder sb, UiNode node, string indent)

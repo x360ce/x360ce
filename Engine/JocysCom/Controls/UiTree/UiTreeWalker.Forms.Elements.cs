@@ -1,10 +1,11 @@
+#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace x360ce.Engine.UiTree
+namespace JocysCom.ClassLibrary.Controls.UiTree
 {
 	/// <summary>
 	/// The parts of the interface that are not controls: the entries on a bar or a menu, and the
@@ -23,7 +24,7 @@ namespace x360ce.Engine.UiTree
 		/// The one element inside another that a segment names, or null. A name matching two
 		/// siblings names neither, because a path that points at two places points at nothing.
 		/// </summary>
-		static object ChildOf(object element, string name)
+		static object ChildOfForms(object element, string name)
 		{
 			var control = element as Control;
 			if (control != null)
@@ -99,19 +100,6 @@ namespace x360ce.Engine.UiTree
 			return null;
 		}
 
-		/// <summary>
-		/// The field name an element is guarded by. A row or a cell answers with its grid's name:
-		/// what a grid holds is data, and a rule about a control is a rule about the whole grid.
-		/// </summary>
-		public static string IdOf(object element)
-		{
-			var item = element as ToolStripItem;
-			if (item != null)
-				return item.Name;
-			var control = ControlOf(element);
-			return control == null ? null : control.Name;
-		}
-
 		#endregion
 
 		#region Bar and menu entries
@@ -125,6 +113,11 @@ namespace x360ce.Engine.UiTree
 				node.Path = path.Length == 0 ? null : path;
 				node.Value = GetValue(item);
 			}
+			else
+			{
+				// The document names an entry whose words follow the program's state the same on every computer.
+				node.Name = UiText.LiveNameFor(item) ?? node.Name;
+			}
 			var parent = item as ToolStripDropDownItem;
 			if (parent != null)
 				foreach (ToolStripItem child in parent.DropDownItems)
@@ -132,19 +125,11 @@ namespace x360ce.Engine.UiTree
 			return node;
 		}
 
-		/// <summary>The path of something inside an element, or null where either cannot be addressed.</summary>
-		static string ChildPath(string path, string name)
-		{
-			if (path == null || string.IsNullOrEmpty(name))
-				return null;
-			return path.Length == 0 ? name : path + "/" + name;
-		}
-
 		static UiNode Describe(ToolStripItem item)
 		{
 			return new UiNode
 			{
-				Name = NameOf(item.AccessibleName, UiText.NameFor(item), item.Text, null),
+				Name = NameOf(item.AccessibleName, UiText.NameFor(item), item.Text, false),
 				Description = Clean(item.AccessibleDescription),
 				Role = RoleOf(item),
 				Id = item.Name,
@@ -224,6 +209,9 @@ namespace x360ce.Engine.UiTree
 
 		static string SetValue(ToolStripItem item, string value)
 		{
+			// A person cannot change a disabled entry either.
+			if (!item.Enabled)
+				return "This element is disabled now.";
 			var role = RoleOf(item);
 			if (role == "CheckBox")
 			{

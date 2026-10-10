@@ -61,6 +61,23 @@ namespace x360ce.Engine.Data
 				&& string.Equals(HidDevicePath, other.HidDevicePath, StringComparison.OrdinalIgnoreCase);
 		}
 
+		/// <summary>The twin this Raw Input device's force feedback goes through: the same controller read through DirectInput, whose driver takes force feedback. Null for any other device, or when there is none.</summary>
+		/// <remarks>
+		/// Raw Input only reads: Windows offers no way to write to a device through it. A pad's or wheel's driver takes
+		/// vibration and wheel forces through DirectInput; an Xbox controller's DirectInput side takes none, and its motors
+		/// are reached through XInput instead.
+		/// </remarks>
+		/// <param name="devices">The devices listed.</param>
+		public UserDevice ForceTwin(System.Collections.Generic.IEnumerable<UserDevice> devices)
+		{
+			if (InputSource != Engine.InputSourceType.RawInput || devices == null)
+				return null;
+			foreach (var device in devices)
+				if (device != null && device.IsDirectInput && device.IsTwinOf(this) && (device.CapFlags & (int)DeviceFlags.ForceFeedback) != 0)
+					return device;
+			return null;
+		}
+
 		public void LoadInstance(DeviceInstance ins)
 		{
 			// Names from the driver are cleaned on the way in, so the settings file stays writable.

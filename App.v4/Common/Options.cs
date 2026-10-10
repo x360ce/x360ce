@@ -1,11 +1,11 @@
 ﻿using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Mcp;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -325,6 +325,10 @@ namespace x360ce.App
 		public const string LoopbackAddress = McpListener.LoopbackAddress;
 		/// <summary>The address that opens the door to every network the computer is on.</summary>
 		public const string AnyAddress = McpListener.AnyAddress;
+
+		[DefaultValue(false), Description("Whether programs on this computer reach the door without the token while it listens on 127.0.0.1 only.")]
+		public bool AiAccessTrustLocal { get { return _AiAccessTrustLocal; } set { _AiAccessTrustLocal = value; OnPropertyChanged(); } }
+		bool _AiAccessTrustLocal;
 
 		[DefaultValue(37360), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }

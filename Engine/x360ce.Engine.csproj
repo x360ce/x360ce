@@ -206,22 +206,7 @@
     <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
-    <Compile Include="Mcp\AiAccess.cs" />
-    <Compile Include="Mcp\McpClient.cs" />
-    <Compile Include="Mcp\McpLog.cs" />
-    <Compile Include="Mcp\McpServer.cs" />
-    <Compile Include="Mcp\McpUiTools.cs" />
-    <Compile Include="UiTree\OverlayForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UiTree\UiCallout.cs" />
     <Compile Include="UiTree\UiGameFlags.cs" />
-    <Compile Include="UiTree\UiNode.cs" />
-    <Compile Include="UiTree\UiText.cs" />
-    <Compile Include="UiTree\UiTreeExporter.cs" />
-    <Compile Include="UiTree\UiTreeMarkdown.cs" />
-    <Compile Include="UiTree\UiTreeWalker.cs" />
-    <Compile Include="UiTree\UiTreeWalker.Elements.cs" />
     <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />
@@ -309,6 +294,18 @@
     <Compile Include="JocysCom\Controls\Themes\ThemeResourceManager.cs" />
     <Compile Include="JocysCom\Controls\Themes\ThemeType.cs" />
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\OverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\UiTree\UiCallout.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiNode.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiText.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiText.Forms.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeExporter.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeMarkdown.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.Forms.cs" />
+    <Compile Include="JocysCom\Controls\UiTree\UiTreeWalker.Forms.Elements.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.ConvertTable.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
@@ -347,6 +344,24 @@
     <Compile Include="JocysCom\Mail\MailMessageSerializable.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccess.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessModel.Catalog.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessModel.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Mcp\AiAccessUserControl.Designer.cs">
+      <DependentUpon>AiAccessUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Mcp\AiSkill.cs" />
+    <Compile Include="JocysCom\Mcp\IAiAccessSettings.cs" />
+    <Compile Include="JocysCom\Mcp\McpClient.cs" />
+    <Compile Include="JocysCom\Mcp\McpListener.cs" />
+    <Compile Include="JocysCom\Mcp\McpLog.cs" />
+    <Compile Include="JocysCom\Mcp\McpServer.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.Forms.cs" />
+    <Compile Include="JocysCom\Mcp\McpUiTools.Windows.cs" />
     <Compile Include="JocysCom\Network\CheckNetworkState.cs" />
     <Compile Include="JocysCom\Network\NetStatInfo.cs" />
     <Compile Include="JocysCom\Network\NetworkHelper.cs" />

@@ -1,6 +1,7 @@
-﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, App.v4/Controls/OptionsUpdateUserControl.Designer.cs
+﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, App.v4/Controls/OptionsUpdateUserControl.Designer.cs, Engine/JocysCom/Mcp/AiAccessUserControl.Designer.cs
 // @area: options-layout   @layer: unit
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Mcp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -79,28 +80,45 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("Every caption and button of the AI skill panel is whole and inside the panel, with its longest status")]
-		public void Ai_skill_rows_stay_inside_the_panel()
+		[Description("Every caption, box and button of the AI page is whole and inside its section, with the longest texts the page writes, and every line of the example, the token and the snippet is inside its box")]
+		public void Ai_page_rows_stay_inside_their_sections()
 		{
 			foreach (var factor in WidthFactors)
 			{
 				WithOptionsPage(factor, page =>
 				{
-					var table = Descendants(page).FirstOrDefault(x => x.Name == "AiSkillTableLayoutPanel");
-					Assert.IsNotNull(table, "AiSkillTableLayoutPanel was not found on the Options page.");
-					Show(table);
+					var ai = Descendants(page).OfType<AiAccessUserControl>().SingleOrDefault();
+					Assert.IsNotNull(ai, "The AI page was not found on the Options page.");
+					Show(ai);
+					ai.CreateControl();
 					// The longest status the page writes: a copy from a newer program, with a version of full width.
-					foreach (var name in new[] { "AiSkillClaudeStatusLabel", "AiSkillAgentsStatusLabel" })
-						table.Controls.Find(name, false).Single().Text = "Version 4.25.300.0, from a newer program.";
-					table.PerformLayout();
-					var boxes = table.Controls.Cast<Control>().Where(x => x.Visible && ReadOrClicked(x))
-						.ToDictionary(x => x.Name, x => x.Bounds);
-					Assert.IsTrue(boxes.Count >= 10, "Expected the whole AI skill panel, measured " + boxes.Count + " controls.");
-					AssertNoOverlap(boxes, factor);
-					foreach (var box in boxes)
-						Assert.IsTrue(box.Value.Right <= table.ClientSize.Width && box.Value.Bottom <= table.ClientSize.Height,
-							box.Key + " " + box.Value + " runs past the panel, which is " + table.ClientSize +
-							", with the page " + factor + " times its designed width.");
+					foreach (var name in new[] { "AiSkillClaudeStatusText", "AiSkillAgentsStatusText" })
+						ai.Controls.Find(name, true).Single().Text = "Version 4.25.300.0, from a newer program.";
+					ai.Controls.Find("AiAccessTokenTextBox", true).Single().Text = McpListener.NewToken();
+					ai.PerformLayout();
+					foreach (var section in new[] { "AiHeaderPanel", "AiAccessPanel", "AiSkillPanel" })
+					{
+						var table = (TableLayoutPanel)ai.Controls.Find(section, true).Single();
+						table.PerformLayout();
+						var boxes = table.Controls.Cast<Control>().Where(x => x.Visible && (ReadOrClicked(x) || x is TextBoxBase))
+							.ToDictionary(x => x.Name, x => x.Bounds);
+						Assert.AreEqual(table.Controls.Count, boxes.Count, "Expected the whole of " + section + ".");
+						AssertNoOverlap(boxes, factor);
+						foreach (var box in boxes)
+							Assert.IsTrue(box.Value.Right <= table.ClientSize.Width && box.Value.Bottom <= table.ClientSize.Height,
+								box.Key + " " + box.Value + " runs past " + section + ", which is " + table.ClientSize +
+								", with the page " + factor + " times its designed width.");
+					}
+					// A box that wraps grows to its lines; a line below its bottom edge is cut off.
+					foreach (var name in new[] { "AiExampleTextBox", "AiAccessTokenTextBox", "AiAccessSnippetTextBox" })
+					{
+						var box = (TextBox)ai.Controls.Find(name, true).Single();
+						var last = box.GetPositionFromCharIndex(box.TextLength - 1);
+						var line = TextRenderer.MeasureText("Ag", box.Font, Size.Empty, TextFormatFlags.NoPadding).Height;
+						Assert.IsTrue(last.Y + line <= box.ClientSize.Height, string.Format(
+							"The last line of {0} ends at {1} px, below the box, which shows {2} px, with the page {3} times its designed width.",
+							name, last.Y + line, box.ClientSize.Height, factor));
+					}
 				});
 			}
 		}

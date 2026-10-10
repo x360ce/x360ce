@@ -1,4 +1,4 @@
-﻿## [4.25.53.0] - 2026-10-08
+﻿## [4.25.64.0] - 2026-10-10
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -23,6 +23,12 @@
 - Fixed: An AI assistant's press waited until its question was answered.
 - Fixed: The program left an empty x360ce folder beside itself.
 - Fixed: A /Profile start kept its start-up record in the shared folder.
+- Fixed: AI assistants could read the AI access token.
+- Fixed: AI assistants could change greyed-out settings.
+- Fixed: /Ai and /Mcp did not reach a copy started with /Profile.
+- Fixed: AI assistants could not read or write a mapping formula.
+- Fixed: /ExportUi opened AI assistant access and saved the settings.
+- Fixed: The round-corner formula example for Stick Y turned up into down on most devices.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
@@ -35,6 +41,7 @@
 - Changed: Device lists show a controller waiting for its XInput place.
 - Changed: Quick presses, hat taps and stick flicks are never missed.
 - Changed: The AI door refuses web pages and explains its refusals.
+- Changed: The AI skill tells an assistant to use only the program's door, never the screen.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
 - Added: [Recentre] in a mapping box's menu sets where a stick rests as its middle (Issue #1638, FlogramMatt).
@@ -47,6 +54,10 @@
 - Added: Raw Input devices, which read an Xbox One controller in the background.
 - Added: Logitech G13 stick and keys, without Logitech's software.
 - Added: AI assistants can log every press and movement.
+- Added: An AI assistant's highlight can stay until you act.
+- Added: Trust local connections option for AI assistant access, off by default.
+- Added: The AI page shows an example request, with a Copy button.
+- Added: AI assistants can find a controller by its maker.
 
 ## [4.24.60.0] - 2026-10-02
 

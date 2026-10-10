@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.25.53.0",
-	"Built":"2026-10-09",
+	"Version":"4.25.64.0",
+	"Built":"2026-10-10",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1217,7 +1217,7 @@
 												},
 												{
 													"Name":"Effect description",
-													"Description":"What the chosen effect type does, or, for a device read through Raw Input, that it sends no force feedback.",
+													"Description":"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.",
 													"Role":"Label",
 													"Id":"EffectDescriptionLabel"
 												},
@@ -1622,13 +1622,13 @@
 							"Id":"StatusIsAdminLabel"
 						},
 						{
-							"Name":"AI assistant access: an assistant may configure this program",
+							"Name":"AI assistant access",
 							"Description":"Whether an assistant may read or change this program right now. Opens the Options tab.",
 							"Role":"Status",
 							"Id":"StatusAiAccessLabel"
 						},
 						{
-							"Name":"No error reports",
+							"Name":"Error reports",
 							"Description":"Opens the error report window",
 							"Role":"Status",
 							"Id":"StatusErrorsLabel"
@@ -2507,134 +2507,185 @@
 													"Id":"AiTabPage",
 													"Items":[
 														{
-															"Name":"AI assistant access (MCP server)",
-															"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
-															"Role":"Section",
-															"Id":"AiAccessGroupBox",
+															"Name":"AI assistant access",
+															"Description":"Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.",
+															"Role":"Group",
+															"Id":"AiControl",
+															"Type":"AiAccessUserControl",
 															"Items":[
 																{
-																	"Name":"AI assistant level",
-																	"Description":"How much a connected assistant may do: Read, Configure or Administer.",
-																	"Role":"List",
-																	"Id":"AiAccessComboBox"
+																	"Name":"About AI assistant access",
+																	"Description":"What AI assistant access does, and an example of what to ask an assistant once it is on.",
+																	"Role":"Group",
+																	"Id":"AiHeaderPanel",
+																	"Items":[
+																		{
+																			"Name":"What AI assistant access does",
+																			"Description":"Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.",
+																			"Role":"Label",
+																			"Id":"AiHeaderText"
+																		},
+																		{
+																			"Name":"Example request",
+																			"Description":"Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.",
+																			"Role":"Value",
+																			"Id":"AiExampleTextBox"
+																		},
+																		{
+																			"Name":"Copy example",
+																			"Description":"Copies the example request to the clipboard, to paste into an AI assistant.",
+																			"Role":"Button",
+																			"Id":"AiExampleCopyButton"
+																		}
+																	]
 																},
 																{
-																	"Name":"AI assistant address",
-																	"Description":"Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.",
-																	"Role":"List",
-																	"Id":"AiAccessAddressComboBox"
+																	"Name":"AI assistant access (MCP server)",
+																	"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
+																	"Role":"Group",
+																	"Id":"AiAccessPanel",
+																	"Items":[
+																		{
+																			"Name":"AI assistant access",
+																			"Description":"Lets an AI assistant or a script reach this program at all. Off until a person ticks it.",
+																			"Role":"CheckBox",
+																			"Id":"AiAccessEnabledCheckBox"
+																		},
+																		{
+																			"Name":"AI assistant level",
+																			"Description":"Read, Configure or Administer: how much a connected assistant or script may do.",
+																			"Role":"List",
+																			"Id":"AiAccessComboBox"
+																		},
+																		{
+																			"Name":"AI assistant address",
+																			"Description":"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.",
+																			"Role":"List",
+																			"Id":"AiAccessAddressComboBox"
+																		},
+																		{
+																			"Name":"Trust local connections (no token)",
+																			"Description":"Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.",
+																			"Role":"CheckBox",
+																			"Id":"AiAccessTrustLocalCheckBox"
+																		},
+																		{
+																			"Name":"AI assistant port",
+																			"Description":"Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.",
+																			"Role":"Text",
+																			"Id":"AiAccessPortTextBox"
+																		},
+																		{
+																			"Name":"AI assistant URL",
+																			"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.",
+																			"Role":"Value",
+																			"Id":"AiAccessUrlTextBox"
+																		},
+																		{
+																			"Name":"Copy URL",
+																			"Description":"Copies the URL to the clipboard.",
+																			"Role":"Button",
+																			"Id":"AiAccessUrlCopyButton"
+																		},
+																		{
+																			"Name":"AI assistant token",
+																			"Description":"What a caller must present to be let in. Made by this program.",
+																			"Role":"Value",
+																			"Id":"AiAccessTokenTextBox"
+																		},
+																		{
+																			"Name":"Regenerate token",
+																			"Description":"Makes a new token, so anything holding the old one is shut out.",
+																			"Role":"Button",
+																			"Id":"AiAccessRegenerateButton"
+																		},
+																		{
+																			"Name":"Assistant snippet",
+																			"Description":"Settings to paste into an assistant so it can start this program as an MCP server.",
+																			"Role":"Value",
+																			"Id":"AiAccessSnippetTextBox"
+																		},
+																		{
+																			"Name":"Copy snippet",
+																			"Description":"Copies the assistant snippet to the clipboard. The snippet holds no token.",
+																			"Role":"Button",
+																			"Id":"AiAccessCopyButton"
+																		},
+																		{
+																			"Name":"Copy prompt",
+																			"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.",
+																			"Role":"Button",
+																			"Id":"AiAccessPromptButton"
+																		},
+																		{
+																			"Name":"Open log",
+																			"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
+																			"Role":"Button",
+																			"Id":"AiAccessLogButton"
+																		},
+																		{
+																			"Name":"Door state",
+																			"Description":"Whether the door is open and at which level, or why it could not open; after a press, what it did.",
+																			"Role":"Label",
+																			"Id":"AiAccessStatusText"
+																		}
+																	]
 																},
 																{
-																	"Name":"AI assistant port",
-																	"Description":"Local port the assistant connects to. Change it if another program holds it.",
-																	"Role":"Number",
-																	"Id":"AiAccessPortNumericUpDown",
-																	"Min":1024,
-																	"Max":49151
-																},
-																{
-																	"Name":"AI assistant token",
-																	"Description":"What a caller must present to be let in. Made by the program.",
-																	"Role":"Value",
-																	"Id":"AiAccessTokenTextBox"
-																},
-																{
-																	"Name":"Regenerate token",
-																	"Description":"Makes a new token, so anything holding the old one is shut out.",
-																	"Role":"Button",
-																	"Id":"AiAccessRegenerateButton"
-																},
-																{
-																	"Name":"AI assistant URL",
-																	"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header.",
-																	"Role":"Value",
-																	"Id":"AiAccessUrlTextBox"
-																},
-																{
-																	"Name":"Copy URL",
-																	"Description":"Copies the URL to the clipboard.",
-																	"Role":"Button",
-																	"Id":"AiAccessUrlCopyButton"
-																},
-																{
-																	"Name":"Registration snippet",
-																	"Description":"Settings to paste into an assistant so it can reach this program.",
-																	"Role":"Value",
-																	"Id":"AiAccessSnippetTextBox"
-																},
-																{
-																	"Name":"Copy snippet",
-																	"Description":"Copies the registration snippet to the clipboard.",
-																	"Role":"Button",
-																	"Id":"AiAccessCopyButton"
-																},
-																{
-																	"Name":"Open log",
-																	"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
-																	"Role":"Button",
-																	"Id":"AiAccessLogButton"
-																},
-																{
-																	"Name":"AI assistant access",
-																	"Description":"Whether an AI assistant or a script may reach the program at all.",
-																	"Role":"CheckBox",
-																	"Id":"AiAccessEnabledCheckBox"
-																},
-																{
-																	"Name":"Copy prompt",
-																	"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.",
-																	"Role":"Button",
-																	"Id":"AiAccessPromptButton"
-																}
-															]
-														},
-														{
-															"Name":"AI skill",
-															"Description":"Installs the x360ce skill, which teaches an AI agent what this program does and how to use it, where agents read skills.",
-															"Role":"Section",
-															"Id":"AiSkillGroupBox",
-															"Items":[
-																{
-																	"Name":"Claude Code skills folder",
-																	"Description":"Where Claude Code reads skills.",
-																	"Role":"Value",
-																	"Id":"AiSkillClaudeFolderTextBox"
-																},
-																{
-																	"Name":"Claude Code skill",
-																	"Description":"Whether the skill is in that folder, and whether it is this program's version.",
-																	"Role":"Label",
-																	"Id":"AiSkillClaudeStatusLabel"
-																},
-																{
-																	"Name":"Install for Claude Code",
-																	"Description":"Writes the skill with the help and a description of this interface into the Claude Code folder, replacing only the x360ce skill.",
-																	"Role":"Button",
-																	"Id":"AiSkillClaudeButton"
-																},
-																{
-																	"Name":"Other agents' skills folder",
-																	"Description":"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.",
-																	"Role":"Value",
-																	"Id":"AiSkillAgentsFolderTextBox"
-																},
-																{
-																	"Name":"Other agents' skill",
-																	"Description":"Whether the skill is in that folder, and whether it is this program's version.",
-																	"Role":"Label",
-																	"Id":"AiSkillAgentsStatusLabel"
-																},
-																{
-																	"Name":"Install for other agents",
-																	"Description":"Writes the skill with the help and a description of this interface into the folder the other agents share, replacing only the x360ce skill.",
-																	"Role":"Button",
-																	"Id":"AiSkillAgentsButton"
-																},
-																{
-																	"Name":"Save as ZIP",
-																	"Description":"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.",
-																	"Role":"Button",
-																	"Id":"AiSkillZipButton"
+																	"Name":"AI skill",
+																	"Description":"Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.",
+																	"Role":"Group",
+																	"Id":"AiSkillPanel",
+																	"Items":[
+																		{
+																			"Name":"Claude Code skills folder",
+																			"Description":"Where Claude Code reads skills.",
+																			"Role":"Value",
+																			"Id":"AiSkillClaudeFolderTextBox"
+																		},
+																		{
+																			"Name":"Install for Claude Code",
+																			"Description":"Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.",
+																			"Role":"Button",
+																			"Id":"AiSkillClaudeButton"
+																		},
+																		{
+																			"Name":"Claude Code skill",
+																			"Description":"Whether the skill is in that folder, and whether it is this program's version.",
+																			"Role":"Label",
+																			"Id":"AiSkillClaudeStatusText"
+																		},
+																		{
+																			"Name":"Other agents' skills folder",
+																			"Description":"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.",
+																			"Role":"Value",
+																			"Id":"AiSkillAgentsFolderTextBox"
+																		},
+																		{
+																			"Name":"Install for other agents",
+																			"Description":"Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.",
+																			"Role":"Button",
+																			"Id":"AiSkillAgentsButton"
+																		},
+																		{
+																			"Name":"Other agents' skill",
+																			"Description":"Whether the skill is in that folder, and whether it is this program's version.",
+																			"Role":"Label",
+																			"Id":"AiSkillAgentsStatusText"
+																		},
+																		{
+																			"Name":"Claude app",
+																			"Description":"What to do with the ZIP, or why it was not saved.",
+																			"Role":"Label",
+																			"Id":"AiSkillZipNoteText"
+																		},
+																		{
+																			"Name":"Save as ZIP",
+																			"Description":"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.",
+																			"Role":"Button",
+																			"Id":"AiSkillZipButton"
+																		}
+																	]
 																}
 															]
 														}
@@ -3311,37 +3362,37 @@
 									"Type":"AboutControl",
 									"Items":[
 										{
-											"Name":"https:\/\/www.x360ce.com",
+											"Name":"https://www.x360ce.com",
 											"Description":"Opens the program's website.",
 											"Role":"Link",
 											"Id":"x360ceLinkLabel"
 										},
 										{
-											"Name":"https:\/\/github.com\/x360ce\/x360ce",
+											"Name":"https://github.com/x360ce/x360ce",
 											"Description":"Opens the source code.",
 											"Role":"Link",
 											"Id":"GoogleProjectLinkLabel"
 										},
 										{
-											"Name":"https:\/\/www.jocys.com",
+											"Name":"https://www.jocys.com",
 											"Description":"Opens the publisher's website.",
 											"Role":"Link",
 											"Id":"AboutJocysLinkLabel"
 										},
 										{
-											"Name":"https:\/\/github.com\/Nucleoprotein",
+											"Name":"https://github.com/Nucleoprotein",
 											"Description":"Opens a contributor's page.",
 											"Role":"Link",
 											"Id":"AboutVirusLinkLabel"
 										},
 										{
-											"Name":"https:\/\/github.com\/nefarius",
+											"Name":"https://github.com/nefarius",
 											"Description":"Opens the page the virtual controller driver comes from.",
 											"Role":"Link",
 											"Id":"AboutViGEmLinkLabel"
 										},
 										{
-											"Name":"http:\/\/www.tocaedit.com",
+											"Name":"http://www.tocaedit.com",
 											"Description":"Opens the site of the person who wrote the first version.",
 											"Role":"Link",
 											"Id":"AboutTocaEditLinkLabel"
@@ -3468,7 +3519,6 @@
 			"Description":"The menu behind the icon in the notification area.",
 			"Role":"Section",
 			"Id":"TrayContextMenuStrip",
-			"Hidden":true,
 			"Items":[
 				{
 					"Name":"Open Application",

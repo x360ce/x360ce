@@ -499,7 +499,7 @@ namespace System.IO.Compression
 			byte[] signature = new byte[4];
 			this.ZipFileStream.Seek(zfe.HeaderOffset, SeekOrigin.Begin);
 
-			await this.ZipFileStream.ReadAsync(signature, 0, 4);
+			await ReadFullyAsync(this.ZipFileStream, signature, 4);
 
 			if (BitConverter.ToUInt32(signature, 0) != 0x04034b50)
 				return false;
@@ -522,6 +522,9 @@ namespace System.IO.Compression
 			while (bytesPending > 0)
 			{
 				int bytesRead = await inStream.ReadAsync(buffer, 0, (int)Math.Min(bytesPending, buffer.Length));
+				// A truncated archive ends before the entry does.
+				if (bytesRead <= 0)
+					throw new System.IO.InvalidDataException();
 				await stream.WriteAsync(buffer, 0, bytesRead);
 
 				bytesPending -= (uint)bytesRead;
@@ -616,15 +619,47 @@ namespace System.IO.Compression
 		#endregion
 
 		#region Private methods
+		/// <summary>
+		/// Read exactly the count of bytes into the start of the buffer.
+		/// </summary>
+		/// <exception cref="System.IO.InvalidDataException">The stream ended before the count was read.</exception>
+		private static void ReadFully(Stream stream, byte[] buffer, int count)
+		{
+			int offset = 0;
+			while (offset < count)
+			{
+				int read = stream.Read(buffer, offset, count - offset);
+				if (read <= 0)
+					throw new System.IO.InvalidDataException();
+				offset += read;
+			}
+		}
+
+		/// <summary>
+		/// Read exactly the count of bytes into the start of the buffer.
+		/// </summary>
+		/// <exception cref="System.IO.InvalidDataException">The stream ended before the count was read.</exception>
+		private static async Task ReadFullyAsync(Stream stream, byte[] buffer, int count)
+		{
+			int offset = 0;
+			while (offset < count)
+			{
+				int read = await stream.ReadAsync(buffer, offset, count - offset);
+				if (read <= 0)
+					throw new System.IO.InvalidDataException();
+				offset += read;
+			}
+		}
+
 		// Calculate the file offset by reading the corresponding local header
 		private uint GetFileOffset(uint _headerOffset)
 		{
 			byte[] buffer = new byte[2];
 
 			this.ZipFileStream.Seek(_headerOffset + 26, SeekOrigin.Begin);
-			this.ZipFileStream.Read(buffer, 0, 2);
+			ReadFully(this.ZipFileStream, buffer, 2);
 			ushort filenameSize = BitConverter.ToUInt16(buffer, 0);
-			this.ZipFileStream.Read(buffer, 0, 2);
+			ReadFully(this.ZipFileStream, buffer, 2);
 			ushort extraSize = BitConverter.ToUInt16(buffer, 0);
 
 			return (uint)(30 + filenameSize + extraSize + _headerOffset);
@@ -1076,7 +1111,7 @@ namespace System.IO.Compression
 						this.ExistingFiles = entries;
 						this.CentralDirImage = new byte[centralSize];
 						this.ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);
-						this.ZipFileStream.Read(this.CentralDirImage, 0, (int)centralSize);
+						ReadFully(this.ZipFileStream, this.CentralDirImage, (int)centralSize);
 
 						// Leave the pointer at the begining of central dir, to append new files
 						this.ZipFileStream.Seek(centralDirOffset, SeekOrigin.Begin);

@@ -1,70 +1,12 @@
+#nullable disable
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace x360ce.Engine.UiTree
+namespace JocysCom.ClassLibrary.Controls.UiTree
 {
-	/// <summary>The name and purpose of each part of the interface, in one place.</summary>
-	/// <remarks>
-	/// These are written onto AccessibleName and AccessibleDescription, which is what a screen
-	/// reader announces and what an automation tool searches by. The same two properties are what
-	/// the exported navigation tree is built from, so a control described here is described
-	/// everywhere at once, and there is one place to correct a wrong word.
-	///
-	/// Keys are "OwningType.FieldName", the same pair a developer sees in the designer. A control
-	/// already named where it is built keeps that name; nothing here overwrites a deliberate one.
-	/// Each program supplies its own list through <see cref="Catalog"/>.
-	/// </remarks>
-	public static class UiText
+	/// <summary>Writes the catalog onto Windows Forms controls and the entries of their bars and menus.</summary>
+	public static partial class UiText
 	{
-		/// <summary>What one element is called and what it is for.</summary>
-		public struct Text
-		{
-			public Text(string name, string purpose, bool documentOnly = false)
-			{
-				Name = name;
-				Purpose = purpose;
-				DocumentOnly = documentOnly;
-			}
-
-			public readonly string Name;
-			public readonly string Purpose;
-
-			/// <summary>True where the name describes the element but must not be written onto it.</summary>
-			public readonly bool DocumentOnly;
-		}
-
-		/// <summary>
-		/// An element whose text is its value rather than its label: a reading on the status bar,
-		/// the help header.
-		/// </summary>
-		/// <remarks>
-		/// A label carries no value of its own, so what a screen reader reads out is its name. Give
-		/// one a fixed name and the reading disappears behind it - "Controller rate" announced over
-		/// and over while the number it is announcing can no longer be heard at all. So the name is
-		/// kept for the exported document, where a fixed name is what is wanted, and the element
-		/// itself is given only its purpose.
-		/// </remarks>
-		public static Text Live(string name, string purpose)
-		{
-			return new Text(name, purpose, true);
-		}
-
-		/// <summary>Builds the program's list, keyed "OwningType.FieldName". Set once at start; read the first time it is needed.</summary>
-		public static Func<Dictionary<string, Text>> Catalog;
-
-		static Dictionary<string, Text> _items;
-
-		static Dictionary<string, Text> Items
-		{
-			get
-			{
-				if (_items == null)
-					_items = Catalog == null ? new Dictionary<string, Text>() : Catalog();
-				return _items;
-			}
-		}
-
 		/// <summary>Names and describes everything inside a control that has an entry here.</summary>
 		public static void Apply(Control root)
 		{
@@ -144,14 +86,24 @@ namespace x360ce.Engine.UiTree
 				? text.Name : null;
 		}
 
-		static bool Find(Type owner, string field, string key, out Text text)
+		/// <summary>
+		/// The document's name for a control whose entry is <see cref="Live"/>, or null for any other. Its words on
+		/// screen follow the program's state, so the document names it the same on every computer.
+		/// </summary>
+		public static string LiveNameFor(Control control)
 		{
-			text = default(Text);
-			if (!string.IsNullOrEmpty(key))
-				return Items.TryGetValue(key, out text);
-			if (owner == null || string.IsNullOrEmpty(field))
-				return false;
-			return Items.TryGetValue(owner.Name + "." + field, out text);
+			Text text;
+			return control != null && Find(OwnerOf(control), control.Name, null, out text) && text.DocumentOnly
+				? text.Name : null;
+		}
+
+		/// <summary>The document's name for a menu or bar entry whose entry is <see cref="Live"/>, or null for any other.</summary>
+		public static string LiveNameFor(ToolStripItem item)
+		{
+			Text text;
+			var owner = item == null || item.Owner == null ? null : OwnerOf(item.Owner);
+			return owner != null && Find(owner, item.Name, null, out text) && text.DocumentOnly
+				? text.Name : null;
 		}
 
 		/// <summary>The panel or window a field belongs to, which is how the designer names it.</summary>
@@ -171,9 +123,7 @@ namespace x360ce.Engine.UiTree
 		{
 			if (!(control is UserControl) && !(control is Form))
 				return false;
-			var space = control.GetType().Namespace ?? "";
-			return space.StartsWith("x360ce", StringComparison.Ordinal)
-				|| space.StartsWith("JocysCom", StringComparison.Ordinal);
+			return UiTreeWalker.IsOwnType(control.GetType());
 		}
 	}
 }

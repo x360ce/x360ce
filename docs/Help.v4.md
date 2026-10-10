@@ -50,7 +50,7 @@ A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can t
 x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens, on rows next to each other. The `[Source]` column says how each row is read.
 
 - `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
-- `DirectInput` sends force feedback: vibration and wheel forces. Raw Input sends none. `[Pass Through]` on the `[Force Feedback]` page reaches an Xbox controller's motors from either row.
+- Vibration and wheel forces reach the controller from either row. Raw Input only reads, so a `Raw Input` row's go through the same controller's `DirectInput` side. An Xbox controller's DirectInput side takes none: `[Pass Through]` on the `[Force Feedback]` page reaches its motors from either row.
 
 Both rows of a controller read every button and axis into the same place, so a mapping made on one works on the other. Adding one to a controller tab where the other is mapped starts it with the other's settings. Map one of them: if both are ticked in the tab's list, both drive the controller, so untick the `[Enabled]` box of the one you do not use.
 
@@ -342,7 +342,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=a1*(0.5+a2*0.5)` - walk slowly, run when the trigger is held.
 - `=a1-0.05` - correct a stick that drifts off centre. `[Recentre]` in the box's menu measures the offset and writes it.
 - `=a1*sqrt(1-a2^2/2)` - round the corners of a stick that reaches the corners of a square, so a full diagonal is no stronger than straight ahead. Use it for Stick X; a1 and a2 are the stick's own two axes.
-- `=a2*sqrt(1-a1^2/2)` - the same for Stick Y.
+- `=-a2*sqrt(1-a1^2/2)` - the same for Stick Y. Most devices report up as the low end of Axis 2, so Stick Y holds `IAxis 2` and the formula keeps its minus; drop the minus when Stick Y holds plain `Axis 2`.
 - `=max(a1,0)` - one pedal axis split into the accelerator.
 - `=-min(a1,0)` - the same axis, its braking half.
 - `=a1-a2` - separate accelerator and brake onto one axis.
@@ -373,7 +373,9 @@ chat and it takes it from there. The two ways, both shown on the page:
   and needs no token from you.
 - **An assistant that connects to a URL**, on this computer or another. Copy the URL and give it
   as an HTTP MCP server, with the header `Authorization: Bearer <token>` where `<token>` is the
-  token on the AI page. For another computer, set Address to `0.0.0.0` first; Windows then
+  token on the AI page. If you allow it with Trust local connections, an assistant on this
+  computer needs no token, and Copy prompt leaves it out; on every network the token is always
+  needed. For another computer, set Address to `0.0.0.0` first; Windows then
   asks once, through the Fix button on the Issues tab, for permission to listen on every network.
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
@@ -399,7 +401,9 @@ this computer can read, so it tells one program from another, not one person fro
 
 A skill is a set of instructions an AI agent reads when a task calls for it. The x360ce skill tells
 an agent what this program does, where its settings are and how to use AI assistant access, so it
-answers from the program instead of guessing. The AI skill box on the AI page installs it:
+answers from the program instead of guessing. It works only through AI assistant access, at the level
+you chose, and never by taking over your screen, mouse or keyboard; to show you something it frames it
+on your screen. The AI skill box on the AI page installs it:
 
 - **Claude Code**: into the skills folder Claude Code reads, `%USERPROFILE%\.claude\skills`, or the
   one in `CLAUDE_CONFIG_DIR` when that is set.
@@ -429,6 +433,6 @@ Write a switch after the program's name, for example `x360ce.exe /WindowState=Mi
 - `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
 - `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
 - `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `skills\x360ce\references` when none is given, then closes. The window is built off the screen while it does this.
-- `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. The help's AI assistant access section says more.
+- `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. Both reach the copy that runs with its own settings, a `/Profile` included. The help's AI assistant access section says more.
 
 The program also starts a copy of itself with other switches when it needs an administrator, for example to install the driver. Those are not meant to be typed.

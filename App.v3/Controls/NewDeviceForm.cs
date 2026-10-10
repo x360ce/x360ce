@@ -23,7 +23,7 @@ namespace x360ce.App.Controls
 		public NewDeviceForm()
 		{
 			InitializeComponent();
-			Engine.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
 			ControlsHelper.ScaleImages(this);
 			ControlsHelper.ScaleGrid(MySettingsDataGridView);
 		}

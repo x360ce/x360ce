@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
 	/// <summary>
 	/// The name and purpose of each part of version 3's interface, given to
-	/// <see cref="x360ce.Engine.UiTree.UiText"/>. The controls linked to a setting are named after
+	/// <see cref="JocysCom.ClassLibrary.Controls.UiTree.UiText"/>. The controls linked to a setting are named after
 	/// the setting and are listed here only where the setting's own words say too little.
 	/// </summary>
 	public static partial class UiCatalog

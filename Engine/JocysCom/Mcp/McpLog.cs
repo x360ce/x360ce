@@ -1,7 +1,10 @@
+#nullable disable
 using System;
 using System.IO;
 using System.Text;
-namespace x360ce.Engine.Mcp
+using System.Text.RegularExpressions;
+
+namespace JocysCom.ClassLibrary.Mcp
 {
 	/// <summary>
 	/// What was done through the door, one line per action, so a person can read afterwards what
@@ -13,16 +16,16 @@ namespace x360ce.Engine.Mcp
 		const long RollAt = 5 * 1024 * 1024;
 		static readonly object Gate = new object();
 
-		/// <summary>Where the log lives: beside the settings unless a test points it elsewhere.</summary>
+		/// <summary>Where the log lives: the program's settings folder, which each program sets. A test may point it elsewhere.</summary>
 		public static string Folder;
 
-		/// <summary>The log's file name. Each program sets its own, because both keep their settings in one folder.</summary>
-		public static string FileName = "x360ce.AiAccess.log";
+		/// <summary>The log's file name. Each program sets its own, because programs may share a settings folder.</summary>
+		public static string FileName = "AiAccess.log";
 
-		/// <summary>Beside the settings, so it travels with them and the Options tab can open it.</summary>
+		/// <summary>Beside the settings, so it travels with them and the settings page can open it. In the local application data folder when the program set no folder.</summary>
 		public static string Path
 		{
-			get { return System.IO.Path.Combine(Folder ?? EngineHelper.AppDataPath, FileName); }
+			get { return System.IO.Path.Combine(Folder ?? Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), FileName); }
 		}
 
 		/// <summary>Appends one dated line. A log that cannot be written must not stop the action it records, so a failure to write is the one thing not logged.</summary>
@@ -52,7 +55,7 @@ namespace x360ce.Engine.Mcp
 		public static void Open()
 		{
 			if (!File.Exists(Path))
-				Write("log opened from the Options tab");
+				Write("log opened from the settings");
 			System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Path) { UseShellExecute = true });
 		}
 
@@ -65,12 +68,12 @@ namespace x360ce.Engine.Mcp
 			return text.Length <= max ? text : text.Substring(0, max) + "... (" + text.Length + " chars)";
 		}
 
-		/// <summary>One line, and never the token: a read of the Options tab carries it, and a log is for reading afterwards by anyone.</summary>
+		/// <summary>One line, and never the token: a read of the settings page carries it, and a log is for reading afterwards by anyone.</summary>
 		static string Flat(string text)
 		{
 			return Token.Replace(text.Replace("\r", " ").Replace("\n", " ").Replace("\t", " "), "<token>");
 		}
 
-		static readonly System.Text.RegularExpressions.Regex Token = new System.Text.RegularExpressions.Regex("[0-9a-f]{64}");
+		static readonly Regex Token = new Regex("[0-9a-f]{64}");
 	}
 }

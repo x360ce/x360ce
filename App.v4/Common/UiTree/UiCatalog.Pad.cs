@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -63,7 +63,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceFeedbackGroupBox"] = new Text("Force feedback",
 				"Vibration settings shared by both motors.");
 			d["PadControl.EffectDescriptionLabel"] = Live("Effect description",
-				"What the chosen effect type does, or, for a device read through Raw Input, that it sends no force feedback.");
+				"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
 				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",

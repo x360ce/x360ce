@@ -1,12 +1,20 @@
+#nullable disable
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+#if !NETFRAMEWORK
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+#endif
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace x360ce.Engine.UiTree
+namespace JocysCom.ClassLibrary.Controls.UiTree
 {
-	/// <summary>Writes what the program looks like to a pair of documents beside the source.</summary>
+	/// <summary>Writes what the program looks like to a pair of documents.</summary>
 	/// <remarks>
 	/// The program is the only accurate account of its own features, so it writes the account
 	/// itself. Anyone - a person or a program helping one - reads the result instead of guessing
@@ -14,44 +22,86 @@ namespace x360ce.Engine.UiTree
 	/// </remarks>
 	public static class UiTreeExporter
 	{
-		/// <summary>The documents' name without the extension, set by each program: ui-tree-v3 or ui-tree-v4.</summary>
+		/// <summary>The documents' name without the extension, set by each program, such as ui-tree or ui-tree-v4.</summary>
 		public static string BaseName = "ui-tree";
 
 		public static string JsonFileName { get { return BaseName + ".json"; } }
 
-		static readonly System.Text.RegularExpressions.Regex MarkdownStamp = new System.Text.RegularExpressions.Regex(@"(?m)^Version \S+, built \S+\.(?=\r?$)");
-		static readonly System.Text.RegularExpressions.Regex JsonVersion = new System.Text.RegularExpressions.Regex("\"Version\":\"[^\"]*\"");
-		static readonly System.Text.RegularExpressions.Regex JsonBuilt = new System.Text.RegularExpressions.Regex("\"Built\":\"[^\"]*\"");
+		public static string MarkdownFileName { get { return BaseName + ".md"; } }
+
+		static readonly Regex MarkdownStamp = new Regex(@"(?m)^Version \S+, built \S+\.(?=\r?$)");
+		static readonly Regex JsonVersion = new Regex("(\"Version\":\\s*)\"[^\"]*\"");
+		static readonly Regex JsonBuilt = new Regex("(\"Built\":\\s*)\"[^\"]*\"");
 
 		/// <summary>A written document, Markdown or JSON, with another version and build day in place of its own.</summary>
-		/// <remarks>Lets a copy installed by a later build of the same interface name the build that installed it.</remarks>
+		/// <remarks>
+		/// Lets a copy installed by a later build of the same interface name the build that installed it. The space
+		/// after each colon stays as the document has it, so the copy is laid out like the file it came from.
+		/// </remarks>
 		public static string Restamp(string document, string version, string built)
 		{
 			document = MarkdownStamp.Replace(document, UiTreeMarkdown.Stamp(version, built), 1);
-			document = JsonVersion.Replace(document, "\"Version\":\"" + version + "\"", 1);
-			return JsonBuilt.Replace(document, "\"Built\":\"" + built + "\"", 1);
+			document = JsonVersion.Replace(document, "${1}\"" + version + "\"", 1);
+			return JsonBuilt.Replace(document, "${1}\"" + built + "\"", 1);
 		}
-		public static string MarkdownFileName { get { return BaseName + ".md"; } }
+
+#if NETFRAMEWORK
+		/// <summary>The tree as JSON: indented with tabs for the document, on one line for a tool's answer.</summary>
+		/// <remarks>
+		/// Written by the data contract serialiser .NET Framework carries, which leaves out what an element does not
+		/// have as the contract says. It writes '/' as '\/', valid JSON and useless as a path, so '/' is put back.
+		/// </remarks>
+		public static string ToJson(UiNode node, bool indented)
+		{
+			var json = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToJson(node).Replace("\\/", "/");
+			return indented ? JocysCom.ClassLibrary.Runtime.Serializer.FormatJson(json) : json;
+		}
+#else
+		static readonly JsonSerializerOptions Indented = Options(true);
+		static readonly JsonSerializerOptions Compact = Options(false);
+
+		static JsonSerializerOptions Options(bool indented)
+		{
+			return new JsonSerializerOptions
+			{
+				WriteIndented = indented,
+				IndentCharacter = '\t',
+				IndentSize = 1,
+				// What an element does not have is left out, as the document has always done.
+				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+				// A name keeps its letters as written, and '/' stays '/', so a path can be pasted back.
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+			};
+		}
+
+		/// <summary>The tree as JSON: indented with tabs for the document, on one line for a tool's answer.</summary>
+		public static string ToJson(UiNode node, bool indented)
+		{
+			return JsonSerializer.Serialize(node, indented ? Indented : Compact);
+		}
+#endif
 
 		/// <summary>Describes the whole program: its shared controls, its window, and its tray menu.</summary>
-		/// <param name="window">The main window, already built.</param>
+		/// <param name="window">The main window, already built: a form or a WPF window.</param>
 		/// <param name="trayMenu">The menu behind the tray icon, or null when there is none.</param>
 		/// <param name="raw">True keeps every arranging panel, for looking at what is there.</param>
-		public static UiNode Read(Form window, ContextMenuStrip trayMenu, bool raw = false)
+		public static UiNode Read(object window, ContextMenuStrip trayMenu, bool raw = false)
 		{
 			// The version and build day of the program that owns the window, so a reader can tell whether this is current.
 			var program = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(window.GetType().Assembly);
 			var root = new UiNode
 			{
-				Name = Application.ProductName,
+				Name = program.Product,
 				Role = "Program",
 				Version = program.Version.ToString(),
-				Built = program.BuildDateTime.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+				Built = program.BuildDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
 			};
-			var app = UiTreeWalker.Read(window, raw);
+			var app = UiTreeWalker.Read(window, raw, null);
 			app.Name = "App";
 			app.Role = "Section";
 			app.Description = "The main window.";
+			// The window is built, not shown, while the description is written, which says nothing about the program.
+			app.Hidden = false;
 			var shared = new UiNode
 			{
 				Name = "Controls",
@@ -69,6 +119,8 @@ namespace x360ce.Engine.UiTree
 				tray.Name = "Tray";
 				tray.Role = "Section";
 				tray.Description = "The menu behind the icon in the notification area.";
+				// A menu shows only while it is open, which says nothing about the program either.
+				tray.Hidden = false;
 				root.Add(tray);
 			}
 			return root;
@@ -185,8 +237,7 @@ namespace x360ce.Engine.UiTree
 			// strictly - Python's among them - refuses a document that starts with one. These files
 			// exist to be read by other programs, so they are written the way those expect.
 			var utf8 = new UTF8Encoding(false);
-			var json = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToJson(root, Encoding.UTF8);
-			File.WriteAllText(jsonPath, JocysCom.ClassLibrary.Runtime.Serializer.FormatJson(json), utf8);
+			File.WriteAllText(jsonPath, ToJson(root, true), utf8);
 			File.WriteAllText(markdownPath, UiTreeMarkdown.Write(root), utf8);
 			return jsonPath + "\r\n" + markdownPath;
 		}

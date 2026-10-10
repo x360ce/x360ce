@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using JocysCom.ClassLibrary.Mcp;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 using x360ce.App.Properties;
 
 namespace x360ce.App.Controls

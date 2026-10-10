@@ -158,8 +158,9 @@ namespace x360ce.App.DInput
 				if (!ud.IsOnline)
 					continue;
 				// A Raw Input device is copied from the hub, which has its newest state ready. It has no DirectInput device
-				// to hold or poll and no force feedback, so none of what follows applies to it, and the test option that
-				// stops DirectInput reads does not stop it.
+				// to hold or poll, so none of what follows applies to it, and the test option that stops DirectInput reads
+				// does not stop it. Raw Input sends nothing back: its force goes to its DirectInput twin, which the routing
+				// adds to the devices read here (DeviceRouting.MappedDevices).
 				if (ud.InputSourceType == (int)InputSourceType.RawInput)
 				{
 					ReadRawInputState(ud, o.ReadEveryChange);

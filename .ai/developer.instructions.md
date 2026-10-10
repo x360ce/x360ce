@@ -75,8 +75,8 @@ in `README.MD` are written together.
 the repository. Only `SKILL.md` is written by hand. Every v4 build runs `x360ce.exe -Skill=skills`, which writes
 the program's version into `SKILL.md` and both programs' help into `references/help-v3.md` and `help-v4.md`; each
 program's `x360ce.exe /ExportUi` writes its `references/ui-tree-v3.*` or `ui-tree-v4.*`. The v4 program carries all
-of them (`App.v4/Common/AiSkill.cs`) and removes from the folder any file it does not write, so a new reference goes
-into `AiSkill.References` first. Change the help in `docs/Help.v3.md` or `docs/Help.v4.md`, never in `references/`. `Tests/Common/SkillTest.cs` checks the folder against what the program
+of them (`App.v4/Mcp/McpTools.cs` points the shared `AiSkill` at them) and removes from the folder any file it does not write, so a new reference goes
+into `McpTools.SkillReferences` first. Change the help in `docs/Help.v3.md` or `docs/Help.v4.md`, never in `references/`. `Tests/Common/SkillTest.cs` checks the folder against what the program
 installs.
 
 ## Plans live in `docs/plans/`

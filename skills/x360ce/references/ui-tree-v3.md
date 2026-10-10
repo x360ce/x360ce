@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 3.6.20.0, built 2026-10-09.
+Version 3.6.24.0, built 2026-10-10.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -17,9 +17,13 @@ A setting offered through several controls at once is listed once, unless they
 accept different ranges - a slider in per cent beside a box in raw units are two
 different things to set, so both are kept.
 
-Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button` and
-`Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`, `Number` and `Text`
-are set. `Value`, `Status` and `Grid` are read, not typed in.
+Kinds: `Tab`, `Tabs`, `Section`, `Group`, `Toolbar` and `Control` hold other
+elements. `Button` and `Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`,
+`Number` and `Text` are set. `Value`, `Status`, `Label`, `Picture`, `Progress` and
+`Grid` are read, not typed in.
+
+A name followed by `(hidden)` stands for an element that is present but
+not shown in this state of the program.
 
 ```
 [Kind]      Where it sits and what it is called                                         # What it is for
@@ -315,7 +319,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Text]      │   │                   └── License                                         # The licence this program is released under.
 [Label]     │   ├── Help text                                                           # What whatever the mouse is over is for.
 [List]      │   └── Game                                                                # Which game the emulator is set up for: the folder whose x360ce.ini the pages below edit.
-[Section]   └── Tray (hidden)                                                           # The menu behind the icon in the notification area.
+[Section]   └── Tray                                                                    # The menu behind the icon in the notification area.
 [Button]        ├── Open Application                                                    # Brings the window back from the notification area.
 [Button]        └── Exit                                                                # Closes the program.
 ```

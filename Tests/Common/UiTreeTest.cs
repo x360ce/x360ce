@@ -1,4 +1,4 @@
-// @under-test: Engine/UiTree/UiTreeWalker.cs, Engine/UiTree/UiText.cs, Engine/UiTree/UiGameFlags.cs
+// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs, Engine/JocysCom/Controls/UiTree/UiText.cs, Engine/UiTree/UiGameFlags.cs
 // @area: accessibility   @layer: ui-winforms
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using x360ce.App.UiTree;
-using x360ce.Engine.UiTree;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.Tests
 {
@@ -91,7 +91,7 @@ namespace x360ce.Tests
 
 		static string Unstamped(string text)
 		{
-			return x360ce.Engine.UiTree.UiTreeExporter.Restamp(text.Replace("\r\n", "\n").TrimStart('\uFEFF'), "0", "0");
+			return JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Restamp(text.Replace("\r\n", "\n").TrimStart('\uFEFF'), "0", "0");
 		}
 
 		[TestMethod, TestCategory("accessibility"), TestCategory("ui-interactive")]

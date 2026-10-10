@@ -8,7 +8,7 @@ using x360ce.App;
 using x360ce.App.Mcp;
 using x360ce.Engine;
 using x360ce.Engine.Data;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -17,12 +17,14 @@ namespace x360ce.Tests
 	public class McpDeviceToolsTest
 	{
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("The device list names the test controller, and mapping without a game is refused")]
+		[Description("The device list names the test controller and its maker, and mapping without a game is refused")]
 		public void Device_list_names_the_test_controller()
 		{
 			McpTools.Register();
 			McpCatalog.OnUiThread = a => a();
 			var device = TestDeviceHelper.NewUserDevice();
+			// A request that names a controller by its brand finds it by the maker the controller tab shows.
+			device.DevManufacturer = "Thrustmaster";
 			SettingsManager.UserDevices.Items.Add(device);
 			var game = SettingsManager.CurrentGame;
 			SettingsManager.CurrentGame = null;
@@ -32,6 +34,7 @@ namespace x360ce.Tests
 				var row = rows.FirstOrDefault(x => (string)x["InstanceGuid"] == device.InstanceGuid.ToString());
 				Assert.IsNotNull(row, "The test controller is not listed.");
 				Assert.AreEqual(device.ProductName, row["Product"]);
+				Assert.AreEqual("Thrustmaster", row["Vendor"], "The device list does not name the maker.");
 				Assert.AreEqual(0, ((int[])row["Controllers"]).Length, "With no game, the device is listed on a controller.");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.DeviceMap(device.InstanceGuid.ToString(), 2)).Message, "No game");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.DeviceMap("not-a-guid", 1)).Message, "No device");

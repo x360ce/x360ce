@@ -108,7 +108,6 @@
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
-    <Compile Include="Common\AiSkill.cs" />
     <Compile Include="Common\Update\UpdateClient.cs" />
     <Compile Include="Common\Update\UpdateRelease.cs" />
     <Compile Include="Common\CloudItem.cs" />
@@ -397,6 +396,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Mcp\AiAccessSettings.cs" />
     <Compile Include="Mcp\McpTools.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />

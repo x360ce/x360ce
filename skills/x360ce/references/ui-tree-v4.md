@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.25.53.0, built 2026-10-09.
+Version 4.25.64.0, built 2026-10-10.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -17,9 +17,13 @@ A setting offered through several controls at once is listed once, unless they
 accept different ranges - a slider in per cent beside a box in raw units are two
 different things to set, so both are kept.
 
-Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button` and
-`Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`, `Number` and `Text`
-are set. `Value`, `Status` and `Grid` are read, not typed in.
+Kinds: `Tab`, `Tabs`, `Section`, `Group`, `Toolbar` and `Control` hold other
+elements. `Button` and `Link` are pressed. `CheckBox`, `Choice`, `List`, `Slider`,
+`Number` and `Text` are set. `Value`, `Status`, `Label`, `Picture`, `Progress` and
+`Grid` are read, not typed in.
+
+A name followed by `(hidden)` stands for an element that is present but
+not shown in this state of the program.
 
 ```
 [Kind]      Where it sits and what it is called                                         # What it is for
@@ -198,7 +202,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
-[Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input, that it sends no force feedback.
+[Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
 [List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
@@ -259,8 +263,8 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Status]    │   │   ├── Suspended events (hidden)                                       # Setting changes held back while a page is being filled in.
 [Status]    │   │   ├── Saving (hidden)                                                 # Shown while settings are being written to disk.
 [Status]    │   │   ├── Administrator                                                   # Whether the program is running with Administrator rights.
-[Status]    │   │   ├── AI assistant access: an assistant may configure this program    # Whether an assistant may read or change this program right now. Opens the Options tab.
-[Status]    │   │   ├── No error reports                                                # Opens the error report window
+[Status]    │   │   ├── AI assistant access                                             # Whether an assistant may read or change this program right now. Opens the Options tab.
+[Status]    │   │   ├── Error reports                                                   # Opens the error report window
 [Status]    │   │   └── XInput library                                                  # Which XInput library the program loaded, and its version.
 [Label]     │   ├── Help subject                                                        # Name of whatever the mouse is over.
 [Label]     │   ├── Help text                                                           # What whatever the mouse is over is for.
@@ -392,27 +396,35 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [CheckBox]  │       │           │       ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
 [Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
 [Tab]       │       │           └── AI                                                  # AI assistant access, and the skill that teaches AI agents to use this program.
-[Section]   │       │               ├── AI assistant access (MCP server)                # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[List]      │       │               │   ├── AI assistant level                          # How much a connected assistant may do: Read, Configure or Administer.
-[List]      │       │               │   ├── AI assistant address                        # Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.
-[Number]    │       │               │   ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
-[Value]     │       │               │   ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
-[Button]    │       │               │   ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │               │   ├── AI assistant URL                            # Address an agent that connects over HTTP is given, with the token as a bearer header.
-[Button]    │       │               │   ├── Copy URL                                    # Copies the URL to the clipboard.
-[Value]     │       │               │   ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
-[Button]    │       │               │   ├── Copy snippet                                # Copies the registration snippet to the clipboard.
-[Button]    │       │               │   ├── Open log                                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
-[CheckBox]  │       │               │   ├── AI assistant access                         # Whether an AI assistant or a script may reach the program at all.
-[Button]    │       │               │   └── Copy prompt                                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.
-[Section]   │       │               └── AI skill                                        # Installs the x360ce skill, which teaches an AI agent what this program does and how to use it, where agents read skills.
-[Value]     │       │                   ├── Claude Code skills folder                   # Where Claude Code reads skills.
-[Label]     │       │                   ├── Claude Code skill                           # Whether the skill is in that folder, and whether it is this program's version.
-[Button]    │       │                   ├── Install for Claude Code                     # Writes the skill with the help and a description of this interface into the Claude Code folder, replacing only the x360ce skill.
-[Value]     │       │                   ├── Other agents' skills folder                 # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
-[Label]     │       │                   ├── Other agents' skill                         # Whether the skill is in that folder, and whether it is this program's version.
-[Button]    │       │                   ├── Install for other agents                    # Writes the skill with the help and a description of this interface into the folder the other agents share, replacing only the x360ce skill.
-[Button]    │       │                   └── Save as ZIP                                 # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Group]     │       │               └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
+[Group]     │       │                   ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
+[Label]     │       │                   │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
+[Value]     │       │                   │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
+[Button]    │       │                   │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
+[Group]     │       │                   ├── AI assistant access (MCP server)            # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[CheckBox]  │       │                   │   ├── AI assistant access                     # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
+[List]      │       │                   │   ├── AI assistant level                      # Read, Configure or Administer: how much a connected assistant or script may do.
+[List]      │       │                   │   ├── AI assistant address                    # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
+[CheckBox]  │       │                   │   ├── Trust local connections (no token)      # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
+[Text]      │       │                   │   ├── AI assistant port                       # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
+[Value]     │       │                   │   ├── AI assistant URL                        # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
+[Button]    │       │                   │   ├── Copy URL                                # Copies the URL to the clipboard.
+[Value]     │       │                   │   ├── AI assistant token                      # What a caller must present to be let in. Made by this program.
+[Button]    │       │                   │   ├── Regenerate token                        # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │                   │   ├── Assistant snippet                       # Settings to paste into an assistant so it can start this program as an MCP server.
+[Button]    │       │                   │   ├── Copy snippet                            # Copies the assistant snippet to the clipboard. The snippet holds no token.
+[Button]    │       │                   │   ├── Copy prompt                             # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
+[Button]    │       │                   │   ├── Open log                                # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[Label]     │       │                   │   └── Door state                              # Whether the door is open and at which level, or why it could not open; after a press, what it did.
+[Group]     │       │                   └── AI skill                                    # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
+[Value]     │       │                       ├── Claude Code skills folder               # Where Claude Code reads skills.
+[Button]    │       │                       ├── Install for Claude Code                 # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
+[Label]     │       │                       ├── Claude Code skill                       # Whether the skill is in that folder, and whether it is this program's version.
+[Value]     │       │                       ├── Other agents' skills folder             # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
+[Button]    │       │                       ├── Install for other agents                # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
+[Label]     │       │                       ├── Other agents' skill                     # Whether the skill is in that folder, and whether it is this program's version.
+[Label]     │       │                       ├── Claude app                              # What to do with the ZIP, or why it was not saved.
+[Button]    │       │                       └── Save as ZIP                             # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -534,7 +546,7 @@ are set. `Value`, `Status` and `Grid` are read, not typed in.
 [Status]    │                   ├── Check state                                         # What the program is checking right now.
 [Status]    │                   ├── Next check                                          # How long until the checks run again.
 [Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
-[Section]   └── Tray (hidden)                                                           # The menu behind the icon in the notification area.
+[Section]   └── Tray                                                                    # The menu behind the icon in the notification area.
 [Button]        ├── Open Application                                                    # Brings the window back from the notification area.
 [CheckBox]      ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.
 [Button]        └── Exit                                                                # Closes the program and stops the emulated controllers.

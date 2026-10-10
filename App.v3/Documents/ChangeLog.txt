@@ -1,4 +1,4 @@
-﻿## [3.6.20.0] - 2026-10-09
+﻿## [3.6.24.0] - 2026-10-10
 
 - Fixed: AI tools silently ignored arguments they do not take.
 - Fixed: Reading the device list leaked a little memory each time.
@@ -6,14 +6,18 @@
 - Fixed: An AI assistant's press waited until its question was answered.
 - Fixed: The program left an empty x360ce folder beside itself.
 - Fixed: The help's link to the version 4 help did nothing.
+- Fixed: AI assistants could read the AI access token.
+- Fixed: AI assistants could change greyed-out settings.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: Pastel icons, sharper controller pictures and button glyphs.
 - Changed: Sharp text and icons on screens set above 100%.
 - Changed: In the light theme, the tabs not chosen have dimmer text.
 - Changed: AI search takes several words and lists best matches first.
 - Changed: The AI door refuses web pages and explains its refusals.
+- Changed: The program tells an AI assistant to use only its door, never the screen.
 - Added: Light and dark themes; System follows Windows.
 - Added: AI assistants can walk the person to a setting, one tab at a time.
+- Added: An AI assistant's highlight can stay until you act.
 
 ## [3.5.10.0] - 2026-09-27
 

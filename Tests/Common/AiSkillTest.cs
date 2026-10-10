@@ -1,6 +1,7 @@
-// @under-test: App.v4/Common/AiSkill.cs, App.v4/Issues/AiSkillIssue.cs
+// @under-test: Engine/JocysCom/Mcp/AiSkill.cs, App.v4/Mcp/McpTools.cs, App.v4/Issues/AiSkillIssue.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Mcp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -102,7 +103,7 @@ namespace x360ce.Tests
 
 		static string Unstamped(string text)
 		{
-			return x360ce.Engine.UiTree.UiTreeExporter.Restamp(text, "0", "0");
+			return JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Restamp(text, "0", "0");
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
@@ -178,7 +179,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, Skill("references/ui-tree-v3.json", out printed, out failed));
 			Assert.AreEqual(AppHelper.ReadHelp(AiSkill.References["references/ui-tree-v3.json"]), printed);
 			Assert.AreEqual(0, Skill("help-v3", out printed, out failed));
-			Assert.AreEqual(x360ce.Engine.MarkdownRtf.ResolveLinks(AppHelper.ReadHelp(AiSkill.HelpV3Resource)), printed);
+			Assert.AreEqual(x360ce.Engine.MarkdownRtf.ResolveLinks(AppHelper.ReadHelp(AppHelper.HelpV3Resource)), printed);
 			// A name that is neither a file nor a folder that exists makes no folder, and says what the switch takes.
 			foreach (var name in new[] { "references/manual.md", "skills", "<folder>" })
 			{

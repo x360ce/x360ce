@@ -24,61 +24,7 @@ namespace x360ce.Engine
 			get
 			{
 				if (string.IsNullOrEmpty(_AppDataPath))
-				{
-					// Where settings are kept is decided by SettingsLocation, which knows the
-					// folders they may be in and, more to the point, which of them this user
-					// can actually write. The folder for all users stays the first choice, so
-					// a version that does not know about any of this still finds them.
-					_AppDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
-					// An older portable layout kept the files loose in the folder rather than
-					// in a Settings sub-folder. It still wins when it is there: somebody
-					// carrying the program on a stick chose that explicitly.
-					var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
-					// If local configuration was found then use it.
-					if (fi.Exists)
-					{
-						_AppDataPath = fi.Directory.FullName;
-					}
-					else
-					{
-						var args = Environment.GetCommandLineArgs();
-						// Requires System.Configuration.Installl reference.
-						var ic = new System.Configuration.Install.InstallContext(null, args);
-						if (ic.Parameters.ContainsKey("Profile"))
-						{
-							var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
-							if (string.IsNullOrEmpty(name))
-							{
-								// Name is invalid.
-							}
-							else
-							{
-								var path = Environment.ExpandEnvironmentVariables(name);
-								// Get invalid path and file name chars.
-								var ipc = Path.GetInvalidPathChars();
-								var ifc = Path.GetInvalidFileNameChars();
-								// If path is valid file name then...
-								if (!name.ToCharArray().Any(x => ifc.Contains(x)))
-								{
-									// Use Profiles sub-folder.
-									_AppDataPath += "\\Profiles\\" + name;
-								}
-								// If name is valid path then...
-								else if (!name.ToCharArray().Any(x => ipc.Contains(x)))
-								{
-									var di = new DirectoryInfo(path);
-									path = di.FullName;
-									var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-									// If path is not inside windows folder then...
-									if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
-									{
-										_AppDataPath = path;
-									}
-								}
-							}
-						}
-					}
-				}
+					_AppDataPath = ResolveAppDataPath(Environment.GetCommandLineArgs());
 				return _AppDataPath;
 			}
 			set
@@ -87,6 +33,52 @@ namespace x360ce.Engine
 			}
 		}
 		static string _AppDataPath;
+
+		/// <summary>The settings folder of a copy of this program started with these arguments, /Profile included.</summary>
+		public static string ResolveAppDataPath(string[] args)
+		{
+			// Where settings are kept is decided by SettingsLocation, which knows the
+			// folders they may be in and, more to the point, which of them this user
+			// can actually write. The folder for all users stays the first choice, so
+			// a version that does not know about any of this still finds them.
+			var appDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
+			// An older portable layout kept the files loose in the folder rather than
+			// in a Settings sub-folder. It still wins when it is there: somebody
+			// carrying the program on a stick chose that explicitly.
+			var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
+			// If local configuration was found then use it.
+			if (fi.Exists)
+				return fi.Directory.FullName;
+			// Requires System.Configuration.Installl reference.
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			if (!ic.Parameters.ContainsKey("Profile"))
+				return appDataPath;
+			var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
+			// Name is invalid.
+			if (string.IsNullOrEmpty(name))
+				return appDataPath;
+			var path = Environment.ExpandEnvironmentVariables(name);
+			// Get invalid path and file name chars.
+			var ipc = Path.GetInvalidPathChars();
+			var ifc = Path.GetInvalidFileNameChars();
+			// If path is valid file name then...
+			if (!name.ToCharArray().Any(x => ifc.Contains(x)))
+			{
+				// Use Profiles sub-folder.
+				return appDataPath + "\\Profiles\\" + name;
+			}
+			// If name is valid path then...
+			if (!name.ToCharArray().Any(x => ipc.Contains(x)))
+			{
+				var di = new DirectoryInfo(path);
+				path = di.FullName;
+				var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+				// If path is not inside windows folder then...
+				if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+					return path;
+			}
+			return appDataPath;
+		}
 
 		/// <summary>
 		/// Get information about XInput located on the disk.

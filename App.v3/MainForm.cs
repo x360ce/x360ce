@@ -454,7 +454,7 @@ namespace x360ce.App
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			Engine.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
 			if (UpdateTimer != null) UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try
@@ -915,8 +915,8 @@ namespace x360ce.App
 			ReloadXinputSettings();
 			// Every page exists now, so every control can be given its name and purpose: first what
 			// the catalogue says, then, for the controls linked to a setting, what the setting says.
-			Engine.UiTree.UiText.Apply(this);
-			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			SettingManager.Current.DescribeControls();
 			// Every page exists now, so every image and fixed grid column on them is enlarged with the screen once.
 			ControlsHelper.ScaleImages(this);

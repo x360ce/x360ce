@@ -1,22 +1,22 @@
-﻿using System.Collections.Generic;
+#nullable disable
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace x360ce.Engine.UiTree
+namespace JocysCom.ClassLibrary.Controls.UiTree
 {
 	/// <summary>One element of the interface, as a screen reader or an automation tool sees it.</summary>
 	/// <remarks>
-	/// Written to <c>skills/x360ce/references/ui-tree-v3.json</c> and <c>ui-tree-v4.json</c> by each program itself,
-	/// so the answer always describes the build it came from rather than a document somebody
-	/// remembered to update.
+	/// Written to the program's <c>ui-tree.json</c> by the program itself, so the answer always
+	/// describes the build it came from rather than a document somebody remembered to update.
 	/// </remarks>
 	[DataContract]
 	public class UiNode
 	{
-		/// <summary>Name the element is found by, from AccessibleName, then Text, then the field name.</summary>
+		/// <summary>Name the element is found by: its accessible name, then the catalog's, then its caption.</summary>
 		[DataMember(Order = 1)]
 		public string Name { get; set; }
 
-		/// <summary>What the element is for, from AccessibleDescription.</summary>
+		/// <summary>What the element is for: its accessible description, which WPF calls help text.</summary>
 		[DataMember(Order = 2, EmitDefaultValue = false)]
 		public string Description { get; set; }
 
@@ -68,7 +68,7 @@ namespace x360ce.Engine.UiTree
 		[DataMember(Order = 12, EmitDefaultValue = false)]
 		public List<UiNode> Items { get; set; }
 
-		/// <summary>Control names from the main window's children down, joined by '/'. Filled only when the tree is read with a path.</summary>
+		/// <summary>Element names from the main window's children down, joined by '/'. Filled only when the tree is read with a path.</summary>
 		[DataMember(Order = 13, EmitDefaultValue = false)]
 		public string Path { get; set; }
 

@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"3.6.20.0",
-	"Built":"2026-10-09",
+	"Version":"3.6.24.0",
+	"Built":"2026-10-10",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -200,7 +200,7 @@
 							"Id":"ProcessorArchitectureComboBox"
 						},
 						{
-							"Name":"Apply\/Synchronize Settings",
+							"Name":"Apply/Synchronize Settings",
 							"Description":"Copies the ticked libraries and the settings into the game's folder, after listing what differs.",
 							"Role":"Button",
 							"Id":"SynchronizeSettingsButton"
@@ -266,7 +266,7 @@
 									"Id":"HelpButton",
 									"Items":[
 										{
-											"Name":"https:\/\/www.google.co.uk\/?#q=x360ce+X360+Controller+Emulator",
+											"Name":"https://www.google.co.uk/?#q=x360ce+X360+Controller+Emulator",
 											"Role":"Button",
 											"Id":"GoogleSearchButton"
 										},
@@ -1827,27 +1827,27 @@
 									"Type":"AboutControl",
 									"Items":[
 										{
-											"Name":"http:\/\/www.jocys.com",
+											"Name":"http://www.jocys.com",
 											"Role":"Link",
 											"Id":"AboutJocysLinkLabel"
 										},
 										{
-											"Name":"https:\/\/github.com\/x360ce\/x360ce",
+											"Name":"https://github.com/x360ce/x360ce",
 											"Role":"Link",
 											"Id":"GoogleProjectLinkLabel"
 										},
 										{
-											"Name":"http:\/\/dev.tapek.shst.pl",
+											"Name":"http://dev.tapek.shst.pl",
 											"Role":"Link",
 											"Id":"AboutVirusLinkLabel"
 										},
 										{
-											"Name":"http:\/\/www.tocaedit.com",
+											"Name":"http://www.tocaedit.com",
 											"Role":"Link",
 											"Id":"AboutTocaEditLinkLabel"
 										},
 										{
-											"Name":"http:\/\/en.wikipedia.org\/wiki\/Xbox_360_Controller",
+											"Name":"http://en.wikipedia.org/wiki/Xbox_360_Controller",
 											"Role":"Link",
 											"Id":"AboutWikiLinkLabel"
 										},
@@ -1909,7 +1909,6 @@
 			"Description":"The menu behind the icon in the notification area.",
 			"Role":"Section",
 			"Id":"TrayContextMenuStrip",
-			"Hidden":true,
 			"Items":[
 				{
 					"Name":"Open Application",

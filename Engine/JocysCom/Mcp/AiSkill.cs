@@ -1,16 +1,19 @@
+#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.Mcp
 {
 	/// <summary>
-	/// The x360ce skill for AI agents: the copy built into the program, written into the folders agents read skills
-	/// from, into a ZIP for the Claude app, or printed by the /Skill switch, with the program's help and a description
-	/// of its interface beside it.
+	/// The program's skill for AI agents: the copy built into the program, written into the folders agents read skills
+	/// from, into a ZIP for the Claude app, or printed by the -Skill switch, with the program's interface description
+	/// beside it.
 	/// </summary>
 	/// <remarks>
 	/// Installed from the program's own copy only: a copy from the internet could describe tools this build does not
@@ -20,26 +23,23 @@ namespace x360ce.App
 	/// </remarks>
 	public static class AiSkill
 	{
-		/// <summary>The skill's name, which is also its folder's name.</summary>
-		public const string Name = "x360ce";
+		/// <summary>The skill's name, which is also its folder's name. Set by the program.</summary>
+		public static string Name = "skill";
 
-		/// <summary>The embedded skills/x360ce/SKILL.md.</summary>
-		public const string Resource = "Documents.x360ce.SKILL.md";
-
-		/// <summary>The embedded docs/Help.v3.md, the help version 3 shows.</summary>
-		public const string HelpV3Resource = "Documents.Help.v3.md";
+		/// <summary>The embedded SKILL.md, by the name ReadResource takes.</summary>
+		public static string Resource = "SKILL.md";
 
 		/// <summary>The references beside SKILL.md, by their path in the skill's folder, and the embedded document each one is.</summary>
-		/// <remarks>Both programs, each named for its version as they were in docs: the skill teaches version 4, and an agent may meet version 3.</remarks>
-		public static readonly Dictionary<string, string> References = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-		{
-			{ "references/help-v4.md", AppHelper.HelpV4Resource },
-			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
-			{ "references/ui-tree-v4.json", "Documents.x360ce.ui-tree-v4.json" },
-			{ "references/help-v3.md", HelpV3Resource },
-			{ "references/ui-tree-v3.md", "Documents.x360ce.ui-tree-v3.md" },
-			{ "references/ui-tree-v3.json", "Documents.x360ce.ui-tree-v3.json" },
-		};
+		public static Dictionary<string, string> References = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+		/// <summary>Reads an embedded document by name; empty when the program carries none.</summary>
+		public static Func<string, string> ReadResource = name => "";
+
+		/// <summary>What -Skill=help and -Skill=ui-tree add to find their file, such as "-v4"; empty where the references carry no version.</summary>
+		public static string ReferenceSuffix = "";
+
+		/// <summary>The program that carries the skill, whose version an installed copy carries.</summary>
+		public static Assembly ProgramAssembly = Assembly.GetEntryAssembly();
 
 		public enum State
 		{
@@ -69,25 +69,25 @@ namespace x360ce.App
 		public static string AgentsFolder { get { return Path.Combine(UserProfile, ".agents", "skills"); } }
 
 		/// <summary>The version of the program that carries the skill, which an installed copy carries so a later program can tell it is out of date.</summary>
-		public static Version ProgramVersion { get { return typeof(AiSkill).Assembly.GetName().Version; } }
+		public static Version ProgramVersion { get { return ProgramAssembly.GetName().Version; } }
 
 		/// <summary>The day the program was built, as its interface description names it.</summary>
 		public static string ProgramBuilt
 		{
-			get { return new JocysCom.ClassLibrary.Configuration.AssemblyInfo(typeof(AiSkill).Assembly).BuildDateTime.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture); }
+			get { return new JocysCom.ClassLibrary.Configuration.AssemblyInfo(ProgramAssembly).BuildDateTime.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture); }
 		}
 
 		/// <summary>The start of this program's own interface description among the references, which an install stamps with its version and build day.</summary>
-		const string OwnTree = "references/ui-tree-v4";
+		public static string OwnTree = "references/ui-tree";
 
-		/// <summary>The start of the help documents among the references, whose links are made into addresses: see <see cref="Engine.MarkdownRtf.ResolveLinks"/>.</summary>
-		const string HelpPrefix = "references/help-";
+		/// <summary>The start of the help documents among the references, whose links are made into addresses by McpUiTools.ResolveLinks.</summary>
+		public static string HelpPrefix = "references/help-";
 
 		/// <summary>The skill as the program ships it, its version set to the program's.</summary>
 		/// <remarks>Written with LF line endings whatever the checkout it was built from, so every install is the same.</remarks>
 		public static string Text(Version version)
 		{
-			var text = AppHelper.ReadHelp(Resource).Replace("\r\n", "\n");
+			var text = (ReadResource(Resource) ?? "").Replace("\r\n", "\n");
 			if (string.IsNullOrEmpty(text))
 				throw new InvalidOperationException("The program carries no skill (" + Resource + ").");
 			return VersionLine.Replace(text, "${1}\"" + version + "\"", 1);
@@ -99,14 +99,14 @@ namespace x360ce.App
 			var files = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { { "SKILL.md", Text(version) } };
 			foreach (var reference in References)
 			{
-				var text = AppHelper.ReadHelp(reference.Value);
+				var text = ReadResource(reference.Value);
 				// The description was written by the build that last exported it; the copy names the build that installs it,
-				// so an agent can tell from the file alone whether it is current. Version 3's keeps its own.
+				// so an agent can tell from the file alone whether it is current.
 				if (reference.Key.StartsWith(OwnTree, StringComparison.OrdinalIgnoreCase))
-					text = Engine.UiTree.UiTreeExporter.Restamp(text, version.ToString(), ProgramBuilt);
+					text = JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Restamp(text, version.ToString(), ProgramBuilt);
 				// The help links to the other pages and files of the docs folder, which the skill's folder does not hold.
 				if (reference.Key.StartsWith(HelpPrefix, StringComparison.OrdinalIgnoreCase))
-					text = Engine.MarkdownRtf.ResolveLinks(text);
+					text = McpUiTools.ResolveLinks(text);
 				files.Add(reference.Key, text);
 			}
 			return files;
@@ -135,7 +135,7 @@ namespace x360ce.App
 
 		/// <summary>Writes the skill's folder into a skills folder, with the program's version unless another is given.</summary>
 		/// <remarks>
-		/// Only the x360ce folder is touched. It ends as the program ships it: each file written where it differs, and
+		/// Only the skill's folder is touched. It ends as the program ships it: each file written where it differs, and
 		/// anything else in it removed, which is what an older copy left behind. A file that is already right keeps its
 		/// time, so the build that writes the skill into the repository, where these files are also its sources, does
 		/// not start another build.
@@ -164,10 +164,10 @@ namespace x360ce.App
 					Directory.Delete(path);
 		}
 
-		/// <summary>The skill as a ZIP the Claude app takes under Customize, Skills: the x360ce folder with its files.</summary>
+		/// <summary>The skill as a ZIP the Claude app takes under Customize, Skills: the skill's folder with its files.</summary>
 		public static void SaveZip(string zipPath, Version version = null)
 		{
-			var temp = Path.Combine(Path.GetTempPath(), "x360ce-skill-" + Guid.NewGuid().ToString("N"));
+			var temp = Path.Combine(Path.GetTempPath(), Name + "-skill-" + Guid.NewGuid().ToString("N"));
 			try
 			{
 				Install(temp, version);
@@ -182,7 +182,7 @@ namespace x360ce.App
 			}
 		}
 
-		/// <summary>What the /Skill switch does: alone it prints SKILL.md, with help or ui-tree it prints that reference, and with a folder that exists it installs the skill there. Returns the exit code.</summary>
+		/// <summary>What the -Skill switch does: alone it prints SKILL.md, with help or ui-tree it prints that reference, and with a folder that exists it installs the skill there. Returns the exit code.</summary>
 		/// <param name="value">The switch's value.</param>
 		/// <param name="callerFolder">The folder the command was given in, which a relative folder is taken from.</param>
 		/// <param name="output">Where the skill is printed.</param>
@@ -218,10 +218,10 @@ namespace x360ce.App
 			return 0;
 		}
 
-		/// <summary>The skill's file a /Skill value names, or null.</summary>
+		/// <summary>The skill's file a -Skill value names, or null.</summary>
 		/// <remarks>
-		/// Named without its folder and its .md too, because PowerShell splits an unquoted -Skill=references/help-v4.md
-		/// at the dot. Help and ui-tree alone are this program's, version 4.
+		/// Named without its folder and its .md too, because PowerShell splits an unquoted -Skill=references/ui-tree.md
+		/// at the dot. Help and ui-tree alone are this program's own.
 		/// </remarks>
 		static string FileOf(string value)
 		{
@@ -233,7 +233,7 @@ namespace x360ce.App
 			if (name.Length == 0 || string.Equals(name, "skill", StringComparison.OrdinalIgnoreCase))
 				return "SKILL.md";
 			if (string.Equals(name, "help", StringComparison.OrdinalIgnoreCase) || string.Equals(name, "ui-tree", StringComparison.OrdinalIgnoreCase))
-				name += "-v4";
+				name += ReferenceSuffix;
 			var path = "references/" + name;
 			if (References.ContainsKey(path))
 				return path;

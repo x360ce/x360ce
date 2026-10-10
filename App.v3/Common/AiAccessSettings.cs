@@ -1,6 +1,6 @@
 using System;
+using JocysCom.ClassLibrary.Mcp;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 
 namespace x360ce.App
 {
@@ -25,6 +25,9 @@ namespace x360ce.App
 		/// <summary>How much a connected assistant may do.</summary>
 		public AiAccess Level = AiAccess.Read;
 
+		/// <summary>Whether programs on this computer reach the door without the token. Off unless a person switches it on.</summary>
+		public bool TrustLocal;
+
 		/// <summary>Local port the assistant connects to.</summary>
 		public int Port = DefaultPort;
 
@@ -40,6 +43,7 @@ namespace x360ce.App
 			AiAccess level;
 			if (Enum.TryParse(ini.GetValue(Section, "AiAccess"), true, out level) && Enum.IsDefined(typeof(AiAccess), level))
 				s.Level = level;
+			s.TrustLocal = ini.GetValue(Section, "AiAccessTrustLocal") == "1";
 			int port;
 			if (int.TryParse(ini.GetValue(Section, "AiAccessPort"), out port))
 				s.Port = port;
@@ -54,6 +58,7 @@ namespace x360ce.App
 			var ini = new Ini(SettingManager.IniFileName);
 			return ini.SetValue(Section, "AiAccessEnabled", Enabled ? "1" : "0") != 0
 				&& ini.SetValue(Section, "AiAccess", Level.ToString()) != 0
+				&& ini.SetValue(Section, "AiAccessTrustLocal", TrustLocal ? "1" : "0") != 0
 				&& ini.SetValue(Section, "AiAccessPort", Port.ToString()) != 0
 				&& ini.SetValue(Section, "AiAccessToken", Token ?? "") != 0;
 		}
@@ -76,7 +81,7 @@ namespace x360ce.App
 			McpListener.Stop();
 			EnsureToken();
 			if (Enabled)
-				McpListener.Start(McpListener.LoopbackAddress, Port, Token);
+				McpListener.Start(McpListener.LoopbackAddress, Port, Token, TrustLocal);
 		}
 	}
 }

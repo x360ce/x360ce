@@ -21,7 +21,7 @@ namespace x360ce.App
 		public WarningsForm()
 		{
 			InitializeComponent();
-			Engine.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
 			ControlsHelper.ScaleImages(this);
 			ControlsHelper.ScaleGrid(WarningsDataGridView);
 			checkTimer = new System.Timers.Timer();

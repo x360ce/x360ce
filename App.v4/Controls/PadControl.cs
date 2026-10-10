@@ -1364,7 +1364,9 @@ namespace x360ce.App.Controls
 		void ForceSpringAutoButton_Click(object sender, EventArgs e)
 		{
 			var ud = GetSelectedDevice();
-			if (ud == null || ud.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
+			// The device whose motors the engine drives, which runs the measuring: a Raw Input device's DirectInput twin.
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			if (driven == null || driven.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
 			{
 				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
 				return;
@@ -1380,8 +1382,8 @@ namespace x360ce.App.Controls
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
-			springAutoDevice = ud;
-			ud.SpringCalibration = new SpringCalibration();
+			springAutoDevice = driven;
+			driven.SpringCalibration = new SpringCalibration();
 			SpringAutoTimer.Start();
 		}
 
@@ -2155,20 +2157,25 @@ namespace x360ce.App.Controls
 			UpdateEffectDescription();
 		}
 
-		/// <summary>What the Force Feedback page says for a device read through Raw Input, which carries no force feedback, or null.</summary>
-		/// <remarks>Pass Through goes to an XInput place, not through the device's source, so it reaches an Xbox controller from either row.</remarks>
-		public static string RawInputForceNote(UserDevice ud)
+		/// <summary>What the Force Feedback page says for a device read through Raw Input that no force feedback reaches, or null.</summary>
+		/// <remarks>
+		/// Raw Input only reads, so a Raw Input device's force goes through its DirectInput twin (<see cref="UserDevice.ForceTwin"/>),
+		/// and the note is for one with no twin that takes it, such as an Xbox controller. Pass Through goes to an XInput
+		/// place, not through the device's source, so it reaches an Xbox controller from either row.
+		/// </remarks>
+		/// <param name="devices">The devices listed, among which the twin is looked for.</param>
+		public static string RawInputForceNote(UserDevice ud, IEnumerable<UserDevice> devices)
 		{
-			return ud != null && ud.InputSource == InputSourceType.RawInput ? RawInputForceNoteText : null;
+			return ud != null && ud.InputSource == InputSourceType.RawInput && ud.ForceTwin(devices) == null ? RawInputForceNoteText : null;
 		}
 
-		const string RawInputForceNoteText = "Raw Input sends no vibration or wheel forces. The same controller's DirectInput row does; Pass Through reaches an Xbox controller from either.";
+		const string RawInputForceNoteText = "No vibration or wheel forces reach this controller: Raw Input only reads, and its DirectInput side takes none. Pass Through reaches an Xbox controller.";
 
 		/// <summary>Shows what the chosen effect type does, or <see cref="RawInputForceNote"/> in its place for a Raw Input device.</summary>
 		/// <remarks>Written when the effect type changes and when another device is selected, so neither leaves the other's text.</remarks>
 		void UpdateEffectDescription()
 		{
-			var note = RawInputForceNote(GetSelectedDevice());
+			var note = RawInputForceNote(GetSelectedDevice(), SettingsManager.UserDevices.ItemsToArraySynchronized());
 			if (note != null)
 			{
 				EffectDescriptionLabel.Text = note;

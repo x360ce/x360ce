@@ -1,4 +1,4 @@
-// @under-test: Engine/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpServer.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +10,7 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Mcp;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -84,33 +84,36 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("A password sent through the door is masked in the log, and the token never appears in it")]
+		[Description("A password or the token box's value sent through the door is masked in the log, and the token never appears in it")]
 		public void The_log_keeps_no_secret()
 		{
+			UseSample(AiAccess.Configure);
 			var folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "x360ce-log-" + Guid.NewGuid().ToString("N"));
 			System.IO.Directory.CreateDirectory(folder);
 			McpLog.Folder = folder;
 			try
 			{
-				UseSample(AiAccess.Configure);
 				CallTool("ui_set", new Dictionary<string, object> { { "path", "Options/RemotePasswordTextBox" }, { "value", "hunter2" } });
+				CallTool("ui_set", new Dictionary<string, object> { { "path", "Tabs/Options/AiAccessTokenTextBox" }, { "value", "typed-secret" } });
 				var token = new string('a', 64);
 				CallTool("poke_value", new Dictionary<string, object> { { "value", token } });
 				var log = System.IO.File.ReadAllText(McpLog.Path);
 				StringAssert.Contains(log, "RemotePasswordTextBox");
+				StringAssert.Contains(log, "AiAccessTokenTextBox");
 				Assert.IsFalse(log.Contains("hunter2"), "The password was written to the log.");
+				Assert.IsFalse(log.Contains("typed-secret"), "The value given to the token box was written to the log.");
 				Assert.IsFalse(log.Contains(token), "The token was written to the log.");
 				StringAssert.Contains(log, "<token>");
 			}
 			finally
 			{
-				McpLog.Folder = null;
+				McpLog.Folder = LogFolder;
 				System.IO.Directory.Delete(folder, true);
 			}
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("Initialize names the protocol and the program, and passes on the program's instructions when it has some")]
+		[Description("Initialize names the protocol, the program and its version, and passes on the program's instructions followed by the door-only rule, which is sent even when the program has none")]
 		public void Initialize_names_protocol_and_program()
 		{
 			UseSample(AiAccess.Read);
@@ -120,11 +123,13 @@ namespace x360ce.Tests
 				McpServer.Instructions = null;
 				var r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];
 				Assert.AreEqual(McpServer.ProtocolVersion, r["protocolVersion"]);
-				Assert.IsTrue(((Dictionary<string, object>)r["serverInfo"])["name"].ToString().Contains("x360ce"));
-				Assert.IsFalse(r.ContainsKey("instructions"), "No instructions are sent when the program has none.");
+				var serverInfo = (Dictionary<string, object>)r["serverInfo"];
+				Assert.IsTrue(serverInfo["name"].ToString().Contains("x360ce"));
+				Assert.AreEqual(Application.ProductVersion, serverInfo["version"], "The version is not the program's.");
+				Assert.AreEqual(McpServer.DoorOnly, r["instructions"], "Without instructions of the program's own, the door-only rule is sent alone.");
 				McpServer.Instructions = "Start with devices_list.";
 				r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];
-				Assert.AreEqual("Start with devices_list.", r["instructions"]);
+				Assert.AreEqual("Start with devices_list. " + McpServer.DoorOnly, r["instructions"]);
 			}
 			finally { McpServer.Instructions = saved; }
 		}

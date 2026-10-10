@@ -5,6 +5,7 @@ using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using x360ce.App;
 using x360ce.App.DInput;
 using x360ce.Engine;
@@ -66,6 +67,54 @@ namespace x360ce.Tests
 			Assert.IsTrue(routing.TryGetForce(device, out force), "A mapped device has no force source.");
 			CollectionAssert.AreEqual(new[] { 0, 2 }, force.ForcePads, "Both switches are on, so both tabs' force reaches the device.");
 			Assert.AreSame(first, force.PadSetting, "The effects are not made with the lowest switched-on tab's settings.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("A Raw Input row's force goes to its DirectInput twin, which the engine then reads and holds, since Raw Input sends nothing back")]
+		public void A_raw_input_rows_force_goes_to_its_DirectInput_twin()
+		{
+			var path = @"\\?\HID#VID_046D&PID_C219#7&2c4ab5e4&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}";
+			var raw = new UserDevice { InstanceGuid = Guid.NewGuid(), InputSourceType = (int)InputSourceType.RawInput, HidDevicePath = path, IsEnabled = true, IsOnline = true };
+			// DirectInput reports the same path in lower case. Unticked on the Devices page, as a person does who reads the
+			// controller through Raw Input only: it is still the way to that controller's motors.
+			var twin = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDevicePath = path.ToLowerInvariant(), IsEnabled = false, IsOnline = true, CapFlags = (int)DeviceFlags.ForceFeedback };
+			var other = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDevicePath = @"\\?\hid#vid_045e&pid_02ff", IsEnabled = true, IsOnline = true };
+			var on = Force(true);
+			var routing = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller2, on) }, new[] { on }, new[] { raw, twin, other });
+
+			DeviceForce force;
+			Assert.IsTrue(routing.TryGetForce(twin.InstanceGuid, out force), "The twin is given no force, so the motors are never driven.");
+			CollectionAssert.AreEqual(new[] { 1 }, force.ForcePads, "The twin's force does not come from the Raw Input row's tab.");
+			Assert.AreSame(on, force.PadSetting, "The twin's effects are not made with the Raw Input row's settings.");
+			CollectionAssert.Contains(routing.MappedDevices, twin, "The twin is not read, so the engine never holds it or sends its force.");
+			CollectionAssert.DoesNotContain(routing.MappedDevices, other, "A device that is not the twin is read.");
+			Assert.AreSame(twin, routing.ForceDevice(raw), "The Raw Input row's force is not said to go through its twin.");
+			Assert.AreSame(other, routing.ForceDevice(other), "A device that drives its own force is said to go through another.");
+			Assert.AreEqual(0, routing.PadRows.Sum(x => x.Count(r => r.InstanceGuid == twin.InstanceGuid)), "The twin's input reaches a controller.");
+
+			// With the tab's force off, nothing reaches the motors, so the twin is neither read nor held.
+			var off = Force(false);
+			var quiet = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller2, off) }, new[] { off }, new[] { raw, twin });
+			CollectionAssert.DoesNotContain(quiet.MappedDevices, twin, "The twin is held with no force to send.");
+			Assert.AreSame(raw, quiet.ForceDevice(raw));
+
+			// The twin on a tab of its own: both tabs' force reaches the motors, and the twin is read once.
+			twin.IsEnabled = true;
+			var own = Force(true);
+			var both = DeviceRouting.Build(Game, new[] { Row(twin.InstanceGuid, MapTo.Controller1, own), Row(raw.InstanceGuid, MapTo.Controller2, on) },
+				new[] { own, on }, new[] { raw, twin });
+			Assert.IsTrue(both.TryGetForce(twin.InstanceGuid, out force));
+			CollectionAssert.AreEqual(new[] { 0, 1 }, force.ForcePads, "Force from the twin's own tab and the Raw Input row's tab is not merged.");
+			Assert.AreSame(own, force.PadSetting, "The effects are not made with the lowest forcing tab's settings.");
+			Assert.AreEqual(1, both.MappedDevices.Count(x => x == twin), "The twin is read twice in a pass.");
+
+			// A twin whose driver takes no force feedback, as an Xbox controller's DirectInput side: nothing would reach the
+			// motors through it, so it is neither read nor held.
+			twin.IsEnabled = false;
+			twin.CapFlags = 0;
+			var xbox = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller2, on) }, new[] { on }, new[] { raw, twin });
+			CollectionAssert.DoesNotContain(xbox.MappedDevices, twin, "A twin that takes no force feedback is held for it.");
+			Assert.AreSame(raw, xbox.ForceDevice(raw));
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]

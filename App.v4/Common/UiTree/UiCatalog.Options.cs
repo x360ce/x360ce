@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using JocysCom.ClassLibrary.Mcp;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -108,51 +109,10 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.AllowRemote4CheckBox"] = new Text("Allow remote controller 4",
 				"Lets a remote computer work controller 4.");
 
-			// The door an AI assistant or a script comes in by. Off until a person opens it here.
-			d["OptionsUserControl.AiAccessGroupBox"] = new Text("AI assistant access (MCP server)",
-				"Lets an AI assistant or a script read or operate this program, at the level chosen here.");
-			d["OptionsUserControl.AiAccessEnabledCheckBox"] = new Text("AI assistant access",
-				"Lets an AI assistant or a script reach this program at all. Off until a person ticks it.");
-			d["OptionsUserControl.AiAccessComboBox"] = new Text("AI assistant level",
-				"Read, Configure or Administer: how much a connected assistant or script may do.");
-			d["OptionsUserControl.AiAccessPromptButton"] = new Text("Copy prompt",
-				"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask.");
-			d["OptionsUserControl.AiAccessAddressComboBox"] = new Text("AI assistant address",
-				"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on.");
-			d["OptionsUserControl.AiAccessUrlTextBox"] = new Text("AI assistant URL",
-				"Address an agent that connects over HTTP is given, with the token as a bearer header.");
-			d["OptionsUserControl.AiAccessUrlCopyButton"] = new Text("Copy URL",
-				"Copies the URL to the clipboard.");
-			d["OptionsUserControl.AiAccessPortNumericUpDown"] = new Text("AI assistant port",
-				"Local port the assistant connects to. Change it if another program holds it.");
-			d["OptionsUserControl.AiAccessTokenTextBox"] = new Text("AI assistant token",
-				"What a caller must present to be let in. Made by the program.");
-			d["OptionsUserControl.AiAccessRegenerateButton"] = new Text("Regenerate token",
-				"Makes a new token, so anything holding the old one is shut out.");
-			d["OptionsUserControl.AiAccessSnippetTextBox"] = new Text("Registration snippet",
-				"Settings to paste into an assistant so it can reach this program.");
-			d["OptionsUserControl.AiAccessCopyButton"] = new Text("Copy snippet",
-				"Copies the registration snippet to the clipboard.");
+			// The AI page: the shared page's names and purposes, under the tab that is this program's own.
 			d["OptionsUserControl.AiTabPage"] = new Text("AI",
 				"AI assistant access, and the skill that teaches AI agents to use this program.");
-			d["OptionsUserControl.AiSkillGroupBox"] = new Text("AI skill",
-				"Installs the x360ce skill, which teaches an AI agent what this program does and how to use it, where agents read skills.");
-			d["OptionsUserControl.AiSkillClaudeFolderTextBox"] = new Text("Claude Code skills folder",
-				"Where Claude Code reads skills.");
-			d["OptionsUserControl.AiSkillClaudeStatusLabel"] = new Text("Claude Code skill",
-				"Whether the skill is in that folder, and whether it is this program's version.");
-			d["OptionsUserControl.AiSkillClaudeButton"] = new Text("Install for Claude Code",
-				"Writes the skill with the help and a description of this interface into the Claude Code folder, replacing only the x360ce skill.");
-			d["OptionsUserControl.AiSkillAgentsFolderTextBox"] = new Text("Other agents' skills folder",
-				"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.");
-			d["OptionsUserControl.AiSkillAgentsStatusLabel"] = new Text("Other agents' skill",
-				"Whether the skill is in that folder, and whether it is this program's version.");
-			d["OptionsUserControl.AiSkillAgentsButton"] = new Text("Install for other agents",
-				"Writes the skill with the help and a description of this interface into the folder the other agents share, replacing only the x360ce skill.");
-			d["OptionsUserControl.AiSkillZipButton"] = new Text("Save as ZIP",
-				"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.");
-			d["OptionsUserControl.AiAccessLogButton"] = new Text("Open log",
-				"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.");
+			AiAccessModel.AddCatalog(d, AiAccessModel.FormsView);
 
 			// Hiding the real controller.
 			d["OptionsUserControl.HidHideGroupBox"] = new Text("HID Hide",
