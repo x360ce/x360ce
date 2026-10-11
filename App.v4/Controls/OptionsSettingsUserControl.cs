@@ -105,12 +105,7 @@ namespace x360ce.App.Controls
 
 		private void OpenFolderButton_Click(object sender, EventArgs e)
 		{
-			var folder = Path.Combine(EngineHelper.AppDataPath, "Settings");
-			// The folder is made when the first setting is saved, so a fresh install has
-			// nothing to open yet. Opening the one above it still shows where it will be.
-			if (!Directory.Exists(folder))
-				folder = EngineHelper.AppDataPath;
-			EngineHelper.BrowsePath(folder);
+			Program.OpenSettingsFolder();
 		}
 
 		private void ApplyButton_Click(object sender, EventArgs e)

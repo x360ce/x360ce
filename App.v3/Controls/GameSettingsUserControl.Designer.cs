@@ -94,13 +94,10 @@
 			// 
 			// GamesTabControl
 			// 
-			this.GamesTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.GamesTabControl.Controls.Add(this.GamesTabPage);
 			this.GamesTabControl.Controls.Add(this.GlobalSettingsTabPage);
 			this.GamesTabControl.Controls.Add(this.SettingsTabPage);
-			this.GamesTabControl.ItemSize = new System.Drawing.Size(116, 18);
+			this.GamesTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesTabControl.Location = new System.Drawing.Point(3, 3);
 			this.GamesTabControl.Name = "GamesTabControl";
 			this.GamesTabControl.SelectedIndex = 0;
@@ -127,7 +124,7 @@
 			this.GamesDataGridView.AllowUserToAddRows = false;
 			this.GamesDataGridView.AllowUserToDeleteRows = false;
 			this.GamesDataGridView.AllowUserToResizeRows = false;
-			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.GamesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -392,7 +389,7 @@
 			this.ProgramsDataGridView.AllowUserToDeleteRows = false;
 			this.ProgramsDataGridView.AllowUserToOrderColumns = true;
 			this.ProgramsDataGridView.AllowUserToResizeRows = false;
-			this.ProgramsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.ProgramsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.ProgramsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.ProgramsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
@@ -639,6 +636,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.GamesTabControl);
 			this.Name = "GameSettingsUserControl";
+			this.Padding = new System.Windows.Forms.Padding(3);
 			this.Size = new System.Drawing.Size(701, 482);
 			this.Load += new System.EventHandler(this.GameSettingsUserControl_Load);
 			this.GamesTabControl.ResumeLayout(false);

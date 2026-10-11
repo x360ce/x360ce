@@ -244,9 +244,19 @@ namespace x360ce.App.ViGEm
 			return current;
 		}
 
+		/// <summary>Clears HID Guardian's list of hidden devices.</summary>
+		/// <returns>False when the list cannot be written, which needs an administrator to give the rights once.</returns>
 		public static bool ClearAffected()
 		{
-			var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
+			RegistryKey key;
+			try
+			{
+				key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
+			}
+			catch (System.Security.SecurityException)
+			{
+				return false;
+			}
 			if (key == null)
 				return true;
 			key.SetValue(registryKeyName, new string[0], RegistryValueKind.MultiString);

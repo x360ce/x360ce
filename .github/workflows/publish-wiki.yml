@@ -1,0 +1,54 @@
+# Publishes docs to the project wiki whenever the documents change on master, which is where releases land.
+# docs is the only place the pages are written: .github/scripts/Publish-Wiki.ps1 writes the wiki from it, and this
+# pushes the result. Run it by hand from the Actions tab to publish again without a change.
+name: Publish wiki
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'docs/**'
+      - '.github/scripts/Publish-Wiki.ps1'
+      - '.github/workflows/publish-wiki.yml'
+  workflow_dispatch:
+
+# The built-in token pushes to the wiki repository with this; no other secret is needed.
+permissions:
+  contents: write
+
+# Two pushes close together publish one after the other, never at once.
+concurrency:
+  group: publish-wiki
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          path: repo
+
+      - name: Check out the wiki
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+
+      - name: Write the wiki from docs
+        shell: pwsh
+        run: ./repo/.github/scripts/Publish-Wiki.ps1 -Docs repo/docs -Wiki wiki -Commit $env:GITHUB_SHA -Repository $env:GITHUB_REPOSITORY
+
+      - name: Push the wiki
+        working-directory: wiki
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "The wiki already matches docs."
+            exit 0
+          fi
+          git commit -m "Published from docs at ${GITHUB_SHA::8}"
+          git push

@@ -1,10 +1,12 @@
-// @under-test: Engine/Mcp/McpLog.cs
+// @under-test: Engine/JocysCom/Mcp/McpLog.cs
 // @area: mcp   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
+using x360ce.App.Mcp;
+using x360ce.Engine;
 
 namespace x360ce.Tests
 {
@@ -16,13 +18,22 @@ namespace x360ce.Tests
 		{
 			var folder = Path.Combine(Path.GetTempPath(), "x360ce.McpLogTest." + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(folder);
+			var previous = McpLog.Folder;
 			McpLog.Folder = folder;
 			try { test(folder); }
 			finally
 			{
-				McpLog.Folder = null;
+				McpLog.Folder = previous;
 				Directory.Delete(folder, true);
 			}
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The program keeps its log beside its settings, under its own name, so the Options tab opens the right file")]
+		public void The_log_is_beside_the_settings()
+		{
+			McpTools.Register();
+			Assert.AreEqual(Path.Combine(EngineHelper.AppDataPath, "x360ce.AiAccess.log"), McpLog.Path);
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]

@@ -1,8 +1,11 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -16,7 +19,7 @@ namespace JocysCom.ClassLibrary.Network
 	{
 		/// <summary>
 		/// Original source.
-		/// https://code.msdn.microsoft.com/C-Sample-to-list-all-the-4817b58f/sourcecode?fileId=147562&pathId=62315043
+		/// https://code.msdn.microsoft.com/C-Sample-to-list-all-the-4817b58f/sourcecode?fileId=147562&amp;pathId=62315043
 		/// </summary>
 
 		public class NativeMethods
@@ -26,7 +29,7 @@ namespace JocysCom.ClassLibrary.Network
 			internal static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, int processId);
 
 			[DllImport("psapi.dll", CharSet = CharSet.Unicode)]
-			internal static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In] [MarshalAs(UnmanagedType.U4)] int nSize);
+			internal static extern uint GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, [In][MarshalAs(UnmanagedType.U4)] int nSize);
 
 			[DllImport("kernel32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
@@ -95,7 +98,7 @@ namespace JocysCom.ClassLibrary.Network
 
 		static bool IsIpAddress(string addr)
 		{
-			IPAddress ip = null;
+			IPAddress ip;
 			if (!IPAddress.TryParse(addr, out ip))
 				return false;
 			return ip.AddressFamily == AddressFamily.InterNetworkV6 || ip.AddressFamily == AddressFamily.InterNetwork;
@@ -106,13 +109,18 @@ namespace JocysCom.ClassLibrary.Network
 			var retryCount = 0;
 			while (retryCount < retry)
 			{
-				// Logical delay without blocking the current thread.
 				if (retryCount > 0)
+					// Logical delay without blocking the current hardware thread.
 					Task.Delay(timeout).Wait();
 				if (isUdp)
 				{
 					// UDP is connectionless by design, therefore method below is not 100 % reliable.
 					// Firewall and network setups might influence the result.
+					//
+					// SUPPRESS: CWE-772: Missing Release of Resource after Effective Lifetime
+					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
+					// The only case when finally clause don't run is when program immediately stopped.
+					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
 					var udp = new UdpClient();
 					try
 					{
@@ -122,7 +130,6 @@ namespace JocysCom.ClassLibrary.Network
 						{
 							udp.BeginReceive(null, null);
 							udp.EndSend(result);
-
 							var result2 = udp.BeginReceive(null, null);
 							var success2 = result.AsyncWaitHandle.WaitOne(timeout);
 							if (success2)
@@ -149,6 +156,10 @@ namespace JocysCom.ClassLibrary.Network
 				}
 				else
 				{
+					// SUPPRESS: CWE-772: Missing Release of Resource after Effective Lifetime
+					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
+					// The only case when finally clause don't run is when program immediately stopped.
+					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
 					var tcp = new TcpClient();
 					try
 					{
@@ -172,7 +183,7 @@ namespace JocysCom.ClassLibrary.Network
 			return false;
 		}
 
-		public static CheckNetworkState CheckNetwork(string url, ref List<string> log)
+		public static CheckNetworkState CheckNetwork(string url, IList<string> log)
 		{
 			Uri u;
 			DateTime start;
@@ -184,11 +195,11 @@ namespace JocysCom.ClassLibrary.Network
 				log.Add(string.Format("Test TCP/IP connection with {0}:{1}...", u.Host, u.Port));
 				var client = new TcpClient(u.Host, u.Port);
 				client.Close();
-				CnsAddLog(ref log, start);
+				CnsAddLog(log, start);
 			}
 			catch (Exception ex1)
 			{
-				return CnsAddLog(ref log, start, ex1, CheckNetworkState.PublicHttp);
+				return CnsAddLog(log, start, ex1, CheckNetworkState.PublicHttp);
 			}
 			// Check access to known and reliable public HTTPS site.
 			start = DateTime.Now;
@@ -198,11 +209,11 @@ namespace JocysCom.ClassLibrary.Network
 				log.Add(string.Format("Test TCP/IP connection with {0}:{1}...", u.Host, u.Port));
 				var client = new TcpClient(u.Host, u.Port);
 				client.Close();
-				CnsAddLog(ref log, start);
+				CnsAddLog(log, start);
 			}
 			catch (Exception ex2)
 			{
-				return CnsAddLog(ref log, start, ex2, CheckNetworkState.PublicHttps);
+				return CnsAddLog(log, start, ex2, CheckNetworkState.PublicHttps);
 			}
 			// Check custom URL.
 			u = new Uri(url);
@@ -224,16 +235,16 @@ namespace JocysCom.ClassLibrary.Network
 					if (ips.Length == 0)
 					{
 						var ex3a = new Exception("Host IP address is not available");
-						return CnsAddLog(ref log, start, ex3a, CheckNetworkState.PublicDns);
+						return CnsAddLog(log, start, ex3a, CheckNetworkState.PublicDns);
 					}
 					else
 					{
-						CnsAddLog(ref log, start, null, null, "{0}", string.Join(", ", ips));
+						CnsAddLog(log, start, null, null, "{0}", string.Join(", ", ips));
 					}
 				}
 				catch (Exception ex3)
 				{
-					return CnsAddLog(ref log, start, ex3, CheckNetworkState.PublicDns);
+					return CnsAddLog(log, start, ex3, CheckNetworkState.PublicDns);
 				}
 			}
 			// Test TCP/IP connection with URL.
@@ -244,11 +255,11 @@ namespace JocysCom.ClassLibrary.Network
 				log.Add(string.Format("Test TCP/IP connection with {0}:{1}...", u.Host, u.Port));
 				var client = new TcpClient(u.Host, u.Port);
 				client.Close();
-				CnsAddLog(ref log, start);
+				CnsAddLog(log, start);
 			}
 			catch (Exception ex4)
 			{
-				return CnsAddLog(ref log, start, ex4, CheckNetworkState.RemoteWebServer);
+				return CnsAddLog(log, start, ex4, CheckNetworkState.RemoteWebServer);
 			}
 			// Test HTTP/HTTPS request.
 			start = DateTime.Now;
@@ -256,28 +267,28 @@ namespace JocysCom.ClassLibrary.Network
 			{
 				// Check if web service page works.
 				log.Add(string.Format("Test URL - requesting {0} URL...", u.AbsoluteUri));
-				var request = WebRequest.Create(u.AbsoluteUri);
-				// CWE-918: Server-Side Request Forgery (SSRF).
+				var client = new HttpClient();
+				// SUPPRESS: CWE-918: Server-Side Request Forgery (SSRF).
 				// Note: External users do not have control over request URL.
-				var response = (HttpWebResponse)request.GetResponse();
-				var code = (int)response.StatusCode;
-				var description = response.StatusDescription;
-				response.Close();
-				CnsAddLog(ref log, start, null, null, "Response Status: {0} - {1}", code, description);
+				var response = Task.Run(() => client.GetAsync(u)).Result;
+				var statusCode = (int)response.StatusCode;
+				var statusText = response.ReasonPhrase;
+				client.Dispose();
+				CnsAddLog(log, start, null, null, "Response Status: {0} - {1}", statusCode, statusText);
 			}
 			catch (Exception ex5)
 			{
-				return CnsAddLog(ref log, start, ex5, CheckNetworkState.RemoteWebService);
+				return CnsAddLog(log, start, ex5, CheckNetworkState.RemoteWebService);
 			}
 			log.Add("RESULT: no issues found.");
 			return CheckNetworkState.OK;
 		}
 
-		static CheckNetworkState CnsAddLog(ref List<string> log, DateTime start, Exception ex = null, CheckNetworkState? state = null, string format = null, params object[] args)
+		static CheckNetworkState CnsAddLog(IList<string> log, DateTime start, Exception ex = null, CheckNetworkState? state = null, string format = null, params object[] args)
 		{
 			var sb = new StringBuilder();
 			sb.Append(' ', 2);
-			sb.Append(ex == null ? "PASS" : "FAIL");
+			sb.Append(ex is null ? "PASS" : "FAIL");
 			sb.AppendFormat(": {0:0.000} sec.", DateTime.Now.Subtract(start).TotalSeconds);
 			if (ex != null)
 				sb.AppendFormat(": {0}", ex.Message);
@@ -438,7 +449,7 @@ namespace JocysCom.ClassLibrary.Network
 		#region TCP socket enumerations and structures
 
 		/// <summary>
-		/// <see cref="http://msdn2.microsoft.com/en-us/library/aa366386.aspx"/>
+		/// <see href="http://msdn2.microsoft.com/en-us/library/aa366386.aspx"/>
 		/// </summary>
 		public enum TCP_TABLE_CLASS
 		{
@@ -457,13 +468,13 @@ namespace JocysCom.ClassLibrary.Network
 		/// The structure contains information that describes an IPv4 TCP connection with 
 		/// IPv4 addresses, ports used by the TCP connection, and the specific process ID 
 		/// (PID) associated with connection. 
-		/// <see cref="http://msdn2.microsoft.com/en-us/library/aa366921.aspx"/>
+		/// <see href="http://msdn2.microsoft.com/en-us/library/aa366921.aspx"/>
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential)]
 		public struct MIB_TCPTABLE_OWNER_PID
 		{
 			public uint NumEntries;
-			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 1)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] //ArraySubType = UnmanagedType.Struct,
 			public MIB_TCPROW_OWNER_PID[] table;
 		}
 
@@ -471,7 +482,7 @@ namespace JocysCom.ClassLibrary.Network
 		/// The structure contains information that describes an IPv4 TCP connection with 
 		/// IPv4 addresses, ports used by the TCP connection, and the specific process ID 
 		/// (PID) associated with connection. 
-		/// <see cref="http://msdn2.microsoft.com/en-us/library/aa366913.aspx"/>
+		/// <see href="http://msdn2.microsoft.com/en-us/library/aa366913.aspx"/>
 		/// </summary>
 		[StructLayout(LayoutKind.Sequential)]
 		public struct MIB_TCPROW_OWNER_PID
@@ -524,8 +535,7 @@ namespace JocysCom.ClassLibrary.Network
 		public struct MIB_UDPTABLE_OWNER_PID
 		{
 			public uint NumEntries;
-			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct,
-				SizeConst = 1)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] //ArraySubType = UnmanagedType.Struct,
 			public MIB_UDPROW_OWNER_PID[] table;
 		}
 

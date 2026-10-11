@@ -35,8 +35,8 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThread(() =>
 			{
-				var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
-				var pads = SettingsManager.PadSettings.ItemsToArraySyncronized();
+				var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var pads = SettingsManager.PadSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
 				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
 				SettingsManager.Current.NotifySettingsStatus = count => { };

@@ -15,6 +15,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+			this.LayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.DeadZoneTrackBar = new System.Windows.Forms.TrackBar();
 			this.ButtonNameLabel = new System.Windows.Forms.Label();
 			this.MappedAxisTextBox = new System.Windows.Forms.TextBox();
@@ -22,18 +23,46 @@
 			this.DeadZoneTextBox = new System.Windows.Forms.TextBox();
 			this.ArrowPictureBox = new System.Windows.Forms.PictureBox();
 			this.ButtonImagePictureBox = new System.Windows.Forms.PictureBox();
+			this.LayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DeadZoneTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DeadZoneNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ArrowPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ButtonImagePictureBox)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
+			// LayoutPanel
+			//
+			this.LayoutPanel.ColumnCount = 7;
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.LayoutPanel.Controls.Add(this.MappedAxisTextBox, 0, 0);
+			this.LayoutPanel.Controls.Add(this.ArrowPictureBox, 1, 0);
+			this.LayoutPanel.Controls.Add(this.ButtonImagePictureBox, 2, 0);
+			this.LayoutPanel.Controls.Add(this.ButtonNameLabel, 3, 0);
+			this.LayoutPanel.Controls.Add(this.DeadZoneTrackBar, 4, 0);
+			this.LayoutPanel.Controls.Add(this.DeadZoneTextBox, 5, 0);
+			this.LayoutPanel.Controls.Add(this.DeadZoneNumericUpDown, 6, 0);
+			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.LayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.LayoutPanel.Name = "LayoutPanel";
+			this.LayoutPanel.RowCount = 1;
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LayoutPanel.Size = new System.Drawing.Size(554, 28);
+			this.LayoutPanel.TabIndex = 0;
+			//
 			// DeadZoneTrackBar
-			// 
-			this.DeadZoneTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			//
 			this.DeadZoneTrackBar.AutoSize = false;
+			this.DeadZoneTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DeadZoneTrackBar.LargeChange = 10;
 			this.DeadZoneTrackBar.Location = new System.Drawing.Point(217, 0);
+			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
 			this.DeadZoneTrackBar.Maximum = 100;
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -41,7 +70,8 @@
 			this.DeadZoneTrackBar.TickFrequency = 2;
 			// 
 			// ButtonNameLabel
-			// 
+			//
+			this.ButtonNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ButtonNameLabel.AutoSize = true;
 			this.ButtonNameLabel.Location = new System.Drawing.Point(134, 6);
 			this.ButtonNameLabel.Name = "ButtonNameLabel";
@@ -50,8 +80,10 @@
 			this.ButtonNameLabel.Text = "Button Name:";
 			// 
 			// MappedAxisTextBox
-			// 
+			//
+			this.MappedAxisTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MappedAxisTextBox.Location = new System.Drawing.Point(0, 3);
+			this.MappedAxisTextBox.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.MappedAxisTextBox.Name = "MappedAxisTextBox";
 			this.MappedAxisTextBox.ReadOnly = true;
 			this.MappedAxisTextBox.Size = new System.Drawing.Size(75, 20);
@@ -60,8 +92,9 @@
 			// 
 			// DeadZoneNumericUpDown
 			// 
-			this.DeadZoneNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.DeadZoneNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(499, 3);
+			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -74,7 +107,7 @@
 			// 
 			// DeadZoneTextBox
 			// 
-			this.DeadZoneTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.DeadZoneTextBox.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.DeadZoneTextBox.Location = new System.Drawing.Point(450, 3);
 			this.DeadZoneTextBox.Name = "DeadZoneTextBox";
 			this.DeadZoneTextBox.ReadOnly = true;
@@ -85,7 +118,8 @@
 			this.DeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// ArrowPictureBox
-			// 
+			//
+			this.ArrowPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.ArrowPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ArrowPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_gray_16x16;
 			this.ArrowPictureBox.Location = new System.Drawing.Point(81, 6);
@@ -96,7 +130,8 @@
 			this.ArrowPictureBox.EnabledChanged += new System.EventHandler(this.ArrowPictureBox_EnabledChanged);
 			// 
 			// ButtonImagePictureBox
-			// 
+			//
+			this.ButtonImagePictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_16x16;
 			this.ButtonImagePictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ButtonImagePictureBox.Location = new System.Drawing.Point(103, 0);
@@ -112,26 +147,22 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.DeadZoneNumericUpDown);
-			this.Controls.Add(this.DeadZoneTextBox);
-			this.Controls.Add(this.DeadZoneTrackBar);
-			this.Controls.Add(this.ButtonNameLabel);
-			this.Controls.Add(this.MappedAxisTextBox);
-			this.Controls.Add(this.ArrowPictureBox);
-			this.Controls.Add(this.ButtonImagePictureBox);
+			this.Controls.Add(this.LayoutPanel);
 			this.Name = "AxisToButtonUserControl";
 			this.Size = new System.Drawing.Size(554, 28);
+			this.LayoutPanel.ResumeLayout(false);
+			this.LayoutPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DeadZoneTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DeadZoneNumericUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ArrowPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ButtonImagePictureBox)).EndInit();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
         #endregion
 
+        private System.Windows.Forms.TableLayoutPanel LayoutPanel;
         private System.Windows.Forms.PictureBox ButtonImagePictureBox;
         private System.Windows.Forms.TrackBar DeadZoneTrackBar;
         private System.Windows.Forms.Label ButtonNameLabel;

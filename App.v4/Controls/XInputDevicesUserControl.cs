@@ -80,9 +80,9 @@ namespace x360ce.App.Controls
 			return names.Length == 0 ? "Nothing mapped" : names;
 		}
 
-		/// <summary>The shield Windows puts on anything that asks for Administrator.</summary>
+		/// <summary>The shield Windows puts on anything that asks for Administrator, at a small icon's size on this screen.</summary>
 		static readonly System.Drawing.Image AdministratorImage =
-			new System.Drawing.Icon(System.Drawing.SystemIcons.Shield, 16, 16).ToBitmap();
+			new System.Drawing.Icon(System.Drawing.SystemIcons.Shield, SystemInformation.SmallIconSize).ToBitmap();
 
 		static bool ControlsHelperDesignMode()
 		{
@@ -134,7 +134,7 @@ namespace x360ce.App.Controls
 					i > 0 ? Properties.Resources.nav_up_16x16 : null,
 					i < _entries.Count - 1 ? Properties.Resources.nav_down_16x16 : null,
 					entry.Waiting
-						? string.Format("Virtual {0} (waiting)", entry.Pad)
+						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
 					entry.Controller > 0 ? string.Format("Controller {0}", entry.Controller) : "",
 					entry.Name,

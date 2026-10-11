@@ -1,4 +1,12 @@
-﻿using System;
+﻿#nullable disable
+
+#if NETFRAMEWORK // .NET Framework
+using System.Web;
+#else
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+#endif
+using System;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -8,20 +16,17 @@ namespace JocysCom.ClassLibrary.Security
 		/// Get URL to page. If runs on website then host will be replaced with current request.
 		/// Use AbsoluteUri property to get full URL string.
 		/// </summary>
+		/// <param name="keyName">Key name for the token parameter.</param>
 		/// <param name="token">Token.</param>
-		/// <param name="page">Page name. Like "/Login.aspx" or "/LoginReset.aspx"</param>
+		/// <param name="url">Base URL. If null, current request URL will be used.</param>
 		/// <returns>URL string.</returns>
 		public static Uri GetUrl(string keyName, string token, Uri url = null)
 		{
-			var context = System.Web.HttpContext.Current;
-			var u = (url == null || context != null)
-				? System.Web.HttpContext.Current.Request.Url
-				: url;
-			var absolutePath = (url != null)
-				? url.AbsolutePath
-				: u.AbsolutePath;
+			var u = url ?? GetRequestUrl();
+			if (u is null)
+				return null;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port;
-			var absoluteUri = string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, absolutePath, keyName, token);
+			var absoluteUri = string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, u.AbsolutePath, keyName, token);
 			return new Uri(absoluteUri);
 		}
 
@@ -30,10 +35,9 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		public static Uri GetFullUrl(string absolutePath)
 		{
-			var context = System.Web.HttpContext.Current;
-			if (context == null)
+			var u = GetRequestUrl();
+			if (u is null)
 				return null;
-			var u = context.Request.Url;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port;
 			var absoluteUri = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, absolutePath);
 			return new Uri(absoluteUri);
@@ -44,10 +48,51 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		public static Uri GetApplicationUrl()
 		{
-			var context = System.Web.HttpContext.Current;
-			if (context == null)
+			var path = GetApplicationPath();
+			if (path is null)
 				return null;
-			return GetFullUrl(context.Request.ApplicationPath);
+			return GetFullUrl(path);
 		}
+
+#if NETFRAMEWORK // .NET Framework
+
+		public static string GetApplicationPath()
+			=> System.Web.HttpContext.Current?.Request?.ApplicationPath;
+
+		public static Uri GetRequestUrl()
+			=> System.Web.HttpContext.Current?.Request?.Url;
+
+#else
+
+		/*
+			// Call InitializeParser to initialize parser in .NET Core.
+			public class Startup
+			{
+				public void Configure()
+				{
+					JocysCom.ClassLibrary.Configuration.TokenHelper.Configure(SiteHelper.ApplicationPath);
+				}
+			}
+		*/
+
+		private static string _ApplicationPath;
+
+		/// <summary>
+		/// Use this method to initialize configuration in .NET core.
+		/// </summary>
+		/// <param name="configuration"></param>
+		public static void Configure(string applicationPath)
+			=> _ApplicationPath = applicationPath;
+
+		public static string GetApplicationPath()
+			=> _ApplicationPath;
+
+		public static Uri GetRequestUrl()
+			=> new Uri(_ApplicationPath);
+
+#endif
+
 	}
+
+
 }

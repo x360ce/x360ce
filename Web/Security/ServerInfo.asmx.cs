@@ -88,7 +88,7 @@ namespace JocysCom.Web.Security
 		/// <param name="field">Validation parameters.</param>
 		/// <returns>validation results</returns>
 		[WebMethod(EnableSession = true, Description = "Test new user registration info if it valid for registration.")]
-		public WebSites.Engine.Security.ValidationField[] ValidateUserRegistration(
+		public JocysCom.ClassLibrary.Security.ValidationField[] ValidateUserRegistration(
 			string firstName,
 			string lastName,
 			string email,

@@ -92,7 +92,7 @@ namespace x360ce.App.Issues
 				.ToArray();
 			if (instanceGuids.Length == 0)
 				return new UserDevice[0];
-			return SettingsManager.UserDevices.ItemsToArraySyncronized()
+			return SettingsManager.UserDevices.ItemsToArraySynchronized()
 				.Where(x => x.IsEnabled && instanceGuids.Contains(x.InstanceGuid))
 				.ToArray();
 		}

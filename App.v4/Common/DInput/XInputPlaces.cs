@@ -590,6 +590,13 @@ namespace x360ce.App.DInput
 				: string.Format("{0} (place not known)", Holder(isVirtual, isOurs));
 		}
 
+		/// <summary>How a controller tab's virtual controller reads while it is wanted but has no place, because its place is taken.</summary>
+		/// <param name="pad">Controller tab, 1 to 4.</param>
+		public static string Waiting(int pad)
+		{
+			return string.Format("Virtual {0} (waiting)", pad);
+		}
+
 		/// <summary>How the places a device reaches read to a person, as one line.</summary>
 		/// <remarks>
 		/// A device can reach a game in more than one place at once, and by two different routes. It
@@ -605,7 +612,8 @@ namespace x360ce.App.DInput
 		/// <param name="ownIsVirtual">Whether the device itself was made rather than plugged in.</param>
 		/// <param name="ownIsOurs">Whether this program made the device itself.</param>
 		/// <param name="carried">The places of the controllers this device is mapped to.</param>
-		public static string Describe(int ownPlace, bool ownIsVirtual, bool ownIsOurs, IEnumerable<int> carried)
+		/// <param name="waiting">The controller tabs this device is mapped to whose virtual controller waits for its place.</param>
+		public static string Describe(int ownPlace, bool ownIsVirtual, bool ownIsOurs, IEnumerable<int> carried, IEnumerable<int> waiting = null)
 		{
 			// Carried places are always controllers this program made: that is what carrying means here.
 			var named = new SortedDictionary<int, string>();
@@ -616,7 +624,11 @@ namespace x360ce.App.DInput
 			// itself is the stronger fact: a game reads it with this program switched off.
 			if (ownPlace >= 0 && ownPlace <= 3)
 				named[ownPlace] = Holder(ownIsVirtual, ownIsOurs);
-			var parts = named.Select(x => string.Format("{0} {1}", x.Value, x.Key + 1)).ToArray();
+			var parts = named.Select(x => string.Format("{0} {1}", x.Value, x.Key + 1)).ToList();
+			// Left out, a device whose tab waits would read as carried nowhere, when the place another
+			// controller holds is the one thing missing. Named as the Devices page names it.
+			if (waiting != null)
+				parts.AddRange(waiting.Distinct().OrderBy(x => x).Select(Waiting));
 			return string.Join(", ", parts);
 		}
 	}

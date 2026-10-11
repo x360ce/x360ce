@@ -107,17 +107,23 @@ namespace x360ce.App
 			var ini = new x360ce.Engine.Ini(SettingManager.IniFileName);
 			if (ini.File.Exists)
 				ini.EnsureUnicode();
-			if (Engine.Mcp.McpClient.IsSwitch(ic.Parameters))
+			// The install context lower-cases every name; the switches read names without regard to case.
+			var parameters = ic.Parameters.Keys.Cast<string>().ToDictionary(k => k, k => ic.Parameters[k], StringComparer.OrdinalIgnoreCase);
+			if (JocysCom.ClassLibrary.Mcp.McpClient.IsSwitch(parameters))
 			{
 				var o = AiAccessSettings.Load();
 				o.EnsureToken();
-				Environment.ExitCode = Engine.Mcp.McpClient.RunSwitches(ic.Parameters, o.Enabled, o.Port, o.Token, Application.ExecutablePath);
+				Environment.ExitCode = JocysCom.ClassLibrary.Mcp.McpClient.RunSwitches(parameters, o.Enabled, o.Port, o.Token, Application.ExecutablePath);
 				return;
 			}
 			if (!CheckSettings())
 				return;
 			AiAccessSettings.Current = AiAccessSettings.Load();
 			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+			// Before the first window, so every image it is made with is already the theme's and the screen's size.
+			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
+			// Before the first window, so every colour it is made with is already the theme's.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(Controls.OptionsControl.ToTheme(ini.GetValue("Options", Engine.SettingName.Theme)));
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
@@ -150,9 +156,9 @@ namespace x360ce.App
 		/// <summary>Writes the navigation tree into the folder given, or into docs beside the program.</summary>
 		public static void ExportUi()
 		{
-			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? "docs" : ExportUiFolder;
-			var tree = Engine.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
-			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
+			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? Path.Combine("skills", "x360ce", "references") : ExportUiFolder;
+			var tree = JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
+			JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
 		}
 
 		public static bool IsOneCopyRunningAlready()

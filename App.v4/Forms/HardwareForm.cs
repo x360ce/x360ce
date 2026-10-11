@@ -7,6 +7,8 @@ namespace x360ce.App.Forms
 		public HardwareForm()
 		{
 			InitializeComponent();
+			// Images are drawn at the size they were made, so they are enlarged to the screen's scale.
+			JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImages(this);
 		}
 	}
 }

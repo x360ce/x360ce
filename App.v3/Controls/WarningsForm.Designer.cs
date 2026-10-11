@@ -19,7 +19,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarningsForm));
 			this.WarningsTabControl = new System.Windows.Forms.TabControl();
 			this.WarningsTabPage = new System.Windows.Forms.TabPage();
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
@@ -40,7 +39,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.WarningsTabControl.Controls.Add(this.WarningsTabPage);
-			this.WarningsTabControl.ItemSize = new System.Drawing.Size(116, 18);
 			this.WarningsTabControl.Location = new System.Drawing.Point(12, 12);
 			this.WarningsTabControl.Name = "WarningsTabControl";
 			this.WarningsTabControl.SelectedIndex = 0;
@@ -65,7 +63,7 @@
 			this.WarningsDataGridView.AllowUserToOrderColumns = true;
 			this.WarningsDataGridView.AllowUserToResizeRows = false;
 			this.WarningsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.WarningsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.WarningsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.WarningsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.WarningsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -181,7 +179,7 @@
 			this.Controls.Add(this.IgnoreButton);
 			this.Controls.Add(this.Closebutton);
 			this.Controls.Add(this.WarningsTabControl);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "WarningsForm";
 			this.Text = "Warnings Form";
 			this.WarningsTabControl.ResumeLayout(false);

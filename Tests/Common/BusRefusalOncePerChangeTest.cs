@@ -118,7 +118,7 @@ namespace x360ce.Tests
 			StringAssert.Contains(lines[0].Key, "Virtual controller 2");
 			StringAssert.Contains(lines[0].Key, "vibration");
 			StringAssert.Contains(lines[0].Key, "0xE0000015", "The log quotes the code otherwise than the Issues tab does.");
-			Assert.AreEqual(EventLogEntryType.Warning, lines[0].Value);
+			Assert.AreEqual(TraceLevel.Warning, lines[0].Value);
 			Assert.AreEqual(Unnamed, current[1], "The refusal is not kept, so the Issues tab cannot say it.");
 			Assert.AreEqual(VIGEM_ERROR.VIGEM_ERROR_NONE, current[0], "Another controller's value changed.");
 			lines = Logged(() =>

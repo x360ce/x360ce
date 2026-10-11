@@ -28,14 +28,13 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
-			AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			//AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			//AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ControlsHelper.InitInvokeContext();
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)
 			{
+				// The released program carries no configuration file, so it has no RunMode setting:
+				// without one it is a release, not a test build.
+				LogHelper.DefaultRunMode = "LIVE";
 				// Initialize exception handlers
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;
@@ -68,21 +67,8 @@ namespace x360ce.App
 
 			// Map event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
-			// Fix Images
-			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
-			BuletImageList.ImageStream = null;
-			BuletImageList.Images.Clear();
-			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
-			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
-			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
-			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusGrey));
-			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
-			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
-			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
-			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
-			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+			FillBuletImageList();
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			GameToCustomizeComboBox.Font = Font;
@@ -106,6 +92,29 @@ namespace x360ce.App
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
 			o.WindowPosition?.LoadPosition(this);
+		}
+
+		/// <summary>Fills the tab image list with the status lights and the icons of the theme in use.</summary>
+		/// <remarks>
+		/// Filled again when the theme changes: a list keeps copies of its images, so it does not follow the
+		/// resources. The lights of two colours are put back by the next status update (<see cref="StatusImageKey"/>).
+		/// </remarks>
+		void FillBuletImageList()
+		{
+			BuletImageList.Images.Clear();
+			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
+			BuletImageList.ImageSize = SystemInformation.SmallIconSize;
+			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
+			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
+			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
+			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
+			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
+			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
+			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
+			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
+			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
+			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
+			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
 		}
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
@@ -188,16 +197,16 @@ namespace x360ce.App
 				if (!mapped && !xiOurs && !xiOn)
 				{
 					// Nothing is set up on this tab, which is not a fault and should not look like one.
-					left = AppHelper.StatusGrey;
-					right = AppHelper.StatusGrey;
+					left = AppHelper.StatusOff;
+					right = AppHelper.StatusOff;
 				}
 				else
 				{
 					// A device mapped here and not connected is worth a look; none mapped is simply nothing.
-					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusGrey;
+					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusOff;
 					if (!enabled)
 						// Switched off on purpose, which is not a fault and must not be lit as one.
-						right = AppHelper.StatusGrey;
+						right = AppHelper.StatusOff;
 					else if (!checking)
 						// Not looking is not the same as looking and finding nothing.
 						right = AppHelper.StatusBlue;
@@ -808,7 +817,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			Engine.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -882,7 +891,9 @@ namespace x360ce.App
 				// delete temp.
 				tmp.Delete();
 			}
-			SaveAll();
+			// An export only describes the window, so it leaves the settings as it found them.
+			if (Program.ExportUiFolder == null)
+				SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}
 
@@ -1070,10 +1081,14 @@ namespace x360ce.App
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
 			// navigation tree is built from.
-			Engine.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
-			Engine.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
+			// too, now that every panel that shows one exists.
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleImages(TrayContextMenuStrip);
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
 			Program.StartupTrace.Mark("UpdateForm2: text applied");
@@ -1336,6 +1351,7 @@ namespace x360ce.App
 					new SwitchedOffControllersIssue(),
 					new HidHideIssue(),
 					new AiAccessIssue(),
+					new AiSkillIssue(),
 				};
 				IssuesPanel.AddIssues(issues);
 				// The controller pages are built only once the first round of checks is done, so each
@@ -1441,6 +1457,23 @@ namespace x360ce.App
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				// Static events keep this window alive and call into its disposed controls, also when it
+				// is disposed without being closed.
+				SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+				SettingsManager.Current.ConfigLoaded -= Current_ConfigLoaded;
+				SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
+				if (Global.DHelper != null)
+				{
+					Global.DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
+					Global.DHelper.StatesRetrieved -= DHelper_StatesRetrieved;
+					Global.DHelper.XInputReloaded -= DHelper_XInputReloaded;
+				}
+			}
 			if (disposing && (components != null))
 			{
 				if (_Mutex != null)
@@ -1500,6 +1533,9 @@ namespace x360ce.App
 			// If pad controls not initializes yet then return.
 			if (PadControls == null)
 				return;
+			// The event is static and can arrive while the window is going away; its controls are gone then.
+			if (IsDisposed || Disposing || GameToCustomizeComboBox.ComboBox == null)
+				return;
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
@@ -1532,6 +1568,7 @@ namespace x360ce.App
 		protected override void OnFormClosed(FormClosedEventArgs e)
 		{
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
 			DeviceDetector.UnregisterDeviceInterface(_DeviceNotification);
 			_DeviceNotification = IntPtr.Zero;
 			base.OnFormClosed(e);
@@ -1653,6 +1690,10 @@ namespace x360ce.App
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
 		{
+			// Ahead of the check below, which skips the rest while the window is minimised, as it is while a game
+			// runs. Only the device thread's call asks: the same change comes through here again on the interface thread.
+			if (InvokeRequired)
+				ControlsHelper.BeginInvoke(NoteMappedDeviceChanges);
 			lock (LockFormEvents)
 			{
 				FormEventsDevicesUpdated = true;
@@ -1677,6 +1718,60 @@ namespace x360ce.App
 			if (PadControls != null)
 				foreach (var pad in PadControls)
 					pad.RefreshPlaces();
+		}
+
+		/// <summary>Whether each listed device was connected at the last change of the device list, by instance.</summary>
+		readonly Dictionary<Guid, bool> _deviceOnline = new Dictionary<Guid, bool>();
+
+		/// <summary>Says over the game when a device it uses disconnects or connects again.</summary>
+		/// <remarks>
+		/// The window is usually minimised while a game runs, so its lights are not seen there, and a pad that drops
+		/// out mid-game otherwise shows only as a game that stopped answering. Runs once per change of the device
+		/// list, never per engine pass.
+		/// </remarks>
+		void NoteMappedDeviceChanges()
+		{
+			if (Program.IsClosing || IsDisposed)
+				return;
+			var game = SettingsManager.CurrentGame;
+			var mapped = game == null ? new UserDevice[0] : SettingsManager.GetMappedDevices(game.FileName, true);
+			bool anyGone;
+			var note = DeviceChangeNote(_deviceOnline, SettingsManager.UserDevices.ItemsToArraySynchronized(), mapped, out anyGone);
+			if (note == null || !SettingsManager.Options.DeviceChangeOverlay)
+				return;
+			// Amber is what the left half of a controller tab's light shows for a mapped device that is not connected.
+			OverlayNote.Show(note, ColorTranslator.FromHtml(anyGone ? AppHelper.StatusAmber : AppHelper.StatusGreen),
+				anyGone ? 4 : OverlayNote.DefaultSeconds);
+		}
+
+		/// <summary>The note for the mapped devices whose connection changed since the last look, or null when none did.</summary>
+		/// <remarks>
+		/// Every device's state is written into <paramref name="last"/>, mapped or not, so a device mapped later is
+		/// judged from its real last state. A device not in it yet changes nothing, so a start says nothing.
+		/// </remarks>
+		/// <param name="last">Whether each device was connected at the last look, by instance; updated here.</param>
+		/// <param name="devices">Every listed device.</param>
+		/// <param name="mapped">The devices the current game uses.</param>
+		/// <param name="anyGone">Whether a mapped device disconnected.</param>
+		public static string DeviceChangeNote(IDictionary<Guid, bool> last, UserDevice[] devices, UserDevice[] mapped, out bool anyGone)
+		{
+			var gone = new List<string>();
+			var back = new List<string>();
+			foreach (var ud in devices)
+			{
+				bool was;
+				var known = last.TryGetValue(ud.InstanceGuid, out was);
+				last[ud.InstanceGuid] = ud.IsOnline;
+				if (known && was != ud.IsOnline && mapped.Contains(ud))
+					(ud.IsOnline ? back : gone).Add(string.IsNullOrEmpty(ud.InstanceName) ? ud.ProductName : ud.InstanceName);
+			}
+			anyGone = gone.Count > 0;
+			var parts = new List<string>();
+			if (gone.Count > 0)
+				parts.Add(string.Join(", ", gone) + " disconnected");
+			if (back.Count > 0)
+				parts.Add(string.Join(", ", back) + " connected");
+			return parts.Count == 0 ? null : string.Join(". ", parts);
 		}
 
 		#endregion
@@ -1875,9 +1970,17 @@ namespace x360ce.App
 
 		private void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
+			ShowErrorReport();
+		}
+
+		/// <summary>Shows the error reports the program has written, to read, send or clear.</summary>
+		public void ShowErrorReport()
+		{
 			win = new Forms.ErrorReportForm();
 			ControlsHelper.CheckTopMost(win);
-			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
+			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
+			var scale = ControlsHelper.DpiScale;
+			win.Width = Math.Min((int)Math.Round(1450 * scale), Screen.FromControl(this).WorkingArea.Width - (int)Math.Round(200 * scale));
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
@@ -2054,7 +2157,7 @@ namespace x360ce.App
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			var colour = ErrorFilesCount > 0
-				? System.Drawing.Color.DarkRed
+				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed)
 				: System.Drawing.SystemColors.ControlDark;
 			StatusErrorsLabel.ForeColor = colour;
 			// The count is a link so that it can be clicked at all, which also means its colour
@@ -2067,12 +2170,25 @@ namespace x360ce.App
 				: "No error reports";
 			StatusErrorsLabel.AccessibleDescription = "Opens the error report window";
 			StatusErrorsLabel.AccessibleRole = AccessibleRole.PushButton;
-			StatusErrorsLabel.Image = ErrorFilesCount > 0
+			ControlsHelper.SetImage(StatusErrorsLabel, ErrorFilesCount > 0
 				? Resources.error_16x16
-				: AppHelper.GetDisabledImage(Resources.error_16x16);
+				: AppHelper.GetDisabledImage(Resources.error_16x16));
 		}
 
 		#region Exception Handling and Reporting
+
+		/// <summary>
+		/// The error count takes its colour from the theme, so it is coloured again when the theme changes. The
+		/// open windows get the theme's icons from the resources; the tab list and the tray menu, which no window
+		/// holds, are given them here.
+		/// </summary>
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			UpdateStatusErrorsLabel();
+			FillBuletImageList();
+			if (Resources.ResourceManager is JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager manager)
+				ControlsHelper.ReplaceImages(TrayContextMenuStrip, manager.Themed);
+		}
 
 		private void LogHelper_Current_NewException(object sender, EventArgs e)
 		{
@@ -2088,7 +2204,7 @@ namespace x360ce.App
 			if (d != null)
 			{
 				// If exception when getting Joystic properties in
-				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
+				// SourceState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
 				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
 					d.Module == "SharpDX.DirectInput" &&
 					d.NativeApiCode == "DIERR_NOTFOUND"

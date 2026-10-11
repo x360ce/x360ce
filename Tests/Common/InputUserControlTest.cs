@@ -31,11 +31,11 @@ namespace x360ce.Tests
 				DiSliderMask = sliderMask,
 				CapPovCount = povs,
 			};
-			ud.DiState = new CustomDiState(new JoystickState());
-			for (var i = 0; i < ud.DiState.Axis.Length; i++)
-				ud.DiState.Axis[i] = InputChips.AxisCentre;
-			for (var i = 0; i < ud.DiState.Povs.Length; i++)
-				ud.DiState.Povs[i] = InputChips.PovRest;
+			ud.SourceState = new SourceState(new JoystickState());
+			for (var i = 0; i < ud.SourceState.Axis.Length; i++)
+				ud.SourceState.Axis[i] = InputChips.AxisCentre;
+			for (var i = 0; i < ud.SourceState.Povs.Length; i++)
+				ud.SourceState.Povs[i] = InputChips.PovRest;
 			return ud;
 		}
 
@@ -82,8 +82,8 @@ namespace x360ce.Tests
 					panel.UpdateFrom(ud);
 					Assert.IsFalse(panel.ButtonChips.Chips.Any(c => c.Lit), "Nothing pressed, nothing lit.");
 
-					ud.DiState.Buttons[2] = true;
-					ud.DiState.Axis[1] = 65535;
+					ud.SourceState.Buttons[2] = true;
+					ud.SourceState.Axis[1] = 65535;
 					panel.UpdateFrom(ud);
 					CollectionAssert.AreEqual(new[] { false, false, true, false }, panel.ButtonChips.Chips.Select(c => c.Lit).ToArray());
 					var y = panel.AxisChips.Chips.Single(c => c.Index == 1);

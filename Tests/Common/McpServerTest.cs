@@ -1,4 +1,4 @@
-// @under-test: Engine/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpServer.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,7 +10,7 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Mcp;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -84,47 +84,88 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("A password sent through the door is masked in the log, and the token never appears in it")]
+		[Description("A password or the token box's value sent through the door is masked in the log, and the token never appears in it")]
 		public void The_log_keeps_no_secret()
 		{
+			UseSample(AiAccess.Configure);
 			var folder = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "x360ce-log-" + Guid.NewGuid().ToString("N"));
 			System.IO.Directory.CreateDirectory(folder);
 			McpLog.Folder = folder;
 			try
 			{
-				UseSample(AiAccess.Configure);
 				CallTool("ui_set", new Dictionary<string, object> { { "path", "Options/RemotePasswordTextBox" }, { "value", "hunter2" } });
+				CallTool("ui_set", new Dictionary<string, object> { { "path", "Tabs/Options/AiAccessTokenTextBox" }, { "value", "typed-secret" } });
 				var token = new string('a', 64);
 				CallTool("poke_value", new Dictionary<string, object> { { "value", token } });
 				var log = System.IO.File.ReadAllText(McpLog.Path);
 				StringAssert.Contains(log, "RemotePasswordTextBox");
+				StringAssert.Contains(log, "AiAccessTokenTextBox");
 				Assert.IsFalse(log.Contains("hunter2"), "The password was written to the log.");
+				Assert.IsFalse(log.Contains("typed-secret"), "The value given to the token box was written to the log.");
 				Assert.IsFalse(log.Contains(token), "The token was written to the log.");
 				StringAssert.Contains(log, "<token>");
 			}
 			finally
 			{
-				McpLog.Folder = null;
+				McpLog.Folder = LogFolder;
 				System.IO.Directory.Delete(folder, true);
 			}
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("Initialize names the protocol and the program")]
+		[Description("Initialize names the protocol, the program and its version, and passes on the program's instructions followed by the door-only rule, which is sent even when the program has none")]
 		public void Initialize_names_protocol_and_program()
 		{
 			UseSample(AiAccess.Read);
-			var r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];
-			Assert.AreEqual(McpServer.ProtocolVersion, r["protocolVersion"]);
-			Assert.IsTrue(((Dictionary<string, object>)r["serverInfo"])["name"].ToString().Contains("x360ce"));
+			var saved = McpServer.Instructions;
+			try
+			{
+				McpServer.Instructions = null;
+				var r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];
+				Assert.AreEqual(McpServer.ProtocolVersion, r["protocolVersion"]);
+				var serverInfo = (Dictionary<string, object>)r["serverInfo"];
+				Assert.IsTrue(serverInfo["name"].ToString().Contains("x360ce"));
+				Assert.AreEqual(Application.ProductVersion, serverInfo["version"], "The version is not the program's.");
+				Assert.AreEqual(McpServer.DoorOnly, r["instructions"], "Without instructions of the program's own, the door-only rule is sent alone.");
+				McpServer.Instructions = "Start with devices_list.";
+				r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];
+				Assert.AreEqual("Start with devices_list. " + McpServer.DoorOnly, r["instructions"]);
+			}
+			finally { McpServer.Instructions = saved; }
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Each listed tool says whether it changes anything: Read tools are read-only, the rest may replace what was set, and nothing leaves the computer")]
+		public void Tools_carry_hints_from_their_level()
+		{
+			UseSample(AiAccess.Read);
+			var tools = ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Cast<Dictionary<string, object>>().ToList();
+			var peek = (Dictionary<string, object>)tools.Single(t => (string)t["name"] == "peek")["annotations"];
+			Assert.AreEqual(true, peek["readOnlyHint"]);
+			Assert.AreEqual(false, peek["destructiveHint"]);
+			Assert.AreEqual(false, peek["openWorldHint"]);
+			var poke = (Dictionary<string, object>)tools.Single(t => (string)t["name"] == "poke_value")["annotations"];
+			Assert.AreEqual(false, poke["readOnlyHint"]);
+			Assert.AreEqual(true, poke["destructiveHint"]);
+			Assert.IsFalse(new McpToolInfo { Level = AiAccess.Read, Changes = true }.ReadOnly, "A Read tool that can still change things, such as a script, is not read-only.");
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Only a page on this computer is a local origin; anything else, or an origin that is no address, is not")]
+		public void Only_pages_on_this_computer_are_local_origins()
+		{
+			foreach (var local in new[] { "http://localhost", "http://localhost:6274", "http://127.0.0.1:3000", "http://[::1]:8080" })
+				Assert.IsTrue(McpListener.IsLocalOrigin(local), local);
+			foreach (var foreign in new[] { "http://example.com", "https://attacker.example:37360", "http://192.168.1.2", "null", "" })
+				Assert.IsFalse(McpListener.IsLocalOrigin(foreign), foreign);
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("Every tool is listed whatever the level, so the list never changes; the level is enforced when a tool is called")]
 		public void Tools_are_listed_whatever_the_level()
 		{
-			// Windows checks a registered server's tool list against what it declared, so the list
-			// must not depend on a setting. What the level gates is the call, tested below.
+			// The list does not depend on a setting, so an assistant sees what more access would allow.
+			// What the level gates is the call, tested below.
 			UseSample(AiAccess.Read);
 			Assert.AreEqual(5, ((object[])((Dictionary<string, object>)Call("tools/list", null)["result"])["tools"]).Length);
 			UseSample(AiAccess.Configure);
@@ -132,14 +173,15 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("Arguments bind by name whatever their case, defaults fill in, and a tool above the level is refused naming the level needed")]
+		[Description("Arguments bind by name whatever their case, defaults fill in, one the tool does not take is refused, and a tool above the level is refused naming the level needed")]
 		public void Arguments_bind_and_levels_gate()
 		{
 			UseSample(AiAccess.Read);
 			var args = new Dictionary<string, object> { { "value", "x" } };
-			var refused = (Dictionary<string, object>)CallTool("poke_value", args)["error"];
-			Assert.AreEqual(-32001, refused["code"]);
-			StringAssert.Contains(refused["message"].ToString(), "Configure");
+			// A result the model reads, not a protocol error: many clients hide those from the model.
+			var refused = (Dictionary<string, object>)CallTool("poke_value", args)["result"];
+			Assert.AreEqual(true, refused["isError"]);
+			StringAssert.Contains(Text(refused), "needs Configure access");
 			UseSample(AiAccess.Configure);
 			Assert.AreEqual("poked x", Text((Dictionary<string, object>)CallTool("poke_value", args)["result"]));
 			var twice = new Dictionary<string, object> { { "value", "x" }, { "times", 2 } };
@@ -150,6 +192,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(-32602, missing["code"]);
 			var wrongType = (Dictionary<string, object>)CallTool("poke_value", new Dictionary<string, object> { { "value", "x" }, { "times", "many" } })["error"];
 			Assert.AreEqual(-32602, wrongType["code"]);
+			// Dropped, an invented argument looks as if it worked: one caller asked for depth 3 and got the whole branch.
+			var unknown = (Dictionary<string, object>)CallTool("poke_value", new Dictionary<string, object> { { "value", "x" }, { "depth", "3" } })["error"];
+			Assert.AreEqual(-32602, unknown["code"]);
+			StringAssert.Contains((string)unknown["message"], "depth");
+			StringAssert.Contains((string)unknown["message"], "value, times", "The refusal names the arguments the tool does take.");
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]

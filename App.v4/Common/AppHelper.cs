@@ -91,6 +91,8 @@ namespace x360ce.App
 					Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
 					DiIndex = o.ObjectId.InstanceNumber - 1,
+					UsagePage = (ushort)o.UsagePage,
+					Usage = (ushort)o.Usage,
 				};
 				var isAxis = o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.Axis);
 				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis);
@@ -183,6 +185,9 @@ namespace x360ce.App
 
 		/// <summary>The help page this version shows, as embedded.</summary>
 		public const string HelpV4Resource = "Documents.Help.v4.md";
+
+		/// <summary>The help page version 3 shows, as embedded for the AI skill's references.</summary>
+		public const string HelpV3Resource = "Documents.Help.v3.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
@@ -190,6 +195,22 @@ namespace x360ce.App
 		{
 			using (var stream = EngineHelper.GetResourceStream(resourceName))
 				return stream == null ? "" : new StreamReader(stream).ReadToEnd();
+		}
+
+		/// <summary>What /?, -h and --help print: the program in one line, then its switches as the help describes them.</summary>
+		public static string Usage()
+		{
+			const string heading = "## Command-line switches";
+			var help = ReadHelp(HelpV4Resource).Replace("\r\n", "\n");
+			var start = help.IndexOf(heading, StringComparison.Ordinal);
+			var section = "";
+			if (start >= 0)
+			{
+				var end = help.IndexOf("\n## ", start + heading.Length, StringComparison.Ordinal);
+				section = (end < 0 ? help.Substring(start) : help.Substring(start, end - start)).Trim();
+			}
+			var text = "X360CE " + typeof(AppHelper).Assembly.GetName().Version + ", the Xbox 360 Controller Emulator: maps controllers, wheels and pedals to virtual Xbox 360 controllers that games read.\n\n" + section + "\n";
+			return text.Replace("\n", Environment.NewLine);
 		}
 
 		public static void LoadHelp(System.Windows.Forms.RichTextBox box, string resourceName)
@@ -204,6 +225,11 @@ namespace x360ce.App
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
 			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			// The colours are written into the document, so it is written again in the new ones, for as
+			// long as the box exists: the event outlives it.
+			EventHandler reload = (s, e) => box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += reload;
+			box.Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= reload;
 			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
 			{
 				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);
@@ -218,16 +244,22 @@ namespace x360ce.App
 		/// <summary>
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
+		/// <remarks>
+		/// Made faded (<see cref="EngineHelper.Faded"/>) from the image as it was drawn at 100% and at each larger size
+		/// it was drawn at, and then scaled to the size of the one given, so a faded icon is as sharp as the full one and
+		/// is known as enlarged, never enlarged again.
+		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
 			lock (DisabledImageLock)
 			{
 				if (!DisabledImageCache.ContainsKey(image))
 				{
-					var newImage = (Bitmap)image.Clone();
-					JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
-					JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
-					DisabledImageCache.Add(image, newImage);
+					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
+					var faded = EngineHelper.Faded(original);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(faded,
+						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(EngineHelper.Faded).ToArray());
+					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(faded, image.Size));
 				}
 				return DisabledImageCache[image];
 			}
@@ -376,13 +408,14 @@ namespace x360ce.App
 		/// <summary>
 		/// Must be executed before program close.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>False when HID Guardian's list cannot be written, in which case nothing is changed.</returns>
 		public static bool UnhideAllDevices()
 		{
 			var affected = ViGEm.HidGuardianHelper.GetAffected();
 			// Clear list of hidden devices.
-			ViGEm.HidGuardianHelper.ClearAffected();
-			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			if (!ViGEm.HidGuardianHelper.ClearAffected())
+				return false;
+			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			// Unhide all devices.
 			for (int i = 0; i < devices.Length; i++)
 				devices[i].IsHidden = false;
@@ -458,6 +491,15 @@ namespace x360ce.App
 			return grid.Rows[rowIndex].DataBoundItem as T;
 		}
 
+		/// <summary>The source a device is read through, as the Source column of the device lists names it.</summary>
+		/// <remarks>Microsoft's names for the two: DirectInput and Raw Input.</remarks>
+		public static string GetInputSourceName(Engine.Data.UserDevice device)
+		{
+			if (device == null)
+				return string.Empty;
+			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
+		}
+
 		/// <summary>Every XInput place a game can feel a device through, as it reads in a list.</summary>
 		/// <remarks>
 		/// There are two ways in, and a device can use both at once.
@@ -481,18 +523,25 @@ namespace x360ce.App
 			if (device == null)
 				return string.Empty;
 			var carried = new List<int>();
+			var waiting = new List<int>();
 			var helper = Global.DHelper;
-			var fileName = SettingsManager.CurrentGame?.FileName;
+			var game = SettingsManager.CurrentGame;
+			var fileName = game?.FileName;
 			if (helper != null && fileName != null)
 				foreach (var setting in SettingsManager.GetSettings(fileName))
 					if (setting.InstanceGuid == device.InstanceGuid
 						&& setting.MapTo >= 1 && setting.MapTo <= helper.XiPlaceForPad.Length)
-						carried.Add(helper.XiPlaceForPad[setting.MapTo - 1]);
+					{
+						var place = helper.XiPlaceForPad[setting.MapTo - 1];
+						carried.Add(place);
+						if ((place < 0 || place > 3) && DInputHelper.WantsVirtual(game, (uint)setting.MapTo))
+							waiting.Add(setting.MapTo);
+					}
 			var own = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
 			return XInputPlaces.Describe(own,
 				XInputPlaces.IsMadeNotPluggedIn(device.HidDeviceId, device.DevDeviceId),
 				XInputPlaces.IsOneOfOurs(device.HidDeviceId, device.DevDeviceId),
-				carried);
+				carried, waiting);
 		}
 
 		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none, and the settings which said so.</summary>
@@ -538,6 +587,16 @@ namespace x360ce.App
 		public const string StatusBlue = "#6FA8DC";
 		public const string StatusGrey = "#CFD4D8";
 
+		/// <summary>Grey in the dark theme: kept close to the dark backgrounds, as the light grey is kept close to the light ones.</summary>
+		public const string StatusGreyDark = "#4B5056";
+
+		/// <summary>The grey of a light in the window, which follows its theme: nothing set up, or switched off.</summary>
+		/// <remarks>The note shown over a game is dark whatever the theme, and keeps <see cref="StatusGrey"/>.</remarks>
+		public static string StatusOff
+		{
+			get { return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? StatusGreyDark : StatusGrey; }
+		}
+
 		/// <summary>The warm ramp, mildest first. A light is somewhere along it.</summary>
 		static readonly string[] Ramp = { StatusGreen, StatusAmber, StatusOrange, StatusRed };
 
@@ -582,8 +641,8 @@ namespace x360ce.App
 		/// single paint is never given back.
 		/// </remarks>
 		/// <param name="hex">The colour, as "#RRGGBB" or "RRGGBB".</param>
-		/// <param name="size">Width and height in pixels.</param>
-		public static Bitmap GetStatusIcon(string hex, int size = 16)
+		/// <param name="size">Width and height in pixels; when not given, a small icon's size on this screen.</param>
+		public static Bitmap GetStatusIcon(string hex, int size = 0)
 		{
 			return GetStatusIcon(hex, hex, size);
 		}
@@ -598,8 +657,11 @@ namespace x360ce.App
 		/// Two halves say it without words: your device on the left, the emulated controller on the right.
 		/// Both green and it is working, and looks exactly as a single green light always did.
 		/// </remarks>
-		public static Bitmap GetStatusIcon(string leftHex, string rightHex, int size = 16)
+		public static Bitmap GetStatusIcon(string leftHex, string rightHex, int size = 0)
 		{
+			// Drawn at the screen's size rather than enlarged after, so a light is as sharp at 150% as at 100%.
+			if (size == 0)
+				size = System.Windows.Forms.SystemInformation.SmallIconSize.Width;
 			var key = leftHex + "|" + rightHex + "@" + size;
 			lock (StatusIcons)
 			{
@@ -657,7 +719,7 @@ namespace x360ce.App
 		{
 			return online
 				? GetStatusIcon(StatusGreen)
-				: GetStatusIcon(StatusGrey);
+				: GetStatusIcon(StatusOff);
 		}
 
 		/// <summary>The icon of the port a device is attached through, or a blank of the same size.</summary>
@@ -670,10 +732,12 @@ namespace x360ce.App
 		{
 			if (connectionClass == Guid.Empty)
 				return BlankIcon;
-			return JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, 16)?.ToBitmap() ?? BlankIcon;
+			return JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, BlankIcon.Width)?.ToBitmap() ?? BlankIcon;
 		}
 
-		private static readonly Bitmap BlankIcon = new Bitmap(16, 16);
+		private static readonly Bitmap BlankIcon = new Bitmap(
+			System.Windows.Forms.SystemInformation.SmallIconSize.Width,
+			System.Windows.Forms.SystemInformation.SmallIconSize.Height);
 
 		#endregion
 

@@ -19,7 +19,7 @@ namespace x360ce.App
 			// Snapshot under the collection lock. This runs on the device refresh thread
 			// while the interface thread can add or remove devices, and enumerating the
 			// live list throws "Collection was modified".
-			var items = SettingsManager.UserDevices.ItemsToArraySyncronized()
+			var items = SettingsManager.UserDevices.ItemsToArraySynchronized()
 				.Where(x => x.ProductGuid == ProductGuid).ToArray();
 			foreach (var item in items)
 			{
@@ -34,22 +34,22 @@ namespace x360ce.App
 		public static DeviceObjectItem[] GetDeviceObjects()
 		{
 			var list = new List<DeviceObjectItem>();
-			list.Add(new DeviceObjectItem((int)JoystickOffset.X, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Y, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Z, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationY, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationX, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons0, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons1, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons2, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons3, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons4, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons5, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons6, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons7, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons8, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons9, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9"));
-			list.Add(new DeviceObjectItem((int)JoystickOffset.PointOfViewControllers0, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch"));
+			list.Add(new DeviceObjectItem((int)JoystickOffset.X, ObjectGuid.XAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 0, "X Axis") { UsagePage = 1, Usage = 0x30 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Y, ObjectGuid.YAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 1, "Y Axis") { UsagePage = 1, Usage = 0x31 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Z, ObjectGuid.ZAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis") { UsagePage = 1, Usage = 0x32 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationY, ObjectGuid.RxAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 3, "X Rotation") { UsagePage = 1, Usage = 0x33 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.RotationX, ObjectGuid.RyAxis, ObjectAspect.Position, DeviceObjectTypeFlags.AbsoluteAxis, 4, "Y Rotation") { UsagePage = 1, Usage = 0x34 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons0, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 0, "Button 0") { UsagePage = 9, Usage = 1 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons1, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 1, "Button 1") { UsagePage = 9, Usage = 2 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons2, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 2, "Button 2") { UsagePage = 9, Usage = 3 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons3, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 3, "Button 3") { UsagePage = 9, Usage = 4 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons4, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 4, "Button 4") { UsagePage = 9, Usage = 5 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons5, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 5, "Button 5") { UsagePage = 9, Usage = 6 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons6, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 6, "Button 6") { UsagePage = 9, Usage = 7 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons7, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 7, "Button 7") { UsagePage = 9, Usage = 8 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons8, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 8, "Button 8") { UsagePage = 9, Usage = 9 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.Buttons9, ObjectGuid.Button, 0, DeviceObjectTypeFlags.PushButton, 9, "Button 9") { UsagePage = 9, Usage = 10 });
+			list.Add(new DeviceObjectItem((int)JoystickOffset.PointOfViewControllers0, ObjectGuid.PovController, 0, DeviceObjectTypeFlags.PointOfViewController, 0, "Hat Switch") { UsagePage = 1, Usage = 0x39 });
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 0, "Collection 0 - Game Pad"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 1, "Collection 1"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 2, "Collection 2"));
@@ -65,7 +65,7 @@ namespace x360ce.App
 			var instanceName = "";
 			var productName = "Test Device";
 			// Snapshot once, for the same reason as above.
-			var existing = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var existing = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			for (int i = 1; ; i++)
 			{
 				instanceName = string.Format("{0} {1}", productName, i);
@@ -104,8 +104,8 @@ namespace x360ce.App
 		static Stopwatch watch;
 
 		/// <summary>Axis and slider values worked out for the test controller, reserved so a state is filled without making anything. Shared, so one thread fills at a time: in the program, the input thread.</summary>
-		static readonly int[] TestAxis = new int[CustomDiState.MaxAxis];
-		static readonly int[] TestSliders = new int[CustomDiState.MaxSliders];
+		static readonly int[] TestAxis = new int[SourceState.MaxAxis];
+		static readonly int[] TestSliders = new int[SourceState.MaxSliders];
 
 		/// <summary>Fills the test controller's state for now into <paramref name="state"/>, making nothing.</summary>
 		public static void GetCurrentState(UserDevice ud, JoystickState state)
@@ -164,7 +164,7 @@ namespace x360ce.App
 			}
 			// Set Axis.
 			var axis = TestAxis;
-			CustomDiState.FillAxis(state, axis);
+			SourceState.FillAxis(state, axis);
 			// How many axes the controller describes, counted without making a list.
 			var axisCount = 0;
 			foreach (var item in ud.DeviceObjects)
@@ -203,10 +203,10 @@ namespace x360ce.App
 				}
 				axis[i] = position;
 			}
-			CustomDiState.SetStateFromAxis(state, axis);
+			SourceState.SetStateFromAxis(state, axis);
 			// Get sliders array.
 			var sliders = TestSliders;
-			CustomDiState.FillSliders(state, sliders);
+			SourceState.FillSliders(state, sliders);
 			// Set sliders.
 			for (int i = 0; i < sliders.Length; i++)
 			{
@@ -240,7 +240,7 @@ namespace x360ce.App
 				}
 				sliders[i] = position;
 			}
-			CustomDiState.SetStateFromSliders(state, sliders);
+			SourceState.SetStateFromSliders(state, sliders);
 		}
 	}
 

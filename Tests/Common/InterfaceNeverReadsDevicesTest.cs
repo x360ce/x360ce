@@ -34,6 +34,7 @@ namespace x360ce.Tests
 			"XInputReorderPlan.ReadEntries(",
 			"Program.RunElevated(",
 			"UacHelper.RunElevated(",
+			"UacHelper.RunProcess(",
 		};
 
 		/// <summary>Files whose code runs on the window's own thread.</summary>

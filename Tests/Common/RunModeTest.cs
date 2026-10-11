@@ -1,9 +1,10 @@
-﻿// @under-test: Engine/JocysCom/Runtime/LogHelper.cs, Engine/JocysCom/Configuration/AssemblyInfo.cs
+﻿// @under-test: Engine/JocysCom/Runtime/LogHelper.cs, Engine/JocysCom/Configuration/AssemblyInfo.cs, App.v4/MainForm.cs
 // @area: diagnostics   @layer: unit
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 
 namespace x360ce.Tests
 {
@@ -16,12 +17,31 @@ namespace x360ce.Tests
 	public class RunModeTest
 	{
 		Func<string, string> _getValue;
+		string _defaultRunMode;
 
 		[TestInitialize]
-		public void Before() { _getValue = SettingsParser._GetValue; }
+		public void Before()
+		{
+			_getValue = SettingsParser._GetValue;
+			_defaultRunMode = LogHelper.DefaultRunMode;
+			// As the program sets it at start, before anything is logged.
+			LogHelper.DefaultRunMode = "LIVE";
+		}
 
 		[TestCleanup]
-		public void After() { SettingsParser._GetValue = _getValue; }
+		public void After()
+		{
+			SettingsParser._GetValue = _getValue;
+			LogHelper.DefaultRunMode = _defaultRunMode;
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("critical")]
+		[Description("The program starts by calling itself a release, for when it has no run mode setting")]
+		public void Program_starts_as_a_release()
+		{
+			var mainForm = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
+			StringAssert.Contains(mainForm, "LogHelper.DefaultRunMode = \"LIVE\";");
+		}
 
 		/// <summary>Settings as a configuration file would give them; null is a setting that is not there.</summary>
 		static void Settings(string runMode, string environment)

@@ -15,7 +15,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapDeviceToControllerForm));
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
@@ -83,11 +82,13 @@
 			// 
 			// MapDeviceToControllerForm
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(624, 442);
 			this.Controls.Add(this.MainTabControl);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.CloseButton);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "MapDeviceToControllerForm";
 			this.Text = "X360CE - Map Device To Controller";
 			this.Controls.SetChildIndex(this.CloseButton, 0);

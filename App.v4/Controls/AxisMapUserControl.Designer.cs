@@ -76,7 +76,7 @@
 			// 
 			// MainPictureBox
 			// 
-			this.MainPictureBox.BackColor = System.Drawing.Color.White;
+			this.MainPictureBox.BackColor = System.Drawing.SystemColors.Window;
 			this.MainPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.MainPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.MainPictureBox.Location = new System.Drawing.Point(6, 36);

@@ -78,6 +78,8 @@ namespace x360ce.App.Controls
 		{
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
+			UpdateSpringNote();
+			UpdateWheelChart();
 		}
 
 		private void UpdateControlFromDInput()
@@ -94,7 +96,7 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
+				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
 				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
 				for (int p = 0; p < pages.Length; p++)
 				{
@@ -116,16 +118,16 @@ namespace x360ce.App.Controls
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
-					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
+					var stopped = _Imager.Recorder.StopRecording(ud.SourceState);
 					// If value was found and recording stopped then...
 					if (stopped)
 					{
 						// Device not initialized yet.
-						if (ud.DiState == null)
+						if (ud.SourceState == null)
 							RecordAllMaps.Clear();
 						if (RecordAllMaps.Count == 0)
 						{
-							if (ud.DiState != null)
+							if (ud.SourceState != null)
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.SetHelpText("");
@@ -193,13 +195,13 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = GetSelectedDevice();
-			if (ud != null && ud.DiState != null)
+			if (ud != null && ud.SourceState != null)
 			{
 				// Get current pad setting.
 				var ps = GetSelectedPadSetting();
 				Map map;
 				// LeftThumbX
-				var axis = ud.DiState.Axis;
+				var axis = ud.SourceState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				DrawMappedPoint(LeftThumbXUserControl, map, axis, newState.Gamepad.LeftThumbX);
 				// LeftThumbY
@@ -324,6 +326,11 @@ namespace x360ce.App.Controls
 					ForceOverallTrackBar,
 					ForceSpringEnableCheckBox,
 					ForceSpringStrengthTrackBar,
+					ForceSpringCentreTrackBar,
+					ForceSpringPeakTrackBar,
+					ForceSpringLighteningTrackBar,
+					ForceSpringDampingTrackBar,
+					ForceSpringSpeedTrackBar,
 					ForceSwapMotorCheckBox,
 					LeftMotorDirectionComboBox,
 					LeftMotorPeriodTrackBar,
@@ -363,9 +370,9 @@ namespace x360ce.App.Controls
 				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
-				GetXInputStatesCheckBox.Image = o.GetXInputStates
+				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
 				   ? Properties.Resources.checkbox_16x16
-				   : Properties.Resources.checkbox_unchecked_16x16;
+				   : Properties.Resources.checkbox_unchecked_16x16);
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -387,6 +394,10 @@ namespace x360ce.App.Controls
 			{
 				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
 				MapNameComboBox.DisplayMember = "Name";
+				// A list selects its first row by itself only once its tab has been shown. Selected here, the
+				// page holds its device's settings from the start, so whatever reads a tab nobody has opened,
+				// an AI assistant among them, gets the real values rather than blank defaults.
+				ControlsHelper.RestoreSelection(MappedDevicesDataGridView, nameof(UserSetting.InstanceGuid), new List<Guid>());
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
 			});
@@ -444,6 +455,11 @@ namespace x360ce.App.Controls
 			WheelRangeComboBox.Items.Add(new KeyValuePair("360° - Formula cars", "360"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("270° - Arcade", "270"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("200° - As powered up", "200"));
+			// The cars the Car list offers, then Custom for values that match none of them.
+			ForceSpringCarComboBox.Items.AddRange(SpringCars);
+			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
+			ShowSpringCar();
+			UpdateSpringChart();
 			PassThroughIndexComboBox.DisplayMember = "Key";
 			PassThroughIndexComboBox.ValueMember = "Value";
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
@@ -532,17 +548,17 @@ namespace x360ce.App.Controls
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
-			EnableButton.Image = virt
+			ControlsHelper.SetImage(EnableButton, virt
 				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
 			// Update emulation type.
 			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapButton.Checked = auto;
-			AutoMapButton.Image = auto
+			ControlsHelper.SetImage(AutoMapButton, auto
 				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
 			MappedDevicesDataGridView.Enabled = !auto;
 			MappedDevicesDataGridView.BackgroundColor = auto
 				? SystemColors.Control
@@ -626,7 +642,7 @@ namespace x360ce.App.Controls
 			var grid = MappedDevicesDataGridView;
 			var game = SettingsManager.CurrentGame;
 			// Get rows which must be displayed on the list.
-			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
+			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
 				// Filter devices by controller.
 				.Where(x => x.MapTo == (int)MappedTo)
 				// Filter devices by selected game (no items will be shown if game is not selected).
@@ -952,6 +968,11 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
 			AddMap(() => SettingName.ForceSpringEnable, ForceSpringEnableCheckBox);
 			AddMap(() => SettingName.ForceSpringStrength, ForceSpringStrengthTrackBar);
+			AddMap(() => SettingName.ForceSpringCentre, ForceSpringCentreTrackBar);
+			AddMap(() => SettingName.ForceSpringPeak, ForceSpringPeakTrackBar);
+			AddMap(() => SettingName.ForceSpringLightening, ForceSpringLighteningTrackBar);
+			AddMap(() => SettingName.ForceSpringDamping, ForceSpringDampingTrackBar);
+			AddMap(() => SettingName.ForceSpringSpeed, ForceSpringSpeedTrackBar);
 			AddMap(() => SettingName.WheelRange, WheelRangeComboBox);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
@@ -1056,11 +1077,18 @@ namespace x360ce.App.Controls
 
 		void UpdateDirectInputTabPage(UserDevice diDevice)
 		{
+			ControlsHelper.SetText(DirectInputTabPage, DirectInputTabTitle(diDevice));
+		}
+
+		/// <summary>The Direct Input tab's title: the source the device is read through, its instance, and whether it is offline or online with no state yet.</summary>
+		/// <remarks>A Raw Input device has no DirectInput device; its state is the one the engine reads it into.</remarks>
+		public static string DirectInputTabTitle(UserDevice diDevice)
+		{
 			var isOnline = diDevice != null && diDevice.IsOnline;
-			var hasState = isOnline && diDevice.Device != null;
+			var hasState = isOnline && (diDevice.IsDirectInput ? diDevice.Device != null : diDevice.SourceState != null);
+			var source = diDevice != null && !diDevice.IsDirectInput ? AppHelper.GetInputSourceName(diDevice) : "Direct Input";
 			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
-			ControlsHelper.SetText(DirectInputTabPage, text);
+			return source + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
 		}
 
 		#endregion
@@ -1082,6 +1110,7 @@ namespace x360ce.App.Controls
 
 		string cRecord = "[Record]";
 		string cInvert = "[Invert]";
+		string cRecentre = "[Recentre]";
 		string cEmpty = "<empty>";
 		string cPOVs = "POVs";
 
@@ -1099,11 +1128,16 @@ namespace x360ce.App.Controls
 				return;
 			// Add [Record] button.
 			mi = new ToolStripMenuItem(cRecord);
-			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
+			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_16x16);
 			// Add [Invert] button, which reads the box's control the other way round.
 			mi = new ToolStripMenuItem(cInvert);
+			mi.Click += new EventHandler(DiMenuStrip_Click);
+			DiMenuStrip.Items.Add(mi);
+			// Add [Recentre] button, which makes where the box's axis rests now read as its middle.
+			mi = new ToolStripMenuItem(cRecentre);
+			mi.ToolTipText = "Leave the stick at rest, then pick this: where it rests now reads as the middle.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
@@ -1120,10 +1154,10 @@ namespace x360ce.App.Controls
 					// Add Axes.
 					mi = new ToolStripMenuItem("Axes");
 					DiMenuStrip.Items.Add(mi);
-					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Half", "HAxis {0}", "x{0}", SourceState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Axis {0}", "a{0}", SourceState.MaxAxis, ud.DiAxeMask);
 				}
 				if (ud.DiSliderMask > 0)
 				{
@@ -1131,10 +1165,10 @@ namespace x360ce.App.Controls
 					mi = new ToolStripMenuItem("Sliders");
 					DiMenuStrip.Items.Add(mi);
 					// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Half", "HSlider {0}", "h{0}", SourceState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Slider {0}", "s{0}", SourceState.MaxSliders, ud.DiSliderMask);
 				}
 				// Add D-Pads.
 				if (ud.CapPovCount > 0)
@@ -1234,6 +1268,16 @@ namespace x360ce.App.Controls
 						SettingsManager.Current.SetComboBoxValue(cbx, inverted);
 					CurrentCbx = null;
 				}
+				else if (item.Text == cRecentre)
+				{
+					var recentred = RecentredText(cbx.Text, GetSelectedDevice()?.SourceState?.Axis);
+					if (recentred != null)
+						SettingsManager.Current.SetComboBoxValue(cbx, recentred);
+					MainForm.Current.StatusTimerLabel.Text = recentred == null
+						? "[Recentre] works on a box mapped to an axis of a connected device."
+						: "Recentred: where the stick rests now reads as the middle (" + recentred + ").";
+					CurrentCbx = null;
+				}
 				else if (item.Text == cEmpty)
 				{
 					SettingsManager.Current.SetComboBoxValue(cbx, string.Empty);
@@ -1245,6 +1289,32 @@ namespace x360ce.App.Controls
 					CurrentCbx = null;
 				}
 			}
+		}
+
+		/// <summary>The mapping that reads a stick's axis from where it rests now, or null when the box maps no axis.</summary>
+		/// <remarks>
+		/// A formula subtracts the resting reading, in the units formulas use for a stick: -1 to 1 with the middle at
+		/// nought. An axis read the other way round is turned round in the formula as well.
+		/// </remarks>
+		/// <param name="text">The box's mapping: "Axis N", "IAxis N", or a formula "=aN" or "=-aN" with or without an offset.</param>
+		/// <param name="axes">The device's axes as they read now, 0 to 65535.</param>
+		public static string RecentredText(string text, int[] axes)
+		{
+			if (string.IsNullOrEmpty(text) || axes == null)
+				return null;
+			var m = Regex.Match(text.Trim(), @"^(?:(?<inv>I?)Axis (?<n>\d+)|=(?<inv>-?)a(?<n>\d+)\s*(?:[+-]\s*[0-9.]+)?)$");
+			if (!m.Success)
+				return null;
+			var index = int.Parse(m.Groups["n"].Value);
+			if (index < 1 || index > axes.Length)
+				return null;
+			var inverted = m.Groups["inv"].Value.Length > 0;
+			var rest = MapExpressionUnits.Centred(axes[index - 1]) * (inverted ? -1 : 1);
+			var offset = Math.Round(rest, 3);
+			if (offset == 0)
+				return (inverted ? "IAxis " : "Axis ") + index;
+			return "=" + (inverted ? "-a" : "a") + index + (offset > 0 ? "-" : "+")
+				+ Math.Abs(offset).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
 		}
 
 		public void EnableDPadMenu(bool enable)
@@ -1281,12 +1351,181 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			UpdateSpringChart();
 		}
+
+		/// <summary>Shows the values of the centering spring's curve beside their sliders, the car they match, and the curve.</summary>
+		void ForceSpringCurveTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			ForceSpringCentreTextBox.Text = string.Format("{0}° ", ForceSpringCentreTrackBar.Value);
+			ForceSpringPeakTextBox.Text = ForceSpringPeakTrackBar.Value == 0 ? "Stop " : string.Format("{0}° ", ForceSpringPeakTrackBar.Value);
+			ForceSpringLighteningTextBox.Text = string.Format("{0} % ", ForceSpringLighteningTrackBar.Value);
+			ForceSpringDampingTextBox.Text = string.Format("{0} % ", ForceSpringDampingTrackBar.Value);
+			ForceSpringSpeedTextBox.Text = string.Format("{0} km/h ", ForceSpringSpeedTrackBar.Value);
+			ShowSpringCar();
+			UpdateSpringChart();
+		}
+
+		void WheelRangeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			UpdateSpringChart();
+		}
+
+		#region Wheel tab: cars and chart
+
+		/// <summary>A car on the Car list: the values it puts on the centering spring's curve, and what they are based on.</summary>
+		/// <remarks>Strength is not among them: it is the wheel's, which Auto measures, not the car's.</remarks>
+		public class SpringCar
+		{
+			public SpringCar(string name, int centre, int peak, int lightening, int damping, int speed)
+			{
+				Name = name;
+				Centre = centre;
+				Peak = peak;
+				Lightening = lightening;
+				Damping = damping;
+				Speed = speed;
+			}
+
+			/// <summary>The kind of car, its speed, and what its values are based on.</summary>
+			public readonly string Name;
+			public readonly int Centre;
+			public readonly int Peak;
+			public readonly int Lightening;
+			public readonly int Damping;
+			public readonly int Speed;
+
+			public override string ToString()
+			{
+				return Name;
+			}
+		}
+
+		/// <summary>The cars on the Car list, in its order.</summary>
+		/// <remarks>
+		/// No standard sets how a steering wheel must feel, so each car names what it is based on. The family car at
+		/// 100 km/h is worked out from measurements taken in the ISO 13674-1 weave test; in town and parking are the same
+		/// car read at a lower speed; the sports car and the van are estimates within the range measured on many cars in
+		/// the same test. The first is the settings' defaults.
+		/// </remarks>
+		public static readonly SpringCar[] SpringCars =
+		{
+			new SpringCar("Family car, 100 km/h (ISO 13674-1 weave test, measured)", 12, 60, 40, 5, 100),
+			new SpringCar("Family car in town, 40 km/h (same car, slower)", 12, 60, 40, 5, 40),
+			new SpringCar("Parking (same car, 10 km/h)", 12, 60, 40, 0, 10),
+			new SpringCar("Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range)", 8, 40, 30, 5, 100),
+			new SpringCar("Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range)", 30, 120, 50, 10, 80),
+		};
+
+		/// <summary>What the Car list shows when the values match no car.</summary>
+		public const string CustomSpringCar = "Custom";
+
+		/// <summary>The place on <see cref="SpringCars"/> of the car with these values, or -1 when none has them.</summary>
+		public static int SpringCarIndex(int centre, int peak, int lightening, int damping, int speed)
+		{
+			for (var i = 0; i < SpringCars.Length; i++)
+			{
+				var car = SpringCars[i];
+				if (car.Centre == centre && car.Peak == peak && car.Lightening == lightening && car.Damping == damping && car.Speed == speed)
+					return i;
+			}
+			return -1;
+		}
+
+		/// <summary>Guards the Car list and the sliders against answering each other in a loop.</summary>
+		bool _settingSpringCar;
+
+		/// <summary>Shows on the Car list the car the sliders' values match, or Custom.</summary>
+		void ShowSpringCar()
+		{
+			if (_settingSpringCar || ForceSpringCarComboBox.Items.Count == 0)
+				return;
+			_settingSpringCar = true;
+			try
+			{
+				var i = SpringCarIndex(ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value, ForceSpringLighteningTrackBar.Value,
+					ForceSpringDampingTrackBar.Value, ForceSpringSpeedTrackBar.Value);
+				ForceSpringCarComboBox.SelectedIndex = i >= 0 ? i : SpringCars.Length;
+			}
+			finally
+			{
+				_settingSpringCar = false;
+			}
+		}
+
+		/// <summary>A chosen car sets Centre, Peak, Lightening, Damping and Speed, which save as any other move does. Custom changes nothing.</summary>
+		void ForceSpringCarComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_settingSpringCar)
+				return;
+			var i = ForceSpringCarComboBox.SelectedIndex;
+			if (i < 0 || i >= SpringCars.Length)
+			{
+				// The list goes back to the car the values still match, once the choice is over.
+				BeginInvoke((Action)ShowSpringCar);
+				return;
+			}
+			var car = SpringCars[i];
+			_settingSpringCar = true;
+			try
+			{
+				ForceSpringCentreTrackBar.Value = car.Centre;
+				ForceSpringPeakTrackBar.Value = car.Peak;
+				ForceSpringLighteningTrackBar.Value = car.Lightening;
+				ForceSpringDampingTrackBar.Value = car.Damping;
+				ForceSpringSpeedTrackBar.Value = car.Speed;
+			}
+			finally
+			{
+				_settingSpringCar = false;
+			}
+		}
+
+		/// <summary>The steering range chosen on the Wheel range list, or nought when it leaves the wheel as it is.</summary>
+		int SelectedWheelRange()
+		{
+			var item = WheelRangeComboBox.SelectedItem as KeyValuePair;
+			int range;
+			return item != null && int.TryParse(item.Value, out range) ? range : 0;
+		}
+
+		/// <summary>Gives the chart the curve the page's settings make. The chart draws it again only when it changed.</summary>
+		void UpdateSpringChart()
+		{
+			WheelChartUserControl.SetCurve(ForceSpringStrengthTrackBar.Value, ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value,
+				ForceSpringLighteningTrackBar.Value, SelectedWheelRange(), ForceSpringSpeedTrackBar.Value);
+		}
+
+		/// <summary>Puts the wheel's angle, the live speed and the friction Auto measured on the chart, while the Wheel tab is shown.</summary>
+		/// <remarks>
+		/// Read from the device whose motors the engine drives, a Raw Input device's DirectInput twin, as the engine reads
+		/// it for the spring: the axis the spring's motor turns, or the first axis before force feedback has found it.
+		/// </remarks>
+		void UpdateWheelChart()
+		{
+			if (PadTabControl.SelectedTab != WheelTabPage)
+				return;
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			int? position = null;
+			var state = driven == null ? null : driven.SourceState;
+			if (state != null && state.Axis != null)
+			{
+				var index = driven.FFState != null && driven.FFState.SpringAxisIndex >= 0 ? driven.FFState.SpringAxisIndex : 0;
+				if (index < state.Axis.Length)
+					position = state.Axis[index];
+			}
+			WheelChartUserControl.UpdateWheel(position,
+				driven == null ? null : driven.ForceSpringSpeedOverride,
+				driven == null ? 0 : driven.ForceSpringFriction);
+		}
+
+		#endregion
 
 		/// <summary>The device the Auto button's run is on, held here because the tab can be switched to another while it runs.</summary>
 		UserDevice springAutoDevice;
 
-		/// <summary>Starts the run that finds the weakest centering force.</summary>
+		/// <summary>Starts the run that measures the wheel's friction and sets the centering spring's strength to beat it.</summary>
 		/// <remarks>
 		/// The engine drives the wheel and does the measuring; this side only starts it, watches it
 		/// through a timer, and puts the answer on the slider, which saves it like any other move.
@@ -1295,7 +1534,9 @@ namespace x360ce.App.Controls
 		void ForceSpringAutoButton_Click(object sender, EventArgs e)
 		{
 			var ud = GetSelectedDevice();
-			if (ud == null || ud.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
+			// The device whose motors the engine drives, which runs the measuring: a Raw Input device's DirectInput twin.
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			if (driven == null || driven.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
 			{
 				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
 				return;
@@ -1303,9 +1544,7 @@ namespace x360ce.App.Controls
 			// The engine drives the run only for a device the routing forces from this tab. A tab switched
 			// off, or a device unticked in the tab's list or on the Devices page, drives nothing, and the run
 			// would never end.
-			DInput.DeviceForce route;
-			if (!(DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
-				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0))
+			if (!ForcesFromThisTab(ud))
 			{
 				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, and this device ticked in its list and on the Devices page. Otherwise nothing drives the wheel.";
 				return;
@@ -1313,9 +1552,58 @@ namespace x360ce.App.Controls
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
-			springAutoDevice = ud;
-			ud.SpringCalibration = new SpringCalibration();
+			springAutoDevice = driven;
+			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);
 			SpringAutoTimer.Start();
+		}
+
+		/// <summary>Whether the engine sends this tab's force feedback, the centering spring included, to the device.</summary>
+		/// <remarks>Only for a device on this tab, with the tab switched on for the current game and the device ticked in its list and on the Devices page.</remarks>
+		bool ForcesFromThisTab(UserDevice ud)
+		{
+			DInput.DeviceForce route;
+			return DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
+				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0;
+		}
+
+		/// <summary>What the page says while the centering spring is ticked but nothing reaches the wheel, or null.</summary>
+		/// <param name="forceOn">Whether force feedback is ticked on this tab.</param>
+		/// <param name="springOn">Whether the centering spring is ticked.</param>
+		/// <param name="reachesWheel">Whether the engine sends this tab's force feedback to the device (<see cref="ForcesFromThisTab"/>).</param>
+		public static string SpringNote(bool forceOn, bool springOn, bool reachesWheel)
+		{
+			return forceOn && springOn && !reachesWheel
+				? "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page."
+				: null;
+		}
+
+		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
+		bool springNoteShown;
+		string springNoteHid;
+
+		/// <summary>Shows or takes away the note that the spring reaches nothing, when that changes.</summary>
+		/// <remarks>
+		/// The spring's strength changes nothing while the tab is switched off for the current game, so the page says
+		/// why. Left alone while Auto runs, which writes the same line.
+		/// </remarks>
+		void UpdateSpringNote()
+		{
+			if (springAutoDevice != null)
+				return;
+			var ud = GetSelectedDevice();
+			var note = ud == null ? null : SpringNote(ForceEnableCheckBox.Checked, ForceSpringEnableCheckBox.Checked, ForcesFromThisTab(ud));
+			if ((note != null) == springNoteShown)
+				return;
+			springNoteShown = note != null;
+			if (springNoteShown)
+			{
+				springNoteHid = WheelDescriptionLabel.Text;
+				WheelDescriptionLabel.Text = note;
+			}
+			else
+			{
+				WheelDescriptionLabel.Text = springNoteHid;
+			}
 		}
 
 		void SpringAutoTimer_Tick(object sender, EventArgs e)
@@ -1337,10 +1625,12 @@ namespace x360ce.App.Controls
 			ud.SpringCalibration = null;
 			if (run.Result > 0)
 			{
-				ForceSpringStrengthTrackBar.Value = run.Result;
+				// The friction stays with the device for the session, for the chart's band.
+				ud.ForceSpringFriction = run.Result;
+				ForceSpringStrengthTrackBar.Value = run.Strength;
 				WheelDescriptionLabel.Text = string.Format(
-					"Centering spring set to {0} %. The wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a little is added so it starts every time.",
-					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
+					"Centering spring set to {0} %, so it beats the wheel's friction of {1} % from the stop to Centre. The wheel turns at {2} % and {3} % from the two stops, and comes home within {4} s at {5} % and {6} %.",
+					run.Strength, run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
 			{
@@ -1553,7 +1843,7 @@ namespace x360ce.App.Controls
 			form.StartPosition = FormStartPosition.CenterParent;
 			var buttons = MessageBoxButtons.YesNo;
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
-			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
+			if (!AutoMapHelper.CanGetAutoPreset(ud))
 			{
 				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
 				buttons = MessageBoxButtons.OK;
@@ -1846,6 +2136,10 @@ namespace x360ce.App.Controls
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(item.InstanceGuid);
 			}
+			else if (column == SourceColumn)
+			{
+				e.Value = AppHelper.GetInputSourceName(SettingsManager.GetDevice(item.InstanceGuid));
+			}
 			else if (column == SettingIdColumn)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
@@ -1882,6 +2176,7 @@ namespace x360ce.App.Controls
 			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			UpdateGridButtons();
 			UpdateForceFeedbackTitle();
+			UpdateEffectDescription();
 		}
 
 		/// <summary>The Force Feedback page's title, naming the other tabs the selected device is on.</summary>
@@ -2031,6 +2326,40 @@ namespace x360ce.App.Controls
 
 		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			UpdateEffectDescription();
+		}
+
+		/// <summary>What the Force Feedback page says for a device read through Raw Input that no force feedback reaches, or null.</summary>
+		/// <remarks>
+		/// Raw Input only reads, so a Raw Input device's force goes through its DirectInput twin (<see cref="UserDevice.ForceTwin"/>),
+		/// and the note is for one with no twin that takes it, such as an Xbox controller. Pass Through goes to an XInput
+		/// place, not through the device's source, so it reaches an Xbox controller from either row.
+		/// </remarks>
+		/// <param name="devices">The devices listed, among which the twin is looked for.</param>
+		public static string RawInputForceNote(UserDevice ud, IEnumerable<UserDevice> devices)
+		{
+			return ud != null && ud.InputSource == InputSourceType.RawInput && ud.ForceTwin(devices) == null ? RawInputForceNoteText : null;
+		}
+
+		const string RawInputForceNoteText = "No vibration or wheel forces reach this controller: Raw Input only reads, and its DirectInput side takes none. Pass Through reaches an Xbox controller.";
+
+		/// <summary>Shows what the chosen effect type does, or <see cref="RawInputForceNote"/> in its place for a Raw Input device.</summary>
+		/// <remarks>Written when the effect type changes and when another device is selected, so neither leaves the other's text.</remarks>
+		void UpdateEffectDescription()
+		{
+			var note = RawInputForceNote(GetSelectedDevice(), SettingsManager.UserDevices.ItemsToArraySynchronized());
+			if (note != null)
+			{
+				EffectDescriptionLabel.Text = note;
+				return;
+			}
+			if (ForceTypeComboBox.SelectedItem == null)
+			{
+				// No effect type to describe yet; the note of a Raw Input device selected before goes.
+				if (EffectDescriptionLabel.Text == RawInputForceNoteText)
+					EffectDescriptionLabel.Text = string.Empty;
+				return;
+			}
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
 			var list = new List<string>();
 			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)

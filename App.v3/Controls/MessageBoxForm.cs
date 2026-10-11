@@ -15,6 +15,7 @@ namespace x360ce.App.Controls
 		public MessageBoxForm()
 		{
 			InitializeComponent();
+			ControlsHelper.ScaleImages(this);
 		}
 
 		public bool PlaySounds { get; set; }
@@ -69,26 +70,27 @@ namespace x360ce.App.Controls
 					EnableButtons(DialogResult.Yes, DialogResult.No, DialogResult.Cancel);
 					break;
 			}
-			Bitmap image = Properties.Resources.MessageBoxIcon_Information_32x32;
+			var icons = JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Library;
+			var image = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
 			switch (icon)
 			{
 				case MessageBoxIcon.None:
 					if (PlaySounds) System.Media.SystemSounds.Beep.Play();
 					break;
 				case MessageBoxIcon.Error: // Same as 'Hand' and 'Stop'.
-					image = Properties.Resources.MessageBoxIcon_Error_32x32;
+					image = (Image)icons.GetObject("MessageBoxIcon_Error_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Hand.Play();
 					break;
 				case MessageBoxIcon.Question:
-					image = Properties.Resources.MessageBoxIcon_Question_32x32;
+					image = (Image)icons.GetObject("MessageBoxIcon_Question_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Question.Play();
 					break;
 				case MessageBoxIcon.Warning: // Same as 'Exclamation'.
-					image = Properties.Resources.MessageBoxIcon_Warning_32x32;
+					image = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Exclamation.Play();
 					break;
 				case MessageBoxIcon.Information: // Same as 'Asterisk'.
-					image = Properties.Resources.MessageBoxIcon_Information_32x32;
+					image = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
 					if (PlaySounds) System.Media.SystemSounds.Asterisk.Play();
 					break;
 			}

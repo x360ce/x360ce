@@ -125,11 +125,12 @@ namespace x360ce.Tests
 			Console.WriteLine(additions.Count == 0
 				? "Target contract equals the live contract."
 				: "Target adds:" + Environment.NewLine + string.Join(Environment.NewLine, additions));
-			// The additions this release makes: the 4.22 wheel columns of PadSetting, and GetServerInfo
-			// with its answer type, for the Options page's Test button.
+			// The additions this release makes: the 4.22 wheel columns of PadSetting, GetServerInfo with
+			// its answer type, for the Options page's Test button, and the 4.25 input source of a device.
 			var unexpected = additions
 				.Where(x => !x.StartsWith("PadSetting: +Force") && !x.StartsWith("PadSetting: +WheelRange"))
 				.Where(x => x != "ServerInfo: new type" && x != "message:GetServerInfo: new type" && x != "message:GetServerInfoResponse: new type")
+				.Where(x => x != "UserDevice: +InputSourceType:s:int")
 				.ToArray();
 			Assert.AreEqual(0, unexpected.Length, "Unplanned additions: " + string.Join("; ", unexpected));
 		}

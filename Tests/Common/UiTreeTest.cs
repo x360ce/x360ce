@@ -1,4 +1,4 @@
-// @under-test: Engine/UiTree/UiTreeWalker.cs, Engine/UiTree/UiText.cs, Engine/UiTree/UiGameFlags.cs
+// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs, Engine/JocysCom/Controls/UiTree/UiText.cs, Engine/UiTree/UiGameFlags.cs
 // @area: accessibility   @layer: ui-winforms
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using x360ce.App.UiTree;
-using x360ce.Engine.UiTree;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.Tests
 {
@@ -62,6 +62,36 @@ namespace x360ce.Tests
 				"{0} element(s) are named but say nothing about what they do, which is the half that "
 				+ "makes the document worth reading. Give each one an entry in UiText: {1}",
 				missingPurpose.Count, string.Join(", ", missingPurpose.Take(20).ToArray())));
+		}
+
+		[TestMethod, TestCategory("accessibility"), TestCategory("ui-interactive")]
+		[Description("The committed description of the interface is the program's own, so the AI skill that carries it describes this build")]
+		public void Committed_tree_is_the_programs_own()
+		{
+			// Compared without the version and build day, which every build writes anew.
+			foreach (var name in new[] { "ui-tree-v4.md", "ui-tree-v4.json" })
+			{
+				var exported = Unstamped(File.ReadAllText(Path.Combine(Run(), name)));
+				var committed = Unstamped(File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "skills", "x360ce", "references", name)));
+				Assert.AreEqual(committed, exported,
+					"skills/x360ce/references/" + name + " no longer matches the program, and the AI skill carries it. " +
+					"Run x360ce.exe /ExportUi from the repository root and commit the result.");
+			}
+		}
+
+		[TestMethod, TestCategory("accessibility"), TestCategory("ui-interactive")]
+		[Description("The written tree names the version and build day of the program that wrote it")]
+		public void Written_tree_names_its_build()
+		{
+			var markdown = File.ReadAllText(Path.Combine(Run(), "ui-tree-v4.md"));
+			StringAssert.Matches(markdown, new System.Text.RegularExpressions.Regex(@"(?m)^Version \d+\.\d+\.\d+\.\d+, built \d{4}-\d{2}-\d{2}\.\r?$"),
+				"Without the version, an agent cannot tell whether the description it holds is current.");
+			StringAssert.Contains(File.ReadAllText(Path.Combine(Run(), "ui-tree-v4.json")), "\"Built\":\"");
+		}
+
+		static string Unstamped(string text)
+		{
+			return JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Restamp(text.Replace("\r\n", "\n").TrimStart('\uFEFF'), "0", "0");
 		}
 
 		[TestMethod, TestCategory("accessibility"), TestCategory("ui-interactive")]

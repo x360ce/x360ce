@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.Configuration;
 using System.IO;
 using System.IO.Compression;
@@ -59,14 +61,20 @@ namespace JocysCom.ClassLibrary.Security
 		private static ICryptoTransform GetTransform(string password, bool encrypt)
 		{
 			// Create an instance of the AES class. 
-			var provider = new AesCryptoServiceProvider();
+			var provider = Aes.Create();
 			// Calculate salt to make it harder to guess key by using a dictionary attack.
 			var salt = SaltFromPassword(password);
 			// Generate Secret Key from the password and salt.
 			// Note: Set number of iterations to 10 in order for JavaScript example to work faster.
 			// Rfc2898DeriveBytes generator based on HMACSHA1 by default.
 			// Ability to specify HMAC algorithm is available since .NET 4.7.2
+#if NETFRAMEWORK
 			var secretKey = new Rfc2898DeriveBytes(password, salt, 10);
+#else
+#pragma warning disable SYSLIB0060 // Rfc2898DeriveBytes constructor is obsolete; replacement not available on net48.
+			var secretKey = new Rfc2898DeriveBytes(password, salt, 10, HashAlgorithmName.SHA1);
+#pragma warning restore SYSLIB0060
+#endif
 			// 32 bytes (256 bits) for the secret key and
 			// 16 bytes (128 bits) for the initialization vector (IV).
 			var key = secretKey.GetBytes(provider.KeySize / 8);
@@ -91,7 +99,7 @@ namespace JocysCom.ClassLibrary.Security
 			// Copy data bytes to input buffer.
 			System.Buffer.BlockCopy(input, 0, inputBuffer, 0, inputBuffer.Length);
 			// Create a MemoryStream to hold the output bytes.
-			// CWE-404: Improper Resource Shutdown or Release
+			// SUPPRESS: CWE-404: Improper Resource Shutdown or Release
 			// Note: False Positive: cryptoStream.Close() will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			// Create a CryptoStream through which we are going to be processing our data.
@@ -138,7 +146,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Encrypted bytes.</returns>
 		public static byte[] Encrypt(string password, byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var encryptor = GetTransform(password, true);
 			var encryptedBytes = CipherStreamWrite(encryptor, bytes);
@@ -172,11 +180,11 @@ namespace JocysCom.ClassLibrary.Security
 		/// Decrypt string with AES-256 by using password key.
 		/// </summary>
 		/// <param name="password">String password.</param>
-		/// <param name="encryptedBytes">Encrypted bytes.</param>
+		/// <param name="bytes">Encrypted bytes.</param>
 		/// <returns>Decrypted bytes.</returns>
 		public static byte[] Decrypt(string password, byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var decryptor = GetTransform(password, false);
 			var decryptedBytes = CipherStreamWrite(decryptor, bytes);
@@ -238,10 +246,10 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			var encryptor = GetTransform(password, true);
 			// Open the file streams.
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var input = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
 			try
@@ -286,16 +294,16 @@ namespace JocysCom.ClassLibrary.Security
 		/// <param name="inputFile">Encrypted input file.</param>
 		/// <param name="outputFile">Decrypted output file.</param>
 		/// <param name="decompress">Decompress file after decryption</param>
-		// CWE-73: External Control of File Name or Path
+		// SUPPRESS: CWE-73: External Control of File Name or Path
 		// Note: False Positive. File path is not externally controlled by the user.
 		public static void DecryptFile(string password, string inputFile, string outputFile, bool decompress = false)
 		{
 			var decryptor = GetTransform(password, false);
 			// Open the file streams.
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var input = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
 			try

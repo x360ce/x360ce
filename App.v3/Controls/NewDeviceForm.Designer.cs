@@ -32,7 +32,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewDeviceForm));
 			this.SearchLabel = new System.Windows.Forms.Label();
 			this.BrowseLabel = new System.Windows.Forms.Label();
 			this.CloseButton = new System.Windows.Forms.Button();
@@ -346,7 +345,7 @@
 			this.MySettingsDataGridView.AllowUserToAddRows = false;
 			this.MySettingsDataGridView.AllowUserToDeleteRows = false;
 			this.MySettingsDataGridView.AllowUserToResizeRows = false;
-			this.MySettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.MySettingsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.MySettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MySettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -455,7 +454,7 @@
 			this.Controls.Add(this.BackButton);
 			this.Controls.Add(this.NextButton);
 			this.Controls.Add(this.CloseButton);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.MinimumSize = new System.Drawing.Size(556, 326);
 			this.Name = "NewDeviceForm";
 			this.Text = "New Device Detected - {0}";

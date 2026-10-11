@@ -1,10 +1,10 @@
-// @under-test: Engine/UiTree/UiTreeWalker.cs, Engine/UiTree/UiNode.cs
+// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs, Engine/JocysCom/Controls/UiTree/UiTreeWalker.Forms.cs, Engine/JocysCom/Controls/UiTree/UiNode.cs
 // @area: accessibility   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.UiTree;
-using x360ce.Engine.UiTree;
+using JocysCom.ClassLibrary.Controls.UiTree;
 
 namespace x360ce.Tests
 {
@@ -23,11 +23,14 @@ namespace x360ce.Tests
 			var other = new TabPage { Name = "Page2", Text = "Two" };
 			var slider = new TrackBar { Name = "Slider", Minimum = 0, Maximum = 100, Value = 40 };
 			var box = new CheckBox { Name = "Box", Text = "Enable" };
-			var list = new ComboBox { Name = "Kind", DisplayMember = "Name" };
+			var list = new ComboBox { Name = "Kind", DisplayMember = "Name", DropDownStyle = ComboBoxStyle.DropDownList };
 			list.Items.Add(new Item { Name = "Constant" }); list.Items.Add(new Item { Name = "Periodic" }); list.SelectedIndex = 0;
+			// A list a person can also type into, as a mapping box is while it holds a formula.
+			var typed = new ComboBox { Name = "Formula" };
+			typed.Items.Add("a1");
 			var secret = new TextBox { Name = "Secret", Text = "hunter2", UseSystemPasswordChar = true };
 			var button = new Button { Name = "Go", Text = "Go" };
-			page.Controls.AddRange(new Control[] { slider, box, list, secret });
+			page.Controls.AddRange(new Control[] { slider, box, list, typed, secret });
 			other.Controls.Add(button);
 			tabs.Controls.Add(page);
 			tabs.Controls.Add(other);
@@ -54,13 +57,13 @@ namespace x360ce.Tests
 					var branch = UiTreeWalker.Read(UiTreeWalker.Find(form, "Tabs/Page1"), false, "Tabs/Page1");
 					Assert.AreEqual("Tabs/Page1", branch.Path);
 					Assert.IsNotNull(Find(branch, "Tabs/Page1/Slider"), "A branch read must still carry paths from the window, or ui_set cannot use them.");
-					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; docs/ui-tree-v4.json would change.");
+					Assert.IsNull(UiTreeWalker.Read(form).Items[0].Path, "The export must not gain paths; the committed ui-tree-v4.json would change.");
 				}
 			});
 		}
 
 		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
-		[Description("A path resolves to its control, sets it, and presses a button on another page")]
+		[Description("A path resolves to its control, sets it, and presses a button on another page; a list takes typed words only where a person can type")]
 		public void A_path_finds_sets_and_presses()
 		{
 			Ui.OnUiThread(() =>
@@ -76,6 +79,11 @@ namespace x360ce.Tests
 					Assert.IsNull(UiTreeWalker.SetValue(list, "Periodic"), "A bound list is set by the text shown.");
 					Assert.AreEqual("Periodic", UiTreeWalker.GetValue(list));
 					Assert.IsNotNull(UiTreeWalker.SetValue(list, "Square"), "An item the list does not have must be refused.");
+					var typed = UiTreeWalker.Find(form, "Tabs/Page1/Formula");
+					Assert.IsNull(UiTreeWalker.SetValue(typed, "=a1*sqrt(1-a2^2/2)"), "A list a person can type into must take typed words, as they can.");
+					Assert.AreEqual("=a1*sqrt(1-a2^2/2)", UiTreeWalker.GetValue(typed), "A list that takes typing reads by its text.");
+					Assert.IsNull(UiTreeWalker.SetValue(typed, "A1"), "An item of the list is still chosen by its text.");
+					Assert.AreEqual("a1", UiTreeWalker.GetValue(typed));
 					var pressed = false;
 					var button = (Button)UiTreeWalker.Find(form, "Tabs/Page2/Go");
 					button.Click += (s, e) => pressed = true;
@@ -85,6 +93,11 @@ namespace x360ce.Tests
 					Assert.IsTrue(pressed, "The button on the other page was not pressed.");
 					var tabs = (TabControl)UiTreeWalker.Find(form, "Tabs");
 					Assert.AreEqual("Page2", UiTreeWalker.GetValue(tabs));
+					// A controller tab's light says in its hint what is missing; read as the page's value.
+					var page2 = (TabPage)UiTreeWalker.Find(form, "Tabs/Page2");
+					Assert.IsNull(UiTreeWalker.GetValue(page2), "A page without a hint holds nothing.");
+					page2.ToolTipText = "Controller 2: virtual controller waiting for its place.";
+					Assert.AreEqual(page2.ToolTipText, UiTreeWalker.GetValue(page2));
 					Assert.IsNotNull(UiTreeWalker.Invoke(slider), "A slider is set, not pressed.");
 					tabs.SelectedTab = (TabPage)UiTreeWalker.Find(form, "Tabs/Page1");
 					button.Enabled = false;

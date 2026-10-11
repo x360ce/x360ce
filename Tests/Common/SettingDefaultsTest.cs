@@ -98,6 +98,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(Default("ForceOverall"), ps.GetForceOverall(), "Overall strength");
 			Assert.AreEqual(Default("LeftMotorStrength"), ps.GetLeftMotorStrength(), "Left motor strength");
 			Assert.AreEqual(Default("RightMotorStrength"), ps.GetRightMotorStrength(), "Right motor strength");
+			Assert.AreEqual(Default("ForceSpringCentre"), ps.GetForceSpringCentre(), "Spring centre");
+			Assert.AreEqual(Default("ForceSpringPeak"), ps.GetForceSpringPeak(), "Spring peak");
+			Assert.AreEqual(Default("ForceSpringLightening"), ps.GetForceSpringLightening(), "Spring lightening");
+			Assert.AreEqual(Default("ForceSpringDamping"), ps.GetForceSpringDamping(), "Spring damping");
+			Assert.AreEqual(Default("ForceSpringSpeed"), ps.GetForceSpringSpeed(), "Spring speed");
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("force-feedback")]
@@ -108,6 +113,42 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, ps.GetForceSpringStrength());
 			Assert.AreEqual(0, ps.GetLeftMotorPeriod());
 			Assert.AreEqual(120, ps.GetRightMotorPeriod());
+			// Nought is an answer for the spring's curve: the peak at the stop, nothing left there, no damping, standing still.
+			var curve = new PadSetting { ForceSpringCentre = "8", ForceSpringPeak = "0", ForceSpringLightening = "0", ForceSpringDamping = "0", ForceSpringSpeed = "0" };
+			Assert.AreEqual(8, curve.GetForceSpringCentre());
+			Assert.AreEqual(0, curve.GetForceSpringPeak());
+			Assert.AreEqual(0, curve.GetForceSpringLightening());
+			Assert.AreEqual(0, curve.GetForceSpringDamping());
+			Assert.AreEqual(0, curve.GetForceSpringSpeed());
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("The spring's curve is written to the settings file and read back, and left out at its defaults")]
+		public void The_spring_curve_round_trips_through_the_settings_file()
+		{
+			var names = new[] { "ForceSpringCentre", "ForceSpringPeak", "ForceSpringLightening", "ForceSpringDamping", "ForceSpringSpeed" };
+			var set = new PadSetting { ForceSpringCentre = "30", ForceSpringPeak = "0", ForceSpringLightening = "50", ForceSpringDamping = "0", ForceSpringSpeed = "80" };
+			var back = RoundTrip(set);
+			foreach (var name in names)
+				Assert.AreEqual(typeof(PadSetting).GetProperty(name).GetValue(set, null), typeof(PadSetting).GetProperty(name).GetValue(back, null), name + " did not come back.");
+			var atDefaults = new PadSetting();
+			foreach (var name in names)
+				typeof(PadSetting).GetProperty(name).SetValue(atDefaults, Default(name).ToString(), null);
+			var writer = new System.IO.StringWriter();
+			new System.Xml.Serialization.XmlSerializer(typeof(PadSetting)).Serialize(writer, atDefaults);
+			foreach (var name in names)
+				Assert.IsFalse(writer.ToString().Contains("<" + name + ">"), name + " at its default was written to the file.");
+			var read = RoundTrip(atDefaults);
+			Assert.AreEqual(Default("ForceSpringCentre"), read.GetForceSpringCentre(), "Left out, the centre is not read back as its default.");
+			Assert.AreEqual(Default("ForceSpringSpeed"), read.GetForceSpringSpeed(), "Left out, the speed is not read back as its default.");
+		}
+
+		static PadSetting RoundTrip(PadSetting ps)
+		{
+			var serializer = new System.Xml.Serialization.XmlSerializer(typeof(PadSetting));
+			var writer = new System.IO.StringWriter();
+			serializer.Serialize(writer, ps);
+			return (PadSetting)serializer.Deserialize(new System.IO.StringReader(writer.ToString()));
 		}
 	}
 }

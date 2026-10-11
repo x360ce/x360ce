@@ -98,18 +98,24 @@ namespace x360ce.Tests
 			read();
 			var best = long.MaxValue;
 			var found = 0;
-			var runs = Enumerable.Range(0, 3).Select(i =>
+			long[] runs;
+			string machine;
+			using (var power = new MachinePower())
 			{
-				var watch = Stopwatch.StartNew();
-				found = read();
-				watch.Stop();
-				return watch.ElapsedMilliseconds;
-			}).ToArray();
+				runs = Enumerable.Range(0, 3).Select(i =>
+				{
+					var watch = Stopwatch.StartNew();
+					found = read();
+					watch.Stop();
+					return watch.ElapsedMilliseconds;
+				}).ToArray();
+				machine = power.ToString();
+			}
 			foreach (var run in runs)
 				best = Math.Min(best, run);
 			count = found;
-			Console.WriteLine("{0,-46} {1,5} ms  (runs {2}, found {3})",
-				what, best, string.Join("/", runs.Select(x => x.ToString()).ToArray()), found);
+			Console.WriteLine("{0,-46} {1,5} ms  (runs {2}, found {3}; {4})",
+				what, best, string.Join("/", runs.Select(x => x.ToString()).ToArray()), found, machine);
 			return best;
 		}
 	}

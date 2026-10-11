@@ -271,7 +271,7 @@ namespace x360ce.Tests
 			Assert.IsNull(wheel.FFState, "An unticked device keeps its force state, so what it was playing goes on.");
 			Assert.IsNull(wheel.IsExclusiveMode, "An unticked device keeps its exclusive hold, so no other program can use it.");
 			Assert.IsTrue(run.IsFinished, "Auto goes on waiting for a wheel unticked while it ran.");
-			Assert.AreEqual("Stopped.", run.Message, "An ended run says something other than a stopped run says.");
+			Assert.AreEqual(DInputHelper.SpringStopReleased, run.Message, "An ended run does not say why it stopped.");
 			Assert.AreSame(padForce, pad.FFState, "The ticked device beside it lost its force state.");
 			Assert.AreEqual(true, pad.IsExclusiveMode, "The ticked device beside it was let go of.");
 			// Once: a pass of the same routing leaves the device alone.
@@ -292,16 +292,14 @@ namespace x360ce.Tests
 			var release = take.IndexOf("ReleaseDroppedDevices(was, routing);");
 			Assert.IsTrue(taken > 0 && release > taken, "A release that fails is tried again on every pass.");
 			var body = Body(step2, "void ReleaseDroppedDevices(");
-			Assert.AreEqual(1, Ui.Count(body, "device.CreatedEffects"), "The device's effects are listed more than once a release.");
-			Assert.IsFalse(body.Contains("StopDeviceForces("),
-				"The release stops the forces through the pass's own stop, which gives up at the first effect that fails.");
-			var stop = body.IndexOf(".Stop();");
+			Assert.IsFalse(body.Contains("device.CreatedEffects"),
+				"The release asks the device about its effects, which a device no longer holding them refuses, and leaves them on it for the next force state.");
+			var stop = body.IndexOf("ud.FFState.StopDeviceForces();");
 			var letGo = body.IndexOf("device.Unacquire();");
 			Assert.IsTrue(stop > 0 && letGo > stop, "The hold is given up before the forces are stopped, or not at all.");
-			// Each effect is stopped in its own try, and the hold is given up in one of its own, so an effect that will not
-			// stop leaves neither the effects after it playing nor the device held.
-			Assert.IsTrue(LastTry(body, stop) > body.LastIndexOf("for (", stop), "An effect that will not stop leaves the effects after it playing.");
-			Assert.IsTrue(LastTry(body, letGo) > body.IndexOf("catch (Exception", stop), "An effect that will not stop leaves the device held.");
+			// Taking the effects off asks the device nothing, so it cannot fail; the hold is given up in a try of its own,
+			// so a hold that will not be given up stops neither this release's report nor the devices after it.
+			Assert.IsTrue(LastTry(body, letGo) > stop, "Giving up the hold is not in a try of its own.");
 			Assert.IsFalse(body.Contains("catch (SharpDXException"), "A fault that is not a device result leaves the devices after it held.");
 			Assert.AreEqual(1, Ui.Count(body, "WriteException("), "A device's release is reported more than once a change.");
 			Assert.IsTrue(body.IndexOf("WriteException(") > letGo, "A release is reported before every step of it was tried.");
@@ -336,14 +334,14 @@ namespace x360ce.Tests
 			Assert.IsTrue(run.IsFinished, "Auto goes on waiting for a wheel nothing drives any more, and its button stays on Wait.");
 			Assert.AreEqual(SpringCalibration.Phase.Failed, run.Step, "An ended run hands over a strength.");
 			Assert.AreEqual(0, run.Result, "An ended run hands over a strength.");
-			Assert.AreEqual("Stopped.", run.Message, "An ended run says something other than a stopped run says.");
+			Assert.AreEqual(DInputHelper.SpringStopReleased, run.Message, "An ended run does not say why it stopped.");
 			// Every other way the engine stops driving a device's spring ends its run too: every tab switched off or its
 			// force feedback switched off, and the device going away.
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var poll = step2.Substring(step2.IndexOf("if (mapped)"), step2.IndexOf("ud.FFState.UpdateSpring(") - step2.IndexOf("if (mapped)"));
 			Assert.AreEqual(2, Ui.Count(poll, "ud.FFState = null;"), "The force block's stops are not where the test expects them.");
-			Assert.AreEqual(2, Ui.Count(poll, "EndSpringRun(ud);"), "A run whose device's tab or force feedback is switched off goes on waiting.");
-			StringAssert.Contains(Body(step2, "void ReleaseDroppedDevices("), "EndSpringRun(ud);", "A run whose device is unticked goes on waiting.");
+			Assert.AreEqual(2, Ui.Count(poll, "EndSpringRun(ud, "), "A run whose device's tab or force feedback is switched off goes on waiting.");
+			StringAssert.Contains(Body(step2, "void ReleaseDroppedDevices("), "EndSpringRun(ud, SpringStopReleased);", "A run whose device is unticked goes on waiting.");
 			var step1 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step1.UpdateDevices.cs"));
 			StringAssert.Contains(Ui.Between(step1, "// Remove disconnected devices.", "if (evictDevices.Count > 0)"), "EndSpringRun(",
 				"A run whose device went away goes on waiting.");
@@ -422,7 +420,7 @@ namespace x360ce.Tests
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var mapped = step2.IndexOf("if (mapped)");
 			var forcing = step2.IndexOf("if (route.ForcePads.Length > 0)", mapped);
-			var stop = step2.IndexOf("ud.FFState.StopDeviceForces(device);", mapped);
+			var stop = step2.IndexOf("ud.FFState.StopDeviceForces();", mapped);
 			Assert.IsTrue(mapped > 0 && forcing > mapped && stop > forcing, "The force block and its stop are not where the test expects them.");
 			Assert.IsFalse(step2.Substring(mapped, stop - mapped).Contains("if (ps != null)"),
 				"A mapped device whose settings are not stored never reaches the stop, and goes on playing its last effect.");
@@ -458,15 +456,8 @@ namespace x360ce.Tests
 					pass();
 			});
 			Assert.IsTrue(bytes < passes, passes + " passes, each with a new force passed on, handed the collector " + bytes + " bytes.");
-			var free = XInputReadPauseTest.Fastest(passes, pass);
-			// The interface reads a setting's default under this lock.
-			var defaults = typeof(JocysCom.ClassLibrary.Runtime.Attributes).GetField("DefaultValuesLock", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-			double held = -1;
-			Assert.IsTrue(HeldLock.Finishes(() => held = XInputReadPauseTest.Fastest(passes, pass), 5000, defaults),
-				"A new force passed on waits for the lock the interface reads a setting's default under.");
-			Console.WriteLine(passes + " passes: " + bytes + " bytes; " + held + " ms with the defaults lock held, " + free + " ms free.");
-			Assert.IsTrue(held <= free + XInputReadPauseTest.HeldSlackMs,
-				passes + " passes took " + held + " ms with the defaults lock held and " + free + " ms with it free.");
+			// A setting's default is read without a lock (Attributes keeps them in a concurrent
+			// dictionary), so the interface reading one cannot hold up a pass.
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]

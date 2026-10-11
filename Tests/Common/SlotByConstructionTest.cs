@@ -7,6 +7,7 @@ using SharpDX.XInput;
 using System;
 using System.Linq;
 using System.Threading;
+using x360ce.App.DInput;
 
 namespace x360ce.Tests
 {
@@ -33,45 +34,17 @@ namespace x360ce.Tests
 	[TestClass]
 	public class SlotByConstructionTest
 	{
-		/// <summary>Windows' own XInput, not the one this program can put in its place.</summary>
+		/// <summary>Which places Windows' own XInput reports a controller in.</summary>
 		/// <remarks>
-		/// Asked of the system library directly. The wrapper in this solution exists to load whichever
-		/// XInput the emulator wants a game to see, which is the opposite of what is wanted here: the
-		/// question is which places Windows has actually given out.
+		/// Asked through <see cref="SystemXInput"/>, which loads the system library by its full path and can let go of it
+		/// again. A library bound by DllImport stays loaded until the process ends, and so does every controller it has
+		/// answered about.
 		/// </remarks>
-		static class SystemXInput
-		{
-			[System.Runtime.InteropServices.DllImport("xinput1_4.dll", EntryPoint = "XInputGetState")]
-			internal static extern int GetState14(int index, out RawState state);
-
-			[System.Runtime.InteropServices.DllImport("xinput9_1_0.dll", EntryPoint = "XInputGetState")]
-			internal static extern int GetState910(int index, out RawState state);
-
-			[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-			internal struct RawState
-			{
-				public uint PacketNumber;
-				public ushort Buttons;
-				public byte LeftTrigger;
-				public byte RightTrigger;
-				public short ThumbLX, ThumbLY, ThumbRX, ThumbRY;
-			}
-
-			internal static bool Connected(int index)
-			{
-				RawState state;
-				try { return GetState14(index, out state) == 0; }
-				catch (DllNotFoundException) { }
-				catch (EntryPointNotFoundException) { }
-				return GetState910(index, out state) == 0;
-			}
-		}
-
 		static bool[] Occupied()
 		{
 			var places = new bool[4];
 			for (var i = 0; i < 4; i++)
-				places[i] = SystemXInput.Connected(i);
+				places[i] = SystemXInput.IsConnected(i);
 			return places;
 		}
 

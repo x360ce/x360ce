@@ -83,7 +83,7 @@
 			// 
 			// HelpPictureBox
 			// 
-			this.HelpPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HelpPictureBox.Image")));
+			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_24x24;
 			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
 			this.HelpPictureBox.Name = "HelpPictureBox";
 			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
@@ -105,7 +105,7 @@
 			// HeaderPictureBox
 			// 
 			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("HeaderPictureBox.Image")));
+			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_48x48;
 			this.HeaderPictureBox.Location = new System.Drawing.Point(894, 9);
 			this.HeaderPictureBox.Name = "HeaderPictureBox";
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);

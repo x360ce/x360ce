@@ -26,7 +26,7 @@ namespace x360ce.App.Issues
 		public override void CheckTask()
 		{
 			var lines = new List<string>();
-			foreach (var ud in SettingsManager.UserDevices.ItemsToArraySyncronized())
+			foreach (var ud in SettingsManager.UserDevices.ItemsToArraySynchronized())
 			{
 				var name = string.IsNullOrEmpty(ud.ProductName) ? ud.InstanceName : ud.ProductName;
 				// Read once, since the engine sets and clears it.

@@ -28,8 +28,8 @@ namespace x360ce.Tests
 		[TestInitialize]
 		public void Before()
 		{
-			_settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
-			_pads = SettingsManager.PadSettings.ItemsToArraySyncronized();
+			_settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+			_pads = SettingsManager.PadSettings.ItemsToArraySynchronized();
 			_game = SettingsManager.CurrentGame;
 			SettingsManager.UserSettings.Items.Clear();
 		}

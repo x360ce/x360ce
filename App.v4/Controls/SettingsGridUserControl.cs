@@ -197,9 +197,10 @@ namespace x360ce.App.Controls
 				var result = (SearchResult)e.Result;
 				// Reorder Settings.
 				result.Settings = result.Settings.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
-				SettingsManager.Current.UpsertSettings(result.Settings);
-				// Insert pad settings which are used by settings.
+				// The pad settings first: a row added to its tab is shown at once, and a row whose pad settings are not
+				// stored yet is shown with the defaults, which the tab then writes back over the row's checksum.
 				SettingsManager.Current.UpsertPadSettings(result.PadSettings);
+				SettingsManager.Current.UpsertSettings(result.Settings);
 				// Remove unused pad settings.
 				SettingsManager.Current.CleanupPadSettings();
 				// Display results about operation.

@@ -170,6 +170,53 @@ namespace JocysCom.ClassLibrary.Controls
 			}).ToList();
 		}
 
+		/// <summary>The physical-pixel work area of the display containing a window.</summary>
+		public static Rectangle GetPhysicalWorkingArea(IntPtr window)
+		{
+			using (new PhysicalPixelContext())
+			{
+				var monitor = NativeMethods.MonitorFromWindow(window, NativeMethods.MONITOR_DEFAULTTOPRIMARY);
+				return NativeMethods.GetWorkingArea(monitor);
+			}
+		}
+
+		/// <summary>The physical-pixel work area containing saved bounds, or the primary display.</summary>
+		public static Rectangle GetPhysicalWorkingArea(Rectangle bounds)
+		{
+			using (new PhysicalPixelContext())
+			{
+				var rect = new NativeMethods.RECT
+				{
+					Left = bounds.Left,
+					Top = bounds.Top,
+					Right = bounds.Right,
+					Bottom = bounds.Bottom,
+				};
+				var monitor = NativeMethods.MonitorFromRect(ref rect, NativeMethods.MONITOR_DEFAULTTOPRIMARY);
+				return NativeMethods.GetWorkingArea(monitor);
+			}
+		}
+
+		/// <summary>Keeps Win32 window bounds and monitor areas in physical pixels.</summary>
+		/// <remarks>
+		/// A class rather than a struct: a struct's parameterless constructor needs C# 10, and
+		/// without one <c>new PhysicalPixelContext()</c> would compile to an empty value that
+		/// switches nothing.
+		/// </remarks>
+		public sealed class PhysicalPixelContext : IDisposable
+		{
+			private readonly IntPtr _previous;
+
+			public PhysicalPixelContext()
+				=> _previous = NativeMethods.SetThreadDpiAwarenessContext(new IntPtr(-4));
+
+			public void Dispose()
+			{
+				if (_previous != IntPtr.Zero)
+					NativeMethods.SetThreadDpiAwarenessContext(_previous);
+			}
+		}
+
 		/// <summary>
 		/// Every screen in device-independent units, which is what WPF windows are measured in.
 		/// </summary>
@@ -218,6 +265,12 @@ namespace JocysCom.ClassLibrary.Controls
 		static internal class NativeMethods
 		{
 			[DllImport("user32.dll")]
+			internal static extern IntPtr SetThreadDpiAwarenessContext(IntPtr context);
+
+			[DllImport("user32.dll")]
+			internal static extern IntPtr MonitorFromWindow(IntPtr window, uint flags);
+
+			[DllImport("user32.dll")]
 			internal static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
 
 			[DllImport("Shcore.dll")]
@@ -226,10 +279,15 @@ namespace JocysCom.ClassLibrary.Controls
 			[DllImport("user32.dll", SetLastError = true)]
 			internal static extern IntPtr MonitorFromRect(ref RECT lprcMonitor, uint dwFlags);
 
+			[DllImport("user32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			internal static extern bool GetMonitorInfo(IntPtr monitor, ref MONITORINFO info);
+
 			[DllImport("shcore.dll")]
 			public static extern int GetProcessDpiAwareness(IntPtr hprocess, out ProcessDpiAwareness value);
 
 			internal const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+			internal const uint MONITOR_DEFAULTTOPRIMARY = 0x00000001;
 
 			[StructLayout(LayoutKind.Sequential)]
 			internal struct POINT
@@ -245,6 +303,23 @@ namespace JocysCom.ClassLibrary.Controls
 				public int Top;
 				public int Right;
 				public int Bottom;
+			}
+
+			[StructLayout(LayoutKind.Sequential)]
+			internal struct MONITORINFO
+			{
+				public uint Size;
+				public RECT Bounds;
+				public RECT Work;
+				public uint Flags;
+			}
+
+			internal static Rectangle GetWorkingArea(IntPtr monitor)
+			{
+				var info = new MONITORINFO { Size = (uint)Marshal.SizeOf<MONITORINFO>() };
+				return monitor != IntPtr.Zero && GetMonitorInfo(monitor, ref info)
+					? Rectangle.FromLTRB(info.Work.Left, info.Work.Top, info.Work.Right, info.Work.Bottom)
+					: Rectangle.Empty;
 			}
 
 			internal enum DpiType

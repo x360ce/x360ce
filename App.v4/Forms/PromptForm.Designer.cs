@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PromptForm));
 			this.EditTextBox = new System.Windows.Forms.TextBox();
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
@@ -96,6 +95,8 @@
 			// PromptForm
 			// 
 			this.AcceptButton = this.OkButton;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.CloseButton;
 			this.ClientSize = new System.Drawing.Size(464, 261);
 			this.Controls.Add(this.SizeLabel);
@@ -103,7 +104,7 @@
 			this.Controls.Add(this.CopyButton);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.EditTextBox);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.Name = "PromptForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Prompt Form";

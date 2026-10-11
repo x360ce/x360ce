@@ -1,6 +1,8 @@
-﻿using System;
+﻿#nullable disable
 
-namespace JocysCom.WebSites.Engine.Security
+using System;
+
+namespace JocysCom.ClassLibrary.Security
 {
 	[Serializable]
 	public struct ValidationField

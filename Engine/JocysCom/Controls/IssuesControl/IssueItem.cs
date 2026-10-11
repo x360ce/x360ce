@@ -1,13 +1,23 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
 	public class IssueItem : INotifyPropertyChanged
 	{
+		public IssueItem()
+		{
+			Description = "";
+			FixName = "Fix";
+		}
 
-		public IssueItem(int orderId = 0)
+		public IssueItem(int orderId)
 		{
 			Description = "";
 			FixName = "Fix";
@@ -20,45 +30,26 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public event EventHandler<EventArgs> Fixing;
 		public event EventHandler<EventArgs> Fixed;
 
+		[XmlIgnore, JsonIgnore]
 		public Exception LastException;
 
-		public IssueStatus Status { get; private set; }
-
-		void SetStatus(IssueStatus status)
-		{
-			Status = status;
-			OnPropertyChanged(nameof(Status));
-		}
+		public IssueStatus Status { get => _Status; set => SetProperty(ref _Status, value); }
+		IssueStatus _Status;
 
 		/// <summary>
 		/// Order ID will define in which order issues will be checked.
 		/// </summary>
-		public int OrderId
-		{
-			get { return _OrderId; }
-			set { _OrderId = value; OnPropertyChanged(); }
-		}
-		private int _OrderId ;
+		public int OrderId { get => _OrderId; set => SetProperty(ref _OrderId, value); }
+		private int _OrderId;
 
-		public string Name
-		{
-			get { return _Name; }
-			set { _Name = value; OnPropertyChanged(); }
-		}
+		public string Name { get => _Name; set => SetProperty(ref _Name, value); }
 		string _Name;
 
-		public string Description
-		{
-			get { return _Description; }
-			set { _Description = value; OnPropertyChanged(); }
-		}
+		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
 		string _Description;
 
-		public Uri MoreInfo
-		{
-			get { return _MoreInfo; }
-			set { _MoreInfo = value; OnPropertyChanged(); }
-		}
+		[XmlIgnore, JsonIgnore]
+		public Uri MoreInfo { get => _MoreInfo; set => SetProperty(ref _MoreInfo, value); }
 		private Uri _MoreInfo;
 
 		public int FixType;
@@ -71,26 +62,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// </remarks>
 		public bool FixNeedsAdmin;
 
-		public string FixName
-		{
-			get { return _FixName; }
-			set { _FixName = value; OnPropertyChanged(); }
-		}
+		public string FixName { get => _FixName; set => SetProperty(ref _FixName, value); }
 		string _FixName;
 
 		[DefaultValue(true)]
-		public bool IsEnabled
-		{
-			get { return _IsEnabled; }
-			set { _IsEnabled = value; OnPropertyChanged(); }
-		}
+		public bool IsEnabled { get => _IsEnabled; set => SetProperty(ref _IsEnabled, value); }
 		bool _IsEnabled = true;
 
-		public IssueSeverity? Severity
-		{
-			get { return _Severity; }
-			set { _Severity = value; OnPropertyChanged(); }
-		}
+		public IssueSeverity? Severity { get => _Severity; set => SetProperty(ref _Severity, value); }
 		IssueSeverity? _Severity;
 
 		public virtual void CheckTask()
@@ -100,7 +79,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public void Check()
 		{
-			SetStatus(IssueStatus.Checking);
+			Debug.WriteLine("---> {0}: {1}", "Check", GetType());
+			Status = IssueStatus.Checking;
 			Checking?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
@@ -115,7 +95,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			finally
 			{
-				SetStatus(IssueStatus.Idle);
+				Status = IssueStatus.Idle;
 				Checked?.Invoke(this, new EventArgs());
 			}
 		}
@@ -135,7 +115,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				if (Status == IssueStatus.Fixing)
 					return;
 			}
-			SetStatus(IssueStatus.Fixing);
+			Status = IssueStatus.Fixing;
 			Fixing?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
@@ -150,10 +130,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			finally
 			{
-				SetStatus(IssueStatus.Idle);
+				Status = IssueStatus.Idle;
 				Fixed?.Invoke(this, new EventArgs());
 			}
-
 		}
 
 		public void SetSeverity(IssueSeverity severity, int fixType = 0, string description = null)
@@ -172,9 +151,40 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+		{
+			property = value;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public bool ResetToDefault()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Save()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void SaveAs(string fileName)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Load()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void LoadFrom(string fileName)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion

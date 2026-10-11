@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace x360ce.App
@@ -73,7 +75,6 @@ namespace x360ce.App
 		{
 			StartupTrace.Mark("Main");
 			StartupTrace.WatchAssemblyLoads();
-			StartJitProfile();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// Set here rather than in a configuration file, because the program ships as one file
@@ -90,6 +91,7 @@ namespace x360ce.App
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.2", false);
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.3", false);
 			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.4", false);
+			CallerFolder = Environment.CurrentDirectory;
 			// First: Set working folder to the path of executable.
 			var fi = new FileInfo(Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);
@@ -130,8 +132,20 @@ namespace x360ce.App
 
 		public const string arg_WindowState = "WindowState";
 
-		/// <summary>Folder to write the interface description into. Defaults to docs beside the source.</summary>
+		/// <summary>Prints the x360ce skill for AI agents, one of its files, or installs it into a folder.</summary>
+		public const string arg_Skill = "Skill";
+
+		/// <summary>/?, -h, /help and --help, as the command line reads them.</summary>
+		static readonly string[] HelpSwitches = { "?", "h", "help", "-help" };
+
+		/// <summary>The folder the command was given in, before the program moved to its own: a relative folder on the command line is taken from it.</summary>
+		static string CallerFolder;
+
+		/// <summary>Folder to write the interface description into. Defaults to the skill's references beside the source.</summary>
 		public const string arg_ExportUi = "ExportUi";
+
+		/// <summary>The folder /ExportUi named, empty for the default; null when the program runs for a person.</summary>
+		public static string ExportUiFolder;
 
 		/// <summary>
 		/// Waits for the window to finish building itself, then describes it.
@@ -164,15 +178,9 @@ namespace x360ce.App
 		static void ExportUi(string folder)
 		{
 			if (string.IsNullOrWhiteSpace(folder))
-				folder = "docs";
-			var tree = Engine.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
-			Engine.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
-		}
-
-		internal class NativeMethods
-		{
-			[System.Runtime.InteropServices.DllImport("user32.dll")]
-			internal static extern bool SetProcessDPIAware();
+				folder = Path.Combine("skills", JocysCom.ClassLibrary.Mcp.AiSkill.Name, "references");
+			var tree = JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
+			JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(Path.Combine(CallerFolder, folder)));
 		}
 
 		static void StartApp(string[] args)
@@ -181,8 +189,6 @@ namespace x360ce.App
 			{
 				// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 			}
-			if (Environment.OSVersion.Version.Major >= 6)
-				NativeMethods.SetProcessDPIAware();
 			Application.EnableVisualStyles();
 			// Handle exceptions from this thread here. Left to the framework it builds an error
 			// window instead, which cannot be created once the application is closing, so the
@@ -202,19 +208,37 @@ namespace x360ce.App
 			if (executed)
 				return;
 			// ------------------------------------------------
+			// Answered and done, with nothing started: a person at a console, or an AI agent meeting the
+			// program for the first time, would otherwise get a window and a command that never returns.
+			if (ic.Parameters.ContainsKey(arg_Skill) || HelpSwitches.Any(ic.Parameters.ContainsKey))
+			{
+				TextWriter output, error;
+				JocysCom.ClassLibrary.Mcp.McpClient.OpenConsole(out output, out error);
+				if (ic.Parameters.ContainsKey(arg_Skill))
+					Environment.ExitCode = JocysCom.ClassLibrary.Mcp.AiSkill.RunSwitch(ic.Parameters[arg_Skill], CallerFolder, output, error);
+				else
+					output.Write(AppHelper.Usage());
+				return;
+			}
 			if (ic.Parameters.ContainsKey("Settings"))
 			{
-				OpenSettingsFolder(Application.UserAppDataPath);
-				OpenSettingsFolder(Application.CommonAppDataPath);
-				OpenSettingsFolder(Application.LocalUserAppDataPath);
+				OpenSettingsFolder();
 				return;
 			}
-			if (Engine.Mcp.McpClient.IsSwitch(ic.Parameters))
+			var parameters = Parameters(args);
+			if (JocysCom.ClassLibrary.Mcp.McpClient.IsSwitch(parameters))
 			{
+				if (!parameters.ContainsKey("Profile"))
+					FollowRunningCopy();
 				var o = SettingsManager.Options;
-				Environment.ExitCode = Engine.Mcp.McpClient.RunSwitches(ic.Parameters, o.AiAccessEnabled, o.AiAccessPort, o.AiAccessToken, Application.ExecutablePath);
+				Environment.ExitCode = JocysCom.ClassLibrary.Mcp.McpClient.RunSwitches(parameters, o.AiAccessEnabled, o.AiAccessPort, o.AiAccessToken, Application.ExecutablePath);
 				return;
 			}
+			// Recorded only by a start that goes on to build the window. The record is replaced by whatever run
+			// ends last, and a switch that answers and stops would leave its own few methods in it, so the next
+			// start would compile ahead nothing the window needs.
+			if (!ic.Parameters.ContainsKey("Exit"))
+				StartJitProfile();
 			StartupTrace.Mark("StartApp: before CheckSettings");
 			if (!CheckSettings())
 				return;
@@ -222,6 +246,13 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			StartupTrace.Mark("StartApp: services ready");
+			// Before the first window, so every image it is made with is already the theme's and the screen's size.
+			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
+			// Before the first window, so every colour it is made with is already the theme's.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(SettingsManager.Options.Theme);
+			// Known before the window is built: an export opens no door and writes no setting.
+			if (ic.Parameters.ContainsKey(arg_ExportUi))
+				ExportUiFolder = ic.Parameters[arg_ExportUi];
 			MainForm.Current = new MainForm();
 			StartupTrace.Mark("StartApp: main form built");
 			// Describe the interface and leave. The program is the only accurate account of its own
@@ -231,13 +262,12 @@ namespace x360ce.App
 			// interface - the four controller panels among it - is built while loading and does not
 			// exist in a window that was only constructed. It opens off-screen so that laying out
 			// happens without anything appearing in front of whoever asked for the export.
-			if (ic.Parameters.ContainsKey(arg_ExportUi))
+			if (ExportUiFolder != null)
 			{
-				var folder = ic.Parameters[arg_ExportUi];
 				MainForm.Current.StartPosition = FormStartPosition.Manual;
 				MainForm.Current.Location = new System.Drawing.Point(-32000, -32000);
 				MainForm.Current.ShowInTaskbar = false;
-				MainForm.Current.Shown += (sender, e) => WaitThenExport(folder);
+				MainForm.Current.Shown += (sender, e) => WaitThenExport(ExportUiFolder);
 				Application.Run(MainForm.Current);
 				return;
 			}
@@ -276,6 +306,76 @@ namespace x360ce.App
 			Global.DisposeServices();
 		}
 
+		/// <summary>The command line, read without regard to case: the install context lower-cases every name.</summary>
+		static Dictionary<string, string> Parameters(string[] args)
+		{
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			return ic.Parameters.Keys.Cast<string>().ToDictionary(k => k, k => ic.Parameters[k], StringComparer.OrdinalIgnoreCase);
+		}
+
+		/// <summary>
+		/// Reads the settings of the copy of the program that runs. An assistant calls /Ai and /Mcp without /Profile,
+		/// and the door's port and token are in the profile that copy was started with. Nothing changes when no other
+		/// copy runs, when several do, or when one's command line cannot be read.
+		/// </summary>
+		static void FollowRunningCopy()
+		{
+			var self = Process.GetCurrentProcess();
+			var copies = new List<string[]>();
+			foreach (var process in Process.GetProcessesByName(self.ProcessName))
+			{
+				if (process.Id == self.Id)
+					continue;
+				var other = ArgumentsOf(process.Id);
+				// Another caller of the door, such as an assistant's /Mcp bridge, is not the copy it talks to.
+				if (other != null && JocysCom.ClassLibrary.Mcp.McpClient.IsSwitch(Parameters(other)))
+					continue;
+				copies.Add(other);
+			}
+			if (copies.Count == 1 && copies[0] != null)
+				Engine.EngineHelper.AppDataPath = Engine.EngineHelper.ResolveAppDataPath(copies[0]);
+		}
+
+		/// <summary>The arguments another process was started with, or null when its command line cannot be read, as one run as administrator's cannot.</summary>
+		static string[] ArgumentsOf(int processId)
+		{
+			string line = null;
+			try
+			{
+				using (var searcher = new System.Management.ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId=" + processId))
+				using (var results = searcher.Get())
+					foreach (var result in results)
+						using (result)
+							line = result["CommandLine"] as string;
+			}
+			// Windows Management Instrumentation can be switched off or broken; the switch then reads its own settings.
+			catch (System.Management.ManagementException) { }
+			if (line == null)
+				return null;
+			int count;
+			var argv = CommandLineToArgvW(line, out count);
+			if (argv == IntPtr.Zero)
+				return null;
+			try
+			{
+				var args = new string[count];
+				for (var i = 0; i < count; i++)
+					args[i] = Marshal.PtrToStringUni(Marshal.ReadIntPtr(argv, i * IntPtr.Size));
+				return args;
+			}
+			finally
+			{
+				LocalFree(argv);
+			}
+		}
+
+		/// <summary>Splits a command line into arguments the way Windows gives them to a program.</summary>
+		[DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+		static extern IntPtr CommandLineToArgvW(string commandLine, out int count);
+
+		[DllImport("kernel32.dll")]
+		static extern IntPtr LocalFree(IntPtr memory);
+
 		public static bool IsClosing;
 
 		public static object DeviceLock = new object();
@@ -298,15 +398,15 @@ namespace x360ce.App
 			MainForm.Current.UpdateTimer.Start();
 		}
 
-		static void OpenSettingsFolder(string path)
+		/// <summary>Opens the folder the settings are kept in, the one the Options page names.</summary>
+		public static void OpenSettingsFolder()
 		{
-			var di = new DirectoryInfo(path);
-			//if (!di.Exists) return;
-			//if (di.GetFiles().Length == 0) return;
-			var psi = new ProcessStartInfo(di.Parent.Parent.FullName);
-			psi.UseShellExecute = true;
-			psi.ErrorDialog = true;
-			Process.Start(psi);
+			var folder = Path.Combine(Engine.EngineHelper.AppDataPath, "Settings");
+			// The folder is made when the first setting is saved, so a fresh install has
+			// nothing to open yet. Opening the one above it still shows where it will be.
+			if (!Directory.Exists(folder))
+				folder = Engine.EngineHelper.AppDataPath;
+			Engine.EngineHelper.BrowsePath(folder);
 		}
 
 		static bool CheckSettings()
@@ -334,9 +434,8 @@ namespace x360ce.App
 				}
 				else
 				{
-					OpenSettingsFolder(Application.UserAppDataPath);
-					OpenSettingsFolder(Application.CommonAppDataPath);
-					OpenSettingsFolder(Application.LocalUserAppDataPath);
+					// Shows the damaged file itself, for the repair the person chose.
+					Engine.EngineHelper.BrowsePath(filename);
 					return false;
 				}
 			}
@@ -362,7 +461,7 @@ namespace x360ce.App
 				return;
 			try
 			{
-				var folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "X360CE");
+				var folder = Engine.EngineHelper.AppDataPath;
 				Directory.CreateDirectory(folder);
 				System.Runtime.ProfileOptimization.SetProfileRoot(folder);
 				System.Runtime.ProfileOptimization.StartProfile("x360ce.startup.profile");
@@ -406,7 +505,6 @@ namespace x360ce.App
 				case "x360ce.Engine.XmlSerializers":
 				case "SharpDX":
 				case "SharpDX.DirectInput":
-				case "SharpDX.RawInput":
 					sr = GetResourceStream(dllName + ".dll");
 					break;
 				default:

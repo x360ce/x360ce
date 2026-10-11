@@ -45,6 +45,9 @@
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.TopLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.NotesLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.ControllerComboBox = new System.Windows.Forms.ComboBox();
 			this.ControllerLabel = new System.Windows.Forms.Label();
 			this.GameComboBox = new System.Windows.Forms.ComboBox();
@@ -95,6 +98,9 @@
 			this.PresetsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).BeginInit();
 			this.toolStrip3.SuspendLayout();
+			this.MainLayoutPanel.SuspendLayout();
+			this.TopLayoutPanel.SuspendLayout();
+			this.NotesLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MyDevicesDataGridView
@@ -102,7 +108,7 @@
 			this.MyDevicesDataGridView.AllowUserToAddRows = false;
 			this.MyDevicesDataGridView.AllowUserToDeleteRows = false;
 			this.MyDevicesDataGridView.AllowUserToResizeRows = false;
-			this.MyDevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.MyDevicesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.MyDevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MyDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -204,11 +210,71 @@
 			this.MapToColumn.ReadOnly = true;
 			this.MapToColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.MapToColumn.Width = 69;
-			// 
+			//
+			// MainLayoutPanel
+			//
+			this.MainLayoutPanel.ColumnCount = 1;
+			this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainLayoutPanel.Controls.Add(this.TopLayoutPanel, 0, 0);
+			this.MainLayoutPanel.Controls.Add(this.NotesLayoutPanel, 0, 1);
+			this.MainLayoutPanel.Controls.Add(this.SettingsListTabControl, 0, 2);
+			this.MainLayoutPanel.Controls.Add(this.CommentSelectedTextBox, 0, 3);
+			this.MainLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.MainLayoutPanel.Name = "MainLayoutPanel";
+			this.MainLayoutPanel.RowCount = 4;
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.Size = new System.Drawing.Size(640, 491);
+			this.MainLayoutPanel.TabIndex = 0;
+			//
+			// TopLayoutPanel
+			//
+			this.TopLayoutPanel.AutoSize = true;
+			this.TopLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.TopLayoutPanel.ColumnCount = 3;
+			this.TopLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.TopLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.TopLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.TopLayoutPanel.Controls.Add(this.ControllerLabel, 0, 0);
+			this.TopLayoutPanel.Controls.Add(this.GameLabel, 1, 0);
+			this.TopLayoutPanel.Controls.Add(this.ControllerComboBox, 0, 1);
+			this.TopLayoutPanel.Controls.Add(this.GameComboBox, 1, 1);
+			this.TopLayoutPanel.Controls.Add(this.MySettingsSaveButton, 2, 1);
+			this.TopLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.TopLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.TopLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.TopLayoutPanel.Name = "TopLayoutPanel";
+			this.TopLayoutPanel.RowCount = 2;
+			this.TopLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.TopLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.TopLayoutPanel.Size = new System.Drawing.Size(640, 42);
+			this.TopLayoutPanel.TabIndex = 0;
+			//
+			// NotesLayoutPanel
+			//
+			this.NotesLayoutPanel.AutoSize = true;
+			this.NotesLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.NotesLayoutPanel.ColumnCount = 2;
+			this.NotesLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.NotesLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.NotesLayoutPanel.Controls.Add(this.CommentLabel, 0, 0);
+			this.NotesLayoutPanel.Controls.Add(this.CommentTextBox, 1, 0);
+			this.NotesLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.NotesLayoutPanel.Location = new System.Drawing.Point(0, 42);
+			this.NotesLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.NotesLayoutPanel.Name = "NotesLayoutPanel";
+			this.NotesLayoutPanel.RowCount = 1;
+			this.NotesLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.NotesLayoutPanel.Size = new System.Drawing.Size(640, 26);
+			this.NotesLayoutPanel.TabIndex = 1;
+			//
 			// ControllerComboBox
-			// 
-			this.ControllerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			//
+			this.ControllerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ControllerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ControllerComboBox.FormattingEnabled = true;
 			this.ControllerComboBox.Location = new System.Drawing.Point(3, 16);
@@ -228,7 +294,7 @@
 			// 
 			// GameComboBox
 			// 
-			this.GameComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.GameComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.GameComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.GameComboBox.FormattingEnabled = true;
 			this.GameComboBox.Location = new System.Drawing.Point(319, 16);
@@ -239,7 +305,6 @@
 			// 
 			// GameLabel
 			// 
-			this.GameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.GameLabel.AutoSize = true;
 			this.GameLabel.Location = new System.Drawing.Point(316, 0);
 			this.GameLabel.Name = "GameLabel";
@@ -249,8 +314,7 @@
 			// 
 			// CommentTextBox
 			// 
-			this.CommentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.CommentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.CommentTextBox.Location = new System.Drawing.Point(48, 43);
 			this.CommentTextBox.MaxLength = 1024;
 			this.CommentTextBox.Name = "CommentTextBox";
@@ -258,7 +322,8 @@
 			this.CommentTextBox.TabIndex = 6;
 			// 
 			// CommentLabel
-			// 
+			//
+			this.CommentLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.CommentLabel.AutoSize = true;
 			this.CommentLabel.Location = new System.Drawing.Point(4, 46);
 			this.CommentLabel.Name = "CommentLabel";
@@ -268,8 +333,7 @@
 			// 
 			// CommentSelectedTextBox
 			// 
-			this.CommentSelectedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.CommentSelectedTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.CommentSelectedTextBox.Location = new System.Drawing.Point(3, 468);
 			this.CommentSelectedTextBox.Name = "CommentSelectedTextBox";
 			this.CommentSelectedTextBox.ReadOnly = true;
@@ -278,12 +342,10 @@
 			// 
 			// SettingsListTabControl
 			// 
-			this.SettingsListTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.SettingsListTabControl.Controls.Add(this.MyDeviceSettingsTabPage);
 			this.SettingsListTabControl.Controls.Add(this.SummariesTabPage);
 			this.SettingsListTabControl.Controls.Add(this.PresetsTabPage);
+			this.SettingsListTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsListTabControl.Location = new System.Drawing.Point(3, 69);
 			this.SettingsListTabControl.Name = "SettingsListTabControl";
 			this.SettingsListTabControl.SelectedIndex = 0;
@@ -426,7 +488,7 @@
 			this.SummariesDataGridView.AllowUserToAddRows = false;
 			this.SummariesDataGridView.AllowUserToDeleteRows = false;
 			this.SummariesDataGridView.AllowUserToResizeRows = false;
-			this.SummariesDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.SummariesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.SummariesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.SummariesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
@@ -567,7 +629,7 @@
 			this.PresetsDataGridView.AllowUserToAddRows = false;
 			this.PresetsDataGridView.AllowUserToDeleteRows = false;
 			this.PresetsDataGridView.AllowUserToResizeRows = false;
-			this.PresetsDataGridView.BackgroundColor = System.Drawing.Color.White;
+			this.PresetsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
 			this.PresetsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.PresetsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
@@ -647,7 +709,6 @@
 			// 
 			// MySettingsSaveButton
 			// 
-			this.MySettingsSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
 			this.MySettingsSaveButton.Location = new System.Drawing.Point(562, 15);
 			this.MySettingsSaveButton.Name = "MySettingsSaveButton";
@@ -699,15 +760,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.MySettingsSaveButton);
-			this.Controls.Add(this.CommentSelectedTextBox);
-			this.Controls.Add(this.CommentTextBox);
-			this.Controls.Add(this.GameLabel);
-			this.Controls.Add(this.ControllerLabel);
-			this.Controls.Add(this.CommentLabel);
-			this.Controls.Add(this.GameComboBox);
-			this.Controls.Add(this.ControllerComboBox);
-			this.Controls.Add(this.SettingsListTabControl);
+			this.Controls.Add(this.MainLayoutPanel);
 			this.Name = "ControllerSettingsUserControl";
 			this.Size = new System.Drawing.Size(640, 491);
 			this.Load += new System.EventHandler(this.InternetUserControl_Load);
@@ -728,8 +781,13 @@
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).EndInit();
 			this.toolStrip3.ResumeLayout(false);
 			this.toolStrip3.PerformLayout();
+			this.MainLayoutPanel.ResumeLayout(false);
+			this.MainLayoutPanel.PerformLayout();
+			this.TopLayoutPanel.ResumeLayout(false);
+			this.TopLayoutPanel.PerformLayout();
+			this.NotesLayoutPanel.ResumeLayout(false);
+			this.NotesLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -771,6 +829,9 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
+		private System.Windows.Forms.TableLayoutPanel MainLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel TopLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel NotesLayoutPanel;
 		private System.Windows.Forms.ToolStripDropDownButton MapToDropDownButton;
 		private System.Windows.Forms.ToolStripMenuItem MapToDisabledMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem MapToAutoMenuItem;

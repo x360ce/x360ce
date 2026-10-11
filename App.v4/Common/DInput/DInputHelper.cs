@@ -25,7 +25,76 @@ namespace x360ce.App.DInput
 			}
 			watch = new System.Diagnostics.Stopwatch();
 			_ResetEvent = new ManualResetEvent(false);
+			RawInput.DevicesChanged += RawInput_DevicesChanged;
 		}
+
+		#region Raw Input
+
+		/// <summary>Reads the Raw Input game controllers on a thread of its own: the program's only Raw Input registration.</summary>
+		/// <remarks>
+		/// Started with the update thread the first time, and stopped when the helper is disposed, as the program closes.
+		/// It is not stopped with the update thread, which stops on every change of Windows settings: the hub draws
+		/// nothing, and a restart would read every device in the wrong slots until the device list found its twin again.
+		/// While it does not run its device list is empty, so the device list shows every Raw Input device offline and
+		/// DirectInput reads on as before.
+		/// </remarks>
+		public readonly Engine.RawInputHub RawInput = new Engine.RawInputHub();
+
+		/// <summary>Why the Raw Input hub did not start the last time the update thread started, or null when it started.</summary>
+		/// <remarks>A hub that did not start is tried again each time the update thread starts, which it does on every change of Windows settings, so the failure is logged the first time only. Read without a lock: one reference.</remarks>
+		public Exception RawInputError { get { return _rawInputError; } }
+		volatile Exception _rawInputError;
+		bool _rawInputErrorLogged;
+
+		/// <summary>A Raw Input game controller arrived or left: the device list is read again, as for a DirectInput device.</summary>
+		/// <remarks>Raised on the hub thread, which reads no reports while it runs, so it only raises the flag the update thread reads once a pass.</remarks>
+		void RawInput_DevicesChanged(object sender, EventArgs e)
+		{
+			UpdateDevicesEnabled = true;
+		}
+
+		/// <summary>Starts the Raw Input hub, unless it runs. A hub that does not start is recorded in <see cref="RawInputError"/>, and the program reads through DirectInput alone.</summary>
+		void StartRawInputHub()
+		{
+			try
+			{
+				StartRawInput();
+				_rawInputError = null;
+			}
+			catch (Exception ex)
+			{
+				// Whatever stopped the hub's thread from registering: Windows refusing the window or the registration.
+				_rawInputError = ex;
+				if (_rawInputErrorLogged)
+					return;
+				_rawInputErrorLogged = true;
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
+		}
+
+		/// <summary>Starts <see cref="RawInput"/>; throws what its start throws.</summary>
+		/// <remarks>Virtual so a test can stand in a hub that Windows refuses, which cannot be arranged from outside.</remarks>
+		protected virtual void StartRawInput()
+		{
+			RawInput.Start();
+		}
+
+		/// <summary>Stops the Raw Input hub, as the helper is disposed.</summary>
+		/// <remarks>The stop waits for the hub thread, which never waits for this one: its only handler raises a flag. It is never called on the hub thread.</remarks>
+		void StopRawInputHub()
+		{
+			try
+			{
+				RawInput.Stop();
+			}
+			catch (System.ComponentModel.Win32Exception ex)
+			{
+				// Windows did not take the message that stops the hub. Its thread is a background one, and ends with the process.
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
+		}
+
+		#endregion
 
 		// Where current DInput device state is stored:
 		//
@@ -180,6 +249,7 @@ namespace x360ce.App.DInput
 				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
+				StartRawInputHub();
 			}
 		}
 
@@ -204,7 +274,7 @@ namespace x360ce.App.DInput
 					// so reporting turned an ordinary delay into an error report for the user.
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
-						System.Diagnostics.EventLogEntryType.Warning);
+						System.Diagnostics.TraceLevel.Warning);
 					return false;
 				}
 				return true;
@@ -547,6 +617,12 @@ namespace x360ce.App.DInput
 					.Append(XiStatesRead ? "+read" : "+idle");
 				for (int i = 0; i < 4; i++)
 					line.Append('/').Append(XiPlaceForPad[i]).Append(LiveXiConnected[i] ? "c" : "-");
+				// Raw Input devices read in the second, the reads that found a new state from the hub, and those that found
+				// the device missing from it. A run that reads only DirectInput devices shows 0/0/0.
+				line.Append(",rawinput=").Append(_rawInputReads).Append('/').Append(_rawInputFresh).Append('/').Append(_rawInputMissing);
+				_rawInputReads = 0;
+				_rawInputFresh = 0;
+				_rawInputMissing = 0;
 				// Passes that ran past the timer interval, and the longest pass in microseconds with the step that held it.
 				line.Append(",slow=").Append(_slowPasses);
 				line.Append(",longest=").Append(_longestPass * 1000000L / System.Diagnostics.Stopwatch.Frequency);
@@ -595,6 +671,8 @@ namespace x360ce.App.DInput
 					return;
 				IsDisposing = true;
 				var stopped = Stop();
+				// The hub outlives every stop of the update thread, and goes with the helper.
+				StopRawInputHub();
 				// The display reader waits between reads; told to end, it ends at its next wake.
 				_displayReaderStop = true;
 				_displayReadWake.Set();

@@ -815,7 +815,7 @@ namespace x360ce.App.DInput
 			{
 				_releaseRefused = true;
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(XInputNotAnswering,
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 			}
 			var ev = StatesRetrieved;
 			if (ev != null)
@@ -954,8 +954,8 @@ namespace x360ce.App.DInput
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual controller " + userIndex + ": the bus refused its report: " + BusAnswers.Name(answer) + ".",
 					meaning == BusAnswer.Gone
-						? System.Diagnostics.EventLogEntryType.Information
-						: System.Diagnostics.EventLogEntryType.Warning);
+						? System.Diagnostics.TraceLevel.Info
+						: System.Diagnostics.TraceLevel.Warning);
 			return false;
 		}
 
@@ -1103,7 +1103,7 @@ namespace x360ce.App.DInput
 			{
 				_placesNotAnswering = true;
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(PlacesNotAnswering,
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 			}
 			return null;
 		}

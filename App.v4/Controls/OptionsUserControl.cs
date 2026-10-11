@@ -1,10 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.Forms;
+using x360ce.App.Mcp;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -20,17 +22,8 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
-			AiAccessSnippetTextBox.Text = Engine.Mcp.McpClient.ServerSettings(Application.ExecutablePath);
-			AiAccessCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessSnippetTextBox.Text);
-			AiAccessUrlCopyButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiAccessUrlTextBox.Text);
-			AiAccessPromptButton.Click += (s, e) => ControlsHelper.CopyToClipboardOrWarn(AiPrompt());
-			// The Windows agent registry ships with newer Windows only. Where its tool is absent the
-			// switch stays off and says why, rather than promising something the machine cannot do.
-			AiAccessWindowsCheckBox.Enabled = Engine.Mcp.WindowsAgentRegistry.IsAvailable;
-			if (!Engine.Mcp.WindowsAgentRegistry.IsAvailable)
-				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
-			AiAccessLogButton.Click += (s, e) => Engine.Mcp.McpLog.Open();
-			UpdateAiAccessUrl();
+			// The theme that follows Windows is named the way Windows names it.
+			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
 			EmulationHotkeyTextBox.ReadOnly = true;
@@ -39,12 +32,6 @@ namespace x360ce.App.Controls
 			// is parented, so the cue is put back whenever a handle is made.
 			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
-			AiAccessRegenerateButton.Click += (s, e) =>
-			{
-				SettingsManager.Options.RegenerateAiAccessToken();
-				Global.ApplyAiAccess();
-				AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
-			};
 #if DEBUG
 			// Install stays available in development builds so that the removal path can
 			// be tested. The confirmation dialog states that this is a development build.
@@ -163,27 +150,25 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			SettingsManager.LoadAndMonitor(x => x.Theme, ThemeComboBox, Enum.GetValues(typeof(ThemeType)));
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.AiAccessEnabled, AiAccessEnabledCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(Engine.Mcp.AiAccess)));
-			SettingsManager.LoadAndMonitor(x => x.AiAccessAddress, AiAccessAddressComboBox, new[] { Options.LoopbackAddress, Options.AnyAddress });
-			SettingsManager.LoadAndMonitor(x => x.AiAccessWindows, AiAccessWindowsCheckBox);
-			// Not bound with LoadAndMonitor: ValueChanged fires on every spin click, each of which
-			// would restart the listener, so the value is taken when editing ends.
-			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;
-			AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
-			UpdateAiAccessUrl();
+			// The door opens as the options left it, and the AI page reads and changes them from now on. An export
+			// describes the page and leaves: it opens no door and writes no options file.
+			if (Program.ExportUiFolder == null)
+				Global.ApplyAiAccess();
+			AiControl.Bind(new AiAccessSettings());
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.ReadEveryChange, ReadEveryChangeCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyEnabled, EmulationHotkeyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkey, EmulationHotkeyTextBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyOverlay, EmulationOverlayCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.DeviceChangeOverlay, DeviceChangeOverlayCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
 			LoadSettings();
@@ -212,6 +197,9 @@ namespace x360ce.App.Controls
 				case nameof(Options.RemoteControllers):
 					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
 					break;
+				case nameof(Options.Theme):
+					FormsTheme.SetTheme(o.Theme);
+					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 					break;
@@ -221,14 +209,7 @@ namespace x360ce.App.Controls
 					var held = MainForm.Current.ApplyEmulationHotkey();
 					EmulationHotkeyTextBox.ForeColor = held || !o.EmulationHotkeyEnabled || string.IsNullOrEmpty(o.EmulationHotkey)
 						? System.Drawing.SystemColors.WindowText
-						: System.Drawing.Color.Firebrick;
-					break;
-				case nameof(Options.AiAccess):
-				case nameof(Options.AiAccessAddress):
-				case nameof(Options.AiAccessPort):
-					// Shows the token made when access is first switched on, and where the door now is.
-					AiAccessTokenTextBox.Text = o.AiAccessToken;
-					UpdateAiAccessUrl();
+						: FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.Firebrick);
 					break;
 				default:
 					break;
@@ -350,39 +331,6 @@ namespace x360ce.App.Controls
 			RemotePasswordTextBox.Text = o.RemotePassword;
 			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
 				RemotePortNumericUpDown.Value = o.RemotePort;
-			if (o.AiAccessPort >= AiAccessPortNumericUpDown.Minimum && o.AiAccessPort <= AiAccessPortNumericUpDown.Maximum)
-				AiAccessPortNumericUpDown.Value = o.AiAccessPort;
-		}
-
-		/// <summary>
-		/// What a person pastes into any AI: how to reach this program, both ways, and a first
-		/// thing to ask, so the assistant proves the connection with something simple.
-		/// </summary>
-		string AiPrompt()
-		{
-			var o = SettingsManager.Options;
-			var sb = new System.Text.StringBuilder();
-			sb.AppendLine("Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.");
-			sb.AppendLine();
-			sb.AppendLine("If you can run commands on this computer, add this MCP server:");
-			sb.AppendLine(AiAccessSnippetTextBox.Text);
-			sb.AppendLine();
-			sb.AppendLine("If you connect to MCP servers by URL, use this one (JSON-RPC over HTTP POST):");
-			sb.AppendLine(AiAccessUrlTextBox.Text);
-			sb.AppendLine("with the header: Authorization: Bearer " + o.AiAccessToken);
-			sb.AppendLine();
-			sb.AppendLine("Start by calling the tool devices_list and tell me what you found. Use ui_find with a word to locate any control, ui_show to point at one for me, and help for the manual.");
-			if (!o.AiAccessEnabled)
-				sb.AppendLine("Note: AI assistant access is not switched on yet; I will tick it on the Options page first.");
-			return sb.ToString();
-		}
-
-		/// <summary>The address an agent that connects over HTTP is given: this computer's name when every network is allowed, the loopback otherwise.</summary>
-		void UpdateAiAccessUrl()
-		{
-			var o = SettingsManager.Options;
-			var host = o.AiAccessAddress == Options.AnyAddress ? Environment.MachineName.ToLowerInvariant() : Options.LoopbackAddress;
-			AiAccessUrlTextBox.Text = "http://" + host + ":" + o.AiAccessPort + "/mcp/";
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)

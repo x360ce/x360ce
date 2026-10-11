@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
-	/// <summary>The name and purpose of each part of this program's interface, given to <see cref="x360ce.Engine.UiTree.UiText"/>.</summary>
+	/// <summary>The name and purpose of each part of this program's interface, given to <see cref="JocysCom.ClassLibrary.Controls.UiTree.UiText"/>.</summary>
 	public static partial class UiCatalog
 	{
 		/// <summary>Every entry, keyed "OwningType.FieldName".</summary>

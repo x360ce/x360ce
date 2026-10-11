@@ -1,4 +1,4 @@
-﻿namespace JocysCom.WebSites.Engine.Security
+﻿namespace JocysCom.ClassLibrary.Security
 {
 	public enum UserQueryName
 	{

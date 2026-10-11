@@ -13,7 +13,7 @@ namespace x360ce.Tests
 	/// through the list took a private lock inside BindingListInvoked, and neither excluded the
 	/// other. Reports from 4.18.6.0 and 4.18.7.0 show both halves of that race, as
 	/// "Collection was modified" while enumerating and as "Destination array was not long enough"
-	/// inside ItemsToArraySyncronized. These tests pin the collection against both.
+	/// inside ItemsToArraySynchronized. These tests pin the collection against both.
 	/// </summary>
 	[TestClass]
 	public class SettingsDataConcurrencyTest
@@ -28,7 +28,7 @@ namespace x360ce.Tests
 		public void Snapshot_survives_concurrent_changes()
 		{
 			var data = new JocysCom.ClassLibrary.Configuration.SettingsData<Row>();
-			RunRace(data, () => { var items = data.ItemsToArraySyncronized(); GC.KeepAlive(items); });
+			RunRace(data, () => { var items = data.ItemsToArraySynchronized(); GC.KeepAlive(items); });
 		}
 
 		[TestMethod, TestCategory("settings")]
@@ -42,7 +42,7 @@ namespace x360ce.Tests
 				// any lock the reader can take, because a change arriving through the list
 				// itself does not take it.
 				var count = 0;
-				foreach (var item in data.ItemsToArraySyncronized())
+				foreach (var item in data.ItemsToArraySynchronized())
 					count += item == null ? 0 : 1;
 				GC.KeepAlive(count);
 			});

@@ -1,23 +1,26 @@
-﻿using System;
+#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace JocysCom.WebSites.Engine
+namespace JocysCom.ClassLibrary
 {
 	/// <summary>
-	/// Provides Enumeration class with Guid value stored as attribute.
+	/// Provides reflection-based bidirectional mapping between enum values and their GUIDs stored via <see cref="GuidValueAttribute"/>.
 	/// </summary>
 	public static class GuidEnum
 	{
 		/// <summary>
+		/// Retrieves the GUID value from the <see cref="GuidValueAttribute"/> applied to the specified enum field.
 		/// Get attribute by enumeration:
-		///	Guid attribute = GuidEnum.Attribute(myEnum)
+		/// 	Guid attribute = GuidEnum.Attribute(myEnum)
 		/// </summary>
-		/// <typeparam name="TE">Enum Type</typeparam>
+		/// <typeparam name="TE">Enum Type annotated with GuidValueAttribute.</typeparam>
 		/// <param name="e">You can use 'dynamic' to supply unknown enum value.
 		/// dynamic en = Enum.Parse(enumType, name);
 		/// </param>
-		/// <returns></returns>
+		/// <returns>The <see cref="Guid"/> value from the field's <see cref="GuidValueAttribute"/>.</returns>
 		public static Guid Attribute<TE>(TE e)
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
@@ -30,11 +33,15 @@ namespace JocysCom.WebSites.Engine
 		}
 
 		private static Regex _GuidRegex;
+		/// <summary>
+		/// Lazy-initialized <see cref="Regex"/> matching GUID string formats:
+		/// 32 hex digits, hyphen-delimited with braces or parentheses, or initializer-list notation.
+		/// </summary>
 		public static Regex GuidRegex
 		{
 			get
 			{
-				if (_GuidRegex == null)
+				if (_GuidRegex is null)
 				{
 					_GuidRegex = new Regex(
 						"^[A-Fa-f0-9]{32}$|" +
@@ -46,6 +53,11 @@ namespace JocysCom.WebSites.Engine
 
 		}
 
+		/// <summary>
+		/// Determines whether the specified string is a valid GUID in any recognized format.
+		/// </summary>
+		/// <param name="s">Input string to validate.</param>
+		/// <returns>True if <paramref name="s"/> is non-null, non-empty, and matches <see cref="GuidRegex"/>.</returns>
 		public static bool IsGuid(string s)
 		{
 			if (string.IsNullOrEmpty(s))
@@ -64,16 +76,25 @@ namespace JocysCom.WebSites.Engine
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return (TE)Enum.Parse(typeof(TE), value);
 		}
 
+		/// <summary>
+		/// Attempts to parse the specified string to the enum <typeparamref name="TE"/>.
+		/// Returns <paramref name="defaultValue"/> on failure or when <paramref name="asString"/> is true and the string does not start with a letter.
+		/// </summary>
+		/// <typeparam name="TE">Enum type.</typeparam>
+		/// <param name="value">String value to parse.</param>
+		/// <param name="defaultValue">Default enum value to return on error.</param>
+		/// <param name="asString">If true, parsing only proceeds for names starting with a letter.</param>
+		/// <returns>The parsed enum value, or <paramref name="defaultValue"/> if parsing failed.</returns>
 		public static TE TryParse<TE>(string value, TE defaultValue, bool asString)
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			var results = defaultValue;
 			try
@@ -98,18 +119,19 @@ namespace JocysCom.WebSites.Engine
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return (TE)Enum.Parse(typeof(TE), value, ignoreCase);
 		}
 
 		/// <summary>
+		/// Retrieves the enum value whose <see cref="GuidValueAttribute"/> matches the specified GUID string.
 		/// Get enumeration by attribute:
 		///     <para>myEnum = GuidEnum&lt;MyEnum&gt;.ParseByAttribute("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")</para>
 		/// </summary>
-		/// <typeparam name="TE"></typeparam>
-		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <typeparam name="TE">Enum type annotated with <see cref="GuidValueAttribute"/>.</typeparam>
+		/// <param name="value">GUID value string to match against attributes.</param>
+		/// <returns>The matching enum value, or default(<typeparamref name="TE"/>) if no match is found.</returns>
 		public static TE ParseByAttribute<TE>(string value)
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
@@ -118,11 +140,13 @@ namespace JocysCom.WebSites.Engine
 		}
 
 		/// <summary>
+		/// Retrieves the enum value whose <see cref="GuidValueAttribute"/> matches the specified <see cref="Guid"/>.
 		/// Get enumeration by attribute:
 		///     <para>myEnum = GuidEnum&lt;MyEnum&gt;.ParseByAttribute(new Guid("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"))</para>
 		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <typeparam name="TE">Enum type annotated with <see cref="GuidValueAttribute"/>.</typeparam>
+		/// <param name="value">GUID to match against attributes.</param>
+		/// <returns>The matching enum value, or default(<typeparamref name="TE"/>) if no match is found.</returns>
 		public static TE ParseByAttribute<TE>(Guid value)
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
@@ -147,11 +171,11 @@ namespace JocysCom.WebSites.Engine
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			var t = Type.GetType(typeName);
 			// Search for object in other assemblies.
-			for (var a = 0; a < assemblies.Length && t == null; a++)
+			for (var a = 0; a < assemblies.Length && t is null; a++)
 				t = assemblies[a].GetType(typeName);
 			if (resolve)
 			{
-				for (var a = 0; a < assemblies.Length && t == null; a++)
+				for (var a = 0; a < assemblies.Length && t is null; a++)
 				{
 					var types = assemblies[a].GetTypes();
 					for (var i = 0; i < types.Length; i++)
@@ -184,7 +208,7 @@ namespace JocysCom.WebSites.Engine
 		public static SortedDictionary<string, object> ToNameDictionary(Type type)
 		{
 			var list = new SortedDictionary<string, object>();
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var names = Enum.GetNames(type);
 			foreach (string name in names)
@@ -202,7 +226,7 @@ namespace JocysCom.WebSites.Engine
 		{
 			Type enumType = FindType(typeName, resolve);
 			var list = new SortedDictionary<string, object>();
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException(typeName);
 			var names = Enum.GetNames(enumType);
 			foreach (string name in names)
@@ -216,11 +240,14 @@ namespace JocysCom.WebSites.Engine
 		/// <param name="typeName">The name of the type to get.</param>
 		/// <param name="resolve">True to resolve partial type name.</param>
 		/// <returns>A System.Collections.Generic.Dictionary.</returns>
+		/// <remarks>
+		/// Method can be used to bind enumeration to DropDownLists.
+		/// </remarks>
 		public static SortedDictionary<string, Guid> ToAttributeDictionary(string typeName, bool resolve)
 		{
 			var enumType = FindType(typeName, resolve);
 			var list = new SortedDictionary<string, Guid>();
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException(typeName);
 			var names = Enum.GetNames(enumType);
 			foreach (string name in names)

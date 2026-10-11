@@ -1,9 +1,9 @@
-﻿#if NETCOREAPP // .NET Core
-using Microsoft.EntityFrameworkCore;
-#elif NETSTANDARD // .NET Standard
-using Microsoft.EntityFrameworkCore;
-#else // .NET Framework
+﻿#nullable disable
+
+#if NETFRAMEWORK // .NET Framework
 using System.Data.Objects.DataClasses;
+#else
+using Microsoft.EntityFrameworkCore;
 #endif
 using System;
 using System.Collections.Generic;
@@ -40,9 +40,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
 						.Where(p => p.CanRead && p.CanWrite)
 						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 					if (skipKey)
 					{
@@ -94,7 +92,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			foreach (var p in ps)
 			{
 				var value = p.GetValue(item, null);
-				if (value == null)
+				if (value is null)
 					continue;
 				var defaultValue = p.PropertyType.IsValueType ? Activator.CreateInstance(p.PropertyType) : null;
 				if (Equals(defaultValue, value))
@@ -129,8 +127,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			state.State = EntityState.Unchanged;
 			if (oldValue != newValue)
 				state.State = EntityState.Modified;
-			var oldIsEmpty = oldValue == null || oldValue == Activator.CreateInstance(type);
-			var newIsEmpty = newValue == null || newValue == Activator.CreateInstance(type);
+			var oldIsEmpty = oldValue is null || oldValue == Activator.CreateInstance(type);
+			var newIsEmpty = newValue is null || newValue == Activator.CreateInstance(type);
 			if (oldIsEmpty && !newIsEmpty)
 				state.State = EntityState.Added;
 			if (newIsEmpty && !oldIsEmpty)
@@ -161,42 +159,49 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Compare all properties of two objects and return change state for every property and field.
 		/// </summary>
 		/// <param name="source">item1</param>
-		/// <param name="dest">item2</param>
+		/// <param name="target">item2</param>
 		/// <returns></returns>
-		public static List<ChangeState> CompareProperties(object source, object dest)
+		public static List<ChangeState> CompareProperties(object source, object target)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
-				throw new ArgumentNullException(nameof(dest));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
 			object oldValue;
 			object newValue;
 			ChangeState state;
 			var list = new List<ChangeState>();
-			var dstType = dest.GetType();
-			var itersectingFields = GetItersectingFields(source, dest);
-			foreach (var fi in itersectingFields)
+			var dstType = target.GetType();
+			// Get Field Info.
+			var sourceFields = GetFields(source.GetType());
+			var targetFields = GetFields(target.GetType());
+			foreach (var sf in sourceFields)
 			{
-				var dp = dstType.GetField(fi.Name);
-				if (IsKnownType(fi.FieldType))
-				{
-					oldValue = fi.GetValue(source);
-					newValue = fi.GetValue(dest);
-					state = GetValueChangeSet(fi.FieldType, oldValue, newValue);
-					list.Add(state);
-				}
+				var tf = targetFields.FirstOrDefault(x => x.Name == sf.Name);
+				if (tf == null || sf.FieldType != tf.FieldType)
+					continue;
+				// A member whose value cannot be read on its own says nothing about a change.
+				if (!IsKnownType(sf.FieldType))
+					continue;
+				oldValue = sf.GetValue(source);
+				newValue = tf.GetValue(target);
+				state = GetValueChangeSet(sf.FieldType, oldValue, newValue);
+				list.Add(state);
 			}
-			var itersectingProperties = GetItersectingProperties(source, dest);
-			foreach (var pi in itersectingProperties)
+			// Get Property Info.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sp in sourceProperties)
 			{
-				var dp = dstType.GetProperty(pi.Name);
-				if (IsKnownType(pi.PropertyType))
-				{
-					oldValue = pi.GetValue(source, null);
-					newValue = pi.GetValue(dest, null);
-					state = GetValueChangeSet(pi.PropertyType, oldValue, newValue);
-					list.Add(state);
-				}
+				var tp = targetProperties.FirstOrDefault(x => x.Name == sp.Name);
+				if (tp == null || sp.PropertyType != tp.PropertyType)
+					continue;
+				if (!IsKnownType(sp.PropertyType))
+					continue;
+				oldValue = sp.GetValue(source, null);
+				newValue = tp.GetValue(target, null);
+				state = GetValueChangeSet(sp.PropertyType, oldValue, newValue);
+				list.Add(state);
 			}
 			return list;
 		}

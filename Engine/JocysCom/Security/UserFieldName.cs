@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace JocysCom.WebSites.Engine.Security
+namespace JocysCom.ClassLibrary.Security
 {
 	[Flags]
 	public enum UserFieldName

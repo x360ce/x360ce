@@ -34,6 +34,9 @@ namespace x360ce.Tests
 			LogsFolder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "run-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(LogsFolder);
 			LogHelper.Current.OverrideLogFolder = LogsFolder;
+			// The program points the shared door, interface tree and skill at itself before anything else, so a page
+			// built here names the program, its switches and its skill as it does when the program runs.
+			x360ce.App.Mcp.McpTools.Register();
 		}
 
 		[AssemblyCleanup]

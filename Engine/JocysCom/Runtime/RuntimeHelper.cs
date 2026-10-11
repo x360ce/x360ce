@@ -1,11 +1,14 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Runtime
@@ -13,14 +16,19 @@ namespace JocysCom.ClassLibrary.Runtime
 	public static partial class RuntimeHelper
 	{
 
+		/// <summary>True for a type whose value can be read and compared on its own.</summary>
+		/// <param name="type">Type to test.</param>
 		public static bool IsKnownType(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return
 				type == typeof(string)
 				|| type.IsPrimitive
-				|| type.IsSerializable;
+				// Type.IsSerializable, which is obsolete: marked [Serializable], or Enum or Delegate in the base type chain.
+				|| type.IsDefined(typeof(SerializableAttribute), false)
+				|| type == typeof(Enum) || type.IsSubclassOf(typeof(Enum))
+				|| type == typeof(Delegate) || type.IsSubclassOf(typeof(Delegate));
 		}
 
 		private static readonly HashSet<Type> numericTypes = new HashSet<Type>
@@ -59,7 +67,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string GetBuiltInTypeNameOrAlias(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var elementType = type.IsArray
 				? type.GetElementType()
@@ -91,7 +99,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool IsNullableType(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return type.IsGenericType
 				? type.GetGenericTypeDefinition() == typeof(Nullable<>)
@@ -105,45 +113,120 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>
 		/// Get source intersecting fields.
 		/// </summary>
-		private static FieldInfo[] GetItersectingFields(object source, object dest)
+		private static FieldInfo[] GetItersectingFields(object source, object target)
 		{
-			var dFieldNames = dest.GetType().GetFields(DefaultBindingFlags).Select(x => x.Name).ToArray();
-			var itersectingFields = source
+			var targetNames = target.GetType().GetFields(DefaultBindingFlags).Select(x => x.Name).ToArray();
+			var sourceFields = source
 				.GetType()
 				.GetFields(DefaultBindingFlags)
-				.Where(x => dFieldNames.Contains(x.Name))
+				.Where(x => targetNames.Contains(x.Name))
 				.ToArray();
-			return itersectingFields;
+			return sourceFields;
 		}
 
-		public static void CopyFields(object source, object dest)
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, FieldInfo[]> Fields { get; } = new ConcurrentDictionary<Type, FieldInfo[]>();
+
+		private static FieldInfo[] GetFields(Type t, bool cache = true)
 		{
-			if (source == null)
+			var items = cache
+				? Fields.GetOrAdd(t, x => t.GetFields(DefaultBindingFlags))
+				: t.GetFields(DefaultBindingFlags);
+			return items;
+		}
+
+
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, PropertyInfo[]> Properties { get; } = new ConcurrentDictionary<Type, PropertyInfo[]>();
+
+		private static PropertyInfo[] GetProperties(Type t, bool cache = true)
+		{
+			var items = cache
+				? Properties.GetOrAdd(t, x => t.GetProperties(DefaultBindingFlags))
+				: t.GetProperties(DefaultBindingFlags);
+			return items;
+		}
+
+		public static void CopyFields(object source, object target, bool onlyNonByRef = false)
+		{
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
-				throw new ArgumentNullException(nameof(dest));
-			// Get type of the destination object.
-			var destType = dest.GetType();
-			// Copy fields.
-			var sourceItersectingFields = GetItersectingFields(source, dest);
-			foreach (var sfi in sourceItersectingFields)
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+			// Get Field Info.
+			var sourceFields = GetFields(source.GetType());
+			var targetFields = GetFields(target.GetType());
+			foreach (var sm in sourceFields)
 			{
-				if (IsKnownType(sfi.FieldType))
+				var tm = targetFields.FirstOrDefault(x => x.Name == sm.Name);
+				bool useJson;
+				if (!CanCopy(sm.FieldType, tm.FieldType, onlyNonByRef, out useJson))
+					continue;
+				// Get source value.
+				var sValue = sm.GetValue(source);
+				if (useJson)
+					sValue = Serialize(sValue);
+				var update = true;
+				// Get target value.
+				var dValue = tm.GetValue(target);
+				if (useJson)
+					dValue = Serialize(dValue);
+				// Update only if values are different.
+				update = !Equals(sValue, dValue);
+				if (update)
 				{
-					var dfi = destType.GetField(sfi.Name, DefaultBindingFlags);
-					dfi.SetValue(dest, sfi.GetValue(source));
+					if (useJson)
+						sValue = Deserialize(sValue as string, tm.FieldType);
+					tm.SetValue(target, sValue);
 				}
 			}
 		}
 
 		#endregion
 
-		#region Copy Properties
+		#region Serializer
 
-		private static readonly object PropertiesReadLock = new object();
-		private static readonly Dictionary<Type, PropertyInfo[]> PropertiesReadList = new Dictionary<Type, PropertyInfo[]>();
-		private static readonly object PropertiesWriteLock = new object();
-		private static readonly Dictionary<Type, PropertyInfo[]> PropertiesWriteList = new Dictionary<Type, PropertyInfo[]>();
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, DataContractJsonSerializer> JsonSerializers = new ConcurrentDictionary<Type, DataContractJsonSerializer>();
+
+		static DataContractJsonSerializer GetJsonSerializer(Type type, DataContractJsonSerializerSettings settings = null)
+		{
+			if (type == null)
+				return null;
+			return JsonSerializers.GetOrAdd(type, x => new DataContractJsonSerializer(type, settings));
+		}
+
+		private static string Serialize(object o)
+		{
+			if (o is null)
+				return null;
+			var serializer = GetJsonSerializer(o.GetType());
+			var ms = new MemoryStream();
+			lock (serializer) { serializer.WriteObject(ms, o); }
+			var json = Encoding.UTF8.GetString(ms.ToArray());
+			ms.Close();
+			return json;
+		}
+
+		private static object Deserialize(string json, Type type)
+		{
+			if (json is null)
+				return null;
+			var serializer = GetJsonSerializer(type);
+			var bytes = Encoding.UTF8.GetBytes(json);
+			var ms = new MemoryStream(bytes);
+			object o;
+			lock (serializer) { o = serializer.ReadObject(ms); }
+			ms.Close();
+			return o;
+		}
+
+		#endregion
+
+		#region Copy Properties
 
 		/// <summary>
 		/// Get information about different and intersecting properties.
@@ -191,134 +274,113 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return sb.ToString();
 		}
+
 		/// <summary>
-		/// Get properties which exists on both objects.
+		/// Retur true if can copy.
 		/// </summary>
-		static PropertyInfo[] GetItersectingProperties(object source, object dest)
+		public static bool CanCopy(Type source, Type target, bool onlyNonByRef, out bool useJson)
 		{
-			if (source == null)
-				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
-				throw new ArgumentNullException(nameof(dest));
-			// Properties to read.
-			PropertyInfo[] sProperties;
-			lock (PropertiesReadLock)
-			{
-				var sType = source.GetType();
-				if (PropertiesReadList.ContainsKey(sType))
-				{
-					sProperties = PropertiesReadList[sType];
-				}
-				else
-				{
-					sProperties = sType.GetProperties(DefaultBindingFlags)
-						.Where(p => p.CanRead)
-						.ToArray();
-					PropertiesReadList.Add(sType, sProperties);
-				}
-			}
-			// Properties to write.
-			PropertyInfo[] dProperties;
-			lock (PropertiesWriteLock)
-			{
-				var dType = dest.GetType();
-				if (PropertiesWriteList.ContainsKey(dType))
-				{
-					dProperties = PropertiesWriteList[dType];
-				}
-				else
-				{
-					dProperties = dType.GetProperties(DefaultBindingFlags)
-						.Where(p => p.CanWrite)
-						.ToArray();
-					PropertiesWriteList.Add(dType, dProperties);
-				}
-			}
-			var dPropertyNames = dProperties.Select(x => x.Name).ToArray();
-			var itersectingProperties = sProperties
-				.Where(x => dPropertyNames.Contains(x.Name))
-				.ToArray();
-			return itersectingProperties;
+			useJson = false;
+			// If target property don't exists.
+			if (target == null)
+				return false;
+			// If target property can't be assigned.
+			if (!source.IsAssignableFrom(source))
+				return false;
+			// If only non reference properties can be compied.
+			if (onlyNonByRef && source.IsByRef)
+				return false;
+			// Use JSON to clone referenced values.
+			useJson = source.IsByRef;
+			return true;
 		}
 
-		public static void CopyProperties(object source, object dest)
+		public static void CopyProperties(object source, object target, bool onlyNonByRef = false)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
-				throw new ArgumentNullException(nameof(dest));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
 			// Get type of the destination object.
-			var destType = dest.GetType();
-			// Copy properties.
-			var sourceItersectingProperties = GetItersectingProperties(source, dest);
-			foreach (var spi in sourceItersectingProperties)
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sm in sourceProperties)
 			{
-				// Skip if can't read.
-				if (!spi.CanRead)
+				// Get destination property and skip if not found.
+				var tm = targetProperties.FirstOrDefault(x => Equals(x.Name, sm.Name));
+				if (!sm.CanRead || !tm.CanWrite)
 					continue;
-				if (!IsKnownType(spi.PropertyType))
-					continue;
-				// Get destination type.
-				var dpi = destType.GetProperty(spi.Name, DefaultBindingFlags);
-				// Skip if can't write.
-				if (!dpi.CanWrite)
+				bool useJson;
+				if (!CanCopy(sm.PropertyType, tm.PropertyType, onlyNonByRef, out useJson))
 					continue;
 				// Get source value.
-				var sValue = spi.GetValue(source, null);
+				var sValue = sm.GetValue(source, null);
+				if (useJson)
+					sValue = Serialize(sValue);
 				var update = true;
-				// If can read destination.
-				if (dpi.CanRead)
+				// If can read target value.
+				if (tm.CanRead)
 				{
-					// Get destination value.
-					var dValue = dpi.GetValue(dest, null);
+					// Get target value.
+					var dValue = tm.GetValue(target, null);
+					if (useJson)
+						dValue = Serialize(dValue);
 					// Update only if values are different.
 					update = !Equals(sValue, dValue);
 				}
 				if (update)
-					dpi.SetValue(dest, sValue, null);
+				{
+					if (useJson)
+						sValue = Deserialize(sValue as string, tm.PropertyType);
+					tm.SetValue(target, sValue, null);
+				}
 			}
-		}
-
-		#endregion
-
-		public static object CloneObject(object o)
-		{
-			if (o == null)
-				throw new ArgumentNullException(nameof(o));
-			var t = o.GetType();
-			var properties = t.GetProperties();
-			var dest = t.InvokeMember("", BindingFlags.CreateInstance, null, o, null);
-			foreach (var pi in properties)
-			{
-				if (pi.CanWrite)
-					pi.SetValue(dest, pi.GetValue(o, null), null);
-			}
-			return dest;
 		}
 
 		/// <summary>
-		/// Assign property values from their [DefaultValueAttribute] value.
+		/// Returns true if all properties with the same name are equal.
 		/// </summary>
-		/// <param name="o">Object to reset properties on.</param>
-		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false)
+		public static bool EqualProperties(object source, object target, bool onlyNonByRef = false)
 		{
-			if (o == null)
-				return;
-			var type = o.GetType();
-			var properties = type.GetProperties();
-			foreach (var p in properties)
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+			// Get type of the destination object.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sm in sourceProperties)
 			{
-				if (p.CanRead && onlyIfNull && p.GetValue(o, null) != null)
+				// Get destination property and skip if not found.
+				var tm = targetProperties.FirstOrDefault(x => Equals(x.Name, sm.Name));
+				if (!sm.CanRead)
 					continue;
-				if (!p.CanWrite)
+				bool useJson;
+				if (!CanCopy(sm.PropertyType, tm.PropertyType, onlyNonByRef, out useJson))
 					continue;
-				var da = p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-				if (da.Length == 0)
-					continue;
-				var value = ((DefaultValueAttribute)da[0]).Value;
-				p.SetValue(o, value, null);
+				// Get source value.
+				var sValue = sm.GetValue(source, null);
+				if (useJson)
+					sValue = Serialize(sValue);
+				var update = true;
+				// If can read target value.
+				if (tm.CanRead)
+				{
+					// Get target value.
+					var dValue = tm.GetValue(target, null);
+					if (useJson)
+						dValue = Serialize(dValue);
+					// Update only if values are different.
+					update = !Equals(sValue, dValue);
+				}
+				// If update needed then not equal.
+				if (update)
+					return false;
 			}
+			return true;
 		}
+
+		#endregion
 
 		#region Convert: Object <-> Bytes
 
@@ -335,8 +397,43 @@ namespace JocysCom.ClassLibrary.Runtime
 					foreach (var p in props)
 					{
 						var value = p.GetValue(o);
-						dynamic dv = (dynamic)value;
-						var _ = writer.Write(dv);
+						switch (value)
+						{
+							case bool v:
+								writer.Write(v); break;
+							case byte v:
+								writer.Write(v); break;
+							case byte[] v:
+								writer.Write(v); break;
+							case char[] v:
+								writer.Write(v); break;
+							case char v:
+								writer.Write(v); break;
+							case decimal v:
+								writer.Write(v); break;
+							case double v:
+								writer.Write(v); break;
+							case float v:
+								writer.Write(v); break;
+							case int v:
+								writer.Write(v); break;
+							case long v:
+								writer.Write(v); break;
+							case sbyte v:
+								writer.Write(v); break;
+							case short v:
+								writer.Write(v); break;
+							case string v:
+								writer.Write(v); break;
+							case uint v:
+								writer.Write(v); break;
+							case ulong v:
+								writer.Write(v); break;
+							case ushort v:
+								writer.Write(v); break;
+							default:
+								break;
+						}
 					}
 					ms.Flush();
 					ms.Seek(0, SeekOrigin.Begin);
@@ -456,7 +553,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static object BytesToStructure(byte[] bytes, Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var value = type.IsValueType ? Activator.CreateInstance(type) : null;
 			var handle = default(GCHandle);
@@ -482,13 +579,12 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// its type T equivalent. A return value indicates whether the conversion
 		/// succeeded or failed.
 		/// </summary>
-		/// <typeparam name="T">The type to try and convert to.</typeparam>
 		/// <param name="value">A string containing the value to try and convert.</param>
+		/// <param name="t">target type</param>
 		/// <param name="result">If the conversion was successful, the converted value of type T.</param>
 		/// <returns>If value was converted successfully, true; otherwise false.</returns>
-		public static bool TryParse<T>(string value, out T result)
+		public static bool TryParse(object value, Type t, out object result)
 		{
-			var t = typeof(T);
 			if (IsNullable(t))
 				t = Nullable.GetUnderlyingType(t) ?? t;
 			//var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(T));
@@ -497,10 +593,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			//	result = (T)converter.ConvertFromString(value);
 			//	return true;
 			//}
+			if (t == typeof(string))
+			{
+				result = value;
+				return true;
+			}
 			if (t.IsEnum)
 			{
-				var retValue = value == null ? false : Enum.IsDefined(t, value);
-				result = retValue ? (T)Enum.Parse(t, value) : default(T);
+				var retValue = value is null ? false : Enum.IsDefined(t, value?.ToString());
+				result = retValue ? Enum.Parse(t, value?.ToString()) : default;
 				return retValue;
 			}
 			var tryParseMethod = t.GetMethod("TryParse",
@@ -508,8 +609,27 @@ namespace JocysCom.ClassLibrary.Runtime
 				new[] { typeof(string), t.MakeByRefType() }, null);
 			var parameters = new object[] { value, null };
 			var retVal = (bool)tryParseMethod.Invoke(null, parameters);
-			result = (T)parameters[1];
+			result = parameters[1];
 			return retVal;
+		}
+
+
+		/// <summary>
+		/// Tries to convert the specified string representation of a logical value to
+		/// its type T equivalent. A return value indicates whether the conversion
+		/// succeeded or failed.
+		/// </summary>
+		/// <typeparam name="T">The type to try and convert to.</typeparam>
+		/// <param name="value">A string containing the value to try and convert.</param>
+		/// <param name="result">If the conversion was successful, the converted value of type T.</param>
+		/// <returns>If value was converted successfully, true; otherwise false.</returns>
+		public static bool TryParse<T>(string value, out T result)
+		{
+			var t = typeof(T);
+			object o;
+			var success = TryParse(value, t, out o);
+			result = (T)o;
+			return success;
 		}
 
 		/// <summary>
@@ -537,7 +657,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null)
+			if (t is null)
 				throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
 			else if (t == typeof(void))
@@ -552,139 +672,32 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		public static void DetectType(string[] values, out Type type, out int sizeMin, out int sizeMax, out bool isAscii, out bool haveEmpty)
+		/// <summary>
+		/// Convert year values from 0 to 99 to the years xx00 to yy99 with appropriate century. 
+		/// </summary>
+		/// <param name="year">A two-digit or four-digit integer that represents the year to convert.</param>
+		/// <param name="twoDigitYearMax">The last year of a 100-year range that can be represented by a 2-digit year.</param>
+		/// <returns>An integer that contains the four-digit representation of year.</returns>
+		/// <remarks>
+		/// Use C# solution from System.Globalization.Calendar.ToFourDigitYear(System.Int32 year).
+		/// For example, if TwoDigitYearMax is set to 2029, the 100-year range is from 1930 to 2029:
+		///   a 2-digit value of 30 is interpreted as 1930
+		///   a 2-digit value of 29 is interpreted as 2029
+		/// </remarks>
+		public static int ToFourDigitYear(int year, int? twoDigitYearMax = null)
 		{
-			if (values == null)
-				throw new ArgumentNullException(nameof(values));
-			type = typeof(string);
-			sizeMin = int.MaxValue;
-			sizeMax = 0;
-			isAscii = true;
-			haveEmpty = false;
-			// Order matters. First available type will be returned.
-			// If all values can be parsed to Int16 then it can be parsed to Int32 and Int64 too.
-			var tcs = new TypeCode[]
-			{
-				TypeCode.Boolean,
-				TypeCode.Byte,
-				TypeCode.SByte,
-				TypeCode.Int16,
-				TypeCode.Int32,
-				TypeCode.Int64,
-				TypeCode.UInt16,
-				TypeCode.UInt32,
-				TypeCode.UInt64,
-				TypeCode.Single,
-				TypeCode.Char,
-				TypeCode.DateTime,
-				TypeCode.Double,
-				TypeCode.Decimal,
-				TypeCode.String,
-				// TypeCode.DBNull,
-				// TypeCode.Empty,
-				// TypeCode.Object,
-			}.ToList();
-			// All available types.
-			var available = new Dictionary<TypeCode, Type>();
-			tcs.ForEach(x => available.Add(x, Type.GetType(nameof(System) + "." + x)));
-			//Convert.ChangeType(value, colType);
-			foreach (var value in values)
-			{
-				if (string.IsNullOrEmpty(value))
-				{
-					haveEmpty = true;
-					continue;
-				}
-				// Determine string limits.
-				sizeMin = Math.Min(sizeMin, value.Length);
-				sizeMax = Math.Max(sizeMax, value.Length);
-				isAscii &= value.All(x => x < 128);
-				// Get available types to test against.
-				var availableTypeCodes = available.Keys.ToArray();
-				// If only string was left.
-				if (availableTypeCodes.Length == 1 && availableTypeCodes[0] == TypeCode.String)
-					return;
-				// Test against available types.
-				foreach (var tc in availableTypeCodes)
-				{
-					switch (tc)
-					{
-						case TypeCode.Boolean:
-							bool resultBool;
-							if (!bool.TryParse(value, out resultBool))
-								available.Remove(tc);
-							break;
-						case TypeCode.Byte:
-							byte resultByte;
-							if (!byte.TryParse(value, out resultByte))
-								available.Remove(tc);
-							break;
-						case TypeCode.Char:
-							char resultChar;
-							if (!char.TryParse(value, out resultChar))
-								available.Remove(tc);
-							break;
-						case TypeCode.DateTime:
-							DateTime resultDateTime;
-							if (!DateTime.TryParse(value, out resultDateTime))
-								available.Remove(tc);
-							break;
-						case TypeCode.Decimal:
-							decimal resultDecimal;
-							if (!decimal.TryParse(value, out resultDecimal))
-								available.Remove(tc);
-							break;
-						case TypeCode.Double:
-							double resultDouble;
-							if (!double.TryParse(value, out resultDouble))
-								available.Remove(tc);
-							break;
-						case TypeCode.Int16:
-							short resultShort;
-							if (!short.TryParse(value, out resultShort))
-								available.Remove(tc);
-							break;
-						case TypeCode.Int32:
-							int resultInt;
-							if (!int.TryParse(value, out resultInt))
-								available.Remove(tc);
-							break;
-						case TypeCode.Int64:
-							long resultLong;
-							if (!long.TryParse(value, out resultLong))
-								available.Remove(tc);
-							break;
-						case TypeCode.SByte:
-							sbyte resultSByte;
-							if (!sbyte.TryParse(value, out resultSByte))
-								available.Remove(tc);
-							break;
-						case TypeCode.Single:
-							float resultFloat;
-							if (!float.TryParse(value, out resultFloat))
-								available.Remove(tc);
-							break;
-						case TypeCode.UInt16:
-							ushort resultUShort;
-							if (!ushort.TryParse(value, out resultUShort))
-								available.Remove(tc);
-							break;
-						case TypeCode.UInt32:
-							uint resultUInt;
-							if (!uint.TryParse(value, out resultUInt))
-								available.Remove(tc);
-							break;
-						case TypeCode.UInt64:
-							ulong resultULong;
-							if (!ulong.TryParse(value, out resultULong))
-								available.Remove(tc);
-							break;
-						default:
-							break;
-					}
-				}
-			}
-			type = available.FirstOrDefault().Value;
+			// If year is outside of the range then return.
+			if (year < 0 && year > 99)
+				return year;
+			// Convert year from 2 to 4 digits with the correct century (-50/+50 rule).
+			// JavaScript: By default, new Date(..) convert values from 0 to 99 to the years 1900 to 1999.
+			//var twoDigitYearMax = new Date().getFullYear() + 50;
+			var fullYearMax = twoDigitYearMax ?? DateTime.Now.Year + 50;
+			var yearMax = fullYearMax % 100;
+			var century = (fullYearMax - yearMax) / 100;
+			var fullYear = (century - (year > yearMax ? 1 : 0)) * 100 + year;
+			return fullYear;
 		}
+
 	}
 }

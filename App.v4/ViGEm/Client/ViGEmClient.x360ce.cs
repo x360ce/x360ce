@@ -260,7 +260,7 @@ namespace Nefarius.ViGEm.Client
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual controller " + userIndex + " works, but the bus refused its vibration: " +
 					BusAnswers.Name(answer) + ".",
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 		}
 
 		/// <summary>Forgets each controller's last plug and unplug failure and its refused vibration, so the next one is written.</summary>
@@ -445,11 +445,11 @@ namespace Nefarius.ViGEm.Client
 			if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual bus connected again after " + BusAnswers.Name(previous) + ".",
-					System.Diagnostics.EventLogEntryType.Information);
+					System.Diagnostics.TraceLevel.Info);
 			else
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"Virtual bus refused the connection: " + BusAnswers.Name(error) + ".",
-					System.Diagnostics.EventLogEntryType.Warning);
+					System.Diagnostics.TraceLevel.Warning);
 		}
 
 		public static void DisposeCurrent()
@@ -611,7 +611,7 @@ namespace Nefarius.ViGEm.Client
 			else
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 					"The virtual bus library loaded after failing to load before.",
-					System.Diagnostics.EventLogEntryType.Information);
+					System.Diagnostics.TraceLevel.Info);
 		}
 
 		public static string LibraryName { get { return _LibraryName; } }
@@ -636,25 +636,25 @@ namespace Nefarius.ViGEm.Client
 					var sr = Program.GetResourceStream(name);
 					if (sr == null)
 						return;
-					FileStream sw = null;
-					sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-					var buffer = new byte[1024];
-					while (true)
-					{
-						var count = sr.Read(buffer, 0, buffer.Length);
-						if (count == 0)
-							break;
-						sw.Write(buffer, 0, count);
-					}
-					sr.Close();
-					sw.Close();
+					// Written under another name and then moved, so a copy cut short never takes the file's name.
+					var partName = fileName + ".part";
+					using (sr)
+					using (var sw = new FileStream(partName, FileMode.Create, FileAccess.Write))
+						sr.CopyTo(sw);
+					File.Move(partName, fileName);
 				}
 				_LibraryName = fileName;
 				// Load library into memory.
 				Exception loadException;
 				libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary(_LibraryName, out loadException);
 				if (libHandle == IntPtr.Zero)
-					LastLoadException = loadException;
+				{
+					LastLoadException = new Exception("Could not load " + fileName + ": " + loadException.Message, loadException);
+					// A damaged copy is never written again while it is there, so it goes, and the next attempt writes it anew.
+					try { File.Delete(fileName); }
+					catch (IOException) { }
+					catch (UnauthorizedAccessException) { }
+				}
 			}
 			catch (Exception ex)
 			{

@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using JocysCom.ClassLibrary.Mcp;
 using x360ce.Engine;
-using x360ce.Engine.Mcp;
 using x360ce.App.Properties;
 
 namespace x360ce.App.Controls
@@ -19,12 +19,27 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (DesignMode) return;
+			// System until the file says otherwise; a file without the setting leaves it there.
+			ThemeComboBox.SelectedIndex = 0;
+			ThemeComboBox.SelectedIndexChanged += (s, e) =>
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(ToTheme(ThemeComboBox.Text));
 		}
 
 		public void InitOptions()
 		{
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			InitAiAccess();
+		}
+
+		/// <summary>The theme a Theme value of x360ce.ini names: Light, Dark, or anything else for System.</summary>
+		/// <remarks>System follows the Windows setting for apps.</remarks>
+		public static JocysCom.ClassLibrary.Controls.Themes.ThemeType ToTheme(string value)
+		{
+			if (string.Equals(value, "Light", StringComparison.OrdinalIgnoreCase))
+				return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light;
+			if (string.Equals(value, "Dark", StringComparison.OrdinalIgnoreCase))
+				return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark;
+			return JocysCom.ClassLibrary.Controls.Themes.ThemeType.Auto;
 		}
 
 		#region AI Assistant Access
@@ -41,11 +56,6 @@ namespace x360ce.App.Controls
 			AiAccessComboBox.SelectedItem = s.Level.ToString();
 			AiAccessPortNumericUpDown.Value = Math.Max(AiAccessPortNumericUpDown.Minimum, Math.Min(AiAccessPortNumericUpDown.Maximum, s.Port));
 			AiAccessTokenTextBox.Text = s.Token ?? "";
-			AiAccessWindowsCheckBox.Checked = s.Windows;
-			// The Windows agent registry ships with newer Windows only.
-			AiAccessWindowsCheckBox.Enabled = WindowsAgentRegistry.IsAvailable;
-			if (!WindowsAgentRegistry.IsAvailable)
-				AiAccessWindowsCheckBox.Text += " (needs a newer Windows)";
 			AiAccessEnabledCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Enabled = AiAccessEnabledCheckBox.Checked);
 			AiAccessComboBox.SelectedIndexChanged += (sender, e) => ChangeAiAccess(x => x.Level = (AiAccess)Enum.Parse(typeof(AiAccess), (string)AiAccessComboBox.SelectedItem));
 			// Taken when editing ends, and only when it changed: every spin click, or every visit to the
@@ -55,7 +65,6 @@ namespace x360ce.App.Controls
 				if ((int)AiAccessPortNumericUpDown.Value != AiAccessSettings.Current.Port)
 					ChangeAiAccess(x => x.Port = (int)AiAccessPortNumericUpDown.Value);
 			};
-			AiAccessWindowsCheckBox.CheckedChanged += (sender, e) => ChangeAiAccess(x => x.Windows = AiAccessWindowsCheckBox.Checked);
 			AiAccessRegenerateButton.Click += (sender, e) => ChangeAiAccess(x => x.Token = McpListener.NewToken());
 			AiAccessCopyButton.Click += (sender, e) => JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(McpClient.ServerSettings(Application.ExecutablePath));
 			AiAccessLogButton.Click += (sender, e) => McpLog.Open();
@@ -85,8 +94,6 @@ namespace x360ce.App.Controls
 				status = "Open at " + McpListener.Prefix(McpListener.LoopbackAddress, s.Port) + " with " + s.Level + " access.";
 			else
 				status = "Not open: " + McpListener.LastError;
-			if (s.Enabled && s.Windows && WindowsAgentRegistry.LastError != null)
-				status += " Windows registration: " + WindowsAgentRegistry.LastError;
 			AiAccessStatusLabel.Text = status;
 		}
 
@@ -113,6 +120,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
 			SettingManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
 			SettingManager.AddMap(section, () => SettingName.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			SettingManager.AddMap(section, () => SettingName.Theme, ThemeComboBox);
 			SettingManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
 			SettingManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			SettingManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);

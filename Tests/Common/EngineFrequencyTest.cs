@@ -121,7 +121,7 @@ namespace x360ce.Tests
 				var reader = new Thread(() =>
 				{
 					while (!Volatile.Read(ref stop))
-						GC.KeepAlive(data.ItemsToArraySyncronized());
+						GC.KeepAlive(data.ItemsToArraySynchronized());
 				});
 				reader.IsBackground = true;
 				Cycles(data, 250);
@@ -148,7 +148,7 @@ namespace x360ce.Tests
 			var watch = Stopwatch.StartNew();
 			while (watch.ElapsedMilliseconds < milliseconds)
 			{
-				GC.KeepAlive(data.ItemsToArraySyncronized());
+				GC.KeepAlive(data.ItemsToArraySynchronized());
 				// Assigning through the indexer raises the change the interface listens for,
 				// which is the step that reaches the interface thread.
 				data.Items[0] = data.Items[0];

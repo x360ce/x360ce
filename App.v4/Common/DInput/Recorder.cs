@@ -56,14 +56,14 @@ namespace x360ce.App
 		}
 
 		/// <summary>Initial Direct Input activity state</summary>
-		CustomDiState recordingSnapshot;
+		SourceState recordingSnapshot;
 
 		/// <summary>
 		/// Called when recording is in progress.
 		/// </summary>
 		/// <param name="state">Current direct input activity.</param>
 		/// <returns>True if recording stopped, otherwise false.</returns>
-		public bool StopRecording(CustomDiState state = null)
+		public bool StopRecording(SourceState state = null)
 		{
 			lock (recordingLock)
 			{
@@ -220,7 +220,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Compare to another state.
 		/// </summary>
-		public static string[] CompareTo(CustomDiState oldState, CustomDiState newState, MapCode mappingTo)
+		public static string[] CompareTo(SourceState oldState, SourceState newState, MapCode mappingTo)
 		{
 			if (oldState == null)
 				throw new ArgumentNullException(nameof(oldState));
@@ -248,7 +248,7 @@ namespace x360ce.App
 					if (oldState.Povs[i] != newState.Povs[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-						var v = newState.Povs[0];
+						var v = newState.Povs[i];
 						if ((DPadEnum)v == DPadEnum.Up)
 							list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Up.ToString()));
 						if ((DPadEnum)v == DPadEnum.Right)

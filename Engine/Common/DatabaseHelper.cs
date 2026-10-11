@@ -16,7 +16,10 @@ namespace x360ce.Engine
 			if (command.UserGames != null)
 				messages.Add(Upsert(command.UserGames));
 			if (command.UserDevices != null)
+			{
+				StoreInputSource(command.UserDevices);
 				messages.Add(Upsert(command.UserDevices));
+			}
 			if (command.UserInstances != null)
 				messages.Add(Upsert(command.UserInstances));
 			// UPSERT settings last, because it depends on other records.
@@ -61,6 +64,8 @@ namespace x360ce.Engine
 				UserDevice[] userDevices;
 				error = Select(computerId, profileId, command.UserDevices, out userDevices);
 				messages.Add(error);
+				// Before the checksums, which the program takes with a DirectInput device at 0.
+				userDevices = FilterByInputSource(userDevices, command.Values);
 				results.UserDevices = FilterByChecksum(userDevices, command.Checksums, out error);
 				if (!string.IsNullOrEmpty(error))
 					messages.Add(error);
@@ -118,6 +123,58 @@ namespace x360ce.Engine
 			error = string.Format("{0} record(s) changed", list.Length);
 			return list;
 		}
+
+		#region Input source of a device
+
+		/// <summary>
+		/// Gives every device sent without an input source the one the database stores for it: DirectInput.
+		/// </summary>
+		/// <remarks>
+		/// A program before 4.25 sends no input source, and a newer one sends none for a DirectInput device, so a
+		/// device that arrives without one is a DirectInput device. Called before the devices are inserted or copied
+		/// over the stored rows. An older program updating a row that a newer one saved under the same InstanceGuid
+		/// would set it back to DirectInput; that does not happen, because a Raw Input device takes its InstanceGuid
+		/// from its HID path, and no older program knows that device.
+		/// </remarks>
+		public static void StoreInputSource(UserDevice[] devices)
+		{
+			foreach (var device in devices)
+				if (device.InputSourceType == 0)
+					device.InputSourceType = (int)InputSourceType.DirectInput;
+		}
+
+		/// <summary>
+		/// The stored devices of the kinds the program reads, each with its input source as the program keeps it:
+		/// 0 for DirectInput.
+		/// </summary>
+		/// <param name="devices">Devices as stored. A row at 0 counts as DirectInput.</param>
+		/// <param name="values">
+		/// The values of the program's message. <see cref="CloudKey.InputSourceTypes"/> names the kinds it reads; a
+		/// program that sends none, as every program before 4.25, reads DirectInput only.
+		/// </param>
+		/// <remarks>
+		/// Handing a DirectInput device back at 0 keeps its checksum the one the program took, so an unchanged
+		/// device is not sent again. The devices are changed in place, so they must not be tracked by a context that
+		/// is saved later; <see cref="Select{T}"/> reads them untracked.
+		/// </remarks>
+		public static UserDevice[] FilterByInputSource(UserDevice[] devices, KeyValueList values)
+		{
+			var directInput = (int)InputSourceType.DirectInput;
+			var readable = values.GetValue(CloudKey.InputSourceTypes, directInput);
+			if (readable == 0)
+				readable = directInput;
+			var list = devices.Where(x =>
+			{
+				var kind = x.InputSourceType == 0 ? directInput : x.InputSourceType;
+				return (readable & kind) == kind;
+			}).ToArray();
+			foreach (var device in list)
+				if (device.InputSourceType == directInput)
+					device.InputSourceType = 0;
+			return list;
+		}
+
+		#endregion
 
 		#region Helper Methods
 
@@ -179,10 +236,16 @@ namespace x360ce.Engine
 			return string.Format("{0}s: {1} created, {2} updated.", items.GetType().GetElementType().Name, created, updated);
 		}
 
+		/// <summary>Reads the records of one computer and profile.</summary>
+		/// <remarks>
+		/// The records are read to be sent, never saved, so they are not tracked: one changed on its way out, as
+		/// <see cref="FilterByInputSource"/> and <see cref="FilterByChecksum"/> do, stays a change to the reply.
+		/// </remarks>
 		public static string Select<T>(Guid computerId, Guid profileId, T[] filter, out T[] items) where T : EntityObject, IUserRecord
 		{
 			var db = new x360ceModelContainer();
 			var table = db.CreateObjectSet<T>();
+			table.MergeOption = MergeOption.NoTracking;
 			items = table.Where(x => x.ComputerId == computerId && x.ProfileId == profileId).ToArray();
 			db.Dispose();
 			return string.Format("{0}s: {1} selected.", items.GetType().GetElementType().Name, items.Length);

@@ -8,7 +8,7 @@ using x360ce.App;
 using x360ce.App.Mcp;
 using x360ce.Engine;
 using x360ce.Engine.Data;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.Mcp;
 
 namespace x360ce.Tests
 {
@@ -17,12 +17,14 @@ namespace x360ce.Tests
 	public class McpDeviceToolsTest
 	{
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("The device list names the test controller, and mapping without a game is refused")]
+		[Description("The device list names the test controller and its maker, and mapping without a game is refused")]
 		public void Device_list_names_the_test_controller()
 		{
 			McpTools.Register();
 			McpCatalog.OnUiThread = a => a();
 			var device = TestDeviceHelper.NewUserDevice();
+			// A request that names a controller by its brand finds it by the maker the controller tab shows.
+			device.DevManufacturer = "Thrustmaster";
 			SettingsManager.UserDevices.Items.Add(device);
 			var game = SettingsManager.CurrentGame;
 			SettingsManager.CurrentGame = null;
@@ -32,6 +34,7 @@ namespace x360ce.Tests
 				var row = rows.FirstOrDefault(x => (string)x["InstanceGuid"] == device.InstanceGuid.ToString());
 				Assert.IsNotNull(row, "The test controller is not listed.");
 				Assert.AreEqual(device.ProductName, row["Product"]);
+				Assert.AreEqual("Thrustmaster", row["Vendor"], "The device list does not name the maker.");
 				Assert.AreEqual(0, ((int[])row["Controllers"]).Length, "With no game, the device is listed on a controller.");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.DeviceMap(device.InstanceGuid.ToString(), 2)).Message, "No game");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.DeviceMap("not-a-guid", 1)).Message, "No device");
@@ -53,7 +56,7 @@ namespace x360ce.Tests
 			// Configure, so the unmap leaves HID Guardian alone, which would elevate.
 			var level = McpCatalog.Level;
 			McpCatalog.Level = () => AiAccess.Configure;
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var oldGame = SettingsManager.CurrentGame;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
@@ -104,7 +107,7 @@ namespace x360ce.Tests
 			McpCatalog.Level = () => AiAccess.Configure;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;
 			var twoTabs = new UserGame
 			{
@@ -149,7 +152,7 @@ namespace x360ce.Tests
 			McpCatalog.Level = () => AiAccess.Configure;
 			var device = TestDeviceHelper.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized();
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;
 			var keepMove = new UserGame
 			{
@@ -223,17 +226,21 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("The semantic tools are catalogued at the levels the spec gives them, and only input_wait leaves the interface thread")]
+		[Description("The semantic tools are catalogued at the levels the spec gives them, and only the tools that wait leave the interface thread")]
 		public void Semantic_tools_carry_their_levels()
 		{
 			McpTools.Register();
 			var tools = McpCatalog.Tools.ToDictionary(t => t.Name);
 			Assert.AreEqual(AiAccess.Read, tools["devices_list"].Level);
-			foreach (var name in new[] { "device_map", "input_wait", "preset_apply", "settings_save" })
+			// The input tools read what the person presses, a mapped keyboard's keys among it, so they ask what changing does.
+			foreach (var name in new[] { "device_map", "input_wait", "input_log", "preset_apply", "settings_save" })
 				Assert.AreEqual(AiAccess.Configure, tools[name].Level, name);
 			Assert.IsFalse(tools["input_wait"].OnUiThread, "Waiting on the interface thread would freeze the window.");
+			Assert.IsFalse(tools["input_log"].OnUiThread, "Logging waits for its seconds, which on the interface thread would freeze the window.");
 			Assert.IsFalse(tools["ui_show"].OnUiThread, "Pointing waits too, so the balloon can be read while the window keeps drawing.");
-			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "ui_show" && t.Name != "ui_script").All(t => t.OnUiThread));
+			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "input_log" && t.Name != "ui_show" && t.Name != "ui_script").All(t => t.OnUiThread));
+			StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.InputLog(1, "not a guid")).Message, "devices_list",
+				"A device that cannot be named must be refused with where to take its name from, before anything is logged.");
 		}
 	}
 }

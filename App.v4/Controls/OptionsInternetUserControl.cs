@@ -146,7 +146,9 @@ namespace x360ce.App.Controls
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
 			var form = new WebBrowserForm();
-			form.Size = new Size(400, 500);
+			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
+			var scale = ControlsHelper.DpiScale;
+			form.Size = new Size((int)Math.Round(400 * scale), (int)Math.Round(500 * scale));
 			form.Text = "Create Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
@@ -162,7 +164,9 @@ namespace x360ce.App.Controls
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
 			var form = new WebBrowserForm();
-			form.Size = new Size(400, 300);
+			// In pixels at 100%, so enlarged with the screen as the window's own sizes are.
+			var scale = ControlsHelper.DpiScale;
+			form.Size = new Size((int)Math.Round(400 * scale), (int)Math.Round(300 * scale));
 			form.Text = "Reset Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;

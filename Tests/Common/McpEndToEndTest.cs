@@ -1,4 +1,4 @@
-// @under-test: Engine/Mcp/McpServer.cs, Engine/Mcp/McpClient.cs, App.v4/Mcp/McpTools.cs, App.v4/Program.cs
+// @under-test: Engine/JocysCom/Mcp/McpServer.cs, Engine/JocysCom/Mcp/McpClient.cs, App.v4/Mcp/McpTools.cs, App.v4/Program.cs, Engine/Common/EngineHelper.cs, App.v4/Controls/OptionsUserControl.cs
 // @area: mcp   @layer: ui-interactive
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web.Script.Serialization;
 using x360ce.App;
 using x360ce.App.Mcp;
-using x360ce.Engine.Mcp;
+using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Mcp;
+using JocysCom.ClassLibrary.Runtime;
 using x360ce.Engine;
 
 namespace x360ce.Tests
@@ -64,6 +67,93 @@ namespace x360ce.Tests
 				o.AiAccess = previous;
 				o.AiAccessEnabled = previouslyEnabled;
 				SettingsManager.OptionsData.Save();
+			}
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("ui-interactive"), Timeout(180000)]
+		[Description("A switch called without /Profile, as an assistant calls it, reaches a copy the person started with /Profile")]
+		public void A_switch_without_a_profile_reaches_a_copy_started_with_one()
+		{
+			var exe = Ui.FindApp("App.v4");
+			if (exe == null)
+				Assert.Inconclusive("App.v4 is not built.");
+			if (Process.GetProcessesByName("x360ce").Length > 0)
+				Assert.Inconclusive("x360ce is running; this test starts a copy of its own.");
+			var profile = NewProfile(37362);
+			var process = Process.Start(new ProcessStartInfo(exe, "\"/Profile=" + profile + "\"") { WorkingDirectory = profile, UseShellExecute = false });
+			try
+			{
+				// The door opens once the window is built; until then the switch says the copy does not answer.
+				var output = "";
+				var code = -1;
+				var until = DateTime.Now.AddSeconds(90);
+				while (code != 0 && DateTime.Now < until)
+				{
+					code = RunSwitch(exe, "-Ai=ui_current", out output);
+					if (code != 0)
+						System.Threading.Thread.Sleep(1000);
+				}
+				Assert.AreEqual(0, code, "The switch did not reach the copy started with /Profile: " + output);
+				StringAssert.Contains(output, "\"Windows\"");
+			}
+			finally
+			{
+				Ui.CloseApp(process);
+				Directory.Delete(profile, true);
+			}
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("ui-interactive"), Timeout(240000)]
+		[Description("Describing the interface with /ExportUi opens no door and leaves the options file as it was, even where the options have AI assistant access on")]
+		public void Export_opens_no_door_and_writes_no_settings()
+		{
+			var exe = Ui.FindApp("App.v4");
+			if (exe == null)
+				Assert.Inconclusive("App.v4 is not built.");
+			var profile = NewProfile(37363);
+			var options = Path.Combine(profile, "Settings", "x360ce.Options.xml");
+			var before = File.ReadAllBytes(options);
+			var folder = Path.Combine(profile, "export");
+			var process = Process.Start(new ProcessStartInfo(exe, "\"/Profile=" + profile + "\" \"/ExportUi=" + folder + "\"") { WorkingDirectory = profile, UseShellExecute = false });
+			try
+			{
+				Assert.IsTrue(process.WaitForExit(180000), "The export did not finish.");
+				Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree-v4.md")), "The export wrote nothing, so this proves nothing.");
+				var log = Path.Combine(profile, "x360ce.AiAccess.log");
+				Assert.IsFalse(File.Exists(log) && File.ReadAllText(log).Contains("door opened"), "The export opened the door: " + (File.Exists(log) ? File.ReadAllText(log) : ""));
+				CollectionAssert.AreEqual(before, File.ReadAllBytes(options), "The export wrote the options file.");
+			}
+			finally
+			{
+				if (!process.HasExited)
+					process.Kill();
+				process.WaitForExit();
+				Directory.Delete(profile, true);
+			}
+		}
+
+		/// <summary>A profile folder whose options have the door on at Read on the port given, trusting local connections.</summary>
+		static string NewProfile(int port)
+		{
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "profile-" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(Path.Combine(folder, "Settings"));
+			var o = new Options { AiAccessEnabled = true, AiAccess = AiAccess.Read, AiAccessTrustLocal = true, AiAccessPort = port };
+			o.EnsureAiAccessToken();
+			var data = new XSettingsData<Options> { Items = new SortableBindingList<Options> { o } };
+			File.WriteAllBytes(Path.Combine(folder, "Settings", "x360ce.Options.xml"), Serializer.SerializeToXmlBytes(data, Encoding.UTF8, true));
+			return folder;
+		}
+
+		/// <summary>Runs the program with a switch that answers and stops, and returns its exit code, with what it printed.</summary>
+		static int RunSwitch(string exe, string arguments, out string output)
+		{
+			var start = new ProcessStartInfo(exe, arguments) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+			using (var p = Process.Start(start))
+			{
+				var error = p.StandardError.ReadToEndAsync();
+				output = p.StandardOutput.ReadToEnd() + error.Result;
+				p.WaitForExit();
+				return p.ExitCode;
 			}
 		}
 

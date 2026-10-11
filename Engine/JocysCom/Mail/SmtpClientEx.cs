@@ -1,13 +1,13 @@
-﻿using System;
+﻿#nullable disable
+
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 using System.Net.Configuration;
 using System.Web;
 #endif
@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.Mail
 			{
 				lock (currentLock)
 				{
-					if (_Current == null)
+					if (_Current is null)
 						_Current = new SmtpClientEx();
 					return _Current;
 				}
@@ -73,7 +73,7 @@ namespace JocysCom.ClassLibrary.Mail
 		{
 			get
 			{
-				if (localHostName == null)
+				if (localHostName is null)
 					return null;
 				return (string)localHostName.GetValue(this);
 			}
@@ -105,7 +105,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void SetErrorCode(Exception ex, int errorCode)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			if (errorCode == 0)
 				return;
@@ -138,11 +138,10 @@ namespace JocysCom.ClassLibrary.Mail
 			//
 			var sp = Configuration.SettingsParser.Current;
 			string settingsFrom = null;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
-			var x = GetCurrentConfiguration();
-			settingsFrom = getFrom();
+#if NETFRAMEWORK // .NET Framework
+			System.Configuration.Configuration config;
+			var settings = GetCurrentSmtpSettings(out config);
+			settingsFrom = settings.From;
 #endif
 			SmtpFrom = sp.Parse("SmtpFrom", settingsFrom);
 			var credentials = (NetworkCredential)Credentials ?? new NetworkCredential();
@@ -182,15 +181,13 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 
 		/// <summary>Get configuration settings from current web.config or app.config.</summary>
 		static System.Configuration.Configuration GetCurrentConfiguration()
 		{
 			// If executable then...
-			if (HttpRuntime.IISVersion == null)
+			if (HttpRuntime.IISVersion is null)
 				return System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
 			// If web request then...
 			if (HttpContext.Current != null
@@ -207,13 +204,6 @@ namespace JocysCom.ClassLibrary.Mail
 			// Get Mail settings.
 			var settings = NetSectionGroup.GetSectionGroup(config).MailSettings;
 			return settings.Smtp;
-		}
-
-		private string getFrom()
-		{
-			System.Configuration.Configuration config;
-			var settings = GetCurrentSmtpSettings(out config);
-			return settings.From;
 		}
 
 #endif
@@ -234,7 +224,9 @@ namespace JocysCom.ClassLibrary.Mail
 					// Enable TLS 1.1, 1.2 and 1.3
 					var Tls11 = 0x0300; //   768
 					var Tls12 = 0x0C00; //  3072
+#pragma warning disable SYSLIB0014 // ServicePointManager is obsolete on modern .NET but required for net48.
 					ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
+#pragma warning restore SYSLIB0014
 				}
 				if (SmtpLocalAddress != IPAddress.Any || SmtpLocalPort > 0)
 				{
@@ -262,8 +254,8 @@ namespace JocysCom.ClassLibrary.Mail
 				return;
 			}
 			// Send Email.
-			// CWE-201: Information Exposure Through Send Data
-			// CWE-209: Information Exposure Through an Error Message
+			// SUPPRESS: CWE-201: Information Exposure Through Send Data
+			// SUPPRESS: CWE-209: Information Exposure Through an Error Message
 			// Note: Mitigated by design. Generic shared method.
 			Send(message);
 		}
@@ -303,7 +295,7 @@ namespace JocysCom.ClassLibrary.Mail
 		/// <param name="message"></param>
 		public static void AddSmtpSendCopyToRecipients(MailMessage message, string recipients)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var addresses = MailHelper.ParseEmailAddress(recipients);
 			var hosts = addresses.Select(x => x.Host.ToLower()).Distinct().ToArray();

@@ -86,7 +86,7 @@ namespace x360ce.Tests
 				ListLock(SettingsManager.UserSettings.Items), ListLock(SettingsManager.UserDevices.Items),
 				ListLock(SettingsManager.PadSettings.Items), MapsLock(ps)),
 				"Reading the devices or converting the rows waits for a settings list or a mapping the interface holds while it draws a change.");
-			Assert.IsNotNull(ud.DiState, "The test controller was not read, so the conversion was not timed.");
+			Assert.IsNotNull(ud.SourceState, "The test controller was not read, so the conversion was not timed.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
@@ -350,7 +350,7 @@ namespace x360ce.Tests
 					// window starts a device list read under the second.
 					InstanceField(helper, "PassLock"), InstanceField(helper, "_deviceListStartLock")),
 					"A thousand passes did not finish while the interface's locks were held: the pass waits for one of them.");
-				Assert.IsNotNull(ud.DiState, "The test controller was not read, so the pass was not timed with a device.");
+				Assert.IsNotNull(ud.SourceState, "The test controller was not read, so the pass was not timed with a device.");
 			}
 			finally
 			{

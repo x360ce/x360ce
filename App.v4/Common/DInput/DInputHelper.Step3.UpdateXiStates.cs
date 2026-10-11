@@ -42,7 +42,11 @@ namespace x360ce.App.DInput
 					continue;
 				// If device Direct Input state failed then...
 				if (ud.JoState == null)
-					continue;
+				{
+					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
+					if (ud.InputSourceType != (int)InputSourceType.RawInput || ud.RawInputMissing)
+						continue;
+				}
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;
@@ -56,7 +60,7 @@ namespace x360ce.App.DInput
 				// If setting was not found then continue.
 				if (maps == null)
 					continue;
-				var diState = ud.DiState;
+				var diState = ud.SourceState;
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
@@ -76,21 +80,11 @@ namespace x360ce.App.DInput
 				{
 					// Get degree value from the POV.
 					int povdeg = diState.Povs[p];
-					// If POV is pressed into one of the directions then...
+					// If POV is pressed into one of the directions then up, right, down and left, a diagonal pressing two.
 					if (povdeg >= 0)
 					{
-						// Split PoV degrees into 8 groups by
-						// converting PoV degree from 0 to 36000 to number from 0 to 7.
-						// This will allow to have more flexible degree values mapped to buttons.
-						var y = ((2250 + povdeg) / 4500) % 8;
-						// XINPUT_GAMEPAD_DPAD_UP
-						dPadButtons[p * 4 + 0] = (y >= 0 && y <= 1) || y == 7;
-						// XINPUT_GAMEPAD_DPAD_RIGHT
-						dPadButtons[p * 4 + 1] = (y >= 1 && y <= 3);
-						// XINPUT_GAMEPAD_DPAD_DOWN
-						dPadButtons[p * 4 + 2] = (y >= 3 && y <= 5);
-						// XINPUT_GAMEPAD_DPAD_LEFT
-						dPadButtons[p * 4 + 3] = (y >= 5 && y <= 7);
+						for (var d = 0; d < 4; d++)
+							dPadButtons[p * 4 + d] = ConvertHelper.IsPovDirectionPressed(povdeg, d);
 					}
 				}
 
@@ -366,7 +360,7 @@ namespace x360ce.App.DInput
 		/// a result neither of them describes. Switching a row over writes the settings out as part
 		/// of the formula, so nothing is lost by them no longer being read.
 		/// </remarks>
-		void ApplyExpression(Map map, CustomDiState diState, ref Gamepad gp)
+		void ApplyExpression(Map map, SourceState diState, ref Gamepad gp)
 		{
 			// A stick is read from the middle, a trigger and a button from one end, exactly as the
 			// ordinary mapping path already does through GetThumbValue's own thumb flag.

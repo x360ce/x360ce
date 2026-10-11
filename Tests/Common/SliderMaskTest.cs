@@ -21,9 +21,9 @@ namespace x360ce.Tests
 		{
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs");
 			var source = File.ReadAllText(path);
-			var kept = Regex.IsMatch(source, @"ud\.DiSliderMask\s*=\s*CustomDiState\.GetJoystickSlidersMask\(");
+			var kept = Regex.IsMatch(source, @"ud\.DiSliderMask\s*=\s*SourceState\.GetJoystickSlidersMask\(");
 			Assert.IsTrue(kept, "GetJoystickSlidersMask is called without its result being assigned to ud.DiSliderMask, so no real device offers a slider.");
-			var dropped = Regex.IsMatch(source, @"^\s*CustomDiState\.GetJoystickSlidersMask\(", RegexOptions.Multiline);
+			var dropped = Regex.IsMatch(source, @"^\s*SourceState\.GetJoystickSlidersMask\(", RegexOptions.Multiline);
 			Assert.IsFalse(dropped, "GetJoystickSlidersMask is called as a statement, which drops the mask.");
 		}
 	}

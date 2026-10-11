@@ -62,6 +62,11 @@
     <Property Name="ForceOverall" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSpringEnable" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSpringStrength" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ForceSpringCentre" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ForceSpringPeak" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ForceSpringLightening" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ForceSpringDamping" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="ForceSpringSpeed" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="WheelRange" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSwapMotor" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
@@ -268,6 +273,7 @@
     <Property Name="IsHidden" Type="bit" Nullable="false" />
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
+    <Property Name="InputSourceType" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="x360ce_UserGames">
     <Key>

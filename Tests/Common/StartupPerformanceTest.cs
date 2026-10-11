@@ -80,6 +80,7 @@ namespace x360ce.Tests
 				UseShellExecute = false,
 			};
 			info.EnvironmentVariables["X360CE_ENGINE_LOG"] = log;
+			var power = new MachinePower();
 			var process = Process.Start(info);
 			var startedAt = process.StartTime;
 			try
@@ -87,6 +88,8 @@ namespace x360ce.Tests
 				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 				var takenLine = Ui.WaitFor(() => FirstMilestone(log, "device list taken in"),
 					TimeSpan.FromSeconds(30), "the device list to be taken in");
+				// The clock while the program started, not while it then sat settled.
+				var machine = power.ToString();
 				// Ten and thirty seconds after the process began, so the two samples are a fixed
 				// distance apart whatever the machine did in between.
 				var atTen = SampleMemory(process, startedAt.AddSeconds(10), "10s");
@@ -101,6 +104,7 @@ namespace x360ce.Tests
 				Ui.CloseApp(process);
 				process = null;
 
+				Console.WriteLine("machine while starting: " + machine);
 				var milestones = ReadLines(log).Where(x => x.StartsWith("startup,", StringComparison.Ordinal)).ToArray();
 				foreach (var line in milestones)
 					Console.WriteLine(line);
@@ -149,6 +153,7 @@ namespace x360ce.Tests
 			}
 			finally
 			{
+				power.Dispose();
 				if (process != null)
 					Ui.CloseApp(process);
 				try { File.Delete(log); }

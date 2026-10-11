@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/Common/CustomDiState.cs, Engine/Data/UserDevice.cs, App.v4/Common/TestDeviceHelper.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/Recorder.cs, App.v4/Mcp/McpTools.cs, App.v4/Controls/PadTabPages/DirectInputControl.cs
+﻿// @under-test: Engine/Input/States/SourceState.cs, Engine/Data/UserDevice.cs, App.v4/Common/TestDeviceHelper.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/Recorder.cs, App.v4/Mcp/McpTools.cs, App.v4/Controls/PadTabPages/DirectInputControl.cs
 // @area: engine   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -50,8 +50,8 @@ namespace x360ce.Tests
 			js.VelocitySliders[1] = 8;
 			js.PointOfViewControllers[3] = 9000;
 			js.Buttons[127] = true;
-			var made = new CustomDiState(js);
-			var filled = new CustomDiState();
+			var made = new SourceState(js);
+			var filled = new SourceState();
 			var axis = filled.Axis;
 			var buttons = filled.Buttons;
 			filled.Load(js);
@@ -74,17 +74,17 @@ namespace x360ce.Tests
 			DeviceRouting routing;
 			var read = Reading(out ud, out routing);
 			read(null, Game, null, routing);
-			var first = ud.DiState;
+			var first = ud.SourceState;
 			var firstJo = ud.JoState;
 			read(null, Game, null, routing);
-			var second = ud.DiState;
+			var second = ud.SourceState;
 			Assert.AreNotSame(first, second, "The poll wrote into the state shown until then.");
 			Assert.AreNotSame(firstJo, ud.JoState, "The poll read the device into the state shown until then.");
-			Assert.AreSame(first, ud.OldDiState);
+			Assert.AreSame(first, ud.OldSourceState);
 			read(null, Game, null, routing);
-			Assert.AreSame(first, ud.DiState, "A third poll made a new state rather than filling the one from two polls ago.");
+			Assert.AreSame(first, ud.SourceState, "A third poll made a new state rather than filling the one from two polls ago.");
 			Assert.AreSame(firstJo, ud.JoState, "A third poll made a new state rather than filling the one from two polls ago.");
-			Assert.AreSame(second, ud.OldDiState);
+			Assert.AreSame(second, ud.OldSourceState);
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("performance")]
@@ -113,16 +113,16 @@ namespace x360ce.Tests
 		{
 			// X, Y and the wheel report how far they moved; axis 4 reports where it is.
 			var ud = new UserDevice { DiRelativeAxisMask = 0x1 | 0x2 | 0x4 };
-			var read = new CustomDiState();
-			var shown = new CustomDiState();
+			var read = new SourceState();
+			var shown = new SourceState();
 			read.Axis[0] = 1000;
 			read.Axis[3] = 12345;
 			read.Buttons[2] = true;
 			read.Povs[0] = -1;
 			shown.Povs[0] = 9000;
 			DInputHelper.ToMouseState(ud, read, shown, 5);
-			Assert.IsNotNull(ud.OrgDiState);
-			Assert.AreNotSame(read, ud.OrgDiState, "The origin is the reading itself, which the next poll fills again.");
+			Assert.IsNotNull(ud.OriginSourceState);
+			Assert.AreNotSame(read, ud.OriginSourceState, "The origin is the reading itself, which the next poll fills again.");
 			Assert.AreEqual(1000, read.Axis[0], "The reading was written over.");
 			Assert.AreEqual(-short.MinValue, shown.Axis[0], "A mouse that has not moved rests at one end, not in the middle.");
 			Assert.AreEqual(-short.MinValue, shown.Axis[1], "An axis still at its first reading does not rest in the middle.");
@@ -153,13 +153,13 @@ namespace x360ce.Tests
 		public void Movement_axes_are_known_by_their_flag()
 		{
 			// The masks need a device, so they are read from the source.
-			var engine = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "Engine", "Common", "CustomDiState.cs"));
+			var engine = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "Engine", "Input", "States", "SourceState.cs"));
 			Assert.AreEqual(3, Ui.Count(engine, "if (item.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis))"),
 				"An axis or slider mask leaves out the controls DirectInput calls relative.");
 			Assert.AreEqual(3, Ui.Count(engine, "relativeMask |= 1 << i;"));
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
-			StringAssert.Contains(step2, "ud.DiRelativeAxisMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeMask);");
-			StringAssert.Contains(step2, "ud.DiRelativeSliderMask = CustomDiState.TrustedRelativeMask(ud.CapType, relativeSliderMask);");
+			StringAssert.Contains(step2, "ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, relativeMask);");
+			StringAssert.Contains(step2, "ud.DiRelativeSliderMask = SourceState.TrustedRelativeMask(ud.CapType, relativeSliderMask);");
 			StringAssert.Contains(step2, "var moving = ud.Device != null && (ud.DiRelativeAxisMask | ud.DiRelativeSliderMask) != 0;");
 			Assert.AreEqual(2, Ui.Count(step2, "ud.DiRelativeRestart = true;"),
 				"A device acquired again keeps the origin of its moving axes, so after a reorder or a reconnect they rest at an end.");
@@ -172,8 +172,8 @@ namespace x360ce.Tests
 		{
 			// Slider 2 reports how far it moved; slider 1 and the axes report where they are.
 			var ud = new UserDevice { DiRelativeSliderMask = 0x2 };
-			var read = new CustomDiState();
-			var shown = new CustomDiState();
+			var read = new SourceState();
+			var shown = new SourceState();
 			read.Sliders[0] = 777;
 			read.Sliders[1] = 5000;
 			read.Axis[0] = 4321;
@@ -191,11 +191,11 @@ namespace x360ce.Tests
 		public void A_device_acquired_again_rests_in_the_middle_again()
 		{
 			var ud = new UserDevice { DiRelativeAxisMask = 0x1 | 0x2, DiRelativeSliderMask = 0x1 };
-			var read = new CustomDiState();
-			var shown = new CustomDiState();
+			var read = new SourceState();
+			var shown = new SourceState();
 			read.Axis[0] = 500;
 			DInputHelper.ToMouseState(ud, read, shown, 1);
-			var origin = ud.OrgDiState;
+			var origin = ud.OriginSourceState;
 			read.Axis[0] += 10000;
 			DInputHelper.ToMouseState(ud, read, shown, 2);
 			Assert.AreEqual(ushort.MaxValue, shown.Axis[0], "A mouse moved past the end is not at the end.");
@@ -209,7 +209,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(-short.MinValue, shown.Axis[1], "An axis whose total moved while the device was away does not rest in the middle.");
 			Assert.AreEqual(-short.MinValue, shown.Sliders[0], "A moving slider does not rest in the middle after the device was acquired again.");
 			Assert.IsFalse(ud.DiRelativeRestart, "The origin is taken again on every poll, so the device never moves.");
-			Assert.AreSame(origin, ud.OrgDiState, "The origin was made again rather than filled in place.");
+			Assert.AreSame(origin, ud.OriginSourceState, "The origin was made again rather than filled in place.");
 			read.Axis[0] += 100;
 			DInputHelper.ToMouseState(ud, read, shown, 4);
 			Assert.AreEqual(-short.MinValue + 1600, shown.Axis[0], "The movement from the new origin is not what the mouse shows.");
@@ -230,31 +230,31 @@ namespace x360ce.Tests
 		public void A_moving_axis_at_rest_centres_a_stick_and_releases_a_trigger_and_a_button()
 		{
 			// Axis 1 and slider 1 report how far they moved; axis 2 reports where it is.
-			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), DiRelativeAxisMask = 0x1, DiRelativeSliderMask = 0x1, JoState = new JoystickState(), DiState = new CustomDiState() };
+			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), DiRelativeAxisMask = 0x1, DiRelativeSliderMask = 0x1, JoState = new JoystickState(), SourceState = new SourceState() };
 			ud.IsOnline = true;
 			var ps = new PadSetting { LeftThumbAxisX = "a1", LeftTrigger = "a1", ButtonA = "a1", ButtonB = "a-1", ButtonX = "s1", RightTrigger = "a2", PadSettingChecksum = Guid.NewGuid() };
 			var row = new UserSetting { InstanceGuid = ud.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
 			var routing = DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { ud });
 			var xi = EngineSteps.UpdateXiStates(new DInputHelper());
 			// At rest: the middle, where a moving axis starts.
-			ud.DiState.Axis[0] = -short.MinValue;
-			ud.DiState.Axis[1] = -short.MinValue;
-			ud.DiState.Sliders[0] = -short.MinValue;
+			ud.SourceState.Axis[0] = -short.MinValue;
+			ud.SourceState.Axis[1] = -short.MinValue;
+			ud.SourceState.Sliders[0] = -short.MinValue;
 			xi(routing);
 			Assert.AreEqual(0, row.XiState.LeftThumbX, "A stick on a moving axis at rest is not centred.");
 			Assert.AreEqual(0, row.XiState.LeftTrigger, "A trigger on a moving axis at rest is pressed.");
 			Assert.AreEqual(SharpDX.XInput.GamepadButtonFlags.None, row.XiState.Buttons, "A button on a moving axis or slider at rest is pressed.");
 			Assert.AreEqual(127, row.XiState.RightTrigger, "A trigger on an axis that reports where it is no longer reads the whole axis.");
 			// Moved one way: the stick and the trigger follow, and the buttons on that way press.
-			ud.DiState.Axis[0] = ushort.MaxValue;
-			ud.DiState.Sliders[0] = ushort.MaxValue;
+			ud.SourceState.Axis[0] = ushort.MaxValue;
+			ud.SourceState.Sliders[0] = ushort.MaxValue;
 			xi(routing);
 			Assert.AreEqual(short.MaxValue, row.XiState.LeftThumbX);
 			Assert.AreEqual(byte.MaxValue, row.XiState.LeftTrigger, "A trigger on a moving axis is not pressed by the movement.");
 			Assert.AreEqual(SharpDX.XInput.GamepadButtonFlags.A | SharpDX.XInput.GamepadButtonFlags.X, row.XiState.Buttons);
 			// Moved the other way: only the inverted button presses.
-			ud.DiState.Axis[0] = 0;
-			ud.DiState.Sliders[0] = 0;
+			ud.SourceState.Axis[0] = 0;
+			ud.SourceState.Sliders[0] = 0;
 			xi(routing);
 			Assert.AreEqual(short.MinValue, row.XiState.LeftThumbX);
 			Assert.AreEqual(0, row.XiState.LeftTrigger, "A trigger on a moving axis is pressed by the movement the other way.");
@@ -273,14 +273,14 @@ namespace x360ce.Tests
 		public void Waiting_for_input_keeps_its_own_copy()
 		{
 			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Reused state" };
-			ud.DiState = new CustomDiState(new JoystickState());
+			ud.SourceState = new SourceState(new JoystickState());
 			SettingsManager.UserDevices.Items.Add(ud);
 			try
 			{
 				var wait = Task.Run(() => McpTools.InputWait(3));
 				Thread.Sleep(300);
 				// The engine fills the state it replaced two polls ago in place: the object the wait began with.
-				ud.DiState.Buttons[0] = true;
+				ud.SourceState.Buttons[0] = true;
 				var found = wait.Result as Dictionary<string, object>;
 				Assert.IsNotNull(found, "A button pressed while the tool waited was not seen, because the state it compared with was written over.");
 				Assert.AreEqual(ud.InstanceGuid.ToString(), found["InstanceGuid"]);

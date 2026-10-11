@@ -138,7 +138,9 @@ namespace x360ce.Tests
 		public void The_engine_never_reads_HID_Hide()
 		{
 			var folder = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput");
-			foreach (var file in Directory.GetFiles(folder, "DInputHelper*.cs"))
+			var files = Directory.GetFiles(folder, "DInputHelper*.cs");
+			Assert.IsTrue(files.Length > 0, "No engine file was found in " + folder + ", so nothing was checked.");
+			foreach (var file in files)
 				Assert.IsFalse(File.ReadAllText(file).Contains("GetHidHideState("),
 					Path.GetFileName(file) + " reads HID Hide. That starts a process and belongs to the issue check.");
 		}

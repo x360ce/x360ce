@@ -17,9 +17,9 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// Runs the centering spring itself on an attached wheel, through the same state the program
-	/// uses: the Auto run first, then the spring at the strength it found and at full strength,
-	/// each from a stop. The wheel must come home and stay, not swing from one end to the other,
-	/// which is what a constant force does on its own. Under a light steady push it must settle
+	/// uses: the Auto run first, then the spring at the strength it set and at full strength,
+	/// each from a stop. The wheel must come back inside Centre and stay, not swing from one end
+	/// to the other. Under a light steady push it must settle
 	/// where the push and the spring balance, not pulse between pushed out and pushed back. And
 	/// pumped into a swing on purpose, it must come out of it by itself once the pumping stops.
 	/// </summary>
@@ -52,7 +52,7 @@ namespace x360ce.Tests
 		/// <summary>The push that pumps the wheel into a swing, always in the direction it is already moving, and for how long.</summary>
 		const int PumpPercent = 60;
 		const int PumpMs = 2500;
-		/// <summary>How far the pumping must have got the wheel for the recovery to mean anything: past the ramp the spring rises over, where a swing lives. A strong spring lets the pump no further.</summary>
+		/// <summary>How far the pumping must have got the wheel for the recovery to mean anything: past the steepest the spring may rise over, where a swing lives. A strong spring lets the pump no further.</summary>
 		const int SwingAtLeast = ForceFeedbackState.SpringRamp;
 
 		/// <summary>What the spring runs against: the device as the program sees it, and a push effect of our own.</summary>
@@ -74,7 +74,7 @@ namespace x360ce.Tests
 		{
 			OnTheWheel(b =>
 			{
-				var found = Auto(b);
+				var found = Auto(b).Strength;
 				Settles(b, found);
 				Settles(b, 100);
 			});
@@ -87,7 +87,7 @@ namespace x360ce.Tests
 			OnTheWheel(b =>
 			{
 				// A push that just moves the wheel against the friction in its gears, as a finger does.
-				var finger = Math.Min(Auto(b) + FingerAboveFriction, FingerAtMost);
+				var finger = Math.Min(Auto(b).Result + FingerAboveFriction, FingerAtMost);
 				Holds(b, finger, 50);
 				Holds(b, finger, 100);
 			});
@@ -99,11 +99,96 @@ namespace x360ce.Tests
 		{
 			OnTheWheel(b =>
 			{
-				var found = Auto(b);
+				var found = Auto(b).Strength;
 				ComesOutOfASwing(b, found);
 				ComesOutOfASwing(b, 50);
 				ComesOutOfASwing(b, 100);
 			});
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("ui-interactive"), TestCategory("requires-wheel")]
+		[Description("A wheel let go of and held again, as when its row is removed and added again, is driven by the new force state: its spring brings the wheel home and its motor moves it")]
+		public void A_wheel_let_go_of_and_held_again_is_driven_by_a_new_state()
+		{
+			using (var manager = new DirectInput())
+			{
+				var instance = FindWheel(manager);
+				using (var form = new Form())
+				using (var device = new Joystick(manager, instance.InstanceGuid))
+				{
+					var ud = new UserDevice();
+					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
+					ud.DevVendorId = device.Properties.VendorId;
+					ud.DevProductId = device.Properties.ProductId;
+					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "60" };
+					var silence = new Vibration { LeftMotorSpeed = short.MinValue, RightMotorSpeed = short.MinValue };
+					var full = new Vibration { LeftMotorSpeed = short.MaxValue, RightMotorSpeed = short.MinValue };
+					Hold(device, form);
+					// The first state pushes the wheel out with its motor, so the new one has somewhere to bring it home from.
+					var first = new ForceFeedbackState();
+					first.SetDeviceForces(ud, device, ps, full);
+					SpringFor(first, device, 1500);
+					// Let go of as the engine lets go of a device its routing drops, and held again as one routed again.
+					first.StopDeviceForces();
+					device.Unacquire();
+					Assert.AreEqual(0, device.CreatedEffects.Count, "Letting go of the wheel left the old state's effects on it.");
+					Hold(device, form);
+					var second = new ForceFeedbackState();
+					try
+					{
+						second.SetDeviceForces(ud, device, ps, silence);
+						var home = SpringFor(second, device, SettleMs);
+						Console.WriteLine("New state's spring: from {0} to {1} ({2} degrees of 900 from the centre).", home[0], home[1], Degrees(home[1] - SpringCalibration.Center));
+						Assert.IsTrue(Math.Abs(home[0] - SpringCalibration.Center) > StopZone, "The old state's motor did not push the wheel out, so the return proves nothing.");
+						Assert.IsTrue(Math.Abs(home[1] - SpringCalibration.Center) <= StopZone, "The new state's spring did not bring the wheel home: it drives nothing.");
+						second.SetDeviceForces(ud, device, ps, full);
+						var pushed = SpringFor(second, device, 1500);
+						Console.WriteLine("New state's motor: from {0} to {1}.", pushed[0], pushed[1]);
+						Assert.IsTrue(Math.Abs(pushed[1] - pushed[0]) > StopZone, "The new state's motor did not move the wheel.");
+					}
+					finally
+					{
+						second.StopDeviceForces();
+						device.Unacquire();
+					}
+				}
+			}
+		}
+
+		/// <summary>The attached force feedback wheel, or an inconclusive test when there is none.</summary>
+		/// <remarks>A wheel before anything else with force feedback: a rumble pad plugged in beside the wheel answers to the same question, and its motor cannot be pushed to a stop.</remarks>
+		static DeviceInstance FindWheel(DirectInput manager)
+		{
+			var instance = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly)
+				.Where(x => x.ForceFeedbackDriverGuid != Guid.Empty)
+				.OrderByDescending(x => x.Type == SharpDX.DirectInput.DeviceType.Driving)
+				.FirstOrDefault();
+			if (instance == null)
+				Assert.Inconclusive("No force feedback controller is attached.");
+			return instance;
+		}
+
+		/// <summary>Holds the device as the program does while its spring is on: exclusively, with the device's own centring off, which left on holds the wheel against every push made here.</summary>
+		static void Hold(Joystick device, Form form)
+		{
+			device.SetCooperativeLevel(form.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+			device.Properties.AutoCenter = false;
+			device.Acquire();
+		}
+
+		/// <summary>Drives a state's spring for a while, as every poll does, and returns where the wheel started and ended.</summary>
+		static int[] SpringFor(ForceFeedbackState ff, Joystick device, int ms)
+		{
+			var watch = Stopwatch.StartNew();
+			var start = Position(device);
+			var position = start;
+			while (watch.ElapsedMilliseconds < ms)
+			{
+				position = Position(device);
+				ff.UpdateSpring(device, position, null, watch.ElapsedMilliseconds, null);
+				Thread.Sleep(1);
+			}
+			return new[] { start, position };
 		}
 
 		/// <summary>Pumps the wheel as a child pumps a swing, a push the way it is already going, then lets it be and watches it come to rest.</summary>
@@ -128,7 +213,7 @@ namespace x360ce.Tests
 				while (watch.ElapsedMilliseconds < PumpMs)
 				{
 					var position = Position(b.Device);
-					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds);
+					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null);
 					widest = Math.Max(widest, Math.Abs(position - SpringCalibration.Center));
 					// The push follows the movement, read over a short stretch so the encoder's jitter does not steer it.
 					if (watch.ElapsedMilliseconds - lastAt >= 20)
@@ -164,23 +249,23 @@ namespace x360ce.Tests
 			Assert.IsTrue(crossings <= CrossingsAllowed, string.Format(
 				"At {0} % the wheel crossed the centre {1} times in {2} ms after the pumping stopped: it stays in the swing instead of coming out of it.",
 				strength, crossings, SettleMs));
-			Assert.IsTrue(farthest <= ForceFeedbackState.SpringRampFor(strength), string.Format(
-				"At {0} % the wheel was still {1} from the centre in the last second.", strength, farthest));
+			Assert.IsTrue(farthest <= b.Ff.Curve.CentreUnits, string.Format(
+				"At {0} % the wheel was still {1} from the centre in the last second, outside Centre ({2}).", strength, farthest, b.Ff.Curve.CentreUnits));
 		}
 
-		/// <summary>The Auto run, exactly as the button starts it, and the strength it found.</summary>
-		static int Auto(Bench b)
+		/// <summary>The Auto run, exactly as the button starts it: the friction it found (<see cref="SpringCalibration.Result"/>) and the strength it set (<see cref="SpringCalibration.Strength"/>).</summary>
+		static SpringCalibration Auto(Bench b)
 		{
-			var run = new SpringCalibration();
+			var run = new SpringCalibration(b.Ps, b.Ud.ForceSpringSpeedOverride);
 			var watch = Stopwatch.StartNew();
 			while (!run.IsFinished && watch.ElapsedMilliseconds < 60000)
 			{
-				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds);
+				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, b.Ud.ForceSpringSpeedOverride);
 				Thread.Sleep(1);
 			}
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
-			Console.WriteLine("Auto found {0} % (low side {1} %, high side {2} %); its check crossed the centre {3} time(s)", run.Result, run.LowLevel, run.HighLevel, run.Crossings);
-			return run.Result;
+			Console.WriteLine("Auto found a friction of {0} % (low side {1} %, high side {2} %) and set {3} %; its check crossed the centre {4} time(s)", run.Result, run.LowLevel, run.HighLevel, run.Strength, run.Crossings);
+			return run;
 		}
 
 		/// <summary>Acquires the attached force feedback wheel the way the program does and runs the check on it.</summary>
@@ -188,27 +273,16 @@ namespace x360ce.Tests
 		{
 			using (var manager = new DirectInput())
 			{
-				// A wheel before anything else with force feedback: a rumble pad plugged in beside
-				// the wheel answers to the same question, and its motor cannot be pushed to a stop.
-				var instance = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly)
-					.Where(x => x.ForceFeedbackDriverGuid != Guid.Empty)
-					.OrderByDescending(x => x.Type == SharpDX.DirectInput.DeviceType.Driving)
-					.FirstOrDefault();
-				if (instance == null)
-					Assert.Inconclusive("No force feedback controller is attached.");
+				var instance = FindWheel(manager);
 				using (var form = new Form())
 				using (var device = new Joystick(manager, instance.InstanceGuid))
 				{
-					device.SetCooperativeLevel(form.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
-					// The device's own centring is switched off, as the program does while its spring is on;
-					// left on, it holds the wheel against every push made here.
-					device.Properties.AutoCenter = false;
-					device.Acquire();
+					Hold(device, form);
 					// The device as the program sees it: its objects, with the axis index each one moves.
 					var ud = new UserDevice();
 					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
 					int axisMask, actuatorMask, actuatorCount;
-					CustomDiState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
+					SourceState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
 					if (actuatorCount == 0)
 						Assert.Inconclusive(instance.ProductName + " has no actuator on an axis.");
 					ud.DevVendorId = device.Properties.VendorId;
@@ -237,7 +311,7 @@ namespace x360ce.Tests
 						finally
 						{
 							push.Stop();
-							ff.StopDeviceForces(device);
+							ff.StopDeviceForces();
 							device.Unacquire();
 						}
 					}
@@ -262,18 +336,18 @@ namespace x360ce.Tests
 			var perMs = positions.Count / (double)SettleMs;
 			var tail = positions.Skip(positions.Count - (int)(RestMs * perMs)).ToArray();
 			var farthest = tail.Max(x => Math.Abs(x - SpringCalibration.Center));
-			var ramp = ForceFeedbackState.SpringRampFor(strength);
-			var arrivedAt = positions.FindIndex(x => Math.Abs(x - SpringCalibration.Center) <= ramp);
+			var centre = b.Ff.Curve.CentreUnits;
+			var arrivedAt = positions.FindIndex(x => Math.Abs(x - SpringCalibration.Center) <= centre);
 			Console.WriteLine("At {0} %: home after about {1} ms, crossed the centre {2} time(s), at most {3} from it over the last second ({4} degrees of 900).",
 				strength, arrivedAt < 0 ? -1 : (int)(arrivedAt / perMs), crossings, farthest, Degrees(farthest));
 			Assert.IsTrue(crossings <= CrossingsAllowed, string.Format(
 				"At {0} % the wheel crossed the centre {1} times in {2} ms: it is swinging from one end to the other instead of coming to rest.",
 				strength, crossings, SettleMs));
-			// A spring whose force grows with distance rests where that force equals the friction in
-			// the gears, which is inside the ramp; a wheel still outside it is not being held at all.
-			Assert.IsTrue(farthest <= ramp, string.Format(
-				"At {0} % the wheel was still {1} from the centre in the last second, outside the ramp the spring rises over.",
-				strength, farthest));
+			// The spring rests the wheel where its force falls to the friction in the gears, which is
+			// inside Centre; a wheel still outside it is not being held at all.
+			Assert.IsTrue(farthest <= centre, string.Format(
+				"At {0} % the wheel was still {1} from the centre in the last second, outside Centre ({2}).",
+				strength, farthest, centre));
 		}
 
 		/// <summary>Lets the spring settle the wheel, then leans on it with a light steady push and watches what it does.</summary>
@@ -326,9 +400,9 @@ namespace x360ce.Tests
 			Assert.IsTrue(reversals <= ReversalsAllowed, string.Format(
 				"At {0} % the wheel turned round {1} times under a steady {2} % push: it is pulsing between pushed out and pushed back instead of settling.",
 				strength, reversals, finger));
-			Assert.IsTrue(span <= ForceFeedbackState.SpringRampFor(strength), string.Format(
-				"At {0} % the wheel moved over {1} under a steady {2} % push, more than the ramp the spring rises over.",
-				strength, span, finger));
+			Assert.IsTrue(span <= b.Ff.Curve.CentreUnits, string.Format(
+				"At {0} % the wheel moved over {1} under a steady {2} % push, more than Centre ({3}).",
+				strength, span, finger, b.Ff.Curve.CentreUnits));
 		}
 
 		/// <summary>Runs the spring for a while, the way the device thread does, and returns the positions seen.</summary>
@@ -340,7 +414,7 @@ namespace x360ce.Tests
 			{
 				var position = Position(b.Device);
 				positions.Add(position);
-				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds);
+				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null);
 				Thread.Sleep(1);
 			}
 			return positions;
@@ -350,7 +424,7 @@ namespace x360ce.Tests
 		{
 			b.Ps.ForceSpringStrength = strength.ToString();
 			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence);
-			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0);
+			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, null);
 		}
 
 		static int Degrees(int axisUnits)

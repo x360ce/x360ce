@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
 	/// <summary>
 	/// The name and purpose of each part of version 3's interface, given to
-	/// <see cref="x360ce.Engine.UiTree.UiText"/>. The controls linked to a setting are named after
+	/// <see cref="JocysCom.ClassLibrary.Controls.UiTree.UiText"/>. The controls linked to a setting are named after
 	/// the setting and are listed here only where the setting's own words say too little.
 	/// </summary>
 	public static partial class UiCatalog
@@ -123,8 +123,6 @@ namespace x360ce.App.UiTree
 				"What a caller must present to be let in. Regenerate it to shut out everyone who has the old one.");
 			d["OptionsControl.AiAccessRegenerateButton"] = new Text("Regenerate",
 				"Makes a new token, which shuts out every caller that has the old one.");
-			d["OptionsControl.AiAccessWindowsCheckBox"] = new Text("Register with Windows",
-				"Registers the program with the Windows agent registry, so agents such as Copilot find it by themselves.");
 			d["OptionsControl.AiAccessCopyButton"] = new Text("Copy MCP Settings",
 				"Copies what an assistant needs to start the program as an MCP server.");
 			d["OptionsControl.AiAccessLogButton"] = new Text("Log",

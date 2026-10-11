@@ -62,7 +62,7 @@ namespace x360ce.Tests
 		public void The_corner_rounding_examples_keep_a_stick_inside_the_circle()
 		{
 			const string forX = "=a1*sqrt(1-a2^2/2)";
-			const string forY = "=a2*sqrt(1-a1^2/2)";
+			const string forY = "=-a2*sqrt(1-a1^2/2)";
 			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == forX), "The Stick X example is not listed.");
 			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == forY), "The Stick Y example is not listed.");
 			var x1 = Parse(forX, "Stick X");
@@ -79,7 +79,8 @@ namespace x360ce.Tests
 			}
 			Assert.AreEqual(1f, At(x1, 1f, 0f), 0.0001f, "Straight right must stay at full.");
 			Assert.AreEqual(0f, At(y1, 1f, 0f), 0.0001f, "Straight right must leave Y at rest.");
-			Assert.AreEqual(1f, At(y1, 0f, 1f), 0.0001f, "Straight up must stay at full.");
+			// Up is the low end of axis 2 on most devices, which is why their Stick Y holds IAxis 2.
+			Assert.AreEqual(1f, At(y1, 0f, -1f), 0.0001f, "Straight up must stay at full and stay up.");
 			// Nowhere in the square may the rounded stick reach past the circle.
 			for (var a = -10; a <= 10; a++)
 			{

@@ -39,6 +39,35 @@ namespace JocysCom.ClassLibrary.Extensions
 			}
 		}
 
+		public enum SqlIsolationLevel { None, ReadUncommitted, ReadCommitted, RepeatableRead, Serializable, Snapshot }
+		const string selectIsolationLevel = "SELECT transaction_isolation_level FROM sys.dm_exec_sessions WHERE session_id = @@SPID";
+
+		/*
+		public static void ReportIsolationLevel(System.Data.Entity.DbContext context, object? prefix = null) {
+			var level = context.Database.SqlQuery<short>(selectIsolationLevel).First();
+			System.Diagnostics.Debug.WriteLine(string.Format("{0}Current Isolation level: {1} - {2}", prefix, level, (SqlIsolationLevel)level));
+		}
+
+		// Example
+		public async Task<IEnumerable<MyDataItem>> GetData() {
+			// Output all SQL queries to debug window.
+			MyContext.Database.Log += x => System.Diagnostics.Debug.WriteLine(x);
+			// Show database issolation level.
+			ReportIsolationLevel(MyContext, 1);
+			IEnumerable<MyDataItem> items;
+			using (var transaction = MyContext.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted)) {
+				ReportIsolationLevel(MyContext, 2);
+				// No need to track some read-only data.
+				items = await MyContext.MyDataItems.AsNoTracking().ToListAsync();
+				transaction.Commit();
+			}
+			// ReadUncommitted will remain, even outside of the scope.
+			ReportIsolationLevel(MyContext, 3);
+			return items;
+		}
+
+		*/
+
 	}
 
 }

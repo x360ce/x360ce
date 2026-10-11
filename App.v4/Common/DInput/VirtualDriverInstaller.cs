@@ -684,7 +684,8 @@ namespace x360ce.App.DInput
 			var exePath = Path.Combine(folder, GetDevConPath());
 			if (!File.Exists(exePath))
 				return false;
-			var exitCode = UacHelper.RunElevated(exePath, arguments, style, true);
+			var exitCode = JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(exePath, arguments,
+				useFileWorkingFolder: true, isElevated: true, windowStyle: style);
 			return exitCode == 0 || exitCode == 1;
 		}
 
@@ -1037,10 +1038,10 @@ namespace x360ce.App.DInput
 				return;
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
-			UacHelper.RunElevated(
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"remove \"" + deviceId + "\"",
-				style, true);
+				useFileWorkingFolder: true, isElevated: true, windowStyle: style);
 			// Make sure that device is re-inserted.
 			DeviceDetector.ScanForHardwareChanges();
 		}

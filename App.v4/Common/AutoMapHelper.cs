@@ -10,6 +10,22 @@ namespace x360ce.App
 {
 	public class AutoMapHelper
 	{
+		/// <summary>Whether <see cref="GetAutoPreset"/> can fill a preset for the device now.</summary>
+		/// <remarks>
+		/// The preset is made from the device's objects: a DirectInput device gives them once it is open, a Raw Input
+		/// device once the device list has found it, and the demo device always.
+		/// </remarks>
+		public static bool CanGetAutoPreset(UserDevice ud)
+		{
+			if (ud == null)
+				return false;
+			if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
+				return true;
+			return ud.IsDirectInput
+				? ud.Device != null
+				: ud.IsOnline && ud.DeviceObjects != null;
+		}
+
 		public static PadSetting GetAutoPreset(UserDevice ud)
 		{
 			var ps = new PadSetting();

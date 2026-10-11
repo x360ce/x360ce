@@ -18,6 +18,11 @@ namespace x360ce.Engine
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
 			_FileSuffix = fileSuffix;
+			// A load replaces the list with what the file holds, as validated.
+			ClearWhenLoading = true;
+			// Two copies of the program may save the same file. Each save is kept, rather than one
+			// copy silently stopping its saves once the other has written.
+			PreventWriteToNewerFiles = false;
 			Rebase();
 		}
 

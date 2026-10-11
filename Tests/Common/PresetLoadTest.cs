@@ -35,7 +35,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Loads the preset into a controller page and hands the page over.</summary>
-		static void OnLoadedPage(PadSetting preset, Action<PadControl> test)
+		internal static void OnLoadedPage(PadSetting preset, Action<PadControl> test)
 		{
 			Ui.OnUiThread(() =>
 			{
@@ -221,6 +221,18 @@ namespace x360ce.Tests
 				Assert.AreEqual("Button 3", box("ButtonBComboBox"), "B button");
 				Assert.AreEqual("Button 3", box("ButtonYComboBox"), "Y button");
 			});
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("critical")]
+		[Description("Settings downloaded on the Settings tab keep their pad settings: the pad settings are stored before the rows that point at them")]
+		public void Downloaded_rows_keep_their_pad_settings()
+		{
+			// A row added to its tab is shown at once. Stored before its pad settings, it would be shown with the defaults,
+			// which the tab writes back over its checksum, and the clean-up would remove the pad settings it came with.
+			var code = System.IO.File.ReadAllText(System.IO.Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "SettingsGridUserControl.cs"));
+			var pads = code.IndexOf("UpsertPadSettings(result.PadSettings);");
+			var rows = code.IndexOf("UpsertSettings(result.Settings);");
+			Assert.IsTrue(pads > 0 && rows > pads, "Downloaded rows are stored before the pad settings they point at.");
 		}
 	}
 }

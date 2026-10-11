@@ -145,9 +145,9 @@ namespace x360ce.App.DInput
 		/// <remarks>Windows asks at this point, and a refusal arrives as an exception from Start.</remarks>
 		bool StartCopy(string pipeName)
 		{
-			var copy = JocysCom.ClassLibrary.Win32.UacHelper.CreateElevatedProcess(Application.ExecutablePath,
-				string.Format("{0}=\"{1}\"", AdminCommand.DeviceHelper, pipeName));
-			copy.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			var copy = JocysCom.ClassLibrary.Windows.UacHelper.CreateProcess(Application.ExecutablePath,
+				string.Format("{0}=\"{1}\"", AdminCommand.DeviceHelper, pipeName),
+				isElevated: true, windowStyle: ProcessWindowStyle.Hidden);
 			try
 			{
 				copy.Start();

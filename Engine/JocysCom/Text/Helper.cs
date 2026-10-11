@@ -1,6 +1,9 @@
-﻿using System;
+#nullable disable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,7 +12,7 @@ namespace JocysCom.ClassLibrary.Text
 
 	public static class Helper
 	{
-		private static readonly Regex tagRx = new Regex("{((?<prefix>[0-9A-Z]+)[.])?(?<property>[0-9A-Z]+)(:(?<format>[^{}]+))?}", RegexOptions.IgnoreCase);
+		private static readonly Regex tagRx = new Regex("{((?<prefix>[\\w]+)[.])?(?<property>[\\w]+)(:(?<format>[^{}]+))?}", RegexOptions.IgnoreCase);
 
 		/// <summary>
 		/// Replace {TypeName.PropertyName[:format]} or {customPrefix.propertyName[:format]} pattern with the property value of the object.
@@ -41,8 +44,10 @@ namespace JocysCom.ClassLibrary.Text
 			{
 				foreach (Match m in matches)
 				{
-					if (usePrefix && string.Compare(prefix, m.Groups["prefix"].Value, true) != 0) continue;
-					if (string.Compare(p.Name, m.Groups["property"].Value, true) != 0) continue;
+					if (usePrefix && string.Compare(prefix, m.Groups["prefix"].Value, true) != 0)
+						continue;
+					if (string.Compare(p.Name, m.Groups["property"].Value, true) != 0)
+						continue;
 					var format = m.Groups["format"].Value;
 					var value = p.GetValue(o, null);
 					var text = string.IsNullOrEmpty(format)
@@ -51,6 +56,98 @@ namespace JocysCom.ClassLibrary.Text
 					s = Replace(s, m.Value, text, StringComparison.OrdinalIgnoreCase);
 				}
 			}
+			return s;
+		}
+
+		/// <summary>
+		/// Replace {TypeName.PropertyName[:format]} or {customPrefix.propertyName[:format]} pattern with the property value of the object.
+		/// </summary>
+		/// <remarks>
+		/// Example 1: Supply current date. Use {customPrefix.propertyName[:format]}.
+		///	var template = "file_{date.Now:yyyyMMdd}.txt";
+		/// var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, DateTime.Now, true, "date");
+		///
+		/// Example 2: Supply profile object. Use {TypeName.PropertyName[:format]}.
+		///	var template = "Profile full name: {Profile.first_name} {Profile.last_name}";
+		/// var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, profile);
+		/// </remarks>
+		/// <param name="s">String template</param>
+		/// <param name="o">Object values.</param>
+		public static string ReplaceDictionary(string s, Dictionary<string, object> o, bool usePrefix = true, string customPrefix = null)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			if (o == null)
+				return s;
+			var prefix = customPrefix;
+			var matches = tagRx.Matches(s);
+			foreach (var key in o.Keys)
+			{
+				foreach (Match m in matches)
+				{
+					if (usePrefix && string.Compare(prefix, m.Groups["prefix"].Value, true) != 0)
+						continue;
+					if (string.Compare(key, m.Groups["property"].Value, true) != 0)
+						continue;
+					var format = m.Groups["format"].Value;
+					var value = o[key];
+					var text = string.IsNullOrEmpty(format)
+						? string.Format("{0}", value)
+						: string.Format("{0:" + format + "}", value);
+					s = Replace(s, m.Value, text, StringComparison.OrdinalIgnoreCase);
+				}
+			}
+			return s;
+		}
+
+		public static List<string> GetReplaceMacros<T>(bool usePrefix = true, string customPrefix = null)
+		{
+			var list = new List<string>();
+			var t = typeof(T);
+			var properties = t.GetProperties();
+			var prefix = string.IsNullOrEmpty(customPrefix) ? t.Name : customPrefix;
+			foreach (var p in properties)
+			{
+				var macro = usePrefix
+					? prefix + "." + p.Name
+					: p.Name;
+				list.Add(macro);
+			}
+			return list;
+		}
+
+		/// <summary>
+		/// Used to parametrize path. For example:
+		/// Convert "C:\Program Files\JocysCom\Focus Logger" to
+		/// "C:\Program Files\{Company}\{Product}"
+		/// </summary>
+		public static string Replace<T>(T o, string s, bool usePrefix = true, string customPrefix = null)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			if (o == null)
+				return s;
+			var t = typeof(T);
+			var properties = t.GetProperties();
+			var prefix = string.IsNullOrEmpty(customPrefix) ? t.Name : customPrefix;
+			var replacement = new List<KeyValuePair<string, string>>();
+			foreach (var p in properties)
+			{
+				var value = $"{p.GetValue(o, null)}";
+				if (string.IsNullOrEmpty(value))
+					continue;
+				var param = "{";
+				if (usePrefix && !string.IsNullOrEmpty(prefix))
+					param += prefix;
+				param += p.Name + "}";
+				replacement.Add(new KeyValuePair<string, string>(param, value));
+			}
+			replacement = replacement
+				.OrderByDescending(x => x.Value.Length)
+				.ThenBy(x => x.Key.Length)
+				.ToList();
+			foreach (var item in replacement)
+				s = Replace(s, item.Value, item.Key, StringComparison.OrdinalIgnoreCase);
 			return s;
 		}
 
@@ -89,9 +186,9 @@ namespace JocysCom.ClassLibrary.Text
 		/// <remarks>This is very fast search.</remarks>
 		public static int IndexOf(byte[] input, byte[] value, int startIndex = 0)
 		{
-			if (input == null)
+			if (input is null)
 				throw new ArgumentNullException(nameof(input));
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			var endIndex = input.Length - value.Length;
 			int v;
@@ -112,13 +209,12 @@ namespace JocysCom.ClassLibrary.Text
 		}
 
 		/// <summary>
-		/// Get value from text [name]:\s*[value]. And parse to specific type.
+		/// Get value from text [name]:\s*[value].
 		/// </summary>
 		/// <param name="name">Prefix name.</param>
 		/// <param name="s">String to get value from.</param>
 		/// <param name="defaultValue">Override default value.</param>
-		/// <returns></returns>
-		public static T GetValue<T>(string name, string s, T defaultValue = default(T))
+		public static string GetValue(string name, string s, string defaultValue = "")
 		{
 			var pattern = string.Format(@"{0}:\s*(?<Value>[^\s]+)", name);
 			var rx = new Regex(pattern, RegexOptions.IgnoreCase);
@@ -126,103 +222,71 @@ namespace JocysCom.ClassLibrary.Text
 			if (!m.Success)
 				return defaultValue;
 			var v = m.Groups["Value"].Value;
-			if (typeof(T) == typeof(string))
-				return (T)(object)v;
-			return Runtime.RuntimeHelper.TryParse(v, defaultValue);
+			return v;
 		}
-
-		public static string GetValue(string name, string s, string defaultValue = null)
-		{
-			return GetValue<string>(name, s, defaultValue);
-		}
-
-		/// <summary>
-		/// Convert timespan to string.
-		/// </summary>
-		/// <param name="ts">TimeSpan value to convert.</param>
-		/// <param name="includeMilliseconds">include milliseconds.</param>
-		/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
-		/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
-		/// <param name="precision">Precision. Applied when useWords = true.</param>
-		/// <returns></returns>
-		public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
-		{
-			var s = "";
-			if (useWords)
-			{
-				var list = new List<string>();
-				if (ts.Days != 0)
-				{
-					s = string.Format("{0} {1}", ts.Days, ts.Days == 1 ? "day" : "days");
-					list.Add(s);
-				}
-				if (ts.Hours != 0 && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Hours, ts.Hours == 1 ? "hour" : "hours");
-					list.Add(s);
-				}
-				if (ts.Minutes != 0 && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Minutes, useShortWords ? "min" : (ts.Minutes == 1 ? "minute" : "minutes"));
-					list.Add(s);
-				}
-				// Force to show seconds if milliseconds will not be visible.
-				if (!precision.HasValue || list.Count < precision.Value)
-				{
-					s = string.Format("{0} {1}", ts.Seconds, useShortWords ? "sec" : (ts.Seconds == 1 ? "second" : "seconds"));
-					list.Add(s);
-				}
-				var showMilliseconds = includeMilliseconds && (ts.Milliseconds != 0 || list.Count == 0);
-				if (showMilliseconds && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Milliseconds, useShortWords ? "ms" : (ts.Milliseconds == 1 ? "millisecond" : "milliseconds"));
-					list.Add(s);
-				}
-				s = string.Join(" ", list);
-			}
-			else
-			{
-				if (ts.Days != 0)
-					s += ts.Days.ToString("0") + ".";
-				if (s.Length != 0 || ts.Hours > 0)
-					s += ts.Days.ToString("00") + ":";
-				if (s.Length != 0 || ts.Minutes > 0)
-					s += ts.Minutes.ToString("00") + ":";
-				// Seconds will be always included.
-				s += ts.Seconds.ToString("00");
-				if (includeMilliseconds)
-					s += "." + ts.Milliseconds.ToString("000");
-			}
-			return s;
-		}
-
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
 
 		/// <summary>
 		/// Convert string value to an escaped C# string literal.
 		/// </summary>
-		public static string ToLiteral(string input, string language = "JScript")
+		public static string ToLiteral(string input)
 		{
-			using (var writer = new StringWriter())
-			{
-				using (var provider = System.CodeDom.Compiler.CodeDomProvider.CreateProvider(language))
-				{
-					var exp = new System.CodeDom.CodePrimitiveExpression(input);
-					System.CodeDom.Compiler.CodeGeneratorOptions options = null;
-					provider.GenerateCodeFromExpression(exp, writer, options);
-					var literal = writer.ToString();
-					var rxLines = new Regex("\"\\s*[+]\\s*[\r\n]\"", RegexOptions.Multiline);
-					literal = rxLines.Replace(literal, "");
-					//literal = literal.Replace(string.Format("\" +{0}\t\"", Environment.NewLine), "");
-					//literal = literal.Replace("\\r\\n", "\\r\\n\"+\r\n\"");
-					return literal;
-				}
-			}
+			return FormatLiteral(input, quote: true);
 		}
 
-#endif
+		/// <summary>Return a C# string literal (optionally quoted) that represents <paramref name="value"/>.</summary>
+		private static string FormatLiteral(string value, bool quote)
+		{
+			if (value is null) return "null";
+
+			var sb = new StringBuilder(value.Length + 2);
+			if (quote) sb.Append('"');
+
+			for (int i = 0; i < value.Length; i++)
+			{
+				char c = value[i];
+				switch (c)
+				{
+					case '\"': sb.Append("\\\""); break; // quote
+					case '\\': sb.Append("\\\\"); break; // backslash
+					case '\0': sb.Append("\\0"); break;
+					case '\a': sb.Append("\\a"); break;
+					case '\b': sb.Append("\\b"); break;
+					case '\f': sb.Append("\\f"); break;
+					case '\n': sb.Append("\\n"); break;
+					case '\r': sb.Append("\\r"); break;
+					case '\t': sb.Append("\\t"); break;
+					case '\v': sb.Append("\\v"); break;
+
+					default:
+						// Line/para separators & NEL must be escaped in C# source, and any control chars.
+						if (char.IsControl(c) || c == '\u0085' || c == '\u2028' || c == '\u2029')
+						{
+							sb.Append("\\u").Append(((int)c).ToString("x4"));
+						}
+						else if (char.IsSurrogate(c))
+						{
+							// If it's a valid surrogate pair, keep it as-is (e.g., emoji).
+							if (char.IsHighSurrogate(c) && i + 1 < value.Length && char.IsLowSurrogate(value[i + 1]))
+							{
+								sb.Append(c).Append(value[++i]);
+							}
+							else
+							{
+								// Unpaired surrogate — escape it.
+								sb.Append("\\u").Append(((int)c).ToString("x4"));
+							}
+						}
+						else
+						{
+							sb.Append(c);
+						}
+						break;
+				}
+			}
+			if (quote)
+				sb.Append('"');
+			return sb.ToString();
+		}
 
 		#region Word Wrap
 
@@ -238,7 +302,7 @@ namespace JocysCom.ClassLibrary.Text
 		/// <returns>The modified text</returns>
 		public static string WrapText(string text, int width, bool useSpaces = false)
 		{
-			if (text == null)
+			if (text is null)
 				throw new ArgumentNullException(nameof(text));
 			// Lucidity check
 			if (width < 1)
@@ -314,28 +378,69 @@ namespace JocysCom.ClassLibrary.Text
 
 		#endregion
 
-		public static string IdentText(int tabs, string s, char ident = '\t')
+		/// <summary>
+		/// Add or remove ident.
+		/// </summary>
+		/// <param name="s">String to ident.</param>
+		/// <param name="tabs">Positive - add ident, negative - remove ident.</param>
+		/// <param name="ident">Ident character</param>
+		public static string IdentText(string s, int tabs = 1, string ident = "\t")
 		{
 			if (tabs == 0)
 				return s;
-			if (s == null)
-				s = string.Empty;
+			if (string.IsNullOrEmpty(s))
+				return s;
 			var sb = new StringBuilder();
 			var tr = new StringReader(s);
-			var prefix = string.Empty;
-			for (var i = 0; i < tabs; i++)
-				prefix += ident;
+			var prefix = string.Concat(Enumerable.Repeat(ident, tabs));
 			string line;
-			while ((line = tr.ReadLine()) != null)
+			var lines = s.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+			for (int i = 0; i < lines.Length; i++)
 			{
-				if (sb.Length > 0)
-					sb.AppendLine();
-				if (tabs > 0)
-					sb.Append(prefix);
-				sb.Append(line);
+				line = lines[i];
+				if (line != "")
+				{
+					// If add idents then...
+					if (tabs > 0)
+						sb.Append(prefix);
+					// If remove idents then...
+					else if (tabs < 0)
+					{
+						var count = 0;
+						// Count how much idents could be removed
+						while (line.Substring(count * ident.Length, ident.Length) == ident && count < tabs)
+							count++;
+						line = line.Substring(count * ident.Length);
+					}
+				}
+				if (i < lines.Length - 1)
+					sb.AppendLine(line);
+				else
+					sb.Append(line);
 			}
 			tr.Dispose();
 			return sb.ToString();
+		}
+
+		public static string RemoveIdent(string s)
+		{
+			s = s.Trim('\n', '\r', ' ', '\t').Replace("\r\n", "\n");
+			var lines = s.Split('\n');
+			var checkLines = lines
+				// Ignore first trimmed line.
+				.Where((x, i) => i > 0 && !string.IsNullOrWhiteSpace(x)).ToArray();
+			if (checkLines.Length == 0)
+				return s;
+			var minIndent = checkLines.Min(x => x.Length - x.TrimStart(' ', '\t').Length);
+			for (var i = 0; i < lines.Length; i++)
+			{
+				if (lines[i].Length > minIndent)
+					// Don't trim first line.
+					lines[i] = lines[i].Substring(i == 0 ? 0 : minIndent);
+				else if (string.IsNullOrWhiteSpace(lines[i]))
+					lines[i] = "";
+			}
+			return string.Join(Environment.NewLine, lines);
 		}
 
 		public static string BytesToStringBlock(string s, bool addIndex, bool addHex, bool addText)
@@ -346,7 +451,7 @@ namespace JocysCom.ClassLibrary.Text
 
 		public static string BytesToStringBlock(byte[] bytes, bool addIndex, bool addHex, bool addText, int offset = 0, int size = -1, int? maxDisplayLines = null)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var builder = new StringBuilder();
 			var hx = new StringBuilder();
@@ -428,6 +533,121 @@ namespace JocysCom.ClassLibrary.Text
 			var enc = Encoding.GetEncoding("IBM437");
 			return enc.GetString(bytes);
 		}
+
+		#region TimeSpan
+
+		/// <summary>
+		/// Convert timespan to string.
+		/// </summary>
+		/// <param name="ts">TimeSpan value to convert.</param>
+		/// <param name="includeMilliseconds">include milliseconds.</param>
+		/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
+		/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
+		/// <param name="precision">Precision. Applied when useWords = true.</param>
+		/// <returns></returns>
+		public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
+		{
+			var s = "";
+			if (useWords)
+			{
+				var list = new List<string>();
+				if (ts.Days != 0)
+				{
+					s = string.Format("{0} {1}", ts.Days, ts.Days == 1 ? "day" : "days");
+					list.Add(s);
+				}
+				if (ts.Hours != 0 && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Hours, ts.Hours == 1 ? "hour" : "hours");
+					list.Add(s);
+				}
+				if (ts.Minutes != 0 && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Minutes, useShortWords ? "min" : (ts.Minutes == 1 ? "minute" : "minutes"));
+					list.Add(s);
+				}
+				// Force to show seconds if milliseconds will not be visible.
+				if (!precision.HasValue || list.Count < precision.Value)
+				{
+					s = string.Format("{0} {1}", ts.Seconds, useShortWords ? "sec" : (ts.Seconds == 1 ? "second" : "seconds"));
+					list.Add(s);
+				}
+				var showMilliseconds = includeMilliseconds && (ts.Milliseconds != 0 || list.Count == 0);
+				if (showMilliseconds && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Milliseconds, useShortWords ? "ms" : (ts.Milliseconds == 1 ? "millisecond" : "milliseconds"));
+					list.Add(s);
+				}
+				s = string.Join(" ", list);
+			}
+			else
+			{
+				if (ts.Days != 0)
+					s += ts.Days.ToString("0") + ".";
+				if (s.Length != 0 || ts.Hours > 0)
+					s += ts.Days.ToString("00") + ":";
+				if (s.Length != 0 || ts.Minutes > 0)
+					s += ts.Minutes.ToString("00") + ":";
+				// Seconds will be always included.
+				s += ts.Seconds.ToString("00");
+				if (includeMilliseconds)
+					s += "." + ts.Milliseconds.ToString("000");
+			}
+			return s;
+		}
+
+		/// <summary>Time Span Standard regular expression.</summary>
+		/// <remarks>
+		/// Minutes are mandatory with required colon from left or right.
+		/// Pattern: [-][[dd.]HH:](:mm|mm:)[:ss[.fffffff]]
+		/// </remarks>
+		public const string TimeSpanStandard =
+			@"(?:(?<ne>-))?" +
+			@"(?:(?:(?<dd>0*[0-9]+)[.])?(?:(?<HH>0*[2][0-3]|0*[1][0-9]|0*[0-9])[:]))?" +
+			@"(?<mm>(?<=:)0*[0-5]?[0-9]|0*[5-9]?[0-9](?=[:]))" +
+			@"(?:[:](?<ss>0*[0-5]?[0-9](?:[.][0-9]{0,7})?))?";
+
+		/// <summary>
+		/// Convert JSON TimeSpan format...
+		///		From Standard: [-][d.]HH:mm[:ss.fffffff]
+		///		To   ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+		/// </summary>
+		public static string ConvertTimeSpanStandardToISO8601(string jsonString)
+		{
+			var spanRx = new Regex("\"" + TimeSpanStandard + "\"");
+			var me = new MatchEvaluator((Match m) =>
+			{
+				var standard = m.Value.Trim('"');
+				var span = TimeSpan.Parse(standard);
+				var iso8601 = System.Xml.XmlConvert.ToString(span);
+				return string.Format(@"""{0}""", iso8601);
+			});
+			return spanRx.Replace(jsonString, me);
+		}
+
+		/// <summary>Time Span ISO8601 regular expression</summary>
+		public const string TimeSpanISO8601 =
+			@"(?<V>(P(?=\d+[YMWD])?(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?))";
+
+		/// <summary>
+		/// Convert JSON TimeSpan format...
+		///		From ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+		///		To   Standard: [-][d.]HH:mm[:ss.fffffff]
+		/// </summary>
+		public static string ConvertTimeSpanISO8601ToStandard(string jsonString)
+		{
+			var spanRx = new Regex("\"" + TimeSpanISO8601 + "\"");
+			var me = new MatchEvaluator((Match m) =>
+			{
+				var iso8601 = m.Groups["V"].Value.Trim('"');
+				var span = System.Xml.XmlConvert.ToTimeSpan(iso8601);
+				var standard = span.ToString();
+				return string.Format(@"""{0}""", standard);
+			});
+			return spanRx.Replace(jsonString, me);
+		}
+
+		#endregion
 
 	}
 }

@@ -57,18 +57,22 @@ namespace x360ce.Engine
 					// A folder that is not there yet is usable when it can be made. Asking
 					// must leave the disk as it was: a location a person only looked at
 					// should not appear on it.
-					var created = false;
+					// Making the folder makes every missing folder above it too, so the
+					// highest of those is the one taken away again.
+					DirectoryInfo created = null;
 					if (!folder.Exists)
 					{
+						created = folder;
+						while (created.Parent != null && !created.Parent.Exists)
+							created = created.Parent;
 						folder.Create();
-						created = true;
 					}
 					var probe = System.IO.Path.Combine(folder.FullName, "write.test.tmp");
 					File.WriteAllText(probe, "");
 					File.Delete(probe);
-					if (created)
+					if (created != null)
 					{
-						folder.Delete(true);
+						created.Delete(true);
 						return null;
 					}
 					// The folder allowing new files says nothing about the files in it.

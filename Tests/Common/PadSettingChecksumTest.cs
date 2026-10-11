@@ -36,6 +36,17 @@ namespace x360ce.Tests
 		/// <summary>The settings added after presets were first shared, which must stay invisible until used.</summary>
 		static readonly string[] NewSettings = { "ForcePassThrough", "ForcePassThroughIndex", "ForceSpringEnable", "ForceSpringStrength", "WheelRange" };
 
+		/// <summary>The centering spring's curve, added after those: settings whose default is not nought, where nought is an answer.</summary>
+		static readonly string[] SpringCurveSettings = { "ForceSpringCentre", "ForceSpringPeak", "ForceSpringLightening", "ForceSpringDamping", "ForceSpringSpeed" };
+
+		/// <summary>A setting's default, as <see cref="SettingName"/> declares it and the page shows it.</summary>
+		static string Default(string setting)
+		{
+			var attribute = (System.ComponentModel.DefaultValueAttribute)typeof(SettingName).GetProperty(setting)
+				.GetCustomAttributes(typeof(System.ComponentModel.DefaultValueAttribute), false).Single();
+			return (string)attribute.Value;
+		}
+
 		#region The presets this program ships, as settings
 
 		/// <summary>The INI key each PadSetting property is written under.</summary>
@@ -144,7 +155,7 @@ namespace x360ce.Tests
 			{
 				var lines = new List<string>();
 				preset.Value.CleanAndGetCheckSum(lines);
-				foreach (var name in NewSettings)
+				foreach (var name in NewSettings.Concat(SpringCurveSettings))
 					Assert.IsFalse(lines.Any(x => x.StartsWith(name + "=", StringComparison.Ordinal)),
 						"Preset " + preset.Key + " puts " + name + " into its checksum while it is " +
 						"switched off, so every set of settings ever saved has just been renamed and " +
@@ -431,7 +442,7 @@ namespace x360ce.Tests
 				if (p.PropertyType == typeof(string) && p.CanWrite)
 					p.SetValue(ps, "1", null);
 			ps.CleanAndGetCheckSum(lines);
-			foreach (var name in NewSettings)
+			foreach (var name in NewSettings.Concat(SpringCurveSettings))
 			{
 				var property = typeof(PadSetting).GetProperty(name);
 				Assert.IsNotNull(property, name + " is not a setting at all.");
@@ -444,5 +455,70 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("A setting saved before the spring's curve existed keeps its checksum, measured the way it was always measured")]
+		public void A_setting_saved_before_the_curve_keeps_its_checksum()
+		{
+			// Measured here from its lines alone, the way the server and the change script measure it, so a
+			// line the curve slipped in, or a change in how the lines are joined, cannot hide.
+			var saved = new PadSetting
+			{
+				ButtonA = "1", ButtonB = "2", LeftThumbAxisX = "1", LeftTrigger = "a-6",
+				ForceEnable = "1", ForceSpringEnable = "1", ForceSpringStrength = "50", WheelRange = "900",
+			};
+			var text = "ButtonA=1\r\nButtonB=2\r\nForceEnable=1\r\nForceSpringEnable=1\r\nForceSpringStrength=50\r\nLeftThumbAxisX=1\r\nLeftTrigger=a-6\r\nWheelRange=900";
+			Guid expected;
+			using (var md5 = System.Security.Cryptography.MD5.Create())
+				expected = new Guid(md5.ComputeHash(System.Text.Encoding.ASCII.GetBytes(text)));
+			Assert.AreEqual(expected, Copy(saved).CleanAndGetCheckSum(), "A setting with the curve never set is named differently than it was saved.");
+			Assert.AreEqual(expected, saved.CleanAndGetCheckSum(), "A setting whose curve was never set at all, rather than set empty, is named differently.");
+			// And every shipped preset, never set or set empty, is named as it was.
+			foreach (var preset in Presets())
+			{
+				var never = Copy(preset.Value);
+				foreach (var name in SpringCurveSettings)
+					typeof(PadSetting).GetProperty(name).SetValue(never, "", null);
+				Assert.AreEqual(preset.Value.CleanAndGetCheckSum(), never.CleanAndGetCheckSum(), "Preset " + preset.Key + " changes its name with the curve empty.");
+			}
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("Every setting of the spring's curve at its default is the same setting as one left empty, and is stored empty")]
+		public void The_curve_at_its_defaults_is_the_same_as_the_curve_left_empty()
+		{
+			var empty = new PadSetting { ButtonA = "1", ForceEnable = "1", ForceSpringEnable = "1" };
+			var atDefaults = new PadSetting { ButtonA = "1", ForceEnable = "1", ForceSpringEnable = "1" };
+			foreach (var name in SpringCurveSettings)
+				typeof(PadSetting).GetProperty(name).SetValue(atDefaults, Default(name), null);
+			Assert.AreEqual(empty.CleanAndGetCheckSum(), atDefaults.CleanAndGetCheckSum(),
+				"The curve at its defaults is stored under another name than the curve left empty, so the same settings would be stored twice.");
+			foreach (var name in SpringCurveSettings)
+				Assert.AreEqual("", typeof(PadSetting).GetProperty(name).GetValue(atDefaults, null), name + " at its default was stored instead of left empty.");
+			// Nothing but the curve at its defaults is empty settings.
+			var onlyDefaults = new PadSetting();
+			foreach (var name in SpringCurveSettings)
+				typeof(PadSetting).GetProperty(name).SetValue(onlyDefaults, Default(name), null);
+			Assert.AreEqual(Guid.Empty, onlyDefaults.CleanAndGetCheckSum(), "The curve at its defaults gives empty settings a name.");
+			// The defaults are the family car at 100 km/h.
+			CollectionAssert.AreEqual(new[] { "12", "60", "40", "5", "100" }, SpringCurveSettings.Select(Default).ToArray());
+		}
+
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("A setting of the spring's curve away from its default, nought included, changes the name")]
+		public void A_curve_setting_away_from_its_default_changes_the_name()
+		{
+			var plain = new PadSetting { ButtonA = "1", ForceEnable = "1", ForceSpringEnable = "1" };
+			var before = Copy(plain).CleanAndGetCheckSum();
+			var seen = new HashSet<Guid> { before };
+			foreach (var name in SpringCurveSettings)
+				foreach (var value in new[] { "0", "1", "33" })
+				{
+					var changed = Copy(plain);
+					typeof(PadSetting).GetProperty(name).SetValue(changed, value, null);
+					var sum = changed.CleanAndGetCheckSum();
+					Assert.IsTrue(seen.Add(sum), name + " at " + value + " is stored under a name another setting already has, so one would be stored over the other.");
+					Assert.AreEqual(value, typeof(PadSetting).GetProperty(name).GetValue(changed, null), name + " at " + value + " was not kept.");
+				}
+		}
 	}
 }

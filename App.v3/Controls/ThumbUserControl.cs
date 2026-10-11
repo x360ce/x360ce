@@ -137,7 +137,7 @@ namespace x360ce.App.Controls
 		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
 		{
 			MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			MainPictureBox.BackColor = Enabled ? System.Drawing.Color.White : System.Drawing.SystemColors.Control;
+			MainPictureBox.BackColor = Enabled ? System.Drawing.SystemColors.Window : System.Drawing.SystemColors.Control;
 		}
 
 		bool _invert;
@@ -158,6 +158,12 @@ namespace x360ce.App.Controls
 
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
 		{
+			// Each value label has the colour of its line and dot: XInput blue, DInput green,
+			// in the dark theme's own blue and green.
+			var xColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorBrand", System.Drawing.Color.Blue);
+			var dColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", System.Drawing.Color.Green);
+			if (XInputValueLabel.ForeColor != xColor) XInputValueLabel.ForeColor = xColor;
+			if (DInputValueLabel.ForeColor != dColor) DInputValueLabel.ForeColor = dColor;
 			var image = LastBackgroundImage;
 			if (image == null) return;
 			var w = (float)image.Width;
@@ -166,11 +172,11 @@ namespace x360ce.App.Controls
 			var di = ConvertHelper.ConvertRangeF(0, ushort.MaxValue, 0, w, _dInput);
 			// Convert DInput to image position.
 			var xi = ((float)(_xInput - short.MinValue) / (float)ushort.MaxValue * (w - 1f));
-			var xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 0, 255));
-			var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 0, 255));
+			var xInputPoint = new SolidBrush(xColor);
+			var xInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, xColor));
 			var xInputPen = new Pen(xInputBrush);
-			var dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, 0, 128, 0));
-			var dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 0, 128, 0));
+			var dInputPoint = new SolidBrush(dColor);
+			var dInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, dColor));
 			var dInputPen = new Pen(dInputBrush);
 			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
 			var nInputPen = new Pen(nInputBrush);

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using static x360ce.Engine.UiTree.UiText;
+using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
 {
@@ -60,6 +60,8 @@ namespace x360ce.App.UiTree
 				"Shapes what the game receives from one control, without changing the device.");
 			d["AxisToButtonUserControl"] = new Text(null,
 				"How far a stick or pedal must move before the button mapped to it counts as pressed.");
+			d["WheelChartUserControl"] = new Text(null,
+				"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.");
 			d["DirectInputUserControl"] = new Text(null,
 				"What the mapped device reports about itself, and its values as they change.");
 			d["MapExpressionToggle"] = new Text(null,
@@ -78,7 +80,7 @@ namespace x360ce.App.UiTree
 				"Every controller the program can see.");
 			d["CloudUserControl"] = new Text(null,
 				"Settings waiting to be sent to or fetched from the online database.");
-			d["IssuesUserControl"] = new Text(null,
+			d["IssuesUserControl"] = new Text("Issues list",
 				"Problems the program found, and what to do about each one.");
 			d["AboutControl"] = new Text(null,
 				"Version, licence, and what changed in each release.");

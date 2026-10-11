@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.App.Issues;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 
 namespace x360ce.App
 {
@@ -20,7 +21,9 @@ namespace x360ce.App
 		public WarningsForm()
 		{
 			InitializeComponent();
-			Engine.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleGrid(WarningsDataGridView);
 			checkTimer = new System.Timers.Timer();
 			checkTimer.Interval = 1000;
 			checkTimer.AutoReset = false;
@@ -214,22 +217,23 @@ namespace x360ce.App
 			var item = (WarningItem)row.DataBoundItem;
 			if (column == SeverityColumn)
 			{
+				var icons = ThemeResourceManager.Library;
 				switch (item.Severity)
 				{
 					case IssueSeverity.None:
 						e.Value = null;
 						break;
 					case IssueSeverity.Low:
-						e.Value = Properties.Resources.MessageBoxIcon_Information_32x32;
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
 						break;
 					case IssueSeverity.Important:
-						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
 						break;
 					case IssueSeverity.Moderate:
-						e.Value = Properties.Resources.MessageBoxIcon_Warning_32x32;
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
 						break;
 					case IssueSeverity.Critical:
-						e.Value = Properties.Resources.MessageBoxIcon_Error_32x32;
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Error_32x32");
 						break;
 					default:
 						break;
