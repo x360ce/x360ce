@@ -1,4 +1,8 @@
-﻿## [4.25.67.0] - 2026-10-11
+﻿## [4.26.7.0] - 2026-10-11
+
+- Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
+
+## [4.25.67.0] - 2026-10-11
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.

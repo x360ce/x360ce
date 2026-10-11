@@ -173,7 +173,7 @@ namespace x360ce.Engine
 		{
 			// Read checksum.
 			var bytes = System.IO.File.ReadAllBytes(GdbFile.FullName);
-			_Checksum = EngineHelper.ComputeMd5Hash(bytes);
+			_Checksum = JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(bytes);
 		}
 
 	}
