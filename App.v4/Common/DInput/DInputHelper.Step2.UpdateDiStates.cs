@@ -166,6 +166,12 @@ namespace x360ce.App.DInput
 					ReadRawInputState(ud, o.ReadEveryChange);
 					continue;
 				}
+				// A plugin device is asked for its state by its plugin, and has nothing else to hold or poll.
+				if (ud.InputSourceType == (int)InputSourceType.Plugin)
+				{
+					ReadPluginState(ud);
+					continue;
+				}
 				JoystickState state = null;
 				DirectInputChanges kept = null;
 				if (allow)
@@ -433,23 +439,6 @@ namespace x360ce.App.DInput
 							}
 							ud.IsExclusiveMode = null;
 						}
-					}
-					// If this is test device then...
-					else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
-					{
-						// Fill device objects.
-						if (ud.DeviceObjects == null)
-						{
-							var dos = TestDeviceHelper.GetDeviceObjects();
-							ud.DeviceObjects = dos;
-							// Update masks.
-							ud.DiAxeMask = 0x1 | 0x2 | 0x4 | 0x8;
-							ud.DiSliderMask = 0;
-						}
-						if (ud.DeviceEffects == null)
-							ud.DeviceEffects = new DeviceEffectItem[0];
-						state = NextJoState(ud);
-						TestDeviceHelper.GetCurrentState(ud, state);
 					}
 				}
 				ud.JoState = state;
@@ -739,6 +728,7 @@ namespace x360ce.App.DInput
 				ud.ForceFailures = 0;
 				ud.ForceFault = 0;
 				EndSpringRun(ud, SpringStopReleased);
+				ReleasePluginReader(ud);
 			}
 		}
 

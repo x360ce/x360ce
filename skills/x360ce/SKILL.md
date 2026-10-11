@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.26.7.0"
+  version: "4.26.11.0"
 ---
 
 # X360CE
@@ -246,6 +246,9 @@ version. The program also prints them, whether AI assistant access is on or not:
   `ui_tree` tool. `ui-tree-v4.json` is the same for a program to read.
 - `help-v3.md`, `ui-tree-v3.md` and `ui-tree-v3.json`: the same for version 3, the older program that works through a
   library copied into the game's folder. It has AI assistant access too; `x360ce.exe -Ai` lists its tools.
+- `plugins.md`, plugins that add devices and how to write one from a single `.cs` file: `x360ce.exe -Skill=plugins`.
+  `plugins/<name>.md` describes each plugin the program has, its devices and their controls; the `plugins_list` tool
+  says the same for the plugins found on this computer, and whether each loaded.
 
 Any of them prints with `x360ce.exe "-Skill=<name>"`, such as `"-Skill=ui-tree-v3.json"`. `x360ce.exe -Skill`
 alone prints this file, which is how an agent without it can learn the program.

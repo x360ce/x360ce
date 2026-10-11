@@ -69,7 +69,8 @@ namespace x360ce.Tests
 			Assert.AreEqual(Program, AiSkill.VersionOf(File.ReadAllText(Path.Combine(own, "SKILL.md"))));
 			foreach (var reference in AiSkill.References)
 			{
-				var embedded = AppHelper.ReadHelp(reference.Value);
+				// Read as the install reads it: an embedded document, or a plugin's, made from what the program knows.
+				var embedded = AiSkill.ReadResource(reference.Value);
 				Assert.IsTrue(embedded.Length > 0, "The program does not carry " + reference.Key + ".");
 				var written = File.ReadAllText(Path.Combine(own, reference.Key.Replace('/', Path.DirectorySeparatorChar)));
 				// The help's links are relative to the docs folder, which the skill's folder is not.

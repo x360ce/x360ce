@@ -342,9 +342,37 @@ namespace x360ce.App.Controls
 			}, ui);
 		}
 
+		/// <summary>Adds a device a plugin offers: at once when one kind is offered, from a list when there are several.</summary>
 		private void AddDemoDevice_Click(object sender, EventArgs e)
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
+			var manager = Plugins.PluginManager.Current;
+			var types = manager == null ? new Plugins.PluginDeviceType[0] : manager.DeviceTypes.Where(x => !x.Faulted).ToArray();
+			if (types.Length == 0)
+			{
+				MessageBox.Show("No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load.",
+					"Add Plugin Device", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			if (types.Length == 1)
+			{
+				AddPluginDevice(types[0]);
+				return;
+			}
+			var menu = new ContextMenuStrip();
+			foreach (var type in types)
+			{
+				var item = new ToolStripMenuItem(type.Name) { Tag = type };
+				item.Click += (s, a) => AddPluginDevice((Plugins.PluginDeviceType)((ToolStripMenuItem)s).Tag);
+				menu.Items.Add(item);
+			}
+			menu.Closed += (s, a) => BeginInvoke((Action)menu.Dispose);
+			var button = (ToolStripItem)sender;
+			menu.Show(button.Owner, new Point(button.Bounds.Left, button.Bounds.Bottom));
+		}
+
+		static void AddPluginDevice(Plugins.PluginDeviceType type)
+		{
+			var ud = Plugins.PluginDevices.NewUserDevice(type);
 			lock (SettingsManager.UserDevices.SyncRoot)
 				SettingsManager.UserDevices.Items.Add(ud);
 			Global.DHelper.UpdateDevicesEnabled = true;

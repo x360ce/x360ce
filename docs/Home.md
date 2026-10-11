@@ -15,6 +15,7 @@ time a release reaches `master`, so a page is changed here, never in the wiki.
 | [Help.HidGuardian](Help.HidGuardian.md) | Removing the obsolete HID Guardian, and how to recover if keyboard and mouse stop working. |
 | [Help.AiAssistants](Help.AiAssistants.md) | Letting an AI assistant set up x360ce, with a worked example, and checking what it did. |
 | [Help.WheelCentering](Help.WheelCentering.md) | How a real car centres its steering wheel, with measured values, and how the Wheel tab's centering spring copies it. |
+| [Help.Plugins](Help.Plugins.md) | Plugins that add devices, which plugins load, and writing one from a single `.cs` file. |
 
 ## For the project
 

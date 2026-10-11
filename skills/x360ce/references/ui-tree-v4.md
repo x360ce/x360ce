@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.7.0, built 2026-10-11.
+Version 4.26.11.0, built 2026-10-11.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -410,36 +410,43 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
 [CheckBox]  │       │           │       ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
 [Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
-[Tab]       │       │           └── AI                                                  # AI assistant access, and the skill that teaches AI agents to use this program.
-[Group]     │       │               └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
-[Group]     │       │                   ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
-[Label]     │       │                   │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
-[Value]     │       │                   │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
-[Button]    │       │                   │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
-[Group]     │       │                   ├── AI assistant access (MCP server)            # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[CheckBox]  │       │                   │   ├── AI assistant access                     # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
-[List]      │       │                   │   ├── AI assistant level                      # Read, Configure or Administer: how much a connected assistant or script may do.
-[List]      │       │                   │   ├── AI assistant address                    # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
-[CheckBox]  │       │                   │   ├── Trust local connections (no token)      # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
-[Text]      │       │                   │   ├── AI assistant port                       # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
-[Value]     │       │                   │   ├── AI assistant URL                        # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
-[Button]    │       │                   │   ├── Copy URL                                # Copies the URL to the clipboard.
-[Value]     │       │                   │   ├── AI assistant token                      # What a caller must present to be let in. Made by this program.
-[Button]    │       │                   │   ├── Regenerate token                        # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │                   │   ├── Assistant snippet                       # Settings to paste into an assistant so it can start this program as an MCP server.
-[Button]    │       │                   │   ├── Copy snippet                            # Copies the assistant snippet to the clipboard. The snippet holds no token.
-[Button]    │       │                   │   ├── Copy prompt                             # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
-[Button]    │       │                   │   ├── Open log                                # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
-[Label]     │       │                   │   └── Door state                              # Whether the door is open and at which level, or why it could not open; after a press, what it did.
-[Group]     │       │                   └── AI skill                                    # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
-[Value]     │       │                       ├── Claude Code skills folder               # Where Claude Code reads skills.
-[Button]    │       │                       ├── Install for Claude Code                 # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
-[Label]     │       │                       ├── Claude Code skill                       # Whether the skill is in that folder, and whether it is this program's version.
-[Value]     │       │                       ├── Other agents' skills folder             # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
-[Button]    │       │                       ├── Install for other agents                # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
-[Label]     │       │                       ├── Other agents' skill                     # Whether the skill is in that folder, and whether it is this program's version.
-[Label]     │       │                       ├── Claude app                              # What to do with the ZIP, or why it was not saved.
-[Button]    │       │                       └── Save as ZIP                             # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Tab]       │       │           ├── AI                                                  # AI assistant access, and the skill that teaches AI agents to use this program.
+[Group]     │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
+[Group]     │       │           │       ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
+[Label]     │       │           │       │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
+[Value]     │       │           │       │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
+[Button]    │       │           │       │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
+[Group]     │       │           │       ├── AI assistant access (MCP server)            # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[CheckBox]  │       │           │       │   ├── AI assistant access                     # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
+[List]      │       │           │       │   ├── AI assistant level                      # Read, Configure or Administer: how much a connected assistant or script may do.
+[List]      │       │           │       │   ├── AI assistant address                    # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
+[CheckBox]  │       │           │       │   ├── Trust local connections (no token)      # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
+[Text]      │       │           │       │   ├── AI assistant port                       # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
+[Value]     │       │           │       │   ├── AI assistant URL                        # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
+[Button]    │       │           │       │   ├── Copy URL                                # Copies the URL to the clipboard.
+[Value]     │       │           │       │   ├── AI assistant token                      # What a caller must present to be let in. Made by this program.
+[Button]    │       │           │       │   ├── Regenerate token                        # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │           │       │   ├── Assistant snippet                       # Settings to paste into an assistant so it can start this program as an MCP server.
+[Button]    │       │           │       │   ├── Copy snippet                            # Copies the assistant snippet to the clipboard. The snippet holds no token.
+[Button]    │       │           │       │   ├── Copy prompt                             # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
+[Button]    │       │           │       │   ├── Open log                                # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[Label]     │       │           │       │   └── Door state                              # Whether the door is open and at which level, or why it could not open; after a press, what it did.
+[Group]     │       │           │       └── AI skill                                    # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
+[Value]     │       │           │           ├── Claude Code skills folder               # Where Claude Code reads skills.
+[Button]    │       │           │           ├── Install for Claude Code                 # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
+[Label]     │       │           │           ├── Claude Code skill                       # Whether the skill is in that folder, and whether it is this program's version.
+[Value]     │       │           │           ├── Other agents' skills folder             # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
+[Button]    │       │           │           ├── Install for other agents                # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
+[Label]     │       │           │           ├── Other agents' skill                     # Whether the skill is in that folder, and whether it is this program's version.
+[Label]     │       │           │           ├── Claude app                              # What to do with the ZIP, or why it was not saved.
+[Button]    │       │           │           └── Save as ZIP                             # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Tab]       │       │           └── Plugins                                             # The plugins found, the devices each adds, and whether plugins from others may load.
+[Group]     │       │               └── (PluginsPanel)
+[CheckBox]  │       │                   ├── Allow third-party plugins                   # Load plugins that are not signed by the publisher of x360ce.
+[Button]    │       │                   ├── Open Folder                                 # Opens the folder plugins load from. A DLL put there, or in a folder inside it, loads at once.
+[Value]     │       │                   ├── Plugins folder                              # The folder plugins load from, subfolders included.
+[Label]     │       │                   ├── About plugins                               # Which plugins load by themselves, and why plugins from others need permission.
+[Grid]      │       │                   └── Plugins                                     # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -519,7 +526,7 @@ not shown in this state of the program.
 [Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.
 [CheckBox]  │       │           ├── Show System Devices (hidden)                        # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
 [Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
-[Button]    │       │           ├── Add Demo Device                                     # Adds a pretend controller, for trying the program without hardware.
+[Button]    │       │           ├── Add Plugin Device                                   # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
 [Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
 [Button]    │       │           └── HID Guardian                                        # Actions for the obsolete HID Guardian tool.
 [Button]    │       │               ├── Show Enumerated Devices                         # Lists the devices HID Guardian knows about.

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- What a plugin compiles against, and nothing else: it references no part of x360ce, so a plugin
+         sees only these types, and another program could host the same plugins. -->
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>x360ce.Plugins</RootNamespace>
+    <AssemblyName>x360ce.Plugins</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <!-- Held at 1.0.0.0: a plugin built against this binds to every later x360ce. Change it only with
+         the contract itself, when plugins built before can no longer work. -->
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>X360 Controller Emulator</Product>
+    <Company>Jocys.com</Company>
+    <Description>The types an x360ce plugin implements.</Description>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+</Project>

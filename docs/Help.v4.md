@@ -58,6 +58,10 @@ Every press, hat tap and stick flick reaches the controller, even one shorter th
 
 A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are buttons 0 to 39.
 
+## Plugin devices
+
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](Help.Plugins.md).
+
 ## One device on several controller tabs
 
 A device can drive up to four emulated controllers at once.
@@ -435,6 +439,7 @@ Write a switch after the program's name, for example `x360ce.exe /WindowState=Mi
 - `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
 - `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
 - `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `skills\x360ce\references` when none is given, then closes. The window is built off the screen while it does this.
+- `/PluginKit=<folder>` writes a folder to start a plugin in, and starts nothing else: the types a plugin implements, the build settings, the Test Controller's source as a sample, and the plugin help.
 - `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. Both reach the copy that runs with its own settings, a `/Profile` included. The help's AI assistant access section says more.
 
 The program also starts a copy of itself with other switches when it needs an administrator, for example to install the driver. Those are not meant to be typed.

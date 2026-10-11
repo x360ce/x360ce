@@ -147,16 +147,8 @@ namespace x360ce.App
 		{
 			foreach (var item in settings)
 			{
-				bool isOnline;
-				if (TestDeviceHelper.ProductGuid.Equals(item.ProductGuid))
-				{
-					isOnline = true;
-				}
-				else
-				{
-					var device = GetDevice(item.InstanceGuid);
-					isOnline = device == null ? false : device.IsOnline;
-				}
+				var device = GetDevice(item.InstanceGuid);
+				var isOnline = device == null ? false : device.IsOnline;
 				if (item.IsOnline != isOnline)
 					item.IsOnline = isOnline;
 			}
@@ -1052,15 +1044,22 @@ namespace x360ce.App
 
 		public static UserSetting[] FilterSettings(UserSetting[] settings)
 		{
-			// Make sure that non-supported keyboard, mouse and test devices are excluded.
+			// Make sure that non-supported keyboard, mouse and plugin devices are excluded: the library reads DirectInput only.
 			var exludeTypes = new[]
 			{
 				(int)SharpDX.DirectInput.DeviceType.Mouse,
 				(int)SharpDX.DirectInput.DeviceType.Keyboard,
 			};
 			return settings
-				.Where(x => !exludeTypes.Contains(x.DeviceType) && x.ProductGuid != TestDeviceHelper.ProductGuid)
+				.Where(x => !exludeTypes.Contains(x.DeviceType) && !IsPluginDevice(x.InstanceGuid))
 				.ToArray();
+		}
+
+		/// <summary>Whether the device of this instance is one a plugin adds.</summary>
+		static bool IsPluginDevice(Guid instanceGuid)
+		{
+			var device = GetDevice(instanceGuid);
+			return device != null && device.InputSourceType == (int)InputSourceType.Plugin;
 		}
 
 		#endregion

@@ -40,8 +40,30 @@ namespace x360ce.App
 			WindowHook = new ForegroundWindowHook();
 			WindowHook.OnActivate += WindowHook_OnActivate;
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
+			StartPlugins();
 			// Add event which will start and stop UDP server depending on options.
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+		}
+
+		/// <summary>Loads the plugins, before the first device list is read, so the devices they add are found online.</summary>
+		static void StartPlugins()
+		{
+			var manager = new Plugins.PluginManager(
+				System.IO.Path.Combine(EngineHelper.AppDataPath, Plugins.PluginManager.FolderName),
+				Plugins.PluginManager.GetSigner(System.Windows.Forms.Application.ExecutablePath),
+				() => SettingsManager.Options.AllowThirdPartyPlugins,
+				typeof(Global).Assembly);
+			Plugins.PluginManager.Current = manager;
+			// A plugin found, loaded or switched off changes which devices are online, which the next device refresh says,
+			// and what the AI skill's plugin documents say.
+			manager.Changed += (s, e) =>
+			{
+				if (DHelper != null)
+					DHelper.UpdateDevicesEnabled = true;
+				Plugins.PluginDocs.UpdateReferences(manager);
+			};
+			manager.Start();
+			Plugins.PluginDocs.UpdateReferences(manager);
 		}
 
 		private static void WindowHook_OnActivate(object sender, EventArgs<Process> e)
@@ -141,6 +163,12 @@ namespace x360ce.App
 						RemoteServer.StartServer();
 					else
 						RemoteServer.StopServer();
+					break;
+				case nameof(Options.AllowThirdPartyPlugins):
+					// The plugins waiting for permission load at once. Taking it back takes effect on the next start:
+					// a loaded library cannot be unloaded.
+					if (o.AllowThirdPartyPlugins && Plugins.PluginManager.Current != null)
+						Plugins.PluginManager.Current.Scan();
 					break;
 				case nameof(Options.PollingRate):
 					// Applied here rather than from the options page, because the rate belongs to

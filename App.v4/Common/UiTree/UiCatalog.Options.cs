@@ -143,6 +143,24 @@ namespace x360ce.App.UiTree
 
 			AddInternetOptions(d);
 			AddSettingsOptions(d);
+			AddPluginsOptions(d);
+		}
+
+		/// <summary>The Plugins page: the plugins found, what became of each, and whether others may load.</summary>
+		static void AddPluginsOptions(Dictionary<string, Text> d)
+		{
+			d["OptionsUserControl.PluginsTabPage"] = new Text("Plugins",
+				"The plugins found, the devices each adds, and whether plugins from others may load.");
+			d["OptionsPluginsUserControl.AllowThirdPartyPluginsCheckBox"] = new Text("Allow third-party plugins",
+				"Loads plugins not signed by the publisher of x360ce. A plugin runs with all the rights of x360ce, so allow this only for plugins from people you trust. Unticking it takes effect when x360ce starts again.");
+			d["OptionsPluginsUserControl.OpenFolderButton"] = new Text("Open Folder",
+				"Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\\MyDevice.dll, loads at once.");
+			d["OptionsPluginsUserControl.FolderTextBox"] = new Text("Plugins folder",
+				"The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.");
+			d["OptionsPluginsUserControl.NoteLabel"] = new Text("About plugins",
+				"Which plugins load by themselves, and why plugins from others need permission.");
+			d["OptionsPluginsUserControl.PluginsDataGridView"] = new Text("Plugins",
+				"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
 		}
 
 		/// <summary>The Internet page: the online database and the account used with it.</summary>

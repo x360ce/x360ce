@@ -133,8 +133,9 @@ namespace x360ce.App.UiTree
 				"Forgets the selected device and its settings.");
 			d["UserDevicesUserControl.HardwareButton"] = new Text("Hardware...",
 				"Opens the selected device in Windows Device Manager.");
-			d["UserDevicesUserControl.AddDemoDevice"] = new Text("Add Demo Device",
-				"Adds a pretend controller, for trying the program without hardware.");
+			d["UserDevicesUserControl.AddDemoDevice"] = new Text("Add Plugin Device",
+				"Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. "
+				+ "With several plugin devices it opens a list to pick from.");
 			d["UserDevicesUserControl.CleanupVirtualPadsButton"] = new Text("Remove Leftover Pads",
 				"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.");
 			d["UserDevicesUserControl.ShowSystemDevicesButton"] = new Text("Show System Devices",

@@ -169,6 +169,16 @@ namespace x360ce.App
 		}
 		bool _ReadEveryChange = true;
 
+		/// <summary>True: plugins from anyone load. False: only the plugins embedded in this program and those signed by its publisher.</summary>
+		/// <remarks>A plugin runs inside this program with all its rights, so loading one from anyone else is the person's choice.</remarks>
+		[DefaultValue(false), Description("Load plugins that are not signed by the publisher of x360ce.")]
+		public bool AllowThirdPartyPlugins
+		{
+			get { return _AllowThirdPartyPlugins; }
+			set { _AllowThirdPartyPlugins = value; OnPropertyChanged(); }
+		}
+		bool _AllowThirdPartyPlugins;
+
 
 		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
 		public bool HidGuardianConfigureAutomatically

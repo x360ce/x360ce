@@ -73,7 +73,7 @@ namespace x360ce.Tests
 		public void Steps_2_and_3_wait_for_no_settings_list()
 		{
 			// The test controller, so a state is read and converted with no hardware.
-			var ud = TestDeviceHelper.NewUserDevice();
+			var ud = TestControllerDevice.NewUserDevice();
 			ud.IsOnline = true;
 			var ps = new PadSetting { ButtonA = "b1", LeftThumbAxisX = "a1", DPad = "p1", PadSettingChecksum = Guid.NewGuid() };
 			var game = new UserGame { FileName = "no-list-lock.exe", FileProductName = "No list lock", EnableMask = (int)MapToMask.Controller1 };
@@ -316,7 +316,7 @@ namespace x360ce.Tests
 			var oldGame = SettingsManager.CurrentGame;
 			var oldGetXInputStates = SettingsManager.Options.GetXInputStates;
 			var oldReadMachine = XInputPlaces.ReadMachine;
-			var ud = TestDeviceHelper.NewUserDevice();
+			var ud = TestControllerDevice.NewUserDevice();
 			ud.IsOnline = true;
 			var ps = EnginePassAllocationTest.Typical();
 			var game = EnginePassAllocationTest.Game;

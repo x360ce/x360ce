@@ -383,6 +383,8 @@ namespace x360ce.App.DInput
 			}
 			finally
 			{
+				// Plugins hold what they opened (a socket, a device) until they are let go of.
+				ReleasePluginReaders();
 				// Native objects must be released even when the loop ended with an error.
 				if (pacer != null)
 					pacer.Dispose();

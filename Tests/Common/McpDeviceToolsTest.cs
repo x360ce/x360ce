@@ -22,7 +22,7 @@ namespace x360ce.Tests
 		{
 			McpTools.Register();
 			McpCatalog.OnUiThread = a => a();
-			var device = TestDeviceHelper.NewUserDevice();
+			var device = TestControllerDevice.NewUserDevice();
 			// A request that names a controller by its brand finds it by the maker the controller tab shows.
 			device.DevManufacturer = "Thrustmaster";
 			SettingsManager.UserDevices.Items.Add(device);
@@ -58,7 +58,7 @@ namespace x360ce.Tests
 			McpCatalog.Level = () => AiAccess.Configure;
 			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var oldGame = SettingsManager.CurrentGame;
-			var device = TestDeviceHelper.NewUserDevice();
+			var device = TestControllerDevice.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
 			var game = new UserGame
 			{
@@ -105,7 +105,7 @@ namespace x360ce.Tests
 			var level = McpCatalog.Level;
 			// Below Administer HID Guardian is left alone, so nothing here asks Windows to elevate.
 			McpCatalog.Level = () => AiAccess.Configure;
-			var device = TestDeviceHelper.NewUserDevice();
+			var device = TestControllerDevice.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
 			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;
@@ -150,7 +150,7 @@ namespace x360ce.Tests
 			McpCatalog.OnUiThread = a => a();
 			var level = McpCatalog.Level;
 			McpCatalog.Level = () => AiAccess.Configure;
-			var device = TestDeviceHelper.NewUserDevice();
+			var device = TestControllerDevice.NewUserDevice();
 			SettingsManager.UserDevices.Items.Add(device);
 			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
 			var game = SettingsManager.CurrentGame;

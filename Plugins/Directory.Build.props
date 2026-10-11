@@ -1,0 +1,34 @@
+﻿<Project>
+  <!--
+    Build settings for x360ce plugins. A plugin is a folder holding one .cs file named like it, MyDevice\MyDevice.cs,
+    and optionally a Resources folder whose files are carried inside the DLL. Build-Plugins.ps1 builds each plugin
+    into bin\MyDevice\MyDevice.dll, one file; so does:
+
+      dotnet build MyDevice\MyDevice.cs -o bin\MyDevice
+
+    Copy the bin\MyDevice folder into the Plugins folder of the x360ce settings folder, and x360ce loads it at once.
+    Help: the Plugins page of the x360ce help, or skills/x360ce/references/plugins.md.
+  -->
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <!-- x360ce runs on .NET Framework, so a plugin targets it too. -->
+    <TargetFramework>net462</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <PublishAot>false</PublishAot>
+    <!-- One file: the symbols go inside the DLL, so an error in a plugin still names its line. -->
+    <DebugType>embedded</DebugType>
+    <!-- The types a plugin implements, written beside this file by x360ce.exe /PluginKit=<folder>. -->
+    <X360cePluginsDll Condition="'$(X360cePluginsDll)' == ''">$(MSBuildThisFileDirectory)x360ce.Plugins.dll</X360cePluginsDll>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Read with GetManifestResourceStream("MyDevice.Resources.<file name>"). -->
+    <EmbeddedResource Include="Resources\**\*" />
+    <Reference Include="x360ce.Plugins">
+      <HintPath>$(X360cePluginsDll)</HintPath>
+      <!-- x360ce provides it; the plugin's output does not carry a copy. -->
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -113,6 +113,8 @@
 			this.UpdateTabPage = new System.Windows.Forms.TabPage();
 			this.AiTabPage = new System.Windows.Forms.TabPage();
 			this.AiControl = new JocysCom.ClassLibrary.Mcp.AiAccessUserControl();
+			this.PluginsTabPage = new System.Windows.Forms.TabPage();
+			this.PluginsPanel = new x360ce.App.Controls.OptionsPluginsUserControl();
 			this.UpdatePanel = new x360ce.App.Controls.OptionsUpdateUserControl();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
@@ -147,6 +149,7 @@
 			this.SettingsTabPage.SuspendLayout();
 			this.UpdateTabPage.SuspendLayout();
 			this.AiTabPage.SuspendLayout();
+			this.PluginsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
@@ -777,6 +780,7 @@
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.UpdateTabPage);
 			this.MainTabControl.Controls.Add(this.AiTabPage);
+			this.MainTabControl.Controls.Add(this.PluginsTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Name = "MainTabControl";
@@ -982,7 +986,26 @@
 			this.AiControl.Name = "AiControl";
 			this.AiControl.Size = new System.Drawing.Size(644, 415);
 			this.AiControl.TabIndex = 0;
-			// 
+			//
+			// PluginsTabPage
+			//
+			this.PluginsTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.PluginsTabPage.Controls.Add(this.PluginsPanel);
+			this.PluginsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.PluginsTabPage.Name = "PluginsTabPage";
+			this.PluginsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.PluginsTabPage.Size = new System.Drawing.Size(650, 421);
+			this.PluginsTabPage.TabIndex = 8;
+			this.PluginsTabPage.Text = "Plugins";
+			//
+			// PluginsPanel
+			//
+			this.PluginsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PluginsPanel.Location = new System.Drawing.Point(3, 3);
+			this.PluginsPanel.Name = "PluginsPanel";
+			this.PluginsPanel.Size = new System.Drawing.Size(644, 415);
+			this.PluginsPanel.TabIndex = 0;
+			//
 			// UpdatePanel
 			// 
 			this.UpdatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1283,6 +1306,7 @@
 			this.SettingsTabPage.ResumeLayout(false);
 			this.UpdateTabPage.ResumeLayout(false);
 			this.AiTabPage.ResumeLayout(false);
+			this.PluginsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.HidHideButtonsPanel.ResumeLayout(false);
@@ -1363,6 +1387,8 @@
 		private System.Windows.Forms.TabPage UpdateTabPage;
 		private System.Windows.Forms.TabPage AiTabPage;
 		private JocysCom.ClassLibrary.Mcp.AiAccessUserControl AiControl;
+		private System.Windows.Forms.TabPage PluginsTabPage;
+		private x360ce.App.Controls.OptionsPluginsUserControl PluginsPanel;
 		public OptionsUpdateUserControl UpdatePanel;
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;

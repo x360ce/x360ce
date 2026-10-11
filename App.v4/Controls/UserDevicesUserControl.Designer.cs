@@ -267,7 +267,7 @@
 			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddDemoDevice.Name = "AddDemoDevice";
 			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
-			this.AddDemoDevice.Text = "Add Demo Device";
+			this.AddDemoDevice.Text = "Add Plugin Device";
 			this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
 			// 
 			// CleanupVirtualPadsButton

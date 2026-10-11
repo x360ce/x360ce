@@ -135,6 +135,9 @@ namespace x360ce.App
 		/// <summary>Prints the x360ce skill for AI agents, one of its files, or installs it into a folder.</summary>
 		public const string arg_Skill = "Skill";
 
+		/// <summary>Writes a folder to start a plugin in: the types a plugin implements, the build settings, a sample and the help.</summary>
+		public const string arg_PluginKit = "PluginKit";
+
 		/// <summary>/?, -h, /help and --help, as the command line reads them.</summary>
 		static readonly string[] HelpSwitches = { "?", "h", "help", "-help" };
 
@@ -210,12 +213,19 @@ namespace x360ce.App
 			// ------------------------------------------------
 			// Answered and done, with nothing started: a person at a console, or an AI agent meeting the
 			// program for the first time, would otherwise get a window and a command that never returns.
-			if (ic.Parameters.ContainsKey(arg_Skill) || HelpSwitches.Any(ic.Parameters.ContainsKey))
+			if (ic.Parameters.ContainsKey(arg_Skill) || ic.Parameters.ContainsKey(arg_PluginKit) || HelpSwitches.Any(ic.Parameters.ContainsKey))
 			{
 				TextWriter output, error;
 				JocysCom.ClassLibrary.Mcp.McpClient.OpenConsole(out output, out error);
 				if (ic.Parameters.ContainsKey(arg_Skill))
 					Environment.ExitCode = JocysCom.ClassLibrary.Mcp.AiSkill.RunSwitch(ic.Parameters[arg_Skill], CallerFolder, output, error);
+				else if (ic.Parameters.ContainsKey(arg_PluginKit))
+				{
+					var folder = ic.Parameters[arg_PluginKit];
+					if (!string.IsNullOrEmpty(folder) && !Path.IsPathRooted(folder))
+						folder = Path.Combine(CallerFolder, folder);
+					Environment.ExitCode = Plugins.PluginKit.Write(folder, output, error);
+				}
 				else
 					output.Write(AppHelper.Usage());
 				return;
@@ -490,9 +500,21 @@ namespace x360ce.App
 					return loaded;
 				loaded = LoadFromResources(dllName);
 				if (loaded != null)
+				{
 					LoadedFromResources[dllName] = loaded;
-				return loaded;
+					return loaded;
+				}
 			}
+			return ResolvePluginDependency(e);
+		}
+
+		/// <summary>A library a plugin brings beside it, found by the plugin manager.</summary>
+		/// <remarks>Kept apart so the resolver names the plugin manager only once its own libraries are found.</remarks>
+		[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+		static Assembly ResolvePluginDependency(ResolveEventArgs e)
+		{
+			var manager = Plugins.PluginManager.Current;
+			return manager == null ? null : manager.ResolveDependency(e);
 		}
 
 		static Assembly LoadFromResources(string dllName)
@@ -503,6 +525,7 @@ namespace x360ce.App
 				case "ViGEmClient":
 				case "x360ce.Engine":
 				case "x360ce.Engine.XmlSerializers":
+				case "x360ce.Plugins":
 				case "SharpDX":
 				case "SharpDX.DirectInput":
 					sr = GetResourceStream(dllName + ".dll");

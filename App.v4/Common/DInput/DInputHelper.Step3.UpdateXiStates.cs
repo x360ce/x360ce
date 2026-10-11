@@ -44,7 +44,10 @@ namespace x360ce.App.DInput
 				if (ud.JoState == null)
 				{
 					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
-					if (ud.InputSourceType != (int)InputSourceType.RawInput || ud.RawInputMissing)
+					// A plugin device has none either. It is converted once its plugin has given it a state.
+					var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
+					var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
+					if (!rawInput && !plugin)
 						continue;
 				}
 				// If device is offline then continue.

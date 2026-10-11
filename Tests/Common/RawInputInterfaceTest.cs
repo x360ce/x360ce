@@ -261,7 +261,7 @@ namespace x360ce.Tests
 			var di = DirectInputRow("Pad", PadPath);
 			di.DeviceObjects = RawInputFixtures.RumblePad2.Objects;
 			Assert.IsFalse(AutoMapHelper.CanGetAutoPreset(di), "A DirectInput row with no DirectInput device was offered a preset.");
-			Assert.IsTrue(AutoMapHelper.CanGetAutoPreset(TestDeviceHelper.NewUserDevice()), "The demo device was refused.");
+			Assert.IsTrue(AutoMapHelper.CanGetAutoPreset(TestControllerDevice.NewUserDevice()), "The demo device was refused.");
 		}
 
 		#endregion

@@ -188,6 +188,9 @@ namespace x360ce.App
 
 		/// <summary>The help page version 3 shows, as embedded for the AI skill's references.</summary>
 		public const string HelpV3Resource = "Documents.Help.v3.md";
+
+		/// <summary>How plugins work and how to write one, as embedded for the AI skill's references and the plugin kit.</summary>
+		public const string HelpPluginsResource = "Documents.Help.Plugins.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>

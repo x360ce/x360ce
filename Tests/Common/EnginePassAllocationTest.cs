@@ -129,7 +129,7 @@ namespace x360ce.Tests
 		/// <summary>The test controller, listed.</summary>
 		UserDevice Device()
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
+			var ud = TestControllerDevice.NewUserDevice();
 			ud.IsOnline = true;
 			ud.HidDeviceId = "HID\\VID_045E&PID_028E&IG_00\\pass-allocation";
 			_devices.Add(ud);

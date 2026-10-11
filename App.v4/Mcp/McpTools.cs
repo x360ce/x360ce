@@ -57,6 +57,7 @@ namespace x360ce.App.Mcp
 		public static readonly Dictionary<string, string> SkillReferences = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			{ "references/help-v4.md", AppHelper.HelpV4Resource },
+			{ "references/plugins.md", AppHelper.HelpPluginsResource },
 			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
 			{ "references/ui-tree-v4.json", "Documents.x360ce.ui-tree-v4.json" },
 			{ "references/help-v3.md", AppHelper.HelpV3Resource },
@@ -103,7 +104,11 @@ namespace x360ce.App.Mcp
 			AiSkill.Name = "x360ce";
 			AiSkill.Resource = "Documents.x360ce.SKILL.md";
 			AiSkill.References = SkillReferences;
-			AiSkill.ReadResource = AppHelper.ReadHelp;
+			// Embedded documents, and each plugin's, made from what the plugin manager knows (Plugins.PluginDocs).
+			AiSkill.ReadResource = Plugins.PluginDocs.Read;
+			// The plugins inside this program, so the skill is the same wherever it is written; the plugins folder's own
+			// are added once the program loads them.
+			Plugins.PluginDocs.UpdateReferences(Plugins.PluginDocs.EmbeddedManager());
 			AiSkill.ReferenceSuffix = "-v4";
 			AiSkill.OwnTree = "references/ui-tree-v4";
 			AiSkill.HelpPrefix = "references/help-";
@@ -131,6 +136,36 @@ namespace x360ce.App.Mcp
 					: SettingsManager.GetDeviceTabs(game.FileName, d.InstanceGuid).Select(x => (int)x).ToArray() },
 				{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
 				{ "Source", d.InputSource.ToString() },
+			}).ToArray();
+		}
+
+		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, and devices_list and device_map work on it as on any device. How to write a plugin: x360ce.exe -Skill=plugins.")]
+		public static object PluginsList()
+		{
+			var manager = Plugins.PluginManager.Current;
+			if (manager == null)
+				return new object[0];
+			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			return manager.Files.Select(f => (object)new Dictionary<string, object>
+			{
+				{ "Name", f.Name },
+				{ "State", f.State.ToString() },
+				{ "Reason", f.Reason },
+				{ "Signer", f.Embedded ? "part of x360ce" : f.Signer },
+				{ "Source", f.Embedded ? "Embedded" : f.Source },
+				{ "Devices", f.DeviceTypes.Select(t => (object)new Dictionary<string, object>
+					{
+						{ "Name", t.Name },
+						{ "ProductGuid", t.ProductGuid.ToString() },
+						{ "Axes", t.AxisCount },
+						{ "Sliders", t.SliderCount },
+						{ "Povs", t.PovCount },
+						{ "Buttons", t.ButtonCount },
+						{ "SwitchedOff", t.FaultReason },
+						{ "Added", devices.Where(d => d.InputSourceType == (int)InputSourceType.Plugin && d.ProductGuid == t.ProductGuid)
+							.Select(d => d.InstanceGuid.ToString()).ToArray() },
+					}).ToArray() },
+				{ "Help", Plugins.PluginDocs.Markdown(f) },
 			}).ToArray();
 		}
 

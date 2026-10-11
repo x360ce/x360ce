@@ -452,8 +452,8 @@ namespace x360ce.App.DInput
 				lock (SettingsManager.UserDevices.SyncRoot)
 					SettingsManager.UserDevices.Items.Add(ud);
 			}
-			// Enable Test instances.
-			TestDeviceHelper.EnableTestInstances();
+			// Plugin devices are online while their plugin is loaded and working.
+			Plugins.PluginDevices.UpdateOnline(Plugins.PluginManager.Current);
 			RefreshDevicesCount++;
 			var ev = DevicesUpdated;
 			if (ev != null)

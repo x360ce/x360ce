@@ -16,7 +16,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.26.7.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.26.11.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -83,6 +83,17 @@ every angle, and its dot follows the wheel as it turns. With hands off the wheel
 the wheel's friction and sets **Strength** to beat it.
 [How a real car centres its steering wheel](docs/Help.WheelCentering.md) says what each setting
 copies from a real car, with the measurements and standards behind it.
+
+## Plugins (v4.x)
+
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code, such as a
+controller fed over the network. It is one DLL built from one `.cs` file with `dotnet build`, put into
+a folder of its own in the **Plugins** folder of the x360ce data folder, where it loads at once. Plugins signed by the
+publisher of x360ce load by themselves; others wait for **Allow third-party plugins** on the
+**Options** tab's **Plugins** page, which lists every plugin and why one did not load. The Test
+Controller, a pretend controller for trying a mapping without hardware, is a plugin inside x360ce:
+**Add Plugin Device** on the **Devices** tab adds it. `x360ce.exe /PluginKit=<folder>` writes a
+folder to start a plugin in. [Plugins](docs/Help.Plugins.md) says how to write one.
 
 ## Putting controllers in order (v4.x)
 
