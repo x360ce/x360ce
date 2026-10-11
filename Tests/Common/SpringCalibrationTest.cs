@@ -246,7 +246,7 @@ namespace x360ce.Tests
 			var call = Regex.Match(File.ReadAllText(path), @"\.UpdateSpring\((?<args>[^;]*)\);");
 			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
 			var args = call.Groups["args"].Value;
-			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*SettingsManager\.Options\.ForceSpringCentreDamping$"),
+			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*SettingsManager\.Options\.ForceSpringCentreDamping,\s*SettingsManager\.Options\.ForceSpringDampingWidth$"),
 				"The engine times the run with a clock that can be negative or go back, or reads it for every device: " + args);
 		}
 

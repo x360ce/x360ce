@@ -242,7 +242,7 @@ A game made for a gamepad sends only rumble, so a wheel turns freely between bum
 
 The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
 
-If the wheel swings past the centre and back, raise `[Centre Damping]`. It resists the wheel's speed only near the centre, where the spring fades, and is the same for every controller tab.
+The spring's damping resists the wheel's speed only within `[Damping Width]` either side of the centre, 30° unless you change it. Beyond it nothing slows the wheel, so even a weak spring brings it back from the stops quickly. Degrees are counted against `[Wheel Range]`, or against 900° when the range is left as it is. If the wheel swings past the centre and back, raise `[Centre Damping]`, which adds to that damping. A narrower width brings the wheel back faster; a wider one calms a wheel that still swings. Both are the same for every controller tab.
 
 ## Flying an RC transmitter in a game
 

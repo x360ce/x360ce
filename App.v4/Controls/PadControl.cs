@@ -1344,12 +1344,21 @@ namespace x360ce.App.Controls
 			SettingsManager.Options.ForceSpringCentreDamping = ForceSpringDampingTrackBar.Value;
 		}
 
-		/// <summary>Shows the centre damping, which every controller tab shares and any of them can set.</summary>
+		void ForceSpringDampingWidthTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			ForceSpringDampingWidthTextBox.Text = string.Format("{0}° ", ForceSpringDampingWidthTrackBar.Value);
+			SettingsManager.Options.ForceSpringDampingWidth = ForceSpringDampingWidthTrackBar.Value;
+		}
+
+		/// <summary>Shows the centre damping and the damping width, which every controller tab shares and any of them can set.</summary>
 		void SyncCentreDamping()
 		{
 			var value = Math.Max(0, Math.Min(ForceSpringDampingTrackBar.Maximum, SettingsManager.Options.ForceSpringCentreDamping));
 			if (ForceSpringDampingTrackBar.Value != value)
 				ForceSpringDampingTrackBar.Value = value;
+			var width = Math.Max(0, Math.Min(ForceSpringDampingWidthTrackBar.Maximum, SettingsManager.Options.ForceSpringDampingWidth));
+			if (ForceSpringDampingWidthTrackBar.Value != width)
+				ForceSpringDampingWidthTrackBar.Value = width;
 		}
 
 		/// <summary>The device the Auto button's run is on, held here because the tab can be switched to another while it runs.</summary>

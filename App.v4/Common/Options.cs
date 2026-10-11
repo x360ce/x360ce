@@ -248,6 +248,16 @@ namespace x360ce.App
 		}
 		int _ForceSpringCentreDamping;
 
+		/// <summary>How far either side of a wheel's centre the centering spring's damping reaches, in degrees.</summary>
+		/// <remarks>The same for every controller, as <see cref="ForceSpringCentreDamping"/> is. Counted against the wheel range setting.</remarks>
+		[DefaultValue(ForceFeedbackState.DefaultDampingDegrees), Description("How far either side of the centre the centering spring's damping reaches, in degrees. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly.")]
+		public int ForceSpringDampingWidth
+		{
+			get { return _ForceSpringDampingWidth; }
+			set { _ForceSpringDampingWidth = value; OnPropertyChanged(); }
+		}
+		int _ForceSpringDampingWidth = ForceFeedbackState.DefaultDampingDegrees;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

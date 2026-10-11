@@ -119,14 +119,26 @@ namespace x360ce.Engine
         /// <summary>The last force update threw before it finished, so settings it recorded as sent may not have reached the device.</summary>
         bool interrupted;
 
-        public void StopDeviceForces(Joystick device)
+        /// <summary>Takes every effect this state made off the device, before the state is dropped.</summary>
+        /// <remarks>
+        /// Disposed rather than stopped: disposing an effect takes its force off as a stop does, and asks the
+        /// device nothing, so it cannot fail. A device the program has let go of no longer holds its effects, and
+        /// DirectInput answers a stop or a status asked of one of them with DIERR_NOTDOWNLOADED.
+        /// </remarks>
+        public void StopDeviceForces()
         {
-            for (int i = 0; i < device.CreatedEffects.Count; i++)
-            {
-                var effect = device.CreatedEffects[i];
-                if (effect.Status == EffectStatus.Playing)
-                    effect.Stop();
-            }
+            Dispose(ref effectL);
+            Dispose(ref effectR);
+            Dispose(ref effectS);
+            Dispose(ref effectD);
+        }
+
+        static void Dispose(ref Effect effect)
+        {
+            if (effect == null)
+                return;
+            effect.Dispose();
+            effect = null;
         }
 
         // Xbox One gamepads are equipped with a total of four independent vibration motors:
@@ -464,12 +476,14 @@ namespace x360ce.Engine
             // plugged in again has forgotten it. Not before the device is known by its ids: they
             // come from a read of the machine that finishes after the first polls, and a range
             // sent while they were still nought was sent to nothing and never sent again.
+            // The range the damping width is counted against, whatever the wheel is.
+            var range = ps.GetWheelRange();
+            rangeDegrees = range > 0 ? range : DefaultRangeDegrees;
             if (ud.DevVendorId != 0 && (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device))
             {
                 rangeDevice = device;
-                var degrees = ps.GetWheelRange();
-                if (degrees > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
-                    LogitechWheel.SetRange(ud.HidDevicePath, degrees);
+                if (range > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
+                    LogitechWheel.SetRange(ud.HidDevicePath, range);
             }
             interrupted = false;
             return true;
@@ -606,18 +620,17 @@ namespace x360ce.Engine
             return offset < 0 ? percent : -percent;
         }
 
-        /// <summary>How much the device resists the wheel's speed while the spring is on, in DirectInput's units.</summary>
+        /// <summary>How much the device resists the wheel's speed near the centre while the spring is on, in DirectInput's units.</summary>
         /// <remarks>
         /// A constant force alone swings a wheel from one end to the other: it arrives at the centre
         /// at speed, the force turns round, and it goes back just as far. Resistance in proportion
         /// to speed takes that energy out, and the device computes it itself between polls.
         ///
-        /// One value, whatever the strength and wherever the wheel is: a wheel's feel must not
-        /// change with the angle unless the game asks it to. Measured on a G27, where a thirty
-        /// percent push crossed the wheel in 0.8 s free, 1.2 s at this much, and could not move it
-        /// at all at 5000: enough to take a swing out, far from enough to hold the wheel against
-        /// its own motor. Scaled with the strength it reached 10000 at full, and the wheel ground
-        /// its way home against its own brake.
+        /// One value, whatever the strength. Measured on a G27, where a thirty percent push crossed
+        /// the wheel in 0.8 s free, 1.2 s at this much, and could not move it at all at 5000: enough
+        /// to take a swing out, far from enough to hold the wheel against its own motor. Scaled with
+        /// the strength it reached 10000 at full, and the wheel ground its way home against its own
+        /// brake. It acts only within the damping width (<see cref="SpringDamping"/>).
         /// </remarks>
         public const int DamperCoefficient = 2500;
 
@@ -630,31 +643,52 @@ namespace x360ce.Engine
         /// <summary>The most damping the centre may add, so that with <see cref="DamperCoefficient"/> it reaches DirectInput's full scale.</summary>
         public const int CentreDamperMax = DI_FFNOMINALMAX - DamperCoefficient;
 
-        /// <summary>Whether the wheel is in the extra damping near the centre (<see cref="CentreDamping"/>).</summary>
-        bool inCentreDamping;
+        /// <summary>How far either side of the centre the damping reaches unless the person sets another width, in degrees.</summary>
+        public const int DefaultDampingDegrees = 30;
 
-        /// <summary>The damping added near the centre, in DirectInput's units.</summary>
+        /// <summary>The steering range, lock to lock, that degrees are counted against while the wheel range setting leaves the wheel as it is.</summary>
+        public const int DefaultRangeDegrees = 900;
+
+        /// <summary>The steering range, lock to lock, from the wheel range setting, or <see cref="DefaultRangeDegrees"/>.</summary>
+        int rangeDegrees = DefaultRangeDegrees;
+
+        /// <summary>Whether the wheel is within the damping width (<see cref="SpringDamping"/>).</summary>
+        bool inDamping;
+
+        /// <summary>How far from the centre a width in degrees reaches, in axis units, on a wheel with this range lock to lock.</summary>
+        /// <param name="degrees">The width each side of the centre.</param>
+        /// <param name="rangeDegrees">The wheel's range lock to lock, or nought when it is not known, which counts as <see cref="DefaultRangeDegrees"/>.</param>
+        public static int DampingBand(int degrees, int rangeDegrees)
+        {
+            if (degrees <= 0)
+                return 0;
+            if (rangeDegrees <= 0)
+                rangeDegrees = DefaultRangeDegrees;
+            return (int)Math.Min(SpringCalibration.Center + 1L, (long)SpringCalibration.AxisMax * degrees / rangeDegrees);
+        }
+
+        /// <summary>The spring's resistance to the wheel's speed, in DirectInput's units: all of it within the band either side of the centre, none beyond.</summary>
         /// <remarks>
-        /// A wheel pulled home by the spring arrives with speed and can swing past the centre and back. More resistance
-        /// to speed where the spring's force fades, its ramp, takes that swing out where it happens and leaves the rest of
-        /// the travel as it was. A wheel leaves the band a quarter further out than it enters it, so one resting on the
-        /// edge does not switch the device's damper on every poll.
+        /// A wheel pulled home by the spring arrives with speed and can swing past the centre and back, so the resistance
+        /// that takes the swing out acts where the swing happens. Beyond the band nothing resists the wheel, and even a
+        /// weak spring brings it back from the stops at the speed its force allows. A wheel leaves the band a quarter
+        /// further out than it enters it, so one resting on the edge does not switch the device's damper on every poll.
         /// </remarks>
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
-        /// <param name="strengthPercent">The spring's strength, which sets the width of its ramp.</param>
-        /// <param name="centrePercent">How much damping to add, 0 to 100.</param>
+        /// <param name="strengthPercent">The spring's strength; with no spring there is no damping.</param>
+        /// <param name="centrePercent">How much damping to add to <see cref="DamperCoefficient"/>, 0 to 100.</param>
+        /// <param name="band">How far from the centre the damping reaches, in axis units (<see cref="DampingBand"/>); nought for none.</param>
         /// <param name="inside">Whether the wheel was inside the band on the last poll; set to whether it is now.</param>
-        public static int CentreDamping(int position, int strengthPercent, int centrePercent, ref bool inside)
+        public static int SpringDamping(int position, int strengthPercent, int centrePercent, int band, ref bool inside)
         {
-            if (strengthPercent <= 0 || centrePercent <= 0)
+            if (strengthPercent <= 0 || band <= 0)
             {
                 inside = false;
                 return 0;
             }
             var distance = Math.Abs(position - SpringCalibration.Center);
-            var band = SpringRampFor(strengthPercent);
             inside = inside ? distance <= band + band / 4 : distance < band;
-            return inside ? CentreDamperMax * Math.Min(100, centrePercent) / 100 : 0;
+            return inside ? DamperFor(strengthPercent) + CentreDamperMax * Math.Max(0, Math.Min(100, centrePercent)) / 100 : 0;
         }
 
         /// <summary>
@@ -674,17 +708,18 @@ namespace x360ce.Engine
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
         /// <param name="calibration">The Auto button's run, or null.</param>
         /// <param name="nowMs">The time, for the calibration.</param>
-        /// <param name="centreDamping">The damping to add near the centre, 0 to 100 (<see cref="CentreDamping"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int centreDamping)
+        /// <param name="centreDamping">The damping to add near the centre, 0 to 100 (<see cref="SpringDamping"/>).</param>
+        /// <param name="dampingDegrees">How far either side of the centre the damping reaches, in degrees (<see cref="DampingBand"/>).</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int centreDamping, int dampingDegrees)
         {
             var percent = calibration != null
                 ? calibration.Update(position, nowMs)
                 : SpringForce(position, springStrength);
-            // The damping follows the setting, or the calibration's own asking: none while its pushes
+            // The damping follows the settings, or the calibration's own asking: none while its pushes
             // must move the wheel freely, the answer's own damping while it checks that answer.
             UpdateDamper(device, calibration != null
                 ? calibration.Damping
-                : DamperFor(springStrength) + CentreDamping(position, springStrength, centreDamping, ref inCentreDamping));
+                : SpringDamping(position, springStrength, centreDamping, DampingBand(dampingDegrees, rangeDegrees), ref inDamping));
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
                 return;
@@ -785,14 +820,16 @@ namespace x360ce.Engine
         }
 
         /// <summary>Takes down every effect on the device, whichever state made it.</summary>
+        /// <remarks>
+        /// Disposed without asking the device first. An effect left by a state from before the device was let go
+        /// of is no longer on the device, and DirectInput answers its status with DIERR_NOTDOWNLOADED, an answer
+        /// the engine counts as a device condition and never reports; the new state would stop there on every
+        /// poll and drive nothing. Disposing a playing effect takes its force off as a stop does.
+        /// </remarks>
         static void DisposeDeviceEffects(Joystick device)
         {
             foreach (var effect in device.CreatedEffects.ToArray())
-            {
-                if (effect.Status == EffectStatus.Playing)
-                    effect.Stop();
                 effect.Dispose();
-            }
         }
 
         /// <summary>

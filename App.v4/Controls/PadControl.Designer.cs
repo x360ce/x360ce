@@ -179,6 +179,9 @@
             this.ForceSpringDampingLabel = new System.Windows.Forms.Label();
             this.ForceSpringDampingTrackBar = new System.Windows.Forms.TrackBar();
             this.ForceSpringDampingTextBox = new System.Windows.Forms.TextBox();
+            this.ForceSpringDampingWidthLabel = new System.Windows.Forms.Label();
+            this.ForceSpringDampingWidthTrackBar = new System.Windows.Forms.TrackBar();
+            this.ForceSpringDampingWidthTextBox = new System.Windows.Forms.TextBox();
             this.WheelRangeComboBox = new System.Windows.Forms.ComboBox();
             this.WheelDescriptionLabel = new System.Windows.Forms.Label();
             this.ForceDefaultsButton = new System.Windows.Forms.Button();
@@ -270,6 +273,7 @@
             this.WheelGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingWidthTrackBar)).BeginInit();
             this.LeftMotorGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
@@ -1955,7 +1959,7 @@
             this.ForceFeedbackGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
             this.ForceFeedbackGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(540, 260);
+            this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(540, 306);
             this.ForceFeedbackGroupBox.TabIndex = 0;
             this.ForceFeedbackGroupBox.TabStop = false;
             this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -2103,12 +2107,15 @@
             this.WheelGroupBox.Controls.Add(this.ForceSpringDampingLabel);
             this.WheelGroupBox.Controls.Add(this.ForceSpringDampingTrackBar);
             this.WheelGroupBox.Controls.Add(this.ForceSpringDampingTextBox);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingWidthLabel);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingWidthTrackBar);
+            this.WheelGroupBox.Controls.Add(this.ForceSpringDampingWidthTextBox);
             this.WheelGroupBox.Controls.Add(this.WheelDescriptionLabel);
             this.WheelGroupBox.Location = new System.Drawing.Point(552, 5);
             this.WheelGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.WheelGroupBox.Name = "WheelGroupBox";
             this.WheelGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.WheelGroupBox.Size = new System.Drawing.Size(542, 260);
+            this.WheelGroupBox.Size = new System.Drawing.Size(542, 306);
             this.WheelGroupBox.TabIndex = 1;
             this.WheelGroupBox.TabStop = false;
             this.WheelGroupBox.Text = "Wheel";
@@ -2223,13 +2230,51 @@
             this.ForceSpringDampingTextBox.TabStop = false;
             this.ForceSpringDampingTextBox.Text = "0 % ";
             this.ForceSpringDampingTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
+            //
+            // ForceSpringDampingWidthLabel
+            //
+            this.ForceSpringDampingWidthLabel.AutoSize = true;
+            this.ForceSpringDampingWidthLabel.Location = new System.Drawing.Point(8, 174);
+            this.ForceSpringDampingWidthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ForceSpringDampingWidthLabel.Name = "ForceSpringDampingWidthLabel";
+            this.ForceSpringDampingWidthLabel.Size = new System.Drawing.Size(117, 20);
+            this.ForceSpringDampingWidthLabel.TabIndex = 0;
+            this.ForceSpringDampingWidthLabel.Text = "Damping Width:";
+            //
+            // ForceSpringDampingWidthTrackBar
+            //
+            this.ForceSpringDampingWidthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForceSpringDampingWidthTrackBar.AutoSize = false;
+            this.ForceSpringDampingWidthTrackBar.LargeChange = 10;
+            this.ForceSpringDampingWidthTrackBar.Location = new System.Drawing.Point(129, 168);
+            this.ForceSpringDampingWidthTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSpringDampingWidthTrackBar.Maximum = 180;
+            this.ForceSpringDampingWidthTrackBar.Name = "ForceSpringDampingWidthTrackBar";
+            this.ForceSpringDampingWidthTrackBar.Size = new System.Drawing.Size(335, 43);
+            this.ForceSpringDampingWidthTrackBar.TabIndex = 12;
+            this.ForceSpringDampingWidthTrackBar.TickFrequency = 5;
+            this.ForceSpringDampingWidthTrackBar.Value = 30;
+            this.ForceSpringDampingWidthTrackBar.ValueChanged += new System.EventHandler(this.ForceSpringDampingWidthTrackBar_ValueChanged);
+            //
+            // ForceSpringDampingWidthTextBox
+            //
+            this.ForceSpringDampingWidthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ForceSpringDampingWidthTextBox.Location = new System.Drawing.Point(472, 168);
+            this.ForceSpringDampingWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSpringDampingWidthTextBox.Name = "ForceSpringDampingWidthTextBox";
+            this.ForceSpringDampingWidthTextBox.ReadOnly = true;
+            this.ForceSpringDampingWidthTextBox.Size = new System.Drawing.Size(62, 26);
+            this.ForceSpringDampingWidthTextBox.TabIndex = 0;
+            this.ForceSpringDampingWidthTextBox.TabStop = false;
+            this.ForceSpringDampingWidthTextBox.Text = "30° ";
+            this.ForceSpringDampingWidthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            //
             // WheelDescriptionLabel
             // 
             this.WheelDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.WheelDescriptionLabel.Location = new System.Drawing.Point(8, 168);
+            this.WheelDescriptionLabel.Location = new System.Drawing.Point(8, 214);
             this.WheelDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.WheelDescriptionLabel.Name = "WheelDescriptionLabel";
             this.WheelDescriptionLabel.Size = new System.Drawing.Size(526, 87);
@@ -2263,7 +2308,7 @@
             this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
             this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
             this.LeftMotorGroupBox.Controls.Add(this.TestLeftMotorLabel);
-            this.LeftMotorGroupBox.Location = new System.Drawing.Point(4, 275);
+            this.LeftMotorGroupBox.Location = new System.Drawing.Point(4, 321);
             this.LeftMotorGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorGroupBox.Name = "LeftMotorGroupBox";
             this.LeftMotorGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -2417,7 +2462,7 @@
             this.groupBox1.Controls.Add(this.RightMotorTestTrackBar);
             this.groupBox1.Controls.Add(this.RightMotorTestTextBox);
             this.groupBox1.Controls.Add(this.RightMotorPeriodTextBox);
-            this.groupBox1.Location = new System.Drawing.Point(552, 275);
+            this.groupBox1.Location = new System.Drawing.Point(552, 321);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -3046,6 +3091,7 @@
             this.WheelGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringStrengthTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingWidthTrackBar)).EndInit();
             this.LeftMotorGroupBox.ResumeLayout(false);
             this.LeftMotorGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).EndInit();
@@ -3186,6 +3232,9 @@
 		System.Windows.Forms.Label ForceSpringDampingLabel;
 		System.Windows.Forms.TrackBar ForceSpringDampingTrackBar;
 		System.Windows.Forms.TextBox ForceSpringDampingTextBox;
+		System.Windows.Forms.Label ForceSpringDampingWidthLabel;
+		System.Windows.Forms.TrackBar ForceSpringDampingWidthTrackBar;
+		System.Windows.Forms.TextBox ForceSpringDampingWidthTextBox;
 		System.Windows.Forms.Label WheelDescriptionLabel;
 		public System.Windows.Forms.ComboBox WheelRangeComboBox;
 		System.Windows.Forms.Timer SpringAutoTimer;

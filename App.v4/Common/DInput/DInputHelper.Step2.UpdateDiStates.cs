@@ -365,8 +365,8 @@ namespace x360ce.App.DInput
 										else if (ud.FFState != null)
 										{
 											// Stop device forces.
-											step = "ud.FFState.StopDeviceForces(device)";
-											ud.FFState.StopDeviceForces(device);
+											step = "ud.FFState.StopDeviceForces()";
+											ud.FFState.StopDeviceForces();
 											ud.FFState = null;
 											EndSpringRun(ud, SpringStopForceOff);
 										}
@@ -376,8 +376,8 @@ namespace x360ce.App.DInput
 									// this game is not read at all, and ReleaseDroppedDevices stopped it.
 									else if (ud.FFState != null)
 									{
-										step = "ud.FFState.StopDeviceForces(device)";
-										ud.FFState.StopDeviceForces(device);
+										step = "ud.FFState.StopDeviceForces()";
+										ud.FFState.StopDeviceForces();
 										ud.FFState = null;
 										EndSpringRun(ud, SpringStopTabOff);
 									}
@@ -390,7 +390,8 @@ namespace x360ce.App.DInput
 									{
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
-										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0, SettingsManager.Options.ForceSpringCentreDamping);
+										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
+											SettingsManager.Options.ForceSpringCentreDamping, SettingsManager.Options.ForceSpringDampingWidth);
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -684,15 +685,15 @@ namespace x360ce.App.DInput
 		/// <summary>Lets go of every device the previous routing read and this one does not: unticked in a tab's list or on the Devices page, taken off its tabs, or of another game.</summary>
 		/// <remarks>
 		/// No pass visits such a device again, so nothing else would stop what it was playing or give up the
-		/// exclusive hold that keeps every other program from it. Its effects are stopped first and its hold given
+		/// exclusive hold that keeps every other program from it. Its effects come off first and its hold is given
 		/// up after, the order a pass keeps for a device that stops being a force source, and it is left as no
-		/// program holds it: not acquired, with no force state or force failure, and its mode unknown, so a later
-		/// routing that reads it again takes it from the start. An Auto run under way on it ends.
+		/// program holds it: not acquired, with no effect of ours on it, no force state or force failure, and its
+		/// mode unknown, so a later routing that reads it again takes it from the start. An Auto run under way on
+		/// it ends.
 		///
-		/// Every step is made whatever the one before it did, since nothing comes back to make it later: an effect
-		/// that will not stop leaves the next effect and the hold still to be given up. The first fault that is not
-		/// a device condition is reported, once for the device. Called once a routing change, on the engine thread
-		/// that owns the devices. Nothing on a pass; on a change it lists each dropped device's effects once.
+		/// Taking the effects off asks the device nothing (<see cref="Engine.ForceFeedbackState.StopDeviceForces"/>),
+		/// so only giving up the hold can fail, and its fault, unless it is a device condition, is reported once for
+		/// the device. Called once a routing change, on the engine thread that owns the devices. Nothing on a pass.
 		/// </remarks>
 		/// <param name="was">The routing the previous pass read, or null before the first pass.</param>
 		/// <param name="routing">The routing of this pass.</param>
@@ -717,28 +718,7 @@ namespace x360ce.App.DInput
 					Exception fault = null;
 					var faultStep = "";
 					if (ud.FFState != null)
-					{
-						System.Collections.Generic.IList<Effect> effects = null;
-						try
-						{
-							effects = device.CreatedEffects;
-						}
-						catch (Exception ex)
-						{
-							KeepReleaseFault(ex, "CreatedEffects (Release)", ref fault, ref faultStep);
-						}
-						for (var e = 0; effects != null && e < effects.Count; e++)
-						{
-							try
-							{
-								effects[e].Stop();
-							}
-							catch (Exception ex)
-							{
-								KeepReleaseFault(ex, "Stop effect (Release)", ref fault, ref faultStep);
-							}
-						}
-					}
+						ud.FFState.StopDeviceForces();
 					try
 					{
 						device.Unacquire();

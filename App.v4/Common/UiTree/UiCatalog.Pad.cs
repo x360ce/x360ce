@@ -89,9 +89,13 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
 				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
 			d["PadControl.ForceSpringDampingTextBox"] = new Text("Centre damping",
-				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
+				"Extra resistance to the wheel's speed within the damping width, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
 			d["PadControl.ForceSpringDampingTrackBar"] = new Text("Centre damping",
-				"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
+				"Extra resistance to the wheel's speed within the damping width, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
+			d["PadControl.ForceSpringDampingWidthTextBox"] = new Text("Damping width",
+				"How far either side of the centre the spring's damping reaches, in degrees of the wheel range, or of 900 when the range is left as it is. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly. Nought turns the damping off. The same for every controller.");
+			d["PadControl.ForceSpringDampingWidthTrackBar"] = new Text("Damping width",
+				"How far either side of the centre the spring's damping reaches, in degrees of the wheel range, or of 900 when the range is left as it is. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly. Nought turns the damping off. The same for every controller.");
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
 				"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",

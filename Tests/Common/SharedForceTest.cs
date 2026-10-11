@@ -292,16 +292,14 @@ namespace x360ce.Tests
 			var release = take.IndexOf("ReleaseDroppedDevices(was, routing);");
 			Assert.IsTrue(taken > 0 && release > taken, "A release that fails is tried again on every pass.");
 			var body = Body(step2, "void ReleaseDroppedDevices(");
-			Assert.AreEqual(1, Ui.Count(body, "device.CreatedEffects"), "The device's effects are listed more than once a release.");
-			Assert.IsFalse(body.Contains("StopDeviceForces("),
-				"The release stops the forces through the pass's own stop, which gives up at the first effect that fails.");
-			var stop = body.IndexOf(".Stop();");
+			Assert.IsFalse(body.Contains("device.CreatedEffects"),
+				"The release asks the device about its effects, which a device no longer holding them refuses, and leaves them on it for the next force state.");
+			var stop = body.IndexOf("ud.FFState.StopDeviceForces();");
 			var letGo = body.IndexOf("device.Unacquire();");
 			Assert.IsTrue(stop > 0 && letGo > stop, "The hold is given up before the forces are stopped, or not at all.");
-			// Each effect is stopped in its own try, and the hold is given up in one of its own, so an effect that will not
-			// stop leaves neither the effects after it playing nor the device held.
-			Assert.IsTrue(LastTry(body, stop) > body.LastIndexOf("for (", stop), "An effect that will not stop leaves the effects after it playing.");
-			Assert.IsTrue(LastTry(body, letGo) > body.IndexOf("catch (Exception", stop), "An effect that will not stop leaves the device held.");
+			// Taking the effects off asks the device nothing, so it cannot fail; the hold is given up in a try of its own,
+			// so a hold that will not be given up stops neither this release's report nor the devices after it.
+			Assert.IsTrue(LastTry(body, letGo) > stop, "Giving up the hold is not in a try of its own.");
 			Assert.IsFalse(body.Contains("catch (SharpDXException"), "A fault that is not a device result leaves the devices after it held.");
 			Assert.AreEqual(1, Ui.Count(body, "WriteException("), "A device's release is reported more than once a change.");
 			Assert.IsTrue(body.IndexOf("WriteException(") > letGo, "A release is reported before every step of it was tried.");
@@ -422,7 +420,7 @@ namespace x360ce.Tests
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var mapped = step2.IndexOf("if (mapped)");
 			var forcing = step2.IndexOf("if (route.ForcePads.Length > 0)", mapped);
-			var stop = step2.IndexOf("ud.FFState.StopDeviceForces(device);", mapped);
+			var stop = step2.IndexOf("ud.FFState.StopDeviceForces();", mapped);
 			Assert.IsTrue(mapped > 0 && forcing > mapped && stop > forcing, "The force block and its stop are not where the test expects them.");
 			Assert.IsFalse(step2.Substring(mapped, stop - mapped).Contains("if (ps != null)"),
 				"A mapped device whose settings are not stored never reaches the stop, and goes on playing its last effect.");

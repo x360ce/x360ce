@@ -189,7 +189,7 @@ namespace x360ce.Tests
 			// Every force call in the block sits in the force's own try, and its catch does not throw on.
 			var forceTry = SharedForceTest.LastTry(source, send);
 			var end = source.IndexOf("ud.DiReadFaultReported = false;", gate);
-			foreach (var call in new[] { "ud.FFState.StopDeviceForces(device);", "ud.FFState.UpdateSpring(device," })
+			foreach (var call in new[] { "ud.FFState.StopDeviceForces();", "ud.FFState.UpdateSpring(device," })
 				for (var at = source.IndexOf(call, gate); at >= 0 && at < end; at = source.IndexOf(call, at + 1))
 					Assert.AreEqual(forceTry, SharedForceTest.LastTry(source, at), call + " is outside the force's own try, so its failure counts as a failed read.");
 			Assert.IsFalse(Regex.IsMatch(failure, @"\bthrow\b"), "The force's catch throws on, so a force failure reaches the read's catch.");

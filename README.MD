@@ -16,7 +16,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.25.64.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.25.66.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -109,7 +109,7 @@ Report only crashes or other bugs, note that the Issue tracker is not a help des
 
 **DO NOT ASK FOR HELP IN INSTALLATION OR CONFIGURATION!!!**
 
-**If you have questions about installation or configuration, please go to our [forum @NGemu](http://ngemu.com/forums/x360ce.140)**
+**If you have questions about installation or configuration, please go to our [forum @NGemu - x360ce](http://www.ngemu.com/forums/x360ce.140)**
 
 # Compatibility
 Version 3 works inside each game, and some games need a HookMask: see [What do HookMasks do?](docs/Help.v3.md#what-do-hookmasks-do)

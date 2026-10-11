@@ -304,8 +304,8 @@ namespace x360ce.Tests
 			StringAssert.Contains(step2, "mapped = routing.TryGetForce(ud.InstanceGuid, out route);", "Force feedback is looked up some other way than the routing.");
 			// A device on no routed row is stopped after the mapped block and before its spring is driven.
 			var mappedBlock = step2.IndexOf("if (mapped)");
-			var tabStop = step2.IndexOf("ud.FFState.StopDeviceForces(device);", mappedBlock);
-			var unroutedStop = step2.IndexOf("ud.FFState.StopDeviceForces(device);", tabStop + 1);
+			var tabStop = step2.IndexOf("ud.FFState.StopDeviceForces();", mappedBlock);
+			var unroutedStop = step2.IndexOf("ud.FFState.StopDeviceForces();", tabStop + 1);
 			var spring = step2.IndexOf("ud.FFState.UpdateSpring(");
 			Assert.IsTrue(mappedBlock > 0 && tabStop > mappedBlock && unroutedStop > tabStop && spring > unroutedStop,
 				"A device whose rows of the game are all switched off goes on playing its last force, and its spring goes on holding the wheel.");

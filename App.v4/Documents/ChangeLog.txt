@@ -1,4 +1,4 @@
-﻿## [4.25.64.0] - 2026-10-10
+﻿## [4.25.66.0] - 2026-10-11
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -29,6 +29,7 @@
 - Fixed: AI assistants could not read or write a mapping formula.
 - Fixed: /ExportUi opened AI assistant access and saved the settings.
 - Fixed: The round-corner formula example for Stick Y turned up into down on most devices.
+- Fixed: Force feedback did nothing after its device was removed from a controller and added again.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
@@ -58,6 +59,7 @@
 - Added: Trust local connections option for AI assistant access, off by default.
 - Added: The AI page shows an example request, with a Copy button.
 - Added: AI assistants can find a controller by its maker.
+- Added: Damping Width, so the centering spring slows the wheel only near the centre and a weak spring brings it back quickly.
 
 ## [4.24.60.0] - 2026-10-02
 

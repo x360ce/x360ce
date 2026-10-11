@@ -139,7 +139,7 @@ namespace x360ce.Tests
 						finally
 						{
 							Poll(ff, ud, device, ps, Off, 50);
-							ff.StopDeviceForces(device);
+							ff.StopDeviceForces();
 							device.Unacquire();
 						}
 					}

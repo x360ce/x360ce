@@ -106,6 +106,91 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("ui-interactive"), TestCategory("requires-wheel")]
+		[Description("A wheel let go of and held again, as when its row is removed and added again, is driven by the new force state: its spring brings the wheel home and its motor moves it")]
+		public void A_wheel_let_go_of_and_held_again_is_driven_by_a_new_state()
+		{
+			using (var manager = new DirectInput())
+			{
+				var instance = FindWheel(manager);
+				using (var form = new Form())
+				using (var device = new Joystick(manager, instance.InstanceGuid))
+				{
+					var ud = new UserDevice();
+					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
+					ud.DevVendorId = device.Properties.VendorId;
+					ud.DevProductId = device.Properties.ProductId;
+					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "60" };
+					var silence = new Vibration { LeftMotorSpeed = short.MinValue, RightMotorSpeed = short.MinValue };
+					var full = new Vibration { LeftMotorSpeed = short.MaxValue, RightMotorSpeed = short.MinValue };
+					Hold(device, form);
+					// The first state pushes the wheel out with its motor, so the new one has somewhere to bring it home from.
+					var first = new ForceFeedbackState();
+					first.SetDeviceForces(ud, device, ps, full);
+					SpringFor(first, device, 1500);
+					// Let go of as the engine lets go of a device its routing drops, and held again as one routed again.
+					first.StopDeviceForces();
+					device.Unacquire();
+					Assert.AreEqual(0, device.CreatedEffects.Count, "Letting go of the wheel left the old state's effects on it.");
+					Hold(device, form);
+					var second = new ForceFeedbackState();
+					try
+					{
+						second.SetDeviceForces(ud, device, ps, silence);
+						var home = SpringFor(second, device, SettleMs);
+						Console.WriteLine("New state's spring: from {0} to {1} ({2} degrees of 900 from the centre).", home[0], home[1], Degrees(home[1] - SpringCalibration.Center));
+						Assert.IsTrue(Math.Abs(home[0] - SpringCalibration.Center) > StopZone, "The old state's motor did not push the wheel out, so the return proves nothing.");
+						Assert.IsTrue(Math.Abs(home[1] - SpringCalibration.Center) <= StopZone, "The new state's spring did not bring the wheel home: it drives nothing.");
+						second.SetDeviceForces(ud, device, ps, full);
+						var pushed = SpringFor(second, device, 1500);
+						Console.WriteLine("New state's motor: from {0} to {1}.", pushed[0], pushed[1]);
+						Assert.IsTrue(Math.Abs(pushed[1] - pushed[0]) > StopZone, "The new state's motor did not move the wheel.");
+					}
+					finally
+					{
+						second.StopDeviceForces();
+						device.Unacquire();
+					}
+				}
+			}
+		}
+
+		/// <summary>The attached force feedback wheel, or an inconclusive test when there is none.</summary>
+		/// <remarks>A wheel before anything else with force feedback: a rumble pad plugged in beside the wheel answers to the same question, and its motor cannot be pushed to a stop.</remarks>
+		static DeviceInstance FindWheel(DirectInput manager)
+		{
+			var instance = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly)
+				.Where(x => x.ForceFeedbackDriverGuid != Guid.Empty)
+				.OrderByDescending(x => x.Type == SharpDX.DirectInput.DeviceType.Driving)
+				.FirstOrDefault();
+			if (instance == null)
+				Assert.Inconclusive("No force feedback controller is attached.");
+			return instance;
+		}
+
+		/// <summary>Holds the device as the program does while its spring is on: exclusively, with the device's own centring off, which left on holds the wheel against every push made here.</summary>
+		static void Hold(Joystick device, Form form)
+		{
+			device.SetCooperativeLevel(form.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
+			device.Properties.AutoCenter = false;
+			device.Acquire();
+		}
+
+		/// <summary>Drives a state's spring for a while, as every poll does, and returns where the wheel started and ended.</summary>
+		static int[] SpringFor(ForceFeedbackState ff, Joystick device, int ms)
+		{
+			var watch = Stopwatch.StartNew();
+			var start = Position(device);
+			var position = start;
+			while (watch.ElapsedMilliseconds < ms)
+			{
+				position = Position(device);
+				ff.UpdateSpring(device, position, null, watch.ElapsedMilliseconds, 0, ForceFeedbackState.DefaultDampingDegrees);
+				Thread.Sleep(1);
+			}
+			return new[] { start, position };
+		}
+
 		/// <summary>Pumps the wheel as a child pumps a swing, a push the way it is already going, then lets it be and watches it come to rest.</summary>
 		/// <remarks>
 		/// A spring alone stores what the pump puts in and gives it back for ever, like a plane in a
@@ -128,7 +213,7 @@ namespace x360ce.Tests
 				while (watch.ElapsedMilliseconds < PumpMs)
 				{
 					var position = Position(b.Device);
-					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0);
+					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0, ForceFeedbackState.DefaultDampingDegrees);
 					widest = Math.Max(widest, Math.Abs(position - SpringCalibration.Center));
 					// The push follows the movement, read over a short stretch so the encoder's jitter does not steer it.
 					if (watch.ElapsedMilliseconds - lastAt >= 20)
@@ -175,7 +260,7 @@ namespace x360ce.Tests
 			var watch = Stopwatch.StartNew();
 			while (!run.IsFinished && watch.ElapsedMilliseconds < 60000)
 			{
-				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, 0);
+				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, 0, ForceFeedbackState.DefaultDampingDegrees);
 				Thread.Sleep(1);
 			}
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
@@ -188,22 +273,11 @@ namespace x360ce.Tests
 		{
 			using (var manager = new DirectInput())
 			{
-				// A wheel before anything else with force feedback: a rumble pad plugged in beside
-				// the wheel answers to the same question, and its motor cannot be pushed to a stop.
-				var instance = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly)
-					.Where(x => x.ForceFeedbackDriverGuid != Guid.Empty)
-					.OrderByDescending(x => x.Type == SharpDX.DirectInput.DeviceType.Driving)
-					.FirstOrDefault();
-				if (instance == null)
-					Assert.Inconclusive("No force feedback controller is attached.");
+				var instance = FindWheel(manager);
 				using (var form = new Form())
 				using (var device = new Joystick(manager, instance.InstanceGuid))
 				{
-					device.SetCooperativeLevel(form.Handle, CooperativeLevel.Background | CooperativeLevel.Exclusive);
-					// The device's own centring is switched off, as the program does while its spring is on;
-					// left on, it holds the wheel against every push made here.
-					device.Properties.AutoCenter = false;
-					device.Acquire();
+					Hold(device, form);
 					// The device as the program sees it: its objects, with the axis index each one moves.
 					var ud = new UserDevice();
 					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
@@ -237,7 +311,7 @@ namespace x360ce.Tests
 						finally
 						{
 							push.Stop();
-							ff.StopDeviceForces(device);
+							ff.StopDeviceForces();
 							device.Unacquire();
 						}
 					}
@@ -340,7 +414,7 @@ namespace x360ce.Tests
 			{
 				var position = Position(b.Device);
 				positions.Add(position);
-				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0);
+				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, 0, ForceFeedbackState.DefaultDampingDegrees);
 				Thread.Sleep(1);
 			}
 			return positions;
@@ -350,7 +424,7 @@ namespace x360ce.Tests
 		{
 			b.Ps.ForceSpringStrength = strength.ToString();
 			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence);
-			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, 0);
+			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, 0, ForceFeedbackState.DefaultDampingDegrees);
 		}
 
 		static int Degrees(int axisUnits)

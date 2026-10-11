@@ -107,12 +107,11 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The damping is one value: the same at every angle and at every strength")]
-		public void Damping_is_the_same_at_every_angle_and_strength()
+		[Description("The spring's own damping is one value, the same at every strength")]
+		public void Damping_is_the_same_at_every_strength()
 		{
-			// An edge in the damping was felt as a border in the wheel, a third of the way out, where
-			// the resistance dropped for no reason a hand could see. Scaled with the strength instead,
-			// full strength asked the device for everything it had and the wheel ground its way home.
+			// Scaled with the strength, full strength asked the device for everything it had and the
+			// wheel ground its way home.
 			Assert.AreEqual(0, ForceFeedbackState.DamperFor(0), "No spring, no damping.");
 			Assert.AreEqual(ForceFeedbackState.DamperCoefficient, ForceFeedbackState.DamperFor(28));
 			Assert.AreEqual(ForceFeedbackState.DamperFor(28), ForceFeedbackState.DamperFor(100), "A stronger spring must not brake the wheel harder.");
@@ -120,24 +119,36 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Centre damping adds resistance only where the spring fades, and only when it is asked for (issue #1643)")]
-		public void Centre_damping_acts_only_near_the_centre()
+		[Description("The damping width is counted in degrees against the wheel's range, and a range left as it is counts as 900 degrees")]
+		public void The_damping_width_is_counted_in_degrees_of_the_wheel_range()
+		{
+			Assert.AreEqual(SpringCalibration.AxisMax * 30 / 900, ForceFeedbackState.DampingBand(30, 900), "Thirty degrees of a 900 degree wheel is a thirtieth of its travel.");
+			Assert.AreEqual(ForceFeedbackState.DampingBand(30, 900), ForceFeedbackState.DampingBand(30, 0), "A wheel whose range is left as it is is not counted as 900 degrees.");
+			Assert.AreEqual(SpringCalibration.AxisMax * 30 / 200, ForceFeedbackState.DampingBand(30, 200), "Thirty degrees of a 200 degree wheel is a wider part of its travel.");
+			Assert.AreEqual(0, ForceFeedbackState.DampingBand(0, 900), "Nought degrees is no damping.");
+			Assert.AreEqual(SpringCalibration.Center + 1, ForceFeedbackState.DampingBand(180, 200), "A width wider than the wheel covers the whole wheel and no more.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The spring's damping acts only within the width either side of the centre, so a weak spring brings the wheel back from the stops unslowed (issue #1643)")]
+		public void Damping_acts_only_within_the_width()
 		{
 			const int strength = 28;
-			var band = ForceFeedbackState.SpringRampFor(strength);
+			var band = ForceFeedbackState.DampingBand(30, 900);
 			var centre = SpringCalibration.Center;
 			var inside = false;
-			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre, strength, 0, ref inside), "Off adds nothing.");
-			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre, 0, 50, ref inside), "No spring, no centre damping.");
-			Assert.AreEqual(ForceFeedbackState.CentreDamperMax / 2, ForceFeedbackState.CentreDamping(centre + band / 2, strength, 50, ref inside));
+			Assert.AreEqual(0, ForceFeedbackState.SpringDamping(centre, 0, 50, band, ref inside), "No spring, no damping.");
+			Assert.AreEqual(0, ForceFeedbackState.SpringDamping(centre, strength, 50, 0, ref inside), "No width, no damping.");
+			Assert.AreEqual(ForceFeedbackState.DamperCoefficient, ForceFeedbackState.SpringDamping(centre + band / 2, strength, 0, band, ref inside),
+				"Within the width, the spring's own damping acts with no centre damping added.");
 			Assert.IsTrue(inside);
-			Assert.AreEqual(ForceFeedbackState.CentreDamperMax, ForceFeedbackState.CentreDamping(centre, strength, 100, ref inside));
-			Assert.IsTrue(ForceFeedbackState.DamperCoefficient + ForceFeedbackState.CentreDamperMax <= 10000, "More than the device can do is asked.");
+			Assert.AreEqual(ForceFeedbackState.DamperCoefficient + ForceFeedbackState.CentreDamperMax / 2, ForceFeedbackState.SpringDamping(centre, strength, 50, band, ref inside));
+			Assert.AreEqual(10000, ForceFeedbackState.SpringDamping(centre, strength, 100, band, ref inside), "Full centre damping is not everything the device can do, or more.");
 			// Out past the edge by less than a quarter of the band, a wheel already inside stays inside.
-			Assert.AreNotEqual(0, ForceFeedbackState.CentreDamping(centre + band + band / 8, strength, 50, ref inside), "A wheel resting on the edge switches the damper on every poll.");
-			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre - band - band / 2, strength, 50, ref inside), "The damping follows the wheel out of the centre.");
-			Assert.AreEqual(0, ForceFeedbackState.CentreDamping(centre + band + band / 8, strength, 50, ref inside), "A wheel coming back takes the damping before it reaches the band.");
-			Assert.AreNotEqual(0, ForceFeedbackState.CentreDamping(centre + band - 1, strength, 50, ref inside));
+			Assert.AreNotEqual(0, ForceFeedbackState.SpringDamping(centre + band + band / 8, strength, 50, band, ref inside), "A wheel resting on the edge switches the damper on every poll.");
+			Assert.AreEqual(0, ForceFeedbackState.SpringDamping(centre - band - band / 2, strength, 50, band, ref inside), "Beyond the width the wheel is slowed, so a weak spring brings it home slowly.");
+			Assert.AreEqual(0, ForceFeedbackState.SpringDamping(centre + band + band / 8, strength, 50, band, ref inside), "A wheel coming back is slowed before it reaches the width.");
+			Assert.AreNotEqual(0, ForceFeedbackState.SpringDamping(centre + band - 1, strength, 50, band, ref inside));
 		}
 	}
 }
