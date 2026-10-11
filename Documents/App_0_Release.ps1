@@ -278,10 +278,24 @@ function Invoke-Build {
             $extra += "-p:$($property.Name)=$($property.Value)"
         }
     }
-    & $msbuild $target -t:restore,build `
-        -p:Configuration=$Configuration -p:Platform=$($Build.Platform) `
-        @extra -v:minimal -nologo -m
-    if ($LASTEXITCODE -ne 0) { throw "Build failed: $name $Configuration|$($Build.Platform)" }
+    # A source folder projected by a file system provider, such as a class library mirror kept in step by one,
+    # can refuse the build for a few milliseconds while the provider holds a file: the compiler says CS1504, the
+    # resource generator MSB3103, both with "being used by another process". Nothing is wrong with the source, and
+    # the same build passes a moment later, so a build whose every error is such a refusal is built again. Any
+    # other failure stops the release at once.
+    $attempts = 3
+    for ($attempt = 1; $attempt -le $attempts; $attempt++) {
+        & $msbuild $target -t:restore,build `
+            -p:Configuration=$Configuration -p:Platform=$($Build.Platform) `
+            @extra -v:minimal -nologo -m | Tee-Object -Variable output
+        if ($LASTEXITCODE -eq 0) { return }
+        $errors = @($output | Where-Object { "$_" -match ': error ' })
+        $locked = $errors.Count -gt 0 -and @($errors | Where-Object { "$_" -notmatch 'being used by another process' }).Count -eq 0
+        if (-not $locked -or $attempt -eq $attempts) { break }
+        Write-Host "A source file was held by another process for a moment; building $name again ($($attempt + 1) of $attempts)." -ForegroundColor Yellow
+        Start-Sleep -Seconds 2
+    }
+    throw "Build failed: $name $Configuration|$($Build.Platform)"
 }
 
 # "All" signs and then rebuilds the zip from scratch. A stage with no zip

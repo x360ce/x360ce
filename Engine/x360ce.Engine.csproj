@@ -175,6 +175,7 @@
     <Compile Include="Common\ForceFeedbackState.cs" />
     <Compile Include="Common\LogitechWheel.cs" />
     <Compile Include="Common\SpringCalibration.cs" />
+    <Compile Include="Common\SpringCurve.cs" />
     <Compile Include="Common\ForegroundWindowHook.cs" />
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />

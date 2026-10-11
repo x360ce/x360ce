@@ -14,6 +14,7 @@ time a release reaches `master`, so a page is changed here, never in the wiki.
 | [Help.ForceFeedback](Help.ForceFeedback.md) | Which motor a game uses for what, as the Force Feedback page shows it. |
 | [Help.HidGuardian](Help.HidGuardian.md) | Removing the obsolete HID Guardian, and how to recover if keyboard and mouse stop working. |
 | [Help.AiAssistants](Help.AiAssistants.md) | Letting an AI assistant set up x360ce, with a worked example, and checking what it did. |
+| [Help.WheelCentering](Help.WheelCentering.md) | How a real car centres its steering wheel, with measured values, and how the Wheel tab's centering spring copies it. |
 
 ## For the project
 

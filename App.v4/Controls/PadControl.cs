@@ -79,7 +79,7 @@ namespace x360ce.App.Controls
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
 			UpdateSpringNote();
-			SyncCentreDamping();
+			UpdateWheelChart();
 		}
 
 		private void UpdateControlFromDInput()
@@ -326,6 +326,11 @@ namespace x360ce.App.Controls
 					ForceOverallTrackBar,
 					ForceSpringEnableCheckBox,
 					ForceSpringStrengthTrackBar,
+					ForceSpringCentreTrackBar,
+					ForceSpringPeakTrackBar,
+					ForceSpringLighteningTrackBar,
+					ForceSpringDampingTrackBar,
+					ForceSpringSpeedTrackBar,
 					ForceSwapMotorCheckBox,
 					LeftMotorDirectionComboBox,
 					LeftMotorPeriodTrackBar,
@@ -450,6 +455,11 @@ namespace x360ce.App.Controls
 			WheelRangeComboBox.Items.Add(new KeyValuePair("360° - Formula cars", "360"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("270° - Arcade", "270"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("200° - As powered up", "200"));
+			// The cars the Car list offers, then Custom for values that match none of them.
+			ForceSpringCarComboBox.Items.AddRange(SpringCars);
+			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
+			ShowSpringCar();
+			UpdateSpringChart();
 			PassThroughIndexComboBox.DisplayMember = "Key";
 			PassThroughIndexComboBox.ValueMember = "Value";
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
@@ -958,6 +968,11 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
 			AddMap(() => SettingName.ForceSpringEnable, ForceSpringEnableCheckBox);
 			AddMap(() => SettingName.ForceSpringStrength, ForceSpringStrengthTrackBar);
+			AddMap(() => SettingName.ForceSpringCentre, ForceSpringCentreTrackBar);
+			AddMap(() => SettingName.ForceSpringPeak, ForceSpringPeakTrackBar);
+			AddMap(() => SettingName.ForceSpringLightening, ForceSpringLighteningTrackBar);
+			AddMap(() => SettingName.ForceSpringDamping, ForceSpringDampingTrackBar);
+			AddMap(() => SettingName.ForceSpringSpeed, ForceSpringSpeedTrackBar);
 			AddMap(() => SettingName.WheelRange, WheelRangeComboBox);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
@@ -1336,35 +1351,181 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			UpdateSpringChart();
 		}
 
-		void ForceSpringDampingTrackBar_ValueChanged(object sender, EventArgs e)
+		/// <summary>Shows the values of the centering spring's curve beside their sliders, the car they match, and the curve.</summary>
+		void ForceSpringCurveTrackBar_ValueChanged(object sender, EventArgs e)
 		{
+			ForceSpringCentreTextBox.Text = string.Format("{0}° ", ForceSpringCentreTrackBar.Value);
+			ForceSpringPeakTextBox.Text = ForceSpringPeakTrackBar.Value == 0 ? "Stop " : string.Format("{0}° ", ForceSpringPeakTrackBar.Value);
+			ForceSpringLighteningTextBox.Text = string.Format("{0} % ", ForceSpringLighteningTrackBar.Value);
 			ForceSpringDampingTextBox.Text = string.Format("{0} % ", ForceSpringDampingTrackBar.Value);
-			SettingsManager.Options.ForceSpringCentreDamping = ForceSpringDampingTrackBar.Value;
+			ForceSpringSpeedTextBox.Text = string.Format("{0} km/h ", ForceSpringSpeedTrackBar.Value);
+			ShowSpringCar();
+			UpdateSpringChart();
 		}
 
-		void ForceSpringDampingWidthTrackBar_ValueChanged(object sender, EventArgs e)
+		void WheelRangeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			ForceSpringDampingWidthTextBox.Text = string.Format("{0}° ", ForceSpringDampingWidthTrackBar.Value);
-			SettingsManager.Options.ForceSpringDampingWidth = ForceSpringDampingWidthTrackBar.Value;
+			UpdateSpringChart();
 		}
 
-		/// <summary>Shows the centre damping and the damping width, which every controller tab shares and any of them can set.</summary>
-		void SyncCentreDamping()
+		#region Wheel tab: cars and chart
+
+		/// <summary>A car on the Car list: the values it puts on the centering spring's curve, and what they are based on.</summary>
+		/// <remarks>Strength is not among them: it is the wheel's, which Auto measures, not the car's.</remarks>
+		public class SpringCar
 		{
-			var value = Math.Max(0, Math.Min(ForceSpringDampingTrackBar.Maximum, SettingsManager.Options.ForceSpringCentreDamping));
-			if (ForceSpringDampingTrackBar.Value != value)
-				ForceSpringDampingTrackBar.Value = value;
-			var width = Math.Max(0, Math.Min(ForceSpringDampingWidthTrackBar.Maximum, SettingsManager.Options.ForceSpringDampingWidth));
-			if (ForceSpringDampingWidthTrackBar.Value != width)
-				ForceSpringDampingWidthTrackBar.Value = width;
+			public SpringCar(string name, int centre, int peak, int lightening, int damping, int speed)
+			{
+				Name = name;
+				Centre = centre;
+				Peak = peak;
+				Lightening = lightening;
+				Damping = damping;
+				Speed = speed;
+			}
+
+			/// <summary>The kind of car, its speed, and what its values are based on.</summary>
+			public readonly string Name;
+			public readonly int Centre;
+			public readonly int Peak;
+			public readonly int Lightening;
+			public readonly int Damping;
+			public readonly int Speed;
+
+			public override string ToString()
+			{
+				return Name;
+			}
 		}
+
+		/// <summary>The cars on the Car list, in its order.</summary>
+		/// <remarks>
+		/// No standard sets how a steering wheel must feel, so each car names what it is based on. The family car at
+		/// 100 km/h is worked out from measurements taken in the ISO 13674-1 weave test; in town and parking are the same
+		/// car read at a lower speed; the sports car and the van are estimates within the range measured on many cars in
+		/// the same test. The first is the settings' defaults.
+		/// </remarks>
+		public static readonly SpringCar[] SpringCars =
+		{
+			new SpringCar("Family car, 100 km/h (ISO 13674-1 weave test, measured)", 12, 60, 40, 5, 100),
+			new SpringCar("Family car in town, 40 km/h (same car, slower)", 12, 60, 40, 5, 40),
+			new SpringCar("Parking (same car, 10 km/h)", 12, 60, 40, 0, 10),
+			new SpringCar("Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range)", 8, 40, 30, 5, 100),
+			new SpringCar("Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range)", 30, 120, 50, 10, 80),
+		};
+
+		/// <summary>What the Car list shows when the values match no car.</summary>
+		public const string CustomSpringCar = "Custom";
+
+		/// <summary>The place on <see cref="SpringCars"/> of the car with these values, or -1 when none has them.</summary>
+		public static int SpringCarIndex(int centre, int peak, int lightening, int damping, int speed)
+		{
+			for (var i = 0; i < SpringCars.Length; i++)
+			{
+				var car = SpringCars[i];
+				if (car.Centre == centre && car.Peak == peak && car.Lightening == lightening && car.Damping == damping && car.Speed == speed)
+					return i;
+			}
+			return -1;
+		}
+
+		/// <summary>Guards the Car list and the sliders against answering each other in a loop.</summary>
+		bool _settingSpringCar;
+
+		/// <summary>Shows on the Car list the car the sliders' values match, or Custom.</summary>
+		void ShowSpringCar()
+		{
+			if (_settingSpringCar || ForceSpringCarComboBox.Items.Count == 0)
+				return;
+			_settingSpringCar = true;
+			try
+			{
+				var i = SpringCarIndex(ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value, ForceSpringLighteningTrackBar.Value,
+					ForceSpringDampingTrackBar.Value, ForceSpringSpeedTrackBar.Value);
+				ForceSpringCarComboBox.SelectedIndex = i >= 0 ? i : SpringCars.Length;
+			}
+			finally
+			{
+				_settingSpringCar = false;
+			}
+		}
+
+		/// <summary>A chosen car sets Centre, Peak, Lightening, Damping and Speed, which save as any other move does. Custom changes nothing.</summary>
+		void ForceSpringCarComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (_settingSpringCar)
+				return;
+			var i = ForceSpringCarComboBox.SelectedIndex;
+			if (i < 0 || i >= SpringCars.Length)
+			{
+				// The list goes back to the car the values still match, once the choice is over.
+				BeginInvoke((Action)ShowSpringCar);
+				return;
+			}
+			var car = SpringCars[i];
+			_settingSpringCar = true;
+			try
+			{
+				ForceSpringCentreTrackBar.Value = car.Centre;
+				ForceSpringPeakTrackBar.Value = car.Peak;
+				ForceSpringLighteningTrackBar.Value = car.Lightening;
+				ForceSpringDampingTrackBar.Value = car.Damping;
+				ForceSpringSpeedTrackBar.Value = car.Speed;
+			}
+			finally
+			{
+				_settingSpringCar = false;
+			}
+		}
+
+		/// <summary>The steering range chosen on the Wheel range list, or nought when it leaves the wheel as it is.</summary>
+		int SelectedWheelRange()
+		{
+			var item = WheelRangeComboBox.SelectedItem as KeyValuePair;
+			int range;
+			return item != null && int.TryParse(item.Value, out range) ? range : 0;
+		}
+
+		/// <summary>Gives the chart the curve the page's settings make. The chart draws it again only when it changed.</summary>
+		void UpdateSpringChart()
+		{
+			WheelChartUserControl.SetCurve(ForceSpringStrengthTrackBar.Value, ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value,
+				ForceSpringLighteningTrackBar.Value, SelectedWheelRange(), ForceSpringSpeedTrackBar.Value);
+		}
+
+		/// <summary>Puts the wheel's angle, the live speed and the friction Auto measured on the chart, while the Wheel tab is shown.</summary>
+		/// <remarks>
+		/// Read from the device whose motors the engine drives, a Raw Input device's DirectInput twin, as the engine reads
+		/// it for the spring: the axis the spring's motor turns, or the first axis before force feedback has found it.
+		/// </remarks>
+		void UpdateWheelChart()
+		{
+			if (PadTabControl.SelectedTab != WheelTabPage)
+				return;
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
+			int? position = null;
+			var state = driven == null ? null : driven.SourceState;
+			if (state != null && state.Axis != null)
+			{
+				var index = driven.FFState != null && driven.FFState.SpringAxisIndex >= 0 ? driven.FFState.SpringAxisIndex : 0;
+				if (index < state.Axis.Length)
+					position = state.Axis[index];
+			}
+			WheelChartUserControl.UpdateWheel(position,
+				driven == null ? null : driven.ForceSpringSpeedOverride,
+				driven == null ? 0 : driven.ForceSpringFriction);
+		}
+
+		#endregion
 
 		/// <summary>The device the Auto button's run is on, held here because the tab can be switched to another while it runs.</summary>
 		UserDevice springAutoDevice;
 
-		/// <summary>Starts the run that finds the weakest centering force.</summary>
+		/// <summary>Starts the run that measures the wheel's friction and sets the centering spring's strength to beat it.</summary>
 		/// <remarks>
 		/// The engine drives the wheel and does the measuring; this side only starts it, watches it
 		/// through a timer, and puts the answer on the slider, which saves it like any other move.
@@ -1392,7 +1553,7 @@ namespace x360ce.App.Controls
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = driven;
-			driven.SpringCalibration = new SpringCalibration();
+			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);
 			SpringAutoTimer.Start();
 		}
 
@@ -1464,10 +1625,12 @@ namespace x360ce.App.Controls
 			ud.SpringCalibration = null;
 			if (run.Result > 0)
 			{
-				ForceSpringStrengthTrackBar.Value = run.Result;
+				// The friction stays with the device for the session, for the chart's band.
+				ud.ForceSpringFriction = run.Result;
+				ForceSpringStrengthTrackBar.Value = run.Strength;
 				WheelDescriptionLabel.Text = string.Format(
-					"Centering spring set to {0} %. The wheel turns at {1} % and {2} % from the two stops, comes home within {3} s at {4} % and {5} %, and a little is added so it starts every time.",
-					run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
+					"Centering spring set to {0} %, so it beats the wheel's friction of {1} % from the stop to Centre. The wheel turns at {2} % and {3} % from the two stops, and comes home within {4} s at {5} % and {6} %.",
+					run.Strength, run.Result, run.LowTurnsAt, run.HighTurnsAt, SpringCalibration.ReturnWithinMs / 1000, run.LowLevel, run.HighLevel);
 			}
 			else
 			{

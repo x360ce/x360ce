@@ -61,8 +61,8 @@ namespace x360ce.Engine
         public PeriodicForce PeriodicForceR;
         public ConstantForce ConstantForceR;
 
-        // Centering spring: a constant force on the same actuator as the left motor, turned
-        // towards the centre by this program as the wheel moves.
+        // Centering spring: a constant force on the same actuator as the left motor, set by this
+        // program from the spring's curve as the wheel moves.
 
         EffectParameters paramsS;
         Effect effectS;
@@ -71,16 +71,29 @@ namespace x360ce.Engine
         /// <summary>Whether the spring is wanted, or null before the setting has been read.</summary>
         bool? springEnabled;
         string old_SpringStrength;
-        /// <summary>The spring strength in percent, read once when the setting changes rather than parsed every poll.</summary>
+        string old_SpringCentre;
+        string old_SpringPeak;
+        string old_SpringLightening;
+        string old_SpringDamping;
+        string old_SpringSpeed;
+        // The spring's settings, read once when one changes rather than parsed every poll.
+        /// <summary>The spring strength in percent, or nought when the spring is off.</summary>
         int springStrength;
+        int springCentre = int.Parse(SettingName.DefaultForceSpringCentre);
+        int springPeak = int.Parse(SettingName.DefaultForceSpringPeak);
+        int springLightening = int.Parse(SettingName.DefaultForceSpringLightening);
+        int springSpeed = int.Parse(SettingName.DefaultForceSpringSpeed);
+        /// <summary>The damping that goes with the spring, in DirectInput's units, or nought when the spring is off.</summary>
+        int springDamper;
+        /// <summary>The spring's force at every angle, built when a setting, the wheel range or the speed changes.</summary>
+        public readonly SpringCurve Curve = new SpringCurve();
         /// <summary>The force the device holds now, so a poll that would set the same value sets nothing.</summary>
         int springMagnitude;
-        /// <summary>The wheel is at rest inside the dead band, and stays let go of until it is well outside it.</summary>
         /// <summary>The device refused the spring effect. Asked once, or every poll would ask and throw.</summary>
         bool springRefused;
 
-        // Damping that goes with the spring: the device itself resists the wheel's speed, so a
-        // constant force does not swing it from one end to the other.
+        // Damping that goes with the spring: the device itself resists the wheel's speed, so the
+        // wheel does not swing past the centre and back.
 
         EffectParameters paramsD;
         Effect effectD;
@@ -456,9 +469,23 @@ namespace x360ce.Engine
             if (flagsR != EffectParameterFlags.None)
                 SetParamaters(effectR, paramsR, flagsR);
 
-            var springEnableChanged = Changed(ref old_SpringEnable, ps.ForceSpringEnable);
-            if (springEnableChanged || Changed(ref old_SpringStrength, ps.ForceSpringStrength))
+            // Each compared on its own, so every one is recorded as read.
+            var springChanged = Changed(ref old_SpringEnable, ps.ForceSpringEnable)
+                | Changed(ref old_SpringStrength, ps.ForceSpringStrength)
+                | Changed(ref old_SpringCentre, ps.ForceSpringCentre)
+                | Changed(ref old_SpringPeak, ps.ForceSpringPeak)
+                | Changed(ref old_SpringLightening, ps.ForceSpringLightening)
+                | Changed(ref old_SpringDamping, ps.ForceSpringDamping)
+                | Changed(ref old_SpringSpeed, ps.ForceSpringSpeed);
+            if (springChanged)
+            {
                 springStrength = ps.ForceSpringEnable == "1" ? Math.Max(0, Math.Min(100, ps.GetForceSpringStrength())) : 0;
+                springCentre = ps.GetForceSpringCentre();
+                springPeak = ps.GetForceSpringPeak();
+                springLightening = ps.GetForceSpringLightening();
+                springSpeed = ps.GetForceSpringSpeed();
+                springDamper = springStrength == 0 ? 0 : SpringDamper(ps.GetForceSpringDamping());
+            }
             // Off means nothing of ours on the wheel, so whatever else centres it is left in charge: the
             // effects come off, and the device is held again so that DirectInput's own autocenter, which
             // can only be set while the device is let go of, follows the setting.
@@ -476,7 +503,7 @@ namespace x360ce.Engine
             // plugged in again has forgotten it. Not before the device is known by its ids: they
             // come from a read of the machine that finishes after the first polls, and a range
             // sent while they were still nought was sent to nothing and never sent again.
-            // The range the damping width is counted against, whatever the wheel is.
+            // The range the spring's curve is counted against, whatever the wheel is.
             var range = ps.GetWheelRange();
             rangeDegrees = range > 0 ? range : DefaultRangeDegrees;
             if (ud.DevVendorId != 0 && (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device))
@@ -530,166 +557,48 @@ namespace x360ce.Engine
             make = motors & ~refused;
         }
 
-        /// <summary>How far from the centre the spring reaches full strength, as a share of the travel to one side.</summary>
+        /// <summary>The share of the travel to one side, in percent, over which the spring may rise by <see cref="SpringStiffnessLimit"/> percent at most.</summary>
         /// <remarks>
-        /// A spring's force grows with distance; this is where the growth stops. Narrow, so that a
-        /// wheel held off centre by the friction in its own gears comes to rest close to the centre:
-        /// it rests where the spring's force equals that friction, and the steeper the ramp the
-        /// nearer that is. A DirectInput spring effect could do this on the device, but its steepest
-        /// slope is full force over the whole travel, which on a geared wheel leaves the rest far
-        /// out; the loop runs a thousand times a second, which is steep enough to do it here.
-        ///
-        /// On a G27 the friction of the gears is about 29 % of full force. Measured with the ramp at
-        /// 2 % whatever the strength, at the 31 % that Auto chose in that run, the wheel comes home
-        /// within 3 degrees, and within 2 degrees at 100 %; under a steady 39 % push it makes 0
-        /// reversals and no movement over 3 s.
+        /// With <see cref="SpringStiffnessLimit"/> it is the steepest the spring may be. The force answers the position a
+        /// few milliseconds late: the poll, the bus, the device. A spring steep enough that the wheel crosses it in that
+        /// time chases its own force: pumped into a swing at half strength over two percent of the travel, a G27 stayed in
+        /// a nine hertz shake of ten degrees either side for as long as it was watched, damping and all, while at a quarter
+        /// of its force over the same travel it came to rest in two crossings.
         /// </remarks>
         public const int SpringRampPercent = 2;
 
-        /// <summary>The ramp in axis units, at strengths up to <see cref="SpringStiffnessLimit"/>.</summary>
+        /// <summary>The travel over which the spring may rise by <see cref="SpringStiffnessLimit"/> percent at most, in axis units.</summary>
         public const int SpringRamp = SpringCalibration.Center * SpringRampPercent / 100;
 
-        /// <summary>The strength above which the ramp widens, so the spring gets no stiffer than it is here.</summary>
-        /// <remarks>
-        /// The force answers the position a few milliseconds late: the poll, the bus, the device.
-        /// A spring stiff enough that the wheel crosses the ramp in that time chases its own tail:
-        /// pumped into a swing at half strength over the two percent ramp, a G27 stayed in a nine
-        /// hertz shake of ten degrees either side for as long as it was watched, damping and all,
-        /// while at the strength Auto finds for it, a quarter, it came to rest in two crossings.
-        /// Above this the ramp widens in proportion, which keeps the force per degree, and so the
-        /// loop, where it was measured to hold.
-        /// </remarks>
+        /// <summary>The most the spring may rise over <see cref="SpringRamp"/>, in percent of the device's force.</summary>
+        /// <remarks><see cref="SpringCurve"/> widens Centre so that the slope at the centre is never steeper.</remarks>
         public const int SpringStiffnessLimit = 30;
-
-        /// <summary>How far from the centre the spring reaches full strength at a strength, in axis units.</summary>
-        public static int SpringRampFor(int strengthPercent)
-        {
-            return strengthPercent <= SpringStiffnessLimit ? SpringRamp : SpringRamp * strengthPercent / SpringStiffnessLimit;
-        }
-
-        /// <summary>The most one step of the ramp may change the force by, in percent of the device's force.</summary>
-        /// <remarks>
-        /// A wheel held just off the centre sits on a step of the ramp and is knocked across it by
-        /// each change of force. Eight fixed steps made that knock an eighth of the strength, which
-        /// at full strength was a twelve percent blow every poll and a wheel that chattered under a
-        /// finger; a step no larger than this is too small to move it. Each change is still a message
-        /// to the device, so the steps are as few as the cap allows.
-        /// </remarks>
-        public const int SpringStepPercent = 3;
-
-        /// <summary>How many force levels the ramp is cut into at a strength: enough that no step is larger than <see cref="SpringStepPercent"/>.</summary>
-        public static int SpringRampSteps(int strengthPercent)
-        {
-            return Math.Max(1, (strengthPercent + SpringStepPercent - 1) / SpringStepPercent);
-        }
 
         /// <summary>How near the centre the spring asks nothing, as DirectInput counts the axis: a fifth of a percent of the travel.</summary>
         /// <remarks>
-        /// Small. The force just outside it is the ramp's lowest step, which is small too, so there
-        /// is no edge for the wheel to chatter across; a wide band was where a wheel came to rest
-        /// short of the centre.
+        /// Small. The force just outside it is small too, so there is no edge for the wheel to chatter across; a wide band
+        /// was where a wheel came to rest short of the centre.
         /// </remarks>
         public const int SpringDeadBand = SpringCalibration.AxisMax / 500;
 
-        /// <summary>The spring's force for a wheel position, in percent, positive towards the high end of the axis.</summary>
+        /// <summary>The damping that goes with the spring, in DirectInput's units: the damping setting's percent of the device's full scale, at every angle.</summary>
         /// <remarks>
-        /// Beyond the ramp the force is the same at every angle, so the weakest setting that brings
-        /// the wheel home from one place brings it home from everywhere, and a wheel in a 200 degree
-        /// range feels the same as one in 900. Inside the ramp it grows with the distance, in steps,
-        /// down to nothing at the centre. It used to switch between nothing and full at the edge of
-        /// a band, and a wheel nudged gently was pushed back, let go, nudged and pushed back again,
-        /// pulsing under a finger or a small weight; a force that grows has no edge to pulse at.
+        /// A spring alone can swing a wheel past the centre and back: it arrives with speed, and the force turns round.
+        /// Resistance in proportion to the speed takes that energy out, and the device computes it itself between polls.
+        /// A spring that grows with the angle, as a car's does, needs little of it. Measured on a G27, a thirty percent
+        /// push crossed the wheel in 0.8 s free, in 1.2 s against a quarter of full damping, and not at all against half.
         /// </remarks>
-        public static int SpringForce(int position, int strengthPercent)
+        /// <param name="dampingPercent">The damping setting, 0 to 100.</param>
+        public static int SpringDamper(int dampingPercent)
         {
-            if (strengthPercent <= 0)
-                return 0;
-            var offset = position - SpringCalibration.Center;
-            var distance = Math.Abs(offset);
-            if (distance <= SpringDeadBand)
-                return 0;
-            var percent = strengthPercent;
-            var ramp = SpringRampFor(strengthPercent);
-            if (distance < ramp)
-            {
-                // Counted from the edge of the dead band, so the first force outside it is one step.
-                var steps = SpringRampSteps(strengthPercent);
-                var step = (int)((long)(distance - SpringDeadBand) * steps / (ramp - SpringDeadBand)) + 1;
-                percent = strengthPercent * step / steps;
-            }
-            return offset < 0 ? percent : -percent;
+            return Math.Max(0, Math.Min(100, dampingPercent)) * (DI_FFNOMINALMAX / 100);
         }
-
-        /// <summary>How much the device resists the wheel's speed near the centre while the spring is on, in DirectInput's units.</summary>
-        /// <remarks>
-        /// A constant force alone swings a wheel from one end to the other: it arrives at the centre
-        /// at speed, the force turns round, and it goes back just as far. Resistance in proportion
-        /// to speed takes that energy out, and the device computes it itself between polls.
-        ///
-        /// One value, whatever the strength. Measured on a G27, where a thirty percent push crossed
-        /// the wheel in 0.8 s free, 1.2 s at this much, and could not move it at all at 5000: enough
-        /// to take a swing out, far from enough to hold the wheel against its own motor. Scaled with
-        /// the strength it reached 10000 at full, and the wheel ground its way home against its own
-        /// brake. It acts only within the damping width (<see cref="SpringDamping"/>).
-        /// </remarks>
-        public const int DamperCoefficient = 2500;
-
-        /// <summary>The damping to ask of the device while the spring is on at this strength.</summary>
-        public static int DamperFor(int strengthPercent)
-        {
-            return strengthPercent <= 0 ? 0 : DamperCoefficient;
-        }
-
-        /// <summary>The most damping the centre may add, so that with <see cref="DamperCoefficient"/> it reaches DirectInput's full scale.</summary>
-        public const int CentreDamperMax = DI_FFNOMINALMAX - DamperCoefficient;
-
-        /// <summary>How far either side of the centre the damping reaches unless the person sets another width, in degrees.</summary>
-        public const int DefaultDampingDegrees = 30;
 
         /// <summary>The steering range, lock to lock, that degrees are counted against while the wheel range setting leaves the wheel as it is.</summary>
         public const int DefaultRangeDegrees = 900;
 
         /// <summary>The steering range, lock to lock, from the wheel range setting, or <see cref="DefaultRangeDegrees"/>.</summary>
         int rangeDegrees = DefaultRangeDegrees;
-
-        /// <summary>Whether the wheel is within the damping width (<see cref="SpringDamping"/>).</summary>
-        bool inDamping;
-
-        /// <summary>How far from the centre a width in degrees reaches, in axis units, on a wheel with this range lock to lock.</summary>
-        /// <param name="degrees">The width each side of the centre.</param>
-        /// <param name="rangeDegrees">The wheel's range lock to lock, or nought when it is not known, which counts as <see cref="DefaultRangeDegrees"/>.</param>
-        public static int DampingBand(int degrees, int rangeDegrees)
-        {
-            if (degrees <= 0)
-                return 0;
-            if (rangeDegrees <= 0)
-                rangeDegrees = DefaultRangeDegrees;
-            return (int)Math.Min(SpringCalibration.Center + 1L, (long)SpringCalibration.AxisMax * degrees / rangeDegrees);
-        }
-
-        /// <summary>The spring's resistance to the wheel's speed, in DirectInput's units: all of it within the band either side of the centre, none beyond.</summary>
-        /// <remarks>
-        /// A wheel pulled home by the spring arrives with speed and can swing past the centre and back, so the resistance
-        /// that takes the swing out acts where the swing happens. Beyond the band nothing resists the wheel, and even a
-        /// weak spring brings it back from the stops at the speed its force allows. A wheel leaves the band a quarter
-        /// further out than it enters it, so one resting on the edge does not switch the device's damper on every poll.
-        /// </remarks>
-        /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
-        /// <param name="strengthPercent">The spring's strength; with no spring there is no damping.</param>
-        /// <param name="centrePercent">How much damping to add to <see cref="DamperCoefficient"/>, 0 to 100.</param>
-        /// <param name="band">How far from the centre the damping reaches, in axis units (<see cref="DampingBand"/>); nought for none.</param>
-        /// <param name="inside">Whether the wheel was inside the band on the last poll; set to whether it is now.</param>
-        public static int SpringDamping(int position, int strengthPercent, int centrePercent, int band, ref bool inside)
-        {
-            if (strengthPercent <= 0 || band <= 0)
-            {
-                inside = false;
-                return 0;
-            }
-            var distance = Math.Abs(position - SpringCalibration.Center);
-            inside = inside ? distance <= band + band / 4 : distance < band;
-            return inside ? DamperFor(strengthPercent) + CentreDamperMax * Math.Max(0, Math.Min(100, centrePercent)) / 100 : 0;
-        }
 
         /// <summary>
         /// A DirectInput direction names where a force comes from, so a positive magnitude along the
@@ -700,26 +609,34 @@ namespace x360ce.Engine
         /// <summary>Holds a wheel at its centre with a spring the game never asked for. Called every poll.</summary>
         /// <remarks>
         /// A game made for a gamepad sends rumble and nothing else, so a wheel driven from that
-        /// rumble has no force at all between bumps and turns freely. While a calibration is on, it
-        /// decides the force instead of the setting. The device is only spoken to when the force
-        /// changes, which is when the wheel crosses the centre or the dead band, so a poll usually
-        /// compares two numbers and returns.
+        /// rumble has no force at all between bumps and turns freely. The force is looked up in the
+        /// spring's curve (<see cref="Curve"/>), which is built again only when a setting, the wheel
+        /// range or the speed changes. While a calibration is on, it decides the force and the damping
+        /// instead. The device is only spoken to when the force changes by a whole percent, so a poll
+        /// of a still wheel compares a few numbers and returns.
         /// </remarks>
         /// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>.</param>
         /// <param name="calibration">The Auto button's run, or null.</param>
         /// <param name="nowMs">The time, for the calibration.</param>
-        /// <param name="centreDamping">The damping to add near the centre, 0 to 100 (<see cref="SpringDamping"/>).</param>
-        /// <param name="dampingDegrees">How far either side of the centre the damping reaches, in degrees (<see cref="DampingBand"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int centreDamping, int dampingDegrees)
+        /// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride)
         {
-            var percent = calibration != null
-                ? calibration.Update(position, nowMs)
-                : SpringForce(position, springStrength);
-            // The damping follows the settings, or the calibration's own asking: none while its pushes
-            // must move the wheel freely, the answer's own damping while it checks that answer.
-            UpdateDamper(device, calibration != null
-                ? calibration.Damping
-                : SpringDamping(position, springStrength, centreDamping, DampingBand(dampingDegrees, rangeDegrees), ref inDamping));
+            int percent;
+            int damper;
+            if (calibration != null)
+            {
+                // The calibration's own asking: no damping while its pushes must move the wheel freely,
+                // the spring's damping while it ramps and while it checks its answer.
+                percent = calibration.Update(position, nowMs);
+                damper = calibration.Damping;
+            }
+            else
+            {
+                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed);
+                percent = Curve.Force(position);
+                damper = springDamper;
+            }
+            UpdateDamper(device, damper);
             var magnitude = TowardsHighEnd * percent * (DI_FFNOMINALMAX / 100);
             if (magnitude == springMagnitude && (magnitude == 0 || effectS != null))
                 return;
@@ -956,6 +873,11 @@ namespace x360ce.Engine
            old_OveralStrength != ps.ForceOverall ||
            old_SpringEnable != ps.ForceSpringEnable ||
            old_SpringStrength != ps.ForceSpringStrength ||
+           old_SpringCentre != ps.ForceSpringCentre ||
+           old_SpringPeak != ps.ForceSpringPeak ||
+           old_SpringLightening != ps.ForceSpringLightening ||
+           old_SpringDamping != ps.ForceSpringDamping ||
+           old_SpringSpeed != ps.ForceSpringSpeed ||
            old_WheelRange != ps.WheelRange;
         }
 

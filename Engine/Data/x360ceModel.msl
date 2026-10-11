@@ -69,6 +69,11 @@
           <ScalarProperty Name="ForceType" ColumnName="ForceType" />
           <ScalarProperty Name="ForceSpringEnable" ColumnName="ForceSpringEnable" />
           <ScalarProperty Name="ForceSpringStrength" ColumnName="ForceSpringStrength" />
+          <ScalarProperty Name="ForceSpringCentre" ColumnName="ForceSpringCentre" />
+          <ScalarProperty Name="ForceSpringPeak" ColumnName="ForceSpringPeak" />
+          <ScalarProperty Name="ForceSpringLightening" ColumnName="ForceSpringLightening" />
+          <ScalarProperty Name="ForceSpringDamping" ColumnName="ForceSpringDamping" />
+          <ScalarProperty Name="ForceSpringSpeed" ColumnName="ForceSpringSpeed" />
           <ScalarProperty Name="WheelRange" ColumnName="WheelRange" />
           <ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
           <ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />

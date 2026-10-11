@@ -16,7 +16,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.25.66.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.25.67.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -72,6 +72,17 @@ Leave the destination on **Auto (Real)** to use the real controller behind the m
 
 The Test sliders drive the same path a game does, pass through included, so the destination can be
 checked without starting a game.
+
+## Wheel centering spring (v4.x)
+
+A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. The **Wheel**
+tab of a controller holds the wheel at its centre the way a car's steering does: the force grows
+from the centre to a peak, then eases off towards the stop. Pick a car from the **Car** list, or set
+**Centre**, **Peak**, **Lightening**, **Damping** and **Speed** yourself; a chart shows the force at
+every angle, and its dot follows the wheel as it turns. With hands off the wheel, **Auto** measures
+the wheel's friction and sets **Strength** to beat it.
+[How a real car centres its steering wheel](docs/Help.WheelCentering.md) says what each setting
+copies from a real car, with the measurements and standards behind it.
 
 ## Putting controllers in order (v4.x)
 

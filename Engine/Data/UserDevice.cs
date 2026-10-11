@@ -309,6 +309,26 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public volatile SpringCalibration SpringCalibration;
 
+		/// <summary>The wheel's friction the Auto button's run measured this session, in percent of the device's force, or nought before a run. Not stored.</summary>
+		/// <remarks>Set by the interface when a run finishes with an answer (<see cref="Engine.SpringCalibration.Result"/>).</remarks>
+		[XmlIgnore]
+		public int ForceSpringFriction;
+
+		/// <summary>The car's speed in km/h from a live source, such as a game's telemetry, or null to use the Speed setting. Not stored.</summary>
+		/// <remarks>
+		/// While set it replaces the setting in the centering spring's curve (<see cref="SpringCurve"/>), and the engine
+		/// builds the curve again when it changes. Kept here rather than on the force state, which is made again whenever
+		/// the device's force feedback is switched off and on. Written by any thread and read by the engine on every poll,
+		/// so it is held as one number, -1 for none.
+		/// </remarks>
+		[XmlIgnore]
+		public int? ForceSpringSpeedOverride
+		{
+			get { var speed = _ForceSpringSpeedOverride; return speed < 0 ? (int?)null : speed; }
+			set { _ForceSpringSpeedOverride = value.HasValue ? Math.Max(0, value.Value) : -1; }
+		}
+		volatile int _ForceSpringSpeedOverride = -1;
+
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
 

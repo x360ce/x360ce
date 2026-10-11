@@ -385,13 +385,13 @@ namespace x360ce.App.DInput
 									// drives the wheel through the same effect. A device with no force state, or
 									// no actuator on an axis, pays nothing here. The clock is read only while a run is
 									// under way, and the run is read once, so one started between two reads is never
-									// handed time 0.
+									// handed time 0. A live speed, when something sets one, replaces the stored one.
 									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
 										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
-											SettingsManager.Options.ForceSpringCentreDamping, SettingsManager.Options.ForceSpringDampingWidth);
+											ud.ForceSpringSpeedOverride);
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;

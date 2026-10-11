@@ -24,6 +24,8 @@ namespace x360ce.App.UiTree
 				"Shapes what the game receives from the right stick.");
 			d["PadControl.ForceFeedbackTabPage"] = new Text("Force Feedback",
 				"Turns vibration on and sets how strong it is.");
+			d["PadControl.WheelTabPage"] = new Text("Wheel",
+				"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.");
 			d["PadControl.DirectInputTabPage"] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 
@@ -80,26 +82,6 @@ namespace x360ce.App.UiTree
 				"Shows what each motor is used for, their measured speeds, and what the multipliers mean.");
 			d["PadControl.ForceDefaultsButton"] = new Text("Defaults",
 				"Puts every setting on this page back to its default.");
-			d["PadControl.WheelGroupBox"] = new Text("Wheel",
-				"Settings only a wheel has: the centering spring and the steering range.");
-			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
-				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
-			d["PadControl.ForceSpringStrengthTextBox"] = new Text("Centering spring",
-				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
-			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
-				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
-			d["PadControl.ForceSpringDampingTextBox"] = new Text("Centre damping",
-				"Extra resistance to the wheel's speed within the damping width, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
-			d["PadControl.ForceSpringDampingTrackBar"] = new Text("Centre damping",
-				"Extra resistance to the wheel's speed within the damping width, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.");
-			d["PadControl.ForceSpringDampingWidthTextBox"] = new Text("Damping width",
-				"How far either side of the centre the spring's damping reaches, in degrees of the wheel range, or of 900 when the range is left as it is. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly. Nought turns the damping off. The same for every controller.");
-			d["PadControl.ForceSpringDampingWidthTrackBar"] = new Text("Damping width",
-				"How far either side of the centre the spring's damping reaches, in degrees of the wheel range, or of 900 when the range is left as it is. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly. Nought turns the damping off. The same for every controller.");
-			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
-				"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.");
-			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
-				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200. Needs Enable ticked. Leave as it is sends nothing.");
 			d["PadControl.ForcePassThroughIndexComboBox"] = new Text("Pass through to",
 				"Which XInput place receives the game's vibration when it is passed through.");
 			d["PadControl.InforTextBox"] = new Text("About force feedback",
@@ -108,6 +90,45 @@ namespace x360ce.App.UiTree
 				"The big, slow motor, which produces the heavy rumble.");
 			AddMotor(d, "Right", "groupBox1", "Right motor",
 				"The small, fast motor, which produces the light buzz.");
+
+			// Wheel page.
+			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
+				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
+			d["PadControl.ForceSpringCarComboBox"] = new Text("Car",
+				"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. "
+				+ "No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out "
+				+ "from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the "
+				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.");
+			d["PadControl.ForceSpringStrengthTextBox"] = d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Strength",
+				"The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.");
+			d["PadControl.ForceSpringCentreTextBox"] = d["PadControl.ForceSpringCentreTrackBar"] = new Text("Centre",
+				"The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.");
+			d["PadControl.ForceSpringPeakTextBox"] = d["PadControl.ForceSpringPeakTrackBar"] = new Text("Peak",
+				"The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.");
+			d["PadControl.ForceSpringLighteningTextBox"] = d["PadControl.ForceSpringLighteningTrackBar"] = new Text("Lightening",
+				"How much of the spring's strongest force is left at the stop, in percent.");
+			d["PadControl.ForceSpringDampingTextBox"] = d["PadControl.ForceSpringDampingTrackBar"] = new Text("Damping",
+				"Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.");
+			d["PadControl.ForceSpringSpeedTextBox"] = d["PadControl.ForceSpringSpeedTrackBar"] = new Text("Speed",
+				"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. "
+				+ "A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.");
+			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
+				"Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.");
+			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
+				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against, 900 when left as it is. "
+				+ "Needs Enable ticked on the Force Feedback page. Leave as it is sends nothing.");
+			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
+				"What Auto is doing and what it found, or why the centering spring does nothing now.");
+
+			// The chart on the Wheel page.
+			d["WheelChartUserControl.MainPictureBox"] = new Text("Centering chart",
+				"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle "
+				+ "it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is "
+				+ "inside it. The crosshair and the dot are the wheel's angle and force now.");
+			d["WheelChartUserControl.AngleValueLabel"] = Live("Wheel angle",
+				"The wheel's angle now, in degrees from the centre; negative is to the left.");
+			d["WheelChartUserControl.ForceValueLabel"] = Live("Spring force",
+				"The spring's force at that angle, in percent of the wheel's force, and which way it pushes.");
 
 			// Devices and presets.
 			d["PadControl.MappedDevicesDataGridView"] = new Text("Mapped devices",

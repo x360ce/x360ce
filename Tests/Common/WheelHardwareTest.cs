@@ -60,9 +60,13 @@ namespace x360ce.Tests
 					{
 						try
 						{
+							// The power-up range, sent rather than assumed: the wheel keeps the last range it was sent until it is
+							// unplugged, so a run after the program or another test set 900 would measure 900 twice.
+							Assert.IsTrue(LogitechWheel.SetRange(path, 200), "The wheel did not take the range report.");
+							Thread.Sleep(500);
 							// Towards the low end first, so the wheel starts every run from the same place.
-							var atLow = Drive(device, effect, parameters, force, -Push, 4000, x => x <= StopZone);
-							Assert.IsTrue(atLow, "Pushed towards the low end for four seconds, the wheel did not get there. "
+							var atLow = Drive(device, effect, parameters, force, -Push, 6000, x => x <= StopZone);
+							Assert.IsTrue(atLow, "Pushed towards the low end for six seconds, the wheel did not get there. "
 								+ "Either the sign is the other way round from what the spring assumes, or the wheel is held.");
 							var withPowerUpRange = TravelMs(device, effect, parameters, force);
 							Console.WriteLine("Stop to stop at the power-up range: {0} ms", withPowerUpRange);

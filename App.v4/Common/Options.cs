@@ -238,26 +238,6 @@ namespace x360ce.App
 		}
 		bool _DeviceChangeOverlay = true;
 
-		/// <summary>Extra resistance to a wheel's speed near its centre while the centering spring is on, in percent.</summary>
-		/// <remarks>The same for every controller: one wheel is usually on one tab, and its swing is the wheel's own.</remarks>
-		[DefaultValue(0), Description("Extra resistance to the wheel's speed near the centre, where the centering spring fades, in percent. Calms a wheel that swings past the centre and back.")]
-		public int ForceSpringCentreDamping
-		{
-			get { return _ForceSpringCentreDamping; }
-			set { _ForceSpringCentreDamping = value; OnPropertyChanged(); }
-		}
-		int _ForceSpringCentreDamping;
-
-		/// <summary>How far either side of a wheel's centre the centering spring's damping reaches, in degrees.</summary>
-		/// <remarks>The same for every controller, as <see cref="ForceSpringCentreDamping"/> is. Counted against the wheel range setting.</remarks>
-		[DefaultValue(ForceFeedbackState.DefaultDampingDegrees), Description("How far either side of the centre the centering spring's damping reaches, in degrees. Beyond it nothing slows the wheel, so even a weak spring brings it back quickly.")]
-		public int ForceSpringDampingWidth
-		{
-			get { return _ForceSpringDampingWidth; }
-			set { _ForceSpringDampingWidth = value; OnPropertyChanged(); }
-		}
-		int _ForceSpringDampingWidth = ForceFeedbackState.DefaultDampingDegrees;
-
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

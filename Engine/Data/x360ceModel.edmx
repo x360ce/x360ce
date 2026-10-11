@@ -67,6 +67,11 @@
           <Property Name="ForceOverall" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSpringEnable" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSpringStrength" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringCentre" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringPeak" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringLightening" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringDamping" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForceSpringSpeed" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="WheelRange" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceSwapMotor" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
@@ -421,6 +426,11 @@
 					<Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSpringEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSpringStrength" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringCentre" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringPeak" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringLightening" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringDamping" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForceSpringSpeed" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="WheelRange" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -827,6 +837,11 @@
 								<ScalarProperty Name="ForceType" ColumnName="ForceType" />
 								<ScalarProperty Name="ForceSpringEnable" ColumnName="ForceSpringEnable" />
 								<ScalarProperty Name="ForceSpringStrength" ColumnName="ForceSpringStrength" />
+								<ScalarProperty Name="ForceSpringCentre" ColumnName="ForceSpringCentre" />
+								<ScalarProperty Name="ForceSpringPeak" ColumnName="ForceSpringPeak" />
+								<ScalarProperty Name="ForceSpringLightening" ColumnName="ForceSpringLightening" />
+								<ScalarProperty Name="ForceSpringDamping" ColumnName="ForceSpringDamping" />
+								<ScalarProperty Name="ForceSpringSpeed" ColumnName="ForceSpringSpeed" />
 								<ScalarProperty Name="WheelRange" ColumnName="WheelRange" />
 								<ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
 								<ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />

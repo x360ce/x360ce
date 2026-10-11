@@ -238,11 +238,13 @@ Solution 2: If you can't separate pedals:
 
 ## Wheel centering spring
 
-A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. `[Force Feedback]` → `[Wheel]` → `[Centering]` holds it at its centre. Take your hands off the wheel and press `[Auto]` to find the weakest spring that brings it home.
+A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. On the wheel's controller tab, open the `[Wheel]` page and tick `[Centering spring]` to hold it at its centre. Take your hands off the wheel and press `[Auto]`. It measures the wheel's friction and sets `[Strength]` to beat it.
 
-The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
+The spring pulls like a car's steering: its force grows from the centre to a peak, then eases off towards the stop. Choose a car from the `[Car]` list, or set `[Centre]`, `[Peak]`, `[Lightening]`, `[Damping]` and `[Speed]` yourself. The chart beside them shows the force at every angle, and its dot follows the wheel as it turns.
 
-The spring's damping resists the wheel's speed only within `[Damping Width]` either side of the centre, 30° unless you change it. Beyond it nothing slows the wheel, so even a weak spring brings it back from the stops quickly. Degrees are counted against `[Wheel Range]`, or against 900° when the range is left as it is. If the wheel swings past the centre and back, raise `[Centre Damping]`, which adds to that damping. A narrower width brings the wheel back faster; a wider one calms a wheel that still swings. Both are the same for every controller tab.
+The spring needs `[Enable]` ticked on the `[Force Feedback]` page. It works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
+
+The wiki page "How a real car centres its steering wheel" says what each setting copies from a real car, and what each car on the list is based on.
 
 ## Flying an RC transmitter in a game
 

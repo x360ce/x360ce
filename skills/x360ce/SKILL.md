@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.25.64.0"
+  version: "4.25.67.0"
 ---
 
 # X360CE
@@ -164,9 +164,10 @@ again before calling it a fault.
   and right sticks are Left Thumb and Right Thumb, each with an Axis X and an Axis Y box; with a picture of the
   controller and an Input column that lights each control of the device as it moves), Buttons (how far a stick
   or pedal must move to press a button), D-Pad, Triggers, Left Thumb and Right Thumb (the dead zone, anti-dead
-  zone and sensitivity of each trigger and stick axis), Force Feedback (rumble strength and motor tests, and for wheels a Wheel section: the
-  centering spring with Auto and Centre damping, and Wheel range, the steering range sent to a Logitech wheel, 40
-  to 900 degrees), and Direct Input (the device's raw readings).
+  zone and sensitivity of each trigger and stick axis), Force Feedback (rumble strength and motor tests), Wheel
+  (for wheels: the centering spring with Auto, a Car list that fills its curve, a chart of its force at every angle,
+  and Wheel range, the steering range sent to a Logitech wheel, 40 to 900 degrees), and Direct Input (the device's
+  raw readings).
   Steering is usually mapped to Left Thumb Axis X.
 - **The light on each controller tab.** Its left half is the device, its right half the virtual controller. The
   tab's Value says the same in words: `ui_find` with `Pad1TabPage` lists that tab first.

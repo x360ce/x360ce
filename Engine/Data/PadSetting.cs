@@ -107,6 +107,11 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForceOverall, "100");
 			AddValue(ref list, x => x.ForceSpringEnable);
 			AddValue(ref list, x => x.ForceSpringStrength);
+			AddValue(ref list, x => x.ForceSpringCentre, SettingName.DefaultForceSpringCentre);
+			AddValue(ref list, x => x.ForceSpringPeak, SettingName.DefaultForceSpringPeak);
+			AddValue(ref list, x => x.ForceSpringLightening, SettingName.DefaultForceSpringLightening);
+			AddValue(ref list, x => x.ForceSpringDamping, SettingName.DefaultForceSpringDamping);
+			AddValue(ref list, x => x.ForceSpringSpeed, SettingName.DefaultForceSpringSpeed);
 			AddValue(ref list, x => x.WheelRange);
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
@@ -305,6 +310,16 @@ namespace x360ce.Engine.Data
 		public int GetForceOverall() { return GetValue(OrDefault(ForceOverall, nameof(ForceOverall)), 0); }
 		/// <summary>Strength of the centering spring. It does nothing until the spring is turned on.</summary>
 		public int GetForceSpringStrength() { return GetValue(OrDefault(ForceSpringStrength, nameof(ForceSpringStrength)), 0); }
+		/// <summary>The steering angle, in degrees, at which the centering spring reaches half its strength, for the car at 100 km/h.</summary>
+		public int GetForceSpringCentre() { return GetValue(OrDefault(ForceSpringCentre, nameof(ForceSpringCentre)), 0); }
+		/// <summary>The steering angle, in degrees, of the centering spring's strongest force, for the car at 100 km/h, where nought is the stop.</summary>
+		public int GetForceSpringPeak() { return GetValue(OrDefault(ForceSpringPeak, nameof(ForceSpringPeak)), 0); }
+		/// <summary>How much of the centering spring's strongest force is left at the stop, in percent.</summary>
+		public int GetForceSpringLightening() { return GetValue(OrDefault(ForceSpringLightening, nameof(ForceSpringLightening)), 0); }
+		/// <summary>The centering spring's resistance to the wheel's speed, in percent of what the device can do.</summary>
+		public int GetForceSpringDamping() { return GetValue(OrDefault(ForceSpringDamping, nameof(ForceSpringDamping)), 0); }
+		/// <summary>The car's speed, in km/h, that the centering spring's curve is read at.</summary>
+		public int GetForceSpringSpeed() { return GetValue(OrDefault(ForceSpringSpeed, nameof(ForceSpringSpeed)), 0); }
 		/// <summary>Steering range in degrees sent to a Logitech wheel, where nought - the default - leaves the wheel as it is.</summary>
 		public int GetWheelRange() { return GetValue(WheelRange, 0); }
 		/// <summary>Period of the left, low-frequency motor at full drive, in milliseconds.</summary>
@@ -372,6 +387,11 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeForcePassThroughIndex() { return !isDefault(ForcePassThroughIndex); }
 		public bool ShouldSerializeForceSpringEnable() { return !isDefault(ForceSpringEnable); }
 		public bool ShouldSerializeForceSpringStrength() { return !isDefault(ForceSpringStrength); }
+		public bool ShouldSerializeForceSpringCentre() { return !isDefault(ForceSpringCentre, SettingName.DefaultForceSpringCentre); }
+		public bool ShouldSerializeForceSpringPeak() { return !isDefault(ForceSpringPeak, SettingName.DefaultForceSpringPeak); }
+		public bool ShouldSerializeForceSpringLightening() { return !isDefault(ForceSpringLightening, SettingName.DefaultForceSpringLightening); }
+		public bool ShouldSerializeForceSpringDamping() { return !isDefault(ForceSpringDamping, SettingName.DefaultForceSpringDamping); }
+		public bool ShouldSerializeForceSpringSpeed() { return !isDefault(ForceSpringSpeed, SettingName.DefaultForceSpringSpeed); }
 		public bool ShouldSerializeWheelRange() { return !isDefault(WheelRange); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
 		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }

@@ -1,4 +1,4 @@
-﻿## [4.25.66.0] - 2026-10-11
+﻿## [4.25.67.0] - 2026-10-11
 
 - Fixed: The update log ran past the bottom of the Options page.
 - Fixed: Update did not check the downloaded zip against the SHA-256 GitHub publishes for it.
@@ -30,6 +30,7 @@
 - Fixed: /ExportUi opened AI assistant access and saved the settings.
 - Fixed: The round-corner formula example for Stick Y turned up into down on most devices.
 - Fixed: Force feedback did nothing after its device was removed from a controller and added again.
+- Fixed: Settings downloaded on the Settings tab lost the pad settings they came with.
 - Removed: The Register with Windows box of AI assistant access.
 - Changed: The Source panel lights an axis or slider while it moves, so pedals at rest stay dark.
 - Changed: Sharper controller pictures and button glyphs.
@@ -43,10 +44,11 @@
 - Changed: Quick presses, hat taps and stick flicks are never missed.
 - Changed: The AI door refuses web pages and explains its refusals.
 - Changed: The AI skill tells an assistant to use only the program's door, never the screen.
+- Changed: The centering spring pulls like a car's steering (Issue #1643, Rusty-Gere).
+- Changed: The Wheel settings have their own tab, with a chart of the force at every angle.
 - Added: Light and dark themes; System follows Windows.
 - Added: Developer Tools buttons that open each kind of message window, to test them.
 - Added: [Recentre] in a mapping box's menu sets where a stick rests as its middle (Issue #1638, FlogramMatt).
-- Added: Centre Damping calms a wheel that swings past the centre (Issue #1643, Rusty-Gere).
 - Added: Help on the command-line switches and on games with anti-cheat.
 - Added: A note over the game when a device it uses disconnects or connects again.
 - Added: The AI page installs the x360ce skill for AI agents.
@@ -59,7 +61,6 @@
 - Added: Trust local connections option for AI assistant access, off by default.
 - Added: The AI page shows an example request, with a Copy button.
 - Added: AI assistants can find a controller by its maker.
-- Added: Damping Width, so the centering spring slows the wheel only near the centre and a weak spring brings it back quickly.
 
 ## [4.24.60.0] - 2026-10-02
 

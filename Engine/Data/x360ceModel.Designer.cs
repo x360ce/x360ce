@@ -2398,6 +2398,126 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.String ForceSpringCentre
+        {
+            get
+            {
+                return _ForceSpringCentre;
+            }
+            set
+            {
+                OnForceSpringCentreChanging(value);
+                ReportPropertyChanging("ForceSpringCentre");
+                _ForceSpringCentre = StructuralObject.SetValidValue(value, false, "ForceSpringCentre");
+                ReportPropertyChanged("ForceSpringCentre");
+                OnForceSpringCentreChanged();
+            }
+        }
+        private global::System.String _ForceSpringCentre;
+        partial void OnForceSpringCentreChanging(global::System.String value);
+        partial void OnForceSpringCentreChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringPeak
+        {
+            get
+            {
+                return _ForceSpringPeak;
+            }
+            set
+            {
+                OnForceSpringPeakChanging(value);
+                ReportPropertyChanging("ForceSpringPeak");
+                _ForceSpringPeak = StructuralObject.SetValidValue(value, false, "ForceSpringPeak");
+                ReportPropertyChanged("ForceSpringPeak");
+                OnForceSpringPeakChanged();
+            }
+        }
+        private global::System.String _ForceSpringPeak;
+        partial void OnForceSpringPeakChanging(global::System.String value);
+        partial void OnForceSpringPeakChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringLightening
+        {
+            get
+            {
+                return _ForceSpringLightening;
+            }
+            set
+            {
+                OnForceSpringLighteningChanging(value);
+                ReportPropertyChanging("ForceSpringLightening");
+                _ForceSpringLightening = StructuralObject.SetValidValue(value, false, "ForceSpringLightening");
+                ReportPropertyChanged("ForceSpringLightening");
+                OnForceSpringLighteningChanged();
+            }
+        }
+        private global::System.String _ForceSpringLightening;
+        partial void OnForceSpringLighteningChanging(global::System.String value);
+        partial void OnForceSpringLighteningChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringDamping
+        {
+            get
+            {
+                return _ForceSpringDamping;
+            }
+            set
+            {
+                OnForceSpringDampingChanging(value);
+                ReportPropertyChanging("ForceSpringDamping");
+                _ForceSpringDamping = StructuralObject.SetValidValue(value, false, "ForceSpringDamping");
+                ReportPropertyChanged("ForceSpringDamping");
+                OnForceSpringDampingChanged();
+            }
+        }
+        private global::System.String _ForceSpringDamping;
+        partial void OnForceSpringDampingChanging(global::System.String value);
+        partial void OnForceSpringDampingChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForceSpringSpeed
+        {
+            get
+            {
+                return _ForceSpringSpeed;
+            }
+            set
+            {
+                OnForceSpringSpeedChanging(value);
+                ReportPropertyChanging("ForceSpringSpeed");
+                _ForceSpringSpeed = StructuralObject.SetValidValue(value, false, "ForceSpringSpeed");
+                ReportPropertyChanged("ForceSpringSpeed");
+                OnForceSpringSpeedChanged();
+            }
+        }
+        private global::System.String _ForceSpringSpeed;
+        partial void OnForceSpringSpeedChanging(global::System.String value);
+        partial void OnForceSpringSpeedChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.String ForceSpringEnable
         {
             get

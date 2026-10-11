@@ -85,5 +85,21 @@ namespace x360ce.Tests
 					Assert.AreEqual("2", loaded.ForcePassThroughIndex, "ForcePassThroughIndex");
 				});
 		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("writes"), TestCategory("schema-4-25")]
+		[Description("The centering spring's curve a 4.25 program sends is stored and returned")]
+		public void The_spring_curve_round_trips()
+		{
+			RoundTrip(
+				new PadSetting { ButtonA = "1", ForceEnable = "1", ForceSpringEnable = "1", ForceSpringCentre = "30", ForceSpringPeak = "0", ForceSpringLightening = "50", ForceSpringDamping = "0", ForceSpringSpeed = "80" },
+				loaded =>
+				{
+					Assert.AreEqual("30", loaded.ForceSpringCentre, "ForceSpringCentre");
+					Assert.AreEqual("0", loaded.ForceSpringPeak, "ForceSpringPeak");
+					Assert.AreEqual("50", loaded.ForceSpringLightening, "ForceSpringLightening");
+					Assert.AreEqual("0", loaded.ForceSpringDamping, "ForceSpringDamping");
+					Assert.AreEqual("80", loaded.ForceSpringSpeed, "ForceSpringSpeed");
+				});
+		}
 	}
 }

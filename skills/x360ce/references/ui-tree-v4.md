@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.25.64.0, built 2026-10-11.
+Version 4.25.67.0, built 2026-10-11.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -207,14 +207,6 @@ not shown in this state of the program.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
 [List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
 [Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
-[Section]   │   │   │   │   ├── Wheel                                                   # Settings only a wheel has: the centering spring and the steering range.
-[Value]     │   │   │   │   │   ├── Centering spring                                    # Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.
-[Value]     │   │   │   │   │   ├── Centre damping                                      # Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.
-[CheckBox]  │   │   │   │   │   ├── Centering spring                                    # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
-[Slider]    │   │   │   │   │   ├── Centering spring 0..100                             # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.
-[Button]    │   │   │   │   │   ├── Auto                                                # Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.
-[List]      │   │   │   │   │   ├── Wheel range                                         # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
-[Slider]    │   │   │   │   │   └── Centre damping 0..100                               # Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
@@ -233,6 +225,25 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
 [Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
+[Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.
+[Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
+[CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
+[List]      │   │   │   │   ├── Car                                                     # Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.
+[Slider]    │   │   │   │   ├── Strength 0..100                                         # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.
+[Value]     │   │   │   │   ├── Strength                                                # The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.
+[Button]    │   │   │   │   ├── Auto                                                    # Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.
+[Slider]    │   │   │   │   ├── Centre 1..450                                           # The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.
+[Value]     │   │   │   │   ├── Centre                                                  # The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.
+[Slider]    │   │   │   │   ├── Peak 0..450                                             # The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.
+[Value]     │   │   │   │   ├── Peak                                                    # The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.
+[Slider]    │   │   │   │   ├── Lightening 0..100                                       # How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.
+[Value]     │   │   │   │   ├── Lightening                                              # How much of the spring's strongest force is left at the stop, in percent.
+[Slider]    │   │   │   │   ├── Damping 0..100                                          # The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.
+[Value]     │   │   │   │   ├── Damping                                                 # Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.
+[Slider]    │   │   │   │   ├── Speed 0..250                                            # The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
+[Value]     │   │   │   │   ├── Speed                                                   # The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.
+[List]      │   │   │   │   ├── Wheel range                                             # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
+[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, or why the centering spring does nothing now.
 [Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
@@ -252,6 +263,10 @@ not shown in this state of the program.
 [Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON.
 [Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
+[Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
+[Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
+[Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
+[Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is inside it. The crosshair and the dot are the wheel's angle and force now.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.

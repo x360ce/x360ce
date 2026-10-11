@@ -392,6 +392,31 @@ namespace x360ce.Engine
 		[DefaultValue("30"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.")]
 		static public string ForceSpringStrength { get { return "SpringStrength"; } }
 
+		[DefaultValue(DefaultForceSpringCentre), Description("The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.")]
+		static public string ForceSpringCentre { get { return "SpringCentre"; } }
+		/// <summary>The family car at 100 km/h, measured in the ISO 13674-1 weave test.</summary>
+		public const string DefaultForceSpringCentre = "12";
+
+		[DefaultValue(DefaultForceSpringPeak), Description("The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.")]
+		static public string ForceSpringPeak { get { return "SpringPeak"; } }
+		/// <summary>The family car at 100 km/h: the tyres' grip peaks at about 3 degrees of slip.</summary>
+		public const string DefaultForceSpringPeak = "60";
+
+		[DefaultValue(DefaultForceSpringLightening), Description("How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.")]
+		static public string ForceSpringLightening { get { return "SpringLightening"; } }
+		/// <summary>The family car: the share of its centring that does not come from the tyres.</summary>
+		public const string DefaultForceSpringLightening = "40";
+
+		[DefaultValue(DefaultForceSpringDamping), Description("The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.")]
+		static public string ForceSpringDamping { get { return "SpringDamping"; } }
+		/// <summary>The light damping of power steering.</summary>
+		public const string DefaultForceSpringDamping = "5";
+
+		[DefaultValue(DefaultForceSpringSpeed), Description("The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.")]
+		static public string ForceSpringSpeed { get { return "SpringSpeed"; } }
+		/// <summary>The speed of the ISO 13674-1 weave test, which Centre, Peak and Lightening describe.</summary>
+		public const string DefaultForceSpringSpeed = "100";
+
 		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
 		static public string WheelRange { get { return "WheelRange"; } }
 

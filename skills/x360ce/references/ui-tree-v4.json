@@ -1,7 +1,7 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.25.64.0",
+	"Version":"4.25.67.0",
 	"Built":"2026-10-11",
 	"Items":[
 		{
@@ -1248,60 +1248,6 @@
 											]
 										},
 										{
-											"Name":"Wheel",
-											"Description":"Settings only a wheel has: the centering spring and the steering range.",
-											"Role":"Section",
-											"Id":"WheelGroupBox",
-											"Items":[
-												{
-													"Name":"Centering spring",
-													"Description":"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.",
-													"Role":"Value",
-													"Id":"ForceSpringStrengthTextBox"
-												},
-												{
-													"Name":"Centre damping",
-													"Description":"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.",
-													"Role":"Value",
-													"Id":"ForceSpringDampingTextBox"
-												},
-												{
-													"Name":"Centering spring",
-													"Description":"Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.",
-													"Role":"CheckBox",
-													"Id":"ForceSpringEnableCheckBox"
-												},
-												{
-													"Name":"Centering spring",
-													"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.",
-													"Role":"Slider",
-													"Id":"ForceSpringStrengthTrackBar",
-													"Min":0,
-													"Max":100
-												},
-												{
-													"Name":"Auto",
-													"Description":"Finds the weakest centering spring that brings the wheel home from both sides, with hands off the wheel, and sets the slider to it.",
-													"Role":"Button",
-													"Id":"ForceSpringAutoButton"
-												},
-												{
-													"Name":"Wheel range",
-													"Description":"Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).",
-													"Role":"List",
-													"Id":"WheelRangeComboBox"
-												},
-												{
-													"Name":"Centre damping",
-													"Description":"Extra resistance to the wheel's speed near the centre, where the spring fades, so a wheel does not swing past the centre and back. Nought adds none. The same for every controller.",
-													"Role":"Slider",
-													"Id":"ForceSpringDampingTrackBar",
-													"Min":0,
-													"Max":100
-												}
-											]
-										},
-										{
 											"Name":"Left motor",
 											"Description":"The big, slow motor, which produces the heavy rumble.",
 											"Role":"Section",
@@ -1428,6 +1374,136 @@
 									]
 								},
 								{
+									"Name":"Wheel",
+									"Description":"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.",
+									"Role":"Tab",
+									"Id":"WheelTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.",
+											"Role":"Group",
+											"Id":"WheelChartUserControl",
+											"Type":"WheelChartUserControl",
+											"SameAs":"WheelChartUserControl"
+										},
+										{
+											"Name":"Centering spring",
+											"Description":"Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.",
+											"Role":"CheckBox",
+											"Id":"ForceSpringEnableCheckBox"
+										},
+										{
+											"Name":"Car",
+											"Description":"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.",
+											"Role":"List",
+											"Id":"ForceSpringCarComboBox"
+										},
+										{
+											"Name":"Strength",
+											"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.",
+											"Role":"Slider",
+											"Id":"ForceSpringStrengthTrackBar",
+											"Min":0,
+											"Max":100
+										},
+										{
+											"Name":"Strength",
+											"Description":"The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.",
+											"Role":"Value",
+											"Id":"ForceSpringStrengthTextBox"
+										},
+										{
+											"Name":"Auto",
+											"Description":"Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.",
+											"Role":"Button",
+											"Id":"ForceSpringAutoButton"
+										},
+										{
+											"Name":"Centre",
+											"Description":"The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.",
+											"Role":"Slider",
+											"Id":"ForceSpringCentreTrackBar",
+											"Min":1,
+											"Max":450
+										},
+										{
+											"Name":"Centre",
+											"Description":"The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.",
+											"Role":"Value",
+											"Id":"ForceSpringCentreTextBox"
+										},
+										{
+											"Name":"Peak",
+											"Description":"The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.",
+											"Role":"Slider",
+											"Id":"ForceSpringPeakTrackBar",
+											"Min":0,
+											"Max":450
+										},
+										{
+											"Name":"Peak",
+											"Description":"The steering angle in degrees of the spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. Stop puts the strongest force at the stop.",
+											"Role":"Value",
+											"Id":"ForceSpringPeakTextBox"
+										},
+										{
+											"Name":"Lightening",
+											"Description":"How much of the centering spring's strongest force is left at the stop, in percent. Range is 0 to 100. Default is 40, a family car.",
+											"Role":"Slider",
+											"Id":"ForceSpringLighteningTrackBar",
+											"Min":0,
+											"Max":100
+										},
+										{
+											"Name":"Lightening",
+											"Description":"How much of the spring's strongest force is left at the stop, in percent.",
+											"Role":"Value",
+											"Id":"ForceSpringLighteningTextBox"
+										},
+										{
+											"Name":"Damping",
+											"Description":"The centering spring's resistance to the wheel's speed, the same at every angle, in percent of what the device can do. Range is 0 to 100. Default is 5.",
+											"Role":"Slider",
+											"Id":"ForceSpringDampingTrackBar",
+											"Min":0,
+											"Max":100
+										},
+										{
+											"Name":"Damping",
+											"Description":"Resistance to the wheel's speed, the same at every angle, in percent of what the wheel can do. Calms a wheel that swings past the centre.",
+											"Role":"Value",
+											"Id":"ForceSpringDampingTextBox"
+										},
+										{
+											"Name":"Speed",
+											"Description":"The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.",
+											"Role":"Slider",
+											"Id":"ForceSpringSpeedTrackBar",
+											"Min":0,
+											"Max":250
+										},
+										{
+											"Name":"Speed",
+											"Description":"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.",
+											"Role":"Value",
+											"Id":"ForceSpringSpeedTextBox"
+										},
+										{
+											"Name":"Wheel range",
+											"Description":"Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).",
+											"Role":"List",
+											"Id":"WheelRangeComboBox"
+										},
+										{
+											"Name":"Wheel message",
+											"Description":"What Auto is doing and what it found, or why the centering spring does nothing now.",
+											"Role":"Label",
+											"Id":"WheelDescriptionLabel"
+										}
+									]
+								},
+								{
 									"Name":"Direct Input",
 									"Description":"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.",
 									"Role":"Tab",
@@ -1548,6 +1624,31 @@
 							"Description":"Configuration name of the section which is mapped to PAD1.",
 							"Role":"Grid",
 							"Id":"MappedDevicesDataGridView"
+						}
+					]
+				},
+				{
+					"Name":"WheelChartUserControl",
+					"Description":"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Wheel angle",
+							"Description":"The wheel's angle now, in degrees from the centre; negative is to the left.",
+							"Role":"Label",
+							"Id":"AngleValueLabel"
+						},
+						{
+							"Name":"Spring force",
+							"Description":"The spring's force at that angle, in percent of the wheel's force, and which way it pushes.",
+							"Role":"Label",
+							"Id":"ForceValueLabel"
+						},
+						{
+							"Name":"Centering chart",
+							"Description":"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is inside it. The crosshair and the dot are the wheel's angle and force now.",
+							"Role":"Picture",
+							"Id":"MainPictureBox"
 						}
 					]
 				},
