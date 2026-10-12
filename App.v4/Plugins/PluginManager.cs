@@ -250,7 +250,11 @@ namespace x360ce.App.Plugins
 		}
 
 		/// <summary>Every kind of device an assembly adds: each public class that implements <see cref="IPluginDevice"/> and can be made without arguments.</summary>
-		/// <remarks>One instance of each is made and asked for its name, product and controls, then disposed.</remarks>
+		/// <remarks>
+		/// One instance of each is made and asked for its name, product, controls and the values its settings start with,
+		/// then disposed. The control a kind of device has is a public Windows Forms control in the same assembly whose
+		/// constructor takes the device.
+		/// </remarks>
 		public static PluginDeviceType[] FindDeviceTypes(Assembly assembly, PluginFile file)
 		{
 			Type[] types;
@@ -272,6 +276,8 @@ namespace x360ce.App.Plugins
 				{
 					var probe = (IPluginDevice)Activator.CreateInstance(type);
 					deviceType.Describe(probe);
+					deviceType.Settings = PluginSetting.Find(type, probe);
+					deviceType.ControlType = FindControlType(types, type);
 					var disposable = probe as IDisposable;
 					if (disposable != null)
 						disposable.Dispose();
@@ -283,6 +289,24 @@ namespace x360ce.App.Plugins
 				list.Add(deviceType);
 			}
 			return list.ToArray();
+		}
+
+		/// <summary>The control a plugin declares for a kind of device: a public Windows Forms control whose constructor takes the device; null when there is none.</summary>
+		static Type FindControlType(Type[] types, Type deviceType)
+		{
+			foreach (var type in types)
+			{
+				if (type.IsAbstract || !typeof(System.Windows.Forms.Control).IsAssignableFrom(type))
+					continue;
+				foreach (var constructor in type.GetConstructors())
+				{
+					var parameters = constructor.GetParameters();
+					if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(deviceType)
+						&& parameters[0].ParameterType != typeof(object))
+						return type;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>Finds a DLL a plugin depends on in the plugin's own folder, under the same trust as a plugin.</summary>
@@ -403,6 +427,15 @@ namespace x360ce.App.Plugins
 		public int SliderCount { get; private set; }
 		public int PovCount { get; private set; }
 		public int ButtonCount { get; private set; }
+
+		/// <summary>The settings the device's class has, shown on its tab of the controller page.</summary>
+		public PluginSetting[] Settings { get; internal set; } = new PluginSetting[0];
+
+		/// <summary>The control the plugin declares for the device, placed on its tab; null when it declares none.</summary>
+		public Type ControlType { get; internal set; }
+
+		/// <summary>True when the device has a tab of its own on the controller page: settings, or a control.</summary>
+		public bool HasTab { get { return Settings.Length > 0 || ControlType != null; } }
 
 		/// <summary>True once the plugin threw: its devices are offline until the program starts again.</summary>
 		public bool Faulted { get { return FaultReason != null; } }

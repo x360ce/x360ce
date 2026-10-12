@@ -33,6 +33,12 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "- Product GUID: " + TestControllerDevice.ProductGuid);
 			StringAssert.Contains(text, "axes 5, sliders 0, hat switches 1, buttons 10");
 			StringAssert.Contains(text, TestControllerDevice.Type.Description);
+			StringAssert.Contains(text, "\n### Its tab\n");
+			StringAssert.Contains(text, "- Move the axes (Movement, check box, starts at True): Moves the axes by themselves.");
+			StringAssert.Contains(text, "- Shape (Movement, one of: Swing and ramp, Circle, starts at Swing and ramp): ");
+			StringAssert.Contains(text, "- Moving time (s) (Movement, number, 0.5 to 20, starts at 4): ");
+			StringAssert.Contains(text, "- Reads per second (Status, read only): ");
+			StringAssert.Contains(text, "- The plugin's own control, TestControllerPad, under the settings.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]

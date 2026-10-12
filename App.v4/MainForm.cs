@@ -1623,6 +1623,7 @@ namespace x360ce.App
 				SettingsManager.UserDevices.Save();
 				SettingsManager.PadSettings.Save();
 				SettingsManager.UserInstances.Save();
+				Plugins.PluginSettings.Current.Save(SettingsManager.UserDevices.ItemsToArraySynchronized().Select(x => x.InstanceGuid));
 				XInputMaskScanner.FileInfoCache.Save();
 			});
 		}

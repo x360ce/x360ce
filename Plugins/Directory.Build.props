@@ -25,6 +25,10 @@
   <ItemGroup>
     <!-- Read with GetManifestResourceStream("MyDevice.Resources.<file name>"). -->
     <EmbeddedResource Include="Resources\**\*" />
+    <!-- A plugin's own control for its device, on its tab of the controller page. -->
+    <Reference Include="System.Windows.Forms" />
+    <!-- [Range], which limits a number setting. -->
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="x360ce.Plugins">
       <HintPath>$(X360cePluginsDll)</HintPath>
       <!-- x360ce provides it; the plugin's output does not carry a copy. -->

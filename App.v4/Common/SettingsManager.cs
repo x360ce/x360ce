@@ -543,6 +543,7 @@ namespace x360ce.App
 			UserInstances.Rebase();
 			UserSettings.Rebase();
 			PadSettings.Rebase();
+			Plugins.PluginSettings.Current.Rebase();
 			// The AI assistant access log lives beside the settings, so it moves with them.
 			JocysCom.ClassLibrary.Mcp.McpLog.Folder = EngineHelper.AppDataPath;
 		}

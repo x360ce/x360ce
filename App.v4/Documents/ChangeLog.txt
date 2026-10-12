@@ -1,10 +1,11 @@
-﻿## [4.26.11.0] - 2026-10-11
+﻿## [4.26.12.0] - 2026-10-12
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Changed: The demo device is the Test Controller plugin, inside x360ce; Add Plugin Device adds it.
 - Added: Plugins that add devices, each one DLL built from one .cs file and loaded from its own folder under Plugins.
 - Added: The Plugins page on the Options tab lists every plugin and why one did not load.
 - Added: x360ce.exe /PluginKit writes a folder to start a plugin in; plugins_list and the skill describe each plugin.
+- Added: A plugin device gets a tab on the controller page for its settings and its own controls; the Test Controller has both.
 
 ## [4.25.67.0] - 2026-10-11
 

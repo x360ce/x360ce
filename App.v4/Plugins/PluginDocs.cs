@@ -72,8 +72,57 @@ namespace x360ce.App.Plugins
 				sb.Append("- To use it: Add Plugin Device on the Devices tab adds one; map it to a controller like any device.\n");
 				if (!string.IsNullOrWhiteSpace(type.Description))
 					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
+				AppendTab(sb, type);
 			}
 			return sb.ToString();
+		}
+
+		/// <summary>What the device's tab on the controller page holds: each setting, and the plugin's own control.</summary>
+		static void AppendTab(StringBuilder sb, PluginDeviceType type)
+		{
+			if (!type.HasTab)
+				return;
+			sb.Append("\n### Its tab\n\n");
+			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to. ");
+			sb.Append("Each device keeps its own values; Reset gives back the first ones.\n\n");
+			foreach (var setting in type.Settings)
+			{
+				sb.Append("- ").Append(setting.DisplayName).Append(" (").Append(setting.Category).Append(", ").Append(KindText(setting));
+				if (setting.Kind != PluginSettingKind.Status)
+				{
+					// A list starts at an entry, named as the list shows it.
+					var first = setting.Kind == PluginSettingKind.List
+						? setting.GetChoices().FirstOrDefault(x => x.Value == setting.DefaultText)
+						: null;
+					sb.Append(", starts at ").Append(first == null ? setting.DefaultText : first.Text);
+				}
+				sb.Append(")");
+				if (!string.IsNullOrWhiteSpace(setting.Description))
+					sb.Append(": ").Append(setting.Description.Trim());
+				sb.Append('\n');
+			}
+			if (type.ControlType != null)
+				sb.Append("- The plugin's own control, ").Append(type.ControlType.Name).Append(", under the settings.\n");
+		}
+
+		/// <summary>The kind of field a setting is, with its limits or its choices.</summary>
+		static string KindText(PluginSetting setting)
+		{
+			switch (setting.Kind)
+			{
+				case PluginSettingKind.CheckBox:
+					return "check box";
+				case PluginSettingKind.Number:
+					return "number, " + setting.Minimum.ToString(System.Globalization.CultureInfo.InvariantCulture)
+						+ " to " + setting.Maximum.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				case PluginSettingKind.List:
+					var choices = string.Join(", ", setting.GetChoices().Select(x => x.Text));
+					return (setting.ListOnly ? "one of: " : "list, or typed: ") + choices;
+				case PluginSettingKind.Text:
+					return "text";
+				default:
+					return "read only";
+			}
 		}
 
 		/// <summary>Whether the plugin loaded, and if not, why.</summary>

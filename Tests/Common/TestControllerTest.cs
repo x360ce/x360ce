@@ -1,4 +1,4 @@
-﻿// @under-test: Plugins/TestController/TestController.cs, App.v4/Plugins/PluginDevices.cs
+﻿// @under-test: Plugins/TestController/TestController.cs, App.v4/Plugins/PluginDevices.cs, App.v4/Plugins/PluginSettings.cs
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -154,6 +154,93 @@ namespace x360ce.Tests
 					string.Format("A trigger mapped to {0}, outside what a game can read.", trigger));
 				Thread.Sleep(1);
 			}
+		}
+
+		/// <summary>Gives the plugin a setting's value, as the engine gives it the value kept for the device.</summary>
+		static void Set(IPluginDevice plugin, string name, string value)
+		{
+			TestControllerDevice.Type.Settings.Single(x => x.Name == name).Write(plugin, value);
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("It shows its settings and its own control on its tab: the movement, the buttons, and how often it is read")]
+		public void It_has_settings_and_a_control_of_its_own()
+		{
+			var type = TestControllerDevice.Type;
+			CollectionAssert.AreEqual(
+				new[] { "MoveAxes", "TurnHat", "Shape", "MoveSeconds", "RestSeconds", "PressButtons", "PressMilliseconds", "ReadsPerSecond" },
+				type.Settings.Select(x => x.Name).ToArray());
+			Assert.AreEqual("TestControllerPad", type.ControlType == null ? null : type.ControlType.Name, "Its control was not found.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("With the axes, the hat and the buttons switched off it rests: the even axes in the middle, the odd ones at their start, the hat released, no button held")]
+		public void Switched_off_it_rests()
+		{
+			PluginState state;
+			var plugin = NewPlugin(out state);
+			Set(plugin, "MoveAxes", "False");
+			Set(plugin, "TurnHat", "False");
+			Set(plugin, "PressButtons", "False");
+			plugin.Read(state);
+			CollectionAssert.AreEqual(new[] { PluginState.Middle + 1, 0, PluginState.Middle + 1, 0, PluginState.Middle + 1 }, state.Axes.Take(5).ToArray());
+			Assert.AreEqual(PluginState.PovReleased, state.Povs[0]);
+			Assert.AreEqual(0, state.Buttons.Count(x => x), "A button is held.");
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("In a circle, X and Y stay as far from the middle as a stick pushed all the way")]
+		public void In_a_circle_x_and_y_go_round()
+		{
+			PluginState state;
+			var plugin = NewPlugin(out state);
+			Set(plugin, "Shape", "Circle");
+			Set(plugin, "MoveSeconds", "20");
+			for (var sample = 0; sample < 10; sample++)
+			{
+				plugin.Read(state);
+				var x = state.Axes[0] - PluginState.Middle;
+				var y = state.Axes[1] - PluginState.Middle;
+				var radius = Math.Sqrt((double)x * x + (double)y * y);
+				Assert.AreEqual(PluginState.Middle, radius, 2, "X and Y are not on the circle.");
+				Thread.Sleep(20);
+			}
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("A shorter press time walks the buttons faster")]
+		public void A_shorter_press_time_walks_the_buttons_faster()
+		{
+			PluginState state;
+			var plugin = NewPlugin(out state);
+			Set(plugin, "PressMilliseconds", "50");
+			var held = new System.Collections.Generic.HashSet<int>();
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			while (watch.ElapsedMilliseconds < 400)
+			{
+				plugin.Read(state);
+				held.Add(Array.IndexOf(state.Buttons, true));
+				Thread.Sleep(10);
+			}
+			Assert.IsTrue(held.Count >= 4, "Only " + held.Count + " buttons were held in 400 ms, a new one every 50 ms.");
+		}
+
+		[TestMethod, TestCategory("plugins")]
+		[Description("Its pad holds X and Y where the hand puts them, and lets them go")]
+		public void Its_pad_steers_x_and_y()
+		{
+			PluginState state;
+			var plugin = NewPlugin(out state);
+			Set(plugin, "MoveAxes", "False");
+			var steer = plugin.GetType().GetMethod("Steer");
+			steer.Invoke(plugin, new object[] { 1000, 60000 });
+			plugin.Read(state);
+			Assert.AreEqual(1000, state.Axes[0]);
+			Assert.AreEqual(60000, state.Axes[1]);
+			plugin.GetType().GetMethod("Release").Invoke(plugin, null);
+			plugin.Read(state);
+			Assert.AreEqual(PluginState.Middle + 1, state.Axes[0], "X did not go back to rest.");
+			Assert.AreEqual(0, state.Axes[1], "Y did not go back to rest.");
 		}
 
 	}

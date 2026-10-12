@@ -124,10 +124,67 @@ Rules:
 - **Explain the device.** The class's `[Description("...")]` is its help, Markdown allowed. x360ce shows it to AI
   agents with the device's controls.
 - **Errors switch it off.** An exception from any member switches that kind of device off until x360ce starts again;
-  the Plugins page and the Issues tab say why.
+  the Plugins page and the Issues tab say why. A control of its own that cannot be made says why on its tab instead,
+  and the device keeps working.
 - **.NET Framework 4.6.2, C# 7.3.** The build settings in `Directory.Build.props` set both. A plugin can use anything in
   .NET Framework, and other DLLs it brings in its own folder; x360ce looks for a plugin's DLLs only there, so the DLLs
   of one plugin never stand in for another's.
+
+### Settings, and a control of its own
+
+A device can have a tab of its own on the controller page it is mapped to, named after it. x360ce makes the tab from
+what the plugin has:
+
+- **Settings: the class's public properties.** Each is shown as a field: a `bool` as a check box, a number as a number
+  box, a `string` as a text box, an `enum` as a list. A property without a public setter is shown as a status, read
+  again once a second. Each device keeps its own values, saved with the other settings; **Reset** gives back the values
+  a new device starts with. x360ce sets them on the thread that calls `Read`, just before a read, so they need no lock.
+- **A control of its own: a Windows Forms control whose constructor takes the device.** x360ce places it under the
+  settings, made with the instance it reads. The control runs on the interface thread while `Read` runs on the input
+  thread, so a value the two share must be safe to read from both, such as a `volatile` field.
+
+Attributes shape the settings:
+
+| Attribute | What it does |
+|---|---|
+| `[DisplayName("Port")]` | The field's label. Without it, the property's name. |
+| `[Description("...")]` | The help shown in the header while the mouse is over the field, and to AI agents. On an enum value, the list's text for it. |
+| `[Category("Network")]` | The group the field is shown in. Without it, Settings, or Status for a status. |
+| `[Range(1, 65535)]` | A number's limits, from `System.ComponentModel.DataAnnotations`. |
+| `[Browsable(false)]` | Leaves a property off the tab. |
+| `[TypeConverter(typeof(...))]` | A converter that offers standard values makes the field a list. Unless it says its values are the only ones, other values can be typed too. |
+
+A controller fed over the network might choose the address it listens on as IIS bindings do:
+
+```csharp
+public class AddressConverter : StringConverter
+{
+	public override bool GetStandardValuesSupported(ITypeDescriptorContext context) { return true; }
+	// Other addresses can be typed too.
+	public override bool GetStandardValuesExclusive(ITypeDescriptorContext context) { return false; }
+	public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+	{
+		var addresses = Dns.GetHostAddresses(Dns.GetHostName())
+			.Where(x => x.AddressFamily == AddressFamily.InterNetwork)
+			.Select(x => x.ToString());
+		return new StandardValuesCollection(new[] { "All Unassigned" }.Concat(addresses).ToArray());
+	}
+}
+
+[Category("Network"), DisplayName("IP address"), Description("The address to listen on.")]
+[TypeConverter(typeof(AddressConverter))]
+public string Address { get; set; } = "All Unassigned";
+
+[Category("Network"), DisplayName("Port"), Description("The UDP port to listen on.")]
+[Range(1, 65535)]
+public int Port { get; set; } = 26760;
+
+[Category("Network"), DisplayName("Packets received"), Description("Packets received since the device was added.")]
+public int Packets { get { return _packets; } }
+```
+
+The Test Controller shows both: settings for its movement and its buttons, and `TestControllerPad`, a square that steers
+its stick by hand.
 
 ### Sign a plugin
 
@@ -141,3 +198,5 @@ A plugin signed with the same certificate as x360ce.exe loads without **Allow th
 - The skill holds one document for each plugin, under `references/plugins/`; `x360ce.exe -Skill=plugins/TestController`
   prints one.
 - `devices_list` and `device_map` work on plugin devices as on any device.
+- A device's document lists the settings on its tab. With the device selected on its controller page, `ui_read` and
+  `ui_set` reach the tab's fields like any other.

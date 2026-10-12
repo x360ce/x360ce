@@ -127,6 +127,40 @@ namespace x360ce.App.Plugins
 		public IPluginDevice Device { get; }
 		public readonly PluginState State = new PluginState();
 
+		/// <summary>The store's version the device was last given, or -1 before it was given anything.</summary>
+		int _appliedVersion = -1;
+
+		/// <summary>The text of each value the device was given, by setting.</summary>
+		readonly Dictionary<string, string> _applied = new Dictionary<string, string>();
+
+		/// <summary>Gives the device the values kept for it that it does not have yet.</summary>
+		/// <remarks>
+		/// Called on the engine thread before each read, so a plugin's settings are set on the thread that reads it and
+		/// need no lock. While nothing changed it compares one number. A setting with no kept value is given the value a
+		/// new device starts with, so a reset takes back what was set before. What a setter throws reaches the caller.
+		/// </remarks>
+		public void ApplySettings(PluginSettings store, Guid instanceGuid)
+		{
+			var version = store.Version;
+			if (version == _appliedVersion)
+				return;
+			_appliedVersion = version;
+			foreach (var setting in Type.Settings)
+			{
+				if (setting.Kind == PluginSettingKind.Status)
+					continue;
+				var text = store.Get(instanceGuid, setting.Name) ?? setting.DefaultText;
+				string applied;
+				// What the device started with counts as given.
+				if (!_applied.TryGetValue(setting.Name, out applied))
+					applied = setting.DefaultText;
+				if (text == applied)
+					continue;
+				setting.Write(Device, text);
+				_applied[setting.Name] = text;
+			}
+		}
+
 		/// <summary>Copies what the plugin wrote into the state the engine maps.</summary>
 		public void CopyTo(SourceState state)
 		{

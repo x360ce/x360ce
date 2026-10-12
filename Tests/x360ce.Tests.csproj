@@ -39,6 +39,8 @@
 		<Reference Include="PresentationFramework" />
 		<Reference Include="System.Windows.Forms" />
 		<Reference Include="System.Configuration" />
+		<!-- The limits a plugin sets on a number setting. -->
+		<Reference Include="System.ComponentModel.DataAnnotations" />
 		<!-- Untyped JSON for the MCP tests, in-box. -->
 		<Reference Include="System.Web.Extensions" />
 		<Reference Include="System.IO.Compression" />

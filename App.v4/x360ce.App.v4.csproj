@@ -85,6 +85,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
@@ -283,6 +284,9 @@
     <Compile Include="Controls\PadTabPages\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\PadTabPages\PluginDeviceUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\PadTabPages\DirectInputControl.Designer.cs">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
     </Compile>
@@ -415,6 +419,7 @@
     <Compile Include="Plugins\PluginDocs.cs" />
     <Compile Include="Plugins\PluginKit.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

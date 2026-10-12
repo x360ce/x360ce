@@ -113,6 +113,7 @@ namespace x360ce.App.Controls
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
+				UpdatePluginTab(ud);
 				DirectInputPanel.UpdateFrom(ud);
 				InputPanel.UpdateFrom(ud);
 				if (enable && _Imager.Recorder.Recording)
@@ -2263,6 +2264,71 @@ namespace x360ce.App.Controls
 		{
 			ShowTab(show, AdvancedTabPage);
 		}
+
+		#region Plugin device tab
+
+		/// <summary>The tab of the plugin device selected on this page; null while it has none.</summary>
+		TabPage PluginTabPage;
+
+		/// <summary>What the plugin device's tab holds.</summary>
+		PluginDeviceUserControl PluginPanel;
+
+		/// <summary>When the plugin device's status was last read, by <see cref="Environment.TickCount"/>.</summary>
+		int _pluginStatusTick;
+
+		/// <summary>Shows the tab of the selected device when it is a plugin device with settings or a control, and reads its status once a second.</summary>
+		void UpdatePluginTab(UserDevice ud)
+		{
+			var manager = Plugins.PluginManager.Current;
+			// An export describes the program as every computer has it; a plugin device's tab is this computer's.
+			var type = ud != null && ud.InputSourceType == (int)InputSourceType.Plugin && manager != null && Program.ExportUiFolder == null
+				? manager.FindDeviceType(ud.ProductGuid)
+				: null;
+			var device = type == null || Global.DHelper == null ? null : Global.DHelper.GetPluginDevice(ud.InstanceGuid);
+			ShowPluginTab(ud == null ? Guid.Empty : ud.InstanceGuid, type, device);
+			if (PluginPanel != null && unchecked(Environment.TickCount - _pluginStatusTick) >= 1000)
+			{
+				_pluginStatusTick = Environment.TickCount;
+				PluginPanel.RefreshStatus();
+			}
+		}
+
+		/// <summary>Shows a plugin device's tab, last and named after the device, or takes it away.</summary>
+		/// <remarks>
+		/// The tab is made again when the device, its kind or the plugin instance the engine reads changes, so the plugin's
+		/// own control always works the instance that is read. A device with neither settings nor a control, a kind
+		/// switched off after it failed, and any other device have no tab.
+		/// </remarks>
+		/// <param name="instanceGuid">The device, as the device list knows it.</param>
+		/// <param name="type">The device's kind, or null when it is not a plugin device.</param>
+		/// <param name="device">The plugin instance the engine reads for it, or null while it reads none.</param>
+		public void ShowPluginTab(Guid instanceGuid, Plugins.PluginDeviceType type, x360ce.Plugins.IPluginDevice device)
+		{
+			var show = type != null && !type.Faulted && type.HasTab;
+			var panel = PluginPanel;
+			if (show && panel != null && panel.InstanceGuid == instanceGuid && panel.Type == type && panel.Device == device)
+				return;
+			// A tab made again while it is open stays open.
+			var selected = PluginTabPage != null && PadTabControl.SelectedTab == PluginTabPage;
+			if (PluginTabPage != null)
+			{
+				PadTabControl.TabPages.Remove(PluginTabPage);
+				PluginTabPage.Dispose();
+				PluginTabPage = null;
+				PluginPanel = null;
+			}
+			if (!show)
+				return;
+			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
+			PluginTabPage = new TabPage { Name = "PluginTabPage", Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
+			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
+			PluginTabPage.Controls.Add(PluginPanel);
+			PadTabControl.TabPages.Add(PluginTabPage);
+			if (selected)
+				PadTabControl.SelectedTab = PluginTabPage;
+		}
+
+		#endregion
 
 		void ShowTab(bool show, TabPage page)
 		{
