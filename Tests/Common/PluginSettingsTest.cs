@@ -183,6 +183,22 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
+		[Description("The device's help heads its tab, so what to know before using the device is in view")]
+		public void The_device_help_heads_its_tab()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var type = Type(SettingsPluginDevice.Product);
+				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, new SettingsPluginDevice(), new PluginSettings()))
+				{
+					var help = Find(panel, "DescriptionLabel");
+					Assert.AreEqual(type.Description, help.Text);
+					Assert.AreEqual(0, ((TableLayoutPanel)help.Parent).GetRow(help), "The help is not at the top of the tab.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
 		[Description("The AI door reads each setting on the tab once, by its name and with its value, a status included")]
 		public void The_ai_door_reads_each_setting_once()
 		{
@@ -262,15 +278,17 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
-		[Description("No field on the settings tab covers another or runs past the edge, at any zoom and width")]
+		[Description("No field or help on the settings tab covers another or runs past the edge, at any zoom and width")]
 		public void The_settings_tab_keeps_every_field_clear_at_any_zoom()
 		{
 			Ui.OnUiThread(() =>
 			{
+				// The Test Controller's help runs to two paragraphs, which must wrap at every width.
+				foreach (var type in new[] { Type(SettingsPluginDevice.Product), TestControllerDevice.Type })
 				foreach (var zoom in new[] { 1f, 1.5f, 2f })
 				{
 					using (var form = new Form { Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom) })
-					using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), Type(SettingsPluginDevice.Product), new SettingsPluginDevice(), new PluginSettings()))
+					using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, type.NewInstance(), new PluginSettings()))
 					{
 						panel.Dock = DockStyle.Fill;
 						form.Controls.Add(panel);
@@ -280,12 +298,12 @@ namespace x360ce.Tests
 							form.ClientSize = new Size((int)(width * zoom), (int)(500 * zoom));
 							Application.DoEvents();
 							var covered = ControlOverlapTest.Covered(panel).ToList();
-							Assert.AreEqual(0, covered.Count, string.Format("At {0} % and {1} pixels wide, covered:{2}{3}",
-								zoom * 100, width, Environment.NewLine, string.Join(Environment.NewLine, covered)));
+							Assert.AreEqual(0, covered.Count, string.Format("{0} at {1} % and {2} pixels wide, covered:{3}{4}",
+								type.Name, zoom * 100, width, Environment.NewLine, string.Join(Environment.NewLine, covered)));
 							var outside = Descendants(panel).Where(x => x.Visible && x.Parent != null && x.Right > x.Parent.ClientSize.Width)
 								.Select(x => x.Name).ToList();
-							Assert.AreEqual(0, outside.Count, string.Format("At {0} % and {1} pixels wide, past the edge: {2}",
-								zoom * 100, width, string.Join(", ", outside)));
+							Assert.AreEqual(0, outside.Count, string.Format("{0} at {1} % and {2} pixels wide, past the edge: {3}",
+								type.Name, zoom * 100, width, string.Join(", ", outside)));
 						}
 					}
 				}

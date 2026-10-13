@@ -111,7 +111,7 @@ namespace x360ce.App.UiTree
 
 			// The AI page: the shared page's names and purposes, under the tab that is this program's own.
 			d["OptionsUserControl.AiTabPage"] = new Text("AI",
-				"AI assistant access, and the skill that teaches AI agents to use this program.");
+				"The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.");
 			AiAccessModel.AddCatalog(d, AiAccessModel.FormsView);
 
 			// Hiding the real controller.

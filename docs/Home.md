@@ -13,7 +13,7 @@ time a release reaches `master`, so a page is changed here, never in the wiki.
 | [Help.v3](Help.v3.md) | Version 3.x, which replaces the game's XInput library and runs from the game folder. |
 | [Help.ForceFeedback](Help.ForceFeedback.md) | Which motor a game uses for what, as the Force Feedback page shows it. |
 | [Help.HidGuardian](Help.HidGuardian.md) | Removing the obsolete HID Guardian, and how to recover if keyboard and mouse stop working. |
-| [Help.AiAssistants](Help.AiAssistants.md) | Letting an AI assistant set up x360ce, with a worked example, and checking what it did. |
+| [Help.AiAssistants](Help.AiAssistants.md) | For people who use their own AI assistant: a worked example, then the skill, AI assistant access and the tunnel for ChatGPT on the web, and where the keys are kept. x360ce has no AI inside. |
 | [Help.WheelCentering](Help.WheelCentering.md) | How a real car centres its steering wheel, with measured values, and how the Wheel tab's centering spring copies it. |
 | [Help.Plugins](Help.Plugins.md) | Plugins that add devices, which plugins load, and writing one from a single `.cs` file. |
 

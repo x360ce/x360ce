@@ -88,6 +88,7 @@ namespace x360ce.App
 			o.AppVersion = appVersion;
 			// Attach property monitoring first.
 			o.PropertyChanged += Options_PropertyChanged;
+			SettingsManager.AiOptions.PropertyChanged += AiOptions_PropertyChanged;
 			LoadSettings();
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
@@ -363,8 +364,15 @@ namespace x360ce.App
 				case nameof(Options.ShowTestButton):
 					TestButton.Visible = o.ShowTestButton;
 					break;
-				case nameof(Options.AiAccessEnabled):
-				case nameof(Options.AiAccess):
+			}
+		}
+
+		private void AiOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(AiOptions.AiAccessEnabled):
+				case nameof(AiOptions.AiAccess):
 					UpdateStatusAiAccessLabel();
 					break;
 			}
@@ -818,6 +826,7 @@ namespace x360ce.App
 		{
 			Program.IsClosing = true;
 			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpTunnel.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.
 			SettingsManager.Options.WindowPosition?.SavePosition(this);
@@ -1467,6 +1476,7 @@ namespace x360ce.App
 				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 				SettingsManager.Current.ConfigLoaded -= Current_ConfigLoaded;
+				SettingsManager.AiOptions.PropertyChanged -= AiOptions_PropertyChanged;
 				SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
 				if (Global.DHelper != null)
 				{
@@ -2137,7 +2147,7 @@ namespace x360ce.App
 		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
 		void UpdateStatusAiAccessLabel()
 		{
-			var o = SettingsManager.Options;
+			var o = SettingsManager.AiOptions;
 			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
 			StatusAiAccessLabel.Text = "AI: " + word;
 			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.ControlDark;

@@ -240,7 +240,7 @@ namespace x360ce.App
 			{
 				if (!parameters.ContainsKey("Profile"))
 					FollowRunningCopy();
-				var o = SettingsManager.Options;
+				var o = SettingsManager.AiOptions;
 				Environment.ExitCode = JocysCom.ClassLibrary.Mcp.McpClient.RunSwitches(parameters, o.AiAccessEnabled, o.AiAccessPort, o.AiAccessToken, Application.ExecutablePath);
 				return;
 			}

@@ -43,6 +43,8 @@ namespace x360ce.App
 			StartPlugins();
 			// Add event which will start and stop UDP server depending on options.
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			// The door and the tunnel open and close as the AI settings change.
+			SettingsManager.AiOptions.PropertyChanged += AiOptions_PropertyChanged;
 		}
 
 		/// <summary>Loads the plugins, before the first device list is read, so the devices they add are found online.</summary>
@@ -118,6 +120,7 @@ namespace x360ce.App
 		public static void DisposeServices()
 		{
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			SettingsManager.AiOptions.PropertyChanged -= AiOptions_PropertyChanged;
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 			RemoteServer.StopServer();
 			WindowHook.IsEnabled = false;
@@ -126,29 +129,59 @@ namespace x360ce.App
 		#endregion
 
 		/// <summary>
-		/// Opens or closes the assistant's door to match the option, then writes the options file so
-		/// the switches read the same level and token the window shows, switched off included. Safe to call
-		/// again; it restarts. The door opens before the file is written, so a folder that cannot be
-		/// written leaves the door usable and the Issues tab saying why the switches are not.
+		/// Opens or closes the assistant's door to match the AI settings, then the tunnel that leads to it, then
+		/// writes the AI settings file so the switches read the same level and token the window shows, switched off
+		/// included. Safe to call again; it restarts the door. The door opens before the file is written, so a folder
+		/// that cannot be written leaves the door usable and the Issues tab saying why the switches are not.
 		/// </summary>
 		public static void ApplyAiAccess()
 		{
-			var o = SettingsManager.Options;
+			var o = SettingsManager.AiOptions;
 			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
 			if (o.AiAccessEnabled)
 			{
 				o.EnsureAiAccessToken();
 				JocysCom.ClassLibrary.Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken, o.AiAccessTrustLocal);
 			}
+			ApplyAiTunnel();
+		}
+
+		/// <summary>
+		/// Opens or closes the tunnel for ChatGPT on the web to match the AI settings, then writes the AI settings
+		/// file. A tunnel already open with the same settings is left open.
+		/// </summary>
+		public static void ApplyAiTunnel()
+		{
+			JocysCom.ClassLibrary.Mcp.McpTunnel.Apply(new Mcp.AiAccessSettings());
 			try
 			{
-				SettingsManager.OptionsData.Save();
+				SettingsManager.AiOptionsData.Save();
 			}
 			catch (Exception ex)
 			{
-				// This runs on the interface thread from the options-changed event; an exception here
+				// This runs on the interface thread from the settings-changed event; an exception here
 				// would be a crash report for a folder that is read-only, which the Issues tab explains better.
-				JocysCom.ClassLibrary.Mcp.McpListener.LastError = "the options file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+				JocysCom.ClassLibrary.Mcp.McpListener.LastError = "the AI settings file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+			}
+		}
+
+		private static void AiOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(AiOptions.AiAccessEnabled):
+				case nameof(AiOptions.AiAccess):
+				case nameof(AiOptions.AiAccessAddress):
+				case nameof(AiOptions.AiAccessTrustLocal):
+				case nameof(AiOptions.AiAccessPort):
+					ApplyAiAccess();
+					break;
+				case nameof(AiOptions.TunnelEnabled):
+				case nameof(AiOptions.TunnelId):
+				case nameof(AiOptions.TunnelOrganization):
+				case nameof(AiOptions.TunnelApiKey):
+					ApplyAiTunnel();
+					break;
 			}
 		}
 
@@ -175,13 +208,6 @@ namespace x360ce.App
 					// the device loop and not to the control that happens to set it.
 					if (DHelper != null)
 						DHelper.Frequency = o.PollingRate;
-					break;
-				case nameof(Options.AiAccessEnabled):
-				case nameof(Options.AiAccess):
-				case nameof(Options.AiAccessAddress):
-				case nameof(Options.AiAccessTrustLocal):
-				case nameof(Options.AiAccessPort):
-					ApplyAiAccess();
 					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;

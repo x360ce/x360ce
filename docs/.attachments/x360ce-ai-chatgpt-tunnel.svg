@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title>ChatGPT on the web reaches x360ce through an OpenAI tunnel that x360ce opens from your computer</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="429" rx="16" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- The internet side -->
+  <rect x="20" y="36" width="420" height="300" rx="14" fill="#fff8f0" stroke="#d1872b" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <rect x="36" y="28" width="134" height="16" fill="#ffffff"/>
+  <text x="44" y="41" font-size="15" font-weight="600" fill="#9a5b13">Internet: OpenAI</text>
+
+  <rect x="48" y="70" width="364" height="90" rx="12" fill="#ffffff" stroke="#d1872b" stroke-width="2"/>
+  <text x="230" y="104" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">ChatGPT on the web</text>
+  <text x="230" y="132" font-size="14" fill="#57606a" text-anchor="middle">your x360ce plugin, used with @ in a chat</text>
+
+  <rect x="48" y="220" width="364" height="96" rx="12" fill="#ffffff" stroke="#d1872b" stroke-width="2"/>
+  <text x="230" y="252" font-size="18" font-weight="700" fill="#1f2328" text-anchor="middle">OpenAI Secure MCP Tunnel</text>
+  <text x="230" y="276" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">tunnel_0123456789abcdef...</text>
+  <text x="230" y="300" font-size="13" fill="#57606a" text-anchor="middle">made by Create on the AI page</text>
+
+  <!-- This computer -->
+  <rect x="520" y="36" width="420" height="300" rx="14" fill="none" stroke="#8c959f" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <rect x="536" y="25" width="112" height="22" fill="#ffffff"/>
+  <text x="544" y="41" font-size="15" font-weight="600" fill="#57606a">Your computer</text>
+
+  <rect x="548" y="70" width="364" height="90" rx="12" fill="#ecf8ee" stroke="#2da44e" stroke-width="2"/>
+  <text x="730" y="102" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">x360ce AI door</text>
+  <text x="730" y="128" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37360/mcp/</text>
+  <text x="730" y="148" font-size="13" fill="#57606a" text-anchor="middle">at the level you choose</text>
+
+  <rect x="548" y="220" width="364" height="96" rx="12" fill="#f6f8fa" stroke="#8c959f" stroke-width="2"/>
+  <text x="730" y="252" font-size="18" font-weight="700" fill="#1f2328" text-anchor="middle">tunnel-client</text>
+  <text x="730" y="276" font-size="13" fill="#57606a" text-anchor="middle">started by x360ce when you tick</text>
+  <text x="730" y="296" font-size="13" fill="#57606a" text-anchor="middle">Open the tunnel; runs with the API key</text>
+
+  <!-- Arrows -->
+  <line x1="230" y1="162" x2="230" y2="216" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="242" y="194" font-size="13" fill="#1f2328">1. ChatGPT calls a tool</text>
+
+  <line x1="546" y1="268" x2="416" y2="268" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="425" y="236" width="110" height="20" fill="#ffffff"/>
+  <text x="480" y="251" font-size="13" fill="#1f2328" text-anchor="middle">2. connects out</text>
+  <rect x="425" y="279" width="110" height="20" fill="#ffffff"/>
+  <text x="480" y="294" font-size="13" fill="#57606a" text-anchor="middle">over HTTPS</text>
+
+  <line x1="730" y1="218" x2="730" y2="164" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="742" y="186" font-size="13" fill="#1f2328">3. passes the call on,</text>
+  <text x="742" y="204" font-size="13" fill="#1f2328">with the door's token</text>
+
+  <text x="480" y="372" font-size="14" fill="#57606a" text-anchor="middle">No port is opened on your computer: tunnel-client connects out to OpenAI and picks up ChatGPT's calls.</text>
+  <text x="480" y="396" font-size="14" fill="#57606a" text-anchor="middle">Answers go back the same way. Untick Open the tunnel, and ChatGPT cannot reach x360ce.</text>
+</svg>

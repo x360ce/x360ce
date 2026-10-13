@@ -104,6 +104,29 @@ namespace x360ce.App
 
 		public static Options Options { get { return OptionsData.Items[0]; } }
 
+		/// <summary>The AI settings, in their own file: AI assistant access and the tunnel for ChatGPT on the web.</summary>
+		public static XSettingsData<AiOptions> AiOptionsData
+		{
+			get
+			{
+				lock (OptionsLock)
+				{
+					if (_AiOptionsData == null)
+					{
+						var data = new XSettingsData<AiOptions>("AI.xml", "x360ce AI settings: AI assistant access, and the tunnel for ChatGPT on the web.");
+						data.Load();
+						if (data.Items.Count == 0)
+							data.Items.Add(new AiOptions());
+						_AiOptionsData = data;
+					}
+					return _AiOptionsData;
+				}
+			}
+		}
+		static XSettingsData<AiOptions> _AiOptionsData;
+
+		public static AiOptions AiOptions { get { return AiOptionsData.Items[0]; } }
+
 		// Global settings.
 
 		/// <summary>Programs - Default settings for most popular Games.</summary>
@@ -534,6 +557,7 @@ namespace x360ce.App
 		internal static void ReloadSettingsFiles()
 		{
 			OptionsData.Rebase();
+			AiOptionsData.Rebase();
 			Programs.Rebase();
 			Summaries.Rebase();
 			Presets.Rebase();

@@ -16,7 +16,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.26.12.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.26.15.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -104,10 +104,7 @@ down first, so a run that is interrupted is undone at the next start.
 
 ## AI assistants (v4.x)
 
-An AI assistant can map and tune your controllers for you, through the program's own AI assistant
-access rather than your screen, mouse or keyboard. It is off until you switch it on, on the
-Options tab's AI page. [AI assistants](docs/Help.AiAssistants.md) shows how to set it up, with a
-worked example, and how to check what the assistant did.
+x360ce has no AI inside. If you use an AI assistant of your own, it can map and tune your controllers for you, through the program's own AI assistant access rather than your screen, mouse or keyboard. It is off until you switch it on, on the Options tab's AI page. [AI assistants](docs/Help.AiAssistants.md) starts with a worked example and how to check what the assistant did, then shows how to set it up, ChatGPT on the web included.
 
 # Download v3.x
 

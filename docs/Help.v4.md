@@ -363,7 +363,8 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 ## AI assistant access
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
-program. It is off until you tick AI assistant access on the Options tab's AI page and choose a level.
+program. It is off until you tick AI assistant access on the Options tab's AI page, on its MCP Server - AI
+Assistant Access tab, and choose a level.
 **Read**: read the interface, the
 devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
 may still ask for an administrator, as it asks a person, when a step needs one.
@@ -386,6 +387,8 @@ chat and it takes it from there. The two ways, both shown on the page:
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
 
+**ChatGPT on the web** runs on OpenAI's servers and cannot reach the door. The AI page's OpenAI Tunnel tab opens an OpenAI Secure MCP Tunnel to it. The program downloads OpenAI's tunnel-client from github.com/openai/tunnel-client into `%LOCALAPPDATA%\X360CE\TunnelClient`, checks it against the release's SHA-256 sums, and runs it while Open the tunnel and AI assistant access are both ticked. tunnel-client connects out to OpenAI over HTTPS and passes each of ChatGPT's calls to the door with the door's token, so no port is opened on this computer. Create makes the tunnel with an OpenAI admin key, which is used for that call only and never kept. The tunnel runs with a restricted API key, kept encrypted for your Windows account. [AI assistants](Help.AiAssistants.md#openai-tunnel) gives the steps in ChatGPT.
+
 An assistant can read and answer the other windows the program opens over the main one.
 
 An assistant can also point: ask it where something is and it brings the page to the front,
@@ -400,8 +403,9 @@ its arguments and what came of it, with the time, so you can see afterwards what
 From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Git Bash turns
 `/Ai=` into a path, so there write `-Ai=devices_list`. Regenerate the
-token to revoke access. The token is kept with the program's settings, which every account on
-this computer can read, so it tells one program from another, not one person from another.
+token to revoke access.
+
+The AI settings are kept in their own file, `x360ce.AI.xml`, beside the other settings: `C:\ProgramData\X360CE\Settings` unless they live elsewhere. It holds whether the door is on, its level, address, port and token, and the tunnel's ID, organization and API key. Every account on this computer can read the file, so the token tells one program from another, not one person from another. The API key in it is encrypted with Windows DPAPI for the Windows account that saved it, so other accounts and other computers cannot read it.
 
 ## The AI skill
 
@@ -409,7 +413,7 @@ A skill is a set of instructions an AI agent reads when a task calls for it. The
 an agent what this program does, where its settings are and how to use AI assistant access, so it
 answers from the program instead of guessing. It works only through AI assistant access, at the level
 you chose, and never by taking over your screen, mouse or keyboard; to show you something it frames it
-on your screen. The AI skill box on the AI page installs it:
+on your screen. The AI page's AI Skill tab installs it:
 
 - **Claude Code**: into the skills folder Claude Code reads, `%USERPROFILE%\.claude\skills`, or the
   one in `CLAUDE_CONFIG_DIR` when that is set.

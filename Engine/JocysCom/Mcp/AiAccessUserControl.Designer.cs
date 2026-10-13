@@ -15,14 +15,16 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.AiPanel = new Panel();
 			this.AiHeaderPanel = new TableLayoutPanel();
 			this.AiHeaderText = new Label();
 			this.AiExampleLabel = new Label();
 			this.AiExampleTextBox = new TextBox();
 			this.AiExampleCopyButton = new Button();
+			this.AiTabControl = new TabControl();
+			this.AiSkillTabPage = new TabPage();
+			this.AiAccessTabPage = new TabPage();
+			this.AiTunnelTabPage = new TabPage();
 			this.AiAccessPanel = new TableLayoutPanel();
-			this.AiAccessTitleLabel = new Label();
 			this.AiAccessEnabledCheckBox = new CheckBox();
 			this.AiAccessLevelLabel = new Label();
 			this.AiAccessComboBox = new ComboBox();
@@ -44,7 +46,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessLogButton = new Button();
 			this.AiAccessStatusText = new Label();
 			this.AiSkillPanel = new TableLayoutPanel();
-			this.AiSkillTitleLabel = new Label();
 			this.AiSkillNoteText = new Label();
 			this.AiSkillClaudeLabel = new Label();
 			this.AiSkillClaudeFolderTextBox = new TextBox();
@@ -57,20 +58,41 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillZipLabel = new Label();
 			this.AiSkillZipNoteText = new Label();
 			this.AiSkillZipButton = new Button();
-			this.AiPanel.SuspendLayout();
+			this.AiTunnelPanel = new TableLayoutPanel();
+			this.AiTunnelNoteText = new Label();
+			this.AiTunnelOrganizationLabel = new Label();
+			this.AiTunnelOrganizationTextBox = new TextBox();
+			this.AiTunnelOrganizationButton = new Button();
+			this.AiTunnelAdminKeyLabel = new Label();
+			this.AiTunnelAdminKeyTextBox = new TextBox();
+			this.AiTunnelAdminKeyButton = new Button();
+			this.AiTunnelIdLabel = new Label();
+			this.AiTunnelIdTextBox = new TextBox();
+			this.AiTunnelCreateButton = new Button();
+			this.AiTunnelCopyButton = new Button();
+			this.AiTunnelDeleteButton = new Button();
+			this.AiTunnelApiKeyLabel = new Label();
+			this.AiTunnelApiKeyTextBox = new TextBox();
+			this.AiTunnelApiKeyButton = new Button();
+			this.AiTunnelEnabledCheckBox = new CheckBox();
+			this.AiTunnelPageButton = new Button();
+			this.AiTunnelChatGptLabel = new Label();
+			this.AiTunnelChatGptText = new Label();
+			this.AiTunnelChatGptButton = new Button();
+			this.AiTunnelFileLabel = new Label();
+			this.AiTunnelFileTextBox = new TextBox();
+			this.AiTunnelFileButton = new Button();
+			this.AiTunnelKeysNoteText = new Label();
+			this.AiTunnelStatusText = new Label();
 			this.AiHeaderPanel.SuspendLayout();
+			this.AiTabControl.SuspendLayout();
+			this.AiSkillTabPage.SuspendLayout();
+			this.AiAccessTabPage.SuspendLayout();
+			this.AiTunnelTabPage.SuspendLayout();
 			this.AiAccessPanel.SuspendLayout();
+			this.AiTunnelPanel.SuspendLayout();
 			this.AiSkillPanel.SuspendLayout();
 			this.SuspendLayout();
-			// AiPanel
-			this.AiPanel.AutoScroll = true;
-			this.AiPanel.Controls.Add(this.AiSkillPanel);
-			this.AiPanel.Controls.Add(this.AiAccessPanel);
-			this.AiPanel.Controls.Add(this.AiHeaderPanel);
-			this.AiPanel.Dock = DockStyle.Fill;
-			this.AiPanel.Name = "AiPanel";
-			this.AiPanel.Padding = new Padding(3, 3, 9, 3);
-			this.AiPanel.TabIndex = 0;
 			// AiHeaderPanel
 			this.AiHeaderPanel.AutoSize = true;
 			this.AiHeaderPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -84,7 +106,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiHeaderPanel.Controls.Add(this.AiExampleCopyButton, 2, 1);
 			this.AiHeaderPanel.Dock = DockStyle.Top;
 			this.AiHeaderPanel.Name = "AiHeaderPanel";
-			this.AiHeaderPanel.Padding = new Padding(0, 0, 0, 12);
+			this.AiHeaderPanel.Padding = new Padding(3, 3, 9, 6);
 			this.AiHeaderPanel.RowCount = 2;
 			this.AiHeaderPanel.TabIndex = 0;
 			// AiHeaderText
@@ -115,6 +137,38 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiExampleCopyButton.TabIndex = 3;
 			this.AiExampleCopyButton.Text = "Copy";
 			this.AiExampleCopyButton.Click += new EventHandler(this.AiExampleCopyButton_Click);
+			// AiTabControl
+			this.AiTabControl.Controls.Add(this.AiSkillTabPage);
+			this.AiTabControl.Controls.Add(this.AiAccessTabPage);
+			this.AiTabControl.Controls.Add(this.AiTunnelTabPage);
+			this.AiTabControl.Dock = DockStyle.Fill;
+			this.AiTabControl.Name = "AiTabControl";
+			this.AiTabControl.SelectedIndex = 0;
+			this.AiTabControl.TabIndex = 1;
+			// AiSkillTabPage
+			this.AiSkillTabPage.AutoScroll = true;
+			this.AiSkillTabPage.BackColor = SystemColors.Control;
+			this.AiSkillTabPage.Controls.Add(this.AiSkillPanel);
+			this.AiSkillTabPage.Name = "AiSkillTabPage";
+			this.AiSkillTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiSkillTabPage.TabIndex = 0;
+			this.AiSkillTabPage.Text = "AI Skill";
+			// AiAccessTabPage
+			this.AiAccessTabPage.AutoScroll = true;
+			this.AiAccessTabPage.BackColor = SystemColors.Control;
+			this.AiAccessTabPage.Controls.Add(this.AiAccessPanel);
+			this.AiAccessTabPage.Name = "AiAccessTabPage";
+			this.AiAccessTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiAccessTabPage.TabIndex = 1;
+			this.AiAccessTabPage.Text = "MCP Server - AI Assistant Access";
+			// AiTunnelTabPage
+			this.AiTunnelTabPage.AutoScroll = true;
+			this.AiTunnelTabPage.BackColor = SystemColors.Control;
+			this.AiTunnelTabPage.Controls.Add(this.AiTunnelPanel);
+			this.AiTunnelTabPage.Name = "AiTunnelTabPage";
+			this.AiTunnelTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiTunnelTabPage.TabIndex = 2;
+			this.AiTunnelTabPage.Text = "OpenAI Tunnel";
 			// AiAccessPanel
 			this.AiAccessPanel.AutoSize = true;
 			this.AiAccessPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -122,40 +176,30 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessPanel.ColumnStyles.Add(new ColumnStyle());
 			this.AiAccessPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			this.AiAccessPanel.ColumnStyles.Add(new ColumnStyle());
-			this.AiAccessPanel.Controls.Add(this.AiAccessTitleLabel, 0, 0);
-			this.AiAccessPanel.Controls.Add(this.AiAccessEnabledCheckBox, 0, 1);
-			this.AiAccessPanel.Controls.Add(this.AiAccessLevelLabel, 0, 2);
-			this.AiAccessPanel.Controls.Add(this.AiAccessComboBox, 1, 2);
-			this.AiAccessPanel.Controls.Add(this.AiAccessAddressLabel, 0, 3);
-			this.AiAccessPanel.Controls.Add(this.AiAccessAddressComboBox, 1, 3);
-			this.AiAccessPanel.Controls.Add(this.AiAccessTrustLocalCheckBox, 1, 4);
-			this.AiAccessPanel.Controls.Add(this.AiAccessPortLabel, 0, 5);
-			this.AiAccessPanel.Controls.Add(this.AiAccessPortTextBox, 1, 5);
-			this.AiAccessPanel.Controls.Add(this.AiAccessUrlLabel, 0, 6);
-			this.AiAccessPanel.Controls.Add(this.AiAccessUrlTextBox, 1, 6);
-			this.AiAccessPanel.Controls.Add(this.AiAccessUrlCopyButton, 2, 6);
-			this.AiAccessPanel.Controls.Add(this.AiAccessTokenLabel, 0, 7);
-			this.AiAccessPanel.Controls.Add(this.AiAccessTokenTextBox, 1, 7);
-			this.AiAccessPanel.Controls.Add(this.AiAccessRegenerateButton, 2, 7);
-			this.AiAccessPanel.Controls.Add(this.AiAccessSnippetLabel, 0, 8);
-			this.AiAccessPanel.Controls.Add(this.AiAccessSnippetTextBox, 1, 8);
-			this.AiAccessPanel.Controls.Add(this.AiAccessCopyButton, 2, 8);
-			this.AiAccessPanel.Controls.Add(this.AiAccessPromptButton, 1, 9);
-			this.AiAccessPanel.Controls.Add(this.AiAccessLogButton, 2, 9);
-			this.AiAccessPanel.Controls.Add(this.AiAccessStatusText, 0, 10);
+			this.AiAccessPanel.Controls.Add(this.AiAccessEnabledCheckBox, 0, 0);
+			this.AiAccessPanel.Controls.Add(this.AiAccessLevelLabel, 0, 1);
+			this.AiAccessPanel.Controls.Add(this.AiAccessComboBox, 1, 1);
+			this.AiAccessPanel.Controls.Add(this.AiAccessAddressLabel, 0, 2);
+			this.AiAccessPanel.Controls.Add(this.AiAccessAddressComboBox, 1, 2);
+			this.AiAccessPanel.Controls.Add(this.AiAccessTrustLocalCheckBox, 1, 3);
+			this.AiAccessPanel.Controls.Add(this.AiAccessPortLabel, 0, 4);
+			this.AiAccessPanel.Controls.Add(this.AiAccessPortTextBox, 1, 4);
+			this.AiAccessPanel.Controls.Add(this.AiAccessUrlLabel, 0, 5);
+			this.AiAccessPanel.Controls.Add(this.AiAccessUrlTextBox, 1, 5);
+			this.AiAccessPanel.Controls.Add(this.AiAccessUrlCopyButton, 2, 5);
+			this.AiAccessPanel.Controls.Add(this.AiAccessTokenLabel, 0, 6);
+			this.AiAccessPanel.Controls.Add(this.AiAccessTokenTextBox, 1, 6);
+			this.AiAccessPanel.Controls.Add(this.AiAccessRegenerateButton, 2, 6);
+			this.AiAccessPanel.Controls.Add(this.AiAccessSnippetLabel, 0, 7);
+			this.AiAccessPanel.Controls.Add(this.AiAccessSnippetTextBox, 1, 7);
+			this.AiAccessPanel.Controls.Add(this.AiAccessCopyButton, 2, 7);
+			this.AiAccessPanel.Controls.Add(this.AiAccessPromptButton, 1, 8);
+			this.AiAccessPanel.Controls.Add(this.AiAccessLogButton, 2, 8);
+			this.AiAccessPanel.Controls.Add(this.AiAccessStatusText, 0, 9);
 			this.AiAccessPanel.Dock = DockStyle.Top;
 			this.AiAccessPanel.Name = "AiAccessPanel";
-			this.AiAccessPanel.Padding = new Padding(0, 0, 0, 12);
-			this.AiAccessPanel.RowCount = 11;
-			this.AiAccessPanel.TabIndex = 1;
-			// AiAccessTitleLabel
-			this.AiAccessTitleLabel.Anchor = AnchorStyles.Left;
-			this.AiAccessTitleLabel.AutoSize = true;
-			this.AiAccessPanel.SetColumnSpan(this.AiAccessTitleLabel, 3);
-			this.AiAccessTitleLabel.Margin = new Padding(3, 0, 0, 5);
-			this.AiAccessTitleLabel.Name = "AiAccessTitleLabel";
-			this.AiAccessTitleLabel.TabIndex = 0;
-			this.AiAccessTitleLabel.Text = "AI assistant access (MCP server)";
+			this.AiAccessPanel.RowCount = 10;
+			this.AiAccessPanel.TabIndex = 0;
 			// AiAccessEnabledCheckBox
 			this.AiAccessEnabledCheckBox.Anchor = AnchorStyles.Left;
 			this.AiAccessEnabledCheckBox.AutoSize = true;
@@ -299,6 +343,221 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessStatusText.Margin = new Padding(3, 6, 0, 0);
 			this.AiAccessStatusText.Name = "AiAccessStatusText";
 			this.AiAccessStatusText.TabIndex = 20;
+			// AiTunnelPanel
+			this.AiTunnelPanel.AutoSize = true;
+			this.AiTunnelPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			this.AiTunnelPanel.ColumnCount = 3;
+			this.AiTunnelPanel.ColumnStyles.Add(new ColumnStyle());
+			this.AiTunnelPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			this.AiTunnelPanel.ColumnStyles.Add(new ColumnStyle());
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelNoteText, 0, 0);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelOrganizationLabel, 0, 1);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelOrganizationTextBox, 1, 1);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelOrganizationButton, 2, 1);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyLabel, 0, 2);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyTextBox, 1, 2);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyButton, 2, 2);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdLabel, 0, 3);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdTextBox, 1, 3);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelCreateButton, 2, 3);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelCopyButton, 1, 4);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelDeleteButton, 2, 4);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelApiKeyLabel, 0, 5);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelApiKeyTextBox, 1, 5);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelApiKeyButton, 2, 5);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelEnabledCheckBox, 0, 6);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelPageButton, 2, 6);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelChatGptLabel, 0, 7);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelChatGptText, 1, 7);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelChatGptButton, 2, 7);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelFileLabel, 0, 8);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelFileTextBox, 1, 8);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelFileButton, 2, 8);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelKeysNoteText, 1, 9);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelStatusText, 0, 10);
+			this.AiTunnelPanel.Dock = DockStyle.Top;
+			this.AiTunnelPanel.Name = "AiTunnelPanel";
+			this.AiTunnelPanel.RowCount = 11;
+			this.AiTunnelPanel.TabIndex = 0;
+			// AiTunnelNoteText
+			this.AiTunnelNoteText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelNoteText.AutoSize = true;
+			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelNoteText, 3);
+			this.AiTunnelNoteText.ForeColor = SystemColors.GrayText;
+			this.AiTunnelNoteText.Margin = new Padding(3, 0, 0, 6);
+			this.AiTunnelNoteText.Name = "AiTunnelNoteText";
+			this.AiTunnelNoteText.TabIndex = 1;
+			// AiTunnelOrganizationLabel
+			this.AiTunnelOrganizationLabel.Anchor = AnchorStyles.Left;
+			this.AiTunnelOrganizationLabel.AutoSize = true;
+			this.AiTunnelOrganizationLabel.Margin = new Padding(3, 0, 8, 0);
+			this.AiTunnelOrganizationLabel.Name = "AiTunnelOrganizationLabel";
+			this.AiTunnelOrganizationLabel.TabIndex = 2;
+			this.AiTunnelOrganizationLabel.Text = "Organization ID";
+			// AiTunnelOrganizationTextBox
+			this.AiTunnelOrganizationTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelOrganizationTextBox.Name = "AiTunnelOrganizationTextBox";
+			this.AiTunnelOrganizationTextBox.TabIndex = 3;
+			this.AiTunnelOrganizationTextBox.Validated += new EventHandler(this.AiTunnelOrganizationTextBox_Validated);
+			// AiTunnelOrganizationButton
+			this.AiTunnelOrganizationButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelOrganizationButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelOrganizationButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelOrganizationButton.Name = "AiTunnelOrganizationButton";
+			this.AiTunnelOrganizationButton.TabIndex = 4;
+			this.AiTunnelOrganizationButton.Text = "Find";
+			this.AiTunnelOrganizationButton.Click += new EventHandler(this.AiTunnelOrganizationButton_Click);
+			// AiTunnelAdminKeyLabel
+			this.AiTunnelAdminKeyLabel.Anchor = AnchorStyles.Left;
+			this.AiTunnelAdminKeyLabel.AutoSize = true;
+			this.AiTunnelAdminKeyLabel.Margin = new Padding(3, 0, 8, 0);
+			this.AiTunnelAdminKeyLabel.Name = "AiTunnelAdminKeyLabel";
+			this.AiTunnelAdminKeyLabel.TabIndex = 5;
+			this.AiTunnelAdminKeyLabel.Text = "Admin key";
+			// AiTunnelAdminKeyTextBox
+			this.AiTunnelAdminKeyTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelAdminKeyTextBox.Name = "AiTunnelAdminKeyTextBox";
+			this.AiTunnelAdminKeyTextBox.TabIndex = 6;
+			this.AiTunnelAdminKeyTextBox.UseSystemPasswordChar = true;
+			// AiTunnelAdminKeyButton
+			this.AiTunnelAdminKeyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelAdminKeyButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelAdminKeyButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelAdminKeyButton.Name = "AiTunnelAdminKeyButton";
+			this.AiTunnelAdminKeyButton.TabIndex = 7;
+			this.AiTunnelAdminKeyButton.Text = "Get key";
+			this.AiTunnelAdminKeyButton.Click += new EventHandler(this.AiTunnelAdminKeyButton_Click);
+			// AiTunnelIdLabel
+			this.AiTunnelIdLabel.Anchor = AnchorStyles.Left;
+			this.AiTunnelIdLabel.AutoSize = true;
+			this.AiTunnelIdLabel.Margin = new Padding(3, 0, 8, 0);
+			this.AiTunnelIdLabel.Name = "AiTunnelIdLabel";
+			this.AiTunnelIdLabel.TabIndex = 8;
+			this.AiTunnelIdLabel.Text = "Tunnel ID";
+			// AiTunnelIdTextBox
+			this.AiTunnelIdTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelIdTextBox.Name = "AiTunnelIdTextBox";
+			this.AiTunnelIdTextBox.TabIndex = 9;
+			this.AiTunnelIdTextBox.Validated += new EventHandler(this.AiTunnelIdTextBox_Validated);
+			// AiTunnelCreateButton
+			this.AiTunnelCreateButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelCreateButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelCreateButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelCreateButton.Name = "AiTunnelCreateButton";
+			this.AiTunnelCreateButton.TabIndex = 10;
+			this.AiTunnelCreateButton.Text = "Create";
+			this.AiTunnelCreateButton.Click += new EventHandler(this.AiTunnelCreateButton_Click);
+			// AiTunnelCopyButton
+			this.AiTunnelCopyButton.Anchor = AnchorStyles.Left;
+			this.AiTunnelCopyButton.AutoSize = true;
+			this.AiTunnelCopyButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelCopyButton.Name = "AiTunnelCopyButton";
+			this.AiTunnelCopyButton.TabIndex = 11;
+			this.AiTunnelCopyButton.Text = "Copy tunnel ID";
+			this.AiTunnelCopyButton.Click += new EventHandler(this.AiTunnelCopyButton_Click);
+			// AiTunnelDeleteButton
+			this.AiTunnelDeleteButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelDeleteButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelDeleteButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelDeleteButton.Name = "AiTunnelDeleteButton";
+			this.AiTunnelDeleteButton.TabIndex = 12;
+			this.AiTunnelDeleteButton.Text = "Delete...";
+			this.AiTunnelDeleteButton.Click += new EventHandler(this.AiTunnelDeleteButton_Click);
+			// AiTunnelApiKeyLabel
+			this.AiTunnelApiKeyLabel.Anchor = AnchorStyles.Left;
+			this.AiTunnelApiKeyLabel.AutoSize = true;
+			this.AiTunnelApiKeyLabel.Margin = new Padding(3, 0, 8, 0);
+			this.AiTunnelApiKeyLabel.Name = "AiTunnelApiKeyLabel";
+			this.AiTunnelApiKeyLabel.TabIndex = 13;
+			this.AiTunnelApiKeyLabel.Text = "API key";
+			// AiTunnelApiKeyTextBox
+			this.AiTunnelApiKeyTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelApiKeyTextBox.Name = "AiTunnelApiKeyTextBox";
+			this.AiTunnelApiKeyTextBox.TabIndex = 14;
+			this.AiTunnelApiKeyTextBox.UseSystemPasswordChar = true;
+			this.AiTunnelApiKeyTextBox.Validated += new EventHandler(this.AiTunnelApiKeyTextBox_Validated);
+			// AiTunnelApiKeyButton
+			this.AiTunnelApiKeyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelApiKeyButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelApiKeyButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelApiKeyButton.Name = "AiTunnelApiKeyButton";
+			this.AiTunnelApiKeyButton.TabIndex = 15;
+			this.AiTunnelApiKeyButton.Text = "Get key";
+			this.AiTunnelApiKeyButton.Click += new EventHandler(this.AiTunnelApiKeyButton_Click);
+			// AiTunnelEnabledCheckBox
+			this.AiTunnelEnabledCheckBox.Anchor = AnchorStyles.Left;
+			this.AiTunnelEnabledCheckBox.AutoSize = true;
+			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelEnabledCheckBox, 2);
+			this.AiTunnelEnabledCheckBox.Margin = new Padding(3, 3, 3, 3);
+			this.AiTunnelEnabledCheckBox.Name = "AiTunnelEnabledCheckBox";
+			this.AiTunnelEnabledCheckBox.TabIndex = 16;
+			this.AiTunnelEnabledCheckBox.Text = "Open the tunnel";
+			this.AiTunnelEnabledCheckBox.CheckedChanged += new EventHandler(this.AiTunnelEnabledCheckBox_CheckedChanged);
+			// AiTunnelPageButton
+			this.AiTunnelPageButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelPageButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelPageButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelPageButton.Name = "AiTunnelPageButton";
+			this.AiTunnelPageButton.TabIndex = 17;
+			this.AiTunnelPageButton.Text = "Status page";
+			this.AiTunnelPageButton.Click += new EventHandler(this.AiTunnelPageButton_Click);
+			// AiTunnelChatGptLabel
+			this.AiTunnelChatGptLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			this.AiTunnelChatGptLabel.AutoSize = true;
+			this.AiTunnelChatGptLabel.Margin = new Padding(3, 6, 8, 0);
+			this.AiTunnelChatGptLabel.Name = "AiTunnelChatGptLabel";
+			this.AiTunnelChatGptLabel.TabIndex = 18;
+			this.AiTunnelChatGptLabel.Text = "In ChatGPT";
+			// AiTunnelChatGptText
+			this.AiTunnelChatGptText.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelChatGptText.AutoSize = true;
+			this.AiTunnelChatGptText.Margin = new Padding(3, 6, 3, 6);
+			this.AiTunnelChatGptText.Name = "AiTunnelChatGptText";
+			this.AiTunnelChatGptText.TabIndex = 19;
+			// AiTunnelChatGptButton
+			this.AiTunnelChatGptButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelChatGptButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelChatGptButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelChatGptButton.Name = "AiTunnelChatGptButton";
+			this.AiTunnelChatGptButton.TabIndex = 20;
+			this.AiTunnelChatGptButton.Text = "Open ChatGPT";
+			this.AiTunnelChatGptButton.Click += new EventHandler(this.AiTunnelChatGptButton_Click);
+			// AiTunnelFileLabel
+			this.AiTunnelFileLabel.Anchor = AnchorStyles.Left;
+			this.AiTunnelFileLabel.AutoSize = true;
+			this.AiTunnelFileLabel.Margin = new Padding(3, 0, 8, 0);
+			this.AiTunnelFileLabel.Name = "AiTunnelFileLabel";
+			this.AiTunnelFileLabel.TabIndex = 21;
+			this.AiTunnelFileLabel.Text = "Kept in";
+			// AiTunnelFileTextBox
+			this.AiTunnelFileTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelFileTextBox.Name = "AiTunnelFileTextBox";
+			this.AiTunnelFileTextBox.ReadOnly = true;
+			this.AiTunnelFileTextBox.TabIndex = 22;
+			// AiTunnelFileButton
+			this.AiTunnelFileButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelFileButton.Margin = new Padding(8, 3, 0, 3);
+			this.AiTunnelFileButton.MinimumSize = new Size(90, 23);
+			this.AiTunnelFileButton.Name = "AiTunnelFileButton";
+			this.AiTunnelFileButton.TabIndex = 23;
+			this.AiTunnelFileButton.Text = "Show file";
+			this.AiTunnelFileButton.Click += new EventHandler(this.AiTunnelFileButton_Click);
+			// AiTunnelKeysNoteText
+			this.AiTunnelKeysNoteText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelKeysNoteText.AutoSize = true;
+			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelKeysNoteText, 2);
+			this.AiTunnelKeysNoteText.ForeColor = SystemColors.GrayText;
+			this.AiTunnelKeysNoteText.Margin = new Padding(3, 0, 0, 6);
+			this.AiTunnelKeysNoteText.Name = "AiTunnelKeysNoteText";
+			this.AiTunnelKeysNoteText.TabIndex = 24;
+			// AiTunnelStatusText
+			this.AiTunnelStatusText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelStatusText.AutoSize = true;
+			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelStatusText, 3);
+			this.AiTunnelStatusText.ForeColor = SystemColors.GrayText;
+			this.AiTunnelStatusText.Margin = new Padding(3, 6, 0, 0);
+			this.AiTunnelStatusText.Name = "AiTunnelStatusText";
+			this.AiTunnelStatusText.TabIndex = 25;
 			// AiSkillPanel
 			this.AiSkillPanel.AutoSize = true;
 			this.AiSkillPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -306,31 +565,22 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillPanel.ColumnStyles.Add(new ColumnStyle());
 			this.AiSkillPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			this.AiSkillPanel.ColumnStyles.Add(new ColumnStyle());
-			this.AiSkillPanel.Controls.Add(this.AiSkillTitleLabel, 0, 0);
-			this.AiSkillPanel.Controls.Add(this.AiSkillNoteText, 0, 1);
-			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeLabel, 0, 2);
-			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeFolderTextBox, 1, 2);
-			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeButton, 2, 2);
-			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeStatusText, 1, 3);
-			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsLabel, 0, 4);
-			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsFolderTextBox, 1, 4);
-			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsButton, 2, 4);
-			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsStatusText, 1, 5);
-			this.AiSkillPanel.Controls.Add(this.AiSkillZipLabel, 0, 6);
-			this.AiSkillPanel.Controls.Add(this.AiSkillZipNoteText, 1, 6);
-			this.AiSkillPanel.Controls.Add(this.AiSkillZipButton, 2, 6);
+			this.AiSkillPanel.Controls.Add(this.AiSkillNoteText, 0, 0);
+			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeLabel, 0, 1);
+			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeFolderTextBox, 1, 1);
+			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeButton, 2, 1);
+			this.AiSkillPanel.Controls.Add(this.AiSkillClaudeStatusText, 1, 2);
+			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsLabel, 0, 3);
+			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsFolderTextBox, 1, 3);
+			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsButton, 2, 3);
+			this.AiSkillPanel.Controls.Add(this.AiSkillAgentsStatusText, 1, 4);
+			this.AiSkillPanel.Controls.Add(this.AiSkillZipLabel, 0, 5);
+			this.AiSkillPanel.Controls.Add(this.AiSkillZipNoteText, 1, 5);
+			this.AiSkillPanel.Controls.Add(this.AiSkillZipButton, 2, 5);
 			this.AiSkillPanel.Dock = DockStyle.Top;
 			this.AiSkillPanel.Name = "AiSkillPanel";
-			this.AiSkillPanel.RowCount = 7;
-			this.AiSkillPanel.TabIndex = 2;
-			// AiSkillTitleLabel
-			this.AiSkillTitleLabel.Anchor = AnchorStyles.Left;
-			this.AiSkillTitleLabel.AutoSize = true;
-			this.AiSkillPanel.SetColumnSpan(this.AiSkillTitleLabel, 3);
-			this.AiSkillTitleLabel.Margin = new Padding(3, 0, 0, 5);
-			this.AiSkillTitleLabel.Name = "AiSkillTitleLabel";
-			this.AiSkillTitleLabel.TabIndex = 0;
-			this.AiSkillTitleLabel.Text = "AI skill";
+			this.AiSkillPanel.RowCount = 6;
+			this.AiSkillPanel.TabIndex = 0;
 			// AiSkillNoteText
 			this.AiSkillNoteText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
 			this.AiSkillNoteText.AutoSize = true;
@@ -414,30 +664,40 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessUserControl
 			this.AutoScaleDimensions = new SizeF(6F, 13F);
 			this.AutoScaleMode = AutoScaleMode.Font;
-			this.Controls.Add(this.AiPanel);
+			this.Controls.Add(this.AiTabControl);
+			this.Controls.Add(this.AiHeaderPanel);
 			this.Name = "AiAccessUserControl";
 			this.Size = new Size(600, 560);
-			this.AiPanel.ResumeLayout(false);
-			this.AiPanel.PerformLayout();
 			this.AiHeaderPanel.ResumeLayout(false);
 			this.AiHeaderPanel.PerformLayout();
 			this.AiAccessPanel.ResumeLayout(false);
 			this.AiAccessPanel.PerformLayout();
+			this.AiTunnelPanel.ResumeLayout(false);
+			this.AiTunnelPanel.PerformLayout();
 			this.AiSkillPanel.ResumeLayout(false);
 			this.AiSkillPanel.PerformLayout();
+			this.AiSkillTabPage.ResumeLayout(false);
+			this.AiSkillTabPage.PerformLayout();
+			this.AiAccessTabPage.ResumeLayout(false);
+			this.AiAccessTabPage.PerformLayout();
+			this.AiTunnelTabPage.ResumeLayout(false);
+			this.AiTunnelTabPage.PerformLayout();
+			this.AiTabControl.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
 
 		#endregion
 
-		private Panel AiPanel;
 		private TableLayoutPanel AiHeaderPanel;
 		private Label AiHeaderText;
 		private Label AiExampleLabel;
 		private TextBox AiExampleTextBox;
 		private Button AiExampleCopyButton;
+		private TabControl AiTabControl;
+		private TabPage AiSkillTabPage;
+		private TabPage AiAccessTabPage;
+		private TabPage AiTunnelTabPage;
 		private TableLayoutPanel AiAccessPanel;
-		private Label AiAccessTitleLabel;
 		private CheckBox AiAccessEnabledCheckBox;
 		private Label AiAccessLevelLabel;
 		private ComboBox AiAccessComboBox;
@@ -458,8 +718,33 @@ namespace JocysCom.ClassLibrary.Mcp
 		private Button AiAccessPromptButton;
 		private Button AiAccessLogButton;
 		private Label AiAccessStatusText;
+		private TableLayoutPanel AiTunnelPanel;
+		private Label AiTunnelNoteText;
+		private Label AiTunnelOrganizationLabel;
+		private TextBox AiTunnelOrganizationTextBox;
+		private Button AiTunnelOrganizationButton;
+		private Label AiTunnelAdminKeyLabel;
+		private TextBox AiTunnelAdminKeyTextBox;
+		private Button AiTunnelAdminKeyButton;
+		private Label AiTunnelIdLabel;
+		private TextBox AiTunnelIdTextBox;
+		private Button AiTunnelCreateButton;
+		private Button AiTunnelCopyButton;
+		private Button AiTunnelDeleteButton;
+		private Label AiTunnelApiKeyLabel;
+		private TextBox AiTunnelApiKeyTextBox;
+		private Button AiTunnelApiKeyButton;
+		private CheckBox AiTunnelEnabledCheckBox;
+		private Button AiTunnelPageButton;
+		private Label AiTunnelChatGptLabel;
+		private Label AiTunnelChatGptText;
+		private Button AiTunnelChatGptButton;
+		private Label AiTunnelFileLabel;
+		private TextBox AiTunnelFileTextBox;
+		private Button AiTunnelFileButton;
+		private Label AiTunnelKeysNoteText;
+		private Label AiTunnelStatusText;
 		private TableLayoutPanel AiSkillPanel;
-		private Label AiSkillTitleLabel;
 		private Label AiSkillNoteText;
 		private Label AiSkillClaudeLabel;
 		private TextBox AiSkillClaudeFolderTextBox;

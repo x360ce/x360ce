@@ -21,21 +21,21 @@ namespace x360ce.Tests
 		public void Token_gates_and_level_is_live()
 		{
 			McpServerTest.UseSample(AiAccess.Read);
-			Assert.IsFalse(McpListener.Start(Options.LoopbackAddress, 80, "secret"), "A port outside the range must be refused, not tried.");
+			Assert.IsFalse(McpListener.Start(AiOptions.LoopbackAddress, 80, "secret"), "A port outside the range must be refused, not tried.");
 			StringAssert.Contains(McpListener.LastError, "1024");
 			// Every network needs a reservation Windows only grants to an Administrator; without one the
 			// door stays shut and the reason names the Fix. With one, it opens, and that is fine too.
-			if (!McpListener.Start(Options.AnyAddress, Port, "secret"))
+			if (!McpListener.Start(AiOptions.AnyAddress, Port, "secret"))
 			{
 				Assert.IsTrue(McpListener.NeedsUrlReservation, McpListener.LastError);
 				StringAssert.Contains(McpListener.LastError, "Press Fix on the Issues tab");
 				StringAssert.Contains(McpListener.LastError, "netsh http add urlacl");
 			}
 			// The command the sentence gives is the one the Fix runs elevated: for every user, not only this one.
-			var remedy = McpListener.UrlReservationRemedy(McpListener.Prefix(Options.AnyAddress, Port));
+			var remedy = McpListener.UrlReservationRemedy(McpListener.Prefix(AiOptions.AnyAddress, Port));
 			StringAssert.Contains(remedy, "Press Fix on the Issues tab");
 			StringAssert.Contains(remedy, "netsh http add urlacl url=http://+:" + Port + "/mcp/ sddl=D:(A;;GX;;;WD)");
-			Assert.IsTrue(McpListener.Start(Options.LoopbackAddress, Port, "secret"), McpListener.LastError);
+			Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.LastError);
 			Assert.IsFalse(McpListener.NeedsUrlReservation);
 			try
 			{
@@ -72,16 +72,16 @@ namespace x360ce.Tests
 			{
 				// Every network needs the token whatever the setting says. Opening it needs a reservation Windows only
 				// grants to an Administrator; where it opens, a call without the token is refused.
-				if (McpListener.Start(Options.AnyAddress, Port, "secret", true))
+				if (McpListener.Start(AiOptions.AnyAddress, Port, "secret", true))
 					Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, null), "The door on every network let a call in without the token.");
-				Assert.IsTrue(McpListener.Start(Options.LoopbackAddress, Port, "secret", true), McpListener.LastError);
+				Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret", true), McpListener.LastError);
 				Assert.AreEqual(HttpStatusCode.OK, Post(null, null), "A call from this computer without a token was refused while local connections are trusted.");
 				Assert.AreEqual(HttpStatusCode.OK, Post("secret", null), "The token stopped working.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post("wrong", null), "A wrong token was let in because local connections are trusted.");
 				Assert.AreEqual(HttpStatusCode.Forbidden, Post(null, "http://example.com"), "A page from another site reached the door without a token.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, "http://localhost:3000"), "A page served from this computer ran a tool without the token.");
 				Assert.AreEqual(HttpStatusCode.OK, Post("secret", "http://localhost:3000"), "A page on this computer with the token was refused.");
-				Assert.IsTrue(McpListener.Start(Options.LoopbackAddress, Port, "secret"), McpListener.LastError);
+				Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.LastError);
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, null), "A call without a token was let in with local connections not trusted.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post("wrong", null));
 			}
@@ -97,16 +97,16 @@ namespace x360ce.Tests
 		{
 			var here = IPAddress.Loopback;
 			var other = IPAddress.Parse("192.168.1.20");
-			Assert.IsTrue(McpListener.IsAuthorised(null, here, Options.LoopbackAddress, "secret", true));
-			Assert.IsFalse(McpListener.IsAuthorised(null, here, Options.LoopbackAddress, "secret", false), "No token needs trust.");
-			Assert.IsFalse(McpListener.IsAuthorised(null, here, Options.AnyAddress, "secret", true), "On every network the token is always needed.");
-			Assert.IsFalse(McpListener.IsAuthorised(null, other, Options.LoopbackAddress, "secret", true), "A call from another computer is not local.");
-			Assert.IsFalse(McpListener.IsAuthorised("Bearer wrong", here, Options.LoopbackAddress, "secret", true), "A wrong token is refused even when trusted.");
-			Assert.IsFalse(McpListener.IsAuthorised("Bearer ", here, Options.LoopbackAddress, null, false), "A door without a token lets nobody in by token.");
-			Assert.IsTrue(McpListener.IsAuthorised("Bearer secret", other, Options.AnyAddress, "secret", false));
-			Assert.IsFalse(McpListener.IsAuthorised(null, here, Options.LoopbackAddress, "secret", true, "http://localhost:3000"), "A web page needs the token whatever the person trusts.");
-			Assert.IsTrue(McpListener.IsAuthorised("Bearer secret", here, Options.LoopbackAddress, "secret", true, "http://localhost:3000"));
-			Assert.IsFalse(McpListener.TrustsLocal(Options.AnyAddress, true));
+			Assert.IsTrue(McpListener.IsAuthorised(null, here, AiOptions.LoopbackAddress, "secret", true));
+			Assert.IsFalse(McpListener.IsAuthorised(null, here, AiOptions.LoopbackAddress, "secret", false), "No token needs trust.");
+			Assert.IsFalse(McpListener.IsAuthorised(null, here, AiOptions.AnyAddress, "secret", true), "On every network the token is always needed.");
+			Assert.IsFalse(McpListener.IsAuthorised(null, other, AiOptions.LoopbackAddress, "secret", true), "A call from another computer is not local.");
+			Assert.IsFalse(McpListener.IsAuthorised("Bearer wrong", here, AiOptions.LoopbackAddress, "secret", true), "A wrong token is refused even when trusted.");
+			Assert.IsFalse(McpListener.IsAuthorised("Bearer ", here, AiOptions.LoopbackAddress, null, false), "A door without a token lets nobody in by token.");
+			Assert.IsTrue(McpListener.IsAuthorised("Bearer secret", other, AiOptions.AnyAddress, "secret", false));
+			Assert.IsFalse(McpListener.IsAuthorised(null, here, AiOptions.LoopbackAddress, "secret", true, "http://localhost:3000"), "A web page needs the token whatever the person trusts.");
+			Assert.IsTrue(McpListener.IsAuthorised("Bearer secret", here, AiOptions.LoopbackAddress, "secret", true, "http://localhost:3000"));
+			Assert.IsFalse(McpListener.TrustsLocal(AiOptions.AnyAddress, true));
 		}
 
 		/// <summary>Posts the tools list with the token and an Origin header, as a browser page would, and returns the status.</summary>

@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.26.12.0"
+  version: "4.26.15.0"
 ---
 
 # X360CE
@@ -38,8 +38,8 @@ person allowed and refuses the rest; controlling the screen would go around thei
 
 ## Connecting
 
-The door is the person's to open: Options tab, then the AI page, AI assistant access, where they also choose its
-level. Until they do, nothing can reach the program.
+The door is the person's to open: Options tab, then the AI page, its MCP Server - AI Assistant Access tab, AI
+assistant access, where they also choose its level. Until they do, nothing can reach the program.
 
 Use the first way that works:
 
@@ -64,6 +64,11 @@ Use the first way that works:
      off; ask the person to switch it on as described above.
    - `& $exe -Ai | Out-String` lists every tool with the level it needs and its arguments. A tool refuses an
      argument it does not take and names the ones it does.
+
+**ChatGPT on the web** runs on OpenAI's servers and cannot reach the door on this computer. The AI page's OpenAI
+Tunnel tab opens an OpenAI Secure MCP Tunnel to it and shows the tunnel ID that ChatGPT's
+Add custom MCP server asks for. Point the person there with `ui_show`; only they can fill it in, because it takes
+their OpenAI keys.
 
 | Tool | Arguments | What it gives |
 |---|---|---|
@@ -91,7 +96,7 @@ The parentheses matter: without them Windows PowerShell 5.1 passes the whole arr
 
 ## Access levels
 
-The person picks one on the same AI page:
+The person picks one on the same tab:
 
 - **Read**, the default: look at everything and point at things for the person; nothing can be changed.
 - **Configure**: everything a person does on the tabs: set values, press buttons, map devices, save.
@@ -234,7 +239,7 @@ program does not offer them.
 program says so, and point at Auto-Order on the Devices page with `ui_show`; press it only if asked.
 
 **Access is off.** The command line exits with 2, or the tools are missing. Tell the person: Options tab, AI page,
-tick AI assistant access, and choose Read to let you look or Configure to let you change settings.
+MCP Server - AI Assistant Access tab, tick AI assistant access, and choose Read to let you look or Configure to let you change settings.
 
 ## Reference files
 
@@ -265,7 +270,7 @@ be older or newer. Before relying on a page, button or tool named here:
 3. To replace the installed copy, ask the person, then have the program write its own into the skills folder the
    agent reads: `& $exe "-Skill=$env:USERPROFILE\.claude\skills"` for Claude Code, or
    `& $exe "-Skill=$env:USERPROFILE\.agents\skills"` for Codex, GitHub Copilot, Gemini CLI, Cursor and OpenCode.
-   The person can do the same with Install or Update on the Options tab's AI page, and the Issues tab offers it
+   The person can do the same with Install or Update on the AI page's AI Skill tab, and the Issues tab offers it
    when an installed copy is older than the program.
 
 The newest copy is published with the program's source at `github.com/x360ce/x360ce`, in `skills/x360ce`, where

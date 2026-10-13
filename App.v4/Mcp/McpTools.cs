@@ -91,7 +91,7 @@ namespace x360ce.App.Mcp
 			McpLog.Folder = EngineHelper.AppDataPath;
 			McpLog.FileName = "x360ce.AiAccess.log";
 			McpCatalog.Sources = new[] { typeof(McpUiTools), typeof(McpTools) };
-			McpCatalog.Level = () => SettingsManager.Options.AiAccess;
+			McpCatalog.Level = () => SettingsManager.AiOptions.AiAccess;
 			McpUiTools.MainWindow = () => MainForm.Current;
 			McpUiTools.TrayMenu = () => MainForm.Current == null ? null : MainForm.Current.TrayMenu;
 			McpUiTools.Restore = window => ((MainForm)window).RestoreFromTray(true);
@@ -118,6 +118,8 @@ namespace x360ce.App.Mcp
 				+ "then round the corners of its square range.";
 			AiAccessModel.PromptRequest = "Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.";
 			AiAccessModel.PromptFirstTool = "devices_list";
+			McpTunnel.Name = "x360ce";
+			McpTunnel.Folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X360CE", "TunnelClient");
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 

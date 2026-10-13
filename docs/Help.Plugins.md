@@ -121,8 +121,8 @@ Rules:
   `Read` to copy. Make nothing in `Read` that the garbage collector must clean up.
 - **Let go of what you open.** A class that also implements `IDisposable` is disposed when its device is removed and
   when x360ce closes.
-- **Explain the device.** The class's `[Description("...")]` is its help, Markdown allowed. x360ce shows it to AI
-  agents with the device's controls.
+- **Explain the device.** The class's `[Description("...")]` is its help, Markdown allowed. x360ce shows it at the top
+  of the device's tab, as plain text, and to AI agents with the device's controls.
 - **Errors switch it off.** An exception from any member switches that kind of device off until x360ce starts again;
   the Plugins page and the Issues tab say why. A control of its own that cannot be made says why on its tab instead,
   and the device keeps working.

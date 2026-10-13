@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using x360ce.App.Controls;
+using x360ce.App.Mcp;
 
 namespace x360ce.Tests
 {
@@ -91,14 +92,20 @@ namespace x360ce.Tests
 					Assert.IsNotNull(ai, "The AI page was not found on the Options page.");
 					Show(ai);
 					ai.CreateControl();
+					// The program's settings keep a tunnel, so its tab is shown and measured too.
+					ai.Bind(new AiAccessSettings());
 					// The longest status the page writes: a copy from a newer program, with a version of full width.
 					foreach (var name in new[] { "AiSkillClaudeStatusText", "AiSkillAgentsStatusText" })
 						ai.Controls.Find(name, true).Single().Text = "Version 4.25.300.0, from a newer program.";
 					ai.Controls.Find("AiAccessTokenTextBox", true).Single().Text = McpListener.NewToken();
 					ai.PerformLayout();
-					foreach (var section in new[] { "AiHeaderPanel", "AiAccessPanel", "AiSkillPanel" })
+					foreach (var section in new[] { "AiHeaderPanel", "AiSkillPanel", "AiAccessPanel", "AiTunnelPanel" })
 					{
 						var table = (TableLayoutPanel)ai.Controls.Find(section, true).Single();
+						// A section is measured on its tab, in front, as a person sees it.
+						var tab = table.Parent as TabPage;
+						if (tab != null)
+							((TabControl)tab.Parent).SelectedTab = tab;
 						table.PerformLayout();
 						var boxes = table.Controls.Cast<Control>().Where(x => x.Visible && (ReadOrClicked(x) || x is TextBoxBase))
 							.ToDictionary(x => x.Name, x => x.Bounds);

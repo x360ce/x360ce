@@ -168,7 +168,7 @@ namespace x360ce.Tests
 		{
 			var type = TestControllerDevice.Type;
 			CollectionAssert.AreEqual(
-				new[] { "MoveAxes", "TurnHat", "Shape", "MoveSeconds", "RestSeconds", "PressButtons", "PressMilliseconds", "ReadsPerSecond" },
+				new[] { "MoveAxes", "TurnHat", "Shape", "MoveSeconds", "RestSeconds", "PressButtons", "PressNavigationButtons", "PressMilliseconds", "ReadsPerSecond" },
 				type.Settings.Select(x => x.Name).ToArray());
 			Assert.AreEqual("TestControllerPad", type.ControlType == null ? null : type.ControlType.Name, "Its control was not found.");
 		}
@@ -186,6 +186,29 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(new[] { PluginState.Middle + 1, 0, PluginState.Middle + 1, 0, PluginState.Middle + 1 }, state.Axes.Take(5).ToArray());
 			Assert.AreEqual(PluginState.PovReleased, state.Povs[0]);
 			Assert.AreEqual(0, state.Buttons.Count(x => x), "A button is held.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("As added, it leaves alone what Windows navigates with: buttons 1 to 8 stay released and the hat stays still")]
+		public void As_added_it_leaves_the_navigation_buttons_alone()
+		{
+			// x360ce's own mapping makes buttons 1 to 8 A, B, X, Y, the bumpers, View and Menu, and the hat the D-pad. Windows
+			// sends them to the window in front as keys, so a controller that pressed them by itself would act on that window.
+			PluginState state;
+			var plugin = NewPlugin(out state);
+			Set(plugin, "PressMilliseconds", "50");
+			var held = new System.Collections.Generic.HashSet<int>();
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			while (watch.ElapsedMilliseconds < 400)
+			{
+				plugin.Read(state);
+				for (var i = 0; i < plugin.ButtonCount; i++)
+					if (state.Buttons[i])
+						held.Add(i + 1);
+				Assert.AreEqual(PluginState.PovReleased, state.Povs[0], "The hat moved.");
+				Thread.Sleep(10);
+			}
+			CollectionAssert.AreEquivalent(new[] { 9, 10 }, held.ToArray(), "Only buttons 9 and 10, the stick clicks, take turns.");
 		}
 
 		[TestMethod, TestCategory("plugins")]
@@ -213,6 +236,7 @@ namespace x360ce.Tests
 		{
 			PluginState state;
 			var plugin = NewPlugin(out state);
+			Set(plugin, "PressNavigationButtons", "True");
 			Set(plugin, "PressMilliseconds", "50");
 			var held = new System.Collections.Generic.HashSet<int>();
 			var watch = System.Diagnostics.Stopwatch.StartNew();

@@ -11,6 +11,7 @@ namespace x360ce.App.Controls
 {
 	/// <summary>A plugin device's tab on the controller page: its settings, made from its class, and the control its plugin declares.</summary>
 	/// <remarks>
+	/// The device's help, its class's [Description], heads the tab, so what to know before using the device is in view.
 	/// Laid out as the Options pages are: a group for each [Category], and in it a row for each setting, its label on the
 	/// left and its field on the right, or a check box across both. A change is kept for the device at once, and the
 	/// engine gives it to the plugin before its next read. A status is read from the device the engine reads, whenever
@@ -36,6 +37,15 @@ namespace x360ce.App.Controls
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			if (!string.IsNullOrWhiteSpace(type.Description))
+				AddRow(new Label
+				{
+					Name = "DescriptionLabel",
+					Text = type.Description.Trim(),
+					AutoSize = true,
+					// Across the column, so the table wraps it at the tab's width.
+					Anchor = AnchorStyles.Left | AnchorStyles.Right,
+				});
 			foreach (var category in type.Settings.Select(x => x.Category).Distinct())
 				AddRow(NewGroup(category, type.Settings.Where(x => x.Category == category).ToArray()));
 			if (type.Settings.Any(x => x.Kind != PluginSettingKind.Status))
