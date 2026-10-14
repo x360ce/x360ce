@@ -20,6 +20,8 @@ namespace x360ce.App.Controls
 			XInputCheckBoxes = XInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			HookCheckBoxes = HookMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			AutoMapCheckBoxes = AutoMapMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			// The program does not map devices by itself yet, so Auto Map is shown greyed out and unticked.
+			AutoMapMaskGroupBox.Enabled = false;
 			// Fill architecture combo box.
 			var paItems = (ProcessorArchitecture[])Enum.GetValues(typeof(ProcessorArchitecture));
 			foreach (var item in paItems)
@@ -75,7 +77,7 @@ namespace x360ce.App.Controls
 					SetMask(DInputCheckBoxes, (DInputMask)item.DInputMask);
 					SetMask(XInputCheckBoxes, (XInputMask)item.XInputMask);
 					SetMask(HookCheckBoxes, (HookMask)item.HookMask);
-					SetMask(AutoMapCheckBoxes, (MapToMask)item.AutoMapMask);
+					SetMask(AutoMapCheckBoxes, MapToMask.None);
 					HookModeFakeVidNumericUpDown.Value = item.FakeVID;
 					HookModeFakePidNumericUpDown.Value = item.FakePID;
 					TimeoutNumericUpDown.Value = item.Timeout;
@@ -184,8 +186,6 @@ namespace x360ce.App.Controls
 				cb.CheckedChanged += CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes)
 				cb.CheckedChanged += CheckBox_Changed;
-			foreach (var cb in AutoMapCheckBoxes)
-				cb.CheckedChanged += CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged += TimeoutNumericUpDown_ValueChanged;
@@ -206,8 +206,6 @@ namespace x360ce.App.Controls
 			foreach (var cb in XInputCheckBoxes)
 				cb.CheckedChanged -= CheckBox_Changed;
 			foreach (var cb in HookCheckBoxes)
-				cb.CheckedChanged -= CheckBox_Changed;
-			foreach (var cb in AutoMapCheckBoxes)
 				cb.CheckedChanged -= CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
@@ -281,13 +279,6 @@ namespace x360ce.App.Controls
 					mask = GetMask<HookMask>(HookCheckBoxes);
 					if (CurrentItem.HookMask != mask)
 						CurrentItem.HookMask = mask;
-				}
-				else if (AutoMapCheckBoxes.Contains(cbx))
-				{
-					// Set auto map mask.
-					mask = GetMask<MapToMask>(AutoMapCheckBoxes);
-					if (CurrentItem.AutoMapMask != mask)
-						CurrentItem.AutoMapMask = mask;
 				}
 				UpdateTitle(cbx.Parent as GroupBox, mask);
 			}

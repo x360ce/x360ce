@@ -32,6 +32,9 @@ namespace x360ce.App.Controls
 			// is parented, so the cue is put back whenever a handle is made.
 			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
+			StartWithWindowsCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
+			EmulationHotkeyCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
+			UpdateDependentControls();
 #if DEBUG
 			// Install stays available in development builds so that the removal path can
 			// be tested. The confirmation dialog states that this is a development build.
@@ -181,6 +184,15 @@ namespace x360ce.App.Controls
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 		}
 
+		/// <summary>Greys out what does nothing until the box it belongs to is ticked.</summary>
+		void UpdateDependentControls()
+		{
+			// Read only when the program is started with Windows.
+			StartWithWindowsStateComboBox.Enabled = StartWithWindowsCheckBox.Checked;
+			// Shown only when the hotkey is pressed.
+			EmulationOverlayCheckBox.Enabled = EmulationHotkeyCheckBox.Checked;
+		}
+
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			var o = SettingsManager.Options;
@@ -229,7 +241,11 @@ namespace x360ce.App.Controls
 			else if (e.KeyCode == Keys.Escape)
 				EmulationHotkeyTextBox.Text = SettingsManager.Options.EmulationHotkey;
 			else if (HotkeyHelper.IsComplete(e.KeyData))
+			{
 				EmulationHotkeyTextBox.Text = HotkeyHelper.Format(e.KeyData);
+				// Recording keys says the person wants the hotkey, so its box is ticked too.
+				EmulationHotkeyCheckBox.Checked = true;
+			}
 		}
 
 		private void AddLocationButton_Click(object sender, EventArgs e)
@@ -708,8 +724,11 @@ namespace x360ce.App.Controls
 			{
 				// Get Virtual Bus and HID Guardian status.
 				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
+				var installed = ViGEm.HidGuardianHelper.IsInstalled();
 				ControlsHelper.BeginInvoke(() =>
 				{
+					// Hiding devices goes through HID Guardian's settings, so without them the box does nothing.
+					HidGuardianConfigureAutomaticallyCheckBox.Enabled = installed;
 					// Update HID status.
 					var hidStatus = hid.DriverVersion == 0
 						? "Not installed"

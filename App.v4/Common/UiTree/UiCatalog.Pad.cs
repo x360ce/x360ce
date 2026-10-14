@@ -49,9 +49,9 @@ namespace x360ce.App.UiTree
 
 			// D-Pad page.
 			d["PadControl.AxisToDPadGroupBox"] = new Text("Axis to D-Pad",
-				"Turns one axis, a steering wheel among them, into the four pad directions.");
+				"Turns the device's X and Y axes, its main stick, into the four pad directions. Read only by Library emulation's XInput library, so greyed out for virtual controllers.");
 			d["PadControl.AxisToDPadEnabledCheckBox"] = new Text("Enabled",
-				"Turns the axis into directional pad presses.");
+				"Turns the X and Y axes into directional pad presses.");
 			d["PadControl.AxisToDPadDeadZoneTextBox"] = new Text("Dead zone",
 				"How far the axis must move from the centre before a direction is pressed.");
 			d["PadControl.AxisToDPadDeadZoneTrackBar"] = new Text("Dead zone",
@@ -77,7 +77,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.MotorPeriodPresetComboBox"] = new Text("Motor periods",
-				"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.");
+				"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.");
 			d["PadControl.MotorInfoButton"] = new Text("About the motors",
 				"Shows what each motor is used for, their measured speeds, and what the multipliers mean.");
 			d["PadControl.ForceDefaultsButton"] = new Text("Defaults",
@@ -140,7 +140,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.RemoveMapButton"] = new Text("Remove",
 				"Stops the selected device working this controller.");
 			d["PadControl.AutoMapButton"] = new Text("Auto Map",
-				"Lets the program pick a device for this controller by itself when a game starts.");
+				"Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.");
 			d["PadControl.EnableButton"] = new Text("Enable",
 				"Turns this controller on or off for the selected game.");
 			d["PadControl.GetXInputStatesCheckBox"] = new Text("Show XInput State",
@@ -184,9 +184,9 @@ namespace x360ce.App.UiTree
 			d["PadControl." + side + "MotorStrengthTrackBar"] = new Text(name + " strength",
 				"How hard this motor runs when the game asks for vibration.");
 			d["PadControl." + side + "MotorPeriodTextBox"] = new Text(name + " period",
-				"How long one pulse lasts, when the effect is repeated rather than held.");
+				"How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.");
 			d["PadControl." + side + "MotorPeriodTrackBar"] = new Text(name + " period",
-				"How long one pulse lasts, when the effect is repeated rather than held.");
+				"How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.");
 			d["PadControl." + side + "MotorDirectionComboBox"] = new Text(name + " direction",
 				"Which way a wheel is pushed by this motor.");
 			d["PadControl." + side + "MotorTestTextBox"] = new Text("Test " + lower,

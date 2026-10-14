@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.15.0, built 2026-10-13.
+Version 4.26.20.0, built 2026-10-14.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -180,7 +180,7 @@ not shown in this state of the program.
 [Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Tab]       │   │   │   ├── D-Pad                                                       # Turns a stick or wheel into the directional pad.
-[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns one axis, a steering wheel among them, into the four pad directions.
+[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device's X and Y axes, its main stick, into the four pad directions. Read only by Library emulation's XInput library, so greyed out for virtual controllers.
 [Value]     │   │   │   │       ├── Dead zone                                           # How far the axis must move from the centre before a direction is pressed.
 [Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
@@ -205,11 +205,11 @@ not shown in this state of the program.
 [Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
-[List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
+[List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.
 [Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
-[Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
+[Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
 [Value]     │   │   │   │   │   ├── Test left motor                                     # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Left motor direction                                # Left motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Left motor strength 0..100                          # Left motor strength. Range is 0 to 100. Default is 100.
@@ -217,7 +217,7 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   └── Test left motor 0..100                              # Runs this motor at the chosen strength, so you can feel it without a game.
 [Section]   │   │   │   │   ├── Right motor                                             # The small, fast motor, which produces the light buzz.
 [Value]     │   │   │   │   │   ├── Right motor strength                                # How hard this motor runs when the game asks for vibration.
-[Value]     │   │   │   │   │   ├── Right motor period                                  # How long one pulse lasts, when the effect is repeated rather than held.
+[Value]     │   │   │   │   │   ├── Right motor period                                  # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
 [Value]     │   │   │   │   │   ├── Test right motor                                    # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Right motor direction                               # Right motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Right motor strength 0..100                         # Right motor strength. Range is 0 to 100. Default is 100.
@@ -249,7 +249,7 @@ not shown in this state of the program.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
-[CheckBox]  │   │   │   ├── Auto Map                                                    # Lets the program pick a device for this controller by itself when a game starts.
+[CheckBox]  │   │   │   ├── Auto Map                                                    # Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.
 [CheckBox]  │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
 [CheckBox]  │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
@@ -507,7 +507,7 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   ├── XInput 1.3, 64-bit                              # Supplies the 64-bit XInput 1.3 library to the game.
 [CheckBox]  │       │           │   ├── XInput 1.4, 32-bit                              # Supplies the 32-bit XInput 1.4 library to the game.
 [CheckBox]  │       │           │   └── XInput 1.4, 64-bit                              # Supplies the 64-bit XInput 1.4 library to the game.
-[Section]   │       │           ├── Auto map                                            # Which of the four controllers are assigned to a device by the program itself.
+[Section]   │       │           ├── Auto map                                            # Not available yet, so greyed out: the program does not map devices to controllers by itself.
 [CheckBox]  │       │           │   ├── Auto map controller 1                           # Lets the program assign controller 1 to a device when this game starts.
 [CheckBox]  │       │           │   ├── Auto map controller 3                           # Lets the program assign controller 3 to a device when this game starts.
 [CheckBox]  │       │           │   ├── Auto map controller 2                           # Lets the program assign controller 2 to a device when this game starts.

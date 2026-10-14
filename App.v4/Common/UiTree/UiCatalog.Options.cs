@@ -53,13 +53,13 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.EmulationHotkeyCheckBox"] = new Text("Emulation",
 				"Turns the hotkey on. Off by default, so the keys stay with other programs until you choose.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
-				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them. Backspace clears it.");
+				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them, which ticks the box. Backspace clears it.");
 			d["OptionsUserControl.EmulationOverlayCheckBox"] = new Text("Show a note on the screen when pressed",
-				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden.");
+				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden. Greyed out while the hotkey is off.");
 			d["OptionsUserControl.DeviceChangeOverlayCheckBox"] = new Text("Show a note when a device disconnects",
 				"Shows a short note at the top of the screen, over the game, when a device mapped to the current game disconnects or connects again.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
-				"How the window appears when the program starts with Windows.");
+				"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.");
 			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",
 				"Light or dark colours. System follows the Windows setting for apps.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
@@ -137,7 +137,7 @@ namespace x360ce.App.UiTree
 				"Checks HID Guardian again.");
 			d["OptionsUserControl.HidGuardianConfigureAutomaticallyCheckBox"] = new Text(
 				"Configure automatically",
-				"Hides a device from games as soon as it is mapped to a controller.");
+				"Hides a device from games as soon as it is mapped to a controller. Greyed out while HID Guardian is not installed.");
 			d["OptionsUserControl.HelpRichTextBox"] = new Text("HID Guardian notes",
 				"Explains why HID Guardian is no longer recommended.");
 

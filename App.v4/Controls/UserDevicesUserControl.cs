@@ -415,9 +415,7 @@ namespace x360ce.App.Controls
 					}
 					else
 					{
-						var form = new MessageBoxForm();
-						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						ShowHidGuardianPermissionDenied();
 					}
 				}
 			}
@@ -459,12 +457,15 @@ namespace x360ce.App.Controls
 				ShowHidGuardianPermissionDenied();
 		}
 
-		/// <summary>Says that HID Guardian's settings cannot be written and how to allow it.</summary>
+		/// <summary>Says why HID Guardian's settings cannot be written: it is not installed, or this account may not write them yet.</summary>
 		void ShowHidGuardianPermissionDenied()
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			if (!ViGEm.HidGuardianHelper.IsInstalled())
+				form.ShowForm(ViGEm.HidGuardianHelper.NotInstalledText, "HID Guardian", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			else
+				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]

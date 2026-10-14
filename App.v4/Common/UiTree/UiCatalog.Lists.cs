@@ -48,7 +48,7 @@ namespace x360ce.App.UiTree
 			d["GameDetailsUserControl.DInputMaskGroupBox"] = new Text("DInput file",
 				"Whether the Direct Input library is supplied to the game as well.");
 			d["GameDetailsUserControl.AutoMapMaskGroupBox"] = new Text("Auto map",
-				"Which of the four controllers are assigned to a device by the program itself.");
+				"Not available yet, so greyed out: the program does not map devices to controllers by itself.");
 			d["GameDetailsUserControl.OtherOptionsGroupBox"] = new Text("Other options",
 				"How the game is started, and what it is told about the controller.");
 			d["GameDetailsUserControl.ProcessorArchitectureComboBox"] = new Text("Architecture",

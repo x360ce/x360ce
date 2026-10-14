@@ -3259,8 +3259,9 @@
             this.AutoMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
             this.AutoMapButton.Name = "AutoMapButton";
             this.AutoMapButton.Size = new System.Drawing.Size(116, 29);
+            this.AutoMapButton.Enabled = false;
             this.AutoMapButton.Text = "&Auto Map";
-            this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
+            this.AutoMapButton.ToolTipText = "Not available yet: x360ce does not map devices by itself. Use Add to map a device.";
             // 
             // EnableButton
             // 

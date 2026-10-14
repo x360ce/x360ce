@@ -2034,6 +2034,12 @@ namespace x360ce.App
 		private void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)
 		{
 			var control = (ErrorReportUserControl)sender;
+			var off = CloudClient.OffReason;
+			if (off != null)
+			{
+				control.StatusLabel.Text = off;
+				return;
+			}
 			control.StatusLabel.Text = "Sending...";
 			// Run cloud operation on a separate thread so that it won't freeze the app.
 			Task.Run(new Action(() =>

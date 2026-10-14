@@ -50,11 +50,11 @@ namespace x360ce.App.UiTree
 
 			// Internet page.
 			d["OptionsInternetUserControl.InternetFeaturesCheckBox"] = new Text(null,
-				"Allows the program to contact the online settings database.");
+				"Allows the program to contact the online settings database. While it is off, nothing is sent to the cloud.");
 			d["OptionsInternetUserControl.InternetAutoLoadCheckBox"] = new Text(null,
-				"Fetches settings for a device as soon as it is added.");
+				"Fetches settings for a device as soon as it is added. Greyed out while Internet features are off.");
 			d["OptionsInternetUserControl.InternetAutoSaveCheckBox"] = new Text(null,
-				"Shares your settings so other people with the same device can use them.");
+				"Shares your settings so other people with the same device can use them. Greyed out while Internet features are off.");
 			d["OptionsInternetUserControl.GetProgramsIncludeEnabledCheckBox"] = new Text(null,
 				"Counts only games that are switched on when choosing a default.");
 			d["OptionsInternetUserControl.OpenSettingsFolderButton"] = new Text("Open",

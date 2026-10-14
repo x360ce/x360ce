@@ -245,6 +245,7 @@ namespace x360ce.App.Controls
 		static void DrawMappedPoint(AxisMapUserControl chart, Map map, int[] axis, int produced)
 		{
 			chart.SetExpression(map == null ? null : map.Expression);
+			chart.SetTuningEnabled(map != null && map.Expression == null && (map.IsAxis || map.IsSlider));
 			if (map == null)
 				return;
 			var index = map.Index;
@@ -553,30 +554,14 @@ namespace x360ce.App.Controls
 				? x360ce.App.Properties.Resources.checkbox_16x16
 				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
 			// Update emulation type.
-			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
-			// Update AutoMap.
-			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
-			AutoMapButton.Checked = auto;
-			ControlsHelper.SetImage(AutoMapButton, auto
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
-			MappedDevicesDataGridView.Enabled = !auto;
-			MappedDevicesDataGridView.BackgroundColor = auto
-				? SystemColors.Control
-				: SystemColors.Window;
-			MappedDevicesDataGridView.DefaultCellStyle.BackColor = auto
-				? SystemColors.Control
-				: SystemColors.Window;
-			if (auto)
-			{
-				// Remove mapping from all devices.	
-				var grid = MappedDevicesDataGridView;
-				var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (UserSetting)x.DataBoundItem).ToArray();
-				foreach (var item in items)
-				{
-					item.MapTo = (int)MapTo.None;
-				}
-			}
+			var library = game != null && game.EmulationType == (int)EmulationType.Library;
+			ShowAdvancedTab(library);
+			// Only the XInput library of Library emulation reads Axis to D-Pad; the virtual controllers do not.
+			AxisToDPadGroupBox.Enabled = library;
+			AxisToDPadGroupBox.Text = library ? "Axis To D-Pad" : "Axis To D-Pad - works only with Library emulation";
+			// The theme's window colour: the designer records plain white, which a dark theme does not change.
+			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
+			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
 			ShowHideAndSelectGridRows(null);
 			UpdateGridButtons();
 		}
@@ -2067,12 +2052,7 @@ namespace x360ce.App.Controls
 
 		void UpdateGridButtons()
 		{
-			var grid = MappedDevicesDataGridView;
-			var game = SettingsManager.CurrentGame;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
-			RemoveMapButton.Enabled = !auto && grid.SelectedRows.Count > 0;
-			AddMapButton.Enabled = !auto;
+			RemoveMapButton.Enabled = MappedDevicesDataGridView.SelectedRows.Count > 0;
 		}
 
 		/// <summary>Shows the XInput places again, sized to what they now say.</summary>
@@ -2227,28 +2207,6 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void AutoMapButton_Click(object sender, EventArgs e)
-		{
-			var game = SettingsManager.CurrentGame;
-			// If no game selected then ignore click.
-			if (game == null)
-				return;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			var value = (MapToMask)game.AutoMapMask;
-			var autoMap = value.HasFlag(flag);
-			// If AUTO enabled then...
-			if (autoMap)
-			{
-				// Remove AUTO.
-				game.AutoMapMask = (int)(value & ~flag);
-			}
-			else
-			{
-				// Add AUTO.
-				game.AutoMapMask = (int)(value | flag);
-			}
-		}
-
 		private void EnableButton_Click(object sender, EventArgs e)
 		{
 			var game = SettingsManager.CurrentGame;
@@ -2393,6 +2351,22 @@ namespace x360ce.App.Controls
 		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateEffectDescription();
+			UpdateMotorPeriodControls();
+		}
+
+		/// <summary>Greys out the motor periods while the effect type is Constant: only Sine and Sawtooth have a period.</summary>
+		void UpdateMotorPeriodControls()
+		{
+			var periodic = !(ForceTypeComboBox.SelectedItem is ForceEffectType)
+				|| ((ForceEffectType)ForceTypeComboBox.SelectedItem & ~ForceEffectType._Type2) != ForceEffectType.Constant;
+			var controls = new Control[]
+			{
+				MotorPeriodPresetLabel, MotorPeriodPresetComboBox,
+				LeftMotorPeriodLabel, LeftMotorPeriodTrackBar, LeftMotorPeriodTextBox,
+				RightMotorPeriodLabel, RightMotorPeriodTrackBar, RightMotorPeriodTextBox,
+			};
+			foreach (var control in controls)
+				control.Enabled = periodic;
 		}
 
 		/// <summary>What the Force Feedback page says for a device read through Raw Input that no force feedback reaches, or null.</summary>

@@ -1,6 +1,11 @@
-﻿## [4.26.15.0] - 2026-10-13
+﻿## [4.26.20.0] - 2026-10-14
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
+- Fixed: Auto Map emptied the controller's device list.
+- Fixed: Cloud uploads went on with Internet features off.
+- Fixed: Hiding a device without HID Guardian asked for an administrator.
+- Changed: Settings that do nothing right now are greyed out, with the reason.
+- Changed: Recording a hotkey switches it on.
 - Changed: The demo device is the Test Controller plugin, inside x360ce; Add Plugin Device adds it.
 - Changed: AI settings are kept in x360ce.AI.xml; switch AI assistant access on again.
 - Changed: The AI page shows an example first, then a tab for each part.

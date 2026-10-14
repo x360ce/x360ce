@@ -65,6 +65,8 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void UploadToCloudButton_Click(object sender, EventArgs e)
 		{
+			if (CloudIsOff())
+				return;
 			Task.Run(new Action(() =>
 			{
 				Global.CloudClient.TasksTimer.Queue.Clear();
@@ -74,6 +76,15 @@ namespace x360ce.App.Controls
 				AddInsert(SettingsManager.UserInstances.Items.ToArray());
 				AddInsert(SettingsManager.UserSettings.Items.ToArray());
 			}));
+		}
+
+		/// <summary>True when the cloud is switched off; the header then says which box switches it on.</summary>
+		static bool CloudIsOff()
+		{
+			var reason = CloudClient.OffReason;
+			if (reason != null)
+				MainForm.Current.SetHeaderError(reason);
+			return reason != null;
 		}
 
 		private void AddInsert<T>(T[] items) where T : IChecksum
@@ -88,6 +99,8 @@ namespace x360ce.App.Controls
 		/// </summary>
 		private void DownloadFromCloudButton_Click(object sender, EventArgs e)
 		{
+			if (CloudIsOff())
+				return;
 			Task.Run(new Action(() =>
 			{
 				List<Guid> userDeviceChecksums;
