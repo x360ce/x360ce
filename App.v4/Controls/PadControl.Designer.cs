@@ -159,6 +159,8 @@
             this.ForceFeedbackPanel = new System.Windows.Forms.Panel();
             this.InforTextBox = new System.Windows.Forms.TextBox();
             this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
+            this.ForceSourceGroupBox = new System.Windows.Forms.GroupBox();
+            this.ForceSourceLabel = new System.Windows.Forms.Label();
             this.MotorPeriodPresetLabel = new System.Windows.Forms.Label();
             this.MotorPeriodPresetComboBox = new System.Windows.Forms.ComboBox();
             this.MotorInfoButton = new System.Windows.Forms.Button();
@@ -284,6 +286,7 @@
             this.ForceFeedbackTabPage.SuspendLayout();
             this.ForceFeedbackPanel.SuspendLayout();
             this.ForceFeedbackGroupBox.SuspendLayout();
+            this.ForceSourceGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
             this.WheelTabPage.SuspendLayout();
             this.WheelTableLayoutPanel.SuspendLayout();
@@ -472,11 +475,11 @@
             // ForcePassThroughCheckBox
             // 
             this.ForcePassThroughCheckBox.AutoSize = true;
-            this.ForcePassThroughCheckBox.Location = new System.Drawing.Point(9, 100);
+            this.ForcePassThroughCheckBox.Location = new System.Drawing.Point(9, 65);
             this.ForcePassThroughCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForcePassThroughCheckBox.Name = "ForcePassThroughCheckBox";
             this.ForcePassThroughCheckBox.Size = new System.Drawing.Size(133, 24);
-            this.ForcePassThroughCheckBox.TabIndex = 6;
+            this.ForcePassThroughCheckBox.TabIndex = 3;
             this.ForcePassThroughCheckBox.Text = "Pass Through";
             this.ForcePassThroughCheckBox.UseVisualStyleBackColor = true;
             this.ForcePassThroughCheckBox.CheckedChanged += new System.EventHandler(this.ForcesPassThroughCheckBox_CheckedChanged);
@@ -489,7 +492,7 @@
             this.ForcePassThroughIndexLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ForcePassThroughIndexLabel.Name = "ForcePassThroughIndexLabel";
             this.ForcePassThroughIndexLabel.Size = new System.Drawing.Size(73, 20);
-            this.ForcePassThroughIndexLabel.TabIndex = 7;
+            this.ForcePassThroughIndexLabel.TabIndex = 4;
             this.ForcePassThroughIndexLabel.Text = "Send To:";
             // 
             // ForcePassThroughIndexComboBox
@@ -502,7 +505,7 @@
             this.ForcePassThroughIndexComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForcePassThroughIndexComboBox.Name = "ForcePassThroughIndexComboBox";
             this.ForcePassThroughIndexComboBox.Size = new System.Drawing.Size(198, 28);
-            this.ForcePassThroughIndexComboBox.TabIndex = 8;
+            this.ForcePassThroughIndexComboBox.TabIndex = 5;
             // 
             // AxisToDPadGroupBox
             // 
@@ -1937,6 +1940,7 @@
             this.ForceFeedbackPanel.Controls.Add(this.InforTextBox);
             this.ForceFeedbackPanel.Controls.Add(this.ForceFeedbackGroupBox);
             this.ForceFeedbackPanel.Controls.Add(this.ForceDefaultsButton);
+            this.ForceFeedbackPanel.Controls.Add(this.ForceSourceGroupBox);
             this.ForceFeedbackPanel.Controls.Add(this.LeftMotorGroupBox);
             this.ForceFeedbackPanel.Controls.Add(this.groupBox1);
             this.ForceFeedbackPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1992,7 +1996,7 @@
             this.MotorPeriodPresetLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.MotorPeriodPresetLabel.Name = "MotorPeriodPresetLabel";
             this.MotorPeriodPresetLabel.Size = new System.Drawing.Size(111, 20);
-            this.MotorPeriodPresetLabel.TabIndex = 20;
+            this.MotorPeriodPresetLabel.TabIndex = 8;
             this.MotorPeriodPresetLabel.Text = "Motor Periods:";
             // 
             // MotorPeriodPresetComboBox
@@ -2003,7 +2007,7 @@
             this.MotorPeriodPresetComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MotorPeriodPresetComboBox.Name = "MotorPeriodPresetComboBox";
             this.MotorPeriodPresetComboBox.Size = new System.Drawing.Size(198, 28);
-            this.MotorPeriodPresetComboBox.TabIndex = 21;
+            this.MotorPeriodPresetComboBox.TabIndex = 9;
             this.MotorPeriodPresetComboBox.SelectedIndexChanged += new System.EventHandler(this.MotorPeriodPresetComboBox_SelectedIndexChanged);
             // 
             // MotorInfoButton
@@ -2017,7 +2021,7 @@
             this.MotorInfoButton.Name = "MotorInfoButton";
             this.MotorInfoButton.Padding = new System.Windows.Forms.Padding(4);
             this.MotorInfoButton.Size = new System.Drawing.Size(30, 30);
-            this.MotorInfoButton.TabIndex = 22;
+            this.MotorInfoButton.TabIndex = 7;
             this.MotorInfoButton.UseVisualStyleBackColor = true;
             this.MotorInfoButton.Click += new System.EventHandler(this.MotorInfoButton_Click);
             // 
@@ -2030,7 +2034,7 @@
             this.EffectDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
             this.EffectDescriptionLabel.Size = new System.Drawing.Size(532, 69);
-            this.EffectDescriptionLabel.TabIndex = 5;
+            this.EffectDescriptionLabel.TabIndex = 11;
             this.EffectDescriptionLabel.Text = "Effect Description";
             // 
             // ForceTypeComboBox
@@ -2042,7 +2046,7 @@
             this.ForceTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceTypeComboBox.Name = "ForceTypeComboBox";
             this.ForceTypeComboBox.Size = new System.Drawing.Size(198, 28);
-            this.ForceTypeComboBox.TabIndex = 3;
+            this.ForceTypeComboBox.TabIndex = 2;
             this.ForceTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.ForceTypeComboBox_SelectedIndexChanged);
             // 
             // ForceEnableCheckBox
@@ -2072,11 +2076,11 @@
             // ForceSwapMotorCheckBox
             // 
             this.ForceSwapMotorCheckBox.AutoSize = true;
-            this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(9, 65);
+            this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(9, 100);
             this.ForceSwapMotorCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceSwapMotorCheckBox.Name = "ForceSwapMotorCheckBox";
             this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(128, 24);
-            this.ForceSwapMotorCheckBox.TabIndex = 2;
+            this.ForceSwapMotorCheckBox.TabIndex = 6;
             this.ForceSwapMotorCheckBox.Text = "Swap Motors";
             this.ForceSwapMotorCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -2111,7 +2115,7 @@
             this.ForceOverallTrackBar.Maximum = 100;
             this.ForceOverallTrackBar.Name = "ForceOverallTrackBar";
             this.ForceOverallTrackBar.Size = new System.Drawing.Size(340, 43);
-            this.ForceOverallTrackBar.TabIndex = 4;
+            this.ForceOverallTrackBar.TabIndex = 10;
             this.ForceOverallTrackBar.TickFrequency = 2;
             this.ForceOverallTrackBar.Value = 100;
             this.ForceOverallTrackBar.ValueChanged += new System.EventHandler(this.ForceOverallTrackBar_ValueChanged);
@@ -2537,7 +2541,30 @@
             this.ForceDefaultsButton.Text = "Defaults";
             this.ForceDefaultsButton.UseVisualStyleBackColor = true;
             this.ForceDefaultsButton.Click += new System.EventHandler(this.ForceDefaultsButton_Click);
-            // 
+            //
+            // ForceSourceGroupBox
+            //
+            this.ForceSourceGroupBox.Controls.Add(this.ForceSourceLabel);
+            this.ForceSourceGroupBox.Location = new System.Drawing.Point(552, 49);
+            this.ForceSourceGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSourceGroupBox.Name = "ForceSourceGroupBox";
+            this.ForceSourceGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSourceGroupBox.Size = new System.Drawing.Size(542, 216);
+            this.ForceSourceGroupBox.TabIndex = 24;
+            this.ForceSourceGroupBox.TabStop = false;
+            this.ForceSourceGroupBox.Text = "Force Source";
+            this.ForceSourceGroupBox.Visible = false;
+            //
+            // ForceSourceLabel
+            //
+            this.ForceSourceLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ForceSourceLabel.Location = new System.Drawing.Point(4, 24);
+            this.ForceSourceLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ForceSourceLabel.Name = "ForceSourceLabel";
+            this.ForceSourceLabel.Padding = new System.Windows.Forms.Padding(4);
+            this.ForceSourceLabel.Size = new System.Drawing.Size(534, 187);
+            this.ForceSourceLabel.TabIndex = 0;
+            //
             // LeftMotorGroupBox
             // 
             this.LeftMotorGroupBox.Controls.Add(this.LeftMotorDirectionLabel);
@@ -3330,6 +3357,7 @@
             this.ForceFeedbackPanel.PerformLayout();
             this.ForceFeedbackGroupBox.ResumeLayout(false);
             this.ForceFeedbackGroupBox.PerformLayout();
+            this.ForceSourceGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
             this.WheelTabPage.ResumeLayout(false);
             this.WheelTableLayoutPanel.ResumeLayout(false);
@@ -3451,6 +3479,8 @@
 		System.Windows.Forms.ToolTip MainToolTip;
 		System.Windows.Forms.TabPage ForceFeedbackTabPage;
 		System.Windows.Forms.GroupBox ForceFeedbackGroupBox;
+		System.Windows.Forms.GroupBox ForceSourceGroupBox;
+		System.Windows.Forms.Label ForceSourceLabel;
 		System.Windows.Forms.Label MotorPeriodPresetLabel;
 		public System.Windows.Forms.ComboBox MotorPeriodPresetComboBox;
 		System.Windows.Forms.Button MotorInfoButton;

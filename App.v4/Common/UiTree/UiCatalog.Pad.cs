@@ -78,6 +78,11 @@ namespace x360ce.App.UiTree
 				"Vibration settings shared by both motors.");
 			d["PadControl.EffectDescriptionLabel"] = Live("Effect description",
 				"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.");
+			d["PadControl.ForceSourceGroupBox"] = new Text("Force source",
+				"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.");
+			d["PadControl.ForceSourceLabel"] = Live("Force source",
+				"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: "
+				+ "on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
 				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",

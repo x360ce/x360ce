@@ -70,8 +70,9 @@ A device can drive up to four emulated controllers at once.
 2. `[Move here]` takes it off every other tab. A tab left with no device is switched off.
 3. `[Keep there too]` puts it on this tab as well. This tab starts with the settings of the lowest-numbered tab it is on, force feedback included; after that each tab keeps its own. Do the same on more tabs, up to `[Controller 4]`.
 4. `[Cancel]` changes nothing.
-5. On each tab, `[Force Feedback]` → `[Enable]` says whether that tab's game rumbles the device. On for one tab: that tab's rumble. On for several: the strongest of each motor. The effect type and strengths are those of the lowest-numbered tab with `[Enable]` on.
-6. While the selected device is on other tabs, the `[Force Feedback]` page title names every one of them, for example `Also on Controller 2` or `Also on Controllers 1, 3`.
+5. On each tab, `[Force Feedback]` → `[Enable]` says whether that tab's game rumbles the device. On for one tab: that tab's rumble. On for several: the strongest of each motor.
+6. The lowest enabled controller tab the device is on shapes its force: effect type, strengths, motors and centering spring, whatever its own `[Enable]` says. On the other tabs those settings are greyed out; `[Enable]`, `[Pass Through]` and the Test sliders stay live.
+7. While the device is on another tab too, the `[Force Feedback]` page title names the other tabs, for example `Shared with Controller 2` or `Shared with Controllers 1, 3`, and the `[Force Source]` box says which tab shapes the force and which tabs' force the device plays. A controller read through Raw Input on one tab and DirectInput on another counts as on both.
 
 ## Configuring and Mapping Buttons and Axes
 

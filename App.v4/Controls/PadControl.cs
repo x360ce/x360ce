@@ -86,6 +86,7 @@ namespace x360ce.App.Controls
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
 			UpdateSpringNote();
+			UpdateForceSource();
 			UpdateWheelChart();
 		}
 
@@ -565,6 +566,7 @@ namespace x360ce.App.Controls
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
 			ShowHideAndSelectGridRows(null);
 			UpdateGridButtons();
+			UpdateForceSource();
 		}
 
 		private void UserSettings_Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -1545,21 +1547,32 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		bool SpringFromThisTab(UserDevice ud)
 		{
-			var routing = DInput.DeviceRouting.Current;
-			var driven = routing.ForceDevice(ud);
+			var route = ForceRoute(DInput.DeviceRouting.Current, ud);
+			return route != null && route.SettingsPad == (int)MappedTo - 1;
+		}
+
+		/// <summary>Where the force of the device whose motors the engine drives for this one comes from, or null when it is on no switched-on tab.</summary>
+		/// <remarks>The device driven is a Raw Input device's DirectInput twin, or else the device itself.</remarks>
+		static DInput.DeviceForce ForceRoute(DInput.DeviceRouting routing, UserDevice ud)
+		{
+			var driven = ud == null ? null : routing.ForceDevice(ud);
 			DInput.DeviceForce route;
-			return driven != null && routing.TryGetForce(driven.InstanceGuid, out route)
-				&& route.SettingsPad == (int)MappedTo - 1;
+			return driven != null && routing.TryGetForce(driven.InstanceGuid, out route) ? route : null;
 		}
 
 		/// <summary>What the page says while the centering spring is ticked but does not reach the wheel, or null.</summary>
 		/// <param name="springOn">Whether the centering spring is ticked.</param>
-		/// <param name="fromThisTab">Whether the engine holds the wheel's spring with this tab's settings (<see cref="SpringFromThisTab"/>).</param>
-		public static string SpringNote(bool springOn, bool fromThisTab)
+		/// <param name="pad">This tab's pad index, 0 to 3.</param>
+		/// <param name="route">Where the wheel's force comes from, as <see cref="ForceRoute"/> gives it, or null when it is on no switched-on tab.</param>
+		public static string SpringNote(bool springOn, int pad, DInput.DeviceForce route)
 		{
-			return springOn && !fromThisTab
-				? "The centering spring does nothing now: this controller tab is switched off for the current game, the wheel is unticked in its list or on the Devices page, or another controller tab's settings drive it."
-				: null;
+			if (!springOn)
+				return null;
+			if (route == null)
+				return "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page.";
+			if (route.SettingsPad >= 0 && route.SettingsPad != pad)
+				return string.Format("The centering spring here does nothing: Controller {0} is the lowest enabled controller tab this wheel is on, so its settings drive it. Change the spring there.", route.SettingsPad + 1);
+			return null;
 		}
 
 		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
@@ -1576,7 +1589,13 @@ namespace x360ce.App.Controls
 			if (springAutoDevice != null)
 				return;
 			var ud = GetSelectedDevice();
-			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, SpringFromThisTab(ud));
+			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, (int)MappedTo - 1, ForceRoute(DInput.DeviceRouting.Current, ud));
+			// A note already shown is written again when its reason changes, as when another tab comes to drive the wheel.
+			if (note != null && springNoteShown)
+			{
+				ControlsHelper.SetText(WheelDescriptionLabel, "{0}", note);
+				return;
+			}
 			if ((note != null) == springNoteShown)
 				return;
 			springNoteShown = note != null;
@@ -2157,18 +2176,20 @@ namespace x360ce.App.Controls
 			UpdateGridButtons();
 			UpdateForceFeedbackTitle();
 			UpdateEffectDescription();
+			UpdateForceSource();
 		}
 
 		/// <summary>The Force Feedback page's title, naming the other tabs the selected device is on.</summary>
 		/// <remarks>
 		/// Each tab's Enable switch decides whether that tab's game rumbles the device, so a device on two
-		/// tabs is felt from every switched-on tab where it is on. The title says where else it is.
+		/// tabs is felt from every switched-on tab where it is on. The title says where else it is, and the
+		/// Force Source box says which of them it plays and whose settings shape it.
 		/// </remarks>
 		public static string ForceFeedbackTitle(MapTo[] otherTabs)
 		{
 			if (otherTabs == null || otherTabs.Length == 0)
 				return "Force Feedback";
-			return string.Format("Force Feedback - Also on Controller{0} {1}",
+			return string.Format("Force Feedback - Shared with Controller{0} {1}",
 				otherTabs.Length > 1 ? "s" : "",
 				string.Join(", ", otherTabs.Select(x => ((int)x).ToString())));
 		}
@@ -2176,12 +2197,31 @@ namespace x360ce.App.Controls
 		/// <summary>Shows on the Force Feedback page which other tabs the selected device is on.</summary>
 		void UpdateForceFeedbackTitle()
 		{
+			ControlsHelper.SetText(ForceFeedbackGroupBox, "{0}", ForceFeedbackTitle(OtherTabs(GetSelectedSetting())));
+		}
+
+		/// <summary>The other controller tabs of the current game the row's controller is on, lowest first.</summary>
+		/// <remarks>
+		/// The controller counts with its twin, the same controller read through another source (<see cref="UserDevice.IsTwinOf"/>):
+		/// a Raw Input row on one tab and its DirectInput twin on another drive the same motors.
+		/// </remarks>
+		MapTo[] OtherTabs(UserSetting setting)
+		{
 			var game = SettingsManager.CurrentGame;
-			var setting = GetSelectedSetting();
-			var others = game == null || setting == null
-				? new MapTo[0]
-				: SettingsManager.GetDeviceTabs(game.FileName, setting.InstanceGuid).Where(x => x != MappedTo).ToArray();
-			ControlsHelper.SetText(ForceFeedbackGroupBox, "{0}", ForceFeedbackTitle(others));
+			if (game == null || setting == null)
+				return new MapTo[0];
+			var devices = new HashSet<Guid> { setting.InstanceGuid };
+			var ud = SettingsManager.GetDevice(setting.InstanceGuid);
+			if (ud != null)
+				foreach (var device in SettingsManager.UserDevices.ItemsToArraySynchronized())
+					if (ud.IsTwinOf(device))
+						devices.Add(device.InstanceGuid);
+			return devices
+				.SelectMany(x => SettingsManager.GetDeviceTabs(game.FileName, x))
+				.Where(x => x != MappedTo)
+				.Distinct()
+				.OrderBy(x => x)
+				.ToArray();
 		}
 
 		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -2320,22 +2360,100 @@ namespace x360ce.App.Controls
 		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			UpdateEffectDescription();
-			UpdateMotorPeriodControls();
+			UpdateForceControls();
 		}
 
-		/// <summary>Greys out the motor periods while the effect type is Constant: only Sine and Sawtooth have a period.</summary>
-		void UpdateMotorPeriodControls()
+		/// <summary>Whether another tab's settings shape the selected device's force, as <see cref="UpdateForceSource"/> last worked it out.</summary>
+		bool otherTabShapesForce;
+
+		/// <summary>Greys out the force settings that do nothing: every setting that shapes the force while another tab's settings shape it, and the motor periods while the effect type is Constant, which has no period.</summary>
+		/// <remarks>
+		/// Enable, Pass Through, Send To and the Test sliders stay live on every tab: they belong to this tab's virtual
+		/// controller, not to the device. Auto stays live too, and says why it does not start.
+		/// </remarks>
+		void UpdateForceControls()
 		{
+			var shapes = !otherTabShapesForce;
 			var periodic = !(ForceTypeComboBox.SelectedItem is ForceEffectType)
 				|| ((ForceEffectType)ForceTypeComboBox.SelectedItem & ~ForceEffectType._Type2) != ForceEffectType.Constant;
-			var controls = new Control[]
+			var shaping = new Control[]
+			{
+				label1, ForceTypeComboBox, ForceSwapMotorCheckBox,
+				OveralEffectsStengthLabel, ForceOverallTrackBar, ForceOverallTextBox,
+				LeftMotorDirectionLabel, LeftMotorDirectionComboBox, LeftMotorStrengthLabel, LeftMotorStrengthTrackBar, LeftMotorStrengthTextBox,
+				RightMotorDirectionLabel, RightMotorDirectionComboBox, RightMotorStrengthLabel, RightMotorStrengthTrackBar, RightMotorStrengthTextBox,
+				ForceSpringEnableCheckBox, ForceSpringCarLabel, ForceSpringCarComboBox,
+				ForceSpringStrengthLabel, ForceSpringStrengthTrackBar, ForceSpringStrengthTextBox,
+				ForceSpringCentreLabel, ForceSpringCentreTrackBar, ForceSpringCentreTextBox,
+				ForceSpringPeakLabel, ForceSpringPeakTrackBar, ForceSpringPeakTextBox,
+				ForceSpringLighteningLabel, ForceSpringLighteningTrackBar, ForceSpringLighteningTextBox,
+				ForceSpringDampingLabel, ForceSpringDampingTrackBar, ForceSpringDampingTextBox,
+				ForceSpringSpeedLabel, ForceSpringSpeedTrackBar, ForceSpringSpeedTextBox,
+			};
+			foreach (var control in shaping)
+				ControlsHelper.SetEnabled(control, shapes);
+			var periods = new Control[]
 			{
 				MotorPeriodPresetLabel, MotorPeriodPresetComboBox,
 				LeftMotorPeriodLabel, LeftMotorPeriodTrackBar, LeftMotorPeriodTextBox,
 				RightMotorPeriodLabel, RightMotorPeriodTrackBar, RightMotorPeriodTextBox,
 			};
-			foreach (var control in controls)
-				control.Enabled = periodic;
+			foreach (var control in periods)
+				ControlsHelper.SetEnabled(control, shapes && periodic);
+		}
+
+		/// <summary>The routing, row and device the Force Source box was last written for.</summary>
+		DInput.DeviceRouting forceSourceRouting;
+		UserSetting forceSourceSetting;
+		UserDevice forceSourceDevice;
+
+		/// <summary>Shows the Force Source box while the selected controller is on another tab too, and greys out the settings another tab's settings overrule, when the routing or the selection changes.</summary>
+		/// <remarks>Asked on every state update, so it costs a reference compare unless something changed.</remarks>
+		void UpdateForceSource()
+		{
+			var routing = DInput.DeviceRouting.Current;
+			var setting = GetSelectedSetting();
+			var ud = GetSelectedDevice();
+			if (routing == forceSourceRouting && setting == forceSourceSetting && ud == forceSourceDevice)
+				return;
+			forceSourceRouting = routing;
+			forceSourceSetting = setting;
+			forceSourceDevice = ud;
+			var pad = (int)MappedTo - 1;
+			var route = ForceRoute(routing, ud);
+			otherTabShapesForce = route != null && route.SettingsPad >= 0 && route.SettingsPad != pad;
+			// Only for a controller on another tab too. A Raw Input device that no force reaches is not shown it either:
+			// the effect description already says so.
+			var shared = ud != null && OtherTabs(setting).Length > 0
+				&& RawInputForceNote(ud, SettingsManager.UserDevices.ItemsToArraySynchronized()) == null;
+			ControlsHelper.SetText(ForceSourceLabel, "{0}", shared ? ForceSourceNote(pad, route) : string.Empty);
+			ForceSourceGroupBox.Visible = shared;
+			UpdateForceControls();
+		}
+
+		/// <summary>What the Force Source box says: whose settings shape the device's force, and which controllers' force it plays.</summary>
+		/// <param name="pad">This tab's pad index, 0 to 3.</param>
+		/// <param name="route">Where the device's force comes from, as <see cref="ForceRoute"/> gives it, or null when it is on no switched-on tab.</param>
+		public static string ForceSourceNote(int pad, DInput.DeviceForce route)
+		{
+			if (route == null)
+				return "No force reaches this device: this controller tab is switched off for the current game, or the device is unticked in its list or on the Devices page.";
+			var lines = new List<string>();
+			if (route.SettingsPad == pad)
+				lines.Add("This is the lowest enabled controller tab the device is on, so these settings shape its force.");
+			else if (route.SettingsPad >= 0)
+				lines.Add(string.Format("Controller {0} is the lowest enabled controller tab the device is on, so its settings shape the force. Change them there; here they are greyed out.", route.SettingsPad + 1));
+			var pads = route.ForcePads.Select(x => (x + 1).ToString()).ToArray();
+			if (pads.Length == 0)
+				lines.Add(route.Spring
+					? "No game force reaches it: Force Feedback Enable is off on every controller tab it is on. Only the centering spring holds it."
+					: "No game force reaches it: Force Feedback Enable is off on every controller tab it is on.");
+			else if (pads.Length == 1)
+				lines.Add(string.Format("It plays Controller {0}'s force.", pads[0]));
+			else
+				lines.Add(string.Format("It plays the strongest force of Controllers {0} and {1}: each motor at the highest value any of them asks for.",
+					string.Join(", ", pads, 0, pads.Length - 1), pads[pads.Length - 1]));
+			return string.Join(Environment.NewLine + Environment.NewLine, lines);
 		}
 
 		/// <summary>What the Force Feedback page says for a device read through Raw Input that no force feedback reaches, or null.</summary>

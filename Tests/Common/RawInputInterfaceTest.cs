@@ -349,6 +349,9 @@ namespace x360ce.Tests
 						var note = PadControl.RawInputForceNote(rawWheel, SettingsManager.UserDevices.ItemsToArraySynchronized());
 						Assert.IsNotNull(note);
 						Assert.AreEqual(note, effect.Text, "The Force Feedback page does not say no force feedback reaches the Raw Input row.");
+						// The wheel's DirectInput twin is on Controller 3: the same wheel, so the page says it is shared.
+						Assert.AreEqual("Force Feedback - Shared with Controller 3", pad.Controls.Find("ForceFeedbackGroupBox", true).Single().Text,
+							"The page does not count the wheel's twin on another tab.");
 						grid.Rows[RowOf(grid, twinRow)].Selected = true;
 						Application.DoEvents();
 						Assert.AreSame(twinRow, pad.GetSelectedSetting(), "The pad's DirectInput row was not selected.");

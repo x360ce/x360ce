@@ -105,8 +105,16 @@ namespace x360ce.Tests
 				new[] { own, on }, new[] { raw, twin });
 			Assert.IsTrue(both.TryGetForce(twin.InstanceGuid, out force));
 			CollectionAssert.AreEqual(new[] { 0, 1 }, force.ForcePads, "Force from the twin's own tab and the Raw Input row's tab is not merged.");
-			Assert.AreSame(own, force.PadSetting, "The effects are not made with the lowest forcing tab's settings.");
+			Assert.AreSame(own, force.PadSetting, "The effects are not made with the lowest tab's settings.");
 			Assert.AreEqual(1, both.MappedDevices.Count(x => x == twin), "The twin is read twice in a pass.");
+
+			// The twin's own tab, lower, with its force off: its settings still shape the Raw Input row's force.
+			var ownOff = Force(false);
+			var lowerOff = DeviceRouting.Build(Game, new[] { Row(twin.InstanceGuid, MapTo.Controller1, ownOff), Row(raw.InstanceGuid, MapTo.Controller2, on) },
+				new[] { ownOff, on }, new[] { raw, twin });
+			Assert.IsTrue(lowerOff.TryGetForce(twin.InstanceGuid, out force));
+			CollectionAssert.AreEqual(new[] { 1 }, force.ForcePads, "Force comes from a tab whose force feedback is off.");
+			Assert.AreSame(ownOff, force.PadSetting, "The twin's lower tab does not shape the force, because its force feedback is off.");
 
 			// A twin whose driver takes no force feedback, as an Xbox controller's DirectInput side: nothing would reach the
 			// motors through it, so it is neither read nor held.
@@ -118,7 +126,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
-		[Description("Force comes from the tab whose switch is on, and from none when every switch is off")]
+		[Description("Force comes from the tab whose switch is on, and from none when every switch is off; the settings stay with the lowest tab")]
 		public void Force_comes_from_the_tab_whose_switch_is_on()
 		{
 			var device = Guid.NewGuid();
@@ -128,7 +136,8 @@ namespace x360ce.Tests
 			DeviceRouting.Build(Game, new[] { Row(device, MapTo.Controller1, first), Row(device, MapTo.Controller2, second) }, new[] { first, second })
 				.TryGetForce(device, out force);
 			CollectionAssert.AreEqual(new[] { 1 }, force.ForcePads);
-			Assert.AreSame(second, force.PadSetting, "The device plays the settings of a tab whose force feedback is off.");
+			Assert.AreSame(first, force.PadSetting, "Switching off the lowest tab's force feedback moved the device's settings to another tab.");
+			Assert.AreEqual(0, force.SettingsPad, "The settings are said to come from another tab than the lowest.");
 
 			var alsoOff = Force(false);
 			DeviceRouting.Build(Game, new[] { Row(device, MapTo.Controller2, alsoOff), Row(device, MapTo.Controller1, first) }, new[] { first, alsoOff })

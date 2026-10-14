@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.25.0, built 2026-10-14.
+Version 4.26.26.0, built 2026-10-14.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -207,14 +207,14 @@ not shown in this state of the program.
 [Section]   │   │   │   │   ├── Force feedback                                          # Vibration settings shared by both motors.
 [Value]     │   │   │   │   │   ├── Overall strength                                    # Scales all vibration, so a device that shakes too hard can be calmed.
 [CheckBox]  │   │   │   │   │   ├── Enable                                              # Use Force Feedback. 0 = OFF, 1 = ON.
-[CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
-[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
-[Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
+[CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
+[Button]    │   │   │   │   │   ├── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
 [List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.
-[Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
+[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[Label]     │   │   │   │   │   └── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
@@ -232,7 +232,9 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
-[Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
+[Button]    │   │   │   │   ├── Defaults                                                # Puts every setting on this page back to its default.
+[Section]   │   │   │   │   └── Force source (hidden)                                   # Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
+[Label]     │   │   │   │       └── Force source                                        # Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
 [Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.
 [Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.

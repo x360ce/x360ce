@@ -98,8 +98,9 @@ namespace x360ce.App.DInput
 				if (tabs.Length == 0)
 					continue;
 				var forcing = tabs.Where(x => x.Settings != null && x.Settings.ForceEnable == "1").ToArray();
-				// One tab's settings make the effects, so they are not made again on every pass.
-				var source = forcing.Length > 0 ? forcing[0] : tabs.FirstOrDefault(x => x.Settings != null);
+				// One tab's settings make the effects, so they are not made again on every pass: the lowest switched-on
+				// tab's, whatever its Enable says, so ticking Enable never moves the settings to another tab.
+				var source = tabs.FirstOrDefault(x => x.Settings != null);
 				_forces[device.Key] = new DeviceForce(source?.Settings, source == null ? -1 : source.Pad,
 					forcing.Select(x => x.Pad).Distinct().ToArray());
 			}
@@ -118,13 +119,12 @@ namespace x360ce.App.DInput
 				var twin = raw.ForceTwin(devices);
 				if (twin == null)
 					continue;
-				// The twin on a forcing tab of its own: both tabs' force reaches the motors, and the effects are made with
-				// the settings of the lowest forcing tab, as for any device. A Raw Input row sending no force, only its
-				// spring, gives way to the twin's own forcing tab.
+				// The twin on a switched-on tab of its own: both tabs' force reaches the motors, and the effects are made
+				// with the settings of the lower of the two tabs, as for any device.
 				DeviceForce own;
-				if (_forces.TryGetValue(twin.InstanceGuid, out own) && own.ForcePads.Length > 0)
+				if (_forces.TryGetValue(twin.InstanceGuid, out own))
 				{
-					var lower = force.ForcePads.Length == 0 || own.ForcePads[0] < force.ForcePads[0] ? own : force;
+					var lower = own.SettingsPad >= 0 && own.SettingsPad < force.SettingsPad ? own : force;
 					force = new DeviceForce(lower.PadSetting, lower.SettingsPad,
 						own.ForcePads.Concat(force.ForcePads).Distinct().OrderBy(x => x).ToArray());
 				}
@@ -390,9 +390,9 @@ namespace x360ce.App.DInput
 
 		/// <summary>The settings the device's effects are made with, or null when none of its rows' settings is stored.</summary>
 		/// <remarks>
-		/// Those of the lowest switched-on tab whose Force feedback enabled switch is on, so that switch is on
-		/// exactly when <see cref="ForcePads"/> has a tab. With it off on every switched-on tab, those of the
-		/// lowest switched-on tab, which still decide the centering spring and the wheel's own centering.
+		/// Those of the lowest switched-on tab the device is on, whatever its Force feedback enabled switch says: they
+		/// shape the force of every tab in <see cref="ForcePads"/>, and decide the centering spring and the wheel's own
+		/// centering. The page of every other tab greys them out and names this one.
 		/// </remarks>
 		public readonly PadSetting PadSetting;
 
