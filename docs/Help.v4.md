@@ -152,7 +152,13 @@ not make, such as one from DS4Windows or one left behind, which the `[Devices]` 
 as Leftover. Until its place is free, the `[Devices]` page lists the tab's own controller as
 `Virtual N (waiting)`. `[Auto-Order]` on the `[Devices]` page moves a real controller or another of
 this program's own virtual controllers out of the way; a Leftover has to be removed with
-`[Remove Leftover Pads]` on the same page instead.
+`[Remove Leftover Pads]` on the same page instead. While a tab waits, its controller picture
+stays grey: the controller in its place is not the tab's own.
+
+The program notes the place each of its own controllers lands in, and checks that note against
+the product number XInput reports for each place. A note on a place that holds another kind of
+controller is moved to where its controller is, or, when that cannot be told, the lists say
+`Virtual (place not known)`.
 
 ## How to Install or Uninstall ViGEmBus Virtual Gamepad Emulation Driver
 

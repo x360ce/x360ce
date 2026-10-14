@@ -184,9 +184,6 @@ namespace x360ce.App.DInput
 		/// <summary>The time between two questions to XInput while controllers arrive.</summary>
 		static readonly TimeSpan WatchPause = TimeSpan.FromMilliseconds(250);
 
-		/// <summary>The product number of a virtual controller made by this program, which is an Xbox 360 Controller.</summary>
-		const ushort VirtualProduct = 0x028E;
-
 		/// <summary>Whether a controller has arrived yet, so XInput is asked from then on.</summary>
 		bool _arrivals;
 
@@ -476,7 +473,7 @@ namespace x360ce.App.DInput
 			}
 			// Which controller is where, when the library says: a place made for one of this program's holds a virtual one.
 			for (var place = 0; place < 4; place++)
-				if (ours[place] && products[place] != 0 && products[place] != VirtualProduct)
+				if (ours[place] && products[place] != 0 && products[place] != DInputHelper.VirtualProduct)
 				{
 					Fail(string.Format("XInput {0} holds another controller than the one this program made for it, so the order is not the one asked for.", place + 1));
 					return;

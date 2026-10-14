@@ -1,6 +1,8 @@
-﻿## [4.26.26.0] - 2026-10-14
+﻿## [4.26.28.0] - 2026-10-14
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
+- Fixed: A waiting tab's picture showed the real controller holding its place.
+- Fixed: A virtual controller noted in the wrong XInput place is found again.
 - Fixed: Auto Map emptied the controller's device list.
 - Fixed: Cloud uploads went on with Internet features off.
 - Fixed: Hiding a device without HID Guardian asked for an administrator.

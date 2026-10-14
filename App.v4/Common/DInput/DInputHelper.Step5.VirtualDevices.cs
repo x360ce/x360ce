@@ -1064,16 +1064,121 @@ namespace x360ce.App.DInput
 			XInputPlaces.Invalidate();
 		}
 
+		/// <summary>Checks the place noted for each pad against the controller XInput reports there, and corrects a note found wrong.</summary>
+		/// <remarks>
+		/// A note can be wrong. With a real Xbox One controller on the machine, Controller 2's note said XInput 2 while XInput
+		/// reported the Xbox One there and ours in XInput 1: the picture drew the idle Xbox One, and the tab named the wrong
+		/// place. XInput reports a product number for each place, and a place reporting another product than ours holds
+		/// another controller.
+		///
+		/// Asked on each read of the place table, which runs after every plug, with the places that read began with. The
+		/// caller asks only while nothing has been noted since then, and this returns at once while a plug is under way, since
+		/// that plug's note is not written yet. A note moves only when the place it belongs to can be told; otherwise it goes,
+		/// and the place reads as not known. A pad whose controller could not be told from the others when it was made is
+		/// matched to its controller here the same way, so the Devices page names its place too. Each change is written to
+		/// the log once, as it is made.
+		/// </remarks>
+		/// <param name="taken">Which places XInput reports a controller in.</param>
+		/// <param name="products">The product number in each place, 0 where XInput did not say.</param>
+		/// <param name="ourHardware">The hardware of every controller this program made that is on the machine, as <see cref="XInputPlaces.HardwareOf"/> names it.</param>
+		internal void CheckOurPlaces(bool[] taken, ushort[] products, ICollection<string> ourHardware)
+		{
+			var client = ViGEmClient.Current;
+			if (client == null || PlugUnderWay(true))
+				return;
+			var onBus = new bool[4];
+			for (var i = 0; i < onBus.Length; i++)
+				onBus[i] = client.IsControllerConnected((uint)i + 1);
+			var places = (int[])XiPlaceForPad.Clone();
+			var hardware = (string[])OurHardware.Clone();
+			CheckPlaces(places, hardware, onBus, taken, products, ourHardware);
+			for (var i = 0; i < places.Length; i++)
+			{
+				var was = XiPlaceForPad[i];
+				if (places[i] == was && hardware[i] == OurHardware[i])
+					continue;
+				if (places[i] != was)
+				{
+					var found = was < 0 ? "had no place noted"
+						: taken[was] ? string.Format("was noted in XInput {0}, which holds a controller with product number {1:X4}", was + 1, products[was])
+						: string.Format("was noted in XInput {0}, which XInput reports empty", was + 1);
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(string.Format("Controller {0}'s virtual controller {1}. {2}",
+						i + 1, found, places[i] >= 0 ? string.Format("It is in XInput {0}.", places[i] + 1) : "Where it is is not known."),
+						System.Diagnostics.TraceLevel.Warning);
+				}
+				XiPlaceForPad[i] = places[i];
+				OurHardware[i] = hardware[i];
+				if (places[i] >= 0)
+					XInputPlaces.Remember(hardware[i], places[i]);
+				else
+					XInputPlaces.Forget(hardware[i]);
+			}
+		}
+
+		/// <summary>Corrects the noted places of the pads against the product number XInput reports for each place.</summary>
+		/// <remarks>
+		/// A note pointing at a place XInput reports empty, or one reporting another product than <see cref="VirtualProduct"/>,
+		/// is wrong, and goes. Then one pad on the bus without a place, and one place reporting our product that no pad is
+		/// noted in, are each other, but only while every place reporting our product is ours: a real Xbox 360 Controller, or
+		/// a virtual one another program made, reports the same number, and could be the one left over. A place whose product
+		/// XInput did not say keeps its note. Last, one controller of ours no pad is matched to, and one pad on the bus
+		/// matched to none, are each other.
+		/// </remarks>
+		/// <param name="places">The place noted for each pad, -1 for none, corrected where it stands.</param>
+		/// <param name="hardware">The controller each pad is matched to, null for none, filled in where it stands.</param>
+		/// <param name="onBus">Whether the bus holds each pad's controller.</param>
+		/// <param name="taken">Which places XInput reports a controller in.</param>
+		/// <param name="products">The product number in each place, 0 where XInput did not say.</param>
+		/// <param name="ourHardware">The hardware of every controller this program made that is on the machine.</param>
+		public static void CheckPlaces(int[] places, string[] hardware, bool[] onBus, bool[] taken, ushort[] products, ICollection<string> ourHardware)
+		{
+			for (var i = 0; i < places.Length; i++)
+			{
+				var place = places[i];
+				if (place >= 0 && place < taken.Length && (!taken[place] || !MayBeOurs(products[place])))
+					places[i] = -1;
+			}
+			var ours = Enumerable.Range(0, places.Length).Where(i => onBus[i]).ToArray();
+			var ourKind = Enumerable.Range(0, taken.Length).Where(p => taken[p] && products[p] == VirtualProduct).ToArray();
+			var unplaced = ours.Where(i => places[i] < 0).ToArray();
+			var spare = ourKind.Where(p => !places.Contains(p)).ToArray();
+			if (unplaced.Length == 1 && spare.Length == 1 && ourKind.Length == ours.Length)
+				places[unplaced[0]] = spare[0];
+			var unmatched = ourHardware.Where(x => !hardware.Contains(x, StringComparer.OrdinalIgnoreCase)).ToArray();
+			var unnamed = ours.Where(i => hardware[i] == null).ToArray();
+			if (unmatched.Length == 1 && unnamed.Length == 1)
+				hardware[unnamed[0]] = unmatched[0];
+		}
+
 		/// <summary>Which places Windows reports a controller in, or null when XInput did not answer in <see cref="XiAnswerMs"/>.</summary>
 		/// <remarks>For reads outside any wait of their own: the place table's, and the last look after a wait for a change.</remarks>
 		public static bool[] OccupiedPlaces()
+		{
+			return OccupiedPlaces((ushort[])null);
+		}
+
+		/// <summary>The same, and fills <paramref name="products"/> with the product number of the controller in each place, 0 where there is none or it is not known.</summary>
+		public static bool[] OccupiedPlaces(ushort[] products)
 		{
 			// Not asked while the loop is suspended: controllers are being put in order, the library has been let go of, and a
 			// read would load it again and open every controller.
 			var helper = Global.DHelper;
 			if (helper != null && helper.Suspended)
 				return null;
-			return OccupiedPlaces(TimeSpan.FromMilliseconds(XiAnswerMs));
+			return OccupiedPlaces(TimeSpan.FromMilliseconds(XiAnswerMs), products);
+		}
+
+		/// <summary>The product number XInput reports for a virtual controller this program makes, which is an Xbox 360 Controller.</summary>
+		/// <remarks>
+		/// A real wired Xbox 360 Controller, and a virtual one another program made, report it too. So a place that reports
+		/// another number holds a controller that is not ours, while one that reports this number may or may not.
+		/// </remarks>
+		public const ushort VirtualProduct = 0x028E;
+
+		/// <summary>Whether the controller in a place may be one this program made: it reports <see cref="VirtualProduct"/>, or XInput did not say.</summary>
+		static bool MayBeOurs(ushort product)
+		{
+			return product == 0 || product == VirtualProduct;
 		}
 
 		/// <summary>Which places Windows reports a controller in, or null when XInput did not answer within <paramref name="limit"/>.</summary>
@@ -1134,21 +1239,25 @@ namespace x360ce.App.DInput
 		/// Each read is given what is left of the five seconds. XInput stops answering while Windows builds the controller,
 		/// and an answer that comes back between two reads is not used: the next read asks XInput again. Reads given a
 		/// second each can therefore miss, one after another, a place that has arrived.
+		///
+		/// Only a place whose controller may be ours counts. XInput can show a real controller late, in the same few seconds,
+		/// and that place filling is not where ours went.
 		/// </remarks>
 		/// <param name="answered">Whether XInput answered any read in the wait, so a place that never came is told from one nobody could see.</param>
 		static int WaitForPlace(bool[] before, out bool answered)
 		{
 			answered = false;
+			var products = new ushort[4];
 			var until = DateTime.UtcNow + PlugWindow;
 			while (DateTime.UtcNow < until)
 			{
 				// A read XInput does not answer is waited out like a place not yet given, until the time is up.
-				var now = OccupiedPlaces(until - DateTime.UtcNow);
+				var now = OccupiedPlaces(until - DateTime.UtcNow, products);
 				if (now != null)
 				{
 					answered = true;
 					for (var i = 0; i < 4; i++)
-						if (!before[i] && now[i])
+						if (!before[i] && now[i] && MayBeOurs(products[i]))
 							return i;
 				}
 				System.Threading.Thread.Sleep(50);

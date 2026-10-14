@@ -165,15 +165,24 @@ namespace x360ce.App.Controls
 				// computer with all four places empty this program's first controller was put in the
 				// third; reading the first place showed a controller that was never there.
 				var place = Global.DHelper.XiPlaceForPad[i];
-				if (place >= 0)
-					i = place;
+				// No place, or one not known: nothing XInput reads back is this tab's controller. Read by the tab's
+				// number, a real controller holding that place was drawn as this tab's, idle while its device moved.
+				if (place < 0)
+				{
+					newState = new State();
+					newConnected = false;
+				}
+				else
+				{
+					newState = Global.DHelper.LiveXiStates[place];
+					newConnected = Global.DHelper.LiveXiConnected[place];
+				}
 			}
-			newState = useXiStates
-				? Global.DHelper.LiveXiStates[i]
-				: Global.DHelper.CombinedXiStates[i];
-			newConnected = useXiStates
-				? Global.DHelper.LiveXiConnected[i]
-				: Global.DHelper.CombinedXiConencted[i];
+			else
+			{
+				newState = Global.DHelper.CombinedXiStates[i];
+				newConnected = Global.DHelper.CombinedXiConencted[i];
+			}
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;

@@ -527,9 +527,11 @@ namespace x360ce.App
 				return string.Empty;
 			var carried = new List<int>();
 			var waiting = new List<int>();
+			var notKnown = false;
 			var helper = Global.DHelper;
 			var game = SettingsManager.CurrentGame;
 			var fileName = game?.FileName;
+			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
 			if (helper != null && fileName != null)
 				foreach (var setting in SettingsManager.GetSettings(fileName))
 					if (setting.InstanceGuid == device.InstanceGuid
@@ -537,14 +539,19 @@ namespace x360ce.App
 					{
 						var place = helper.XiPlaceForPad[setting.MapTo - 1];
 						carried.Add(place);
-						if ((place < 0 || place > 3) && DInputHelper.WantsVirtual(game, (uint)setting.MapTo))
+						if (place >= 0 && place <= 3)
+							continue;
+						// Made, and where XInput put it is not known; or not made, because another controller holds its place.
+						if (client != null && client.IsControllerConnected((uint)setting.MapTo))
+							notKnown = true;
+						else if (DInputHelper.WantsVirtual(game, (uint)setting.MapTo))
 							waiting.Add(setting.MapTo);
 					}
 			var own = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
 			return XInputPlaces.Describe(own,
 				XInputPlaces.IsMadeNotPluggedIn(device.HidDeviceId, device.DevDeviceId),
 				XInputPlaces.IsOneOfOurs(device.HidDeviceId, device.DevDeviceId),
-				carried, waiting);
+				carried, waiting, notKnown);
 		}
 
 		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none, and the settings which said so.</summary>

@@ -258,7 +258,16 @@ namespace x360ce.App
 				if (page.ToolTipText != hint)
 					page.ToolTipText = hint;
 			}
-
+			// A pad's place changes with no device coming or going: noted as its controller arrives, or corrected once
+			// XInput reports another controller there. The lists are shown again when one does.
+			if (helper != null)
+				for (var i = 0; i < _placesShown.Length; i++)
+					if (_placesShown[i] != helper.XiPlaceForPad[i])
+					{
+						Array.Copy(helper.XiPlaceForPad, _placesShown, _placesShown.Length);
+						ShowPlacesAgain();
+						break;
+					}
 		}
 
 		const string EmulationSwitchedOff = "Emulation is switched off, so no virtual controller is made and a game sees " +
@@ -1760,6 +1769,15 @@ namespace x360ce.App
 			// answers kept for the lists are thrown away and the places are shown again. Without
 			// this a list keeps showing where things were before somebody plugged something in.
 			x360ce.App.DInput.XInputPlaces.Invalidate();
+			ShowPlacesAgain();
+		}
+
+		/// <summary>The place noted for each pad when the lists last showed the places.</summary>
+		readonly int[] _placesShown = new int[] { -1, -1, -1, -1 };
+
+		/// <summary>Shows the places again in every list that shows them.</summary>
+		void ShowPlacesAgain()
+		{
 			XInputDevicesPanel.ReloadPlaces();
 			DevicesPanel.RefreshPlaces();
 			if (PadControls != null)
