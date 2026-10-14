@@ -121,6 +121,8 @@ namespace x360ce.Engine
         string old_LeftDirection;
         string old_RightDirection;
         string old_OveralStrength;
+        /// <summary>The Force feedback enabled switch the last update was made with. Off with the spring on, the game's vibration is nought.</summary>
+        string old_ForceEnable;
         // Speed sent by the game.
         short old_LeftMotorSpeed;
         short old_RightMotorSpeed;
@@ -161,6 +163,7 @@ namespace x360ce.Engine
 
         public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
 		{
+			Changed(ref old_ForceEnable, ps.ForceEnable);
 			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);
 			bool swapMotor = false;
 
@@ -857,6 +860,7 @@ namespace x360ce.Engine
         public bool Changed(PadSetting ps)
         {
             return
+            old_ForceEnable != ps.ForceEnable ||
             old_ForceType != ps.ForceType ||
             old_LeftPeriod != ps.LeftMotorPeriod ||
             old_RightPeriod != ps.RightMotorPeriod ||

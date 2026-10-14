@@ -241,7 +241,7 @@ A game made for a gamepad sends only rumble, so a wheel turns freely between bum
 
 The spring pulls like a car's steering: its force grows from the centre to a peak, then eases off towards the stop. Choose a car from the `[Car]` list, or set `[Centre]`, `[Peak]`, `[Lightening]`, `[Damping]` and `[Speed]` yourself. The chart beside them shows the force at every angle, and its dot follows the wheel as it turns.
 
-The spring needs `[Enable]` ticked on the `[Force Feedback]` page. It works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
+The spring works without `[Enable]` on the `[Force Feedback]` page, which passes on the game's vibration. While the spring is off, the wheel keeps its own centering. The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. When the wheel is on two controller tabs, the settings of the lower tab drive it, or of the lower tab with `[Enable]` ticked. The page says so when the spring does nothing.
 
 The wiki page "How a real car centres its steering wheel" says what each setting copies from a real car, and what each car on the list is based on.
 

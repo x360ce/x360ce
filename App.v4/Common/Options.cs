@@ -96,7 +96,7 @@ namespace x360ce.App
 		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; OnPropertyChanged(); } }
 		bool _InternetFeatures;
 
-		[DefaultValue(true), Description("Auto load settings from Internet Database.")]
+		[DefaultValue(true), Description("Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.")]
 		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; OnPropertyChanged(); } }
 		bool _InternetAutoLoad;
 

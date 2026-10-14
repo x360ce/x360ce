@@ -4,7 +4,7 @@
 - Fixed: Auto Map emptied the controller's device list.
 - Fixed: Cloud uploads went on with Internet features off.
 - Fixed: Hiding a device without HID Guardian asked for an administrator.
-- Fixed: A wheel lost its own centering with the spring ticked and Enable off.
+- Fixed: The centering spring did nothing while Enable was off.
 - Fixed: The update's signature and version boxes were ticked again at every start.
 - Fixed: A controller tab's light ignored unticked devices and the tab's Enable.
 - Changed: Settings that do nothing right now are greyed out, with the reason.

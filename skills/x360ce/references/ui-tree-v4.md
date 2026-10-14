@@ -164,7 +164,7 @@ not shown in this state of the program.
 [CheckBox]  │   │   │   │   ├── Right Thumb Down formula -> MapExpressionToggle         # Writes the Right Thumb Down mapping as a formula instead of choosing one control.
 [CheckBox]  │   │   │   │   └── Right Thumb Button formula -> MapExpressionToggle       # Writes the Right Thumb Button mapping as a formula instead of choosing one control.
 [Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.
-[Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: joined this controller with another into one.
+[Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: combined this controller into another virtual controller.
 [CheckBox]  │   │   │   │   │   ├── Combine this controller                             # Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   └── Combine Into                                        # The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [Section]   │   │   │   │   └── Device                                                  # What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.
@@ -357,7 +357,7 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       │   └── Include Enabled                         # Counts only games that are switched on when choosing a default.
 [Section]   │       │           │       ├── Internet                                    # Whether the program contacts the online settings database at all.
 [CheckBox]  │       │           │       │   ├── Enable Internet Features                # Enable the use of Internet features like the settings database.
-[CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Auto load settings from Internet Database.
+[CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.
 [CheckBox]  │       │           │       │   ├── Save Settings to Cloud                  # Auto save settings to Internet Database.
 [List]      │       │           │       │   ├── Web service address                     # Internet settings database URL.
 [Button]    │       │           │       │   └── Test                                    # Asks the web service at that address who it is and says whether it answers.

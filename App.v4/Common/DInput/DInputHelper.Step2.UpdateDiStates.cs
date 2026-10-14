@@ -212,8 +212,9 @@ namespace x360ce.App.DInput
 							{
 								mapped = routing.TryGetForce(ud.InstanceGuid, out route);
 								ps = mapped ? route.PadSetting : null;
-								// Forced when a tab's Force feedback enabled switch is on, as the routing was built.
-								forcingFromHere = mapped && route.ForcePads.Length > 0;
+								// Forced when a tab's Force feedback enabled switch is on, or the centering spring is ticked, as the
+								// routing was built.
+								forcingFromHere = mapped && route.Drives;
 							}
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
 							// Virtual emulation holds only a device on a switched-on tab: one whose tabs are all switched
@@ -221,10 +222,10 @@ namespace x360ce.App.DInput
 							var exclusiveRequired = hasForceFeedback
 								&& ((isVirtual && mapped) || forcingFromHere || ud.FFState != null || ud.DeviceEffects == null);
 							// Holding a wheel this way turns its own centering off. It is kept on unless this program's spring
-							// holds the centre, which it does only while the tab sends force, so the wheel's own centering, or
-							// the wheel maker's software, stays in charge whenever ours is off. A device held with the other
-							// setting is held again, because the setting can only be changed while the device is let go of.
-							var autoCenter = !forcingFromHere || ps.ForceSpringEnable != "1";
+							// holds the centre, so the wheel's own centering, or the wheel maker's software, stays in charge
+							// whenever ours is off. A device held with the other setting is held again, because the setting can
+							// only be changed while the device is let go of.
+							var autoCenter = !(mapped && route.Spring);
 							if (ud.IsExclusiveMode == true && ud.AutoCenter != autoCenter)
 								ud.IsExclusiveMode = null;
 							// If exclusive mode is required and mode is unknown or not exclusive then...
@@ -346,16 +347,17 @@ namespace x360ce.App.DInput
 									// If device is mapped to controller then...
 									if (mapped)
 									{
-										// If force is enabled then... On one tab or several, whose settings are then
-										// always stored, so ps is set.
-										if (route.ForcePads.Length > 0)
+										// If force is enabled, on one tab or several, or the centering spring is ticked then...
+										// The settings are then stored, so ps is set.
+										if (route.Drives)
 										{
 											if (ud.FFState == null)
 												ud.FFState = new Engine.ForceFeedbackState();
 											// The force of every tab the device's force comes from: the strongest of each
 											// motor, a tab whose game said nothing new this pass counting with what it asked
-											// for last. The effects are always made with the same settings, ps. A force that
-											// failed is sent again once it is due, as to a device held again.
+											// for last. No tab for a spring alone, so its motors are at nought. The effects
+											// are always made with the same settings, ps. A force that failed is sent again
+											// once it is due, as to a device held again.
 											byte large, small;
 											var forceArrived = MergeForces(route.ForcePads, arrived, _lastLargeMotor, _lastSmallMotor, out large, out small);
 											if (forceArrived || held || ud.ForceFailures > 0 || ud.FFState.Changed(ps))
@@ -371,15 +373,15 @@ namespace x360ce.App.DInput
 												ud.FFState.SetDeviceForces(ud, device, ps, v);
 											}
 										}
-										// Force feedback off on every switched-on tab, or no stored settings for any of them.
-										// If force state was created then...
+										// Force feedback and the spring off on every switched-on tab, or no stored settings for
+										// any of them. If force state was created then...
 										else if (ud.FFState != null)
 										{
 											// Stop device forces.
 											step = "ud.FFState.StopDeviceForces()";
 											ud.FFState.StopDeviceForces();
 											ud.FFState = null;
-											EndSpringRun(ud, SpringStopForceOff);
+											EndSpringRun(ud, SpringStopSpringOff);
 										}
 									}
 									// Every tab it is on switched off: what was playing is stopped, or the effect, which
@@ -751,8 +753,8 @@ namespace x360ce.App.DInput
 		/// <summary>Why a centering spring Auto run stopped: the wheel was unplugged.</summary>
 		public const string SpringStopUnplugged = "Stopped: the wheel was unplugged.";
 
-		/// <summary>Why a centering spring Auto run stopped: force feedback was switched off on the tabs the wheel is on.</summary>
-		public const string SpringStopForceOff = "Stopped: force feedback was switched off on this controller tab.";
+		/// <summary>Why a centering spring Auto run stopped: the spring, and force feedback, were switched off on the tabs the wheel is on.</summary>
+		public const string SpringStopSpringOff = "Stopped: the centering spring was switched off on this controller tab.";
 
 		/// <summary>Why a centering spring Auto run stopped: every controller tab the wheel is on was switched off for the current game.</summary>
 		public const string SpringStopTabOff = "Stopped: this controller tab was switched off for the current game.";

@@ -1516,17 +1516,17 @@ namespace x360ce.App.Controls
 			var ud = GetSelectedDevice();
 			// The device whose motors the engine drives, which runs the measuring: a Raw Input device's DirectInput twin.
 			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
-			if (driven == null || driven.DiActuatorCount == 0 || !ForceEnableCheckBox.Checked || !ForceSpringEnableCheckBox.Checked)
+			if (driven == null || driven.DiActuatorCount == 0 || !ForceSpringEnableCheckBox.Checked)
 			{
-				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Enable and Centering Spring ticked.";
+				WheelDescriptionLabel.Text = "Auto needs a connected wheel with force feedback, with Centering Spring ticked.";
 				return;
 			}
-			// The engine drives the run only for a device the routing forces from this tab. A tab switched
-			// off, or a device unticked in the tab's list or on the Devices page, drives nothing, and the run
-			// would never end.
-			if (!ForcesFromThisTab(ud))
+			// The engine drives the run only for a device whose spring the routing takes from this tab. A tab switched
+			// off, or a device unticked in the tab's list or on the Devices page, drives nothing, and the run would
+			// never end.
+			if (!SpringFromThisTab(ud))
 			{
-				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, and this device ticked in its list and on the Devices page. Otherwise nothing drives the wheel.";
+				WheelDescriptionLabel.Text = "Auto needs this controller tab switched on, this device ticked in its list and on the Devices page, and no other controller tab's settings driving it. Otherwise nothing drives the wheel.";
 				return;
 			}
 			WheelDescriptionLabel.Text = "Hands off the wheel.";
@@ -1537,26 +1537,29 @@ namespace x360ce.App.Controls
 			SpringAutoTimer.Start();
 		}
 
-		/// <summary>Whether the engine sends this tab's force feedback, the centering spring included, to the device.</summary>
-		/// <remarks>Only for a device on this tab, with the tab switched on for the current game and the device ticked in its list and on the Devices page.</remarks>
-		bool ForcesFromThisTab(UserDevice ud)
+		/// <summary>Whether the engine holds the device's centering spring with this tab's settings.</summary>
+		/// <remarks>
+		/// Only for a device on this tab, with the tab switched on for the current game, the device ticked in its list and on
+		/// the Devices page, and no other tab's settings driving it. Asked of the device whose motors the engine drives: a Raw
+		/// Input device's DirectInput twin.
+		/// </remarks>
+		bool SpringFromThisTab(UserDevice ud)
 		{
+			var routing = DInput.DeviceRouting.Current;
+			var driven = routing.ForceDevice(ud);
 			DInput.DeviceForce route;
-			return DInput.DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)
-				&& Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0;
+			return driven != null && routing.TryGetForce(driven.InstanceGuid, out route)
+				&& route.SettingsPad == (int)MappedTo - 1;
 		}
 
-		/// <summary>What the page says while the centering spring is ticked but nothing reaches the wheel, or null.</summary>
-		/// <param name="forceOn">Whether force feedback is ticked on this tab.</param>
+		/// <summary>What the page says while the centering spring is ticked but does not reach the wheel, or null.</summary>
 		/// <param name="springOn">Whether the centering spring is ticked.</param>
-		/// <param name="reachesWheel">Whether the engine sends this tab's force feedback to the device (<see cref="ForcesFromThisTab"/>).</param>
-		public static string SpringNote(bool forceOn, bool springOn, bool reachesWheel)
+		/// <param name="fromThisTab">Whether the engine holds the wheel's spring with this tab's settings (<see cref="SpringFromThisTab"/>).</param>
+		public static string SpringNote(bool springOn, bool fromThisTab)
 		{
-			if (!springOn || forceOn && reachesWheel)
-				return null;
-			return forceOn
-				? "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page."
-				: "The centering spring is off while force feedback is off, and the wheel's own centering holds the centre. Tick Enable to switch the spring on.";
+			return springOn && !fromThisTab
+				? "The centering spring does nothing now: this controller tab is switched off for the current game, the wheel is unticked in its list or on the Devices page, or another controller tab's settings drive it."
+				: null;
 		}
 
 		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
@@ -1573,7 +1576,7 @@ namespace x360ce.App.Controls
 			if (springAutoDevice != null)
 				return;
 			var ud = GetSelectedDevice();
-			var note = ud == null ? null : SpringNote(ForceEnableCheckBox.Checked, ForceSpringEnableCheckBox.Checked, ForcesFromThisTab(ud));
+			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, SpringFromThisTab(ud));
 			if ((note != null) == springNoteShown)
 				return;
 			springNoteShown = note != null;

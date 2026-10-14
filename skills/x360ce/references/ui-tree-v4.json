@@ -929,7 +929,7 @@
 									"Items":[
 										{
 											"Name":"Combining",
-											"Description":"x360ce 3 only: joined this controller with another into one.",
+											"Description":"x360ce 3 only: combined this controller into another virtual controller.",
 											"Role":"Section",
 											"Id":"CombineGroupBox",
 											"Items":[
@@ -2253,7 +2253,7 @@
 																		},
 																		{
 																			"Name":"Load Settings from Cloud",
-																			"Description":"Auto load settings from Internet Database.",
+																			"Description":"Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.",
 																			"Role":"CheckBox",
 																			"Id":"InternetAutoLoadCheckBox"
 																		},

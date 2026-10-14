@@ -307,13 +307,13 @@ namespace x360ce.Tests
 			};
 		}
 
-		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device the routing forces from this tab.</summary>
+		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device whose spring the routing takes from this tab.</summary>
 		/// <param name="device">The row's device as the devices list holds it, or null for none listed.</param>
 		static bool AutoStarts(UserGame game, UserSetting row, PadSetting ps, UserDevice device = null)
 		{
 			DeviceForce route;
 			return DeviceRouting.Build(game, new[] { row }, new[] { ps }, device == null ? null : new[] { device }).TryGetForce(row.InstanceGuid, out route)
-				&& Array.IndexOf(route.ForcePads, row.MapTo - 1) >= 0;
+				&& route.SettingsPad == row.MapTo - 1;
 		}
 
 		/// <summary>Checks that the Auto button asks the routing, and says why, before it starts a run.</summary>
@@ -322,7 +322,7 @@ namespace x360ce.Tests
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs");
 			var source = File.ReadAllText(path);
 			var click = source.IndexOf("void ForceSpringAutoButton_Click(");
-			var routed = source.IndexOf("if (!ForcesFromThisTab(ud))", click);
+			var routed = source.IndexOf("if (!SpringFromThisTab(ud))", click);
 			var reason = source.IndexOf("WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", click);
 			var start = source.IndexOf("driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);", click);
 			Assert.IsTrue(click > 0 && routed > click && reason > routed && start > reason,
@@ -330,9 +330,9 @@ namespace x360ce.Tests
 			// The engine runs it on the device whose motors it drives, which for a Raw Input device is its DirectInput twin.
 			var driven = source.IndexOf("var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);", click);
 			Assert.IsTrue(driven > click && driven < start, "Auto puts its run on a device the engine does not drive.");
-			var rule = Ui.Between(source, "bool ForcesFromThisTab(UserDevice ud)", "public static string SpringNote(");
-			StringAssert.Contains(rule, "DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)", "Auto does not ask the routing.");
-			StringAssert.Contains(rule, "Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0", "Auto does not ask whether the routing forces from this tab.");
+			var rule = Ui.Between(source, "bool SpringFromThisTab(UserDevice ud)", "public static string SpringNote(");
+			StringAssert.Contains(rule, "routing.TryGetForce(driven.InstanceGuid, out route)", "Auto does not ask the routing about the device it drives.");
+			StringAssert.Contains(rule, "route.SettingsPad == (int)MappedTo - 1", "Auto does not ask whether the routing takes the spring from this tab.");
 			Assert.IsFalse(source.Contains("(game.EnableMask & (int)AppHelper.GetMapFlag(MappedTo)) == 0"),
 				"Auto repeats part of the routing rule instead of asking the routing.");
 		}
@@ -347,6 +347,22 @@ namespace x360ce.Tests
 			Assert.IsTrue(AutoStarts(Game(true), Row(ps, true), ps), "Auto does not start where the engine drives it.");
 			Assert.IsFalse(AutoStarts(Game(false), Row(ps, true), ps), "Auto starts on a tab switched off.");
 			AssertAutoAsksTheRouting();
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The spring works without force feedback's Enable, which passes on the game's vibration: Auto starts, and the engine drives the wheel for the spring alone, with no tab sending it vibration")]
+		public void The_spring_needs_no_Enable()
+		{
+			var ps = new PadSetting { ForceEnable = "0", ForceSpringEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			var row = Row(ps, true);
+			Assert.IsTrue(AutoStarts(Game(true), row, ps), "Auto does not start with Enable unticked, though the spring is ticked.");
+			DeviceForce route;
+			Assert.IsTrue(DeviceRouting.Build(Game(true), new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route));
+			Assert.IsTrue(route.Drives, "The engine leaves the wheel alone while only the spring is ticked.");
+			Assert.AreEqual(0, route.ForcePads.Length, "The game's vibration reaches the wheel with Enable unticked.");
+			ps.ForceSpringEnable = "0";
+			Assert.IsFalse(DeviceRouting.Build(Game(true), new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route) && route.Drives,
+				"The engine drives a wheel with neither Enable nor the spring ticked.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
