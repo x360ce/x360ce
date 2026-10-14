@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.20.0, built 2026-10-14.
+Version 4.26.25.0, built 2026-10-14.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -163,6 +163,14 @@ not shown in this state of the program.
 [CheckBox]  │   │   │   │   ├── Right Thumb Up formula -> MapExpressionToggle           # Writes the Right Thumb Up mapping as a formula instead of choosing one control.
 [CheckBox]  │   │   │   │   ├── Right Thumb Down formula -> MapExpressionToggle         # Writes the Right Thumb Down mapping as a formula instead of choosing one control.
 [CheckBox]  │   │   │   │   └── Right Thumb Button formula -> MapExpressionToggle       # Writes the Right Thumb Button mapping as a formula instead of choosing one control.
+[Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.
+[Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: joined this controller with another into one.
+[CheckBox]  │   │   │   │   │   ├── Combine this controller                             # Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.
+[List]      │   │   │   │   │   └── Combine Into                                        # The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[Section]   │   │   │   │   └── Device                                                  # What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.
+[List]      │   │   │   │       ├── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
+[CheckBox]  │   │   │   │       ├── Pass Through                                        # Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.
+[List]      │   │   │   │       └── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [Tab]       │   │   │   ├── Buttons                                                     # How far a stick or pedal must move before a button mapped to it counts as pressed.
 [Section]   │   │   │   │   └── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
 [Group]     │   │   │   │       ├── A Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
@@ -179,8 +187,8 @@ not shown in this state of the program.
 [Group]     │   │   │   │       ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Tab]       │   │   │   ├── D-Pad                                                       # Turns a stick or wheel into the directional pad.
-[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device's X and Y axes, its main stick, into the four pad directions. Read only by Library emulation's XInput library, so greyed out for virtual controllers.
+[Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.
+[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.
 [Value]     │   │   │   │       ├── Dead zone                                           # How far the axis must move from the centre before a direction is pressed.
 [Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
@@ -313,19 +321,19 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
 [CheckBox]  │       │           │   │   ├── Minimize to Tray                            # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │       │           │   │   ├── Always on Top                               # Make program Top Window
-[CheckBox]  │       │           │   │   ├── Start with Windows:                         # Start with Windows.
-[List]      │       │           │   │   ├── Start with Windows                          # Windows State when program starts with Windows.
+[CheckBox]  │       │           │   │   ├── Start with Windows:                         # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
+[List]      │       │           │   │   ├── Start with Windows                          # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
 [List]      │       │           │   │   └── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
 [Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
 [CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
 [CheckBox]  │       │           │   │   └── Show [Test...] Button                       # Show [Test...] Button.
 [Section]   │       │           │   ├── Direct Input Devices                            # Which devices the program lists and reads.
-[CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # Leaves out the extra parts a device reports beside its main controls.
-[CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # Leaves out the controllers this program creates, so they are not mapped to themselves.
+[CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
+[CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
 [CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
-[Section]   │       │           │   ├── Configuration                                   # What the settings file written for games contains.
+[Section]   │       │           │   ├── Configuration                                   # Switching settings to the game in front, and two x360ce.ini settings this version no longer uses.
 [Text]      │       │           │   │   ├── Configuration version                       # The configuration file version.
-[CheckBox]  │       │           │   │   ├── Include [Products]                          # Writes the device list into the settings file games read.
+[CheckBox]  │       │           │   │   ├── Include [Products]                          # Wrote the device list into the x360ce.ini file x360ce 3 wrote for games. This version does not write that file, so nothing reads it.
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
@@ -407,8 +415,8 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
 [Label]     │       │           │       ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
 [Button]    │       │           │       ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
-[CheckBox]  │       │           │       ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
-[CheckBox]  │       │           │       ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
+[CheckBox]  │       │           │       ├── Check Digital Signature                     # Install only an update whose program file carries a trusted digital signature.
+[CheckBox]  │       │           │       ├── Check Version                               # Install only an update whose program file is newer than this one and is the version its release announces.
 [Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
 [Tab]       │       │           ├── AI                                                  # The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.
 [Group]     │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.

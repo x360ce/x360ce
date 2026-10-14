@@ -198,12 +198,7 @@ If the installer fails, see Microsoft's troubleshooting guide: <https://learn.mi
 
 With the usual emulation, `Virtual`, a game reads an Xbox 360 gamepad whatever the device behind it, so a wheel needs no disguise. Check that both halves of the light on the wheel's controller tab are green, as described in "What the light on each controller tab means", and choose an Xbox or XInput controller in the game's own settings.
 
-A game set to `Library` emulation on the `[Games]` tab is told the device's type instead, and some such games work only with a gamepad:
-
-1. Select the `[tab]` with your wheel.
-2. Open the `[Advanced]` page, which only `Library` emulation shows.
-3. Set `[Device Sub Type]` to `[Gamepad]`.
-4. Click `[Save All]`.
+`[Device Sub Type]` on the `[Advanced]` page told a game what kind of device it read, through x360ce 3's XInput library. This version does not write the `x360ce.ini` file that library reads, so the page is greyed out. Its settings are kept, so x360ce 3's settings in the cloud stay as they are.
 
 ## How to reduce wheel dead zone?
 

@@ -332,6 +332,11 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
 
+		/// <summary>Whether the engine left the wheel's own centering on when it last held the device exclusively. Set by the engine only.</summary>
+		/// <remarks>DirectInput takes a new setting only while the device is let go of, so a change is made by holding it again.</remarks>
+		[XmlIgnore]
+		public bool AutoCenter;
+
 		/// <summary>Reads of this device that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the engine rests the device until <see cref="DiReadRetryAt"/>.</remarks>
 		[XmlIgnore]

@@ -34,13 +34,16 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
-		[Description("The page says the spring does nothing only while it is ticked and nothing reaches the wheel")]
+		[Description("The page says the spring does nothing while it is ticked and nothing reaches the wheel, or force feedback is off")]
 		public void The_page_says_when_the_spring_reaches_nothing()
 		{
 			StringAssert.Contains(PadControl.SpringNote(true, true, false), "switched off for the current game");
 			Assert.IsNull(PadControl.SpringNote(true, true, true), "The note shows while the spring reaches the wheel.");
 			Assert.IsNull(PadControl.SpringNote(true, false, false), "The note shows with the spring unticked.");
-			Assert.IsNull(PadControl.SpringNote(false, true, false), "The note shows with force feedback unticked.");
+			Assert.IsNull(PadControl.SpringNote(false, false, false), "The note shows with the spring and force feedback unticked.");
+			StringAssert.Contains(PadControl.SpringNote(false, true, true), "Tick Enable",
+				"The spring is ticked with force feedback off, and the page does not say it does nothing.");
+			StringAssert.Contains(PadControl.SpringNote(false, true, false), "Tick Enable");
 		}
 	}
 }

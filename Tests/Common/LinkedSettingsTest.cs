@@ -1,6 +1,7 @@
 // @under-test: App.v4/Common/CloudClient.cs, App.v4/Controls/OptionsInternetUserControl.cs, App.v4/Controls/OptionsUserControl.cs, App.v4/Controls/PadControl.cs, App.v4/Controls/AxisMapUserControl.cs, App.v4/Controls/GameDetailsUserControl.cs
 // @area: options   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Win32;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -105,6 +106,106 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options")]
+		[Description("Start with Windows shows Windows' own setting for this copy, Task Manager's switch included, and writes every change back there")]
+		public void Start_with_Windows_is_the_Windows_setting()
+		{
+			const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
+			var runField = typeof(OptionsUserControl).GetField("RunKeyPath", flags);
+			var approvedField = typeof(OptionsUserControl).GetField("StartupApprovedKeyPath", flags);
+			var oldRun = runField.GetValue(null);
+			var oldApproved = approvedField.GetValue(null);
+			const string root = "Software\\x360ce.Tests.WindowsStart";
+			runField.SetValue(null, root + "\\Run");
+			approvedField.SetValue(null, root + "\\StartupApproved");
+			try
+			{
+				Ui.OnUiThread(() =>
+				{
+					var name = Application.ProductName;
+					using (var run = Registry.CurrentUser.CreateSubKey(root + "\\Run"))
+					using (var approved = Registry.CurrentUser.CreateSubKey(root + "\\StartupApproved"))
+					using (var page = new OptionsUserControl())
+					{
+						page.CreateControl();
+						var start = Find<CheckBox>(page, "StartWithWindowsCheckBox");
+						var state = Find<ComboBox>(page, "StartWithWindowsStateComboBox");
+						var load = typeof(OptionsUserControl).GetMethod("LoadWindowsStart", BindingFlags.NonPublic | BindingFlags.Instance);
+						run.SetValue(name, "\"C:\\Other copy\\x360ce.exe\" /WindowState=Normal");
+						page.InitWindowsStart();
+						var hint = Field<ToolTip>(page, "StartWithWindowsHint");
+						Assert.IsFalse(start.Checked, "The box is ticked while Windows starts another copy.");
+						StringAssert.Contains(hint.GetToolTip(start), "C:\\Other copy\\x360ce.exe");
+
+						run.SetValue(name, "\"" + Application.ExecutablePath + "\" /WindowState=Maximized");
+						load.Invoke(page, null);
+						Assert.IsTrue(start.Checked, "The box is unticked while Windows starts this copy.");
+						Assert.AreEqual("Maximized", state.SelectedItem);
+						Assert.AreEqual("", hint.GetToolTip(start));
+
+						approved.SetValue(name, new byte[] { 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, RegistryValueKind.Binary);
+						load.Invoke(page, null);
+						Assert.IsFalse(start.Checked, "The box is ticked while Task Manager has it switched off.");
+						StringAssert.Contains(hint.GetToolTip(start), "Task Manager");
+
+						start.Checked = true;
+						Assert.AreEqual("\"" + Application.ExecutablePath + "\" /WindowState=Maximized", run.GetValue(name));
+						Assert.IsNull(approved.GetValue(name), "Ticking left Task Manager's switch off.");
+						state.SelectedItem = "Normal";
+						Assert.AreEqual("\"" + Application.ExecutablePath + "\" /WindowState=Normal", run.GetValue(name));
+						start.Checked = false;
+						Assert.IsNull(run.GetValue(name), "Unticking left the program in Windows' start-up list.");
+					}
+				});
+			}
+			finally
+			{
+				Registry.CurrentUser.DeleteSubKeyTree(root, false);
+				runField.SetValue(null, oldRun);
+				approvedField.SetValue(null, oldApproved);
+			}
+		}
+
+		[TestMethod, TestCategory("options")]
+		[Description("The update's signature and version checks are on by default, and the person's choice is kept")]
+		public void Update_checks_keep_the_choice()
+		{
+			var fresh = new Options();
+			Assert.IsTrue(fresh.CheckUpdateSignature, "A new install skips the signature check.");
+			Assert.IsTrue(fresh.CheckUpdateVersion, "A new install skips the version check.");
+			var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Options));
+			var writer = new System.IO.StringWriter();
+			serializer.Serialize(writer, new Options { CheckUpdateSignature = false, CheckUpdateVersion = false });
+			var read = (Options)serializer.Deserialize(new System.IO.StringReader(writer.ToString()));
+			Assert.IsFalse(read.CheckUpdateSignature, "The signature check came back on after a restart.");
+			Assert.IsFalse(read.CheckUpdateVersion, "The version check came back on after a restart.");
+			var o = SettingsManager.Options;
+			var signature = o.CheckUpdateSignature;
+			var version = o.CheckUpdateVersion;
+			try
+			{
+				o.CheckUpdateSignature = false;
+				o.CheckUpdateVersion = true;
+				Ui.OnUiThread(() =>
+				{
+					using (var page = new OptionsUpdateUserControl())
+					{
+						page.UpdateSettingsMap();
+						var box = Find<CheckBox>(page, "CheckDigitalSignatureCheckBox");
+						Assert.IsFalse(box.Checked, "The box does not show the kept choice.");
+						Assert.IsTrue(Find<CheckBox>(page, "CheckVersionCheckBox").Checked);
+						box.Checked = true;
+						Assert.IsTrue(o.CheckUpdateSignature, "Ticking the box was not kept.");
+					}
+				});
+			}
+			finally
+			{
+				o.CheckUpdateSignature = signature;
+				o.CheckUpdateVersion = version;
+			}
+		}
+
+		[TestMethod, TestCategory("options")]
 		[Description("The dead zones and the sensitivity are greyed out with the reason in the header, and the chart stays")]
 		public void Axis_tuning_is_greyed_out_with_its_reason()
 		{
@@ -144,7 +245,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("A game that kept Auto Map leaves the controller's devices mapped; Auto Map is greyed out with its reason; the motor periods follow the effect type; Axis to D-Pad is greyed out for a virtual controller")]
+		[Description("A game that kept Auto Map leaves the controller's devices mapped; Auto Map is greyed out with its reason; the motor periods follow the effect type; x360ce 3's settings, the Advanced page and Axis to D-Pad, are shown greyed out under every emulation")]
 		public void Controller_page_greys_out_what_does_nothing()
 		{
 			Ui.OnUiThread(() =>
@@ -191,12 +292,23 @@ namespace x360ce.Tests
 						type.SelectedItem = ForceEffectType.PeriodicSine2;
 						Assert.IsTrue(period.Enabled, "The motor period is greyed out under Sine.");
 
+						var tabs = Find<TabControl>(pad, "PadTabControl");
+						var advanced = tabs.TabPages.Cast<TabPage>().SingleOrDefault(x => x.Name == "AdvancedTabPage");
+						Assert.IsNotNull(advanced, "The Advanced page is hidden for a virtual controller.");
+						Assert.IsFalse(Find<Panel>(pad, "AdvancedOptionsPanel").Enabled, "x360ce 3's settings can be changed here, where nothing reads them.");
+						StringAssert.Contains(Find<GroupBox>(pad, "DeviceGroupBox").Text, "x360ce 3");
+						Find<CheckBox>(pad, "PassThroughCheckBox").Checked = true;
+						Assert.IsTrue(Find<CheckBox>(pad, "ForcePassThroughCheckBox").Enabled,
+							"x360ce 3's full pass-through greys out this version's force pass-through.");
+						Find<CheckBox>(pad, "PassThroughCheckBox").Checked = false;
+
 						var dpad = Find<GroupBox>(pad, "AxisToDPadGroupBox");
 						Assert.IsFalse(dpad.Enabled, "Axis to D-Pad is live for a virtual controller, which does not read it.");
-						StringAssert.Contains(dpad.Text, "Library");
+						StringAssert.Contains(dpad.Text, "x360ce 3");
 						game.EmulationType = (int)EmulationType.Library;
 						pad.UpdateFromCurrentGame();
-						Assert.IsTrue(dpad.Enabled, "Axis to D-Pad is greyed out under Library emulation.");
+						Assert.IsFalse(dpad.Enabled, "Axis to D-Pad is live under Library emulation, though this version writes no x360ce.ini.");
+						Assert.IsTrue(tabs.TabPages.Contains(advanced), "The Advanced page went away.");
 					}
 				}
 				finally

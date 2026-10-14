@@ -220,6 +220,13 @@ namespace x360ce.App.DInput
 							// off is read for its tabs' own pages, and left for other programs to use.
 							var exclusiveRequired = hasForceFeedback
 								&& ((isVirtual && mapped) || forcingFromHere || ud.FFState != null || ud.DeviceEffects == null);
+							// Holding a wheel this way turns its own centering off. It is kept on unless this program's spring
+							// holds the centre, which it does only while the tab sends force, so the wheel's own centering, or
+							// the wheel maker's software, stays in charge whenever ours is off. A device held with the other
+							// setting is held again, because the setting can only be changed while the device is let go of.
+							var autoCenter = !forcingFromHere || ps.ForceSpringEnable != "1";
+							if (ud.IsExclusiveMode == true && ud.AutoCenter != autoCenter)
+								ud.IsExclusiveMode = null;
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{
@@ -230,12 +237,10 @@ namespace x360ce.App.DInput
 								directInput.KeepChanges();
 								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-								// Holding a wheel this way turns its own centering off. It is kept on unless this
-								// program's spring is to hold the centre, so the wheel's own centering, or the wheel
-								// maker's software, stays in charge whenever ours is off. Set here because it can
-								// only be set while the device is let go of.
+								// Set here because it can only be set while the device is let go of.
 								step = "AutoCenter";
-								SetAutoCenter(device, ps == null || ps.ForceSpringEnable != "1");
+								SetAutoCenter(device, autoCenter);
+								ud.AutoCenter = autoCenter;
 								step = "Acquire (Exclusive)";
 								device.Acquire();
 								ud.IsExclusiveMode = true;

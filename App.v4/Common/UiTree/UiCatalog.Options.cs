@@ -36,11 +36,11 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.DirectInputDevicesGroupBox"] = new Text("Direct Input Devices",
 				"Which devices the program lists and reads.");
 			d["OptionsUserControl.ConfigurationGroupBox"] = new Text("Configuration",
-				"What the settings file written for games contains.");
+				"Switching settings to the game in front, and two x360ce.ini settings this version no longer uses.");
 			d["OptionsUserControl.ConfigurationVersionTextBox"] = new Text("Configuration version",
-				"Which version of the settings file is written for games.");
+				"The version of the x360ce.ini file x360ce 3 wrote for games. This version does not write that file.");
 			d["OptionsUserControl.IncludeProductsCheckBox"] = new Text("Include [Products]",
-				"Writes the device list into the settings file games read.");
+				"Wrote the device list into the x360ce.ini file x360ce 3 wrote for games. This version does not write that file, so nothing reads it.");
 			d["OptionsUserControl.AutoDetectForegroundWindowCheckBox"] = new Text(
 				"Auto switch configuration when game focused",
 				"Loads the settings of whichever game you switch to.");
@@ -207,9 +207,11 @@ namespace x360ce.App.UiTree
 			d["OptionsUpdateUserControl.CheckButton"] = new Text("Check now",
 				"Looks for a newer version now, downloads it, checks it and installs it.");
 			d["OptionsUpdateUserControl.CheckDigitalSignatureCheckBox"] = new Text(null,
-				"Installs only a download that carries a trusted digital signature.");
+				"Installs only a download that carries a trusted digital signature. On by default; your choice is kept. "
+				+ "The download is always checked against the SHA-256 GitHub publishes for it.");
 			d["OptionsUpdateUserControl.CheckVersionCheckBox"] = new Text(null,
-				"Installs only a download whose version is newer than this one and matches the release.");
+				"Installs only a download whose version is newer than this one and matches the release. On by default; your choice is kept. "
+				+ "A release older than or the same as this one is never offered.");
 			d["OptionsUpdateUserControl.LogTextBox"] = Live("Update log",
 				"Each step of the last check and what it found.");
 		}

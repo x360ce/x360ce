@@ -12,11 +12,11 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.XInputEnableCheckBox"] = new Text(null,
 				"Turns the emulated controllers on. Off leaves games with the real ones.");
 			d["OptionsUserControl.EnableLoggingCheckBox"] = new Text(null,
-				"Writes what the program does to a file, for working out why something failed.");
+				"An x360ce.ini setting for x360ce 3's XInput library, which wrote a log. This version does not write x360ce.ini, so it neither keeps nor reads it.");
 			d["OptionsUserControl.ConsoleCheckBox"] = new Text(null,
-				"Opens a text window showing what the program is doing as it happens.");
+				"An x360ce.ini setting for x360ce 3's XInput library, which opened a console. This version does not write x360ce.ini, so it neither keeps nor reads it.");
 			d["OptionsUserControl.DebugModeCheckBox"] = new Text(null,
-				"Shows extra controls used while working on the program.");
+				"An x360ce.ini setting for x360ce 3's XInput library. This version does not write x360ce.ini, so it neither keeps nor reads it.");
 			d["OptionsUserControl.ShowProgramsTabCheckBox"] = new Text(null,
 				"Shows the Programs page, which lists what has been set up for each program.");
 			d["OptionsUserControl.ShowDevicesTabCheckBox"] = new Text(null,
@@ -32,7 +32,8 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.AlwaysOnTopCheckBox"] = new Text(null,
 				"Keeps this window in front of other windows.");
 			d["OptionsUserControl.StartWithWindowsCheckBox"] = new Text(null,
-				"Starts the program when you sign in.");
+				"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, " +
+				"so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.");
 			d["OptionsUserControl.ShowFormInfoCheckBox"] = new Text(null,
 				"Shows what a control is called when you Ctrl+Shift+right-click it.");
 			d["OptionsUserControl.ShowTestButtonCheckBox"] = new Text(null,
@@ -40,9 +41,9 @@ namespace x360ce.App.UiTree
 
 			// Which devices are read.
 			d["OptionsUserControl.ExcludeSupplementalDevicesCheckBox"] = new Text(null,
-				"Leaves out the extra parts a device reports beside its main controls.");
+				"For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.");
 			d["OptionsUserControl.ExcludeVirtualDevicesCheckBox"] = new Text(null,
-				"Leaves out the controllers this program creates, so they are not mapped to themselves.");
+				"For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.");
 			d["OptionsUserControl.ReadEveryChangeCheckBox"] = new Text(null,
 				"Reads every change a device reported, rather than only its position at each pass, on DirectInput and Raw Input devices alike, " +
 				"so a tap that comes and goes between two passes still reaches the controller. " +
@@ -52,7 +53,8 @@ namespace x360ce.App.UiTree
 			d["OptionsInternetUserControl.InternetFeaturesCheckBox"] = new Text(null,
 				"Allows the program to contact the online settings database. While it is off, nothing is sent to the cloud.");
 			d["OptionsInternetUserControl.InternetAutoLoadCheckBox"] = new Text(null,
-				"Fetches settings for a device as soon as it is added. Greyed out while Internet features are off.");
+				"Meant to fetch settings for a device as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page. "
+				+ "Greyed out while Internet features are off.");
 			d["OptionsInternetUserControl.InternetAutoSaveCheckBox"] = new Text(null,
 				"Shares your settings so other people with the same device can use them. Greyed out while Internet features are off.");
 			d["OptionsInternetUserControl.GetProgramsIncludeEnabledCheckBox"] = new Text(null,

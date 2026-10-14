@@ -31,6 +31,13 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
+			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
+			// greyed out, and kept with the settings, so what x360ce 3 keeps in the cloud stays as it is.
+			AdvancedOptionsPanel.Enabled = false;
+			DeviceGroupBox.Text = "Device - x360ce 3 only";
+			CombineGroupBox.Text = "Combining - x360ce 3 only";
+			AxisToDPadGroupBox.Enabled = false;
+			AxisToDPadGroupBox.Text = "Axis To D-Pad - x360ce 3 only";
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
@@ -553,12 +560,6 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetImage(EnableButton, virt
 				? x360ce.App.Properties.Resources.checkbox_16x16
 				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
-			// Update emulation type.
-			var library = game != null && game.EmulationType == (int)EmulationType.Library;
-			ShowAdvancedTab(library);
-			// Only the XInput library of Library emulation reads Axis to D-Pad; the virtual controllers do not.
-			AxisToDPadGroupBox.Enabled = library;
-			AxisToDPadGroupBox.Text = library ? "Axis To D-Pad" : "Axis To D-Pad - works only with Library emulation";
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
@@ -987,17 +988,10 @@ namespace x360ce.App.Controls
 
 		private void UpdatePassThroughRelatedControls()
 		{
-			// Is Pass Through enabled?
-			bool fullPassThrough = PassThroughCheckBox.Checked;
-
-			// If full pass-through mode is turned on, changing forces pass-through has no effect.
-			ForcePassThroughCheckBox.Enabled = !fullPassThrough;
-
-			// Each pass-through now says where it goes for itself, so each box turns its own
-			// destination on. They shared one before, which meant the destination could be changed
-			// from a page where nothing was passing anything through.
-			PassThroughIndexComboBox.Enabled = fullPassThrough;
-			ForcePassThroughIndexComboBox.Enabled = !fullPassThrough && ForcePassThroughCheckBox.Checked;
+			// Each pass-through says where it goes for itself, so each box turns its own destination on. Full pass-through
+			// belongs to x360ce 3 and is greyed out with its page, so it leaves this version's force pass-through alone.
+			PassThroughIndexComboBox.Enabled = PassThroughCheckBox.Checked;
+			ForcePassThroughIndexComboBox.Enabled = ForcePassThroughCheckBox.Checked;
 		}
 
 		/// <summary>
@@ -1558,9 +1552,11 @@ namespace x360ce.App.Controls
 		/// <param name="reachesWheel">Whether the engine sends this tab's force feedback to the device (<see cref="ForcesFromThisTab"/>).</param>
 		public static string SpringNote(bool forceOn, bool springOn, bool reachesWheel)
 		{
-			return forceOn && springOn && !reachesWheel
+			if (!springOn || forceOn && reachesWheel)
+				return null;
+			return forceOn
 				? "The centering spring does nothing now: this controller tab is switched off for the current game, or the wheel is unticked in its list or on the Devices page."
-				: null;
+				: "The centering spring is off while force feedback is off, and the wheel's own centering holds the centre. Tick Enable to switch the spring on.";
 		}
 
 		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
@@ -2218,11 +2214,6 @@ namespace x360ce.App.Controls
 			SettingsManager.SetTabEnabled(game, MappedTo, ((MapToMask)game.EnableMask & flag) == 0);
 		}
 
-		public void ShowAdvancedTab(bool show)
-		{
-			ShowTab(show, AdvancedTabPage);
-		}
-
 		#region Plugin device tab
 
 		/// <summary>The tab of the plugin device selected on this page; null while it has none.</summary>
@@ -2287,31 +2278,6 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
-
-		void ShowTab(bool show, TabPage page)
-		{
-			var tc = PadTabControl;
-			// If must hide then...
-			if (!show && tc.TabPages.Contains(page))
-			{
-				// Hide and return.
-				tc.TabPages.Remove(page);
-				return;
-			}
-			// If must show then..
-			if (show && !tc.TabPages.Contains(page))
-			{
-				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabPage>() { AdvancedTabPage };
-				// Get index of always displayed tab.
-				var index = tc.TabPages.IndexOf(GeneralTabPage);
-				// Get tabs in front of tab which must be inserted.
-				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
-				// Count visible tabs.
-				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
-				tc.TabPages.Insert(index + countBefore + 1, page);
-			}
-		}
 
 		private void MapNameComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{

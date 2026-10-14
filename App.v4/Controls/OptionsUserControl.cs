@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.App.Forms;
 using x360ce.App.Mcp;
@@ -89,38 +90,135 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.Parent)
 			{
+				// Task Manager or another copy may have changed it since.
+				LoadWindowsStart();
 				RefreshViGEmBusStatus();
 				RefreshHidGuardianStatus();
 				RefreshHidHideStatus();
 			}
 		}
 
-		#region Operation 
+		#region Operation
+
+		/// <summary>The programs Windows starts when the current user signs in. Writable without administrator rights.</summary>
+		static string RunKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+
+		/// <summary>Task Manager's on/off switch for each entry in <see cref="RunKeyPath"/>, from its Startup apps page.</summary>
+		static string StartupApprovedKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run";
+
+		/// <summary>Says why the Start with Windows box is unticked when Windows starts another copy or Task Manager switched it off.</summary>
+		ToolTip StartWithWindowsHint;
+
+		/// <summary>True while the boxes show what Windows has, so showing it writes nothing back.</summary>
+		bool _LoadingWindowsStart;
 
 		/// <summary>
-		/// Requires no special permissions, because current used have full access to CurrentUser 'Run' registry key.
+		/// Shows Windows' own record in the boxes, then writes every change the person makes back into it.
 		/// </summary>
-		/// <param name="enabled">Start with Windows after Sign-In.</param>
-		/// <param name="startState">Start Mode.</param>
-		public void UpdateWindowsStartRegistry(bool enabled, FormWindowState? startState = null)
+		/// <remarks>
+		/// Windows is the only record, so copies of the program in different folders, which share one settings folder,
+		/// never hold different ideas of it.
+		/// </remarks>
+		public void InitWindowsStart()
 		{
-			startState = startState ?? SettingsManager.Options.StartWithWindowsState;
-			var runKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-			if (enabled)
+			StartWithWindowsHint = new ToolTip(components ?? (components = new System.ComponentModel.Container()));
+			LoadWindowsStart();
+			StartWithWindowsCheckBox.CheckedChanged += (s, e) => SaveWindowsStart();
+			StartWithWindowsStateComboBox.SelectedIndexChanged += (s, e) => SaveWindowsStart();
+		}
+
+		/// <summary>
+		/// Ticks the box only when Windows starts this copy, from this folder, and Task Manager leaves it on; the window
+		/// state comes from the same command.
+		/// </summary>
+		void LoadWindowsStart()
+		{
+			var command = ReadWindowsStart(out var approved);
+			var path = GetCommandPath(command);
+			var thisCopy = string.Equals(path, Application.ExecutablePath, StringComparison.OrdinalIgnoreCase);
+			_LoadingWindowsStart = true;
+			StartWithWindowsCheckBox.Checked = thisCopy && approved;
+			StartWithWindowsStateComboBox.SelectedItem = (thisCopy ? GetCommandWindowState(command) : null) ?? FormWindowState.Minimized.ToString();
+			_LoadingWindowsStart = false;
+			string reason = null;
+			if (path != null && !thisCopy)
+				reason = "Windows starts another copy: " + path + "\r\nTicking this starts this copy instead.";
+			else if (thisCopy && !approved)
+				reason = "Switched off in Task Manager, on its Startup apps page. Ticking this switches it on again.";
+			StartWithWindowsHint?.SetToolTip(StartWithWindowsCheckBox, reason);
+		}
+
+		void SaveWindowsStart()
+		{
+			if (_LoadingWindowsStart)
+				return;
+			var state = (FormWindowState)Enum.Parse(typeof(FormWindowState), (string)StartWithWindowsStateComboBox.SelectedItem ?? FormWindowState.Minimized.ToString());
+			UpdateWindowsStartRegistry(StartWithWindowsCheckBox.Checked, state);
+			LoadWindowsStart();
+		}
+
+		/// <summary>The command Windows runs at sign-in under this program's name, or null; and whether Task Manager leaves it on.</summary>
+		/// <remarks>
+		/// Task Manager writes 2 in the first byte of its switch when the entry is on and 3 when it is off. Microsoft does not
+		/// document the value, so any odd first byte is read as off, and no value at all as on.
+		/// </remarks>
+		static string ReadWindowsStart(out bool approved)
+		{
+			string command;
+			using (var runKey = Registry.CurrentUser.OpenSubKey(RunKeyPath))
+				command = runKey?.GetValue(Application.ProductName) as string;
+			byte[] data;
+			using (var approvedKey = Registry.CurrentUser.OpenSubKey(StartupApprovedKeyPath))
+				data = approvedKey?.GetValue(Application.ProductName) as byte[];
+			approved = data == null || data.Length == 0 || (data[0] & 1) == 0;
+			return command;
+		}
+
+		/// <summary>The program a start-up command runs, without its quotes and arguments; null for no command.</summary>
+		static string GetCommandPath(string command)
+		{
+			command = command?.Trim();
+			if (string.IsNullOrEmpty(command))
+				return null;
+			if (command[0] == '"')
 			{
-				// Add the value in the registry so that the application runs at start-up
-				string command = string.Format("\"{0}\" /{1}={2}", Application.ExecutablePath, Program.arg_WindowState, startState.ToString());
-				var value = (string)runKey.GetValue(Application.ProductName);
-				if (value != command)
-					runKey.SetValue(Application.ProductName, command);
+				var end = command.IndexOf('"', 1);
+				return end > 1 ? command.Substring(1, end - 1) : null;
 			}
-			else
+			var space = command.IndexOf(' ');
+			return space < 0 ? command : command.Substring(0, space);
+		}
+
+		/// <summary>The window state a start-up command asks for, as the box lists it; null when it asks for none.</summary>
+		static string GetCommandWindowState(string command)
+		{
+			var match = Regex.Match(command ?? "", "/" + Program.arg_WindowState + "=(\\w+)", RegexOptions.IgnoreCase);
+			return match.Success && Enum.TryParse(match.Groups[1].Value, true, out FormWindowState state) ? state.ToString() : null;
+		}
+
+		/// <summary>
+		/// Makes Windows start this copy at sign-in, or start no copy. Ticking also clears Task Manager's switch for the
+		/// entry, which Windows reads as on; unticking clears it with the entry it belonged to.
+		/// </summary>
+		/// <param name="enabled">Start with Windows after sign-in.</param>
+		/// <param name="startState">How the window appears.</param>
+		public static void UpdateWindowsStartRegistry(bool enabled, FormWindowState startState)
+		{
+			using (var runKey = Registry.CurrentUser.CreateSubKey(RunKeyPath))
 			{
-				// Remove the value from the registry so that the application doesn't start
-				if (runKey.GetValueNames().Contains(Application.ProductName))
+				if (enabled)
+				{
+					var command = string.Format("\"{0}\" /{1}={2}", Application.ExecutablePath, Program.arg_WindowState, startState);
+					if (runKey.GetValue(Application.ProductName) as string != command)
+						runKey.SetValue(Application.ProductName, command);
+				}
+				else
+				{
 					runKey.DeleteValue(Application.ProductName, false);
+				}
 			}
-			runKey.Close();
+			using (var approvedKey = Registry.CurrentUser.OpenSubKey(StartupApprovedKeyPath, true))
+				approvedKey?.DeleteValue(Application.ProductName, false);
 		}
 
 		#endregion
@@ -151,8 +249,7 @@ namespace x360ce.App.Controls
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
-			SettingsManager.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			InitWindowsStart();
 			SettingsManager.LoadAndMonitor(x => x.Theme, ThemeComboBox, Enum.GetValues(typeof(ThemeType)));
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
@@ -177,8 +274,7 @@ namespace x360ce.App.Controls
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
-			// This was never attached, so none of the settings it applies ever took effect:
-			// always on top, start with Windows, the remote port box and the info window.
+			// Applies always on top, the theme, the remote port box, the info window and the hotkey as they change.
 			// Detached first so a second call cannot apply everything twice.
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
@@ -201,10 +297,6 @@ namespace x360ce.App.Controls
 			{
 				case nameof(Options.AlwaysOnTop):
 					MainForm.Current.TopMost = o.AlwaysOnTop;
-					break;
-				case nameof(Options.StartWithWindows):
-				case nameof(Options.StartWithWindowsState):
-					UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
 					break;
 				case nameof(Options.RemoteControllers):
 					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;

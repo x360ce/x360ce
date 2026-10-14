@@ -3,7 +3,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 using x360ce.Engine;
 
 namespace x360ce.App
@@ -15,7 +14,6 @@ namespace x360ce.App
 			// Set default values.
 			AllowOnlyOneCopy = true;
 			MinimizeToTray = true;
-			StartWithWindowsState = FormWindowState.Minimized;
 			InternetFeatures = true;
 			InternetAutoLoad = true;
 			InternetAutoSave = true;
@@ -84,14 +82,6 @@ namespace x360ce.App
 		[DefaultValue(false), Description("Make program Top Window")]
 		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; OnPropertyChanged(); } }
 		bool _AlwaysOnTop;
-
-		[DefaultValue(false), Description("Start with Windows.")]
-		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; OnPropertyChanged(); } }
-		bool _StartWithWindows;
-
-		[DefaultValue(FormWindowState.Minimized), Description("Windows State when program starts with Windows.")]
-		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; OnPropertyChanged(); } }
-		FormWindowState _StartWithWindowsState;
 
 		[DefaultValue(ThemeType.Auto), Description("Light or dark colours. System follows the Windows setting for apps.")]
 		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
@@ -291,6 +281,22 @@ namespace x360ce.App
 			set { _CheckForUpdates = value; OnPropertyChanged(); }
 		}
 		bool _CheckForUpdates;
+
+		[DefaultValue(true), Description("Install only an update whose program file carries a trusted digital signature.")]
+		public bool CheckUpdateSignature
+		{
+			get { return _CheckUpdateSignature; }
+			set { _CheckUpdateSignature = value; OnPropertyChanged(); }
+		}
+		bool _CheckUpdateSignature = true;
+
+		[DefaultValue(true), Description("Install only an update whose program file is newer than this one and is the version its release announces.")]
+		public bool CheckUpdateVersion
+		{
+			get { return _CheckUpdateVersion; }
+			set { _CheckUpdateVersion = value; OnPropertyChanged(); }
+		}
+		bool _CheckUpdateVersion = true;
 
 		[Description("When the program last looked for a newer version; the start-up look runs at most once a day.")]
 		public DateTime LastUpdateCheck { get; set; }

@@ -149,16 +149,22 @@ namespace x360ce.App
 			// that requests it: the two part company whenever the XInput library is not loaded, and
 			// then nothing is read while the setting still says everything is being watched.
 			var checking = helper != null && helper.XiStatesRead;
-			// Whether the emulated controllers are switched on at all. Off is a choice, not a fault,
-			// and the lights must not say otherwise.
-			var enabled = SettingsManager.Options.XInputEnabled;
+			var game = SettingsManager.CurrentGame;
+			var routing = x360ce.App.DInput.DeviceRouting.Current;
 			for (var i = 0; i < 4; i++)
 			{
 				var padControl = PadControls[i];
-				// Get devices mapped to game and specific controller index.
-				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
-				// DInput instance is ON if active devices found.
-				var diOn = devices.Count(x => x.IsOnline) > 0;
+				// Whether this tab is to have an emulated controller, asked the way the engine asks: the master switch,
+				// the game's emulation and the tab's own Enable. Off is a choice, not a fault, and the lights must not
+				// say otherwise.
+				var offReason = EmulationOffReason(game, i + 1);
+				var enabled = offReason == null;
+				// The rows the engine reads for this tab: the current game's, ticked in the tab's list and on the
+				// Devices page. A device mapped here but unticked feeds nothing, so it does not light the tab.
+				var rows = routing.PadRows[i];
+				var unticked = rows.Length == 0 && SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1)).Count > 0;
+				// DInput instance is ON if a ticked device is online.
+				var diOn = rows.Any(x => SettingsManager.GetDevice(x.InstanceGuid)?.IsOnline == true);
 				// Two questions, and one variable was answering both. Whether a controller sits in this
 				// tab's place is one; whether it is the one we made is the other. Asking only the
 				// second left a tab with a real controller in its place showing no light at all, as
@@ -185,7 +191,7 @@ namespace x360ce.App
 				// What the bus said about this one, which is a fault in its own right.
 				var errors = helper == null ? null : helper.VirtualErrors;
 				var busError = errors == null || i >= errors.Length ? VirtualError.None : errors[i];
-				var mapped = devices.Count > 0;
+				var mapped = rows.Length > 0;
 				// Two halves, one per question, because a tab has always answered two at once and a single
 				// colour could only ever answer one of them - so which half was missing, the thing somebody
 				// actually needs, was the one thing the light could not say.
@@ -248,11 +254,36 @@ namespace x360ce.App
 				// One of ours stays in another tab's place only when the driver would not remove it, and its own tab says so.
 				var keptHolds = holder == x360ce.App.DInput.XInputPlaces.HolderVirtual && errors != null
 					&& Array.IndexOf(errors, VirtualError.RemovalRefused) >= 0;
-				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled, busError, holder, keptHolds);
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours, enabled, busError, holder, keptHolds, offReason, unticked);
 				if (page.ToolTipText != hint)
 					page.ToolTipText = hint;
 			}
 
+		}
+
+		const string EmulationSwitchedOff = "Emulation is switched off, so no virtual controller is made and a game sees " +
+			"only real controllers. Turn on Enable XInput on the Options page, in the tray menu, or with the hotkey.";
+
+		/// <summary>
+		/// Why a controller tab has no emulated controller by choice, or null when it is to have one. Asks what the engine
+		/// asks (<see cref="x360ce.App.DInput.DInputHelper.WantsVirtual"/>) and names the switch that is off.
+		/// </summary>
+		/// <param name="game">The current game.</param>
+		/// <param name="pad">Controller number, 1 to 4.</param>
+		public static string EmulationOffReason(UserGame game, int pad)
+		{
+			if (x360ce.App.DInput.DInputHelper.WantsVirtual(game, (uint)pad))
+				return null;
+			if (!SettingsManager.Options.XInputEnabled)
+				return EmulationSwitchedOff;
+			if (game == null)
+				return "No game is current, so no virtual controller is made.";
+			var type = (EmulationType)game.EmulationType;
+			if (!type.HasFlag(EmulationType.Virtual))
+				return string.Format("The current game, {0}, is set to {1} on the Games tab, so no virtual controller is made. " +
+					"Choose Virtual there to make one.", game.FileName, type == EmulationType.None ? "no emulation" : type + " emulation");
+			return "This controller tab is switched off for the current game, so no virtual controller is made. " +
+				"Press Enable at the top of this tab's page to switch it on.";
 		}
 
 		/// <summary>What the light on a controller tab means, in words.</summary>
@@ -272,8 +303,11 @@ namespace x360ce.App
 		/// <param name="busError">What the virtual bus last said about this tab's controller.</param>
 		/// <param name="holder">What holds this tab's place when it is not ours, as <see cref="x360ce.App.DInput.XInputPlaces.HolderOf(int)"/> names it, or null when that is not known.</param>
 		/// <param name="keptHolds">Whether one of this program's own holding the place is a controller the driver would not remove.</param>
-		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null, bool keptHolds = false)
+		/// <param name="offReason">Why the tab has no emulated controller, as <see cref="EmulationOffReason"/> says it, when <paramref name="enabled"/> is false; null for the master switch.</param>
+		/// <param name="unticked">Whether devices are mapped here but every one is unticked, so the engine reads none of them.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1, bool enabled = true, VirtualError busError = VirtualError.None, string holder = null, bool keptHolds = false, string offReason = null, bool unticked = false)
 		{
+			const string untickedText = "every device mapped here is unticked, in this tab's list or on the Devices page";
 			string state;
 			// The place a tab was given is not always the place of the same number: Windows hands them out
 			// and cannot be asked. Everything works, and a game reads this controller as a different player
@@ -301,9 +335,7 @@ namespace x360ce.App
 			var taken = busError == VirtualError.PlaceTaken || busError == VirtualError.RemovalRefused;
 			if (!enabled)
 				// Off on purpose, so the missing controller is the thing that was asked for.
-				state = "Emulation is switched off, so no virtual controller is made and a game sees " +
-					"only real controllers. Turn on Enable XInput on the Options page, in the tray " +
-					"menu, or with the hotkey.";
+				state = offReason ?? EmulationSwitchedOff;
 			else if (diOn && xiOn && xiOurs)
 				state = "A mapped device is connected and Windows hands back a virtual controller.";
 			else if (diOn && !checking)
@@ -327,8 +359,8 @@ namespace x360ce.App
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
 					"not listed there, it was never finished being built.";
 			else if (xiOn && xiOurs)
-				state = "A virtual controller exists, but no mapped device is connected, so it " +
-					"reports nothing.";
+				state = "A virtual controller exists, but " + (unticked ? untickedText : "no mapped device is connected") +
+					", so it reports nothing.";
 			else if (xiOn)
 				state = taken
 					? "A game already reads the controller holding this place directly, and this " +
@@ -337,9 +369,12 @@ namespace x360ce.App
 						"and this program is not emulating anything here. {1}", heldBy,
 						onlyWay ?? "Map a device on this tab only once that controller is unplugged.");
 			else if (!checking)
-				state = "No mapped device. Whether a virtual controller exists has not been checked.";
+				state = (unticked ? "Nothing is read here: " + untickedText + "." : "No mapped device.") +
+					" Whether a virtual controller exists has not been checked.";
 			else
-				state = "No mapped device and no virtual controller.";
+				state = unticked
+					? "Nothing is read here: " + untickedText + ". There is no virtual controller."
+					: "No mapped device and no virtual controller.";
 			var text = string.Format("Controller {0}: {1}{2}", place, elsewhere, state);
 			// What the bus said, when it said anything. Without this the missing half is named and the
 			// reason for it is not, which leaves nowhere to go. A place taken by a leftover, or by a controller the

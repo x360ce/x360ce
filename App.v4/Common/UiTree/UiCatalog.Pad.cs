@@ -14,8 +14,25 @@ namespace x360ce.App.UiTree
 				"Says which control on your device works each part of the Xbox controller.");
 			d["PadControl.ButtonsTabPage"] = new Text("Buttons",
 				"How far a stick or pedal must move before a button mapped to it counts as pressed.");
+			d["PadControl.AdvancedTabPage"] = new Text("Advanced",
+				"Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. "
+				+ "Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.");
+			d["PadControl.DeviceGroupBox"] = new Text("Device",
+				"What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.");
+			d["PadControl.PassThroughCheckBox"] = new Text("Pass Through",
+				"x360ce 3 only: passed the real controller straight to the game. This version passes force feedback through on the Force Feedback page.");
+			d["PadControl.PassThroughIndexComboBox"] = new Text("Pass Through ID",
+				"x360ce 3 only: the XInput place Pass Through passed the controller to.");
+			d["PadControl.DeviceSubTypeComboBox"] = new Text("Device Sub Type",
+				"x360ce 3 only: the kind of device, such as a gamepad or a wheel, the library told a game. This version always gives a game an Xbox 360 gamepad.");
+			d["PadControl.CombineGroupBox"] = new Text("Combining",
+				"x360ce 3 only: joined this controller with another into one.");
+			d["PadControl.CombinedCheckBox"] = new Text("Combine this controller",
+				"x360ce 3 only: joined this controller with the one named in Combine Into.");
+			d["PadControl.CombinedIndexComboBox"] = new Text("Combine Into",
+				"x360ce 3 only: the controller this one was joined with.");
 			d["PadControl.DPadTabPage"] = new Text("D-Pad",
-				"Turns a stick or wheel into the directional pad.");
+				"Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.");
 			d["PadControl.TriggersTabPage"] = new Text("Triggers",
 				"Shapes what the game receives from the two triggers.");
 			d["PadControl.LeftThumbTabPage"] = new Text("Left Thumb",
@@ -49,7 +66,8 @@ namespace x360ce.App.UiTree
 
 			// D-Pad page.
 			d["PadControl.AxisToDPadGroupBox"] = new Text("Axis to D-Pad",
-				"Turns the device's X and Y axes, its main stick, into the four pad directions. Read only by Library emulation's XInput library, so greyed out for virtual controllers.");
+				"Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, "
+				+ "from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.");
 			d["PadControl.AxisToDPadEnabledCheckBox"] = new Text("Enabled",
 				"Turns the X and Y axes into directional pad presses.");
 			d["PadControl.AxisToDPadDeadZoneTextBox"] = new Text("Dead zone",
@@ -93,7 +111,8 @@ namespace x360ce.App.UiTree
 
 			// Wheel page.
 			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
-				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
+				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting. "
+				+ "It runs only while Enable is ticked; until then the wheel keeps its own centering, and the page says so.");
 			d["PadControl.ForceSpringCarComboBox"] = new Text("Car",
 				"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. "
 				+ "No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out "

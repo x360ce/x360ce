@@ -68,8 +68,6 @@ namespace x360ce.Engine
         Effect effectS;
         readonly ConstantForce springForce = new ConstantForce();
         string old_SpringEnable;
-        /// <summary>Whether the spring is wanted, or null before the setting has been read.</summary>
-        bool? springEnabled;
         string old_SpringStrength;
         string old_SpringCentre;
         string old_SpringPeak;
@@ -487,12 +485,8 @@ namespace x360ce.Engine
                 springDamper = springStrength == 0 ? 0 : SpringDamper(ps.GetForceSpringDamping());
             }
             // Off means nothing of ours on the wheel, so whatever else centres it is left in charge: the
-            // effects come off, and the device is held again so that DirectInput's own autocenter, which
-            // can only be set while the device is let go of, follows the setting.
-            var wanted = ps.ForceSpringEnable == "1";
-            if (springEnabled.HasValue && springEnabled.Value != wanted)
-                ud.IsExclusiveMode = null;
-            springEnabled = wanted;
+            // effects come off, and the engine holds the device again so that DirectInput's own autocenter
+            // follows the setting (UserDevice.AutoCenter).
             if (springStrength == 0)
                 DropSpring();
             // The actuator the spring sits on may have changed, here or in an update that threw, so the effect is made
