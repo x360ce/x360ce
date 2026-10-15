@@ -225,8 +225,8 @@ namespace x360ce.App.DInput
 							// holds the centre, so the wheel's own centering, or the wheel maker's software, stays in charge
 							// whenever ours is off. A device held with the other setting is held again, because the setting can
 							// only be changed while the device is let go of.
-							var autoCenter = !(mapped && route.Spring);
-							if (ud.IsExclusiveMode == true && ud.AutoCenter != autoCenter)
+							var autoCenter = AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring);
+							if (ud.IsExclusiveMode == true && autoCenter.HasValue && ud.AutoCenter != autoCenter.Value)
 								ud.IsExclusiveMode = null;
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
@@ -239,9 +239,12 @@ namespace x360ce.App.DInput
 								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								// Set here because it can only be set while the device is let go of.
-								step = "AutoCenter";
-								SetAutoCenter(device, autoCenter);
-								ud.AutoCenter = autoCenter;
+								if (autoCenter.HasValue)
+								{
+									step = "AutoCenter";
+									SetAutoCenter(device, autoCenter.Value);
+									ud.AutoCenter = autoCenter.Value;
+								}
 								step = "Acquire (Exclusive)";
 								device.Acquire();
 								ud.IsExclusiveMode = true;
@@ -382,6 +385,9 @@ namespace x360ce.App.DInput
 											ud.FFState.StopDeviceForces();
 											ud.FFState = null;
 											EndSpringRun(ud, SpringStopSpringOff);
+											// Still held, and a wheel keeps its own centering off after an effect until it is held
+											// again, so it is held again and centres itself.
+											ud.IsExclusiveMode = null;
 										}
 									}
 									// Every tab it is on switched off: what was playing is stopped, or the effect, which
@@ -394,6 +400,9 @@ namespace x360ce.App.DInput
 										ud.FFState = null;
 										EndSpringRun(ud, SpringStopTabOff);
 									}
+									// The wheel's own centering, switched once it is due after effects were made.
+									if (ud.FFState != null)
+										ud.FFState.UpdateCentering(Environment.TickCount);
 									// The centering spring follows the wheel every poll, and the Auto button's run
 									// drives the wheel through the same effect. A device with no force state, or
 									// no actuator on an axis, pays nothing here. The clock is read only while a run is
@@ -781,6 +790,19 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
+		/// <summary>The own centering the engine sets on a device it holds: off while this program's spring holds the centre,
+		/// on for a device that centres itself with a motor (a wheel, a flight stick, anything with one force motor), and null
+		/// for a pad, whose motors only rumble, so it is left as its driver has it.</summary>
+		public static bool? AutoCenterFor(int capType, int actuatorCount, bool springHolds)
+		{
+			if (springHolds)
+				return false;
+			if (capType == (int)SharpDX.DirectInput.DeviceType.Driving || capType == (int)SharpDX.DirectInput.DeviceType.Flight
+				|| actuatorCount == 1)
+				return true;
+			return null;
+		}
+
 		static void SetAutoCenter(Joystick device, bool on)
 		{
 			try

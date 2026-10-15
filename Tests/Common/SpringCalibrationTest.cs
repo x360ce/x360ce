@@ -366,6 +366,23 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A wheel's own centering is on while the spring is off and off while it holds; a pad's is left as its driver has it")]
+		public void Only_a_device_that_centres_itself_gets_its_centering_switched_on()
+		{
+			Func<SharpDX.DirectInput.DeviceType, int, bool, bool?> rule = (type, motors, spring) => DInputHelper.AutoCenterFor((int)type, motors, spring);
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Driving, 1, false), "A wheel loses its own centering while the spring is off.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Driving, 1, true), "A wheel's own centering fights the spring.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Joystick, 1, false), "A wheel that calls itself a joystick loses its own centering.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Flight, 2, false), "A flight stick loses its own centering.");
+			// A pad with two rumble motors, reported either way, is left as versions before the spring left it.
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Joystick, 2, false), "A two-motor pad's centering is switched.");
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, false), "A gamepad's centering is switched.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, true), "The spring holds a pad against the pad's own centering.");
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
+			StringAssert.Contains(source, "AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring)", "The engine holds a device without the rule.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("Auto is not started for a device unticked in the tab's list")]
 		public void Auto_does_not_start_for_an_unticked_row()
 		{

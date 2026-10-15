@@ -207,7 +207,7 @@ namespace x360ce.Tests
 			var noActuator = source.IndexOf("if (actuatorL == null)", start);
 			var carried = source.IndexOf("var resend = interrupted;", start);
 			var marked = source.IndexOf("interrupted = true;", start);
-			var resume = source.IndexOf("Resume(effectL);", start);
+			var resume = source.IndexOf("Resume(effectL)", start);
 			Assert.IsTrue(start > 0 && noActuator > start && carried > noActuator && marked > carried && resume > marked,
 				"An update is not marked as under way before its first device call, so one that throws is not made again by the next.");
 			// Every effect made again with every setting, as for a new type or new motors: a make sends them all.

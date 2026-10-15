@@ -248,7 +248,7 @@ A game made for a gamepad sends only rumble, so a wheel turns freely between bum
 
 The spring pulls like a car's steering: its force grows from the centre to a peak, then eases off towards the stop. Choose a car from the `[Car]` list, or set `[Centre]`, `[Peak]`, `[Lightening]`, `[Damping]` and `[Speed]` yourself. The chart beside them shows the force at every angle, and its dot follows the wheel as it turns.
 
-The spring works without `[Enable]` on the `[Force Feedback]` page, which passes on the game's vibration. While the spring is off, the wheel keeps its own centering. The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. When the wheel is on two controller tabs, the settings of the lower tab drive it, or of the lower tab with `[Enable]` ticked. The page says so when the spring does nothing.
+The spring works without `[Enable]` on the `[Force Feedback]` page, which passes on the game's vibration. While the spring is off, a Logitech wheel keeps its own centering, under the game's vibration too: the G25, G27, G29, Driving Force, Driving Force Pro, Driving Force GT, MOMO and Speed Force Wireless. Another wheel gets its own centering back once X360CE sends it no force. The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. When the wheel is on two controller tabs, the settings of the lowest enabled tab drive it, whatever its own `[Enable]` says. The page says so when the spring does nothing.
 
 The wiki page "How a real car centres its steering wheel" says what each setting copies from a real car, and what each car on the list is based on.
 

@@ -106,6 +106,32 @@ namespace x360ce.Engine
         string old_WheelRange;
         Joystick rangeDevice;
 
+        // The wheel's own centering, switched on its HID interface on the wheels that take it.
+
+        /// <summary>The HID interface of the wheel whose own centering this state switched, or null.</summary>
+        string centeringPath;
+        /// <summary>Whether the wheel's own centering is to be on, or null before it was decided.</summary>
+        bool? centeringOn;
+        /// <summary>True while the decision waits to be sent, at <see cref="centeringDueAt"/>.</summary>
+        bool centeringDue;
+        int centeringDueAt;
+
+        /// <summary>How long after an effect is made the wheel's own centering is switched.</summary>
+        /// <remarks>
+        /// The driver switches it off itself shortly after the first effect starts on a device held again, and a
+        /// report sent before that is lost. Measured on a G27: sent at once it was lost, sent 100 ms later it held.
+        /// </remarks>
+        public const int CenteringSettleMs = 250;
+
+        /// <summary>Sends the wheel's own centering once it is due. Called every poll: a flag and a clock compare until then.</summary>
+        public void UpdateCentering(int tickCount)
+        {
+            if (!centeringDue || tickCount - centeringDueAt < 0)
+                return;
+            centeringDue = false;
+            LogitechWheel.SetCentering(centeringPath, centeringOn == true);
+        }
+
         #region Force Feedback
 
         const int DI_FFNOMINALMAX = 10000;
@@ -144,6 +170,12 @@ namespace x360ce.Engine
             Dispose(ref effectR);
             Dispose(ref effectS);
             Dispose(ref effectD);
+            // The effects took the wheel's own centering away, so it is given back with them.
+            if (centeringPath != null)
+                LogitechWheel.SetCentering(centeringPath, true);
+            centeringPath = null;
+            centeringOn = null;
+            centeringDue = false;
         }
 
         static void Dispose(ref Effect effect)
@@ -225,10 +257,8 @@ namespace x360ce.Engine
 			// refusal is not new, even when it holds nothing.
 			if (effectL == null && effectR == null && effectS == null && effectD == null && motorsRefused == MotorEffects.None)
 				DisposeDeviceEffects(device);
-			Resume(effectL);
-			Resume(effectR);
-			Resume(effectS);
-			Resume(effectD);
+			// Each one resumed, so not short-circuited.
+			var restarted = Resume(effectL) | Resume(effectR) | Resume(effectS) | Resume(effectD);
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
@@ -488,8 +518,7 @@ namespace x360ce.Engine
                 springDamper = springStrength == 0 ? 0 : SpringDamper(ps.GetForceSpringDamping());
             }
             // Off means nothing of ours on the wheel, so whatever else centres it is left in charge: the
-            // effects come off, and the engine holds the device again so that DirectInput's own autocenter
-            // follows the setting (UserDevice.AutoCenter).
+            // spring's effects come off, and a wheel that takes the report gets its own centering back below.
             if (springStrength == 0)
                 DropSpring();
             // The actuator the spring sits on may have changed, here or in an update that threw, so the effect is made
@@ -508,6 +537,20 @@ namespace x360ce.Engine
                 rangeDevice = device;
                 if (range > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
                     LogitechWheel.SetRange(ud.HidDevicePath, range);
+            }
+            // The wheel switches its own centering off when an effect is made, or played again after the device was
+            // let go of, and keeps it off. It is switched on while this program's spring is off, so the wheel centres
+            // itself under a game's rumble, and off while the spring holds the centre, so the two do not pull together.
+            if (ud.DevVendorId != 0 && LogitechWheel.SupportsCentering(ud.DevVendorId, ud.DevProductId))
+            {
+                var centering = springStrength == 0;
+                if (centering != centeringOn || make != MotorEffects.None || restarted)
+                {
+                    centeringPath = ud.HidDevicePath;
+                    centeringOn = centering;
+                    centeringDueAt = Environment.TickCount + CenteringSettleMs;
+                    centeringDue = true;
+                }
             }
             interrupted = false;
             return true;
@@ -777,13 +820,16 @@ namespace x360ce.Engine
         /// Every effect this state makes plays from the moment it is made, at nought when it is quiet,
         /// so one that is not playing was dropped.
         /// </remarks>
-        void Resume(Effect effect)
+        /// <returns>True when the effect had been dropped and was started again.</returns>
+        bool Resume(Effect effect)
         {
             if (effect == null || unsupported.Contains(effect))
-                return;
+                return false;
             effect.Download();
-            if (effect.Status != EffectStatus.Playing)
-                effect.Start(1);
+            if (effect.Status == EffectStatus.Playing)
+                return false;
+            effect.Start(1);
+            return true;
         }
 
         /// <summary>What the device refused to play, as a person would name it, or empty when it took everything asked of it.</summary>
