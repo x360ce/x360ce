@@ -16,6 +16,5 @@
 		POV,
 		IPOV,
 		DPOVButton,
-		IPOVButton,
 	}
 }

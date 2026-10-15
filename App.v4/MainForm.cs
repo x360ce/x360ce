@@ -881,12 +881,12 @@ namespace x360ce.App
 			// there will be no need to kill it by using task manager if exception is thrown.
 			try
 			{
-				OnCloseAction(e);
+				OnCloseAction();
 			}
 			catch (Exception) { }
 		}
 
-		private void OnCloseAction(FormClosingEventArgs e)
+		private void OnCloseAction()
 		{
 			// Disable force feedback effect before closing application.
 			if (UpdateTimer != null)
@@ -902,48 +902,6 @@ namespace x360ce.App
 			//});
 			// Logical delay without blocking the current thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
-			var tmp = new FileInfo(SettingsManager.TmpFileName);
-			var ini = new FileInfo(SettingsManager.IniFileName);
-			if (tmp.Exists && ini.Exists)
-			{
-				// Before renaming file check for changes.
-				var changed = false;
-				if (tmp.Length != ini.Length)
-				{ changed = true; }
-				else
-				{
-					var tmpChecksum = EngineHelper.GetFileChecksum(tmp.FullName);
-					var iniChecksum = EngineHelper.GetFileChecksum(ini.FullName);
-					changed = !tmpChecksum.Equals(iniChecksum);
-				}
-				if (changed)
-				{
-					var form = new MessageBoxForm
-					{
-						StartPosition = FormStartPosition.CenterParent
-					};
-					var result = form.ShowForm(
-					"Do you want to save changes you made to configuration?",
-					"Save Changes?",
-					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-					if (result == DialogResult.Yes)
-					{
-						// Do nothing since INI contains latest updates.
-					}
-					else if (result == DialogResult.No)
-					{
-						// Rename temp to INI.
-						tmp.CopyTo(SettingsManager.IniFileName, true);
-					}
-					else if (result == DialogResult.Cancel)
-					{
-						e.Cancel = true;
-						return;
-					}
-				}
-				// delete temp.
-				tmp.Delete();
-			}
 			// An export only describes the window, so it leaves the settings as it found them.
 			if (Program.ExportUiFolder == null)
 				SaveAll();

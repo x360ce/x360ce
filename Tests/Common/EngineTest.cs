@@ -40,6 +40,18 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping")]
+		[Description("A D-Pad button with a minus sign is the same D-Pad button, as the native library reads it")]
+		public void A_minus_sign_on_a_D_Pad_button_is_ignored()
+		{
+			AssertParses("d-3", MapType.DPOVButton, 3);
+			Assert.AreEqual("POV 1 Down", SettingsConverter.FromIniValue("d-3"), "The box shows a direction it cannot read back.");
+			// The engine presses a D-Pad button only for this type, so another would leave the mapping doing nothing.
+			var map = new Map(MapCode.ButtonA, "d-3", TargetType.Button, "", "", "");
+			Assert.AreEqual(MapType.DPOVButton, map.Type);
+			Assert.IsFalse(map.IsInverted, "A D-Pad button has no inverted form.");
+		}
+
+		[TestMethod, TestCategory("mapping")]
 		[Description("An empty or malformed value is rejected rather than throwing")]
 		public void Malformed_values_are_rejected_without_throwing()
 		{

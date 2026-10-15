@@ -8,15 +8,9 @@ namespace x360ce.App.UiTree
 		/// <summary>The individual settings on the General and Internet pages.</summary>
 		static void AddSwitches(Dictionary<string, Text> d)
 		{
-			// Testing and logging.
+			// Testing.
 			d["OptionsUserControl.XInputEnableCheckBox"] = new Text(null,
 				"Turns the emulated controllers on. Off leaves games with the real ones.");
-			d["OptionsUserControl.EnableLoggingCheckBox"] = new Text(null,
-				"An x360ce.ini setting for x360ce 3's XInput library, which wrote a log. This version does not write x360ce.ini, so it neither keeps nor reads it.");
-			d["OptionsUserControl.ConsoleCheckBox"] = new Text(null,
-				"An x360ce.ini setting for x360ce 3's XInput library, which opened a console. This version does not write x360ce.ini, so it neither keeps nor reads it.");
-			d["OptionsUserControl.DebugModeCheckBox"] = new Text(null,
-				"An x360ce.ini setting for x360ce 3's XInput library. This version does not write x360ce.ini, so it neither keeps nor reads it.");
 			d["OptionsUserControl.ShowProgramsTabCheckBox"] = new Text(null,
 				"Shows the Programs page, which lists what has been set up for each program.");
 			d["OptionsUserControl.ShowDevicesTabCheckBox"] = new Text(null,

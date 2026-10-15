@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.28.0, built 2026-10-14.
+Version 4.26.30.0, built 2026-10-15.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -310,12 +310,9 @@ not shown in this state of the program.
 [Tab]       │       ├── Options                                                         # Settings for the program itself, and for the drivers it needs.
 [Group]     │       │   └── (OptionsPanel)                                              # Settings for the program itself, rather than for one controller.
 [Tabs]      │       │       └── Options pages                                           # Settings for the program itself, rather than for one controller.
-[Tab]       │       │           ├── General                                             # How the program starts, what it logs, and which tabs it shows.
-[Section]   │       │           │   ├── Testing and Logging                             # Extra output, useful when something is not working and needs reporting.
+[Tab]       │       │           ├── General                                             # How the program starts and runs, and which tabs it shows.
+[Section]   │       │           │   ├── Testing                                         # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
 [CheckBox]  │       │           │   │   ├── Enable XInput                               # Turns the emulated controllers on. Off leaves games with the real ones.
-[CheckBox]  │       │           │   │   ├── Enable Logging                              # Create a log file in the folder 'x360ce logs'. 0 = OFF, 1 = ON.
-[CheckBox]  │       │           │   │   ├── Enable Console                              # Display the console window. 0 = OFF, 1 = ON.
-[CheckBox]  │       │           │   │   ├── Debug Mode                                  # Throw or suspend errors. 0 = Suspend, 1 = Throw.
 [CheckBox]  │       │           │   │   ├── Show [Programs] Tab                         # Shows the Programs page, which lists what has been set up for each program.
 [CheckBox]  │       │           │   │   ├── Show [Devices] Tab                          # Shows the Devices page, which lists every controller found.
 [CheckBox]  │       │           │   │   └── Show [Settings] Tab                         # Shows the Settings page, which lists every stored setting.
@@ -333,9 +330,7 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
 [CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
 [CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
-[Section]   │       │           │   ├── Configuration                                   # Switching settings to the game in front, and two x360ce.ini settings this version no longer uses.
-[Text]      │       │           │   │   ├── Configuration version                       # The configuration file version.
-[CheckBox]  │       │           │   │   ├── Include [Products]                          # Wrote the device list into the x360ce.ini file x360ce 3 wrote for games. This version does not write that file, so nothing reads it.
+[Section]   │       │           │   ├── Configuration                                   # Switching settings to the game in front.
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.

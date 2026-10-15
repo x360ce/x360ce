@@ -19,7 +19,7 @@ namespace x360ce.App.Mcp
 	public static class McpTools
 	{
 		/// <summary>
-		/// Elements whose press or setting installs or removes a driver, turns on debug mode, removes
+		/// Elements whose press or setting installs or removes a driver, removes
 		/// controllers left behind by earlier runs, or sends the controller tabs' Add and Remove
 		/// buttons through HID Guardian, which elevates. Below Administer these may not be touched.
 		/// Field names as in the tree, so a bar entry is named the same way a control is. The
@@ -33,7 +33,6 @@ namespace x360ce.App.Mcp
 			"ViGEmBusInstallButton", "ViGEmBusUninstallButton",
 			"HidGuardianInstallButton", "HidGuardianUninstallButton",
 			"HidGuardianConfigureAutomaticallyCheckBox",
-			"DebugModeCheckBox",
 			"CleanupVirtualPadsButton",
 		}.Concat(AiAccessModel.AdminControls).ToArray();
 

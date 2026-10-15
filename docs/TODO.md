@@ -11,7 +11,6 @@
 
 ## Known issues
 
-- An inverted D-Pad button (`d-N`, `IPOVButton`) is read from settings but the engine never applies it. No menu offers it either.
 - After Repair, Remove Leftover Pads, a reorder or a virtual controller made again, a game's steady rumble stays off until the game sends it again.
 - A crash inside Microsoft's XInput driver ends the program.
 - A removed stale virtual controller record keeps its device open until the program closes, one handle per record.
@@ -33,11 +32,9 @@ x360ce 3 settings:
 5. `Library` emulation makes this version do nothing for a game: it loads the library only to show states. Decide whether `[Games]` should still offer it. The architecture issue still checks `Library` games.
 6. `[Pass Through ID]`, `[Combine this controller]` and `[Combine Into]` have no column in the settings, so they are lost on reload and not kept for x360ce 3 either. Add the columns or remove them.
 7. `[Games]` tab: `[Hook Mask]`, `[XInput Files]`, `[DInput File]`, fake VID and PID, `[Timeout]`, `[XInput Path]` and the DInput file name are x360ce 3 only. Grey them out with the reason. `[Other Options]` holds them beside `[Emulation]`, which works, so it needs a new layout.
-8. `[Options]` tab: `[Enable Logging]`, `[Enable Console]`, `[Debug Mode]`, `[Version]` and `[Include [Products]]` were `x360ce.ini` settings. Nothing reads or saves them. Remove them; their two groups need a new layout.
-9. Remove the code left from `x360ce.ini`: `SettingsManager.SetPadSetting`, whose only caller is the unused `NewDeviceForm`, and the close-time check of `x360ce.tmp` against `x360ce.ini`.
 
 Other settings:
 
-10. Nothing reads `[Load Settings from Cloud]` or the hidden Remote controllers group. Make them work or remove them.
-11. `[Auto Map]` is greyed out. Build it, so a device is mapped when a game starts (the call to `MainForm.AutoConfigure` in `DInputHelper.Step1.UpdateDevices.cs` is commented out), or remove it. `[Exclude Supplemental Devices]` and `[Exclude Virtual Devices]` are read only by Auto Map's code, so they go with it; until then, grey them out with the reason.
-12. A plugin cannot say that one of its settings needs another. Add that to the plugin contract, so the Test Controller can grey out what does nothing.
+8. Nothing reads `[Load Settings from Cloud]` or the hidden Remote controllers group. Make them work or remove them.
+9. `[Auto Map]` is greyed out. Build it, so a device is mapped when a game starts (the call to `MainForm.AutoConfigure` in `DInputHelper.Step1.UpdateDevices.cs` is commented out), or remove it. `[Exclude Supplemental Devices]` and `[Exclude Virtual Devices]` are read only by Auto Map's code, so they go with it; until then, grey them out with the reason.
+10. A plugin cannot say that one of its settings needs another. Add that to the plugin contract, so the Test Controller can grey out what does nothing.

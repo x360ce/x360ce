@@ -630,11 +630,7 @@ namespace x360ce.App
 
 		#region Constants
 
-		public const string IniFileName = "x360ce.ini";
-		public const string TmpFileName = "x360ce.tmp";
-
 		public const string MappingsSection = "Mappings";
-		public const string OptionsSection = "Options";
 
 		#endregion // Constants
 
@@ -783,11 +779,6 @@ namespace x360ce.App
 
 
 
-		//public void ReadSettings()
-		//{
-		//	ReadSettings(IniFileName);
-		//}
-
 		static private T GetCustomAttribute<T>(PropertyInfo prop)
 		{
 			if (prop == null)
@@ -796,15 +787,6 @@ namespace x360ce.App
 			}
 
 			return (T)prop.GetCustomAttributes(typeof(T), false).FirstOrDefault();
-		}
-
-		public void SetPadSetting(string padSectionName, DeviceInstance di)
-		{
-			var ini2 = new Ini(IniFileName);
-			//ps.PadSettingChecksum = Guid.Empty;
-			ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
-			ini2.SetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
-			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
 		}
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
@@ -922,9 +904,6 @@ namespace x360ce.App
 					return;
 				if (key == SettingName.InstanceGuid)
 					return;
-				// Always override version.
-				if (key == SettingName.Version)
-					value = SettingName.DefaultVersion;
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -1112,49 +1091,6 @@ namespace x360ce.App
 		public string GetInstanceSection(Guid instanceGuid)
 		{
 			return string.Format("IG_{0:N}", instanceGuid).ToUpper();
-		}
-
-		public string GetProductSection(Guid productGuid)
-		{
-			return string.Format("PG_{0:N}", productGuid).ToUpper();
-		}
-
-
-		public bool ContainsProductSection(Guid productGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			var section = GetProductSection(productGuid);
-			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "ProductGUID"));
-			sectionName = contains ? section : null;
-			return contains;
-		}
-
-		public bool ContainsInstanceSection(Guid instanceGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			var section = GetInstanceSection(instanceGuid);
-			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "InstanceGUID"));
-			sectionName = contains ? section : null;
-			return contains;
-		}
-
-		public bool ContainsInstanceSectionOld(Guid instanceGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			for (int i = 1; i <= 4; i++)
-			{
-				var section = string.Format("PAD{0}", i);
-				var v = ini2.GetValue(section, "InstanceGUID");
-				if (string.IsNullOrEmpty(v))
-					continue;
-				if (v.ToLower() == instanceGuid.ToString("D").ToLower())
-				{
-					sectionName = section;
-					return true;
-				}
-			}
-			sectionName = null;
-			return false;
 		}
 
 		#endregion // Instance Version

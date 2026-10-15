@@ -82,7 +82,6 @@ namespace x360ce.App.Controls
 
 		public void InitOptions()
 		{
-			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
 			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
 		}
 
@@ -224,28 +223,8 @@ namespace x360ce.App.Controls
 		#endregion
 
 
-		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			// Recording a failure is not the same as swallowing it, so debug mode does not turn
-			// reporting off. It used to: this runs once at start while the box still carries the
-			// value it was designed with, which detached the handler for everyone. The framework
-			// then had to build its own error window, and a failure that happened when no window
-			// could be created was reported as that failure instead of the one that caused it.
-			// A debugger still stops at the throw, long before this is reached.
-			Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-		}
-
 		public void UpdateSettingsMap()
 		{
-			// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
-			// INI setting keys with controls.
-			var section = SettingsManager.OptionsSection;
-			SettingsManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
-			// Stored inside XML now.
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
@@ -428,7 +407,6 @@ namespace x360ce.App.Controls
 			ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
 			ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
 			ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
-			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
 			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
 			// Remote Options.
@@ -449,7 +427,6 @@ namespace x360ce.App.Controls
 			o.ShowProgramsTab = ShowProgramsTabCheckBox.Checked;
 			o.ShowSettingsTab = ShowSettingsTabCheckBox.Checked;
 			o.ShowDevicesTab = ShowDevicesTabCheckBox.Checked;
-			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
 			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
 			// Remote Options.

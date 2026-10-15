@@ -69,11 +69,7 @@ namespace x360ce.App.DInput
 		/// back even if this one never reaches its own tidying up.
 		/// </remarks>
 		public static Func<string> PendingFile = () =>
-		{
-			var folder = Path.GetDirectoryName(SettingsManager.IniFileName);
-			return Path.Combine(string.IsNullOrEmpty(folder) ? Path.GetTempPath() : folder,
-				"x360ce.switched-off.txt");
-		};
+			Path.Combine(Path.GetTempPath(), "x360ce.switched-off.txt");
 
 		public static void RememberSwitchedOff(string deviceId)
 		{

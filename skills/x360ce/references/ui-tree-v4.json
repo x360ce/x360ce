@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.26.28.0",
-	"Built":"2026-10-14",
+	"Version":"4.26.30.0",
+	"Built":"2026-10-15",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1947,39 +1947,21 @@
 											"Items":[
 												{
 													"Name":"General",
-													"Description":"How the program starts, what it logs, and which tabs it shows.",
+													"Description":"How the program starts and runs, and which tabs it shows.",
 													"Role":"Tab",
 													"Id":"GeneralTabPage",
 													"Items":[
 														{
-															"Name":"Testing and Logging",
-															"Description":"Extra output, useful when something is not working and needs reporting.",
+															"Name":"Testing",
+															"Description":"Switching the emulated controllers off to try the real ones, and the pages that show more detail.",
 															"Role":"Section",
-															"Id":"TestingAndLoggingGroupBox",
+															"Id":"TestingGroupBox",
 															"Items":[
 																{
 																	"Name":"Enable XInput",
 																	"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
 																	"Role":"CheckBox",
 																	"Id":"XInputEnableCheckBox"
-																},
-																{
-																	"Name":"Enable Logging",
-																	"Description":"Create a log file in the folder 'x360ce logs'. 0 = OFF, 1 = ON.",
-																	"Role":"CheckBox",
-																	"Id":"EnableLoggingCheckBox"
-																},
-																{
-																	"Name":"Enable Console",
-																	"Description":"Display the console window. 0 = OFF, 1 = ON.",
-																	"Role":"CheckBox",
-																	"Id":"ConsoleCheckBox"
-																},
-																{
-																	"Name":"Debug Mode",
-																	"Description":"Throw or suspend errors. 0 = Suspend, 1 = Throw.",
-																	"Role":"CheckBox",
-																	"Id":"DebugModeCheckBox"
 																},
 																{
 																	"Name":"Show [Programs] Tab",
@@ -2093,22 +2075,10 @@
 														},
 														{
 															"Name":"Configuration",
-															"Description":"Switching settings to the game in front, and two x360ce.ini settings this version no longer uses.",
+															"Description":"Switching settings to the game in front.",
 															"Role":"Section",
 															"Id":"ConfigurationGroupBox",
 															"Items":[
-																{
-																	"Name":"Configuration version",
-																	"Description":"The configuration file version.",
-																	"Role":"Text",
-																	"Id":"ConfigurationVersionTextBox"
-																},
-																{
-																	"Name":"Include [Products]",
-																	"Description":"Wrote the device list into the x360ce.ini file x360ce 3 wrote for games. This version does not write that file, so nothing reads it.",
-																	"Role":"CheckBox",
-																	"Id":"IncludeProductsCheckBox"
-																},
 																{
 																	"Name":"Auto switch configuration when game focused",
 																	"Description":"Autodetect currently focussed game.",

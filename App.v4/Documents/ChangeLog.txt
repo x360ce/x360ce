@@ -1,14 +1,16 @@
-﻿## [4.26.28.0] - 2026-10-14
+﻿## [4.26.30.0] - 2026-10-15
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.
 - Fixed: A virtual controller noted in the wrong XInput place is found again.
+- Fixed: A D-Pad direction saved with a minus sign did nothing.
 - Fixed: Auto Map emptied the controller's device list.
 - Fixed: Cloud uploads went on with Internet features off.
 - Fixed: Hiding a device without HID Guardian asked for an administrator.
 - Fixed: The centering spring did nothing while Enable was off.
 - Fixed: The update's signature and version boxes were ticked again at every start.
 - Fixed: A controller tab's light ignored unticked devices and the tab's Enable.
+- Removed: Enable Logging, Enable Console, Debug Mode, Version and Include [Products] on the Options page, which did nothing.
 - Changed: Settings that do nothing right now are greyed out, with the reason.
 - Changed: A device on several tabs uses the lowest enabled tab's settings.
 - Changed: Recording a hotkey switches it on.

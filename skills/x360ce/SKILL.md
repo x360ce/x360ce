@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.26.28.0"
+  version: "4.26.30.0"
 ---
 
 # X360CE
@@ -100,7 +100,7 @@ The person picks one on the same tab:
 
 - **Read**, the default: look at everything and point at things for the person; nothing can be changed.
 - **Configure**: everything a person does on the tabs: set values, press buttons, map devices, save.
-- **Administer**: also install or remove drivers and switch on debug mode.
+- **Administer**: also install or remove drivers.
 
 When a tool is refused, the answer names the level it needs. Tell the person what you wanted to do and which level
 it needs, and let them decide; do not look for a way around it.

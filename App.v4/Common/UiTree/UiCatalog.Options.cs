@@ -12,7 +12,7 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.MainTabControl"] = new Text("Options pages",
 				"Settings for the program itself, rather than for one controller.");
 			d["OptionsUserControl.GeneralTabPage"] = new Text("General",
-				"How the program starts, what it logs, and which tabs it shows.");
+				"How the program starts and runs, and which tabs it shows.");
 			d["OptionsUserControl.InternetOptionsTabPage"] = new Text("Internet",
 				"Whether settings are shared with the online database, and the account used.");
 			d["OptionsUserControl.VirtualDeviceTabPage"] = new Text("Virtual Device",
@@ -27,8 +27,8 @@ namespace x360ce.App.UiTree
 				"Looks for a newer version of the program and installs it.");
 
 			// General page.
-			d["OptionsUserControl.TestingAndLoggingGroupBox"] = new Text("Testing and Logging",
-				"Extra output, useful when something is not working and needs reporting.");
+			d["OptionsUserControl.TestingGroupBox"] = new Text("Testing",
+				"Switching the emulated controllers off to try the real ones, and the pages that show more detail.");
 			d["OptionsUserControl.OperationGroupBox"] = new Text("Operation",
 				"How the program behaves while it runs.");
 			d["OptionsUserControl.DevelopingGroupBox"] = new Text("Developing",
@@ -36,11 +36,7 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.DirectInputDevicesGroupBox"] = new Text("Direct Input Devices",
 				"Which devices the program lists and reads.");
 			d["OptionsUserControl.ConfigurationGroupBox"] = new Text("Configuration",
-				"Switching settings to the game in front, and two x360ce.ini settings this version no longer uses.");
-			d["OptionsUserControl.ConfigurationVersionTextBox"] = new Text("Configuration version",
-				"The version of the x360ce.ini file x360ce 3 wrote for games. This version does not write that file.");
-			d["OptionsUserControl.IncludeProductsCheckBox"] = new Text("Include [Products]",
-				"Wrote the device list into the x360ce.ini file x360ce 3 wrote for games. This version does not write that file, so nothing reads it.");
+				"Switching settings to the game in front.");
 			d["OptionsUserControl.AutoDetectForegroundWindowCheckBox"] = new Text(
 				"Auto switch configuration when game focused",
 				"Loads the settings of whichever game you switch to.");

@@ -196,8 +196,6 @@ namespace x360ce.App
 			// Handle exceptions from this thread here. Left to the framework it builds an error
 			// window instead, which cannot be created once the application is closing, so the
 			// crash a user sees is the framework failing rather than the fault that caused it.
-			// This was only attached when the options page was built, so anyone who never opened
-			// that page had no handler at all. Debug mode still detaches it.
 			Application.ThreadException += Application_ThreadException;
 			Application.SetCompatibleTextRenderingDefault(false);
 			Mcp.McpTools.Register();

@@ -370,7 +370,7 @@ Assistant Access tab, and choose a level.
 **Read**: read the interface, the
 devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
 may still ask for an administrator, as it asks a person, when a step needs one.
-**Administer**: also the actions that install or remove drivers and switch on debug mode. The
+**Administer**: also the actions that install or remove drivers. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
 
 The quickest start is Copy prompt on the AI page: it copies instructions for any AI, with
