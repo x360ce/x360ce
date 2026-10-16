@@ -478,14 +478,11 @@ namespace x360ce.Tests
 			// Relying on the length cap to bound it would tie two limits together silently: raising the
 			// length would reintroduce the crash with nothing to say so.
 			Refuses("=" + new string('-', MapExpression.MaxDepth + 1) + "1");
-			// While a mapping is stored in sixteen characters the length refuses a deep expression
-			// before the depth can. Both caps are real and both are kept; the tighter one speaks
-			// first. This says which, so that widening the column cannot quietly remove the guard.
+			// Both caps are real and both are kept; the tighter one speaks first. While the length
+			// cap is the tighter one it refuses a deep expression before the depth can, and there is
+			// nothing more to check; otherwise one sign inside the depth cap must still parse.
 			var deepest = "=" + new string('-', MapExpression.MaxDepth - 1) + "1";
-			if (deepest.Length > MapExpression.MaxLength)
-				Assert.IsTrue(MapExpression.MaxDepth + 2 > MapExpression.MaxLength,
-					"Depth is reachable again; go back to checking one under the cap parses.");
-			else
+			if (deepest.Length <= MapExpression.MaxLength)
 				Assert.AreEqual(-1f, Value(deepest),
 					"One sign inside the cap should still work.");
 			// Nesting through function calls descends the same way.

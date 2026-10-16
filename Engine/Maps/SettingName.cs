@@ -389,7 +389,7 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.")]
 		static public string ForceSpringEnable { get { return "SpringEnable"; } }
 
-		[DefaultValue("30"), Description("Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.")]
+		[DefaultValue("30"), Description("Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.")]
 		static public string ForceSpringStrength { get { return "SpringStrength"; } }
 
 		[DefaultValue(DefaultForceSpringCentre), Description("The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.")]

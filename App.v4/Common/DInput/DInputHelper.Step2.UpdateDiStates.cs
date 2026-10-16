@@ -413,7 +413,7 @@ namespace x360ce.App.DInput
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
 										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
-											ud.ForceSpringSpeedOverride);
+											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;

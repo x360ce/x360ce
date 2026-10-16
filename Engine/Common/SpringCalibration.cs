@@ -3,18 +3,19 @@ using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
-	/// <summary>Finds the wheel's friction, sets the centering spring's strength to beat it, and checks that the spring holds the wheel.</summary>
+	/// <summary>Finds the wheel's friction, which the centering spring never falls below outside the centre, and checks that the spring then holds the wheel.</summary>
 	/// <remarks>
 	/// The wheel is pushed to one stop and let go. The force towards the centre is then raised one
 	/// percent at a time until the wheel moves at pace, held while it does, and raised again only
 	/// if it stalls or slows to a creep: the level it is on when it reaches the centre is the force
 	/// that overcomes the wheel's own friction. The same is done from the other stop, starting from
-	/// that answer, because the two sides of a wheel are rarely the same, and the larger answer plus
-	/// a little extra is the friction (<see cref="Result"/>). The strength is then set so that the
-	/// spring's curve beats it from the stop to Centre (<see cref="SpringCurve.AutoStrength"/>).
-	/// Then the spring itself runs at that strength, with its curve and its damping, from a stop:
-	/// the wheel must come back inside Centre and stay, not swing through the centre, before the
-	/// strength is the answer. A run that ends in a swing says so instead of handing over a number.
+	/// that answer, because the two sides of a wheel are rarely the same, and the larger answer and
+	/// a tenth more, so it starts every time, is the friction (<see cref="Result"/>). The spring
+	/// adds the car's strength to it (<see cref="SpringCurve"/>), so the strength is left as it is.
+	/// Then the spring itself runs, the friction and the strength, with its curve and its damping,
+	/// from a stop: the wheel must come back inside Centre and stay, not swing through the centre,
+	/// before the friction is the answer. A run that ends in a swing says so instead of handing
+	/// over a number.
 	///
 	/// This runs on the engine thread, one call per poll, and keeps no time of its own: the caller
 	/// says what the time is. Nothing here allocates or waits: the spring's curve is built once,
@@ -29,6 +30,7 @@ namespace x360ce.Engine
 		public SpringCalibration(PadSetting ps = null, int? speedOverride = null)
 		{
 			ps = ps ?? new PadSetting();
+			strength = ps.GetForceSpringStrength();
 			centreDegrees = ps.GetForceSpringCentre();
 			peakDegrees = ps.GetForceSpringPeak();
 			lighteningPercent = ps.GetForceSpringLightening();
@@ -37,7 +39,9 @@ namespace x360ce.Engine
 			damper = ForceFeedbackState.SpringDamper(ps.GetForceSpringDamping());
 		}
 
-		// The spring the run measures for and checks: its curve, and the damping that goes with it.
+		// The spring the run measures for and checks: the car's strength on top of the friction, its curve, and the
+		// damping that goes with it.
+		readonly int strength;
 		readonly int centreDegrees;
 		readonly int peakDegrees;
 		readonly int lighteningPercent;
@@ -97,8 +101,8 @@ namespace x360ce.Engine
 		const int PaceWindowMs = 100;
 		/// <summary>The least the wheel must move towards the centre in one window for it to count as at pace: the pace of <see cref="ReturnWithinMs"/>.</summary>
 		const int PaceMovement = (int)((long)Center * PaceWindowMs / ReturnWithinMs);
-		/// <summary>Added to the larger of the two answers, in percent of the device's force: the force that just started the wheel, plus enough over it to start it every time.</summary>
-		const int ExtraPercent = 3;
+		/// <summary>Added to the larger of the two answers, in percent of it: enough over the force that brought the wheel home to start it every time.</summary>
+		public const int ExtraPercent = 10;
 		/// <summary>How long the spring is given, from a stop, to bring the wheel home and hold it: the slowest return that counts, and a second to settle.</summary>
 		const int CheckMs = ReturnWithinMs + 1000;
 		/// <summary>How many times the wheel may pass through the centre on its way to rest. A swing from side to side passes it every time.</summary>
@@ -106,15 +110,14 @@ namespace x360ce.Engine
 
 		volatile int phase = (int)Phase.PushToLow;
 		volatile int result;
-		volatile int strength;
 		volatile string message = "";
 		volatile bool cancel;
 		volatile string cancelReason;
 
 		public Phase Step { get { return (Phase)phase; } }
-		/// <summary>The wheel's friction found, in percent: the weakest constant force that brings it home from both stops, and a little more so it starts every time. Nought when nothing was found.</summary>
+		/// <summary>The wheel's friction found, in percent: the weakest constant force that brings it home from both stops, and a tenth more so it starts every time. Nought when nothing was found.</summary>
 		public int Result { get { return result; } }
-		/// <summary>The spring's strength, in percent, that beats <see cref="Result"/> from the stop to Centre. Nought when nothing was found.</summary>
+		/// <summary>The car's strength the spring is checked with, on top of the friction: the pad's own, which the run does not change.</summary>
 		public int Strength { get { return strength; } }
 		/// <summary>Why it stopped, when it stopped without an answer.</summary>
 		public string Message { get { return message; } }
@@ -142,9 +145,9 @@ namespace x360ce.Engine
 						return Ramping("right", HighTurnsAt, seconds);
 					case Phase.PushForCheck:
 					case Phase.SettleCheck:
-						return string.Format("Left {0} %, right {1} %, plus {2} % to start every time: the friction is {3} %. A spring of {4} % beats it from the stop to Centre. Pushing to a stop to check it.", LowLevel, HighLevel, ExtraPercent, result, strength);
+						return string.Format("Left {0} %, right {1} %, and a tenth more to start every time: the friction is {2} %, which the spring never pushes less than outside the centre. Pushing to a stop to check it with Strength {3} % on top.", LowLevel, HighLevel, result, strength);
 					case Phase.Check:
-						return string.Format("Checking {0} %: the wheel must come home and stay, not swing. Crossed the centre {1} time(s).", strength, Crossings);
+						return string.Format("Checking {0} % friction with Strength {1} % on top: the wheel must come home and stay, not swing. Crossed the centre {2} time(s).", result, strength, Crossings);
 					default:
 						return message;
 				}
@@ -227,10 +230,10 @@ namespace x360ce.Engine
 			}
 		}
 
-		/// <summary>Runs the spring at the strength found from a stop and counts the wheel's passes through the centre.</summary>
+		/// <summary>Runs the spring, the friction found and the strength on top, from a stop and counts the wheel's passes through the centre.</summary>
 		/// <remarks>
-		/// Home is inside Centre: the curve is half its strength there, enough to beat the friction, and the wheel rests
-		/// wherever the curve falls below the friction, which is between Centre and the centre.
+		/// Home is inside Centre: the force reaches the friction a few degrees from the centre and never falls below it
+		/// beyond, so the wheel comes at least that near, wherever the friction holds it.
 		/// </remarks>
 		int Check(int position, long nowMs, long elapsed)
 		{
@@ -250,9 +253,9 @@ namespace x360ce.Engine
 				if (Crossings <= CrossingsAllowed && home)
 					phase = (int)Phase.Done;
 				else if (Crossings > CrossingsAllowed)
-					Fail(string.Format("{0} % brings the wheel home but it swings through the centre {1} times. Set the strength by hand, lower first, or raise Damping.", strength, Crossings));
+					Fail(string.Format("{0} % friction with Strength {1} % on top brings the wheel home, but it swings through the centre {2} times. Lower Strength or raise Damping, then try again.", result, strength, Crossings));
 				else
-					Fail(string.Format("{0} % did not bring the wheel back inside Centre. Take your hands off it and try again.", strength));
+					Fail(string.Format("{0} % friction with Strength {1} % on top did not bring the wheel back inside Centre. Take your hands off it and try again.", result, strength));
 				return 0;
 			}
 			Damping = damper;
@@ -314,10 +317,10 @@ namespace x360ce.Engine
 				else
 				{
 					HighLevel = level;
-					// Both sides answered: the friction, and the strength whose curve beats it, which the check runs at.
-					result = Math.Min(100, Math.Max(LowLevel, HighLevel) + ExtraPercent);
-					strength = SpringCurve.AutoStrength(result, lighteningPercent, peakDegrees, rangeDegrees);
-					checkCurve.Set(strength, centreDegrees, peakDegrees, lighteningPercent, rangeDegrees, speed);
+					// Both sides answered: the friction, a tenth over the larger, rounded up. The check runs the spring the
+					// engine plays, the car's strength on top of it.
+					result = Math.Min(100, (Math.Max(LowLevel, HighLevel) * (100 + ExtraPercent) + 99) / 100);
+					checkCurve.Set(strength, centreDegrees, peakDegrees, lighteningPercent, rangeDegrees, speed, result);
 				}
 				Enter(next, nowMs);
 				return 0;
@@ -387,7 +390,6 @@ namespace x360ce.Engine
 		{
 			message = why;
 			result = 0;
-			strength = 0;
 			Damping = 0;
 			phase = (int)Phase.Failed;
 		}

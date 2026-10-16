@@ -112,12 +112,18 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
 				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
 			d["PadControl.ForceSpringCarComboBox"] = new Text("Car",
-				"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. "
+				"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. "
 				+ "No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out "
 				+ "from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the "
-				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.");
+				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range "
+				+ "for road and sports cars. Friction and Strength are left as they are, and the car is not saved.");
+			d["PadControl.ForceSpringFrictionTextBox"] = d["PadControl.ForceSpringFrictionTrackBar"] = new Text("Friction",
+				"The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre "
+				+ "and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; "
+				+ "a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. "
+				+ "Greyed out while no wheel is selected.");
 			d["PadControl.ForceSpringStrengthTextBox"] = d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Strength",
-				"The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.");
+				"The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.");
 			d["PadControl.ForceSpringCentreTextBox"] = d["PadControl.ForceSpringCentreTrackBar"] = new Text("Centre",
 				"The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.");
 			d["PadControl.ForceSpringPeakTextBox"] = d["PadControl.ForceSpringPeakTrackBar"] = new Text("Peak",
@@ -130,18 +136,19 @@ namespace x360ce.App.UiTree
 				"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. "
 				+ "A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.");
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
-				"Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.");
+				"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
 				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against, 900 when left as it is. "
-				+ "Needs Enable ticked on the Force Feedback page. Leave as it is sends nothing.");
+				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing.");
 			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
 				"What Auto is doing and what it found, or why the centering spring does nothing now.");
 
 			// The chart on the Wheel page.
 			d["WheelChartUserControl.MainPictureBox"] = new Text("Centering chart",
 				"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle "
-				+ "it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is "
-				+ "inside it. The crosshair and the dot are the wheel's angle and force now.");
+				+ "it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere "
+				+ "but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are "
+				+ "the wheel's angle and force now.");
 			d["WheelChartUserControl.AngleValueLabel"] = Live("Wheel angle",
 				"The wheel's angle now, in degrees from the centre; negative is to the left.");
 			d["WheelChartUserControl.ForceValueLabel"] = Live("Spring force",

@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.26.32.0",
-	"Built":"2026-10-15",
+	"Version":"4.26.35.0",
+	"Built":"2026-10-16",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1464,13 +1464,33 @@
 										},
 										{
 											"Name":"Car",
-											"Description":"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.",
+											"Description":"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.",
 											"Role":"List",
 											"Id":"ForceSpringCarComboBox"
 										},
 										{
+											"Name":"Friction",
+											"Description":"The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.",
+											"Role":"Slider",
+											"Id":"ForceSpringFrictionTrackBar",
+											"Min":1,
+											"Max":100
+										},
+										{
+											"Name":"Friction",
+											"Description":"The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.",
+											"Role":"Value",
+											"Id":"ForceSpringFrictionTextBox"
+										},
+										{
+											"Name":"Auto",
+											"Description":"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.",
+											"Role":"Button",
+											"Id":"ForceSpringAutoButton"
+										},
+										{
 											"Name":"Strength",
-											"Description":"Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.",
+											"Description":"Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.",
 											"Role":"Slider",
 											"Id":"ForceSpringStrengthTrackBar",
 											"Min":0,
@@ -1478,15 +1498,9 @@
 										},
 										{
 											"Name":"Strength",
-											"Description":"The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.",
+											"Description":"The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.",
 											"Role":"Value",
 											"Id":"ForceSpringStrengthTextBox"
-										},
-										{
-											"Name":"Auto",
-											"Description":"Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.",
-											"Role":"Button",
-											"Id":"ForceSpringAutoButton"
 										},
 										{
 											"Name":"Centre",
@@ -1715,7 +1729,7 @@
 						},
 						{
 							"Name":"Centering chart",
-							"Description":"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is inside it. The crosshair and the dot are the wheel's angle and force now.",
+							"Description":"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.",
 							"Role":"Picture",
 							"Id":"MainPictureBox"
 						}

@@ -274,6 +274,7 @@
     <Property Name="IsEnabled" Type="bit" Nullable="false" />
     <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
     <Property Name="InputSourceType" Type="int" Nullable="false" />
+    <Property Name="ForceSpringFriction" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="x360ce_UserGames">
     <Key>

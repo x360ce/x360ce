@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.26.32.0"
+  version: "4.26.35.0"
 ---
 
 # X360CE
@@ -170,7 +170,8 @@ again before calling it a fault.
   controller and an Input column that lights each control of the device as it moves), Buttons (how far a stick
   or pedal must move to press a button), D-Pad, Triggers, Left Thumb and Right Thumb (the dead zone, anti-dead
   zone and sensitivity of each trigger and stick axis), Force Feedback (rumble strength and motor tests), Wheel
-  (for wheels: the centering spring with Auto, a Car list that fills its curve, a chart of its force at every angle,
+  (for wheels: the centering spring with Friction, which Auto measures, a Car list that fills its curve and the
+  wheel range, a chart of its force at every angle,
   and Wheel range, the steering range sent to a Logitech wheel, 40 to 900 degrees), and Direct Input (the device's
   raw readings).
   Steering is usually mapped to Left Thumb Axis X.

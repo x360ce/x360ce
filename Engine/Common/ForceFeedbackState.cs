@@ -616,8 +616,9 @@ namespace x360ce.Engine
 
         /// <summary>How near the centre the spring asks nothing, as DirectInput counts the axis: a fifth of a percent of the travel.</summary>
         /// <remarks>
-        /// Small. The force just outside it is small too, so there is no edge for the wheel to chatter across; a wide band
-        /// was where a wheel came to rest short of the centre.
+        /// Small: a wide band was where a wheel came to rest short of the centre. Outside it the force, the friction too,
+        /// rises from the centre no steeper than <see cref="SpringStiffnessLimit"/> over <see cref="SpringRamp"/>, so the
+        /// wheel slows as it comes in rather than being thrown across the centre.
         /// </remarks>
         public const int SpringDeadBand = SpringCalibration.AxisMax / 500;
 
@@ -659,7 +660,8 @@ namespace x360ce.Engine
         /// <param name="calibration">The Auto button's run, or null.</param>
         /// <param name="nowMs">The time, for the calibration.</param>
         /// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride)
+        /// <param name="frictionPercent">The least force that turns the wheel, which the spring never falls below outside the centre (<see cref="UserDevice.ForceSpringFriction"/>).</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
         {
             int percent;
             int damper;
@@ -672,7 +674,9 @@ namespace x360ce.Engine
             }
             else
             {
-                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed);
+                // The friction is the spring's floor, so it plays only while the spring does.
+                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed,
+                    springStrength == 0 ? 0 : frictionPercent);
                 percent = Curve.Force(position);
                 damper = springDamper;
             }

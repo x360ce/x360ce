@@ -118,7 +118,7 @@ namespace x360ce.Tests
 			{
 				LogHelper.Current.WritingException -= keep;
 				lock (LoadLock())
-					if (field.GetValue(null) == faulting)
+					if (ReferenceEquals(field.GetValue(null), faulting))
 						field.SetValue(null, loaded);
 			}
 			Assert.IsFalse(answered, "A read that threw was taken as an answer.");

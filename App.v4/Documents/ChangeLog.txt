@@ -1,4 +1,4 @@
-﻿## [4.26.32.0] - 2026-10-15
+﻿## [4.26.35.0] - 2026-10-16
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.
@@ -9,12 +9,15 @@
 - Fixed: Hiding a device without HID Guardian asked for an administrator.
 - Fixed: The centering spring did nothing while Enable was off.
 - Fixed: With the centering spring off, the wheel's own centering was lost.
+- Fixed: The centering spring was too weak to bring the wheel home from the stops.
 - Fixed: The update's signature and version boxes were ticked again at every start.
 - Fixed: A controller tab's light ignored unticked devices and the tab's Enable.
 - Removed: Enable Logging, Enable Console, Debug Mode, Version and Include [Products] on the Options page, which did nothing.
 - Changed: Settings that do nothing right now are greyed out, with the reason.
 - Changed: A device on several tabs uses the lowest enabled tab's settings.
 - Changed: Force feedback leaves a pad's own centering as it is; only wheels and flight sticks get theirs switched on.
+- Changed: Friction, the least force that turns the wheel, starts at 20 % and Auto measures it; Strength adds the car's steering on top.
+- Changed: The Car list sets the wheel range too.
 - Changed: Recording a hotkey switches it on.
 - Changed: Start with Windows shows the Windows setting, as Task Manager does.
 - Changed: The Advanced page always shows, with x360ce 3's settings greyed out.

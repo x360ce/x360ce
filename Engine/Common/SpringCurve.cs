@@ -4,8 +4,10 @@ namespace x360ce.Engine
 {
 	/// <summary>The centering spring's force at every steering angle, shaped like a car's steering and read at the car's speed.</summary>
 	/// <remarks>
-	/// The force towards the centre passes through four points, times the strength: nothing at the centre, half at
-	/// Centre, all of it at Peak, and Lightening of it at the stop. A monotone cubic (Fritsch-Carlson) joins them, so
+	/// The force towards the centre is the wheel's friction, the least force that turns it, and on top of it the car's
+	/// steering: so the wheel comes home from any angle to near the centre, and feels like the car while it does. The
+	/// car's part passes through four points, times the strength: nothing at the centre, half at Centre, all of it at
+	/// Peak, and Lightening of it at the stop. Their sum is held within the device's force. A monotone cubic (Fritsch-Carlson) joins them, so
 	/// between two points it rises or falls no more than they do. With Peak at nought, at or beyond the stop, or at or
 	/// inside Centre, the points are the centre, half at Centre, and all of it at the stop. Beyond the stop the curve
 	/// stays at its value there. The other side of the centre is its mirror. Angles are steering wheel degrees, counted
@@ -21,7 +23,9 @@ namespace x360ce.Engine
 	/// own force. So the slope at the centre, after the speed, is never steeper than
 	/// <see cref="ForceFeedbackState.SpringStiffnessLimit"/> percent over <see cref="ForceFeedbackState.SpringRamp"/> axis
 	/// units: Centre is widened until it is not. Within <see cref="ForceFeedbackState.SpringDeadBand"/> of the centre
-	/// there is no force.
+	/// there is no force, and outside it the whole force, the friction too, stays under the line from the centre at that
+	/// slope: a step to the friction at the edge of the band shook a G27 four degrees either side five times a second. So
+	/// the friction is reached a few degrees out, and the wheel comes to rest inside them.
 	///
 	/// The curve is built into a table of whole percents, one for every axis unit from the centre, when a setting
 	/// changes. A poll looks its force up there, and makes nothing.
@@ -52,6 +56,7 @@ namespace x360ce.Engine
 		int builtLightening;
 		int builtRange;
 		int builtSpeed;
+		int builtFriction;
 
 		/// <summary>The speed, in km/h, the table was built for, as it was given.</summary>
 		public int Speed { get { return builtSpeed; } }
@@ -60,17 +65,19 @@ namespace x360ce.Engine
 		public int CentreUnits { get; private set; }
 
 		/// <summary>Builds the table for these settings, unless it was built for them already.</summary>
-		/// <remarks>Called on every poll; when nothing changed it compares six numbers and returns.</remarks>
-		/// <param name="strength">The strongest force, in percent of the device's force.</param>
+		/// <remarks>Called on every poll; when nothing changed it compares seven numbers and returns.</remarks>
+		/// <param name="strength">The car's strongest force, at Peak, in percent of the device's force, added to the friction.</param>
 		/// <param name="centreDegrees">The angle of half the strength, at 100 km/h.</param>
 		/// <param name="peakDegrees">The angle of the strongest force, at 100 km/h, where nought is the stop.</param>
 		/// <param name="lighteningPercent">How much of the strongest force is left at the stop.</param>
 		/// <param name="rangeDegrees">The wheel's range lock to lock, or nought when it is left as it is.</param>
 		/// <param name="speed">The car's speed in km/h.</param>
-		public void Set(int strength, int centreDegrees, int peakDegrees, int lighteningPercent, int rangeDegrees, int speed)
+		/// <param name="frictionPercent">The least force that turns the wheel, which the force never falls below outside the centre, or nought while not known.</param>
+		public void Set(int strength, int centreDegrees, int peakDegrees, int lighteningPercent, int rangeDegrees, int speed, int frictionPercent)
 		{
 			if (strength == builtStrength && centreDegrees == builtCentre && peakDegrees == builtPeak
-				&& lighteningPercent == builtLightening && rangeDegrees == builtRange && speed == builtSpeed)
+				&& lighteningPercent == builtLightening && rangeDegrees == builtRange && speed == builtSpeed
+				&& frictionPercent == builtFriction)
 				return;
 			builtStrength = strength;
 			builtCentre = centreDegrees;
@@ -78,6 +85,7 @@ namespace x360ce.Engine
 			builtLightening = lighteningPercent;
 			builtRange = rangeDegrees;
 			builtSpeed = speed;
+			builtFriction = frictionPercent;
 			Build();
 		}
 
@@ -93,31 +101,10 @@ namespace x360ce.Engine
 			return offset < 0 ? percent : -percent;
 		}
 
-		/// <summary>The strength Auto sets for a wheel's friction: enough for the curve to beat it from the stop to Centre, and a tenth more.</summary>
-		/// <remarks>
-		/// Beyond Centre the curve is at its lowest either at Centre, half the strength, or at the stop, Lightening of it.
-		/// So the strength is the friction over the smaller of the two, and a tenth more, rounded up. With the peak at the
-		/// stop Lightening plays no part, and the lowest is half.
-		/// </remarks>
-		/// <param name="frictionPercent">The weakest constant force that brings the wheel home, in percent.</param>
-		/// <param name="lighteningPercent">How much of the strongest force is left at the stop.</param>
-		/// <param name="peakDegrees">The angle of the strongest force, where nought is the stop.</param>
-		/// <param name="rangeDegrees">The wheel's range lock to lock, or nought when it is left as it is.</param>
-		public static int AutoStrength(int frictionPercent, int lighteningPercent, int peakDegrees, int rangeDegrees)
-		{
-			if (frictionPercent <= 0)
-				return 0;
-			var range = rangeDegrees > 0 ? rangeDegrees : ForceFeedbackState.DefaultRangeDegrees;
-			var peakAtStop = peakDegrees <= 0 || peakDegrees * 2 >= range;
-			var lowest = peakAtStop ? 50 : Math.Max(0, Math.Min(50, lighteningPercent));
-			if (lowest == 0)
-				return 100;
-			return Math.Min(100, (frictionPercent * 110 + lowest - 1) / lowest);
-		}
-
 		void Build()
 		{
 			var strength = Math.Max(0, Math.Min(100, builtStrength));
+			var friction = Math.Max(0, Math.Min(100, builtFriction));
 			var range = builtRange > 0 ? builtRange : ForceFeedbackState.DefaultRangeDegrees;
 			// The speed stretches or squeezes the angle the curve is read at.
 			var scale = Math.Max(MinimumSpeed, builtSpeed) / (double)PointsSpeed;
@@ -127,7 +114,7 @@ namespace x360ce.Engine
 			var capped = scale * strength / 2.0 * ForceFeedbackState.SpringRamp / ForceFeedbackState.SpringStiffnessLimit * degreesPerUnit;
 			var centre = Math.Max(Math.Max(1, builtCentre), capped);
 			CentreUnits = (int)Math.Round(centre / scale / degreesPerUnit);
-			if (strength == 0)
+			if (strength == 0 && friction == 0)
 			{
 				Array.Clear(table, 0, table.Length);
 				return;
@@ -140,11 +127,11 @@ namespace x360ce.Engine
 			for (; distance <= ForceFeedbackState.SpringDeadBand; distance++)
 				table[distance] = 0;
 			// Each segment is a cubic in its own share of the way, t, from one point to the next, with the strength
-			// taken in: force = ((c3 t + c2) t + c1) t + c0, where t grows by the same step every axis unit.
+			// and the friction taken in: force = ((c3 t + c2) t + c1) t + c0, where t grows by the same step every axis unit.
 			for (var i = 0; i < count - 1; i++)
 			{
 				var h = xs[i + 1] - xs[i];
-				var c0 = strength * ys[i];
+				var c0 = friction + strength * ys[i];
 				var c1 = strength * h * ms[i];
 				var c2 = strength * (3 * (ys[i + 1] - ys[i]) - h * (2 * ms[i] + ms[i + 1]));
 				var c3 = strength * (2 * (ys[i] - ys[i + 1]) + h * (ms[i] + ms[i + 1]));
@@ -157,9 +144,18 @@ namespace x360ce.Engine
 				}
 			}
 			// Beyond the stop the curve stays at its value there.
-			var stopPercent = Percent(strength * ys[count - 1]);
+			var stopPercent = Percent(friction + strength * ys[count - 1]);
 			for (; distance < table.Length; distance++)
 				table[distance] = stopPercent;
+			// The force, friction and all, is never above the steepest line from the centre the limit allows.
+			for (distance = ForceFeedbackState.SpringDeadBand + 1; distance < table.Length; distance++)
+			{
+				var most = distance * (double)ForceFeedbackState.SpringStiffnessLimit / ForceFeedbackState.SpringRamp;
+				if (most >= 100)
+					break;
+				if (table[distance] > most)
+					table[distance] = Percent(most);
+			}
 		}
 
 		/// <summary>A force in percent, rounded to a whole percent and kept within the device's force.</summary>

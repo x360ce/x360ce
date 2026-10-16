@@ -134,8 +134,8 @@ namespace x360ce.Tests
 		#region Model
 
 		[TestMethod, TestCategory("devices"), TestCategory("settings"), TestCategory("critical")]
-		[Description("The model the program runs from reads the input source column, declared as the table declares it")]
-		public void The_embedded_model_maps_the_input_source_column()
+		[Description("The model the program runs from reads the input source and friction columns, declared as the table declares them")]
+		public void The_embedded_model_maps_the_device_columns()
 		{
 			// The program runs from the three files embedded in the engine, not from the .edmx beside them.
 			var engine = typeof(EngineHelper).Assembly;
@@ -143,24 +143,28 @@ namespace x360ce.Tests
 			var conceptual = new EdmItemCollection(new[] { open("Data.x360ceModel.csdl") });
 			var storage = new StoreItemCollection(new[] { open("Data.x360ceModel.ssdl") });
 			new System.Data.Mapping.StorageMappingItemCollection(conceptual, storage, new[] { open("Data.x360ceModel.msl") });
-			var column = storage.GetItems<EntityType>().Single(x => x.Name == "x360ce_UserDevices").Properties["InputSourceType"];
-			Assert.AreEqual("int", column.TypeUsage.EdmType.Name);
-			Assert.IsFalse(column.Nullable, "The column refuses null.");
-			var property = conceptual.GetItems<EntityType>().Single(x => x.Name == "UserDevice").Properties["InputSourceType"];
-			Assert.AreEqual("Int32", property.TypeUsage.EdmType.Name);
-			Assert.IsFalse(property.Nullable, "The property refuses null.");
-			Assert.IsNull(property.DefaultValue, "A default would start every new device at 1, which changes its checksum.");
-			Assert.AreEqual(0, new UserDevice().InputSourceType, "A new device starts as the program keeps DirectInput.");
 			// The mapping, measured by the query the web service runs. It is only compiled; no server is named.
+			string sql;
 			using (var db = new x360ceModelContainer("metadata=res://*/Data.x360ceModel.csdl|res://*/Data.x360ceModel.ssdl|res://*/Data.x360ceModel.msl;provider=System.Data.SqlClient;provider connection string=\"\""))
-			{
-				var sql = db.UserDevices.ToTraceString();
-				StringAssert.Contains(sql, "[InputSourceType]", "The query of devices does not read the column: " + sql);
-			}
-			// The table, declared as the live script adds the column.
+				sql = db.UserDevices.ToTraceString();
 			var table = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "Data", "dbo", "Tables", "x360ce_UserDevices.sql"));
-			StringAssert.Matches(table, new Regex(@"\[InputSourceType\]\s+INT\s+CONSTRAINT \[DF_x360ce_UserDevices_InputSourceType\] DEFAULT \(\(1\)\) NOT NULL,"),
-				"The table file declares the column otherwise than the live script adds it.");
+			// Each column with the value the database gives a row a program sends without it. The program keeps both
+			// defaults at 0, so their files and checksums stay as they were; a model default would change both.
+			foreach (var c in new[] { new { Name = "InputSourceType", Stored = 1 }, new { Name = "ForceSpringFriction", Stored = 0 } })
+			{
+				var column = storage.GetItems<EntityType>().Single(x => x.Name == "x360ce_UserDevices").Properties[c.Name];
+				Assert.AreEqual("int", column.TypeUsage.EdmType.Name, c.Name);
+				Assert.IsFalse(column.Nullable, c.Name + ": the column refuses null.");
+				var property = conceptual.GetItems<EntityType>().Single(x => x.Name == "UserDevice").Properties[c.Name];
+				Assert.AreEqual("Int32", property.TypeUsage.EdmType.Name, c.Name);
+				Assert.IsFalse(property.Nullable, c.Name + ": the property refuses null.");
+				Assert.IsNull(property.DefaultValue, c.Name + ": a default would start every new device away from 0, which changes its checksum.");
+				StringAssert.Contains(sql, "[" + c.Name + "]", "The query of devices does not read the column: " + sql);
+				StringAssert.Matches(table, new Regex(@"\[" + c.Name + @"\]\s+INT\s+CONSTRAINT \[DF_x360ce_UserDevices_" + c.Name + @"\] DEFAULT \(\(" + c.Stored + @"\)\) NOT NULL,"),
+					"The table file declares " + c.Name + " otherwise than the live database has it.");
+			}
+			Assert.AreEqual(0, new UserDevice().InputSourceType, "A new device starts as the program keeps DirectInput.");
+			Assert.AreEqual(0, new UserDevice().ForceSpringFriction, "A new wheel starts at the default friction, kept as 0.");
 		}
 
 		#endregion
