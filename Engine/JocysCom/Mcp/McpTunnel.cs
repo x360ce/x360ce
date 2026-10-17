@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -133,16 +134,48 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		#endregion
 
-		#region Making and deleting tunnels
+		#region Listing, making and deleting tunnels
+
+		/// <summary>A tunnel the organization has, as OpenAI lists it.</summary>
+		public class Info
+		{
+			public string Id;
+			public string Name;
+			public string Description;
+			public DateTime? Created;
+
+			/// <summary>The ID, then what tells the tunnel apart: its description and the day it was made.</summary>
+			public override string ToString()
+			{
+				return Id + "  " + Description + (Created.HasValue ? ", made " + Created.Value.ToLocalTime().ToString("yyyy-MM-dd") : "");
+			}
+		}
+
+		/// <summary>The description a tunnel made on this computer gets, which tells it apart from the organization's other tunnels.</summary>
+		static string LocalDescription { get { return Name + " on " + Environment.MachineName; } }
+
+		/// <summary>The organization's tunnels, newest first. Only an admin key can list them; it is used for this call only.</summary>
+		public static Info[] List(string adminKey, string organization)
+		{
+			RequireOrganization(organization);
+			RequireAdminKey(adminKey, "Listing the organization's tunnels");
+			return Tunnels(Admin("tunnels list --organization-id " + organization, AdminVariables(adminKey)))
+				.OrderByDescending(x => x.Created ?? DateTime.MinValue).ToArray();
+		}
+
+		/// <summary>The newest tunnel this program made on this computer, or null.</summary>
+		public static Info Mine(IEnumerable<Info> tunnels)
+		{
+			return tunnels.Where(x => x.Name == Name && x.Description == LocalDescription)
+				.OrderByDescending(x => x.Created ?? DateTime.MinValue).FirstOrDefault();
+		}
 
 		/// <summary>Makes a tunnel in the organization and returns its ID. The admin key is used for this call only.</summary>
 		public static string Create(string adminKey, string organization)
 		{
-			if (!IsOrganization(organization))
-				throw new InvalidOperationException("The organization ID starts with org-. Find it on the OpenAI Platform.");
-			if (string.IsNullOrEmpty(adminKey))
-				throw new InvalidOperationException("Making a tunnel needs an admin key from the OpenAI Platform.");
-			var json = Admin("tunnels create --name " + Quote(Name) + " --description " + Quote(Name + " on " + Environment.MachineName)
+			RequireOrganization(organization);
+			RequireAdminKey(adminKey, "Making a tunnel");
+			var json = Admin("tunnels create --name " + Quote(Name) + " --description " + Quote(LocalDescription)
 				+ " --organization-id " + organization, AdminVariables(adminKey));
 			var id = Field(json, "id");
 			if (!IsTunnelId(id))
@@ -156,9 +189,71 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			if (!IsTunnelId(id))
 				throw new InvalidOperationException("There is no tunnel ID to delete.");
-			if (string.IsNullOrEmpty(adminKey))
-				throw new InvalidOperationException("Deleting a tunnel needs an admin key from the OpenAI Platform.");
+			RequireAdminKey(adminKey, "Deleting a tunnel");
 			Admin("tunnels delete " + id + " --confirm", AdminVariables(adminKey));
+		}
+
+		static void RequireOrganization(string organization)
+		{
+			if (!IsOrganization(organization))
+				throw new InvalidOperationException("The organization ID starts with org-. Find it on the OpenAI Platform.");
+		}
+
+		static void RequireAdminKey(string adminKey, string what)
+		{
+			if (string.IsNullOrEmpty(adminKey))
+				throw new InvalidOperationException(what + " needs an admin key from the OpenAI Platform.");
+		}
+
+		/// <summary>The tunnels in a JSON answer: each object whose own "id" is a tunnel ID, whatever the answer wraps them in.</summary>
+		static List<Info> Tunnels(string json)
+		{
+			json = json ?? "";
+			var tunnels = new List<Info>();
+			var starts = new Stack<int>();
+			var taken = new List<int>();
+			var quoted = false;
+			for (var i = 0; i < json.Length; i++)
+			{
+				var c = json[i];
+				if (quoted)
+				{
+					if (c == '\\')
+						i++;
+					else if (c == '"')
+						quoted = false;
+					continue;
+				}
+				if (c == '"')
+					quoted = true;
+				else if (c == '{')
+					starts.Push(i);
+				else if (c == '}' && starts.Count > 0)
+				{
+					var start = starts.Pop();
+					// An object holding a tunnel already read, such as the answer's own wrapper, is no tunnel itself.
+					if (taken.Any(x => x > start))
+						continue;
+					var text = json.Substring(start, i - start + 1);
+					var id = Field(text, "id");
+					if (!IsTunnelId(id))
+						continue;
+					taken.Add(start);
+					tunnels.Add(new Info { Id = id, Name = Field(text, "name"), Description = Field(text, "description"), Created = Time(text, "created_at") });
+				}
+			}
+			return tunnels;
+		}
+
+		/// <summary>A time field written as seconds since 1970 or as text, or null.</summary>
+		static DateTime? Time(string json, string name)
+		{
+			var m = Regex.Match(json, "\"" + name + "\"\\s*:\\s*(\\d{1,11})\\b");
+			if (m.Success)
+				return DateTimeOffset.FromUnixTimeSeconds(long.Parse(m.Groups[1].Value)).UtcDateTime;
+			DateTime time;
+			return DateTime.TryParse(Field(json, name), CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out time)
+				? time : (DateTime?)null;
 		}
 
 		static Dictionary<string, string> AdminVariables(string adminKey)

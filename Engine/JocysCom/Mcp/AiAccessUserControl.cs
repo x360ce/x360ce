@@ -1,6 +1,7 @@
 #nullable disable
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Mcp
@@ -117,7 +118,8 @@ namespace JocysCom.ClassLibrary.Mcp
 				AiTabControl.TabPages.Add(AiTunnelTabPage);
 			AiTunnelNoteText.Text = AiAccessModel.TunnelNote;
 			ShowText(AiTunnelOrganizationTextBox, Model.TunnelOrganization);
-			ShowText(AiTunnelIdTextBox, Model.TunnelId);
+			ShowChoices(AiTunnelIdComboBox, Model.TunnelChoices);
+			ShowText(AiTunnelIdComboBox, Model.TunnelId);
 			ShowText(AiTunnelApiKeyTextBox, Model.TunnelApiKey);
 			AiTunnelCreateButton.Enabled = !Model.TunnelBusy;
 			AiTunnelDeleteButton.Enabled = Model.TunnelDeleteAllowed;
@@ -131,9 +133,22 @@ namespace JocysCom.ClassLibrary.Mcp
 		}
 
 		/// <summary>Shows a value in a box the person can type in, unless they are typing in it: the tunnel's state changes on its own while they do.</summary>
-		static void ShowText(TextBox box, string text)
+		static void ShowText(Control box, string text)
 		{
 			if (!box.Focused)
+				box.Text = text;
+		}
+
+		/// <summary>Lists the organization's tunnels under the Tunnel ID box when the list changed, keeping what the box shows.</summary>
+		static void ShowChoices(ComboBox box, McpTunnel.Info[] choices)
+		{
+			var lines = choices.Select(x => x.ToString()).ToArray();
+			if (box.Items.Cast<string>().SequenceEqual(lines))
+				return;
+			var text = box.Text;
+			box.Items.Clear();
+			box.Items.AddRange(lines);
+			if (box.Text != text)
 				box.Text = text;
 		}
 
@@ -165,7 +180,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			AiExampleLabel.Font = bold;
 			AiAccessTokenTextBox.Font = code;
 			AiAccessSnippetTextBox.Font = code;
-			AiTunnelIdTextBox.Font = code;
+			AiTunnelIdComboBox.Font = code;
 			DisposeFonts();
 			_bold = bold;
 			_code = code;
@@ -273,7 +288,17 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		void AiTunnelOrganizationTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelOrganization(AiTunnelOrganizationTextBox.Text); }
 
-		void AiTunnelIdTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelId(AiTunnelIdTextBox.Text); }
+		void AiTunnelIdComboBox_Validated(object sender, EventArgs e) { Model.SetTunnelId(AiTunnelIdComboBox.Text); }
+
+		/// <summary>Opening the list asks OpenAI for the organization's tunnels, with the admin key in its box.</summary>
+		void AiTunnelIdComboBox_DropDown(object sender, EventArgs e) { Model.ListTunnels(AiTunnelAdminKeyTextBox.Text.Trim()); }
+
+		void AiTunnelIdComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			Model.PickTunnel(AiTunnelIdComboBox.SelectedIndex);
+			// The box shows the picked line until the list has closed; then it holds the ID alone, as a typed one is.
+			BeginInvoke((Action)(() => AiTunnelIdComboBox.Text = Model.TunnelId));
+		}
 
 		void AiTunnelApiKeyTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelApiKey(AiTunnelApiKeyTextBox.Text); }
 

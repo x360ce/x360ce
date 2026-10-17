@@ -424,7 +424,7 @@ namespace x360ce.Tests
 						Assert.IsTrue(Find<TextBox>(ai, "AiTunnelAdminKeyTextBox").UseSystemPasswordChar, "The admin key shows as typed.");
 						CollectionAssert.IsSubsetOf(new[] { "AiTunnelAdminKeyTextBox", "AiTunnelApiKeyTextBox" }, McpTools.SecretControls);
 						CollectionAssert.IsSubsetOf(new[] { "AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox",
-							"AiTunnelIdTextBox", "AiTunnelCreateButton", "AiTunnelDeleteButton", "AiTunnelApiKeyTextBox" }, McpTools.DoorControls);
+							"AiTunnelIdComboBox", "AiTunnelCreateButton", "AiTunnelDeleteButton", "AiTunnelApiKeyTextBox" }, McpTools.DoorControls);
 						o.TunnelId = "";
 						ai.Model.SetTunnelId("not a tunnel");
 						Assert.AreEqual("", o.TunnelId, "Text that is no tunnel ID was kept.");

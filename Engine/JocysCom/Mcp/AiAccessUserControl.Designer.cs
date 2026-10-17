@@ -67,7 +67,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelAdminKeyTextBox = new TextBox();
 			this.AiTunnelAdminKeyButton = new Button();
 			this.AiTunnelIdLabel = new Label();
-			this.AiTunnelIdTextBox = new TextBox();
+			this.AiTunnelIdComboBox = new ComboBox();
 			this.AiTunnelCreateButton = new Button();
 			this.AiTunnelCopyButton = new Button();
 			this.AiTunnelDeleteButton = new Button();
@@ -358,7 +358,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyTextBox, 1, 2);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyButton, 2, 2);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdLabel, 0, 3);
-			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdTextBox, 1, 3);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdComboBox, 1, 3);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelCreateButton, 2, 3);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelCopyButton, 1, 4);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelDeleteButton, 2, 4);
@@ -434,11 +434,13 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelIdLabel.Name = "AiTunnelIdLabel";
 			this.AiTunnelIdLabel.TabIndex = 8;
 			this.AiTunnelIdLabel.Text = "Tunnel ID";
-			// AiTunnelIdTextBox
-			this.AiTunnelIdTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelIdTextBox.Name = "AiTunnelIdTextBox";
-			this.AiTunnelIdTextBox.TabIndex = 9;
-			this.AiTunnelIdTextBox.Validated += new EventHandler(this.AiTunnelIdTextBox_Validated);
+			// AiTunnelIdComboBox
+			this.AiTunnelIdComboBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelIdComboBox.Name = "AiTunnelIdComboBox";
+			this.AiTunnelIdComboBox.TabIndex = 9;
+			this.AiTunnelIdComboBox.DropDown += new EventHandler(this.AiTunnelIdComboBox_DropDown);
+			this.AiTunnelIdComboBox.SelectionChangeCommitted += new EventHandler(this.AiTunnelIdComboBox_SelectionChangeCommitted);
+			this.AiTunnelIdComboBox.Validated += new EventHandler(this.AiTunnelIdComboBox_Validated);
 			// AiTunnelCreateButton
 			this.AiTunnelCreateButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			this.AiTunnelCreateButton.Margin = new Padding(8, 3, 0, 3);
@@ -727,7 +729,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		private TextBox AiTunnelAdminKeyTextBox;
 		private Button AiTunnelAdminKeyButton;
 		private Label AiTunnelIdLabel;
-		private TextBox AiTunnelIdTextBox;
+		private ComboBox AiTunnelIdComboBox;
 		private Button AiTunnelCreateButton;
 		private Button AiTunnelCopyButton;
 		private Button AiTunnelDeleteButton;

@@ -1,4 +1,9 @@
-﻿## [4.26.38.0] - 2026-10-17
+﻿## [4.27.8.0] - 2026-10-17
+
+- Changed: Create uses the tunnel made earlier for this computer instead of making another.
+- Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
+
+## [4.26.38.0] - 2026-10-17
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.

@@ -46,7 +46,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessTrustLocalCheckBox", "AiAccessPortTextBox",
 			"AiAccessRegenerateButton", "AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton",
-			"AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelIdTextBox", "AiTunnelCreateButton",
+			"AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelIdComboBox", "AiTunnelCreateButton",
 			"AiTunnelDeleteButton", "AiTunnelApiKeyTextBox",
 		};
 

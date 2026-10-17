@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.26.38.0, built 2026-10-17.
+Version 4.27.8.0, built 2026-10-17.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -455,10 +455,10 @@ not shown in this state of the program.
 [Label]     │       │           │                   ├── About the tunnel                # Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.
 [Text]      │       │           │                   ├── OpenAI organization ID          # The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.
 [Button]    │       │           │                   ├── Find organization ID            # Opens the OpenAI Platform page that shows the organization ID.
-[Text]      │       │           │                   ├── OpenAI admin key                # An admin key of the organization, used only by Create and Delete and never kept.
+[Text]      │       │           │                   ├── OpenAI admin key                # An admin key of the organization, used only to list, create and delete tunnels and never kept.
 [Button]    │       │           │                   ├── Get admin key                   # Opens the OpenAI Platform page that makes admin keys.
-[Text]      │       │           │                   ├── Tunnel ID                       # The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Made by Create, or pasted from the OpenAI Platform.
-[Button]    │       │           │                   ├── Create tunnel                   # Makes a tunnel in the organization with the admin key, and keeps its ID.
+[List]      │       │           │                   ├── Tunnel ID                       # The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.
+[Button]    │       │           │                   ├── Create tunnel                   # Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.
 [Button]    │       │           │                   ├── Copy tunnel ID                  # Copies the tunnel ID, to paste into ChatGPT.
 [Button]    │       │           │                   ├── Delete tunnel                   # Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.
 [Text]      │       │           │                   ├── OpenAI API key                  # The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.
