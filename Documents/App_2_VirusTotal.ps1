@@ -74,6 +74,11 @@
     console to ask, such as one driven by another script, skips the menu and reports
     the unknown files instead.
 
+    A file that cannot be checked or submitted is reported with the others, and the
+    run goes on. A rejected key or a used-up allowance stops further requests, and
+    what was found before is still reported. A file VirusTotal says is already being
+    submitted is waited for rather than sent again.
+
     Rebuilding changes every hash, so the baseline records engine names rather
     than hashes. A new build with the same known detections passes; a new engine,
     or more detections than were accepted, does not.
@@ -173,6 +178,11 @@ function Get-ReleaseFile {
 
 $script:LastRequest = [DateTime]::MinValue
 
+# Set when VirusTotal gives an answer every later request would get as well: a rejected key,
+# the allowance used up, or a report that cannot be read. The run stops asking, and still
+# reports everything it found before that.
+$script:StopReason = $null
+
 # Requests are spaced out rather than counted, which keeps a free key inside its
 # allowance without having to model the window.
 function Wait-Turn {
@@ -214,6 +224,17 @@ function Invoke-VirusTotal {
     if ($response.Content) {
         $body = $response.Content | ConvertFrom-Json -AsHashtable
     }
+    # The two answers worth naming, because the fix for each is a different one. Every
+    # request after them would get the same, so the run stops asking.
+    if ([int]$response.StatusCode -eq 401) {
+        $script:StopReason = "VirusTotal rejected the API key. Check VIRUSTOTAL_API_KEY."
+        throw $script:StopReason
+    }
+    if ([int]$response.StatusCode -eq 429) {
+        $script:StopReason = "VirusTotal refused the request for being too frequent. The free key allows " +
+            "4 a minute and 500 a day; lower -RequestsPerMinute, or wait for the daily allowance."
+        throw $script:StopReason
+    }
     return [PSCustomObject]@{ Status = [int]$response.StatusCode; Body = $body }
 }
 
@@ -226,21 +247,14 @@ function Get-Report {
         # here is what turns the next parsing surprise into a message instead of a
         # file wrongly called unknown and needlessly offered for submission.
         if ($null -eq $response.Body -or $null -eq $response.Body.data) {
-            throw ("VirusTotal answered 200 for $Name but the report could not be read. " +
-                "Treating it as unseen would be wrong, so the run stops here.")
+            $script:StopReason = "VirusTotal answered 200 for $Name but the report could not be read. " +
+                "Treating it as unseen would be wrong, so nothing more is asked."
+            throw $script:StopReason
         }
         return $response.Body.data
     }
     # Not seen before, which is normal for a file which has just been built.
     if ($response.Status -eq 404) { return $null }
-    # The two answers worth naming, because the fix for each is a different one.
-    if ($response.Status -eq 401) {
-        throw "VirusTotal rejected the API key. Check VIRUSTOTAL_API_KEY."
-    }
-    if ($response.Status -eq 429) {
-        throw ("VirusTotal refused the request for being too frequent. The free key allows " +
-            "4 a minute and 500 a day; lower -RequestsPerMinute, or wait for the daily allowance.")
-    }
     throw "VirusTotal returned $($response.Status) for $Name. $($response.Body.error.message)"
 }
 
@@ -256,6 +270,9 @@ function Send-File {
         $endpoint = $upload.Body.data
     }
     $response = Invoke-VirusTotal $endpoint "Post" -Form @{ file = Get-Item -LiteralPath $Path }
+    # Already in VirusTotal's queue, sent by an earlier run that stopped or by somebody else.
+    # There is no analysis of this upload to follow, so the caller waits for the file's report.
+    if ($response.Status -eq 409) { return $null }
     if ($response.Status -ne 200) {
         throw "Upload of $Path failed with $($response.Status). $($response.Body.error.message)"
     }
@@ -273,6 +290,21 @@ function Wait-Analysis {
         Write-Host "    still being analysed..."
     }
     return $false
+}
+
+# The report of a file VirusTotal is already analysing, once its engines have answered.
+# Null when it did not arrive in time.
+function Wait-Report {
+    param([string]$Hash, [string]$Name)
+    $until = [DateTime]::UtcNow.AddMinutes($WaitMinutes)
+    while ([DateTime]::UtcNow -lt $until) {
+        $report = Get-Report $Hash $Name
+        if ($null -ne $report -and (Get-EngineCount $report) -gt 0) {
+            return $report
+        }
+        Write-Host "    still being analysed..."
+    }
+    return $null
 }
 
 # Where a person reads the same answer for themselves. VirusTotal indexes by hash,
@@ -337,11 +369,21 @@ function Send-ForAnalysis {
     param($File, [string]$Hash)
     Write-Host ("  {0,-10}  {1} (submitting)" -f "new", $File.Name)
     $id = Send-File $File.Path
-    if (-not (Wait-Analysis $id)) {
-        $problems.Add("$($File.Name) was submitted but the analysis did not finish within $WaitMinutes minute(s).")
-        return $null
+    if ($id) {
+        if (-not (Wait-Analysis $id)) {
+            $problems.Add("$($File.Name) was submitted but the analysis did not finish within $WaitMinutes minute(s).")
+            return $null
+        }
+        $report = Get-Report $Hash $File.Name
     }
-    $report = Get-Report $Hash $File.Name
+    else {
+        Write-Host "    already in VirusTotal's queue; waiting for its report"
+        $report = Wait-Report $Hash $File.Name
+        if ($null -eq $report) {
+            $problems.Add("$($File.Name) was already being analysed, and no report came within $WaitMinutes minute(s).")
+            return $null
+        }
+    }
     if ($null -eq $report) {
         $problems.Add("$($File.Name) was submitted but no report came back.")
         return $null
@@ -409,7 +451,7 @@ function Select-Files {
     # hands back nothing. Both a list and a plain array arrive here.
     $list = [object[]]$Files
     Write-Host ""
-    Write-Host "  What should be $($Verb)ed?"
+    Write-Host "  What should be $($Verb)?"
     Write-Host ""
     for ($i = 0; $i -lt $list.Count; $i++) {
         Write-Host ("  {0,2} - {1}" -f ($i + 1), $list[$i].Name)
@@ -472,7 +514,7 @@ $checked = 0
 # file of a release costs minutes at four requests a minute, and most of them are
 # libraries nobody downloads on their own.
 if (-not $ListOnly -and -not $Upload -and [Environment]::UserInteractive) {
-    $files = @(Select-Files $files "check" -AllowAll)
+    $files = @(Select-Files $files "checked" -AllowAll)
     if ($files.Count -eq 0) {
         Write-Host ""
         Write-Host "Nothing checked."
@@ -487,6 +529,9 @@ Write-Host "Rate limit:    $RequestsPerMinute request(s) per minute"
 Write-Host ""
 
 foreach ($file in $files) {
+    if ($script:StopReason) {
+        break
+    }
     if (-not (Test-Path -LiteralPath $file.Path)) {
         $problems.Add("$($file.Name) is missing. Build the release first.")
         continue
@@ -505,30 +550,39 @@ foreach ($file in $files) {
         Write-Host ("  {0}  {1}" -f $hash, $file.Name)
         continue
     }
-    if ($reports.ContainsKey($hash)) {
-        # Including a file VirusTotal has never seen: asking twice costs a second
-        # request and gets the same answer.
-        $report = $reports[$hash]
-    }
-    else {
-        $report = Get-Report $hash $file.Name
-        $reports[$hash] = $report
-    }
-
-    if ($null -eq $report) {
-        if (-not $Upload) {
-            Write-Host ("  {0,-10}  {1}" -f "unknown", $file.Name)
-            Write-Host ("              {0}" -f (Get-VirusTotalLink $hash))
-            $unknown.Add($file)
-            continue
+    # One file that could not be checked is reported with the rest, rather than ending
+    # the run and losing what the files before it found.
+    try {
+        if ($reports.ContainsKey($hash)) {
+            # Including a file VirusTotal has never seen: asking twice costs a second
+            # request and gets the same answer.
+            $report = $reports[$hash]
         }
-        $report = Send-ForAnalysis $file $hash
+        else {
+            $report = Get-Report $hash $file.Name
+            $reports[$hash] = $report
+        }
+
         if ($null -eq $report) {
-            continue
+            if (-not $Upload) {
+                Write-Host ("  {0,-10}  {1}" -f "unknown", $file.Name)
+                Write-Host ("              {0}" -f (Get-VirusTotalLink $hash))
+                $unknown.Add($file)
+                continue
+            }
+            $report = Send-ForAnalysis $file $hash
+            if ($null -eq $report) {
+                continue
+            }
+        }
+
+        Add-Result $file $report
+    }
+    catch {
+        if (-not $script:StopReason) {
+            $problems.Add("$($file.Name) could not be checked: $($_.Exception.Message)")
         }
     }
-
-    Add-Result $file $report
 }
 
 #------------------------------------------------------------------------------
@@ -539,20 +593,36 @@ foreach ($file in $files) {
 # the file in somebody else's hands, so it happens only when a person says so.
 # A run driving another script answers no by never being asked.
 if ($unknown.Count -gt 0 -and -not $Upload -and -not $ListOnly -and -not $UpdateBaseline -and
-    [Environment]::UserInteractive) {
+    -not $script:StopReason -and [Environment]::UserInteractive) {
     Write-Host ""
     Write-Host "VirusTotal has never seen $($unknown.Count) of these files."
     Write-Host "A file you submit is stored by VirusTotal, where its customers can download it."
-    while ($unknown.Count -gt 0) {
-        $chosen = @(Select-Files $unknown "submit")
+    while ($unknown.Count -gt 0 -and -not $script:StopReason) {
+        $chosen = @(Select-Files $unknown "submitted")
         if ($chosen.Count -eq 0) {
             break
         }
         foreach ($file in $chosen) {
             $hash = (Get-FileHash -LiteralPath $file.Path -Algorithm SHA256).Hash.ToLowerInvariant()
-            $report = Send-ForAnalysis $file $hash
-            if ($null -ne $report) {
-                Add-Result $file $report
+            try {
+                # The same content under another name, answered earlier in this run: the release
+                # zips one build under two names, and VirusTotal refuses a second upload of it.
+                $report = $reports[$hash]
+                if ($null -eq $report) {
+                    $report = Send-ForAnalysis $file $hash
+                }
+                if ($null -ne $report) {
+                    Add-Result $file $report
+                }
+            }
+            catch {
+                if (-not $script:StopReason) {
+                    $problems.Add("$($file.Name) could not be submitted: $($_.Exception.Message)")
+                }
+            }
+            # Left on the list when the run stopped, so it is still reported as never seen.
+            if ($script:StopReason) {
+                break
             }
             $unknown.Remove($file) | Out-Null
         }
@@ -592,7 +662,13 @@ if ($ListOnly) {
     return
 }
 
-if ($UpdateBaseline) {
+if ($script:StopReason) {
+    $problems.Insert(0, "The run stopped asking VirusTotal: $script:StopReason")
+}
+
+# Not from a run that stopped part way: it would replace what earlier runs accepted with
+# what this one reached.
+if ($UpdateBaseline -and -not $script:StopReason) {
     Write-Baseline $accepted
     Write-Host "Detections above are now the accepted result. Rerun without -UpdateBaseline to gate on them."
     return
