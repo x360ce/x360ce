@@ -108,7 +108,7 @@ x360ce has no AI inside. If you use an AI assistant of your own, it can map and 
 
 # Download v3.x
 
-Digitally Signed Application v3.4.39.0 and Libraries 3.4.1
+Digitally Signed Application v3.7.8.0 and Libraries 3.4.1
 
 Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 32-bit games
 
