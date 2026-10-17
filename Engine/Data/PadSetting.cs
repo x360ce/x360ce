@@ -212,8 +212,7 @@ namespace x360ce.Engine.Data
 			// Prepare list for checksum.
 			var s = string.Join("\r\n", sorted);
 			var bytes = System.Text.Encoding.ASCII.GetBytes(s);
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			return new Guid(md5.ComputeHash(bytes));
+			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(bytes);
 		}
 
 		/// <summary>Adds a button's axis dead zone, which counts only while an axis, a slider or a formula drives the button.</summary>

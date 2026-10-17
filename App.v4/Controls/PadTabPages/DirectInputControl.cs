@@ -22,6 +22,24 @@ namespace x360ce.App.Controls
 				return;
 			InitDirectInputTab();
 			DiObjectsDataGridView.AutoGenerateColumns = false;
+			DiObjectsDataGridView.CellFormatting += DiObjectsDataGridView_CellFormatting;
+		}
+
+		/// <summary>What a mapping box shows for a button: the box numbers buttons from 1, where Windows names them from 0.</summary>
+		/// <returns>Empty for an axis, a slider or a hat, which Windows names without a number.</returns>
+		internal static string MapsAs(DeviceObjectItem item)
+		{
+			return item != null && (item.Type == ObjectGuid.Button || item.Type == ObjectGuid.Key)
+				? SettingsConverter.ToTextValue(MapType.Button, item.DiIndex + 1)
+				: "";
+		}
+
+		void DiObjectsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			if (e.RowIndex < 0 || e.ColumnIndex != MapsAsColumn.Index)
+				return;
+			e.Value = MapsAs(DiObjectsDataGridView.Rows[e.RowIndex].DataBoundItem as DeviceObjectItem);
+			e.FormattingApplied = true;
 		}
 
 		DataTable DiButtonsTable;
@@ -82,9 +100,10 @@ namespace x360ce.App.Controls
 			if (buttons != null)
 			{
 				var ids = new List<string>();
+				// From 1, as the mapping boxes number them, so a button pressed here is found under the same number there.
 				for (int i = 0; i < buttons.Length; i++)
 					if (buttons[i])
-						ids.Add(i.ToString("00"));
+						ids.Add((i + 1).ToString("00"));
 				buttonsText = string.Join(" ", ids);
 			}
 			if (oldButtons != buttonsText)
@@ -513,8 +532,9 @@ namespace x360ce.App.Controls
 			var maxName = objects.Max(x => x.Name.Length);
 			var maxFlags = objects.Max(x => x.Flags.ToString().Length);
 			var maxAspectName = objects.Max(x => x.AspectName.Length);
-			var names = new string[] { "Offset", "Type", "Aspect", "Flags", "Instance", "Name" };
-			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxName };
+			var maxMapsAs = Math.Max("Maps as".Length, objects.Max(x => MapsAs(x).Length));
+			var names = new string[] { "Offset", "Type", "Aspect", "Flags", "Instance", "Maps as", "Name" };
+			var sizes = new int[] { "Offset".Length, -maxTypeName, -maxAspectName, -maxFlags, "Instance".Length, -maxMapsAs, -maxName };
 			// Create format line.
 			var format = "// ";
 			for (int i = 0; i < sizes.Length; i++)
@@ -533,7 +553,7 @@ namespace x360ce.App.Controls
 			for (int i = 0; i < objects.Length; i++)
 			{
 				var o = objects[i];
-				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
+				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, MapsAs(o), o.Name);
 				sb.AppendLine();
 			}
 			ControlsHelper.CopyToClipboardOrWarn(sb.ToString());

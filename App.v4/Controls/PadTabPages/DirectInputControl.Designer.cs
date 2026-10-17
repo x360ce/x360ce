@@ -129,6 +129,7 @@
 			this.ObjectsAspectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsInstanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MapsAsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.GranularityColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.SaturationColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -700,6 +701,7 @@
             this.ObjectsAspectColumn,
             this.ObjectsFlagsColumn,
             this.ObjectsInstanceColumn,
+            this.MapsAsColumn,
             this.ObjectsNameColumn,
             this.GranularityColumn,
             this.SaturationColumn,
@@ -1057,7 +1059,18 @@
 			this.ObjectsInstanceColumn.ReadOnly = true;
 			this.ObjectsInstanceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			this.ObjectsInstanceColumn.Width = 54;
-			// 
+			//
+			// MapsAsColumn
+			//
+			this.MapsAsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MapsAsColumn.HeaderText = "Maps as";
+			this.MapsAsColumn.MinimumWidth = 6;
+			this.MapsAsColumn.Name = "MapsAsColumn";
+			this.MapsAsColumn.ReadOnly = true;
+			this.MapsAsColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.MapsAsColumn.ToolTipText = "What a mapping box shows for this button. Windows numbers buttons from 0; the mapping boxes number them from 1.";
+			this.MapsAsColumn.Width = 60;
+			//
 			// ObjectsNameColumn
 			// 
 			this.ObjectsNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -1221,6 +1234,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsAspectColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MapsAsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GranularityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SaturationColumn;

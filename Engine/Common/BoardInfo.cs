@@ -45,13 +45,10 @@
 			if (string.IsNullOrEmpty(diskId))
 				return Guid.Empty;
 			var serialBytes = System.Text.Encoding.ASCII.GetBytes(diskId);
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			byte[] retVal = md5.ComputeHash(serialBytes);
-			md5.Dispose();
-			return new Guid(retVal);
+			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(serialBytes);
 		}
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		static extern SafeFileHandle CreateFile(
 			string lpFileName,
 			UInt32 dwDesiredAccess,

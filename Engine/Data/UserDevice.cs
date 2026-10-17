@@ -309,10 +309,39 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public volatile SpringCalibration SpringCalibration;
 
-		/// <summary>The wheel's friction the Auto button's run measured this session, in percent of the device's force, or nought before a run. Not stored.</summary>
-		/// <remarks>Set by the interface when a run finishes with an answer (<see cref="Engine.SpringCalibration.Result"/>).</remarks>
-		[XmlIgnore]
-		public int ForceSpringFriction;
+		/// <summary>The wheel's friction until Auto measures it or it is set by hand on the Wheel tab, in percent of its force: enough to bring even a geared wheel such as a G27 home from its stops.</summary>
+		public const int DefaultForceSpringFriction = 20;
+
+		/// <summary>The least force that turns the wheel and brings it home, in percent of its force: <see cref="ForceSpringFriction"/>, or <see cref="DefaultForceSpringFriction"/> while that is nought.</summary>
+		/// <remarks>
+		/// The centering spring never pushes less outside the centre, so the wheel comes home from any angle, whatever the
+		/// car. It belongs to the wheel, so it is kept with the device. The Auto button's run measures it
+		/// (<see cref="Engine.SpringCalibration.Result"/>): a geared or belt wheel needs much, a direct drive wheel little.
+		/// </remarks>
+		public int GetForceSpringFriction()
+		{
+			var friction = ForceSpringFriction;
+			return friction > 0 ? friction : DefaultForceSpringFriction;
+		}
+
+		/// <summary>Sets the wheel's friction, keeping <see cref="DefaultForceSpringFriction"/> as nought.</summary>
+		/// <remarks>
+		/// Nought, the default, is left out of x360ce.UserDevices.xml, of what is sent to the web service and of the
+		/// device's checksum, so a device whose friction was never changed stays as it was stored before the column existed.
+		/// </remarks>
+		/// <param name="percent">The friction, 1 to 100.</param>
+		public void SetForceSpringFriction(int percent)
+		{
+			var friction = percent == DefaultForceSpringFriction ? 0 : percent;
+			if (ForceSpringFriction != friction)
+				ForceSpringFriction = friction;
+		}
+
+		/// <summary>Whether <see cref="ForceSpringFriction"/> is written: only when it is not the default, nought.</summary>
+		public bool ShouldSerializeForceSpringFriction()
+		{
+			return ForceSpringFriction != 0;
+		}
 
 		/// <summary>The car's speed in km/h from a live source, such as a game's telemetry, or null to use the Speed setting. Not stored.</summary>
 		/// <remarks>
@@ -331,6 +360,11 @@ namespace x360ce.Engine.Data
 
 		[XmlIgnore]
 		public bool? IsExclusiveMode;
+
+		/// <summary>Whether the engine left the wheel's own centering on when it last held the device exclusively. Set by the engine only.</summary>
+		/// <remarks>DirectInput takes a new setting only while the device is let go of, so a change is made by holding it again.</remarks>
+		[XmlIgnore]
+		public bool AutoCenter;
 
 		/// <summary>Reads of this device that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the engine rests the device until <see cref="DiReadRetryAt"/>.</remarks>

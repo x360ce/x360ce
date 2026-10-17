@@ -38,10 +38,10 @@ namespace JocysCom.ClassLibrary.Win32
 		/// If the function succeeds, the return value is a handle to the window that has the specified class name and window name.
 		/// If the function fails, the return value is NULL. To get extended error information, call GetLastError.
 		/// </returns>
-		[DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+		[DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern IntPtr FindWindow([In] string lpClassName, [In] string lpWindowName);
 
-		[DllImport("user32.dll", SetLastError = true)]
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern IntPtr FindWindowEx(IntPtr parentHwnd, IntPtr childAfterHwnd, string className, string windowText);
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// <param name="lpString">The buffer that will receive the text.</param>
 		/// <param name="nMaxCount">The maximum number of characters to copy to the buffer, including the null character.</param>
 		/// <returns>If the function succeeds, the return value is the length, in characters, of the copied string, not including the terminating null character.</returns>
-		[DllImport("user32.dll", SetLastError = true)]
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
 		/// <summary>

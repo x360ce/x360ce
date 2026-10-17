@@ -45,7 +45,7 @@ namespace x360ce.App.Controls
 		/// <summary>The car's speed from a live source, which replaces the Speed setting while it is not null.</summary>
 		int? speedOverride;
 
-		/// <summary>The wheel's friction Auto measured, in percent, drawn as the grey band; nought for none.</summary>
+		/// <summary>The wheel's friction, in percent, drawn as the grey band and added to the curve, as the engine adds it; nought for none.</summary>
 		int friction;
 
 		/// <summary>The steering axis now, 0 to <see cref="SpringCalibration.AxisMax"/>, or -1 while no wheel is read.</summary>
@@ -72,7 +72,7 @@ namespace x360ce.App.Controls
 		int RangeDegrees { get { return range > 0 ? range : ForceFeedbackState.DefaultRangeDegrees; } }
 
 		/// <summary>Sets the spring's settings the curve is drawn from. Draws it again only when one of them changed.</summary>
-		/// <param name="strength">The strongest force, in percent of the wheel's force.</param>
+		/// <param name="strength">The car's strongest force, at Peak, in percent of the wheel's force, added to the friction.</param>
 		/// <param name="centreDegrees">The angle of half the strength, at 100 km/h.</param>
 		/// <param name="peakDegrees">The angle of the strongest force, at 100 km/h, where nought is the stop.</param>
 		/// <param name="lighteningPercent">How much of the strongest force is left at the stop.</param>
@@ -98,7 +98,7 @@ namespace x360ce.App.Controls
 		/// <summary>Puts the wheel on the chart. Called on every refresh of the page; it allocates nothing unless what is shown changes.</summary>
 		/// <param name="position">The steering axis, 0 to <see cref="SpringCalibration.AxisMax"/>, or null while no wheel is read.</param>
 		/// <param name="speedOverride">The car's speed from a live source, or null to use the Speed setting.</param>
-		/// <param name="frictionPercent">The wheel's friction Auto measured, or nought.</param>
+		/// <param name="frictionPercent">The wheel's friction, or nought while not known.</param>
 		public void UpdateWheel(int? position, int? speedOverride, int frictionPercent)
 		{
 			if (speedOverride != this.speedOverride || frictionPercent != friction)
@@ -128,7 +128,7 @@ namespace x360ce.App.Controls
 		/// <summary>Writes the wheel's angle and force above the chart, when either changed.</summary>
 		void UpdateValues()
 		{
-			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed);
+			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed, strength == 0 ? 0 : friction);
 			var known = position >= 0;
 			var angle = known ? AngleOf(position) : int.MinValue;
 			var force = known ? curve.Force(position) : int.MinValue;
@@ -221,7 +221,7 @@ namespace x360ce.App.Controls
 		/// <summary>Draws the picture behind the wheel's dot: the friction band, the centre lines, which way the force pushes, and the red curve.</summary>
 		void DrawPicture(int w, int h)
 		{
-			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed);
+			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed, strength == 0 ? 0 : friction);
 			if (picture != null)
 				picture.Dispose();
 			// Opaque, so the notes are drawn as clear text: text drawn onto a picture with see-through pixels comes out smudged.

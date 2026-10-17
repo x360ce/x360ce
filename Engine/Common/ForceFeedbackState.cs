@@ -68,8 +68,6 @@ namespace x360ce.Engine
         Effect effectS;
         readonly ConstantForce springForce = new ConstantForce();
         string old_SpringEnable;
-        /// <summary>Whether the spring is wanted, or null before the setting has been read.</summary>
-        bool? springEnabled;
         string old_SpringStrength;
         string old_SpringCentre;
         string old_SpringPeak;
@@ -108,6 +106,32 @@ namespace x360ce.Engine
         string old_WheelRange;
         Joystick rangeDevice;
 
+        // The wheel's own centering, switched on its HID interface on the wheels that take it.
+
+        /// <summary>The HID interface of the wheel whose own centering this state switched, or null.</summary>
+        string centeringPath;
+        /// <summary>Whether the wheel's own centering is to be on, or null before it was decided.</summary>
+        bool? centeringOn;
+        /// <summary>True while the decision waits to be sent, at <see cref="centeringDueAt"/>.</summary>
+        bool centeringDue;
+        int centeringDueAt;
+
+        /// <summary>How long after an effect is made the wheel's own centering is switched.</summary>
+        /// <remarks>
+        /// The driver switches it off itself shortly after the first effect starts on a device held again, and a
+        /// report sent before that is lost. Measured on a G27: sent at once it was lost, sent 100 ms later it held.
+        /// </remarks>
+        public const int CenteringSettleMs = 250;
+
+        /// <summary>Sends the wheel's own centering once it is due. Called every poll: a flag and a clock compare until then.</summary>
+        public void UpdateCentering(int tickCount)
+        {
+            if (!centeringDue || tickCount - centeringDueAt < 0)
+                return;
+            centeringDue = false;
+            LogitechWheel.SetCentering(centeringPath, centeringOn == true);
+        }
+
         #region Force Feedback
 
         const int DI_FFNOMINALMAX = 10000;
@@ -123,6 +147,8 @@ namespace x360ce.Engine
         string old_LeftDirection;
         string old_RightDirection;
         string old_OveralStrength;
+        /// <summary>The Force feedback enabled switch the last update was made with. Off with the spring on, the game's vibration is nought.</summary>
+        string old_ForceEnable;
         // Speed sent by the game.
         short old_LeftMotorSpeed;
         short old_RightMotorSpeed;
@@ -144,6 +170,12 @@ namespace x360ce.Engine
             Dispose(ref effectR);
             Dispose(ref effectS);
             Dispose(ref effectD);
+            // The effects took the wheel's own centering away, so it is given back with them.
+            if (centeringPath != null)
+                LogitechWheel.SetCentering(centeringPath, true);
+            centeringPath = null;
+            centeringOn = null;
+            centeringDue = false;
         }
 
         static void Dispose(ref Effect effect)
@@ -163,6 +195,7 @@ namespace x360ce.Engine
 
         public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
 		{
+			Changed(ref old_ForceEnable, ps.ForceEnable);
 			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);
 			bool swapMotor = false;
 
@@ -224,10 +257,8 @@ namespace x360ce.Engine
 			// refusal is not new, even when it holds nothing.
 			if (effectL == null && effectR == null && effectS == null && effectD == null && motorsRefused == MotorEffects.None)
 				DisposeDeviceEffects(device);
-			Resume(effectL);
-			Resume(effectR);
-			Resume(effectS);
-			Resume(effectD);
+			// Each one resumed, so not short-circuited.
+			var restarted = Resume(effectL) | Resume(effectR) | Resume(effectS) | Resume(effectD);
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
@@ -487,12 +518,7 @@ namespace x360ce.Engine
                 springDamper = springStrength == 0 ? 0 : SpringDamper(ps.GetForceSpringDamping());
             }
             // Off means nothing of ours on the wheel, so whatever else centres it is left in charge: the
-            // effects come off, and the device is held again so that DirectInput's own autocenter, which
-            // can only be set while the device is let go of, follows the setting.
-            var wanted = ps.ForceSpringEnable == "1";
-            if (springEnabled.HasValue && springEnabled.Value != wanted)
-                ud.IsExclusiveMode = null;
-            springEnabled = wanted;
+            // spring's effects come off, and a wheel that takes the report gets its own centering back below.
             if (springStrength == 0)
                 DropSpring();
             // The actuator the spring sits on may have changed, here or in an update that threw, so the effect is made
@@ -511,6 +537,20 @@ namespace x360ce.Engine
                 rangeDevice = device;
                 if (range > 0 && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId))
                     LogitechWheel.SetRange(ud.HidDevicePath, range);
+            }
+            // The wheel switches its own centering off when an effect is made, or played again after the device was
+            // let go of, and keeps it off. It is switched on while this program's spring is off, so the wheel centres
+            // itself under a game's rumble, and off while the spring holds the centre, so the two do not pull together.
+            if (ud.DevVendorId != 0 && LogitechWheel.SupportsCentering(ud.DevVendorId, ud.DevProductId))
+            {
+                var centering = springStrength == 0;
+                if (centering != centeringOn || make != MotorEffects.None || restarted)
+                {
+                    centeringPath = ud.HidDevicePath;
+                    centeringOn = centering;
+                    centeringDueAt = Environment.TickCount + CenteringSettleMs;
+                    centeringDue = true;
+                }
             }
             interrupted = false;
             return true;
@@ -576,8 +616,9 @@ namespace x360ce.Engine
 
         /// <summary>How near the centre the spring asks nothing, as DirectInput counts the axis: a fifth of a percent of the travel.</summary>
         /// <remarks>
-        /// Small. The force just outside it is small too, so there is no edge for the wheel to chatter across; a wide band
-        /// was where a wheel came to rest short of the centre.
+        /// Small: a wide band was where a wheel came to rest short of the centre. Outside it the force, the friction too,
+        /// rises from the centre no steeper than <see cref="SpringStiffnessLimit"/> over <see cref="SpringRamp"/>, so the
+        /// wheel slows as it comes in rather than being thrown across the centre.
         /// </remarks>
         public const int SpringDeadBand = SpringCalibration.AxisMax / 500;
 
@@ -619,7 +660,8 @@ namespace x360ce.Engine
         /// <param name="calibration">The Auto button's run, or null.</param>
         /// <param name="nowMs">The time, for the calibration.</param>
         /// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
-        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride)
+        /// <param name="frictionPercent">The least force that turns the wheel, which the spring never falls below outside the centre (<see cref="UserDevice.ForceSpringFriction"/>).</param>
+        public void UpdateSpring(Joystick device, int position, SpringCalibration calibration, long nowMs, int? speedOverride, int frictionPercent)
         {
             int percent;
             int damper;
@@ -632,7 +674,9 @@ namespace x360ce.Engine
             }
             else
             {
-                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed);
+                // The friction is the spring's floor, so it plays only while the spring does.
+                Curve.Set(springStrength, springCentre, springPeak, springLightening, rangeDegrees, speedOverride ?? springSpeed,
+                    springStrength == 0 ? 0 : frictionPercent);
                 percent = Curve.Force(position);
                 damper = springDamper;
             }
@@ -780,13 +824,16 @@ namespace x360ce.Engine
         /// Every effect this state makes plays from the moment it is made, at nought when it is quiet,
         /// so one that is not playing was dropped.
         /// </remarks>
-        void Resume(Effect effect)
+        /// <returns>True when the effect had been dropped and was started again.</returns>
+        bool Resume(Effect effect)
         {
             if (effect == null || unsupported.Contains(effect))
-                return;
+                return false;
             effect.Download();
-            if (effect.Status != EffectStatus.Playing)
-                effect.Start(1);
+            if (effect.Status == EffectStatus.Playing)
+                return false;
+            effect.Start(1);
+            return true;
         }
 
         /// <summary>What the device refused to play, as a person would name it, or empty when it took everything asked of it.</summary>
@@ -863,6 +910,7 @@ namespace x360ce.Engine
         public bool Changed(PadSetting ps)
         {
             return
+            old_ForceEnable != ps.ForceEnable ||
             old_ForceType != ps.ForceType ||
             old_LeftPeriod != ps.LeftMotorPeriod ||
             old_RightPeriod != ps.RightMotorPeriod ||

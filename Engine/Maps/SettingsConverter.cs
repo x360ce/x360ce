@@ -120,7 +120,8 @@ namespace x360ce.Engine
 					type = n == "-" ? MapType.IPOV : MapType.POV;
 					break;
 				case SettingName.SType.POVButton:
-					type = n == "-" ? MapType.IPOVButton : MapType.DPOVButton;
+					// The native library reads a D-Pad button's number without its sign, so "d-3" is "d3".
+					type = MapType.DPOVButton;
 					break;
 				case SettingName.SType.ButtonMark:
 					type = n == "-" ? MapType.IButton : MapType.Button;
@@ -166,8 +167,6 @@ namespace x360ce.Engine
 					return string.Format("{0}{1}", SettingName.SType.POV, -index);
 				case MapType.DPOVButton:
 					return string.Format("{0}{1}", SettingName.SType.POVButton, index);
-				case MapType.IPOVButton:
-					return string.Format("{0}{1}", SettingName.SType.POVButton, -index);
 				default:
 					return "";
 			}

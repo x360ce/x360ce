@@ -44,7 +44,10 @@ namespace x360ce.App.DInput
 				if (ud.JoState == null)
 				{
 					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
-					if (ud.InputSourceType != (int)InputSourceType.RawInput || ud.RawInputMissing)
+					// A plugin device has none either. It is converted once its plugin has given it a state.
+					var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
+					var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
+					if (!rawInput && !plugin)
 						continue;
 				}
 				// If device is offline then continue.
@@ -202,21 +205,13 @@ namespace x360ce.App.DInput
 								// Target: Thumb.
 								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftThumbX)
-									gp.LeftThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbX = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
 								else if (map.Target == TargetType.LeftThumbY)
-									gp.LeftThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbY = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbX)
-									gp.RightThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbX = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbY)
-									gp.RightThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbY = map.AxisValue.HasValue ? map.AxisValue.Value : short.MaxValue;
 							}
 						}
 					}

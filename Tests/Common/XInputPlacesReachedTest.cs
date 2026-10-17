@@ -85,7 +85,17 @@ namespace x360ce.Tests
 				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown }, new[] { 1 }));
 			Assert.AreEqual("Virtual 2, Virtual 1 (waiting)",
 				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown, 1 }, new[] { 1 }));
-			Assert.AreEqual(XInputPlaces.Waiting(3), "Virtual 3 (waiting)");
+			Assert.AreEqual("Virtual 3 (waiting)", XInputPlaces.Waiting(3));
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("A tab whose controller is made, in a place that is not known, says so rather than waiting or naming a place")]
+		public void A_made_controller_in_a_place_not_known_says_so()
+		{
+			Assert.AreEqual("Virtual (place not known)",
+				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown }, null, true));
+			Assert.AreEqual("Virtual 1, Virtual (place not known), Virtual 3 (waiting)",
+				XInputPlaces.Describe(XInputPlaces.Unknown, false, false, new[] { XInputPlaces.Unknown, 0, XInputPlaces.Unknown }, new[] { 3 }, true));
 		}
 
 		[TestMethod, TestCategory("devices")]

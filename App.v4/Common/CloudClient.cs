@@ -54,11 +54,25 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>Why nothing may be sent to the cloud now, or null when it may.</summary>
+		/// <remarks>Enable Internet Features switches every call off; Save Settings to Cloud is the one beneath it.</remarks>
+		public static string OffReason
+		{
+			get
+			{
+				var o = SettingsManager.Options;
+				if (!o.InternetFeatures)
+					return "The cloud is off: tick Enable Internet Features on the Options tab's Internet page.";
+				if (!o.InternetAutoSave)
+					return "The cloud is off: tick Save Settings to Cloud on the Options tab's Internet page.";
+				return null;
+			}
+		}
+
+		/// <summary>Sends a message to the cloud, unless <see cref="OffReason"/> says it may not be sent.</summary>
 		public void Add<T>(CloudAction action, T[] items, Guid[] checksums = null)
 		{
-			var o = SettingsManager.Options;
-			var allow = o.InternetAutoSave;
-			if (!allow)
+			if (OffReason != null)
 				return;
 			var message = new CloudMessage(action);
 			// Try to assign list.

@@ -12,7 +12,9 @@ namespace x360ce.Tests
 	/// <remarks>
 	/// The places reader calls XInputGetState for the four places in order. Here that call waits as the test sets and
 	/// then says whether each place is taken, so a test can make XInput silent, slow, or show a controller in any place,
-	/// without a controller or a driver on the machine. Used with a bus client that has nothing native behind it.
+	/// without a controller or a driver on the machine. The product number of each place is the one the test sets in
+	/// <see cref="Products"/>, so the controllers on the machine running the test say nothing. Used with a bus client that
+	/// has nothing native behind it.
 	/// </remarks>
 	internal static class StandInXInputFixtures
 	{
@@ -39,6 +41,32 @@ namespace x360ce.Tests
 
 		/// <summary>Whether the stand-in XInput says nothing while the stand-in controller is on the bus.</summary>
 		public static volatile bool SilentWhilePlugged;
+
+		/// <summary>The product number the stand-in XInput reports for each place; 0 reports none, as a library that cannot say.</summary>
+		public static readonly ushort[] Products = new ushort[4];
+
+		/// <summary>Stands in for XInputGetCapabilitiesEx: the product number set for the place, or no answer.</summary>
+		public static int AnswerProduct(int place, out ushort product)
+		{
+			product = place >= 0 && place < Products.Length ? Products[place] : (ushort)0;
+			return product != 0 ? 0 : NotConnected;
+		}
+
+		/// <summary>A delegate of the library's capabilities type that answers through <see cref="AnswerProduct"/>.</summary>
+		static Delegate StandInCapabilities(Type type)
+		{
+			// (one, place, flags, out capabilities): the product number goes into the capabilities.
+			var parameters = type.GetMethod("Invoke").GetParameters().Select(x => Expression.Parameter(x.ParameterType)).ToArray();
+			var capabilities = parameters[3];
+			var product = Expression.Variable(typeof(ushort));
+			var answer = Expression.Variable(typeof(int));
+			var body = Expression.Block(new[] { product, answer },
+				Expression.Assign(capabilities, Expression.Default(capabilities.Type)),
+				Expression.Assign(answer, Expression.Call(typeof(StandInXInputFixtures).GetMethod(nameof(AnswerProduct)), parameters[1], product)),
+				Expression.Assign(Expression.Field(capabilities, "ProductId"), product),
+				answer);
+			return Expression.Lambda(type, body, parameters).Compile();
+		}
 
 		/// <summary>Stands in for XInputGetState: waits as the test sets, then says whether the place is taken.</summary>
 		public static int Answer(int place)
@@ -77,13 +105,18 @@ namespace x360ce.Tests
 			var parameters = field.FieldType.GetMethod("Invoke").GetParameters().Select(x => Expression.Parameter(x.ParameterType)).ToArray();
 			var standIn = Expression.Lambda(field.FieldType,
 				Expression.Call(typeof(StandInXInputFixtures).GetMethod(nameof(Answer)), parameters[0]), parameters).Compile();
+			var capabilitiesField = typeof(SystemXInput).GetField("_GetCapabilitiesEx", BindingFlags.NonPublic | BindingFlags.Static);
+			var capabilities = StandInCapabilities(capabilitiesField.FieldType);
 			var loadLock = XInputPlacesNotAnsweringTest.LoadLock();
 			object loaded;
+			object loadedCapabilities;
 			// The reader holds the load lock for each read, so the library is never swapped under one.
 			lock (loadLock)
 			{
 				loaded = field.GetValue(null);
 				field.SetValue(null, standIn);
+				loadedCapabilities = capabilitiesField.GetValue(null);
+				capabilitiesField.SetValue(null, capabilities);
 			}
 			try
 			{
@@ -97,9 +130,14 @@ namespace x360ce.Tests
 				Volatile.Write(ref GivenTo, GivenPlace);
 				SilentWhilePlugged = false;
 				Plugged = null;
+				Array.Clear(Products, 0, Products.Length);
 				lock (loadLock)
+				{
 					if (ReferenceEquals(field.GetValue(null), standIn))
 						field.SetValue(null, loaded);
+					if (ReferenceEquals(capabilitiesField.GetValue(null), capabilities))
+						capabilitiesField.SetValue(null, loadedCapabilities);
+				}
 			}
 			Assert.IsNotNull(DInputHelper.OccupiedPlaces(), "XInput does not answer after the test.");
 		}

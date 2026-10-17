@@ -2,6 +2,8 @@
 // @area: options   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using x360ce.App;
+using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -35,6 +37,40 @@ namespace x360ce.Tests
 			StringAssert.Contains(off, "Enable XInput");
 			var on = MainForm.ControllerStateHint(1, true, false, false, true, -1, true);
 			Assert.IsFalse(on.Contains("switched off"), "With the switch on, a missing controller is a fault and must be reported as one.");
+		}
+
+		[TestMethod, TestCategory("options")]
+		[Description("A tab with no emulated controller by choice names the switch that is off, as the engine decides it: the master switch, the game's emulation or the tab's Enable")]
+		public void Tab_hint_names_the_switch_that_is_off()
+		{
+			var o = SettingsManager.Options;
+			var master = o.XInputEnabled;
+			try
+			{
+				var game = new UserGame { FileName = "tab-off.exe", EmulationType = (int)EmulationType.Virtual, EnableMask = (int)MapToMask.Controller1 };
+				o.XInputEnabled = true;
+				Assert.IsNull(MainForm.EmulationOffReason(game, 1), "A switched-on tab is said to be off.");
+				var tabOff = MainForm.EmulationOffReason(game, 2);
+				StringAssert.Contains(tabOff, "Enable", "A tab switched off for the game is blamed on something else.");
+				StringAssert.Contains(MainForm.ControllerStateHint(2, true, false, false, true, -1, false, offReason: tabOff), "Press Enable");
+				game.EmulationType = (int)EmulationType.Library;
+				StringAssert.Contains(MainForm.EmulationOffReason(game, 1), "Library emulation");
+				o.XInputEnabled = false;
+				StringAssert.Contains(MainForm.EmulationOffReason(game, 1), "Enable XInput");
+			}
+			finally
+			{
+				o.XInputEnabled = master;
+			}
+		}
+
+		[TestMethod, TestCategory("options")]
+		[Description("A tab whose mapped devices are all unticked says nothing is read, not that nothing is mapped")]
+		public void Tab_hint_says_when_every_device_is_unticked()
+		{
+			StringAssert.Contains(MainForm.ControllerStateHint(1, false, false, false, true, unticked: true), "unticked");
+			StringAssert.Contains(MainForm.ControllerStateHint(1, false, true, true, true, unticked: true), "unticked");
+			StringAssert.Contains(MainForm.ControllerStateHint(1, false, false, false, true), "No mapped device");
 		}
 	}
 }

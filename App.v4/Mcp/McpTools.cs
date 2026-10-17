@@ -19,7 +19,7 @@ namespace x360ce.App.Mcp
 	public static class McpTools
 	{
 		/// <summary>
-		/// Elements whose press or setting installs or removes a driver, turns on debug mode, removes
+		/// Elements whose press or setting installs or removes a driver, removes
 		/// controllers left behind by earlier runs, or sends the controller tabs' Add and Remove
 		/// buttons through HID Guardian, which elevates. Below Administer these may not be touched.
 		/// Field names as in the tree, so a bar entry is named the same way a control is. The
@@ -33,7 +33,6 @@ namespace x360ce.App.Mcp
 			"ViGEmBusInstallButton", "ViGEmBusUninstallButton",
 			"HidGuardianInstallButton", "HidGuardianUninstallButton",
 			"HidGuardianConfigureAutomaticallyCheckBox",
-			"DebugModeCheckBox",
 			"CleanupVirtualPadsButton",
 		}.Concat(AiAccessModel.AdminControls).ToArray();
 
@@ -57,6 +56,7 @@ namespace x360ce.App.Mcp
 		public static readonly Dictionary<string, string> SkillReferences = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			{ "references/help-v4.md", AppHelper.HelpV4Resource },
+			{ "references/plugins.md", AppHelper.HelpPluginsResource },
 			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
 			{ "references/ui-tree-v4.json", "Documents.x360ce.ui-tree-v4.json" },
 			{ "references/help-v3.md", AppHelper.HelpV3Resource },
@@ -90,7 +90,7 @@ namespace x360ce.App.Mcp
 			McpLog.Folder = EngineHelper.AppDataPath;
 			McpLog.FileName = "x360ce.AiAccess.log";
 			McpCatalog.Sources = new[] { typeof(McpUiTools), typeof(McpTools) };
-			McpCatalog.Level = () => SettingsManager.Options.AiAccess;
+			McpCatalog.Level = () => SettingsManager.AiOptions.AiAccess;
 			McpUiTools.MainWindow = () => MainForm.Current;
 			McpUiTools.TrayMenu = () => MainForm.Current == null ? null : MainForm.Current.TrayMenu;
 			McpUiTools.Restore = window => ((MainForm)window).RestoreFromTray(true);
@@ -103,7 +103,11 @@ namespace x360ce.App.Mcp
 			AiSkill.Name = "x360ce";
 			AiSkill.Resource = "Documents.x360ce.SKILL.md";
 			AiSkill.References = SkillReferences;
-			AiSkill.ReadResource = AppHelper.ReadHelp;
+			// Embedded documents, and each plugin's, made from what the plugin manager knows (Plugins.PluginDocs).
+			AiSkill.ReadResource = Plugins.PluginDocs.Read;
+			// The plugins inside this program, so the skill is the same wherever it is written; the plugins folder's own
+			// are added once the program loads them.
+			Plugins.PluginDocs.UpdateReferences(Plugins.PluginDocs.EmbeddedManager());
 			AiSkill.ReferenceSuffix = "-v4";
 			AiSkill.OwnTree = "references/ui-tree-v4";
 			AiSkill.HelpPrefix = "references/help-";
@@ -113,6 +117,8 @@ namespace x360ce.App.Mcp
 				+ "then round the corners of its square range.";
 			AiAccessModel.PromptRequest = "Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.";
 			AiAccessModel.PromptFirstTool = "devices_list";
+			McpTunnel.Name = "x360ce";
+			McpTunnel.Folder = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "X360CE", "TunnelClient");
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
@@ -131,6 +137,36 @@ namespace x360ce.App.Mcp
 					: SettingsManager.GetDeviceTabs(game.FileName, d.InstanceGuid).Select(x => (int)x).ToArray() },
 				{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
 				{ "Source", d.InputSource.ToString() },
+			}).ToArray();
+		}
+
+		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, and devices_list and device_map work on it as on any device. How to write a plugin: x360ce.exe -Skill=plugins.")]
+		public static object PluginsList()
+		{
+			var manager = Plugins.PluginManager.Current;
+			if (manager == null)
+				return new object[0];
+			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			return manager.Files.Select(f => (object)new Dictionary<string, object>
+			{
+				{ "Name", f.Name },
+				{ "State", f.State.ToString() },
+				{ "Reason", f.Reason },
+				{ "Signer", f.Embedded ? "part of x360ce" : f.Signer },
+				{ "Source", f.Embedded ? "Embedded" : f.Source },
+				{ "Devices", f.DeviceTypes.Select(t => (object)new Dictionary<string, object>
+					{
+						{ "Name", t.Name },
+						{ "ProductGuid", t.ProductGuid.ToString() },
+						{ "Axes", t.AxisCount },
+						{ "Sliders", t.SliderCount },
+						{ "Povs", t.PovCount },
+						{ "Buttons", t.ButtonCount },
+						{ "SwitchedOff", t.FaultReason },
+						{ "Added", devices.Where(d => d.InputSourceType == (int)InputSourceType.Plugin && d.ProductGuid == t.ProductGuid)
+							.Select(d => d.InstanceGuid.ToString()).ToArray() },
+					}).ToArray() },
+				{ "Help", Plugins.PluginDocs.Markdown(f) },
 			}).ToArray();
 		}
 

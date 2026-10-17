@@ -2,7 +2,7 @@ using JocysCom.ClassLibrary.Controls.IssuesControl;
 
 namespace x360ce.App.Issues
 {
-	/// <summary>Access is switched on and something keeps it from working: the port is out of range, another program holds it, or the options file the switches read could not be written.</summary>
+	/// <summary>Access is switched on and something keeps it from working: the port is out of range, another program holds it, or the AI settings file the switches read could not be written.</summary>
 	public class AiAccessIssue : IssueItem
 	{
 		public AiAccessIssue() : base()
@@ -19,7 +19,7 @@ namespace x360ce.App.Issues
 			// start is not reported as a fault. The sentence carries its own remedy, and the one
 			// remedy the program can apply itself gets the Fix button.
 			var error = JocysCom.ClassLibrary.Mcp.McpListener.LastError;
-			if (SettingsManager.Options.AiAccessEnabled && error != null)
+			if (SettingsManager.AiOptions.AiAccessEnabled && error != null)
 			{
 				SetSeverity(IssueSeverity.Important, JocysCom.ClassLibrary.Mcp.McpListener.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
 				return;
@@ -31,7 +31,7 @@ namespace x360ce.App.Issues
 		{
 			if (FixType != 1)
 				return;
-			Program.RunElevated(AdminCommand.ReserveAiAccessUrl, SettingsManager.Options.AiAccessPort.ToString());
+			Program.RunElevated(AdminCommand.ReserveAiAccessUrl, SettingsManager.AiOptions.AiAccessPort.ToString());
 			// Windows now allows the address, so the door is opened again the same way the option does it.
 			JocysCom.ClassLibrary.Controls.ControlsHelper.Invoke(Global.ApplyAiAccess);
 		}

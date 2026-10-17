@@ -28,14 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
+			this.TestingGroupBox = new System.Windows.Forms.GroupBox();
 			this.ShowSettingsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowProgramsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
-			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
-			this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
-			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
 			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
 			this.StartWithWindowsStateComboBox = new System.Windows.Forms.ComboBox();
 			this.ThemeLabel = new System.Windows.Forms.Label();
@@ -54,9 +51,6 @@
 			this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.ConfigurationGroupBox = new System.Windows.Forms.GroupBox();
 			this.AutoDetectForegroundWindowCheckBox = new System.Windows.Forms.CheckBox();
-			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
-			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
-			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
 			this.ReadEveryChangeCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
@@ -113,6 +107,8 @@
 			this.UpdateTabPage = new System.Windows.Forms.TabPage();
 			this.AiTabPage = new System.Windows.Forms.TabPage();
 			this.AiControl = new JocysCom.ClassLibrary.Mcp.AiAccessUserControl();
+			this.PluginsTabPage = new System.Windows.Forms.TabPage();
+			this.PluginsPanel = new x360ce.App.Controls.OptionsPluginsUserControl();
 			this.UpdatePanel = new x360ce.App.Controls.OptionsUpdateUserControl();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
@@ -127,7 +123,7 @@
 			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
-			this.TestingAndLoggingGroupBox.SuspendLayout();
+			this.TestingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
 			this.GameScanLocationsTabPage.SuspendLayout();
@@ -147,6 +143,7 @@
 			this.SettingsTabPage.SuspendLayout();
 			this.UpdateTabPage.SuspendLayout();
 			this.AiTabPage.SuspendLayout();
+			this.PluginsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
@@ -158,21 +155,18 @@
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// TestingAndLoggingGroupBox
+			// TestingGroupBox
 			// 
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowSettingsTabCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowDevicesTabCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsTabCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 141);
-			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 117);
-			this.TestingAndLoggingGroupBox.TabIndex = 30;
-			this.TestingAndLoggingGroupBox.TabStop = false;
-			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
+			this.TestingGroupBox.Controls.Add(this.ShowSettingsTabCheckBox);
+			this.TestingGroupBox.Controls.Add(this.ShowDevicesTabCheckBox);
+			this.TestingGroupBox.Controls.Add(this.ShowProgramsTabCheckBox);
+			this.TestingGroupBox.Controls.Add(this.XInputEnableCheckBox);
+			this.TestingGroupBox.Location = new System.Drawing.Point(3, 141);
+			this.TestingGroupBox.Name = "TestingGroupBox";
+			this.TestingGroupBox.Size = new System.Drawing.Size(254, 94);
+			this.TestingGroupBox.TabIndex = 30;
+			this.TestingGroupBox.TabStop = false;
+			this.TestingGroupBox.Text = "Testing";
 			// 
 			// ShowSettingsTabCheckBox
 			// 
@@ -218,37 +212,7 @@
 			this.XInputEnableCheckBox.TabIndex = 0;
 			this.XInputEnableCheckBox.Text = "Enable XInput";
 			this.XInputEnableCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// ConsoleCheckBox
-			// 
-			this.ConsoleCheckBox.AutoSize = true;
-			this.ConsoleCheckBox.Location = new System.Drawing.Point(6, 71);
-			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
-			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
-			this.ConsoleCheckBox.TabIndex = 0;
-			this.ConsoleCheckBox.Text = "Enable Console";
-			this.ConsoleCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// DebugModeCheckBox
-			// 
-			this.DebugModeCheckBox.AutoSize = true;
-			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 94);
-			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
-			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
-			this.DebugModeCheckBox.TabIndex = 0;
-			this.DebugModeCheckBox.Text = "Debug Mode";
-			this.DebugModeCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// EnableLoggingCheckBox
-			// 
-			this.EnableLoggingCheckBox.AutoSize = true;
-			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 48);
-			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
-			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
-			this.EnableLoggingCheckBox.TabIndex = 0;
-			this.EnableLoggingCheckBox.Text = "Enable Logging";
-			this.EnableLoggingCheckBox.UseVisualStyleBackColor = true;
-			// 
+			//
 			// OperationGroupBox
 			// 
 			this.OperationGroupBox.Controls.Add(this.ThemeComboBox);
@@ -419,12 +383,9 @@
 			// ConfigurationGroupBox
 			// 
 			this.ConfigurationGroupBox.Controls.Add(this.AutoDetectForegroundWindowCheckBox);
-			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
-			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
-			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(263, 313);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-			this.ConfigurationGroupBox.Size = new System.Drawing.Size(277, 71);
+			this.ConfigurationGroupBox.Size = new System.Drawing.Size(277, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
 			this.ConfigurationGroupBox.TabStop = false;
 			this.ConfigurationGroupBox.Text = "Configuration";
@@ -432,46 +393,19 @@
 			// AutoDetectForegroundWindowCheckBox
 			// 
 			this.AutoDetectForegroundWindowCheckBox.AutoSize = true;
-			this.AutoDetectForegroundWindowCheckBox.Location = new System.Drawing.Point(6, 45);
+			this.AutoDetectForegroundWindowCheckBox.Location = new System.Drawing.Point(6, 21);
 			this.AutoDetectForegroundWindowCheckBox.Name = "AutoDetectForegroundWindowCheckBox";
 			this.AutoDetectForegroundWindowCheckBox.Size = new System.Drawing.Size(244, 17);
 			this.AutoDetectForegroundWindowCheckBox.TabIndex = 0;
 			this.AutoDetectForegroundWindowCheckBox.Text = "Auto switch configuration when game focused";
 			this.AutoDetectForegroundWindowCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// IncludeProductsCheckBox
-			// 
-			this.IncludeProductsCheckBox.AutoSize = true;
-			this.IncludeProductsCheckBox.Location = new System.Drawing.Point(124, 21);
-			this.IncludeProductsCheckBox.Name = "IncludeProductsCheckBox";
-			this.IncludeProductsCheckBox.Size = new System.Drawing.Size(112, 17);
-			this.IncludeProductsCheckBox.TabIndex = 0;
-			this.IncludeProductsCheckBox.Text = "Include [Products]";
-			this.IncludeProductsCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// ConfigurationVersionLabel
-			// 
-			this.ConfigurationVersionLabel.AutoSize = true;
-			this.ConfigurationVersionLabel.Location = new System.Drawing.Point(4, 22);
-			this.ConfigurationVersionLabel.Name = "ConfigurationVersionLabel";
-			this.ConfigurationVersionLabel.Size = new System.Drawing.Size(45, 13);
-			this.ConfigurationVersionLabel.TabIndex = 0;
-			this.ConfigurationVersionLabel.Text = "Version:";
-			// 
-			// ConfigurationVersionTextBox
-			// 
-			this.ConfigurationVersionTextBox.Enabled = false;
-			this.ConfigurationVersionTextBox.Location = new System.Drawing.Point(55, 19);
-			this.ConfigurationVersionTextBox.Name = "ConfigurationVersionTextBox";
-			this.ConfigurationVersionTextBox.Size = new System.Drawing.Size(51, 20);
-			this.ConfigurationVersionTextBox.TabIndex = 0;
-			// 
+			//
 			// DirectInputDevicesGroupBox
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ReadEveryChangeCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 264);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 241);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 91);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -777,6 +711,7 @@
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Controls.Add(this.UpdateTabPage);
 			this.MainTabControl.Controls.Add(this.AiTabPage);
+			this.MainTabControl.Controls.Add(this.PluginsTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Name = "MainTabControl";
@@ -799,7 +734,7 @@
 			// 
 			this.GeneralPanel.Controls.Add(this.OperationGroupBox);
 			this.GeneralPanel.Controls.Add(this.DeveloperToolsButton);
-			this.GeneralPanel.Controls.Add(this.TestingAndLoggingGroupBox);
+			this.GeneralPanel.Controls.Add(this.TestingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DevelopingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.GeneralPanel.Controls.Add(this.GuideButtonGroupBox);
@@ -850,7 +785,7 @@
 			// 
 			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
 			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
-			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 361);
+			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 338);
 			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
 			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.GuideButtonGroupBox.TabIndex = 31;
@@ -879,7 +814,7 @@
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationOverlayCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.DeviceChangeOverlayCheckBox);
-			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 414);
+			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 391);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
 			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 93);
 			this.HotkeysGroupBox.TabIndex = 32;
@@ -982,7 +917,26 @@
 			this.AiControl.Name = "AiControl";
 			this.AiControl.Size = new System.Drawing.Size(644, 415);
 			this.AiControl.TabIndex = 0;
-			// 
+			//
+			// PluginsTabPage
+			//
+			this.PluginsTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.PluginsTabPage.Controls.Add(this.PluginsPanel);
+			this.PluginsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.PluginsTabPage.Name = "PluginsTabPage";
+			this.PluginsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.PluginsTabPage.Size = new System.Drawing.Size(650, 421);
+			this.PluginsTabPage.TabIndex = 8;
+			this.PluginsTabPage.Text = "Plugins";
+			//
+			// PluginsPanel
+			//
+			this.PluginsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PluginsPanel.Location = new System.Drawing.Point(3, 3);
+			this.PluginsPanel.Name = "PluginsPanel";
+			this.PluginsPanel.Size = new System.Drawing.Size(644, 415);
+			this.PluginsPanel.TabIndex = 0;
+			//
 			// UpdatePanel
 			// 
 			this.UpdatePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1252,8 +1206,8 @@
 			this.Controls.Add(this.MainTabControl);
 			this.Name = "OptionsUserControl";
 			this.Size = new System.Drawing.Size(658, 447);
-			this.TestingAndLoggingGroupBox.ResumeLayout(false);
-			this.TestingAndLoggingGroupBox.PerformLayout();
+			this.TestingGroupBox.ResumeLayout(false);
+			this.TestingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
 			this.OperationGroupBox.PerformLayout();
 			this.ProgramScanLocationsTabControl.ResumeLayout(false);
@@ -1283,6 +1237,7 @@
 			this.SettingsTabPage.ResumeLayout(false);
 			this.UpdateTabPage.ResumeLayout(false);
 			this.AiTabPage.ResumeLayout(false);
+			this.PluginsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.HidHideButtonsPanel.ResumeLayout(false);
@@ -1303,11 +1258,8 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox TestingAndLoggingGroupBox;
+        private System.Windows.Forms.GroupBox TestingGroupBox;
         private System.Windows.Forms.CheckBox XInputEnableCheckBox;
-        private System.Windows.Forms.CheckBox ConsoleCheckBox;
-        private System.Windows.Forms.CheckBox DebugModeCheckBox;
-        private System.Windows.Forms.CheckBox EnableLoggingCheckBox;
         private System.Windows.Forms.GroupBox OperationGroupBox;
         public System.Windows.Forms.CheckBox AllowOnlyOneCopyCheckBox;
         private System.Windows.Forms.TabControl ProgramScanLocationsTabControl;
@@ -1315,8 +1267,6 @@
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
         public System.Windows.Forms.ListBox GameScanLocationsListBox;
         private System.Windows.Forms.GroupBox ConfigurationGroupBox;
-        private System.Windows.Forms.Label ConfigurationVersionLabel;
-        private System.Windows.Forms.TextBox ConfigurationVersionTextBox;
         private System.Windows.Forms.ToolStrip LocationsToolStrip;
         private System.Windows.Forms.ToolStripButton RefreshLocationsButton;
         private System.Windows.Forms.ToolStripButton AddLocationButton;
@@ -1328,7 +1278,6 @@
 		private System.Windows.Forms.CheckBox ShowProgramsTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowSettingsTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowDevicesTabCheckBox;
-		public System.Windows.Forms.CheckBox IncludeProductsCheckBox;
 		private System.Windows.Forms.GroupBox VirtualDeviceGroupBox;
 		private System.Windows.Forms.Label PollingRateLabel;
 		private System.Windows.Forms.ComboBox PollingRateComboBox;
@@ -1363,6 +1312,8 @@
 		private System.Windows.Forms.TabPage UpdateTabPage;
 		private System.Windows.Forms.TabPage AiTabPage;
 		private JocysCom.ClassLibrary.Mcp.AiAccessUserControl AiControl;
+		private System.Windows.Forms.TabPage PluginsTabPage;
+		private x360ce.App.Controls.OptionsPluginsUserControl PluginsPanel;
 		public OptionsUpdateUserControl UpdatePanel;
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;

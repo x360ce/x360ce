@@ -166,6 +166,12 @@ namespace x360ce.App.DInput
 					ReadRawInputState(ud, o.ReadEveryChange);
 					continue;
 				}
+				// A plugin device is asked for its state by its plugin, and has nothing else to hold or poll.
+				if (ud.InputSourceType == (int)InputSourceType.Plugin)
+				{
+					ReadPluginState(ud);
+					continue;
+				}
 				JoystickState state = null;
 				DirectInputChanges kept = null;
 				if (allow)
@@ -206,14 +212,22 @@ namespace x360ce.App.DInput
 							{
 								mapped = routing.TryGetForce(ud.InstanceGuid, out route);
 								ps = mapped ? route.PadSetting : null;
-								// Forced when a tab's Force feedback enabled switch is on, as the routing was built.
-								forcingFromHere = mapped && route.ForcePads.Length > 0;
+								// Forced when a tab's Force feedback enabled switch is on, or the centering spring is ticked, as the
+								// routing was built.
+								forcingFromHere = mapped && route.Drives;
 							}
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
 							// Virtual emulation holds only a device on a switched-on tab: one whose tabs are all switched
 							// off is read for its tabs' own pages, and left for other programs to use.
 							var exclusiveRequired = hasForceFeedback
 								&& ((isVirtual && mapped) || forcingFromHere || ud.FFState != null || ud.DeviceEffects == null);
+							// Holding a wheel this way turns its own centering off. It is kept on unless this program's spring
+							// holds the centre, so the wheel's own centering, or the wheel maker's software, stays in charge
+							// whenever ours is off. A device held with the other setting is held again, because the setting can
+							// only be changed while the device is let go of.
+							var autoCenter = AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring);
+							if (ud.IsExclusiveMode == true && autoCenter.HasValue && ud.AutoCenter != autoCenter.Value)
+								ud.IsExclusiveMode = null;
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{
@@ -224,12 +238,13 @@ namespace x360ce.App.DInput
 								directInput.KeepChanges();
 								step = "SetCooperativeLevel (Exclusive)";
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-								// Holding a wheel this way turns its own centering off. It is kept on unless this
-								// program's spring is to hold the centre, so the wheel's own centering, or the wheel
-								// maker's software, stays in charge whenever ours is off. Set here because it can
-								// only be set while the device is let go of.
-								step = "AutoCenter";
-								SetAutoCenter(device, ps == null || ps.ForceSpringEnable != "1");
+								// Set here because it can only be set while the device is let go of.
+								if (autoCenter.HasValue)
+								{
+									step = "AutoCenter";
+									SetAutoCenter(device, autoCenter.Value);
+									ud.AutoCenter = autoCenter.Value;
+								}
 								step = "Acquire (Exclusive)";
 								device.Acquire();
 								ud.IsExclusiveMode = true;
@@ -335,16 +350,17 @@ namespace x360ce.App.DInput
 									// If device is mapped to controller then...
 									if (mapped)
 									{
-										// If force is enabled then... On one tab or several, whose settings are then
-										// always stored, so ps is set.
-										if (route.ForcePads.Length > 0)
+										// If force is enabled, on one tab or several, or the centering spring is ticked then...
+										// The settings are then stored, so ps is set.
+										if (route.Drives)
 										{
 											if (ud.FFState == null)
 												ud.FFState = new Engine.ForceFeedbackState();
 											// The force of every tab the device's force comes from: the strongest of each
 											// motor, a tab whose game said nothing new this pass counting with what it asked
-											// for last. The effects are always made with the same settings, ps. A force that
-											// failed is sent again once it is due, as to a device held again.
+											// for last. No tab for a spring alone, so its motors are at nought. The effects
+											// are always made with the same settings, ps. A force that failed is sent again
+											// once it is due, as to a device held again.
 											byte large, small;
 											var forceArrived = MergeForces(route.ForcePads, arrived, _lastLargeMotor, _lastSmallMotor, out large, out small);
 											if (forceArrived || held || ud.ForceFailures > 0 || ud.FFState.Changed(ps))
@@ -360,15 +376,18 @@ namespace x360ce.App.DInput
 												ud.FFState.SetDeviceForces(ud, device, ps, v);
 											}
 										}
-										// Force feedback off on every switched-on tab, or no stored settings for any of them.
-										// If force state was created then...
+										// Force feedback and the spring off on every switched-on tab, or no stored settings for
+										// any of them. If force state was created then...
 										else if (ud.FFState != null)
 										{
 											// Stop device forces.
 											step = "ud.FFState.StopDeviceForces()";
 											ud.FFState.StopDeviceForces();
 											ud.FFState = null;
-											EndSpringRun(ud, SpringStopForceOff);
+											EndSpringRun(ud, SpringStopSpringOff);
+											// Still held, and a wheel keeps its own centering off after an effect until it is held
+											// again, so it is held again and centres itself.
+											ud.IsExclusiveMode = null;
 										}
 									}
 									// Every tab it is on switched off: what was playing is stopped, or the effect, which
@@ -381,6 +400,9 @@ namespace x360ce.App.DInput
 										ud.FFState = null;
 										EndSpringRun(ud, SpringStopTabOff);
 									}
+									// The wheel's own centering, switched once it is due after effects were made.
+									if (ud.FFState != null)
+										ud.FFState.UpdateCentering(Environment.TickCount);
 									// The centering spring follows the wheel every poll, and the Auto button's run
 									// drives the wheel through the same effect. A device with no force state, or
 									// no actuator on an axis, pays nothing here. The clock is read only while a run is
@@ -391,7 +413,7 @@ namespace x360ce.App.DInput
 										var run = ud.SpringCalibration;
 										step = "ud.FFState.UpdateSpring(device)";
 										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
-											ud.ForceSpringSpeedOverride);
+											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
 									}
 									// Nothing failed, so a run of failures is over and the next fault is news.
 									ud.ForceFailures = 0;
@@ -433,23 +455,6 @@ namespace x360ce.App.DInput
 							}
 							ud.IsExclusiveMode = null;
 						}
-					}
-					// If this is test device then...
-					else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
-					{
-						// Fill device objects.
-						if (ud.DeviceObjects == null)
-						{
-							var dos = TestDeviceHelper.GetDeviceObjects();
-							ud.DeviceObjects = dos;
-							// Update masks.
-							ud.DiAxeMask = 0x1 | 0x2 | 0x4 | 0x8;
-							ud.DiSliderMask = 0;
-						}
-						if (ud.DeviceEffects == null)
-							ud.DeviceEffects = new DeviceEffectItem[0];
-						state = NextJoState(ud);
-						TestDeviceHelper.GetCurrentState(ud, state);
 					}
 				}
 				ud.JoState = state;
@@ -739,6 +744,7 @@ namespace x360ce.App.DInput
 				ud.ForceFailures = 0;
 				ud.ForceFault = 0;
 				EndSpringRun(ud, SpringStopReleased);
+				ReleasePluginReader(ud);
 			}
 		}
 
@@ -756,8 +762,8 @@ namespace x360ce.App.DInput
 		/// <summary>Why a centering spring Auto run stopped: the wheel was unplugged.</summary>
 		public const string SpringStopUnplugged = "Stopped: the wheel was unplugged.";
 
-		/// <summary>Why a centering spring Auto run stopped: force feedback was switched off on the tabs the wheel is on.</summary>
-		public const string SpringStopForceOff = "Stopped: force feedback was switched off on this controller tab.";
+		/// <summary>Why a centering spring Auto run stopped: the spring, and force feedback, were switched off on the tabs the wheel is on.</summary>
+		public const string SpringStopSpringOff = "Stopped: the centering spring was switched off on this controller tab.";
 
 		/// <summary>Why a centering spring Auto run stopped: every controller tab the wheel is on was switched off for the current game.</summary>
 		public const string SpringStopTabOff = "Stopped: this controller tab was switched off for the current game.";
@@ -784,6 +790,19 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
+		/// <summary>The own centering the engine sets on a device it holds: off while this program's spring holds the centre,
+		/// on for a device that centres itself with a motor (a wheel, a flight stick, anything with one force motor), and null
+		/// for a pad, whose motors only rumble, so it is left as its driver has it.</summary>
+		public static bool? AutoCenterFor(int capType, int actuatorCount, bool springHolds)
+		{
+			if (springHolds)
+				return false;
+			if (capType == (int)SharpDX.DirectInput.DeviceType.Driving || capType == (int)SharpDX.DirectInput.DeviceType.Flight
+				|| actuatorCount == 1)
+				return true;
+			return null;
+		}
+
 		static void SetAutoCenter(Joystick device, bool on)
 		{
 			try

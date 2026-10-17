@@ -68,7 +68,7 @@ namespace x360ce.Tests
 						.Select(x => x.Name).Where(x => x.StartsWith("AiAccess") || x.StartsWith("AiSkill")).ToArray();
 					Assert.AreEqual(0, left.Length, "The Options page still has AI controls of its own: " + string.Join(", ", left));
 					ai.Bind(new AiAccessSettings());
-					var o = SettingsManager.Options;
+					var o = SettingsManager.AiOptions;
 					// Typed text would leave the list's selection empty.
 					var level = Find<ComboBox>(ai, "AiAccessComboBox");
 					Assert.AreEqual(ComboBoxStyle.DropDownList, level.DropDownStyle);
@@ -76,13 +76,13 @@ namespace x360ce.Tests
 					Assert.AreEqual(o.AiAccess.ToString(), level.SelectedItem);
 					var address = Find<ComboBox>(ai, "AiAccessAddressComboBox");
 					Assert.AreEqual(ComboBoxStyle.DropDownList, address.DropDownStyle);
-					CollectionAssert.AreEqual(new[] { Options.LoopbackAddress, Options.AnyAddress }, address.Items.Cast<string>().ToArray());
+					CollectionAssert.AreEqual(new[] { AiOptions.LoopbackAddress, AiOptions.AnyAddress }, address.Items.Cast<string>().ToArray());
 					Assert.AreEqual(o.AiAccessPort.ToString(), Find<TextBox>(ai, "AiAccessPortTextBox").Text);
 					Assert.AreEqual(o.AiAccessToken ?? "", Find<TextBox>(ai, "AiAccessTokenTextBox").Text);
 					// http.sys routes by the Host header: the door on this computer answers to localhost, and 127.0.0.1 gets 400.
 					var url = Find<TextBox>(ai, "AiAccessUrlTextBox");
 					Assert.IsTrue(url.ReadOnly);
-					if (o.AiAccessAddress != Options.AnyAddress)
+					if (o.AiAccessAddress != AiOptions.AnyAddress)
 						Assert.AreEqual("http://localhost:" + o.AiAccessPort + "/mcp/", url.Text);
 					var snippet = Find<TextBox>(ai, "AiAccessSnippetTextBox");
 					StringAssert.Contains(snippet.Text, "\"/Mcp\"");
@@ -137,7 +137,30 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
-		[Description("Trust local connections sits under Address, is kept when ticked, is greyed out on every network keeping the choice, and is the person's alone: the door refuses to set it at any level, by the path the WPF page gives it")]
+		[Description("What an assistant can do comes first: the example sits above the tabs, then AI Skill, MCP Server - AI Assistant Access and OpenAI Tunnel, the tunnel's tab only for settings that keep a tunnel")]
+		public void The_example_comes_first_then_a_tab_for_each_part()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var ai = new AiAccessUserControl())
+				{
+					ai.PerformLayout();
+					var header = Find<TableLayoutPanel>(ai, "AiHeaderPanel");
+					var tabs = Find<TabControl>(ai, "AiTabControl");
+					Assert.AreSame(ai, tabs.Parent);
+					Assert.IsTrue(header.Bottom <= tabs.Top, "The example is not above the tabs.");
+					CollectionAssert.AreEqual(new[] { "AI Skill", "MCP Server - AI Assistant Access" },
+						tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray(), "Settings that keep no tunnel show a tunnel tab.");
+					ai.Bind(new AiAccessSettings());
+					CollectionAssert.AreEqual(new[] { "AI Skill", "MCP Server - AI Assistant Access", "OpenAI Tunnel" },
+						tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray());
+					Assert.AreEqual(0, tabs.SelectedIndex, "The page does not open on its first tab.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("Trust local connections sits under Address, is kept when ticked, is greyed out on every network keeping the choice, and is the person's alone: the door refuses to set it at any level, by its path through the tab")]
 		public void Trust_local_connections_is_greyed_on_every_network_and_is_the_persons_alone()
 		{
 			Ui.OnUiThread(() =>
@@ -176,7 +199,7 @@ namespace x360ce.Tests
 						McpCatalog.OnUiThread = a => a();
 						McpUiTools.Root = form;
 						var refused = Assert.ThrowsExactly<InvalidOperationException>(() =>
-							McpUiTools.UiSet("AiControl/AiPanel/AiAccessPanel/AiAccessTrustLocalCheckBox", "false"));
+							McpUiTools.UiSet("AiControl/AiTabControl/AiAccessTabPage/AiAccessPanel/AiAccessTrustLocalCheckBox", "false"));
 						StringAssert.Contains(refused.Message, "the person's alone");
 						StringAssert.Contains(refused.Message, "Options tab");
 						Assert.IsTrue(trust.Checked, "The door changed a door control.");
@@ -201,6 +224,10 @@ namespace x360ce.Tests
 				{
 					var settings = new CountingSettings();
 					ai.Bind(settings);
+					// A button is pressed on its tab, in front, as a person presses it. A tab strip brings a page to the front
+					// only once it has a window.
+					ai.CreateControl();
+					Find<TabControl>(ai, "AiTabControl").SelectedTab = Find<TabPage>(ai, "AiAccessTabPage");
 					var status = Find<Label>(ai, "AiAccessStatusText");
 					Assert.AreEqual("Off. Nothing can reach this program.", status.Text);
 					var port = Find<TextBox>(ai, "AiAccessPortTextBox");
@@ -235,7 +262,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("accessibility")]
-		[Description("The Windows Forms page and the shared catalog agree: every element a person reads or uses has an entry, every entry names an element, the elements follow the catalog's order, which is the WPF page's, and every guarded name is an element")]
+		[Description("The Windows Forms page and the shared catalog agree: every element a person reads or uses has an entry, every entry names an element, the elements follow the catalog's order, and every guarded name is an element")]
 		public void Forms_page_and_shared_catalog_agree()
 		{
 			Assert.AreEqual(AiAccessModel.FormsView, typeof(AiAccessUserControl).Name);
@@ -247,10 +274,10 @@ namespace x360ce.Tests
 			var fields = typeof(AiAccessUserControl).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
 				.Where(x => typeof(Control).IsAssignableFrom(x.FieldType)).Select(x => x.Name).ToList();
 			CollectionAssert.IsSubsetOf(entries, fields, "An entry names no element of the page.");
-			// A caption or a title names what is beside or below it and stays out of the tree, as a field ending in Label;
-			// the scroll panel only arranges; the skill note says what its section's purpose says.
+			// A caption names what is beside or below it and stays out of the tree, as a field ending in Label; the skill
+			// note says what its section's purpose says.
 			var uncatalogued = fields.Where(x => !x.EndsWith("Label")).Except(entries).ToArray();
-			CollectionAssert.AreEquivalent(new[] { "AiPanel", "AiSkillNoteText" }, uncatalogued,
+			CollectionAssert.AreEquivalent(new[] { "AiSkillNoteText" }, uncatalogued,
 				"Elements without a name and purpose: " + string.Join(", ", uncatalogued));
 			foreach (var name in AiAccessModel.DoorControls.Concat(AiAccessModel.SecretControls).Concat(AiAccessModel.AdminControls))
 				CollectionAssert.Contains(fields, name, name + " is guarded, but it is not an element of the page.");
@@ -258,16 +285,32 @@ namespace x360ce.Tests
 			{
 				using (var ai = new AiAccessUserControl())
 				{
+					// Read from the page's fields: the tunnel's tab is off the tabs until settings that keep a tunnel are bound.
+					Func<string, Control> field = name => (Control)typeof(AiAccessUserControl)
+						.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ai);
 					var order = new List<string>();
-					foreach (var name in new[] { "AiHeaderPanel", "AiAccessPanel", "AiSkillPanel" })
+					// The header, then each section on its own tab.
+					foreach (var section in new[] { new[] { null, "AiHeaderPanel" }, new[] { "AiSkillTabPage", "AiSkillPanel" },
+						new[] { "AiAccessTabPage", "AiAccessPanel" }, new[] { "AiTunnelTabPage", "AiTunnelPanel" } })
 					{
-						var table = Find<TableLayoutPanel>(ai, name);
-						Assert.AreSame(ai.Controls.Find("AiPanel", false).Single(), table.Parent, name + " is not straight inside AiPanel, so its path differs from the WPF page's.");
-						order.Add(name);
+						var table = (TableLayoutPanel)field(section[1]);
+						if (section[0] == null)
+						{
+							Assert.AreSame(ai, table.Parent, section[1] + " is not straight on the page, above the tabs.");
+							order.Add(section[1]);
+						}
+						else
+						{
+							Assert.AreSame(field(section[0]), table.Parent, section[1] + " is not straight inside " + section[0] + ".");
+							if (order.Count > 0 && !order.Contains("AiTabControl"))
+								order.Add("AiTabControl");
+							order.Add(section[0]);
+							order.Add(section[1]);
+						}
 						var inTabOrder = table.Controls.Cast<Control>().OrderBy(x => x.TabIndex).ToArray();
 						// The keyboard and the tree go through a section the way it reads: row by row, left to right.
 						var cells = inTabOrder.Select(x => table.GetRow(x) * 10 + table.GetColumn(x)).ToArray();
-						CollectionAssert.AreEqual(cells.OrderBy(x => x).ToArray(), cells, name + " is not in reading order.");
+						CollectionAssert.AreEqual(cells.OrderBy(x => x).ToArray(), cells, section[1] + " is not in reading order.");
 						order.AddRange(inTabOrder.Select(x => x.Name).Where(entries.Contains));
 					}
 					CollectionAssert.AreEqual(entries, order, "The page's order differs from the catalog's.");
@@ -308,19 +351,19 @@ namespace x360ce.Tests
 		[Description("Ticking AI assistant access and then Trust local connections on the page, bound to the program's own options, reaches the door through Global: a call without the token is answered only once Trust local is ticked")]
 		public void Trust_local_reaches_the_door_through_the_programs_options()
 		{
-			var o = SettingsManager.Options;
+			var o = SettingsManager.AiOptions;
 			var saved = new object[] { o.AiAccessEnabled, o.AiAccess, o.AiAccessAddress, o.AiAccessTrustLocal, o.AiAccessPort, o.AiAccessToken };
 			var appData = EngineHelper.AppDataPath;
 			var logFolder = McpLog.Folder;
-			// Every change writes the options file and the door's log, so both go into a folder of the test's own.
+			// Every change writes the AI settings file and the door's log, so both go into a folder of the test's own.
 			var folder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "x360ce.Tests", "trust-" + Guid.NewGuid().ToString("N"))).FullName;
 			EngineHelper.AppDataPath = folder;
-			SettingsManager.OptionsData.Rebase();
+			SettingsManager.AiOptionsData.Rebase();
 			McpLog.Folder = folder;
 			McpListener.Stop();
 			o.AiAccessEnabled = false;
 			o.AiAccessTrustLocal = false;
-			o.AiAccessAddress = Options.LoopbackAddress;
+			o.AiAccessAddress = AiOptions.LoopbackAddress;
 			o.AiAccessPort = McpListenerTest.Port;
 			// The program's own start-up path, which subscribes Global to the options.
 			Global.InitializeServices();
@@ -351,9 +394,58 @@ namespace x360ce.Tests
 				o.AiAccessToken = (string)saved[5];
 				McpListener.Stop();
 				EngineHelper.AppDataPath = appData;
-				SettingsManager.OptionsData.Rebase();
+				SettingsManager.AiOptionsData.Rebase();
 				McpLog.Folder = logFolder;
 				Directory.Delete(folder, true);
+			}
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("The tunnel section names the file its settings are kept in, hides both OpenAI keys, refuses text that is no tunnel ID, and keeps the API key only encrypted")]
+		public void Tunnel_section_keeps_the_API_key_encrypted()
+		{
+			const string key = "sk-test-api-key";
+			const string id = "tunnel_0123456789abcdef0123456789abcdef";
+			var o = SettingsManager.AiOptions;
+			var saved = new object[] { o.TunnelEnabled, o.TunnelId, o.TunnelOrganization, o.TunnelApiKey };
+			try
+			{
+				Ui.OnUiThread(() =>
+				{
+					using (var ai = new AiAccessUserControl())
+					{
+						ai.CreateControl();
+						ai.Bind(new AiAccessSettings());
+						Assert.IsNotNull(ai.Model.Tunnel, "The program's settings keep no tunnel, so the page shows no tunnel section.");
+						var file = Find<TextBox>(ai, "AiTunnelFileTextBox").Text;
+						Assert.AreEqual(SettingsManager.AiOptionsData.XmlFile.FullName, file, "The page does not name the file the keys are kept in.");
+						StringAssert.EndsWith(file, "x360ce.AI.xml");
+						Assert.IsTrue(Find<TextBox>(ai, "AiTunnelApiKeyTextBox").UseSystemPasswordChar, "The API key shows as typed.");
+						Assert.IsTrue(Find<TextBox>(ai, "AiTunnelAdminKeyTextBox").UseSystemPasswordChar, "The admin key shows as typed.");
+						CollectionAssert.IsSubsetOf(new[] { "AiTunnelAdminKeyTextBox", "AiTunnelApiKeyTextBox" }, McpTools.SecretControls);
+						CollectionAssert.IsSubsetOf(new[] { "AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox",
+							"AiTunnelIdTextBox", "AiTunnelCreateButton", "AiTunnelDeleteButton", "AiTunnelApiKeyTextBox" }, McpTools.DoorControls);
+						o.TunnelId = "";
+						ai.Model.SetTunnelId("not a tunnel");
+						Assert.AreEqual("", o.TunnelId, "Text that is no tunnel ID was kept.");
+						ai.Model.SetTunnelId(" " + id + " ");
+						Assert.AreEqual(id, o.TunnelId);
+						ai.Model.SetTunnelApiKey(key);
+						Assert.IsFalse(string.IsNullOrEmpty(o.TunnelApiKey), "The API key was not kept.");
+						Assert.IsFalse(o.TunnelApiKey.Contains(key), "The API key was kept as typed.");
+						Assert.AreEqual(key, McpTunnel.Unprotect(o.TunnelApiKey), "The kept API key does not decrypt to the one typed.");
+						Assert.AreEqual(key, ai.Model.TunnelApiKey);
+						ai.Model.SetTunnelApiKey("");
+						Assert.AreEqual("", o.TunnelApiKey, "An emptied box did not forget the API key.");
+					}
+				});
+			}
+			finally
+			{
+				o.TunnelEnabled = (bool)saved[0];
+				o.TunnelId = (string)saved[1];
+				o.TunnelOrganization = (string)saved[2];
+				o.TunnelApiKey = (string)saved[3];
 			}
 		}
 

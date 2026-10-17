@@ -27,6 +27,12 @@
 		was actually released. The 5.x MemoryLeakHelper carries the same warning.
 		-->
 		<Optimize>true</Optimize>
+		<!--
+		MSTEST0032 (assertion always true) is off. Tests here pin documented constants to their
+		values on purpose, so that moving one fails a test instead of the test moving with it;
+		the analyzer reads every such pin as an assertion that cannot fail.
+		-->
+		<NoWarn>$(NoWarn);MSTEST0032</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -39,6 +45,8 @@
 		<Reference Include="PresentationFramework" />
 		<Reference Include="System.Windows.Forms" />
 		<Reference Include="System.Configuration" />
+		<!-- The limits a plugin sets on a number setting. -->
+		<Reference Include="System.ComponentModel.DataAnnotations" />
 		<!-- Untyped JSON for the MCP tests, in-box. -->
 		<Reference Include="System.Web.Extensions" />
 		<Reference Include="System.IO.Compression" />
@@ -62,9 +70,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-		<PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
-		<PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="4.5.1" />
+		<PackageReference Include="MSTest.TestFramework" Version="4.5.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,4 +1,4 @@
-// @under-test: Engine/Common/DeviceObjectItem.cs, App.v4/Common/AppHelper.cs, App.v4/Common/TestDeviceHelper.cs
+// @under-test: Engine/Common/DeviceObjectItem.cs, App.v4/Common/AppHelper.cs, Plugins/TestController/TestController.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -60,7 +60,7 @@ namespace x360ce.Tests
 		[Description("Every axis, button and hat switch of the test controller carries the HID usage a gamepad reports for it")]
 		public void The_test_controller_carries_a_hid_usage_for_every_control()
 		{
-			var objects = TestDeviceHelper.GetDeviceObjects();
+			var objects = TestControllerDevice.GetDeviceObjects();
 			Assert.IsTrue(objects.Any(IsAxis), "The test controller describes no axis.");
 			Assert.IsTrue(objects.Any(IsButton), "The test controller describes no button.");
 			Assert.IsTrue(objects.Any(IsPov), "The test controller describes no hat switch.");

@@ -45,10 +45,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(lightening, car.Lightening, name);
 			Assert.AreEqual(damping, car.Damping, name);
 			Assert.AreEqual(speed, car.Speed, name);
+			Assert.AreEqual(PadControl.RoadCarRange, car.Range, name + ": a road car that does not turn the road car range.");
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("force-feedback")]
-		[Description("The Car list shows the car the loaded values match; choosing a car sets the five sliders and leaves Strength; a slider moved off it shows Custom")]
+		[Description("The Car list shows the car the loaded values match; choosing a car sets the five sliders and the wheel range and leaves Strength; a slider moved off it shows Custom")]
 		public void Choosing_a_car_sets_the_curve_and_a_moved_slider_shows_custom()
 		{
 			var preset = new PadSetting
@@ -75,6 +76,7 @@ namespace x360ce.Tests
 				var saved = pad.CloneCurrentPadSetting();
 				Assert.AreEqual("30", saved.ForceSpringCentre, "The car's values do not reach the settings.");
 				Assert.AreEqual("80", saved.ForceSpringSpeed, "The car's values do not reach the settings.");
+				Assert.AreEqual("900", saved.WheelRange, "The car does not set the wheel range its name says.");
 				Assert.AreEqual(van.Name, car.GetItemText(car.SelectedItem), "The list left the car it set.");
 				((TrackBar)Find(pad, "ForceSpringDampingTrackBar")).Value = 11;
 				Assert.AreEqual(PadControl.CustomSpringCar, car.GetItemText(car.SelectedItem), "Values that match no car are not shown as Custom.");
@@ -108,7 +110,7 @@ namespace x360ce.Tests
 					var w = picture.ClientSize.Width;
 					var h = picture.ClientSize.Height;
 					var curve = new SpringCurve();
-					curve.Set(60, 12, 60, 40, 900, 100);
+					curve.Set(60, 12, 60, 40, 900, 100, 0);
 					// A quarter of the way from the left stop: the force pushes right, above the middle.
 					var x = w / 4;
 					var force = curve.Force(Axis(x, w));
@@ -121,16 +123,20 @@ namespace x360ce.Tests
 					chart.UpdateWheel(null, null, 20);
 					using (var banded = Draw(picture))
 						Assert.IsFalse(IsWhite(banded, picture, x, YOf(10, h)), "The friction Auto measured is not drawn as a band.");
-					// The wheel 32 degrees to the left: the header says so, and the force there pushes right.
+					// The wheel 32 degrees to the left: the header says so, and the force there, the friction and the
+					// car's on top, pushes right.
 					var position = (int)Math.Round(SpringCalibration.Center - 32.0 / 450 * SpringCalibration.Center);
 					chart.UpdateWheel(position, null, 20);
 					Assert.AreEqual("-32°", Find(chart, "AngleValueLabel").Text);
-					Assert.AreEqual(curve.Force(position) + " % to the right", Find(chart, "ForceValueLabel").Text);
+					var played = new SpringCurve();
+					played.Set(60, 12, 60, 40, 900, 100, 20);
+					Assert.AreEqual(played.Force(position) + " % to the right", Find(chart, "ForceValueLabel").Text,
+						"The chart leaves the friction out of the force.");
 					// A live speed replaces the Speed setting, as it does in the engine.
 					chart.UpdateWheel(position, 40, 20);
 					var slower = new SpringCurve();
-					slower.Set(60, 12, 60, 40, 900, 40);
-					Assert.AreNotEqual(curve.Force(position), slower.Force(position), "The test angle cannot tell the two speeds apart.");
+					slower.Set(60, 12, 60, 40, 900, 40, 20);
+					Assert.AreNotEqual(played.Force(position), slower.Force(position), "The test angle cannot tell the two speeds apart.");
 					Assert.AreEqual(slower.Force(position) + " % to the right", Find(chart, "ForceValueLabel").Text,
 						"The chart ignores the live speed.");
 				}

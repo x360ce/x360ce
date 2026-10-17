@@ -233,7 +233,7 @@ namespace x360ce.Tests
 					Assert.AreEqual(1234, axis.Rows[0][1], "Axis X.");
 					Assert.AreEqual(55, sliders.Rows[0][1], "Slider 0.");
 					Assert.AreEqual(9000, povs.Rows[0][1], "POV 0.");
-					Assert.AreEqual("02", buttons.Rows[0][0], "Buttons.");
+					Assert.AreEqual("03", buttons.Rows[0][0], "Buttons.");
 					// A DirectInput row whose read failed has no DirectInput state, and shows none; its last engine state is not a reading.
 					var di = DirectInputRow("Wheel", WheelPath);
 					di.SourceState = raw.SourceState;
@@ -261,7 +261,7 @@ namespace x360ce.Tests
 			var di = DirectInputRow("Pad", PadPath);
 			di.DeviceObjects = RawInputFixtures.RumblePad2.Objects;
 			Assert.IsFalse(AutoMapHelper.CanGetAutoPreset(di), "A DirectInput row with no DirectInput device was offered a preset.");
-			Assert.IsTrue(AutoMapHelper.CanGetAutoPreset(TestDeviceHelper.NewUserDevice()), "The demo device was refused.");
+			Assert.IsTrue(AutoMapHelper.CanGetAutoPreset(TestControllerDevice.NewUserDevice()), "The demo device was refused.");
 		}
 
 		#endregion
@@ -349,6 +349,9 @@ namespace x360ce.Tests
 						var note = PadControl.RawInputForceNote(rawWheel, SettingsManager.UserDevices.ItemsToArraySynchronized());
 						Assert.IsNotNull(note);
 						Assert.AreEqual(note, effect.Text, "The Force Feedback page does not say no force feedback reaches the Raw Input row.");
+						// The wheel's DirectInput twin is on Controller 3: the same wheel, so the page says it is shared.
+						Assert.AreEqual("Force Feedback - Shared with Controller 3", pad.Controls.Find("ForceFeedbackGroupBox", true).Single().Text,
+							"The page does not count the wheel's twin on another tab.");
 						grid.Rows[RowOf(grid, twinRow)].Selected = true;
 						Application.DoEvents();
 						Assert.AreSame(twinRow, pad.GetSelectedSetting(), "The pad's DirectInput row was not selected.");

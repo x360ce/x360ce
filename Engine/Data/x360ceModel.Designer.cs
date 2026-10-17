@@ -4926,7 +4926,8 @@ namespace x360ce.Engine.Data
         /// <param name="profileId">Initial value of the ProfileId property.</param>
         /// <param name="connectionClass">Initial value of the ConnectionClass property.</param>
         /// <param name="inputSourceType">Initial value of the InputSourceType property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden, global::System.Int32 diActuatorMask, global::System.Int32 diActuatorCount, global::System.Guid profileId, global::System.Guid connectionClass, global::System.Int32 inputSourceType)
+        /// <param name="forceSpringFriction">Initial value of the ForceSpringFriction property.</param>
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden, global::System.Int32 diActuatorMask, global::System.Int32 diActuatorCount, global::System.Guid profileId, global::System.Guid connectionClass, global::System.Int32 inputSourceType, global::System.Int32 forceSpringFriction)
         {
             UserDevice userDevice = new UserDevice();
             userDevice.Id = id;
@@ -4979,6 +4980,7 @@ namespace x360ce.Engine.Data
             userDevice.ProfileId = profileId;
             userDevice.ConnectionClass = connectionClass;
             userDevice.InputSourceType = inputSourceType;
+            userDevice.ForceSpringFriction = forceSpringFriction;
             return userDevice;
         }
 
@@ -6188,6 +6190,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _InputSourceType;
         partial void OnInputSourceTypeChanging(global::System.Int32 value);
         partial void OnInputSourceTypeChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ForceSpringFriction
+        {
+            get
+            {
+                return _ForceSpringFriction;
+            }
+            set
+            {
+                OnForceSpringFrictionChanging(value);
+                ReportPropertyChanging("ForceSpringFriction");
+                _ForceSpringFriction = StructuralObject.SetValidValue(value, "ForceSpringFriction");
+                ReportPropertyChanged("ForceSpringFriction");
+                OnForceSpringFrictionChanged();
+            }
+        }
+        private global::System.Int32 _ForceSpringFriction;
+        partial void OnForceSpringFrictionChanging(global::System.Int32 value);
+        partial void OnForceSpringFrictionChanged();
 
         #endregion
 

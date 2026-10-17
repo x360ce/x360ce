@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.25.67.0"
+  version: "4.26.38.0"
 ---
 
 # X360CE
@@ -38,8 +38,8 @@ person allowed and refuses the rest; controlling the screen would go around thei
 
 ## Connecting
 
-The door is the person's to open: Options tab, then the AI page, AI assistant access, where they also choose its
-level. Until they do, nothing can reach the program.
+The door is the person's to open: Options tab, then the AI page, its MCP Server - AI Assistant Access tab, AI
+assistant access, where they also choose its level. Until they do, nothing can reach the program.
 
 Use the first way that works:
 
@@ -64,6 +64,11 @@ Use the first way that works:
      off; ask the person to switch it on as described above.
    - `& $exe -Ai | Out-String` lists every tool with the level it needs and its arguments. A tool refuses an
      argument it does not take and names the ones it does.
+
+**ChatGPT on the web** runs on OpenAI's servers and cannot reach the door on this computer. The AI page's OpenAI
+Tunnel tab opens an OpenAI Secure MCP Tunnel to it and shows the tunnel ID that ChatGPT's
+Add custom MCP server asks for. Point the person there with `ui_show`; only they can fill it in, because it takes
+their OpenAI keys.
 
 | Tool | Arguments | What it gives |
 |---|---|---|
@@ -91,11 +96,11 @@ The parentheses matter: without them Windows PowerShell 5.1 passes the whole arr
 
 ## Access levels
 
-The person picks one on the same AI page:
+The person picks one on the same tab:
 
 - **Read**, the default: look at everything and point at things for the person; nothing can be changed.
 - **Configure**: everything a person does on the tabs: set values, press buttons, map devices, save.
-- **Administer**: also install or remove drivers and switch on debug mode.
+- **Administer**: also install or remove drivers.
 
 When a tool is refused, the answer names the level it needs. Tell the person what you wanted to do and which level
 it needs, and let them decide; do not look for a way around it.
@@ -165,7 +170,8 @@ again before calling it a fault.
   controller and an Input column that lights each control of the device as it moves), Buttons (how far a stick
   or pedal must move to press a button), D-Pad, Triggers, Left Thumb and Right Thumb (the dead zone, anti-dead
   zone and sensitivity of each trigger and stick axis), Force Feedback (rumble strength and motor tests), Wheel
-  (for wheels: the centering spring with Auto, a Car list that fills its curve, a chart of its force at every angle,
+  (for wheels: the centering spring with Friction, which Auto measures, a Car list that fills its curve and the
+  wheel range, a chart of its force at every angle,
   and Wheel range, the steering range sent to a Logitech wheel, 40 to 900 degrees), and Direct Input (the device's
   raw readings).
   Steering is usually mapped to Left Thumb Axis X.
@@ -234,7 +240,7 @@ program does not offer them.
 program says so, and point at Auto-Order on the Devices page with `ui_show`; press it only if asked.
 
 **Access is off.** The command line exits with 2, or the tools are missing. Tell the person: Options tab, AI page,
-tick AI assistant access, and choose Read to let you look or Configure to let you change settings.
+MCP Server - AI Assistant Access tab, tick AI assistant access, and choose Read to let you look or Configure to let you change settings.
 
 ## Reference files
 
@@ -246,6 +252,9 @@ version. The program also prints them, whether AI assistant access is on or not:
   `ui_tree` tool. `ui-tree-v4.json` is the same for a program to read.
 - `help-v3.md`, `ui-tree-v3.md` and `ui-tree-v3.json`: the same for version 3, the older program that works through a
   library copied into the game's folder. It has AI assistant access too; `x360ce.exe -Ai` lists its tools.
+- `plugins.md`, plugins that add devices and how to write one from a single `.cs` file: `x360ce.exe -Skill=plugins`.
+  `plugins/<name>.md` describes each plugin the program has, its devices and their controls; the `plugins_list` tool
+  says the same for the plugins found on this computer, and whether each loaded.
 
 Any of them prints with `x360ce.exe "-Skill=<name>"`, such as `"-Skill=ui-tree-v3.json"`. `x360ce.exe -Skill`
 alone prints this file, which is how an agent without it can learn the program.
@@ -262,7 +271,7 @@ be older or newer. Before relying on a page, button or tool named here:
 3. To replace the installed copy, ask the person, then have the program write its own into the skills folder the
    agent reads: `& $exe "-Skill=$env:USERPROFILE\.claude\skills"` for Claude Code, or
    `& $exe "-Skill=$env:USERPROFILE\.agents\skills"` for Codex, GitHub Copilot, Gemini CLI, Cursor and OpenCode.
-   The person can do the same with Install or Update on the Options tab's AI page, and the Issues tab offers it
+   The person can do the same with Install or Update on the AI page's AI Skill tab, and the Issues tab offers it
    when an installed copy is older than the program.
 
 The newest copy is published with the program's source at `github.com/x360ce/x360ce`, in `skills/x360ce`, where

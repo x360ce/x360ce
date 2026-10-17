@@ -305,6 +305,17 @@ namespace x360ce.App.ViGEm
 
 		#region Helper
 
+		/// <summary>Whether HID Guardian's settings are there. Without them nothing can be hidden through HID Guardian, whoever runs the program.</summary>
+		public static bool IsInstalled()
+		{
+			using (var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry))
+				return key != null;
+		}
+
+		/// <summary>What the person reads when a device is to be hidden while HID Guardian is not installed.</summary>
+		public const string NotInstalledText = "HID Guardian is not installed, so x360ce cannot hide devices with it.\r\n"
+			+ "HID Hide hides devices instead: see the HID Hide page on the Options tab.";
+
 		/// <summary>
 		/// Check if Users have right to modify programs white list.
 		/// </summary>

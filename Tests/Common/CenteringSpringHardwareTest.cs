@@ -1,5 +1,6 @@
 // @under-test: Engine/Common/ForceFeedbackState.cs, Engine/Common/SpringCalibration.cs
 // @area: devices   @layer: hardware
+using JocysCom.ClassLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -17,8 +18,8 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// Runs the centering spring itself on an attached wheel, through the same state the program
-	/// uses: the Auto run first, then the spring at the strength it set and at full strength,
-	/// each from a stop. The wheel must come back inside Centre and stay, not swing from one end
+	/// uses: the Auto run first, to find the friction, then the spring with the family car's Strength
+	/// on top of it and with full Strength, each from a stop. The wheel must come back inside Centre and stay, not swing from one end
 	/// to the other. Under a light steady push it must settle
 	/// where the push and the spring balance, not pulse between pushed out and pushed back. And
 	/// pumped into a swing on purpose, it must come out of it by itself once the pumping stops.
@@ -66,16 +67,24 @@ namespace x360ce.Tests
 			public Effect Push;
 			public EffectParameters PushParameters;
 			public ConstantForce PushForce;
+			/// <summary>The wheel's friction, which the spring reaches a few degrees from the centre: what Auto found, or nought before it ran.</summary>
+			public int Friction;
+			/// <summary>Paces the polls once a millisecond, as the engine's device thread does.</summary>
+			/// <remarks>Thread.Sleep(1) in a process that never asked for a finer timer waits about 16 ms, and a spring answered that late swings a wheel the program holds still.</remarks>
+			public HiResPacer Pacer;
 		}
 
+		/// <summary>The Strength the family car, the settings' default, adds on top of the friction.</summary>
+		const int CarStrength = 30;
+
 		[TestMethod, TestCategory("devices"), TestCategory("ui-interactive"), TestCategory("requires-wheel")]
-		[Description("The Auto run finds a strength, and the spring brings the wheel home from a stop without swinging, at that strength and at full strength")]
+		[Description("The Auto run finds the friction, and the spring brings the wheel home from a stop without swinging, with the family car's Strength on top and with full Strength")]
 		public void The_spring_brings_the_wheel_home_and_holds_it()
 		{
 			OnTheWheel(b =>
 			{
-				var found = Auto(b).Strength;
-				Settles(b, found);
+				Auto(b);
+				Settles(b, CarStrength);
 				Settles(b, 100);
 			});
 		}
@@ -87,7 +96,7 @@ namespace x360ce.Tests
 			OnTheWheel(b =>
 			{
 				// A push that just moves the wheel against the friction in its gears, as a finger does.
-				var finger = Math.Min(Auto(b).Result + FingerAboveFriction, FingerAtMost);
+				var finger = Math.Min(Auto(b) + FingerAboveFriction, FingerAtMost);
 				Holds(b, finger, 50);
 				Holds(b, finger, 100);
 			});
@@ -99,8 +108,8 @@ namespace x360ce.Tests
 		{
 			OnTheWheel(b =>
 			{
-				var found = Auto(b).Strength;
-				ComesOutOfASwing(b, found);
+				Auto(b);
+				ComesOutOfASwing(b, CarStrength);
 				ComesOutOfASwing(b, 50);
 				ComesOutOfASwing(b, 100);
 			});
@@ -115,19 +124,18 @@ namespace x360ce.Tests
 				var instance = FindWheel(manager);
 				using (var form = new Form())
 				using (var device = new Joystick(manager, instance.InstanceGuid))
+				using (var wake = new ManualResetEvent(false))
+				using (var pacer = new HiResPacer(wake))
 				{
-					var ud = new UserDevice();
-					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
-					ud.DevVendorId = device.Properties.VendorId;
-					ud.DevProductId = device.Properties.ProductId;
-					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "60" };
+					var ud = Wheel(device);
+					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "60", WheelRange = CarRange };
 					var silence = new Vibration { LeftMotorSpeed = short.MinValue, RightMotorSpeed = short.MinValue };
 					var full = new Vibration { LeftMotorSpeed = short.MaxValue, RightMotorSpeed = short.MinValue };
 					Hold(device, form);
 					// The first state pushes the wheel out with its motor, so the new one has somewhere to bring it home from.
 					var first = new ForceFeedbackState();
 					first.SetDeviceForces(ud, device, ps, full);
-					SpringFor(first, device, 1500);
+					SpringFor(first, device, pacer, 1500);
 					// Let go of as the engine lets go of a device its routing drops, and held again as one routed again.
 					first.StopDeviceForces();
 					device.Unacquire();
@@ -137,12 +145,12 @@ namespace x360ce.Tests
 					try
 					{
 						second.SetDeviceForces(ud, device, ps, silence);
-						var home = SpringFor(second, device, SettleMs);
+						var home = SpringFor(second, device, pacer, SettleMs);
 						Console.WriteLine("New state's spring: from {0} to {1} ({2} degrees of 900 from the centre).", home[0], home[1], Degrees(home[1] - SpringCalibration.Center));
 						Assert.IsTrue(Math.Abs(home[0] - SpringCalibration.Center) > StopZone, "The old state's motor did not push the wheel out, so the return proves nothing.");
 						Assert.IsTrue(Math.Abs(home[1] - SpringCalibration.Center) <= StopZone, "The new state's spring did not bring the wheel home: it drives nothing.");
 						second.SetDeviceForces(ud, device, ps, full);
-						var pushed = SpringFor(second, device, 1500);
+						var pushed = SpringFor(second, device, pacer, 1500);
 						Console.WriteLine("New state's motor: from {0} to {1}.", pushed[0], pushed[1]);
 						Assert.IsTrue(Math.Abs(pushed[1] - pushed[0]) > StopZone, "The new state's motor did not move the wheel.");
 					}
@@ -168,6 +176,21 @@ namespace x360ce.Tests
 			return instance;
 		}
 
+		/// <summary>The family car's wheel range, which the Car list sets and the program sends to the wheel.</summary>
+		/// <remarks>Not sent, a G27 keeps whatever range it was left at: narrower, the same axis units are a steeper spring in real degrees, and the wheel swings.</remarks>
+		static readonly string CarRange = x360ce.App.Controls.PadControl.RoadCarRange.ToString();
+
+		/// <summary>The device as the program sees it: its objects with the axis index each one moves, its ids, and its HID interface, where the range is sent.</summary>
+		static UserDevice Wheel(Joystick device)
+		{
+			var ud = new UserDevice();
+			ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
+			ud.DevVendorId = device.Properties.VendorId;
+			ud.DevProductId = device.Properties.ProductId;
+			ud.HidDevicePath = device.Properties.InterfacePath;
+			return ud;
+		}
+
 		/// <summary>Holds the device as the program does while its spring is on: exclusively, with the device's own centring off, which left on holds the wheel against every push made here.</summary>
 		static void Hold(Joystick device, Form form)
 		{
@@ -177,7 +200,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Drives a state's spring for a while, as every poll does, and returns where the wheel started and ended.</summary>
-		static int[] SpringFor(ForceFeedbackState ff, Joystick device, int ms)
+		static int[] SpringFor(ForceFeedbackState ff, Joystick device, HiResPacer pacer, int ms)
 		{
 			var watch = Stopwatch.StartNew();
 			var start = Position(device);
@@ -185,8 +208,8 @@ namespace x360ce.Tests
 			while (watch.ElapsedMilliseconds < ms)
 			{
 				position = Position(device);
-				ff.UpdateSpring(device, position, null, watch.ElapsedMilliseconds, null);
-				Thread.Sleep(1);
+				ff.UpdateSpring(device, position, null, watch.ElapsedMilliseconds, null, 0);
+				pacer.Wait(1);
 			}
 			return new[] { start, position };
 		}
@@ -213,7 +236,7 @@ namespace x360ce.Tests
 				while (watch.ElapsedMilliseconds < PumpMs)
 				{
 					var position = Position(b.Device);
-					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null);
+					b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null, b.Friction);
 					widest = Math.Max(widest, Math.Abs(position - SpringCalibration.Center));
 					// The push follows the movement, read over a short stretch so the encoder's jitter does not steer it.
 					if (watch.ElapsedMilliseconds - lastAt >= 20)
@@ -228,7 +251,7 @@ namespace x360ce.Tests
 						last = position;
 						lastAt = watch.ElapsedMilliseconds;
 					}
-					Thread.Sleep(1);
+					b.Pacer.Wait(1);
 				}
 			}
 			finally
@@ -253,19 +276,22 @@ namespace x360ce.Tests
 				"At {0} % the wheel was still {1} from the centre in the last second, outside Centre ({2}).", strength, farthest, b.Ff.Curve.CentreUnits));
 		}
 
-		/// <summary>The Auto run, exactly as the button starts it: the friction it found (<see cref="SpringCalibration.Result"/>) and the strength it set (<see cref="SpringCalibration.Strength"/>).</summary>
-		static SpringCalibration Auto(Bench b)
+		/// <summary>The Auto run, exactly as the button starts it, with the family car's Strength: the friction it found (<see cref="SpringCalibration.Result"/>), which the bench keeps as the button keeps it with the wheel.</summary>
+		static int Auto(Bench b)
 		{
+			b.Ps.ForceSpringStrength = CarStrength.ToString();
 			var run = new SpringCalibration(b.Ps, b.Ud.ForceSpringSpeedOverride);
 			var watch = Stopwatch.StartNew();
 			while (!run.IsFinished && watch.ElapsedMilliseconds < 60000)
 			{
-				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, b.Ud.ForceSpringSpeedOverride);
-				Thread.Sleep(1);
+				b.Ff.UpdateSpring(b.Device, Position(b.Device), run, watch.ElapsedMilliseconds, b.Ud.ForceSpringSpeedOverride, b.Friction);
+				b.Pacer.Wait(1);
 			}
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
-			Console.WriteLine("Auto found a friction of {0} % (low side {1} %, high side {2} %) and set {3} %; its check crossed the centre {4} time(s)", run.Result, run.LowLevel, run.HighLevel, run.Strength, run.Crossings);
-			return run;
+			Console.WriteLine("Auto found a friction of {0} % (low side turns at {1} %, home at {2} %; high side turns at {3} %, home at {4} %); its check with Strength {5} % on top crossed the centre {6} time(s)",
+				run.Result, run.LowTurnsAt, run.LowLevel, run.HighTurnsAt, run.HighLevel, run.Strength, run.Crossings);
+			b.Friction = run.Result;
+			return run.Result;
 		}
 
 		/// <summary>Acquires the attached force feedback wheel the way the program does and runs the check on it.</summary>
@@ -276,18 +302,16 @@ namespace x360ce.Tests
 				var instance = FindWheel(manager);
 				using (var form = new Form())
 				using (var device = new Joystick(manager, instance.InstanceGuid))
+				using (var wake = new ManualResetEvent(false))
+				using (var pacer = new HiResPacer(wake))
 				{
 					Hold(device, form);
-					// The device as the program sees it: its objects, with the axis index each one moves.
-					var ud = new UserDevice();
-					ud.DeviceObjects = x360ce.App.AppHelper.GetDeviceObjects(device);
+					var ud = Wheel(device);
 					int axisMask, actuatorMask, actuatorCount;
 					SourceState.GetJoystickAxisMask(ud.DeviceObjects, device, out axisMask, out actuatorMask, out actuatorCount, out _);
 					if (actuatorCount == 0)
 						Assert.Inconclusive(instance.ProductName + " has no actuator on an axis.");
-					ud.DevVendorId = device.Properties.VendorId;
-					ud.DevProductId = device.Properties.ProductId;
-					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "0" };
+					var ps = new PadSetting { ForceEnable = "1", ForceType = "0", ForceSpringEnable = "1", ForceSpringStrength = "0", WheelRange = CarRange };
 					// No rumble, said the way the program says it.
 					var silence = new Vibration { LeftMotorSpeed = short.MinValue, RightMotorSpeed = short.MinValue };
 					var ff = new ForceFeedbackState();
@@ -302,7 +326,7 @@ namespace x360ce.Tests
 						var bench = new Bench
 						{
 							Device = device, Ud = ud, Ps = ps, Silence = silence, Ff = ff,
-							Push = push, PushParameters = pushParameters, PushForce = pushForce,
+							Push = push, PushParameters = pushParameters, PushForce = pushForce, Pacer = pacer,
 						};
 						try
 						{
@@ -343,8 +367,8 @@ namespace x360ce.Tests
 			Assert.IsTrue(crossings <= CrossingsAllowed, string.Format(
 				"At {0} % the wheel crossed the centre {1} times in {2} ms: it is swinging from one end to the other instead of coming to rest.",
 				strength, crossings, SettleMs));
-			// The spring rests the wheel where its force falls to the friction in the gears, which is
-			// inside Centre; a wheel still outside it is not being held at all.
+			// A few degrees out the spring reaches the friction in the gears and never pushes less beyond,
+			// so it brings the wheel inside Centre; a wheel still outside it is not being held at all.
 			Assert.IsTrue(farthest <= centre, string.Format(
 				"At {0} % the wheel was still {1} from the centre in the last second, outside Centre ({2}).",
 				strength, farthest, centre));
@@ -414,8 +438,8 @@ namespace x360ce.Tests
 			{
 				var position = Position(b.Device);
 				positions.Add(position);
-				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null);
-				Thread.Sleep(1);
+				b.Ff.UpdateSpring(b.Device, position, null, watch.ElapsedMilliseconds, null, b.Friction);
+				b.Pacer.Wait(1);
 			}
 			return positions;
 		}
@@ -424,7 +448,7 @@ namespace x360ce.Tests
 		{
 			b.Ps.ForceSpringStrength = strength.ToString();
 			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence);
-			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, null);
+			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, null, b.Friction);
 		}
 
 		static int Degrees(int axisUnits)

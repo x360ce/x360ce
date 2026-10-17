@@ -48,7 +48,7 @@ namespace x360ce.App.UiTree
 			d["GameDetailsUserControl.DInputMaskGroupBox"] = new Text("DInput file",
 				"Whether the Direct Input library is supplied to the game as well.");
 			d["GameDetailsUserControl.AutoMapMaskGroupBox"] = new Text("Auto map",
-				"Which of the four controllers are assigned to a device by the program itself.");
+				"Not available yet, so greyed out: the program does not map devices to controllers by itself.");
 			d["GameDetailsUserControl.OtherOptionsGroupBox"] = new Text("Other options",
 				"How the game is started, and what it is told about the controller.");
 			d["GameDetailsUserControl.ProcessorArchitectureComboBox"] = new Text("Architecture",
@@ -133,8 +133,9 @@ namespace x360ce.App.UiTree
 				"Forgets the selected device and its settings.");
 			d["UserDevicesUserControl.HardwareButton"] = new Text("Hardware...",
 				"Opens the selected device in Windows Device Manager.");
-			d["UserDevicesUserControl.AddDemoDevice"] = new Text("Add Demo Device",
-				"Adds a pretend controller, for trying the program without hardware.");
+			d["UserDevicesUserControl.AddDemoDevice"] = new Text("Add Plugin Device",
+				"Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. "
+				+ "With several plugin devices it opens a list to pick from.");
 			d["UserDevicesUserControl.CleanupVirtualPadsButton"] = new Text("Remove Leftover Pads",
 				"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.");
 			d["UserDevicesUserControl.ShowSystemDevicesButton"] = new Text("Show System Devices",

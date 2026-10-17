@@ -14,8 +14,19 @@ namespace x360ce.App.UiTree
 				"Says which control on your device works each part of the Xbox controller.");
 			d["PadControl.ButtonsTabPage"] = new Text("Buttons",
 				"How far a stick or pedal must move before a button mapped to it counts as pressed.");
+			d["PadControl.AdvancedTabPage"] = new Text("Advanced",
+				"Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. "
+				+ "Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.");
+			d["PadControl.DeviceGroupBox"] = new Text("Device",
+				"What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.");
+			// The settings these are bound to describe them.
+			d["PadControl.PassThroughIndexComboBox"] = new Text("Pass Through ID", null);
+			d["PadControl.DeviceSubTypeComboBox"] = new Text("Device Sub Type", null);
+			d["PadControl.CombineGroupBox"] = new Text("Combining",
+				"x360ce 3 only: combined this controller into another virtual controller.");
+			d["PadControl.CombinedIndexComboBox"] = new Text("Combine Into", null);
 			d["PadControl.DPadTabPage"] = new Text("D-Pad",
-				"Turns a stick or wheel into the directional pad.");
+				"Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.");
 			d["PadControl.TriggersTabPage"] = new Text("Triggers",
 				"Shapes what the game receives from the two triggers.");
 			d["PadControl.LeftThumbTabPage"] = new Text("Left Thumb",
@@ -49,9 +60,10 @@ namespace x360ce.App.UiTree
 
 			// D-Pad page.
 			d["PadControl.AxisToDPadGroupBox"] = new Text("Axis to D-Pad",
-				"Turns one axis, a steering wheel among them, into the four pad directions.");
+				"Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, "
+				+ "from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.");
 			d["PadControl.AxisToDPadEnabledCheckBox"] = new Text("Enabled",
-				"Turns the axis into directional pad presses.");
+				"Turns the X and Y axes into directional pad presses.");
 			d["PadControl.AxisToDPadDeadZoneTextBox"] = new Text("Dead zone",
 				"How far the axis must move from the centre before a direction is pressed.");
 			d["PadControl.AxisToDPadDeadZoneTrackBar"] = new Text("Dead zone",
@@ -66,6 +78,11 @@ namespace x360ce.App.UiTree
 				"Vibration settings shared by both motors.");
 			d["PadControl.EffectDescriptionLabel"] = Live("Effect description",
 				"What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.");
+			d["PadControl.ForceSourceGroupBox"] = new Text("Force source",
+				"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.");
+			d["PadControl.ForceSourceLabel"] = Live("Force source",
+				"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: "
+				+ "on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.");
 			d["PadControl.ForceEnableCheckBox"] = new Text("Enable",
 				"Passes this controller's vibration from the game to the device. A device on several tabs feels every tab where this switch is also on, the strongest of each motor.");
 			d["PadControl.ForceSwapMotorCheckBox"] = new Text("Swap Motors",
@@ -77,7 +94,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.MotorPeriodPresetComboBox"] = new Text("Motor periods",
-				"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.");
+				"Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.");
 			d["PadControl.MotorInfoButton"] = new Text("About the motors",
 				"Shows what each motor is used for, their measured speeds, and what the multipliers mean.");
 			d["PadControl.ForceDefaultsButton"] = new Text("Defaults",
@@ -95,12 +112,18 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceSpringEnableCheckBox"] = new Text("Centering spring",
 				"Turns the centering spring on. Off by default, so a wheel's own software can hold the centre without the two fighting.");
 			d["PadControl.ForceSpringCarComboBox"] = new Text("Car",
-				"Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. "
+				"Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. "
 				+ "No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out "
 				+ "from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the "
-				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.");
+				+ "heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range "
+				+ "for road and sports cars. Friction and Strength are left as they are, and the car is not saved.");
+			d["PadControl.ForceSpringFrictionTextBox"] = d["PadControl.ForceSpringFrictionTrackBar"] = new Text("Friction",
+				"The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre "
+				+ "and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; "
+				+ "a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. "
+				+ "Greyed out while no wheel is selected.");
 			d["PadControl.ForceSpringStrengthTextBox"] = d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Strength",
-				"The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.");
+				"The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.");
 			d["PadControl.ForceSpringCentreTextBox"] = d["PadControl.ForceSpringCentreTrackBar"] = new Text("Centre",
 				"The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.");
 			d["PadControl.ForceSpringPeakTextBox"] = d["PadControl.ForceSpringPeakTrackBar"] = new Text("Peak",
@@ -113,18 +136,19 @@ namespace x360ce.App.UiTree
 				"The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. "
 				+ "A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.");
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
-				"Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.");
+				"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
 				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against, 900 when left as it is. "
-				+ "Needs Enable ticked on the Force Feedback page. Leave as it is sends nothing.");
+				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing.");
 			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
 				"What Auto is doing and what it found, or why the centering spring does nothing now.");
 
 			// The chart on the Wheel page.
 			d["WheelChartUserControl.MainPictureBox"] = new Text("Centering chart",
 				"The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle "
-				+ "it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is "
-				+ "inside it. The crosshair and the dot are the wheel's angle and force now.");
+				+ "it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere "
+				+ "but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are "
+				+ "the wheel's angle and force now.");
 			d["WheelChartUserControl.AngleValueLabel"] = Live("Wheel angle",
 				"The wheel's angle now, in degrees from the centre; negative is to the left.");
 			d["WheelChartUserControl.ForceValueLabel"] = Live("Spring force",
@@ -140,7 +164,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.RemoveMapButton"] = new Text("Remove",
 				"Stops the selected device working this controller.");
 			d["PadControl.AutoMapButton"] = new Text("Auto Map",
-				"Lets the program pick a device for this controller by itself when a game starts.");
+				"Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.");
 			d["PadControl.EnableButton"] = new Text("Enable",
 				"Turns this controller on or off for the selected game.");
 			d["PadControl.GetXInputStatesCheckBox"] = new Text("Show XInput State",
@@ -184,9 +208,9 @@ namespace x360ce.App.UiTree
 			d["PadControl." + side + "MotorStrengthTrackBar"] = new Text(name + " strength",
 				"How hard this motor runs when the game asks for vibration.");
 			d["PadControl." + side + "MotorPeriodTextBox"] = new Text(name + " period",
-				"How long one pulse lasts, when the effect is repeated rather than held.");
+				"How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.");
 			d["PadControl." + side + "MotorPeriodTrackBar"] = new Text(name + " period",
-				"How long one pulse lasts, when the effect is repeated rather than held.");
+				"How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.");
 			d["PadControl." + side + "MotorDirectionComboBox"] = new Text(name + " direction",
 				"Which way a wheel is pushed by this motor.");
 			d["PadControl." + side + "MotorTestTextBox"] = new Text("Test " + lower,

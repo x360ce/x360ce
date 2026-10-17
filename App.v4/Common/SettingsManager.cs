@@ -104,6 +104,29 @@ namespace x360ce.App
 
 		public static Options Options { get { return OptionsData.Items[0]; } }
 
+		/// <summary>The AI settings, in their own file: AI assistant access and the tunnel for ChatGPT on the web.</summary>
+		public static XSettingsData<AiOptions> AiOptionsData
+		{
+			get
+			{
+				lock (OptionsLock)
+				{
+					if (_AiOptionsData == null)
+					{
+						var data = new XSettingsData<AiOptions>("AI.xml", "x360ce AI settings: AI assistant access, and the tunnel for ChatGPT on the web.");
+						data.Load();
+						if (data.Items.Count == 0)
+							data.Items.Add(new AiOptions());
+						_AiOptionsData = data;
+					}
+					return _AiOptionsData;
+				}
+			}
+		}
+		static XSettingsData<AiOptions> _AiOptionsData;
+
+		public static AiOptions AiOptions { get { return AiOptionsData.Items[0]; } }
+
 		// Global settings.
 
 		/// <summary>Programs - Default settings for most popular Games.</summary>
@@ -147,16 +170,8 @@ namespace x360ce.App
 		{
 			foreach (var item in settings)
 			{
-				bool isOnline;
-				if (TestDeviceHelper.ProductGuid.Equals(item.ProductGuid))
-				{
-					isOnline = true;
-				}
-				else
-				{
-					var device = GetDevice(item.InstanceGuid);
-					isOnline = device == null ? false : device.IsOnline;
-				}
+				var device = GetDevice(item.InstanceGuid);
+				var isOnline = device == null ? false : device.IsOnline;
 				if (item.IsOnline != isOnline)
 					item.IsOnline = isOnline;
 			}
@@ -542,6 +557,7 @@ namespace x360ce.App
 		internal static void ReloadSettingsFiles()
 		{
 			OptionsData.Rebase();
+			AiOptionsData.Rebase();
 			Programs.Rebase();
 			Summaries.Rebase();
 			Presets.Rebase();
@@ -551,6 +567,7 @@ namespace x360ce.App
 			UserInstances.Rebase();
 			UserSettings.Rebase();
 			PadSettings.Rebase();
+			Plugins.PluginSettings.Current.Rebase();
 			// The AI assistant access log lives beside the settings, so it moves with them.
 			JocysCom.ClassLibrary.Mcp.McpLog.Folder = EngineHelper.AppDataPath;
 		}
@@ -613,11 +630,7 @@ namespace x360ce.App
 
 		#region Constants
 
-		public const string IniFileName = "x360ce.ini";
-		public const string TmpFileName = "x360ce.tmp";
-
 		public const string MappingsSection = "Mappings";
-		public const string OptionsSection = "Options";
 
 		#endregion // Constants
 
@@ -766,11 +779,6 @@ namespace x360ce.App
 
 
 
-		//public void ReadSettings()
-		//{
-		//	ReadSettings(IniFileName);
-		//}
-
 		static private T GetCustomAttribute<T>(PropertyInfo prop)
 		{
 			if (prop == null)
@@ -779,15 +787,6 @@ namespace x360ce.App
 			}
 
 			return (T)prop.GetCustomAttributes(typeof(T), false).FirstOrDefault();
-		}
-
-		public void SetPadSetting(string padSectionName, DeviceInstance di)
-		{
-			var ini2 = new Ini(IniFileName);
-			//ps.PadSettingChecksum = Guid.Empty;
-			ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
-			ini2.SetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
-			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
 		}
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
@@ -905,9 +904,6 @@ namespace x360ce.App
 					return;
 				if (key == SettingName.InstanceGuid)
 					return;
-				// Always override version.
-				if (key == SettingName.Version)
-					value = SettingName.DefaultVersion;
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -1052,15 +1048,22 @@ namespace x360ce.App
 
 		public static UserSetting[] FilterSettings(UserSetting[] settings)
 		{
-			// Make sure that non-supported keyboard, mouse and test devices are excluded.
+			// Make sure that non-supported keyboard, mouse and plugin devices are excluded: the library reads DirectInput only.
 			var exludeTypes = new[]
 			{
 				(int)SharpDX.DirectInput.DeviceType.Mouse,
 				(int)SharpDX.DirectInput.DeviceType.Keyboard,
 			};
 			return settings
-				.Where(x => !exludeTypes.Contains(x.DeviceType) && x.ProductGuid != TestDeviceHelper.ProductGuid)
+				.Where(x => !exludeTypes.Contains(x.DeviceType) && !IsPluginDevice(x.InstanceGuid))
 				.ToArray();
+		}
+
+		/// <summary>Whether the device of this instance is one a plugin adds.</summary>
+		static bool IsPluginDevice(Guid instanceGuid)
+		{
+			var device = GetDevice(instanceGuid);
+			return device != null && device.InputSourceType == (int)InputSourceType.Plugin;
 		}
 
 		#endregion
@@ -1088,49 +1091,6 @@ namespace x360ce.App
 		public string GetInstanceSection(Guid instanceGuid)
 		{
 			return string.Format("IG_{0:N}", instanceGuid).ToUpper();
-		}
-
-		public string GetProductSection(Guid productGuid)
-		{
-			return string.Format("PG_{0:N}", productGuid).ToUpper();
-		}
-
-
-		public bool ContainsProductSection(Guid productGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			var section = GetProductSection(productGuid);
-			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "ProductGUID"));
-			sectionName = contains ? section : null;
-			return contains;
-		}
-
-		public bool ContainsInstanceSection(Guid instanceGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			var section = GetInstanceSection(instanceGuid);
-			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "InstanceGUID"));
-			sectionName = contains ? section : null;
-			return contains;
-		}
-
-		public bool ContainsInstanceSectionOld(Guid instanceGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			for (int i = 1; i <= 4; i++)
-			{
-				var section = string.Format("PAD{0}", i);
-				var v = ini2.GetValue(section, "InstanceGUID");
-				if (string.IsNullOrEmpty(v))
-					continue;
-				if (v.ToLower() == instanceGuid.ToString("D").ToLower())
-				{
-					sectionName = section;
-					return true;
-				}
-			}
-			sectionName = null;
-			return false;
 		}
 
 		#endregion // Instance Version
@@ -1241,8 +1201,10 @@ namespace x360ce.App
 						setting.Completion = twin.Completion;
 					else
 						ps = AutoMapHelper.GetAutoPreset(ud);
+					// The page is not loaded here: it belongs to the row selected on the tab, which is still the
+					// device that was there before, and the next change would save this one's settings into it.
+					// Selecting the new row loads its page.
 					Current.LoadPadSettingAndCleanup(setting, ps, true);
-					Current.SyncFormFromPadSetting(mappedTo, ps);
 					// Refresh online status
 					RefreshDeviceIsOnlineValueOnSettings(setting);
 					// Load created setting.

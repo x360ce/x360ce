@@ -1,10 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Controls.Themes;
-using JocysCom.ClassLibrary.Mcp;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 using x360ce.Engine;
 
 namespace x360ce.App
@@ -16,7 +14,6 @@ namespace x360ce.App
 			// Set default values.
 			AllowOnlyOneCopy = true;
 			MinimizeToTray = true;
-			StartWithWindowsState = FormWindowState.Minimized;
 			InternetFeatures = true;
 			InternetAutoLoad = true;
 			InternetAutoSave = true;
@@ -86,14 +83,6 @@ namespace x360ce.App
 		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; OnPropertyChanged(); } }
 		bool _AlwaysOnTop;
 
-		[DefaultValue(false), Description("Start with Windows.")]
-		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; OnPropertyChanged(); } }
-		bool _StartWithWindows;
-
-		[DefaultValue(FormWindowState.Minimized), Description("Windows State when program starts with Windows.")]
-		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; OnPropertyChanged(); } }
-		FormWindowState _StartWithWindowsState;
-
 		[DefaultValue(ThemeType.Auto), Description("Light or dark colours. System follows the Windows setting for apps.")]
 		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
 		ThemeType _Theme;
@@ -107,7 +96,7 @@ namespace x360ce.App
 		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; OnPropertyChanged(); } }
 		bool _InternetFeatures;
 
-		[DefaultValue(true), Description("Auto load settings from Internet Database.")]
+		[DefaultValue(true), Description("Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.")]
 		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; OnPropertyChanged(); } }
 		bool _InternetAutoLoad;
 
@@ -168,6 +157,16 @@ namespace x360ce.App
 			set { _ReadEveryChange = value; OnPropertyChanged(); }
 		}
 		bool _ReadEveryChange = true;
+
+		/// <summary>True: plugins from anyone load. False: only the plugins embedded in this program and those signed by its publisher.</summary>
+		/// <remarks>A plugin runs inside this program with all its rights, so loading one from anyone else is the person's choice.</remarks>
+		[DefaultValue(false), Description("Load plugins that are not signed by the publisher of x360ce.")]
+		public bool AllowThirdPartyPlugins
+		{
+			get { return _AllowThirdPartyPlugins; }
+			set { _AllowThirdPartyPlugins = value; OnPropertyChanged(); }
+		}
+		bool _AllowThirdPartyPlugins;
 
 
 		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
@@ -251,8 +250,6 @@ namespace x360ce.App
 
 		public string LoginEnabled { get; set; }
 
-		public bool IncludeProductsInsideINI { get; set; }
-
 		public string UserRsaPublicKey { get; set; }
 		public string UserRsaPrivateKey { get; set; }
 
@@ -283,6 +280,22 @@ namespace x360ce.App
 		}
 		bool _CheckForUpdates;
 
+		[DefaultValue(true), Description("Install only an update whose program file carries a trusted digital signature.")]
+		public bool CheckUpdateSignature
+		{
+			get { return _CheckUpdateSignature; }
+			set { _CheckUpdateSignature = value; OnPropertyChanged(); }
+		}
+		bool _CheckUpdateSignature = true;
+
+		[DefaultValue(true), Description("Install only an update whose program file is newer than this one and is the version its release announces.")]
+		public bool CheckUpdateVersion
+		{
+			get { return _CheckUpdateVersion; }
+			set { _CheckUpdateVersion = value; OnPropertyChanged(); }
+		}
+		bool _CheckUpdateVersion = true;
+
 		[Description("When the program last looked for a newer version; the start-up look runs at most once a day.")]
 		public DateTime LastUpdateCheck { get; set; }
 
@@ -296,51 +309,6 @@ namespace x360ce.App
 		public int RemotePort { get; set; }
 		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; OnPropertyChanged(); } }
 		bool _RemoteEnabled;
-
-		// AI assistant access
-
-		[DefaultValue(false), Description("Whether an AI assistant or a script may reach the program at all.")]
-		public bool AiAccessEnabled { get { return _AiAccessEnabled; } set { _AiAccessEnabled = value; OnPropertyChanged(); } }
-		bool _AiAccessEnabled;
-
-		[DefaultValue(AiAccess.Read), Description("How much a connected assistant may do: Read, Configure or Administer.")]
-		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
-		AiAccess _AiAccess = AiAccess.Read;
-
-		[DefaultValue(LoopbackAddress), Description("Where the door listens: 127.0.0.1 for this computer only, 0.0.0.0 for every network.")]
-		public string AiAccessAddress { get { return _AiAccessAddress; } set { _AiAccessAddress = value; OnPropertyChanged(); } }
-		string _AiAccessAddress = LoopbackAddress;
-
-		/// <summary>The address that keeps the door on this computer. The default.</summary>
-		public const string LoopbackAddress = McpListener.LoopbackAddress;
-		/// <summary>The address that opens the door to every network the computer is on.</summary>
-		public const string AnyAddress = McpListener.AnyAddress;
-
-		[DefaultValue(false), Description("Whether programs on this computer reach the door without the token while it listens on 127.0.0.1 only.")]
-		public bool AiAccessTrustLocal { get { return _AiAccessTrustLocal; } set { _AiAccessTrustLocal = value; OnPropertyChanged(); } }
-		bool _AiAccessTrustLocal;
-
-		[DefaultValue(37360), Description("Local port the assistant connects to.")]
-		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
-		int _AiAccessPort = 37360;
-
-		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
-		public string AiAccessToken { get; set; }
-
-		/// <summary>Makes the token when there is none. True when it did.</summary>
-		public bool EnsureAiAccessToken()
-		{
-			if (!string.IsNullOrEmpty(AiAccessToken))
-				return false;
-			RegenerateAiAccessToken();
-			return true;
-		}
-
-		public string RegenerateAiAccessToken()
-		{
-			AiAccessToken = McpListener.NewToken();
-			return AiAccessToken;
-		}
 
 		// Performance Test
 

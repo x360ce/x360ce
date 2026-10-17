@@ -35,13 +35,13 @@ namespace x360ce.Tests
 			var programSettings = SettingsLocation.Resolve(Path.GetDirectoryName(exe)).Path;
 			if (!string.Equals(programSettings, EngineHelper.AppDataPath, StringComparison.OrdinalIgnoreCase))
 				Assert.Inconclusive("The program reads settings from " + programSettings + " and this test from " + EngineHelper.AppDataPath + ".");
-			var o = SettingsManager.Options;
+			var o = SettingsManager.AiOptions;
 			var previous = o.AiAccess;
 			var previouslyEnabled = o.AiAccessEnabled;
 			o.AiAccessEnabled = true;
 			o.AiAccess = AiAccess.Configure;
 			o.EnsureAiAccessToken();
-			SettingsManager.OptionsData.Save();
+			SettingsManager.AiOptionsData.Save();
 			Process process = null;
 			try
 			{
@@ -66,7 +66,7 @@ namespace x360ce.Tests
 					Ui.CloseApp(process);
 				o.AiAccess = previous;
 				o.AiAccessEnabled = previouslyEnabled;
-				SettingsManager.OptionsData.Save();
+				SettingsManager.AiOptionsData.Save();
 			}
 		}
 
@@ -104,14 +104,14 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("ui-interactive"), Timeout(240000)]
-		[Description("Describing the interface with /ExportUi opens no door and leaves the options file as it was, even where the options have AI assistant access on")]
+		[Description("Describing the interface with /ExportUi opens no door and leaves the AI settings file as it was, even where it has AI assistant access on")]
 		public void Export_opens_no_door_and_writes_no_settings()
 		{
 			var exe = Ui.FindApp("App.v4");
 			if (exe == null)
 				Assert.Inconclusive("App.v4 is not built.");
 			var profile = NewProfile(37363);
-			var options = Path.Combine(profile, "Settings", "x360ce.Options.xml");
+			var options = Path.Combine(profile, "Settings", "x360ce.AI.xml");
 			var before = File.ReadAllBytes(options);
 			var folder = Path.Combine(profile, "export");
 			var process = Process.Start(new ProcessStartInfo(exe, "\"/Profile=" + profile + "\" \"/ExportUi=" + folder + "\"") { WorkingDirectory = profile, UseShellExecute = false });
@@ -121,7 +121,7 @@ namespace x360ce.Tests
 				Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree-v4.md")), "The export wrote nothing, so this proves nothing.");
 				var log = Path.Combine(profile, "x360ce.AiAccess.log");
 				Assert.IsFalse(File.Exists(log) && File.ReadAllText(log).Contains("door opened"), "The export opened the door: " + (File.Exists(log) ? File.ReadAllText(log) : ""));
-				CollectionAssert.AreEqual(before, File.ReadAllBytes(options), "The export wrote the options file.");
+				CollectionAssert.AreEqual(before, File.ReadAllBytes(options), "The export wrote the AI settings file.");
 			}
 			finally
 			{
@@ -132,15 +132,15 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>A profile folder whose options have the door on at Read on the port given, trusting local connections.</summary>
+		/// <summary>A profile folder whose AI settings have the door on at Read on the port given, trusting local connections.</summary>
 		static string NewProfile(int port)
 		{
 			var folder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "profile-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(Path.Combine(folder, "Settings"));
-			var o = new Options { AiAccessEnabled = true, AiAccess = AiAccess.Read, AiAccessTrustLocal = true, AiAccessPort = port };
+			var o = new AiOptions { AiAccessEnabled = true, AiAccess = AiAccess.Read, AiAccessTrustLocal = true, AiAccessPort = port };
 			o.EnsureAiAccessToken();
-			var data = new XSettingsData<Options> { Items = new SortableBindingList<Options> { o } };
-			File.WriteAllBytes(Path.Combine(folder, "Settings", "x360ce.Options.xml"), Serializer.SerializeToXmlBytes(data, Encoding.UTF8, true));
+			var data = new XSettingsData<AiOptions> { Items = new SortableBindingList<AiOptions> { o } };
+			File.WriteAllBytes(Path.Combine(folder, "Settings", "x360ce.AI.xml"), Serializer.SerializeToXmlBytes(data, Encoding.UTF8, true));
 			return folder;
 		}
 
@@ -159,7 +159,7 @@ namespace x360ce.Tests
 
 		static string Post(string body)
 		{
-			var o = SettingsManager.Options;
+			var o = SettingsManager.AiOptions;
 			return McpClient.Post(o.AiAccessPort, o.AiAccessToken, body);
 		}
 

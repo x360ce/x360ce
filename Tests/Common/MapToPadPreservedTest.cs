@@ -57,20 +57,21 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
-		[Description("Saving writes the values it knows and removes nothing else")]
-		public void Saving_writes_what_it_knows_and_removes_nothing_else()
+		[Description("This version writes nothing into the older version's configuration file")]
+		public void Saving_leaves_the_older_versions_file_alone()
 		{
-			// The file is written a value at a time, not rebuilt from what this version happens to
-			// model. That is what leaves a setting it does not use exactly as it found it, and it is
-			// worth holding: rewriting the file wholesale would look tidier and would silently drop
-			// every setting belonging to the other version.
-			var manager = Read(Path.Combine("App.v4", "Common", "SettingsManager.cs"));
-			Assert.IsTrue(Regex.Matches(manager, @"ini2?\.SetValue\(").Count > 0,
-				"The configuration file is no longer written a value at a time.");
-			foreach (var wipes in new[] { "DeleteKey", "DeleteSection", "RemoveKey" })
-				Assert.IsFalse(manager.Contains(wipes),
-					"Saving now removes keys from the configuration file, so a setting this version " +
-					"does not use is lost the first time somebody opens their file here.");
+			// This version keeps its settings in its own files, so a setting it does not use stays in
+			// x360ce.ini exactly as the older version left it. Code here that opens that file could
+			// rewrite or drop every setting belonging to the other version.
+			var app = Path.Combine(Ui.RepoRoot.FullName, "App.v4");
+			var writers = Directory.GetFiles(app, "*.cs", SearchOption.AllDirectories)
+				.Where(x => !x.Contains(@"\bin\") && !x.Contains(@"\obj\"))
+				.Where(x => Regex.IsMatch(File.ReadAllText(x), @"new\s+Ini\("))
+				.Select(x => x.Substring(app.Length + 1))
+				.ToArray();
+			Assert.AreEqual(0, writers.Length,
+				"These files open x360ce.ini, so this version can change the older version's settings: "
+				+ string.Join(", ", writers));
 		}
 
 	}

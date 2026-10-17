@@ -71,11 +71,43 @@ namespace x360ce.App.Controls
 		[Category("Appearance"), DefaultValue(0)]
 		public string HeaderText
 		{
-			get { return MainGroupBox.Text; }
+			get { return _HeaderText; }
 			set
 			{
-				MainGroupBox.Text = value;
+				_HeaderText = value;
+				UpdateHeader();
 			}
+		}
+		string _HeaderText;
+
+		/// <summary>
+		/// Greys out the dead zones and the sensitivity, which only a stick, pedal or slider row uses: a button row sends
+		/// full travel and a formula row works out its own value. The chart stays, so a formula's curve is still drawn.
+		/// </summary>
+		public void SetTuningEnabled(bool enabled)
+		{
+			if (_TuningEnabled == enabled)
+				return;
+			_TuningEnabled = enabled;
+			var controls = new Control[]
+			{
+				DeadZoneLabel, DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox,
+				AntiDeadZoneLabel, AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox,
+				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox,
+				PresetMenuStrip,
+			};
+			foreach (var control in controls)
+				control.Enabled = enabled;
+			UpdateHeader();
+		}
+		bool _TuningEnabled = true;
+
+		/// <summary>The header, which says why the settings are greyed out while they are.</summary>
+		void UpdateHeader()
+		{
+			if (_HeaderText == null)
+				_HeaderText = MainGroupBox.Text;
+			MainGroupBox.Text = _TuningEnabled ? _HeaderText : _HeaderText + " (settings only for a mapped axis or slider)";
 		}
 
 		TargetType _TargetType;

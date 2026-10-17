@@ -104,7 +104,7 @@ namespace x360ce.Engine
 		/// <remarks>An MD5 hash of the path in upper case, since Windows reports the same path in either case.</remarks>
 		public static Guid GetInstanceGuid(string interfacePath)
 		{
-			return EngineHelper.ComputeMd5Hash(interfacePath.ToUpperInvariant());
+			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(interfacePath.ToUpperInvariant());
 		}
 
 		/// <summary>The product GUID DirectInput gives a HID device: {PPPPVVVV-0000-0000-0000-504944564944}.</summary>

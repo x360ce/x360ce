@@ -191,6 +191,7 @@
     <EntitySetMapping Name="UserDevices">
       <EntityTypeMapping TypeName="x360ceModel.UserDevice">
         <MappingFragment StoreEntitySet="x360ce_UserDevices">
+          <ScalarProperty Name="ForceSpringFriction" ColumnName="ForceSpringFriction" />
           <ScalarProperty Name="InputSourceType" ColumnName="InputSourceType" />
           <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
           <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />

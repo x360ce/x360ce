@@ -1,4 +1,9 @@
-﻿## [3.6.24.0] - 2026-10-10
+﻿## [3.7.8.0] - 2026-10-17
+
+- Fixed: The program failed on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
+- Fixed: The program stopped at its first start when its settings went in a folder beside it (Issue #1649, PeeLetan).
+
+## [3.6.24.0] - 2026-10-10
 
 - Fixed: AI tools silently ignored arguments they do not take.
 - Fixed: Reading the device list leaked a little memory each time.

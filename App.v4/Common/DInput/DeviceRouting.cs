@@ -98,11 +98,11 @@ namespace x360ce.App.DInput
 				if (tabs.Length == 0)
 					continue;
 				var forcing = tabs.Where(x => x.Settings != null && x.Settings.ForceEnable == "1").ToArray();
-				// One tab's settings make the effects, so they are not made again on every pass.
-				var settings = forcing.Length > 0
-					? forcing[0].Settings
-					: tabs.Select(x => x.Settings).FirstOrDefault(x => x != null);
-				_forces[device.Key] = new DeviceForce(settings, forcing.Select(x => x.Pad).Distinct().ToArray());
+				// One tab's settings make the effects, so they are not made again on every pass: the lowest switched-on
+				// tab's, whatever its Enable says, so ticking Enable never moves the settings to another tab.
+				var source = tabs.FirstOrDefault(x => x.Settings != null);
+				_forces[device.Key] = new DeviceForce(source?.Settings, source == null ? -1 : source.Pad,
+					forcing.Select(x => x.Pad).Distinct().ToArray());
 			}
 			// Raw Input sends nothing back: Windows reads a device through it and offers no way to write to one. So the force
 			// of a Raw Input device goes to its DirectInput twin whose driver takes force feedback (UserDevice.ForceTwin),
@@ -114,17 +114,20 @@ namespace x360ce.App.DInput
 			{
 				DeviceForce force;
 				if (raw == null || raw.InputSource != InputSourceType.RawInput
-					|| !_forces.TryGetValue(raw.InstanceGuid, out force) || force.ForcePads.Length == 0)
+					|| !_forces.TryGetValue(raw.InstanceGuid, out force) || !force.Drives)
 					continue;
 				var twin = raw.ForceTwin(devices);
 				if (twin == null)
 					continue;
-				// The twin on a forcing tab of its own: both tabs' force reaches the motors, and the effects are made with
-				// the settings of the lowest forcing tab, as for any device.
+				// The twin on a switched-on tab of its own: both tabs' force reaches the motors, and the effects are made
+				// with the settings of the lower of the two tabs, as for any device.
 				DeviceForce own;
-				if (_forces.TryGetValue(twin.InstanceGuid, out own) && own.ForcePads.Length > 0)
-					force = new DeviceForce(own.ForcePads[0] < force.ForcePads[0] ? own.PadSetting : force.PadSetting,
+				if (_forces.TryGetValue(twin.InstanceGuid, out own))
+				{
+					var lower = own.SettingsPad >= 0 && own.SettingsPad < force.SettingsPad ? own : force;
+					force = new DeviceForce(lower.PadSetting, lower.SettingsPad,
 						own.ForcePads.Concat(force.ForcePads).Distinct().OrderBy(x => x).ToArray());
+				}
 				_forces[twin.InstanceGuid] = force;
 				_forceDevices[raw.InstanceGuid] = twin;
 				forceTwins.Add(twin);
@@ -377,22 +380,37 @@ namespace x360ce.App.DInput
 	/// <summary>Where one device's force feedback comes from.</summary>
 	public sealed class DeviceForce
 	{
-		public DeviceForce(PadSetting padSetting, int[] forcePads)
+		public DeviceForce(PadSetting padSetting, int settingsPad, int[] forcePads)
 		{
 			PadSetting = padSetting;
+			SettingsPad = settingsPad;
 			ForcePads = forcePads;
+			Spring = padSetting != null && padSetting.ForceSpringEnable == "1";
 		}
 
 		/// <summary>The settings the device's effects are made with, or null when none of its rows' settings is stored.</summary>
 		/// <remarks>
-		/// Those of the lowest switched-on tab whose Force feedback enabled switch is on, so that switch is on
-		/// exactly when <see cref="ForcePads"/> has a tab. With it off on every switched-on tab, those of the
-		/// lowest switched-on tab, which still decide the wheel's own centering.
+		/// Those of the lowest switched-on tab the device is on, whatever its Force feedback enabled switch says: they
+		/// shape the force of every tab in <see cref="ForcePads"/>, and decide the centering spring and the wheel's own
+		/// centering. The page of every other tab greys them out and names this one.
 		/// </remarks>
 		public readonly PadSetting PadSetting;
+
+		/// <summary>The pad index, 0 to 3, of the tab whose settings <see cref="PadSetting"/> are, or -1 when none is stored.</summary>
+		public readonly int SettingsPad;
 
 		/// <summary>The pad indexes, 0 to 3, whose Force feedback enabled switch is on, lowest first. Empty when none is.</summary>
 		/// <remarks>Only tabs switched on for the game, which have a virtual controller for a game to speak through.</remarks>
 		public readonly int[] ForcePads;
+
+		/// <summary>Whether the centering spring of <see cref="PadSetting"/> is ticked, as it was when the routing was built.</summary>
+		/// <remarks>
+		/// The spring holds the wheel by itself and needs no tab to send force, so a wheel is driven for its spring alone,
+		/// with no game vibration: that comes only from <see cref="ForcePads"/>.
+		/// </remarks>
+		public readonly bool Spring;
+
+		/// <summary>Whether the engine drives the device's force: a tab sends force to it, or its centering spring is ticked.</summary>
+		public bool Drives { get { return ForcePads.Length > 0 || Spring; } }
 	}
 }

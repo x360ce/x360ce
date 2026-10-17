@@ -28,6 +28,8 @@ namespace x360ce.App.Controls
 		public void UpdateSettingsMap()
 		{
 			SettingsManager.LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.CheckUpdateSignature, CheckDigitalSignatureCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.CheckUpdateVersion, CheckVersionCheckBox);
 		}
 
 		readonly List<string> _lines = new List<string>();

@@ -177,11 +177,7 @@ namespace x360ce.Engine
 
 		public static Guid GetFileChecksum(string fileName)
 		{
-			var file = new FileStream(fileName, FileMode.Open);
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			byte[] retVal = md5.ComputeHash(file);
-			file.Close();
-			return new Guid(retVal);
+			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuidFromFile(fileName);
 		}
 
 		public static x360ce.Engine.Data.Program[] GetLocalFiles(string path = ".")
@@ -689,57 +685,6 @@ namespace x360ce.Engine
 
 		#endregion
 
-		#region MD5
-
-		static System.Security.Cryptography.MD5 HashProvider;
-		static object HashProviderLock = new object();
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified text. Use UTF-8 encoding to get bytes.
-		/// </summary>
-		/// <param name="text">The input to compute the hash code for.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		public static Guid ComputeMd5Hash(string text)
-		{
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
-			return ComputeMd5Hash(bytes);
-		}
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified text.
-		/// </summary>
-		/// <param name="text">The input to compute the hash code for.</param>
-		/// <param name="encoding">Encoding to get bytes.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		public static Guid ComputeMd5Hash(string text, Encoding encoding)
-		{
-			byte[] bytes = encoding.GetBytes(text);
-			return ComputeMd5Hash(bytes);
-		}
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified byte array.
-		/// </summary>
-		/// <param name="bytes">The input to compute the hash code for.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		/// <remarks>
-		/// One instance of the MD5 Crypto Service Provider
-		/// can't operate properly with multiple simultaneous threads.
-		/// Use lock to solve this problem.
-		/// </remarks>
-		public static Guid ComputeMd5Hash(byte[] bytes)
-		{
-			byte[] hash;
-			lock (HashProviderLock)
-			{
-				HashProvider = HashProvider ?? new System.Security.Cryptography.MD5CryptoServiceProvider();
-				hash = HashProvider.ComputeHash(bytes);
-			}
-			return new Guid(hash);
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Get first 8 numbers of GUID.
 		/// </summary>
@@ -852,11 +797,11 @@ namespace x360ce.Engine
 			return newName;
 		}
 
-		static Guid UpdateChecksum(IChecksum item, System.Security.Cryptography.MD5CryptoServiceProvider md5)
+		static Guid UpdateChecksum(IChecksum item)
 		{
 			string s = JocysCom.ClassLibrary.Runtime.RuntimeHelper.GetDataMembersString(item);
 			var bytes = Encoding.Unicode.GetBytes(s);
-			var cs = new Guid(md5.ComputeHash(bytes));
+			var cs = JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(bytes);
 			if (item.Checksum != cs)
 				item.Checksum = cs;
 			return cs;
@@ -869,10 +814,9 @@ namespace x360ce.Engine
 		public static List<Guid> UpdateChecksums<T>(T[] list) where T : IChecksum
 		{
 			var result = new List<Guid>();
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 			for (int i = 0; i < list.Length; i++)
 			{
-				var checksum = UpdateChecksum(list[i], md5);
+				var checksum = UpdateChecksum(list[i]);
 				result.Add(checksum);
 			}
 			if (list.Length > 0)
@@ -884,7 +828,7 @@ namespace x360ce.Engine
 				{
 					Array.Copy(list[i].Checksum.ToByteArray(), 0, total, i * size, size);
 				}
-				result.Add(new Guid(md5.ComputeHash(total)));
+				result.Add(JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(total));
 			}
 			return result;
 		}

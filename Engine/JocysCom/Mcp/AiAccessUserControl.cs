@@ -6,20 +6,20 @@ using System.Windows.Forms;
 namespace JocysCom.ClassLibrary.Mcp
 {
 	/// <summary>
-	/// The AI page in Windows Forms: the door an AI assistant or a script reaches the program by, at the level the
-	/// person chooses, and the skill that teaches AI agents to use the program. It shows <see cref="Model"/> and passes
-	/// every change and press to it; the WPF view AiAccessControl does the same with the same field names, so a path
-	/// reads the same in both.
+	/// The AI page in Windows Forms: the skill that teaches AI agents to use the program, the door an AI assistant or a
+	/// script reaches the program by, at the level the person chooses, and the tunnel that lets ChatGPT on the web reach
+	/// the door. It shows <see cref="Model"/> and passes every change and press to it; the WPF view AiAccessControl does
+	/// the same with the same field names.
 	/// </summary>
 	/// <remarks>
-	/// Each section is one table: its title, then rows of caption, value and button. Windows Forms makes every named
-	/// control a segment of a path, so a section holds its rows with no panel between. Names no WPF type, so a
-	/// Windows Forms program compiles it without WPF.
+	/// What the page is for and an example to ask come first, above the tabs, so a person sees what an assistant can do
+	/// before how to connect one. Each tab holds one section in one table: rows of caption, value and button. Windows
+	/// Forms makes every named control a segment of a path, so a path here goes through the section's tab, and a section
+	/// holds its rows with no panel between. Names no WPF type, so a Windows Forms program compiles it without WPF.
 	/// </remarks>
 	public partial class AiAccessUserControl : UserControl
 	{
 		bool _showing;
-		Font _title;
 		Font _bold;
 		Font _code;
 
@@ -27,7 +27,12 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			InitializeComponent();
 			Model = new AiAccessModel(SetClipboard);
-			Model.Changed += (s, e) => ShowModel();
+			// The tunnel can report its state after the page is gone, while the program closes.
+			Model.Changed += (s, e) =>
+			{
+				if (!IsDisposed)
+					ShowModel();
+			};
 			AiAccessComboBox.Items.AddRange(AiAccessModel.Levels);
 			AiAccessAddressComboBox.Items.AddRange(AiAccessModel.Addresses);
 			// A box that wraps is as tall as the lines it holds at its width, as the WPF box is.
@@ -45,7 +50,14 @@ namespace JocysCom.ClassLibrary.Mcp
 				Model.Refresh();
 				Model.CheckSkills();
 			};
-			Disposed += (s, e) => DisposeFonts();
+			Disposed += (s, e) =>
+			{
+				Model.Close();
+				DisposeFonts();
+				// Off the tabs, the tunnel's tab is not disposed with them.
+				if (!AiTunnelTabPage.IsDisposed)
+					AiTunnelTabPage.Dispose();
+			};
 			SetFonts();
 			ShowModel();
 		}
@@ -81,6 +93,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				ShowRow(Model.Claude, AiSkillClaudeFolderTextBox, AiSkillClaudeStatusText, AiSkillClaudeButton);
 				ShowRow(Model.Agents, AiSkillAgentsFolderTextBox, AiSkillAgentsStatusText, AiSkillAgentsButton);
 				AiSkillZipNoteText.Text = Model.ZipNote;
+				ShowTunnel();
 			}
 			finally
 			{
@@ -88,6 +101,40 @@ namespace JocysCom.ClassLibrary.Mcp
 			}
 			// A skill button's caption can change its width.
 			ShareColumns();
+		}
+
+		/// <summary>Shows the tunnel's tab, for a program whose settings keep a tunnel.</summary>
+		void ShowTunnel()
+		{
+			var shown = AiTunnelTabPage.Parent != null;
+			if (Model.Tunnel == null)
+			{
+				if (shown)
+					AiTabControl.TabPages.Remove(AiTunnelTabPage);
+				return;
+			}
+			if (!shown)
+				AiTabControl.TabPages.Add(AiTunnelTabPage);
+			AiTunnelNoteText.Text = AiAccessModel.TunnelNote;
+			ShowText(AiTunnelOrganizationTextBox, Model.TunnelOrganization);
+			ShowText(AiTunnelIdTextBox, Model.TunnelId);
+			ShowText(AiTunnelApiKeyTextBox, Model.TunnelApiKey);
+			AiTunnelCreateButton.Enabled = !Model.TunnelBusy;
+			AiTunnelDeleteButton.Enabled = Model.TunnelDeleteAllowed;
+			AiTunnelCopyButton.Enabled = Model.TunnelId.Length > 0;
+			AiTunnelEnabledCheckBox.Checked = Model.TunnelEnabled;
+			AiTunnelPageButton.Enabled = Model.TunnelPageAllowed;
+			AiTunnelChatGptText.Text = AiAccessModel.TunnelChatGpt;
+			AiTunnelFileTextBox.Text = Model.TunnelFile;
+			AiTunnelKeysNoteText.Text = AiAccessModel.TunnelKeysNote;
+			AiTunnelStatusText.Text = Model.TunnelStatus;
+		}
+
+		/// <summary>Shows a value in a box the person can type in, unless they are typing in it: the tunnel's state changes on its own while they do.</summary>
+		static void ShowText(TextBox box, string text)
+		{
+			if (!box.Focused)
+				box.Text = text;
 		}
 
 		static void ShowRow(AiAccessModel.SkillRow row, TextBox folder, Label status, Button button)
@@ -110,28 +157,24 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		#region Layout
 
-		/// <summary>Titles larger and bold, the example's caption bold, and the token and the snippet in a fixed-width font, all from the page's own font.</summary>
+		/// <summary>The example's caption bold, and the token and the snippet in a fixed-width font, all from the page's own font.</summary>
 		void SetFonts()
 		{
-			var title = new Font(Font.FontFamily, Font.SizeInPoints * 1.25f, FontStyle.Bold);
 			var bold = new Font(Font, FontStyle.Bold);
 			var code = new Font("Consolas", Font.SizeInPoints);
-			AiAccessTitleLabel.Font = title;
-			AiSkillTitleLabel.Font = title;
 			AiExampleLabel.Font = bold;
 			AiAccessTokenTextBox.Font = code;
 			AiAccessSnippetTextBox.Font = code;
+			AiTunnelIdTextBox.Font = code;
 			DisposeFonts();
-			_title = title;
 			_bold = bold;
 			_code = code;
 		}
 
 		void DisposeFonts()
 		{
-			if (_title == null)
+			if (_bold == null)
 				return;
-			_title.Dispose();
 			_bold.Dispose();
 			_code.Dispose();
 		}
@@ -145,11 +188,11 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		/// <summary>
 		/// Gives the caption column and the button column of every section the width of the widest in any section, so
-		/// captions, values and buttons line up down the page, as the WPF grids share theirs.
+		/// captions, values and buttons stay in place from tab to tab, as the WPF grids share theirs.
 		/// </summary>
 		void ShareColumns()
 		{
-			var tables = new[] { AiHeaderPanel, AiAccessPanel, AiSkillPanel };
+			var tables = new[] { AiHeaderPanel, AiAccessPanel, AiTunnelPanel, AiSkillPanel };
 			foreach (var column in new[] { 0, 2 })
 			{
 				var width = 0;
@@ -221,6 +264,41 @@ namespace JocysCom.ClassLibrary.Mcp
 		void AiAccessPromptButton_Click(object sender, EventArgs e) { Model.CopyPrompt(); }
 
 		void AiAccessLogButton_Click(object sender, EventArgs e) { Model.OpenLog(); }
+
+		void AiTunnelEnabledCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			if (!_showing)
+				Model.SetTunnelEnabled(AiTunnelEnabledCheckBox.Checked);
+		}
+
+		void AiTunnelOrganizationTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelOrganization(AiTunnelOrganizationTextBox.Text); }
+
+		void AiTunnelIdTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelId(AiTunnelIdTextBox.Text); }
+
+		void AiTunnelApiKeyTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelApiKey(AiTunnelApiKeyTextBox.Text); }
+
+		void AiTunnelOrganizationButton_Click(object sender, EventArgs e) { Model.OpenOrganizationPage(); }
+
+		void AiTunnelAdminKeyButton_Click(object sender, EventArgs e) { Model.OpenAdminKeysPage(); }
+
+		void AiTunnelApiKeyButton_Click(object sender, EventArgs e) { Model.OpenApiKeysPage(); }
+
+		void AiTunnelCreateButton_Click(object sender, EventArgs e) { Model.CreateTunnel(AiTunnelAdminKeyTextBox.Text.Trim()); }
+
+		void AiTunnelCopyButton_Click(object sender, EventArgs e) { Model.CopyTunnelId(); }
+
+		void AiTunnelDeleteButton_Click(object sender, EventArgs e)
+		{
+			var answer = MessageBox.Show(this, Model.TunnelDeleteQuestion, "Delete tunnel", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+			if (answer == DialogResult.Yes)
+				Model.DeleteTunnel(AiTunnelAdminKeyTextBox.Text.Trim());
+		}
+
+		void AiTunnelPageButton_Click(object sender, EventArgs e) { Model.OpenTunnelStatusPage(); }
+
+		void AiTunnelChatGptButton_Click(object sender, EventArgs e) { Model.OpenChatGpt(); }
+
+		void AiTunnelFileButton_Click(object sender, EventArgs e) { Model.ShowTunnelFile(); }
 
 		void AiSkillClaudeButton_Click(object sender, EventArgs e) { Model.InstallClaude(); }
 

@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.25.67.0, built 2026-10-11.
+Version 4.26.38.0, built 2026-10-17.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -163,6 +163,14 @@ not shown in this state of the program.
 [CheckBox]  │   │   │   │   ├── Right Thumb Up formula -> MapExpressionToggle           # Writes the Right Thumb Up mapping as a formula instead of choosing one control.
 [CheckBox]  │   │   │   │   ├── Right Thumb Down formula -> MapExpressionToggle         # Writes the Right Thumb Down mapping as a formula instead of choosing one control.
 [CheckBox]  │   │   │   │   └── Right Thumb Button formula -> MapExpressionToggle       # Writes the Right Thumb Button mapping as a formula instead of choosing one control.
+[Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.
+[Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: combined this controller into another virtual controller.
+[CheckBox]  │   │   │   │   │   ├── Combine this controller                             # Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.
+[List]      │   │   │   │   │   └── Combine Into                                        # The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[Section]   │   │   │   │   └── Device                                                  # What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.
+[List]      │   │   │   │       ├── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
+[CheckBox]  │   │   │   │       ├── Pass Through                                        # Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.
+[List]      │   │   │   │       └── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [Tab]       │   │   │   ├── Buttons                                                     # How far a stick or pedal must move before a button mapped to it counts as pressed.
 [Section]   │   │   │   │   └── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
 [Group]     │   │   │   │       ├── A Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
@@ -179,8 +187,8 @@ not shown in this state of the program.
 [Group]     │   │   │   │       ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Tab]       │   │   │   ├── D-Pad                                                       # Turns a stick or wheel into the directional pad.
-[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns one axis, a steering wheel among them, into the four pad directions.
+[Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.
+[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.
 [Value]     │   │   │   │       ├── Dead zone                                           # How far the axis must move from the centre before a direction is pressed.
 [Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
@@ -199,17 +207,17 @@ not shown in this state of the program.
 [Section]   │   │   │   │   ├── Force feedback                                          # Vibration settings shared by both motors.
 [Value]     │   │   │   │   │   ├── Overall strength                                    # Scales all vibration, so a device that shakes too hard can be calmed.
 [CheckBox]  │   │   │   │   │   ├── Enable                                              # Use Force Feedback. 0 = OFF, 1 = ON.
-[CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
-[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
-[Label]     │   │   │   │   │   ├── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
-[List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels.
-[Button]    │   │   │   │   │   └── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
+[CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
+[Button]    │   │   │   │   │   ├── About the motors                                    # Shows what each motor is used for, their measured speeds, and what the multipliers mean.
+[List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.
+[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[Label]     │   │   │   │   │   └── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
-[Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
+[Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
 [Value]     │   │   │   │   │   ├── Test left motor                                     # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Left motor direction                                # Left motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Left motor strength 0..100                          # Left motor strength. Range is 0 to 100. Default is 100.
@@ -217,21 +225,25 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   └── Test left motor 0..100                              # Runs this motor at the chosen strength, so you can feel it without a game.
 [Section]   │   │   │   │   ├── Right motor                                             # The small, fast motor, which produces the light buzz.
 [Value]     │   │   │   │   │   ├── Right motor strength                                # How hard this motor runs when the game asks for vibration.
-[Value]     │   │   │   │   │   ├── Right motor period                                  # How long one pulse lasts, when the effect is repeated rather than held.
+[Value]     │   │   │   │   │   ├── Right motor period                                  # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
 [Value]     │   │   │   │   │   ├── Test right motor                                    # Runs this motor at the chosen strength, so you can feel it without a game.
 [List]      │   │   │   │   │   ├── Right motor direction                               # Right motor effect direction. -1, 0, 1.
 [Slider]    │   │   │   │   │   ├── Right motor strength 0..100                         # Right motor strength. Range is 0 to 100. Default is 100.
 [Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
 [Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
-[Button]    │   │   │   │   └── Defaults                                                # Puts every setting on this page back to its default.
+[Button]    │   │   │   │   ├── Defaults                                                # Puts every setting on this page back to its default.
+[Section]   │   │   │   │   └── Force source (hidden)                                   # Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
+[Label]     │   │   │   │       └── Force source                                        # Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
 [Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.
 [Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
-[List]      │   │   │   │   ├── Car                                                     # Fills Centre, Peak, Lightening, Damping and Speed with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Strength is left as it is, and the car is not saved.
-[Slider]    │   │   │   │   ├── Strength 0..100                                         # Strength of the always-on centering spring on a wheel. Range is 0 to 100. Default is 30, the strength a geared wheel needs; the spring is still off until enabled.
-[Value]     │   │   │   │   ├── Strength                                                # The spring's strongest force, at Peak, in percent of the wheel's force. Auto sets it. Nought is off.
-[Button]    │   │   │   │   ├── Auto                                                    # Measures the wheel's friction from both stops, with hands off the wheel, and sets the strength so the spring beats it from the stop to Centre.
+[List]      │   │   │   │   ├── Car                                                     # Fills Centre, Peak, Lightening, Damping, Speed and Wheel range with a kind of car's values, and shows the car the values match, or Custom. No standard sets how a steering wheel must feel, so each car names what it is based on: the family car at 100 km/h is worked out from measurements in the ISO 13674-1 weave test; in town and parking are the same car at 40 and 10 km/h; the sports car and the heavy van are estimates at the firm and slow ends of the range measured in that test. Each is a road car, so each sets the Wheel range for road and sports cars. Friction and Strength are left as they are, and the car is not saved.
+[Slider]    │   │   │   │   ├── Friction 1..100                                         # The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.
+[Value]     │   │   │   │   ├── Friction                                                # The least force that turns this wheel and brings it home, in percent of its force. The spring reaches it a few degrees from the centre and never pushes less beyond, so the wheel comes home from any angle, with every car. 20 % until Auto measures it and adds a tenth. A geared or belt wheel needs much, a G27 about 30 %; a direct drive wheel turns freely and needs little, so lower it by hand when the wheel comes home harder than you like. Kept with the wheel. Greyed out while no wheel is selected.
+[Button]    │   │   │   │   ├── Auto                                                    # Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.
+[Slider]    │   │   │   │   ├── Strength 0..100                                         # Strength of the car's steering, which the always-on centering spring adds on top of the wheel's friction. Range is 0 to 100; nought turns the spring off. Default is 30; the spring is still off until enabled.
+[Value]     │   │   │   │   ├── Strength                                                # The car's steering force at Peak, in percent of the wheel's force, added to Friction. Nought is off.
 [Slider]    │   │   │   │   ├── Centre 1..450                                           # The steering angle in degrees at which the centering spring reaches half its strength, for the car at 100 km/h. Range is 1 to 450. Default is 12, a family car.
 [Value]     │   │   │   │   ├── Centre                                                  # The steering angle in degrees at which the spring reaches half its strength, for the car at 100 km/h. Smaller is firmer on the centre. Widened when the wheel could not follow so steep a spring.
 [Slider]    │   │   │   │   ├── Peak 0..450                                             # The steering angle in degrees of the centering spring's strongest force, for the car at 100 km/h. Beyond it the force eases off towards the stop. 0 puts the peak at the stop. Range is 0 to 450. Default is 60, a family car.
@@ -249,7 +261,7 @@ not shown in this state of the program.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
-[CheckBox]  │   │   │   ├── Auto Map                                                    # Lets the program pick a device for this controller by itself when a game starts.
+[CheckBox]  │   │   │   ├── Auto Map                                                    # Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.
 [CheckBox]  │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
 [CheckBox]  │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
@@ -266,7 +278,7 @@ not shown in this state of the program.
 [Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
 [Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
-[Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is the wheel's friction Auto measured; the wheel rests where the curve is inside it. The crosshair and the dot are the wheel's angle and force now.
+[Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
@@ -300,12 +312,9 @@ not shown in this state of the program.
 [Tab]       │       ├── Options                                                         # Settings for the program itself, and for the drivers it needs.
 [Group]     │       │   └── (OptionsPanel)                                              # Settings for the program itself, rather than for one controller.
 [Tabs]      │       │       └── Options pages                                           # Settings for the program itself, rather than for one controller.
-[Tab]       │       │           ├── General                                             # How the program starts, what it logs, and which tabs it shows.
-[Section]   │       │           │   ├── Testing and Logging                             # Extra output, useful when something is not working and needs reporting.
+[Tab]       │       │           ├── General                                             # How the program starts and runs, and which tabs it shows.
+[Section]   │       │           │   ├── Testing                                         # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
 [CheckBox]  │       │           │   │   ├── Enable XInput                               # Turns the emulated controllers on. Off leaves games with the real ones.
-[CheckBox]  │       │           │   │   ├── Enable Logging                              # Create a log file in the folder 'x360ce logs'. 0 = OFF, 1 = ON.
-[CheckBox]  │       │           │   │   ├── Enable Console                              # Display the console window. 0 = OFF, 1 = ON.
-[CheckBox]  │       │           │   │   ├── Debug Mode                                  # Throw or suspend errors. 0 = Suspend, 1 = Throw.
 [CheckBox]  │       │           │   │   ├── Show [Programs] Tab                         # Shows the Programs page, which lists what has been set up for each program.
 [CheckBox]  │       │           │   │   ├── Show [Devices] Tab                          # Shows the Devices page, which lists every controller found.
 [CheckBox]  │       │           │   │   └── Show [Settings] Tab                         # Shows the Settings page, which lists every stored setting.
@@ -313,19 +322,17 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
 [CheckBox]  │       │           │   │   ├── Minimize to Tray                            # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │       │           │   │   ├── Always on Top                               # Make program Top Window
-[CheckBox]  │       │           │   │   ├── Start with Windows:                         # Start with Windows.
-[List]      │       │           │   │   ├── Start with Windows                          # Windows State when program starts with Windows.
+[CheckBox]  │       │           │   │   ├── Start with Windows:                         # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
+[List]      │       │           │   │   ├── Start with Windows                          # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
 [List]      │       │           │   │   └── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
 [Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
 [CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
 [CheckBox]  │       │           │   │   └── Show [Test...] Button                       # Show [Test...] Button.
 [Section]   │       │           │   ├── Direct Input Devices                            # Which devices the program lists and reads.
-[CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # Leaves out the extra parts a device reports beside its main controls.
-[CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # Leaves out the controllers this program creates, so they are not mapped to themselves.
+[CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
+[CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
 [CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
-[Section]   │       │           │   ├── Configuration                                   # What the settings file written for games contains.
-[Text]      │       │           │   │   ├── Configuration version                       # The configuration file version.
-[CheckBox]  │       │           │   │   ├── Include [Products]                          # Writes the device list into the settings file games read.
+[Section]   │       │           │   ├── Configuration                                   # Switching settings to the game in front.
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
@@ -349,7 +356,7 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       │   └── Include Enabled                         # Counts only games that are switched on when choosing a default.
 [Section]   │       │           │       ├── Internet                                    # Whether the program contacts the online settings database at all.
 [CheckBox]  │       │           │       │   ├── Enable Internet Features                # Enable the use of Internet features like the settings database.
-[CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Auto load settings from Internet Database.
+[CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.
 [CheckBox]  │       │           │       │   ├── Save Settings to Cloud                  # Auto save settings to Internet Database.
 [List]      │       │           │       │   ├── Web service address                     # Internet settings database URL.
 [Button]    │       │           │       │   └── Test                                    # Asks the web service at that address who it is and says whether it answers.
@@ -407,39 +414,70 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
 [Label]     │       │           │       ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
 [Button]    │       │           │       ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
-[CheckBox]  │       │           │       ├── Check Digital Signature                     # Installs only a download that carries a trusted digital signature.
-[CheckBox]  │       │           │       ├── Check Version                               # Installs only a download whose version is newer than this one and matches the release.
+[CheckBox]  │       │           │       ├── Check Digital Signature                     # Install only an update whose program file carries a trusted digital signature.
+[CheckBox]  │       │           │       ├── Check Version                               # Install only an update whose program file is newer than this one and is the version its release announces.
 [Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
-[Tab]       │       │           └── AI                                                  # AI assistant access, and the skill that teaches AI agents to use this program.
-[Group]     │       │               └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
-[Group]     │       │                   ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
-[Label]     │       │                   │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
-[Value]     │       │                   │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
-[Button]    │       │                   │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
-[Group]     │       │                   ├── AI assistant access (MCP server)            # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[CheckBox]  │       │                   │   ├── AI assistant access                     # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
-[List]      │       │                   │   ├── AI assistant level                      # Read, Configure or Administer: how much a connected assistant or script may do.
-[List]      │       │                   │   ├── AI assistant address                    # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
-[CheckBox]  │       │                   │   ├── Trust local connections (no token)      # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
-[Text]      │       │                   │   ├── AI assistant port                       # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
-[Value]     │       │                   │   ├── AI assistant URL                        # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
-[Button]    │       │                   │   ├── Copy URL                                # Copies the URL to the clipboard.
-[Value]     │       │                   │   ├── AI assistant token                      # What a caller must present to be let in. Made by this program.
-[Button]    │       │                   │   ├── Regenerate token                        # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │                   │   ├── Assistant snippet                       # Settings to paste into an assistant so it can start this program as an MCP server.
-[Button]    │       │                   │   ├── Copy snippet                            # Copies the assistant snippet to the clipboard. The snippet holds no token.
-[Button]    │       │                   │   ├── Copy prompt                             # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
-[Button]    │       │                   │   ├── Open log                                # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
-[Label]     │       │                   │   └── Door state                              # Whether the door is open and at which level, or why it could not open; after a press, what it did.
-[Group]     │       │                   └── AI skill                                    # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
-[Value]     │       │                       ├── Claude Code skills folder               # Where Claude Code reads skills.
-[Button]    │       │                       ├── Install for Claude Code                 # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
-[Label]     │       │                       ├── Claude Code skill                       # Whether the skill is in that folder, and whether it is this program's version.
-[Value]     │       │                       ├── Other agents' skills folder             # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
-[Button]    │       │                       ├── Install for other agents                # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
-[Label]     │       │                       ├── Other agents' skill                     # Whether the skill is in that folder, and whether it is this program's version.
-[Label]     │       │                       ├── Claude app                              # What to do with the ZIP, or why it was not saved.
-[Button]    │       │                       └── Save as ZIP                             # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Tab]       │       │           ├── AI                                                  # The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.
+[Group]     │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
+[Group]     │       │           │       ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
+[Label]     │       │           │       │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
+[Value]     │       │           │       │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
+[Button]    │       │           │       │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
+[Tabs]      │       │           │       └── AI tabs                                     # The skill, the door, and the tunnel for ChatGPT on the web, each on a tab of its own.
+[Tab]       │       │           │           ├── AI Skill                                # Installs the skill that teaches an AI agent how to use this program.
+[Group]     │       │           │           │   └── AI skill                            # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
+[Value]     │       │           │           │       ├── Claude Code skills folder       # Where Claude Code reads skills.
+[Button]    │       │           │           │       ├── Install for Claude Code         # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
+[Label]     │       │           │           │       ├── Claude Code skill               # Whether the skill is in that folder, and whether it is this program's version.
+[Value]     │       │           │           │       ├── Other agents' skills folder     # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
+[Button]    │       │           │           │       ├── Install for other agents        # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
+[Label]     │       │           │           │       ├── Other agents' skill             # Whether the skill is in that folder, and whether it is this program's version.
+[Label]     │       │           │           │       ├── Claude app                      # What to do with the ZIP, or why it was not saved.
+[Button]    │       │           │           │       └── Save as ZIP                     # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Tab]       │       │           │           ├── MCP Server - AI Assistant Access        # Opens the door an AI assistant or a script reaches this program by, at the level chosen there.
+[Group]     │       │           │           │   └── AI assistant access (MCP server)    # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[CheckBox]  │       │           │           │       ├── AI assistant access             # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
+[List]      │       │           │           │       ├── AI assistant level              # Read, Configure or Administer: how much a connected assistant or script may do.
+[List]      │       │           │           │       ├── AI assistant address            # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
+[CheckBox]  │       │           │           │       ├── Trust local connections (no token)  # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
+[Text]      │       │           │           │       ├── AI assistant port               # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
+[Value]     │       │           │           │       ├── AI assistant URL                # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
+[Button]    │       │           │           │       ├── Copy URL                        # Copies the URL to the clipboard.
+[Value]     │       │           │           │       ├── AI assistant token              # What a caller must present to be let in. Made by this program.
+[Button]    │       │           │           │       ├── Regenerate token                # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │           │           │       ├── Assistant snippet               # Settings to paste into an assistant so it can start this program as an MCP server.
+[Button]    │       │           │           │       ├── Copy snippet                    # Copies the assistant snippet to the clipboard. The snippet holds no token.
+[Button]    │       │           │           │       ├── Copy prompt                     # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
+[Button]    │       │           │           │       ├── Open log                        # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[Label]     │       │           │           │       └── Door state                      # Whether the door is open and at which level, or why it could not open; after a press, what it did.
+[Tab]       │       │           │           └── OpenAI Tunnel                           # Lets ChatGPT on the web reach this program through the door. Only the person can change it.
+[Group]     │       │           │               └── ChatGPT on the web (OpenAI tunnel)  # Opens an OpenAI Secure MCP Tunnel, so ChatGPT on the web reaches this program through the door. Only the person can change it.
+[Label]     │       │           │                   ├── About the tunnel                # Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.
+[Text]      │       │           │                   ├── OpenAI organization ID          # The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.
+[Button]    │       │           │                   ├── Find organization ID            # Opens the OpenAI Platform page that shows the organization ID.
+[Text]      │       │           │                   ├── OpenAI admin key                # An admin key of the organization, used only by Create and Delete and never kept.
+[Button]    │       │           │                   ├── Get admin key                   # Opens the OpenAI Platform page that makes admin keys.
+[Text]      │       │           │                   ├── Tunnel ID                       # The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Made by Create, or pasted from the OpenAI Platform.
+[Button]    │       │           │                   ├── Create tunnel                   # Makes a tunnel in the organization with the admin key, and keeps its ID.
+[Button]    │       │           │                   ├── Copy tunnel ID                  # Copies the tunnel ID, to paste into ChatGPT.
+[Button]    │       │           │                   ├── Delete tunnel                   # Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.
+[Text]      │       │           │                   ├── OpenAI API key                  # The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.
+[Button]    │       │           │                   ├── Get API key                     # Opens the OpenAI Platform page that makes the API key.
+[CheckBox]  │       │           │                   ├── Open the tunnel                 # Opens the tunnel while AI assistant access is on, now and each time this program starts.
+[Button]    │       │           │                   ├── Tunnel status page              # Opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. Only while the tunnel runs.
+[Label]     │       │           │                   ├── In ChatGPT                      # What to choose in ChatGPT's Add custom MCP server once the tunnel is open.
+[Button]    │       │           │                   ├── Open ChatGPT                    # Opens the ChatGPT page where custom MCP servers are added.
+[Value]     │       │           │                   ├── Tunnel settings file            # The file the tunnel's ID, organization and encrypted API key are kept in.
+[Button]    │       │           │                   ├── Show file                       # Shows the settings file in File Explorer.
+[Label]     │       │           │                   ├── Where the keys are              # How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.
+[Label]     │       │           │                   └── Tunnel state                    # Whether the tunnel is open, why not, or what the last press did.
+[Tab]       │       │           └── Plugins                                             # The plugins found, the devices each adds, and whether plugins from others may load.
+[Group]     │       │               └── (PluginsPanel)
+[CheckBox]  │       │                   ├── Allow third-party plugins                   # Load plugins that are not signed by the publisher of x360ce.
+[Label]     │       │                   ├── About plugins                               # Which plugins load by themselves, and why plugins from others need permission.
+[Value]     │       │                   ├── Plugins folder                              # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
+[Button]    │       │                   ├── Open Folder                                 # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
+[Grid]      │       │                   └── Plugins                                     # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -476,7 +514,7 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   ├── XInput 1.3, 64-bit                              # Supplies the 64-bit XInput 1.3 library to the game.
 [CheckBox]  │       │           │   ├── XInput 1.4, 32-bit                              # Supplies the 32-bit XInput 1.4 library to the game.
 [CheckBox]  │       │           │   └── XInput 1.4, 64-bit                              # Supplies the 64-bit XInput 1.4 library to the game.
-[Section]   │       │           ├── Auto map                                            # Which of the four controllers are assigned to a device by the program itself.
+[Section]   │       │           ├── Auto map                                            # Not available yet, so greyed out: the program does not map devices to controllers by itself.
 [CheckBox]  │       │           │   ├── Auto map controller 1                           # Lets the program assign controller 1 to a device when this game starts.
 [CheckBox]  │       │           │   ├── Auto map controller 3                           # Lets the program assign controller 3 to a device when this game starts.
 [CheckBox]  │       │           │   ├── Auto map controller 2                           # Lets the program assign controller 2 to a device when this game starts.
@@ -519,7 +557,7 @@ not shown in this state of the program.
 [Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.
 [CheckBox]  │       │           ├── Show System Devices (hidden)                        # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
 [Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
-[Button]    │       │           ├── Add Demo Device                                     # Adds a pretend controller, for trying the program without hardware.
+[Button]    │       │           ├── Add Plugin Device                                   # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
 [Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
 [Button]    │       │           └── HID Guardian                                        # Actions for the obsolete HID Guardian tool.
 [Button]    │       │               ├── Show Enumerated Devices                         # Lists the devices HID Guardian knows about.

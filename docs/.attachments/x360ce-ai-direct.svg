@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="380" viewBox="0 0 960 380" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title>An AI assistant on this computer reaches x360ce's AI door</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+  </defs>
+  <rect x="0.5" y="0.5" width="959" height="379" rx="16" fill="#ffffff" stroke="#d0d7de"/>
+  <rect x="20" y="36" width="920" height="276" rx="14" fill="none" stroke="#8c959f" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <rect x="36" y="25" width="112" height="22" fill="#ffffff"/>
+  <text x="44" y="41" font-size="15" font-weight="600" fill="#57606a">Your computer</text>
+
+  <!-- The assistant -->
+  <rect x="44" y="68" width="236" height="216" rx="12" fill="#eef4ff" stroke="#4f7ce8" stroke-width="2"/>
+  <text x="162" y="104" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">AI assistant</text>
+  <text x="162" y="134" font-size="14" fill="#1f2328" text-anchor="middle">Claude Code, Codex,</text>
+  <text x="162" y="154" font-size="14" fill="#1f2328" text-anchor="middle">GitHub Copilot, Cursor,</text>
+  <text x="162" y="174" font-size="14" fill="#1f2328" text-anchor="middle">the Claude app and others</text>
+  <rect x="74" y="200" width="176" height="56" rx="8" fill="#ffffff" stroke="#9db5f0"/>
+  <text x="162" y="223" font-size="13" fill="#57606a" text-anchor="middle">x360ce skill: tells it</text>
+  <text x="162" y="242" font-size="13" fill="#57606a" text-anchor="middle">how to use the door</text>
+
+  <!-- Way 1: the bridge -->
+  <rect x="372" y="68" width="216" height="88" rx="12" fill="#f6f8fa" stroke="#8c959f" stroke-width="2"/>
+  <text x="480" y="100" font-size="16" font-weight="700" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">x360ce.exe /Mcp</text>
+  <text x="480" y="124" font-size="13" fill="#57606a" text-anchor="middle">from the snippet on the</text>
+  <text x="480" y="142" font-size="13" fill="#57606a" text-anchor="middle">AI page, in its MCP settings</text>
+
+  <!-- x360ce -->
+  <rect x="680" y="68" width="236" height="216" rx="12" fill="#ecf8ee" stroke="#2da44e" stroke-width="2"/>
+  <text x="798" y="104" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">x360ce</text>
+  <text x="798" y="130" font-size="14" font-weight="600" fill="#1a7f37" text-anchor="middle">AI door (MCP server)</text>
+  <text x="798" y="154" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37360/mcp/</text>
+  <text x="798" y="184" font-size="14" fill="#1f2328" text-anchor="middle">Level you choose:</text>
+  <text x="798" y="204" font-size="14" fill="#1f2328" text-anchor="middle">Read, Configure, Administer</text>
+  <text x="798" y="234" font-size="13" fill="#57606a" text-anchor="middle">Every call is written</text>
+  <text x="798" y="252" font-size="13" fill="#57606a" text-anchor="middle">to the log</text>
+
+  <!-- Arrows -->
+  <line x1="282" y1="112" x2="368" y2="112" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="325" y="102" font-size="13" fill="#1f2328" text-anchor="middle">1. starts</text>
+  <line x1="590" y1="112" x2="676" y2="112" stroke="#57606a" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="633" y="102" font-size="13" fill="#1f2328" text-anchor="middle">calls</text>
+  <line x1="282" y1="226" x2="676" y2="226" stroke="#57606a" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
+  <rect x="330" y="204" width="300" height="18" fill="#ffffff"/>
+  <text x="480" y="217" font-size="13" fill="#1f2328" text-anchor="middle">2. or connects by URL, with the door's token</text>
+
+  <text x="480" y="342" font-size="14" fill="#57606a" text-anchor="middle">Off until you tick AI assistant access. The assistant never takes your screen, mouse or keyboard.</text>
+</svg>

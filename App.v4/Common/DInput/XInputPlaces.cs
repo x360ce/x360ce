@@ -379,20 +379,30 @@ namespace x360ce.App.DInput
 				// The places are asked first. Asking them is what loads Windows' XInput, on the places reader, and the input
 				// thread sends a force passed on to a real controller only once it is loaded, so a device tree that cannot be
 				// read does not keep it from loading. Asked once a read, and the table is worked out from that answer.
-				var taken = DInputHelper.OccupiedPlaces();
+				var products = new ushort[4];
+				var taken = DInputHelper.OccupiedPlaces(products);
 				var all = ReadMachine();
 				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
-				cache = Resolve(all, byId, taken);
 				madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				madeByUs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				var ourHardware = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				foreach (var device in all.Where(IsXInputCapable))
 				{
 					if (!VirtualDriverInstaller.IsVirtualPad(device, byId))
 						continue;
 					madeNotPluggedIn.Add(device.DeviceId);
-					if (VirtualDriverInstaller.IsOneOfOurs(device, byId))
-						madeByUs.Add(device.DeviceId);
+					if (!VirtualDriverInstaller.IsOneOfOurs(device, byId))
+						continue;
+					madeByUs.Add(device.DeviceId);
+					ourHardware.Add(HardwareOf(device, byId));
 				}
+				// The place noted for each pad is checked against what XInput reports, before the table is worked out from the
+				// notes. Only while nothing was noted since the places were read: a plug that finished in between noted a place
+				// they do not show yet.
+				var helper = Global.DHelper;
+				if (taken != null && helper != null && generation == System.Threading.Volatile.Read(ref _generation))
+					helper.CheckOurPlaces(taken, products, ourHardware);
+				cache = Resolve(all, byId, taken);
 			}
 			catch (Exception ex)
 			{
@@ -613,7 +623,8 @@ namespace x360ce.App.DInput
 		/// <param name="ownIsOurs">Whether this program made the device itself.</param>
 		/// <param name="carried">The places of the controllers this device is mapped to.</param>
 		/// <param name="waiting">The controller tabs this device is mapped to whose virtual controller waits for its place.</param>
-		public static string Describe(int ownPlace, bool ownIsVirtual, bool ownIsOurs, IEnumerable<int> carried, IEnumerable<int> waiting = null)
+		/// <param name="notKnown">Whether a controller tab this device is mapped to has its virtual controller made, in a place that is not known.</param>
+		public static string Describe(int ownPlace, bool ownIsVirtual, bool ownIsOurs, IEnumerable<int> carried, IEnumerable<int> waiting = null, bool notKnown = false)
 		{
 			// Carried places are always controllers this program made: that is what carrying means here.
 			var named = new SortedDictionary<int, string>();
@@ -625,6 +636,9 @@ namespace x360ce.App.DInput
 			if (ownPlace >= 0 && ownPlace <= 3)
 				named[ownPlace] = Holder(ownIsVirtual, ownIsOurs);
 			var parts = named.Select(x => string.Format("{0} {1}", x.Value, x.Key + 1)).ToList();
+			// Made, but where is not known: said as the Devices page says it, rather than as a place it may not hold.
+			if (notKnown)
+				parts.Add(Describe(Unknown, true, true));
 			// Left out, a device whose tab waits would read as carried nowhere, when the place another
 			// controller holds is the one thing missing. Named as the Devices page names it.
 			if (waiting != null)

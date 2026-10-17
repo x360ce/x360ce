@@ -51,7 +51,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The result is the force that started the wheel plus a little extra")]
+		[Description("The result is the force that started the wheel and a tenth more, rounded up")]
 		public void Finds_the_weakest_force_that_moves_the_wheel()
 		{
 			var wheel = new Wheel { FrictionLow = 12, FrictionHigh = 12 };
@@ -60,7 +60,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
 			Assert.AreEqual(13, run.LowLevel, "The first level above the friction is the one that moved the wheel.");
 			Assert.AreEqual(13, run.HighLevel);
-			Assert.AreEqual(16, run.Result, "Thirteen, plus the extra that starts the wheel every time.");
+			Assert.AreEqual(15, run.Result, "Thirteen and a tenth more, 14.3, rounded up: the extra that starts the wheel every time.");
 		}
 
 		[TestMethod, TestCategory("devices")]
@@ -75,7 +75,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
 			Assert.AreEqual(13, run.LowLevel, "The force rose while the wheel was already on its way.");
 			Assert.AreEqual(13, run.HighLevel);
-			Assert.AreEqual(16, run.Result);
+			Assert.AreEqual(15, run.Result);
 			Assert.AreEqual(13, run.LowTurnsAt, "The level the wheel first turned at is told apart from the level that brings it home.");
 		}
 
@@ -143,7 +143,7 @@ namespace x360ce.Tests
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
 			Assert.AreEqual(11, run.LowLevel);
 			Assert.AreEqual(21, run.HighLevel);
-			Assert.AreEqual(24, run.Result, "Twenty one plus the extra.");
+			Assert.AreEqual(24, run.Result, "Twenty one and a tenth more, 23.1, rounded up.");
 		}
 
 		[TestMethod, TestCategory("devices")]
@@ -174,16 +174,16 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The answer is checked from a stop with the spring's own curve and damping before it is handed over")]
+		[Description("The answer is checked from a stop with the spring the engine plays, the friction and the pad's Strength on top, and its damping, before it is handed over")]
 		public void The_answer_is_checked_before_it_is_given()
 		{
 			var wheel = new Wheel { FrictionLow = 12, FrictionHigh = 12 };
-			var run = new SpringCalibration();
+			var run = new SpringCalibration(new PadSetting { ForceSpringStrength = "30" });
 			var ms = Run(run, wheel, SpringCalibration.Phase.Check);
 			Assert.AreEqual(SpringCalibration.Phase.Check, run.Step, "After both ramps the run goes to a stop and lets the spring bring the wheel home.");
-			// A friction of 16 over the lower of half and the default Lightening of 40 %, and a tenth more.
-			Assert.AreEqual(44, run.Strength, "The strength checked is not the one whose curve beats the friction from the stop to Centre.");
-			StringAssert.Contains(run.Status, "Checking 44 %", "The page is told what the run is doing: " + run.Status);
+			Assert.AreEqual(15, run.Result, "The friction checked is not the one the ramps found.");
+			Assert.AreEqual(30, run.Strength, "The check runs with another Strength than the pad's.");
+			StringAssert.Contains(run.Status, "Checking 15 % friction with Strength 30 %", "The page is told what the run is doing: " + run.Status);
 			Assert.IsTrue(wheel.Position <= SpringCalibration.AxisMax * 15 / 100, "The check starts from a stop, not from the centre.");
 			var damped = false;
 			for (; !run.IsFinished; ms++)
@@ -193,21 +193,21 @@ namespace x360ce.Tests
 			}
 			Assert.IsTrue(damped, "The check ran without the damping the spring will run with.");
 			Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, run.Message);
-			Assert.AreEqual(16, run.Result);
-			Assert.AreEqual(44, run.Strength);
-			Assert.AreEqual(0, run.Crossings, "A wheel that stops where the curve falls below its friction never passes the centre.");
+			Assert.AreEqual(15, run.Result);
+			Assert.AreEqual(30, run.Strength, "The run changed Strength.");
+			Assert.AreEqual(0, run.Crossings, "A wheel pushed home by just over its friction stops at the centre, it does not pass it.");
 			Assert.AreEqual(0, run.Damping, "A finished run leaves no damping on.");
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("The run sets the strength for the pad's own Lightening and checks it with the pad's own damping")]
+		[Description("The friction found does not depend on the pad's curve, and the check runs with the pad's own Strength and damping")]
 		public void The_run_uses_the_pads_own_curve_and_damping()
 		{
 			var wheel = new Wheel { FrictionLow = 12, FrictionHigh = 12 };
-			var run = new SpringCalibration(new PadSetting { ForceSpringLightening = "20", ForceSpringDamping = "0" });
+			var run = new SpringCalibration(new PadSetting { ForceSpringStrength = "50", ForceSpringLightening = "20", ForceSpringDamping = "0" });
 			var ms = Run(run, wheel, SpringCalibration.Phase.Check);
-			Assert.AreEqual(16, run.Result, "The friction does not depend on the curve.");
-			Assert.AreEqual(88, run.Strength, "16 / 0.2 x 1.1 = 88: the curve keeps a fifth of its strength at the stop.");
+			Assert.AreEqual(15, run.Result, "The friction does not depend on the curve.");
+			Assert.AreEqual(50, run.Strength, "The check runs with another Strength than the pad's.");
 			var damped = false;
 			for (; !run.IsFinished; ms++)
 			{
@@ -268,7 +268,7 @@ namespace x360ce.Tests
 			var call = Regex.Match(File.ReadAllText(path), @"\.UpdateSpring\((?<args>[^;]*)\);");
 			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
 			var args = call.Groups["args"].Value;
-			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*ud\.ForceSpringSpeedOverride$"),
+			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*ud\.ForceSpringSpeedOverride,\s*ud\.GetForceSpringFriction\(\)$"),
 				"The engine times the run with a clock that can be negative or go back, or reads it for every device: " + args);
 		}
 
@@ -284,7 +284,7 @@ namespace x360ce.Tests
 				var run = new SpringCalibration();
 				Run(run, wheel, startMs: startMs);
 				Assert.AreEqual(SpringCalibration.Phase.Done, run.Step, "Started at " + startMs + " ms: " + run.Message);
-				Assert.AreEqual(16, run.Result, "Started at " + startMs + " ms.");
+				Assert.AreEqual(15, run.Result, "Started at " + startMs + " ms.");
 			}
 		}
 
@@ -307,13 +307,13 @@ namespace x360ce.Tests
 			};
 		}
 
-		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device the routing forces from this tab.</summary>
+		/// <summary>Whether the Auto button starts a run, asked the way it asks: the engine drives the run only for a device whose spring the routing takes from this tab.</summary>
 		/// <param name="device">The row's device as the devices list holds it, or null for none listed.</param>
 		static bool AutoStarts(UserGame game, UserSetting row, PadSetting ps, UserDevice device = null)
 		{
 			DeviceForce route;
 			return DeviceRouting.Build(game, new[] { row }, new[] { ps }, device == null ? null : new[] { device }).TryGetForce(row.InstanceGuid, out route)
-				&& Array.IndexOf(route.ForcePads, row.MapTo - 1) >= 0;
+				&& route.SettingsPad == row.MapTo - 1;
 		}
 
 		/// <summary>Checks that the Auto button asks the routing, and says why, before it starts a run.</summary>
@@ -322,7 +322,7 @@ namespace x360ce.Tests
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs");
 			var source = File.ReadAllText(path);
 			var click = source.IndexOf("void ForceSpringAutoButton_Click(");
-			var routed = source.IndexOf("if (!ForcesFromThisTab(ud))", click);
+			var routed = source.IndexOf("if (!SpringFromThisTab(ud))", click);
 			var reason = source.IndexOf("WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", click);
 			var start = source.IndexOf("driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);", click);
 			Assert.IsTrue(click > 0 && routed > click && reason > routed && start > reason,
@@ -330,9 +330,9 @@ namespace x360ce.Tests
 			// The engine runs it on the device whose motors it drives, which for a Raw Input device is its DirectInput twin.
 			var driven = source.IndexOf("var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);", click);
 			Assert.IsTrue(driven > click && driven < start, "Auto puts its run on a device the engine does not drive.");
-			var rule = Ui.Between(source, "bool ForcesFromThisTab(UserDevice ud)", "public static string SpringNote(");
-			StringAssert.Contains(rule, "DeviceRouting.Current.TryGetForce(ud.InstanceGuid, out route)", "Auto does not ask the routing.");
-			StringAssert.Contains(rule, "Array.IndexOf(route.ForcePads, (int)MappedTo - 1) >= 0", "Auto does not ask whether the routing forces from this tab.");
+			var rule = Ui.Between(source, "bool SpringFromThisTab(UserDevice ud)", "public static string SpringNote(");
+			StringAssert.Contains(rule, "routing.TryGetForce(driven.InstanceGuid, out route)", "Auto does not ask the routing about the device it drives.");
+			StringAssert.Contains(rule, "route.SettingsPad == (int)MappedTo - 1", "Auto does not ask whether the routing takes the spring from this tab.");
 			Assert.IsFalse(source.Contains("(game.EnableMask & (int)AppHelper.GetMapFlag(MappedTo)) == 0"),
 				"Auto repeats part of the routing rule instead of asking the routing.");
 		}
@@ -347,6 +347,39 @@ namespace x360ce.Tests
 			Assert.IsTrue(AutoStarts(Game(true), Row(ps, true), ps), "Auto does not start where the engine drives it.");
 			Assert.IsFalse(AutoStarts(Game(false), Row(ps, true), ps), "Auto starts on a tab switched off.");
 			AssertAutoAsksTheRouting();
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The spring works without force feedback's Enable, which passes on the game's vibration: Auto starts, and the engine drives the wheel for the spring alone, with no tab sending it vibration")]
+		public void The_spring_needs_no_Enable()
+		{
+			var ps = new PadSetting { ForceEnable = "0", ForceSpringEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			var row = Row(ps, true);
+			Assert.IsTrue(AutoStarts(Game(true), row, ps), "Auto does not start with Enable unticked, though the spring is ticked.");
+			DeviceForce route;
+			Assert.IsTrue(DeviceRouting.Build(Game(true), new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route));
+			Assert.IsTrue(route.Drives, "The engine leaves the wheel alone while only the spring is ticked.");
+			Assert.AreEqual(0, route.ForcePads.Length, "The game's vibration reaches the wheel with Enable unticked.");
+			ps.ForceSpringEnable = "0";
+			Assert.IsFalse(DeviceRouting.Build(Game(true), new[] { row }, new[] { ps }).TryGetForce(row.InstanceGuid, out route) && route.Drives,
+				"The engine drives a wheel with neither Enable nor the spring ticked.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A wheel's own centering is on while the spring is off and off while it holds; a pad's is left as its driver has it")]
+		public void Only_a_device_that_centres_itself_gets_its_centering_switched_on()
+		{
+			Func<SharpDX.DirectInput.DeviceType, int, bool, bool?> rule = (type, motors, spring) => DInputHelper.AutoCenterFor((int)type, motors, spring);
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Driving, 1, false), "A wheel loses its own centering while the spring is off.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Driving, 1, true), "A wheel's own centering fights the spring.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Joystick, 1, false), "A wheel that calls itself a joystick loses its own centering.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Flight, 2, false), "A flight stick loses its own centering.");
+			// A pad with two rumble motors, reported either way, is left as versions before the spring left it.
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Joystick, 2, false), "A two-motor pad's centering is switched.");
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, false), "A gamepad's centering is switched.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, true), "The spring holds a pad against the pad's own centering.");
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
+			StringAssert.Contains(source, "AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring)", "The engine holds a device without the rule.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

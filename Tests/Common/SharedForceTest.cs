@@ -419,7 +419,7 @@ namespace x360ce.Tests
 			// Such a device is mapped with no settings and no force source: it has to reach the stop.
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			var mapped = step2.IndexOf("if (mapped)");
-			var forcing = step2.IndexOf("if (route.ForcePads.Length > 0)", mapped);
+			var forcing = step2.IndexOf("if (route.Drives)", mapped);
 			var stop = step2.IndexOf("ud.FFState.StopDeviceForces();", mapped);
 			Assert.IsTrue(mapped > 0 && forcing > mapped && stop > forcing, "The force block and its stop are not where the test expects them.");
 			Assert.IsFalse(step2.Substring(mapped, stop - mapped).Contains("if (ps != null)"),
@@ -433,8 +433,8 @@ namespace x360ce.Tests
 			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			Assert.IsFalse(step2.Contains("ps.ForceEnable == \"1\""),
 				"Forcing is judged by the settings, which can differ from the force sources the routing was built with.");
-			StringAssert.Contains(step2, "forcingFromHere = mapped && route.ForcePads.Length > 0;");
-			StringAssert.Contains(step2, "if (route.ForcePads.Length > 0)");
+			StringAssert.Contains(step2, "forcingFromHere = mapped && route.Drives;");
+			StringAssert.Contains(step2, "if (route.Drives)");
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]

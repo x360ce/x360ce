@@ -394,17 +394,17 @@ namespace x360ce.Tests
 			WithWindow(AiAccess.Configure, form =>
 			{
 				var install = new Button { Name = "ViGEmBusInstallButton" };
-				var debug = new CheckBox { Name = "DebugModeCheckBox" };
+				var configure = new CheckBox { Name = "HidGuardianConfigureAutomaticallyCheckBox" };
 				var level = new ComboBox { Name = "AiAccessComboBox" };
 				level.Items.AddRange(Enum.GetNames(typeof(AiAccess)));
 				var regenerate = new Button { Name = "AiAccessRegenerateButton" };
-				form.Controls.AddRange(new Control[] { install, debug, level, regenerate });
+				form.Controls.AddRange(new Control[] { install, configure, level, regenerate });
 				form.Show();
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(install.Name)).Message, "Administer");
-				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(debug.Name, "true")).Message, "Administer");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(configure.Name, "true")).Message, "Administer");
 				McpCatalog.Level = () => AiAccess.Administer;
 				Assert.IsNull(McpUiTools.UiInvoke(install.Name));
-				Assert.IsNull(McpUiTools.UiSet(debug.Name, "true"));
+				Assert.IsNull(McpUiTools.UiSet(configure.Name, "true"));
 				// Even at the top level: the level is a person's choice, never the caller's.
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet(level.Name, "Off")).Message, "Options tab");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(regenerate.Name)).Message, "Options tab");

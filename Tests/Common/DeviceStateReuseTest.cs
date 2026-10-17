@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/Input/States/SourceState.cs, Engine/Data/UserDevice.cs, App.v4/Common/TestDeviceHelper.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/Recorder.cs, App.v4/Mcp/McpTools.cs, App.v4/Controls/PadTabPages/DirectInputControl.cs
+﻿// @under-test: Engine/Input/States/SourceState.cs, Engine/Data/UserDevice.cs, Plugins/TestController/TestController.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs, App.v4/Common/DInput/DInputHelper.Step3.UpdateXiStates.cs, App.v4/Common/DInput/Recorder.cs, App.v4/Mcp/McpTools.cs, App.v4/Controls/PadTabPages/DirectInputControl.cs
 // @area: engine   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
@@ -32,7 +32,7 @@ namespace x360ce.Tests
 		/// <summary>The test controller on Controller 1, and the engine's reading step for it.</summary>
 		static EngineSteps.DiStates Reading(out UserDevice ud, out DeviceRouting routing)
 		{
-			ud = TestDeviceHelper.NewUserDevice();
+			ud = TestControllerDevice.NewUserDevice();
 			ud.IsOnline = true;
 			var ps = new PadSetting { ButtonA = "b1", PadSettingChecksum = Guid.NewGuid() };
 			var row = new UserSetting { InstanceGuid = ud.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
@@ -75,16 +75,20 @@ namespace x360ce.Tests
 			var read = Reading(out ud, out routing);
 			read(null, Game, null, routing);
 			var first = ud.SourceState;
-			var firstJo = ud.JoState;
 			read(null, Game, null, routing);
 			var second = ud.SourceState;
 			Assert.AreNotSame(first, second, "The poll wrote into the state shown until then.");
-			Assert.AreNotSame(firstJo, ud.JoState, "The poll read the device into the state shown until then.");
 			Assert.AreSame(first, ud.OldSourceState);
 			read(null, Game, null, routing);
 			Assert.AreSame(first, ud.SourceState, "A third poll made a new state rather than filling the one from two polls ago.");
-			Assert.AreSame(firstJo, ud.JoState, "A third poll made a new state rather than filling the one from two polls ago.");
 			Assert.AreSame(second, ud.OldSourceState);
+			// A DirectInput device is read into its own two reserved states in turn, the same way.
+			var next = typeof(DInputHelper).GetMethod("NextJoState", BindingFlags.NonPublic | BindingFlags.Static);
+			var di = new UserDevice();
+			var firstJo = next.Invoke(null, new object[] { di });
+			var secondJo = next.Invoke(null, new object[] { di });
+			Assert.AreNotSame(firstJo, secondJo, "The poll read the device into the state shown until then.");
+			Assert.AreSame(firstJo, next.Invoke(null, new object[] { di }), "A third poll made a new state rather than filling the one from two polls ago.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("performance")]
@@ -309,13 +313,13 @@ namespace x360ce.Tests
 					var axis = (DataTable)typeof(DirectInputUserControl).GetField("DiAxisTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
 					var buttons = (DataTable)typeof(DirectInputUserControl).GetField("DiButtonsTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
 					Assert.AreEqual(100, axis.Rows[0][1]);
-					Assert.AreEqual("01", buttons.Rows[0][0]);
+					Assert.AreEqual("02", buttons.Rows[0][0]);
 					// The engine fills the state it replaced two polls ago in place: the object the tab drew last.
 					ud.JoState.X = 200;
 					ud.JoState.Buttons[3] = true;
 					tab.UpdateFrom(ud);
 					Assert.AreEqual(200, axis.Rows[0][1], "The tab kept the engine's own state as the one it drew, so a value written into it was taken as already shown.");
-					Assert.AreEqual("01 03", buttons.Rows[0][0], "The tab kept the engine's own state as the one it drew, so a button written into it was not shown.");
+					Assert.AreEqual("02 04", buttons.Rows[0][0], "The tab kept the engine's own state as the one it drew, so a button written into it was not shown.");
 				}
 			});
 		}

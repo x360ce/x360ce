@@ -383,6 +383,8 @@ namespace x360ce.App.DInput
 			}
 			finally
 			{
+				// Plugins hold what they opened (a socket, a device) until they are let go of.
+				ReleasePluginReaders();
 				// Native objects must be released even when the loop ended with an error.
 				if (pacer != null)
 					pacer.Dispose();
@@ -671,6 +673,13 @@ namespace x360ce.App.DInput
 					return;
 				IsDisposing = true;
 				var stopped = Stop();
+				// The update thread has gone, so nothing else touches the effects. Taken off, they give each wheel its own
+				// centering back, so none is left without it once the program has closed.
+				if (stopped)
+					lock (SettingsManager.UserDevices.SyncRoot)
+						foreach (var ud in SettingsManager.UserDevices.Items)
+							if (ud.FFState != null)
+								ud.FFState.StopDeviceForces();
 				// The hub outlives every stop of the update thread, and goes with the helper.
 				StopRawInputHub();
 				// The display reader waits between reads; told to end, it ends at its next wake.

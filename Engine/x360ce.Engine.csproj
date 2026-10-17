@@ -348,6 +348,7 @@
     <Compile Include="JocysCom\Mcp\AiAccess.cs" />
     <Compile Include="JocysCom\Mcp\AiAccessModel.Catalog.cs" />
     <Compile Include="JocysCom\Mcp\AiAccessModel.cs" />
+    <Compile Include="JocysCom\Mcp\AiAccessModel.Tunnel.cs" />
     <Compile Include="JocysCom\Mcp\AiAccessUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -356,10 +357,12 @@
     </Compile>
     <Compile Include="JocysCom\Mcp\AiSkill.cs" />
     <Compile Include="JocysCom\Mcp\IAiAccessSettings.cs" />
+    <Compile Include="JocysCom\Mcp\IAiTunnelSettings.cs" />
     <Compile Include="JocysCom\Mcp\McpClient.cs" />
     <Compile Include="JocysCom\Mcp\McpListener.cs" />
     <Compile Include="JocysCom\Mcp\McpLog.cs" />
     <Compile Include="JocysCom\Mcp\McpServer.cs" />
+    <Compile Include="JocysCom\Mcp\McpTunnel.cs" />
     <Compile Include="JocysCom\Mcp\McpUiTools.cs" />
     <Compile Include="JocysCom\Mcp\McpUiTools.Forms.cs" />
     <Compile Include="JocysCom\Mcp\McpUiTools.Windows.cs" />

@@ -80,6 +80,12 @@ namespace x360ce.Engine
 		/// • No built-in controller abstraction (custom profiles needed)
 		/// • Complex device capability detection required
 		/// </summary>
-		RawInput = 8
+		RawInput = 8,
+
+		/// <summary>
+		/// A device a plugin adds: a DLL that implements x360ce.Plugins.IPluginDevice, embedded in the program or found
+		/// in the settings folder's Plugins folder. The program reads it by asking the plugin; it is never sent to the cloud.
+		/// </summary>
+		Plugin = 16,
 	}
 }

@@ -342,9 +342,37 @@ namespace x360ce.App.Controls
 			}, ui);
 		}
 
+		/// <summary>Adds a device a plugin offers: at once when one kind is offered, from a list when there are several.</summary>
 		private void AddDemoDevice_Click(object sender, EventArgs e)
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
+			var manager = Plugins.PluginManager.Current;
+			var types = manager == null ? new Plugins.PluginDeviceType[0] : manager.DeviceTypes.Where(x => !x.Faulted).ToArray();
+			if (types.Length == 0)
+			{
+				MessageBox.Show("No plugin offers a device. The Plugins page on the Options tab lists the plugins found and why any did not load.",
+					"Add Plugin Device", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			if (types.Length == 1)
+			{
+				AddPluginDevice(types[0]);
+				return;
+			}
+			var menu = new ContextMenuStrip();
+			foreach (var type in types)
+			{
+				var item = new ToolStripMenuItem(type.Name) { Tag = type };
+				item.Click += (s, a) => AddPluginDevice((Plugins.PluginDeviceType)((ToolStripMenuItem)s).Tag);
+				menu.Items.Add(item);
+			}
+			menu.Closed += (s, a) => BeginInvoke((Action)menu.Dispose);
+			var button = (ToolStripItem)sender;
+			menu.Show(button.Owner, new Point(button.Bounds.Left, button.Bounds.Bottom));
+		}
+
+		static void AddPluginDevice(Plugins.PluginDeviceType type)
+		{
+			var ud = Plugins.PluginDevices.NewUserDevice(type);
 			lock (SettingsManager.UserDevices.SyncRoot)
 				SettingsManager.UserDevices.Items.Add(ud);
 			Global.DHelper.UpdateDevicesEnabled = true;
@@ -387,9 +415,7 @@ namespace x360ce.App.Controls
 					}
 					else
 					{
-						var form = new MessageBoxForm();
-						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						ShowHidGuardianPermissionDenied();
 					}
 				}
 			}
@@ -431,12 +457,15 @@ namespace x360ce.App.Controls
 				ShowHidGuardianPermissionDenied();
 		}
 
-		/// <summary>Says that HID Guardian's settings cannot be written and how to allow it.</summary>
+		/// <summary>Says why HID Guardian's settings cannot be written: it is not installed, or this account may not write them yet.</summary>
 		void ShowHidGuardianPermissionDenied()
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			if (!ViGEm.HidGuardianHelper.IsInstalled())
+				form.ShowForm(ViGEm.HidGuardianHelper.NotInstalledText, "HID Guardian", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			else
+				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]

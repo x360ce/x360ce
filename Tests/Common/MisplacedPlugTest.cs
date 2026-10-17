@@ -56,6 +56,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A plug does not take a controller of another kind, shown by XInput in the same moment, for its own")]
+		public void A_plug_does_not_take_another_kind_of_controller_for_its_own()
+		{
+			var place = -2;
+			var answered = false;
+			Logged(() => WithStandInXInput(() =>
+			{
+				// XInput shows an Xbox One controller in XInput 2 only now, and the controller made in XInput 3.
+				Products[1] = 0x02FF;
+				Products[2] = DInputHelper.VirtualProduct;
+				Volatile.Write(ref Taken, (1 << 1) | (1 << 2));
+				place = WaitForPlace(out answered);
+			}));
+			Assert.AreEqual(2, place, "The place an Xbox One controller filled was taken as the place the new controller went.");
+			Assert.IsTrue(answered);
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A plug hears XInput whose every read takes a little over a second, and sees the place its controller was given")]
 		public void A_plug_hears_reads_that_each_take_over_a_second()
 		{

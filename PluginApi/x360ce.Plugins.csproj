@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- What a plugin compiles against, and nothing else: it references no part of x360ce, so a plugin
+         sees only these types, and another program could host the same plugins. -->
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>x360ce.Plugins</RootNamespace>
+    <AssemblyName>x360ce.Plugins</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <!-- Held at 1.0.0.0: a plugin built against this binds to every later x360ce. Change it only with
+         the contract itself, when plugins built before can no longer work. -->
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>X360 Controller Emulator</Product>
+    <Company>Jocys.com</Company>
+    <Description>The types an x360ce plugin implements.</Description>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  <!--
+    The plugins embedded in x360ce 4, built by ..\Plugins\Build-Plugins.ps1 the way any plugin is, against the
+    contract just built, into Plugins beside it. Built here rather than by x360ce 4, so a release builds and signs
+    them with the contract before x360ce 4 embeds them, as it does the engine. Needs the .NET 10 SDK (dotnet), which
+    Visual Studio 2026 installs. Build-Plugins.ps1 sets BuildEmbeddedPlugins to false when it builds this project
+    only for the contract.
+  -->
+  <Target Name="BuildEmbeddedPlugins" AfterTargets="Build" Condition="'$(BuildEmbeddedPlugins)' != 'false'">
+    <PropertyGroup>
+      <!-- No trailing backslash: inside quotes on a command line it would escape the closing quote. -->
+      <EmbeddedPluginsOut>$(TargetDir)Plugins</EmbeddedPluginsOut>
+    </PropertyGroup>
+    <!-- Emptied first, so a plugin renamed or removed is not embedded from an earlier build. -->
+    <RemoveDir Directories="$(EmbeddedPluginsOut)" />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;..\Plugins\Build-Plugins.ps1&quot; -Output &quot;$(EmbeddedPluginsOut)&quot; -Configuration $(Configuration) -Contract &quot;$(TargetPath)&quot;" />
+  </Target>
+</Project>

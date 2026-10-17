@@ -56,7 +56,11 @@ Both rows of a controller read every button and axis into the same place, so a m
 
 Every press, hat tap and stick flick reaches the controller, even one shorter than the time between two reads of the device. A worn button whose contacts chatter can then send extra presses; for it, turn off `[Read Every Change]` on the `[Options]` tab.
 
-A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are buttons 0 to 39.
+A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are `Button 1` to `Button 40`.
+
+## Plugin devices
+
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](https://github.com/x360ce/x360ce/wiki/Help.Plugins).
 
 ## One device on several controller tabs
 
@@ -66,8 +70,9 @@ A device can drive up to four emulated controllers at once.
 2. `[Move here]` takes it off every other tab. A tab left with no device is switched off.
 3. `[Keep there too]` puts it on this tab as well. This tab starts with the settings of the lowest-numbered tab it is on, force feedback included; after that each tab keeps its own. Do the same on more tabs, up to `[Controller 4]`.
 4. `[Cancel]` changes nothing.
-5. On each tab, `[Force Feedback]` → `[Enable]` says whether that tab's game rumbles the device. On for one tab: that tab's rumble. On for several: the strongest of each motor. The effect type and strengths are those of the lowest-numbered tab with `[Enable]` on.
-6. While the selected device is on other tabs, the `[Force Feedback]` page title names every one of them, for example `Also on Controller 2` or `Also on Controllers 1, 3`.
+5. On each tab, `[Force Feedback]` → `[Enable]` says whether that tab's game rumbles the device. On for one tab: that tab's rumble. On for several: the strongest of each motor.
+6. The lowest enabled controller tab the device is on shapes its force: effect type, strengths, motors and centering spring, whatever its own `[Enable]` says. On the other tabs those settings are greyed out; `[Enable]`, `[Pass Through]` and the Test sliders stay live.
+7. While the device is on another tab too, the `[Force Feedback]` page title names the other tabs, for example `Shared with Controller 2` or `Shared with Controllers 1, 3`, and the `[Force Source]` box says which tab shapes the force and which tabs' force the device plays. A controller read through Raw Input on one tab and DirectInput on another counts as on both.
 
 ## Configuring and Mapping Buttons and Axes
 
@@ -82,6 +87,8 @@ A device can drive up to four emulated controllers at once.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 7. Launch the game and see how it works.
+
+Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.
 
 ## Checking for a newer version
 
@@ -147,7 +154,13 @@ not make, such as one from DS4Windows or one left behind, which the `[Devices]` 
 as Leftover. Until its place is free, the `[Devices]` page lists the tab's own controller as
 `Virtual N (waiting)`. `[Auto-Order]` on the `[Devices]` page moves a real controller or another of
 this program's own virtual controllers out of the way; a Leftover has to be removed with
-`[Remove Leftover Pads]` on the same page instead.
+`[Remove Leftover Pads]` on the same page instead. While a tab waits, its controller picture
+stays grey: the controller in its place is not the tab's own.
+
+The program notes the place each of its own controllers lands in, and checks that note against
+the product number XInput reports for each place. A note on a place that holds another kind of
+controller is moved to where its controller is, or, when that cannot be told, the lists say
+`Virtual (place not known)`.
 
 ## How to Install or Uninstall ViGEmBus Virtual Gamepad Emulation Driver
 
@@ -194,12 +207,7 @@ If the installer fails, see Microsoft's troubleshooting guide: <https://learn.mi
 
 With the usual emulation, `Virtual`, a game reads an Xbox 360 gamepad whatever the device behind it, so a wheel needs no disguise. Check that both halves of the light on the wheel's controller tab are green, as described in "What the light on each controller tab means", and choose an Xbox or XInput controller in the game's own settings.
 
-A game set to `Library` emulation on the `[Games]` tab is told the device's type instead, and some such games work only with a gamepad:
-
-1. Select the `[tab]` with your wheel.
-2. Open the `[Advanced]` page, which only `Library` emulation shows.
-3. Set `[Device Sub Type]` to `[Gamepad]`.
-4. Click `[Save All]`.
+`[Device Sub Type]` on the `[Advanced]` page told a game what kind of device it read, through x360ce 3's XInput library. This version does not write the `x360ce.ini` file that library reads, so the page is greyed out. Its settings are kept, so x360ce 3's settings in the cloud stay as they are.
 
 ## How to reduce wheel dead zone?
 
@@ -228,6 +236,16 @@ Solution 2: If you can't separate pedals:
 3. Set RIGHT "Trigger" `[drop-down]` value to: Sliders → Inverted Half → `IHSlider 1`.
 4. Test pedals.
 
+## Pedals on the two triggers move one axis in the game
+
+A game that reads controllers through DirectInput, as many older racing games do, sees the emulated Xbox 360 controller's two triggers as one axis, `Z`: one trigger moves it one way from the middle and the other trigger the other way. Microsoft's Xbox 360 driver presents them like that, and x360ce cannot change it. A game that reads XInput sees two separate triggers.
+
+1. If the game has an XInput or Xbox controller option, choose it.
+2. If it has none, map the pedals to two stick axes instead of the triggers, for example the accelerator to Right Thumb Axis Y and the brake to Right Thumb Axis X, and choose those axes in the game.
+3. If the game then uses only half of a pedal's travel, it counts from the stick's middle. Put the whole pedal into that half with a formula in the stick's box: `=(a3+1)/2` for a pedal on `Axis 3`, or `=s1` for one on `Slider 1`. If the pedal reads full while released, use `=(1-a3)/2`. See "Expressions" below.
+
+Do not calibrate the emulated controller in Windows or with a tool such as DXTweak instead. Windows keeps that calibration and applies it in every DirectInput game; if the readings went wrong after one, set the tool back to its defaults.
+
 ## What are real life steering wheel degrees?
 
 - 1080° (3.0 x 360°) - Heavy cars, trucks.
@@ -238,11 +256,13 @@ Solution 2: If you can't separate pedals:
 
 ## Wheel centering spring
 
-A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. On the wheel's controller tab, open the `[Wheel]` page and tick `[Centering spring]` to hold it at its centre. Take your hands off the wheel and press `[Auto]`. It measures the wheel's friction and sets `[Strength]` to beat it.
+A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. On the wheel's controller tab, open the `[Wheel]` page and tick `[Centering spring]` to hold it at its centre. Take your hands off the wheel and press `[Auto]`. It measures the wheel's friction, the least force that turns it, and sets `[Friction]` a tenth above it.
 
-The spring pulls like a car's steering: its force grows from the centre to a peak, then eases off towards the stop. Choose a car from the `[Car]` list, or set `[Centre]`, `[Peak]`, `[Lightening]`, `[Damping]` and `[Speed]` yourself. The chart beside them shows the force at every angle, and its dot follows the wheel as it turns.
+A few degrees from the centre the spring reaches `[Friction]` and never pushes less beyond, so the wheel comes home from any angle and settles without shaking. `[Strength]` adds the car's steering on top. Friction is kept with the wheel, for every car. It starts at 20 %, which brings even a geared or belt wheel, such as a Logitech G27, home from its stops; Auto measures about 30 % on one. A direct drive wheel turns freely and needs little: lower `[Friction]` by hand when the wheel comes home harder than you like.
 
-The spring needs `[Enable]` ticked on the `[Force Feedback]` page. It works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. The page says so when it is not.
+The car's part pulls like a car's steering: its force grows from the centre to a peak, then eases off towards the stop. Choose a car from the `[Car]` list, or set `[Centre]`, `[Peak]`, `[Lightening]`, `[Damping]` and `[Speed]` yourself. A car also sets `[Wheel range]` to the range its name says: every car on the list is a road car, so 900°. The chart beside them shows the force at every angle, with Friction as a grey band the curve stays above except near the centre, and its dot follows the wheel as it turns.
+
+The spring works without `[Enable]` on the `[Force Feedback]` page, which passes on the game's vibration. While the spring is off, a Logitech wheel keeps its own centering, under the game's vibration too: the G25, G27, G29, Driving Force, Driving Force Pro, Driving Force GT, MOMO and Speed Force Wireless. Another wheel gets its own centering back once X360CE sends it no force. The spring works only while the controller tab is switched on for the current game, and the wheel is ticked in the tab's list and on the `[Devices]` page. When the wheel is on two controller tabs, the settings of the lowest enabled tab drive it, whatever its own `[Enable]` says. The page says so when the spring does nothing.
 
 The wiki page "How a real car centres its steering wheel" says what each setting copies from a real car, and what each car on the list is based on.
 
@@ -359,11 +379,12 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 ## AI assistant access
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
-program. It is off until you tick AI assistant access on the Options tab's AI page and choose a level.
+program. It is off until you tick AI assistant access on the Options tab's AI page, on its MCP Server - AI
+Assistant Access tab, and choose a level.
 **Read**: read the interface, the
 devices and the help, and point at things; changes no setting. **Configure**: everything a person does on the tabs; Windows
 may still ask for an administrator, as it asks a person, when a step needs one.
-**Administer**: also the actions that install or remove drivers and switch on debug mode. The
+**Administer**: also the actions that install or remove drivers. The
 level, the port and the token are changed here and only here; an assistant cannot change them.
 
 The quickest start is Copy prompt on the AI page: it copies instructions for any AI, with
@@ -382,6 +403,8 @@ chat and it takes it from there. The two ways, both shown on the page:
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
 
+**ChatGPT on the web** runs on OpenAI's servers and cannot reach the door. The AI page's OpenAI Tunnel tab opens an OpenAI Secure MCP Tunnel to it. The program downloads OpenAI's tunnel-client from github.com/openai/tunnel-client into `%LOCALAPPDATA%\X360CE\TunnelClient`, checks it against the release's SHA-256 sums, and runs it while Open the tunnel and AI assistant access are both ticked. tunnel-client connects out to OpenAI over HTTPS and passes each of ChatGPT's calls to the door with the door's token, so no port is opened on this computer. Create makes the tunnel with an OpenAI admin key, which is used for that call only and never kept. The tunnel runs with a restricted API key, kept encrypted for your Windows account. [AI assistants](https://github.com/x360ce/x360ce/wiki/Help.AiAssistants#openai-tunnel) gives the steps in ChatGPT.
+
 An assistant can read and answer the other windows the program opens over the main one.
 
 An assistant can also point: ask it where something is and it brings the page to the front,
@@ -396,8 +419,9 @@ its arguments and what came of it, with the time, so you can see afterwards what
 From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Git Bash turns
 `/Ai=` into a path, so there write `-Ai=devices_list`. Regenerate the
-token to revoke access. The token is kept with the program's settings, which every account on
-this computer can read, so it tells one program from another, not one person from another.
+token to revoke access.
+
+The AI settings are kept in their own file, `x360ce.AI.xml`, beside the other settings: `C:\ProgramData\X360CE\Settings` unless they live elsewhere. It holds whether the door is on, its level, address, port and token, and the tunnel's ID, organization and API key. Every account on this computer can read the file, so the token tells one program from another, not one person from another. The API key in it is encrypted with Windows DPAPI for the Windows account that saved it, so other accounts and other computers cannot read it.
 
 ## The AI skill
 
@@ -405,7 +429,7 @@ A skill is a set of instructions an AI agent reads when a task calls for it. The
 an agent what this program does, where its settings are and how to use AI assistant access, so it
 answers from the program instead of guessing. It works only through AI assistant access, at the level
 you chose, and never by taking over your screen, mouse or keyboard; to show you something it frames it
-on your screen. The AI skill box on the AI page installs it:
+on your screen. The AI page's AI Skill tab installs it:
 
 - **Claude Code**: into the skills folder Claude Code reads, `%USERPROFILE%\.claude\skills`, or the
   one in `CLAUDE_CONFIG_DIR` when that is set.
@@ -435,6 +459,7 @@ Write a switch after the program's name, for example `x360ce.exe /WindowState=Mi
 - `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
 - `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
 - `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `skills\x360ce\references` when none is given, then closes. The window is built off the screen while it does this.
+- `/PluginKit=<folder>` writes a folder to start a plugin in, and starts nothing else: the types a plugin implements, the build settings, the Test Controller's source as a sample, and the plugin help.
 - `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. Both reach the copy that runs with its own settings, a `/Profile` included. The help's AI assistant access section says more.
 
 The program also starts a copy of itself with other switches when it needs an administrator, for example to install the driver. Those are not meant to be typed.

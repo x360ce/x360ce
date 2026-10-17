@@ -100,15 +100,22 @@ top of it, as it is now.
 
 ### The curve
 
-The force towards the centre is drawn through four points, and a smooth curve joins them without rising or falling
-anywhere more than the points do:
+The force towards the centre has two parts. The first is **Friction**: the least force that turns the wheel, the
+same at every angle but the last few degrees before the centre, so the wheel comes home from any angle, as a car's
+active return brings its wheel back against
+the friction in the rack. The second, on top of it, is the car's steering, drawn through four points, and a smooth
+curve joins them without rising or falling anywhere more than the points do:
 
 1. Nothing at the centre.
 2. Half of the peak at **Centre**.
 3. The full **Strength** at **Peak**.
 4. **Lightening** of it left at the stop.
 
-The other side of the centre is its mirror. The angles are the steering wheel's, counted against **Wheel Range**, or
+Within a fifth of a percent of the travel from the centre, 1.8° on a 900° wheel, there is no force at all, so the
+wheel can rest there. Outside it the force, Friction too, rises no steeper than the wheel can follow (see below), so
+on a G27 it reaches Friction about 9° out, and the wheel slows as it comes in instead of being thrown across the
+centre. The other side of the centre is its
+mirror. The angles are the steering wheel's, counted against **Wheel Range**, or
 against 900° when the range is left as the wheel has it.
 
 ### Speed
@@ -117,7 +124,7 @@ The four points describe the car at 100 km/h, the speed of the ISO 13674-1 weave
 car's wheel gets stiffer about in proportion to its speed, so at another **Speed** the curve is read at the angle
 scaled by it:
 
-> force at an angle = Strength × the curve at (angle × speed ÷ 100)
+> force at an angle = Friction + Strength × the curve at (angle × speed ÷ 100)
 
 At 40 km/h the force builds over two and a half times the angle; at 10 km/h over ten times, an even, soft pull, as
 when parking. Below 10 km/h the steering axis inclination still pulls the wheel back, so 10 km/h is the least the
@@ -135,15 +142,15 @@ program that sets the live speed through x360ce's AI assistant access or its rem
 The Wheel tab of each controller shows the curve as the thumb stick pages show theirs: the angle across, from one
 stop to the other, and the force up and down, above the middle for a push to the right. The red curve is drawn again
 as each slider moves, and the crosshair and the dot follow the wheel as it turns, so you see the force at the angle
-you hold. The grey band is the wheel's own friction, which Auto measures: the wheel rests wherever the curve is inside
-it.
+you hold. The grey band is Friction, forces too weak to turn the wheel. The curve stays above it everywhere but a few
+degrees round the centre, where it rises gently, so the wheel comes home from any angle and settles there without
+shaking.
 
-![The Wheel tab after Auto on a Logitech G27 at 900 degrees: the chart with the wheel resting at 3 degrees inside the grey friction band, the family car on the Car list, Strength 80 % set by Auto, Centre, Peak, Lightening, Damping, Speed and Wheel range, and Auto's message below](.attachments/x360ce-v4-wheel-tab.png)
+![The Wheel tab after Auto on a Logitech G27 at 900 degrees: the chart with the wheel resting at the centre and the red curve above the grey Friction band everywhere but the centre, the family car on the Car list, Friction 29 % set by Auto, Strength 30 %, Centre, Peak, Lightening, Damping, Speed and Wheel range, and Auto's message below](.attachments/x360ce-v4-wheel-tab.png)
 
-On a Logitech G27 at 900°, Auto finds that the wheel's gears hold back 29 % of its force and sets Strength to 80 %.
-With the family car, the wheel comes back from the stop in about a second and rests within 2 to 4° of the centre; a
-wheel swung hard settles after one or two passes over the centre, and a light steady push holds it still without
-pulsing.
+On a Logitech G27 at 900°, 26 % of the wheel's force brings it home from either stop, so Auto sets Friction to 29 %,
+and the family car's Strength of 30 % comes on top of it. Let go at either stop, the wheel was back inside Centre in
+about 1.2 s, crossed the centre twice, and came to rest within 1° of it.
 
 ### Can the wheel hold this shape by itself?
 
@@ -160,10 +167,12 @@ and fall again.
 - Damping and friction stay on the wheel, as DirectInput damper and friction effects, which it computes itself.
 - The limit is time. The force follows the wheel a few milliseconds late, and a curve that is too steep on the centre
   makes the wheel chase its own force: on a G27, a nine-times-a-second shake. x360ce caps how steep the curve may be
-  near the centre and widens Centre when it has to, and the chart shows the curve as it is played.
+  near the centre and widens Centre when it has to, and the chart shows the curve as it is played. The cap holds for
+  Friction too: a jump to Friction at the edge of the dead band shook a G27 four degrees either side, five times a
+  second.
 
-So the shape can be copied, and the force in newton metres only as far as the wheel can make it: Strength scales the
-whole curve to the wheel. The change with speed is copied only as far as the speed is known.
+So the shape can be copied, and the force in newton metres only as far as the wheel can make it: Friction lifts the
+curve over the wheel's own friction, and Strength scales the car's part to the wheel. The change with speed is copied only as far as the speed is known.
 
 ## The settings on the Wheel tab
 
@@ -172,8 +181,9 @@ wheel's force.
 
 | Setting | What it sets | Car measure it copies |
 | --- | --- | --- |
-| **Car** (list) | Fills in the settings below, like the list of Wheel Range, and names what each car is based on | The kind of car and its speed |
-| **Strength** | The most force, at the peak, in percent of the wheel's force; Auto sets it | Peak aligning torque |
+| **Car** (list) | Fills in the settings below and Wheel Range, and names what each car is based on | The kind of car, its speed and its lock to lock |
+| **Friction** | The least force outside the centre, in percent of the wheel's force; 20 % until Auto measures it, and kept with the wheel | Active return against the friction in the rack |
+| **Strength** | The car's force at the peak, on top of Friction, in percent of the wheel's force; nought turns the spring off | Peak aligning torque |
 | **Centre** | The angle at which the force reaches half its peak, at 100 km/h | On-centre feel and torque gradient |
 | **Peak** | The angle of the strongest force at 100 km/h; beyond it the wheel goes lighter | The tyres' peak slip angle |
 | **Lightening** | How much of the force is left at the stop | Aligning torque falling past the grip limit |
@@ -185,9 +195,12 @@ In the model and the database these are one group, named with the prefix of the 
 `ForceSpringLightening`, `ForceSpringDamping` and `ForceSpringSpeed`. The car itself is not stored: the list shows
 the car the values match, or Custom. The family car at 100 km/h is also the default: a setting that leaves these
 values empty gets it, and a value equal to it is stored empty, so settings saved before keep their checksums.
+Friction belongs to the wheel, not the car, so it is kept with the device as `ForceSpringFriction`, for every car and
+every controller tab the wheel is on. It starts at 20 %, which brings even a geared wheel home from its stops, and
+20 % is stored as nought, so devices saved before keep their checksums.
 
-**Wheel Range** stays as it is and matters as much: set it to the car's lock to lock (the list on the Help page), so
-the degrees here are the car's degrees.
+**Wheel Range** matters as much, so the degrees here are the car's degrees. A car on the list sets it to its lock to
+lock; for another kind of car, set it yourself (the list on the Help page).
 
 ### The cars on the list
 
@@ -195,19 +208,21 @@ No standard sets these values, so each car on the list says what it is based on.
 worked out from the measurements above, taken in the ISO 13674-1 weave test. Town and parking are the same car read
 at a lower speed. The sports car and the van are estimates within the range measured on many cars in the same test.
 
-| Car on the list | Centre | Peak | Lightening | Damping | Speed |
-| --- | --- | --- | --- | --- | --- |
-| Family car, 100 km/h (ISO 13674-1 weave test, measured) | 12° | 60° | 40 % | 5 % | 100 km/h |
-| Family car in town, 40 km/h (same car, slower) | 12° | 60° | 40 % | 5 % | 40 km/h |
-| Parking (same car, 10 km/h) | 12° | 60° | 40 % | 0 % | 10 km/h |
-| Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range) | 8° | 40° | 30 % | 5 % | 100 km/h |
-| Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range) | 30° | 120° | 50 % | 10 % | 80 km/h |
+| Car on the list | Centre | Peak | Lightening | Damping | Speed | Wheel Range |
+| --- | --- | --- | --- | --- | --- | --- |
+| Family car, 100 km/h (ISO 13674-1 weave test, measured) | 12° | 60° | 40 % | 5 % | 100 km/h | 900° |
+| Family car in town, 40 km/h (same car, slower) | 12° | 60° | 40 % | 5 % | 40 km/h | 900° |
+| Parking (same car, 10 km/h) | 12° | 60° | 40 % | 0 % | 10 km/h | 900° |
+| Sports car, 100 km/h (estimate, firm end of the ISO 13674-1 range) | 8° | 40° | 30 % | 5 % | 100 km/h | 900° |
+| Heavy van, 80 km/h (estimate, slow end of the ISO 13674-1 range) | 30° | 120° | 50 % | 10 % | 80 km/h | 900° |
 
 Lightening is the share of the force that does not come from the tyres: the more of a car's centring is the tyres'
 aligning torque, which fades past the peak, the less is left at the stop.
 
-**Auto** measures the wheel's own friction, the weakest force that brings it home, and sets Strength so the curve
-beats that friction all the way from the stop to Centre.
+**Auto** measures the wheel's own friction, the weakest force that brings it home from both stops, and sets Friction
+a tenth above it, so it starts the wheel every time. Strength is left as it is. Until it runs, Friction is 20 %. A
+geared or belt wheel needs much: a G27 about 30 %. A direct drive wheel turns freely and needs little, so Auto finds little; lower Friction by hand when
+the wheel comes home harder than you like.
 
 ## Sources
 

@@ -298,7 +298,7 @@ namespace JocysCom.ClassLibrary.Processes
 		[DllImport("user32.dll")]
 		private static extern IntPtr GetForegroundWindow();
 
-		[DllImport("user32.dll", SetLastError = true)]
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
 
 		[DllImport("user32.dll")]

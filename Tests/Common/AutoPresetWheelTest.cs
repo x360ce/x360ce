@@ -39,7 +39,7 @@ namespace x360ce.Tests
 		/// <summary>A wheel as the test-device helper would report it, with the given controls.</summary>
 		static UserDevice Wheel(params DeviceObjectItem[] objects)
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
+			var ud = TestControllerDevice.NewUserDevice();
 			ud.CapType = (int)DeviceType.Driving;
 			ud.DeviceObjects = objects;
 			ud.CapButtonCount = objects.Count(x => x.Type == ObjectGuid.Button);
@@ -142,7 +142,7 @@ namespace x360ce.Tests
 		[Description("A name hint never takes a button: a gamepad named after its triggers still maps them to axes")]
 		public void Name_hints_match_axes_only()
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
+			var ud = TestControllerDevice.NewUserDevice();
 			// A pad whose buttons carry the names the axis hints look for.
 			var objects = ud.DeviceObjects.ToList();
 			objects.First(x => x.Type == ObjectGuid.Button && x.DiIndex == 6).Name = "L2";

@@ -21,11 +21,11 @@ namespace x360ce.Tests
 		/// <summary>The farthest a position can be from the centre: the high stop.</summary>
 		const int Stop = SpringCalibration.AxisMax - Center;
 
-		/// <summary>The family car at 100 km/h: the settings left empty.</summary>
-		static SpringCurve Curve(int strength, int centre = 12, int peak = 60, int lightening = 40, int range = 0, int speed = 100)
+		/// <summary>The family car at 100 km/h: the settings left empty, on a wheel whose friction is not known unless given.</summary>
+		static SpringCurve Curve(int strength, int centre = 12, int peak = 60, int lightening = 40, int range = 0, int speed = 100, int friction = 0)
 		{
 			var curve = new SpringCurve();
-			curve.Set(strength, centre, peak, lightening, range, speed);
+			curve.Set(strength, centre, peak, lightening, range, speed, friction);
 			return curve;
 		}
 
@@ -86,7 +86,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices")]
-		[Description("Inside the dead band there is no force, and just outside it the force is small")]
+		[Description("Inside the dead band there is no force, and outside it the force, friction and all, stays under the steepest line from the centre")]
 		public void Nothing_inside_the_dead_band()
 		{
 			var curve = Curve(100);
@@ -94,6 +94,12 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, curve.Force(Center + Band));
 			Assert.AreEqual(0, curve.Force(Center - Band));
 			Assert.IsTrue(At(curve, Band + 1) < 10, "Just outside the dead band the force jumps to " + At(curve, Band + 1) + " %.");
+			// A step to the friction at the edge of the band throws the wheel across the centre and back for ever.
+			var slope = (double)ForceFeedbackState.SpringStiffnessLimit / ForceFeedbackState.SpringRamp;
+			foreach (var steep in new[] { curve, Curve(30, friction: 29), Curve(80, friction: 40), Curve(60, speed: 250, friction: 20) })
+				for (var distance = Band + 1; distance <= Stop; distance++)
+					Assert.IsTrue(At(steep, distance) <= distance * slope + 0.5, string.Format(
+						"The force at {0} is {1} %, above the steepest line from the centre.", distance, At(steep, distance)));
 		}
 
 		[TestMethod, TestCategory("devices")]
@@ -103,7 +109,7 @@ namespace x360ce.Tests
 			var curve = Curve(0);
 			Assert.AreEqual(0, curve.Force(0));
 			Assert.AreEqual(0, curve.Force(SpringCalibration.AxisMax));
-			curve.Set(-5, 12, 60, 40, 0, 100);
+			curve.Set(-5, 12, 60, 40, 0, 100, 0);
 			Assert.AreEqual(0, curve.Force(0));
 		}
 
@@ -202,8 +208,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(100, ps.GetForceSpringSpeed(), "Speed");
 			// A force state the settings have not reached yet builds its curve at the default speed.
 			var ff = new ForceFeedbackState();
-			ff.UpdateSpring(null, Center, null, 0, null);
+			ff.UpdateSpring(null, Center, null, 0, null, 0);
 			Assert.AreEqual(100, ff.Curve.Speed);
+			// The friction is the spring's floor, so it plays only while the spring does.
+			ff.UpdateSpring(null, Center, null, 0, null, 29);
+			Assert.AreEqual(0, ff.Curve.Force(0), "The wheel's friction was played with the spring off.");
 		}
 
 		[TestMethod, TestCategory("devices")]
@@ -218,21 +227,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Auto sets the strength so the curve beats the wheel's friction from the stop to Centre, and a tenth more")]
-		public void Auto_strength_beats_the_friction_from_the_stop_to_Centre()
+		[Description("The wheel's friction is the floor, reached a few degrees out along the steepest line from the centre, and the car's curve rides on top")]
+		public void The_friction_is_the_floor_the_car_rides_on()
 		{
-			// The lowest of the curve beyond Centre is half the strength, or Lightening of it at the stop.
-			Assert.AreEqual(44, SpringCurve.AutoStrength(16, 40, 60, 900), "16 / 0.4 x 1.1 = 44.");
-			Assert.AreEqual(36, SpringCurve.AutoStrength(16, 60, 60, 900), "16 / 0.5 x 1.1 = 35.2, rounded up.");
-			Assert.AreEqual(36, SpringCurve.AutoStrength(16, 0, 0, 900), "With the peak at the stop Lightening plays no part.");
-			Assert.AreEqual(36, SpringCurve.AutoStrength(16, 0, 450, 0), "A peak at the stop of a range left as it is.");
-			Assert.AreEqual(100, SpringCurve.AutoStrength(16, 0, 60, 900), "Nothing left at the stop: the most there is.");
-			Assert.AreEqual(100, SpringCurve.AutoStrength(60, 40, 60, 900), "More than the device has.");
-			Assert.AreEqual(0, SpringCurve.AutoStrength(0, 40, 60, 900), "No friction found, no strength.");
-			// And the curve at that strength does beat the friction from the stop to Centre.
-			var curve = Curve(SpringCurve.AutoStrength(16, 40, 60, 900));
-			for (var distance = curve.CentreUnits; distance <= Stop; distance++)
-				Assert.IsTrue(At(curve, distance) > 16, "The curve is below the friction at " + distance);
+			// A G27, whose gears hold back 29 % of its force, with the family car at Strength 30 %.
+			var curve = Curve(30, friction: 29);
+			Assert.AreEqual(0, At(curve, Band), "Inside the dead band there is no force.");
+			// Where the steepest line reaches the friction: inside Centre, which is where the wheel comes to rest.
+			var floorFrom = (int)Math.Ceiling(29.0 * ForceFeedbackState.SpringRamp / ForceFeedbackState.SpringStiffnessLimit);
+			Assert.IsTrue(floorFrom < Units(12), "The friction is reached outside Centre, so the wheel may stop outside it.");
+			for (var distance = floorFrom; distance <= Stop; distance++)
+				Assert.IsTrue(At(curve, distance) >= 29, "Below the friction at " + distance + ", so the wheel would stop there.");
+			Assert.AreEqual(29 + 30, At(curve, Units(60)), "All the strength on top at Peak.");
+			Assert.AreEqual(29 + 12, At(curve, Stop), "Lightening of the strength on top at the stop.");
+			Assert.AreEqual(100, At(Curve(80, friction: 40), Units(60)), "The sum is held within the device's force.");
+			// Past the steepest line, the car's shape on top is the same as without friction.
+			var bare = Curve(30);
+			for (var distance = Units(30); distance <= Stop; distance += 101)
+				Assert.AreEqual(At(bare, distance) + 29, At(curve, distance), 1, "The friction changed the car's shape at " + distance);
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -244,11 +256,11 @@ namespace x360ce.Tests
 			ud.ForceSpringSpeedOverride = 40;
 			Assert.AreEqual(40, ud.ForceSpringSpeedOverride);
 			var ff = new ForceFeedbackState();
-			ff.UpdateSpring(null, Center, null, 0, ud.ForceSpringSpeedOverride);
+			ff.UpdateSpring(null, Center, null, 0, ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
 			Assert.AreEqual(40, ff.Curve.Speed, "The engine's curve was not built at the live speed.");
 			ud.ForceSpringSpeedOverride = null;
 			Assert.IsNull(ud.ForceSpringSpeedOverride);
-			ff.UpdateSpring(null, Center, null, 0, ud.ForceSpringSpeedOverride);
+			ff.UpdateSpring(null, Center, null, 0, ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
 			Assert.AreEqual(100, ff.Curve.Speed, "With the live speed gone the curve was not built at the setting again.");
 			ud.ForceSpringSpeedOverride = -20;
 			Assert.AreEqual(0, ud.ForceSpringSpeedOverride, "A speed below nought is nought.");

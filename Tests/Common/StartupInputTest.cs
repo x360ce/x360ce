@@ -1,4 +1,4 @@
-// @under-test: App.v3/MainForm.cs, App.v4/MainForm.cs
+// @under-test: App.v3/MainForm.cs, App.v4/MainForm.cs, App.v3/Common/SettingsData.cs
 // @area: startup   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -118,6 +118,84 @@ namespace x360ce.Tests
 
 			_process.Refresh();
 			Assert.IsFalse(_process.HasExited, appFolder + " exited while it was starting up.");
+		}
+
+		/// <summary>
+		/// Version 3's first start in a folder it can write to chooses the folder beside the program for its
+		/// settings, and the check that the folder can be written leaves nothing behind, so the first save goes
+		/// into a folder that is not there (issue #1649). A profile folder not made yet is the same first save.
+		/// </summary>
+		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive")]
+		[Description("Version 3 starts with its settings in a folder that is not there yet, and saves them into it")]
+		public void V3_saves_its_settings_into_a_folder_not_made_yet()
+		{
+			var exe = Ui.FindApp("App.v3");
+			if (exe == null)
+				Assert.Inconclusive("App.v3 is not built. Build the solution before running UI tests.");
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce-v3-profile-" + Guid.NewGuid().ToString("N"));
+			var file = Path.Combine(folder, "x360ce.UserSettings.xml");
+			try
+			{
+				_process = Process.Start(new ProcessStartInfo(exe, "/Profile=\"" + folder + "\"") { WorkingDirectory = Path.GetDirectoryName(exe) });
+				string crash = null;
+				Ui.WaitFor(() =>
+				{
+					crash = UnhandledExceptionDialog(_process);
+					return crash != null || File.Exists(file) ? file : null;
+				}, TimeSpan.FromSeconds(45), "the settings to be saved");
+				Assert.IsNull(crash, "Version 3 raised an unhandled exception saving its settings into a new folder: " + crash);
+			}
+			finally
+			{
+				Ui.CloseApp(_process);
+				_process = null;
+				if (Directory.Exists(folder))
+					Directory.Delete(folder, true);
+			}
+		}
+
+		[TestMethod, TestCategory("startup"), TestCategory("languages"), TestCategory("ui-interactive")]
+		[Description("Version 4 starts from a folder named in other languages and saves its settings in one")]
+		public void V4_starts_from_a_folder_named_in_other_languages()
+			=> App_starts_from_a_folder_named_in_other_languages("App.v4", Path.Combine("Settings", "x360ce.UserSettings.xml"));
+
+		[TestMethod, TestCategory("startup"), TestCategory("languages"), TestCategory("ui-interactive")]
+		[Description("Version 3 starts from a folder named in other languages and saves its settings in one")]
+		public void V3_starts_from_a_folder_named_in_other_languages()
+			=> App_starts_from_a_folder_named_in_other_languages("App.v3", "x360ce.UserSettings.xml");
+
+		/// <summary>
+		/// Starts a copy of the program from a folder named in Chinese, Greek and Cyrillic, with its settings in
+		/// a folder named the same, and waits for its first save there.
+		/// </summary>
+		private void App_starts_from_a_folder_named_in_other_languages(string appFolder, string settingsFile)
+		{
+			var exe = Ui.FindApp(appFolder);
+			if (exe == null)
+				Assert.Inconclusive(appFolder + " is not built. Build the solution before running UI tests.");
+			var folder = Path.Combine(Path.GetTempPath(), OtherLanguagesTest.Text + " " + Guid.NewGuid().ToString("N"));
+			var profile = Path.Combine(folder, OtherLanguagesTest.Text);
+			var file = Path.Combine(profile, settingsFile);
+			var copy = Path.Combine(folder, Path.GetFileName(exe));
+			Directory.CreateDirectory(profile);
+			File.Copy(exe, copy);
+			try
+			{
+				_process = Process.Start(new ProcessStartInfo(copy, "/Profile=\"" + profile + "\"") { WorkingDirectory = folder });
+				string crash = null;
+				Ui.WaitFor(() =>
+				{
+					crash = UnhandledExceptionDialog(_process);
+					return crash != null || File.Exists(file) ? file : null;
+				}, TimeSpan.FromSeconds(60), "the settings to be saved");
+				Assert.IsNull(crash, appFolder + " raised an unhandled exception in a folder named in other languages: " + crash);
+			}
+			finally
+			{
+				Ui.CloseApp(_process);
+				_process = null;
+				Directory.Delete(folder, true);
+			}
 		}
 
 		/// <summary>Text of the Windows Forms unhandled-exception dialog, or null when there is none.</summary>

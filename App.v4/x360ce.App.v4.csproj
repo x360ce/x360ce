@@ -85,6 +85,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
@@ -117,6 +118,7 @@
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Plugins.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step1.UpdateDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step2.UpdateDiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step4.CombineXiStates.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
     <Compile Include="Common\LogItem.cs" />
+    <Compile Include="Common\AiOptions.cs" />
     <Compile Include="Common\Options.cs" />
     <Compile Include="Common\RuntimePolicyHelper.cs" />
     <Compile Include="Common\SettingEventArgs.cs" />
@@ -150,7 +153,6 @@
     <Compile Include="Common\SettingsManager.Events.cs" />
     <Compile Include="Common\SettingsManager.XML.cs" />
     <Compile Include="Common\TaskName.cs" />
-    <Compile Include="Common\TestDeviceHelper.cs" />
     <Compile Include="Common\UiTree\UiHelp.cs" />
     <Compile Include="Common\UiTree\UiCatalog.Devices.cs" />
     <Compile Include="Common\UiTree\UiCatalog.Input.cs" />
@@ -174,6 +176,12 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsPluginsUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsPluginsUserControl.Designer.cs">
+      <DependentUpon>OptionsPluginsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsSettingsUserControl.cs">
       <SubType>UserControl</SubType>
@@ -277,6 +285,9 @@
     <Compile Include="Controls\PadTabPages\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\PadTabPages\PluginDeviceUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\PadTabPages\DirectInputControl.Designer.cs">
       <DependentUpon>DirectInputControl.cs</DependentUpon>
     </Compile>
@@ -335,12 +346,6 @@
       <DependentUpon>LoadingCircle.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
-    <Compile Include="Forms\NewDeviceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\NewDeviceForm.Designer.cs">
-      <DependentUpon>NewDeviceForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\OptionsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -375,6 +380,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Issues\AiAccessIssue.cs" />
     <Compile Include="Issues\AiSkillIssue.cs" />
+    <Compile Include="Issues\PluginIssue.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppRuntimeDetector.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
@@ -404,6 +410,11 @@
     </Compile>
     <Compile Include="Mcp\AiAccessSettings.cs" />
     <Compile Include="Mcp\McpTools.cs" />
+    <Compile Include="Plugins\PluginDevices.cs" />
+    <Compile Include="Plugins\PluginDocs.cs" />
+    <Compile Include="Plugins\PluginKit.cs" />
+    <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -490,10 +501,6 @@
     <EmbeddedResource Include="Controls\AxisMapUserControl.resx">
       <DependentUpon>AxisMapUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\NewDeviceForm.resx">
-      <DependentUpon>NewDeviceForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsUserControl.resx">
       <DependentUpon>OptionsUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -533,6 +540,19 @@
     <!-- The rest of the skill: v3's help, and both programs' interface descriptions. -->
     <EmbeddedResource Include="..\docs\Help.v3.md">
       <Link>Documents\Help.v3.md</Link>
+    </EmbeddedResource>
+    <!-- How plugins work, and what x360ce.exe /PluginKit writes: the build settings, the build script and the sample, as text. -->
+    <EmbeddedResource Include="..\docs\Help.Plugins.md">
+      <Link>Documents\Help.Plugins.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Plugins\Directory.Build.props">
+      <LogicalName>x360ce.App.Documents.PluginKit.Directory.Build.props</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Plugins\Build-Plugins.ps1">
+      <LogicalName>x360ce.App.Documents.PluginKit.Build-Plugins.ps1</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Plugins\TestController\TestController.cs">
+      <LogicalName>x360ce.App.Documents.PluginKit.TestController.cs</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v4.md">
       <Link>Documents\x360ce.ui-tree-v4.md</Link>
@@ -720,11 +740,31 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\x360ce.Engine.csproj" />
+    <ProjectReference Include="..\PluginApi\x360ce.Plugins.csproj" />
   </ItemGroup>
   <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
     <ItemGroup>
       <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     </ItemGroup>
+  </Target>
+  <!--
+    The plugins embedded in this application. The contract project, ..\PluginApi, builds them the way any plugin
+    is built, into Plugins beside the contract this build references, so a release signs them before they are
+    embedded here. Each is the DLL named like its folder; any other DLL beside it would be a dependency, which an
+    embedded plugin cannot have. They are staged with the other generated files below, under Resources.Plugins,
+    where the plugin manager looks.
+  -->
+  <Target Name="EmbedPlugins" AfterTargets="ResolveReferences" BeforeTargets="StageGeneratedResources">
+    <PropertyGroup>
+      <EmbeddedPluginsDir>@(ReferencePath->WithMetadataValue('Filename','x360ce.Plugins')->'%(RootDir)%(Directory)')Plugins</EmbeddedPluginsDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <EmbeddedPluginDll Include="$(EmbeddedPluginsDir)\**\*.dll" />
+      <GeneratedResource Include="@(EmbeddedPluginDll)" Condition="'%(EmbeddedPluginDll.RecursiveDir)' == '%(EmbeddedPluginDll.Filename)\'">
+        <EmbeddedName>Plugins.%(Filename).dll</EmbeddedName>
+      </GeneratedResource>
+    </ItemGroup>
+    <Error Condition="'@(EmbeddedPluginDll)' == ''" Text="No plugins to embed in $(EmbeddedPluginsDir). Building ..\PluginApi\x360ce.Plugins.csproj builds them." />
   </Target>
   <!--
     Files produced by the build and embedded into this application. They are staged in
@@ -747,6 +787,10 @@
       -->
       <GeneratedResource Include="@(ReferencePath->'%(RootDir)%(Directory)%(Filename).pdb')" Condition="'%(Filename)' == 'x360ce.Engine' And Exists('%(RootDir)%(Directory)%(Filename).pdb')">
         <EmbeddedName>x360ce.Engine.pdb</EmbeddedName>
+      </GeneratedResource>
+      <!-- The types plugins implement, which every plugin binds to by name. -->
+      <GeneratedResource Include="@(ReferencePath)" Condition="'%(Filename)%(Extension)' == 'x360ce.Plugins.dll'">
+        <EmbeddedName>x360ce.Plugins.dll</EmbeddedName>
       </GeneratedResource>
     </ItemGroup>
     <Error Condition="!Exists('%(GeneratedResource.FullPath)')" Text="Missing build output: %(GeneratedResource.FullPath)$(MissingResourceHint)" />

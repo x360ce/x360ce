@@ -12,7 +12,7 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.MainTabControl"] = new Text("Options pages",
 				"Settings for the program itself, rather than for one controller.");
 			d["OptionsUserControl.GeneralTabPage"] = new Text("General",
-				"How the program starts, what it logs, and which tabs it shows.");
+				"How the program starts and runs, and which tabs it shows.");
 			d["OptionsUserControl.InternetOptionsTabPage"] = new Text("Internet",
 				"Whether settings are shared with the online database, and the account used.");
 			d["OptionsUserControl.VirtualDeviceTabPage"] = new Text("Virtual Device",
@@ -27,8 +27,8 @@ namespace x360ce.App.UiTree
 				"Looks for a newer version of the program and installs it.");
 
 			// General page.
-			d["OptionsUserControl.TestingAndLoggingGroupBox"] = new Text("Testing and Logging",
-				"Extra output, useful when something is not working and needs reporting.");
+			d["OptionsUserControl.TestingGroupBox"] = new Text("Testing",
+				"Switching the emulated controllers off to try the real ones, and the pages that show more detail.");
 			d["OptionsUserControl.OperationGroupBox"] = new Text("Operation",
 				"How the program behaves while it runs.");
 			d["OptionsUserControl.DevelopingGroupBox"] = new Text("Developing",
@@ -36,11 +36,7 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.DirectInputDevicesGroupBox"] = new Text("Direct Input Devices",
 				"Which devices the program lists and reads.");
 			d["OptionsUserControl.ConfigurationGroupBox"] = new Text("Configuration",
-				"What the settings file written for games contains.");
-			d["OptionsUserControl.ConfigurationVersionTextBox"] = new Text("Configuration version",
-				"Which version of the settings file is written for games.");
-			d["OptionsUserControl.IncludeProductsCheckBox"] = new Text("Include [Products]",
-				"Writes the device list into the settings file games read.");
+				"Switching settings to the game in front.");
 			d["OptionsUserControl.AutoDetectForegroundWindowCheckBox"] = new Text(
 				"Auto switch configuration when game focused",
 				"Loads the settings of whichever game you switch to.");
@@ -53,13 +49,13 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.EmulationHotkeyCheckBox"] = new Text("Emulation",
 				"Turns the hotkey on. Off by default, so the keys stay with other programs until you choose.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
-				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them. Backspace clears it.");
+				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them, which ticks the box. Backspace clears it.");
 			d["OptionsUserControl.EmulationOverlayCheckBox"] = new Text("Show a note on the screen when pressed",
-				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden.");
+				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden. Greyed out while the hotkey is off.");
 			d["OptionsUserControl.DeviceChangeOverlayCheckBox"] = new Text("Show a note when a device disconnects",
 				"Shows a short note at the top of the screen, over the game, when a device mapped to the current game disconnects or connects again.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
-				"How the window appears when the program starts with Windows.");
+				"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.");
 			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",
 				"Light or dark colours. System follows the Windows setting for apps.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
@@ -111,7 +107,7 @@ namespace x360ce.App.UiTree
 
 			// The AI page: the shared page's names and purposes, under the tab that is this program's own.
 			d["OptionsUserControl.AiTabPage"] = new Text("AI",
-				"AI assistant access, and the skill that teaches AI agents to use this program.");
+				"The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.");
 			AiAccessModel.AddCatalog(d, AiAccessModel.FormsView);
 
 			// Hiding the real controller.
@@ -137,12 +133,30 @@ namespace x360ce.App.UiTree
 				"Checks HID Guardian again.");
 			d["OptionsUserControl.HidGuardianConfigureAutomaticallyCheckBox"] = new Text(
 				"Configure automatically",
-				"Hides a device from games as soon as it is mapped to a controller.");
+				"Hides a device from games as soon as it is mapped to a controller. Greyed out while HID Guardian is not installed.");
 			d["OptionsUserControl.HelpRichTextBox"] = new Text("HID Guardian notes",
 				"Explains why HID Guardian is no longer recommended.");
 
 			AddInternetOptions(d);
 			AddSettingsOptions(d);
+			AddPluginsOptions(d);
+		}
+
+		/// <summary>The Plugins page: the plugins found, what became of each, and whether others may load.</summary>
+		static void AddPluginsOptions(Dictionary<string, Text> d)
+		{
+			d["OptionsUserControl.PluginsTabPage"] = new Text("Plugins",
+				"The plugins found, the devices each adds, and whether plugins from others may load.");
+			d["OptionsPluginsUserControl.AllowThirdPartyPluginsCheckBox"] = new Text("Allow third-party plugins",
+				"Loads plugins not signed by the publisher of x360ce. A plugin runs with all the rights of x360ce, so allow this only for plugins from people you trust. Unticking it takes effect when x360ce starts again.");
+			d["OptionsPluginsUserControl.OpenFolderButton"] = new Text("Open Folder",
+				"Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\\MyDevice.dll, loads at once.");
+			d["OptionsPluginsUserControl.FolderTextBox"] = new Text("Plugins folder",
+				"The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.");
+			d["OptionsPluginsUserControl.NoteLabel"] = new Text("About plugins",
+				"Which plugins load by themselves, and why plugins from others need permission.");
+			d["OptionsPluginsUserControl.PluginsDataGridView"] = new Text("Plugins",
+				"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.");
 		}
 
 		/// <summary>The Internet page: the online database and the account used with it.</summary>
@@ -189,9 +203,11 @@ namespace x360ce.App.UiTree
 			d["OptionsUpdateUserControl.CheckButton"] = new Text("Check now",
 				"Looks for a newer version now, downloads it, checks it and installs it.");
 			d["OptionsUpdateUserControl.CheckDigitalSignatureCheckBox"] = new Text(null,
-				"Installs only a download that carries a trusted digital signature.");
+				"Installs only a download that carries a trusted digital signature. On by default; your choice is kept. "
+				+ "The download is always checked against the SHA-256 GitHub publishes for it.");
 			d["OptionsUpdateUserControl.CheckVersionCheckBox"] = new Text(null,
-				"Installs only a download whose version is newer than this one and matches the release.");
+				"Installs only a download whose version is newer than this one and matches the release. On by default; your choice is kept. "
+				+ "A release older than or the same as this one is never offered.");
 			d["OptionsUpdateUserControl.LogTextBox"] = Live("Update log",
 				"Each step of the last check and what it found.");
 		}

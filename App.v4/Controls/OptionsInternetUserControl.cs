@@ -13,11 +13,15 @@ namespace x360ce.App.Controls
 		public OptionsInternetUserControl()
 		{
 			InitializeComponent();
+			InternetFeaturesCheckBox.CheckedChanged += InternetCheckBox_CheckedChanged;
+			InternetCheckBox_CheckedChanged(null, EventArgs.Empty);
 		}
 
+		/// <summary>The cloud boxes do nothing while Internet features are off, so they are greyed out then.</summary>
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			InternetAutoLoadCheckBox.Enabled = InternetFeaturesCheckBox.Checked;
+			InternetAutoSaveCheckBox.Enabled = InternetFeaturesCheckBox.Checked;
 		}
 
 		public void UpdateSettingsMap()

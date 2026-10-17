@@ -47,5 +47,25 @@ namespace x360ce.Tests
 			Assert.IsFalse(LogitechWheel.SupportsRange(0x046D, 0xC294), "A wheel still in its compatibility mode takes a different command.");
 			Assert.IsFalse(LogitechWheel.SupportsRange(0x045E, 0x028E), "An Xbox controller.");
 		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("The wheel's own centering is switched on with 0x14 and off with 0xf5, as the Linux driver switches it")]
+		public void Centering_reports_match_the_driver()
+		{
+			CollectionAssert.AreEqual(new byte[] { 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, LogitechWheel.CenteringReport(true, 8));
+			CollectionAssert.AreEqual(new byte[] { 0x00, 0xF5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, LogitechWheel.CenteringReport(false, 8));
+			Assert.AreEqual(8, LogitechWheel.CenteringReport(true, 0).Length, "An interface that will not say gets the command's own length.");
+		}
+
+		[TestMethod, TestCategory("devices")]
+		[Description("Every Logitech wheel the Linux driver switches the centering of is offered it, the newer protocol's wheels are not")]
+		public void Every_wheel_that_takes_the_centering_report_is_offered_it()
+		{
+			foreach (var productId in new[] { 0xC293, 0xC294, 0xC295, 0xC298, 0xC299, 0xC29A, 0xC29B, 0xC29C, 0xC24F, 0xCA03 })
+				Assert.IsTrue(LogitechWheel.SupportsCentering(0x046D, productId), productId.ToString("X4"));
+			Assert.IsFalse(LogitechWheel.SupportsCentering(0x046D, 0xC262), "The G920 speaks another protocol.");
+			Assert.IsFalse(LogitechWheel.SupportsCentering(0x046D, 0xC26E), "The G923 for Xbox speaks another protocol.");
+			Assert.IsFalse(LogitechWheel.SupportsCentering(0x045E, 0x028E), "An Xbox controller.");
+		}
 	}
 }

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace JocysCom.ClassLibrary.Mcp
 {
@@ -45,10 +46,12 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessTrustLocalCheckBox", "AiAccessPortTextBox",
 			"AiAccessRegenerateButton", "AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton",
+			"AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelIdTextBox", "AiTunnelCreateButton",
+			"AiTunnelDeleteButton", "AiTunnelApiKeyTextBox",
 		};
 
-		/// <summary>The page's boxes whose value is a secret: the door's token. A program adds them to <see cref="McpUiTools.SecretControls"/>.</summary>
-		public static readonly string[] SecretControls = { "AiAccessTokenTextBox" };
+		/// <summary>The page's boxes whose value is a secret: the door's token and the tunnel's keys. A program adds them to <see cref="McpUiTools.SecretControls"/>.</summary>
+		public static readonly string[] SecretControls = { "AiAccessTokenTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelApiKeyTextBox" };
 
 		/// <summary>
 		/// The page's controls that need Administer. None: every control on the page that changes anything is a door
@@ -108,11 +111,14 @@ namespace JocysCom.ClassLibrary.Mcp
 		#endregion
 
 		readonly Action<string> _setClipboard;
+		readonly SynchronizationContext _context;
 
 		/// <summary>A page's model. The view passes what puts text on its clipboard, which throws when another program holds it.</summary>
 		public AiAccessModel(Action<string> setClipboard)
 		{
 			_setClipboard = setClipboard;
+			// The tunnel and the tunnel buttons finish on other threads; their results are shown on the page's own.
+			_context = SynchronizationContext.Current;
 			Claude = new SkillRow(() => AiSkill.ClaudeFolder, " for Claude Code");
 			Agents = new SkillRow(() => AiSkill.AgentsFolder, " for other agents");
 			ZipNote = ZipHint;
@@ -188,6 +194,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			Settings = settings;
 			ShowDoor();
+			BindTunnel();
 			Check(Claude);
 			Check(Agents);
 			OnChanged();
@@ -368,19 +375,25 @@ namespace JocysCom.ClassLibrary.Mcp
 				: "On, at the " + level + " level.";
 		}
 
-		/// <summary>Puts text on the clipboard, or says why it could not: another program can hold the clipboard for a moment.</summary>
+		/// <summary>Puts text on the clipboard, and shows what came of it.</summary>
 		void Copy(string text)
+		{
+			Status = CopyText(text);
+			OnChanged();
+		}
+
+		/// <summary>Puts text on the clipboard. Says it did, or why it could not: another program can hold the clipboard for a moment.</summary>
+		string CopyText(string text)
 		{
 			try
 			{
 				_setClipboard(text);
-				Status = "Copied.";
+				return "Copied.";
 			}
 			catch (ExternalException ex)
 			{
-				Status = "Not copied: " + ex.Message;
+				return "Not copied: " + ex.Message;
 			}
-			OnChanged();
 		}
 
 		void OnChanged()

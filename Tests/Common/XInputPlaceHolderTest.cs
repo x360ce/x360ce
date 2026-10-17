@@ -105,7 +105,7 @@ namespace x360ce.Tests
 		{
 			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
 			StringAssert.Contains(source, "XInputPlaces.HolderOf(i)", "The tab hint is not asked about what holds its place.");
-			StringAssert.Contains(source, "checking, ours, enabled, busError, holder, keptHolds)", "The tab hint is not given the holder.");
+			StringAssert.Contains(source, "checking, ours, enabled, busError, holder, keptHolds, offReason, unticked)", "The tab hint is not given the holder.");
 			Assert.IsFalse(source.Contains("var errors = Global.DHelper?.VirtualErrors;"),
 				"The hint reads the bus errors a second time instead of taking them from its caller.");
 		}
