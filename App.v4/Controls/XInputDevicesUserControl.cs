@@ -111,6 +111,10 @@ namespace x360ce.App.Controls
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(read.Exception.GetBaseException());
 					return;
 				}
+				// The page can close while the machine is read, as it does when the program closes as a
+				// controller arrives or leaves, and a closed list has no columns to add rows to.
+				if (IsDisposed)
+					return;
 				// The order waiting for OK stays in view. Replaced by what is there now, the list would no
 				// longer show what OK does.
 				if (_proposed != null)
@@ -346,6 +350,9 @@ namespace x360ce.App.Controls
 				var done = !finished.IsFaulted && finished.Result;
 				if (finished.IsFaulted)
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(finished.Exception.GetBaseException());
+				// Closed while controllers were put in order: there is no page left to report on.
+				if (IsDisposed)
+					return;
 				var report = finished.IsFaulted
 					? runner.ToString() + Environment.NewLine + finished.Exception.GetBaseException().Message
 					: runner.ToString();

@@ -88,6 +88,10 @@ namespace x360ce.App
 					var o = Items[i] as EntityObject;
 					if (o != null) o.EntityKey = null;
 				}
+				// The folder chosen for settings is not always there: the check that a folder can be
+				// written takes away again any folder it made.
+				if (!XmlFile.Directory.Exists)
+					XmlFile.Directory.Create();
 				Serializer.SerializeToXmlFile(this, XmlFile.FullName, Encoding.UTF8, true);
 			}
 		}

@@ -1201,8 +1201,10 @@ namespace x360ce.App
 						setting.Completion = twin.Completion;
 					else
 						ps = AutoMapHelper.GetAutoPreset(ud);
+					// The page is not loaded here: it belongs to the row selected on the tab, which is still the
+					// device that was there before, and the next change would save this one's settings into it.
+					// Selecting the new row loads its page.
 					Current.LoadPadSettingAndCleanup(setting, ps, true);
-					Current.SyncFormFromPadSetting(mappedTo, ps);
 					// Refresh online status
 					RefreshDeviceIsOnlineValueOnSettings(setting);
 					// Load created setting.

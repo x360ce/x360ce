@@ -48,7 +48,7 @@
 			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(serialBytes);
 		}
 
-		[DllImport("kernel32.dll", SetLastError = true)]
+		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		static extern SafeFileHandle CreateFile(
 			string lpFileName,
 			UInt32 dwDesiredAccess,

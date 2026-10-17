@@ -233,7 +233,7 @@ namespace x360ce.Tests
 					Assert.AreEqual(1234, axis.Rows[0][1], "Axis X.");
 					Assert.AreEqual(55, sliders.Rows[0][1], "Slider 0.");
 					Assert.AreEqual(9000, povs.Rows[0][1], "POV 0.");
-					Assert.AreEqual("02", buttons.Rows[0][0], "Buttons.");
+					Assert.AreEqual("03", buttons.Rows[0][0], "Buttons.");
 					// A DirectInput row whose read failed has no DirectInput state, and shows none; its last engine state is not a reading.
 					var di = DirectInputRow("Wheel", WheelPath);
 					di.SourceState = raw.SourceState;

@@ -161,7 +161,9 @@ namespace x360ce.Engine
 		internal static class NativeMethod
 		{
 
-			[DllImport("kernel32.dll", SetLastError = true)]
+			/// <remarks>Unicode: the ANSI form writes a question mark for each character the PC's language for
+			/// non-Unicode programs cannot hold, and the path then matches no game in the list.</remarks>
+			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 			internal static extern bool QueryFullProcessImageName(
 				  [In] IntPtr hProcess,
 				  [In] int dwFlags,

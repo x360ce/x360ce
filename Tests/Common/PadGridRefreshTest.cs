@@ -1,4 +1,4 @@
-// @under-test: App.v4/Controls/PadControl.cs
+// @under-test: App.v4/Controls/PadControl.cs, App.v4/Common/SettingsManager.cs
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -276,6 +276,126 @@ namespace x360ce.Tests
 					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySynchronized().Except(existingPads).ToArray())
 						SettingsManager.PadSettings.Items.Remove(ps);
 				}
+			});
+		}
+
+		/// <summary>A mapping no auto preset makes: Axis 7 on the left stick, button 9 on A.</summary>
+		static PadSetting OwnMapping()
+		{
+			var ps = new PadSetting { LeftThumbAxisX = "7", ButtonA = "9" };
+			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+			return ps;
+		}
+
+		/// <summary>
+		/// Runs a body on a shown controller page for a selected game, with every settings change saved
+		/// from the page into the selected row, as the main window saves it (ApplyAllSettingsToXML).
+		/// </summary>
+		static void OnPageThatSavesChanges(Action<PadControl, UserGame> body)
+		{
+			Ui.OnUiThread(() =>
+			{
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var existingPads = SettingsManager.PadSettings.ItemsToArraySynchronized();
+				var oldGame = SettingsManager.CurrentGame;
+				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				var game = NewGame("GameA");
+				SettingsManager.UserSettings.Items.Clear();
+				EventHandler<SettingChangedEventArgs> save = null;
+				try
+				{
+					using (var form = new Form { Width = 900, Height = 700 })
+					using (var pad = new PadControl(MapTo.Controller2) { Dock = DockStyle.Fill })
+					{
+						form.Controls.Add(pad);
+						pad.InitPadControl();
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						form.Show();
+						SettingsManager.CurrentGame = game;
+						pad.UpdateFromCurrentGame();
+						Application.DoEvents();
+						save = (s, e) =>
+						{
+							var setting = pad.GetSelectedSetting();
+							if (setting == null)
+								return;
+							var page = pad.CloneCurrentPadSetting();
+							if (!SettingsManager.PadSettings.Items.Any(x => x.PadSettingChecksum == page.PadSettingChecksum))
+								SettingsManager.PadSettings.Items.Add(page);
+							setting.PadSettingChecksum = page.PadSettingChecksum;
+						};
+						SettingsManager.Current.SettingChanged += save;
+						body(pad, game);
+					}
+				}
+				finally
+				{
+					if (save != null)
+						SettingsManager.Current.SettingChanged -= save;
+					SettingsManager.Current.NotifySettingsStatus = oldStatus;
+					SettingsManager.CurrentGame = oldGame;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var setting in existing)
+						SettingsManager.UserSettings.Items.Add(setting);
+					foreach (var ps in SettingsManager.PadSettings.ItemsToArraySynchronized().Except(existingPads).ToArray())
+						SettingsManager.PadSettings.Items.Remove(ps);
+				}
+			});
+		}
+
+		/// <remarks>
+		/// Adding a device loaded its settings onto the page while the device already there was still
+		/// selected, and the change that followed saved the page into that device: the joystick and the PS4
+		/// pad of issue #1334, added to one controller, left the joystick with the pad's settings.
+		/// </remarks>
+		[TestMethod, TestCategory("mapping")]
+		[Description("Adding a device to a controller keeps the mapping of the device already on it")]
+		public void Adding_a_device_keeps_the_first_devices_mapping()
+		{
+			OnPageThatSavesChanges((pad, game) =>
+			{
+				var own = OwnMapping();
+				SettingsManager.PadSettings.Items.Add(own);
+				var first = NewSetting(game, MapTo.Controller2);
+				first.PadSettingChecksum = own.PadSettingChecksum;
+				SettingsManager.UserSettings.Items.Add(first);
+				pad.UpdateFromCurrentGame();
+				Application.DoEvents();
+				Assert.AreEqual(first.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid, "The first device is selected to begin with.");
+				Assert.AreEqual("7", pad.CloneCurrentPadSetting().LeftThumbAxisX, "The page does not show the first device's mapping.");
+
+				var added = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Second pad", InstanceName = "Second pad" };
+				pad.MapDevices(game, new[] { added });
+				Application.DoEvents();
+				Assert.AreEqual(own.PadSettingChecksum, first.PadSettingChecksum,
+					"Adding a device replaced the mapping of the device already on the controller.");
+				var row = pad.GetSelectedSetting();
+				Assert.AreEqual(added.InstanceGuid, row?.InstanceGuid, "The device just added is not selected.");
+				Assert.AreEqual(row.PadSettingChecksum, pad.CloneCurrentPadSetting().PadSettingChecksum,
+					"The page does not show the settings of the device just added.");
+			});
+		}
+
+		[TestMethod, TestCategory("mapping")]
+		[Description("A device added to an empty controller keeps its own settings, not what the page showed before")]
+		public void A_device_added_to_an_empty_controller_keeps_its_own_settings()
+		{
+			OnPageThatSavesChanges((pad, game) =>
+			{
+				// The page still shows a mapping from before, as after the last device was removed.
+				var own = OwnMapping();
+				SettingsManager.Current.SyncFormFromPadSetting(MapTo.Controller2, own);
+				var added = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "First pad", InstanceName = "First pad" };
+				pad.MapDevices(game, new[] { added });
+				Application.DoEvents();
+				var row = pad.GetSelectedSetting();
+				Assert.AreEqual(added.InstanceGuid, row?.InstanceGuid, "The device just added is not selected.");
+				Assert.AreNotEqual(own.PadSettingChecksum, row.PadSettingChecksum,
+					"The device took the mapping the page showed before it was added.");
+				Assert.AreEqual(row.PadSettingChecksum, pad.CloneCurrentPadSetting().PadSettingChecksum,
+					"The page does not show the settings of the device just added.");
 			});
 		}
 	}

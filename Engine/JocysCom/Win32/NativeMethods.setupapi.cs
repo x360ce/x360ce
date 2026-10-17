@@ -104,7 +104,7 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern bool SetupDiCallClassInstaller(UInt32 installFunction, IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData);
 
-		[DllImport("setupapi.dll")]
+		[DllImport("setupapi.dll", CharSet = CharSet.Unicode)]
 		public static extern bool SetupDiOpenDeviceInfo(IntPtr deviceInfoSet, string deviceInstanceId, IntPtr hwndParent, UInt32 openFlags, ref SP_DEVINFO_DATA deviceInfoData);
 
 		[DllImport("setupapi.dll", SetLastError = true)]

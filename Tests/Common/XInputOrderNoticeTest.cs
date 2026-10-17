@@ -1,8 +1,12 @@
 // @under-test: App.v4/Controls/XInputDevicesUserControl.cs, App.v4/Controls/XInputDevicesUserControl.Designer.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Controls;
@@ -163,6 +167,57 @@ namespace x360ce.Tests
 					Assert.AreEqual(180, control.Height, "OK did not close the notice.");
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A page closed before the machine answers lets the answer go instead of filling a list that is gone")]
+		public void A_page_closed_before_the_machine_answers_lets_the_answer_go()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var context = new KeptPosts();
+				SynchronizationContext.SetSynchronizationContext(context);
+				using (var form = new Form { ShowInTaskbar = false })
+				{
+					form.Controls.Add(new XInputDevicesUserControl { Dock = DockStyle.Top, Height = 180 });
+					form.Show();
+				}
+				// Closed before this thread took a single message, so the answer arrives after the page is gone,
+				// as it does when the program closes while a controller arrives or leaves.
+				var answers = Ui.WaitFor(() =>
+				{
+					Application.DoEvents();
+					var posted = context.Tasks;
+					return posted.Length > 0 && posted.All(x => x.IsCompleted) ? posted : null;
+				}, TimeSpan.FromSeconds(30), "the machine's answer");
+				var failed = answers.FirstOrDefault(x => x.IsFaulted);
+				Assert.IsNull(failed, "The answer was put into the page after it closed: " + failed?.Exception.GetBaseException());
+			});
+		}
+
+		/// <summary>Posts work to the interface thread as usual, and keeps each task posted so the test sees how it ended.</summary>
+		/// <remarks>A task continued on the interface thread arrives as itself, and a failure inside it stays in the task: nothing else reports it.</remarks>
+		class KeptPosts : SynchronizationContext
+		{
+			readonly SynchronizationContext _thread = new WindowsFormsSynchronizationContext();
+			readonly List<Task> _tasks = new List<Task>();
+
+			public Task[] Tasks
+			{
+				get { lock (_tasks) return _tasks.ToArray(); }
+			}
+
+			public override void Post(SendOrPostCallback d, object state)
+			{
+				if (state is Task task)
+					lock (_tasks)
+						_tasks.Add(task);
+				_thread.Post(d, state);
+			}
+
+			public override void Send(SendOrPostCallback d, object state) => _thread.Send(d, state);
+
+			public override SynchronizationContext CreateCopy() => this;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿## [4.26.35.0] - 2026-10-16
+﻿## [4.26.38.0] - 2026-10-17
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.
@@ -12,6 +12,9 @@
 - Fixed: The centering spring was too weak to bring the wheel home from the stops.
 - Fixed: The update's signature and version boxes were ticked again at every start.
 - Fixed: A controller tab's light ignored unticked devices and the tab's Enable.
+- Fixed: Adding a device to a controller gave the device already on it the new one's settings (Issue #1334, Kuiriel).
+- Fixed: A running game was not selected when its folder name used another language's letters.
+- Fixed: The Direct Input page numbered buttons from 0, while the mapping boxes number them from 1 (Issue #1498, CtrlAltPizza).
 - Removed: Enable Logging, Enable Console, Debug Mode, Version and Include [Products] on the Options page, which did nothing.
 - Changed: Settings that do nothing right now are greyed out, with the reason.
 - Changed: A device on several tabs uses the lowest enabled tab's settings.

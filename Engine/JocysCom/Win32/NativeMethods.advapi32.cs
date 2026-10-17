@@ -11,7 +11,7 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("advapi32.dll", SetLastError = true)]
 		public static extern int RegCloseKey(IntPtr hkey);
 
-		[DllImport("advapi32.dll", SetLastError = true)]
+		[DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern int RegQueryValueEx(IntPtr hKey, string valueName, int reserved, ref REG type, System.Text.StringBuilder data, ref int dataSize);
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// <summary>
 		/// The LogonUser function attempts to log a user on to the local computer.
 		/// </summary>
-		[DllImport("advapi32.dll", SetLastError = true)]
+		[DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken);
 
 	}

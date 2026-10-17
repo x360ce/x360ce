@@ -56,7 +56,7 @@ Both rows of a controller read every button and axis into the same place, so a m
 
 Every press, hat tap and stick flick reaches the controller, even one shorter than the time between two reads of the device. A worn button whose contacts chatter can then send extra presses; for it, turn off `[Read Every Change]` on the `[Options]` tab.
 
-A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are buttons 0 to 39.
+A few devices do not tell Windows what their controls are, so Windows does not list them as game controllers and they have no `DirectInput` row. x360ce reads the ones it knows through Raw Input, without the maker's software: the Logitech G13's stick is the X and Y axes and its keys are `Button 1` to `Button 40`.
 
 ## Plugin devices
 
@@ -87,6 +87,8 @@ A device can drive up to four emulated controllers at once.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 7. Launch the game and see how it works.
+
+Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.
 
 ## Checking for a newer version
 
@@ -233,6 +235,16 @@ Solution 2: If you can't separate pedals:
 2. Set LEFT "Trigger" `[drop-down]` value to: Sliders → Half → `HSlider 1`.
 3. Set RIGHT "Trigger" `[drop-down]` value to: Sliders → Inverted Half → `IHSlider 1`.
 4. Test pedals.
+
+## Pedals on the two triggers move one axis in the game
+
+A game that reads controllers through DirectInput, as many older racing games do, sees the emulated Xbox 360 controller's two triggers as one axis, `Z`: one trigger moves it one way from the middle and the other trigger the other way. Microsoft's Xbox 360 driver presents them like that, and x360ce cannot change it. A game that reads XInput sees two separate triggers.
+
+1. If the game has an XInput or Xbox controller option, choose it.
+2. If it has none, map the pedals to two stick axes instead of the triggers, for example the accelerator to Right Thumb Axis Y and the brake to Right Thumb Axis X, and choose those axes in the game.
+3. If the game then uses only half of a pedal's travel, it counts from the stick's middle. Put the whole pedal into that half with a formula in the stick's box: `=(a3+1)/2` for a pedal on `Axis 3`, or `=s1` for one on `Slider 1`. If the pedal reads full while released, use `=(1-a3)/2`. See "Expressions" below.
+
+Do not calibrate the emulated controller in Windows or with a tool such as DXTweak instead. Windows keeps that calibration and applies it in every DirectInput game; if the readings went wrong after one, set the tool back to its defaults.
 
 ## What are real life steering wheel degrees?
 
