@@ -16,7 +16,7 @@
     },
     {
       "Name": "Engine",
-      "Comment": "The engine, built on its own and signed before the applications embed it. Building it as part of an application would embed it in the same step that produced it, leaving it unsigned inside a signed application.",
+      "Comment": "The engine, and the plugin contract with the plugins built into x360ce 4, built on their own and signed before the applications embed them. Building them as part of an application would embed them in the same step that produced them, leaving them unsigned inside a signed application.",
       "Builds": [
         {
           "Project": "../Engine/x360ce.Engine.csproj",
@@ -28,6 +28,10 @@
         },
         {
           "Project": "../Engine/x360ce.Engine.csproj",
+          "Platform": "AnyCPU"
+        },
+        {
+          "Project": "../PluginApi/x360ce.Plugins.csproj",
           "Platform": "AnyCPU"
         }
       ]
@@ -151,6 +155,21 @@
         },
         {
           "Target": "../Engine/bin/Release_x64/x360ce.Engine.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - Plugins",
+      "Stage": "Engine",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../PluginApi/bin/Release/x360ce.Plugins.dll"
+        },
+        {
+          "Target": "../PluginApi/bin/Release/Plugins/TestController/TestController.dll"
         }
       ]
     },

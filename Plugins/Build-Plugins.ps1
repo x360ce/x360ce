@@ -29,7 +29,8 @@ if (-not $Contract) {
     $Contract = Join-Path $PSScriptRoot 'x360ce.Plugins.dll'
     $project = Join-Path $PSScriptRoot '..\PluginApi\x360ce.Plugins.csproj'
     if (-not (Test-Path -LiteralPath $Contract) -and (Test-Path -LiteralPath $project)) {
-        $Contract = & dotnet build $project -c $Configuration -nologo -v:q -t:Build -getProperty:TargetPath
+        # Only the contract: the project also builds x360ce's own plugins, which this script is about to build.
+        $Contract = & dotnet build $project -c $Configuration -nologo -v:q -t:Build -getProperty:TargetPath -p:BuildEmbeddedPlugins=false
         if ($LASTEXITCODE -ne 0) { throw 'The x360ce.Plugins contract did not build.' }
     }
 }

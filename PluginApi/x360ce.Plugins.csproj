@@ -17,4 +17,20 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
+  <!--
+    The plugins embedded in x360ce 4, built by ..\Plugins\Build-Plugins.ps1 the way any plugin is, against the
+    contract just built, into Plugins beside it. Built here rather than by x360ce 4, so a release builds and signs
+    them with the contract before x360ce 4 embeds them, as it does the engine. Needs the .NET 10 SDK (dotnet), which
+    Visual Studio 2026 installs. Build-Plugins.ps1 sets BuildEmbeddedPlugins to false when it builds this project
+    only for the contract.
+  -->
+  <Target Name="BuildEmbeddedPlugins" AfterTargets="Build" Condition="'$(BuildEmbeddedPlugins)' != 'false'">
+    <PropertyGroup>
+      <!-- No trailing backslash: inside quotes on a command line it would escape the closing quote. -->
+      <EmbeddedPluginsOut>$(TargetDir)Plugins</EmbeddedPluginsOut>
+    </PropertyGroup>
+    <!-- Emptied first, so a plugin renamed or removed is not embedded from an earlier build. -->
+    <RemoveDir Directories="$(EmbeddedPluginsOut)" />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;..\Plugins\Build-Plugins.ps1&quot; -Output &quot;$(EmbeddedPluginsOut)&quot; -Configuration $(Configuration) -Contract &quot;$(TargetPath)&quot;" />
+  </Target>
 </Project>

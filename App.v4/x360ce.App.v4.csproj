@@ -748,27 +748,23 @@
     </ItemGroup>
   </Target>
   <!--
-    The plugins embedded in this application, built the way any plugin is, by ..\Plugins\Build-Plugins.ps1,
-    against the contract this build references. Each is the DLL named like its folder; any other DLL beside it
-    would be a dependency, which an embedded plugin cannot have. They are staged with the other generated files
-    below, under Resources.Plugins, where the plugin manager looks. Needs the .NET 10 SDK (dotnet), which
-    Visual Studio 2026 installs.
+    The plugins embedded in this application. The contract project, ..\PluginApi, builds them the way any plugin
+    is built, into Plugins beside the contract this build references, so a release signs them before they are
+    embedded here. Each is the DLL named like its folder; any other DLL beside it would be a dependency, which an
+    embedded plugin cannot have. They are staged with the other generated files below, under Resources.Plugins,
+    where the plugin manager looks.
   -->
-  <Target Name="BuildEmbeddedPlugins" AfterTargets="ResolveReferences" BeforeTargets="StageGeneratedResources">
+  <Target Name="EmbedPlugins" AfterTargets="ResolveReferences" BeforeTargets="StageGeneratedResources">
     <PropertyGroup>
-      <EmbeddedPluginsContract>@(ReferencePath->WithMetadataValue('Filename','x360ce.Plugins')->'%(FullPath)')</EmbeddedPluginsContract>
-      <!-- No trailing backslash: inside quotes on a command line it would escape the closing quote. -->
-      <EmbeddedPluginsOut>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)Plugins</EmbeddedPluginsOut>
+      <EmbeddedPluginsDir>@(ReferencePath->WithMetadataValue('Filename','x360ce.Plugins')->'%(RootDir)%(Directory)')Plugins</EmbeddedPluginsDir>
     </PropertyGroup>
-    <!-- Emptied first, so a plugin renamed or removed is not embedded from an earlier build. -->
-    <RemoveDir Directories="$(EmbeddedPluginsOut)" />
-    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;..\Plugins\Build-Plugins.ps1&quot; -Output &quot;$(EmbeddedPluginsOut)&quot; -Configuration $(Configuration) -Contract &quot;$(EmbeddedPluginsContract)&quot;" />
     <ItemGroup>
-      <EmbeddedPluginDll Include="$(EmbeddedPluginsOut)\**\*.dll" />
+      <EmbeddedPluginDll Include="$(EmbeddedPluginsDir)\**\*.dll" />
       <GeneratedResource Include="@(EmbeddedPluginDll)" Condition="'%(EmbeddedPluginDll.RecursiveDir)' == '%(EmbeddedPluginDll.Filename)\'">
         <EmbeddedName>Plugins.%(Filename).dll</EmbeddedName>
       </GeneratedResource>
     </ItemGroup>
+    <Error Condition="'@(EmbeddedPluginDll)' == ''" Text="No plugins to embed in $(EmbeddedPluginsDir). Building ..\PluginApi\x360ce.Plugins.csproj builds them." />
   </Target>
   <!--
     Files produced by the build and embedded into this application. They are staged in
