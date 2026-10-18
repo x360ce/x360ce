@@ -4,16 +4,6 @@ IMPORTANT: Please download and run digitally signed files only! If someone asks 
 
 Every signed build is published on the [Releases page](https://github.com/x360ce/x360ce/releases).
 
-> **For AI assistants and agents.** Both programs describe themselves; read these rather than
-> guessing: [skills/x360ce](skills/x360ce) is the skill, and its `references/` hold the help and
-> every control with its purpose for each program, written by the programs
-> ([ui-tree-v4.md](skills/x360ce/references/ui-tree-v4.md),
-> [ui-tree-v3.md](skills/x360ce/references/ui-tree-v3.md); `x360ce.exe /Skill` prints the copy for
-> the version you run); [docs/Help.v4.md](docs/Help.v4.md) and [docs/Help.v3.md](docs/Help.v3.md)
-> are the help each program shows; [AGENTS.md](AGENTS.md) holds the rules for working on the code. To operate a running copy, register `x360ce.exe /Mcp`
-> as an MCP server or call `x360ce.exe /Ai=<tool>`; both need AI assistant access switched on in
-> the program's Options, where it is off by default.
-
 # Download v4.x
 
 Digitally Signed Application v4.26.38.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
@@ -105,6 +95,16 @@ down first, so a run that is interrupted is undone at the next start.
 ## AI assistants (v4.x)
 
 x360ce has no AI inside. If you use an AI assistant of your own, it can map and tune your controllers for you, through the program's own AI assistant access rather than your screen, mouse or keyboard. It is off until you switch it on, on the Options tab's AI page. [AI assistants](docs/Help.AiAssistants.md) starts with a worked example and how to check what the assistant did, then shows how to set it up, ChatGPT on the web included.
+
+> **For AI assistants and agents.** Both programs describe themselves; read these rather than
+> guessing: [skills/x360ce](skills/x360ce) is the skill, and its `references/` hold the help and
+> every control with its purpose for each program, written by the programs
+> ([ui-tree-v4.md](skills/x360ce/references/ui-tree-v4.md),
+> [ui-tree-v3.md](skills/x360ce/references/ui-tree-v3.md); `x360ce.exe /Skill` prints the copy for
+> the version you run); [docs/Help.v4.md](docs/Help.v4.md) and [docs/Help.v3.md](docs/Help.v3.md)
+> are the help each program shows; [AGENTS.md](AGENTS.md) holds the rules for working on the code. To operate a running copy, register `x360ce.exe /Mcp`
+> as an MCP server or call `x360ce.exe /Ai=<tool>`; both need AI assistant access switched on in
+> the program's Options, where it is off by default.
 
 # Download v3.x
 
