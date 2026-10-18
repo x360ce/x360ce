@@ -389,6 +389,11 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public bool RawInputMissing;
 
+		/// <summary>What this device's controller reads in place of <see cref="SourceState"/> while an AutoHotkey script changes it; null otherwise. Set by the engine only.</summary>
+		/// <remarks><see cref="SourceState"/> stays what the device reported, so the screen and the input log show the device itself.</remarks>
+		[XmlIgnore]
+		public SourceState ScriptState;
+
 		/// <summary>Attempts at this device's force feedback that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the force rests until <see cref="ForceRetryAt"/> and is then sent again. The device is read all the while.</remarks>
 		[XmlIgnore]

@@ -30,7 +30,7 @@
   <rect x="680" y="68" width="236" height="216" rx="12" fill="#ecf8ee" stroke="#2da44e" stroke-width="2"/>
   <text x="798" y="104" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">x360ce</text>
   <text x="798" y="130" font-size="14" font-weight="600" fill="#1a7f37" text-anchor="middle">AI door (MCP server)</text>
-  <text x="798" y="154" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37360/mcp/</text>
+  <text x="798" y="154" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37101/mcp/</text>
   <text x="798" y="184" font-size="14" fill="#1f2328" text-anchor="middle">Level you choose:</text>
   <text x="798" y="204" font-size="14" fill="#1f2328" text-anchor="middle">Read, Configure, Administer</text>
   <text x="798" y="234" font-size="13" fill="#57606a" text-anchor="middle">Every call is written</text>

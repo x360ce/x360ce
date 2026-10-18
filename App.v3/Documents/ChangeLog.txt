@@ -1,4 +1,9 @@
-﻿## [3.7.8.0] - 2026-10-17
+﻿## [3.8.8.0] - 2026-10-18
+
+- Changed: AI assistant access uses port 37102 by default.
+- Changed: New AI access tokens start with sk-x360ce-v3-mcp-.
+
+## [3.7.8.0] - 2026-10-17
 
 - Fixed: The program failed on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: The program stopped at its first start when its settings went in a folder beside it (Issue #1649, PeeLetan).

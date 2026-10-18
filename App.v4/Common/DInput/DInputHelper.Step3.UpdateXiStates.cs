@@ -15,6 +15,10 @@ namespace x360ce.App.DInput
 		/// <param name="routing">The rows to convert this pass: the current game's, on a tab and switched on.</param>
 		void UpdateXiStates(DeviceRouting routing)
 		{
+			// The devices a formula can name, c1.d2.b1, for this pass.
+			_expressionRouting = routing;
+			if (_expressionSources == null)
+				_expressionSources = GetExpressionSource;
 			// The same rows the controllers combine, so no row is combined that was not converted.
 			var settings = routing.Rows;
 			// Each row's device, mappings and D-Pad, found when the routing was built. Found here, the devices list
@@ -63,7 +67,8 @@ namespace x360ce.App.DInput
 				// If setting was not found then continue.
 				if (maps == null)
 					continue;
-				var diState = ud.SourceState;
+				// What an AutoHotkey script made of the device's state, when one changes it.
+				var diState = ud.ScriptState ?? ud.SourceState;
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
@@ -340,6 +345,22 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		readonly float[] _expressionValues = new float[MapExpression.MaxReferences];
 
+		/// <summary>The routing of the pass being converted, which a formula naming another device reads it through.</summary>
+		DeviceRouting _expressionRouting;
+
+		/// <summary><see cref="GetExpressionSource"/>, made once, so a formula asks for another device without making anything.</summary>
+		System.Func<int, int, SourceState> _expressionSources;
+
+		/// <summary>What a formula reads for <c>c1.d2.b1</c>: that device's state this pass, as its own controller reads it; null when the routing reads no device there or it is offline, which reads as a control at rest.</summary>
+		SourceState GetExpressionSource(int pad, int number)
+		{
+			var routing = _expressionRouting;
+			var ud = routing == null ? null : routing.GetDevice(pad, number);
+			if (ud == null || !ud.IsOnline)
+				return null;
+			return ud.ScriptState ?? ud.SourceState;
+		}
+
 		/// <summary>
 		/// Works out a formula against the controller as it is now, and puts the answer where the row
 		/// points.
@@ -362,7 +383,7 @@ namespace x360ce.App.DInput
 			var isThumb = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY
 				|| map.Target == TargetType.RightThumbX || map.Target == TargetType.RightThumbY;
 			float value;
-			if (!MapExpressionUnits.TryEvaluate(map.Expression, diState, isThumb, _expressionValues, out value))
+			if (!MapExpressionUnits.TryEvaluate(map.Expression, diState, isThumb, _expressionValues, out value, _expressionSources))
 				return;
 			switch (map.Target)
 			{

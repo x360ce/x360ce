@@ -57,6 +57,7 @@ namespace x360ce.App.Mcp
 		{
 			{ "references/help-v4.md", AppHelper.HelpV4Resource },
 			{ "references/plugins.md", AppHelper.HelpPluginsResource },
+			{ "references/autohotkey.md", AppHelper.HelpAutoHotkeyResource },
 			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
 			{ "references/ui-tree-v4.json", "Documents.x360ce.ui-tree-v4.json" },
 			{ "references/help-v3.md", AppHelper.HelpV3Resource },
@@ -81,7 +82,7 @@ namespace x360ce.App.Mcp
 				+ "When ui_find finds nothing, search the help before saying the program cannot do it: a formula in a mapping box does what no single setting does. "
 				+ "A refusal names the access level the person must choose on the Options tab's AI page; the AI access controls themselves are the person's alone to change.";
 			McpCatalog.SettingsPlace = SettingsPlace;
-			McpListener.Unauthorised = Unauthorised;
+			McpListener.Program.Unauthorised = Unauthorised;
 			// The Fix runs the same reservation elevated, for every user: Program.AdminCommands.cs.
 			McpListener.UrlReservationRemedy = prefix => "Press Fix on the Issues tab, or run as Administrator: netsh http add urlacl url=" + prefix + " sddl=D:(A;;GX;;;WD)";
 			McpClient.SwitchPrefix = "/";
@@ -122,10 +123,11 @@ namespace x360ce.App.Mcp
 			McpCatalog.Load(McpCatalog.Sources);
 		}
 
-		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Vendor (its maker, as the controller tab's Vendor Name column shows it), Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place), Source (how the program reads it: DirectInput, or RawInput, which reads an Xbox One controller while a game has the focus; a controller read both ways is listed once for each, so map one of the two, and force feedback reaches it from either).")]
+		[McpTool(AiAccess.Read, "Every controller the program knows, as JSON: InstanceGuid, Product, Vendor (its maker, as the controller tab's Vendor Name column shows it), Online, Controllers (the controllers 1 to 4 it is on for the current game, empty when none), XInputPlaces (the places games read it in: Real N for the device itself, Virtual N for a controller this program makes from it, Virtual N (waiting) while another controller holds that controller's place), Source (how the program reads it: DirectInput, or RawInput, which reads an Xbox One controller while a game has the focus; a controller read both ways is listed once for each, so map one of the two, and force feedback reaches it from either; Plugin for a device a plugin adds), Tools (what device_call can ask of a plugin device: read, which returns its settings with their values, and a set_ tool for each setting it can change, such as set_state; empty for any other device).")]
 		public static object DevicesList()
 		{
 			var game = SettingsManager.CurrentGame;
+			var manager = Plugins.PluginManager.Current;
 			return SettingsManager.UserDevices.ItemsToArraySynchronized().Select(d => (object)new Dictionary<string, object>
 			{
 				{ "InstanceGuid", d.InstanceGuid.ToString() },
@@ -137,10 +139,39 @@ namespace x360ce.App.Mcp
 					: SettingsManager.GetDeviceTabs(game.FileName, d.InstanceGuid).Select(x => (int)x).ToArray() },
 				{ "XInputPlaces", AppHelper.GetXInputPlaces(d) },
 				{ "Source", d.InputSource.ToString() },
+				{ "Tools", PluginTypeOf(d, manager) == null ? new string[0] : Plugins.PluginDeviceTools.Names(PluginTypeOf(d, manager)) },
 			}).ToArray();
 		}
 
-		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, and devices_list and device_map work on it as on any device. How to write a plugin: x360ce.exe -Skill=plugins.")]
+		/// <summary>The kind of a plugin device, while its plugin works; null for any other device.</summary>
+		static Plugins.PluginDeviceType PluginTypeOf(UserDevice device, Plugins.PluginManager manager)
+		{
+			if (manager == null || device.InputSourceType != (int)InputSourceType.Plugin)
+				return null;
+			var type = manager.FindDeviceType(device.ProductGuid);
+			return type == null || type.Faulted ? null : type;
+		}
+
+		[McpTool(AiAccess.Read, "Calls a tool of a plugin device, one devices_list lists in its Tools: read returns every setting of the device with its value, as JSON by name; a set_ tool sets one setting to value, and needs Configure. The device's tab can also open these tools as an MCP server of the device's own; the plugin's help in plugins_list says what each setting does.", Changes = true)]
+		public static object DeviceCall([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("One of the device's Tools in devices_list, such as read or set_state.")] string tool, [Description("The value a set_ tool sets, as text; read takes none.")] string value = "")
+		{
+			Guid guid;
+			var device = Guid.TryParse(instanceGuid, out guid) ? SettingsManager.GetDevice(guid) : null;
+			if (device == null)
+				throw new InvalidOperationException("No device with that InstanceGuid. Read devices_list for the ids.");
+			var type = PluginTypeOf(device, Plugins.PluginManager.Current);
+			if (type == null)
+				throw new InvalidOperationException("That device has no tools: only a plugin device whose plugin works has them.");
+			var tools = Plugins.PluginDeviceTools.For(guid, type, Plugins.PluginSettings.Current);
+			var found = tools.FirstOrDefault(x => x.Name == tool);
+			if (found == null)
+				throw new InvalidOperationException("No tool " + tool + " on that device. Its tools: " + string.Join(", ", tools.Select(x => x.Name)) + ".");
+			if (found.Level > McpCatalog.Level())
+				throw new InvalidOperationException(McpCatalog.Refusal(found.Level));
+			return found.Body(found.Parameters.Length == 0 ? new object[0] : new object[] { value });
+		}
+
+		[McpTool(AiAccess.Read, "Every plugin the program found, as JSON: Name, State (Loaded; WaitingForPermission, not signed by the publisher of x360ce while Allow third-party plugins is off on the Options tab's Plugins page; Failed), Reason, Signer, Source (Embedded, or the DLL's path), Devices (each kind of device it adds: Name, ProductGuid, Axes, Sliders, Povs, Buttons, SwitchedOff with the reason when it failed, and Added, the InstanceGuid of each one added, as devices_list lists them) and Help, the plugin's documentation as Markdown. A plugin adds devices: Add Plugin Device on the Devices tab adds one, as does picking one in the list a controller tab's Add opens, and devices_list and device_map work on it as on any device, and device_call on its tools. How to write a plugin: x360ce.exe -Skill=plugins.")]
 		public static object PluginsList()
 		{
 			var manager = Plugins.PluginManager.Current;

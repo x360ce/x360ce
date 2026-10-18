@@ -57,15 +57,17 @@ namespace x360ce.App
 				typeof(Global).Assembly);
 			Plugins.PluginManager.Current = manager;
 			// A plugin found, loaded or switched off changes which devices are online, which the next device refresh says,
-			// and what the AI skill's plugin documents say.
+			// and what the AI skill's plugin documents say. A plugin device's MCP server opens once its kind is loaded.
 			manager.Changed += (s, e) =>
 			{
 				if (DHelper != null)
 					DHelper.UpdateDevicesEnabled = true;
 				Plugins.PluginDocs.UpdateReferences(manager);
+				Plugins.PluginMcpDoors.Apply();
 			};
 			manager.Start();
 			Plugins.PluginDocs.UpdateReferences(manager);
+			Plugins.PluginMcpDoors.Apply();
 		}
 
 		private static void WindowHook_OnActivate(object sender, EventArgs<Process> e)
@@ -137,11 +139,11 @@ namespace x360ce.App
 		public static void ApplyAiAccess()
 		{
 			var o = SettingsManager.AiOptions;
-			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
 			if (o.AiAccessEnabled)
 			{
 				o.EnsureAiAccessToken();
-				JocysCom.ClassLibrary.Mcp.McpListener.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken, o.AiAccessTrustLocal);
+				JocysCom.ClassLibrary.Mcp.McpListener.Program.Start(o.AiAccessAddress, o.AiAccessPort, o.AiAccessToken, o.AiAccessTrustLocal);
 			}
 			ApplyAiTunnel();
 		}
@@ -161,7 +163,7 @@ namespace x360ce.App
 			{
 				// This runs on the interface thread from the settings-changed event; an exception here
 				// would be a crash report for a folder that is read-only, which the Issues tab explains better.
-				JocysCom.ClassLibrary.Mcp.McpListener.LastError = "the AI settings file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
+				JocysCom.ClassLibrary.Mcp.McpListener.Program.LastError = "the AI settings file could not be written (" + ex.Message + "). The /Mcp and /Ai switches read the level and token from it.";
 			}
 		}
 

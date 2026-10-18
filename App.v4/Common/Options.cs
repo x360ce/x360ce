@@ -168,6 +168,36 @@ namespace x360ce.App
 		}
 		bool _AllowThirdPartyPlugins;
 
+		/// <summary>True: an AutoHotkey script that includes x360ce.ahk reads the devices and changes what their controllers read. False: no script can reach the engine.</summary>
+		/// <remarks>Off by default: a script changes what games receive, so letting one do that is the person's choice.</remarks>
+		[DefaultValue(false), Description("Let AutoHotkey scripts read devices and change what controllers read.")]
+		public bool AllowAutoHotkeyScripts
+		{
+			get { return _AllowAutoHotkeyScripts; }
+			set { _AllowAutoHotkeyScripts = value; OnPropertyChanged(); }
+		}
+		bool _AllowAutoHotkeyScripts;
+
+		/// <summary>How often an AutoHotkey script tells x360ce it still runs, in milliseconds.</summary>
+		/// <remarks>AutoHotkey's timers step every 15.6 ms, so a shorter time beats no faster.</remarks>
+		[DefaultValue(ScriptChannel.DefaultHeartbeatMilliseconds), Description("How often an AutoHotkey script tells x360ce it still runs, in milliseconds.")]
+		public int AutoHotkeyHeartbeat
+		{
+			get { return _AutoHotkeyHeartbeat; }
+			set { _AutoHotkeyHeartbeat = value; OnPropertyChanged(); }
+		}
+		int _AutoHotkeyHeartbeat = ScriptChannel.DefaultHeartbeatMilliseconds;
+
+		/// <summary>How long x360ce waits for a heartbeat before it lets go of everything a hung AutoHotkey script held, in milliseconds.</summary>
+		/// <remarks>A script that closes or crashes is let go of at once; this is for one that stops responding.</remarks>
+		[DefaultValue(ScriptChannel.DefaultLeaseMilliseconds), Description("How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.")]
+		public int AutoHotkeyHangTimeout
+		{
+			get { return _AutoHotkeyHangTimeout; }
+			set { _AutoHotkeyHangTimeout = value; OnPropertyChanged(); }
+		}
+		int _AutoHotkeyHangTimeout = ScriptChannel.DefaultLeaseMilliseconds;
+
 
 		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
 		public bool HidGuardianConfigureAutomatically

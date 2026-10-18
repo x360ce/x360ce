@@ -578,7 +578,40 @@ namespace x360ce.Engine
 						return Reference(new MapReference(TimeType, 1), start);
 					throw Fault(string.Format("'{0}' is not a source or a function.", name), start);
 				}
-				return ParseReference(name, digits, start);
+				// A source on any device, c1.d2.b1: the controller and the device in front of the control. A dot after a
+				// name never starts a number, so this is the only thing it can be.
+				if (Peek() == '.' && string.Equals(name, "c", StringComparison.OrdinalIgnoreCase))
+					return ParsePath(digits, start);
+				return ParseReference(name, digits, start, 0, 0);
+			}
+
+			/// <summary>Reads the rest of <c>c1.d2.b1</c> once its <c>c1</c> is read.</summary>
+			private Expression ParsePath(string padDigits, int start)
+			{
+				int pad;
+				if (!int.TryParse(padDigits, NumberStyles.None, CultureInfo.InvariantCulture, out pad) || pad < 1 || pad > 4)
+					throw Fault(string.Format("'c{0}' is not a controller: c1 to c4.", padDigits), start);
+				_at++;
+				if (Peek() != 'd' && Peek() != 'D')
+					throw Fault("After the controller comes the device, as in c1.d1.b1.", _at);
+				_at++;
+				var deviceAt = _at;
+				while (_at < _text.Length && _text[_at] >= '0' && _text[_at] <= '9')
+					_at++;
+				int device;
+				if (!int.TryParse(_text.Substring(deviceAt, _at - deviceAt), NumberStyles.None, CultureInfo.InvariantCulture, out device) || device < 1 || device > 255)
+					throw Fault("After the controller comes the device's number, as in c1.d1.b1.", deviceAt);
+				if (Peek() != '.')
+					throw Fault("After the device comes the control, as in c1.d1.b1.", _at);
+				_at++;
+				var nameAt = _at;
+				while (_at < _text.Length && (_text[_at] >= 'a' && _text[_at] <= 'z' || _text[_at] >= 'A' && _text[_at] <= 'Z'))
+					_at++;
+				var name = _text.Substring(nameAt, _at - nameAt);
+				var digitsAt = _at;
+				while (_at < _text.Length && _text[_at] >= '0' && _text[_at] <= '9')
+					_at++;
+				return ParseReference(name, _text.Substring(digitsAt, _at - digitsAt), start, pad, device);
 			}
 
 			private Expression ParseCall(string name, string digits, int start)
@@ -610,14 +643,16 @@ namespace x360ce.Engine
 				return Node(function.Build(args));
 			}
 
-			private Expression ParseReference(string name, string digits, int start)
+			/// <param name="pad">The controller of the device named in front, or 0 for the row's own device.</param>
+			/// <param name="device">That device's number on its controller, or 0 for the row's own device.</param>
+			private Expression ParseReference(string name, string digits, int start, int pad, int device)
 			{
 				if (name.Length != 1 || TypeLetters.IndexOf(char.ToLowerInvariant(name[0])) < 0)
 					throw Fault(string.Format("'{0}' is not a source.", name), start);
 				int index;
 				if (!int.TryParse(digits, NumberStyles.None, CultureInfo.InvariantCulture, out index) || index < 1)
 					throw Fault(string.Format("'{0}{1}' has no source number.", name, digits), start);
-				return Reference(new MapReference(char.ToLowerInvariant(name[0]), index), start);
+				return Reference(new MapReference(char.ToLowerInvariant(name[0]), index, pad, device), start);
 			}
 
 			/// <summary>Turns a source into a read of the slot its value will arrive in.</summary>
@@ -683,10 +718,18 @@ namespace x360ce.Engine
 	/// <summary>One source an expression reads, named the way stored mappings name it.</summary>
 	public struct MapReference : IEquatable<MapReference>
 	{
-		public MapReference(char type, int index)
+		public MapReference(char type, int index) : this(type, index, 0, 0)
+		{
+		}
+
+		/// <param name="pad">The controller of the device to read, 1 to 4, or 0 for the row's own device.</param>
+		/// <param name="device">That device's number on its controller, from 1, or 0 for the row's own device.</param>
+		public MapReference(char type, int index, int pad, int device)
 		{
 			Type = type;
 			Index = index;
+			Pad = pad;
+			Device = device;
 		}
 
 		/// <summary>Source letter: a axis, b button, d d-pad button, h half slider, p d-pad, s slider, x half axis.</summary>
@@ -695,9 +738,15 @@ namespace x360ce.Engine
 		/// <summary>One-based number of the source, as stored mappings count them.</summary>
 		public readonly int Index;
 
+		/// <summary>The controller of the device the source is read from, written <c>c1.</c> in front of it: 0 for the row's own device.</summary>
+		public readonly int Pad;
+
+		/// <summary>That device's number on its controller, written <c>d2.</c> in front of the source: 0 for the row's own device.</summary>
+		public readonly int Device;
+
 		public bool Equals(MapReference other)
 		{
-			return Type == other.Type && Index == other.Index;
+			return Type == other.Type && Index == other.Index && Pad == other.Pad && Device == other.Device;
 		}
 
 		public override bool Equals(object obj)
@@ -707,12 +756,15 @@ namespace x360ce.Engine
 
 		public override int GetHashCode()
 		{
-			return Type * 397 ^ Index;
+			return ((Type * 397 ^ Index) * 31 + Pad) * 31 + Device;
 		}
 
 		public override string ToString()
 		{
-			return string.Concat(Type, Index.ToString(CultureInfo.InvariantCulture));
+			var source = string.Concat(Type, Index.ToString(CultureInfo.InvariantCulture));
+			return Pad == 0
+				? source
+				: string.Format(CultureInfo.InvariantCulture, "c{0}.d{1}.{2}", Pad, Device, source);
 		}
 	}
 }

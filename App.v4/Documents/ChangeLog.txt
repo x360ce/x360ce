@@ -1,7 +1,18 @@
-﻿## [4.27.8.0] - 2026-10-17
+﻿## [4.27.19.0] - 2026-10-18
 
 - Changed: Create uses the tunnel made earlier for this computer instead of making another.
+- Changed: AI assistant access uses port 37101 by default.
+- Changed: New AI access tokens start with sk-x360ce-mcp-.
+- Changed: The Add list sorts devices by source and offers plugin devices.
+- Changed: Plugin devices that come with x360ce name x360ce as their maker.
 - Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
+- Added: AutoHotkey v2 scripts can watch and drive every device. Off by default.
+- Added: Formulas can read another device on the controller, such as =c1.d2.b1.
+- Added: Remote MCP Controller, a plugin device that an AI or a program drives.
+- Added: Plugin settings show in a Properties grid on their own tab.
+- Added: A plugin device can have its own AI assistant access.
+- Added: x360ce's own AI assistant access reaches every plugin device.
+- Added: Help lists the ports x360ce and its plugins use.
 
 ## [4.26.38.0] - 2026-10-17
 

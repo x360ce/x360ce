@@ -25,6 +25,12 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(PluginsDataGridView);
 			PluginsDataGridView.AutoGenerateColumns = false;
 			SettingsManager.LoadAndMonitor(x => x.AllowThirdPartyPlugins, AllowThirdPartyPluginsCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.AllowAutoHotkeyScripts, AllowAutoHotkeyScriptsCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.AutoHotkeyHeartbeat, HeartbeatUpDown);
+			SettingsManager.LoadAndMonitor(x => x.AutoHotkeyHangTimeout, HangTimeoutUpDown);
+			AllowAutoHotkeyScriptsCheckBox.CheckedChanged += AllowAutoHotkeyScriptsCheckBox_CheckedChanged;
+			// A newer x360ce carries a newer library: written again for scripts already allowed.
+			AllowAutoHotkeyScriptsCheckBox_CheckedChanged(this, EventArgs.Empty);
 			var manager = PluginManager.Current;
 			FolderTextBox.Text = manager == null ? "" : manager.Folder;
 			// A change while the page has no window cannot be shown, so the list is read again when it gets one.
@@ -82,6 +88,52 @@ namespace x360ce.App.Controls
 		void RefreshList()
 		{
 			PluginsDataGridView.DataSource = GetRows(PluginManager.Current);
+		}
+
+		void AllowAutoHotkeyScriptsCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			// The times mean nothing while no script may connect: greyed, not hidden.
+			var allowed = AllowAutoHotkeyScriptsCheckBox.Checked;
+			HeartbeatLabel.Enabled = allowed;
+			HeartbeatUpDown.Enabled = allowed;
+			HangTimeoutLabel.Enabled = allowed;
+			HangTimeoutUpDown.Enabled = allowed;
+			if (!allowed)
+				return;
+			try
+			{
+				InstallAutoHotkeyLibrary(AutoHotkeyLibraryFolder);
+			}
+			catch (Exception ex)
+			{
+				// Scripts still work with a copy of x360ce.ahk the person puts beside them.
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
+		}
+
+		/// <summary>The user library folder AutoHotkey v2 searches for <c>#Include &lt;x360ce&gt;</c>: Documents\AutoHotkey\Lib.</summary>
+		public static string AutoHotkeyLibraryFolder
+		{
+			get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AutoHotkey", "Lib"); }
+		}
+
+		/// <summary>Writes the x360ce.ahk this program carries into a folder, unless the same file is there already.</summary>
+		/// <returns>The path of the library.</returns>
+		public static string InstallAutoHotkeyLibrary(string folder)
+		{
+			byte[] bytes;
+			using (var stream = typeof(OptionsPluginsUserControl).Assembly.GetManifestResourceStream("x360ce.App.Documents.x360ce.ahk"))
+			using (var memory = new System.IO.MemoryStream())
+			{
+				stream.CopyTo(memory);
+				bytes = memory.ToArray();
+			}
+			var path = System.IO.Path.Combine(folder, "x360ce.ahk");
+			if (System.IO.File.Exists(path) && System.IO.File.ReadAllBytes(path).SequenceEqual(bytes))
+				return path;
+			System.IO.Directory.CreateDirectory(folder);
+			System.IO.File.WriteAllBytes(path, bytes);
+			return path;
 		}
 
 		private void OpenFolderButton_Click(object sender, EventArgs e)

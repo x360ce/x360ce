@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.27.8.0",
-	"Built":"2026-10-17",
+	"Version":"4.27.19.0",
+	"Built":"2026-10-18",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -3001,7 +3001,7 @@
 												},
 												{
 													"Name":"Plugins",
-													"Description":"The plugins found, the devices each adds, and whether plugins from others may load.",
+													"Description":"The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.",
 													"Role":"Tab",
 													"Id":"PluginsTabPage",
 													"Items":[
@@ -3040,6 +3040,42 @@
 																	"Description":"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
 																	"Role":"Grid",
 																	"Id":"PluginsDataGridView"
+																},
+																{
+																	"Name":"AutoHotkey scripts",
+																	"Description":"Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.",
+																	"Role":"Section",
+																	"Id":"AutoHotkeyGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Allow AutoHotkey scripts",
+																			"Description":"Let AutoHotkey scripts read devices and change what controllers read.",
+																			"Role":"CheckBox",
+																			"Id":"AllowAutoHotkeyScriptsCheckBox"
+																		},
+																		{
+																			"Name":"About AutoHotkey scripts",
+																			"Description":"How a script reaches x360ce, and where the library it includes is written.",
+																			"Role":"Label",
+																			"Id":"ScriptsNoteLabel"
+																		},
+																		{
+																			"Name":"Heartbeat every (ms)",
+																			"Description":"How often an AutoHotkey script tells x360ce it still runs, in milliseconds.",
+																			"Role":"Number",
+																			"Id":"HeartbeatUpDown",
+																			"Min":10,
+																			"Max":1000
+																		},
+																		{
+																			"Name":"Let go of a hung script after (ms)",
+																			"Description":"How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.",
+																			"Role":"Number",
+																			"Id":"HangTimeoutUpDown",
+																			"Min":50,
+																			"Max":10000
+																		}
+																	]
 																}
 															]
 														}
@@ -3531,7 +3567,7 @@
 									"Items":[
 										{
 											"Name":"Devices",
-											"Description":"Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.",
+											"Description":"Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.",
 											"Role":"Grid",
 											"Id":"DevicesDataGridView"
 										},

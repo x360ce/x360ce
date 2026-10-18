@@ -49,6 +49,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				Attach(node, Read(item, raw, ChildPath(path, item.Name)), raw);
 			}
 			AddRows(node, control as DataGridView, path);
+			AddProperties(node, control as PropertyGrid, path);
 			return node;
 		}
 
@@ -165,7 +166,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				return tabs.TabPages.Cast<Control>();
 			// A grid, a box that spins and a box with a list attached are each one thing to a person.
 			// The scroll bars and edit boxes they are assembled from are not places to navigate to.
-			if (control is DataGridView || control is UpDownBase || control is ComboBox)
+			// A property grid's rows are read from the object it shows instead.
+			if (control is DataGridView || control is UpDownBase || control is ComboBox || control is PropertyGrid)
 				return Enumerable.Empty<Control>();
 			return control.Controls.Cast<Control>()
 				.OrderBy(x => x.TabIndex)
@@ -226,6 +228,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			if (control is TabControl) return "Tabs";
 			if (control is Form) return "Window";
 			if (control is DataGridView) return "Grid";
+			if (control is PropertyGrid) return "Properties";
 			if (control is CheckBox) return "CheckBox";
 			if (control is RadioButton) return "Choice";
 			if (control is ComboBox) return "List";

@@ -95,6 +95,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				ShowRow(Model.Agents, AiSkillAgentsFolderTextBox, AiSkillAgentsStatusText, AiSkillAgentsButton);
 				AiSkillZipNoteText.Text = Model.ZipNote;
 				ShowTunnel();
+				ShowDoorOnly();
 			}
 			finally
 			{
@@ -130,6 +131,25 @@ namespace JocysCom.ClassLibrary.Mcp
 			AiTunnelFileTextBox.Text = Model.TunnelFile;
 			AiTunnelKeysNoteText.Text = AiAccessModel.TunnelKeysNote;
 			AiTunnelStatusText.Text = Model.TunnelStatus;
+		}
+
+		/// <summary>
+		/// For a door other than the program's own, shows its rows alone, on the control itself, which the page holding it
+		/// names: the header, the skill and the snippet are about the program, the tunnel leads to the program's door, and
+		/// the command line the snippet starts reaches only the program's door.
+		/// </summary>
+		void ShowDoorOnly()
+		{
+			if (Model.Door == null || AiAccessPanel.Parent == this)
+				return;
+			AiHeaderPanel.Visible = false;
+			AiTabControl.Visible = false;
+			AiAccessSnippetLabel.Visible = false;
+			AiAccessSnippetTextBox.Visible = false;
+			AiAccessCopyButton.Visible = false;
+			Padding = AiAccessTabPage.Padding;
+			AutoScroll = true;
+			Controls.Add(AiAccessPanel);
 		}
 
 		/// <summary>Shows a value in a box the person can type in, unless they are typing in it: the tunnel's state changes on its own while they do.</summary>

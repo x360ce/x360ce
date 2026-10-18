@@ -47,7 +47,7 @@ A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can t
 
 ## DirectInput and Raw Input
 
-x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens, on rows next to each other. The `[Source]` column says how each row is read.
+x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet. The `[Source]` column says how each row is read.
 
 - `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
 - Vibration and wheel forces reach the controller from either row. Raw Input only reads, so a `Raw Input` row's go through the same controller's `DirectInput` side. An Xbox controller's DirectInput side takes none: `[Pass Through]` on the `[Force Feedback]` page reaches its motors from either row.
@@ -60,7 +60,7 @@ A few devices do not tell Windows what their controls are, so Windows does not l
 
 ## Plugin devices
 
-A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](Help.Plugins.md).
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[MCP Server]` for a device with an MCP server of its own. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](Help.Plugins.md).
 
 ## One device on several controller tabs
 
@@ -301,6 +301,8 @@ A control is written as a letter and a number, the same way mappings are stored.
 
   Counting minutes: `=now/60000`
 
+A control of any other device mapped for the game: put its controller and device in front, as the controller tab's `AHK` column shows them while AutoHotkey scripts are allowed: `d1` is the tab's first device row. `c1.d2.b1` is button 1 of device 2 on Controller 1, whichever mapping the formula is in, so one controller can use another device's buttons, such as a wheel's on the pedals' mapping: `=c1.d1.b5`. On that device's own mapping, `=c1.d2.b1` reads what `=b1` reads. A device that is not connected, or not ticked, reads as at rest.
+
 ## Operators that combine two values
 
 - `+` Add. `=a1+a2` - both controls move the same output.
@@ -376,6 +378,26 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
 - A formula can be up to 128 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
 
+## AutoHotkey scripts
+
+An [AutoHotkey v2](https://www.autohotkey.com/) script can watch a controller the way it watches keys, change what the controller's mapping reads, and turn a controller into a keyboard or a mouse, or a keyboard and mouse into a controller. x360ce adds an object for each device, whose properties are its controls; everything else is AutoHotkey itself.
+
+1. `[Options]` tab → `[Plugins]` → tick `Allow AutoHotkey scripts`. x360ce writes `x360ce.ahk` to `Documents\AutoHotkey\Lib`.
+2. Start the script with `#Include <x360ce>`, and run it as any AutoHotkey script.
+
+```autohotkey
+#Requires AutoHotkey v2.0
+#Include <x360ce>
+
+dev := X360ce.c1.d1                              ; device 1 on Controller 1
+dev.Hotkey("b1", (*) => Send("{Space down}"))   ; its button 1 holds the space bar
+dev.Hotkey("b1 up", (*) => Send("{Space up}"))
+XButton2::dev.b2 := 1                            ; the mouse's side button presses its button 2
+XButton2 up::dev.b2 := 0
+```
+
+Devices, controls, hotkeys and more examples: [Help.AutoHotkey](Help.AutoHotkey.md).
+
 ## AI assistant access
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
@@ -422,6 +444,23 @@ one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`
 token to revoke access.
 
 The AI settings are kept in their own file, `x360ce.AI.xml`, beside the other settings: `C:\ProgramData\X360CE\Settings` unless they live elsewhere. It holds whether the door is on, its level, address, port and token, and the tunnel's ID, organization and API key. Every account on this computer can read the file, so the token tells one program from another, not one person from another. The API key in it is encrypted with Windows DPAPI for the Windows account that saved it, so other accounts and other computers cannot read it.
+
+### Ports
+
+x360ce's ports follow one pattern, `37ACD`, so a port says what it reaches:
+
+- `A`: the instance of x360ce, `1` for the first.
+- `C`: `0` for x360ce itself, `1` to `4` for a controller, `5` to `9` for plugins.
+- `D`: the service of x360ce itself, or the device's number on the controller, as the controller tab's `AHK` column shows it.
+
+| Port | What listens |
+|---|---|
+| 37101 | AI assistant access, x360ce 4's MCP server |
+| 37102 | AI assistant access of x360ce 3 |
+| 37111 to 37149 | A plugin device's own MCP server, such as a Remote MCP Controller's: controller `C`, device `D`. 37141 is the first device on controller 4. |
+| 37150 to 37199 | Servers plugins open themselves |
+
+A port typed on the AI page or on a device's MCP Server page is kept in place of the plan's. A device's server moves with its mapping: mapped to another controller or place, it listens on that one's port; on no controller, it has none until it is mapped or a port is typed.
 
 ## The AI skill
 

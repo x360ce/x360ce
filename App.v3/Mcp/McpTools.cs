@@ -45,7 +45,7 @@ namespace x360ce.App.Mcp
 			McpServer.ServerName = "x360ce-v3";
 			McpServer.ServerVersion = System.Windows.Forms.Application.ProductVersion;
 			McpCatalog.SettingsPlace = "under AI assistant access on the Options tab";
-			McpListener.Unauthorised = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
+			McpListener.Program.Unauthorised = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
 				+ "A program on this computer can call x360ce.exe -Ai instead, which needs no token.";
 			McpClient.SwitchPrefix = "/";
 			// Profile picks whose settings, so whose port and token, the call uses; it is not the tool's.

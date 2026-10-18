@@ -869,7 +869,8 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
+			Plugins.PluginMcpDoors.CloseAll();
 			JocysCom.ClassLibrary.Mcp.McpTunnel.Stop();
 			// Remember where the window was, so the next run opens where this one was left rather
 			// than back in the middle of whatever the screen is being used for.

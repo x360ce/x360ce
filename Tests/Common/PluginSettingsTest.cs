@@ -128,7 +128,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("The settings tab shows each setting as a field of its kind, starts from the kept value, keeps what is changed, shows the status, and resets to the first values")]
+		[Description("The settings tab shows each setting as a grouped row of a property grid, starts from the kept value, keeps what is changed, refuses what the setting does not take, shows the status, and resets to the first values")]
 		public void The_settings_tab_edits_the_values_kept_for_the_device()
 		{
 			Ui.OnUiThread(() =>
@@ -137,47 +137,60 @@ namespace x360ce.Tests
 				var guid = Guid.NewGuid();
 				store.Set(guid, "Port", "9000");
 				var device = new SettingsPluginDevice();
-				using (var panel = new PluginDeviceUserControl(guid, Type(SettingsPluginDevice.Product), device, store))
+				using (var form = new Form())
+				using (var panel = new PluginDeviceUserControl(guid, Type(SettingsPluginDevice.Product), device, store) { Dock = DockStyle.Fill })
 				{
-					panel.CreateControl();
-					var port = (NumericUpDown)Find(panel, "PortNumericUpDown");
-					Assert.AreEqual(9000m, port.Value, "The field does not start from the kept value.");
-					Assert.AreEqual(1m, port.Minimum);
-					Assert.AreEqual(65535m, port.Maximum);
-					Assert.AreEqual("Port", port.AccessibleName);
-					Assert.AreEqual("The UDP port to listen on.", port.AccessibleDescription);
-					port.Value = 9001;
+					form.Controls.Add(panel);
+					form.Show();
+					var grid = (PropertyGrid)Find(panel, "SettingsPropertyGrid");
+					var view = grid.SelectedObject;
+					var rows = System.ComponentModel.TypeDescriptor.GetProperties(view);
+					var port = rows["Port"];
+					Assert.AreEqual(9000, port.GetValue(view), "The row does not start from the kept value.");
+					Assert.AreEqual("Port", port.DisplayName);
+					Assert.AreEqual("The UDP port to listen on.", port.Description);
+					Assert.AreEqual("Network", port.Category);
+					Assert.IsTrue(port.ShouldSerializeValue(view), "A kept value is not drawn bold.");
+					port.SetValue(view, 9001);
 					Assert.AreEqual("9001", store.Get(guid, "Port"));
-					var listen = (CheckBox)Find(panel, "ListenCheckBox");
-					Assert.AreEqual("Listen", listen.Text);
-					Assert.IsTrue(listen.Checked, "The field does not start from the device's first value.");
-					listen.Checked = false;
+					var outside = Assert.ThrowsExactly<ArgumentException>(() => port.SetValue(view, 0));
+					StringAssert.Contains(outside.Message, "1 to 65535", "A number outside its range does not say what it takes.");
+					Assert.AreEqual("9001", store.Get(guid, "Port"), "A number outside its range was kept.");
+					var listen = rows["Listen"];
+					Assert.AreEqual(true, listen.GetValue(view), "The row does not start from the device's first value.");
+					Assert.IsFalse(listen.ShouldSerializeValue(view), "A first value is drawn bold.");
+					listen.SetValue(view, false);
 					Assert.AreEqual("False", store.Get(guid, "Listen"));
-					var mode = (ComboBox)Find(panel, "ModeComboBox");
-					Assert.AreEqual(ComboBoxStyle.DropDownList, mode.DropDownStyle, "An enum can be typed into.");
-					CollectionAssert.AreEqual(new[] { "Fast, less accurate", "Accurate" }, mode.Items.Cast<object>().Select(x => mode.GetItemText(x)).ToArray());
-					mode.SelectedIndex = 1;
+					var mode = rows["Mode"];
+					Assert.IsTrue(mode.Converter.GetStandardValuesExclusive(), "An enum can be typed into.");
+					CollectionAssert.AreEqual(new[] { "Fast, less accurate", "Accurate" },
+						mode.Converter.GetStandardValues().Cast<object>().Select(x => mode.Converter.ConvertToString(x)).ToArray());
+					mode.SetValue(view, mode.Converter.ConvertFromString("Accurate"));
 					Assert.AreEqual("Accurate", store.Get(guid, "Mode"));
-					var address = (ComboBox)Find(panel, "AddressComboBox");
-					Assert.AreEqual(ComboBoxStyle.DropDown, address.DropDownStyle, "An address the list does not hold cannot be typed.");
-					Assert.AreEqual("All Unassigned", address.Text);
-					address.Text = "192.168.1.5";
+					var address = rows["Address"];
+					Assert.IsFalse(address.Converter.GetStandardValuesExclusive(), "An address the list does not hold cannot be typed.");
+					Assert.AreEqual("All Unassigned", address.Converter.ConvertToString(address.GetValue(view)));
+					address.SetValue(view, address.Converter.ConvertFromString("192.168.1.5"));
 					Assert.AreEqual("192.168.1.5", store.Get(guid, "Address"));
-					var label = (TextBox)Find(panel, "LabelTextBox");
-					label.Text = "Wheel";
+					rows["Label"].SetValue(view, "Wheel");
 					Assert.AreEqual("Wheel", store.Get(guid, "Label"));
-					Assert.AreEqual("Network", Find(panel, "NetworkGroupBox").Text);
-					var packets = Find(panel, "PacketsValueLabel");
-					Assert.AreEqual("0", packets.Text);
+					Assert.AreEqual(PluginSetting.DefaultCategory, rows["Smoothing"].Category, "A setting with no group is not in the default one.");
+					var packets = rows["Packets"];
+					Assert.IsTrue(packets.IsReadOnly, "A status can be typed into.");
+					Assert.AreEqual("0", packets.GetValue(view));
 					device.Receive();
 					panel.RefreshStatus();
-					Assert.AreEqual("1", packets.Text, "The status does not follow the device.");
-					Assert.AreEqual(0, panel.Controls.Find("SetCountValueLabel", true).Length, "A hidden property is shown.");
+					Assert.AreEqual("1", packets.GetValue(view), "The status does not follow the device.");
+					Assert.IsNull(rows["SetCount"], "A hidden property is shown.");
+					port.ResetValue(view);
+					Assert.IsNull(store.Get(guid, "Port"), "The row's Reset leaves its kept value.");
+					Assert.AreEqual(26760, port.GetValue(view), "The row's Reset does not give the first value back.");
+					((TabControl)Find(panel, "PluginTabControl")).SelectedTab = (TabPage)Find(panel, "PropertiesTabPage");
+					Application.DoEvents();
 					((Button)Find(panel, "ResetButton")).PerformClick();
-					Assert.IsNull(store.Get(guid, "Port"), "Reset leaves a kept value.");
-					Assert.AreEqual(26760m, port.Value, "Reset does not show the first value.");
-					Assert.IsTrue(listen.Checked);
-					Assert.AreEqual(0, mode.SelectedIndex);
+					Assert.IsNull(store.Get(guid, "Listen"), "Reset leaves a kept value.");
+					Assert.AreEqual(true, listen.GetValue(view), "Reset does not give the first value back.");
+					Assert.AreEqual(SettingsPluginMode.Fast, mode.GetValue(view));
 				}
 			});
 		}
@@ -206,16 +219,35 @@ namespace x360ce.Tests
 			{
 				var device = new SettingsPluginDevice();
 				device.Receive();
-				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), Type(SettingsPluginDevice.Product), device, new PluginSettings()))
+				var store = new PluginSettings();
+				var guid = Guid.NewGuid();
+				using (var panel = new PluginDeviceUserControl(guid, Type(SettingsPluginDevice.Product), device, store))
 				{
 					var nodes = new System.Collections.Generic.List<JocysCom.ClassLibrary.Controls.UiTree.UiNode>();
 					Flatten(JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.Read(panel, false, ""), nodes);
 					var port = nodes.Where(x => x.Name == "Port").ToList();
 					Assert.AreEqual(1, port.Count, "Port is read " + port.Count + " times.");
 					Assert.AreEqual("26760", port[0].Value);
+					Assert.AreEqual("Text", port[0].Role);
+					Assert.AreEqual("The UDP port to listen on.", port[0].Description);
 					var packets = nodes.Where(x => x.Name == "Packets received").ToList();
 					Assert.AreEqual(1, packets.Count, "The status is read " + packets.Count + " times.");
 					Assert.AreEqual("1", packets[0].Value, "The status is not read with its value.");
+					Assert.AreEqual("Value", packets[0].Role);
+					Assert.AreEqual("CheckBox", nodes.Single(x => x.Name == "Listen").Role);
+					Assert.AreEqual("List", nodes.Single(x => x.Name == "Mode").Role);
+					// The door's ui_set: a row is set by its path, as a person types into it, and refused with what it takes.
+					var element = JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.Find(panel, port[0].Path);
+					Assert.IsNotNull(element, "The row's path does not lead back to it: " + port[0].Path);
+					Assert.IsNull(JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.SetValue(element, "9002"));
+					Assert.AreEqual("9002", store.Get(guid, "Port"));
+					StringAssert.Contains(JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.SetValue(element, "0"), "1 to 65535");
+					Assert.AreEqual("9002", store.Get(guid, "Port"), "A number outside its range was kept.");
+					var mode = JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.Find(panel, nodes.Single(x => x.Name == "Mode").Path);
+					Assert.IsNull(JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.SetValue(mode, "Accurate"));
+					Assert.AreEqual("Accurate", store.Get(guid, "Mode"));
+					var status = JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.Find(panel, packets[0].Path);
+					Assert.IsNotNull(JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.SetValue(status, "5"), "A status was set.");
 				}
 			});
 		}
@@ -229,7 +261,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("A control the plugin declares for its device is placed on the tab with the device x360ce reads, and waits while there is none")]
+		[Description("A control the plugin declares for its device is placed on a page of its own, first, before the Properties page, with the device x360ce reads, and waits while there is none")]
 		public void A_declared_control_is_placed_on_the_tab()
 		{
 			var type = Type(SettingsPluginDevice.Product);
@@ -242,6 +274,12 @@ namespace x360ce.Tests
 				{
 					var control = (SettingsPluginControl)Find(panel, "SettingsPluginControl");
 					Assert.AreSame(device, control.Device, "The control was given another device than the one x360ce reads.");
+					var pages = ((TabControl)Find(panel, "PluginTabControl")).TabPages.Cast<TabPage>().ToArray();
+					CollectionAssert.AreEqual(new[] { "ControlTabPage", "PropertiesTabPage" }, pages.Select(x => x.Name).ToArray(),
+						"The plugin's control and the properties are not on pages of their own, the control first.");
+					Assert.AreEqual("Properties", pages[1].Text);
+					Assert.AreSame(pages[0], control.Parent, "The control is not on its own page.");
+					Assert.IsTrue(pages[1].Contains(Find(panel, "SettingsPropertyGrid")), "The grid is not on the Properties page.");
 				}
 				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, null, new PluginSettings()))
 				{

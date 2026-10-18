@@ -75,7 +75,7 @@ An assistant on this computer reaches the door in one of two ways.
 ![An AI assistant on this computer starts x360ce.exe /Mcp from its MCP settings, or connects to the door's URL with the token](.attachments/x360ce-ai-direct.svg)
 
 1. **An assistant that runs commands**, such as Claude Code, Codex, GitHub Copilot or Cursor. Paste the assistant snippet from this tab into its MCP settings. The assistant then starts `x360ce.exe /Mcp`, which passes its calls to the running program. It needs no token.
-2. **An assistant that connects by URL.** Give it `http://localhost:37360/mcp/` with the header `Authorization: Bearer <token>`, where the token is the one on this tab.
+2. **An assistant that connects by URL.** Give it `http://localhost:37101/mcp/` with the header `Authorization: Bearer <token>`, where the token is the one on this tab. Which port reaches what: [Ports](Help.v4.md#ports).
 
 ChatGPT on the web runs on OpenAI's servers, not on your computer, so it needs a tunnel. [OpenAI Tunnel](#openai-tunnel) below shows how to open one.
 

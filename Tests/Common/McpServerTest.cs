@@ -97,13 +97,17 @@ namespace x360ce.Tests
 				CallTool("ui_set", new Dictionary<string, object> { { "path", "Tabs/Options/AiAccessTokenTextBox" }, { "value", "typed-secret" } });
 				var token = new string('a', 64);
 				CallTool("poke_value", new Dictionary<string, object> { { "value", token } });
+				var secret = McpListener.NewToken();
+				CallTool("poke_value", new Dictionary<string, object> { { "value", "Bearer " + secret } });
 				var log = System.IO.File.ReadAllText(McpLog.Path);
 				StringAssert.Contains(log, "RemotePasswordTextBox");
 				StringAssert.Contains(log, "AiAccessTokenTextBox");
 				Assert.IsFalse(log.Contains("hunter2"), "The password was written to the log.");
 				Assert.IsFalse(log.Contains("typed-secret"), "The value given to the token box was written to the log.");
-				Assert.IsFalse(log.Contains(token), "The token was written to the log.");
+				Assert.IsFalse(log.Contains(token), "A token made before tokens had a prefix was written to the log.");
 				StringAssert.Contains(log, "<token>");
+				Assert.IsFalse(log.Contains(secret), "The token was written to the log.");
+				StringAssert.Contains(log, JocysCom.ClassLibrary.Security.TokenHelper.MaskSecret(secret), "The log does not say which token it hid.");
 			}
 			finally
 			{

@@ -50,6 +50,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("Each controller numbers its devices by the game's rows in the settings list, ticked or not, as scripts name them")]
+		public void Each_controller_numbers_its_devices_as_scripts_name_them()
+		{
+			var wheel = Row(Guid.NewGuid(), MapTo.Controller1);
+			var unticked = Row(Guid.NewGuid(), MapTo.Controller1);
+			unticked.IsEnabled = false;
+			var otherGame = Row(Guid.NewGuid(), MapTo.Controller1);
+			otherGame.FileName = "other.exe";
+			var pedals = Row(Guid.NewGuid(), MapTo.Controller1);
+			var pad = Row(Guid.NewGuid(), MapTo.Controller2);
+			var settings = new[] { wheel, unticked, otherGame, pedals, pad };
+
+			var numbers = DeviceRouting.GetDeviceNumbers(Game, settings);
+			Assert.AreEqual(1, numbers[wheel]);
+			Assert.AreEqual(2, numbers[unticked], "An unticked row did not keep its number, so unticking it would rename the devices after it.");
+			Assert.AreEqual(3, numbers[pedals], "Another game's row was counted.");
+			Assert.AreEqual(1, numbers[pad], "Controller 2 does not count its devices from 1.");
+			Assert.IsFalse(numbers.ContainsKey(otherGame));
+
+			var routing = DeviceRouting.Build(Game, settings, new PadSetting[0]);
+			CollectionAssert.AreEqual(new[] { wheel, pedals, pad }, routing.Rows);
+			CollectionAssert.AreEqual(new[] { 1, 3, 1 }, routing.RowNumbers, "The engine numbers the devices other than the controller tab does.");
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
 		[Description("A device on two tabs is routed to both, and its force comes from each tab whose switch is on")]
 		public void A_device_on_two_tabs_routes_to_both()
 		{

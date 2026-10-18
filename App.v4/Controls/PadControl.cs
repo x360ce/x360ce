@@ -58,6 +58,11 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
+			// The icon columns show a short heading or none, as on the Devices page. A screen reader still hears the full name,
+			// and the mouse finds it on the heading.
+			IconColumnHeaderCell.Apply(IsOnlineColumn, "Online");
+			IconColumnHeaderCell.Apply(ConnectionClassColumn, "Connection");
+			UpdateScriptColumn();
 			// Axis to Button DeadZones
 			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
 			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
@@ -376,6 +381,58 @@ namespace x360ce.App.Controls
 				{
 					UpdateGetXInputStatesWithNoEvents();
 				}
+				else if (e.PropertyDescriptor.Name == nameof(Options.AllowAutoHotkeyScripts))
+				{
+					UpdateScriptColumn();
+				}
+			}
+		}
+
+		/// <summary>Shows the AHK column while AutoHotkey scripts are allowed, the only time a script can use the names in it.</summary>
+		void UpdateScriptColumn()
+		{
+			ScriptNameColumn.Visible = SettingsManager.Options.AllowAutoHotkeyScripts;
+		}
+
+		/// <summary>A column heading that shows a short word or none, over a column of icons, and still names the column.</summary>
+		/// <remarks>
+		/// A grid gives a screen reader the heading's text as the column's name, so a blank heading left the column, and every
+		/// cell under it, without one. This heading gives the full name instead, and shows it as the heading's tooltip.
+		/// </remarks>
+		sealed class IconColumnHeaderCell : DataGridViewColumnHeaderCell
+		{
+			/// <summary>The column's name as a screen reader says it.</summary>
+			public string FullName { get; set; }
+
+			/// <summary>Gives the column this heading, keeping the text the designer gave it.</summary>
+			public static void Apply(DataGridViewColumn column, string fullName)
+			{
+				var text = column.HeaderText;
+				column.HeaderCell = new IconColumnHeaderCell { FullName = fullName };
+				column.HeaderText = text;
+				column.ToolTipText = fullName;
+			}
+
+			public override object Clone()
+			{
+				var clone = (IconColumnHeaderCell)base.Clone();
+				clone.FullName = FullName;
+				return clone;
+			}
+
+			protected override AccessibleObject CreateAccessibilityInstance()
+			{
+				return new NamedAccessibleObject(this);
+			}
+
+			sealed class NamedAccessibleObject : DataGridViewColumnHeaderCellAccessibleObject
+			{
+				public NamedAccessibleObject(IconColumnHeaderCell owner) : base(owner) { }
+
+				public override string Name
+				{
+					get { return ((IconColumnHeaderCell)Owner).FullName; }
+				}
 			}
 		}
 
@@ -591,6 +648,9 @@ namespace x360ce.App.Controls
 
 		SortableBindingList<Engine.Data.UserSetting> mappedItems = new SortableBindingList<Engine.Data.UserSetting>();
 
+		/// <summary>Each row's device number on its controller, which the AHK column shows.</summary>
+		Dictionary<Engine.Data.UserSetting, int> _deviceNumbers = new Dictionary<Engine.Data.UserSetting, int>();
+
 		/// <summary>True while the rows are being rebuilt.</summary>
 		bool _RowsUpdating;
 
@@ -639,8 +699,11 @@ namespace x360ce.App.Controls
 		{
 			var grid = MappedDevicesDataGridView;
 			var game = SettingsManager.CurrentGame;
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+			// The number a script names each device by, counted as the engine counts it.
+			_deviceNumbers = DInput.DeviceRouting.GetDeviceNumbers(game, settings);
 			// Get rows which must be displayed on the list.
-			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
+			var itemsToShow = settings
 				// Filter devices by controller.
 				.Where(x => x.MapTo == (int)MappedTo)
 				// Filter devices by selected game (no items will be shown if game is not selected).
@@ -2190,6 +2253,11 @@ namespace x360ce.App.Controls
 			{
 				e.Value = AppHelper.GetInputSourceName(SettingsManager.GetDevice(item.InstanceGuid));
 			}
+			else if (column == ScriptNameColumn)
+			{
+				int number;
+				e.Value = _deviceNumbers.TryGetValue(item, out number) ? "c" + item.MapTo + ".d" + number : "";
+			}
 			else if (column == SettingIdColumn)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
@@ -2201,6 +2269,13 @@ namespace x360ce.App.Controls
 				e.Value = device == null
 					? ""
 					: device.DevManufacturer;
+			}
+			else if (column == ProductNameColumn)
+			{
+				// The device's name as it is now: the setting keeps the one the device had when it was mapped.
+				var device = SettingsManager.GetDevice(item.InstanceGuid);
+				if (device != null && !string.IsNullOrEmpty(device.ProductName))
+					e.Value = device.ProductName;
 			}
 		}
 

@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.27.8.0, built 2026-10-17.
+Version 4.27.19.0, built 2026-10-18.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -471,13 +471,18 @@ not shown in this state of the program.
 [Button]    │       │           │                   ├── Show file                       # Shows the settings file in File Explorer.
 [Label]     │       │           │                   ├── Where the keys are              # How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.
 [Label]     │       │           │                   └── Tunnel state                    # Whether the tunnel is open, why not, or what the last press did.
-[Tab]       │       │           └── Plugins                                             # The plugins found, the devices each adds, and whether plugins from others may load.
+[Tab]       │       │           └── Plugins                                             # The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.
 [Group]     │       │               └── (PluginsPanel)
 [CheckBox]  │       │                   ├── Allow third-party plugins                   # Load plugins that are not signed by the publisher of x360ce.
 [Label]     │       │                   ├── About plugins                               # Which plugins load by themselves, and why plugins from others need permission.
 [Value]     │       │                   ├── Plugins folder                              # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
 [Button]    │       │                   ├── Open Folder                                 # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
-[Grid]      │       │                   └── Plugins                                     # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
+[Grid]      │       │                   ├── Plugins                                     # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
+[Section]   │       │                   └── AutoHotkey scripts                          # Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.
+[CheckBox]  │       │                       ├── Allow AutoHotkey scripts                # Let AutoHotkey scripts read devices and change what controllers read.
+[Label]     │       │                       ├── About AutoHotkey scripts                # How a script reaches x360ce, and where the library it includes is written.
+[Number]    │       │                       ├── Heartbeat every (ms) 10..1000           # How often an AutoHotkey script tells x360ce it still runs, in milliseconds.
+[Number]    │       │                       └── Let go of a hung script after (ms) 50..10000  # How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.
 [Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
 [Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
 [Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
@@ -551,7 +556,7 @@ not shown in this state of the program.
 [Button]    │       │   │       ├── Auto-Order                                          # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
 [Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
-[Grid]      │       │       ├── Devices                                                 # Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.
+[Grid]      │       │       ├── Devices                                                 # Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
 [Button]    │       │           ├── Refresh                                             # Reads every device again.
 [Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.

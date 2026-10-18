@@ -65,6 +65,22 @@ namespace x360ce.App.DInput
 		/// <summary>For each of <see cref="Rows"/>, the POV its D-Pad is mapped to, counted from one, or 0 for none.</summary>
 		public readonly int[] RowDPads;
 
+		/// <summary>For each of <see cref="Rows"/>, its device's number on its controller, from <see cref="GetDeviceNumbers"/>.</summary>
+		public readonly int[] RowNumbers;
+
+		/// <summary>Each controller's routed devices by their number, by pad index: <c>PadDevices[0][2]</c> is device 2 on Controller 1, null for a number no ticked row has.</summary>
+		public readonly UserDevice[][] PadDevices = new UserDevice[4][];
+
+		/// <summary>The device a formula names by its controller and number, <c>c1.d2</c>, or null when this routing reads none there.</summary>
+		/// <remarks>An array read, so a formula can ask on every pass.</remarks>
+		public UserDevice GetDevice(int pad, int number)
+		{
+			if (pad < 1 || pad > PadDevices.Length)
+				return null;
+			var devices = PadDevices[pad - 1];
+			return number > 0 && number < devices.Length ? devices[number] : null;
+		}
+
 		readonly Dictionary<Guid, DeviceForce> _forces = new Dictionary<Guid, DeviceForce>();
 
 		/// <summary>The DirectInput twin each Raw Input device sent force drives its motors through, by the Raw Input device.</summary>
@@ -74,9 +90,10 @@ namespace x360ce.App.DInput
 		/// <remarks>A place named in Pass through is passed over while one of these holds it. A device mapped nowhere in the game is not one of them.</remarks>
 		readonly UserDevice[] _unticked;
 
-		DeviceRouting(UserSetting[] rows, IList<PadSetting> padSettings, IList<UserDevice> devices, int enableMask, UserDevice[] unticked)
+		DeviceRouting(UserSetting[] rows, int[] rowNumbers, IList<PadSetting> padSettings, IList<UserDevice> devices, int enableMask, UserDevice[] unticked)
 		{
 			Rows = rows;
+			RowNumbers = rowNumbers;
 			_unticked = unticked;
 			for (var pad = 0; pad < PadRows.Length; pad++)
 				PadRows[pad] = rows.Where(x => x.MapTo == pad + 1).ToArray();
@@ -166,6 +183,18 @@ namespace x360ce.App.DInput
 				if (SettingsConverter.TryParseIniValue(ps.DPad, out type, out index, MapCode.DPad) && type == MapType.POV)
 					RowDPads[i] = index;
 			}
+			for (var pad = 0; pad < PadDevices.Length; pad++)
+			{
+				var count = 0;
+				for (var i = 0; i < rows.Length; i++)
+				{
+					if (rows[i].MapTo == pad + 1)
+						count = Math.Max(count, RowNumbers[i]);
+				}
+				PadDevices[pad] = new UserDevice[count + 1];
+			}
+			for (var i = 0; i < rows.Length; i++)
+				PadDevices[rows[i].MapTo - 1][RowNumbers[i]] = RowDevices[i];
 		}
 
 		/// <summary>The device the engine drives this device's force feedback through: for a Raw Input device sent force, its DirectInput twin; otherwise the device itself.</summary>
@@ -280,13 +309,8 @@ namespace x360ce.App.DInput
 		public static DeviceRouting Build(UserGame game, IList<UserSetting> settings, IList<PadSetting> padSettings, IList<UserDevice> devices = null)
 		{
 			devices = devices ?? new UserDevice[0];
-			// The game's rows on a controller tab, ticked or not.
-			var tabRows = game == null
-				? new UserSetting[0]
-				: settings
-					.Where(x => x != null && string.Compare(x.FileName, game.FileName, true) == 0
-						&& x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4)
-					.ToArray();
+			var tabRows = GetTabRows(game, settings);
+			var numbers = GetDeviceNumbers(tabRows);
 			// A device unticked on the Devices page is left out of every game, as a row unticked in a tab's list is.
 			var disabled = new HashSet<Guid>(devices.Where(x => x != null && !x.IsEnabled).Select(x => x.InstanceGuid));
 			var rows = tabRows.Where(x => x.IsEnabled && !disabled.Contains(x.InstanceGuid)).ToArray();
@@ -296,7 +320,37 @@ namespace x360ce.App.DInput
 			var unticked = devices
 				.Where(x => x != null && !routed.Contains(x.InstanceGuid) && (!x.IsEnabled || onTabs.Contains(x.InstanceGuid)))
 				.ToArray();
-			return new DeviceRouting(rows, padSettings, devices, game == null ? 0 : game.EnableMask, unticked);
+			return new DeviceRouting(rows, rows.Select(x => numbers[x]).ToArray(), padSettings, devices, game == null ? 0 : game.EnableMask, unticked);
+		}
+
+		/// <summary>The game's rows on a controller tab, ticked or not, in the order of the settings list.</summary>
+		static UserSetting[] GetTabRows(UserGame game, IList<UserSetting> settings)
+		{
+			return game == null
+				? new UserSetting[0]
+				: settings
+					.Where(x => x != null && string.Compare(x.FileName, game.FileName, true) == 0
+						&& x.MapTo >= (int)MapTo.Controller1 && x.MapTo <= (int)MapTo.Controller4)
+					.ToArray();
+		}
+
+		/// <summary>The number of each device on its controller in a game: 1 for the controller's first row in the settings list, ticked or not.</summary>
+		/// <remarks>
+		/// An AutoHotkey script names a device by it, <c>c1.d2.a1</c>, and each controller tab shows it beside the device. Unticking a row
+		/// or sorting the tab's list changes no number, so a script keeps working.
+		/// </remarks>
+		public static Dictionary<UserSetting, int> GetDeviceNumbers(UserGame game, IList<UserSetting> settings)
+		{
+			return GetDeviceNumbers(GetTabRows(game, settings));
+		}
+
+		static Dictionary<UserSetting, int> GetDeviceNumbers(UserSetting[] tabRows)
+		{
+			var numbers = new Dictionary<UserSetting, int>();
+			var counts = new int[(int)MapTo.Controller4 + 1];
+			foreach (var row in tabRows)
+				numbers[row] = ++counts[row.MapTo];
+			return numbers;
 		}
 
 		/// <summary>Builds the routing from the settings as they are now and hands it to the engine.</summary>
@@ -316,6 +370,8 @@ namespace x360ce.App.DInput
 				SettingsManager.UserSettings.ItemsToArraySynchronized(),
 				SettingsManager.PadSettings.ItemsToArraySynchronized(),
 				SettingsManager.UserDevices.ItemsToArraySynchronized());
+			// A plugin device's MCP server listens on the port of the controller and place it is mapped to.
+			Plugins.PluginMcpDoors.Apply();
 		}
 
 		static bool _watching;

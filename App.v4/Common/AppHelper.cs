@@ -191,6 +191,9 @@ namespace x360ce.App
 
 		/// <summary>How plugins work and how to write one, as embedded for the AI skill's references and the plugin kit.</summary>
 		public const string HelpPluginsResource = "Documents.Help.Plugins.md";
+
+		/// <summary>How AutoHotkey scripts read and change controllers, as embedded for the AI skill's references.</summary>
+		public const string HelpAutoHotkeyResource = "Documents.Help.AutoHotkey.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
@@ -501,6 +504,28 @@ namespace x360ce.App
 			if (device == null)
 				return string.Empty;
 			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
+		}
+
+		/// <summary>The pale background of a device's row in the device list, one for each way the program reads devices.</summary>
+		/// <remarks>
+		/// Blue for DirectInput, as x360ce 5 colours it, teal for Raw Input, and violet for the devices plugins make. Green and
+		/// the warm colours are left out: the status lights use them to say how well something works, and a source is no
+		/// verdict. Faint enough for text to read as on the plain window, and dark in the dark theme.
+		/// </remarks>
+		public static Color GetInputSourceTint(Engine.Data.UserDevice device)
+		{
+			var dark = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark;
+			switch (device.InputSource)
+			{
+				case InputSourceType.DirectInput:
+					return dark ? Color.FromArgb(0x2A, 0x33, 0x42) : Color.FromArgb(0xEA, 0xF1, 0xFB);
+				case InputSourceType.RawInput:
+					return dark ? Color.FromArgb(0x25, 0x3B, 0x39) : Color.FromArgb(0xE5, 0xF5, 0xF2);
+				case InputSourceType.Plugin:
+					return dark ? Color.FromArgb(0x36, 0x2F, 0x44) : Color.FromArgb(0xF1, 0xEB, 0xFA);
+				default:
+					return SystemColors.Window;
+			}
 		}
 
 		/// <summary>Every XInput place a game can feel a device through, as it reads in a list.</summary>

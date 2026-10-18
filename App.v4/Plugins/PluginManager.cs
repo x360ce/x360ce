@@ -278,6 +278,7 @@ namespace x360ce.App.Plugins
 					deviceType.Describe(probe);
 					deviceType.Settings = PluginSetting.Find(type, probe);
 					deviceType.ControlType = FindControlType(types, type);
+					deviceType.McpServer = FindMcpServer(type, probe);
 					var disposable = probe as IDisposable;
 					if (disposable != null)
 						disposable.Dispose();
@@ -307,6 +308,14 @@ namespace x360ce.App.Plugins
 				}
 			}
 			return null;
+		}
+
+		/// <summary>The MCP server a kind of device declares: the value of its public <see cref="PluginMcpServer"/> property; null when it has none.</summary>
+		static PluginMcpServer FindMcpServer(Type type, IPluginDevice probe)
+		{
+			var property = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+				.FirstOrDefault(x => x.PropertyType == typeof(PluginMcpServer) && x.GetIndexParameters().Length == 0 && x.GetGetMethod() != null);
+			return property == null ? null : (PluginMcpServer)property.GetValue(probe);
 		}
 
 		/// <summary>Finds a DLL a plugin depends on in the plugin's own folder, under the same trust as a plugin.</summary>
@@ -434,8 +443,11 @@ namespace x360ce.App.Plugins
 		/// <summary>The control the plugin declares for the device, placed on its tab; null when it declares none.</summary>
 		public Type ControlType { get; internal set; }
 
-		/// <summary>True when the device has a tab of its own on the controller page: settings, or a control.</summary>
-		public bool HasTab { get { return Settings.Length > 0 || ControlType != null; } }
+		/// <summary>The MCP server the kind of device declares, whose settings its tab shows; null when it declares none.</summary>
+		public PluginMcpServer McpServer { get; internal set; }
+
+		/// <summary>True when the device has a tab of its own on the controller page: settings, a control, or an MCP server.</summary>
+		public bool HasTab { get { return Settings.Length > 0 || ControlType != null || McpServer != null; } }
 
 		/// <summary>True once the plugin threw: its devices are offline until the program starts again.</summary>
 		public bool Faulted { get { return FaultReason != null; } }

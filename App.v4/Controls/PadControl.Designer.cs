@@ -252,6 +252,7 @@
             this.CompletionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SourceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ScriptNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -3121,6 +3122,7 @@
             this.IsEnabledColumn,
             this.SettingIdColumn,
             this.CompletionColumn,
+            this.ScriptNameColumn,
             this.InstanceIdColumn,
             this.SourceColumn,
             this.VendorNameColumn,
@@ -3161,7 +3163,7 @@
             // 
             this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.IsOnlineColumn.DataPropertyName = "IsOnline";
-            this.IsOnlineColumn.HeaderText = "Online";
+            this.IsOnlineColumn.HeaderText = "On";
             this.IsOnlineColumn.MinimumWidth = 24;
             this.IsOnlineColumn.Name = "IsOnlineColumn";
             this.IsOnlineColumn.ReadOnly = true;
@@ -3173,7 +3175,7 @@
             // 
             this.ConnectionClassColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.ConnectionClassColumn.DataPropertyName = "ConnectionClass";
-            this.ConnectionClassColumn.HeaderText = "Connection";
+            this.ConnectionClassColumn.HeaderText = "";
             this.ConnectionClassColumn.MinimumWidth = 24;
             this.ConnectionClassColumn.Name = "ConnectionClassColumn";
             this.ConnectionClassColumn.ReadOnly = true;
@@ -3250,7 +3252,18 @@
             this.SourceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.SourceColumn.ToolTipText = "How the program reads the device: DirectInput or Raw Input.";
             this.SourceColumn.Width = 66;
-            // 
+            //
+            // ScriptNameColumn
+            //
+            this.ScriptNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ScriptNameColumn.HeaderText = "AHK";
+            this.ScriptNameColumn.MinimumWidth = 6;
+            this.ScriptNameColumn.Name = "ScriptNameColumn";
+            this.ScriptNameColumn.ReadOnly = true;
+            this.ScriptNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.ScriptNameColumn.ToolTipText = "How an AutoHotkey script names this device: c1.d2.b1 is button 1 of device 2 on Controller 1.";
+            this.ScriptNameColumn.Width = 60;
+            //
             // VendorNameColumn
             // 
             this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -3671,6 +3684,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn CompletionColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn InstanceIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SourceColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn ScriptNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;

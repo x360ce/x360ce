@@ -69,7 +69,8 @@ namespace x360ce.App.Plugins
 					.Append(", hat switches ").Append(type.PovCount).Append(", buttons ").Append(type.ButtonCount).Append('\n');
 				if (type.Faulted)
 					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
-				sb.Append("- To use it: Add Plugin Device on the Devices tab adds one; map it to a controller like any device.\n");
+				sb.Append("- To use it: the list a controller tab's Add opens offers one until one is added, and Add Plugin Device on the Devices tab ")
+					.Append("adds another; map it to a controller like any device. devices_list lists its tools, and device_call calls them.\n");
 				if (!string.IsNullOrWhiteSpace(type.Description))
 					sb.Append('\n').Append(type.Description.Trim()).Append('\n');
 				AppendTab(sb, type);
@@ -77,7 +78,7 @@ namespace x360ce.App.Plugins
 			return sb.ToString();
 		}
 
-		/// <summary>What the device's tab on the controller page holds: each setting, and the plugin's own control.</summary>
+		/// <summary>What the device's tab on the controller page holds: its MCP server, each setting, and the plugin's own control.</summary>
 		static void AppendTab(StringBuilder sb, PluginDeviceType type)
 		{
 			if (!type.HasTab)
@@ -85,16 +86,22 @@ namespace x360ce.App.Plugins
 			sb.Append("\n### Its tab\n\n");
 			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to. ");
 			sb.Append("Each device keeps its own values; Reset gives back the first ones.\n\n");
+			if (type.McpServer != null)
+				sb.Append("- MCP server: closed until the person opens it on the tab, as AI assistant access is opened on the AI page. ")
+					.Append("It listens on the port x360ce's port plan gives the controller and place the device is mapped to, 371CD: ")
+					.Append(Mcp.PortPlan.Port(4, 1)).Append(" for the first device on controller 4. ")
+					.Append("It serves this device's tools alone: ").Append(string.Join(", ", PluginDeviceTools.Names(type))).Append(".\n");
 			foreach (var setting in type.Settings)
 			{
-				sb.Append("- ").Append(setting.DisplayName).Append(" (").Append(setting.Category).Append(", ").Append(KindText(setting));
+				sb.Append("- ").Append(setting.DisplayName).Append(" (").Append(setting.Category).Append(", ").Append(setting.Takes);
 				if (setting.Kind != PluginSettingKind.Status)
 				{
 					// A list starts at an entry, named as the list shows it.
 					var first = setting.Kind == PluginSettingKind.List
 						? setting.GetChoices().FirstOrDefault(x => x.Value == setting.DefaultText)
 						: null;
-					sb.Append(", starts at ").Append(first == null ? setting.DefaultText : first.Text);
+					var start = first == null ? setting.DefaultText : first.Text;
+					sb.Append(start.Length == 0 ? ", starts empty" : ", starts at " + start);
 				}
 				sb.Append(")");
 				if (!string.IsNullOrWhiteSpace(setting.Description))
@@ -102,27 +109,7 @@ namespace x360ce.App.Plugins
 				sb.Append('\n');
 			}
 			if (type.ControlType != null)
-				sb.Append("- The plugin's own control, ").Append(type.ControlType.Name).Append(", under the settings.\n");
-		}
-
-		/// <summary>The kind of field a setting is, with its limits or its choices.</summary>
-		static string KindText(PluginSetting setting)
-		{
-			switch (setting.Kind)
-			{
-				case PluginSettingKind.CheckBox:
-					return "check box";
-				case PluginSettingKind.Number:
-					return "number, " + setting.Minimum.ToString(System.Globalization.CultureInfo.InvariantCulture)
-						+ " to " + setting.Maximum.ToString(System.Globalization.CultureInfo.InvariantCulture);
-				case PluginSettingKind.List:
-					var choices = string.Join(", ", setting.GetChoices().Select(x => x.Text));
-					return (setting.ListOnly ? "one of: " : "list, or typed: ") + choices;
-				case PluginSettingKind.Text:
-					return "text";
-				default:
-					return "read only";
-			}
+				sb.Append("- The plugin's own control, ").Append(type.ControlType.Name).Append(", on the first page, before Properties.\n");
 		}
 
 		/// <summary>Whether the plugin loaded, and if not, why.</summary>

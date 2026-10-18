@@ -35,7 +35,11 @@ namespace x360ce.Engine
 		/// <param name="isThumb">
 		/// True when the answer drives a stick, false when it drives a trigger or a button.
 		/// </param>
-		public static bool TryFill(MapExpression expression, SourceState state, float[] values, bool isThumb)
+		/// <param name="sources">
+		/// The state of the device a source names in front of it, <c>c1.d2.b1</c>, by controller and number; null, or a
+		/// null answer, where there is none, which reads as a control at rest. A source without one reads <paramref name="state"/>.
+		/// </param>
+		public static bool TryFill(MapExpression expression, SourceState state, float[] values, bool isThumb, Func<int, int, SourceState> sources = null)
 		{
 			if (expression == null || state == null || values == null)
 				return false;
@@ -43,7 +47,13 @@ namespace x360ce.Engine
 			if (values.Length < references.Count)
 				return false;
 			for (int i = 0; i < references.Count; i++)
-				values[i] = Read(references[i], state, isThumb);
+			{
+				var reference = references[i];
+				var from = reference.Pad == 0
+					? state
+					: sources == null ? null : sources(reference.Pad, reference.Device);
+				values[i] = Read(reference, from, isThumb);
+			}
 			return true;
 		}
 
@@ -55,10 +65,11 @@ namespace x360ce.Engine
 		/// was switched on. Asking the same question in one place is the point.
 		/// </remarks>
 		/// <param name="buffer">Room for the sources, at least MaxReferences long.</param>
-		public static bool TryEvaluate(MapExpression expression, SourceState state, bool isThumb, float[] buffer, out float value)
+		/// <param name="sources">The states of other devices a formula names, as <see cref="TryFill"/> takes them.</param>
+		public static bool TryEvaluate(MapExpression expression, SourceState state, bool isThumb, float[] buffer, out float value, Func<int, int, SourceState> sources = null)
 		{
 			value = 0f;
-			if (!TryFill(expression, state, buffer, isThumb))
+			if (!TryFill(expression, state, buffer, isThumb, sources))
 				return false;
 			value = expression.Evaluate(buffer);
 			return true;

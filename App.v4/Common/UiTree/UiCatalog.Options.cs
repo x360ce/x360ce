@@ -146,7 +146,19 @@ namespace x360ce.App.UiTree
 		static void AddPluginsOptions(Dictionary<string, Text> d)
 		{
 			d["OptionsUserControl.PluginsTabPage"] = new Text("Plugins",
-				"The plugins found, the devices each adds, and whether plugins from others may load.");
+				"The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.");
+			d["OptionsPluginsUserControl.AutoHotkeyGroupBox"] = new Text("AutoHotkey scripts",
+				"Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.");
+			d["OptionsPluginsUserControl.AllowAutoHotkeyScriptsCheckBox"] = new Text("Allow AutoHotkey scripts",
+				"Lets an AutoHotkey v2 script that includes x360ce.ahk read the devices and change what their controllers read: press buttons, hold axes and sliders. " +
+				"Turning it on writes x360ce.ahk to Documents\\AutoHotkey\\Lib. When the script closes or crashes, everything it held is let go of at once.");
+			d["OptionsPluginsUserControl.ScriptsNoteLabel"] = new Text("About AutoHotkey scripts",
+				"How a script reaches x360ce, and where the library it includes is written.");
+			d["OptionsPluginsUserControl.HeartbeatUpDown"] = new Text("Heartbeat every (ms)",
+				"How often a script tells x360ce it still runs, in milliseconds. AutoHotkey's timers step every 15.6 ms, so less beats no faster. Greyed out while AutoHotkey scripts are not allowed.");
+			d["OptionsPluginsUserControl.HangTimeoutUpDown"] = new Text("Let go of a hung script after (ms)",
+				"How long x360ce waits for a heartbeat before it lets go of everything a script that stopped responding held, and at least three heartbeats. " +
+				"Shorter lets go sooner, but a script busy for longer, such as in a long Critical section, then loses what it held. Greyed out while AutoHotkey scripts are not allowed.");
 			d["OptionsPluginsUserControl.AllowThirdPartyPluginsCheckBox"] = new Text("Allow third-party plugins",
 				"Loads plugins not signed by the publisher of x360ce. A plugin runs with all the rights of x360ce, so allow this only for plugins from people you trust. Unticking it takes effect when x360ce starts again.");
 			d["OptionsPluginsUserControl.OpenFolderButton"] = new Text("Open Folder",

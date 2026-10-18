@@ -32,4 +32,23 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>Opens or closes the door to match the settings. A door opened without a token makes one and keeps it.</summary>
 		void Apply();
 	}
+
+	/// <summary>
+	/// The settings of a door other than the program's own, such as one a plugin device opens. The AI page then shows
+	/// the door's rows alone, with the door's own state and prompt: no skill, no tunnel and no command line, which reach
+	/// only the program's door.
+	/// </summary>
+	public interface IAiDoorSettings : IAiAccessSettings
+	{
+		/// <summary>How the page names what the door reaches, such as "Remote MCP Controller 1".</summary>
+		string Subject { get; }
+
+		/// <summary>The door itself, whose state the page shows.</summary>
+		McpListener Listener { get; }
+
+		/// <summary>What a person pastes into an AI to use the door.</summary>
+		/// <param name="url">The door's address.</param>
+		/// <param name="authorization">The header a caller sends, or null when this computer's programs need none.</param>
+		string Prompt(string url, string authorization);
+	}
 }

@@ -454,7 +454,7 @@ namespace x360ce.App
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
 			if (UpdateTimer != null) UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try

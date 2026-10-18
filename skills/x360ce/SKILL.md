@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.27.8.0"
+  version: "4.27.19.0"
 ---
 
 # X360CE
@@ -72,7 +72,8 @@ their OpenAI keys.
 
 | Tool | Arguments | What it gives |
 |---|---|---|
-| `devices_list` | none | Every controller: Product, Vendor, Online, Controllers (1 to 4 for the current game), XInputPlaces, Source |
+| `devices_list` | none | Every controller: Product, Vendor, Online, Controllers (1 to 4 for the current game), XInputPlaces, Source, and a plugin device's Tools |
+| `device_call` | `instanceGuid`, `tool`, `value` | Calls one of the Tools `devices_list` names for a plugin device: read returns its settings, and each set tool sets one (Configure) |
 | `ui_current` | none | The window and page on screen, in a few hundred bytes |
 | `ui_find` | `query` | Elements whose name, purpose, field name or path holds every word; best first, at most 40 |
 | `ui_read` | `path` | That branch of the interface with its current values |
@@ -255,6 +256,9 @@ version. The program also prints them, whether AI assistant access is on or not:
 - `plugins.md`, plugins that add devices and how to write one from a single `.cs` file: `x360ce.exe -Skill=plugins`.
   `plugins/<name>.md` describes each plugin the program has, its devices and their controls; the `plugins_list` tool
   says the same for the plugins found on this computer, and whether each loaded.
+- `autohotkey.md`, AutoHotkey v2 scripts that read and change controllers, and turn a controller into a keyboard or a
+  mouse or the other way round: `x360ce.exe -Skill=autohotkey`. Write a person's script from its examples; it runs
+  only while they have ticked Allow AutoHotkey scripts on the Plugins page of the Options tab.
 
 Any of them prints with `x360ce.exe "-Skill=<name>"`, such as `"-Skill=ui-tree-v3.json"`. `x360ce.exe -Skill`
 alone prints this file, which is how an agent without it can learn the program.

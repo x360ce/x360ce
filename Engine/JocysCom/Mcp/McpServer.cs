@@ -41,6 +41,12 @@ namespace JocysCom.ClassLibrary.Mcp
 		public MethodInfo Method;
 		public ParameterInfo[] Parameters;
 
+		/// <summary>
+		/// The tool's work when it is made at run time rather than read from a static method, such as one a plugin device's
+		/// settings give. <see cref="Method"/> then only lends its parameters.
+		/// </summary>
+		public Func<object[], object> Body;
+
 		/// <summary>True for a tool that changes nothing: one of the Read level that cannot change things at any level.</summary>
 		public bool ReadOnly { get { return Level == AiAccess.Read && !Changes; } }
 
@@ -116,6 +122,11 @@ namespace JocysCom.ClassLibrary.Mcp
 			object result = null;
 			Action run = () =>
 			{
+				if (Body != null)
+				{
+					result = Body(values);
+					return;
+				}
 				try { result = Method.Invoke(null, values); }
 				catch (TargetInvocationException ex) { ExceptionDispatchInfo.Capture(ex.InnerException).Throw(); }
 			};
@@ -247,6 +258,34 @@ namespace JocysCom.ClassLibrary.Mcp
 	}
 
 	/// <summary>
+	/// What a door other than the program's own serves: its tools, the level it is set to, and how it introduces itself,
+	/// such as the door a plugin device opens. The program's own door serves the catalogue instead.
+	/// </summary>
+	public sealed class McpToolSet
+	{
+		/// <summary>The name the door gives itself on connecting.</summary>
+		public string Name;
+
+		/// <summary>What an assistant is told on connecting: what the door reaches and how to begin.</summary>
+		public string Instructions;
+
+		/// <summary>The tools, asked on each request, so the set follows what the door reaches.</summary>
+		public Func<IList<McpToolInfo>> Tools;
+
+		/// <summary>The level the door is set to.</summary>
+		public Func<AiAccess> Level;
+
+		/// <summary>Where the person changes the door's settings, as the end of a sentence, such as "on the device's tab".</summary>
+		public string SettingsPlace;
+
+		/// <summary>The one sentence a caller reads when the level is too low.</summary>
+		public string Refusal(AiAccess needed)
+		{
+			return "This needs " + needed + " access; the door is set to " + Level() + ". The person changes it " + SettingsPlace + ".";
+		}
+	}
+
+	/// <summary>
 	/// Answers Model Context Protocol requests. A request in, a response out; the transport and
 	/// the two switches wrap this and add nothing.
 	/// </summary>
@@ -371,7 +410,9 @@ namespace JocysCom.ClassLibrary.Mcp
 #endif
 
 		/// <summary>Handles one JSON-RPC message. Returns the response, or an empty string for a notification.</summary>
-		public static string Handle(string requestJson)
+		/// <param name="requestJson">The message.</param>
+		/// <param name="set">What the door serves; null for the program's own tools.</param>
+		public static string Handle(string requestJson, McpToolSet set = null)
 		{
 			Dictionary<string, object> request;
 			try { request = FromJson(requestJson) as Dictionary<string, object>; }
@@ -393,28 +434,30 @@ namespace JocysCom.ClassLibrary.Mcp
 			switch (method)
 			{
 				case "initialize":
-					return Result(id, InitializeResult());
+					return Result(id, InitializeResult(set));
 				case "ping":
 					return Result(id, new Dictionary<string, object>());
 				case "tools/list":
-					return Result(id, ToolsList());
+					return Result(id, ToolsList(set));
 				case "tools/call":
-					return CallTool(id, p, McpCatalog.Level());
+					return CallTool(id, p, set);
 				default:
 					return Error(id, -32601, "Unknown method: " + method);
 			}
 		}
 
 		/// <summary>What initialize answers.</summary>
-		public static Dictionary<string, object> InitializeResult()
+		/// <param name="set">What the door serves; null for the program's own tools.</param>
+		public static Dictionary<string, object> InitializeResult(McpToolSet set = null)
 		{
 			var result = new Dictionary<string, object>
 			{
 				{ "protocolVersion", ProtocolVersion },
 				{ "capabilities", new Dictionary<string, object> { { "tools", new Dictionary<string, object>() } } },
-				{ "serverInfo", new Dictionary<string, object> { { "name", ServerName }, { "version", ServerVersion } } },
+				{ "serverInfo", new Dictionary<string, object> { { "name", set == null ? ServerName : set.Name }, { "version", ServerVersion } } },
 			};
-			result["instructions"] = string.IsNullOrEmpty(Instructions) ? DoorOnly : Instructions + " " + DoorOnly;
+			result["instructions"] = set != null ? set.Instructions
+				: string.IsNullOrEmpty(Instructions) ? DoorOnly : Instructions + " " + DoorOnly;
 			return result;
 		}
 
@@ -422,17 +465,26 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// Every tool, whatever the level, so an assistant sees what more access would allow; a tool above the
 		/// level says so when called.
 		/// </summary>
-		public static Dictionary<string, object> ToolsList()
+		/// <param name="set">What the door serves; null for the program's own tools.</param>
+		public static Dictionary<string, object> ToolsList(McpToolSet set = null)
 		{
-			return new Dictionary<string, object> { { "tools", McpCatalog.Tools.Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() }, { "annotations", t.Annotations() } }).ToArray() } };
+			return new Dictionary<string, object> { { "tools", ToolsOf(set).Select(t => (object)new Dictionary<string, object> { { "name", t.Name }, { "description", t.Description }, { "inputSchema", t.InputSchema() }, { "annotations", t.Annotations() } }).ToArray() } };
 		}
 
-		static string CallTool(object id, Dictionary<string, object> p, AiAccess level)
+		/// <summary>The tools a door serves.</summary>
+		static IList<McpToolInfo> ToolsOf(McpToolSet set)
 		{
+			return set == null ? McpCatalog.Tools : set.Tools();
+		}
+
+		static string CallTool(object id, Dictionary<string, object> p, McpToolSet set)
+		{
+			var level = set == null ? McpCatalog.Level() : set.Level();
 			var name = p != null && p.ContainsKey("name") ? p["name"] as string : null;
 			var arguments = p != null && p.ContainsKey("arguments") ? p["arguments"] as Dictionary<string, object> : null;
-			var shown = name + " " + McpLog.Clip(Redact(name, arguments), 300);
-			var tool = McpCatalog.Tools.FirstOrDefault(t => t.Name == name);
+			// A call to another door is logged with the door's name, so the log says which door let it in.
+			var shown = (set == null ? "" : set.Name + ": ") + name + " " + McpLog.Clip(Redact(name, arguments), 300);
+			var tool = ToolsOf(set).FirstOrDefault(t => t.Name == name);
 			if (tool == null)
 			{
 				McpLog.Write(shown + " -> no such tool");
@@ -443,7 +495,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				McpLog.Write(shown + " -> refused, needs " + tool.Level + " and the level is " + level);
 				// A tool result rather than a protocol error: many clients hide those from the model, and the
 				// sentence tells it what the person can do.
-				return Result(id, Content(McpCatalog.Refusal(tool.Level), true));
+				return Result(id, Content(set == null ? McpCatalog.Refusal(tool.Level) : set.Refusal(tool.Level), true));
 			}
 			object[] values;
 			try { values = tool.Bind(arguments); }

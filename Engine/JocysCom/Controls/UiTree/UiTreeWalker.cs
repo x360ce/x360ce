@@ -18,7 +18,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// <summary>Namespaces whose types the program defines. Such a control is recorded with its type, and a composite one is described once.</summary>
 		public static string[] OwnNamespaces = { "JocysCom" };
 
-		/// <summary>Describes whatever a path named: a control, a bar entry, a grid row, a cell or a WPF element.</summary>
+		/// <summary>Describes whatever a path named: a control, a bar entry, a grid row, a cell, a property grid's row or a WPF element.</summary>
 		public static UiNode Read(object element, bool raw, string path)
 		{
 			var control = element as Control;
@@ -33,6 +33,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var cell = element as DataGridViewCell;
 			if (cell != null)
 				return Read(cell, path);
+			var property = element as PropertyGridRow;
+			if (property != null)
+				return Read(property, path);
 			UiNode node = null;
 			ReadWpf(element, raw, path, ref node);
 			return node;
@@ -92,6 +95,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var gridCell = element as DataGridViewCell;
 			if (gridCell != null)
 				return TextOf(gridCell);
+			var property = element as PropertyGridRow;
+			if (property != null)
+				return GetValue(property);
 			var control = element as Control;
 			if (control != null)
 				return GetValue(control);
@@ -113,6 +119,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				return SetValue(checkCell, value);
 			if (element is DataGridViewCell)
 				return "Only a check box in a row is set. A button in a row is pressed with ui_invoke, and a row is selected by setting the grid to its index.";
+			var property = element as PropertyGridRow;
+			if (property != null)
+				return SetValue(property, value);
 			var control = element as Control;
 			if (control != null)
 				return SetValue(control, value);
@@ -146,6 +155,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var cell = element as DataGridViewCell;
 			if (cell != null)
 				return Invoke(cell);
+			if (element is PropertyGridRow)
+				return "A row of a property grid is not pressed. Use ui_set to change its value.";
 			var control = element as Control;
 			if (control != null)
 				return Invoke(control);

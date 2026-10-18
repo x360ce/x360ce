@@ -267,6 +267,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public ToolStripRenderMode RenderMode;
 			public ControlStyles? PaintStyles;
 			public List<KeyValuePair<DataGridViewButtonColumn, FlatStyle>> ButtonColumns;
+			/// <summary>A property grid's own colours, in the order <see cref="PropertyGridColors"/> reads them.</summary>
+			public Color[] PropertyGridColors;
 			public bool NativeDark;
 			/// <summary>The tab under the mouse on a tab strip painted in the light theme, or -1.</summary>
 			public int HotTab = -1;
@@ -351,7 +353,36 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				state.LinkColor = link.LinkColor;
 				state.VisitedLinkColor = link.VisitedLinkColor;
 			}
+			if (control is PropertyGrid propertyGrid)
+				state.PropertyGridColors = PropertyGridColors(propertyGrid);
 			return state;
+		}
+
+		/// <summary>The colours a property grid paints its rows, categories, help and commands with, which are not its own BackColor and ForeColor.</summary>
+		static Color[] PropertyGridColors(PropertyGrid grid)
+		{
+			return new[]
+			{
+				grid.ViewBackColor, grid.ViewForeColor, grid.LineColor, grid.CategoryForeColor,
+				grid.HelpBackColor, grid.HelpForeColor, grid.CommandsBackColor, grid.CommandsForeColor,
+			};
+		}
+
+		/// <summary>
+		/// Gives a property grid its colours: in the dark theme a plain copy of each system colour, which Windows Forms
+		/// paints with the theme's value rather than the Windows brush, as <see cref="ApplyColors"/> does a control's.
+		/// </summary>
+		static void ApplyPropertyGrid(PropertyGrid grid, State state)
+		{
+			var c = state.PropertyGridColors.Select(x => IsDark && x.IsSystemColor ? Color.FromArgb(x.ToArgb()) : x).ToArray();
+			grid.ViewBackColor = c[0];
+			grid.ViewForeColor = c[1];
+			grid.LineColor = c[2];
+			grid.CategoryForeColor = c[3];
+			grid.HelpBackColor = c[4];
+			grid.HelpForeColor = c[5];
+			grid.CommandsBackColor = c[6];
+			grid.CommandsForeColor = c[7];
 		}
 
 		/// <summary>
@@ -472,6 +503,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 			if (control is TrackBar)
 				SetPaintedHere(control, state, IsDark, Track_Paint);
+			if (control is PropertyGrid properties)
+				ApplyPropertyGrid(properties, state);
 		}
 
 		static readonly MethodInfo SetWindowFontMethod = typeof(Control).GetMethod("SetWindowFont", BindingFlags.Instance | BindingFlags.NonPublic);

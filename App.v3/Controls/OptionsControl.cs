@@ -90,10 +90,10 @@ namespace x360ce.App.Controls
 				status = "x360ce.ini could not be written, so this change is lost when the program closes.";
 			else if (!s.Enabled)
 				status = "Off.";
-			else if (McpListener.LastError == null)
+			else if (McpListener.Program.LastError == null)
 				status = "Open at " + McpListener.Prefix(McpListener.LoopbackAddress, s.Port) + " with " + s.Level + " access.";
 			else
-				status = "Not open: " + McpListener.LastError;
+				status = "Not open: " + McpListener.Program.LastError;
 			AiAccessStatusLabel.Text = status;
 		}
 

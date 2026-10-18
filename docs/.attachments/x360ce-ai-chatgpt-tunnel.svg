@@ -28,7 +28,7 @@
 
   <rect x="548" y="70" width="364" height="90" rx="12" fill="#ecf8ee" stroke="#2da44e" stroke-width="2"/>
   <text x="730" y="102" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle">x360ce AI door</text>
-  <text x="730" y="128" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37360/mcp/</text>
+  <text x="730" y="128" font-size="13" fill="#1f2328" text-anchor="middle" font-family="Consolas, Menlo, monospace">localhost:37101/mcp/</text>
   <text x="730" y="148" font-size="13" fill="#57606a" text-anchor="middle">at the level you choose</text>
 
   <rect x="548" y="220" width="364" height="96" rx="12" fill="#f6f8fa" stroke="#8c959f" stroke-width="2"/>

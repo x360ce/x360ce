@@ -393,10 +393,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\x360ce_UserMacros.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Stored Procedures\x360ce_Cleanup_Keyboards_and_Mouse.sql" />
     <Build Include="dbo\Stored Procedures\Tools_Info_UserDevicesStatistics.sql">
       <AnsiNulls>On</AnsiNulls>

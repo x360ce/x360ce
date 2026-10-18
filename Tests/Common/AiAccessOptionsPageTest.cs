@@ -352,7 +352,7 @@ namespace x360ce.Tests
 		public void Trust_local_reaches_the_door_through_the_programs_options()
 		{
 			var o = SettingsManager.AiOptions;
-			var saved = new object[] { o.AiAccessEnabled, o.AiAccess, o.AiAccessAddress, o.AiAccessTrustLocal, o.AiAccessPort, o.AiAccessToken };
+			var saved = new object[] { o.AiAccessEnabled, o.AiAccess, o.AiAccessAddress, o.AiAccessTrustLocal, o.AiAccessPort, o.AiAccessToken, o.TunnelEnabled };
 			var appData = EngineHelper.AppDataPath;
 			var logFolder = McpLog.Folder;
 			// Every change writes the AI settings file and the door's log, so both go into a folder of the test's own.
@@ -360,7 +360,10 @@ namespace x360ce.Tests
 			EngineHelper.AppDataPath = folder;
 			SettingsManager.AiOptionsData.Rebase();
 			McpLog.Folder = folder;
-			McpListener.Stop();
+			McpListener.Program.Stop();
+			// Opening the door opens the tunnel too when the person's settings keep one open: the test's door, which trusts
+			// local connections, must not reach ChatGPT, and a tunnel client left running holds the test run's output open.
+			o.TunnelEnabled = false;
 			o.AiAccessEnabled = false;
 			o.AiAccessTrustLocal = false;
 			o.AiAccessAddress = AiOptions.LoopbackAddress;
@@ -375,7 +378,7 @@ namespace x360ce.Tests
 					{
 						ai.Bind(new AiAccessSettings());
 						Find<CheckBox>(ai, "AiAccessEnabledCheckBox").Checked = true;
-						Assert.IsTrue(McpListener.IsRunning, "Ticking AI assistant access did not open the door.");
+						Assert.IsTrue(McpListener.Program.IsRunning, "Ticking AI assistant access did not open the door.");
 						Assert.AreEqual(HttpStatusCode.Unauthorized, McpListenerTest.Post(null, null), "A call without the token was answered before Trust local connections was ticked.");
 						Find<CheckBox>(ai, "AiAccessTrustLocalCheckBox").Checked = true;
 						Assert.IsTrue(o.AiAccessTrustLocal, "The page did not pass Trust local connections to the options.");
@@ -386,13 +389,15 @@ namespace x360ce.Tests
 			finally
 			{
 				Global.DisposeServices();
+				McpTunnel.Stop();
+				o.TunnelEnabled = (bool)saved[6];
 				o.AiAccessEnabled = (bool)saved[0];
 				o.AiAccess = (AiAccess)saved[1];
 				o.AiAccessAddress = (string)saved[2];
 				o.AiAccessTrustLocal = (bool)saved[3];
 				o.AiAccessPort = (int)saved[4];
 				o.AiAccessToken = (string)saved[5];
-				McpListener.Stop();
+				McpListener.Program.Stop();
 				EngineHelper.AppDataPath = appData;
 				SettingsManager.AiOptionsData.Rebase();
 				McpLog.Folder = logFolder;
