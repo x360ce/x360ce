@@ -115,8 +115,11 @@ Within a fifth of a percent of the travel from the centre, 1.8° on a 900° whee
 wheel can rest there. Outside it the force, Friction too, rises no steeper than the wheel can follow (see below), so
 on a G27 it reaches Friction about 9° out, and the wheel slows as it comes in instead of being thrown across the
 centre. The other side of the centre is its
-mirror. The angles are the steering wheel's, counted against **Wheel Range**, or
-against 900° when the range is left as the wheel has it.
+mirror. The angles are the steering wheel's, counted against **Wheel Range**. No wheel says what range it turns,
+so the spring needs one chosen: ticking it with the range left as it is picks 900°, which a Logitech wheel is sent.
+On any other wheel, choose the range its own software sets. Counted against a wider range than the wheel turns,
+the spring is steeper than set, and the wheel swings at its centre. Settings saved with both are counted against
+200° on a Logitech wheel, the range it powers up at, and against 900° on any other.
 
 ### Speed
 

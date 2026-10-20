@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.27.19.0"
+  version: "4.27.25.0"
 ---
 
 # X360CE
@@ -185,7 +185,9 @@ again before calling it a fault.
   one; Auto-Order on the Devices page moves it out of the way.
 - **Source**, in `devices_list` and on the Devices page: a controller can appear twice, once per source. Map one of
   them, not both: the `RawInput` row for an Xbox One controller, which it reads while a game has the focus, and the
-  `DirectInput` row for anything else. Force feedback reaches the controller from either.
+  `DirectInput` row for anything else. Windows feeds an Xbox controller's `DirectInput` row only to the program in
+  front, so mapped that way it works in x360ce and stops once a game is in front. Force feedback reaches the
+  controller from either.
 - **Options** pages: General (start-up, theme, Enable XInput, hotkeys), Internet, Virtual Device (the ViGEmBus
   driver), HID Hide, HID Guardian (obsolete), Settings, Update, AI.
 - **Games**: the games with their own settings. **Devices**: every device the program knows, with the XInput place
@@ -200,19 +202,27 @@ Work through these, reading each from the program rather than assuming it:
 1. `devices_list`. Is the device connected (`Online`) and on a controller (`Controllers` not empty) for the game
    that is selected in the Game box? Its `XInputPlaces` says where games read it; `(waiting)` means its
    controller has no place yet.
-2. The **Issues** tab. Find it with `ui_find` and `IssuesTabPage`, then read its list. Missing or broken ViGEmBus,
+2. Works in x360ce but not in the game: an Xbox controller mapped through its `DirectInput` row, which Windows feeds
+   only to the program in front. Map its `RawInput` row instead (`device_map` answers with its InstanceGuid), then
+   take the `DirectInput` one off with controller 0; or point at **Use Raw Input** on the Issues tab, which does both
+   and keeps the settings. Combining it with a wheel on one controller tab is fine.
+3. The **Issues** tab. Find it with `ui_find` and `IssuesTabPage`, then read its list. Missing or broken ViGEmBus,
    a controller the game would see twice, a device that cannot be read: each row carries its remedy. Read a row
    before describing it.
-3. The controller tab's light, read as the tab's Value, and its device's **Enable** box. Options, General,
+4. The controller tab's light, read as the tab's Value, and its device's **Enable** box. Options, General,
    **Enable XInput** must be on, or no virtual controller exists.
-4. The game. It must be set to use an Xbox or XInput controller; many games keep a separate controller option.
-5. A controller waiting for its place, or games reading the wrong player: the Devices page shows the XInput place
+5. The game. It must be set to use an Xbox or XInput controller; many games keep a separate controller option.
+6. A controller waiting for its place, or games reading the wrong player: the Devices page shows the XInput place
    of each controller, and Auto-Order puts them in order.
-6. Seen twice: HID Hide hides the real device from games (Options, HID Hide).
-7. Games with anti-cheat may refuse virtual controllers; the help explains what X360CE can and cannot do there.
+7. Seen twice: HID Hide hides the real device from games (Options, HID Hide).
+8. Games with anti-cheat may refuse virtual controllers; the help explains what X360CE can and cannot do there.
 
 For wheels and pedals (combined pedals, wheel degrees, dead zones, the centering spring) the help has a section on
-each. Read the one that fits with `help`, and find what it names with `ui_find` before pointing at it.
+each. Read the one that fits with `help`, and find what it names with `ui_find` before pointing at it. The centering
+spring counts its degrees against **Wheel range**, and no wheel reports its own range, so the two must match: a
+Logitech wheel is sent the range chosen, and on any other wheel choose the range its own software sets. Counted
+against a wider range than the wheel turns, the spring is steeper than set and the wheel shakes at its centre.
+`Leave as it is` is for a wheel without the spring; ticking the spring picks 900°.
 
 ## Rules
 

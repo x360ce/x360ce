@@ -396,6 +396,7 @@
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />
     <Compile Include="Issues\SwitchedOffControllersIssue.cs" />
+    <Compile Include="Issues\XboxDirectInputIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Hotkey.cs">
       <DependentUpon>MainForm.cs</DependentUpon>

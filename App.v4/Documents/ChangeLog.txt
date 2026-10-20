@@ -1,10 +1,14 @@
-﻿## [4.27.19.0] - 2026-10-18
+﻿## [4.27.25.0] - 2026-10-20
 
+- Fixed: A Logitech wheel left at its own range shook at its centre with the centering spring on.
+- Fixed: F3 in the Mapped devices, Devices or Games list stopped x360ce with an error.
 - Changed: Create uses the tunnel made earlier for this computer instead of making another.
 - Changed: AI assistant access uses port 37101 by default.
 - Changed: New AI access tokens start with sk-x360ce-mcp-.
 - Changed: The Add list sorts devices by source and offers plugin devices.
 - Changed: Plugin devices that come with x360ce name x360ce as their maker.
+- Changed: Ticking Centering spring with Wheel range left as it is picks 900°.
+- Changed: Buttons, tool bars and tabs are flat and rounded, as in x360ce 5.
 - Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
 - Added: AutoHotkey v2 scripts can watch and drive every device. Off by default.
 - Added: Formulas can read another device on the controller, such as =c1.d2.b1.
@@ -13,6 +17,8 @@
 - Added: A plugin device can have its own AI assistant access.
 - Added: x360ce's own AI assistant access reaches every plugin device.
 - Added: Help lists the ports x360ce and its plugins use.
+- Added: Adding an Xbox controller through DirectInput offers its Raw Input row, which keeps working in games (Issue #1652, Sterling177).
+- Added: The Issues tab names Xbox controllers mapped through DirectInput, with Use Raw Input to move them.
 
 ## [4.26.38.0] - 2026-10-17
 

@@ -202,6 +202,7 @@
 			this.XInputPlaceColumn.HeaderText = "XInput";
 			this.XInputPlaceColumn.Name = "XInputPlaceColumn";
 			this.XInputPlaceColumn.ReadOnly = true;
+			this.XInputPlaceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			this.XInputPlaceColumn.ToolTipText = "Every XInput place a game feels this device through. Real means the device sits in that place itself, which a game reads with this program switched off. Virtual means this program carries it there, through a controller tab it is mapped to.";
 			this.XInputPlaceColumn.Width = 60;
 			// 

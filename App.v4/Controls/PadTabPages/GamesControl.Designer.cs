@@ -189,6 +189,7 @@
 			this.EmptyColumn.MinimumWidth = 6;
 			this.EmptyColumn.Name = "EmptyColumn";
 			this.EmptyColumn.ReadOnly = true;
+			this.EmptyColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// GamesToolStrip
 			// 

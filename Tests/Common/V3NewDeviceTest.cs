@@ -46,8 +46,12 @@ namespace x360ce.Tests
 			try
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));
-				var rate = Ui.WaitFor(() => Ui.FindByName(window, RateText), TimeSpan.FromSeconds(60),
-					"the status bar never reported an interface rate");
+				// The status bar appears once the Warnings window is answered.
+				var rate = Ui.WaitFor(() =>
+				{
+					Ui.FixWarnings(app, window);
+					return Ui.FindByName(window, RateText);
+				}, TimeSpan.FromSeconds(60), "the status bar never reported an interface rate");
 				// Every question is answered No until the program reads the controllers at its usual rate,
 				// which it does only once it has asked everything and loaded the library.
 				Ui.WaitFor(() =>
@@ -106,8 +110,14 @@ namespace x360ce.Tests
 				AutomationElement question;
 				try
 				{
-					question = Ui.WaitFor(() => window.FindFirst(TreeScope.Children, new PropertyCondition(
-						AutomationElement.ControlTypeProperty, ControlType.Window)), TimeSpan.FromSeconds(60), "a new controller question");
+					// The Warnings window comes first and is answered; the question is asked once the pages are built.
+					question = Ui.WaitFor(() =>
+					{
+						Ui.FixWarnings(app, window);
+						return window.FindAll(TreeScope.Children, new PropertyCondition(
+							AutomationElement.ControlTypeProperty, ControlType.Window)).Cast<AutomationElement>()
+							.FirstOrDefault(x => !(x.Current.Name ?? "").EndsWith(" - Warnings", StringComparison.Ordinal));
+					}, TimeSpan.FromSeconds(60), "a new controller question");
 				}
 				catch (TimeoutException)
 				{

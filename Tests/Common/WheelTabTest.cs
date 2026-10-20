@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -82,6 +83,39 @@ namespace x360ce.Tests
 				Assert.AreEqual(PadControl.CustomSpringCar, car.GetItemText(car.SelectedItem), "Values that match no car are not shown as Custom.");
 				((TrackBar)Find(pad, "ForceSpringDampingTrackBar")).Value = van.Damping;
 				Assert.AreEqual(van.Name, car.GetItemText(car.SelectedItem), "Values moved back onto a car do not show it.");
+			});
+		}
+
+		/// <summary>
+		/// The spring's degrees are counted against the range, and no wheel says what range it turns. A G27 left as it is
+		/// turns 200 degrees, and its spring, counted against 900, swung it at its centre.
+		/// </summary>
+		[TestMethod, TestCategory("ui"), TestCategory("force-feedback")]
+		[Description("Ticking the centering spring with the wheel range left as it is picks the cars' range, and the range cannot be left as it is while the spring is on")]
+		public void The_spring_is_never_left_without_a_range()
+		{
+			PresetLoadTest.OnLoadedPage(new PadSetting { WheelRange = "0" }, pad =>
+			{
+				var range = (ComboBox)Find(pad, "WheelRangeComboBox");
+				var spring = (CheckBox)Find(pad, "ForceSpringEnableCheckBox");
+				Assert.AreEqual("Leave as it is (spring off)", range.GetItemText(range.Items[0]));
+				Assert.AreEqual(0, pad.CloneCurrentPadSetting().GetWheelRange(), "The range was not loaded as left as it is.");
+				// The settings' events start suspended and the main window resumes them once it has loaded.
+				SettingsManager.Current.ResumeEvents();
+				try
+				{
+					spring.Checked = true;
+					Assert.AreEqual(PadControl.RoadCarRange, pad.CloneCurrentPadSetting().GetWheelRange(), "Ticking the spring left the range as it is.");
+					range.SelectedIndex = 0;
+					Assert.AreEqual(PadControl.RoadCarRange, pad.CloneCurrentPadSetting().GetWheelRange(), "The range was left as it is while the spring is on.");
+					spring.Checked = false;
+					range.SelectedIndex = 0;
+					Assert.AreEqual(0, pad.CloneCurrentPadSetting().GetWheelRange(), "Without the spring the range cannot be left as it is.");
+				}
+				finally
+				{
+					SettingsManager.Current.SuspendEvents();
+				}
 			});
 		}
 

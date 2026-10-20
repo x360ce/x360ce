@@ -138,8 +138,9 @@ namespace x360ce.App.UiTree
 			d["PadControl.ForceSpringAutoButton"] = new Text("Auto",
 				"Measures the wheel's friction from both stops, with hands off the wheel, sets Friction to it and a tenth more, and checks that the spring then brings the wheel home without swinging. Strength is left as it is.");
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
-				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against, 900 when left as it is. "
-				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing.");
+				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against. "
+				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing, "
+				+ "and is for a wheel without the centering spring: ticking the spring picks 900.");
 			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
 				"What Auto is doing and what it found, or why the centering spring does nothing now.");
 

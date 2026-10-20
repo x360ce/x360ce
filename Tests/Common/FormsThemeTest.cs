@@ -82,14 +82,16 @@ namespace x360ce.Tests
 					Assert.AreEqual(FormsTheme.Palette["BackgroundWhite"].ToArgb(), box.BackColor.ToArgb());
 					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle, "A push button kept the light visual style.");
 					Assert.AreEqual(0, button.FlatAppearance.BorderSize, "A flat border takes room from the text.");
+					Assert.AreEqual(FormsTheme.Palette["BackgroundDark"].ToArgb(), button.BackColor.ToArgb(), "The push button is not filled as the WPF programs fill one.");
 					// Shown light again, as the light theme does with the open windows.
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					Assert.IsTrue(box.BackColor.IsSystemColor, "The text box did not get the Windows colour back.");
 					Assert.AreEqual(SystemColors.Window, box.BackColor);
-					Assert.AreEqual(FlatStyle.Standard, button.FlatStyle);
-					Assert.AreEqual(1, button.FlatAppearance.BorderSize);
-					Assert.IsTrue(button.UseVisualStyleBackColor);
+					// The push button keeps the WPF look, in the light colours.
+					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle);
+					Assert.AreEqual(0, button.FlatAppearance.BorderSize);
+					Assert.AreEqual(FormsTheme.LightPalette["BackgroundDark"].ToArgb(), button.BackColor.ToArgb(), "The light fill is not Default.xaml's BackgroundDark.");
 				}
 			});
 		}
@@ -185,20 +187,32 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("A control the dark theme never changed is left as it is")]
-		public void Light_from_the_start_changes_nothing()
+		[Description("In the light theme a push button, a tool bar and a tab strip are drawn as the WPF programs draw them, and anything else is left as it is")]
+		public void Light_draws_buttons_tool_bars_and_tabs_as_wpf_and_leaves_the_rest()
 		{
 			OnUiThread(() =>
 			{
 				using (var form = new Form())
 				{
+					var box = new TextBox();
 					var button = new Button { UseVisualStyleBackColor = true };
-					form.Controls.Add(button);
+					var flat = new Button { FlatStyle = FlatStyle.Flat };
+					var bar = new ToolStrip();
+					var tabs = new TabControl();
+					tabs.TabPages.Add("Page");
+					form.Controls.AddRange(new Control[] { box, button, flat, bar, tabs });
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
-					Assert.AreEqual(FlatStyle.Standard, button.FlatStyle);
-					Assert.IsTrue(button.UseVisualStyleBackColor);
-					Assert.IsTrue(button.BackColor.IsSystemColor);
+					Assert.IsTrue(box.BackColor.IsSystemColor, "A text box was changed.");
+					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle, "A push button kept the Windows look.");
+					Assert.AreEqual(0, button.FlatAppearance.BorderSize, "A push button has a border.");
+					Assert.AreEqual(FormsTheme.LightPalette["BackgroundDark"].ToArgb(), button.BackColor.ToArgb());
+					Assert.AreEqual(FormsTheme.LightPalette["BackgroundDarkSelected"].ToArgb(), button.FlatAppearance.MouseOverBackColor.ToArgb(), "Under the mouse it is not Default.xaml's hover colour.");
+					Assert.AreEqual(FormsTheme.LightPalette["BackgroundDarkPressed"].ToArgb(), button.FlatAppearance.MouseDownBackColor.ToArgb(), "Pressed it is not Default.xaml's pressed colour.");
+					Assert.AreEqual(1, flat.FlatAppearance.BorderSize, "A button the program styled itself was changed.");
+					Assert.IsTrue(flat.BackColor.IsSystemColor, "A button the program styled itself was filled.");
+					Assert.AreNotEqual(typeof(ToolStripSystemRenderer), bar.Renderer.GetType(), "The tool bar kept the Windows renderer.");
+					Assert.IsFalse(tabs.TabPages[0].UseVisualStyleBackColor, "The page of a painted strip kept the Windows texture.");
 				}
 			});
 		}

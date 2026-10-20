@@ -324,7 +324,7 @@ namespace x360ce.Tests
 			var click = source.IndexOf("void ForceSpringAutoButton_Click(");
 			var routed = source.IndexOf("if (!SpringFromThisTab(ud))", click);
 			var reason = source.IndexOf("WheelDescriptionLabel.Text = \"Auto needs this controller tab switched on", click);
-			var start = source.IndexOf("driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);", click);
+			var start = source.IndexOf("driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride, driven);", click);
 			Assert.IsTrue(click > 0 && routed > click && reason > routed && start > reason,
 				"Auto starts a run the engine never drives, and the button waits for it forever.");
 			// The engine runs it on the device whose motors it drives, which for a Raw Input device is its DirectInput twin.

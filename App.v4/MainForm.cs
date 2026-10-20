@@ -1361,6 +1361,7 @@ namespace x360ce.App
 					new UnfinishedVirtualPadsIssue(),
 					new RestartToFinishRemovalIssue(),
 					new SwitchedOffControllersIssue(),
+					new XboxDirectInputIssue(),
 					new HidHideIssue(),
 					new AiAccessIssue(),
 					new AiSkillIssue(),

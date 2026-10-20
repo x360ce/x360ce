@@ -1,7 +1,8 @@
-// @under-test: Engine/Common/LogitechWheel.cs
+// @under-test: Engine/Common/LogitechWheel.cs, Engine/Common/ForceFeedbackState.cs
 // @area: devices   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -12,6 +13,23 @@ namespace x360ce.Tests
 	[TestClass]
 	public class LogitechWheelTest
 	{
+		/// <summary>
+		/// A G27 left as it is turns the 200 degrees it powers up at, and the spring counted against 900 was four and a half
+		/// times steeper than set in real degrees: the wheel swung from side to side at its centre and never settled.
+		/// </summary>
+		[TestMethod, TestCategory("devices")]
+		[Description("Left as it is, the spring is counted against the 200 degrees a wheel that takes the range powers up at, and against 900 on any other wheel")]
+		public void Spring_range_left_as_it_is_follows_the_wheel()
+		{
+			var g27 = new UserDevice { DevVendorId = 0x046D, DevProductId = 0xC29B };
+			var other = new UserDevice { DevVendorId = 0x346E, DevProductId = 0x0002 };
+			Assert.AreEqual(LogitechWheel.PowerUpRange, ForceFeedbackState.SpringRange(0, g27), "A G27 left as it is.");
+			Assert.AreEqual(ForceFeedbackState.DefaultRangeDegrees, ForceFeedbackState.SpringRange(0, other), "A wheel that takes no range.");
+			Assert.AreEqual(ForceFeedbackState.DefaultRangeDegrees, ForceFeedbackState.SpringRange(0, null), "No device yet.");
+			Assert.AreEqual(540, ForceFeedbackState.SpringRange(540, g27), "A range chosen is the range sent.");
+			Assert.AreEqual(540, ForceFeedbackState.SpringRange(540, other), "A range chosen counts on any wheel.");
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("900 degrees is 0xf8 0x81 with the range in two bytes, low byte first, after the report identifier")]
 		public void Range_report_matches_the_driver()

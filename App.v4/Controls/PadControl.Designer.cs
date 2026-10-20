@@ -3189,6 +3189,7 @@
             this.XInputPlaceColumn.MinimumWidth = 8;
             this.XInputPlaceColumn.Name = "XInputPlaceColumn";
             this.XInputPlaceColumn.ReadOnly = true;
+            this.XInputPlaceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.XInputPlaceColumn.ToolTipText = "Which XInput place the real hardware behind this device holds. Blank when nothing" +
     " can say.";
             this.XInputPlaceColumn.Width = 92;
@@ -3291,6 +3292,7 @@
             this.MapToColumn.MinimumWidth = 6;
             this.MapToColumn.Name = "MapToColumn";
             this.MapToColumn.ReadOnly = true;
+            this.MapToColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.MapToColumn.Visible = false;
             this.MapToColumn.Width = 125;
             // 

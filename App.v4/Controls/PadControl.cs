@@ -338,6 +338,8 @@ namespace x360ce.App.Controls
 			// If control is not specified then return.
 			if (e.Item.Control == null)
 				return;
+			if (e.Item.Control == ForceSpringEnableCheckBox || e.Item.Control == WheelRangeComboBox)
+				KeepRangeForSpring();
 			// By default send vibration if force enabled/disabled changed.
 			var send = e.Item.Control == ForceEnableCheckBox;
 			// If force is enabled then...
@@ -522,9 +524,10 @@ namespace x360ce.App.Controls
 			ForcePassThroughIndexComboBox.ValueMember = "Value";
 			// The ranges a Logitech wheel takes, named by the cars each one suits. The wheel powers
 			// up at 200 and stays there until told otherwise, which is what the first choice leaves.
+			// The centering spring needs a range, so the first choice is for a wheel without it.
 			WheelRangeComboBox.DisplayMember = "Key";
 			WheelRangeComboBox.ValueMember = "Value";
-			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is", "0"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is (spring off)", "0"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("540° - GT and WRC cars", "540"));
@@ -1425,6 +1428,24 @@ namespace x360ce.App.Controls
 			UpdateSpringChart();
 		}
 
+		/// <summary>Picks the cars' range when the centering spring is ticked with the range left as it is.</summary>
+		/// <remarks>
+		/// The spring's degrees are counted against the range, and no wheel says what range it turns, so the spring needs
+		/// one chosen: a wheel that takes it is sent it, and any other is counted against it. Left as it is, a Logitech
+		/// wheel turns the 200 degrees it powers up at, and a spring counted against 900 swung it at its centre.
+		/// </remarks>
+		void KeepRangeForSpring()
+		{
+			if (!ForceSpringEnableCheckBox.Checked || SelectedWheelRange() != 0)
+				return;
+			for (var r = 0; r < WheelRangeComboBox.Items.Count; r++)
+			{
+				var item = WheelRangeComboBox.Items[r] as KeyValuePair;
+				if (item != null && item.Value == RoadCarRange.ToString())
+					WheelRangeComboBox.SelectedIndex = r;
+			}
+		}
+
 		/// <summary>Shows the friction beside its slider, and keeps it with the wheel.</summary>
 		/// <remarks>
 		/// Kept with the device whose motors the engine drives, a Raw Input device's DirectInput twin, so it holds for
@@ -1576,11 +1597,13 @@ namespace x360ce.App.Controls
 			return item != null && int.TryParse(item.Value, out range) ? range : 0;
 		}
 
-		/// <summary>Gives the chart the curve the page's settings make. The chart draws it again only when it changed.</summary>
+		/// <summary>Gives the chart the curve the page's settings make, counted against the range the engine counts it against on the tab's wheel. The chart draws it again only when it changed.</summary>
 		void UpdateSpringChart()
 		{
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
 			WheelChartUserControl.SetCurve(ForceSpringStrengthTrackBar.Value, ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value,
-				ForceSpringLighteningTrackBar.Value, SelectedWheelRange(), ForceSpringSpeedTrackBar.Value);
+				ForceSpringLighteningTrackBar.Value, ForceFeedbackState.SpringRange(SelectedWheelRange(), driven), ForceSpringSpeedTrackBar.Value);
 		}
 
 		/// <summary>Puts the wheel's angle, the live speed and the friction Auto measured on the chart, while the Wheel tab is shown.</summary>
@@ -1592,6 +1615,8 @@ namespace x360ce.App.Controls
 		{
 			if (PadTabControl.SelectedTab != WheelTabPage)
 				return;
+			// The wheel the range is counted for can change with the selection or arrive after the page was drawn.
+			UpdateSpringChart();
 			var ud = GetSelectedDevice();
 			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
 			// The friction is the wheel's, so the slider shows the wheel's, and the default greyed without one.
@@ -1649,7 +1674,7 @@ namespace x360ce.App.Controls
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = driven;
-			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);
+			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride, driven);
 			SpringAutoTimer.Start();
 		}
 
@@ -2145,6 +2170,48 @@ namespace x360ce.App.Controls
 				+ "Copy - add here and leave others.";
 		}
 
+		/// <summary>Asks whether Xbox controllers picked through DirectInput are added through Raw Input instead: Yes uses Raw Input, No adds the rows picked, anything else adds nothing.</summary>
+		/// <remarks>Given the question, shown in bold, and what each answer does under it. A test replaces it, since the real one opens a window.</remarks>
+		public static Func<string, string, DialogResult> AskRawInput = AskAboutRawInput;
+
+		static DialogResult AskAboutRawInput(string heading, string text)
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(form);
+			var answer = form.ShowForm(text, "Xbox controller through DirectInput",
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button1,
+				new[] { "Use &Raw Input", "Add &DirectInput" }, heading);
+			form.Dispose();
+			return answer;
+		}
+
+		/// <summary>The devices to add, with each Xbox controller picked through DirectInput swapped for its Raw Input row when the person says so; null when they cancel.</summary>
+		/// <remarks>
+		/// Windows feeds an Xbox controller's DirectInput row only to the program in front, so the controller works on this
+		/// program's pages and does nothing in the game (<see cref="DInput.XInputPlaces.ReadsOnlyInFront"/>). Asked only when
+		/// the controller has a Raw Input row to offer instead.
+		/// </remarks>
+		public static UserDevice[] PreferRawInput(UserDevice[] devices)
+		{
+			var all = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var twins = devices.Select(x => DInput.XInputPlaces.ReadsOnlyInFront(x) ? x.RawInputTwin(all) : null).ToArray();
+			if (twins.All(x => x == null))
+				return devices;
+			var names = string.Join(", ", devices.Where((x, i) => twins[i] != null)
+				.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct());
+			var answer = AskRawInput(string.Format("Add {0} through Raw Input instead?", names),
+				"Windows lets only the program in front read an Xbox controller through DirectInput, so it stops working once a game is in front. Raw Input keeps working." + Environment.NewLine
+				+ "Use Raw Input - add the controller's Raw Input row." + Environment.NewLine
+				+ "Add DirectInput - add the row picked, which works only while x360ce is in front.");
+			if (answer == DialogResult.Yes)
+				return devices.Select((x, i) => twins[i] ?? x).Distinct().ToArray();
+			if (answer == DialogResult.No)
+				return devices;
+			return null;
+		}
+
 		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
 		/// <remarks>
 		/// A device just added is the one the person means to set up next. The list kept whatever row
@@ -2156,6 +2223,9 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
+			devices = PreferRawInput(devices);
+			if (devices == null)
+				return;
 			var copy = false;
 			var question = SharedDeviceQuestion(game, MappedTo, devices);
 			if (question != null)

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -25,8 +26,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// that use <see cref="SystemColors"/> follow without change. <see cref="Apply"/> covers what Windows
 	/// draws itself: native backgrounds, buttons, check boxes, drop-down lists, tab strips, sliders, scrollbars and
 	/// title bars.
-	/// The light theme is the Windows colours. Its tab strips are painted with the Windows tab artwork, so that the
-	/// text of the tabs not chosen can be dimmer, as the WPF programs draw it.
+	/// The light theme is the Windows colours. In both themes, push buttons, tool bars and tab strips are drawn as the
+	/// WPF programs draw them with Default.xaml: buttons flat, filled and rounded, tabs rounded and apart. High contrast
+	/// keeps the Windows look.
 	/// <para>
 	/// The colours are read as XML from Default_DarkTheme.xaml, embedded in the program as a resource, and no
 	/// WPF type is named here: loading WPF makes a Windows Forms process DPI aware mid-run.
@@ -79,6 +81,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		static WindowsFormsSynchronizationContext _context;
 
+		/// <summary>Whether high contrast was on when the colours were last set.</summary>
+		static bool _highContrast;
+
 		/// <summary>Works out light or dark, changes the system colours to it and brings the open windows along.</summary>
 		/// <param name="themeChanged">True when the choice changed, so the open windows are themed again even if dark stayed dark.</param>
 		static void UpdateColors(bool themeChanged)
@@ -87,7 +92,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			dark &= !SystemInformation.HighContrast && Palette.Count > 0;
 			if (!SetSystemColors(dark))
 				dark = false;
-			var changed = dark != IsDark;
+			var changed = dark != IsDark || SystemInformation.HighContrast != _highContrast;
+			_highContrast = SystemInformation.HighContrast;
 			IsDark = dark;
 			if (dark || changed)
 			{
@@ -211,6 +217,27 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return IsDark && Palette.TryGetValue(key, out color) ? color : lightColor;
 		}
 
+		/// <summary>The light colours of the Default.xaml keys the buttons, tool bars and tab strips are drawn with.</summary>
+		/// <remarks>Copied here because not every program carries Default.xaml; a test holds them equal to it.</remarks>
+		public static readonly Dictionary<string, Color> LightPalette = new Dictionary<string, Color>
+		{
+			{ "BackgroundLight", Color.FromArgb(0xF0, 0xF0, 0xF0) },
+			{ "BackgroundDark", Color.FromArgb(0xDE, 0xDE, 0xDE) },
+			{ "BackgroundDarkSelected", Color.FromArgb(0xC2, 0xE7, 0xFF) },
+			{ "BackgroundDarkPressed", Color.FromArgb(0xC2, 0xFF, 0xE7) },
+			{ "BackgroundTabSelected", Color.FromArgb(0xFF, 0xFF, 0xFF) },
+			{ "BorderDark", Color.FromArgb(0xCC, 0xCC, 0xCC) },
+			{ "ForegroundTab", Color.FromArgb(0x5A, 0x5A, 0x5A) },
+			{ "ForegroundTabSelected", Color.FromArgb(0x00, 0x00, 0x00) },
+		};
+
+		/// <summary>The colour of a WPF theme key in the theme in use, light or dark; without the key, the fallback.</summary>
+		static Color Themed(string key, Color fallback)
+		{
+			Color color;
+			return (IsDark ? Palette : LightPalette).TryGetValue(key, out color) ? color : fallback;
+		}
+
 		/// <summary>Puts the dark colours in the system colour table, or the Windows ones back.</summary>
 		/// <returns>False when the table cannot be changed, so the theme stays light.</returns>
 		static bool SetSystemColors(bool dark)
@@ -252,6 +279,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		class State
 		{
 			public bool? Dark;
+			/// <summary>Whether high contrast was on when the control was last themed: it keeps the Windows look.</summary>
+			public bool? HighContrast;
 			public Color BackColor;
 			public bool BackColorSet;
 			public Color ForeColor;
@@ -302,16 +331,19 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					ApplyNative((Control)sender);
 				};
 			}
-			if (state.Dark == IsDark)
+			var highContrast = SystemInformation.HighContrast;
+			if (state.Dark == IsDark && state.HighContrast == highContrast)
 				return;
-			// A control the dark theme never changed is left exactly as it is, but for a tab strip, which the light
-			// theme paints too.
-			if (state.Dark == null && !IsDark && !PaintsTabs(control))
+			// A control the dark theme never changed is left exactly as it is, but for the buttons, tool bars and tab
+			// strips the light theme draws as the WPF programs do.
+			if (state.Dark == null && !IsDark && !DrawnAsWpf(control))
 			{
 				state.Dark = false;
+				state.HighContrast = highContrast;
 				return;
 			}
 			state.Dark = IsDark;
+			state.HighContrast = highContrast;
 			ApplyColors(control, state);
 			ApplyStyle(control, state);
 			ApplyNative(control);
@@ -417,39 +449,39 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>Swaps the parts Windows draws in its light visual style for ones drawn in the theme colours.</summary>
 		static void ApplyStyle(Control control, State state)
 		{
-			// The visual style draws a button light, so in the dark theme Windows Forms draws it.
 			var button = control as ButtonBase;
 			if (button != null)
 			{
-				var push = button is Button
-					|| (button is CheckBox check && check.Appearance == Appearance.Button)
-					|| (button is RadioButton radio && radio.Appearance == Appearance.Button);
 				button.Paint -= Button_Paint;
-				if (IsDark)
+				// A push button the program left in a Windows style is drawn as the WPF programs draw one, in both
+				// themes: flat and borderless, filled and rounded, lighter under the mouse and lighter again pressed.
+				if (IsWpfButton(button, state))
 				{
-					// Windows draws the text of a system button or check box black.
-					if (state.FlatStyle == FlatStyle.System)
-						button.FlatStyle = FlatStyle.Standard;
+					button.FlatStyle = FlatStyle.Flat;
+					button.FlatAppearance.BorderSize = 0;
 					button.UseVisualStyleBackColor = false;
-					// A standard button draws its edges from the Windows colours, so a push button is made
-					// flat. Its border is drawn here: a flat border takes room from the text and wraps
-					// text that fits the standard button.
-					if (push && state.FlatStyle != FlatStyle.Flat && state.FlatStyle != FlatStyle.Popup)
-					{
-						button.FlatStyle = FlatStyle.Flat;
-						button.FlatAppearance.BorderSize = 0;
-						button.FlatAppearance.MouseOverBackColor = GetColor("MouseOverBackground", SystemColors.ControlLight);
-						button.FlatAppearance.MouseDownBackColor = GetColor("BackgroundDarkPressed", SystemColors.ControlDark);
-						button.Paint += Button_Paint;
-					}
+					if (!state.BackColorSet || state.BackColor.IsSystemColor)
+						button.BackColor = Themed("BackgroundDark", SystemColors.ControlLight);
+					button.FlatAppearance.MouseOverBackColor = Themed("BackgroundDarkSelected", SystemColors.ControlLight);
+					button.FlatAppearance.MouseDownBackColor = Themed("BackgroundDarkPressed", SystemColors.ControlDark);
+					button.Paint += Button_Paint;
 				}
 				else
 				{
-					button.FlatStyle = state.FlatStyle;
+					// Windows draws the text of a system button or check box black.
+					button.FlatStyle = IsDark && state.FlatStyle == FlatStyle.System ? FlatStyle.Standard : state.FlatStyle;
 					button.FlatAppearance.BorderSize = state.FlatBorderSize;
 					button.FlatAppearance.MouseOverBackColor = state.FlatMouseOverBackColor;
 					button.FlatAppearance.MouseDownBackColor = state.FlatMouseDownBackColor;
-					button.UseVisualStyleBackColor = state.UseVisualStyleBackColor;
+					// The visual style draws a check box or radio button's back light.
+					button.UseVisualStyleBackColor = !IsDark && state.UseVisualStyleBackColor;
+				}
+				if (!IsWpfButton(button, state) && state.BackColor.IsSystemColor)
+				{
+					if (state.BackColorSet)
+						button.BackColor = state.BackColor;
+					else
+						button.ResetBackColor();
 				}
 			}
 			if (control is ComboBox combo && state.FlatStyle != FlatStyle.Flat)
@@ -461,8 +493,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					group.Paint += GroupBox_Paint;
 				group.Invalidate();
 			}
+			// A page of a strip painted here is filled plain, as the WPF programs fill one.
 			if (control is TabPage page)
-				page.UseVisualStyleBackColor = !IsDark && state.UseVisualStyleBackColor;
+				page.UseVisualStyleBackColor = state.UseVisualStyleBackColor && !PaintsTabs(page.Parent);
 			if (control is DataGridView grid)
 			{
 				grid.EnableHeadersVisualStyles = !IsDark && state.EnableHeadersVisualStyles;
@@ -479,12 +512,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				link.LinkColor = GetColor("ColorBrand", state.LinkColor);
 				link.VisitedLinkColor = GetColor("ColorBrand", state.VisitedLinkColor);
 			}
-			// The system renderer draws a checked button with the Windows colours, so in the dark theme
-			// every strip without a renderer of its own is drawn by a professional one, made anew because
-			// it keeps the colours it worked out.
+			// A tool bar without a renderer of its own is drawn as the WPF programs draw one, in both themes. The system
+			// renderer draws a checked button with the Windows colours, so in the dark theme every other strip, a menu
+			// or a status bar, is drawn by a professional one. Both are made anew because they keep the colours they
+			// worked out.
 			if (control is ToolStrip strip && state.RenderMode != ToolStripRenderMode.Custom)
 			{
-				if (IsDark)
+				if (IsWpfToolBar(strip))
+					strip.Renderer = new WpfToolStripRenderer();
+				else if (IsDark)
 					strip.Renderer = new ToolStripProfessionalRenderer(new ProfessionalColorTable());
 				else
 					strip.RenderMode = state.RenderMode;
@@ -492,10 +528,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is TabControl tabs && tabs.Alignment == TabAlignment.Top)
 			{
 				SetPaintedHere(tabs, state, PaintsTabs(tabs), Tabs_Paint);
-				// Windows lights the tab under the mouse; painted here in the light theme, the strip does it itself.
+				// Windows lights the tab under the mouse; painted here, the strip does it itself.
 				tabs.MouseMove -= Tabs_MouseMove;
 				tabs.MouseLeave -= Tabs_MouseLeave;
-				if (!IsDark && PaintsTabs(tabs))
+				if (PaintsTabs(tabs))
 				{
 					tabs.MouseMove += Tabs_MouseMove;
 					tabs.MouseLeave += Tabs_MouseLeave;
@@ -639,15 +675,180 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			_checkRenderer.DrawBackground(e.Graphics, box);
 		}
 
-		/// <summary>The border of a push button in the dark theme, in the accent colour while it has the focus.</summary>
+		/// <summary>The rounding of a button's corners, a tab's top corners and a tab page's frame, as Default.xaml draws them.</summary>
+		const int CornerRadius = 5;
+
+		/// <summary>Whether a button is drawn as the WPF programs draw one: a push button the program left in a Windows style, while high contrast is off.</summary>
+		static bool IsWpfButton(ButtonBase button, State state)
+		{
+			var push = button is Button
+				|| (button is CheckBox check && check.Appearance == Appearance.Button)
+				|| (button is RadioButton radio && radio.Appearance == Appearance.Button);
+			return push && state.FlatStyle != FlatStyle.Flat && state.FlatStyle != FlatStyle.Popup && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>Whether a strip is a tool bar drawn as the WPF programs draw one: not a menu, a status bar or a drop-down, while high contrast is off.</summary>
+		static bool IsWpfToolBar(ToolStrip strip)
+		{
+			return !(strip is MenuStrip || strip is StatusStrip || strip is ToolStripDropDown) && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>Whether a control is drawn as the WPF programs draw it, which the light theme does too.</summary>
+		static bool DrawnAsWpf(Control control)
+		{
+			State state;
+			if (control is ButtonBase button && States.TryGetValue(control, out state))
+				return IsWpfButton(button, state);
+			return PaintsTabs(control)
+				|| (control is TabPage && PaintsTabs(control.Parent))
+				|| (control is ToolStrip strip && IsWpfToolBar(strip));
+		}
+
+		/// <summary>
+		/// Rounds a push button's corners into what is behind it, smoothly, and outlines it in the accent colour while it
+		/// has the focus, as the WPF programs draw one.
+		/// </summary>
 		static void Button_Paint(object sender, PaintEventArgs e)
 		{
 			var button = (ButtonBase)sender;
-			var color = button.Focused
-				? GetColor("SelectedBackground", SystemColors.Highlight)
-				: GetColor("BorderDark", SystemColors.ControlDark);
-			using (var pen = new Pen(color))
-				e.Graphics.DrawRectangle(pen, 0, 0, button.Width - 1, button.Height - 1);
+			var g = e.Graphics;
+			var smoothing = g.SmoothingMode;
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var bounds = new Rectangle(0, 0, button.Width, button.Height);
+			// A side another button stands against, as the halves of a split button do, keeps its corners square.
+			bool joinedLeft, joinedRight;
+			JoinedSides(button, out joinedLeft, out joinedRight);
+			var left = joinedLeft ? 0 : CornerRadius;
+			var right = joinedRight ? 0 : CornerRadius;
+			// The corners: the whole button less its rounded face, filled with the colour behind it.
+			using (var corners = new GraphicsPath(FillMode.Alternate))
+			using (var face = RoundedRectangle(bounds, left, right, right, left))
+			using (var brush = new SolidBrush(button.Parent?.BackColor ?? SystemColors.Control))
+			{
+				corners.AddRectangle(bounds);
+				corners.AddPath(face, false);
+				g.FillPath(brush, corners);
+			}
+			if (button.Focused && (bool)(ShowFocusCuesProperty?.GetValue(button, null) ?? false))
+				using (var pen = new Pen(Themed("SelectedBackground", SystemColors.Highlight)))
+				using (var outline = RoundedRectangle(new RectangleF(0.5f, 0.5f, button.Width - 1, button.Height - 1), left, right, right, left))
+					g.DrawPath(pen, outline);
+			g.SmoothingMode = smoothing;
+		}
+
+		/// <summary>Whether another button on the same parent stands against this one's left or right side.</summary>
+		static void JoinedSides(Control button, out bool left, out bool right)
+		{
+			left = right = false;
+			var parent = button.Parent;
+			if (parent == null)
+				return;
+			var b = button.Bounds;
+			foreach (Control other in parent.Controls)
+			{
+				if (other == button || !other.Visible || !(other is ButtonBase))
+					continue;
+				var o = other.Bounds;
+				if (o.Top >= b.Bottom || o.Bottom <= b.Top)
+					continue;
+				left |= Math.Abs(o.Right - b.Left) <= 1;
+				right |= Math.Abs(o.Left - b.Right) <= 1;
+			}
+		}
+
+		/// <summary>A rectangle with each corner rounded by its own radius; nought leaves that corner square.</summary>
+		static GraphicsPath RoundedRectangle(RectangleF r, float topLeft, float topRight, float bottomRight, float bottomLeft)
+		{
+			var path = new GraphicsPath();
+			if (topLeft > 0)
+				path.AddArc(r.Left, r.Top, topLeft * 2, topLeft * 2, 180, 90);
+			else
+				path.AddLine(r.Left, r.Top, r.Left, r.Top);
+			if (topRight > 0)
+				path.AddArc(r.Right - topRight * 2, r.Top, topRight * 2, topRight * 2, 270, 90);
+			else
+				path.AddLine(r.Right, r.Top, r.Right, r.Top);
+			if (bottomRight > 0)
+				path.AddArc(r.Right - bottomRight * 2, r.Bottom - bottomRight * 2, bottomRight * 2, bottomRight * 2, 0, 90);
+			else
+				path.AddLine(r.Right, r.Bottom, r.Right, r.Bottom);
+			if (bottomLeft > 0)
+				path.AddArc(r.Left, r.Bottom - bottomLeft * 2, bottomLeft * 2, bottomLeft * 2, 90, 90);
+			else
+				path.AddLine(r.Left, r.Bottom, r.Left, r.Bottom);
+			path.CloseFigure();
+			return path;
+		}
+
+		/// <summary>
+		/// Draws a tool bar as the WPF programs draw one: plain, without an edge, its buttons filled and rounded, lighter
+		/// under the mouse and lighter again pressed. A menu that drops down from it is drawn as before.
+		/// </summary>
+		class WpfToolStripRenderer : ToolStripProfessionalRenderer
+		{
+			/// <summary>The room left at each side of a tool bar button's fill.</summary>
+			const int ToolBarButtonInset = 1;
+
+			public WpfToolStripRenderer() : base(new ProfessionalColorTable()) { }
+
+			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+			{
+				if (e.ToolStrip is ToolStripDropDown)
+				{
+					base.OnRenderToolStripBackground(e);
+					return;
+				}
+				using (var brush = new SolidBrush(e.ToolStrip.BackColor))
+					e.Graphics.FillRectangle(brush, e.AffectedBounds);
+			}
+
+			protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)
+			{
+				if (e.ToolStrip is ToolStripDropDown)
+					base.OnRenderToolStripBorder(e);
+			}
+
+			protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+			{
+				if (!FillItem(e.Graphics, e.Item))
+					base.OnRenderButtonBackground(e);
+			}
+
+			protected override void OnRenderDropDownButtonBackground(ToolStripItemRenderEventArgs e)
+			{
+				if (!FillItem(e.Graphics, e.Item))
+					base.OnRenderDropDownButtonBackground(e);
+			}
+
+			protected override void OnRenderSplitButtonBackground(ToolStripItemRenderEventArgs e)
+			{
+				var split = (ToolStripSplitButton)e.Item;
+				if (!FillItem(e.Graphics, e.Item))
+				{
+					base.OnRenderSplitButtonBackground(e);
+					return;
+				}
+				DrawArrow(new ToolStripArrowRenderEventArgs(e.Graphics, split, split.DropDownButtonBounds, split.ForeColor, ArrowDirection.Down));
+			}
+
+			/// <summary>Fills a button on the tool bar itself; false for one on a drop-down, which is drawn as before.</summary>
+			static bool FillItem(Graphics g, ToolStripItem item)
+			{
+				if (item.IsOnDropDown)
+					return false;
+				var key = !item.Enabled ? "BackgroundDark"
+					: item.Pressed ? "BackgroundDarkPressed"
+					: item.Selected ? "BackgroundDarkSelected"
+					: "BackgroundDark";
+				var smoothing = g.SmoothingMode;
+				g.SmoothingMode = SmoothingMode.AntiAlias;
+				using (var brush = new SolidBrush(Themed(key, SystemColors.ControlLight)))
+				// A pixel in from each side, so buttons next to each other stand apart, as WPF's margins keep them.
+				using (var face = RoundedRectangle(new RectangleF(ToolBarButtonInset, 0, item.Width - ToolBarButtonInset * 2, item.Height), CornerRadius, CornerRadius, CornerRadius, CornerRadius))
+					g.FillPath(brush, face);
+				g.SmoothingMode = smoothing;
+				return true;
+			}
 		}
 
 		/// <summary>
@@ -679,9 +880,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		const ControlStyles PaintedHereStyles = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw;
 
 		/// <summary>
-		/// The tab strip and the slider have no dark Windows style, so in the dark theme they are painted here,
-		/// double buffered. The light theme paints the tab strip too, with the Windows artwork, to dim the text of
-		/// the tabs not chosen.
+		/// The slider has no dark Windows style, so in the dark theme it is painted here, double buffered. The tab strip
+		/// is painted here in both themes, as the WPF programs draw one.
 		/// </summary>
 		/// <remarks>A control no longer painted here gets back the styles it had, flag by flag.</remarks>
 		static void SetPaintedHere(Control control, State state, bool paintHere, PaintEventHandler paint)
@@ -699,92 +899,33 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			control.Invalidate();
 		}
 
-		/// <summary>The text of a tab not chosen in the light theme: ForegroundTab in Default.xaml, as the WPF programs draw it.</summary>
-		static readonly Color LightTabText = Color.FromArgb(0x5A, 0x5A, 0x5A);
+		/// <summary>The room between two tabs, as Default.xaml leaves it after a TabItem.</summary>
+		const int TabGap = 3;
 
 		static readonly PropertyInfo ShowFocusCuesProperty = typeof(Control).GetProperty("ShowFocusCues", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		/// <summary>Whether Windows draws tabs in a visual style, whose artwork the light theme paints a tab strip with.</summary>
-		static bool HasTabArtwork
-		{
-			get { return VisualStyleRenderer.IsSupported && VisualStyleRenderer.IsElementDefined(VisualStyleElement.Tab.TabItem.Normal); }
-		}
-
 		/// <summary>
-		/// Whether a tab strip is painted here: in the dark theme, and in the light theme wherever Windows has tab artwork
-		/// and the program draws no tabs of its own.
+		/// Whether a tab strip with its tabs on top is painted here, as the WPF programs draw one: in the dark theme every
+		/// one, and in the light theme one the program draws no tabs of its own on. High contrast keeps the Windows tabs.
 		/// </summary>
 		static bool PaintsTabs(Control control)
 		{
-			return control is TabControl tabs && tabs.Alignment == TabAlignment.Top
-				&& (IsDark || (HasTabArtwork && tabs.Appearance == TabAppearance.Normal && tabs.DrawMode == TabDrawMode.Normal));
+			return control is TabControl tabs && tabs.Alignment == TabAlignment.Top && !SystemInformation.HighContrast
+				&& (IsDark || (tabs.Appearance == TabAppearance.Normal && tabs.DrawMode == TabDrawMode.Normal));
 		}
 
+		/// <summary>
+		/// A tab strip as the WPF programs draw one: each tab a little apart from the next, its top corners rounded, the
+		/// chosen one framed and open into the page, the others filled and lighter under the mouse.
+		/// </summary>
+		/// <remarks>
+		/// The tabs keep the places and sizes Windows gives them, so nothing on the window moves; each is drawn
+		/// <see cref="TabGap"/> narrower to leave the room between.
+		/// </remarks>
 		static void Tabs_Paint(object sender, PaintEventArgs e)
 		{
 			var tabs = (TabControl)sender;
 			var g = e.Graphics;
-			if (!IsDark && HasTabArtwork)
-			{
-				PaintTabArtwork(tabs, g);
-				return;
-			}
-			var back = tabs.Parent?.BackColor ?? SystemColors.Control;
-			var border = GetColor("BorderDark", SystemColors.ControlDark);
-			using (var brush = new SolidBrush(back))
-				g.FillRectangle(brush, tabs.ClientRectangle);
-			if (tabs.TabCount == 0)
-				return;
-			// The page area, framed, joined by the open tab.
-			var strip = tabs.GetTabRect(0);
-			var pane = new Rectangle(0, strip.Bottom, tabs.ClientSize.Width - 1, tabs.ClientSize.Height - strip.Bottom - 1);
-			using (var pen = new Pen(border))
-				g.DrawRectangle(pen, pane);
-			for (var i = 0; i < tabs.TabCount; i++)
-			{
-				var selected = i == tabs.SelectedIndex;
-				var bounds = tabs.GetTabRect(i);
-				if (selected)
-					bounds = new Rectangle(bounds.X - 2, bounds.Y - 2, bounds.Width + 4, bounds.Height + 3);
-				var fill = GetColor(selected ? "BackgroundTabSelected" : "BackgroundDark", SystemColors.Control);
-				var text = GetColor(selected ? "ForegroundTabSelected" : "ForegroundTab", SystemColors.ControlText);
-				using (var brush = new SolidBrush(fill))
-					g.FillRectangle(brush, bounds);
-				using (var pen = new Pen(border))
-				{
-					g.DrawLine(pen, bounds.Left, bounds.Bottom - 1, bounds.Left, bounds.Top);
-					g.DrawLine(pen, bounds.Left, bounds.Top, bounds.Right - 1, bounds.Top);
-					g.DrawLine(pen, bounds.Right - 1, bounds.Top, bounds.Right - 1, bounds.Bottom - 1);
-				}
-				var page = tabs.TabPages[i];
-				var content = bounds;
-				var index = GetTabImageIndex(tabs, page);
-				if (index >= 0)
-				{
-					// Drawn by the list itself: taking an image out of it copies the image on every paint, and
-					// fails for a list read from a resource stream.
-					var size = tabs.ImageList.ImageSize;
-					tabs.ImageList.Draw(g, content.X + 6, content.Y + (content.Height - size.Height) / 2, index);
-					content = new Rectangle(content.X + size.Width + 6, content.Y, content.Width - size.Width - 6, content.Height);
-				}
-				TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
-					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
-			}
-		}
-
-		/// <summary>
-		/// The light tab strip as Windows draws it, with the tab artwork of its visual style, but for the text of the tabs
-		/// not chosen, which is dimmer.
-		/// </summary>
-		/// <remarks>
-		/// The parts, sizes and offsets are those Windows uses, compared pixel by pixel with strips Windows drew in one row
-		/// and in several, with each tab chosen, under the mouse and with the keyboard focus. The first tab of a row, and
-		/// the last tab while it is not chosen, have artwork of their own. The chosen tab is two pixels larger each way
-		/// and two more at the bottom, where it opens into the page; its content sits a pixel higher and that of the
-		/// others a pixel lower.
-		/// </remarks>
-		static void PaintTabArtwork(TabControl tabs, Graphics g)
-		{
 			using (var brush = new SolidBrush(tabs.Parent?.BackColor ?? SystemColors.Control))
 				g.FillRectangle(brush, tabs.ClientRectangle);
 			if (tabs.TabCount == 0)
@@ -798,55 +939,68 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				rects[i] = tabs.GetTabRect(i);
 				bottom = Math.Max(bottom, rects[i].Bottom);
 			}
-			TabRenderer.DrawTabPage(g, new Rectangle(0, bottom, tabs.ClientSize.Width, tabs.ClientSize.Height - bottom));
-			var renderer = new VisualStyleRenderer(VisualStyleElement.Tab.TabItem.Normal);
-			// The chosen tab is drawn last, over the others.
-			for (var pass = 0; pass < 2; pass++)
-				for (var i = 0; i < rects.Length; i++)
+			var smoothing = g.SmoothingMode;
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var border = Themed("BorderDark", SystemColors.ControlDark);
+			// The page, framed, its top left corner square where the first tab stands.
+			var pane = new Rectangle(0, bottom, tabs.ClientSize.Width, tabs.ClientSize.Height - bottom);
+			using (var brush = new SolidBrush(Themed("BackgroundLight", SystemColors.Control)))
+			using (var fill = RoundedRectangle(pane, 0, CornerRadius, CornerRadius, CornerRadius))
+				g.FillPath(brush, fill);
+			using (var pen = new Pen(border))
+			using (var frame = RoundedRectangle(new RectangleF(pane.X + 0.5f, pane.Y + 0.5f, pane.Width - 1, pane.Height - 1), 0, CornerRadius, CornerRadius, CornerRadius))
+				g.DrawPath(pen, frame);
+			for (var i = 0; i < rects.Length; i++)
+			{
+				var selected = i == tabs.SelectedIndex;
+				// Each tab stands on the page's top line; the chosen one comes down over it, open into the page.
+				var r = rects[i];
+				var bounds = new Rectangle(r.X, r.Y, Math.Max(1, r.Width - TabGap), bottom - r.Y + (selected ? 1 : 0));
+				var fill = selected ? Themed("BackgroundTabSelected", SystemColors.Window)
+					: i == hot && tabs.Enabled ? Themed("BackgroundDarkSelected", SystemColors.ControlLight)
+					: Themed("BackgroundDark", SystemColors.ControlLight);
+				using (var brush = new SolidBrush(fill))
+				using (var face = RoundedRectangle(bounds, CornerRadius, CornerRadius, 0, 0))
+					g.FillPath(brush, face);
+				if (selected)
+					using (var pen = new Pen(border))
+					using (var edge = TabEdge(new RectangleF(bounds.X + 0.5f, bounds.Y + 0.5f, bounds.Width - 1, bounds.Height - 1)))
+						g.DrawPath(pen, edge);
+				var content = bounds;
+				var page = tabs.TabPages[i];
+				var index = GetTabImageIndex(tabs, page);
+				if (index >= 0)
 				{
-					var selected = i == tabs.SelectedIndex;
-					if (selected != (pass == 1))
-						continue;
-					var first = true;
-					for (var j = 0; j < rects.Length; j++)
-						if (rects[j].Y == rects[i].Y)
-							first &= rects[j].X >= rects[i].X;
-					var last = i == rects.Length - 1 && !selected;
-					var bounds = rects[i];
-					if (selected)
-						bounds = new Rectangle(bounds.X - 2, bounds.Y - 2, bounds.Width + 4, bounds.Height + 4);
-					var itemState = !tabs.Enabled ? TabItemState.Disabled
-						: selected ? TabItemState.Selected
-						: i == hot ? TabItemState.Hot
-						: TabItemState.Normal;
-					// TABP_TABITEM, or TABP_TOPTABITEM for the chosen tab, then its left, right or both edges variant.
-					renderer.SetParameters("TAB", (selected ? 5 : 1) + (first ? 1 : 0) + (last ? 2 : 0), (int)itemState);
-					renderer.DrawBackground(g, bounds);
-					var content = renderer.GetBackgroundContentRectangle(g, bounds);
-					content.Offset(0, selected ? -1 : 1);
-					var page = tabs.TabPages[i];
-					var index = GetTabImageIndex(tabs, page);
-					if (index >= 0)
-					{
-						// Drawn by the list itself, as in the dark strip.
-						var size = tabs.ImageList.ImageSize;
-						tabs.ImageList.Draw(g, content.X + 6 + (selected ? 2 : 0), content.Y + (content.Height - size.Height) / 2, index);
-						content = new Rectangle(content.X + size.Width + 6, content.Y, content.Width - size.Width - 6, content.Height);
-					}
-					content.Offset(1, 0);
-					var text = !tabs.Enabled ? SystemColors.GrayText
-						: selected || SystemInformation.HighContrast ? SystemColors.ControlText
-						: LightTabText;
-					TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
-						TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
+					// Drawn by the list itself: taking an image out of it copies the image on every paint, and
+					// fails for a list read from a resource stream.
+					var size = tabs.ImageList.ImageSize;
+					tabs.ImageList.Draw(g, content.X + 6, content.Y + (content.Height - size.Height) / 2, index);
+					content = new Rectangle(content.X + size.Width + 6, content.Y, content.Width - size.Width - 6, content.Height);
 				}
+				var text = !tabs.Enabled ? SystemColors.GrayText
+					: Themed(selected ? "ForegroundTabSelected" : "ForegroundTab", SystemColors.ControlText);
+				TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
+					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
+			}
+			g.SmoothingMode = smoothing;
 			// Windows marks the chosen tab while the strip has the keyboard focus and focus is being shown.
 			if (tabs.SelectedIndex >= 0 && tabs.Focused && (bool)(ShowFocusCuesProperty?.GetValue(tabs, null) ?? false))
 			{
 				var focus = rects[tabs.SelectedIndex];
-				focus.Inflate(-1, -1);
+				focus = new Rectangle(focus.X + 2, focus.Y + 2, Math.Max(1, focus.Width - TabGap - 4), Math.Max(1, focus.Height - 4));
 				ControlPaint.DrawFocusRectangle(g, focus);
 			}
+		}
+
+		/// <summary>The edge of the chosen tab: up its left side, round its top corners and down its right, open at the bottom into the page.</summary>
+		static GraphicsPath TabEdge(RectangleF r)
+		{
+			var path = new GraphicsPath();
+			path.AddLine(r.Left, r.Bottom, r.Left, r.Top + CornerRadius);
+			path.AddArc(r.Left, r.Top, CornerRadius * 2, CornerRadius * 2, 180, 90);
+			path.AddArc(r.Right - CornerRadius * 2, r.Top, CornerRadius * 2, CornerRadius * 2, 270, 90);
+			path.AddLine(r.Right, r.Top + CornerRadius, r.Right, r.Bottom);
+			return path;
 		}
 
 		static void Tabs_MouseMove(object sender, MouseEventArgs e)

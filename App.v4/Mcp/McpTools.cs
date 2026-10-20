@@ -223,7 +223,11 @@ namespace x360ce.App.Mcp
 				return null;
 			}
 			SettingsManager.MapGamePadDevices(game, (MapTo)controller, new[] { device }, hidGuardian, keep);
-			return null;
+			// The Add button asks about this; here the assistant is told, and decides with the person.
+			var twin = DInput.XInputPlaces.ReadsOnlyInFront(device) ? device.RawInputTwin(SettingsManager.UserDevices.ItemsToArraySynchronized()) : null;
+			return twin == null ? null : string.Format(
+				"Done. Windows feeds an Xbox controller's DirectInput row only to the program in front, so it works in x360ce and stops once a game is in front. "
+				+ "Its Raw Input row, InstanceGuid {0}, keeps working in games: map that one instead, and take this one off with controller 0.", twin.InstanceGuid);
 		}
 
 		[McpTool(AiAccess.Configure, "Waits for the user to press a button or move an axis on any controller, and returns which device and which control moved, named as the Record button names them.", OnUiThread = false)]
