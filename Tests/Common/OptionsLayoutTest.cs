@@ -134,27 +134,29 @@ namespace x360ce.Tests
 		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
 		public void Update_log_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), "LogTextBox", "CheckButton",
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), "LogTextBox", null, "CheckButton",
 				"CheckForUpdatesCheckBox", "PrivacyLabel", "CheckButton", "CheckDigitalSignatureCheckBox", "CheckVersionCheckBox");
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("The plugin list starts just below the folder row and ends at the bottom of the page, and the note wraps inside the page, at every zoom")]
+		[Description("The plugin list starts just below the folder row and ends just above the AutoHotkey group, which ends at the bottom of the page, and the note wraps inside the page, at every zoom")]
 		public void Plugins_list_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), "PluginsDataGridView", "OpenFolderButton",
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), "PluginsDataGridView", "AutoHotkeyGroupBox", "OpenFolderButton",
 				"AllowThirdPartyPluginsCheckBox", "NoteLabel", "FolderLabel", "FolderTextBox", "OpenFolderButton");
 		}
 
 		/// <summary>
-		/// A page of rows above one control that takes the rest: at each zoom Windows offers, the rows are whole and inside
-		/// the page, nothing covers anything, and the last control starts just below the rows and ends at the bottom.
+		/// A page of rows above one control that takes the rest, and maybe one more control below it: at each zoom Windows
+		/// offers, the rows are whole and inside the page, nothing covers anything, the control that takes the rest starts
+		/// just below the rows, and it, or the control below it, ends at the bottom.
 		/// </summary>
 		/// <param name="make">Makes the page.</param>
 		/// <param name="fillName">The control that takes the rest of the page.</param>
+		/// <param name="belowName">The control below it, at the bottom of the page, or null when it is the last.</param>
 		/// <param name="rowName">A control of one row's height: the most space allowed between rows, and below the last.</param>
 		/// <param name="aboveNames">The controls in the rows above it.</param>
-		static void FollowsTheRowsAboveItAtEveryZoom(Func<UserControl> make, string fillName, string rowName, params string[] aboveNames)
+		static void FollowsTheRowsAboveItAtEveryZoom(Func<UserControl> make, string fillName, string belowName, string rowName, params string[] aboveNames)
 		{
 			Ui.OnUiThread(() =>
 			{
@@ -180,9 +182,18 @@ namespace x360ce.Tests
 						var room = on(rowName).Height;
 						Assert.IsTrue(fill.Top >= above && fill.Top - above < room, string.Format(
 							"At {0:P0} {1} starts at {2}, and the rows above it end at {3}.", zoom, fillName, fill.Top, above));
-						var below = content.ClientSize.Height - fill.Bottom;
+						var lastName = fillName;
+						var last = fill;
+						if (belowName != null)
+						{
+							last = on(belowName);
+							lastName = belowName;
+							Assert.IsTrue(last.Top >= fill.Bottom && last.Top - fill.Bottom < room, string.Format(
+								"At {0:P0} {1} ends at {2}, and {3} below it starts at {4}.", zoom, fillName, fill.Bottom, belowName, last.Top));
+						}
+						var below = content.ClientSize.Height - last.Bottom;
 						Assert.IsTrue(below >= 0 && below < room, string.Format(
-							"At {0:P0} {1} ends {2} px from the bottom of the page.", zoom, fillName, below));
+							"At {0:P0} {1} ends {2} px from the bottom of the page.", zoom, lastName, below));
 						foreach (var name in aboveNames)
 							Assert.IsTrue(on(name).Right <= content.ClientSize.Width, string.Format(
 								"At {0:P0} {1} {2} runs past the page, which is {3} px wide.", zoom, name, on(name), content.ClientSize.Width));

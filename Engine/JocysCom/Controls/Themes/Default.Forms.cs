@@ -221,14 +221,18 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <remarks>Copied here because not every program carries Default.xaml; a test holds them equal to it.</remarks>
 		public static readonly Dictionary<string, Color> LightPalette = new Dictionary<string, Color>
 		{
+			{ "BackgroundWhite", Color.FromArgb(0xFF, 0xFF, 0xFF) },
 			{ "BackgroundLight", Color.FromArgb(0xF0, 0xF0, 0xF0) },
 			{ "BackgroundDark", Color.FromArgb(0xDE, 0xDE, 0xDE) },
 			{ "BackgroundDarkSelected", Color.FromArgb(0xC2, 0xE7, 0xFF) },
 			{ "BackgroundDarkPressed", Color.FromArgb(0xC2, 0xFF, 0xE7) },
 			{ "BackgroundTabSelected", Color.FromArgb(0xFF, 0xFF, 0xFF) },
 			{ "BorderDark", Color.FromArgb(0xCC, 0xCC, 0xCC) },
+			{ "ForegroundBlack", Color.FromArgb(0x00, 0x00, 0x00) },
+			{ "ForegroundGray", Color.FromArgb(0x5A, 0x5A, 0x5A) },
 			{ "ForegroundTab", Color.FromArgb(0x5A, 0x5A, 0x5A) },
 			{ "ForegroundTabSelected", Color.FromArgb(0x00, 0x00, 0x00) },
+			{ "SelectedBackground", Color.FromArgb(0x00, 0x78, 0xD4) },
 		};
 
 		/// <summary>The colour of a WPF theme key in the theme in use, light or dark; without the key, the fallback.</summary>
@@ -290,6 +294,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Color FlatMouseOverBackColor;
 			public Color FlatMouseDownBackColor;
 			public bool UseVisualStyleBackColor;
+			/// <summary>A check box's own padding, which the larger box of Default.xaml widens.</summary>
+			public Padding Padding;
 			public bool EnableHeadersVisualStyles;
 			public Color LinkColor;
 			public Color VisitedLinkColor;
@@ -299,8 +305,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			/// <summary>A property grid's own colours, in the order <see cref="PropertyGridColors"/> reads them.</summary>
 			public Color[] PropertyGridColors;
 			public bool NativeDark;
-			/// <summary>The tab under the mouse on a tab strip painted in the light theme, or -1.</summary>
+			/// <summary>The tab under the mouse on a tab strip painted here, or -1.</summary>
 			public int HotTab = -1;
+			/// <summary>Whether the window of a tab strip has the taller tabs of a strip painted here.</summary>
+			public bool TabsPadded;
 		}
 
 		static readonly ConditionalWeakTable<Control, State> States = new ConditionalWeakTable<Control, State>();
@@ -326,8 +334,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				control.ControlAdded += (sender, e) => Apply(e.Control);
 				control.HandleCreated += (sender, e) =>
 				{
-					// A window made again has no window style yet.
+					// A window made again has no window style yet, and a tab strip its own padding.
 					state.NativeDark = false;
+					state.TabsPadded = false;
 					ApplyNative((Control)sender);
 				};
 			}
@@ -367,6 +376,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				state.FlatMouseOverBackColor = button.FlatAppearance.MouseOverBackColor;
 				state.FlatMouseDownBackColor = button.FlatAppearance.MouseDownBackColor;
 				state.UseVisualStyleBackColor = button.UseVisualStyleBackColor;
+				state.Padding = button.Padding;
 			}
 			if (control is ComboBox combo)
 				state.FlatStyle = combo.FlatStyle;
@@ -483,6 +493,24 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					else
 						button.ResetBackColor();
 				}
+				// A check box is drawn by Windows Forms, so its box can be drawn again as the WPF programs draw it, with
+				// its text moved right to make room for the larger box.
+				button.Paint -= CheckBox_Paint;
+				if (button is CheckBox check)
+				{
+					var wpf = IsWpfCheckBox(check, state);
+					var extra = wpf ? CheckBoxPixels(CheckBoxSize.Width) - CheckBoxPixels(WindowsCheckBoxSize) : 0;
+					var padding = new Padding(state.Padding.Left + extra, state.Padding.Top, state.Padding.Right, state.Padding.Bottom);
+					if (check.Padding != padding)
+						check.Padding = padding;
+					if (wpf)
+					{
+						if (state.FlatStyle == FlatStyle.System)
+							check.FlatStyle = FlatStyle.Standard;
+						check.Paint += CheckBox_Paint;
+						check.Invalidate();
+					}
+				}
 			}
 			if (control is ComboBox combo && state.FlatStyle != FlatStyle.Flat)
 				combo.FlatStyle = IsDark ? FlatStyle.Flat : state.FlatStyle;
@@ -554,10 +582,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			State state;
 			if (!control.IsHandleCreated || !States.TryGetValue(control, out state))
 				return;
-			// Windows Forms gives no font to the window of a control painted here, and a tab strip
-			// without one measures its tabs in the larger system font.
-			if (PaintsTabs(control))
-				SetWindowFontMethod?.Invoke(control, null);
+			if (control is TabControl tabs && state.TabsPadded != PaintsTabs(tabs))
+				ApplyTabPadding(tabs, state);
 			if (WindowsBuild < 17763)
 				return;
 			if (control is Form form && form.TopLevel)
@@ -675,8 +701,33 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			_checkRenderer.DrawBackground(e.Graphics, box);
 		}
 
-		/// <summary>The rounding of a button's corners, a tab's top corners and a tab page's frame, as Default.xaml draws them.</summary>
+		/// <summary>The rounding of a button's corners, a tab's top corners and a tab page's frame, as Default.xaml draws them, in device-independent pixels.</summary>
 		const int CornerRadius = 5;
+
+		/// <summary>A size Default.xaml gives in device-independent pixels, in the pixels of the surface drawn on, as WPF scales it.</summary>
+		static float Dip(Graphics g, float value)
+		{
+			return value * g.DpiX / 96f;
+		}
+
+		/// <summary>The width of a line Default.xaml draws one device-independent pixel wide, in whole pixels, so it stays sharp.</summary>
+		static float Line(Graphics g)
+		{
+			return Math.Max(1f, (float)Math.Floor(Dip(g, 1)));
+		}
+
+		/// <summary>
+		/// Smooths the curves drawn on a surface, with whole pixels between whole coordinates, so a straight edge on a whole
+		/// coordinate, or a line half its width in from one, stays sharp, as WPF draws them.
+		/// </summary>
+		/// <returns>The surface's settings before, to restore.</returns>
+		static GraphicsState Smooth(Graphics g)
+		{
+			var saved = g.Save();
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			return saved;
+		}
 
 		/// <summary>Whether a button is drawn as the WPF programs draw one: a push button the program left in a Windows style, while high contrast is off.</summary>
 		static bool IsWpfButton(ButtonBase button, State state)
@@ -685,6 +736,83 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				|| (button is CheckBox check && check.Appearance == Appearance.Button)
 				|| (button is RadioButton radio && radio.Appearance == Appearance.Button);
 			return push && state.FlatStyle != FlatStyle.Flat && state.FlatStyle != FlatStyle.Popup && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>Whether a check box is drawn as the WPF programs draw one: a box before its text the program left in a Windows style, while high contrast is off.</summary>
+		static bool IsWpfCheckBox(CheckBox check, State state)
+		{
+			return check.Appearance == Appearance.Normal && check.CheckAlign == System.Drawing.ContentAlignment.MiddleLeft
+				&& (state.FlatStyle == FlatStyle.Standard || state.FlatStyle == FlatStyle.System) && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>The size of the box Windows draws a check box with, in device-independent pixels.</summary>
+		const int WindowsCheckBoxSize = 13;
+
+		/// <summary>
+		/// The size of Default.xaml's check box, in device-independent pixels: its tick, 10 by 9.1, with 4 on every side for
+		/// the tick's margin, the box's padding and its edge.
+		/// </summary>
+		static readonly SizeF CheckBoxSize = new SizeF(18f, 17.1f);
+
+		/// <summary>A check box size in device-independent pixels, in whole pixels of this program's windows.</summary>
+		static int CheckBoxPixels(float value)
+		{
+			return (int)Math.Round(value * ControlsHelper.DpiScale);
+		}
+
+		/// <summary>The rounding of a check box's corners in Default.xaml, in device-independent pixels.</summary>
+		const int CheckBoxRadius = 3;
+
+		/// <summary>The tick of Default.xaml's check box: its outline, in the 10 by 9.1 units of its own box.</summary>
+		static readonly PointF[] CheckMark =
+		{
+			new PointF(9.97498f, 1.22334f), new PointF(4.6983f, 9.09834f), new PointF(4.52164f, 9.09834f), new PointF(0f, 5.19331f),
+			new PointF(1.27664f, 3.52165f), new PointF(4.255f, 6.08833f), new PointF(8.33331f, 0f),
+		};
+
+		/// <summary>
+		/// Draws Default.xaml's check box over the smaller one Windows drew, from where the program's padding ends: a rounded
+		/// box in the window colour, edged in grey or, under the mouse, in the hover colour, with Default.xaml's tick, or a
+		/// square while it is neither on nor off. Disabled, WPF draws the whole check box at half strength and its box at
+		/// half that again.
+		/// </summary>
+		static void CheckBox_Paint(object sender, PaintEventArgs e)
+		{
+			var check = (CheckBox)sender;
+			State state;
+			if (!States.TryGetValue(check, out state))
+				return;
+			var g = e.Graphics;
+			// A check box in a small font is not as tall as Default.xaml's box, which is then made as tall as it.
+			var height = Math.Min(CheckBoxPixels(CheckBoxSize.Height), check.ClientSize.Height);
+			var box = new Rectangle(state.Padding.Left, (check.ClientSize.Height - height) / 2, CheckBoxPixels(CheckBoxSize.Width), height);
+			using (var brush = new SolidBrush(check.BackColor))
+				g.FillRectangle(brush, Rectangle.Inflate(box, 1, 1));
+			var hot = check.Enabled && check.ClientRectangle.Contains(check.PointToClient(Control.MousePosition));
+			var alpha = check.Enabled ? 255 : 64;
+			var saved = Smooth(g);
+			var line = Line(g);
+			var radius = Dip(g, CheckBoxRadius);
+			using (var face = RoundedRectangle(Inset(box, line / 2), radius, radius, radius, radius))
+			{
+				using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("BackgroundWhite", SystemColors.Window))))
+					g.FillPath(brush, face);
+				using (var pen = new Pen(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "ForegroundGray", SystemColors.ControlDark)), line))
+					g.DrawPath(pen, face);
+			}
+			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("ForegroundBlack", SystemColors.ControlText))))
+			{
+				// The tick, or the square, stands 4 in from every side of the box, as in Default.xaml; the tick keeps to the
+				// middle of a box made shorter.
+				var scale = Dip(g, 1);
+				var inset = 4 * scale;
+				var top = box.Y + (box.Height - 9.1f * scale) / 2;
+				if (check.CheckState == CheckState.Checked)
+					g.FillPolygon(brush, CheckMark.Select(p => new PointF(box.X + inset + p.X * scale, top + p.Y * scale)).ToArray());
+				else if (check.CheckState == CheckState.Indeterminate)
+					g.FillRectangle(brush, Inset(box, inset));
+			}
+			g.Restore(saved);
 		}
 
 		/// <summary>Whether a strip is a tool bar drawn as the WPF programs draw one: not a menu, a status bar or a drop-down, while high contrast is off.</summary>
@@ -698,7 +826,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		{
 			State state;
 			if (control is ButtonBase button && States.TryGetValue(control, out state))
-				return IsWpfButton(button, state);
+				return IsWpfButton(button, state) || (button is CheckBox check && IsWpfCheckBox(check, state));
 			return PaintsTabs(control)
 				|| (control is TabPage && PaintsTabs(control.Parent))
 				|| (control is ToolStrip strip && IsWpfToolBar(strip));
@@ -712,14 +840,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		{
 			var button = (ButtonBase)sender;
 			var g = e.Graphics;
-			var smoothing = g.SmoothingMode;
-			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var saved = Smooth(g);
 			var bounds = new Rectangle(0, 0, button.Width, button.Height);
 			// A side another button stands against, as the halves of a split button do, keeps its corners square.
 			bool joinedLeft, joinedRight;
 			JoinedSides(button, out joinedLeft, out joinedRight);
-			var left = joinedLeft ? 0 : CornerRadius;
-			var right = joinedRight ? 0 : CornerRadius;
+			var radius = Dip(g, CornerRadius);
+			var left = joinedLeft ? 0 : radius;
+			var right = joinedRight ? 0 : radius;
 			// The corners: the whole button less its rounded face, filled with the colour behind it.
 			using (var corners = new GraphicsPath(FillMode.Alternate))
 			using (var face = RoundedRectangle(bounds, left, right, right, left))
@@ -733,7 +861,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				using (var pen = new Pen(Themed("SelectedBackground", SystemColors.Highlight)))
 				using (var outline = RoundedRectangle(new RectangleF(0.5f, 0.5f, button.Width - 1, button.Height - 1), left, right, right, left))
 					g.DrawPath(pen, outline);
-			g.SmoothingMode = smoothing;
+			g.Restore(saved);
 		}
 
 		/// <summary>Whether another button on the same parent stands against this one's left or right side.</summary>
@@ -754,6 +882,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				left |= Math.Abs(o.Right - b.Left) <= 1;
 				right |= Math.Abs(o.Left - b.Right) <= 1;
 			}
+		}
+
+		/// <summary>A rectangle drawn in by the same room on every side, so a line twice that wide drawn on it stays inside the first.</summary>
+		static RectangleF Inset(RectangleF r, float room)
+		{
+			return new RectangleF(r.X + room, r.Y + room, r.Width - room * 2, r.Height - room * 2);
 		}
 
 		/// <summary>A rectangle with each corner rounded by its own radius; nought leaves that corner square.</summary>
@@ -840,13 +974,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					: item.Pressed ? "BackgroundDarkPressed"
 					: item.Selected ? "BackgroundDarkSelected"
 					: "BackgroundDark";
-				var smoothing = g.SmoothingMode;
-				g.SmoothingMode = SmoothingMode.AntiAlias;
-				using (var brush = new SolidBrush(Themed(key, SystemColors.ControlLight)))
+				var saved = Smooth(g);
 				// A pixel in from each side, so buttons next to each other stand apart, as WPF's margins keep them.
-				using (var face = RoundedRectangle(new RectangleF(ToolBarButtonInset, 0, item.Width - ToolBarButtonInset * 2, item.Height), CornerRadius, CornerRadius, CornerRadius, CornerRadius))
+				var inset = Dip(g, ToolBarButtonInset);
+				var radius = Dip(g, CornerRadius);
+				using (var brush = new SolidBrush(Themed(key, SystemColors.ControlLight)))
+				using (var face = RoundedRectangle(new RectangleF(inset, 0, item.Width - inset * 2, item.Height), radius, radius, radius, radius))
 					g.FillPath(brush, face);
-				g.SmoothingMode = smoothing;
+				g.Restore(saved);
 				return true;
 			}
 		}
@@ -902,6 +1037,34 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>The room between two tabs, as Default.xaml leaves it after a TabItem.</summary>
 		const int TabGap = 3;
 
+		/// <summary>
+		/// What a tab strip painted here adds to its tabs' padding on every side, in device-independent pixels, for each tab
+		/// to stand as large as a TabItem of Default.xaml.
+		/// </summary>
+		const int TabExtraPadding = 2;
+
+		/// <summary>
+		/// Gives the tabs of a strip painted here the height of a TabItem of Default.xaml, and the tabs of any other
+		/// strip their own padding back.
+		/// </summary>
+		/// <remarks>
+		/// The padding goes to the window, because setting <see cref="TabControl.Padding"/> makes the window again, and
+		/// a .NET Framework strip that holds the focus then throws as the focus leaves it. Windows measures the tabs
+		/// with the padding when it is given the font, which Windows Forms gives no window painted here.
+		/// </remarks>
+		static void ApplyTabPadding(TabControl tabs, State state)
+		{
+			state.TabsPadded = PaintsTabs(tabs);
+			var extra = state.TabsPadded ? (int)Math.Round(TabExtraPadding * ControlsHelper.DpiScale) : 0;
+			var x = tabs.Padding.X + extra;
+			var y = tabs.Padding.Y + extra;
+			NativeMethods.SendMessage(tabs.Handle, NativeMethods.TCM_SETPADDING, IntPtr.Zero, (IntPtr)((y << 16) | (x & 0xFFFF)));
+			SetWindowFontMethod?.Invoke(tabs, null);
+			// Setting the tab size makes the strip lay its pages out again, in the room the tabs now leave.
+			var itemSize = TypeDescriptor.GetProperties(tabs)[nameof(TabControl.ItemSize)];
+			tabs.ItemSize = itemSize.ShouldSerializeValue(tabs) ? tabs.ItemSize : Size.Empty;
+		}
+
 		static readonly PropertyInfo ShowFocusCuesProperty = typeof(Control).GetProperty("ShowFocusCues", BindingFlags.Instance | BindingFlags.NonPublic);
 
 		/// <summary>
@@ -939,34 +1102,38 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				rects[i] = tabs.GetTabRect(i);
 				bottom = Math.Max(bottom, rects[i].Bottom);
 			}
-			var smoothing = g.SmoothingMode;
-			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var saved = Smooth(g);
 			var border = Themed("BorderDark", SystemColors.ControlDark);
+			var line = Line(g);
+			var radius = Dip(g, CornerRadius);
+			var gap = (int)Math.Round(Dip(g, TabGap));
 			// The page, framed, its top left corner square where the first tab stands.
 			var pane = new Rectangle(0, bottom, tabs.ClientSize.Width, tabs.ClientSize.Height - bottom);
 			using (var brush = new SolidBrush(Themed("BackgroundLight", SystemColors.Control)))
-			using (var fill = RoundedRectangle(pane, 0, CornerRadius, CornerRadius, CornerRadius))
+			using (var fill = RoundedRectangle(pane, 0, radius, radius, radius))
 				g.FillPath(brush, fill);
-			using (var pen = new Pen(border))
-			using (var frame = RoundedRectangle(new RectangleF(pane.X + 0.5f, pane.Y + 0.5f, pane.Width - 1, pane.Height - 1), 0, CornerRadius, CornerRadius, CornerRadius))
+			using (var pen = new Pen(border, line))
+			using (var frame = RoundedRectangle(Inset(pane, line / 2), 0, radius, radius, radius))
 				g.DrawPath(pen, frame);
 			for (var i = 0; i < rects.Length; i++)
 			{
 				var selected = i == tabs.SelectedIndex;
 				// Each tab stands on the page's top line; the chosen one comes down over it, open into the page.
 				var r = rects[i];
-				var bounds = new Rectangle(r.X, r.Y, Math.Max(1, r.Width - TabGap), bottom - r.Y + (selected ? 1 : 0));
+				var bounds = new Rectangle(r.X, r.Y, Math.Max(1, r.Width - gap), bottom - r.Y + (selected ? (int)line : 0));
 				var fill = selected ? Themed("BackgroundTabSelected", SystemColors.Window)
 					: i == hot && tabs.Enabled ? Themed("BackgroundDarkSelected", SystemColors.ControlLight)
 					: Themed("BackgroundDark", SystemColors.ControlLight);
 				using (var brush = new SolidBrush(fill))
-				using (var face = RoundedRectangle(bounds, CornerRadius, CornerRadius, 0, 0))
+				using (var face = RoundedRectangle(bounds, radius, radius, 0, 0))
 					g.FillPath(brush, face);
 				if (selected)
-					using (var pen = new Pen(border))
-					using (var edge = TabEdge(new RectangleF(bounds.X + 0.5f, bounds.Y + 0.5f, bounds.Width - 1, bounds.Height - 1)))
+					using (var pen = new Pen(border, line))
+					using (var edge = TabEdge(Inset(bounds, line / 2), radius))
 						g.DrawPath(pen, edge);
-				var content = bounds;
+				// The text and image of every tab sit at the same height: the line the chosen one reaches over into the
+				// page is not part of it.
+				var content = new Rectangle(bounds.X, bounds.Y, bounds.Width, bottom - r.Y);
 				var page = tabs.TabPages[i];
 				var index = GetTabImageIndex(tabs, page);
 				if (index >= 0)
@@ -982,24 +1149,24 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
 					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
 			}
-			g.SmoothingMode = smoothing;
+			g.Restore(saved);
 			// Windows marks the chosen tab while the strip has the keyboard focus and focus is being shown.
 			if (tabs.SelectedIndex >= 0 && tabs.Focused && (bool)(ShowFocusCuesProperty?.GetValue(tabs, null) ?? false))
 			{
 				var focus = rects[tabs.SelectedIndex];
-				focus = new Rectangle(focus.X + 2, focus.Y + 2, Math.Max(1, focus.Width - TabGap - 4), Math.Max(1, focus.Height - 4));
+				focus = new Rectangle(focus.X + 2, focus.Y + 2, Math.Max(1, focus.Width - gap - 4), Math.Max(1, focus.Height - 4));
 				ControlPaint.DrawFocusRectangle(g, focus);
 			}
 		}
 
 		/// <summary>The edge of the chosen tab: up its left side, round its top corners and down its right, open at the bottom into the page.</summary>
-		static GraphicsPath TabEdge(RectangleF r)
+		static GraphicsPath TabEdge(RectangleF r, float radius)
 		{
 			var path = new GraphicsPath();
-			path.AddLine(r.Left, r.Bottom, r.Left, r.Top + CornerRadius);
-			path.AddArc(r.Left, r.Top, CornerRadius * 2, CornerRadius * 2, 180, 90);
-			path.AddArc(r.Right - CornerRadius * 2, r.Top, CornerRadius * 2, CornerRadius * 2, 270, 90);
-			path.AddLine(r.Right, r.Top + CornerRadius, r.Right, r.Bottom);
+			path.AddLine(r.Left, r.Bottom, r.Left, r.Top + radius);
+			path.AddArc(r.Left, r.Top, radius * 2, radius * 2, 180, 90);
+			path.AddArc(r.Right - radius * 2, r.Top, radius * 2, radius * 2, 270, 90);
+			path.AddLine(r.Right, r.Top + radius, r.Right, r.Bottom);
 			return path;
 		}
 
@@ -1192,6 +1359,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int UISF_HIDEFOCUS = 0x1;
 			public const int TBM_GETTHUMBRECT = 0x0419;
 			public const int TBM_GETCHANNELRECT = 0x041A;
+			public const int TCM_SETPADDING = 0x132B;
 
 			[StructLayout(LayoutKind.Sequential)]
 			public struct RECT
