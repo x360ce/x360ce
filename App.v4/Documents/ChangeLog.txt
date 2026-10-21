@@ -8,7 +8,7 @@
 - Changed: The Add list sorts devices by source and offers plugin devices.
 - Changed: Plugin devices that come with x360ce name x360ce as their maker.
 - Changed: Ticking Centering spring with Wheel range left as it is picks 900°.
-- Changed: Buttons, tool bars, tabs and check boxes look as they do in x360ce 5.
+- Changed: Buttons, tool bars, tabs, check boxes, drop-down lists and group boxes look as they do in x360ce 5; disabled ones are faded.
 - Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
 - Added: AutoHotkey v2 scripts can watch and drive every device. Off by default.
 - Added: Formulas can read another device on the controller, such as =c1.d2.b1.

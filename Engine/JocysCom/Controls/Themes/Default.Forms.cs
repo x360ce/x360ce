@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -26,9 +27,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// that use <see cref="SystemColors"/> follow without change. <see cref="Apply"/> covers what Windows
 	/// draws itself: native backgrounds, buttons, check boxes, drop-down lists, tab strips, sliders, scrollbars and
 	/// title bars.
-	/// The light theme is the Windows colours. In both themes, push buttons, tool bars and tab strips are drawn as the
-	/// WPF programs draw them with Default.xaml: buttons flat, filled and rounded, tabs rounded and apart. High contrast
-	/// keeps the Windows look.
+	/// The light theme is the Windows colours. In both themes, push buttons, tool bars, tab strips, check boxes, group boxes
+	/// and drop-down lists are drawn as the WPF programs draw them with Default.xaml: buttons and lists flat, filled and
+	/// rounded, tabs rounded and apart, frames rounded, and a disabled control at half strength. High contrast keeps the
+	/// Windows look.
 	/// <para>
 	/// The colours are read as XML from Default_DarkTheme.xaml, embedded in the program as a resource, and no
 	/// WPF type is named here: loading WPF makes a Windows Forms process DPI aware mid-run.
@@ -512,12 +514,33 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					}
 				}
 			}
-			if (control is ComboBox combo && state.FlatStyle != FlatStyle.Flat)
-				combo.FlatStyle = IsDark ? FlatStyle.Flat : state.FlatStyle;
+			if (control is ComboBox combo)
+			{
+				if (state.FlatStyle != FlatStyle.Flat)
+					combo.FlatStyle = IsDark ? FlatStyle.Flat : state.FlatStyle;
+				var paint = PaintsComboBox(combo);
+				SetPaintedHere(combo, state, paint, ComboBox_Paint);
+				// Painted here, the list shows the mouse and the choice itself.
+				combo.MouseEnter -= Repaint;
+				combo.MouseLeave -= Repaint;
+				combo.SelectedIndexChanged -= Repaint;
+				combo.DropDownClosed -= Repaint;
+				combo.GotFocus -= Repaint;
+				combo.LostFocus -= Repaint;
+				if (paint)
+				{
+					combo.MouseEnter += Repaint;
+					combo.MouseLeave += Repaint;
+					combo.SelectedIndexChanged += Repaint;
+					combo.DropDownClosed += Repaint;
+					combo.GotFocus += Repaint;
+					combo.LostFocus += Repaint;
+				}
+			}
 			if (control is GroupBox group)
 			{
 				group.Paint -= GroupBox_Paint;
-				if (IsDark)
+				if (PaintsGroupBox(group))
 					group.Paint += GroupBox_Paint;
 				group.Invalidate();
 			}
@@ -546,12 +569,18 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			// worked out.
 			if (control is ToolStrip strip && state.RenderMode != ToolStripRenderMode.Custom)
 			{
-				if (IsWpfToolBar(strip))
+				var wpf = IsWpfToolBar(strip);
+				if (wpf)
 					strip.Renderer = new WpfToolStripRenderer();
 				else if (IsDark)
 					strip.Renderer = new ToolStripProfessionalRenderer(new ProfessionalColorTable());
 				else
 					strip.RenderMode = state.RenderMode;
+				strip.ItemAdded -= ToolBar_ItemAdded;
+				if (wpf)
+					strip.ItemAdded += ToolBar_ItemAdded;
+				foreach (ToolStripItem item in strip.Items)
+					PadToolBarItem(item, wpf);
 			}
 			if (control is TabControl tabs && tabs.Alignment == TabAlignment.Top)
 			{
@@ -738,10 +767,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return push && state.FlatStyle != FlatStyle.Flat && state.FlatStyle != FlatStyle.Popup && !SystemInformation.HighContrast;
 		}
 
-		/// <summary>Whether a check box is drawn as the WPF programs draw one: a box before its text the program left in a Windows style, while high contrast is off.</summary>
+		/// <summary>
+		/// Whether a check box is drawn as the WPF programs draw one: a box before its text, left to right and without an image,
+		/// the program left in a Windows style, while high contrast is off.
+		/// </summary>
 		static bool IsWpfCheckBox(CheckBox check, State state)
 		{
 			return check.Appearance == Appearance.Normal && check.CheckAlign == System.Drawing.ContentAlignment.MiddleLeft
+				&& check.RightToLeft != RightToLeft.Yes && check.Image == null && check.BackgroundImage == null
 				&& (state.FlatStyle == FlatStyle.Standard || state.FlatStyle == FlatStyle.System) && !SystemInformation.HighContrast;
 		}
 
@@ -770,11 +803,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			new PointF(1.27664f, 3.52165f), new PointF(4.255f, 6.08833f), new PointF(8.33331f, 0f),
 		};
 
+		/// <summary>The room between Default.xaml's check box and its text, in device-independent pixels: the box's margin.</summary>
+		const int CheckBoxTextGap = 3;
+
 		/// <summary>
-		/// Draws Default.xaml's check box over the smaller one Windows drew, from where the program's padding ends: a rounded
-		/// box in the window colour, edged in grey or, under the mouse, in the hover colour, with Default.xaml's tick, or a
-		/// square while it is neither on nor off. Disabled, WPF draws the whole check box at half strength and its box at
-		/// half that again.
+		/// Draws a check box as Default.xaml does, over what Windows Forms drew: from where the program's padding ends, a
+		/// rounded box in the window colour, edged in the control colour or, under the mouse, in the hover colour, with
+		/// Default.xaml's tick, or a square while it is neither on nor off; then its text. Disabled, WPF draws the whole check
+		/// box at half strength and its box at half that again.
 		/// </summary>
 		static void CheckBox_Paint(object sender, PaintEventArgs e)
 		{
@@ -783,12 +819,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (!States.TryGetValue(check, out state))
 				return;
 			var g = e.Graphics;
-			// A check box in a small font is not as tall as Default.xaml's box, which is then made as tall as it.
-			var height = Math.Min(CheckBoxPixels(CheckBoxSize.Height), check.ClientSize.Height);
-			var box = new Rectangle(state.Padding.Left, (check.ClientSize.Height - height) / 2, CheckBoxPixels(CheckBoxSize.Width), height);
+			var client = check.ClientRectangle;
+			if (check.BackColor.A < 255)
+				ButtonRenderer.DrawParentBackground(g, client, check);
 			using (var brush = new SolidBrush(check.BackColor))
-				g.FillRectangle(brush, Rectangle.Inflate(box, 1, 1));
-			var hot = check.Enabled && check.ClientRectangle.Contains(check.PointToClient(Control.MousePosition));
+				g.FillRectangle(brush, client);
+			// A check box in a small font is not as tall as Default.xaml's box, which is then made as tall as it.
+			var height = Math.Min(CheckBoxPixels(CheckBoxSize.Height), client.Height);
+			var box = new Rectangle(state.Padding.Left, (client.Height - height) / 2, CheckBoxPixels(CheckBoxSize.Width), height);
+			var hot = check.Enabled && client.Contains(check.PointToClient(Control.MousePosition));
 			var alpha = check.Enabled ? 255 : 64;
 			var saved = Smooth(g);
 			var line = Line(g);
@@ -797,7 +836,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{
 				using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("BackgroundWhite", SystemColors.Window))))
 					g.FillPath(brush, face);
-				using (var pen = new Pen(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "ForegroundGray", SystemColors.ControlDark)), line))
+				using (var pen = new Pen(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "BackgroundDark", SystemColors.ControlLight)), line))
 					g.DrawPath(pen, face);
 			}
 			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("ForegroundBlack", SystemColors.ControlText))))
@@ -812,6 +851,68 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				else if (check.CheckState == CheckState.Indeterminate)
 					g.FillRectangle(brush, Inset(box, inset));
 			}
+			g.Restore(saved);
+			var text = Rectangle.FromLTRB(box.Right + CheckBoxPixels(CheckBoxTextGap), check.Padding.Top,
+				client.Width - check.Padding.Right, client.Height - check.Padding.Bottom);
+			var behind = check.BackColor.A == 255 ? check.BackColor : check.Parent?.BackColor ?? SystemColors.Control;
+			TextRenderer.DrawText(g, check.Text, check.Font, text, check.Enabled ? check.ForeColor : Half(check.ForeColor, behind),
+				TextFlags(check) | TextFormatFlags.NoPadding);
+			if (check.Focused && (bool)(ShowFocusCuesProperty?.GetValue(check, null) ?? false))
+				DrawFocus(g, client, check.ForeColor);
+		}
+
+		/// <summary>A colour at half strength over the one behind it, as WPF draws a disabled control.</summary>
+		static Color Half(Color color, Color behind)
+		{
+			return Color.FromArgb((color.R + behind.R) / 2, (color.G + behind.G) / 2, (color.B + behind.B) / 2);
+		}
+
+		const System.Drawing.ContentAlignment AnyCenter = System.Drawing.ContentAlignment.TopCenter
+			| System.Drawing.ContentAlignment.MiddleCenter | System.Drawing.ContentAlignment.BottomCenter;
+		const System.Drawing.ContentAlignment AnyRight = System.Drawing.ContentAlignment.TopRight
+			| System.Drawing.ContentAlignment.MiddleRight | System.Drawing.ContentAlignment.BottomRight;
+		const System.Drawing.ContentAlignment AnyTop = System.Drawing.ContentAlignment.TopLeft
+			| System.Drawing.ContentAlignment.TopCenter | System.Drawing.ContentAlignment.TopRight;
+		const System.Drawing.ContentAlignment AnyBottom = System.Drawing.ContentAlignment.BottomLeft
+			| System.Drawing.ContentAlignment.BottomCenter | System.Drawing.ContentAlignment.BottomRight;
+
+		static readonly PropertyInfo ShowKeyboardCuesProperty = typeof(Control).GetProperty("ShowKeyboardCues", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>
+		/// The flags Windows Forms draws a button's text with: placed as the button aligns it, broken into lines, its
+		/// ampersands shown, underlined or hidden as the button and the keyboard ask.
+		/// </summary>
+		static TextFormatFlags TextFlags(ButtonBase button)
+		{
+			var align = button.TextAlign;
+			// Right to left, the sides swap.
+			var rtl = button.RightToLeft == RightToLeft.Yes;
+			var right = (align & AnyRight) != 0;
+			var left = (align & (AnyCenter | AnyRight)) == 0;
+			var flags = TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl;
+			flags |= (align & AnyCenter) != 0 ? TextFormatFlags.HorizontalCenter
+				: (rtl ? left : right) ? TextFormatFlags.Right : TextFormatFlags.Left;
+			flags |= (align & AnyTop) != 0 ? TextFormatFlags.Top : (align & AnyBottom) != 0 ? TextFormatFlags.Bottom : TextFormatFlags.VerticalCenter;
+			if (button.AutoEllipsis)
+				flags |= TextFormatFlags.EndEllipsis;
+			if (rtl)
+				flags |= TextFormatFlags.RightToLeft;
+			if (!button.UseMnemonic)
+				flags |= TextFormatFlags.NoPrefix;
+			else if (!(bool)(ShowKeyboardCuesProperty?.GetValue(button, null) ?? true))
+				flags |= TextFormatFlags.HidePrefix;
+			return flags;
+		}
+
+		/// <summary>Default.xaml's focus mark: a dotted line round the control, its corners rounded, in the colour of its text.</summary>
+		static void DrawFocus(Graphics g, Rectangle bounds, Color color)
+		{
+			var saved = Smooth(g);
+			var line = Line(g);
+			var radius = Dip(g, CornerRadius);
+			using (var pen = new Pen(color, line) { DashPattern = new[] { 1f, 2f } })
+			using (var path = RoundedRectangle(Inset(bounds, line / 2), radius, radius, radius, radius))
+				g.DrawPath(pen, path);
 			g.Restore(saved);
 		}
 
@@ -829,7 +930,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				return IsWpfButton(button, state) || (button is CheckBox check && IsWpfCheckBox(check, state));
 			return PaintsTabs(control)
 				|| (control is TabPage && PaintsTabs(control.Parent))
-				|| (control is ToolStrip strip && IsWpfToolBar(strip));
+				|| (control is ToolStrip strip && IsWpfToolBar(strip))
+				|| PaintsGroupBox(control)
+				|| PaintsComboBox(control);
 		}
 
 		/// <summary>
@@ -849,19 +952,60 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var left = joinedLeft ? 0 : radius;
 			var right = joinedRight ? 0 : radius;
 			// The corners: the whole button less its rounded face, filled with the colour behind it.
+			var behind = button.Parent?.BackColor ?? SystemColors.Control;
 			using (var corners = new GraphicsPath(FillMode.Alternate))
 			using (var face = RoundedRectangle(bounds, left, right, right, left))
-			using (var brush = new SolidBrush(button.Parent?.BackColor ?? SystemColors.Control))
+			using (var brush = new SolidBrush(behind))
 			{
 				corners.AddRectangle(bounds);
 				corners.AddPath(face, false);
 				g.FillPath(brush, corners);
+			}
+			// Windows Forms draws a disabled button's text in a shade of its fill, too dark to read on a dark one, so the
+			// face is drawn again at half strength, as WPF draws a disabled control, with the image and text where Windows
+			// Forms put them.
+			Rectangle text, image;
+			if (!button.Enabled && GetButtonLayout(button, e, out text, out image))
+			{
+				using (var brush = new SolidBrush(Half(button.BackColor, behind)))
+				using (var face = RoundedRectangle(bounds, left, right, right, left))
+					g.FillPath(brush, face);
+				var picture = button.Image;
+				if (picture != null)
+					using (var attributes = new ImageAttributes())
+					{
+						attributes.SetColorMatrix(new ColorMatrix { Matrix33 = 0.5f });
+						var place = new Rectangle(image.X + (image.Width - picture.Width) / 2, image.Y + (image.Height - picture.Height) / 2, picture.Width, picture.Height);
+						g.DrawImage(picture, place, 0, 0, picture.Width, picture.Height, GraphicsUnit.Pixel, attributes);
+					}
+				TextRenderer.DrawText(g, button.Text, button.Font, text, Half(button.ForeColor, behind), TextFlags(button));
 			}
 			if (button.Focused && (bool)(ShowFocusCuesProperty?.GetValue(button, null) ?? false))
 				using (var pen = new Pen(Themed("SelectedBackground", SystemColors.Highlight)))
 				using (var outline = RoundedRectangle(new RectangleF(0.5f, 0.5f, button.Width - 1, button.Height - 1), left, right, right, left))
 					g.DrawPath(pen, outline);
 			g.Restore(saved);
+		}
+
+		static readonly PropertyInfo AdapterProperty = typeof(ButtonBase).GetProperty("Adapter", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>Where Windows Forms puts a button's text and image, from its own layout; false where the runtime does not show it.</summary>
+		static bool GetButtonLayout(ButtonBase button, PaintEventArgs e, out Rectangle text, out Rectangle image)
+		{
+			text = image = Rectangle.Empty;
+			const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			var adapter = AdapterProperty?.GetValue(button, null);
+			var options = adapter?.GetType().GetMethod("Layout", flags, null, new[] { typeof(PaintEventArgs) }, null)?.Invoke(adapter, new object[] { e });
+			var data = options?.GetType().GetMethod("Layout", flags, null, Type.EmptyTypes, null)?.Invoke(options, null);
+			// .NET Framework names the fields in lower case, later Windows Forms in upper.
+			var type = data?.GetType();
+			var textField = type?.GetField("textBounds", flags) ?? type?.GetField("TextBounds", flags);
+			var imageField = type?.GetField("imageBounds", flags) ?? type?.GetField("ImageBounds", flags);
+			if (textField == null || imageField == null)
+				return false;
+			text = (Rectangle)textField.GetValue(data);
+			image = (Rectangle)imageField.GetValue(data);
+			return true;
 		}
 
 		/// <summary>Whether another button on the same parent stands against this one's left or right side.</summary>
@@ -920,9 +1064,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// </summary>
 		class WpfToolStripRenderer : ToolStripProfessionalRenderer
 		{
-			/// <summary>The room left at each side of a tool bar button's fill.</summary>
-			const int ToolBarButtonInset = 1;
-
 			public WpfToolStripRenderer() : base(new ProfessionalColorTable()) { }
 
 			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
@@ -965,7 +1106,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				DrawArrow(new ToolStripArrowRenderEventArgs(e.Graphics, split, split.DropDownButtonBounds, split.ForeColor, ArrowDirection.Down));
 			}
 
-			/// <summary>Fills a button on the tool bar itself; false for one on a drop-down, which is drawn as before.</summary>
+			/// <summary>
+			/// Fills a button on the tool bar itself, at half strength while disabled, as WPF draws a disabled control; false
+			/// for one on a drop-down, which is drawn as before.
+			/// </summary>
 			static bool FillItem(Graphics g, ToolStripItem item)
 			{
 				if (item.IsOnDropDown)
@@ -975,10 +1119,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					: item.Selected ? "BackgroundDarkSelected"
 					: "BackgroundDark";
 				var saved = Smooth(g);
-				// A pixel in from each side, so buttons next to each other stand apart, as WPF's margins keep them.
+				// In from each side, so buttons next to each other stand apart, as WPF's margins keep them.
 				var inset = Dip(g, ToolBarButtonInset);
 				var radius = Dip(g, CornerRadius);
-				using (var brush = new SolidBrush(Themed(key, SystemColors.ControlLight)))
+				using (var brush = new SolidBrush(Color.FromArgb(item.Enabled ? 255 : 128, Themed(key, SystemColors.ControlLight))))
 				using (var face = RoundedRectangle(new RectangleF(inset, 0, item.Width - inset * 2, item.Height), radius, radius, radius, radius))
 					g.FillPath(brush, face);
 				g.Restore(saved);
@@ -986,23 +1130,92 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 		}
 
+		/// <summary>The room left at each side of a tool bar button's fill, in device-independent pixels: half the room between two.</summary>
+		const int ToolBarButtonInset = 2;
+
 		/// <summary>
-		/// The visual style draws a group box frame light and, unless the box sets its own text colour, the
-		/// caption in the style's colour; in the dark theme both are drawn again in the theme colours.
+		/// What the theme adds between a tool bar button's fill and what is on it, in device-independent pixels: with the room
+		/// Windows Forms leaves round the text, the 5 Default.xaml pads a button with.
+		/// </summary>
+		const int ToolBarButtonPadding = 2;
+
+		/// <summary>The padding each tool bar button had before the theme widened it.</summary>
+		static readonly ConditionalWeakTable<ToolStripItem, StrongBox<Padding>> ItemPaddings = new ConditionalWeakTable<ToolStripItem, StrongBox<Padding>>();
+
+		/// <summary>
+		/// Widens a button on a tool bar drawn as the WPF programs draw one by the room round its fill and the padding inside it,
+		/// and gives any other button its own padding back.
+		/// </summary>
+		static void PadToolBarItem(ToolStripItem item, bool wpf)
+		{
+			if (!(item is ToolStripButton || item is ToolStripDropDownButton || item is ToolStripSplitButton))
+				return;
+			StrongBox<Padding> own;
+			if (!ItemPaddings.TryGetValue(item, out own))
+			{
+				if (!wpf)
+					return;
+				own = new StrongBox<Padding>(item.Padding);
+				ItemPaddings.Add(item, own);
+			}
+			var extra = wpf ? (int)Math.Round((ToolBarButtonInset + ToolBarButtonPadding) * ControlsHelper.DpiScale) : 0;
+			var padding = new Padding(own.Value.Left + extra, own.Value.Top, own.Value.Right + extra, own.Value.Bottom);
+			if (item.Padding != padding)
+				item.Padding = padding;
+		}
+
+		static void ToolBar_ItemAdded(object sender, ToolStripItemEventArgs e)
+		{
+			PadToolBarItem(e.Item, true);
+		}
+
+		/// <summary>Whether a group box is drawn as the WPF programs draw one: one Windows Forms draws, while high contrast is off.</summary>
+		static bool PaintsGroupBox(Control control)
+		{
+			return control is GroupBox group && group.FlatStyle != FlatStyle.System && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>Where a group box's caption breaks its frame, and how far its text stands in from there, in device-independent pixels, as in Default.xaml.</summary>
+		const int GroupBoxCaptionGap = 10;
+		const int GroupBoxCaptionPadding = 5;
+
+		/// <summary>
+		/// Draws a group box as Default.xaml does, over what Windows Forms drew: its frame rounded, in the border colour, with a
+		/// line in the window colour beside it, a pixel right and down, and its caption in a break in the frame clear of the
+		/// corner, at the height Windows Forms gives it.
 		/// </summary>
 		static void GroupBox_Paint(object sender, PaintEventArgs e)
 		{
 			var box = (GroupBox)sender;
 			var g = e.Graphics;
+			var client = box.ClientRectangle;
+			if (box.BackColor.A < 255)
+				ButtonRenderer.DrawParentBackground(g, client, box);
+			using (var brush = new SolidBrush(box.BackColor))
+				g.FillRectangle(brush, client);
 			var caption = TextRenderer.MeasureText(g, box.Text.Length > 0 ? box.Text : " ", box.Font);
 			var top = caption.Height / 2;
+			var saved = Smooth(g);
+			var line = Line(g);
+			var radius = Dip(g, CornerRadius);
+			var frame = new RectangleF(0, top, client.Width - line, client.Height - top - line);
+			using (var pen = new Pen(Themed("BackgroundWhite", SystemColors.Window), line))
+			using (var path = RoundedRectangle(Inset(new RectangleF(frame.X + line, frame.Y + line, frame.Width, frame.Height), line / 2), radius, radius, radius, radius))
+				g.DrawPath(pen, path);
+			using (var pen = new Pen(Themed("BorderDark", SystemColors.ControlDark), line))
+			using (var path = RoundedRectangle(Inset(frame, line / 2), radius, radius, radius, radius))
+				g.DrawPath(pen, path);
+			g.Restore(saved);
+			if (box.Text.Length == 0)
+				return;
+			const TextFormatFlags flags = TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
+			var width = TextRenderer.MeasureText(g, box.Text, box.Font, Size.Empty, flags).Width;
+			var gap = (int)Math.Round(Dip(g, GroupBoxCaptionGap));
+			var padding = (int)Math.Round(Dip(g, GroupBoxCaptionPadding));
 			using (var brush = new SolidBrush(box.BackColor))
-				g.FillRectangle(brush, box.ClientRectangle);
-			using (var pen = new Pen(GetColor("BorderDark", SystemColors.ControlDark)))
-				g.DrawRectangle(pen, 0, top, box.Width - 1, box.Height - top - 1);
-			if (box.Text.Length > 0)
-				TextRenderer.DrawText(g, box.Text, box.Font, new Point(6, 0),
-					box.Enabled ? box.ForeColor : SystemColors.GrayText, box.BackColor);
+				g.FillRectangle(brush, gap, 0, width + padding * 2, caption.Height);
+			TextRenderer.DrawText(g, box.Text, box.Font, new Rectangle(gap + padding, 0, width, caption.Height),
+				box.Enabled ? box.ForeColor : SystemColors.GrayText, flags);
 		}
 
 		#endregion
@@ -1016,7 +1229,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// The slider has no dark Windows style, so in the dark theme it is painted here, double buffered. The tab strip
-		/// is painted here in both themes, as the WPF programs draw one.
+		/// and the drop-down list are painted here in both themes, as the WPF programs draw them.
 		/// </summary>
 		/// <remarks>A control no longer painted here gets back the styles it had, flag by flag.</remarks>
 		static void SetPaintedHere(Control control, State state, bool paintHere, PaintEventHandler paint)
@@ -1032,6 +1245,66 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (paintHere)
 				control.Paint += paint;
 			control.Invalidate();
+		}
+
+		static void Repaint(object sender, EventArgs e)
+		{
+			((Control)sender).Invalidate();
+		}
+
+		/// <summary>
+		/// Whether a drop-down list is painted here, as the WPF programs draw one: a list the user picks from rather than types
+		/// in, whose items the program does not draw, while high contrast is off.
+		/// </summary>
+		static bool PaintsComboBox(Control control)
+		{
+			return control is ComboBox combo && combo.DropDownStyle == ComboBoxStyle.DropDownList
+				&& combo.DrawMode == DrawMode.Normal && !SystemInformation.HighContrast;
+		}
+
+		/// <summary>The width of the column a drop-down list's triangle stands in, in device-independent pixels.</summary>
+		const int ComboBoxArrowColumn = 16;
+
+		/// <summary>The room between a drop-down list's edge and what is on it, in device-independent pixels: its border and padding.</summary>
+		const int ComboBoxPadding = 5;
+
+		/// <summary>
+		/// A drop-down list as Default.xaml draws one: a rounded field in the control colour, the hover colour under the mouse,
+		/// with the chosen item's text and a triangle pointing down; disabled, all at half strength.
+		/// </summary>
+		static void ComboBox_Paint(object sender, PaintEventArgs e)
+		{
+			var combo = (ComboBox)sender;
+			var g = e.Graphics;
+			var client = combo.ClientRectangle;
+			var behind = combo.Parent?.BackColor ?? SystemColors.Control;
+			using (var brush = new SolidBrush(behind))
+				g.FillRectangle(brush, client);
+			var hot = combo.Enabled && client.Contains(combo.PointToClient(Control.MousePosition));
+			var alpha = combo.Enabled ? 255 : 128;
+			var saved = Smooth(g);
+			var radius = Dip(g, CornerRadius);
+			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "BackgroundDark", SystemColors.ControlLight))))
+			using (var face = RoundedRectangle(client, radius, radius, radius, radius))
+				g.FillPath(brush, face);
+			// Default.xaml's triangle, 10 by 5 drawn 1.4 times as large, in the middle of its column.
+			var scale = Dip(g, 1);
+			var x = client.Width - (ComboBoxPadding + ComboBoxArrowColumn / 2f) * scale;
+			var y = client.Height / 2f;
+			var points = new[]
+			{
+				new PointF(x - 7 * scale, y - 3.5f * scale), new PointF(x + 7 * scale, y - 3.5f * scale), new PointF(x, y + 3.5f * scale),
+			};
+			using (var brush = new SolidBrush(Color.FromArgb(alpha, combo.ForeColor)))
+				g.FillPolygon(brush, points);
+			g.Restore(saved);
+			var padding = (int)Math.Round(ComboBoxPadding * scale);
+			var text = Rectangle.FromLTRB(padding, 0, client.Width - (int)Math.Round((ComboBoxPadding * 2 + ComboBoxArrowColumn) * scale), client.Height);
+			TextRenderer.DrawText(g, combo.Text, combo.Font, text, combo.Enabled ? combo.ForeColor : Half(combo.ForeColor, behind),
+				TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis
+				| TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding);
+			if (combo.Focused && (bool)(ShowFocusCuesProperty?.GetValue(combo, null) ?? false))
+				DrawFocus(g, client, combo.ForeColor);
 		}
 
 		/// <summary>The room between two tabs, as Default.xaml leaves it after a TabItem.</summary>
