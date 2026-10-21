@@ -1,4 +1,8 @@
-﻿## [4.26.38.0] - 2026-10-17
+﻿## [4.26.39.0] - 2026-10-21
+
+- Fixed: A wheel the program cannot talk to kept half its centering, and rested short of straight (Issue #1650, emreyagdan64-prog).
+
+## [4.26.38.0] - 2026-10-17
 
 - Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.
