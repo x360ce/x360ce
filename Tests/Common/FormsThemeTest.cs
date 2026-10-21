@@ -165,6 +165,35 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("interface")]
+		[Description("A drop-down list painted as the WPF programs paint one has its font, and is as tall as a push button")]
+		public void Drop_down_list_has_its_font_and_a_button_s_height()
+		{
+			OnUiThread(() =>
+			{
+				// Themed before its window is made, as a page is that is shown later.
+				using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+				{
+					var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+					combo.Items.Add("Gamepad");
+					var button = new Button { Top = 40 };
+					form.Controls.AddRange(new Control[] { combo, button });
+					FormsTheme.SetTheme(ThemeType.Light);
+					FormsTheme.Apply(form);
+					form.Show();
+					const int WM_GETFONT = 0x0031;
+					const int CB_GETITEMHEIGHT = 0x0154;
+					Assert.AreNotEqual(IntPtr.Zero, SendMessage(combo.Handle, WM_GETFONT, IntPtr.Zero, IntPtr.Zero),
+						"The list has no font, so Windows draws it in the system's bitmap font.");
+					var field = (int)SendMessage(combo.Handle, CB_GETITEMHEIGHT, (IntPtr)(-1), IntPtr.Zero);
+					Assert.AreEqual(button.Height, combo.Height, "The list is not as tall as a button; its field is " + field + " of " + combo.Height + ".");
+				}
+			});
+		}
+
+		[DllImport("user32.dll")]
+		static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
 		[DllImport("user32.dll")]
 		static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref RECT rect);
 

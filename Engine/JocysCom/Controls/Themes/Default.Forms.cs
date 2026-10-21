@@ -296,7 +296,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Color FlatMouseOverBackColor;
 			public Color FlatMouseDownBackColor;
 			public bool UseVisualStyleBackColor;
-			/// <summary>A check box's own padding, which the larger box of Default.xaml widens.</summary>
+			/// <summary>A check box's own padding, which the larger box of Default.xaml widens, or a drop-down list's, which its height does.</summary>
 			public Padding Padding;
 			public bool EnableHeadersVisualStyles;
 			public Color LinkColor;
@@ -381,7 +381,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				state.Padding = button.Padding;
 			}
 			if (control is ComboBox combo)
+			{
 				state.FlatStyle = combo.FlatStyle;
+				state.Padding = combo.Padding;
+			}
 			if (control is TabPage page)
 				state.UseVisualStyleBackColor = page.UseVisualStyleBackColor;
 			if (control is DataGridView grid)
@@ -525,6 +528,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					combo.FlatStyle = IsDark ? FlatStyle.Flat : state.FlatStyle;
 				var paint = PaintsComboBox(combo);
 				SetPaintedHere(combo, state, paint, ComboBox_Paint);
+				FitComboBox(combo, EventArgs.Empty);
 				// Painted here, the list shows the mouse and the choice itself.
 				combo.MouseEnter -= Repaint;
 				combo.MouseLeave -= Repaint;
@@ -532,6 +536,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				combo.DropDownClosed -= Repaint;
 				combo.GotFocus -= Repaint;
 				combo.LostFocus -= Repaint;
+				combo.FontChanged -= FitComboBox;
+				combo.SizeChanged -= ComboBox_SizeChanged;
 				if (paint)
 				{
 					combo.MouseEnter += Repaint;
@@ -540,6 +546,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					combo.DropDownClosed += Repaint;
 					combo.GotFocus += Repaint;
 					combo.LostFocus += Repaint;
+					combo.FontChanged += FitComboBox;
+					combo.SizeChanged += ComboBox_SizeChanged;
 				}
 			}
 			if (control is GroupBox group)
@@ -626,6 +634,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				return;
 			if (control is TabControl tabs && state.TabsPadded != PaintsTabs(tabs))
 				ApplyTabPadding(tabs, state);
+			if (control is ComboBox)
+				FitComboBox(control, EventArgs.Empty);
 			if (WindowsBuild < 17763)
 				return;
 			if (control is Form form && form.TopLevel)
@@ -1307,13 +1317,65 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
+		/// Gives the window of a drop-down list its font, and makes a list painted here as tall as a push button in the same
+		/// font, as Default.xaml makes both: its text with 5 device-independent pixels above and below. One on a tool bar keeps
+		/// the bar's height, and any other list gets its own size back.
+		/// </summary>
+		/// <remarks>
+		/// Windows Forms gives its font only to a window it leaves Windows to paint; without it, Windows sizes the field and draws
+		/// the list it opens in the system's bitmap font. The padding is what Windows Forms adds to a list's preferred height, so
+		/// a layout leaves the room.
+		/// </remarks>
+		static void FitComboBox(object sender, EventArgs e)
+		{
+			var combo = (ComboBox)sender;
+			State state;
+			if (!States.TryGetValue(combo, out state))
+				return;
+			var height = ComboBoxHeight(combo);
+			var natural = combo.PreferredHeight - combo.Padding.Vertical + state.Padding.Vertical;
+			var extra = Math.Max(0, height - natural);
+			var padding = new Padding(state.Padding.Left, state.Padding.Top + extra / 2, state.Padding.Right, state.Padding.Bottom + extra - extra / 2);
+			if (combo.Padding != padding)
+				combo.Padding = padding;
+			if (!combo.IsHandleCreated)
+				return;
+			SetWindowFontMethod?.Invoke(combo, null);
+			RaiseComboBox(combo, height);
+		}
+
+		/// <summary>The height Default.xaml gives a drop-down list painted here, off a tool bar; 0 for any other list.</summary>
+		static int ComboBoxHeight(ComboBox combo)
+		{
+			return PaintsComboBox(combo) && !(combo.Parent is ToolStrip)
+				? combo.Font.Height + (int)Math.Round(ComboBoxPadding * 2 * ControlsHelper.DpiScale)
+				: 0;
+		}
+
+		/// <summary>Makes a drop-down list's field tall enough for the list to stand the height given.</summary>
+		static void RaiseComboBox(ComboBox combo, int height)
+		{
+			var field = (int)NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_GETITEMHEIGHT, (IntPtr)(-1), IntPtr.Zero);
+			if (field > 0 && height > combo.Height)
+				NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, (IntPtr)(-1), (IntPtr)(field + height - combo.Height));
+		}
+
+		/// <summary>Windows fits a drop-down list's field to its font whenever the list is resized, so it is raised again.</summary>
+		static void ComboBox_SizeChanged(object sender, EventArgs e)
+		{
+			var combo = (ComboBox)sender;
+			if (combo.IsHandleCreated)
+				RaiseComboBox(combo, ComboBoxHeight(combo));
+		}
+
+		/// <summary>
 		/// Whether a drop-down list is painted here, as the WPF programs draw one: a list the user picks from rather than types
-		/// in, whose items the program does not draw, while high contrast is off.
+		/// in, whose items the program does not draw and which does not edit a grid cell, while high contrast is off.
 		/// </summary>
 		static bool PaintsComboBox(Control control)
 		{
 			return control is ComboBox combo && combo.DropDownStyle == ComboBoxStyle.DropDownList
-				&& combo.DrawMode == DrawMode.Normal && !SystemInformation.HighContrast;
+				&& combo.DrawMode == DrawMode.Normal && !(control is IDataGridViewEditingControl) && !SystemInformation.HighContrast;
 		}
 
 		/// <summary>The width of the column a drop-down list's triangle stands in, in device-independent pixels.</summary>
@@ -1687,6 +1749,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int TBM_GETTHUMBRECT = 0x0419;
 			public const int TBM_GETCHANNELRECT = 0x041A;
 			public const int TCM_SETPADDING = 0x132B;
+			public const int CB_SETITEMHEIGHT = 0x0153;
+			public const int CB_GETITEMHEIGHT = 0x0154;
 
 			[StructLayout(LayoutKind.Sequential)]
 			public struct RECT
