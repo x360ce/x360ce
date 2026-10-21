@@ -513,6 +513,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						check.Invalidate();
 					}
 				}
+				// Windows Forms draws the text of any other disabled button, a radio button among them, in a shade of its back
+				// colour, too dark to read on a dark page, so in the dark theme it is drawn again faded.
+				button.Paint -= DisabledText_Paint;
+				if (IsDark && !IsWpfButton(button, state) && !(button is CheckBox checkBox && IsWpfCheckBox(checkBox, state)))
+					button.Paint += DisabledText_Paint;
 			}
 			if (control is ComboBox combo)
 			{
@@ -562,6 +567,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{
 				link.LinkColor = GetColor("ColorBrand", state.LinkColor);
 				link.VisitedLinkColor = GetColor("ColorBrand", state.VisitedLinkColor);
+			}
+			// Windows Forms draws a disabled label's text in a shade of its back colour, too dark to read on a dark page, so
+			// in the dark theme it is drawn again faded.
+			if (control is Label label && !(control is LinkLabel))
+			{
+				label.Paint -= DisabledLabel_Paint;
+				if (IsDark)
+					label.Paint += DisabledLabel_Paint;
 			}
 			// A tool bar without a renderer of its own is drawn as the WPF programs draw one, in both themes. The system
 			// renderer draws a checked button with the Windows colours, so in the dark theme every other strip, a menu
@@ -859,6 +872,47 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				TextFlags(check) | TextFormatFlags.NoPadding);
 			if (check.Focused && (bool)(ShowFocusCuesProperty?.GetValue(check, null) ?? false))
 				DrawFocus(g, client, check.ForeColor);
+		}
+
+		/// <summary>
+		/// Draws the text of a disabled button the theme does not draw itself again, faded, where Windows Forms put it, over the
+		/// darker copy Windows Forms drew there and the lighter one a pixel right and down.
+		/// </summary>
+		static void DisabledText_Paint(object sender, PaintEventArgs e)
+		{
+			var button = (ButtonBase)sender;
+			Rectangle text, image;
+			if (button.Enabled || button.Text.Length == 0 || !GetButtonLayout(button, e, out text, out image))
+				return;
+			var behind = button.BackColor.A == 255 ? button.BackColor : button.Parent?.BackColor ?? SystemColors.Control;
+			using (var brush = new SolidBrush(behind))
+				e.Graphics.FillRectangle(brush, Rectangle.Inflate(text, 1, 1));
+			TextRenderer.DrawText(e.Graphics, button.Text, button.Font, text, Half(button.ForeColor, behind), TextFlags(button));
+		}
+
+		static readonly MethodInfo LabelTextFlagsMethod = typeof(Label).GetMethod("CreateTextFormatFlags", BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+
+		/// <summary>
+		/// Draws the text of a disabled label again, faded, where Windows Forms put it and with the flags it uses. A label with
+		/// an image, or one drawing its text the older way, is left as it is.
+		/// </summary>
+		static void DisabledLabel_Paint(object sender, PaintEventArgs e)
+		{
+			var label = (Label)sender;
+			if (label.Enabled || label.Text.Length == 0 || label.Image != null || label.BackgroundImage != null
+				|| label.UseCompatibleTextRendering || LabelTextFlagsMethod == null)
+				return;
+			var g = e.Graphics;
+			var client = label.ClientRectangle;
+			var face = new Rectangle(client.X + label.Padding.Left, client.Y + label.Padding.Top,
+				client.Width - label.Padding.Horizontal, client.Height - label.Padding.Vertical);
+			if (label.BackColor.A < 255)
+				ButtonRenderer.DrawParentBackground(g, face, label);
+			using (var brush = new SolidBrush(label.BackColor))
+				g.FillRectangle(brush, face);
+			var behind = label.BackColor.A == 255 ? label.BackColor : label.Parent?.BackColor ?? SystemColors.Control;
+			TextRenderer.DrawText(g, label.Text, label.Font, face, Half(label.ForeColor, behind),
+				(TextFormatFlags)LabelTextFlagsMethod.Invoke(label, null));
 		}
 
 		/// <summary>A colour at half strength over the one behind it, as WPF draws a disabled control.</summary>
