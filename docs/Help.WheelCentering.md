@@ -98,6 +98,31 @@ x360ce cannot feel the car's speed: a game made for a gamepad sends only rumble.
 with the kind of car and a speed you set, and it stays the same while you drive. The rumble the game sends is played on
 top of it, as it is now.
 
+### One centring at a time
+
+A wheel can hold its own centre two ways: in its own electronics, which no computer is needed for, or under this
+program's curve. Windows lets a program take the first away and put it back, but not once an effect is being played on
+the wheel, so the two are never both resting on it.
+
+What this program does, then, is leave the wheel alone where it cannot put the centering back:
+
+- **On the wheels the program speaks to over their own interface**, the centering is handed over cleanly. With the
+  spring off there is nothing of ours on the wheel, so its own centering is switched back on even while the device is
+  held — DirectInput's own setting alone stops at the first effect made, and this interface is what gets round that.
+  With the spring on the curve holds the centre and the wheel's own centering is switched off, so the two do not pull
+  against each other.
+- **On every other wheel**, the centering is not touched at all. Its own centering, put there by its maker, stays in
+  charge, and **Friction** is the only other force on the wheel. This is the setting to raise if a wheel stops short of
+  straight: the wheel's own centering is doing as much of the job as it was built to, and the curve is doing the rest.
+
+A wheel pulled by its own strong centering *and* by a weak curve at the same time comes home to neither, and rests
+wherever the two cancel out. That is what a wheel on the second list would get if its own centering were taken away and
+only half put back, which is what versions before 4.26.39.0 did.
+
+A wheel that centres itself as well as it ever did out of the box is behaving correctly. If it still feels light at the
+centre, **Friction** and **Strength** are the two settings that change it, and **Auto** measures the friction the wheel
+actually has.
+
 ### The curve
 
 The force towards the centre has two parts. The first is **Friction**: the least force that turns the wheel, the
@@ -151,6 +176,10 @@ shaking.
 On a Logitech G27 at 900°, 26 % of the wheel's force brings it home from either stop, so Auto sets Friction to 29 %,
 and the family car's Strength of 30 % comes on top of it. Let go at either stop, the wheel was back inside Centre in
 about 1.2 s, crossed the centre twice, and came to rest within 1° of it.
+
+On a wheel the program cannot talk to over its own interface, the wheel's own centering is left in charge and 20 % is
+the friction added on top of it. Run **Auto** on such a wheel before driving: it measures what the wheel actually has,
+and a wheel whose own centering is strong needs more of it than the default.
 
 ### Can the wheel hold this shape by itself?
 

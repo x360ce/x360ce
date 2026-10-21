@@ -225,7 +225,7 @@ namespace x360ce.App.DInput
 							// holds the centre, so the wheel's own centering, or the wheel maker's software, stays in charge
 							// whenever ours is off. A device held with the other setting is held again, because the setting can
 							// only be changed while the device is let go of.
-							var autoCenter = AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring);
+							var autoCenter = AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring, CentringFollowsTheWheel(ud));
 							if (ud.IsExclusiveMode == true && autoCenter.HasValue && ud.AutoCenter != autoCenter.Value)
 								ud.IsExclusiveMode = null;
 							// If exclusive mode is required and mode is unknown or not exclusive then...
@@ -789,20 +789,49 @@ namespace x360ce.App.DInput
 			run.Update(SpringCalibration.Center, 0);
 		}
 
-		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
 		/// <summary>The own centering the engine sets on a device it holds: off while this program's spring holds the centre,
 		/// on for a device that centres itself with a motor (a wheel, a flight stick, anything with one force motor), and null
 		/// for a pad, whose motors only rumble, so it is left as its driver has it.</summary>
-		public static bool? AutoCenterFor(int capType, int actuatorCount, bool springHolds)
+		/// <remarks>
+		/// DirectInput's own setting is not the same thing as a wheel's own centering. Writing it takes whatever the wheel
+		/// arrived with away and puts a spring of DirectInput's making in its place, for as long as the device is held. On a
+		/// wheel that follows this program's reports, as the Logitech wheels do, that is undone again from the same hold, so
+		/// the wheel keeps the centering its maker gave it. On a wheel that does not follow them there is no way back: the
+		/// wheel is left with two half-strength centerings, neither of which brings it home. So on such a wheel the setting
+		/// is left alone, and the wheel keeps its own centering for as long as this program is not asking for the centre.
+		/// </remarks>
+		/// <param name="capType">The kind of device Windows reports.</param>
+		/// <param name="actuatorCount">How many force motors the device has.</param>
+		/// <param name="springHolds">Whether this program's spring, not the wheel's, is to hold the centre.</param>
+		/// <param name="followsReports">Whether the wheel takes this program's own reports, so the setting can be undone from the same hold.</param>
+		public static bool? AutoCenterFor(int capType, int actuatorCount, bool springHolds, bool followsReports)
 		{
 			if (springHolds)
 				return false;
+			if (!followsReports)
+				return null;
 			if (capType == (int)SharpDX.DirectInput.DeviceType.Driving || capType == (int)SharpDX.DirectInput.DeviceType.Flight
 				|| actuatorCount == 1)
 				return true;
 			return null;
 		}
 
+		/// <summary>Whether a wheel takes this program's reports on its own interface, so that what the reports set can be put
+		/// back while the device is held. True for the wheels <see cref="LogitechWheel"/> speaks to, false for every other device.</summary>
+		/// <remarks>
+		/// This is the whole difference between a wheel that comes home and one that stops short. A wheel handled this way,
+		/// as the Logitech wheels are, has its own centering switched back on by a report taken while effects play, so the
+		/// wheel's own centering is never left half-switched. A wheel with no such interface keeps its own centering with
+		/// DirectInput's setting alone, which an effect takes away for as long as the device is held and nothing puts back, so
+		/// there the setting is left alone rather than taken and half-returned.
+		/// </remarks>
+		/// <param name="ud">The device.</param>
+		public static bool CentringFollowsTheWheel(UserDevice ud)
+		{
+			return ud != null && LogitechWheel.SupportsCentering(ud.DevVendorId, ud.DevProductId);
+		}
+
+		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
 		static void SetAutoCenter(Joystick device, bool on)
 		{
 			try
