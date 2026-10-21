@@ -1,4 +1,4 @@
-﻿## [4.27.25.0] - 2026-10-20
+﻿## [4.27.26.0] - 2026-10-21
 
 - Fixed: A Logitech wheel left at its own range shook at its centre with the centering spring on.
 - Fixed: F3 in the Mapped devices, Devices or Games list stopped x360ce with an error.
@@ -9,6 +9,7 @@
 - Changed: Plugin devices that come with x360ce name x360ce as their maker.
 - Changed: Ticking Centering spring with Wheel range left as it is picks 900°.
 - Changed: Buttons, tool bars, tabs, check boxes, drop-down lists and group boxes look as they do in x360ce 5; disabled ones are faded.
+- Changed: The mapping menu groups more than 20 buttons by tens: Button x, Button 1x and so on.
 - Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
 - Added: AutoHotkey v2 scripts can watch and drive every device. Off by default.
 - Added: Formulas can read another device on the controller, such as =c1.d2.b1.

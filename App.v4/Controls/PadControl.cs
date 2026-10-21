@@ -1256,17 +1256,35 @@ namespace x360ce.App.Controls
 			CreateItems(smi, text, tag, count, mask);
 		}
 
-		/// <summary>Create menu item.</summary>
+		/// <summary>The most items one list of the mapping menu shows before they are grouped by tens.</summary>
+		public const int MaxMenuItems = 20;
+
+		/// <summary>
+		/// Create menu items. More than <see cref="MaxMenuItems"/> are grouped by tens: "Button x" holds Buttons 1 to 9,
+		/// "Button 1x" Buttons 10 to 19, and so on, so a device with 128 buttons does not fill the screen.
+		/// </summary>
 		/// <param name="mask">Mask contains information if item is present.</param>
 		void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
 		{
+			var items = new List<KeyValuePair<int, ToolStripMenuItem>>();
 			for (int i = 0; i < count; i++)
 			{
 				// If mask specified and item is not present then...
 				if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
 					continue;
-				var item = CreateItem(text, tag, i + 1);
-				parent.DropDownItems.Add(item);
+				items.Add(new KeyValuePair<int, ToolStripMenuItem>(i + 1, CreateItem(text, tag, i + 1)));
+			}
+			if (items.Count <= MaxMenuItems)
+			{
+				foreach (var item in items)
+					parent.DropDownItems.Add(item.Value);
+				return;
+			}
+			foreach (var tens in items.GroupBy(x => x.Key / 10))
+			{
+				var group = new ToolStripMenuItem(string.Format(text, (tens.Key == 0 ? "" : tens.Key.ToString()) + "x"));
+				group.DropDownItems.AddRange(tens.Select(x => (ToolStripItem)x.Value).ToArray());
+				parent.DropDownItems.Add(group);
 			}
 		}
 
