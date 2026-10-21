@@ -369,19 +369,19 @@ namespace x360ce.Tests
 		[Description("A wheel's own centering is on while the spring is off and off while it holds, for a wheel the program speaks to; a wheel it cannot speak to, and a pad, are left as their drivers have them")]
 		public void Only_a_device_that_centres_itself_gets_its_centering_switched_on()
 		{
-			Func<int, int, bool, bool, bool?> rule = (type, motors, spring, follows) => DInputHelper.AutoCenterFor(type, motors, spring, follows);
-			Assert.AreEqual(true, rule(2, 1, false, true), "A wheel loses its own centering while the spring is off.");
-			Assert.AreEqual(false, rule(2, 1, true, true), "A wheel's own centering fights the spring.");
-			Assert.AreEqual(true, rule(1, 1, false, true), "A wheel that calls itself a joystick loses its own centering.");
-			Assert.AreEqual(true, rule(3, 2, false, true), "A flight stick loses its own centering.");
+			Func<SharpDX.DirectInput.DeviceType, int, bool, bool, bool?> rule = (type, motors, spring, follows) => DInputHelper.AutoCenterFor((int)type, motors, spring, follows);
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Driving, 1, false, true), "A wheel loses its own centering while the spring is off.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Driving, 1, true, true), "A wheel's own centering fights the spring.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Joystick, 1, false, true), "A wheel that calls itself a joystick loses its own centering.");
+			Assert.AreEqual(true, rule(SharpDX.DirectInput.DeviceType.Flight, 2, false, true), "A flight stick loses its own centering.");
 			// A pad with two rumble motors, reported either way, is left as versions before the spring left it.
-			Assert.IsNull(rule(1, 2, false, true), "A two-motor pad's centering is switched.");
-			Assert.IsNull(rule(4, 2, false, true), "A gamepad's centering is switched.");
-			Assert.AreEqual(false, rule(4, 2, true, true), "The spring holds a pad against the pad's own centering.");
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Joystick, 2, false, true), "A two-motor pad's centering is switched.");
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, false, true), "A gamepad's centering is switched.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Gamepad, 2, true, true), "The spring holds a pad against the pad's own centering.");
 			// A wheel the program cannot speak to keeps whatever centering its driver gave it, spring or no spring:
 			// taking the setting away is one way and there is no way back, so it is not taken.
-			Assert.IsNull(rule(2, 1, false, false), "A wheel the program cannot talk to had its own centering taken away while the spring is off.");
-			Assert.AreEqual(false, rule(2, 1, true, false), "A wheel the program cannot talk to keeps its own centering while the spring holds the centre.");
+			Assert.IsNull(rule(SharpDX.DirectInput.DeviceType.Driving, 1, false, false), "A wheel the program cannot talk to had its own centering taken away while the spring is off.");
+			Assert.AreEqual(false, rule(SharpDX.DirectInput.DeviceType.Driving, 1, true, false), "A wheel the program cannot talk to keeps its own centering while the spring holds the centre.");
 			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
 			StringAssert.Contains(source, "AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring, CentringFollowsTheWheel(ud))", "The engine holds a device without the rule.");
 		}
@@ -394,10 +394,10 @@ namespace x360ce.Tests
 			// DirectInput's setting put it back only while nothing is playing. Measured on a Rampage FORCE V995: with
 			// its own centering taken and DirectInput's half-spring left in its place, the wheel came to rest short of
 			// straight, and the same with the spring on, which only ever reached part of the way home.
-			var ramp = new UserDevice { CapType = 2, DiActuatorCount = 1 };
+			var ramp = new UserDevice { CapType = (int)SharpDX.DirectInput.DeviceType.Driving, DiActuatorCount = 1 };
 			Assert.IsFalse(DInputHelper.CentringFollowsTheWheel(ramp), "A wheel with no interface of its own is treated as one the program speaks to.");
 			// A Logitech wheel takes the report that switches its own centering back on while the device is held.
-			var g27 = new UserDevice { CapType = 2, DiActuatorCount = 1, DevVendorId = LogitechWheel.VendorId, DevProductId = 0xC29B };
+			var g27 = new UserDevice { CapType = (int)SharpDX.DirectInput.DeviceType.Driving, DiActuatorCount = 1, DevVendorId = LogitechWheel.VendorId, DevProductId = 0xC29B };
 			Assert.IsTrue(DInputHelper.CentringFollowsTheWheel(g27), "The report that saves a Logitech wheel its own centering is not used.");
 			Assert.IsFalse(DInputHelper.CentringFollowsTheWheel(new UserDevice()), "A device with no identifiers is treated as one the program speaks to.");
 			Assert.IsFalse(DInputHelper.CentringFollowsTheWheel(null), "A device that is not there is treated as one the program speaks to.");
