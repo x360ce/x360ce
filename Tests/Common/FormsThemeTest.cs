@@ -71,23 +71,24 @@ namespace x360ce.Tests
 			{
 				using (var form = new Form())
 				{
-					var box = new TextBox();
+					// A native control the theme leaves to Windows in the light theme.
+					var tree = new TreeView();
 					var button = new Button { Text = "Copy prompt", UseVisualStyleBackColor = true };
 					var tabs = new TabControl();
 					tabs.TabPages.Add("Page");
-					form.Controls.AddRange(new Control[] { box, button, tabs });
+					form.Controls.AddRange(new Control[] { tree, button, tabs });
 					FormsTheme.SetTheme(ThemeType.Dark);
 					FormsTheme.Apply(form);
-					Assert.IsFalse(box.BackColor.IsSystemColor, "A native control kept the Windows brush, which paints it light.");
-					Assert.AreEqual(FormsTheme.Palette["BackgroundWhite"].ToArgb(), box.BackColor.ToArgb());
+					Assert.IsFalse(tree.BackColor.IsSystemColor, "A native control kept the Windows brush, which paints it light.");
+					Assert.AreEqual(FormsTheme.Palette["BackgroundWhite"].ToArgb(), tree.BackColor.ToArgb());
 					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle, "A push button kept the light visual style.");
 					Assert.AreEqual(0, button.FlatAppearance.BorderSize, "A flat border takes room from the text.");
 					Assert.AreEqual(FormsTheme.Palette["BackgroundDark"].ToArgb(), button.BackColor.ToArgb(), "The push button is not filled as the WPF programs fill one.");
 					// Shown light again, as the light theme does with the open windows.
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
-					Assert.IsTrue(box.BackColor.IsSystemColor, "The text box did not get the Windows colour back.");
-					Assert.AreEqual(SystemColors.Window, box.BackColor);
+					Assert.IsTrue(tree.BackColor.IsSystemColor, "The tree did not get the Windows colour back.");
+					Assert.AreEqual(SystemColors.Window, tree.BackColor);
 					// The push button keeps the WPF look, in the light colours.
 					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle);
 					Assert.AreEqual(0, button.FlatAppearance.BorderSize);
@@ -142,8 +143,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("A slider's rail is drawn dark in the dark theme, and Windows draws it light again in light")]
-		public void Slider_goes_dark_and_comes_back()
+		[Description("A slider is drawn as WPF draws one in both themes, its track in WPF's own colour")]
+		public void Slider_is_drawn_as_wpf_s_in_both_themes()
 		{
 			OnUiThread(() =>
 			{
@@ -155,12 +156,14 @@ namespace x360ce.Tests
 					form.Show();
 					FormsTheme.SetTheme(ThemeType.Dark);
 					FormsTheme.Apply(form);
-					var dark = RailCentre(track);
+					var dark = TrackCentre(track);
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
-					var light = RailCentre(track);
-					Assert.IsTrue(dark.GetBrightness() < 0.5f, "The rail is light in the dark theme: " + dark);
-					Assert.IsTrue(light.GetBrightness() > 0.5f, "The rail is dark in the light theme: " + light);
+					var light = TrackCentre(track);
+					// WPF's own slider, which Default.xaml does not restyle, fills its track #E7EAEA in either theme.
+					var wpf = ColorTranslator.FromHtml("#E7EAEA").ToArgb();
+					Assert.AreEqual(wpf, dark.ToArgb(), "The track is not WPF's in the dark theme: " + dark);
+					Assert.AreEqual(wpf, light.ToArgb(), "The track is not WPF's in the light theme: " + light);
 				}
 			});
 		}
@@ -202,37 +205,45 @@ namespace x360ce.Tests
 			public int Left, Top, Right, Bottom;
 		}
 
-		/// <summary>The colour in the middle of a slider's rail, where Windows says the rail is.</summary>
-		static Color RailCentre(TrackBar track)
+		/// <summary>The colour of a slider's track halfway along the rail Windows gives, through the middle of the thumb, where the track is drawn.</summary>
+		static Color TrackCentre(TrackBar track)
 		{
+			const int TBM_GETTHUMBRECT = 0x0419;
 			const int TBM_GETCHANNELRECT = 0x041A;
 			var rail = new RECT();
 			SendMessage(track.Handle, TBM_GETCHANNELRECT, IntPtr.Zero, ref rail);
+			var thumb = new RECT();
+			SendMessage(track.Handle, TBM_GETTHUMBRECT, IntPtr.Zero, ref thumb);
 			using (var bitmap = new Bitmap(track.Width, track.Height))
 			{
 				track.DrawToBitmap(bitmap, new Rectangle(Point.Empty, track.Size));
-				return bitmap.GetPixel((rail.Left + rail.Right) / 2, (rail.Top + rail.Bottom) / 2);
+				return bitmap.GetPixel((rail.Left + rail.Right) / 2, (thumb.Top + thumb.Bottom) / 2);
 			}
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("In the light theme a push button, a tool bar and a tab strip are drawn as the WPF programs draw them, and anything else is left as it is")]
-		public void Light_draws_buttons_tool_bars_and_tabs_as_wpf_and_leaves_the_rest()
+		[Description("In the light theme push buttons, tool bars, tab strips and text boxes are drawn as the WPF programs draw them, and anything else is left as it is")]
+		public void Light_draws_wpf_controls_as_wpf_and_leaves_the_rest()
 		{
 			OnUiThread(() =>
 			{
 				using (var form = new Form())
 				{
+					var tree = new TreeView();
 					var box = new TextBox();
 					var button = new Button { UseVisualStyleBackColor = true };
 					var flat = new Button { FlatStyle = FlatStyle.Flat };
 					var bar = new ToolStrip();
 					var tabs = new TabControl();
 					tabs.TabPages.Add("Page");
-					form.Controls.AddRange(new Control[] { box, button, flat, bar, tabs });
+					form.Controls.AddRange(new Control[] { tree, box, button, flat, bar, tabs });
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
-					Assert.IsTrue(box.BackColor.IsSystemColor, "A text box was changed.");
+					Assert.IsTrue(tree.BackColor.IsSystemColor, "A tree was changed.");
+					// The text box's edge is the frame the theme draws, and it stands as tall as Default.xaml's text box.
+					Assert.AreEqual(BorderStyle.None, box.BorderStyle, "The text box kept Windows' edge.");
+					Assert.AreEqual(box.Font.Height + (int)Math.Round(10 * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale), box.Height, "The text box is not as tall as Default.xaml's.");
+					Assert.AreEqual(FormsTheme.LightPalette["BackgroundWhite"].ToArgb(), box.BackColor.ToArgb(), "The text box is not filled with Default.xaml's BackgroundWhite.");
 					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle, "A push button kept the Windows look.");
 					Assert.AreEqual(0, button.FlatAppearance.BorderSize, "A push button has a border.");
 					Assert.AreEqual(FormsTheme.LightPalette["BackgroundDark"].ToArgb(), button.BackColor.ToArgb());
