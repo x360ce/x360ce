@@ -10,11 +10,18 @@ set "REV=0"
 set "REVDATE=0000-00-00"
 set "MODIFIED=0"
 
+:: What the library is built from, as seen from this folder; this script only numbers it. The number is the count of
+:: commits up to the last one that changed these, so a commit elsewhere in the repository leaves the library, its
+:: version and its signature as they were, and users are not asked to update a library that has not changed.
+set SOURCES="." "../Common" "../InputHook" "../../MinHook" ":(exclude)genrev.cmd"
+
 where git >nul 2>nul
 if not errorlevel 1 (
-    for /f "delims=" %%i in ('git rev-list --count HEAD 2^>nul') do set "REV=%%i"
-    for /f "delims=" %%i in ('git log -1 --date^=short --format^=%%cd 2^>nul') do set "REVDATE=%%i"
-    git diff --quiet HEAD -- 2>nul
+    for /f "delims=" %%r in ('git -C "%~dp0." log -1 --format^=%%H -- %SOURCES% 2^>nul') do (
+        for /f "delims=" %%i in ('git -C "%~dp0." rev-list --count %%r 2^>nul') do set "REV=%%i"
+        for /f "delims=" %%i in ('git -C "%~dp0." log -1 --date^=short --format^=%%cd %%r 2^>nul') do set "REVDATE=%%i"
+    )
+    git -C "%~dp0." diff --quiet HEAD -- %SOURCES% 2>nul
     if errorlevel 1 set "MODIFIED=1"
 )
 

@@ -129,7 +129,7 @@ namespace x360ce.App
 			// 
 			// OptionsTabPage
 			// 
-			this.OptionsTabPage.BackColor = System.Drawing.Color.Transparent;
+			this.OptionsTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
