@@ -184,11 +184,36 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return Enumerable.Empty<ToolStripItem>();
 		}
 
+		/// <summary>Whether the control draws an &amp; in its text as the underline of its access key, not as itself.</summary>
+		static bool ShowsAccessKey(Control control)
+		{
+			if (control is Label label)
+				return label.UseMnemonic;
+			if (control is ButtonBase button)
+				return button.UseMnemonic;
+			return control is GroupBox;
+		}
+
+		/// <summary>Text as a person reads it where an &amp; marks the access key: that &amp; is not shown, and &amp;&amp; shows as one &amp;.</summary>
+		static string WithoutAccessKey(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var sb = new System.Text.StringBuilder(text.Length);
+			for (var i = 0; i < text.Length; i++)
+			{
+				if (text[i] == '&' && ++i == text.Length)
+					break;
+				sb.Append(text[i]);
+			}
+			return sb.ToString();
+		}
+
 		static UiNode Describe(Control control)
 		{
 			var node = new UiNode
 			{
-				Name = NameOf(control.AccessibleName, UiText.NameFor(control), control.Text, HoldsValue(control)),
+				Name = NameOf(control.AccessibleName, UiText.NameFor(control), ShowsAccessKey(control) ? WithoutAccessKey(control.Text) : control.Text, HoldsValue(control)),
 				Description = Clean(control.AccessibleDescription),
 				Role = RoleOf(control),
 				Id = control.Name,

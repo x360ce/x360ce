@@ -187,6 +187,8 @@ Duplicated controller, or the game sees two controllers? A game that sees both t
 - `[Devices]` tab → `[HID Hide...]` lists the gaming devices and the hidden ones, shows every device again, makes `HID Hide` hide exactly the devices whose `[Hide]` box is ticked, or opens `HID Hide`.
 - `[Options]` tab → `[HID Hide]` tab → `[Configure automatically]` hides a device while it is mapped to a controller, and shows it again when `X360CE` closes.
 
+Tick `[Hide]` before starting the game: a game already running keeps seeing the device until it is started again.
+
 While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID Hide` is missing, when hiding is off, when the controller is not hidden, or when `HID Hide` hides it from x360ce as well. Its button opens the download page or `HID Hide`'s own program.
 
 `HID Guardian` is the tool `HID Hide` replaced. Its author stopped it in 2023, and keyboards, mice and USB devices dropping out while it was installed were its known side effects. This version only removes it: `[Options]` tab → `[HID Guardian (obsolete)]` tab → `[Uninstall]`.

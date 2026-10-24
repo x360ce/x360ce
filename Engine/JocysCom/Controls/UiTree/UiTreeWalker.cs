@@ -282,11 +282,12 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return Clean(text);
 		}
 
+		/// <summary>Text on one line, or null when there is none. An &amp; is kept: where it marks an access key, the caller drops it.</summary>
 		static string Clean(string value)
 		{
 			if (string.IsNullOrWhiteSpace(value))
 				return null;
-			return value.Replace("&", "").Replace("\r", " ").Replace("\n", " ").Trim();
+			return value.Replace("\r", " ").Replace("\n", " ").Trim();
 		}
 
 		/// <summary>The path of something inside an element, or null where either cannot be addressed.</summary>

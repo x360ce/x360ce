@@ -137,7 +137,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		{
 			return new UiNode
 			{
-				Name = NameOf(item.AccessibleName, UiText.NameFor(item), item.Text, false),
+				Name = NameOf(item.AccessibleName, UiText.NameFor(item), WithoutAccessKey(item.Text), false),
 				Description = Clean(item.AccessibleDescription),
 				Role = RoleOf(item),
 				Id = item.Name,
