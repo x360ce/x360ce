@@ -62,7 +62,19 @@ public static class W3 {
   [DllImport("user32.dll")] public static extern int GetClassName(IntPtr h, StringBuilder s, int n);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr hdc, uint flags);
+  [DllImport("user32.dll")] public static extern bool IsWindowEnabled(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc p, IntPtr l);
+  [DllImport("user32.dll")] public static extern IntPtr GetWindow(IntPtr h, uint cmd);
+  [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
   public delegate bool EnumProc(IntPtr h, IntPtr l);
+  public static List<string> OwnedWindowTitles(IntPtr owner) {
+    var list = new List<string>();
+    EnumWindows((h, l) => {
+      if (GetWindow(h, 4) == owner && IsWindowVisible(h)) { var sb = new StringBuilder(256); GetWindowText(h, sb, 256); list.Add(sb.ToString()); }
+      return true;
+    }, IntPtr.Zero);
+    return list;
+  }
   public static List<IntPtr> FindTabControls(IntPtr parent) {
     var list = new List<IntPtr>();
     EnumChildWindows(parent, (h, l) => {
@@ -85,6 +97,10 @@ if (-not (Test-Path $OutDir)) { New-Item -ItemType Directory -Path $OutDir | Out
 $p = Get-Process $ProcessName -ErrorAction SilentlyContinue |
     Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
 if (-not $p) { throw "$ProcessName is not running with a main window" }
+# A dialog open over the window disables it, and a capture would show the pages behind the dialog as if it were not there.
+if (-not [W3]::IsWindowEnabled($p.MainWindowHandle)) {
+    throw "$ProcessName has a dialog open over its window: '$(([W3]::OwnedWindowTitles($p.MainWindowHandle)) -join "', '")'. Answer it before capturing."
+}
 # This process sees the screen in physical pixels, so a size given in logical pixels is scaled by
 # the zoom of the screen the window is on. Left unaware, Windows would scale every coordinate
 # for us, and the capture would be a blurred, stretched copy at the wrong size.

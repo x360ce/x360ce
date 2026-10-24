@@ -1,7 +1,9 @@
-﻿## [3.8.11.0] - 2026-10-24
+﻿## [3.8.13.0] - 2026-10-24
 
 - Fixed: Letters such as g and y were cut off at the bottom of text boxes and lists.
 - Fixed: The AI Assistant Access tab stretched its Log button down the page.
+- Fixed: The window opened too narrow to show every tab.
+- Fixed: Minimizing to the tray and back built the window again; the window is now hidden there.
 - Changed: Controls look as they do in x360ce 5, in both themes, with check boxes sized from the font.
 - Changed: AI assistant access uses port 37102 by default.
 - Changed: New AI access tokens start with sk-x360ce-v3-mcp-.
