@@ -162,6 +162,7 @@ namespace JocysCom.ClassLibrary.Controls
 			window.DefWndProc(ref msgSuspendUpdate);
 		}
 
+		/// <summary>Lets a control draw again, and draws it again whole: its edge and every control on it, which changed unseen.</summary>
 		public static void ResumeDrawing(Control control)
 		{
 			if (control is null)
@@ -170,8 +171,16 @@ namespace JocysCom.ClassLibrary.Controls
 			var msgResumeUpdate = Message.Create(control.Handle, WM_SETREDRAW, wparam, IntPtr.Zero);
 			var window = NativeWindow.FromHandle(control.Handle);
 			window.DefWndProc(ref msgResumeUpdate);
-			control.Invalidate();
+			RedrawWindow(control.Handle, IntPtr.Zero, IntPtr.Zero, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_FRAME);
 		}
+
+		private const int RDW_INVALIDATE = 0x0001;
+		private const int RDW_ERASE = 0x0004;
+		private const int RDW_ALLCHILDREN = 0x0080;
+		private const int RDW_FRAME = 0x0400;
+
+		[DllImport("user32.dll")]
+		private static extern bool RedrawWindow(IntPtr hWnd, IntPtr rect, IntPtr region, int flags);
 
 		#region Data Grid Functions
 
@@ -750,22 +759,36 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Apply Grid Border Style
 
+		/// <summary>
+		/// True while a shared theme gives every control of the program its look, which the theme sets as it is installed: the
+		/// helpers here then leave the look to it.
+		/// </summary>
+		public static bool LookFromTheme { get; set; }
+
+		/// <summary>
+		/// Gives a grid its look, without an edge and with plain headers, and its behaviour: sized for the screen, unusable
+		/// rows greyed out, no dialog for a row that is going away, and an Enabled column changed with a click when asked.
+		/// </summary>
+		/// <remarks>In a program the shared theme is in charge of, the grid's look is the theme's, as every other grid's is.</remarks>
 		public static void ApplyBorderStyle(DataGridView grid, bool updateEnabledProperty = false)
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
-			grid.BackgroundColor = SystemColors.Window;
-			grid.BorderStyle = BorderStyle.None;
-			grid.EnableHeadersVisualStyles = false;
-			grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-			grid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+			if (!LookFromTheme)
+			{
+				grid.BackgroundColor = SystemColors.Window;
+				grid.BorderStyle = BorderStyle.None;
+				grid.EnableHeadersVisualStyles = false;
+				grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+				grid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+				grid.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+				grid.RowHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+				grid.BackColor = SystemColors.Window;
+				grid.DefaultCellStyle.BackColor = SystemColors.Window;
+				grid.CellPainting += Grid_CellPainting;
+			}
 			grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;
-			grid.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-			grid.RowHeadersDefaultCellStyle.BackColor = SystemColors.Control;
-			grid.BackColor = SystemColors.Window;
-			grid.DefaultCellStyle.BackColor = SystemColors.Window;
 			ScaleGrid(grid);
-			grid.CellPainting += Grid_CellPainting;
 			grid.SelectionChanged += Grid_SelectionChanged;
 			grid.CellFormatting += Grid_CellFormatting;
 			grid.DataError += Grid_DataError;
@@ -1014,11 +1037,13 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region  Apply ToolStrip Border Style
 
+		/// <summary>Draws a tool bar without an edge; in a program the shared theme is in charge of, the tool bar's look is the theme's.</summary>
 		public static void ApplyBorderStyle(ToolStrip control)
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			control.Renderer = new ToolStripBorderlessRenderer();
+			if (!LookFromTheme)
+				control.Renderer = new ToolStripBorderlessRenderer();
 		}
 
 		#endregion

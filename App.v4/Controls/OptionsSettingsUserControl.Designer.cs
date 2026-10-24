@@ -23,7 +23,7 @@
 		{
 			this.MainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.CurrentLabel = new System.Windows.Forms.Label();
-			this.CurrentPanel = new System.Windows.Forms.Panel();
+			this.CurrentPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.CurrentPathTextBox = new System.Windows.Forms.TextBox();
 			this.OpenFolderButton = new System.Windows.Forms.Button();
 			this.KeepLabel = new System.Windows.Forms.Label();
@@ -53,7 +53,6 @@
 			this.MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-			this.MainTableLayoutPanel.Padding = new System.Windows.Forms.Padding(6);
 			this.MainTableLayoutPanel.RowCount = 10;
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -71,8 +70,8 @@
 			// CurrentLabel
 			//
 			this.CurrentLabel.AutoSize = true;
-			this.CurrentLabel.Location = new System.Drawing.Point(9, 6);
-			this.CurrentLabel.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
+			this.CurrentLabel.Location = new System.Drawing.Point(3, 3);
+			this.CurrentLabel.Margin = new System.Windows.Forms.Padding(3);
 			this.CurrentLabel.Name = "CurrentLabel";
 			this.CurrentLabel.Size = new System.Drawing.Size(105, 13);
 			this.CurrentLabel.TabIndex = 0;
@@ -80,32 +79,34 @@
 			//
 			// CurrentPanel
 			//
-			this.CurrentPanel.Controls.Add(this.CurrentPathTextBox);
-			this.CurrentPanel.Controls.Add(this.OpenFolderButton);
-			this.CurrentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.CurrentPanel.Location = new System.Drawing.Point(9, 25);
-			this.CurrentPanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 12);
+			this.CurrentPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.CurrentPanel.AutoSize = true;
+			this.CurrentPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CurrentPanel.ColumnCount = 2;
+			this.CurrentPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.CurrentPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.CurrentPanel.Controls.Add(this.CurrentPathTextBox, 0, 0);
+			this.CurrentPanel.Controls.Add(this.OpenFolderButton, 1, 0);
+			this.CurrentPanel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 9);
 			this.CurrentPanel.Name = "CurrentPanel";
-			this.CurrentPanel.Size = new System.Drawing.Size(542, 24);
+			this.CurrentPanel.RowCount = 1;
+			this.CurrentPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.CurrentPanel.TabIndex = 1;
 			//
 			// CurrentPathTextBox
 			//
-			this.CurrentPathTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.CurrentPathTextBox.Location = new System.Drawing.Point(0, 0);
+			this.CurrentPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.CurrentPathTextBox.Name = "CurrentPathTextBox";
 			this.CurrentPathTextBox.ReadOnly = true;
-			this.CurrentPathTextBox.Size = new System.Drawing.Size(442, 20);
 			this.CurrentPathTextBox.TabIndex = 0;
 			//
 			// OpenFolderButton
 			//
+			this.OpenFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.OpenFolderButton.AutoSize = true;
 			this.OpenFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.OpenFolderButton.Dock = System.Windows.Forms.DockStyle.Right;
 			this.OpenFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenFolderButton.Location = new System.Drawing.Point(442, 0);
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Padding = new System.Windows.Forms.Padding(4, 0, 6, 0);
 			this.OpenFolderButton.Size = new System.Drawing.Size(100, 24);
@@ -213,7 +214,7 @@
 
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 		private System.Windows.Forms.Label CurrentLabel;
-		private System.Windows.Forms.Panel CurrentPanel;
+		private System.Windows.Forms.TableLayoutPanel CurrentPanel;
 		private System.Windows.Forms.TextBox CurrentPathTextBox;
 		private System.Windows.Forms.Button OpenFolderButton;
 		private System.Windows.Forms.Label KeepLabel;

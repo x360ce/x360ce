@@ -65,6 +65,12 @@ namespace x360ce.App.DInput
 		/// <summary>For each of <see cref="Rows"/>, the POV its D-Pad is mapped to, counted from one, or 0 for none.</summary>
 		public readonly int[] RowDPads;
 
+		/// <summary>For each of <see cref="Rows"/>, where its device's X and Y axes press the D-Pad, from <see cref="ConvertHelper.GetAxisToDPadPressPoint"/>, or -1 while its Axis to D-Pad is off.</summary>
+		public readonly int[] RowAxisToDPadPressPoints;
+
+		/// <summary>For each of <see cref="Rows"/>, how far its Axis to D-Pad's offset moves the centre, from <see cref="ConvertHelper.GetAxisToDPadShift"/>.</summary>
+		public readonly int[] RowAxisToDPadShifts;
+
 		/// <summary>For each of <see cref="Rows"/>, its device's number on its controller, from <see cref="GetDeviceNumbers"/>.</summary>
 		public readonly int[] RowNumbers;
 
@@ -167,6 +173,8 @@ namespace x360ce.App.DInput
 			RowDevices = new UserDevice[rows.Length];
 			RowMaps = new List<Map>[rows.Length];
 			RowDPads = new int[rows.Length];
+			RowAxisToDPadPressPoints = Enumerable.Repeat(-1, rows.Length).ToArray();
+			RowAxisToDPadShifts = new int[rows.Length];
 			for (var i = 0; i < rows.Length; i++)
 			{
 				UserDevice device;
@@ -182,6 +190,13 @@ namespace x360ce.App.DInput
 				// The D-Pad names a POV, counted from one. A button, or nothing, maps no POV.
 				if (SettingsConverter.TryParseIniValue(ps.DPad, out type, out index, MapCode.DPad) && type == MapType.POV)
 					RowDPads[i] = index;
+				int value;
+				if (int.TryParse(ps.AxisToDPadEnabled, out value) && value != 0)
+				{
+					// An empty dead zone is the whole of half the travel, as the settings start.
+					RowAxisToDPadPressPoints[i] = ConvertHelper.GetAxisToDPadPressPoint(int.TryParse(ps.AxisToDPadDeadZone, out value) ? value : 256);
+					RowAxisToDPadShifts[i] = ConvertHelper.GetAxisToDPadShift(int.TryParse(ps.AxisToDPadOffset, out value) ? value : 0);
+				}
 			}
 			for (var pad = 0; pad < PadDevices.Length; pad++)
 			{

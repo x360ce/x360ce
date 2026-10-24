@@ -181,7 +181,8 @@ namespace x360ce.App
 		static void ExportUi(string folder)
 		{
 			if (string.IsNullOrWhiteSpace(folder))
-				folder = Path.Combine("skills", JocysCom.ClassLibrary.Mcp.AiSkill.Name, "references");
+				folder = Path.Combine(JocysCom.ClassLibrary.Mcp.AiSkill.SourceSkillsFolder(JocysCom.ClassLibrary.Mcp.AiSkill.Name),
+					JocysCom.ClassLibrary.Mcp.AiSkill.Name, "references");
 			var tree = JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
 			JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(Path.Combine(CallerFolder, folder)));
 		}
@@ -262,6 +263,8 @@ namespace x360ce.App
 			if (ic.Parameters.ContainsKey(arg_ExportUi))
 				ExportUiFolder = ic.Parameters[arg_ExportUi];
 			MainForm.Current = new MainForm();
+			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(MainForm.Current);
 			StartupTrace.Mark("StartApp: main form built");
 			// Describe the interface and leave. The program is the only accurate account of its own
 			// features, so it writes that account itself.

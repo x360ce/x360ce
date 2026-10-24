@@ -14,10 +14,7 @@ namespace x360ce.App.Controls
 		public PresetsGridUserControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(PresetsDataGridView);
-			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			PresetsDataGridView.AutoGenerateColumns = false;
 		}
 

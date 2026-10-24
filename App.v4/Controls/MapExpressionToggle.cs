@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -21,6 +22,10 @@ namespace x360ce.App.Controls
 
 		/// <summary>Width taken from the box it sits beside, so the row still ends where it did.</summary>
 		public const int ToggleWidth = 20;
+
+		/// <summary>The room between the switch and its box, and the rounding of its corners, in device-independent pixels.</summary>
+		const int ToggleGap = 3;
+		const int ToggleRadius = 3;
 
 		/// <summary>The two letters on the face, which are the same on every one of these.</summary>
 		/// <remarks>
@@ -190,9 +195,15 @@ namespace x360ce.App.Controls
 				: Blend(background, SystemColors.WindowText, _hovered ? 0.55 : 0.22);
 			if (Checked)
 			{
-				// A switch that is on has to be unmistakable, because everything the box accepts changes.
+				// A switch that is on has to be unmistakable, because everything the box accepts changes. Its corners are
+				// rounded a little, as the boxes beside it are.
+				var smoothing = e.Graphics.SmoothingMode;
+				e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+				var radius = (int)Math.Round(ToggleRadius * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
 				using (var pen = new Pen(colour))
-					e.Graphics.DrawRectangle(pen, 0, 0, Width - 1, Height - 1);
+				using (var path = AppHelper.RoundedRectangle(new Rectangle(0, 0, Width - 1, Height - 1), radius))
+					e.Graphics.DrawPath(pen, path);
+				e.Graphics.SmoothingMode = smoothing;
 			}
 			TextRenderer.DrawText(e.Graphics, Label, Font, ClientRectangle, colour,
 				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
@@ -264,8 +275,8 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Puts a switch immediately before a mapping box, taking its width from the box so that the
-		/// row still ends exactly where it did.
+		/// Puts a switch just before a mapping box, taking its width and a little room beside it from the
+		/// box so that the row still ends exactly where it did.
 		/// </summary>
 		/// <remarks>
 		/// Narrowing the box rather than moving it is what keeps this safe on a dense pane: nothing to
@@ -284,8 +295,10 @@ namespace x360ce.App.Controls
 			// Named after the box it belongs to, which already carries the row. "RightTriggerComboBox"
 			// becomes "Right Trigger", so the switch answers to the same words a person reads on screen.
 			toggle.NameAfterRow(RowNameFor(box));
-			box.Left += ToggleWidth;
-			box.Width -= ToggleWidth;
+			// The box gives up the switch's width and a little room between them.
+			var taken = ToggleWidth + (int)Math.Round(ToggleGap * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
+			box.Left += taken;
+			box.Width -= taken;
 			box.Parent.Controls.Add(toggle);
 			toggle.BringToFront();
 			Attached.Add(box, toggle);

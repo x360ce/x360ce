@@ -245,7 +245,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("A game that kept Auto Map leaves the controller's devices mapped; Auto Map is greyed out with its reason; the motor periods follow the effect type; x360ce 3's settings, the Advanced page and Axis to D-Pad, are shown greyed out under every emulation")]
+		[Description("A game that kept Auto Map leaves the controller's devices mapped; Auto Map is greyed out with its reason; the motor periods follow the effect type; x360ce 3's settings on the Advanced page are shown greyed out under every emulation, and Axis to D-Pad, which this version reads, is live")]
 		public void Controller_page_greys_out_what_does_nothing()
 		{
 			Ui.OnUiThread(() =>
@@ -303,11 +303,10 @@ namespace x360ce.Tests
 						Find<CheckBox>(pad, "PassThroughCheckBox").Checked = false;
 
 						var dpad = Find<GroupBox>(pad, "AxisToDPadGroupBox");
-						Assert.IsFalse(dpad.Enabled, "Axis to D-Pad is live for a virtual controller, which does not read it.");
-						StringAssert.Contains(dpad.Text, "x360ce 3");
+						Assert.IsTrue(dpad.Enabled, "Axis to D-Pad is greyed out, though the engine reads it.");
+						Assert.IsFalse(dpad.Text.Contains("x360ce 3"), "Axis to D-Pad is called x360ce 3's, though this version reads it.");
 						game.EmulationType = (int)EmulationType.Library;
 						pad.UpdateFromCurrentGame();
-						Assert.IsFalse(dpad.Enabled, "Axis to D-Pad is live under Library emulation, though this version writes no x360ce.ini.");
 						Assert.IsTrue(tabs.TabPages.Contains(advanced), "The Advanced page went away.");
 					}
 				}

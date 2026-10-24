@@ -64,7 +64,6 @@
 			this.MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-			this.MainTableLayoutPanel.Padding = new System.Windows.Forms.Padding(6);
 			this.MainTableLayoutPanel.RowCount = 5;
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -244,8 +243,6 @@
 			this.PluginsDataGridView.AllowUserToAddRows = false;
 			this.PluginsDataGridView.AllowUserToDeleteRows = false;
 			this.PluginsDataGridView.AllowUserToResizeRows = false;
-			this.PluginsDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-			this.PluginsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.PluginsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.PluginsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 			this.NameColumn,
@@ -256,7 +253,6 @@
 			this.ReasonColumn});
 			this.MainTableLayoutPanel.SetColumnSpan(this.PluginsDataGridView, 3);
 			this.PluginsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PluginsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.PluginsDataGridView.Location = new System.Drawing.Point(9, 96);
 			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
 			this.PluginsDataGridView.Name = "PluginsDataGridView";

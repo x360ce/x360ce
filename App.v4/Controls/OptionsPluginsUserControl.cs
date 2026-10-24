@@ -22,7 +22,6 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ControlsHelper.ApplyBorderStyle(PluginsDataGridView);
-			EngineHelper.EnableDoubleBuffering(PluginsDataGridView);
 			PluginsDataGridView.AutoGenerateColumns = false;
 			SettingsManager.LoadAndMonitor(x => x.AllowThirdPartyPlugins, AllowThirdPartyPluginsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowAutoHotkeyScripts, AllowAutoHotkeyScriptsCheckBox);

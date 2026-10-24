@@ -20,6 +20,7 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitPaintObjects();
+			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			// Initialize in constructor and not on "Load" event or it will reset AntiDeadZone value
 			// inside DeadZoneControlsLink(...).
 			updateTimer = new QueueTimer(500, 0);
@@ -31,6 +32,8 @@ namespace x360ce.App.Controls
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			PresetComboBox.Items.AddRange(Presets);
+			PresetComboBox.SelectedIndex = 0;
 			RefreshBackgroundImageAsync();
 		}
 
@@ -94,7 +97,7 @@ namespace x360ce.App.Controls
 				DeadZoneLabel, DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox,
 				AntiDeadZoneLabel, AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox,
 				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox,
-				PresetMenuStrip,
+				PresetComboBox,
 			};
 			foreach (var control in controls)
 				control.Enabled = enabled;
@@ -171,6 +174,7 @@ namespace x360ce.App.Controls
 		{
 			if (disposing)
 			{
+				FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
 				if (deadzoneLink != null)
 					deadzoneLink.Dispose();
 				if (antiDeadzoneLink != null)
@@ -195,8 +199,20 @@ namespace x360ce.App.Controls
 
 		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
 		{
-			MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			MainPictureBox.BackColor = Enabled ? System.Drawing.SystemColors.Window : System.Drawing.SystemColors.Control;
+			MainPictureBox.Invalidate();
+		}
+
+		/// <summary>The chart's picture is made on another thread and handed back through this control's window, so it is made once the window exists.</summary>
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			RefreshBackgroundImageAsync();
+		}
+
+		/// <summary>The chart's picture is as large as its box, so it is made again whenever the box's size changes.</summary>
+		private void MainPictureBox_SizeChanged(object sender, EventArgs e)
+		{
+			RefreshBackgroundImageAsync();
 		}
 
 		// Half and Invert values are only in creating xinput path - red line.
@@ -232,16 +248,33 @@ namespace x360ce.App.Controls
 			// The dot is the text colour: it marks a DInput and an XInput value at once, so it
 			// belongs to neither axis colour. The thin lines carry the per-axis colour.
 			xInputPoint = new SolidBrush(SystemColors.WindowText);
-			// Create thin lines. Each marker line uses the same colour as the value label
-			// it belongs to, so XI is blue and DI is green, in the dark theme's own blue and green.
+			ApplyValueColors();
+			nInputLine = new Pen(AppHelper.ChartLineColor, 1f);
+		}
+
+		/// <summary>
+		/// Colours the values and their marker lines: each line takes the colour of the value it belongs to, so XI is blue
+		/// and DI is green, in the theme's own blue and green.
+		/// </summary>
+		void ApplyValueColors()
+		{
 			var xColor = FormsTheme.GetColor("ColorBrand", Color.Blue);
 			var dColor = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
 			XInputValueLabel.ForeColor = xColor;
 			DInputValueLabel.ForeColor = dColor;
+			if (xInputLine != null)
+				xInputLine.Dispose();
+			if (dInputLine != null)
+				dInputLine.Dispose();
 			xInputLine = new Pen(xColor, 1f);
 			dInputLine = new Pen(dColor, 1f);
-			var nInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Gray));
-			nInputLine = new Pen(nInputLineBrush, 1f);
+		}
+
+		/// <summary>The value colours are the theme's, so they are taken again in a new one.</summary>
+		void FormsTheme_ThemeChanged(object sender, EventArgs e)
+		{
+			ApplyValueColors();
+			MainPictureBox.Invalidate();
 		}
 
 		Pen xInputPath;
@@ -261,9 +294,9 @@ namespace x360ce.App.Controls
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
 			}));
-			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
-			var w = MainPictureBox.Width - borders;
-			var h = MainPictureBox.Height - borders;
+			var chart = AppHelper.ChartBounds(MainPictureBox);
+			var w = chart.Width;
+			var h = chart.Height;
 			var bmp = new Bitmap(w, h);
 			var g = Graphics.FromImage(bmp);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
@@ -274,8 +307,12 @@ namespace x360ce.App.Controls
 			//DrawDLineLine(g, 74.5f);
 			//DrawXLineLine(g, 74.5f);
 			//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
-			// Draw grey line from bottom-left to top-right.
+			// The chart's frame, its middle lines and both diagonals, in a faint grey.
+			g.DrawRectangle(nInputLine, 0, 0, w - 1, h - 1);
+			g.DrawLine(nInputLine, 0f, (h - 1) / 2f, w - 1f, (h - 1) / 2f);
+			g.DrawLine(nInputLine, (w - 1) / 2f, 0f, (w - 1) / 2f, h - 1f);
 			g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
+			g.DrawLine(nInputLine, 0f, 0f, (float)w - 1f, (float)h - 1f);
 			// The mapping is not continuous: dead zone and anti-dead zone make it jump,
 			// so stamped dots leave gaps. Collect the samples and stroke them as one
 			// path, which bridges every jump with a segment of the same line.
@@ -313,7 +350,7 @@ namespace x360ce.App.Controls
 			Invoke(new Action(() =>
 			{
 				LastBackgroundImage = bmp;
-				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
+				MainPictureBox.Invalidate();
 			}));
 		}
 
@@ -383,10 +420,17 @@ namespace x360ce.App.Controls
 
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
 		{
+			var g = e.Graphics;
+			AppHelper.PaintChartBox(g, MainPictureBox, Enabled);
 			var image = LastBackgroundImage;
-			if (image == null) return;
+			if (image == null || !Enabled) return;
+			var chart = AppHelper.ChartBounds(MainPictureBox);
+			g.DrawImageUnscaled(image, chart.Location);
+			// The lines and the dot are drawn in the chart's own place.
+			g.TranslateTransform(chart.X, chart.Y);
+			g.SetClip(new Rectangle(0, 0, image.Width, image.Height));
 			var w = (float)image.Width;
-			var h = (float)image.Width;
+			var h = (float)image.Height;
 			// Convert DInput to image position.
 			var di = ConvertHelper.ConvertRangeF(0f, ushort.MaxValue, 0f, w, _dInput);
 
@@ -394,7 +438,6 @@ namespace x360ce.App.Controls
 			var max = IsThumb ? 32767f : 255f;
 			// Convert XInput to image position.
 			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, _xInput);
-			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
@@ -421,7 +464,7 @@ namespace x360ce.App.Controls
 				var percent = (int)control.Value;
 				var invert = SensitivityCheckBox.Checked;
 				var value = invert ? -percent : percent;
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format("{0} %", percent);
 				// Update percent TextBox.
 				if (SensitivityTextBox.Text != percentString) SensitivityTextBox.Text = percentString;
 				// Update NumericUpDown.
@@ -444,7 +487,7 @@ namespace x360ce.App.Controls
 				var value = (int)control.Value;
 				var invert = value < 0;
 				var percent = invert ? -value : value;
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format("{0} %", percent);
 				// Update percent TextBox.
 				if (SensitivityTextBox.Text != percentString) SensitivityTextBox.Text = percentString;
 				// Update TrackBar.
@@ -473,10 +516,46 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void P_X_Y_Z_MenuItem_Click(object sender, EventArgs e)
+		#region Presets
+
+		/// <summary>A ready-made dead zone, anti-dead zone and sensitivity, each in percent.</summary>
+		sealed class Preset
 		{
-			var c = (ToolStripMenuItem)sender;
-			var values = c.Name.Split('_');
+			public Preset(string name, int deadZone, int antiDeadZone, int sensitivity)
+			{
+				Name = name;
+				DeadZone = deadZone;
+				AntiDeadZone = antiDeadZone;
+				Sensitivity = sensitivity;
+			}
+
+			public readonly string Name;
+			public readonly int DeadZone;
+			public readonly int AntiDeadZone;
+			public readonly int Sensitivity;
+
+			public override string ToString() => Name;
+		}
+
+		/// <summary>The list's own name, then the presets: picking one applies it, and the list shows its name again.</summary>
+		static readonly object[] Presets =
+		{
+			"Apply Preset",
+			new Preset("Clear", 0, 0, 0),
+			new Preset("5% DeadZone, 100% Controller Anti-DeadZone", 5, 100, 0),
+			new Preset("1% DeadZone, 100% Controller Anti-DeadZone", 1, 100, 0),
+			new Preset("100% Controller Anti-DeadZone", 0, 100, 0),
+			new Preset("80% Controller Anti-DeadZone", 0, 80, 0),
+			new Preset("60% Controller Anti-DeadZone", 0, 60, 0),
+			new Preset("40% Controller Anti-DeadZone", 0, 40, 0),
+			new Preset("20% Controller Anti-DeadZone", 0, 20, 0),
+		};
+
+		private void PresetComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var preset = PresetComboBox.SelectedItem as Preset;
+			if (preset == null)
+				return;
 			decimal xDeadZone = 0;
 			switch (TargetType)
 			{
@@ -495,15 +574,17 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
-			var deadZone = int.Parse(values[1]);
-			var antiDeadZone = decimal.Parse(values[2]);
-			var sensitivity = int.Parse(values[3]);
 			// Move focus away from below controls, so that their value can be changed.
 			ActiveControl = SensitivityCheckBox;
-			DeadZoneTrackBar.Value = deadZone;
-			AntiDeadZoneNumericUpDown.Value = xDeadZone * antiDeadZone / 100m;
-			SensitivityTrackBar.Value = sensitivity;
+			DeadZoneTrackBar.Value = preset.DeadZone;
+			AntiDeadZoneNumericUpDown.Value = xDeadZone * preset.AntiDeadZone / 100m;
+			SensitivityTrackBar.Value = preset.Sensitivity;
+			// The list shows its name again once the list has closed, so the same preset can be picked again.
+			if (IsHandleCreated)
+				BeginInvoke((Action)(() => PresetComboBox.SelectedIndex = 0));
 		}
+
+		#endregion
 
 	}
 }

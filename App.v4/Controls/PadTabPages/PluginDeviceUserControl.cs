@@ -9,15 +9,15 @@ using x360ce.Plugins;
 namespace x360ce.App.Controls
 {
 	/// <summary>
-	/// A plugin device's tab on the controller page: the control its plugin declares, its settings, made from its class,
-	/// and its MCP server, each on a page of its own.
+	/// A plugin device's tab on the controller page: the control its plugin declares, its MCP server, and its settings,
+	/// made from its class, each on a page of its own.
 	/// </summary>
 	/// <remarks>
 	/// The device's help, its class's [Description], heads the tab, so what to know before using the device is in view.
 	/// The pages follow, those the device has: the plugin's own control first, made with the device the engine reads, so
-	/// the page says so while there is none yet; Properties, the settings in a property grid, as Visual Studio's
-	/// Properties window shows a component's: a row for each, grouped by [Category], with the selected row's help under
-	/// the grid; and MCP Server, for a kind that declares one, with the AI page's own rows. A change is kept for the
+	/// the page says so while there is none yet; MCP Server, for a kind that declares one, with the AI page's own rows;
+	/// and Properties, the settings in a property grid, as Visual Studio's Properties window shows a component's: a row
+	/// for each, grouped by [Category], with the selected row's help under the grid. A change is kept for the
 	/// device at once, and the engine gives it to the plugin before its next read. A status is read from the device the
 	/// engine reads, and the grid is drawn again whenever <see cref="RefreshStatus"/> finds a value changed.
 	/// </remarks>
@@ -61,6 +61,19 @@ namespace x360ce.App.Controls
 				var text = control == null || string.IsNullOrWhiteSpace(control.Text) ? "Control" : control.Text;
 				AddPage("ControlTabPage", text, "The control the plugin adds for the device.", control ?? NoteLabel);
 			}
+			var door = PluginMcpDoors.Get(instanceGuid, type, store);
+			if (door != null)
+			{
+				McpServerUserControl = new AiAccessUserControl
+				{
+					Name = "McpServerUserControl",
+					Dock = DockStyle.Fill,
+					AccessibleName = "MCP server",
+					AccessibleDescription = "The device's own MCP server, which a program or an AI assistant reaches this device alone through.",
+				};
+				McpServerUserControl.Bind(door);
+				AddPage("McpServerTabPage", "MCP Server", "The device's own MCP server: whether it is open, its level, address, port and token.", McpServerUserControl);
+			}
 			if (type.Settings.Length > 0)
 			{
 				View = new PluginSettingsView(instanceGuid, type, device, store);
@@ -97,19 +110,6 @@ namespace x360ce.App.Controls
 				}
 				properties.RowCount = properties.RowStyles.Count;
 				AddPage("PropertiesTabPage", "Properties", "The device's settings, as a property grid.", properties);
-			}
-			var door = PluginMcpDoors.Get(instanceGuid, type, store);
-			if (door != null)
-			{
-				McpServerUserControl = new AiAccessUserControl
-				{
-					Name = "McpServerUserControl",
-					Dock = DockStyle.Fill,
-					AccessibleName = "MCP server",
-					AccessibleDescription = "The device's own MCP server, which a program or an AI assistant reaches this device alone through.",
-				};
-				McpServerUserControl.Bind(door);
-				AddPage("McpServerTabPage", "MCP Server", "The device's own MCP server: whether it is open, its level, address, port and token.", McpServerUserControl);
 			}
 			AddRow(PluginTabControl, 100F);
 			Controls.Add(MainTableLayoutPanel);

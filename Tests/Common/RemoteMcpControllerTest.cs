@@ -224,7 +224,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("The device's tab shows its properties and its MCP server on pages of their own, the server with the AI page's rows, which the program's door refuses to touch, and no tabs, skill or snippet of the AI page")]
+		[Description("The device's tab shows its MCP server and then its properties on pages of their own, the server with the AI page's rows, which the program's door refuses to touch, and no tabs, skill or snippet of the AI page")]
 		public void Its_tab_shows_its_server_with_the_AI_page_rows()
 		{
 			Ui.OnUiThread(() =>
@@ -237,12 +237,10 @@ namespace x360ce.Tests
 					form.Controls.Add(panel);
 					form.Show();
 					var tabs = (TabControl)Find(panel, "PluginTabControl");
-					CollectionAssert.AreEqual(new[] { "Properties", "MCP Server" }, tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray());
-					Assert.IsTrue(tabs.TabPages[0].Contains(Find(panel, "SettingsPropertyGrid")), "The grid is not on the Properties page.");
-					tabs.SelectedIndex = 1;
-					Application.DoEvents();
+					CollectionAssert.AreEqual(new[] { "MCP Server", "Properties" }, tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray());
+					Assert.IsTrue(tabs.TabPages[1].Contains(Find(panel, "SettingsPropertyGrid")), "The grid is not on the Properties page.");
 					var section = (AiAccessUserControl)Find(panel, "McpServerUserControl");
-					Assert.AreSame(tabs.TabPages[1], section.Parent, "The server is not on the MCP Server page.");
+					Assert.AreSame(tabs.TabPages[0], section.Parent, "The server is not on the MCP Server page.");
 					Assert.IsTrue(Find(panel, "AiAccessEnabledCheckBox").Visible, "The server's rows are not shown.");
 					Assert.IsFalse(Find(panel, "AiTabControl").Visible, "The server shows the AI page's tabs inside its own page.");
 					var door = section.Model.Door as PluginDeviceDoor;

@@ -60,18 +60,20 @@ namespace x360ce.App.UiTree
 
 			// D-Pad page.
 			d["PadControl.AxisToDPadGroupBox"] = new Text("Axis to D-Pad",
-				"Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, "
-				+ "from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.");
+				"Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: "
+				+ "for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.");
 			d["PadControl.AxisToDPadEnabledCheckBox"] = new Text("Enabled",
-				"Turns the X and Y axes into directional pad presses.");
+				"Turns the X and Y axes into D-Pad presses: right and left from X, down and up from Y, two at once on a diagonal.");
 			d["PadControl.AxisToDPadDeadZoneTextBox"] = new Text("Dead zone",
-				"How far the axis must move from the centre before a direction is pressed.");
+				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.");
 			d["PadControl.AxisToDPadDeadZoneTrackBar"] = new Text("Dead zone",
-				"How far the axis must move from the centre before a direction is pressed.");
+				"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.");
 			d["PadControl.AxisToDPadOffsetTextBox"] = new Text("Centre offset",
-				"Moves the point counted as centre, for a device that does not rest in the middle.");
+				"Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.");
 			d["PadControl.AxisToDPadOffsetTrackBar"] = new Text("Centre offset",
-				"Moves the point counted as centre, for a device that does not rest in the middle.");
+				"Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.");
+			d["PadControl.AxisToDPadChart"] = new Text("Axis to D-Pad chart",
+				"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.");
 
 			// Force feedback page.
 			d["PadControl.ForceFeedbackGroupBox"] = new Text("Force feedback",

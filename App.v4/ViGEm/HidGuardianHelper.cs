@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Runtime.InteropServices;
@@ -18,14 +17,6 @@ namespace x360ce.App.ViGEm
 
 		static string ParametersRegistry => $"{HidGuardianRegistry}\\Parameters";
 		static string WhitelistRegistry => $"{ParametersRegistry}\\{WhiteList}";
-
-		static readonly IEnumerable<object> ResponseOk = new[] { "OK" };
-		static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
-
-		static string pattern1 = @"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}";
-		//static string pattern2 = @"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?";
-
-		public static readonly Regex HardwareIdRegex = new Regex(pattern1);
 
 		#region WhiteList
 
@@ -147,174 +138,7 @@ namespace x360ce.App.ViGEm
 
 		#endregion
 
-		#region Affected
-
-		const string registryKeyName = "AffectedDevices";
-
-		public static bool InsertToAffected(params string[] ids)
-		{
-			// Return if invalid id found.
-			if (ids.Any(x => !HardwareIdRegex.IsMatch(x)))
-				return false;
-			FixCasing(ids);
-			// Get existing IDs.
-			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
-			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
-			// Combine arrays.
-			current.AddRange(ids);
-			// Get unique and sorted list.
-			var newList = current
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Distinct()
-				.OrderBy(x => x)
-				.ToArray();
-			// Write back to registry.
-			key.SetValue(registryKeyName, newList, RegistryValueKind.MultiString);
-			key.Close();
-			// Reset Devices.
-			ResetDevices(ids);
-			return true;
-		}
-
-		public static bool RemoveFromAffected(params string[] ids)
-		{
-			// Return if invalid id found.
-			if (ids.Any(x => !HardwareIdRegex.IsMatch(x)))
-				return false;
-			FixCasing(ids);
-			// Get existing Hardware IDs.
-			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
-			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
-			// Remove values from array.
-			current.RemoveAll(x => ids.Contains(x));
-			// Get unique and sorted list.
-			var newList = current
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Distinct()
-				.OrderBy(x => x)
-				.ToArray();
-			// Write back to registry.
-			key.SetValue(registryKeyName, newList, RegistryValueKind.MultiString);
-			key.Close();
-			// Reset Devices.
-			ResetDevices(ids);
-			return true;
-		}
-
-		/// <summary>
-		/// Must remove and re-add devices for HidGuardian filters to take effect.
-		/// </summary>
-		public static void ResetDevices(params string[] deviceIds)
-		{
-			//var hwIds = ConvertToHidVidPid(deviceIds);
-			for (int i = 0; i < deviceIds.Length; i++)
-				Program.RunElevated(AdminCommand.UninstallDevice, deviceIds[i]);
-		}
-
-		static readonly Regex HardwareIdSimpleRegex = new Regex(@"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}", RegexOptions.IgnoreCase);
-
-		/// <summary>
-		/// Convert device IDs into HID Hardware Ids ("HID\VID_HHHH&PID_HHHH")
-		/// </summary>
-		public static string[] ConvertToHidVidPid(params string[] deviceIds)
-		{
-			var list = new List<string>();
-			foreach (var did in deviceIds)
-			{
-				var matches = HardwareIdSimpleRegex.Matches(did);
-				if (matches.Count == 0)
-					continue;
-				var item = matches[0].Value;
-				if (list.Contains(item))
-					continue;
-				list.Add(item);
-			}
-			return list.ToArray();
-		}
-
-
-
-		public static string[] GetAffected()
-		{
-			var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, false);
-			if (key == null)
-				return new string[0];
-			var current = key.GetValue(registryKeyName, new string[0]) as string[];
-			key.Close();
-			return current;
-		}
-
-		/// <summary>Clears HID Guardian's list of hidden devices.</summary>
-		/// <returns>False when the list cannot be written, which needs an administrator to give the rights once.</returns>
-		public static bool ClearAffected()
-		{
-			RegistryKey key;
-			try
-			{
-				key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
-			}
-			catch (System.Security.SecurityException)
-			{
-				return false;
-			}
-			if (key == null)
-				return true;
-			key.SetValue(registryKeyName, new string[0], RegistryValueKind.MultiString);
-			key.Close();
-			return true;
-		}
-
-		public static string[] GetEnumeratedDevices()
-		{
-			var list = new List<string>();
-			var key = Registry.LocalMachine.OpenSubKey($"{HidGuardianRegistry}\\Enum");
-			if (key == null)
-				return list.ToArray();
-			var names = key.GetValueNames();
-			foreach (var name in names)
-			{
-				int id;
-				if (int.TryParse(name, out id))
-				{
-					var hwid = key.GetValue(name) as string;
-					if (!string.IsNullOrEmpty(hwid))
-						list.Add(hwid);
-				}
-			}
-			key.Close();
-			return list.ToArray();
-		}
-
-		/// <summary>
-		/// Make sure that supplied values have same casing as enumerated devices, just in case HidGuardian is case sensitive.
-		/// </summary>
-		/// <param name="hwid"></param>
-		static void FixCasing(string[] hwIds)
-		{
-			var list = GetEnumeratedDevices();
-			for (int i = 0; i < hwIds.Length; i++)
-			{
-				var hwid = hwIds[i];
-				var name = list.FirstOrDefault(x => string.Compare(x, hwid, true) == 0);
-				if (!string.IsNullOrEmpty(name))
-					hwIds[i] = name;
-			}
-		}
-
-		#endregion
-
 		#region Helper
-
-		/// <summary>Whether HID Guardian's settings are there. Without them nothing can be hidden through HID Guardian, whoever runs the program.</summary>
-		public static bool IsInstalled()
-		{
-			using (var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry))
-				return key != null;
-		}
-
-		/// <summary>What the person reads when a device is to be hidden while HID Guardian is not installed.</summary>
-		public const string NotInstalledText = "HID Guardian is not installed, so x360ce cannot hide devices with it.\r\n"
-			+ "HID Hide hides devices instead: see the HID Hide page on the Options tab.";
 
 		/// <summary>
 		/// Check if Users have right to modify programs white list.

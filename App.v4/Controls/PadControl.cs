@@ -36,8 +36,8 @@ namespace x360ce.App.Controls
 			AdvancedOptionsPanel.Enabled = false;
 			DeviceGroupBox.Text = "Device - x360ce 3 only";
 			CombineGroupBox.Text = "Combining - x360ce 3 only";
-			AxisToDPadGroupBox.Enabled = false;
-			AxisToDPadGroupBox.Text = "Axis To D-Pad - x360ce 3 only";
+			AxisToDPadEnabledCheckBox.CheckedChanged += (s, e) => AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
+			AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
@@ -46,8 +46,6 @@ namespace x360ce.App.Controls
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// These three stay pressed to say that something is on, rather than doing something and
 			// springing back. A bar cannot tell the two apart on its own, so it is said here: a screen
 			// reader then announces the state, and the interface tree offers them to be set.
@@ -84,10 +82,24 @@ namespace x360ce.App.Controls
 			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
-
+			// A page comes up to date as it is shown, once the engine has states to show, rather than at the next update.
+			VisibleChanged += (sender, e) =>
+			{
+				if (Visible && Global.DHelper?.PassCount > 0)
+					Global_UpdateControlFromStates(this, EventArgs.Empty);
+			};
 		}
+
+		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
+		const int HiddenUpdateEvery = 10;
+		int _HiddenUpdates;
+
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
+			// Nobody sees a page that is not shown, so it keeps up at a tenth of the rate: what reads it without showing it,
+			// an AI assistant among them, still gets values a second old at most.
+			if (!Visible && ++_HiddenUpdates % HiddenUpdateEvery != 0)
+				return;
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
 			UpdateSpringNote();
@@ -242,6 +254,15 @@ namespace x360ce.App.Controls
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				DrawMappedPoint(RightTriggerUserControl, map, axis, newState.Gamepad.RightTrigger);
+				// Axis to D-Pad reads the device's X and Y axes.
+				if (axis.Length >= 2)
+					AxisToDPadChart.SetReading(axis[0], axis[1]);
+				else
+					AxisToDPadChart.ClearReading();
+			}
+			else
+			{
+				AxisToDPadChart.ClearReading();
 			}
 			// Update Axis to Button Images.
 			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
@@ -1419,13 +1440,13 @@ namespace x360ce.App.Controls
 		void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
+			ForceOverallTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		void ForceSpringStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			ForceSpringStrengthTextBox.Text = string.Format("{0} %", control.Value);
 			UpdateSpringChart();
 		}
 
@@ -1434,8 +1455,8 @@ namespace x360ce.App.Controls
 		{
 			ForceSpringCentreTextBox.Text = string.Format("{0}° ", ForceSpringCentreTrackBar.Value);
 			ForceSpringPeakTextBox.Text = ForceSpringPeakTrackBar.Value == 0 ? "Stop " : string.Format("{0}° ", ForceSpringPeakTrackBar.Value);
-			ForceSpringLighteningTextBox.Text = string.Format("{0} % ", ForceSpringLighteningTrackBar.Value);
-			ForceSpringDampingTextBox.Text = string.Format("{0} % ", ForceSpringDampingTrackBar.Value);
+			ForceSpringLighteningTextBox.Text = string.Format("{0} %", ForceSpringLighteningTrackBar.Value);
+			ForceSpringDampingTextBox.Text = string.Format("{0} %", ForceSpringDampingTrackBar.Value);
 			ForceSpringSpeedTextBox.Text = string.Format("{0} km/h ", ForceSpringSpeedTrackBar.Value);
 			ShowSpringCar();
 			UpdateSpringChart();
@@ -1471,7 +1492,7 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		void ForceSpringFrictionTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			ForceSpringFrictionTextBox.Text = string.Format("{0} % ", ForceSpringFrictionTrackBar.Value);
+			ForceSpringFrictionTextBox.Text = string.Format("{0} %", ForceSpringFrictionTrackBar.Value);
 			if (_showingFriction)
 				return;
 			var ud = GetSelectedDevice();
@@ -1810,8 +1831,8 @@ namespace x360ce.App.Controls
 			// Convert Direct Input Period force feedback effect parameter value.
 			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * PeriodMsPerStep;
 			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * PeriodMsPerStep;
-			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
-			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
+			LeftMotorPeriodTextBox.Text = string.Format("{0}", leftMotorPeriod);
+			RightMotorPeriodTextBox.Text = string.Format("{0}", rightMotorPeriod);
 			ShowMotorPeriodPreset(leftMotorPeriod, rightMotorPeriod);
 		}
 
@@ -1895,8 +1916,8 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.ControllerIndex == -1)
 				return;
-			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
-			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
+			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
+			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
 			SendVibration();
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);
@@ -1954,13 +1975,23 @@ namespace x360ce.App.Controls
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
+			AxisToDPadOffsetTextBox.Text = string.Format("{0} %", control.Value);
+			UpdateAxisToDPadChart();
 		}
 
 		void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
+			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} %", control.Value);
+			UpdateAxisToDPadChart();
+		}
+
+		/// <summary>Draws the Axis to D-Pad chart for the sliders, as the values they store.</summary>
+		void UpdateAxisToDPadChart()
+		{
+			Func<TrackBar, string, int> stored = (bar, key) => Convert.ToInt32(bar.Value / 100F * SettingsManager.TrackBarFullScale(key));
+			AxisToDPadChart.SetSettings(stored(AxisToDPadDeadZoneTrackBar, SettingName.AxisToDPadDeadZone),
+				stored(AxisToDPadOffsetTrackBar, SettingName.AxisToDPadOffset));
 		}
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
@@ -2062,13 +2093,13 @@ namespace x360ce.App.Controls
 		private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			var control = (TrackBar)sender;
-			LeftMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftMotorStrengthTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		private void RightMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			var control = (TrackBar)sender;
-			RightMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			RightMotorStrengthTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		private void PassThroughCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -2254,7 +2285,7 @@ namespace x360ce.App.Controls
 				copy = answer == DialogResult.No;
 			}
 			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
-				SettingsManager.Options.HidGuardianConfigureAutomatically, copy);
+				SettingsManager.Options.HidHideConfigureAutomatically, copy);
 			SettingsManager.Current.RaiseSettingsChanged(null);
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
@@ -2267,7 +2298,7 @@ namespace x360ce.App.Controls
 				return;
 			var setting = GetSelectedSetting();
 			SettingsManager.UnMapGamePadDevices(game, setting,
-				SettingsManager.Options.HidGuardianConfigureAutomatically);
+				SettingsManager.Options.HidHideConfigureAutomatically);
 		}
 
 		void UpdateGridButtons()
@@ -2453,7 +2484,7 @@ namespace x360ce.App.Controls
 				item.IsEnabled = !item.IsEnabled;
 				// An unticked device is not used by the game, so it is not hidden from it either.
 				var game = SettingsManager.CurrentGame;
-				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+				if (game != null && SettingsManager.Options.HidHideConfigureAutomatically)
 					SettingsManager.HideMappedDevices(game, item.InstanceGuid);
 			}
 		}

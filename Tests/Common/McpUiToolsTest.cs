@@ -3,6 +3,7 @@
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -394,7 +395,7 @@ namespace x360ce.Tests
 			WithWindow(AiAccess.Configure, form =>
 			{
 				var install = new Button { Name = "ViGEmBusInstallButton" };
-				var configure = new CheckBox { Name = "HidGuardianConfigureAutomaticallyCheckBox" };
+				var configure = new CheckBox { Name = "HidHideConfigureAutomaticallyCheckBox" };
 				var level = new ComboBox { Name = "AiAccessComboBox" };
 				level.Items.AddRange(Enum.GetNames(typeof(AiAccess)));
 				var regenerate = new Button { Name = "AiAccessRegenerateButton" };
@@ -490,21 +491,30 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("Every administering control named in the guard is a button or check box of the Options page, and the catalogue holds the tools")]
+		[Description("Every administering control named in the guard is a button or check box of the Options page or an entry of the Devices page's bar, and the catalogue holds the tools")]
 		public void Admin_controls_exist_and_tools_are_catalogued()
 		{
 			// The list is what keeps a caller from installing a driver. A name that no longer matches
 			// an element guards nothing, so each name is checked against the designer fields of the
 			// page it belongs to, which a rename changes the same day.
-			foreach (var name in McpUiTools.AdminControls.Where(x => x != "CleanupVirtualPadsButton"))
+			var bar = new Dictionary<string, Type>
+			{
+				{ "CleanupVirtualPadsButton", typeof(ToolStripButton) },
+				{ "UnhideAllDevicesMenuItem", typeof(ToolStripMenuItem) },
+				{ "SynchronizeToHidHideMenuItem", typeof(ToolStripMenuItem) },
+			};
+			foreach (var name in McpUiTools.AdminControls.Where(x => !bar.ContainsKey(x)))
 				AssertField(name, typeof(Button), typeof(CheckBox));
 			// A bar entry is reached by path like any other element now, so the guard has to name it
 			// and the name has to be a real one.
-			var cleanup = typeof(x360ce.App.Controls.UserDevicesUserControl)
-				.GetField("CleanupVirtualPadsButton", BindingFlags.NonPublic | BindingFlags.Instance);
-			Assert.IsNotNull(cleanup, "CleanupVirtualPadsButton is not an element of the Devices page.");
-			Assert.AreEqual(typeof(ToolStripButton), cleanup.FieldType,
-				"CleanupVirtualPadsButton is not the kind of element the guard expects.");
+			foreach (var entry in bar)
+			{
+				CollectionAssert.Contains(McpUiTools.AdminControls, entry.Key);
+				var field = typeof(x360ce.App.Controls.UserDevicesUserControl)
+					.GetField(entry.Key, BindingFlags.NonPublic | BindingFlags.Instance);
+				Assert.IsNotNull(field, entry.Key + " is not an element of the Devices page.");
+				Assert.AreEqual(entry.Value, field.FieldType, entry.Key + " is not the kind of element the guard expects.");
+			}
 			McpTools.Register();
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
 			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);

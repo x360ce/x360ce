@@ -167,7 +167,7 @@ namespace x360ce.App.Controls
 				var cell = CellBounds(i);
 				var face = new Rectangle(cell.X, cell.Y, cell.Width, _ChipHeight);
 				var back = chip == _Dragging ? DragColor : chip.Lit ? LitColor : SystemColors.ControlLight;
-				using (var path = Rounded(face, Radius))
+				using (var path = AppHelper.RoundedRectangle(new Rectangle(face.X, face.Y, face.Width - 1, face.Height - 1), Radius))
 				using (var brush = new SolidBrush(back))
 					g.FillPath(brush, path);
 				TextRenderer.DrawText(g, chip.Caption, Font, face, SystemColors.ControlText, flags);
@@ -177,18 +177,6 @@ namespace x360ce.App.Controls
 					TextRenderer.DrawText(g, chip.Value.ToString(), ValueFont, strip, SystemColors.GrayText, flags);
 				}
 			}
-		}
-
-		static GraphicsPath Rounded(Rectangle r, int radius)
-		{
-			var d = radius * 2;
-			var path = new GraphicsPath();
-			path.AddArc(r.X, r.Y, d, d, 180, 90);
-			path.AddArc(r.Right - d - 1, r.Y, d, d, 270, 90);
-			path.AddArc(r.Right - d - 1, r.Bottom - d - 1, d, d, 0, 90);
-			path.AddArc(r.X, r.Bottom - d - 1, d, d, 90, 90);
-			path.CloseFigure();
-			return path;
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)

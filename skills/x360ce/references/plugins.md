@@ -136,7 +136,7 @@ Rules:
 ### Settings, an MCP server, and a control of its own
 
 A device can have a tab of its own on the controller page it is mapped to, named after it. The device's help heads the
-tab, and under it a page for each part the plugin has: its own control first, then **Properties**, then **MCP Server**.
+tab, and under it a page for each part the plugin has: its own control first, then **MCP Server**, then **Properties**.
 
 - **Settings, on the Properties page: the class's public properties.** They are shown as rows of a property grid, as Visual Studio's
   Properties window shows a component's: grouped, or in A to Z order with the buttons above the grid, and the selected

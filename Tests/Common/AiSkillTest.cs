@@ -195,6 +195,26 @@ namespace x360ce.Tests
 			StringAssert.Contains(printed, Path.Combine(_folder, "skills", AiSkill.Name));
 		}
 
+		[TestMethod, TestCategory("mcp")]
+		[Description("The skill's folder in the source is the repository's, whatever folder the program was started from")]
+		public void Source_skills_folder_is_the_repository_s()
+		{
+			var current = Environment.CurrentDirectory;
+			try
+			{
+				// Started from another project, as an agent working in that one starts it.
+				Environment.CurrentDirectory = _folder;
+				Assert.AreEqual(Path.Combine(Ui.RepoRoot.FullName, "skills"), AiSkill.SourceSkillsFolder("x360ce"),
+					"/ExportUi would write the interface description outside the repository's skill.");
+				Assert.AreEqual(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "skills"), AiSkill.SourceSkillsFolder("no-such-skill"),
+					"A program not built from a source with the skill keeps it in its own folder.");
+			}
+			finally
+			{
+				Environment.CurrentDirectory = current;
+			}
+		}
+
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("/?, -h and --help print what the program is and its switches, from the help, and point an AI agent at /Skill")]
 		public void Help_switch_prints_the_switches_from_the_help()

@@ -328,8 +328,6 @@ namespace x360ce.App.Controls
 
 		private void DirectInputControl_Load(object sender, EventArgs e)
 		{
-			EngineHelper.EnableDoubleBuffering(DiAxisDataGridView);
-			EngineHelper.EnableDoubleBuffering(DiEffectsDataGridView);
 		}
 
 		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)

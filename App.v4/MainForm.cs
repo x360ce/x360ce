@@ -26,6 +26,21 @@ namespace x360ce.App
 {
 	public partial class MainForm : BaseFormWithHeader
 	{
+		/// <summary>
+		/// The window draws everything on it off the screen first and shows it at once, as a WPF window does; otherwise each
+		/// control appears as it draws itself.
+		/// </summary>
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				const int WS_EX_COMPOSITED = 0x02000000;
+				var cp = base.CreateParams;
+				cp.ExStyle |= WS_EX_COMPOSITED;
+				return cp;
+			}
+		}
+
 		public MainForm()
 		{
 			ControlsHelper.InitInvokeContext();
@@ -69,9 +84,6 @@ namespace x360ce.App
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			FillBuletImageList();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			GameToCustomizeComboBox.Font = Font;
 			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
 			Pad1TabPage.Text = "Controller 1";
 			Pad2TabPage.Text = "Controller 2";
@@ -90,32 +102,131 @@ namespace x360ce.App
 			o.PropertyChanged += Options_PropertyChanged;
 			SettingsManager.AiOptions.PropertyChanged += AiOptions_PropertyChanged;
 			LoadSettings();
+			BuildPages();
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
 			o.WindowPosition?.LoadPosition(this);
 		}
 
+		/// <summary>
+		/// Builds the four controller pages and the About page with the window, before Windows makes any of it: the theme then
+		/// shapes them before they are first drawn, and nothing is built while the window is on the screen. They are given their
+		/// settings once the settings are read (<see cref="LoadPages"/>).
+		/// </summary>
+		void BuildPages()
+		{
+			ControlPages = new[] { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
+			foreach (var item in ControlPages)
+				item.ImageKey = "bullet_square_glass_grey.png";
+			Program.StartupTrace.Mark("BuildPages: before pads");
+			BuiltPadControls = new PadControl[4];
+			for (var i = 0; i < BuiltPadControls.Length; i++)
+			{
+				var mapTo = (MapTo)(i + 1);
+				BuiltPadControls[i] = new Controls.PadControl(mapTo)
+				{
+					Name = string.Format("ControlPad{0}", (int)mapTo),
+					Dock = DockStyle.Fill
+				};
+				Program.StartupTrace.Mark("BuildPages: pad " + (i + 1) + " built");
+				ControlPages[i].Controls.Add(BuiltPadControls[i]);
+				BuiltPadControls[i].InitPadControl();
+				Program.StartupTrace.Mark("BuildPages: pad " + (i + 1) + " initialised");
+			}
+			ControlAbout = new AboutControl
+			{
+				Dock = DockStyle.Fill
+			};
+			AboutTabPage.Controls.Add(ControlAbout);
+			Program.StartupTrace.Mark("BuildPages: about built");
+		}
+
+		/// <summary>
+		/// Gives the pages their settings, names and help, once the settings are read and before the window is first shown, so
+		/// it appears whole.
+		/// </summary>
+		void LoadPages()
+		{
+			OptionsPanel.InitOptions();
+			// Update settings manager with [Options] section.
+			UpdateSettingsMap();
+			// The hotkey is read from the settings just loaded.
+			ApplyEmulationHotkey();
+			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
+			// which hold none yet.
+			PadControls = BuiltPadControls;
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
+			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
+			// Note: There must be no such sections in new config.
+			for (var i = 0; i < PadControls.Length; i++)
+			{
+				PadControls[i].UpdateSettingsMap();
+				PadControls[i].InitPadData();
+				Program.StartupTrace.Mark("LoadPages: pad " + (i + 1) + " data");
+			}
+			// Allow events after PAD control are loaded.
+			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
+			// The header names the page shown from the start, as it does once another is chosen.
+			if (MainTabControl.SelectedTab != null)
+				SetHeaderSubject(MainTabControl.SelectedTab.Text);
+			// Name and describe everything, now that every panel exists. This is what a screen
+			// reader announces, what an automation tool searches by, and what the exported
+			// navigation tree is built from.
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			// The tray menu hangs off the notification icon rather than off the window, so it is
+			// not reached by walking the window.
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
+			// too, now that every panel that shows one exists.
+			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleImages(TrayContextMenuStrip);
+			// One call wires the header help for every control at once, from the same two
+			// properties, so what a screen reader announces and what the header shows agree.
+			UiTree.UiHelp.Attach(this);
+			Program.StartupTrace.Mark("LoadPages: end");
+		}
+
 		/// <summary>Fills the tab image list with the status lights and the icons of the theme in use.</summary>
 		/// <remarks>
 		/// Filled again when the theme changes: a list keeps copies of its images, so it does not follow the
-		/// resources. The lights of two colours are put back by the next status update (<see cref="StatusImageKey"/>).
+		/// resources. Each image is put in place of the one under its name, so a tab showing it never goes blank,
+		/// the lights of two colours (<see cref="StatusImageKey"/>) among them.
 		/// </remarks>
 		void FillBuletImageList()
 		{
-			BuletImageList.Images.Clear();
 			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
-			BuletImageList.ImageSize = SystemInformation.SmallIconSize;
-			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
-			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
-			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
-			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
-			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
-			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
-			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
-			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
-			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
+			// Setting the size empties the list, so it is set only while it differs.
+			if (BuletImageList.ImageSize != SystemInformation.SmallIconSize)
+				BuletImageList.ImageSize = SystemInformation.SmallIconSize;
+			SetBuletImage("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
+			SetBuletImage("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
+			SetBuletImage("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
+			SetBuletImage("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
+			SetBuletImage("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
+			SetBuletImage("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
+			SetBuletImage("ok_16x16.png", Resources.ok_16x16);
+			SetBuletImage("ok_off_16x16.png", Resources.ok_off_16x16);
+			SetBuletImage("fix_16x16.png", Resources.fix_16x16);
+			SetBuletImage("fix_off_16x16.png", Resources.fix_off_16x16);
+			SetBuletImage("refresh_16x16.png", Resources.refresh_16x16);
+			foreach (var key in BuletImageList.Images.Keys.Cast<string>().Where(x => x.Contains("|")).ToArray())
+			{
+				var colours = key.Split('|');
+				SetBuletImage(key, AppHelper.GetStatusIcon(colours[0], colours[1]));
+			}
+		}
+
+		/// <summary>Puts an image in the tab image list under its name, in place of the one there.</summary>
+		void SetBuletImage(string key, Image image)
+		{
+			var index = BuletImageList.Images.IndexOfKey(key);
+			if (index < 0)
+				BuletImageList.Images.Add(key, image);
+			else
+				BuletImageList.Images[index] = image;
 		}
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
@@ -437,7 +548,10 @@ namespace x360ce.App
 		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
 		public AboutControl ControlAbout;
+		/// <summary>The controller pages, once they hold their settings; null before.</summary>
 		public PadControl[] PadControls;
+		/// <summary>The controller pages as built with the window, before they are given their settings.</summary>
+		PadControl[] BuiltPadControls;
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -527,6 +641,16 @@ namespace x360ce.App
 			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			LoadPages();
+			// The status bar shows its values from the start, rather than appearing later and pushing the pages up.
+			StatusTimerLabel.Text = "";
+			StatusSaveLabel.Visible = false;
+			StatusEventsLabel.Visible = false;
+			StatusDllLabel.Text = "";
+			StatusIsAdminLabel.Text = WinAPI.IsVista
+				? string.Format("Elevated: {0}", WinAPI.IsElevated())
+				: "";
+			UpdateStatusAiAccessLabel();
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -538,12 +662,12 @@ namespace x360ce.App
 			}
 			MonitorErrors(true);
 			var game = SettingsManager.CurrentGame;
-			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
+			if (SettingsManager.Options.HidHideConfigureAutomatically)
 			{
-				// Enable Reconfigure HID Guardian. Every listed device is judged, so one no longer used by the game,
-				// unticked since the last run among them, is shown again as well as each one used is hidden.
+				// Every listed device is judged, so one no longer used by the game, unticked since the last run among
+				// them, is shown again as well as each one used is hidden.
 				SettingsManager.AutoHideShowMappedDevices(game);
-				AppHelper.SynchronizeToHidGuardian();
+				AppHelper.SynchronizeToHidHide();
 			}
 			Program.StartupTrace.Mark("MainForm_Load: end");
 		}
@@ -601,10 +725,6 @@ namespace x360ce.App
 				// Update Timer will be started inside Settings timer.
 				UpdateTimer.Stop();
 				SettingsTimer.Stop();
-
-				// Synchromize settings to HID Guardian.
-				//AppHelper.SynchronizeToHidGuardian();
-
 				SettingsTimer.Start();
 			}
 		}
@@ -903,9 +1023,12 @@ namespace x360ce.App
 			//});
 			// Logical delay without blocking the current thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
-			// An export only describes the window, so it leaves the settings as it found them.
+			// An export only describes the window, so it leaves the settings, and what HID Hide hides, as it found them.
 			if (Program.ExportUiFolder == null)
+			{
 				SaveAll();
+				AppHelper.UnInitializeHidHide();
+			}
 			AppHelper.UnInitializeHidGuardian();
 		}
 
@@ -1009,26 +1132,6 @@ namespace x360ce.App
 		private void UpdateForm1()
 		{
 			//if (DesignMode) return;
-			OptionsPanel.InitOptions();
-			// Set status.
-			StatusSaveLabel.Visible = false;
-			StatusEventsLabel.Visible = false;
-			// Load Tab pages.
-			ControlPages = new TabPage[4];
-			ControlPages[0] = Pad1TabPage;
-			ControlPages[1] = Pad2TabPage;
-			ControlPages[2] = Pad3TabPage;
-			ControlPages[3] = Pad4TabPage;
-			//BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
-			foreach (var item in ControlPages)
-				item.ImageKey = "bullet_square_glass_grey.png";
-			// Hide status values.
-			StatusDllLabel.Text = "";
-			MainStatusStrip.Visible = false;
 			// Check for various issues.
 			InitIssuesPanel();
 			Program.StartupTrace.Mark("UpdateForm1: end");
@@ -1037,74 +1140,7 @@ namespace x360ce.App
 		private void UpdateForm2()
 		{
 			Program.StartupTrace.Mark("UpdateForm2: start");
-			// Set status labels.
-			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format("Elevated: {0}", WinAPI.IsElevated())
-				: "";
-			UpdateStatusAiAccessLabel();
-			// Show status values.
-			MainStatusStrip.Visible = true;
-			// Update settings manager with [Options] section.
-			UpdateSettingsMap();
-			// The hotkey is read from the settings just loaded.
-			ApplyEmulationHotkey();
 			ScheduleUpdateProbe();
-			// Load PAD controls.
-			Program.StartupTrace.Mark("UpdateForm2: before pads");
-			PadControls = new PadControl[4];
-			for (var i = 0; i < PadControls.Length; i++)
-			{
-				var mapTo = (MapTo)(i + 1);
-				PadControls[i] = new Controls.PadControl(mapTo)
-				{
-					Name = string.Format("ControlPad{0}", (int)mapTo),
-					Dock = DockStyle.Fill
-				};
-				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " built");
-				ControlPages[i].Controls.Add(PadControls[i]);
-				PadControls[i].InitPadControl();
-				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " initialised");
-				// Update settings manager with [Mappings] section.
-			}
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
-			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
-			// Note: There must be no such sections in new config.
-			for (var i = 0; i < PadControls.Length; i++)
-			{
-				PadControls[i].UpdateSettingsMap();
-				PadControls[i].InitPadData();
-				Program.StartupTrace.Mark("UpdateForm2: pad " + (i + 1) + " data");
-			}
-			// Initialize pre-sets. Execute only after name of cIniFile is set.
-			//SettingsDatabasePanel.InitPresets();
-			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
-			// Load about control.
-			ControlAbout = new AboutControl
-			{
-				Dock = DockStyle.Fill
-			};
-			AboutTabPage.Controls.Add(ControlAbout);
-			Program.StartupTrace.Mark("UpdateForm2: about built");
-
-			// Name and describe everything, now that every panel exists. This is what a screen
-			// reader announces, what an automation tool searches by, and what the exported
-			// navigation tree is built from.
-			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
-			// The tray menu hangs off the notification icon rather than off the window, so it is
-			// not reached by walking the window.
-			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
-			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
-			// too, now that every panel that shows one exists.
-			ControlsHelper.ScaleImages(this);
-			ControlsHelper.ScaleImages(TrayContextMenuStrip);
-			// One call wires the header help for every control at once, from the same two
-			// properties, so what a screen reader announces and what the header shows agree.
-			Program.StartupTrace.Mark("UpdateForm2: text applied");
-			UiTree.UiHelp.Attach(this);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 			Program.StartupTrace.Mark("UpdateForm2: end");

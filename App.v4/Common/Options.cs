@@ -199,13 +199,13 @@ namespace x360ce.App
 		int _AutoHotkeyHangTimeout = ScriptChannel.DefaultLeaseMilliseconds;
 
 
-		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
-		public bool HidGuardianConfigureAutomatically
+		[DefaultValue(false), Description("Hide a device through HID Hide while it is mapped to a controller.")]
+		public bool HidHideConfigureAutomatically
 		{
-			get { return _HidGuardianConfigureAutomatically; }
-			set { _HidGuardianConfigureAutomatically = value; OnPropertyChanged(); }
+			get { return _HidHideConfigureAutomatically; }
+			set { _HidHideConfigureAutomatically = value; OnPropertyChanged(); }
 		}
-		bool _HidGuardianConfigureAutomatically = false;
+		bool _HidHideConfigureAutomatically = false;
 
 		[DefaultValue("{7}")]
 		public string GuideButtonAction

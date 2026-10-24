@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.27.26.0, built 2026-10-21.
+Version 4.27.51.0, built 2026-10-24.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -39,23 +39,16 @@ not shown in this state of the program.
 [Slider]    │   │       ├── Anti-dead zone 0..100                                       # Skips past a dead zone the game applies of its own, so small movements are felt.
 [Slider]    │   │       ├── Dead zone 0..100                                            # Add deadzone to the left trigger. Range is 0 to 255. Default is 0. The slider shows it as a percentage: 100 is 256.
 [Number]    │   │       ├── Anti-dead zone                                              # Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.
-[Number]    │   │       ├── Sensitivity -100..100 (hidden)                              # Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.
 [Number]    │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
+[Number]    │   │       ├── Sensitivity -100..100 (hidden)                              # Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.
 [CheckBox]  │   │       ├── Invert sensitivity                                          # Bends the middle the other way: more sensitive in the centre instead of less.
-[Toolbar]   │   │       └── Ready-made settings                                         # Common dead zone and anti-dead zone combinations, applied in one click.
-[Button]    │   │           └── Apply a ready-made setting                              # Fills the three settings above from a common combination.
-[Button]    │   │               ├── Clear                                               # Clears the dead zone, anti-dead zone and sensitivity.
-[Button]    │   │               ├── 5% DeadZone, 100% Controller Anti-DeadZone          # Sets the dead zone to 5% and the anti-dead zone to 100%.
-[Button]    │   │               ├── 100% Controller Anti-DeadZone                       # Sets the dead zone to 0% and the anti-dead zone to 100%.
-[Button]    │   │               ├── 80% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 80%.
-[Button]    │   │               ├── 60% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 60%.
-[Button]    │   │               ├── 40% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 40%.
-[Button]    │   │               └── 20% Controller Anti-DeadZone                        # Sets the dead zone to 0% and the anti-dead zone to 20%.
+[List]      │   │       └── Preset                                                      # Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; "Clear" sets all three to nought. The list then shows "Apply Preset" again.
 [Control]   │   ├── AxisToButtonUserControl                                             # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Value]     │   │   ├── Mapped control                                                  # Which control on your device works this button.
 [Slider]    │   │   ├── Press point 0..100                                              # How far the control must move before this button counts as pressed.
 [Value]     │   │   ├── Press point                                                     # How far the control must move before this button counts as pressed.
 [Number]    │   │   └── Press point 0..32767                                            # Axis to A Button Dead Zone.
+[Control]   │   ├── AxisToDPadChart                                                     # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
 [Control]   │   ├── DirectInputUserControl                                              # What the mapped device reports about itself, and its values as they change.
 [Tabs]      │   │   ├── Device detail pages                                             # What the device reports it can do.
 [Tab]       │   │   │   ├── Device Objects                                              # Every axis, button and hat the device reports having.
@@ -76,10 +69,10 @@ not shown in this state of the program.
 [Value]     │   │   ├── Product identifier                                              # Device product GUID.
 [Value]     │   │   ├── Hardware revision                                               # Hardware revision the device reports.
 [Value]     │   │   ├── Number of point of view hats                                    # How many hat switches the device has.
+[Value]     │   │   ├── Buttons pressed                                                 # Which buttons are pressed right now, by the numbers the mapping boxes use.
 [Value]     │   │   ├── Instance identifier                                             # Device instance GUID.
 [Value]     │   │   ├── Device type                                                     # What kind of device Windows considers this to be.
-[Value]     │   │   ├── Number of buttons                                               # How many buttons the device has.
-[Grid]      │   │   └── Button values reported by the device                            # Which buttons are pressed right now.
+[Value]     │   │   └── Number of buttons                                               # How many buttons the device has.
 [Control]   │   ├── InputChipGroup                                                      # The device's buttons, numbered as the mapping list numbers them.
 [Control]   │   ├── InputUserControl                                                    # Every control of the selected device, lit while it is used, before anything is mapped.
 [Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
@@ -188,12 +181,13 @@ not shown in this state of the program.
 [Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.
-[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.
-[Value]     │   │   │   │       ├── Dead zone                                           # How far the axis must move from the centre before a direction is pressed.
-[Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre, for a device that does not rest in the middle.
+[Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.
+[Value]     │   │   │   │       ├── Dead zone                                           # How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.
+[Value]     │   │   │   │       ├── Centre offset                                       # Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.
 [CheckBox]  │   │   │   │       ├── Enabled                                             # Axis to control DPad. Disabled = 0, Enabled = 1.
 [Slider]    │   │   │   │       ├── Dead zone 0..100                                    # Dead zone for axis. The slider shows it as a percentage: 100 is 256.
-[Slider]    │   │   │   │       └── Centre offset 0..100                                # Axis to D-Pad offset. The slider shows it as a percentage: 100 is 256.
+[Slider]    │   │   │   │       ├── Centre offset 0..100                                # Axis to D-Pad offset. The slider shows it as a percentage: 100 is 256.
+[Group]     │   │   │   │       └── Axis to D-Pad chart -> AxisToDPadChart              # The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
 [Tab]       │   │   │   ├── Triggers                                                    # Shapes what the game receives from the two triggers.
 [Group]     │   │   │   │   ├── (LeftTriggerUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (RightTriggerUserControl) -> AxisMapUserControl         # Shapes what the game receives from one control, without changing the device.
@@ -215,6 +209,9 @@ not shown in this state of the program.
 [List]      │   │   │   │   │   ├── Motor periods                                       # Sets both motor periods to the measured motors played this many times slower; 4x suits most wheels. Greyed out under Constant, which has no period.
 [Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
 [Label]     │   │   │   │   │   └── Effect description                                  # What the chosen effect type does, or, for a device read through Raw Input whose DirectInput side takes no force feedback, that none reaches it.
+[Button]    │   │   │   │   ├── Defaults                                                # Puts every setting on this page back to its default.
+[Section]   │   │   │   │   ├── Force source (hidden)                                   # Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
+[Label]     │   │   │   │   │   └── Force source                                        # Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse of the Sine or Sawtooth effect lasts. Greyed out under Constant, which has no period.
@@ -231,10 +228,7 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   │   ├── Right motor strength 0..100                         # Right motor strength. Range is 0 to 100. Default is 100.
 [Slider]    │   │   │   │   │   ├── Right motor period 0..100                           # Right motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The right motor is the high-frequency one. Range is 0 to 400. Default is 64, the measured motor played 4 times slower for a wheel. The slider shows it as a percentage: 100 is 400.
 [Slider]    │   │   │   │   │   └── Test right motor 0..100                             # Runs this motor at the chosen strength, so you can feel it without a game.
-[Value]     │   │   │   │   ├── About force feedback                                    # Explains what the settings on this page do.
-[Button]    │   │   │   │   ├── Defaults                                                # Puts every setting on this page back to its default.
-[Section]   │   │   │   │   └── Force source (hidden)                                   # Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.
-[Label]     │   │   │   │       └── Force source                                        # Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.
+[Value]     │   │   │   │   └── About force feedback                                    # Explains what the settings on this page do.
 [Tab]       │   │   │   ├── Wheel                                                       # The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.
 [Group]     │   │   │   │   ├── (WheelChartUserControl) -> WheelChartUserControl        # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [CheckBox]  │   │   │   │   ├── Centering spring                                        # Use the centering spring. 0 = OFF, 1 = ON. Off by default, so a wheel's own software can hold the centre instead.
@@ -393,13 +387,13 @@ not shown in this state of the program.
 [Value]     │       │           │       ├── HID Hide state                              # Whether HID Hide is installed, and which version.
 [Button]    │       │           │       ├── Refresh                                     # Checks HID Hide again.
 [Button]    │       │           │       ├── Download HID Hide...                        # Opens the page HID Hide is downloaded from.
-[Button]    │       │           │       └── Open Configuration                          # Opens the HID Hide program, where hidden devices are chosen.
+[Button]    │       │           │       ├── Open Configuration                          # Opens the HID Hide program, where hidden devices are chosen.
+[CheckBox]  │       │           │       └── Configure automatically                     # Hide a device through HID Hide while it is mapped to a controller.
 [Tab]       │       │           ├── HID Guardian (obsolete)                             # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │       │           │   ├── HID Guardian                                    # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │       │           │   │   ├── HID Guardian state                          # Whether HID Guardian is still installed.
 [Button]    │       │           │   │   ├── Install                                     # Installs HID Guardian. Use HID Hide instead.
 [Button]    │       │           │   │   ├── Uninstall                                   # Removes HID Guardian. Needs Administrator.
-[CheckBox]  │       │           │   │   ├── Configure automatically                     # Configure Hid Guardian Automatically.
 [Button]    │       │           │   │   └── Refresh                                     # Checks HID Guardian again.
 [Value]     │       │           │   └── HID Guardian notes                              # Explains why HID Guardian is no longer recommended.
 [Tab]       │       │           ├── Settings                                            # Where your settings are kept, and how to move them somewhere else.
@@ -500,14 +494,14 @@ not shown in this state of the program.
 [Group]     │       │       └── (GameDetailsControl)                                    # How the selected game is set up.
 [Section]   │       │           ├── Hook mask                                           # Which questions a game asks about controllers this program answers for it.
 [CheckBox]  │       │           │   ├── Hook COM                                        # Answers when the game asks Windows for a controller through COM.
-[CheckBox]  │       │           │   ├── Hook Load Library                               # Answers when the game loads a library, so the replacement is loaded instead.
 [CheckBox]  │       │           │   ├── Hook Direct Input                               # Answers when the game asks for a controller through Direct Input.
-[CheckBox]  │       │           │   ├── Hook SetupAPI                                   # Answers when the game asks Windows to list devices.
 [CheckBox]  │       │           │   ├── Hook product and vendor codes                   # Reports the fake product and vendor codes instead of the real ones.
-[CheckBox]  │       │           │   ├── Hook WinVerifyTrust                             # Answers when the game checks a file's signature.
 [CheckBox]  │       │           │   ├── Hook name                                       # Reports a different controller name to the game.
-[CheckBox]  │       │           │   ├── Disable                                         # Turns every answer off, leaving the game with the real controllers.
-[CheckBox]  │       │           │   └── Stop                                            # Stops answering once the game has started.
+[CheckBox]  │       │           │   ├── Stop                                            # Stops answering once the game has started.
+[CheckBox]  │       │           │   ├── Hook Load Library                               # Answers when the game loads a library, so the replacement is loaded instead.
+[CheckBox]  │       │           │   ├── Hook SetupAPI                                   # Answers when the game asks Windows to list devices.
+[CheckBox]  │       │           │   ├── Hook WinVerifyTrust                             # Answers when the game checks a file's signature.
+[CheckBox]  │       │           │   └── Disable                                         # Turns every answer off, leaving the game with the real controllers.
 [Section]   │       │           ├── XInput files                                        # Which XInput library files this program supplies to the game.
 [CheckBox]  │       │           │   ├── XInput 9.1, 32-bit                              # Supplies the 32-bit XInput 9.1 library to the game.
 [CheckBox]  │       │           │   ├── XInput 9.1, 64-bit                              # Supplies the 64-bit XInput 9.1 library to the game.
@@ -521,26 +515,26 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   └── XInput 1.4, 64-bit                              # Supplies the 64-bit XInput 1.4 library to the game.
 [Section]   │       │           ├── Auto map                                            # Not available yet, so greyed out: the program does not map devices to controllers by itself.
 [CheckBox]  │       │           │   ├── Auto map controller 1                           # Lets the program assign controller 1 to a device when this game starts.
-[CheckBox]  │       │           │   ├── Auto map controller 3                           # Lets the program assign controller 3 to a device when this game starts.
 [CheckBox]  │       │           │   ├── Auto map controller 2                           # Lets the program assign controller 2 to a device when this game starts.
+[CheckBox]  │       │           │   ├── Auto map controller 3                           # Lets the program assign controller 3 to a device when this game starts.
 [CheckBox]  │       │           │   └── Auto map controller 4                           # Lets the program assign controller 4 to a device when this game starts.
 [Section]   │       │           ├── DInput file                                         # Whether the Direct Input library is supplied to the game as well.
 [CheckBox]  │       │           │   ├── DInput 8, 32-bit                                # Supplies the 32-bit Direct Input library to the game.
 [CheckBox]  │       │           │   └── DInput 8, 64-bit                                # Supplies the 64-bit Direct Input library to the game.
-[Section]   │       │           ├── Other options                                       # How the game is started, and what it is told about the controller.
-[List]      │       │           │   ├── Architecture                                    # Whether the game is a 32-bit or a 64-bit program.
-[List]      │       │           │   ├── Emulation                                       # Whether the controller is presented by the virtual driver or by replaced library files.
-[Value]     │       │           │   ├── Fake product code                               # Product code reported to a game that only accepts one model of controller.
-[Text]      │       │           │   ├── XInput path                                     # Folder the XInput library is written into.
-[Text]      │       │           │   ├── DInput file                                     # Name of the Direct Input library written for the game.
-[Value]     │       │           │   ├── Fake vendor code                                # Vendor code reported to a game that only accepts one make of controller.
-[Number]    │       │           │   ├── Fake product code 0..65535                      # Product code reported to a game that only accepts one model of controller.
-[Number]    │       │           │   ├── Fake vendor code 0..65535                       # Vendor code reported to a game that only accepts one make of controller.
-[Number]    │       │           │   └── Timeout -1..65535                               # How long to wait for the game before giving up.
 [Section]   │       │           ├── Help                                                # Searches the web for other people's settings for this game.
 [Button]    │       │           │   ├── Search on Google...                             # Searches the web for this game.
 [Button]    │       │           │   ├── Search on NGemu...                              # Searches the NGemu forum for this game.
 [Button]    │       │           │   └── Open NGemu...                                   # Opens the NGemu forum.
+[Section]   │       │           ├── Other options                                       # How the game is started, and what it is told about the controller.
+[Number]    │       │           │   ├── Fake vendor code 0..65535                       # Vendor code reported to a game that only accepts one make of controller.
+[Value]     │       │           │   ├── Fake vendor code                                # Vendor code reported to a game that only accepts one make of controller.
+[Number]    │       │           │   ├── Fake product code 0..65535                      # Product code reported to a game that only accepts one model of controller.
+[Value]     │       │           │   ├── Fake product code                               # Product code reported to a game that only accepts one model of controller.
+[Number]    │       │           │   ├── Timeout -1..65535                               # How long to wait for the game before giving up.
+[Text]      │       │           │   ├── XInput path                                     # Folder the XInput library is written into.
+[List]      │       │           │   ├── Architecture                                    # Whether the game is a 32-bit or a 64-bit program.
+[Text]      │       │           │   ├── DInput file                                     # Name of the Direct Input library written for the game.
+[List]      │       │           │   └── Emulation                                       # Whether the controller is presented by the virtual driver or by replaced library files.
 [Section]   │       │           └── Action                                              # Undoes every change made to this game.
 [Button]    │       │               └── Reset to Default                                # Puts this game's settings back the way they started.
 [Tab]       │       ├── Devices                                                         # Every controller the program can see, whether mapped or not.
@@ -564,11 +558,12 @@ not shown in this state of the program.
 [Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
 [Button]    │       │           ├── Add Plugin Device                                   # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
 [Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
-[Button]    │       │           └── HID Guardian                                        # Actions for the obsolete HID Guardian tool.
-[Button]    │       │               ├── Show Enumerated Devices                         # Lists the devices HID Guardian knows about.
-[Button]    │       │               ├── Show Hidden Devices                             # Lists the devices HID Guardian is hiding from games.
-[Button]    │       │               ├── Unhide All Devices                              # Makes every hidden device visible to games again.
-[Button]    │       │               └── Synchronize To HID Guardian                     # Hides exactly the devices that are mapped to a controller.
+[Button]    │       │           └── HID Hide                                            # Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.
+[Button]    │       │               ├── Show Gaming Devices                             # Lists the devices HID Hide counts as game controllers, with the path it knows each by.
+[Button]    │       │               ├── Show Hidden Devices                             # Lists the devices HID Hide is hiding from games.
+[Button]    │       │               ├── Unhide All Devices                              # Makes every device HID Hide hides visible to games again, and clears every Hide box.
+[Button]    │       │               ├── Synchronize To HID Hide                         # Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.
+[Button]    │       │               └── Open HID Hide                                   # Opens HID Hide's own program, or its download page while it is not installed.
 [Tab]       │       ├── Cloud                                                           # Settings waiting to be sent to or fetched from the online database.
 [Group]     │       │   └── (CloudPanel)                                                # Settings waiting to be sent to or fetched from the online database.
 [Grid]      │       │       ├── Cloud tasks                                             # Settings waiting to be sent to or fetched from the online database.

@@ -72,15 +72,6 @@ namespace x360ce.App.UiTree
 		{
 			d["XboxImageUserControl"] = new Text("Controller picture",
 				"Lights up each part of the controller as it is used, so a mapping can be checked by eye.");
-			d["AxisMapUserControl.P_0_0_0_MenuItem"] = new Text(null,
-				"Clears the dead zone, anti-dead zone and sensitivity.");
-			AddPreset(d, "P_5_100_0_MenuItem", "5", "100");
-			AddPreset(d, "P_0_100_0_MenuItem", "0", "100");
-			AddPreset(d, "P_0_80_0_MenuItem", "0", "80");
-			AddPreset(d, "P_0_60_0_MenuItem", "0", "60");
-			AddPreset(d, "P_0_40_0_MenuItem", "0", "40");
-			AddPreset(d, "P_0_20_0_MenuItem", "0", "20");
-
 			d["GamesGridUserControl.ShowAllGamesMenuItem"] = new Text(null,
 				"Lists every game.");
 			d["GamesGridUserControl.ShowEnabledGamesMenuItem"] = new Text(null,
@@ -89,14 +80,6 @@ namespace x360ce.App.UiTree
 				"Lists only the games that are switched off.");
 			d["GameDetailsUserControl.ActionGroupBox"] = new Text(null,
 				"Undoes every change made to this game.");
-			d["UserDevicesUserControl.EnumeratedDevicesButton"] = new Text(null,
-				"Lists the devices HID Guardian knows about.");
-			d["UserDevicesUserControl.HiddenDevicesMenuItem"] = new Text(null,
-				"Lists the devices HID Guardian is hiding from games.");
-			d["UserDevicesUserControl.UnhideAllDevicesMenuItem"] = new Text(null,
-				"Makes every hidden device visible to games again.");
-			d["UserDevicesUserControl.synchronizeToHidGuardianToolStripMenuItem"] = new Text(null,
-				"Hides exactly the devices that are mapped to a controller.");
 			d["IssuesUserControl.RunStateLabel"] = new Text("Check state",
 				"Whether the checks are running or waiting.");
 
@@ -108,12 +91,6 @@ namespace x360ce.App.UiTree
 				"Opens the page the virtual controller driver comes from.");
 			d["AboutControl.AboutTocaEditLinkLabel"] = new Text(null,
 				"Opens the site of the person who wrote the first version.");
-		}
-
-		static void AddPreset(Dictionary<string, Text> d, string field, string dead, string anti)
-		{
-			d["AxisMapUserControl." + field] = new Text(null,
-				"Sets the dead zone to " + dead + "% and the anti-dead zone to " + anti + "%.");
 		}
 	}
 }

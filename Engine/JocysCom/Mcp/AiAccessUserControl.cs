@@ -142,8 +142,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			if (Model.Door == null || AiAccessPanel.Parent == this)
 				return;
-			AiHeaderPanel.Visible = false;
-			AiTabControl.Visible = false;
+			AiPanel.Visible = false;
 			AiAccessSnippetLabel.Visible = false;
 			AiAccessSnippetTextBox.Visible = false;
 			AiAccessCopyButton.Visible = false;
@@ -195,15 +194,28 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>The example's caption bold, and the token and the snippet in a fixed-width font, all from the page's own font.</summary>
 		void SetFonts()
 		{
-			var bold = new Font(Font, FontStyle.Bold);
-			var code = new Font("Consolas", Font.SizeInPoints);
+			// A control given a font equal to its own keeps its own, so a font equal to the one in use is kept.
+			var bold = Keep(new Font(Font, FontStyle.Bold), _bold);
+			var code = Keep(new Font("Consolas", Font.SizeInPoints), _code);
 			AiExampleLabel.Font = bold;
 			AiAccessTokenTextBox.Font = code;
 			AiAccessSnippetTextBox.Font = code;
 			AiTunnelIdComboBox.Font = code;
-			DisposeFonts();
+			if (_bold != bold)
+				_bold?.Dispose();
+			if (_code != code)
+				_code?.Dispose();
 			_bold = bold;
 			_code = code;
+		}
+
+		/// <summary>The font in use when the new one equals it, the new one otherwise.</summary>
+		static Font Keep(Font font, Font used)
+		{
+			if (!font.Equals(used))
+				return font;
+			font.Dispose();
+			return used;
 		}
 
 		void DisposeFonts()

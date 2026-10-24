@@ -179,7 +179,7 @@ namespace x360ce.Tests
 					SettingsManager.UserSettings.Items.Add(row);
 				SettingsManager.UpdateCurrentGame(game);
 				CollectionAssert.AreEqual(new[] { ticked }, SettingsManager.GetMappedDevices(game.FileName, true),
-					"A device unticked in the tab's list or on the Devices page is hidden from games by HID Guardian.");
+					"A device unticked in the tab's list or on the Devices page is hidden from games by HID Hide.");
 				var named = (UserDevice[])typeof(HidHideIssue).GetMethod("GetVirtualMappedDevices", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 				CollectionAssert.AreEqual(new[] { ticked }, named, "The Issues tab asks for an unticked device to be hidden with HID Hide.");
 				foreach (var ud in devices)
@@ -201,7 +201,7 @@ namespace x360ce.Tests
 			// shown or hidden at once.
 			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
 			StringAssert.Contains(Ui.Between(main, "SettingsManager.AutoHideShowMappedDevices(game);", "MainForm_Load: end"),
-				"AppHelper.SynchronizeToHidGuardian();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+				"AppHelper.SynchronizeToHidHide();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
 			var pad = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
 			StringAssert.Contains(Ui.Between(pad, "private void MappedDevicesDataGridView_CellClick(", "#endregion"),
 				"SettingsManager.HideMappedDevices(", "Unticking a row leaves its device hidden from games.");

@@ -141,8 +141,9 @@ namespace x360ce.Tests
 					chart.PerformLayout();
 					chart.SetCurve(60, 12, 60, 40, 900, 100);
 					var picture = (PictureBox)Find(chart, "MainPictureBox");
-					var w = picture.ClientSize.Width;
-					var h = picture.ClientSize.Height;
+					var area = AppHelper.ChartBounds(picture);
+					var w = area.Width;
+					var h = area.Height;
 					var curve = new SpringCurve();
 					curve.Set(60, 12, 60, 40, 900, 100, 0);
 					// A quarter of the way from the left stop: the force pushes right, above the middle.
@@ -188,7 +189,7 @@ namespace x360ce.Tests
 			return (int)Math.Round(middle - forcePercent / 100f * middle);
 		}
 
-		/// <summary>The picture as it is painted, its border included.</summary>
+		/// <summary>The chart's box as it is painted.</summary>
 		static Bitmap Draw(PictureBox picture)
 		{
 			var bitmap = new Bitmap(picture.Width, picture.Height);
@@ -196,10 +197,11 @@ namespace x360ce.Tests
 			return bitmap;
 		}
 
+		/// <summary>A point of the chart in its painted box, where the chart stands with room round it.</summary>
 		static Point ToBitmap(PictureBox picture, int x, int y)
 		{
-			var border = (picture.Width - picture.ClientSize.Width) / 2;
-			return new Point(x + border, y + border);
+			var area = AppHelper.ChartBounds(picture);
+			return new Point(x + area.X, y + area.Y);
 		}
 
 		/// <summary>Whether a red pixel is a few pixels above or below the point: the line goes through the middle of each whole percent.</summary>

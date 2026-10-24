@@ -3,9 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
 using System;
-using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Plugins;
@@ -53,9 +51,8 @@ namespace x360ce.Tests
 					var boxes = InputChips.Create(14, 0, 0, 0).Select(x => x.Payload).ToArray();
 					Assert.AreEqual("Button 1", boxes[0]);
 
-					var pressed = (DataTable)typeof(DirectInputUserControl)
-						.GetField("DiButtonsTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
-					Assert.AreEqual("01", pressed.Rows[0][0], "The first button, pressed, is not numbered as the box that takes it: " + boxes[0] + ".");
+					var pressed = tab.Controls.Find("DiButtonsTextBox", true).Single();
+					Assert.AreEqual("01", pressed.Text, "The first button, pressed, is not numbered as the box that takes it: " + boxes[0] + ".");
 
 					var grid = (DataGridView)tab.Controls.Find("DiObjectsDataGridView", true).Single();
 					var mapsAs = grid.Columns["MapsAsColumn"].Index;

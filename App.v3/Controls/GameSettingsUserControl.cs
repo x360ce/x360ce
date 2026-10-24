@@ -143,8 +143,6 @@ namespace x360ce.App.Controls
 
 		private void GameSettingsUserControl_Load(object sender, EventArgs e)
 		{
-			EngineHelper.EnableDoubleBuffering(GamesDataGridView);
-			EngineHelper.EnableDoubleBuffering(ProgramsDataGridView);
 			LoadProgramsFromLocalGdbFile();
 			ProgramImageColumn.Visible = false;
 		}

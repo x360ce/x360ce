@@ -90,6 +90,14 @@ A device can drive up to four emulated controllers at once.
 
 Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.
 
+## D-Pad buttons that report as a stick
+
+Some pads report their D-Pad as a stick: their X and Y axes jump to the ends while a direction is held. `[Controller 1]` tab → `[D-Pad]` tab → `[Axis To D-Pad]` → `[Enabled]` turns those axes into the D-Pad: right and left from X, down and up from Y, two at once on a diagonal. The stick's own mappings stay as they are, so clear the left `[Stick Axis X]` and `[Stick Axis Y]` boxes on the `[General]` tab if the game should not see the stick move as well.
+
+- `[Dead Zone]` is how far an axis must move from the centre before a direction is pressed. `100 %` presses close to the end, where such a pad puts the axis even when it falls a little short. For a real stick used as a D-Pad, try `50 %`.
+- `[Offset]` moves the centre towards the right and the bottom, for a device that does not rest in the middle.
+- The chart beside them is the X and Y square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
+
 ## Checking for a newer version
 
 The program can look for a newer release and install it, but only when asked to.
@@ -172,6 +180,12 @@ controller is moved to where its controller is, or, when that cannot be told, th
 ## Hiding the real controller from games (HID Hide)
 
 Duplicated controller, or the game sees two controllers? A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list, tick the controller under Devices, and make sure hiding is turned on.
+
+`X360CE` can make those changes itself once `HID Hide` is installed:
+
+- `[Devices]` tab → a device's `[Hide]` box hides it from games, or shows it again. Hiding a device also adds `x360ce.exe` to the application list and turns hiding on.
+- `[Devices]` tab → `[HID Hide...]` lists the gaming devices and the hidden ones, shows every device again, makes `HID Hide` hide exactly the devices whose `[Hide]` box is ticked, or opens `HID Hide`.
+- `[Options]` tab → `[HID Hide]` tab → `[Configure automatically]` hides a device while it is mapped to a controller, and shows it again when `X360CE` closes.
 
 While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID Hide` is missing, when hiding is off, when the controller is not hidden, or when `HID Hide` hides it from x360ce as well. Its button opens the download page or `HID Hide`'s own program.
 
@@ -497,7 +511,7 @@ Write a switch after the program's name, for example `x360ce.exe /WindowState=Mi
 - `/Exit` closes the program where it is already running, for example from a script that runs when a game ends.
 - `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
 - `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
-- `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `skills\x360ce\references` when none is given, then closes. The window is built off the screen while it does this.
+- `/ExportUi=<folder>` writes a description of every page, box and button into the folder, or, when none is given, into `skills\x360ce\references` of the source the program was built from (beside the program when it was not built from one), whatever folder it is started from, then closes. The window is built off the screen while it does this.
 - `/PluginKit=<folder>` writes a folder to start a plugin in, and starts nothing else: the types a plugin implements, the build settings, the Test Controller's source as a sample, and the plugin help.
 - `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. Both reach the copy that runs with its own settings, a `/Profile` included. The help's AI assistant access section says more.
 

@@ -202,5 +202,50 @@ namespace x360ce.Engine
 			return v > release;
 		}
 
+		/// <summary>The press point Axis to D-Pad's dead zone sets, on the 0 to 32767 scale of half an axis' travel.</summary>
+		/// <remarks>
+		/// The setting's scale ends <see cref="AxisButtonReleaseMargin"/> short of the end of the travel. At its top, x360ce 3's
+		/// default, made for pads whose direction buttons report as an axis, a direction is pressed close to the end, where
+		/// such a pad puts the axis even when it falls a little short, and lets go before the axis is back at rest.
+		/// </remarks>
+		/// <param name="deadZone">The setting: 0 to 256 for none to all of that scale.</param>
+		public static int GetAxisToDPadPressPoint(int deadZone)
+		{
+			return Math.Max(0, Math.Min(deadZone, 256)) * (short.MaxValue - AxisButtonReleaseMargin) / 256;
+		}
+
+		/// <summary>How far Axis to D-Pad's offset moves the centre towards the right and the bottom, on the 0 to 65535 scale of an axis.</summary>
+		/// <param name="offset">The setting: 0 to 256 for none to the whole of half the travel.</param>
+		public static int GetAxisToDPadShift(int offset)
+		{
+			return Math.Max(0, Math.Min(offset * 128, short.MaxValue));
+		}
+
+		/// <summary>
+		/// The D-Pad directions a device's X and Y axes press, as x360ce 3's Axis to D-Pad made the device's main stick the
+		/// D-Pad: right and left from X, down and up from Y, two at once on a diagonal.
+		/// </summary>
+		/// <remarks>Each direction is a button an axis drives, pressed past the press point and let go a little before it (<see cref="IsAxisButtonPressed"/>).</remarks>
+		/// <param name="x">The X axis' reading, 0 to 65535.</param>
+		/// <param name="y">The Y axis' reading, 0 to 65535, growing downwards.</param>
+		/// <param name="pressPoint">From <see cref="GetAxisToDPadPressPoint"/>.</param>
+		/// <param name="shift">From <see cref="GetAxisToDPadShift"/>.</param>
+		/// <param name="wasPressed">The directions pressed on the previous poll.</param>
+		public static SharpDX.XInput.GamepadButtonFlags GetAxisToDPadButtons(int x, int y, int pressPoint, int shift, SharpDX.XInput.GamepadButtonFlags wasPressed)
+		{
+			var buttons = SharpDX.XInput.GamepadButtonFlags.None;
+			x = Math.Max(0, Math.Min(ushort.MaxValue, x - shift));
+			y = Math.Max(0, Math.Min(ushort.MaxValue, y - shift));
+			if (IsAxisButtonPressed(x, false, true, pressPoint, (wasPressed & SharpDX.XInput.GamepadButtonFlags.DPadRight) != 0))
+				buttons |= SharpDX.XInput.GamepadButtonFlags.DPadRight;
+			if (IsAxisButtonPressed(x, true, true, pressPoint, (wasPressed & SharpDX.XInput.GamepadButtonFlags.DPadLeft) != 0))
+				buttons |= SharpDX.XInput.GamepadButtonFlags.DPadLeft;
+			if (IsAxisButtonPressed(y, false, true, pressPoint, (wasPressed & SharpDX.XInput.GamepadButtonFlags.DPadDown) != 0))
+				buttons |= SharpDX.XInput.GamepadButtonFlags.DPadDown;
+			if (IsAxisButtonPressed(y, true, true, pressPoint, (wasPressed & SharpDX.XInput.GamepadButtonFlags.DPadUp) != 0))
+				buttons |= SharpDX.XInput.GamepadButtonFlags.DPadUp;
+			return buttons;
+		}
+
 	}
 }

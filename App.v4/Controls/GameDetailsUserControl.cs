@@ -16,10 +16,10 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			DInputCheckBoxes = DInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
-			XInputCheckBoxes = XInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
-			HookCheckBoxes = HookMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
-			AutoMapCheckBoxes = AutoMapMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
+			DInputCheckBoxes = DInputMaskLayoutPanel.Controls.OfType<CheckBox>().ToArray();
+			XInputCheckBoxes = XInputMaskLayoutPanel.Controls.OfType<CheckBox>().ToArray();
+			HookCheckBoxes = HookMaskLayoutPanel.Controls.OfType<CheckBox>().ToArray();
+			AutoMapCheckBoxes = AutoMapMaskLayoutPanel.Controls.OfType<CheckBox>().ToArray();
 			// The program does not map devices by itself yet, so Auto Map is shown greyed out and unticked.
 			AutoMapMaskGroupBox.Enabled = false;
 			// Fill architecture combo box.
@@ -170,7 +170,7 @@ namespace x360ce.App.Controls
 					cb.Checked = ((m & v) != 0);
 				}
 			}
-			UpdateTitle(boxes.FirstOrDefault().Parent as GroupBox, (int)m);
+			UpdateTitle(boxes.FirstOrDefault(), (int)m);
 		}
 
 		/// <summary>
@@ -280,12 +280,15 @@ namespace x360ce.App.Controls
 					if (CurrentItem.HookMask != mask)
 						CurrentItem.HookMask = mask;
 				}
-				UpdateTitle(cbx.Parent as GroupBox, mask);
+				UpdateTitle(cbx, mask);
 			}
 		}
 
-		void UpdateTitle(GroupBox gp, int mask)
+		/// <summary>Shows a mask in the title of the group a check box of it is in.</summary>
+		void UpdateTitle(CheckBox box, int mask)
 		{
+			// Each group lays its check boxes out in a table of its own.
+			var gp = (GroupBox)box.Parent.Parent;
 			var end = gp.Text.IndexOf(" - ") + 3;
 			var prefix = gp.Text.Substring(0, end);
 			ControlsHelper.SetText(gp, "{0}{1:X8}", prefix, mask);

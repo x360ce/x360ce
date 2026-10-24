@@ -29,11 +29,9 @@
 		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -43,19 +41,14 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle31 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -121,8 +114,8 @@
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiButtonsDataGridView = new System.Windows.Forms.DataGridView();
-			this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiButtonsLabel = new System.Windows.Forms.Label();
+			this.DiButtonsTextBox = new System.Windows.Forms.TextBox();
 			this.ObjectsOffsetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.OffsetNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsGuidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -145,7 +138,6 @@
 			this.DiEffectsDataTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.DiButtonsDataGridView)).BeginInit();
 			this.RootTableLayoutPanel.SuspendLayout();
 			this.HeaderTableLayoutPanel.SuspendLayout();
 			this.AxisRowTableLayoutPanel.SuspendLayout();
@@ -156,9 +148,6 @@
 			this.DiEffectsDataGridView.AllowUserToAddRows = false;
 			this.DiEffectsDataGridView.AllowUserToDeleteRows = false;
 			this.DiEffectsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiEffectsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiEffectsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiEffectsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiEffectsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.DiEffectsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.DiEffectNameColumn,
@@ -166,15 +155,12 @@
             this.DiEffectDynamicParameters});
 			this.DiEffectsDataGridView.ContextMenuStrip = this.CopyContextMenuStrip;
 			this.DiEffectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DiEffectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiEffectsDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.DiEffectsDataGridView.AccessibleName = "Force feedback effects the device supports";
 			this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
 			this.DiEffectsDataGridView.ReadOnly = true;
 			this.DiEffectsDataGridView.RowHeadersVisible = false;
 			this.DiEffectsDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			this.DiEffectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle4;
 			this.DiEffectsDataGridView.Size = new System.Drawing.Size(827, 168);
 			this.DiEffectsDataGridView.TabIndex = 0;
 			// 
@@ -217,7 +203,6 @@
 			// 
 			// CopyContextMenuStrip
 			// 
-			this.CopyContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CopyWithHeadersMenuItem});
 			this.CopyContextMenuStrip.Name = "CopyContextMenuStrip";
@@ -267,15 +252,14 @@
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceRevTextBox, 3, 2);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiPovsLabel, 6, 2);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapPovsTextBox, 7, 2);
-			this.HeaderTableLayoutPanel.Controls.Add(this.DiButtonsDataGridView, 8, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiButtonsLabel, 8, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiButtonsTextBox, 9, 2);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiInstanceGuidLabel, 0, 3);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceInstanceGuidTextBox, 1, 3);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiDeviceTypeLabel, 2, 3);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceTypeTextBox, 3, 3);
 			this.HeaderTableLayoutPanel.Controls.Add(this.label3, 6, 3);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapButtonsTextBox, 7, 3);
-			this.HeaderTableLayoutPanel.SetColumnSpan(this.DiButtonsDataGridView, 2);
-			this.HeaderTableLayoutPanel.SetRowSpan(this.DiButtonsDataGridView, 2);
 			this.HeaderTableLayoutPanel.SetColumnSpan(this.DeviceTypeTextBox, 3);
 			this.HeaderTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HeaderTableLayoutPanel.Name = "HeaderTableLayoutPanel";
@@ -326,9 +310,6 @@
 			this.DiAxisDataGridView.AllowUserToResizeRows = false;
 			this.DiAxisDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiAxisDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiAxisDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiAxisDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiAxisDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiAxisDataGridView.ColumnHeadersHeight = 29;
 			this.DiAxisDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.DiColumnAxis,
@@ -340,7 +321,6 @@
             this.DiColumnFr,
             this.DiColumnV,
             this.DiColumnVr});
-			this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiAxisDataGridView.AccessibleName = "Axis values reported by the device";
 			this.DiAxisDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiAxisDataGridView.Name = "DiAxisDataGridView";
@@ -348,8 +328,6 @@
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiAxisDataGridView.RowHeadersVisible = false;
 			this.DiAxisDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
-			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle14;
 			this.DiAxisDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiAxisDataGridView.TabIndex = 0;
@@ -690,9 +668,6 @@
 			this.DiObjectsDataGridView.AllowUserToAddRows = false;
 			this.DiObjectsDataGridView.AllowUserToDeleteRows = false;
 			this.DiObjectsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiObjectsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiObjectsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiObjectsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiObjectsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.DiObjectsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ObjectsOffsetColumn,
@@ -710,15 +685,12 @@
             this.PhysicalRangeMinColumn});
 			this.DiObjectsDataGridView.ContextMenuStrip = this.CopyContextMenuStrip;
 			this.DiObjectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DiObjectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiObjectsDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.DiObjectsDataGridView.AccessibleName = "Objects the device reports it has";
 			this.DiObjectsDataGridView.Name = "DiObjectsDataGridView";
 			this.DiObjectsDataGridView.ReadOnly = true;
 			this.DiObjectsDataGridView.RowHeadersVisible = false;
 			this.DiObjectsDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle19.BackColor = System.Drawing.SystemColors.Control;
-			this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle19;
 			this.DiObjectsDataGridView.Size = new System.Drawing.Size(827, 168);
 			this.DiObjectsDataGridView.TabIndex = 1;
 			// 
@@ -795,9 +767,6 @@
 			this.DiSlidersDataGridView.AllowUserToResizeRows = false;
 			this.DiSlidersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiSlidersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiSlidersDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiSlidersDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiSlidersDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiSlidersDataGridView.ColumnHeadersHeight = 29;
 			this.DiSlidersDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn1,
@@ -805,7 +774,6 @@
             this.dataGridViewTextBoxColumn4,
             this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn8});
-			this.DiSlidersDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiSlidersDataGridView.AccessibleName = "Slider values reported by the device";
 			this.DiSlidersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiSlidersDataGridView.Name = "DiSlidersDataGridView";
@@ -813,8 +781,6 @@
 			this.DiSlidersDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiSlidersDataGridView.RowHeadersVisible = false;
 			this.DiSlidersDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle25.BackColor = System.Drawing.SystemColors.Control;
-			this.DiSlidersDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle25;
 			this.DiSlidersDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiSlidersDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiSlidersDataGridView.TabIndex = 3;
@@ -887,15 +853,11 @@
 			this.DiPovsDataGridView.AllowUserToResizeRows = false;
 			this.DiPovsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiPovsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiPovsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiPovsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiPovsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiPovsDataGridView.ColumnHeadersHeight = 29;
 			this.DiPovsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn3,
             this.dataGridViewTextBoxColumn5,
             this.dataGridViewTextBoxColumn7});
-			this.DiPovsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiPovsDataGridView.AccessibleName = "Point of view hat values";
 			this.DiPovsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiPovsDataGridView.Name = "DiPovsDataGridView";
@@ -903,8 +865,6 @@
 			this.DiPovsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiPovsDataGridView.RowHeadersVisible = false;
 			this.DiPovsDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Control;
-			this.DiPovsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle29;
 			this.DiPovsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiPovsDataGridView.TabIndex = 3;
 			// 
@@ -943,48 +903,22 @@
 			this.dataGridViewTextBoxColumn7.ReadOnly = true;
 			this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
-			// DiButtonsDataGridView
+			// DiButtonsLabel
 			// 
-			this.DiButtonsDataGridView.AllowUserToAddRows = false;
-			this.DiButtonsDataGridView.AllowUserToDeleteRows = false;
-			this.DiButtonsDataGridView.AllowUserToResizeColumns = false;
-			this.DiButtonsDataGridView.AllowUserToResizeRows = false;
-			this.DiButtonsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-			this.DiButtonsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-			this.DiButtonsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.DiButtonsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DiButtonsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			this.DiButtonsDataGridView.ColumnHeadersHeight = 29;
-			this.DiButtonsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn9});
-			this.DiButtonsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.DiButtonsDataGridView.AccessibleName = "Button values reported by the device";
-			// Kept to its own height. Filling the two rows it stands beside would make a list
-			// of names as tall as a grid wants to be, and every row in the band with it.
-			this.DiButtonsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-			this.DiButtonsDataGridView.Name = "DiButtonsDataGridView";
-			this.DiButtonsDataGridView.Size = new System.Drawing.Size(138, 46);
-			this.DiButtonsDataGridView.ReadOnly = true;
-			this.DiButtonsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			this.DiButtonsDataGridView.RowHeadersVisible = false;
-			this.DiButtonsDataGridView.RowHeadersWidth = 51;
-			dataGridViewCellStyle31.BackColor = System.Drawing.SystemColors.Control;
-			this.DiButtonsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle31;
-			this.DiButtonsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiButtonsDataGridView.TabIndex = 3;
+			this.DiButtonsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.DiButtonsLabel.AutoSize = true;
+			this.DiButtonsLabel.Name = "DiButtonsLabel";
+			this.DiButtonsLabel.TabIndex = 0;
+			this.DiButtonsLabel.Text = "Pressed:";
 			// 
-			// dataGridViewTextBoxColumn9
+			// DiButtonsTextBox
 			// 
-			this.dataGridViewTextBoxColumn9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.dataGridViewTextBoxColumn9.DataPropertyName = "M";
-			dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewTextBoxColumn9.DefaultCellStyle = dataGridViewCellStyle30;
-			this.dataGridViewTextBoxColumn9.HeaderText = "Buttons";
-			this.dataGridViewTextBoxColumn9.MinimumWidth = 6;
-			this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
-			this.dataGridViewTextBoxColumn9.ReadOnly = true;
-			this.dataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiButtonsTextBox.AccessibleName = "Buttons pressed";
+			this.DiButtonsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.DiButtonsTextBox.Name = "DiButtonsTextBox";
+			this.DiButtonsTextBox.ReadOnly = true;
+			this.DiButtonsTextBox.Size = new System.Drawing.Size(138, 20);
+			this.DiButtonsTextBox.TabIndex = 0;
 			// 
 			// ObjectsOffsetColumn
 			// 
@@ -1142,7 +1076,6 @@
 			this.Controls.Add(this.RootTableLayoutPanel);
 			this.Name = "DirectInputUserControl";
 			this.Size = new System.Drawing.Size(841, 408);
-			this.Load += new System.EventHandler(this.DirectInputControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
 			this.CopyContextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
@@ -1152,7 +1085,6 @@
 			this.DiEffectsDataTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.DiButtonsDataGridView)).EndInit();
 			this.AxisRowTableLayoutPanel.ResumeLayout(false);
 			this.HeaderTableLayoutPanel.ResumeLayout(false);
 			this.HeaderTableLayoutPanel.PerformLayout();
@@ -1206,8 +1138,8 @@
 		public System.Windows.Forms.TextBox DeviceRevTextBox;
 		private System.Windows.Forms.DataGridView DiSlidersDataGridView;
 		private System.Windows.Forms.DataGridView DiPovsDataGridView;
-		private System.Windows.Forms.DataGridView DiButtonsDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+		private System.Windows.Forms.Label DiButtonsLabel;
+		private System.Windows.Forms.TextBox DiButtonsTextBox;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;

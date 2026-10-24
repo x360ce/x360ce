@@ -1,6 +1,7 @@
-﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, App.v4/Controls/OptionsUpdateUserControl.Designer.cs, App.v4/Controls/OptionsPluginsUserControl.Designer.cs, Engine/JocysCom/Mcp/AiAccessUserControl.Designer.cs
+﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, App.v4/Controls/OptionsUpdateUserControl.Designer.cs, App.v4/Controls/OptionsPluginsUserControl.Designer.cs, App.v4/Controls/OptionsSettingsUserControl.Designer.cs, Engine/JocysCom/Mcp/AiAccessUserControl.Designer.cs
 // @area: options-layout   @layer: unit
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Mcp;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -40,14 +41,29 @@ namespace x360ce.Tests
 		static readonly double[] WidthFactors = { 1.0, 1.5 };
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("Nothing a user reads or clicks on the Virtual Device panel is painted over")]
+		[Description("Nothing a user reads, types in or clicks on the Virtual Device panel is painted over")]
 		public void Virtual_device_controls_never_overlap()
 		{
 			foreach (var factor in WidthFactors)
 			{
 				var boxes = MeasurePanel("VirtualDeviceGroupBox", factor);
-				Assert.IsTrue(boxes.Count >= 7,
+				Assert.IsTrue(boxes.Count >= 9,
 					"Expected the whole Virtual Device panel, measured " + boxes.Count + " controls.");
+				AssertWhole(boxes, factor);
+				AssertNoOverlap(boxes, factor);
+			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("Nothing a user reads, types in or clicks on the HID Guardian panel is painted over")]
+		public void Hid_guardian_controls_never_overlap()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				var boxes = MeasurePanel("groupBox1", factor);
+				Assert.IsTrue(boxes.Count >= 4,
+					"Expected the whole HID Guardian panel, measured " + boxes.Count + " controls.");
+				AssertWhole(boxes, factor);
 				AssertNoOverlap(boxes, factor);
 			}
 		}
@@ -131,6 +147,37 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("On the Settings page the folder's box ends before Open Folder starts, and each list is as wide as its widest choice needs, as the theme draws it")]
+		public void Settings_rows_hold_their_boxes_whole()
+		{
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetTheme(ThemeType.Light);
+				foreach (var zoom in new[] { 1f, 1.5f })
+				{
+					var content = new OptionsSettingsUserControl();
+					using (var page = PageAt(content, zoom))
+					{
+						FormsTheme.Apply(page);
+						page.CreateControl();
+						page.PerformLayout();
+						var box = content.Controls.Find("CurrentPathTextBox", true).Single();
+						var button = content.Controls.Find("OpenFolderButton", true).Single();
+						Assert.AreSame(box.Parent, button.Parent);
+						Assert.IsTrue(box.Right <= button.Left, string.Format(
+							"At {0:P0} the folder's box {1} runs under Open Folder {2}.", zoom, box.Bounds, button.Bounds));
+						foreach (var name in new[] { "LocationComboBox", "MoveModeComboBox" })
+						{
+							var list = (ComboBox)content.Controls.Find(name, true).Single();
+							Assert.AreEqual(FormsTheme.GetComboBoxWidth(list), list.Width, string.Format(
+								"At {0:P0} {1} is not as wide as its widest choice needs as it is drawn, so its text is cut.", zoom, name));
+						}
+					}
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
 		public void Update_log_follows_the_rows_above_it_at_every_zoom()
 		{
@@ -144,6 +191,89 @@ namespace x360ce.Tests
 		{
 			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), "PluginsDataGridView", "AutoHotkeyGroupBox", "OpenFolderButton",
 				"AllowThirdPartyPluginsCheckBox", "NoteLabel", "FolderLabel", "FolderTextBox", "OpenFolderButton");
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("Each Options page starts its content as far inside it as the General page does, a page's padding and a control's margin, and the pages' tab strip stands as far inside the Options tab, at every zoom for what the Options page lays out itself and at 100 % for the pages that hold a control of their own")]
+		public void Options_pages_start_their_content_as_far_inside_as_General()
+		{
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetTheme(ThemeType.Light);
+				// The zooms Windows offers; the page was drawn at 100 %.
+				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 2f })
+					using (var form = new Form { ClientSize = new Size(1600, 1000), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+					{
+						var options = new OptionsUserControl { Dock = DockStyle.Fill };
+						// The Options tab of the main window: a page with the padding every tab of the window has.
+						var tab = new TabPage("Options") { Padding = new Padding(3) };
+						var window = new UserControl { Dock = DockStyle.Fill };
+						window.SuspendLayout();
+						window.Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom);
+						var tabs = new TabControl { Dock = DockStyle.Fill };
+						tab.Controls.Add(options);
+						tabs.TabPages.Add(tab);
+						window.Controls.Add(tabs);
+						window.AutoScaleDimensions = new SizeF(6F, 13F);
+						window.AutoScaleMode = AutoScaleMode.Font;
+						window.ResumeLayout(false);
+						form.Controls.Add(window);
+						FormsTheme.Apply(form);
+						form.Show();
+						var pages = options.MainTabControl;
+						var strip = tab.PointToClient(pages.Parent.PointToScreen(pages.Location));
+						Point? general = null;
+						foreach (TabPage page in pages.TabPages)
+						{
+							pages.SelectedTab = page;
+							Application.DoEvents();
+							var start = Start(page);
+							if (general == null)
+							{
+								general = start;
+								Assert.IsTrue(AsFar(general.Value, strip), string.Format(
+									"At {0:P0} the pages' tab strip stands at {1} inside the Options tab, and {2} starts at {3}.", zoom, strip, page.Text, start));
+								continue;
+							}
+							// A page that holds a control of its own, which scales itself from the font it is made with: zoomed
+							// by its font once made, it is scaled again, which no screen does, so it is measured at 100 % only,
+							// as a screen at 100 % makes it.
+							if (zoom != 1f && page.Controls.OfType<UserControl>().Any())
+								continue;
+							Assert.IsTrue(AsFar(general.Value, start), string.Format(
+								"At {0:P0} {1} starts at {2}, and General at {3}.", zoom, page.Text, start, general.Value));
+							// A table squeezes a control that cannot grow, even to nothing, as the page is scaled.
+							foreach (var control in Shown(page).Where(x => x.Bounds.Width <= 0 || x.Bounds.Height <= 0))
+								Assert.Fail(string.Format("At {0:P0} {1} on {2} is {3}, so it cannot be seen.", zoom, control.Name, page.Text, control.Bounds));
+						}
+					}
+			});
+		}
+
+		/// <summary>
+		/// Where a page's content starts, from the page's own edge: the left of its leftmost control and the top of its
+		/// topmost, leaving out the panels and tables that only place them.
+		/// </summary>
+		static Point Start(Control page)
+		{
+			var shown = Shown(page).Select(x => page.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds))).ToList();
+			return new Point(shown.Min(x => x.Left), shown.Min(x => x.Top));
+		}
+
+		/// <summary>The controls on a page a person sees, leaving out the panels and tables that only place them.</summary>
+		static IEnumerable<Control> Shown(Control page)
+		{
+			return Descendants(page)
+				.Where(x => x.Visible && !(x is TableLayoutPanel || x is FlowLayoutPanel || x is UserControl || x.GetType() == typeof(Panel)));
+		}
+
+		/// <summary>
+		/// Whether two insets are the same within a pixel: a page drawn at another zoom rounds its spacing to whole pixels
+		/// its own way.
+		/// </summary>
+		static bool AsFar(Point a, Point b)
+		{
+			return Math.Abs(a.X - b.X) <= 1 && Math.Abs(a.Y - b.Y) <= 1;
 		}
 
 		/// <summary>
@@ -234,17 +364,10 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>
-		/// Bounds of every caption and command inside one group box on the Options page.
+		/// Bounds, in the group's own place, of every caption, command and box inside one group box on the Options page,
+		/// at whatever depth the tables put it.
 		/// </summary>
-		/// <remarks>
-		/// Labels, links, buttons and drop-downs are what a user reads and clicks, and every one of
-		/// them has to be whole. A read-only status TextBox is not included: the panel is drawn at a
-		/// design-time width of 186 px, which is narrower than the buttons on its own right-hand
-		/// edge, so <c>ViGEmBusTextBox</c> stretches 63 px underneath <c>ViGEmBusInstallButton</c>
-		/// and the button paints over the empty tail of it. Nothing is hidden by that today, and
-		/// putting it right means laying the panel out again at a width it is really used at, which
-		/// is a bigger change than the overlap this test was written for.
-		/// </remarks>
+		/// <remarks>Labels, links, buttons, drop-downs and text boxes are what a user reads, types in and clicks, and every one of them has to be whole.</remarks>
 		static Dictionary<string, Rectangle> MeasurePanel(string groupName, double widthFactor)
 		{
 			var boxes = new Dictionary<string, Rectangle>();
@@ -253,8 +376,8 @@ namespace x360ce.Tests
 				var group = Descendants(page).FirstOrDefault(x => x.Name == groupName);
 				Assert.IsNotNull(group, groupName + " was not found on the Options page.");
 				Show(group);
-				foreach (var child in group.Controls.Cast<Control>().Where(x => x.Visible && ReadOrClicked(x)))
-					boxes[child.Name] = child.Bounds;
+				foreach (var child in Descendants(group).Where(x => x.Visible && (ReadOrClicked(x) || x is TextBoxBase)))
+					boxes[child.Name] = group.RectangleToClient(child.Parent.RectangleToScreen(child.Bounds));
 			});
 			return boxes;
 		}
@@ -262,6 +385,14 @@ namespace x360ce.Tests
 		static bool ReadOrClicked(Control control)
 		{
 			return control is Label || control is LinkLabel || control is ButtonBase || control is ComboBox;
+		}
+
+		/// <summary>Every control has room: a table squeezes one that cannot grow, even to nothing, which no overlap shows.</summary>
+		static void AssertWhole(Dictionary<string, Rectangle> boxes, double widthFactor)
+		{
+			foreach (var box in boxes)
+				Assert.IsTrue(box.Value.Width > 0 && box.Value.Height > 0, box.Key + " " + box.Value
+					+ " has no room with the page " + widthFactor + " times its designed width, so it cannot be seen.");
 		}
 
 		static void AssertNoOverlap(Dictionary<string, Rectangle> boxes, double widthFactor)

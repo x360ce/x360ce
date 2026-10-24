@@ -145,9 +145,12 @@ namespace x360ce.Tests
 				using (var ai = new AiAccessUserControl())
 				{
 					ai.PerformLayout();
+					var root = Find<TableLayoutPanel>(ai, "AiPanel");
 					var header = Find<TableLayoutPanel>(ai, "AiHeaderPanel");
 					var tabs = Find<TabControl>(ai, "AiTabControl");
-					Assert.AreSame(ai, tabs.Parent);
+					Assert.AreSame(ai, root.Parent);
+					Assert.AreSame(root, header.Parent);
+					Assert.AreSame(root, tabs.Parent);
 					Assert.IsTrue(header.Bottom <= tabs.Top, "The example is not above the tabs.");
 					CollectionAssert.AreEqual(new[] { "AI Skill", "MCP Server - AI Assistant Access" },
 						tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray(), "Settings that keep no tunnel show a tunnel tab.");
@@ -199,7 +202,7 @@ namespace x360ce.Tests
 						McpCatalog.OnUiThread = a => a();
 						McpUiTools.Root = form;
 						var refused = Assert.ThrowsExactly<InvalidOperationException>(() =>
-							McpUiTools.UiSet("AiControl/AiTabControl/AiAccessTabPage/AiAccessPanel/AiAccessTrustLocalCheckBox", "false"));
+							McpUiTools.UiSet("AiControl/AiPanel/AiTabControl/AiAccessTabPage/AiAccessPanel/AiAccessTrustLocalCheckBox", "false"));
 						StringAssert.Contains(refused.Message, "the person's alone");
 						StringAssert.Contains(refused.Message, "Options tab");
 						Assert.IsTrue(trust.Checked, "The door changed a door control.");
@@ -275,9 +278,9 @@ namespace x360ce.Tests
 				.Where(x => typeof(Control).IsAssignableFrom(x.FieldType)).Select(x => x.Name).ToList();
 			CollectionAssert.IsSubsetOf(entries, fields, "An entry names no element of the page.");
 			// A caption names what is beside or below it and stays out of the tree, as a field ending in Label; the skill
-			// note says what its section's purpose says.
+			// note says what its section's purpose says; the page's own table only places the header above the tabs.
 			var uncatalogued = fields.Where(x => !x.EndsWith("Label")).Except(entries).ToArray();
-			CollectionAssert.AreEquivalent(new[] { "AiSkillNoteText" }, uncatalogued,
+			CollectionAssert.AreEquivalent(new[] { "AiSkillNoteText", "AiPanel" }, uncatalogued,
 				"Elements without a name and purpose: " + string.Join(", ", uncatalogued));
 			foreach (var name in AiAccessModel.DoorControls.Concat(AiAccessModel.SecretControls).Concat(AiAccessModel.AdminControls))
 				CollectionAssert.Contains(fields, name, name + " is guarded, but it is not an element of the page.");
@@ -296,7 +299,7 @@ namespace x360ce.Tests
 						var table = (TableLayoutPanel)field(section[1]);
 						if (section[0] == null)
 						{
-							Assert.AreSame(ai, table.Parent, section[1] + " is not straight on the page, above the tabs.");
+							Assert.AreSame(field("AiPanel"), table.Parent, section[1] + " is not in the page's own table, above the tabs.");
 							order.Add(section[1]);
 						}
 						else

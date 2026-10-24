@@ -121,6 +121,9 @@ namespace x360ce.App.UiTree
 				"Opens the page HID Hide is downloaded from.");
 			d["OptionsUserControl.HidHideConfigureButton"] = new Text("Open Configuration",
 				"Opens the HID Hide program, where hidden devices are chosen.");
+			d["OptionsUserControl.HidHideConfigureAutomaticallyCheckBox"] = new Text("Configure automatically",
+				"Hides a device from games through HID Hide while it is mapped to a controller, and shows it again as this program closes. "
+				+ "Greyed out while HID Hide is not installed.");
 			d["OptionsUserControl.groupBox1"] = new Text("HID Guardian",
 				"The tool HID Hide replaced. Kept so an old installation can be removed.");
 			d["OptionsUserControl.HidGuardianTextBox"] = new Text("HID Guardian state",
@@ -131,9 +134,6 @@ namespace x360ce.App.UiTree
 				"Removes HID Guardian. Needs Administrator.");
 			d["OptionsUserControl.HidGuardianRefreshButton"] = new Text("Refresh",
 				"Checks HID Guardian again.");
-			d["OptionsUserControl.HidGuardianConfigureAutomaticallyCheckBox"] = new Text(
-				"Configure automatically",
-				"Hides a device from games as soon as it is mapped to a controller. Greyed out while HID Guardian is not installed.");
 			d["OptionsUserControl.HelpRichTextBox"] = new Text("HID Guardian notes",
 				"Explains why HID Guardian is no longer recommended.");
 

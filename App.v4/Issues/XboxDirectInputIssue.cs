@@ -79,22 +79,22 @@ namespace x360ce.App.Issues
 			// The rows are bound to the controller tabs' lists, so they change on the interface thread.
 			ControlsHelper.Invoke(() =>
 			{
-				Apply(Moves(), SettingsManager.Options.HidGuardianConfigureAutomatically);
+				Apply(Moves(), SettingsManager.Options.HidHideConfigureAutomatically);
 				SettingsManager.Current.RaiseSettingsChanged(null);
 			});
 		}
 
 		/// <summary>Maps each controller's Raw Input row where its DirectInput row was, and takes the DirectInput row off.</summary>
 		/// <param name="moves">The mappings to move (<see cref="Moves"/>).</param>
-		/// <param name="hidGuardian">Whether HID Guardian hides and shows the devices as their mappings change.</param>
-		public static void Apply(Move[] moves, bool hidGuardian)
+		/// <param name="hidHide">Whether HID Hide hides and shows the devices as their mappings change.</param>
+		public static void Apply(Move[] moves, bool hidHide)
 		{
 			foreach (var move in moves)
 			{
 				var tab = (MapTo)move.Setting.MapTo;
 				// The Raw Input row starts with the settings of its twin on this tab: the row it replaces.
-				SettingsManager.MapGamePadDevices(move.Game, tab, new[] { move.RawInput }, hidGuardian, true);
-				SettingsManager.UnMapGamePadDevices(move.Game, move.Setting, hidGuardian);
+				SettingsManager.MapGamePadDevices(move.Game, tab, new[] { move.RawInput }, hidHide, true);
+				SettingsManager.UnMapGamePadDevices(move.Game, move.Setting, hidHide);
 			}
 		}
 	}

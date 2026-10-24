@@ -26,6 +26,8 @@ namespace x360ce.App.DInput
 			var devices = routing.RowDevices;
 			var rowMaps = routing.RowMaps;
 			var dPads = routing.RowDPads;
+			var axisDPadPressPoints = routing.RowAxisToDPadPressPoints;
+			var axisDPadShifts = routing.RowAxisToDPadShifts;
 			var dPadButtons = _dPadButtons;
 			for (int i = 0; i < settings.Length; i++)
 			{
@@ -117,6 +119,18 @@ namespace x360ce.App.DInput
 						gp.Buttons |= GamepadButtonFlags.DPadDown;
 					if (dPadButtons[dPadIndex * 4 + 3])
 						gp.Buttons |= GamepadButtonFlags.DPadLeft;
+				}
+
+				// --------------------------------------------------------
+				// MAP: Axis to D-Pad, the device's X and Y axes as the D-Pad.
+				// --------------------------------------------------------
+
+				var axisDPadPressPoint = axisDPadPressPoints[i];
+				if (axisDPadPressPoint >= 0 && diState.Axis.Length >= 2)
+				{
+					var axisDPad = ConvertHelper.GetAxisToDPadButtons(diState.Axis[0], diState.Axis[1], axisDPadPressPoint, axisDPadShifts[i], wasAxisButtons);
+					gp.Buttons |= axisDPad;
+					axisButtons |= axisDPad;
 				}
 
 				// --------------------------------------------------------

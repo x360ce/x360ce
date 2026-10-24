@@ -21,10 +21,7 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
-			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
 			// The device list is the program's and outlives this control. The Map Device window makes
 			// one of these each time it opens, and left subscribed, every later device change was
 			// handled for each control already gone, on whichever thread had made it.
@@ -409,85 +406,99 @@ namespace x360ce.App.Controls
 				ud.IsEnabled = !ud.IsEnabled;
 				// An unticked device is not used by any game, so it is not hidden from one either.
 				var game = SettingsManager.CurrentGame;
-				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+				if (game != null && SettingsManager.Options.HidHideConfigureAutomatically)
 					SettingsManager.HideMappedDevices(game, ud.InstanceGuid);
 			}
 			else if (column == IsHiddenColumn)
 			{
 				if (ud.AllowHide)
 				{
-					var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-					if (canModify)
+					ud.IsHidden = !ud.IsHidden;
+					// Use begin invoke which will prevent mouse multi-select rows.
+					ControlsHelper.BeginInvoke(() =>
 					{
-						//var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-						var ids = new string[] { ud.DevDeviceId };
+						// The box shows what HID Hide does, so a change it refused is taken back.
+						if (AppHelper.SynchronizeToHidHide(ud.InstanceGuid))
+							return;
 						ud.IsHidden = !ud.IsHidden;
-						// Use begin invoke which will prevent mouse multi-select rows.
-						ControlsHelper.BeginInvoke(() =>
-						{
-							AppHelper.SynchronizeToHidGuardian(ud.InstanceGuid);
-						});
-					}
-					else
-					{
-						ShowHidGuardianPermissionDenied();
-					}
+						ShowHidHideRefused();
+					});
 				}
 			}
 		}
 
 		private void ShowHiddenDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			var devices = ViGEm.HidGuardianHelper.GetAffected();
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var text = devices.Length == 0
-				? "None"
-				// Join and make && visible.
-				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Affected Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			var state = DInput.VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered)
+			{
+				ShowHidHideRefused();
+				return;
+			}
+			ShowList(state.HiddenDevices, "Hidden Devices");
 		}
 
-		private void ShowEnumeratedDevicesMenuItem_Click(object sender, EventArgs e)
+		private void GamingDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			var devices = ViGEm.HidGuardianHelper.GetEnumeratedDevices();
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var text = devices.Length == 0
-				? "None"
-				// Join and make && visible.
-				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Enumerated Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
+			{
+				ShowHidHideRefused();
+				return;
+			}
+			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), "Gaming Devices");
 		}
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
 		{
 			if (!AppHelper.UnhideAllDevices())
-				ShowHidGuardianPermissionDenied();
+				ShowHidHideRefused();
 		}
 
-		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SynchronizeToHidHideMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!AppHelper.SynchronizeToHidGuardian())
-				ShowHidGuardianPermissionDenied();
+			if (!AppHelper.SynchronizeToHidHide())
+				ShowHidHideRefused();
 		}
 
-		/// <summary>Says why HID Guardian's settings cannot be written: it is not installed, or this account may not write them yet.</summary>
-		void ShowHidGuardianPermissionDenied()
+		private void OpenHidHideMenuItem_Click(object sender, EventArgs e)
+		{
+			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
+			if (string.IsNullOrEmpty(client))
+				ControlsHelper.OpenUrl(DInput.VirtualDriverInstaller.HidHideDownloadUrl);
+			else
+				ControlsHelper.OpenPath(client);
+		}
+
+		/// <summary>Shows a list of devices, one on each line.</summary>
+		void ShowList(string[] devices, string caption)
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			if (!ViGEm.HidGuardianHelper.IsInstalled())
-				form.ShowForm(ViGEm.HidGuardianHelper.NotInstalledText, "HID Guardian", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			var text = devices.Length == 0
+				? "None"
+				// Join and make && visible.
+				: string.Join("\r\n", devices).Replace("&", "&&");
+			form.ShowForm(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		/// <summary>Says why HID Hide did not do what was asked: it is not installed, or it did not answer or accept the change.</summary>
+		void ShowHidHideRefused()
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
+				form.ShowForm("HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it.",
+					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			else
-				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				form.ShowForm("HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there.",
+					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]
 		public bool IsVisibleIsHiddenColumn
 		{
 			get { return IsHiddenColumn.Visible; }
-			set { IsHiddenColumn.Visible = false; }
+			set { IsHiddenColumn.Visible = value; }
 		}
 
 		private void DevicesDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)

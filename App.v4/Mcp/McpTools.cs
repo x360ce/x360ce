@@ -20,8 +20,9 @@ namespace x360ce.App.Mcp
 	{
 		/// <summary>
 		/// Elements whose press or setting installs or removes a driver, removes
-		/// controllers left behind by earlier runs, or sends the controller tabs' Add and Remove
-		/// buttons through HID Guardian, which elevates. Below Administer these may not be touched.
+		/// controllers left behind by earlier runs, or changes what HID Hide hides from every program
+		/// on the computer, the controller tabs' Add and Remove included while the HID Hide page hides
+		/// mapped devices. Below Administer these may not be touched.
 		/// Field names as in the tree, so a bar entry is named the same way a control is. The
 		/// remaining elevating action, the XInput reorder Apply, shares its field name with the
 		/// Options page's own Apply, which administers nothing; it is left out rather than have one
@@ -32,7 +33,7 @@ namespace x360ce.App.Mcp
 		{
 			"ViGEmBusInstallButton", "ViGEmBusUninstallButton",
 			"HidGuardianInstallButton", "HidGuardianUninstallButton",
-			"HidGuardianConfigureAutomaticallyCheckBox",
+			"HidHideConfigureAutomaticallyCheckBox", "UnhideAllDevicesMenuItem", "SynchronizeToHidHideMenuItem",
 			"CleanupVirtualPadsButton",
 		}.Concat(AiAccessModel.AdminControls).ToArray();
 
@@ -201,7 +202,7 @@ namespace x360ce.App.Mcp
 			}).ToArray();
 		}
 
-		[McpTool(AiAccess.Configure, "Maps a device to a controller 1 to 4 for the current game, or with 0 takes it off every controller. A device already on another controller moves off every other one unless keep is true, which leaves it there as well, the new one starting with the settings of the lowest-numbered controller it is on. A device can be on up to four controllers. The same as the Add and Remove buttons on a controller tab. Below Administer, HID Guardian is left as it is.")]
+		[McpTool(AiAccess.Configure, "Maps a device to a controller 1 to 4 for the current game, or with 0 takes it off every controller. A device already on another controller moves off every other one unless keep is true, which leaves it there as well, the new one starting with the settings of the lowest-numbered controller it is on. A device can be on up to four controllers. The same as the Add and Remove buttons on a controller tab. Below Administer, what HID Hide hides is left as it is.")]
 		public static string DeviceMap([Description("InstanceGuid from devices_list.")] string instanceGuid, [Description("1 to 4, or 0 to unmap.")] int controller, [Description("True keeps the device on the controllers it is already on; false, the default, moves it.")] bool keep = false)
 		{
 			if (controller < 0 || controller > 4)
@@ -213,16 +214,16 @@ namespace x360ce.App.Mcp
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				throw new InvalidOperationException("No game is selected. Choose one in the Game list first.");
-			// Reconfiguring HID Guardian elevates, which only Administer may do through this door.
-			var hidGuardian = McpCatalog.Level() >= AiAccess.Administer && SettingsManager.Options.HidGuardianConfigureAutomatically;
+			// What HID Hide hides, every program on the computer stops seeing, which only Administer may change through this door.
+			var hidHide = McpCatalog.Level() >= AiAccess.Administer && SettingsManager.Options.HidHideConfigureAutomatically;
 			if (controller == 0)
 			{
 				// Off every controller it is on; UnMapGamePadDevices switches off a tab it leaves empty, as Remove does.
 				foreach (var setting in SettingsManager.GetSettings(game.FileName).Where(x => x.InstanceGuid == guid && x.MapTo > (int)MapTo.None).ToArray())
-					SettingsManager.UnMapGamePadDevices(game, setting, hidGuardian);
+					SettingsManager.UnMapGamePadDevices(game, setting, hidHide);
 				return null;
 			}
-			SettingsManager.MapGamePadDevices(game, (MapTo)controller, new[] { device }, hidGuardian, keep);
+			SettingsManager.MapGamePadDevices(game, (MapTo)controller, new[] { device }, hidHide, keep);
 			// The Add button asks about this; here the assistant is told, and decides with the person.
 			var twin = DInput.XInputPlaces.ReadsOnlyInFront(device) ? device.RawInputTwin(SettingsManager.UserDevices.ItemsToArraySynchronized()) : null;
 			return twin == null ? null : string.Format(

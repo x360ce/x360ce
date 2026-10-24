@@ -213,6 +213,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
+    <Compile Include="Controls\PadTabPages\AxisToDPadChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PadTabPages\WheelChartUserControl.cs">
       <SubType>UserControl</SubType>

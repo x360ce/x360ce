@@ -105,7 +105,7 @@ namespace x360ce.App
 				var g = e.Graphics;
 				// The corners are cut by the see-through colour, so their edge must not be blended with it.
 				g.SmoothingMode = SmoothingMode.None;
-				using (var path = Rounded(new Rectangle(0, 0, Width - 1, Height - 1), 10))
+				using (var path = AppHelper.RoundedRectangle(new Rectangle(0, 0, Width - 1, Height - 1), 10))
 				using (var panel = new SolidBrush(Panel))
 					g.FillPath(panel, path);
 				g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -114,18 +114,6 @@ namespace x360ce.App
 				var textBox = new Rectangle(Pad + Mark + Pad, 0, Width - (Pad + Mark + Pad) - Pad, Height);
 				TextRenderer.DrawText(g, Words, Font, textBox, Color.White,
 					TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.SingleLine);
-			}
-
-			static GraphicsPath Rounded(Rectangle r, int radius)
-			{
-				var d = radius * 2;
-				var path = new GraphicsPath();
-				path.AddArc(r.Left, r.Top, d, d, 180, 90);
-				path.AddArc(r.Right - d, r.Top, d, d, 270, 90);
-				path.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
-				path.AddArc(r.Left, r.Bottom - d, d, d, 90, 90);
-				path.CloseFigure();
-				return path;
 			}
 		}
 	}

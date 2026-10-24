@@ -1,5 +1,7 @@
-﻿## [3.8.8.0] - 2026-10-18
+﻿## [3.8.10.0] - 2026-10-24
 
+- Fixed: Letters such as g and y were cut off at the bottom of text boxes and lists.
+- Changed: Controls look as they do in x360ce 5, in both themes, with check boxes sized from the font.
 - Changed: AI assistant access uses port 37102 by default.
 - Changed: New AI access tokens start with sk-x360ce-v3-mcp-.
 

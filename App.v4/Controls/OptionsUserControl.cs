@@ -19,9 +19,6 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (DesignMode)
 				return;
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
 			// The theme that follows Windows is named the way Windows names it.
 			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
@@ -241,7 +238,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ReadEveryChange, ReadEveryChangeCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.HidHideConfigureAutomatically, HidHideConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyEnabled, EmulationHotkeyCheckBox);
@@ -634,13 +631,14 @@ namespace x360ce.App.Controls
 		/// </summary>
 		/// <remarks>
 		/// HID Hide is a separate product with its own installer and its own configuration
-		/// program. This application only reports what it finds and opens the right place;
-		/// installing or configuring somebody else's driver behind the user's back would be
-		/// the wrong thing to do with a kernel driver.
+		/// program. This application never installs it, and changes what it hides only when the
+		/// person asks: a device's Hide box on the Devices page, the HID Hide menu there, or
+		/// the box here that hides a device while it is mapped.
 		/// </remarks>
 		void RefreshHidHideStatus()
 		{
 			var installed = DInput.VirtualDriverInstaller.IsHidHideDevicePresent();
+			HidHideConfigureAutomaticallyCheckBox.Enabled = installed;
 			var version = DInput.VirtualDriverInstaller.GetHidHideVersion();
 			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
 			if (installed)
@@ -793,11 +791,8 @@ namespace x360ce.App.Controls
 			{
 				// Get Virtual Bus and HID Guardian status.
 				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
-				var installed = ViGEm.HidGuardianHelper.IsInstalled();
 				ControlsHelper.BeginInvoke(() =>
 				{
-					// Hiding devices goes through HID Guardian's settings, so without them the box does nothing.
-					HidGuardianConfigureAutomaticallyCheckBox.Enabled = installed;
 					// Update HID status.
 					var hidStatus = hid.DriverVersion == 0
 						? "Not installed"

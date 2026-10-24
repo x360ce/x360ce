@@ -47,9 +47,6 @@
 			this.PresetsDataGridView.AllowUserToAddRows = false;
 			this.PresetsDataGridView.AllowUserToDeleteRows = false;
 			this.PresetsDataGridView.AllowUserToResizeRows = false;
-			this.PresetsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.PresetsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.PresetsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -72,7 +69,6 @@
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.PresetsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.PresetsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PresetsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.PresetsDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.PresetsDataGridView.MultiSelect = false;
 			this.PresetsDataGridView.Name = "PresetsDataGridView";
@@ -133,7 +129,6 @@
             this.PresetRefreshButton});
 			this.PresetsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.PresetsToolStrip.Name = "PresetsToolStrip";
-			this.PresetsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.PresetsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.PresetsToolStrip.TabIndex = 5;
 			this.PresetsToolStrip.Text = "MySettingsToolStrip";

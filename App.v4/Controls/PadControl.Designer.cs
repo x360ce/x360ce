@@ -39,6 +39,8 @@
             this.ForcePassThroughIndexLabel = new System.Windows.Forms.Label();
             this.ForcePassThroughIndexComboBox = new System.Windows.Forms.ComboBox();
             this.AxisToDPadGroupBox = new System.Windows.Forms.GroupBox();
+            this.AxisToDPadTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.AxisToDPadChart = new x360ce.App.Controls.AxisToDPadChart();
             this.AxisToDPadEnabledCheckBox = new System.Windows.Forms.CheckBox();
             this.AxisToDPadOffsetTrackBar = new System.Windows.Forms.TrackBar();
             this.AxisToDPadOffsetTextBox = new System.Windows.Forms.TextBox();
@@ -159,6 +161,9 @@
             this.ForceFeedbackPanel = new System.Windows.Forms.Panel();
             this.InforTextBox = new System.Windows.Forms.TextBox();
             this.ForceFeedbackGroupBox = new System.Windows.Forms.GroupBox();
+            this.ForceFeedbackTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.ForceFeedbackPageTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.ForceDefaultsFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.ForceSourceGroupBox = new System.Windows.Forms.GroupBox();
             this.ForceSourceLabel = new System.Windows.Forms.Label();
             this.MotorPeriodPresetLabel = new System.Windows.Forms.Label();
@@ -206,6 +211,7 @@
             this.WheelDescriptionLabel = new System.Windows.Forms.Label();
             this.ForceDefaultsButton = new System.Windows.Forms.Button();
             this.LeftMotorGroupBox = new System.Windows.Forms.GroupBox();
+            this.LeftMotorTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.LeftMotorDirectionLabel = new System.Windows.Forms.Label();
             this.LeftMotorStrengthTrackBar = new System.Windows.Forms.TrackBar();
             this.LeftMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
@@ -218,6 +224,7 @@
             this.LeftMotorPeriodTrackBar = new System.Windows.Forms.TrackBar();
             this.TestLeftMotorLabel = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.RightMotorTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.RightMotorDirectionLabel = new System.Windows.Forms.Label();
             this.RightMotorStrengthTrackBar = new System.Windows.Forms.TrackBar();
             this.RightMotorDirectionComboBox = new System.Windows.Forms.ComboBox();
@@ -257,6 +264,7 @@
             this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
+            this.PadTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
             this.AddMapButton = new System.Windows.Forms.ToolStripButton();
             this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
@@ -268,6 +276,7 @@
             this.CombineGroupBox.SuspendLayout();
             this.DeviceGroupBox.SuspendLayout();
             this.AxisToDPadGroupBox.SuspendLayout();
+            this.AxisToDPadTableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
             this.GeneralTabPage.SuspendLayout();
@@ -290,6 +299,10 @@
             this.ForceFeedbackTabPage.SuspendLayout();
             this.ForceFeedbackPanel.SuspendLayout();
             this.ForceFeedbackGroupBox.SuspendLayout();
+            this.PadTableLayoutPanel.SuspendLayout();
+            this.ForceFeedbackTableLayoutPanel.SuspendLayout();
+            this.ForceFeedbackPageTableLayoutPanel.SuspendLayout();
+            this.ForceDefaultsFlowLayoutPanel.SuspendLayout();
             this.ForceSourceGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
             this.WheelTabPage.SuspendLayout();
@@ -303,10 +316,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringSpeedTrackBar)).BeginInit();
             this.LeftMotorGroupBox.SuspendLayout();
+            this.LeftMotorTableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.RightMotorTableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
@@ -480,8 +495,8 @@
             // ForcePassThroughCheckBox
             // 
             this.ForcePassThroughCheckBox.AutoSize = true;
-            this.ForcePassThroughCheckBox.Location = new System.Drawing.Point(9, 65);
             this.ForcePassThroughCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForcePassThroughCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForcePassThroughCheckBox.Name = "ForcePassThroughCheckBox";
             this.ForcePassThroughCheckBox.Size = new System.Drawing.Size(133, 24);
             this.ForcePassThroughCheckBox.TabIndex = 3;
@@ -491,10 +506,9 @@
             // 
             // ForcePassThroughIndexLabel
             // 
-            this.ForcePassThroughIndexLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ForcePassThroughIndexLabel.AutoSize = true;
-            this.ForcePassThroughIndexLabel.Location = new System.Drawing.Point(213, 68);
             this.ForcePassThroughIndexLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ForcePassThroughIndexLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForcePassThroughIndexLabel.Name = "ForcePassThroughIndexLabel";
             this.ForcePassThroughIndexLabel.Size = new System.Drawing.Size(73, 20);
             this.ForcePassThroughIndexLabel.TabIndex = 4;
@@ -502,41 +516,70 @@
             // 
             // ForcePassThroughIndexComboBox
             // 
-            this.ForcePassThroughIndexComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ForcePassThroughIndexComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ForcePassThroughIndexComboBox.Enabled = false;
             this.ForcePassThroughIndexComboBox.FormattingEnabled = true;
-            this.ForcePassThroughIndexComboBox.Location = new System.Drawing.Point(332, 65);
             this.ForcePassThroughIndexComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForcePassThroughIndexComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ForcePassThroughIndexComboBox.Name = "ForcePassThroughIndexComboBox";
             this.ForcePassThroughIndexComboBox.Size = new System.Drawing.Size(198, 28);
             this.ForcePassThroughIndexComboBox.TabIndex = 5;
             // 
             // AxisToDPadGroupBox
             // 
-            this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadEnabledCheckBox);
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTrackBar);
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTextBox);
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
-            this.AxisToDPadGroupBox.Controls.Add(this.OffsetLabel);
-            this.AxisToDPadGroupBox.Controls.Add(this.DeadZoneLabel);
-            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
-            this.AxisToDPadGroupBox.Location = new System.Drawing.Point(4, 5);
+            this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadTableLayoutPanel);
             this.AxisToDPadGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AxisToDPadGroupBox.AutoSize = true;
+            this.AxisToDPadGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AxisToDPadGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
             this.AxisToDPadGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.AxisToDPadGroupBox.Size = new System.Drawing.Size(1117, 192);
             this.AxisToDPadGroupBox.TabIndex = 14;
             this.AxisToDPadGroupBox.TabStop = false;
             this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
-            // 
+            //
+            // AxisToDPadTableLayoutPanel
+            //
+            this.AxisToDPadTableLayoutPanel.AutoSize = true;
+            this.AxisToDPadTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AxisToDPadTableLayoutPanel.ColumnCount = 5;
+            this.AxisToDPadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadChart, 0, 0);
+            this.AxisToDPadTableLayoutPanel.SetRowSpan(this.AxisToDPadChart, 4);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadEnabledCheckBox, 1, 0);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.DeadZoneLabel, 2, 0);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadDeadZoneTrackBar, 2, 1);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadDeadZoneTextBox, 3, 1);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.OffsetLabel, 2, 2);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadOffsetTrackBar, 2, 3);
+            this.AxisToDPadTableLayoutPanel.Controls.Add(this.AxisToDPadOffsetTextBox, 3, 3);
+            this.AxisToDPadTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.AxisToDPadTableLayoutPanel.Name = "AxisToDPadTableLayoutPanel";
+            this.AxisToDPadTableLayoutPanel.RowCount = 4;
+            this.AxisToDPadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.AxisToDPadTableLayoutPanel.TabIndex = 0;
+            //
+            // AxisToDPadChart
+            //
+            this.AxisToDPadChart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.AxisToDPadChart.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AxisToDPadChart.Name = "AxisToDPadChart";
+            this.AxisToDPadChart.TabIndex = 17;
+            this.AxisToDPadChart.TabStop = false;
+            //
             // AxisToDPadEnabledCheckBox
             // 
             this.AxisToDPadEnabledCheckBox.AutoSize = true;
-            this.AxisToDPadEnabledCheckBox.Location = new System.Drawing.Point(9, 29);
             this.AxisToDPadEnabledCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AxisToDPadEnabledCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.AxisToDPadEnabledCheckBox.Name = "AxisToDPadEnabledCheckBox";
             this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(94, 24);
             this.AxisToDPadEnabledCheckBox.TabIndex = 14;
@@ -545,36 +588,34 @@
             // 
             // AxisToDPadOffsetTrackBar
             // 
-            this.AxisToDPadOffsetTrackBar.AutoSize = false;
-            this.AxisToDPadOffsetTrackBar.Location = new System.Drawing.Point(135, 134);
             this.AxisToDPadOffsetTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.AxisToDPadOffsetTrackBar.Maximum = 100;
+            this.AxisToDPadOffsetTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.AxisToDPadOffsetTrackBar.Name = "AxisToDPadOffsetTrackBar";
-            this.AxisToDPadOffsetTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.AxisToDPadOffsetTrackBar.Size = new System.Drawing.Size(340, 32);
             this.AxisToDPadOffsetTrackBar.TabIndex = 16;
             this.AxisToDPadOffsetTrackBar.TickFrequency = 2;
             this.AxisToDPadOffsetTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadOffsetTrackBar_ValueChanged);
             // 
             // AxisToDPadOffsetTextBox
             // 
-            this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(484, 134);
             this.AxisToDPadOffsetTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AxisToDPadOffsetTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
             this.AxisToDPadOffsetTextBox.ReadOnly = true;
             this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(62, 26);
             this.AxisToDPadOffsetTextBox.TabIndex = 0;
             this.AxisToDPadOffsetTextBox.TabStop = false;
-            this.AxisToDPadOffsetTextBox.Text = "0 % ";
+            this.AxisToDPadOffsetTextBox.Text = "0 %";
             this.AxisToDPadOffsetTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // AxisToDPadDeadZoneTrackBar
             // 
-            this.AxisToDPadDeadZoneTrackBar.AutoSize = false;
-            this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(135, 55);
             this.AxisToDPadDeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.AxisToDPadDeadZoneTrackBar.Maximum = 100;
+            this.AxisToDPadDeadZoneTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.AxisToDPadDeadZoneTrackBar.Name = "AxisToDPadDeadZoneTrackBar";
-            this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(340, 32);
             this.AxisToDPadDeadZoneTrackBar.TabIndex = 15;
             this.AxisToDPadDeadZoneTrackBar.TickFrequency = 2;
             this.AxisToDPadDeadZoneTrackBar.Value = 100;
@@ -583,8 +624,8 @@
             // OffsetLabel
             // 
             this.OffsetLabel.AutoSize = true;
-            this.OffsetLabel.Location = new System.Drawing.Point(130, 109);
             this.OffsetLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.OffsetLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.OffsetLabel.Name = "OffsetLabel";
             this.OffsetLabel.Size = new System.Drawing.Size(53, 20);
             this.OffsetLabel.TabIndex = 0;
@@ -593,8 +634,8 @@
             // DeadZoneLabel
             // 
             this.DeadZoneLabel.AutoSize = true;
-            this.DeadZoneLabel.Location = new System.Drawing.Point(130, 31);
             this.DeadZoneLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.DeadZoneLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.DeadZoneLabel.Name = "DeadZoneLabel";
             this.DeadZoneLabel.Size = new System.Drawing.Size(89, 20);
             this.DeadZoneLabel.TabIndex = 0;
@@ -602,14 +643,14 @@
             // 
             // AxisToDPadDeadZoneTextBox
             // 
-            this.AxisToDPadDeadZoneTextBox.Location = new System.Drawing.Point(484, 55);
             this.AxisToDPadDeadZoneTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AxisToDPadDeadZoneTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.AxisToDPadDeadZoneTextBox.Name = "AxisToDPadDeadZoneTextBox";
             this.AxisToDPadDeadZoneTextBox.ReadOnly = true;
             this.AxisToDPadDeadZoneTextBox.Size = new System.Drawing.Size(62, 26);
             this.AxisToDPadDeadZoneTextBox.TabIndex = 0;
             this.AxisToDPadDeadZoneTextBox.TabStop = false;
-            this.AxisToDPadDeadZoneTextBox.Text = "100 % ";
+            this.AxisToDPadDeadZoneTextBox.Text = "100 %";
             this.AxisToDPadDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // GeneralTabPage
@@ -1529,7 +1570,6 @@
             this.SavePresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.SavePresetButton.Location = new System.Drawing.Point(532, 5);
             this.SavePresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.SavePresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.SavePresetButton.Name = "SavePresetButton";
             this.SavePresetButton.Size = new System.Drawing.Size(117, 35);
             this.SavePresetButton.TabIndex = 69;
@@ -1543,7 +1583,6 @@
             this.ResetPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ResetPresetButton.Location = new System.Drawing.Point(1022, 5);
             this.ResetPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ResetPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.ResetPresetButton.Name = "ResetPresetButton";
             this.ResetPresetButton.Size = new System.Drawing.Size(112, 35);
             this.ResetPresetButton.TabIndex = 66;
@@ -1553,8 +1592,6 @@
             // 
             // PadTabControl
             // 
-            this.PadTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.PadTabControl.Controls.Add(this.GeneralTabPage);
             this.PadTabControl.Controls.Add(this.AdvancedTabPage);
             this.PadTabControl.Controls.Add(this.ButtonsTabPage);
@@ -1565,9 +1602,9 @@
             this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
             this.PadTabControl.Controls.Add(this.WheelTabPage);
             this.PadTabControl.Controls.Add(this.DirectInputTabPage);
-            this.PadTabControl.Location = new System.Drawing.Point(4, 178);
             this.PadTabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.PadTabControl.Multiline = true;
+            this.PadTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.PadTabControl.Name = "PadTabControl";
             this.PadTabControl.SelectedIndex = 0;
             this.PadTabControl.Size = new System.Drawing.Size(1412, 714);
@@ -1943,17 +1980,44 @@
             // 
             this.ForceFeedbackPanel.AutoScroll = true;
             this.ForceFeedbackPanel.Controls.Add(this.InforTextBox);
-            this.ForceFeedbackPanel.Controls.Add(this.ForceFeedbackGroupBox);
-            this.ForceFeedbackPanel.Controls.Add(this.ForceDefaultsButton);
-            this.ForceFeedbackPanel.Controls.Add(this.ForceSourceGroupBox);
-            this.ForceFeedbackPanel.Controls.Add(this.LeftMotorGroupBox);
-            this.ForceFeedbackPanel.Controls.Add(this.groupBox1);
+            this.ForceFeedbackPanel.Controls.Add(this.ForceFeedbackPageTableLayoutPanel);
             this.ForceFeedbackPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceFeedbackPanel.Location = new System.Drawing.Point(4, 5);
             this.ForceFeedbackPanel.Margin = new System.Windows.Forms.Padding(0);
             this.ForceFeedbackPanel.Name = "ForceFeedbackPanel";
             this.ForceFeedbackPanel.Size = new System.Drawing.Size(1396, 671);
             this.ForceFeedbackPanel.TabIndex = 11;
+            //
+            // ForceFeedbackPageTableLayoutPanel
+            //
+            this.ForceFeedbackPageTableLayoutPanel.AutoSize = true;
+            this.ForceFeedbackPageTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ForceFeedbackPageTableLayoutPanel.ColumnCount = 3;
+            this.ForceFeedbackPageTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackPageTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackPageTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.ForceFeedbackPageTableLayoutPanel.Controls.Add(this.ForceFeedbackGroupBox, 0, 0);
+            this.ForceFeedbackPageTableLayoutPanel.Controls.Add(this.ForceDefaultsFlowLayoutPanel, 1, 0);
+            this.ForceFeedbackPageTableLayoutPanel.Controls.Add(this.LeftMotorGroupBox, 0, 1);
+            this.ForceFeedbackPageTableLayoutPanel.Controls.Add(this.groupBox1, 1, 1);
+            this.ForceFeedbackPageTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.ForceFeedbackPageTableLayoutPanel.Name = "ForceFeedbackPageTableLayoutPanel";
+            this.ForceFeedbackPageTableLayoutPanel.RowCount = 2;
+            this.ForceFeedbackPageTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackPageTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackPageTableLayoutPanel.TabIndex = 0;
+            //
+            // ForceDefaultsFlowLayoutPanel
+            //
+            this.ForceDefaultsFlowLayoutPanel.AutoSize = true;
+            this.ForceDefaultsFlowLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ForceDefaultsFlowLayoutPanel.Controls.Add(this.ForceDefaultsButton);
+            this.ForceDefaultsFlowLayoutPanel.Controls.Add(this.ForceSourceGroupBox);
+            this.ForceDefaultsFlowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.ForceDefaultsFlowLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.ForceDefaultsFlowLayoutPanel.Name = "ForceDefaultsFlowLayoutPanel";
+            this.ForceDefaultsFlowLayoutPanel.TabIndex = 1;
+            this.ForceDefaultsFlowLayoutPanel.WrapContents = false;
             // 
             // InforTextBox
             // 
@@ -1970,35 +2034,62 @@
             // 
             // ForceFeedbackGroupBox
             // 
-            this.ForceFeedbackGroupBox.Controls.Add(this.MotorPeriodPresetLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.MotorPeriodPresetComboBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.MotorInfoButton);
-            this.ForceFeedbackGroupBox.Controls.Add(this.EffectDescriptionLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughCheckBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexComboBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForceTypeComboBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForceEnableCheckBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTextBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForceSwapMotorCheckBox);
-            this.ForceFeedbackGroupBox.Controls.Add(this.label1);
-            this.ForceFeedbackGroupBox.Controls.Add(this.OveralEffectsStengthLabel);
-            this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
-            this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(4, 5);
+            this.ForceFeedbackGroupBox.AutoSize = true;
+            this.ForceFeedbackGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ForceFeedbackGroupBox.Controls.Add(this.ForceFeedbackTableLayoutPanel);
             this.ForceFeedbackGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
             this.ForceFeedbackGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(540, 260);
             this.ForceFeedbackGroupBox.TabIndex = 0;
             this.ForceFeedbackGroupBox.TabStop = false;
             this.ForceFeedbackGroupBox.Text = "Force Feedback";
+            //
+            // ForceFeedbackTableLayoutPanel
+            //
+            this.ForceFeedbackTableLayoutPanel.AutoSize = true;
+            this.ForceFeedbackTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ForceFeedbackTableLayoutPanel.ColumnCount = 5;
+            this.ForceFeedbackTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.ForceFeedbackTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForceEnableCheckBox, 0, 0);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.label1, 2, 0);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForceTypeComboBox, 3, 0);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForcePassThroughCheckBox, 0, 1);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForcePassThroughIndexLabel, 2, 1);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForcePassThroughIndexComboBox, 3, 1);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForceSwapMotorCheckBox, 0, 2);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.MotorInfoButton, 1, 2);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.MotorPeriodPresetLabel, 2, 2);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.MotorPeriodPresetComboBox, 3, 2);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.OveralEffectsStengthLabel, 0, 3);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForceOverallTrackBar, 1, 3);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.ForceOverallTextBox, 4, 3);
+            this.ForceFeedbackTableLayoutPanel.Controls.Add(this.EffectDescriptionLabel, 0, 4);
+            this.ForceFeedbackTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ForceFeedbackTableLayoutPanel.Name = "ForceFeedbackTableLayoutPanel";
+            this.ForceFeedbackTableLayoutPanel.RowCount = 5;
+            this.ForceFeedbackTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.ForceFeedbackTableLayoutPanel.SetColumnSpan(this.ForceTypeComboBox, 2);
+            this.ForceFeedbackTableLayoutPanel.SetColumnSpan(this.ForcePassThroughIndexComboBox, 2);
+            this.ForceFeedbackTableLayoutPanel.SetColumnSpan(this.MotorPeriodPresetComboBox, 2);
+            this.ForceFeedbackTableLayoutPanel.SetColumnSpan(this.ForceOverallTrackBar, 3);
+            this.ForceFeedbackTableLayoutPanel.SetColumnSpan(this.EffectDescriptionLabel, 5);
+            this.ForceFeedbackTableLayoutPanel.TabIndex = 0;
             // 
             // MotorPeriodPresetLabel
             // 
-            this.MotorPeriodPresetLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MotorPeriodPresetLabel.AutoSize = true;
-            this.MotorPeriodPresetLabel.Location = new System.Drawing.Point(213, 103);
             this.MotorPeriodPresetLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MotorPeriodPresetLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.MotorPeriodPresetLabel.Name = "MotorPeriodPresetLabel";
             this.MotorPeriodPresetLabel.Size = new System.Drawing.Size(111, 20);
             this.MotorPeriodPresetLabel.TabIndex = 8;
@@ -2006,10 +2097,9 @@
             // 
             // MotorPeriodPresetComboBox
             // 
-            this.MotorPeriodPresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MotorPeriodPresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.MotorPeriodPresetComboBox.Location = new System.Drawing.Point(332, 100);
             this.MotorPeriodPresetComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MotorPeriodPresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.MotorPeriodPresetComboBox.Name = "MotorPeriodPresetComboBox";
             this.MotorPeriodPresetComboBox.Size = new System.Drawing.Size(198, 28);
             this.MotorPeriodPresetComboBox.TabIndex = 9;
@@ -2017,12 +2107,11 @@
             // 
             // MotorInfoButton
             // 
-            this.MotorInfoButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MotorInfoButton.AutoSize = true;
             this.MotorInfoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.MotorInfoButton.Image = global::x360ce.App.Properties.Resources.information_16x16;
-            this.MotorInfoButton.Location = new System.Drawing.Point(175, 98);
             this.MotorInfoButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MotorInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.MotorInfoButton.Name = "MotorInfoButton";
             this.MotorInfoButton.Padding = new System.Windows.Forms.Padding(4);
             this.MotorInfoButton.Size = new System.Drawing.Size(30, 30);
@@ -2032,11 +2121,8 @@
             // 
             // EffectDescriptionLabel
             // 
-            this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.EffectDescriptionLabel.Location = new System.Drawing.Point(0, 186);
             this.EffectDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
             this.EffectDescriptionLabel.Size = new System.Drawing.Size(532, 69);
             this.EffectDescriptionLabel.TabIndex = 11;
@@ -2044,11 +2130,10 @@
             // 
             // ForceTypeComboBox
             // 
-            this.ForceTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ForceTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ForceTypeComboBox.FormattingEnabled = true;
-            this.ForceTypeComboBox.Location = new System.Drawing.Point(332, 27);
             this.ForceTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ForceTypeComboBox.Name = "ForceTypeComboBox";
             this.ForceTypeComboBox.Size = new System.Drawing.Size(198, 28);
             this.ForceTypeComboBox.TabIndex = 2;
@@ -2057,8 +2142,8 @@
             // ForceEnableCheckBox
             // 
             this.ForceEnableCheckBox.AutoSize = true;
-            this.ForceEnableCheckBox.Location = new System.Drawing.Point(9, 29);
             this.ForceEnableCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceEnableCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForceEnableCheckBox.Name = "ForceEnableCheckBox";
             this.ForceEnableCheckBox.Size = new System.Drawing.Size(85, 24);
             this.ForceEnableCheckBox.TabIndex = 1;
@@ -2067,22 +2152,21 @@
             // 
             // ForceOverallTextBox
             // 
-            this.ForceOverallTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ForceOverallTextBox.Location = new System.Drawing.Point(470, 138);
             this.ForceOverallTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceOverallTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForceOverallTextBox.Name = "ForceOverallTextBox";
             this.ForceOverallTextBox.ReadOnly = true;
             this.ForceOverallTextBox.Size = new System.Drawing.Size(62, 26);
             this.ForceOverallTextBox.TabIndex = 0;
             this.ForceOverallTextBox.TabStop = false;
-            this.ForceOverallTextBox.Text = "100 % ";
+            this.ForceOverallTextBox.Text = "100 %";
             this.ForceOverallTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // ForceSwapMotorCheckBox
             // 
             this.ForceSwapMotorCheckBox.AutoSize = true;
-            this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(9, 100);
             this.ForceSwapMotorCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceSwapMotorCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForceSwapMotorCheckBox.Name = "ForceSwapMotorCheckBox";
             this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(128, 24);
             this.ForceSwapMotorCheckBox.TabIndex = 6;
@@ -2091,10 +2175,9 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(213, 30);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 20);
             this.label1.TabIndex = 0;
@@ -2103,8 +2186,8 @@
             // OveralEffectsStengthLabel
             // 
             this.OveralEffectsStengthLabel.AutoSize = true;
-            this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(8, 141);
             this.OveralEffectsStengthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.OveralEffectsStengthLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
             this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(115, 20);
             this.OveralEffectsStengthLabel.TabIndex = 0;
@@ -2112,14 +2195,12 @@
             // 
             // ForceOverallTrackBar
             // 
-            this.ForceOverallTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ForceOverallTrackBar.AutoSize = false;
             this.ForceOverallTrackBar.LargeChange = 10;
-            this.ForceOverallTrackBar.Location = new System.Drawing.Point(122, 138);
             this.ForceOverallTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceOverallTrackBar.Maximum = 100;
+            this.ForceOverallTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ForceOverallTrackBar.Name = "ForceOverallTrackBar";
-            this.ForceOverallTrackBar.Size = new System.Drawing.Size(340, 43);
+            this.ForceOverallTrackBar.Size = new System.Drawing.Size(340, 32);
             this.ForceOverallTrackBar.TabIndex = 10;
             this.ForceOverallTrackBar.TickFrequency = 2;
             this.ForceOverallTrackBar.Value = 100;
@@ -2264,7 +2345,6 @@
             //
             // ForceSpringFrictionTrackBar
             //
-            this.ForceSpringFrictionTrackBar.AutoSize = false;
             this.ForceSpringFrictionTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringFrictionTrackBar.LargeChange = 10;
             this.ForceSpringFrictionTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -2286,7 +2366,7 @@
             this.ForceSpringFrictionTextBox.Size = new System.Drawing.Size(100, 26);
             this.ForceSpringFrictionTextBox.TabIndex = 5;
             this.ForceSpringFrictionTextBox.TabStop = false;
-            this.ForceSpringFrictionTextBox.Text = "20 % ";
+            this.ForceSpringFrictionTextBox.Text = "20 %";
             this.ForceSpringFrictionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             //
             // ForceSpringStrengthLabel
@@ -2302,7 +2382,6 @@
             //
             // ForceSpringStrengthTrackBar
             //
-            this.ForceSpringStrengthTrackBar.AutoSize = false;
             this.ForceSpringStrengthTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringStrengthTrackBar.LargeChange = 10;
             this.ForceSpringStrengthTrackBar.Location = new System.Drawing.Point(120, 77);
@@ -2324,7 +2403,7 @@
             this.ForceSpringStrengthTextBox.Size = new System.Drawing.Size(100, 26);
             this.ForceSpringStrengthTextBox.TabIndex = 9;
             this.ForceSpringStrengthTextBox.TabStop = false;
-            this.ForceSpringStrengthTextBox.Text = "0 % ";
+            this.ForceSpringStrengthTextBox.Text = "0 %";
             this.ForceSpringStrengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             //
             // ForceSpringAutoButton
@@ -2334,7 +2413,6 @@
             this.ForceSpringAutoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ForceSpringAutoButton.Location = new System.Drawing.Point(682, 83);
             this.ForceSpringAutoButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ForceSpringAutoButton.MinimumSize = new System.Drawing.Size(62, 0);
             this.ForceSpringAutoButton.Name = "ForceSpringAutoButton";
             this.ForceSpringAutoButton.Size = new System.Drawing.Size(62, 30);
             this.ForceSpringAutoButton.TabIndex = 6;
@@ -2355,7 +2433,6 @@
             //
             // ForceSpringCentreTrackBar
             //
-            this.ForceSpringCentreTrackBar.AutoSize = false;
             this.ForceSpringCentreTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringCentreTrackBar.LargeChange = 10;
             this.ForceSpringCentreTrackBar.Location = new System.Drawing.Point(120, 130);
@@ -2395,7 +2472,6 @@
             //
             // ForceSpringPeakTrackBar
             //
-            this.ForceSpringPeakTrackBar.AutoSize = false;
             this.ForceSpringPeakTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringPeakTrackBar.LargeChange = 10;
             this.ForceSpringPeakTrackBar.Location = new System.Drawing.Point(120, 183);
@@ -2434,7 +2510,6 @@
             //
             // ForceSpringLighteningTrackBar
             //
-            this.ForceSpringLighteningTrackBar.AutoSize = false;
             this.ForceSpringLighteningTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringLighteningTrackBar.LargeChange = 10;
             this.ForceSpringLighteningTrackBar.Location = new System.Drawing.Point(120, 236);
@@ -2457,7 +2532,7 @@
             this.ForceSpringLighteningTextBox.Size = new System.Drawing.Size(100, 26);
             this.ForceSpringLighteningTextBox.TabIndex = 18;
             this.ForceSpringLighteningTextBox.TabStop = false;
-            this.ForceSpringLighteningTextBox.Text = "40 % ";
+            this.ForceSpringLighteningTextBox.Text = "40 %";
             this.ForceSpringLighteningTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             //
             // ForceSpringDampingLabel
@@ -2473,7 +2548,6 @@
             //
             // ForceSpringDampingTrackBar
             //
-            this.ForceSpringDampingTrackBar.AutoSize = false;
             this.ForceSpringDampingTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringDampingTrackBar.LargeChange = 10;
             this.ForceSpringDampingTrackBar.Location = new System.Drawing.Point(120, 289);
@@ -2496,7 +2570,7 @@
             this.ForceSpringDampingTextBox.Size = new System.Drawing.Size(100, 26);
             this.ForceSpringDampingTextBox.TabIndex = 21;
             this.ForceSpringDampingTextBox.TabStop = false;
-            this.ForceSpringDampingTextBox.Text = "5 % ";
+            this.ForceSpringDampingTextBox.Text = "5 %";
             this.ForceSpringDampingTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             //
             // ForceSpringSpeedLabel
@@ -2512,7 +2586,6 @@
             //
             // ForceSpringSpeedTrackBar
             //
-            this.ForceSpringSpeedTrackBar.AutoSize = false;
             this.ForceSpringSpeedTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ForceSpringSpeedTrackBar.LargeChange = 10;
             this.ForceSpringSpeedTrackBar.Location = new System.Drawing.Point(120, 342);
@@ -2578,8 +2651,8 @@
             // 
             this.ForceDefaultsButton.AutoSize = true;
             this.ForceDefaultsButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ForceDefaultsButton.Location = new System.Drawing.Point(552, 14);
             this.ForceDefaultsButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ForceDefaultsButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ForceDefaultsButton.Name = "ForceDefaultsButton";
             this.ForceDefaultsButton.Size = new System.Drawing.Size(79, 30);
             this.ForceDefaultsButton.TabIndex = 23;
@@ -2590,7 +2663,6 @@
             // ForceSourceGroupBox
             //
             this.ForceSourceGroupBox.Controls.Add(this.ForceSourceLabel);
-            this.ForceSourceGroupBox.Location = new System.Drawing.Point(552, 49);
             this.ForceSourceGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ForceSourceGroupBox.Name = "ForceSourceGroupBox";
             this.ForceSourceGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -2612,31 +2684,51 @@
             //
             // LeftMotorGroupBox
             // 
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorDirectionLabel);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthTrackBar);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorDirectionComboBox);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthLabel);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorStrengthTextBox);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorTestTextBox);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorTestTrackBar);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTextBox);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
-            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
-            this.LeftMotorGroupBox.Controls.Add(this.TestLeftMotorLabel);
-            this.LeftMotorGroupBox.Location = new System.Drawing.Point(4, 275);
+            this.LeftMotorGroupBox.Controls.Add(this.LeftMotorTableLayoutPanel);
             this.LeftMotorGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LeftMotorGroupBox.AutoSize = true;
+            this.LeftMotorGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.LeftMotorGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.LeftMotorGroupBox.Name = "LeftMotorGroupBox";
             this.LeftMotorGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorGroupBox.Size = new System.Drawing.Size(540, 230);
             this.LeftMotorGroupBox.TabIndex = 9;
             this.LeftMotorGroupBox.TabStop = false;
             this.LeftMotorGroupBox.Text = "Left Motor (Big, Strong, Low-Frequency)";
+            //
+            // LeftMotorTableLayoutPanel
+            //
+            this.LeftMotorTableLayoutPanel.AutoSize = true;
+            this.LeftMotorTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.LeftMotorTableLayoutPanel.ColumnCount = 3;
+            this.LeftMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorDirectionLabel, 0, 0);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorDirectionComboBox, 1, 0);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorStrengthLabel, 0, 1);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorStrengthTrackBar, 1, 1);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorStrengthTextBox, 2, 1);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorPeriodLabel, 0, 2);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorPeriodTrackBar, 1, 2);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorPeriodTextBox, 2, 2);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.TestLeftMotorLabel, 0, 3);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorTestTrackBar, 1, 3);
+            this.LeftMotorTableLayoutPanel.Controls.Add(this.LeftMotorTestTextBox, 2, 3);
+            this.LeftMotorTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LeftMotorTableLayoutPanel.Name = "LeftMotorTableLayoutPanel";
+            this.LeftMotorTableLayoutPanel.RowCount = 4;
+            this.LeftMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.LeftMotorTableLayoutPanel.TabIndex = 0;
             // 
             // LeftMotorDirectionLabel
             // 
             this.LeftMotorDirectionLabel.AutoSize = true;
-            this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(9, 34);
             this.LeftMotorDirectionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LeftMotorDirectionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
             this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(76, 20);
             this.LeftMotorDirectionLabel.TabIndex = 0;
@@ -2644,14 +2736,12 @@
             // 
             // LeftMotorStrengthTrackBar
             // 
-            this.LeftMotorStrengthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorStrengthTrackBar.AutoSize = false;
+            this.LeftMotorStrengthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.LeftMotorStrengthTrackBar.LargeChange = 10;
-            this.LeftMotorStrengthTrackBar.Location = new System.Drawing.Point(122, 62);
             this.LeftMotorStrengthTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorStrengthTrackBar.Maximum = 100;
             this.LeftMotorStrengthTrackBar.Name = "LeftMotorStrengthTrackBar";
-            this.LeftMotorStrengthTrackBar.Size = new System.Drawing.Size(340, 43);
+            this.LeftMotorStrengthTrackBar.Size = new System.Drawing.Size(340, 32);
             this.LeftMotorStrengthTrackBar.TabIndex = 4;
             this.LeftMotorStrengthTrackBar.TickFrequency = 2;
             this.LeftMotorStrengthTrackBar.Value = 100;
@@ -2659,10 +2749,9 @@
             // 
             // LeftMotorDirectionComboBox
             // 
-            this.LeftMotorDirectionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LeftMotorDirectionComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.LeftMotorDirectionComboBox.FormattingEnabled = true;
-            this.LeftMotorDirectionComboBox.Location = new System.Drawing.Point(143, 24);
             this.LeftMotorDirectionComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorDirectionComboBox.Name = "LeftMotorDirectionComboBox";
             this.LeftMotorDirectionComboBox.Size = new System.Drawing.Size(180, 28);
@@ -2671,8 +2760,8 @@
             // LeftMotorStrengthLabel
             // 
             this.LeftMotorStrengthLabel.AutoSize = true;
-            this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(8, 68);
             this.LeftMotorStrengthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LeftMotorStrengthLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorStrengthLabel.Name = "LeftMotorStrengthLabel";
             this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(71, 20);
             this.LeftMotorStrengthLabel.TabIndex = 0;
@@ -2680,39 +2769,35 @@
             // 
             // LeftMotorStrengthTextBox
             // 
-            this.LeftMotorStrengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorStrengthTextBox.Location = new System.Drawing.Point(470, 62);
+            this.LeftMotorStrengthTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorStrengthTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorStrengthTextBox.Name = "LeftMotorStrengthTextBox";
             this.LeftMotorStrengthTextBox.ReadOnly = true;
             this.LeftMotorStrengthTextBox.Size = new System.Drawing.Size(62, 26);
             this.LeftMotorStrengthTextBox.TabIndex = 0;
             this.LeftMotorStrengthTextBox.TabStop = false;
-            this.LeftMotorStrengthTextBox.Text = "100 % ";
+            this.LeftMotorStrengthTextBox.Text = "100 %";
             this.LeftMotorStrengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // LeftMotorTestTextBox
             // 
-            this.LeftMotorTestTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorTestTextBox.Location = new System.Drawing.Point(470, 174);
+            this.LeftMotorTestTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorTestTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorTestTextBox.Name = "LeftMotorTestTextBox";
             this.LeftMotorTestTextBox.ReadOnly = true;
             this.LeftMotorTestTextBox.Size = new System.Drawing.Size(62, 26);
             this.LeftMotorTestTextBox.TabIndex = 0;
             this.LeftMotorTestTextBox.TabStop = false;
-            this.LeftMotorTestTextBox.Text = "0 % ";
+            this.LeftMotorTestTextBox.Text = "0 %";
             this.LeftMotorTestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // LeftMotorTestTrackBar
             // 
-            this.LeftMotorTestTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorTestTrackBar.AutoSize = false;
-            this.LeftMotorTestTrackBar.Location = new System.Drawing.Point(122, 174);
+            this.LeftMotorTestTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.LeftMotorTestTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorTestTrackBar.Maximum = 100;
             this.LeftMotorTestTrackBar.Name = "LeftMotorTestTrackBar";
-            this.LeftMotorTestTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.LeftMotorTestTrackBar.Size = new System.Drawing.Size(340, 32);
             this.LeftMotorTestTrackBar.TabIndex = 6;
             this.LeftMotorTestTrackBar.TickFrequency = 2;
             this.MainToolTip.SetToolTip(this.LeftMotorTestTrackBar, "Low-frequency rumble motor.");
@@ -2720,22 +2805,21 @@
             // 
             // LeftMotorPeriodTextBox
             // 
-            this.LeftMotorPeriodTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorPeriodTextBox.Location = new System.Drawing.Point(470, 115);
+            this.LeftMotorPeriodTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorPeriodTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorPeriodTextBox.Name = "LeftMotorPeriodTextBox";
             this.LeftMotorPeriodTextBox.ReadOnly = true;
             this.LeftMotorPeriodTextBox.Size = new System.Drawing.Size(62, 26);
             this.LeftMotorPeriodTextBox.TabIndex = 0;
             this.LeftMotorPeriodTextBox.TabStop = false;
-            this.LeftMotorPeriodTextBox.Text = "0 ";
+            this.LeftMotorPeriodTextBox.Text = "0";
             this.LeftMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // LeftMotorPeriodLabel
             // 
             this.LeftMotorPeriodLabel.AutoSize = true;
-            this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(8, 118);
             this.LeftMotorPeriodLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LeftMotorPeriodLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
             this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(89, 20);
             this.LeftMotorPeriodLabel.TabIndex = 0;
@@ -2743,13 +2827,11 @@
             // 
             // LeftMotorPeriodTrackBar
             // 
-            this.LeftMotorPeriodTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.LeftMotorPeriodTrackBar.AutoSize = false;
-            this.LeftMotorPeriodTrackBar.Location = new System.Drawing.Point(122, 115);
+            this.LeftMotorPeriodTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.LeftMotorPeriodTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LeftMotorPeriodTrackBar.Maximum = 100;
             this.LeftMotorPeriodTrackBar.Name = "LeftMotorPeriodTrackBar";
-            this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.LeftMotorPeriodTrackBar.Size = new System.Drawing.Size(340, 32);
             this.LeftMotorPeriodTrackBar.TabIndex = 5;
             this.LeftMotorPeriodTrackBar.TickFrequency = 2;
             this.LeftMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
@@ -2757,8 +2839,8 @@
             // TestLeftMotorLabel
             // 
             this.TestLeftMotorLabel.AutoSize = true;
-            this.TestLeftMotorLabel.Location = new System.Drawing.Point(8, 174);
             this.TestLeftMotorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.TestLeftMotorLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
             this.TestLeftMotorLabel.Size = new System.Drawing.Size(40, 20);
             this.TestLeftMotorLabel.TabIndex = 0;
@@ -2766,31 +2848,51 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.RightMotorDirectionLabel);
-            this.groupBox1.Controls.Add(this.RightMotorStrengthTrackBar);
-            this.groupBox1.Controls.Add(this.RightMotorDirectionComboBox);
-            this.groupBox1.Controls.Add(this.RightMotorStrengthLabel);
-            this.groupBox1.Controls.Add(this.RightMotorStrengthTextBox);
-            this.groupBox1.Controls.Add(this.TestRightMotorLabel);
-            this.groupBox1.Controls.Add(this.RightMotorPeriodTrackBar);
-            this.groupBox1.Controls.Add(this.RightMotorPeriodLabel);
-            this.groupBox1.Controls.Add(this.RightMotorTestTrackBar);
-            this.groupBox1.Controls.Add(this.RightMotorTestTextBox);
-            this.groupBox1.Controls.Add(this.RightMotorPeriodTextBox);
-            this.groupBox1.Location = new System.Drawing.Point(552, 275);
+            this.groupBox1.Controls.Add(this.RightMotorTableLayoutPanel);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.groupBox1.Size = new System.Drawing.Size(542, 230);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Right Motor (Small, Gentle, High-Frequency)";
+            //
+            // RightMotorTableLayoutPanel
+            //
+            this.RightMotorTableLayoutPanel.AutoSize = true;
+            this.RightMotorTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.RightMotorTableLayoutPanel.ColumnCount = 3;
+            this.RightMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorDirectionLabel, 0, 0);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorDirectionComboBox, 1, 0);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorStrengthLabel, 0, 1);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorStrengthTrackBar, 1, 1);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorStrengthTextBox, 2, 1);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorPeriodLabel, 0, 2);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorPeriodTrackBar, 1, 2);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorPeriodTextBox, 2, 2);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.TestRightMotorLabel, 0, 3);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorTestTrackBar, 1, 3);
+            this.RightMotorTableLayoutPanel.Controls.Add(this.RightMotorTestTextBox, 2, 3);
+            this.RightMotorTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RightMotorTableLayoutPanel.Name = "RightMotorTableLayoutPanel";
+            this.RightMotorTableLayoutPanel.RowCount = 4;
+            this.RightMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RightMotorTableLayoutPanel.TabIndex = 0;
             // 
             // RightMotorDirectionLabel
             // 
             this.RightMotorDirectionLabel.AutoSize = true;
-            this.RightMotorDirectionLabel.Location = new System.Drawing.Point(8, 32);
             this.RightMotorDirectionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.RightMotorDirectionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
             this.RightMotorDirectionLabel.Size = new System.Drawing.Size(76, 20);
             this.RightMotorDirectionLabel.TabIndex = 0;
@@ -2798,14 +2900,12 @@
             // 
             // RightMotorStrengthTrackBar
             // 
-            this.RightMotorStrengthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorStrengthTrackBar.AutoSize = false;
+            this.RightMotorStrengthTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.RightMotorStrengthTrackBar.LargeChange = 10;
-            this.RightMotorStrengthTrackBar.Location = new System.Drawing.Point(124, 62);
             this.RightMotorStrengthTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorStrengthTrackBar.Maximum = 100;
             this.RightMotorStrengthTrackBar.Name = "RightMotorStrengthTrackBar";
-            this.RightMotorStrengthTrackBar.Size = new System.Drawing.Size(340, 43);
+            this.RightMotorStrengthTrackBar.Size = new System.Drawing.Size(340, 32);
             this.RightMotorStrengthTrackBar.TabIndex = 4;
             this.RightMotorStrengthTrackBar.TickFrequency = 2;
             this.RightMotorStrengthTrackBar.Value = 100;
@@ -2813,10 +2913,9 @@
             // 
             // RightMotorDirectionComboBox
             // 
-            this.RightMotorDirectionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RightMotorDirectionComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorDirectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.RightMotorDirectionComboBox.FormattingEnabled = true;
-            this.RightMotorDirectionComboBox.Location = new System.Drawing.Point(129, 26);
             this.RightMotorDirectionComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorDirectionComboBox.Name = "RightMotorDirectionComboBox";
             this.RightMotorDirectionComboBox.Size = new System.Drawing.Size(180, 28);
@@ -2825,8 +2924,8 @@
             // RightMotorStrengthLabel
             // 
             this.RightMotorStrengthLabel.AutoSize = true;
-            this.RightMotorStrengthLabel.Location = new System.Drawing.Point(8, 65);
             this.RightMotorStrengthLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.RightMotorStrengthLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorStrengthLabel.Name = "RightMotorStrengthLabel";
             this.RightMotorStrengthLabel.Size = new System.Drawing.Size(71, 20);
             this.RightMotorStrengthLabel.TabIndex = 0;
@@ -2834,22 +2933,21 @@
             // 
             // RightMotorStrengthTextBox
             // 
-            this.RightMotorStrengthTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorStrengthTextBox.Location = new System.Drawing.Point(472, 62);
+            this.RightMotorStrengthTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorStrengthTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorStrengthTextBox.Name = "RightMotorStrengthTextBox";
             this.RightMotorStrengthTextBox.ReadOnly = true;
             this.RightMotorStrengthTextBox.Size = new System.Drawing.Size(62, 26);
             this.RightMotorStrengthTextBox.TabIndex = 0;
             this.RightMotorStrengthTextBox.TabStop = false;
-            this.RightMotorStrengthTextBox.Text = "100 % ";
+            this.RightMotorStrengthTextBox.Text = "100 %";
             this.RightMotorStrengthTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // TestRightMotorLabel
             // 
             this.TestRightMotorLabel.AutoSize = true;
-            this.TestRightMotorLabel.Location = new System.Drawing.Point(8, 174);
             this.TestRightMotorLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.TestRightMotorLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.TestRightMotorLabel.Name = "TestRightMotorLabel";
             this.TestRightMotorLabel.Size = new System.Drawing.Size(40, 20);
             this.TestRightMotorLabel.TabIndex = 0;
@@ -2857,13 +2955,11 @@
             // 
             // RightMotorPeriodTrackBar
             // 
-            this.RightMotorPeriodTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorPeriodTrackBar.AutoSize = false;
-            this.RightMotorPeriodTrackBar.Location = new System.Drawing.Point(124, 115);
+            this.RightMotorPeriodTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.RightMotorPeriodTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorPeriodTrackBar.Maximum = 100;
             this.RightMotorPeriodTrackBar.Name = "RightMotorPeriodTrackBar";
-            this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.RightMotorPeriodTrackBar.Size = new System.Drawing.Size(340, 32);
             this.RightMotorPeriodTrackBar.TabIndex = 7;
             this.RightMotorPeriodTrackBar.TickFrequency = 2;
             this.RightMotorPeriodTrackBar.ValueChanged += new System.EventHandler(this.MotorPeriodTrackBar_ValueChanged);
@@ -2871,8 +2967,8 @@
             // RightMotorPeriodLabel
             // 
             this.RightMotorPeriodLabel.AutoSize = true;
-            this.RightMotorPeriodLabel.Location = new System.Drawing.Point(8, 118);
             this.RightMotorPeriodLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.RightMotorPeriodLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
             this.RightMotorPeriodLabel.Size = new System.Drawing.Size(89, 20);
             this.RightMotorPeriodLabel.TabIndex = 0;
@@ -2880,13 +2976,11 @@
             // 
             // RightMotorTestTrackBar
             // 
-            this.RightMotorTestTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorTestTrackBar.AutoSize = false;
-            this.RightMotorTestTrackBar.Location = new System.Drawing.Point(124, 174);
+            this.RightMotorTestTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.RightMotorTestTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorTestTrackBar.Maximum = 100;
             this.RightMotorTestTrackBar.Name = "RightMotorTestTrackBar";
-            this.RightMotorTestTrackBar.Size = new System.Drawing.Size(340, 49);
+            this.RightMotorTestTrackBar.Size = new System.Drawing.Size(340, 32);
             this.RightMotorTestTrackBar.TabIndex = 8;
             this.RightMotorTestTrackBar.TickFrequency = 2;
             this.MainToolTip.SetToolTip(this.RightMotorTestTrackBar, "High-frequency rumble motor.");
@@ -2894,28 +2988,26 @@
             // 
             // RightMotorTestTextBox
             // 
-            this.RightMotorTestTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorTestTextBox.Location = new System.Drawing.Point(472, 174);
+            this.RightMotorTestTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorTestTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorTestTextBox.Name = "RightMotorTestTextBox";
             this.RightMotorTestTextBox.ReadOnly = true;
             this.RightMotorTestTextBox.Size = new System.Drawing.Size(62, 26);
             this.RightMotorTestTextBox.TabIndex = 0;
             this.RightMotorTestTextBox.TabStop = false;
-            this.RightMotorTestTextBox.Text = "0 % ";
+            this.RightMotorTestTextBox.Text = "0 %";
             this.RightMotorTestTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // RightMotorPeriodTextBox
             // 
-            this.RightMotorPeriodTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.RightMotorPeriodTextBox.Location = new System.Drawing.Point(472, 115);
+            this.RightMotorPeriodTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RightMotorPeriodTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RightMotorPeriodTextBox.Name = "RightMotorPeriodTextBox";
             this.RightMotorPeriodTextBox.ReadOnly = true;
             this.RightMotorPeriodTextBox.Size = new System.Drawing.Size(62, 26);
             this.RightMotorPeriodTextBox.TabIndex = 0;
             this.RightMotorPeriodTextBox.TabStop = false;
-            this.RightMotorPeriodTextBox.Text = "0 ";
+            this.RightMotorPeriodTextBox.Text = "0";
             this.RightMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // SpringAutoTimer
@@ -2925,7 +3017,6 @@
             // 
             // DiMenuStrip
             // 
-            this.DiMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.DiMenuStrip.Name = "DiMenuStrip";
             this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
             this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
@@ -2937,7 +3028,6 @@
             this.PastePresetButton.Image = global::x360ce.App.Properties.Resources.paste_16x16;
             this.PastePresetButton.Location = new System.Drawing.Point(398, 5);
             this.PastePresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.PastePresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.PastePresetButton.Name = "PastePresetButton";
             this.PastePresetButton.Size = new System.Drawing.Size(126, 35);
             this.PastePresetButton.TabIndex = 73;
@@ -2954,7 +3044,6 @@
             this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
             this.CopyPresetButton.Location = new System.Drawing.Point(239, 5);
             this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 0, 5);
-            this.CopyPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.CopyPresetButton.Name = "CopyPresetButton";
             this.CopyPresetButton.Size = new System.Drawing.Size(121, 35);
             this.CopyPresetButton.TabIndex = 71;
@@ -2970,7 +3059,6 @@
             this.CopyPresetFormatButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CopyPresetFormatButton.Location = new System.Drawing.Point(360, 5);
             this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 5, 4, 5);
-            this.CopyPresetFormatButton.MinimumSize = new System.Drawing.Size(30, 35);
             this.CopyPresetFormatButton.Name = "CopyPresetFormatButton";
             this.CopyPresetFormatButton.Size = new System.Drawing.Size(30, 35);
             this.CopyPresetFormatButton.TabIndex = 72;
@@ -2985,7 +3073,6 @@
             this.ClearPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClearPresetButton.Location = new System.Drawing.Point(902, 5);
             this.ClearPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ClearPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.ClearPresetButton.Name = "ClearPresetButton";
             this.ClearPresetButton.Size = new System.Drawing.Size(112, 35);
             this.ClearPresetButton.TabIndex = 66;
@@ -2999,7 +3086,6 @@
             this.GameControllersButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GameControllersButton.Location = new System.Drawing.Point(4, 5);
             this.GameControllersButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.GameControllersButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.GameControllersButton.Name = "GameControllersButton";
             this.GameControllersButton.Size = new System.Drawing.Size(155, 35);
             this.GameControllersButton.TabIndex = 66;
@@ -3013,7 +3099,6 @@
             this.AutoPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AutoPresetButton.Location = new System.Drawing.Point(782, 5);
             this.AutoPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.AutoPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.AutoPresetButton.Name = "AutoPresetButton";
             this.AutoPresetButton.Size = new System.Drawing.Size(112, 35);
             this.AutoPresetButton.TabIndex = 66;
@@ -3023,8 +3108,6 @@
             // 
             // ButtonsPanel
             // 
-            this.ButtonsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.ButtonsPanel.AutoSize = true;
             this.ButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ButtonsPanel.ColumnCount = 2;
@@ -3032,8 +3115,8 @@
             this.ButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.ButtonsPanel.Controls.Add(this.ButtonsLeftPanel, 0, 0);
             this.ButtonsPanel.Controls.Add(this.ButtonsRightPanel, 1, 0);
-            this.ButtonsPanel.Location = new System.Drawing.Point(0, 894);
-            this.ButtonsPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ButtonsPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.ButtonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ButtonsPanel.Name = "ButtonsPanel";
             this.ButtonsPanel.RowCount = 1;
             this.ButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -3060,7 +3143,6 @@
             this.DxTweakButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.DxTweakButton.Location = new System.Drawing.Point(167, 5);
             this.DxTweakButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.DxTweakButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.DxTweakButton.Name = "DxTweakButton";
             this.DxTweakButton.Size = new System.Drawing.Size(112, 35);
             this.DxTweakButton.TabIndex = 70;
@@ -3095,7 +3177,6 @@
             this.LoadPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.LoadPresetButton.Location = new System.Drawing.Point(657, 5);
             this.LoadPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.LoadPresetButton.MinimumSize = new System.Drawing.Size(112, 35);
             this.LoadPresetButton.Name = "LoadPresetButton";
             this.LoadPresetButton.Size = new System.Drawing.Size(117, 35);
             this.LoadPresetButton.TabIndex = 66;
@@ -3108,12 +3189,6 @@
             this.MappedDevicesDataGridView.AllowUserToAddRows = false;
             this.MappedDevicesDataGridView.AllowUserToDeleteRows = false;
             this.MappedDevicesDataGridView.AllowUserToResizeRows = false;
-            this.MappedDevicesDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.MappedDevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.MappedDevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.MappedDevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.MappedDevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.MappedDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
@@ -3136,11 +3211,9 @@
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
-            this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
-            this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-            this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 38);
             this.MappedDevicesDataGridView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MappedDevicesDataGridView.MultiSelect = false;
+            this.MappedDevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MappedDevicesDataGridView.Name = "MappedDevicesDataGridView";
             this.MappedDevicesDataGridView.ReadOnly = true;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -3299,17 +3372,14 @@
             // GamesToolStrip
             // 
             this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RemoveMapButton,
             this.AddMapButton,
             this.AutoMapButton,
             this.EnableButton,
             this.GetXInputStatesCheckBox});
-            this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
             this.GamesToolStrip.Name = "GamesToolStrip";
             this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(6, 0, 2, 0);
-            this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.GamesToolStrip.Size = new System.Drawing.Size(1421, 32);
             this.GamesToolStrip.TabIndex = 3;
             this.GamesToolStrip.Text = "MySettingsToolStrip";
@@ -3368,15 +3438,31 @@
             this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(182, 29);
             this.GetXInputStatesCheckBox.Text = "&Show XInput State";
             this.GetXInputStatesCheckBox.ToolTipText = "Load XInput DLL and query actual state";
+            //
+            // PadTableLayoutPanel
+            //
+            this.PadTableLayoutPanel.ColumnCount = 1;
+            this.PadTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.PadTableLayoutPanel.Controls.Add(this.GamesToolStrip, 0, 0);
+            this.PadTableLayoutPanel.Controls.Add(this.MappedDevicesDataGridView, 0, 1);
+            this.PadTableLayoutPanel.Controls.Add(this.PadTabControl, 0, 2);
+            this.PadTableLayoutPanel.Controls.Add(this.ButtonsPanel, 0, 3);
+            this.PadTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PadTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.PadTableLayoutPanel.Name = "PadTableLayoutPanel";
+            this.PadTableLayoutPanel.RowCount = 4;
+            this.PadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.PadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.PadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.PadTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.PadTableLayoutPanel.Size = new System.Drawing.Size(1421, 938);
+            this.PadTableLayoutPanel.TabIndex = 0;
             // 
             // PadControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.MappedDevicesDataGridView);
-            this.Controls.Add(this.GamesToolStrip);
-            this.Controls.Add(this.PadTabControl);
-            this.Controls.Add(this.ButtonsPanel);
+            this.Controls.Add(this.PadTableLayoutPanel);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "PadControl";
             this.Size = new System.Drawing.Size(1421, 938);
@@ -3387,6 +3473,8 @@
             this.CombineGroupBox.PerformLayout();
             this.DeviceGroupBox.ResumeLayout(false);
             this.DeviceGroupBox.PerformLayout();
+            this.AxisToDPadTableLayoutPanel.ResumeLayout(false);
+            this.AxisToDPadTableLayoutPanel.PerformLayout();
             this.AxisToDPadGroupBox.ResumeLayout(false);
             this.AxisToDPadGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
@@ -3415,7 +3503,15 @@
             this.ForceFeedbackPanel.ResumeLayout(false);
             this.ForceFeedbackPanel.PerformLayout();
             this.ForceFeedbackGroupBox.ResumeLayout(false);
+            this.PadTableLayoutPanel.ResumeLayout(false);
+            this.PadTableLayoutPanel.PerformLayout();
             this.ForceFeedbackGroupBox.PerformLayout();
+            this.ForceFeedbackTableLayoutPanel.ResumeLayout(false);
+            this.ForceFeedbackTableLayoutPanel.PerformLayout();
+            this.ForceFeedbackPageTableLayoutPanel.ResumeLayout(false);
+            this.ForceFeedbackPageTableLayoutPanel.PerformLayout();
+            this.ForceDefaultsFlowLayoutPanel.ResumeLayout(false);
+            this.ForceDefaultsFlowLayoutPanel.PerformLayout();
             this.ForceSourceGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
             this.WheelTabPage.ResumeLayout(false);
@@ -3429,11 +3525,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringLighteningTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringDampingTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringSpeedTrackBar)).EndInit();
+            this.LeftMotorTableLayoutPanel.ResumeLayout(false);
+            this.LeftMotorTableLayoutPanel.PerformLayout();
             this.LeftMotorGroupBox.ResumeLayout(false);
             this.LeftMotorGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorStrengthTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorTestTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LeftMotorPeriodTrackBar)).EndInit();
+            this.RightMotorTableLayoutPanel.ResumeLayout(false);
+            this.RightMotorTableLayoutPanel.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
@@ -3529,6 +3629,8 @@
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
 		System.Windows.Forms.CheckBox PassThroughCheckBox;
         System.Windows.Forms.GroupBox AxisToDPadGroupBox;
+        System.Windows.Forms.TableLayoutPanel AxisToDPadTableLayoutPanel;
+        x360ce.App.Controls.AxisToDPadChart AxisToDPadChart;
         System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
         System.Windows.Forms.TrackBar AxisToDPadDeadZoneTrackBar;
         System.Windows.Forms.Label DeadZoneLabel;
@@ -3539,6 +3641,10 @@
 		System.Windows.Forms.ToolTip MainToolTip;
 		System.Windows.Forms.TabPage ForceFeedbackTabPage;
 		System.Windows.Forms.GroupBox ForceFeedbackGroupBox;
+		System.Windows.Forms.TableLayoutPanel ForceFeedbackTableLayoutPanel;
+		System.Windows.Forms.TableLayoutPanel PadTableLayoutPanel;
+		System.Windows.Forms.TableLayoutPanel ForceFeedbackPageTableLayoutPanel;
+		System.Windows.Forms.FlowLayoutPanel ForceDefaultsFlowLayoutPanel;
 		System.Windows.Forms.GroupBox ForceSourceGroupBox;
 		System.Windows.Forms.Label ForceSourceLabel;
 		System.Windows.Forms.Label MotorPeriodPresetLabel;
@@ -3630,7 +3736,9 @@
         private System.Windows.Forms.Label RightMotorDirectionLabel;
         private System.Windows.Forms.Label LeftMotorDirectionLabel;
         private System.Windows.Forms.GroupBox LeftMotorGroupBox;
+        private System.Windows.Forms.TableLayoutPanel LeftMotorTableLayoutPanel;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.TableLayoutPanel RightMotorTableLayoutPanel;
         private System.Windows.Forms.TabPage ButtonsTabPage;
         private AxisToButtonUserControl AxisToButtonBackDeadZonePanel;
         private AxisToButtonUserControl AxisToLeftShoulderDeadZonePanel;

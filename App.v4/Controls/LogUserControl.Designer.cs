@@ -53,9 +53,6 @@ namespace x360ce.App.Controls
             this.LogDataGridView.AllowUserToAddRows = false;
             this.LogDataGridView.AllowUserToDeleteRows = false;
             this.LogDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
-            this.LogDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-            this.LogDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.LogDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -140,7 +137,6 @@ namespace x360ce.App.Controls
             // 
             // LogToolStrip
             // 
-            this.LogToolStrip.AutoSize = false;
             this.LogToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.LogToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ClearLogButton,
@@ -148,7 +144,6 @@ namespace x360ce.App.Controls
             this.LogSizeComboBox});
             this.LogToolStrip.Location = new System.Drawing.Point(0, 0);
             this.LogToolStrip.Name = "LogToolStrip";
-            this.LogToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.LogToolStrip.Size = new System.Drawing.Size(744, 28);
             this.LogToolStrip.TabIndex = 8;
             this.LogToolStrip.Text = "toolStrip2";

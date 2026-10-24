@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.IO;
 using System.Linq;
@@ -34,22 +35,23 @@ namespace x360ce.App.Controls
 			MoveModeComboBox.SelectedIndex = 0;
 			// A drop-down list sizes to the width it was given, not to what is in it, so
 			// the widest entry is measured and it is made that wide. Anchoring it to the
-			// edge instead would stretch a list of three phrases across the window.
+			// edge instead would stretch a list of three phrases across the window. The room
+			// round the text is the painter's, known once the list is shown, and grows with its font.
+			foreach (var box in new[] { LocationComboBox, MoveModeComboBox })
+			{
+				box.HandleCreated += (s, e) => FitToContent((ComboBox)s);
+				box.FontChanged += (s, e) => FitToContent((ComboBox)s);
+			}
 			FitToContent(MoveModeComboBox);
 			Refresh2();
 		}
 
 		internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
 
-		/// <summary>Makes a list exactly as wide as its longest entry needs.</summary>
+		/// <summary>Makes a list exactly as wide as its longest entry needs, as it is drawn.</summary>
 		private static void FitToContent(ComboBox box)
 		{
-			var widest = 0;
-			using (var graphics = box.CreateGraphics())
-				foreach (var item in box.Items)
-					widest = Math.Max(widest, (int)graphics.MeasureString(item.ToString(), box.Font).Width);
-			// Room for the arrow and the frame, which the text measurement knows nothing of.
-			box.Width = widest + SystemInformation.VerticalScrollBarWidth + 8;
+			box.Width = FormsTheme.GetComboBoxWidth(box);
 		}
 
 		private SettingsLocation[] _locations;
