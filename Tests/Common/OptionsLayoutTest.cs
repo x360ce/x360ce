@@ -141,6 +141,9 @@ namespace x360ce.Tests
 						Assert.IsTrue(last.Y + line <= box.ClientSize.Height, string.Format(
 							"The last line of {0} ends at {1} px, below the box, which shows {2} px, with the page {3} times its designed width.",
 							name, last.Y + line, box.ClientSize.Height, factor));
+						Assert.IsTrue(box.ClientSize.Height < last.Y + 2 * line, string.Format(
+							"{0} shows {1} px, an empty line below its last one, which ends at {2} px, with the page {3} times its designed width.",
+							name, box.ClientSize.Height, last.Y + line, factor));
 					}
 				});
 			}

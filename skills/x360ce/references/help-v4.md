@@ -471,6 +471,7 @@ x360ce's ports follow one pattern, `37ACD`, so a port says what it reaches:
 |---|---|
 | 37101 | AI assistant access, x360ce 4's MCP server |
 | 37102 | AI assistant access of x360ce 3 |
+| 37103 | The x360ce Test Game's MCP server: a program in x360ce's source code that records what a game receives, for testing |
 | 37111 to 37149 | A plugin device's own MCP server, such as a Remote MCP Controller's: controller `C`, device `D`. 37141 is the first device on controller 4. |
 | 37150 to 37199 | Servers plugins open themselves |
 

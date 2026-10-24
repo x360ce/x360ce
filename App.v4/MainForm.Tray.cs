@@ -17,8 +17,6 @@ namespace x360ce.App
 
 		void InitMinimize()
 		{
-			_hiddenForm.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-			_hiddenForm.ShowInTaskbar = false;
 			OptionsPanel.MinimizeToTrayCheckBox.Checked = SettingsManager.Options.MinimizeToTray;
 			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged += MinimizeToTrayCheckBox_CheckedChanged;
 			Resize += MainForm_Resize;
@@ -34,7 +32,6 @@ namespace x360ce.App
 			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged -= MinimizeToTrayCheckBox_CheckedChanged;
 		}
 
-		Form _hiddenForm = new Form();
 		FormWindowState? oldWindowState;
 		object windowStateLock = new object();
 
@@ -101,8 +98,14 @@ namespace x360ce.App
 		#region Minimize / Restore
 
 		/// <summary>
-		/// Minimize the window and hide it from the TaskBar. 
+		/// Minimize the window and hide it from the TaskBar.
 		/// </summary>
+		/// <remarks>
+		/// The window is hidden rather than taken off the task bar. Changing ShowInTaskbar makes Windows Forms
+		/// build the window and every control on it again, at each minimise and each restore: lists read their
+		/// rows afresh in that rebuild and failed there, and a process short of window handles failed making
+		/// them. A hidden window has no task bar button and is not in ALT+TAB.
+		/// </remarks>
 		public void MinimizeToTray(bool showBalloonTip, bool minimizeToTray)
 		{
 			if (!CanChangeWindowState)
@@ -118,19 +121,21 @@ namespace x360ce.App
 			// NOTE: also it would be possible to track which direction mouse will move in or move out on TrayIcon.
 			// For example: open program if mouse moves in from left and moves out from top.
 			TrayNotifyIcon.Text = "X360CE: Double click - program, click - menu.";
-			if (minimizeToTray)
-			{
-				// Set window style as ToolWindow to avoid its icon in ALT+TAB.
-				if (Owner != _hiddenForm)
-					Owner = _hiddenForm;
-				// Hide form bar from the TarkBar.
-				if (ShowInTaskbar)
-					ShowInTaskbar = false;
-			}
 			if (WindowState != FormWindowState.Minimized)
 			{
 				WindowState = FormWindowState.Minimized;
 			}
+			// Hidden once it has finished minimising. A window started minimised has no handle yet; it comes
+			// here again from Resize when it is first shown.
+			if (minimizeToTray && IsHandleCreated)
+				BeginInvoke((Action)HideInTray);
+		}
+
+		/// <summary>Hides the window, if it is still open and minimised.</summary>
+		void HideInTray()
+		{
+			if (CanChangeWindowState && WindowState == FormWindowState.Minimized)
+				Hide();
 		}
 
 		/// <summary>Whether the window is still one that can be shown, hidden or resized.</summary>
@@ -152,6 +157,8 @@ namespace x360ce.App
 		{
 			if (!CanChangeWindowState)
 				return;
+			if (!Visible)
+				Show();
 			if (activate)
 			{
 				// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
@@ -163,16 +170,10 @@ namespace x360ce.App
 				}
 				this.Activate();
 			}
-			// Show in task bar before restoring windows state in order to prevent flickering.
-			if (!ShowInTaskbar)
-				ShowInTaskbar = true;
 			if (WindowState != FormWindowState.Normal)
 			{
 				WindowState = FormWindowState.Normal;
 			}
-			// Set window style as ToolWindow to show in ALT+TAB.
-			if (Owner != null)
-				Owner = null;
 			// Bring form to the front.
 			var tm = TopMost;
 			TopMost = true;

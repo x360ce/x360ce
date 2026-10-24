@@ -789,7 +789,6 @@ namespace x360ce.App.DInput
 			run.Update(SpringCalibration.Center, 0);
 		}
 
-		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
 		/// <summary>The own centering the engine sets on a device it holds: off while this program's spring holds the centre,
 		/// on for a device that centres itself with a motor (a wheel, a flight stick, anything with one force motor), and null
 		/// for a pad, whose motors only rumble, so it is left as its driver has it.</summary>
@@ -803,6 +802,7 @@ namespace x360ce.App.DInput
 			return null;
 		}
 
+		/// <summary>Sets DirectInput's autocenter, which can only be set while the device is not held. A device with no centre of its own is left as it is.</summary>
 		static void SetAutoCenter(Joystick device, bool on)
 		{
 			try

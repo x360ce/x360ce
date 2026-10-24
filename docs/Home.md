@@ -16,6 +16,7 @@ time a release reaches `master`, so a page is changed here, never in the wiki.
 | [Help.AiAssistants](Help.AiAssistants.md) | For people who use their own AI assistant: a worked example, then the skill, AI assistant access and the tunnel for ChatGPT on the web, and where the keys are kept. x360ce has no AI inside. |
 | [Help.WheelCentering](Help.WheelCentering.md) | How a real car centres its steering wheel, with measured values, and how the Wheel tab's centering spring copies it. |
 | [Help.Plugins](Help.Plugins.md) | Plugins that add devices, which plugins load, and writing one from a single `.cs` file. |
+| [Help.MemoryDump](Help.MemoryDump.md) | Making a small memory dump with Microsoft's ProcDump when x360ce crashes or freezes, and sending it privately. |
 
 ## For the project
 

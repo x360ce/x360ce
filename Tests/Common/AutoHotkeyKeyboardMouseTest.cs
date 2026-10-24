@@ -172,6 +172,27 @@ namespace x360ce.Tests
 			return text.ToString();
 		}
 
+		[DllImport("user32.dll")]
+		static extern IntPtr GetKeyboardLayout(uint threadId);
+
+		[DllImport("user32.dll")]
+		static extern uint MapVirtualKeyEx(uint code, uint mapType, IntPtr layout);
+
+		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+		static extern int ToUnicodeEx(uint virtualKey, uint scanCode, byte[] keyState, StringBuilder buffer, int size, uint flags, IntPtr layout);
+
+		/// <summary>What a key types in a window, with the keyboard layout that window's thread has.</summary>
+		/// <remarks>A key is a place on the keyboard, not a letter: the H key types х with a Cyrillic layout.</remarks>
+		static string KeyText(IntPtr window, System.Windows.Forms.Keys key)
+		{
+			uint processId;
+			var layout = GetKeyboardLayout(GetWindowThreadProcessId(window, out processId));
+			var text = new StringBuilder(8);
+			// Flag 4: the call leaves the keyboard's state as it was.
+			var count = ToUnicodeEx((uint)key, MapVirtualKeyEx((uint)key, 0, layout), new byte[256], text, text.Capacity, 4, layout);
+			return count > 0 ? text.ToString(0, count) : "";
+		}
+
 		/// <summary>Presses and lets go of a button, waiting a few passes after each.</summary>
 		static void Tap(AutoHotkeyRun run, int button)
 		{
@@ -198,7 +219,9 @@ namespace x360ce.Tests
 				Tap(run, 3);
 				foreach (var button in new[] { 0, 1, 2, 0, 1 })
 					Tap(run, button);
-				var expected = "Hello from x360ce!\r\nhi hi";
+				// Text goes in as it is; the H and I keys type what they type in the box's keyboard layout.
+				var hi = KeyText(box, System.Windows.Forms.Keys.H) + KeyText(box, System.Windows.Forms.Keys.I);
+				var expected = "Hello from x360ce!\r\n" + hi + " " + hi;
 				Assert.IsTrue(run.PassUntil(() => GetText(box) == expected, 2000),
 					"The text box does not hold what the controller typed: \"" + GetText(box).Replace("\r", "\\r").Replace("\n", "\\n") + "\"");
 			}
@@ -296,7 +319,8 @@ namespace x360ce.Tests
 					foreach (var button in new[] { 0, 1, 2, 0, 1 })
 						Tap(run, button, notepad);
 					Tap(run, 5, notepad);
-					var expected = "Hello from x360ce!\r\nhi hi";
+					var hi = KeyText(notepad, System.Windows.Forms.Keys.H) + KeyText(notepad, System.Windows.Forms.Keys.I);
+					var expected = "Hello from x360ce!\r\n" + hi + " " + hi;
 					Assert.IsTrue(run.PassUntil(() => Saved(file) == expected, 5000),
 						"Notepad did not save what the controller typed. Saved: \"" + (Saved(file) ?? "").Replace("\r", "\\r").Replace("\n", "\\n") + "\"");
 

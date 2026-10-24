@@ -102,6 +102,12 @@
     <Build Solution="*|DLL_x64_v3" Project="false" />
     <Build Solution="*|DLL_x86_v3" Project="false" />
   </Project>
+  <Project Path="TestGame/x360ce.TestGame.csproj" Id="5b8e2c4d-7f1a-4e93-b6d0-2a9c3e7f1b58">
+    <Build Solution="*|APP_x64_v3" Project="false" />
+    <Build Solution="*|APP_x86_v3" Project="false" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
   <Project Path="Tests/x360ce.Tests.csproj" Id="9c1f4b1a-2d7e-4a55-9f10-3b6c8d2e5a41">
     <Build Solution="*|APP_x64_v3" Project="false" />
     <Build Solution="*|APP_x86_v3" Project="false" />

@@ -529,7 +529,8 @@
 			this.AiAccessTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AiAccessTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.AiAccessTableLayoutPanel.Name = "AiAccessTableLayoutPanel";
-			this.AiAccessTableLayoutPanel.RowCount = 4;
+			this.AiAccessTableLayoutPanel.RowCount = 5;
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());

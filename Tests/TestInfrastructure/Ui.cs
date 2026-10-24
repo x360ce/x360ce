@@ -489,9 +489,7 @@ namespace x360ce.Tests
 
 		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
 		/// <remarks>
-		/// A message posted to HWND_BROADCAST reaches unowned top-level windows only, and in the tray the
-		/// window is owned by the hidden form that keeps it off the task bar, so it never arrived and the
-		/// window stayed in the tray. BroadcastSystemMessage reaches it, which is why a second launch works.
+		/// BroadcastSystemMessage, as a second launch sends it, reaches the window while it is hidden in the tray.
 		/// </remarks>
 		public static void PostRestoreRequest()
 		{
