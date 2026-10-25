@@ -1,11 +1,9 @@
-﻿## [3.8.16.0] - 2026-10-25
+﻿## [3.8.14.0] - 2026-10-25
 
-- Fixed: Letters such as g and y were cut off at the bottom of text boxes and lists.
 - Fixed: The AI Assistant Access tab stretched its Log button down the page.
 - Fixed: The window opened too narrow to show every tab.
 - Fixed: Minimizing to the tray and back built the window again; the window is now hidden there.
 - Fixed: AI assistants read lists and descriptions without their & signs, so a device's ID came out wrong.
-- Fixed: The frame of a group box on the Options page ran behind its title.
 - Fixed: Asked to update the XInput file when it had not changed.
 - Changed: Controls look as they do in x360ce 5, in both themes, with check boxes sized from the font.
 - Changed: AI assistant access uses port 37102 by default.

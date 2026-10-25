@@ -161,7 +161,11 @@ namespace x360ce.App
 				{
 					Recording = false;
 					CurrentMap = null;
-					// If stop was initiated before action was recorded then...                    
+					// The prompt StartRecording put in the status bar goes with the recording.
+					var form = MainForm.Current;
+					if (form != null)
+						form.StatusTimerLabel.Text = "";
+					// If stop was initiated before action was recorded then...
 					if (string.IsNullOrEmpty(action))
 					{
 						box.Items.Clear();
@@ -175,7 +179,6 @@ namespace x360ce.App
 						// A switch or a stick recorded onto a button presses it where it was moved to, which
 						// is the wrong end when it was moved the other way while recording.
 						var note = PressedPositionNote(code, action);
-						var form = MainForm.Current;
 						if (note != null && form != null)
 							form.StatusTimerLabel.Text = note;
 					}

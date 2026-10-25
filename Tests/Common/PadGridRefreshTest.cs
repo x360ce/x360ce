@@ -398,5 +398,51 @@ namespace x360ce.Tests
 					"The page does not show the settings of the device just added.");
 			});
 		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A page built before the settings are read shows the game's controller switch once it is given its settings, as the main window starts")]
+		public void A_page_built_before_the_settings_shows_the_game_s_controller_switch()
+		{
+			Ui.OnUiThreadWatched(() =>
+			{
+				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var oldGame = SettingsManager.CurrentGame;
+				var game = NewGame("GameOn");
+				game.EnableMask = (int)MapToMask.Controller2;
+				SettingsManager.UserSettings.Items.Clear();
+				SettingsManager.CurrentGame = null;
+				var oldStatus = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				try
+				{
+					using (var form = new Form { Width = 900, Height = 700 })
+					using (var pad = new PadControl(MapTo.Controller2) { Dock = DockStyle.Fill })
+					{
+						form.Controls.Add(pad);
+						// The main window builds its pages before it reads the settings, so no game is chosen yet.
+						pad.InitPadControl();
+						// The settings are read and the game is chosen while the pages are not offered yet, so the
+						// change of game does not reach them.
+						SettingsManager.UserSettings.Items.Add(NewSetting(game, MapTo.Controller2));
+						SettingsManager.CurrentGame = game;
+						// Then each page is given its settings.
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						Application.DoEvents();
+						var bar = (ToolStrip)pad.Controls.Find("GamesToolStrip", true).Single();
+						var enable = (ToolStripButton)bar.Items["EnableButton"];
+						Assert.IsTrue(enable.Checked, "Controller 2 is on for the game, but its Enable box shows it off: clicking it would turn it off.");
+					}
+				}
+				finally
+				{
+					SettingsManager.Current.NotifySettingsStatus = oldStatus;
+					SettingsManager.CurrentGame = oldGame;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var setting in existing)
+						SettingsManager.UserSettings.Items.Add(setting);
+				}
+			}, "Showing the controller switch");
+		}
 	}
 }

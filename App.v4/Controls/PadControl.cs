@@ -485,6 +485,9 @@ namespace x360ce.App.Controls
 
 		public void InitPadData()
 		{
+			// The main window builds its pages before it reads the settings and chooses the game, and a change of game
+			// reaches a page only once it is given its settings, so the page takes the game's switches here.
+			UpdateFromCurrentGame();
 			// WORKAROUND: Remove SelectionChanged event.
 			MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
 			MappedDevicesDataGridView.DataSource = mappedItems;
@@ -583,7 +586,6 @@ namespace x360ce.App.Controls
 			_MappingBoxes = comboBoxes.ToArray();
 			if (_MappingBoxes.Length > 0)
 				_MappingBoxColor = _MappingBoxes[0].BackColor;
-			UpdateFromCurrentGame();
 		}
 
 		/// <summary>The mapping box a clicked chip goes into: the one last focused on the General tab.</summary>
