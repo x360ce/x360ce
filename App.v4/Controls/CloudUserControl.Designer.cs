@@ -48,9 +48,6 @@
             this.TasksDataGridView.AllowUserToDeleteRows = false;
             this.TasksDataGridView.AllowUserToOrderColumns = true;
             this.TasksDataGridView.AllowUserToResizeRows = false;
-            this.TasksDataGridView.BackgroundColor = System.Drawing.Color.White;
-            this.TasksDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TasksDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -75,7 +72,6 @@
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.TasksDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
             this.TasksDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TasksDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.TasksDataGridView.Location = new System.Drawing.Point(0, 25);
             this.TasksDataGridView.Name = "TasksDataGridView";
             this.TasksDataGridView.ReadOnly = true;
@@ -174,7 +170,6 @@
             this.DeleteButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(654, 25);
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "MySettingsToolStrip";

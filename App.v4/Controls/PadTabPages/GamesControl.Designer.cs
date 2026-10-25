@@ -58,9 +58,6 @@
 			this.GamesDataGridView.AllowUserToAddRows = false;
 			this.GamesDataGridView.AllowUserToDeleteRows = false;
 			this.GamesDataGridView.AllowUserToResizeRows = false;
-			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -87,7 +84,6 @@
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.GamesDataGridView.Location = new System.Drawing.Point(0, 31);
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
@@ -189,11 +185,11 @@
 			this.EmptyColumn.MinimumWidth = 6;
 			this.EmptyColumn.Name = "EmptyColumn";
 			this.EmptyColumn.ReadOnly = true;
+			this.EmptyColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// GamesToolStrip
 			// 
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ScanGamesButton,
             this.AddGameButton,
@@ -205,7 +201,6 @@
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.GamesToolStrip.Size = new System.Drawing.Size(781, 31);
 			this.GamesToolStrip.TabIndex = 2;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";

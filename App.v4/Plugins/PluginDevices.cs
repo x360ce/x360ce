@@ -28,7 +28,8 @@ namespace x360ce.App.Plugins
 			}
 			var ud = new UserDevice();
 			ud.InputSourceType = (int)InputSourceType.Plugin;
-			ud.DevManufacturer = type.File.Name;
+			ud.DevManufacturer = VendorOf(type);
+			ud.HidManufacturer = ud.DevManufacturer;
 			ud.InstanceGuid = Guid.NewGuid();
 			ud.InstanceName = instanceName;
 			ud.ProductGuid = type.ProductGuid;
@@ -39,6 +40,40 @@ namespace x360ce.App.Plugins
 			Describe(ud, type);
 			ud.IsOnline = !type.Faulted;
 			return ud;
+		}
+
+		/// <summary>Who makes a kind of device, as the Vendor Name columns show it: x360ce for a plugin inside x360ce, otherwise the plugin's name.</summary>
+		public static string VendorOf(PluginDeviceType type)
+		{
+			return type.File.Embedded ? "x360ce" : type.File.Name;
+		}
+
+		/// <summary>
+		/// Gives a plugin row the names its kind has now. A kind renamed renames the rows saved under its old name, its
+		/// number kept: "Remote Controller 1" becomes "Remote MCP Controller 1", unless that name is taken.
+		/// </summary>
+		static void Name(UserDevice ud, PluginDeviceType type)
+		{
+			// The Devices page shows the HID manufacturer, a controller tab the device's; a plugin device has both.
+			var vendor = VendorOf(type);
+			if (ud.DevManufacturer != vendor)
+				ud.DevManufacturer = vendor;
+			if (ud.HidManufacturer != vendor)
+				ud.HidManufacturer = vendor;
+			if (ud.ProductName == type.Name)
+				return;
+			var old = ud.ProductName + " ";
+			if (!string.IsNullOrEmpty(ud.ProductName) && ud.InstanceName != null && ud.InstanceName.StartsWith(old, StringComparison.Ordinal))
+			{
+				var instanceName = type.Name + " " + ud.InstanceName.Substring(old.Length);
+				if (!SettingsManager.UserDevices.ItemsToArraySynchronized().Any(x => x != ud && x.InstanceName == instanceName))
+				{
+					if (ud.HidDescription == ud.InstanceName)
+						ud.HidDescription = instanceName;
+					ud.InstanceName = instanceName;
+				}
+			}
+			ud.ProductName = type.Name;
 		}
 
 		/// <summary>Gives a plugin row the controls its kind of device has.</summary>
@@ -86,7 +121,7 @@ namespace x360ce.App.Plugins
 			return list.ToArray();
 		}
 
-		/// <summary>Marks each plugin row online while its kind of device is loaded and working.</summary>
+		/// <summary>Marks each plugin row online while its kind of device is loaded and working, and gives it its kind's names.</summary>
 		/// <remarks>
 		/// A row of a kind a plugin adds, written down as DirectInput before plugins existed (the Test Device), is made a
 		/// plugin row here, so its mappings keep working. Runs on the device refresh thread; a change is marshalled to the
@@ -107,6 +142,9 @@ namespace x360ce.App.Plugins
 				if (online && (ud.DeviceObjects == null || ud.CapButtonCount != type.ButtonCount || ud.CapPovCount != type.PovCount
 					|| ud.CapAxeCount != type.AxisCount + type.SliderCount))
 					Describe(ud, type);
+				// A kind that failed may not have said its name.
+				if (online)
+					Name(ud, type);
 				if (ud.IsOnline != online)
 					ud.IsOnline = online;
 			}

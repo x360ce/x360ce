@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Mcp
@@ -31,7 +32,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			get
 			{
 				return "The API key is kept in this file encrypted for your Windows account with Windows DPAPI: other accounts and other computers "
-					+ "cannot read it. The admin key is used only for Create and Delete and is never kept. tunnel-client is downloaded from "
+					+ "cannot read it. The admin key is used only to list, create and delete tunnels and is never kept. tunnel-client is downloaded from "
 					+ McpTunnel.Releases + " into " + McpTunnel.ClientFolder + ".";
 			}
 		}
@@ -67,8 +68,11 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>Whether the tunnel is open, why not, or what the last press did.</summary>
 		public string TunnelStatus { get; private set; }
 
-		/// <summary>True while Create or Delete waits for OpenAI; both buttons are greyed out meanwhile.</summary>
+		/// <summary>True while Create, Delete or a list of the tunnels waits for OpenAI; both buttons are greyed out meanwhile.</summary>
 		public bool TunnelBusy { get; private set; }
+
+		/// <summary>The organization's tunnels, newest first, as OpenAI last listed them; empty until they are listed.</summary>
+		public McpTunnel.Info[] TunnelChoices { get; private set; } = new McpTunnel.Info[0];
 
 		/// <summary>Whether there is a tunnel to delete.</summary>
 		public bool TunnelDeleteAllowed { get { return !TunnelBusy && McpTunnel.IsTunnelId(TunnelId); } }
@@ -108,6 +112,10 @@ namespace JocysCom.ClassLibrary.Mcp
 		public void SetTunnelId(string text)
 		{
 			text = (text ?? "").Trim();
+			// A line of the list of tunnels, picked or pasted, starts with the ID.
+			var first = text.Split(' ')[0];
+			if (McpTunnel.IsTunnelId(first))
+				text = first;
 			if (Tunnel == null || text == TunnelId)
 				return;
 			if (text.Length > 0 && !McpTunnel.IsTunnelId(text))
@@ -130,21 +138,28 @@ namespace JocysCom.ClassLibrary.Mcp
 			SaveTunnel();
 		}
 
-		/// <summary>Makes a tunnel in the organization with the admin key, which is used for this call only, and keeps its ID.</summary>
-		public void CreateTunnel(string adminKey)
+		/// <summary>
+		/// Lists the organization's tunnels with the admin key, which is used for this call only, so one made earlier, such as
+		/// the one a ChatGPT plugin was made with, can be picked. OpenAI lets no other key list them.
+		/// </summary>
+		public void ListTunnels(string adminKey)
 		{
-			var tunnel = Tunnel;
-			if (tunnel == null || TunnelBusy)
+			if (Tunnel == null || TunnelBusy)
 				return;
+			if (string.IsNullOrEmpty(adminKey))
+			{
+				ShowTunnel("Paste the admin key to list the organization's tunnels: OpenAI lets no other key list them.");
+				return;
+			}
 			var organization = TunnelOrganization;
-			Busy("Making a tunnel in " + organization + ".");
+			Busy("Listing the tunnels in " + organization + ".");
 			Task.Run(() =>
 			{
-				string id = null;
+				McpTunnel.Info[] tunnels = null;
 				string error = null;
 				try
 				{
-					id = McpTunnel.Create(adminKey, organization);
+					tunnels = McpTunnel.List(adminKey, organization);
 				}
 				catch (Exception ex)
 				{
@@ -153,13 +168,67 @@ namespace JocysCom.ClassLibrary.Mcp
 				Post(() =>
 				{
 					TunnelBusy = false;
+					if (tunnels == null)
+					{
+						ShowTunnel("Not listed: " + error);
+						return;
+					}
+					TunnelChoices = tunnels;
+					ShowTunnel(tunnels.Length == 0
+						? organization + " has no tunnels yet. Create makes one."
+						: organization + " has " + tunnels.Length + " tunnel(s). Pick the one your ChatGPT plugin was made with.");
+				});
+			});
+		}
+
+		/// <summary>Keeps the ID of a tunnel from the list.</summary>
+		public void PickTunnel(int index)
+		{
+			if (index >= 0 && index < TunnelChoices.Length)
+				SetTunnelId(TunnelChoices[index].Id);
+		}
+
+		/// <summary>
+		/// Keeps the ID of the tunnel made for this computer, made now when the organization has none, with the admin key,
+		/// which is used for this call only. A tunnel made earlier is used again, so a ChatGPT plugin made with it keeps working.
+		/// </summary>
+		public void CreateTunnel(string adminKey)
+		{
+			var tunnel = Tunnel;
+			if (tunnel == null || TunnelBusy)
+				return;
+			var organization = TunnelOrganization;
+			Busy("Looking for this computer's tunnel in " + organization + ".");
+			Task.Run(() =>
+			{
+				McpTunnel.Info[] tunnels = null;
+				McpTunnel.Info mine = null;
+				string id = null;
+				string error = null;
+				try
+				{
+					tunnels = McpTunnel.List(adminKey, organization);
+					mine = McpTunnel.Mine(tunnels);
+					id = mine != null ? mine.Id : McpTunnel.Create(adminKey, organization);
+				}
+				catch (Exception ex)
+				{
+					error = Message(ex);
+				}
+				Post(() =>
+				{
+					TunnelBusy = false;
+					if (tunnels != null)
+						TunnelChoices = tunnels;
 					if (id == null)
 					{
 						ShowTunnel("Not made: " + error);
 						return;
 					}
 					tunnel.TunnelId = id;
-					TunnelStatus = "Made " + id + ". OpenAI makes it ready in about 30 seconds.";
+					TunnelStatus = mine != null
+						? "Using " + id + ", made earlier for this computer. Delete it first to make a new one."
+						: "Made " + id + ". OpenAI makes it ready in about 30 seconds.";
 					SaveTunnel();
 				});
 			});
@@ -193,6 +262,7 @@ namespace JocysCom.ClassLibrary.Mcp
 						return;
 					}
 					tunnel.TunnelId = "";
+					TunnelChoices = TunnelChoices.Where(x => x.Id != id).ToArray();
 					TunnelStatus = "Deleted " + id + " at OpenAI.";
 					SaveTunnel();
 				});

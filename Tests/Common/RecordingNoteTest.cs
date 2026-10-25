@@ -2,6 +2,7 @@
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.XInput;
+using System;
 using System.IO;
 using x360ce.App;
 using x360ce.Engine;
@@ -98,6 +99,20 @@ namespace x360ce.Tests
 			var source = File.ReadAllText(path);
 			StringAssert.Contains(source, "PressedPositionNote(code, action)", "StopRecording does not ask for the note.");
 			StringAssert.Contains(source, "StatusTimerLabel.Text = note;", "StopRecording does not write the note to the status bar.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("StopRecording takes the Recording prompt out of the status bar, before any note is written")]
+		public void StopRecording_takes_the_recording_prompt_away()
+		{
+			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "Recorder.cs");
+			var source = File.ReadAllText(path);
+			var stop = source.IndexOf("Recording = false;", StringComparison.Ordinal);
+			Assert.IsTrue(stop > 0, "StopRecording does not end the recording.");
+			var cleared = source.IndexOf("StatusTimerLabel.Text = \"\";", stop, StringComparison.Ordinal);
+			var note = source.IndexOf("StatusTimerLabel.Text = note;", stop, StringComparison.Ordinal);
+			Assert.IsTrue(cleared > 0, "The \"Recording - press button...\" prompt stays in the status bar after the recording ends.");
+			Assert.IsTrue(note > cleared, "The prompt is cleared after the note, so the note is lost.");
 		}
 	}
 }

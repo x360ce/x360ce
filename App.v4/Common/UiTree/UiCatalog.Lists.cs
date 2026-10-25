@@ -100,7 +100,9 @@ namespace x360ce.App.UiTree
 		static void AddDevices(Dictionary<string, Text> d)
 		{
 			d["UserDevicesUserControl.DevicesDataGridView"] = new Text("Devices",
-				"Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.");
+				"Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, "
+				+ "then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each "
+				+ "device a loaded plugin offers is listed too, until it has been added.");
 			d["UserDevicesUserControl.ControllersToolStrip"] = new Text("Device actions",
 				"Refreshes the list and works on the selected device.");
 			d["XInputDevicesUserControl.DevicesToolStrip"] = new Text("Emulated controller actions",
@@ -140,17 +142,18 @@ namespace x360ce.App.UiTree
 				"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.");
 			d["UserDevicesUserControl.ShowSystemDevicesButton"] = new Text("Show System Devices",
 				"Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.");
-			d["UserDevicesUserControl.toolStripDropDownButton1"] = new Text("HID Guardian",
-				"Actions for the obsolete HID Guardian tool.");
-			d["UserDevicesUserControl.EnumeratedDevicesButton"] = new Text("Show Enumerated Devices",
-				"Lists the devices HID Guardian knows about.");
+			d["UserDevicesUserControl.HidHideDropDownButton"] = new Text("HID Hide",
+				"Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.");
+			d["UserDevicesUserControl.GamingDevicesMenuItem"] = new Text("Show Gaming Devices",
+				"Lists the devices HID Hide counts as game controllers, with the path it knows each by.");
 			d["UserDevicesUserControl.HiddenDevicesMenuItem"] = new Text("Show Hidden Devices",
-				"Lists the devices HID Guardian is hiding from games.");
+				"Lists the devices HID Hide is hiding from games.");
 			d["UserDevicesUserControl.UnhideAllDevicesMenuItem"] = new Text("Unhide All Devices",
-				"Makes every hidden device visible to games again.");
-			d["UserDevicesUserControl.synchronizeToHidGuardianToolStripMenuItem"] = new Text(
-				"Synchronize To HID Guardian",
-				"Hides exactly the devices that are mapped to a controller.");
+				"Makes every device HID Hide hides visible to games again, and clears every Hide box.");
+			d["UserDevicesUserControl.SynchronizeToHidHideMenuItem"] = new Text("Synchronize To HID Hide",
+				"Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.");
+			d["UserDevicesUserControl.OpenHidHideMenuItem"] = new Text("Open HID Hide",
+				"Opens HID Hide's own program, or its download page while it is not installed.");
 		}
 
 		static void AddCloudAndIssues(Dictionary<string, Text> d)

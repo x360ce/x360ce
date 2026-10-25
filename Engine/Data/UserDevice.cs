@@ -78,6 +78,18 @@ namespace x360ce.Engine.Data
 			return null;
 		}
 
+		/// <summary>The same controller read through Raw Input, when this is a DirectInput device that has one. Null otherwise.</summary>
+		/// <param name="devices">The devices listed.</param>
+		public UserDevice RawInputTwin(System.Collections.Generic.IEnumerable<UserDevice> devices)
+		{
+			if (!IsDirectInput || devices == null)
+				return null;
+			foreach (var device in devices)
+				if (device != null && device.InputSource == Engine.InputSourceType.RawInput && device.IsTwinOf(this))
+					return device;
+			return null;
+		}
+
 		public void LoadInstance(DeviceInstance ins)
 		{
 			// Names from the driver are cleaned on the way in, so the settings file stays writable.
@@ -388,6 +400,11 @@ namespace x360ce.Engine.Data
 		/// </remarks>
 		[XmlIgnore]
 		public bool RawInputMissing;
+
+		/// <summary>What this device's controller reads in place of <see cref="SourceState"/> while an AutoHotkey script changes it; null otherwise. Set by the engine only.</summary>
+		/// <remarks><see cref="SourceState"/> stays what the device reported, so the screen and the input log show the device itself.</remarks>
+		[XmlIgnore]
+		public SourceState ScriptState;
 
 		/// <summary>Attempts at this device's force feedback that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the force rests until <see cref="ForceRetryAt"/> and is then sent again. The device is read all the while.</remarks>

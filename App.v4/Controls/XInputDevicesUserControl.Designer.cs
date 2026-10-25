@@ -42,6 +42,7 @@ namespace x360ce.App.Controls
 			this.ApplyButton,
 			this.AutoOrderButton,
 			this.RefreshButton});
+			this.DevicesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.DevicesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.DevicesToolStrip.Name = "DevicesToolStrip";
 			this.DevicesToolStrip.Size = new System.Drawing.Size(700, 25);
@@ -145,12 +146,6 @@ namespace x360ce.App.Controls
 			this.DevicesDataGridView.AccessibleName = "XInput devices";
 			this.DevicesDataGridView.AllowUserToAddRows = false;
 			this.DevicesDataGridView.AllowUserToResizeColumns = false;
-			this.DevicesDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
-			this.DevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DevicesDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-			this.DevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-			this.DevicesDataGridView.EnableHeadersVisualStyles = false;
-			this.DevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DevicesDataGridView.AllowUserToDeleteRows = false;
 			this.DevicesDataGridView.AllowUserToResizeRows = false;
 			this.DevicesDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -175,29 +170,25 @@ namespace x360ce.App.Controls
 			//
 			// MoveUpColumn
 			//
-			this.MoveUpColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.MoveUpColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
 			this.MoveUpColumn.DefaultCellStyle.NullValue = null;
 			this.MoveUpColumn.HeaderText = "";
 			this.MoveUpColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
-			this.MoveUpColumn.MinimumWidth = 24;
 			this.MoveUpColumn.Name = "MoveUpColumn";
 			this.MoveUpColumn.ReadOnly = true;
 			this.MoveUpColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.MoveUpColumn.ToolTipText = "Ask for this controller to take an earlier XInput place.";
-			this.MoveUpColumn.Width = 24;
 			//
 			// MoveDownColumn
 			//
-			this.MoveDownColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.MoveDownColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCellsExceptHeader;
 			this.MoveDownColumn.DefaultCellStyle.NullValue = null;
 			this.MoveDownColumn.HeaderText = "";
 			this.MoveDownColumn.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Normal;
-			this.MoveDownColumn.MinimumWidth = 24;
 			this.MoveDownColumn.Name = "MoveDownColumn";
 			this.MoveDownColumn.ReadOnly = true;
 			this.MoveDownColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.MoveDownColumn.ToolTipText = "Ask for this controller to take a later XInput place.";
-			this.MoveDownColumn.Width = 24;
 			//
 			// PlaceColumn
 			//

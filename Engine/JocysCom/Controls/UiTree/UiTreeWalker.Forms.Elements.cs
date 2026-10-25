@@ -1,6 +1,8 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -26,6 +28,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// </summary>
 		static object ChildOfForms(object element, string name)
 		{
+			var properties = element as PropertyGrid;
+			if (properties != null)
+				return PropertyOf(properties, name);
 			var control = element as Control;
 			if (control != null)
 			{
@@ -77,6 +82,9 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var cell = element as DataGridViewCell;
 			if (cell != null)
 				return cell.DataGridView;
+			var property = element as PropertyGridRow;
+			if (property != null)
+				return property.Grid;
 			var row = element as DataGridViewRow;
 			return row == null ? null : row.DataGridView;
 		}
@@ -129,7 +137,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		{
 			return new UiNode
 			{
-				Name = NameOf(item.AccessibleName, UiText.NameFor(item), item.Text, false),
+				Name = NameOf(item.AccessibleName, UiText.NameFor(item), WithoutAccessKey(item.Text), false),
 				Description = Clean(item.AccessibleDescription),
 				Role = RoleOf(item),
 				Id = item.Name,
@@ -478,5 +486,107 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		}
 
 		#endregion
+
+		#region Property grid rows
+
+		/// <summary>
+		/// The rows a property grid shows, one for each property of the object it shows, read from the object rather than
+		/// from the grid's drawing, so they are there before the grid is first drawn.
+		/// </summary>
+		static IEnumerable<PropertyGridRow> PropertiesOf(PropertyGrid grid)
+		{
+			var component = grid.SelectedObject;
+			if (component == null)
+				return Enumerable.Empty<PropertyGridRow>();
+			return TypeDescriptor.GetProperties(component, new Attribute[] { BrowsableAttribute.Yes }).Cast<PropertyDescriptor>()
+				.Select(x => new PropertyGridRow(grid, x));
+		}
+
+		/// <summary>The row a property's name names, or null.</summary>
+		static PropertyGridRow PropertyOf(PropertyGrid grid, string name)
+		{
+			return PropertiesOf(grid).FirstOrDefault(x => x.Descriptor.Name == name);
+		}
+
+		/// <summary>
+		/// Adds a property grid's rows, which are described only when the tree is read with a path: what they hold is the
+		/// object one machine shows at one moment, as a grid's rows are.
+		/// </summary>
+		static void AddProperties(UiNode node, PropertyGrid grid, string path)
+		{
+			if (grid == null || path == null)
+				return;
+			foreach (var row in PropertiesOf(grid))
+				node.Add(Read(row, ChildPath(path, row.Descriptor.Name)));
+		}
+
+		/// <summary>One row: its name, help and value, and whether it is a choice, a list, text or a value to read.</summary>
+		static UiNode Read(PropertyGridRow row, string path)
+		{
+			var descriptor = row.Descriptor;
+			return new UiNode
+			{
+				Name = descriptor.DisplayName,
+				Description = Clean(descriptor.Description),
+				Role = RoleOf(descriptor),
+				Id = descriptor.Name,
+				Path = path,
+				Value = path == null ? null : GetValue(row),
+			};
+		}
+
+		static string RoleOf(PropertyDescriptor descriptor)
+		{
+			if (descriptor.IsReadOnly) return "Value";
+			if (descriptor.PropertyType == typeof(bool)) return "CheckBox";
+			if (descriptor.Converter.GetStandardValuesSupported()) return "List";
+			return "Text";
+		}
+
+		/// <summary>The row's value as the grid shows it.</summary>
+		static string GetValue(PropertyGridRow row)
+		{
+			var value = row.Descriptor.GetValue(row.Grid.SelectedObject);
+			return value == null ? "" : row.Descriptor.Converter.ConvertToString(null, CultureInfo.InvariantCulture, value);
+		}
+
+		/// <summary>Sets a row from text, as a person types it into the row. Returns null when done, otherwise why not.</summary>
+		static string SetValue(PropertyGridRow row, string value)
+		{
+			var descriptor = row.Descriptor;
+			if (!row.Grid.Enabled)
+				return "This element is disabled now.";
+			if (descriptor.IsReadOnly)
+				return "This shows a value and cannot be typed into.";
+			try
+			{
+				var converted = descriptor.Converter.ConvertFromString(null, CultureInfo.InvariantCulture, value);
+				descriptor.SetValue(row.Grid.SelectedObject, converted);
+			}
+			// The grid's own converters say what they cannot read by throwing, each in its own way, and a
+			// number converter throws a bare Exception; the person typing would be told the same sentence.
+			catch (Exception ex)
+			{
+				return ex.Message;
+			}
+			row.Grid.Refresh();
+			return null;
+		}
+
+		#endregion
+	}
+
+	/// <summary>One row of a property grid, which is not a control: the grid it is in, and the property it shows.</summary>
+	public sealed class PropertyGridRow
+	{
+		internal PropertyGridRow(PropertyGrid grid, PropertyDescriptor descriptor)
+		{
+			Grid = grid;
+			Descriptor = descriptor;
+		}
+
+		public PropertyGrid Grid { get; }
+
+		public PropertyDescriptor Descriptor { get; }
 	}
 }

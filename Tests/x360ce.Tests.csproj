@@ -83,6 +83,8 @@
 		what makes the controller picture geometry testable.
 		-->
 		<ProjectReference Include="..\App.v4\x360ce.App.v4.csproj" />
+		<!-- The test game, whose rules for what a game makes of its input are tested without its window. -->
+		<ProjectReference Include="..\TestGame\x360ce.TestGame.csproj" />
 	</ItemGroup>
 
 </Project>

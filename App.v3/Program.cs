@@ -147,16 +147,18 @@ namespace x360ce.App
 			}
 		}
 
-		/// <summary>Folder to write the interface description into, relative to the program's folder.</summary>
+		/// <summary>Folder to write the interface description into. Defaults to the skill's references beside the source.</summary>
 		public const string arg_ExportUi = "ExportUi";
 
 		/// <summary>Set when the program was started only to describe its interface: the folder to write into.</summary>
 		public static string ExportUiFolder;
 
-		/// <summary>Writes the navigation tree into the folder given, or into docs beside the program.</summary>
+		/// <summary>Writes the navigation tree into the folder given, or into the skill's references beside the source.</summary>
 		public static void ExportUi()
 		{
-			var folder = string.IsNullOrWhiteSpace(ExportUiFolder) ? Path.Combine("skills", "x360ce", "references") : ExportUiFolder;
+			var folder = string.IsNullOrWhiteSpace(ExportUiFolder)
+				? Path.Combine(JocysCom.ClassLibrary.Mcp.AiSkill.SourceSkillsFolder("x360ce"), "x360ce", "references")
+				: ExportUiFolder;
 			var tree = JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
 			JocysCom.ClassLibrary.Controls.UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
 		}

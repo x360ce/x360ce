@@ -54,9 +54,6 @@
 			this.ProgramsDataGridView.AllowUserToDeleteRows = false;
 			this.ProgramsDataGridView.AllowUserToOrderColumns = true;
 			this.ProgramsDataGridView.AllowUserToResizeRows = false;
-			this.ProgramsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.ProgramsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.ProgramsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -79,7 +76,6 @@
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.ProgramsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.ProgramsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ProgramsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.ProgramsDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.ProgramsDataGridView.Name = "ProgramsDataGridView";
 			this.ProgramsDataGridView.ReadOnly = true;
@@ -146,7 +142,6 @@
 			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
 			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.ProgramsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.ProgramsToolStrip.Size = new System.Drawing.Size(857, 25);
 			this.ProgramsToolStrip.TabIndex = 6;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";

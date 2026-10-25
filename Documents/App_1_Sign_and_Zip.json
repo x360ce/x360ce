@@ -170,6 +170,9 @@
         },
         {
           "Target": "../PluginApi/bin/Release/Plugins/TestController/TestController.dll"
+        },
+        {
+          "Target": "../PluginApi/bin/Release/Plugins/RemoteMcpController/RemoteMcpController.dll"
         }
       ]
     },

@@ -75,7 +75,7 @@ namespace x360ce.Tests
 				var committed = Unstamped(File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "skills", "x360ce", "references", name)));
 				Assert.AreEqual(committed, exported,
 					"skills/x360ce/references/" + name + " no longer matches the program, and the AI skill carries it. " +
-					"Run x360ce.exe /ExportUi from the repository root and commit the result.");
+					"Run x360ce.exe /ExportUi and commit the result.");
 			}
 		}
 

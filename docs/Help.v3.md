@@ -120,7 +120,7 @@ AI Assistant Access tab of the Options page, and choose a level:
 
 The level, the port and the token are changed on that tab and only there; an assistant cannot
 change them. The settings are kept in `x360ce.ini` beside the program, so each game folder has its
-own. The door listens on this computer only, on port 37361 unless you choose another.
+own. The door listens on this computer only, on port 37102 unless you choose another.
 
 To connect an assistant that runs commands, press Copy MCP Settings and paste the result into the
 assistant's MCP settings. It starts `x360ce.exe /Mcp`, which finds the running program, starts it

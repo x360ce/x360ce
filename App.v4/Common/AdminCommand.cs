@@ -10,7 +10,6 @@
 		/// <summary>Remove the virtual bus and put it back, to recover one that has stopped working.</summary>
 		RepairViGEmBus,
         UninstallHidGuardian,
-		UninstallDevice,
 		/// <summary>Remove virtual pads left behind by runs that did not shut down cleanly.</summary>
 		RemoveLeftoverPads,
 		/// <summary>Let every user listen for AI assistants on every network at the given port, which http.sys allows only once an Administrator has said so.</summary>

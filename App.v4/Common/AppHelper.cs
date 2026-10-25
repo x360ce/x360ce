@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -191,6 +192,9 @@ namespace x360ce.App
 
 		/// <summary>How plugins work and how to write one, as embedded for the AI skill's references and the plugin kit.</summary>
 		public const string HelpPluginsResource = "Documents.Help.Plugins.md";
+
+		/// <summary>How AutoHotkey scripts read and change controllers, as embedded for the AI skill's references.</summary>
+		public const string HelpAutoHotkeyResource = "Documents.Help.AutoHotkey.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
@@ -403,33 +407,45 @@ namespace x360ce.App
 			// If can't modify registry then return.
 			if (!ViGEm.HidGuardianHelper.CanModifyParameters())
 				return;
-			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
-				UnhideAllDevices();
 			ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
 		}
 
+		#endregion
+
+		#region HID Hide
+
 		/// <summary>
-		/// Must be executed before program close.
+		/// Shows again the devices this program hid while they were mapped, as it closes, so a game started without it
+		/// sees them. Only when it hides devices itself (<see cref="Options.HidHideConfigureAutomatically"/>).
 		/// </summary>
-		/// <returns>False when HID Guardian's list cannot be written, in which case nothing is changed.</returns>
+		public static void UnInitializeHidHide()
+		{
+			if (!SettingsManager.Options.HidHideConfigureAutomatically)
+				return;
+			foreach (var ud in SettingsManager.UserDevices.ItemsToArraySynchronized())
+				ud.IsHidden = false;
+			SynchronizeToHidHide();
+		}
+
+		/// <summary>Makes HID Hide show every device it hides, and clears every device's Hide box.</summary>
+		/// <returns>False when HID Hide is not installed or did not accept the change, in which case no box is cleared.</returns>
 		public static bool UnhideAllDevices()
 		{
-			var affected = ViGEm.HidGuardianHelper.GetAffected();
-			// Clear list of hidden devices.
-			if (!ViGEm.HidGuardianHelper.ClearAffected())
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered)
 				return false;
-			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
-			// Unhide all devices.
-			for (int i = 0; i < devices.Length; i++)
-				devices[i].IsHidden = false;
-			HidGuardianHelper.ResetDevices(affected);
+			var changes = VirtualDriverInstaller.GetHidHideChanges(state, new string[0], state.HiddenDevices, System.Windows.Forms.Application.ExecutablePath);
+			if (!VirtualDriverInstaller.ChangeHidHide(changes))
+				return false;
+			foreach (var ud in SettingsManager.UserDevices.ItemsToArraySynchronized())
+				ud.IsHidden = false;
 			return true;
 		}
 
-		public static bool SynchronizeToHidGuardian(params Guid[] instanceGuids)
+		/// <summary>Makes HID Hide hide the devices whose Hide box is ticked and show the others: these devices, or every one listed.</summary>
+		/// <returns>False when HID Hide is not installed or did not accept the change.</returns>
+		public static bool SynchronizeToHidHide(params Guid[] instanceGuids)
 		{
-			var game = SettingsManager.CurrentGame;
-			// Affected devices.
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
@@ -437,40 +453,24 @@ namespace x360ce.App
 					? SettingsManager.UserDevices.Items.ToArray()
 					: SettingsManager.UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			}
-			// Get all Ids.
-			var idsToHide = new List<string>();
-			var idsToShow = new List<string>();
+			var hide = new List<string>();
+			var show = new List<string>();
 			foreach (var ud in devices)
 			{
-				var hardwareId = (ud.HidHardwareIds ?? "")
-					// Split lines into arraty and exclude empty ones.
-					.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-					// Get all Hardware IDs with vendor code and product code.
-					.Where(x => HidGuardianHelper.HardwareIdRegex.IsMatch(x)).ToList()
-					// Put longest ID on top.
-					.OrderByDescending(x => x)
-					// Take most detail Hardware ID.
-					.FirstOrDefault();
-				// If hardware is not available then create from device id.
-				if (string.IsNullOrEmpty(hardwareId) && !string.IsNullOrEmpty(ud.DevDeviceId))
-					hardwareId = HidGuardianHelper.ConvertToHidVidPid(ud.DevDeviceId).FirstOrDefault();
-				if (string.IsNullOrEmpty(hardwareId))
-					continue;
-				// If must hide and device is not keyboard or mouse.
+				var paths = VirtualDriverInstaller.GetHidHidePaths(ud);
+				// A keyboard or a mouse is never hidden: without them nobody could put it right.
 				if (ud.IsHidden && !ud.IsKeyboard && !ud.IsMouse)
-					idsToHide.Add(hardwareId);
-				else if(!ud.IsHidden)
-					idsToShow.Add(hardwareId);
+					hide.AddRange(paths);
+				else if (!ud.IsHidden)
+					show.AddRange(paths);
 			}
-			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-			if (canModify)
-			{
-				var idsToHide2 = idsToHide.Distinct().ToArray();
-				var idsToShow2 = idsToShow.Distinct().ToArray();
-				ViGEm.HidGuardianHelper.RemoveFromAffected(idsToShow2);
-				ViGEm.HidGuardianHelper.InsertToAffected(idsToHide2);
-			}
-			return canModify;
+			if (hide.Count == 0 && show.Count == 0)
+				return true;
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered)
+				return false;
+			var changes = VirtualDriverInstaller.GetHidHideChanges(state, hide.ToArray(), show.ToArray(), System.Windows.Forms.Application.ExecutablePath);
+			return VirtualDriverInstaller.ChangeHidHide(changes);
 		}
 
 		#endregion
@@ -501,6 +501,28 @@ namespace x360ce.App
 			if (device == null)
 				return string.Empty;
 			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
+		}
+
+		/// <summary>The pale background of a device's row in the device list, one for each way the program reads devices.</summary>
+		/// <remarks>
+		/// Blue for DirectInput, as x360ce 5 colours it, teal for Raw Input, and violet for the devices plugins make. Green and
+		/// the warm colours are left out: the status lights use them to say how well something works, and a source is no
+		/// verdict. Faint enough for text to read as on the plain window, and dark in the dark theme.
+		/// </remarks>
+		public static Color GetInputSourceTint(Engine.Data.UserDevice device)
+		{
+			var dark = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark;
+			switch (device.InputSource)
+			{
+				case InputSourceType.DirectInput:
+					return dark ? Color.FromArgb(0x2A, 0x33, 0x42) : Color.FromArgb(0xEA, 0xF1, 0xFB);
+				case InputSourceType.RawInput:
+					return dark ? Color.FromArgb(0x25, 0x3B, 0x39) : Color.FromArgb(0xE5, 0xF5, 0xF2);
+				case InputSourceType.Plugin:
+					return dark ? Color.FromArgb(0x36, 0x2F, 0x44) : Color.FromArgb(0xF1, 0xEB, 0xFA);
+				default:
+					return SystemColors.Window;
+			}
 		}
 
 		/// <summary>Every XInput place a game can feel a device through, as it reads in a list.</summary>
@@ -641,6 +663,52 @@ namespace x360ce.App
 		}
 
 		static readonly Dictionary<string, Bitmap> StatusIcons = new Dictionary<string, Bitmap>();
+
+		/// <summary>The outline of a rectangle with its corners rounded by the radius given, in pixels.</summary>
+		public static GraphicsPath RoundedRectangle(Rectangle r, int radius)
+		{
+			var d = radius * 2;
+			var path = new GraphicsPath();
+			path.AddArc(r.Left, r.Top, d, d, 180, 90);
+			path.AddArc(r.Right - d, r.Top, d, d, 270, 90);
+			path.AddArc(r.Right - d, r.Bottom - d, d, d, 0, 90);
+			path.AddArc(r.Left, r.Bottom - d, d, d, 90, 90);
+			path.CloseFigure();
+			return path;
+		}
+
+		#region Chart box
+
+		/// <summary>The room round a chart inside its box, and the rounding of the box's corners, in device-independent pixels.</summary>
+		const int ChartPadding = 10;
+		const int ChartCornerRadius = 5;
+
+		/// <summary>The faint grey of a chart's frame and grid lines.</summary>
+		public static readonly Color ChartLineColor = Color.FromArgb(32, Color.Gray);
+
+		/// <summary>Where a chart stands inside its box: the box less the room round it.</summary>
+		public static Rectangle ChartBounds(System.Windows.Forms.Control box)
+		{
+			var room = (int)Math.Round(ChartPadding * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
+			return new Rectangle(room, room, Math.Max(1, box.Width - room * 2), Math.Max(1, box.Height - room * 2));
+		}
+
+		/// <summary>
+		/// Paints a chart's box as the WPF version draws it: rounded, without an edge, in the window colour, the control
+		/// colour while disabled. The box's own background is transparent, so its corners show the page.
+		/// </summary>
+		public static void PaintChartBox(Graphics g, System.Windows.Forms.Control box, bool enabled)
+		{
+			var smoothing = g.SmoothingMode;
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			var corner = (int)Math.Round(ChartCornerRadius * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
+			using (var face = new SolidBrush(enabled ? SystemColors.Window : SystemColors.Control))
+			using (var path = RoundedRectangle(new Rectangle(0, 0, box.Width - 1, box.Height - 1), corner))
+				g.FillPath(face, path);
+			g.SmoothingMode = smoothing;
+		}
+
+		#endregion
 
 		/// <summary>A status light in the colour given, as "#RRGGBB".</summary>
 		/// <remarks>

@@ -1,5 +1,6 @@
 ﻿// @under-test: App.v4/Controls/OptionsPluginsUserControl.cs, App.v4/Controls/OptionsPluginsUserControl.Designer.cs
 // @area: plugins   @layer: unit
+using JocysCom.ClassLibrary.Controls.Themes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
@@ -64,13 +65,16 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThread(() =>
 			{
+				// The theme is chosen before the page is made and gives it its look, as the program does.
+				FormsTheme.SetTheme(ThemeType.Light);
 				using (var page = new OptionsUserControl())
 				{
+					FormsTheme.Apply(page);
 					var grids = Descendants(page).OfType<DataGridView>().ToList();
 					CollectionAssert.Contains(grids.Select(x => x.Name).ToArray(), "PluginsDataGridView");
 					foreach (var grid in grids)
 					{
-						Assert.AreEqual(SystemColors.Window, grid.BackgroundColor, grid.Name + " is not on the window colour.");
+						Assert.AreEqual(SystemColors.Window.ToArgb(), grid.BackgroundColor.ToArgb(), grid.Name + " is not on the window colour.");
 						Assert.AreEqual(BorderStyle.None, grid.BorderStyle, grid.Name + " has a frame of its own.");
 						Assert.IsFalse(grid.EnableHeadersVisualStyles, grid.Name + " draws its headers in the Windows style.");
 					}

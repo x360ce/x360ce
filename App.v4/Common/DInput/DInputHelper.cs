@@ -385,6 +385,8 @@ namespace x360ce.App.DInput
 			{
 				// Plugins hold what they opened (a socket, a device) until they are let go of.
 				ReleasePluginReaders();
+				// A script's controls are let go of with the engine.
+				CloseScripts();
 				// Native objects must be released even when the loop ended with an error.
 				if (pacer != null)
 					pacer.Dispose();
@@ -442,6 +444,8 @@ namespace x360ce.App.DInput
 				StepDone(1, ref mark);
 				// Update JoystickStates from devices.
 				UpdateDiStates(manager, game, detector, routing);
+				// Counted with the reading, so the engine log keeps its steps.
+				UpdateScriptStates(routing);
 				StepDone(2, ref mark);
 				// Update XInput states from Custom DirectInput states.
 				UpdateXiStates(routing);

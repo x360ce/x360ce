@@ -22,7 +22,7 @@ namespace x360ce.Tests
 			Assert.IsFalse(o.AiAccessEnabled, "The door must be shut until a person opens it.");
 			Assert.AreEqual(AiAccess.Read, o.AiAccess, "Switching on lands on the level that changes nothing.");
 			Assert.IsTrue(string.IsNullOrEmpty(o.AiAccessToken), "A token exists before anyone asked for access.");
-			Assert.AreEqual(37360, o.AiAccessPort);
+			Assert.AreEqual(37101, o.AiAccessPort, "AI assistant access does not start on the port plan's 37101.");
 			Assert.AreEqual(AiOptions.LoopbackAddress, o.AiAccessAddress, "The door must stay on this computer until somebody opens it wider.");
 			Assert.IsFalse(o.AiAccessTrustLocal, "Local connections must need the token until a person says otherwise.");
 		}
@@ -59,7 +59,8 @@ namespace x360ce.Tests
 			var o = new AiOptions();
 			Assert.IsTrue(o.EnsureAiAccessToken(), "The first call makes the token.");
 			var first = o.AiAccessToken;
-			Assert.AreEqual(64, first.Length, "Token is 32 random bytes as hex.");
+			Assert.IsTrue(JocysCom.ClassLibrary.Security.TokenHelper.IsSecretToken(first), "The token is not a secret token with a right checksum: " + first);
+			StringAssert.StartsWith(first, "sk-" + JocysCom.ClassLibrary.Mcp.McpServer.ServerName.ToLowerInvariant() + "-mcp-", "The token does not say which program's MCP server it opens.");
 			Assert.IsFalse(o.EnsureAiAccessToken(), "Asking again must not change the token.");
 			Assert.AreEqual(first, o.AiAccessToken);
 			var second = o.RegenerateAiAccessToken();

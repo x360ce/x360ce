@@ -13,8 +13,8 @@ namespace x360ce.App
 	{
 		const string Section = "Options";
 
-		/// <summary>One above version 4's port, so both programs can be reached at once.</summary>
-		public const int DefaultPort = 37361;
+		/// <summary>One above version 4's port in x360ce's port plan, 37102, so both programs can be reached at once.</summary>
+		public const int DefaultPort = 37102;
 
 		/// <summary>The settings the running program uses. Read at start and replaced by the Options page.</summary>
 		public static AiAccessSettings Current = new AiAccessSettings();
@@ -78,10 +78,10 @@ namespace x360ce.App
 		/// <summary>Opens or closes the door to match. The door listens on this computer only.</summary>
 		public void Apply()
 		{
-			McpListener.Stop();
+			McpListener.Program.Stop();
 			EnsureToken();
 			if (Enabled)
-				McpListener.Start(McpListener.LoopbackAddress, Port, Token, TrustLocal);
+				McpListener.Program.Start(McpListener.LoopbackAddress, Port, Token, TrustLocal);
 		}
 	}
 }

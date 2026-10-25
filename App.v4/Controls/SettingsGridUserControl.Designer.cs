@@ -76,9 +76,6 @@
 			this.SettingsDataGridView.AllowUserToAddRows = false;
 			this.SettingsDataGridView.AllowUserToDeleteRows = false;
 			this.SettingsDataGridView.AllowUserToResizeRows = false;
-			this.SettingsDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.SettingsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.SettingsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -102,7 +99,6 @@
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.SettingsDataGridView.MultiSelect = false;
 			this.SettingsDataGridView.Name = "SettingsDataGridView";
@@ -176,7 +172,6 @@
 			this.SettingsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SettingsToolStrip.Name = "SettingsToolStrip";
 			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.SettingsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.SettingsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SettingsToolStrip.TabIndex = 7;
 			this.SettingsToolStrip.Text = "MySettingsToolStrip";

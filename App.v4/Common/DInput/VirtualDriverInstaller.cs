@@ -1020,32 +1020,6 @@ namespace x360ce.App.DInput
 			return File.Exists(path) ? path : null;
 		}
 
-
-		/// <summary>
-		/// Must bve used to uninstall device when this app is 32-bit, but runs on 64-bit windows.
-		/// This is because SetupDiCallClassInstaller throws ERROR_IN_WOW64 (ex.ErrorCode = 0xE0000235)
-		/// when application architecture do not match OS architecture.
-		/// </summary>
-		/// <param name="deviceId">
-		/// Device Hardware ID ("HID\VID_046D&PID_C219") or
-		/// Device Instance ID prefixed with '@' (@"HID\VID_046D&PID_C219\7&29C26453&0&0000").
-		/// </param>
-		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
-		{
-			// Extract files first.
-			if (!ExtractHidGuardianFiles())
-				return;
-			var folder = GetHidGuardianPath();
-			var exePath = Path.Combine(folder, GetDevConPath());
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				"remove \"" + deviceId + "\"",
-				useFileWorkingFolder: true, isElevated: true, windowStyle: style);
-			// Make sure that device is re-inserted.
-			DeviceDetector.ScanForHardwareChanges();
-		}
-
 		#endregion
 
 		#region Extract Helper
@@ -1308,10 +1282,11 @@ namespace x360ce.App.DInput
 		/// the device thread, so only the issue check calls this, and a reading is reused for
 		/// <see cref="HidHideStateLifetime"/>. It only reads; it never changes HidHide's settings.
 		/// </remarks>
-		public static HidHideState GetHidHideState()
+		/// <param name="fresh">Read again rather than use the last reading: before a change, which starts from what HID Hide holds now.</param>
+		public static HidHideState GetHidHideState(bool fresh = false)
 		{
 			var state = LastHidHideState;
-			if (state != null && DateTime.UtcNow - state.ReadTime < HidHideStateLifetime)
+			if (!fresh && state != null && DateTime.UtcNow - state.ReadTime < HidHideStateLifetime)
 				return state;
 			var installed = IsHidHideDevicePresent();
 			var cli = installed ? GetHidHideProgramPath("HidHideCLI.exe") : null;
@@ -1413,6 +1388,106 @@ namespace x360ce.App.DInput
 			value = value.Trim().Trim('"');
 			if (value.Length > 0)
 				list.Add(value);
+		}
+
+		/// <summary>The device instance paths HID Hide may list a device under: those of its HID device, the only kind HID Hide hides.</summary>
+		public static string[] GetHidHidePaths(Engine.Data.UserDevice ud)
+		{
+			return new[] { ud.HidDeviceId, ud.DevDeviceId, ud.HidParentDeviceId }
+				.Where(x => !string.IsNullOrEmpty(x) && x.Trim().StartsWith(@"HID\", StringComparison.OrdinalIgnoreCase))
+				.Select(x => x.Trim())
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+		}
+
+		/// <summary>
+		/// The commands that make HID Hide hide some devices and show others, leaving out what it already does. While any
+		/// device is to be hidden, hiding is switched on and this program may see what is hidden, or to this program the
+		/// device it reads would look unplugged.
+		/// </summary>
+		/// <param name="state">What HID Hide is set to do now.</param>
+		/// <param name="hide">Device instance paths to hide.</param>
+		/// <param name="show">Device instance paths to show.</param>
+		/// <param name="exePath">Full path of this program, as HID Hide lists programs.</param>
+		/// <returns>The arguments for HID Hide's command line program; empty when nothing is to change.</returns>
+		public static string GetHidHideChanges(HidHideState state, string[] hide, string[] show, string exePath)
+		{
+			var commands = new List<string>();
+			foreach (var path in hide.Where(x => !state.IsHidden(x)).Distinct(StringComparer.OrdinalIgnoreCase))
+				commands.Add("--dev-hide " + Quote(path));
+			foreach (var path in show.Where(state.IsHidden).Distinct(StringComparer.OrdinalIgnoreCase))
+				commands.Add("--dev-unhide " + Quote(path));
+			if (hide.Length > 0 && !state.IsAllowed(exePath))
+				commands.Add((state.Inverse ? "--app-unreg " : "--app-reg ") + Quote(exePath));
+			if (hide.Length > 0 && !state.CloakOn)
+				commands.Add("--cloak-on");
+			return string.Join(" ", commands);
+		}
+
+		static string Quote(string value)
+		{
+			return "\"" + value + "\"";
+		}
+
+		/// <summary>Changes HID Hide's settings through its command line program; the next reading of them is made afresh.</summary>
+		/// <param name="arguments">The commands, as <see cref="GetHidHideChanges"/> writes them; nothing to do when empty.</param>
+		/// <returns>False when HID Hide is not installed, its program is missing, or the program did not accept the change.</returns>
+		public static bool ChangeHidHide(string arguments)
+		{
+			if (string.IsNullOrEmpty(arguments))
+				return true;
+			var cli = IsHidHideDevicePresent() ? GetHidHideProgramPath("HidHideCLI.exe") : null;
+			if (cli == null)
+				return false;
+			var done = RunHidHideCli(cli, arguments) != null;
+			LastHidHideState = null;
+			return done;
+		}
+
+		/// <summary>The devices HID Hide counts as used for gaming, each as its name and device instance path; empty when it did not answer.</summary>
+		public static string[] GetHidHideGamingDevices()
+		{
+			var cli = IsHidHideDevicePresent() ? GetHidHideProgramPath("HidHideCLI.exe") : null;
+			return ParseHidHideDevices(cli == null ? null : RunHidHideCli(cli, "--dev-gaming"));
+		}
+
+		/// <summary>
+		/// Reads what HidHideCLI.exe printed for <c>--dev-gaming</c> or <c>--dev-all</c>: a JSON list of physical devices,
+		/// each with its name and the HID devices it is made of, each with its product name and device instance path.
+		/// </summary>
+		/// <returns>One line for each HID device, its product name, or its device's name, then its path; empty for anything else.</returns>
+		public static string[] ParseHidHideDevices(string output)
+		{
+			var lines = new List<string>();
+			object json;
+			try
+			{
+				json = string.IsNullOrWhiteSpace(output) ? null : JocysCom.ClassLibrary.Mcp.McpServer.FromJson(output);
+			}
+			catch (Exception ex) when (ex is ArgumentException || ex is FormatException)
+			{
+				// An error message, which HID Hide prints in place of the list.
+				return lines.ToArray();
+			}
+			foreach (var item in (json as System.Collections.IEnumerable ?? new object[0]).OfType<Dictionary<string, object>>())
+			{
+				object name;
+				item.TryGetValue("friendlyName", out name);
+				object devices;
+				item.TryGetValue("devices", out devices);
+				foreach (var device in (devices as System.Collections.IEnumerable ?? new object[0]).OfType<Dictionary<string, object>>())
+				{
+					object path;
+					object product;
+					device.TryGetValue("deviceInstancePath", out path);
+					device.TryGetValue("product", out product);
+					if (string.IsNullOrEmpty(path as string))
+						continue;
+					var title = string.IsNullOrWhiteSpace(product as string) ? name as string : (string)product;
+					lines.Add(string.IsNullOrWhiteSpace(title) ? (string)path : title.Trim() + ": " + path);
+				}
+			}
+			return lines.ToArray();
 		}
 
 		#endregion

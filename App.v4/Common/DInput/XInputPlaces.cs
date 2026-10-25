@@ -169,6 +169,19 @@ namespace x360ce.App.DInput
 					|| VirtualDriverInstaller.CarriesInputGroup(device.DeviceId));
 		}
 
+		/// <summary>Whether the device is an Xbox controller read through DirectInput, which Windows feeds only while this program is in front.</summary>
+		/// <remarks>
+		/// Windows gives DirectInput no background access to Xbox controllers, so such a device works on the program's
+		/// own pages and stops the moment a game comes to the front. The same controller read through Raw Input keeps
+		/// working (<see cref="Engine.Data.UserDevice.RawInputTwin"/>).
+		/// </remarks>
+		public static bool ReadsOnlyInFront(Engine.Data.UserDevice ud)
+		{
+			return ud != null && ud.IsDirectInput
+				&& (VirtualDriverInstaller.CarriesInputGroup(ud.HidHardwareIds)
+					|| VirtualDriverInstaller.CarriesInputGroup(ud.HidDevicePath));
+		}
+
 		/// <summary>
 		/// The XInput place each piece of hardware holds, or <see cref="Unknown"/> where it cannot
 		/// be worked out, or null when XInput did not answer in time.

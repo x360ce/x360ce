@@ -27,8 +27,11 @@ load. The **Issues** tab says so too. A plugin that throws an error is switched 
 
 ## Use a plugin device
 
-1. Open the **Devices** tab and press **Add Plugin Device**. With several plugin devices, pick one from the list.
-2. Map the new device to a controller, as any device: open a controller tab and press **Add**.
+1. Open a controller tab and press **Add**. The list offers one device of each kind a loaded plugin makes, until one
+   has been added.
+2. Select it and press **Add Selected Device**. x360ce adds the device and maps it to the controller.
+3. For another device of a kind already added, press **Add Plugin Device** on the **Devices** tab, then map it the
+   same way.
 
 ## Write a plugin
 
@@ -130,29 +133,48 @@ Rules:
   .NET Framework, and other DLLs it brings in its own folder; x360ce looks for a plugin's DLLs only there, so the DLLs
   of one plugin never stand in for another's.
 
-### Settings, and a control of its own
+### Settings, an MCP server, and a control of its own
 
-A device can have a tab of its own on the controller page it is mapped to, named after it. x360ce makes the tab from
-what the plugin has:
+A device can have a tab of its own on the controller page it is mapped to, named after it. The device's help heads the
+tab, and under it a page for each part the plugin has: its own control first, then **MCP Server**, then **Properties**.
 
-- **Settings: the class's public properties.** Each is shown as a field: a `bool` as a check box, a number as a number
-  box, a `string` as a text box, an `enum` as a list. A property without a public setter is shown as a status, read
-  again once a second. Each device keeps its own values, saved with the other settings; **Reset** gives back the values
-  a new device starts with. x360ce sets them on the thread that calls `Read`, just before a read, so they need no lock.
-- **A control of its own: a Windows Forms control whose constructor takes the device.** x360ce places it under the
-  settings, made with the instance it reads. The control runs on the interface thread while `Read` runs on the input
-  thread, so a value the two share must be safe to read from both, such as a `volatile` field.
+- **Settings, on the Properties page: the class's public properties.** They are shown as rows of a property grid, as Visual Studio's
+  Properties window shows a component's: grouped, or in A to Z order with the buttons above the grid, and the selected
+  row's help under it. A `bool` or an `enum` is chosen from a list, a number or a `string` is typed. A property without
+  a public setter is a status, greyed and read again once a second. Each device keeps its own values, saved with the
+  other settings; a value kept for the device is bold. **Reset** on a row's right-click menu gives that row back the
+  value a new device starts with, and the **Reset** button gives back every row's. x360ce sets the values on the thread
+  that calls `Read`, just before a read, so they need no lock.
+- **An MCP server of its own, on the MCP Server page: a public `PluginMcpServer` property.** The page shows the server's settings, with the
+  same rows as AI assistant access on the Options tab's AI page: whether it is open, its level, address, port and token,
+  and **Copy prompt** for an AI assistant. The server is closed until the person opens it there; an AI assistant cannot
+  open it, nor read its token. While it is open, it serves this device's settings as tools: `read` returns every setting
+  with its value, and a `set_` tool sets each one a person can change, such as `set_state` for `State`. `set_` tools
+  need the Configure level. A caller reaches this device alone, never the rest of x360ce. x360ce chooses the port from
+  its [port plan](Help.v4.md#ports): the controller and the place the device is mapped to, so the first device on
+  controller 4 listens on 37141. A device on no controller has no port until it is mapped, or the person types one.
+
+  ```csharp
+  public PluginMcpServer McpServer { get; } = new PluginMcpServer();
+  ```
+
+  A server a plugin opens itself, such as a UDP one, takes a port in the plan's range for plugins: 37150 to 37199.
+
+- **A control of its own: a Windows Forms control whose constructor takes the device.** x360ce places it on the first
+  page, made with the instance it reads; the control's `Text` names the page, or it is called Control. The control runs
+  on the interface thread while `Read` runs on the input thread, so a value the two share must be safe to read from
+  both, such as a `volatile` field.
 
 Attributes shape the settings:
 
 | Attribute | What it does |
 |---|---|
-| `[DisplayName("Port")]` | The field's label. Without it, the property's name. |
-| `[Description("...")]` | The help shown in the header while the mouse is over the field, and to AI agents. On an enum value, the list's text for it. |
-| `[Category("Network")]` | The group the field is shown in. Without it, Settings, or Status for a status. |
-| `[Range(1, 65535)]` | A number's limits, from `System.ComponentModel.DataAnnotations`. |
+| `[DisplayName("Port")]` | The row's name. Without it, the property's name. |
+| `[Description("...")]` | The help shown under the grid while the row is selected, and to AI agents. On an enum value, the list's text for it. |
+| `[Category("Network")]` | The group the row is shown in. Without it, Settings, or Status for a status. |
+| `[Range(1, 65535)]` | A number's limits, from `System.ComponentModel.DataAnnotations`. A value outside them is refused, and the grid says why. |
 | `[Browsable(false)]` | Leaves a property off the tab. |
-| `[TypeConverter(typeof(...))]` | A converter that offers standard values makes the field a list. Unless it says its values are the only ones, other values can be typed too. |
+| `[TypeConverter(typeof(...))]` | A converter that offers standard values makes the row a list. Unless it says its values are the only ones, other values can be typed too. |
 
 A controller fed over the network might choose the address it listens on as IIS bindings do:
 
@@ -183,8 +205,8 @@ public int Port { get; set; } = 26760;
 public int Packets { get { return _packets; } }
 ```
 
-The Test Controller shows both: settings for its movement and its buttons, and `TestControllerPad`, a square that steers
-its stick by hand.
+The Test Controller shows settings for its movement and its buttons, and `TestControllerPad`, a square that steers its
+stick by hand. The Remote MCP Controller shows an MCP server, and `State`, which sets its controls.
 
 ### Sign a plugin
 
@@ -198,5 +220,10 @@ A plugin signed with the same certificate as x360ce.exe loads without **Allow th
 - The skill holds one document for each plugin, under `references/plugins/`; `x360ce.exe -Skill=plugins/TestController`
   prints one.
 - `devices_list` and `device_map` work on plugin devices as on any device.
+- `devices_list` lists each plugin device's `Tools`, and `device_call` calls one by the device's `InstanceGuid`:
+  `device_call` with `tool=read` returns its settings and their values, and `tool=set_state` with `value` sets one, at
+  the Configure level. These are the tools a device's own MCP server serves, reached through x360ce's door, so a program
+  allowed in there can drive every plugin device without opening another port.
 - A device's document lists the settings on its tab. With the device selected on its controller page, `ui_read` and
-  `ui_set` reach the tab's fields like any other.
+  `ui_set` reach the tab's grid rows like any other control: each row's path ends with its property's name, such as
+  `.../SettingsPropertyGrid/State`.

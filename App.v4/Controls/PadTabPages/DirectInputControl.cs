@@ -42,7 +42,6 @@ namespace x360ce.App.Controls
 			e.FormattingApplied = true;
 		}
 
-		DataTable DiButtonsTable;
 		DataTable DiAxisTable;
 		DataTable DiSlidersTable;
 		DataTable DiPovsTable;
@@ -50,7 +49,6 @@ namespace x360ce.App.Controls
 
 		void InitDirectInputTab()
 		{
-			CreateButtonsTable();
 			CreateAxisTable();
 			CreateSlidersTable();
 			CreatePovsTable();
@@ -79,21 +77,11 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Buttons Table
-
-		void CreateButtonsTable()
-		{
-			DiButtonsTable = new DataTable();
-			// http://msdn.microsoft.com/en-us/library/windows/desktop/bb151904%28v=vs.85%29.aspx
-			DiButtonsTable.Columns.Add("M", typeof(string));
-			DiButtonsTable.Rows.Add(DiButtonsTable.NewRow());
-			DiButtonsDataGridView.DataBindingComplete += DataGridView_DataBindingComplete;
-			DiButtonsDataGridView.DataSource = DiButtonsTable;
-		}
+		#region Buttons
 
 		string oldButtons;
 
-		void UpdateButtonsTable(JoystickState state)
+		void UpdateButtons(JoystickState state)
 		{
 			bool[] buttons = state.Buttons;
 			var buttonsText = "";
@@ -109,7 +97,7 @@ namespace x360ce.App.Controls
 			if (oldButtons != buttonsText)
 			{
 				oldButtons = buttonsText;
-				DiButtonsTable.Rows[0][0] = buttonsText;
+				DiButtonsTextBox.Text = buttonsText;
 			}
 		}
 
@@ -384,7 +372,7 @@ namespace x360ce.App.Controls
 			else
 				CopyState(ud?.JoState ?? emptyState, newState);
 
-			UpdateButtonsTable(newState);
+			UpdateButtons(newState);
 			UpdateAxisTable(newState);
 			UpdateSlidersTable(newState);
 			UpdatePovsTable(newState);
@@ -498,12 +486,6 @@ namespace x360ce.App.Controls
 					? false : ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
 			}
 			ShowDirectInputState(ud);
-		}
-
-		private void DirectInputControl_Load(object sender, EventArgs e)
-		{
-			EngineHelper.EnableDoubleBuffering(DiAxisDataGridView);
-			EngineHelper.EnableDoubleBuffering(DiEffectsDataGridView);
 		}
 
 		#region Copy Data

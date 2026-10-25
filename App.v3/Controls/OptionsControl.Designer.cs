@@ -529,7 +529,8 @@
 			this.AiAccessTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AiAccessTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.AiAccessTableLayoutPanel.Name = "AiAccessTableLayoutPanel";
-			this.AiAccessTableLayoutPanel.RowCount = 4;
+			this.AiAccessTableLayoutPanel.RowCount = 5;
+			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.AiAccessTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -575,7 +576,7 @@
 			this.AiAccessPortNumericUpDown.Name = "AiAccessPortNumericUpDown";
 			this.AiAccessPortNumericUpDown.Size = new System.Drawing.Size(60, 20);
 			this.AiAccessPortNumericUpDown.TabIndex = 2;
-			this.AiAccessPortNumericUpDown.Value = new decimal(new int[] { 37361, 0, 0, 0 });
+			this.AiAccessPortNumericUpDown.Value = new decimal(new int[] { 37102, 0, 0, 0 });
 			//
 			// AiAccessTokenLabel
 			//

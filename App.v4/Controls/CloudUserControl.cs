@@ -17,10 +17,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			ControlsHelper.ApplyBorderStyle(TasksDataGridView);
-			EngineHelper.EnableDoubleBuffering(TasksDataGridView);
 			//TasksTimer.Queue.AsynchronousInvoke = true;
 			TasksDataGridView.AutoGenerateColumns = false;
 			// Suspend errors.

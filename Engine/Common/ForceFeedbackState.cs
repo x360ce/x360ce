@@ -531,7 +531,7 @@ namespace x360ce.Engine
             // sent while they were still nought was sent to nothing and never sent again.
             // The range the spring's curve is counted against, whatever the wheel is.
             var range = ps.GetWheelRange();
-            rangeDegrees = range > 0 ? range : DefaultRangeDegrees;
+            rangeDegrees = SpringRange(range, ud);
             if (ud.DevVendorId != 0 && (Changed(ref old_WheelRange, ps.WheelRange) || rangeDevice != device))
             {
                 rangeDevice = device;
@@ -635,10 +635,29 @@ namespace x360ce.Engine
             return Math.Max(0, Math.Min(100, dampingPercent)) * (DI_FFNOMINALMAX / 100);
         }
 
-        /// <summary>The steering range, lock to lock, that degrees are counted against while the wheel range setting leaves the wheel as it is.</summary>
+        /// <summary>The steering range, lock to lock, that degrees are counted against while the wheel range setting leaves a wheel that takes no range as it is.</summary>
         public const int DefaultRangeDegrees = 900;
 
-        /// <summary>The steering range, lock to lock, from the wheel range setting, or <see cref="DefaultRangeDegrees"/>.</summary>
+        /// <summary>The steering range, lock to lock, the spring's degrees are counted against on this wheel.</summary>
+        /// <remarks>
+        /// No wheel tells what range it turns, so the range is the one chosen, which a wheel that takes it is sent. Left as it
+        /// is, such a wheel turns the <see cref="LogitechWheel.PowerUpRange"/> it powers up at, unless the maker's software sent
+        /// it a wider one, which only makes the spring softer than set. Counted against a range wider than the wheel turns,
+        /// the spring is steeper than set, and the wheel swings at its centre. Any other wheel is counted against
+        /// <see cref="DefaultRangeDegrees"/>.
+        /// </remarks>
+        /// <param name="wheelRange">The wheel range setting, or nought when it leaves the wheel as it is.</param>
+        /// <param name="ud">The wheel, or null before one is known.</param>
+        public static int SpringRange(int wheelRange, UserDevice ud)
+        {
+            if (wheelRange > 0)
+                return wheelRange;
+            return ud != null && LogitechWheel.SupportsRange(ud.DevVendorId, ud.DevProductId)
+                ? LogitechWheel.PowerUpRange
+                : DefaultRangeDegrees;
+        }
+
+        /// <summary>The steering range, lock to lock, the spring is counted against: <see cref="SpringRange"/>.</summary>
         int rangeDegrees = DefaultRangeDegrees;
 
         /// <summary>

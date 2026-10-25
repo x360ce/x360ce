@@ -40,9 +40,6 @@ namespace x360ce.App.Controls
 			_myControllersTitle = MyDeviceSettingsTabPage.Text;
 			_globalSummariesTitle = SummariesTabPage.Text;
 			_globalPresetsTitle = PresetsTabPage.Text;
-			EngineHelper.EnableDoubleBuffering(MyDevicesDataGridView);
-			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
-			EngineHelper.EnableDoubleBuffering(PresetsDataGridView);
 			MyDevicesDataGridView.AutoGenerateColumns = false;
 			SummariesDataGridView.AutoGenerateColumns = false;
 			PresetsDataGridView.AutoGenerateColumns = false;

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Mcp
@@ -11,17 +10,45 @@ namespace JocysCom.ClassLibrary.Mcp
 	/// Serves McpServer over HTTP on the loopback address, to callers that present the token, and to this computer's own
 	/// programs without it when the person trusts local connections; a web page always needs the token.
 	/// </summary>
-	public static class McpListener
+	/// <remarks>
+	/// One instance is one door. <see cref="Program"/> serves the program's tools; a door made with an
+	/// <see cref="McpToolSet"/>, such as one a plugin device opens, serves that set alone, on a port of its own.
+	/// </remarks>
+	public sealed class McpListener
 	{
 		/// <summary>The address that keeps the door on this computer. The default.</summary>
 		public const string LoopbackAddress = "127.0.0.1";
 		/// <summary>The address that opens the door to every network the computer is on.</summary>
 		public const string AnyAddress = "0.0.0.0";
 
-		static HttpListener _listener;
-		static string _address;
-		static string _token;
-		static bool _trustLocal;
+		/// <summary>The program's own door, which serves its tools.</summary>
+		public static readonly McpListener Program = new McpListener();
+
+		/// <summary>A door that serves the program's tools.</summary>
+		public McpListener()
+		{
+			Name = "door";
+		}
+
+		/// <summary>A door that serves a set of its own.</summary>
+		/// <param name="tools">What the door serves.</param>
+		/// <param name="name">What the log calls the door, such as "Remote MCP Controller 1 door".</param>
+		public McpListener(McpToolSet tools, string name)
+		{
+			Tools = tools;
+			Name = name;
+		}
+
+		/// <summary>What the door serves; null for the program's own tools.</summary>
+		public McpToolSet Tools { get; }
+
+		/// <summary>What the log calls the door.</summary>
+		public string Name { get; }
+
+		HttpListener _listener;
+		string _address;
+		string _token;
+		bool _trustLocal;
 
 		/// <summary>What every program tells a caller without the token.</summary>
 		public const string NoToken = "Send the token from the program's AI assistant access settings as Authorization: Bearer <token>. "
@@ -31,24 +58,27 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// What a caller without the token is told, as the body of the refusal. A program that finds the door without
 		/// the token is pointed at the command line, which needs none, rather than left to look for the token on disk.
 		/// </summary>
-		public static string Unauthorised = NoToken;
+		public string Unauthorised = NoToken;
 
-		/// <summary>A new token: 32 random bytes as 64 lower-case hex digits, the shape the log hides.</summary>
+		/// <summary>
+		/// A new token, a secret token (<see cref="Security.TokenHelper.NewSecretToken"/>) named for the program's MCP
+		/// server, such as sk-x360ce-mcp-..., so a leaked one says where it opens, and the log knows it to hide it.
+		/// </summary>
 		public static string NewToken()
 		{
-			var bytes = new byte[32];
-			using (var random = RandomNumberGenerator.Create())
-				random.GetBytes(bytes);
-			return BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			return Security.TokenHelper.NewSecretToken("sk-" + McpServer.ServerName + "-mcp");
 		}
 
-		public static bool IsRunning { get { return _listener != null; } }
+		public bool IsRunning { get { return _listener != null; } }
 
 		/// <summary>Why the door is not usable, as one sentence with its own remedy. Null after a start that worked.</summary>
-		public static string LastError;
+		public string LastError;
 
 		/// <summary>True when the last start failed only because Windows has no URL reservation for every network.</summary>
-		public static bool NeedsUrlReservation;
+		public bool NeedsUrlReservation;
+
+		/// <summary>Where the person changes the door's settings, as the end of a sentence.</summary>
+		string SettingsPlace { get { return Tools == null ? McpCatalog.SettingsPlace : Tools.SettingsPlace; } }
 
 		/// <summary>
 		/// What the person does when every network needs a URL reservation, given the prefix to reserve: the end of the
@@ -119,13 +149,13 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// Opens the door on the address and port. False, with the reason in LastError, when it cannot. With
 		/// <paramref name="trustLocal"/>, this computer's own programs need no token on the loopback address.
 		/// </summary>
-		public static bool Start(string address, int port, string token, bool trustLocal = false)
+		public bool Start(string address, int port, string token, bool trustLocal = false)
 		{
 			Stop();
 			NeedsUrlReservation = false;
 			if (port < 1024 || port > 49151)
 			{
-				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range " + McpCatalog.SettingsPlace + ".";
+				LastError = "port " + port + " is outside 1024 to 49151. Choose a port in that range " + SettingsPlace + ".";
 				return false;
 			}
 			var listener = new HttpListener();
@@ -146,7 +176,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				NeedsUrlReservation = address == AnyAddress && ex.ErrorCode == 5;
 				LastError = NeedsUrlReservation
 					? "listening on every network needs a one-time permission from Windows. " + UrlReservationRemedy(Prefix(address, port))
-					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port " + McpCatalog.SettingsPlace + ".";
+					: "port " + port + " could not be opened (" + ex.Message + "). Choose another port " + SettingsPlace + ".";
 				return false;
 			}
 			_address = address;
@@ -155,19 +185,19 @@ namespace JocysCom.ClassLibrary.Mcp
 			_listener = listener;
 			LastError = null;
 			listener.BeginGetContext(OnRequest, listener);
-			McpLog.Write("door opened at " + Prefix(address, port) + " with " + McpCatalog.Level() + " access"
+			McpLog.Write(Name + " opened at " + Prefix(address, port) + " with " + (Tools == null ? McpCatalog.Level() : Tools.Level()) + " access"
 				+ (TrustsLocal(address, trustLocal) ? ", local connections need no token" : ""));
 			return true;
 		}
 
-		public static void Stop()
+		public void Stop()
 		{
 			var listener = _listener;
 			_listener = null;
 			if (listener != null)
 			{
 				listener.Close();
-				McpLog.Write("door closed");
+				McpLog.Write(Name + " closed");
 			}
 		}
 
@@ -176,7 +206,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// so a broken client, a fault in a tool, or a stop that lands mid-request ends in a response
 		/// or in silence rather than in the program.
 		/// </summary>
-		static void OnRequest(IAsyncResult ar)
+		void OnRequest(IAsyncResult ar)
 		{
 			var listener = (HttpListener)ar.AsyncState;
 			HttpListenerContext context;
@@ -209,7 +239,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			return Uri.TryCreate(origin, UriKind.Absolute, out uri) && uri.IsLoopback;
 		}
 
-		static void Answer(HttpListenerContext context)
+		void Answer(HttpListenerContext context)
 		{
 			var origin = context.Request.Headers["Origin"];
 			if (!string.IsNullOrEmpty(origin) && !IsLocalOrigin(origin))
@@ -237,7 +267,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			// JSON is UTF-8 whatever the request says; a missing charset would otherwise mean the system code page.
 			using (var reader = new System.IO.StreamReader(context.Request.InputStream, Encoding.UTF8))
 				body = reader.ReadToEnd();
-			var answer = McpServer.Handle(body);
+			var answer = McpServer.Handle(body, Tools);
 			Write(context.Response, answer.Length == 0 ? 202 : 200, answer);
 		}
 

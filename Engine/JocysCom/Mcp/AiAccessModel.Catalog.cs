@@ -117,13 +117,14 @@ namespace JocysCom.ClassLibrary.Mcp
 			d["AiTunnelOrganizationButton"] = new UiText.Text("Find organization ID",
 				"Opens the OpenAI Platform page that shows the organization ID.");
 			d["AiTunnelAdminKeyTextBox"] = new UiText.Text("OpenAI admin key",
-				"An admin key of the organization, used only by Create and Delete and never kept.");
+				"An admin key of the organization, used only to list, create and delete tunnels and never kept.");
 			d["AiTunnelAdminKeyButton"] = new UiText.Text("Get admin key",
 				"Opens the OpenAI Platform page that makes admin keys.");
-			d["AiTunnelIdTextBox"] = new UiText.Text("Tunnel ID",
-				"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Made by Create, or pasted from the OpenAI Platform.");
+			d["AiTunnelIdComboBox"] = new UiText.Text("Tunnel ID",
+				"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's "
+				+ "tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.");
 			d["AiTunnelCreateButton"] = new UiText.Text("Create tunnel",
-				"Makes a tunnel in the organization with the admin key, and keeps its ID.");
+				"Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.");
 			d["AiTunnelCopyButton"] = new UiText.Text("Copy tunnel ID",
 				"Copies the tunnel ID, to paste into ChatGPT.");
 			d["AiTunnelDeleteButton"] = new UiText.Text("Delete tunnel",

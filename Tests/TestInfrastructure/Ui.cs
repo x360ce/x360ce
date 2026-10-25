@@ -335,6 +335,43 @@ namespace x360ce.Tests
 			return closed.ToArray();
 		}
 
+		/// <summary>Presses Fix on every row of version 3's Warnings window, the way a person answers it.</summary>
+		/// <remarks>
+		/// Version 3 builds its controller pages only once that list is empty. In a folder without the
+		/// XInput library, a fresh build folder among them, the list holds one Critical row, and Fix,
+		/// which creates the library, is the only way on: closing the window counts as Cancel and it
+		/// opens again five seconds later, and Ignore All closes the program.
+		/// </remarks>
+		/// <returns>The names of the rows pressed.</returns>
+		public static string[] FixWarnings(Process p, AutomationElement mainWindow)
+		{
+			var isWindow = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window);
+			var pressed = new List<string>();
+			try
+			{
+				var warnings = mainWindow.FindAll(TreeScope.Children, isWindow).Cast<AutomationElement>()
+					.Where(x => (x.Current.Name ?? "").EndsWith(" - Warnings", StringComparison.Ordinal));
+				foreach (var window in warnings)
+				{
+					var buttons = window.FindAll(TreeScope.Descendants,
+						new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)).Cast<AutomationElement>()
+						.Where(x => (x.Current.Name ?? "").StartsWith("Fix Row ", StringComparison.Ordinal));
+					foreach (var button in buttons)
+					{
+						if (!button.TryGetCurrentPattern(InvokePattern.Pattern, out var pattern))
+							continue;
+						pressed.Add(button.Current.Name);
+						((InvokePattern)pattern).Invoke();
+					}
+				}
+			}
+			catch (ElementNotAvailableException)
+			{
+				// The window closed itself once its list emptied.
+			}
+			return pressed.ToArray();
+		}
+
 		/// <summary>How long the application is given to shut itself down.</summary>
 		/// <remarks>
 		/// Closing is not instant: the program unplugs the controllers it created before it goes.
@@ -452,9 +489,7 @@ namespace x360ce.Tests
 
 		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
 		/// <remarks>
-		/// A message posted to HWND_BROADCAST reaches unowned top-level windows only, and in the tray the
-		/// window is owned by the hidden form that keeps it off the task bar, so it never arrived and the
-		/// window stayed in the tray. BroadcastSystemMessage reaches it, which is why a second launch works.
+		/// BroadcastSystemMessage, as a second launch sends it, reaches the window while it is hidden in the tray.
 		/// </remarks>
 		public static void PostRestoreRequest()
 		{

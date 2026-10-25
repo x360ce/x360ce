@@ -454,7 +454,7 @@ namespace x360ce.App
 		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			JocysCom.ClassLibrary.Mcp.McpListener.Stop();
+			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
 			if (UpdateTimer != null) UpdateTimer.Stop();
 			// Disable force feedback effect before closing app.
 			try
@@ -1326,6 +1326,8 @@ namespace x360ce.App
 				// Show currently running instance.
 				if (m.WParam.ToInt32() == wParam_Restore)
 				{
+					// Hidden while in the tray.
+					if (!Visible) Show();
 					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
 					// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
 					// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
@@ -1385,9 +1387,6 @@ namespace x360ce.App
 		FormWindowState? oldWindowState;
 		object lastStateLock = new object();
 
-		/// <summary>Will be used to prevent form flickering when restoring from tray.</summary>
-		bool ignoreMinimizeToTray;
-
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
 			// Track window state changes.
@@ -1402,26 +1401,33 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>Hides a minimised window while Minimize to Tray is on, and shows it on the task bar again when it is off.</summary>
+		/// <remarks>
+		/// The window is hidden rather than taken off the task bar. Changing ShowInTaskbar makes Windows Forms
+		/// build the window and every control on it again, at each minimise and each restore. A hidden window
+		/// has no task bar button and is not in ALT+TAB.
+		/// </remarks>
 		void UpdateStatusBar(FormWindowState state)
 		{
-			if (state == FormWindowState.Minimized)
+			if (state != FormWindowState.Minimized)
+				return;
+			if (Settings.Default.MinimizeToTray)
 			{
-				if (!ignoreMinimizeToTray)
-				{
-					if (ShowInTaskbar == Settings.Default.MinimizeToTray)
-					{
-						ShowInTaskbar = !Settings.Default.MinimizeToTray;
-					}
-				}
+				// Hidden once it has finished minimising.
+				if (IsHandleCreated)
+					BeginInvoke((Action)HideInTray);
 			}
-			else
+			else if (!Visible)
 			{
-				ignoreMinimizeToTray = false;
-				if (ShowInTaskbar == false)
-				{
-					ShowInTaskbar = true;
-				}
+				Show();
 			}
+		}
+
+		/// <summary>Hides the window, if it is still minimised and Minimize to Tray is still on.</summary>
+		void HideInTray()
+		{
+			if (WindowState == FormWindowState.Minimized && Settings.Default.MinimizeToTray)
+				Hide();
 		}
 
 		public bool MinimizeToTrayChanging;
@@ -1465,9 +1471,8 @@ namespace x360ce.App
 		/// </summary>
 		public void RestoreFromTray()
 		{
-			ignoreMinimizeToTray = true;
-			// Show in task bar before restoring windows state in order to prevent flickering.
-			ShowInTaskbar = true;
+			if (!Visible)
+				Show();
 			if (WindowState != FormWindowState.Normal)
 			{
 				WindowState = FormWindowState.Normal;

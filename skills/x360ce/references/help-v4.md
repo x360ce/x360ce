@@ -41,13 +41,13 @@ If you want `HELP` and have questions about installation or configuration, pleas
 4. Enable `controller` by clicking on `[Enable # Mapped Device]` inside `[Controller 1]` tab.
 5. The `[Enabled]` box on a device's row in the list leaves the device out of the game without removing it. The box in front of a device on the `[Devices]` page leaves it out of every game, and greys its rows' `[Enabled]` box. An unticked device is not read, not held and sent no force feedback, so another program can use it. A Pass through that names the XInput place shown for it sends it nothing either. x360ce no longer hides it or asks for it to be hidden. A device you hid in HID Hide stays hidden until you untick it there. The tab's pages no longer show it live, and a centering spring `[Auto]` run on it stops.
 
-An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so through DirectInput x360ce reads one only while its own window is in front. For an Xbox One controller, map its `Raw Input` row instead: see DirectInput and Raw Input below. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
+An Xbox controller works in x360ce but not in the game? Windows gives DirectInput no background access to Xbox controllers, so through DirectInput x360ce reads one only while its own window is in front. For an Xbox One controller, map its `Raw Input` row instead: see DirectInput and Raw Input below. `[Add...]` asks when you pick an Xbox controller's `DirectInput` row, and for one already mapped the `[Issues]` tab offers `[Use Raw Input]`, which moves it with its settings. An Xbox controller is an XInput device already, so most games read it directly without x360ce.
 
 A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can take a wheel over, and then the game does not see what x360ce provides. In the Steam library open the game's `Properties` → `Controller` and choose `Disable Steam Input`.
 
 ## DirectInput and Raw Input
 
-x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens, on rows next to each other. The `[Source]` column says how each row is read.
+x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet. The `[Source]` column says how each row is read.
 
 - `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
 - Vibration and wheel forces reach the controller from either row. Raw Input only reads, so a `Raw Input` row's go through the same controller's `DirectInput` side. An Xbox controller's DirectInput side takes none: `[Pass Through]` on the `[Force Feedback]` page reaches its motors from either row.
@@ -60,7 +60,7 @@ A few devices do not tell Windows what their controls are, so Windows does not l
 
 ## Plugin devices
 
-A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](https://github.com/x360ce/x360ce/wiki/Help.Plugins).
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[MCP Server]` for a device with an MCP server of its own. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](https://github.com/x360ce/x360ce/wiki/Help.Plugins).
 
 ## One device on several controller tabs
 
@@ -89,6 +89,14 @@ A device can drive up to four emulated controllers at once.
 7. Launch the game and see how it works.
 
 Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.
+
+## D-Pad buttons that report as a stick
+
+Some pads report their D-Pad as a stick: their X and Y axes jump to the ends while a direction is held. `[Controller 1]` tab → `[D-Pad]` tab → `[Axis To D-Pad]` → `[Enabled]` turns those axes into the D-Pad: right and left from X, down and up from Y, two at once on a diagonal. The stick's own mappings stay as they are, so clear the left `[Stick Axis X]` and `[Stick Axis Y]` boxes on the `[General]` tab if the game should not see the stick move as well.
+
+- `[Dead Zone]` is how far an axis must move from the centre before a direction is pressed. `100 %` presses close to the end, where such a pad puts the axis even when it falls a little short. For a real stick used as a D-Pad, try `50 %`.
+- `[Offset]` moves the centre towards the right and the bottom, for a device that does not rest in the middle.
+- The chart beside them is the X and Y square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
 
 ## Checking for a newer version
 
@@ -172,6 +180,14 @@ controller is moved to where its controller is, or, when that cannot be told, th
 ## Hiding the real controller from games (HID Hide)
 
 Duplicated controller, or the game sees two controllers? A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list, tick the controller under Devices, and make sure hiding is turned on.
+
+`X360CE` can make those changes itself once `HID Hide` is installed:
+
+- `[Devices]` tab → a device's `[Hide]` box hides it from games, or shows it again. Hiding a device also adds `x360ce.exe` to the application list and turns hiding on.
+- `[Devices]` tab → `[HID Hide...]` lists the gaming devices and the hidden ones, shows every device again, makes `HID Hide` hide exactly the devices whose `[Hide]` box is ticked, or opens `HID Hide`.
+- `[Options]` tab → `[HID Hide]` tab → `[Configure automatically]` hides a device while it is mapped to a controller, and shows it again when `X360CE` closes.
+
+Tick `[Hide]` before starting the game: a game already running keeps seeing the device until it is started again.
 
 While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID Hide` is missing, when hiding is off, when the controller is not hidden, or when `HID Hide` hides it from x360ce as well. Its button opens the download page or `HID Hide`'s own program.
 
@@ -301,6 +317,8 @@ A control is written as a letter and a number, the same way mappings are stored.
 
   Counting minutes: `=now/60000`
 
+A control of any other device mapped for the game: put its controller and device in front, as the controller tab's `AHK` column shows them while AutoHotkey scripts are allowed: `d1` is the tab's first device row. `c1.d2.b1` is button 1 of device 2 on Controller 1, whichever mapping the formula is in, so one controller can use another device's buttons, such as a wheel's on the pedals' mapping: `=c1.d1.b5`. On that device's own mapping, `=c1.d2.b1` reads what `=b1` reads. A device that is not connected, or not ticked, reads as at rest.
+
 ## Operators that combine two values
 
 - `+` Add. `=a1+a2` - both controls move the same output.
@@ -376,6 +394,26 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
 - A formula can be up to 128 characters including the equals sign, which is the space a mapping is stored in. Longer formulas are refused as you type them.
 
+## AutoHotkey scripts
+
+An [AutoHotkey v2](https://www.autohotkey.com/) script can watch a controller the way it watches keys, change what the controller's mapping reads, and turn a controller into a keyboard or a mouse, or a keyboard and mouse into a controller. x360ce adds an object for each device, whose properties are its controls; everything else is AutoHotkey itself.
+
+1. `[Options]` tab → `[Plugins]` → tick `Allow AutoHotkey scripts`. x360ce writes `x360ce.ahk` to `Documents\AutoHotkey\Lib`.
+2. Start the script with `#Include <x360ce>`, and run it as any AutoHotkey script.
+
+```autohotkey
+#Requires AutoHotkey v2.0
+#Include <x360ce>
+
+dev := X360ce.c1.d1                              ; device 1 on Controller 1
+dev.Hotkey("b1", (*) => Send("{Space down}"))   ; its button 1 holds the space bar
+dev.Hotkey("b1 up", (*) => Send("{Space up}"))
+XButton2::dev.b2 := 1                            ; the mouse's side button presses its button 2
+XButton2 up::dev.b2 := 0
+```
+
+Devices, controls, hotkeys and more examples: [Help.AutoHotkey](https://github.com/x360ce/x360ce/wiki/Help.AutoHotkey).
+
 ## AI assistant access
 
 Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
@@ -423,6 +461,24 @@ token to revoke access.
 
 The AI settings are kept in their own file, `x360ce.AI.xml`, beside the other settings: `C:\ProgramData\X360CE\Settings` unless they live elsewhere. It holds whether the door is on, its level, address, port and token, and the tunnel's ID, organization and API key. Every account on this computer can read the file, so the token tells one program from another, not one person from another. The API key in it is encrypted with Windows DPAPI for the Windows account that saved it, so other accounts and other computers cannot read it.
 
+### Ports
+
+x360ce's ports follow one pattern, `37ACD`, so a port says what it reaches:
+
+- `A`: the instance of x360ce, `1` for the first.
+- `C`: `0` for x360ce itself, `1` to `4` for a controller, `5` to `9` for plugins.
+- `D`: the service of x360ce itself, or the device's number on the controller, as the controller tab's `AHK` column shows it.
+
+| Port | What listens |
+|---|---|
+| 37101 | AI assistant access, x360ce 4's MCP server |
+| 37102 | AI assistant access of x360ce 3 |
+| 37103 | The x360ce Test Game's MCP server: a program in x360ce's source code that records what a game receives, for testing |
+| 37111 to 37149 | A plugin device's own MCP server, such as a Remote MCP Controller's: controller `C`, device `D`. 37141 is the first device on controller 4. |
+| 37150 to 37199 | Servers plugins open themselves |
+
+A port typed on the AI page or on a device's MCP Server page is kept in place of the plan's. A device's server moves with its mapping: mapped to another controller or place, it listens on that one's port; on no controller, it has none until it is mapped or a port is typed.
+
 ## The AI skill
 
 A skill is a set of instructions an AI agent reads when a task calls for it. The x360ce skill tells
@@ -458,7 +514,7 @@ Write a switch after the program's name, for example `x360ce.exe /WindowState=Mi
 - `/Exit` closes the program where it is already running, for example from a script that runs when a game ends.
 - `/Settings` opens the folder the settings are kept in, the one `[Options]` tab → `[Settings]` names, and starts nothing else.
 - `/Profile=<name>` keeps a separate set of settings in the `Profiles\<name>` folder beside the usual ones, and `/Profile=<folder>` keeps them in that folder. A second copy runs beside the first only when its settings have `[Allow only one copy of Application at a time]` unticked.
-- `/ExportUi=<folder>` writes a description of every page, box and button into the folder, `skills\x360ce\references` when none is given, then closes. The window is built off the screen while it does this.
+- `/ExportUi=<folder>` writes a description of every page, box and button into the folder, or, when none is given, into `skills\x360ce\references` of the source the program was built from (beside the program when it was not built from one), whatever folder it is started from, then closes. The window is built off the screen while it does this.
 - `/PluginKit=<folder>` writes a folder to start a plugin in, and starts nothing else: the types a plugin implements, the build settings, the Test Controller's source as a sample, and the plugin help.
 - `/Ai` lists the tools a script or an AI assistant can call once AI assistant access is on, and `/Ai=<tool>` calls one. `/Mcp` offers them to an assistant over MCP. Both reach the copy that runs with its own settings, a `/Profile` included. The help's AI assistant access section says more.
 

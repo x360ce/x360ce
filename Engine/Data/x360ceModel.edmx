@@ -325,28 +325,6 @@
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-        <EntityType Name="x360ce_UserMacros">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="MapType" Type="int" Nullable="false" />
-          <Property Name="MapCode" Type="int" Nullable="false" />
-          <Property Name="MapIndex" Type="int" Nullable="false" />
-          <Property Name="MapRangeMin" Type="int" Nullable="false" />
-          <Property Name="MapRangeMax" Type="int" Nullable="false" />
-          <Property Name="MapEventType" Type="int" Nullable="false" />
-          <Property Name="MapRpmType" Type="int" Nullable="false" />
-          <Property Name="MapRpmMin" Type="int" Nullable="false" />
-          <Property Name="MapRpmMax" Type="int" Nullable="false" />
-          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="Text" Type="nvarchar" MaxLength="1024" Nullable="false" />
-          <Property Name="IsEnabled" Type="bit" Nullable="false" />
-          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="Created" Type="datetime" Nullable="false" />
-          <Property Name="Updated" Type="datetime" Nullable="false" />
-        </EntityType>
         <EntityType Name="x360ce_UserProfiles">
           <Key>
             <PropertyRef Name="Id" />
@@ -379,7 +357,6 @@
           <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserMacros" EntityType="Self.x360ce_UserMacros" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_UserProfiles" EntityType="Self.x360ce_UserProfiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -400,7 +377,6 @@
           <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
           <EntitySet Name="Layouts" EntityType="x360ceModel.Layout" />
           <EntitySet Name="UserProfiles" EntityType="x360ceModel.UserProfile" />
-          <EntitySet Name="UserMacros" EntityType="x360ceModel.UserMacro" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -742,28 +718,6 @@
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
-        </EntityType>
-        <EntityType Name="UserMacro">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="SettingId" Type="Guid" Nullable="false" />
-          <Property Name="MapType" Type="Int32" Nullable="false" />
-          <Property Name="MapCode" Type="Int32" Nullable="false" />
-          <Property Name="MapIndex" Type="Int32" Nullable="false" />
-          <Property Name="MapRangeMin" Type="Int32" Nullable="false" />
-          <Property Name="MapRangeMax" Type="Int32" Nullable="false" />
-          <Property Name="MapEventType" Type="Int32" Nullable="false" />
-          <Property Name="MapRpmType" Type="Int32" Nullable="false" />
-          <Property Name="MapRpmMin" Type="Int32" Nullable="false" />
-          <Property Name="MapRpmMax" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Name="Text" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
-          <Property Name="Checksum" Type="Guid" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Updated" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
 			</Schema>
 		</edmx:ConceptualModels>
@@ -1126,29 +1080,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="UserMacros">
-            <EntityTypeMapping TypeName="x360ceModel.UserMacro">
-              <MappingFragment StoreEntitySet="x360ce_UserMacros">
-                <ScalarProperty Name="Updated" ColumnName="Updated" />
-                <ScalarProperty Name="Created" ColumnName="Created" />
-                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
-                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
-                <ScalarProperty Name="Text" ColumnName="Text" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="MapRpmMax" ColumnName="MapRpmMax" />
-                <ScalarProperty Name="MapRpmMin" ColumnName="MapRpmMin" />
-                <ScalarProperty Name="MapRpmType" ColumnName="MapRpmType" />
-                <ScalarProperty Name="MapEventType" ColumnName="MapEventType" />
-                <ScalarProperty Name="MapRangeMax" ColumnName="MapRangeMax" />
-                <ScalarProperty Name="MapRangeMin" ColumnName="MapRangeMin" />
-                <ScalarProperty Name="MapIndex" ColumnName="MapIndex" />
-                <ScalarProperty Name="MapCode" ColumnName="MapCode" />
-                <ScalarProperty Name="MapType" ColumnName="MapType" />
-                <ScalarProperty Name="SettingId" ColumnName="SettingId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
 				</EntityContainerMapping>
 			</Mapping>
 		</edmx:Mappings>
@@ -1184,7 +1115,6 @@
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
-        <EntityTypeShape EntityType="x360ceModel.UserMacro" Width="1.5" PointX="15.25" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

@@ -108,7 +108,7 @@ namespace x360ce.App.Issues
 			// Only what HID Hide can hide: a keyboard or mouse is never meant to be hidden, and a device
 			// without a HID device instance path is not one HID Hide sees.
 			var hideable = devices
-				.Where(x => !x.IsKeyboard && !x.IsMouse && Paths(x).Any(IsHidPath))
+				.Where(x => !x.IsKeyboard && !x.IsMouse && VirtualDriverInstaller.GetHidHidePaths(x).Length > 0)
 				.ToArray();
 			var online = hideable.Where(x => x.IsOnline).ToArray();
 			if (!state.Installed)
@@ -145,20 +145,9 @@ namespace x360ce.App.Issues
 			return string.Join(Environment.NewLine, lines.ToArray());
 		}
 
-		/// <summary>The device instance paths HID Hide may list a device under.</summary>
-		static string[] Paths(UserDevice ud)
-		{
-			return new[] { ud.HidDeviceId, ud.DevDeviceId, ud.HidParentDeviceId };
-		}
-
-		static bool IsHidPath(string path)
-		{
-			return !string.IsNullOrEmpty(path) && path.StartsWith(@"HID\", StringComparison.OrdinalIgnoreCase);
-		}
-
 		static bool IsHidden(VirtualDriverInstaller.HidHideState state, UserDevice ud)
 		{
-			return Paths(ud).Any(state.IsHidden);
+			return VirtualDriverInstaller.GetHidHidePaths(ud).Any(state.IsHidden);
 		}
 
 		static string Names(UserDevice[] devices)

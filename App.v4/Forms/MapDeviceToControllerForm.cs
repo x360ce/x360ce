@@ -21,6 +21,7 @@ namespace x360ce.App.Controls
 		private void OkButton_Click(object sender, EventArgs e)
 		{
 			SelectedDevices = ControllersPanel.GetSelected();
+			ControllersPanel.AddOffered(SelectedDevices);
 			DialogResult = DialogResult.OK;
 		}
 

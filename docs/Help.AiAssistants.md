@@ -75,7 +75,7 @@ An assistant on this computer reaches the door in one of two ways.
 ![An AI assistant on this computer starts x360ce.exe /Mcp from its MCP settings, or connects to the door's URL with the token](.attachments/x360ce-ai-direct.svg)
 
 1. **An assistant that runs commands**, such as Claude Code, Codex, GitHub Copilot or Cursor. Paste the assistant snippet from this tab into its MCP settings. The assistant then starts `x360ce.exe /Mcp`, which passes its calls to the running program. It needs no token.
-2. **An assistant that connects by URL.** Give it `http://localhost:37360/mcp/` with the header `Authorization: Bearer <token>`, where the token is the one on this tab.
+2. **An assistant that connects by URL.** Give it `http://localhost:37101/mcp/` with the header `Authorization: Bearer <token>`, where the token is the one on this tab. Which port reaches what: [Ports](Help.v4.md#ports).
 
 ChatGPT on the web runs on OpenAI's servers, not on your computer, so it needs a tunnel. [OpenAI Tunnel](#openai-tunnel) below shows how to open one.
 
@@ -92,7 +92,7 @@ The tunnel needs three things from the [OpenAI Platform](https://platform.openai
 | Box | Where to get it | Kept by x360ce |
 |---|---|---|
 | Organization ID | **Find** opens Settings, Organization, General. The ID starts with `org-`. | Yes. It is not a secret. |
-| Admin key | **Get key** opens Admin keys. Make a new admin key. | No. It is used only for Create and Delete. |
+| Admin key | **Get key** opens Admin keys. Make a new admin key. | No. It is used only to list, create and delete tunnels. |
 | API key | **Get key** opens API keys. Create a new secret key, choose **Restricted**, and allow **Tunnels: Read** and **Use**. | Yes, encrypted for your Windows account. |
 
 ![The OpenAI Tunnel tab: the organization ID, admin key, tunnel ID and API key, each with its button, then Open the tunnel and what to do in ChatGPT](.attachments/x360ce-v4-ai-tunnel.png)
@@ -100,7 +100,9 @@ The tunnel needs three things from the [OpenAI Platform](https://platform.openai
 Then:
 
 1. Switch on AI assistant access, as above.
-2. Paste the **Organization ID** and the **Admin key**, then press **Create**. The **Tunnel ID** appears. A tunnel you made on the OpenAI Platform works too: paste its ID instead of pressing Create.
+2. Paste the **Organization ID** and the **Admin key**, then press **Create**. The **Tunnel ID** appears. If x360ce made a tunnel for this computer before, Create uses that one again instead of making another, so a ChatGPT plugin made with it keeps working.
+
+   To use another tunnel, open the **Tunnel ID** list: with the admin key in its box, it shows the organization's tunnels, newest first, each with its description and the day it was made. Pick the one your ChatGPT plugin was made with. Only the admin key can list them; OpenAI lets no other key do it. You can also paste an ID, such as one made on the OpenAI Platform.
 3. Paste the **API key** and tick **Open the tunnel**. After about 30 seconds the line at the bottom of the tab says **Open**.
 4. In ChatGPT, go to **Plugins**. **Open ChatGPT** goes there. Press the plus button and choose **Add custom MCP server**.
    - **Connection**: **Tunnel**. Paste the tunnel ID, which **Copy tunnel ID** puts on the clipboard.
@@ -110,6 +112,8 @@ Then:
 
 x360ce opens the tunnel again each time it starts, as long as both boxes stay ticked. **Status page** opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. If ChatGPT says it gets no answer, look there first.
 
+If ChatGPT says the x360ce connection is unavailable while the tab says **Open**, the plugin was most likely made with another tunnel, and no call reaches this one. Pick the plugin's tunnel in the **Tunnel ID** list, or give the plugin the ID the tab shows.
+
 To shut ChatGPT out, untick **Open the tunnel**. **Delete...** removes the tunnel at OpenAI; it needs the admin key again.
 
 ## Where the keys are kept
@@ -117,7 +121,7 @@ To shut ChatGPT out, untick **Open the tunnel**. **Delete...** removes the tunne
 | What | Where | How it is protected |
 |---|---|---|
 | AI settings: on or off, level, address, port, the door's token, the tunnel ID, the organization ID and the API key | `C:\ProgramData\X360CE\Settings\x360ce.AI.xml`. **Show file** on the OpenAI Tunnel tab shows it. | The API key is encrypted with Windows DPAPI for your Windows account. Other accounts and other computers cannot read it. The door's token is not encrypted: every account on this computer can read it. |
-| Admin key | Nowhere | Used for **Create** or **Delete**, then forgotten. |
+| Admin key | Nowhere | Used to list the tunnels, **Create** or **Delete**, then forgotten. |
 | tunnel-client | `%LOCALAPPDATA%\X360CE\TunnelClient`, a folder for each release | Downloaded once from [github.com/openai/tunnel-client](https://github.com/openai/tunnel-client/releases). Used only when it matches the SHA-256 sum the release lists. |
 | Log | `C:\ProgramData\X360CE\x360ce.AiAccess.log`. **Open log** on the MCP Server - AI Assistant Access tab opens it. | Lists every call, but never the token. |
 

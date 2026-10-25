@@ -53,7 +53,6 @@ namespace x360ce.App.Controls
 			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.LayoutPanel.Name = "LayoutPanel";
-			this.LayoutPanel.Padding = new System.Windows.Forms.Padding(6);
 			this.LayoutPanel.RowCount = 4;
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());

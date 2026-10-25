@@ -19,7 +19,7 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// A controller read through DirectInput and through Raw Input is two rows, usually with the same name. The lists say
-	/// which source each row is read through and keep the two rows next to each other, the Direct Input tab shows a Raw
+	/// which source each row is read through and list and tint the rows by source, the Direct Input tab shows a Raw
 	/// Input row's values, the Force Feedback page says when no force feedback reaches it, and a row added to a tab where
 	/// its twin is mapped starts with the twin's settings.
 	/// </summary>
@@ -88,38 +88,38 @@ namespace x360ce.Tests
 			Assert.AreEqual("Raw Input", AppHelper.GetInputSourceName(rawPad));
 		}
 
-		[TestMethod, TestCategory("devices")]
-		[Description("The lists put each device's twin beside it, DirectInput first, and keep the order otherwise")]
-		public void Twins_are_listed_together()
+		/// <summary>The colour the row is painted in, read where no text is drawn.</summary>
+		static System.Drawing.Color RowColour(DataGridView grid, object item)
 		{
-			var diPad = DirectInputRow("Pad", PadPath);
-			var keyboard = DirectInputRow("Keyboard", null);
-			var rawWheel = RawInputRow("Wheel", WheelPath);
-			var rawPad = RawInputRow("Pad", PadPath);
-			var diWheel = DirectInputRow("Wheel", WheelPath);
-			var ordered = UserDevicesUserControl.TwinsTogether(new[] { diPad, keyboard, rawWheel, rawPad, diWheel });
-			CollectionAssert.AreEqual(new[] { diPad, rawPad, keyboard, diWheel, rawWheel }, ordered,
-				"Expected: " + string.Join(", ", ordered.Select(x => x.ProductName + " " + x.InputSource)));
+			var cell = grid.GetCellDisplayRectangle(grid.Columns["MySidColumn"].Index, RowOf(grid, item), false);
+			using (var picture = new System.Drawing.Bitmap(grid.Width, grid.Height))
+			{
+				grid.DrawToBitmap(picture, new System.Drawing.Rectangle(0, 0, grid.Width, grid.Height));
+				return picture.GetPixel(cell.Left + cell.Width / 2, cell.Top + 1);
+			}
 		}
 
-		/// <summary>Shows the device list, on the Devices page or as the list Add opens, with the twins apart in the program's list.</summary>
-		static void ShowsTwinsTogether(bool mapMode)
+		/// <summary>Shows the device list, on the Devices page or as the list Add opens, with the sources mixed in the program's list.</summary>
+		static void ShowsBySource(bool mapMode)
 		{
 			var diPad = DirectInputRow("Pad", PadPath);
-			var other = DirectInputRow("Other", null);
 			var rawPad = RawInputRow("Pad", PadPath);
+			var other = DirectInputRow("Other", null);
 			var diWheel = DirectInputRow("Wheel", WheelPath);
 			var rawWheel = RawInputRow("Wheel", WheelPath);
-			var devices = new[] { diPad, other, rawPad, diWheel, rawWheel };
+			var plugin = new UserDevice { InstanceGuid = Guid.NewGuid(), InstanceName = "Plugin", ProductName = "Plugin",
+				InputSourceType = (int)InputSourceType.Plugin, IsOnline = true };
+			var devices = new[] { plugin, diPad, rawPad, other, diWheel, rawWheel };
 			Ui.OnUiThread(() =>
 			{
+				SettingsManager.UserDevices.Items.Add(plugin);
 				SettingsManager.UserDevices.Items.Add(diPad);
-				SettingsManager.UserDevices.Items.Add(other);
 				SettingsManager.UserDevices.Items.Add(rawPad);
+				SettingsManager.UserDevices.Items.Add(other);
 				SettingsManager.UserDevices.Items.Add(diWheel);
 				try
 				{
-					using (var form = new Form())
+					using (var form = new Form { Width = 1200, Height = 600 })
 					using (var panel = new UserDevicesUserControl { MapDeviceToControllerMode = mapMode, Dock = DockStyle.Fill })
 					{
 						form.Controls.Add(panel);
@@ -130,16 +130,27 @@ namespace x360ce.Tests
 							"The Source column is not beside the Instance ID column.");
 						Assert.AreEqual("DirectInput", SourceShown(grid, diPad));
 						Assert.AreEqual("Raw Input", SourceShown(grid, rawPad));
-						Assert.AreEqual(RowOf(grid, diPad) + 1, RowOf(grid, rawPad), "The pad's two rows are not next to each other.");
-						Assert.AreEqual(RowOf(grid, rawPad) + 1, RowOf(grid, other), "The device between them in the program's list did not move down.");
-						// A Raw Input row found later goes beside its twin, not to the end.
+						Assert.AreEqual("Plugin", SourceShown(grid, plugin));
+						Assert.AreEqual(RowOf(grid, diPad) + 1, RowOf(grid, other), "The DirectInput rows are not together, in the order they were found.");
+						Assert.AreEqual(RowOf(grid, other) + 1, RowOf(grid, diWheel), "The DirectInput rows are not together, in the order they were found.");
+						Assert.AreEqual(RowOf(grid, diWheel) + 1, RowOf(grid, rawPad), "The Raw Input rows do not follow the DirectInput ones.");
+						Assert.IsTrue(RowOf(grid, plugin) > RowOf(grid, rawPad), "The plugin device is not after the Raw Input rows.");
+						// A Raw Input row found later goes with the other Raw Input rows, not to the end.
 						SettingsManager.UserDevices.Items.Add(rawWheel);
 						Application.DoEvents();
-						Assert.AreEqual(RowOf(grid, diWheel) + 1, RowOf(grid, rawWheel), "A Raw Input row found later is not beside its twin.");
-						Assert.AreEqual("Raw Input", SourceShown(grid, rawWheel));
+						Assert.AreEqual(RowOf(grid, rawPad) + 1, RowOf(grid, rawWheel), "A Raw Input row found later is not with the other Raw Input rows.");
+						Assert.IsTrue(RowOf(grid, plugin) > RowOf(grid, rawWheel), "A Raw Input row found later went after the plugin device.");
+						// Each source has its own tint.
+						grid.ClearSelection();
+						var sources = new[] { diPad, rawPad, plugin };
+						foreach (var row in sources)
+							Assert.AreEqual(AppHelper.GetInputSourceTint(row).ToArgb(), RowColour(grid, row).ToArgb(),
+								"The " + row.InputSource + " row is not painted in its source's tint.");
+						Assert.AreEqual(3, sources.Select(x => AppHelper.GetInputSourceTint(x).ToArgb()).Distinct().Count(), "Two sources share a tint.");
+						Assert.AreEqual(RowColour(grid, diPad), RowColour(grid, diWheel), "Two DirectInput rows have different tints.");
 						// The program's own list keeps the order the devices were found in, which is the order they are saved in.
 						var kept = SettingsManager.UserDevices.Items.Where(x => devices.Contains(x)).ToArray();
-						CollectionAssert.AreEqual(new[] { diPad, other, rawPad, diWheel, rawWheel }, kept, "The program's list was reordered.");
+						CollectionAssert.AreEqual(new[] { plugin, diPad, rawPad, other, diWheel, rawWheel }, kept, "The program's list was reordered.");
 					}
 				}
 				finally
@@ -151,17 +162,17 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("ui")]
-		[Description("The Devices page names each row's source and lists a controller's two rows together")]
-		public void Devices_page_shows_the_source_and_twins_together()
+		[Description("The Devices page names each row's source, lists DirectInput rows, then Raw Input, then plugin devices, and tints each source")]
+		public void Devices_page_lists_and_tints_the_rows_by_source()
 		{
-			ShowsTwinsTogether(false);
+			ShowsBySource(false);
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("ui")]
-		[Description("The list Add opens names each row's source and lists a controller's two rows together")]
-		public void Add_list_shows_the_source_and_twins_together()
+		[Description("The list Add opens names each row's source, lists DirectInput rows, then Raw Input, then plugin devices, and tints each source")]
+		public void Add_list_lists_and_tints_the_rows_by_source()
 		{
-			ShowsTwinsTogether(true);
+			ShowsBySource(true);
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("devices")]
@@ -229,11 +240,11 @@ namespace x360ce.Tests
 					var axis = Table(tab, "DiAxisTable");
 					var sliders = Table(tab, "DiSlidersTable");
 					var povs = Table(tab, "DiPovsTable");
-					var buttons = Table(tab, "DiButtonsTable");
+					var buttons = tab.Controls.Find("DiButtonsTextBox", true).Single();
 					Assert.AreEqual(1234, axis.Rows[0][1], "Axis X.");
 					Assert.AreEqual(55, sliders.Rows[0][1], "Slider 0.");
 					Assert.AreEqual(9000, povs.Rows[0][1], "POV 0.");
-					Assert.AreEqual("03", buttons.Rows[0][0], "Buttons.");
+					Assert.AreEqual("03", buttons.Text, "Buttons.");
 					// A DirectInput row whose read failed has no DirectInput state, and shows none; its last engine state is not a reading.
 					var di = DirectInputRow("Wheel", WheelPath);
 					di.SourceState = raw.SourceState;

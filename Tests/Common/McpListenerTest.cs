@@ -21,22 +21,22 @@ namespace x360ce.Tests
 		public void Token_gates_and_level_is_live()
 		{
 			McpServerTest.UseSample(AiAccess.Read);
-			Assert.IsFalse(McpListener.Start(AiOptions.LoopbackAddress, 80, "secret"), "A port outside the range must be refused, not tried.");
-			StringAssert.Contains(McpListener.LastError, "1024");
+			Assert.IsFalse(McpListener.Program.Start(AiOptions.LoopbackAddress, 80, "secret"), "A port outside the range must be refused, not tried.");
+			StringAssert.Contains(McpListener.Program.LastError, "1024");
 			// Every network needs a reservation Windows only grants to an Administrator; without one the
 			// door stays shut and the reason names the Fix. With one, it opens, and that is fine too.
-			if (!McpListener.Start(AiOptions.AnyAddress, Port, "secret"))
+			if (!McpListener.Program.Start(AiOptions.AnyAddress, Port, "secret"))
 			{
-				Assert.IsTrue(McpListener.NeedsUrlReservation, McpListener.LastError);
-				StringAssert.Contains(McpListener.LastError, "Press Fix on the Issues tab");
-				StringAssert.Contains(McpListener.LastError, "netsh http add urlacl");
+				Assert.IsTrue(McpListener.Program.NeedsUrlReservation, McpListener.Program.LastError);
+				StringAssert.Contains(McpListener.Program.LastError, "Press Fix on the Issues tab");
+				StringAssert.Contains(McpListener.Program.LastError, "netsh http add urlacl");
 			}
 			// The command the sentence gives is the one the Fix runs elevated: for every user, not only this one.
 			var remedy = McpListener.UrlReservationRemedy(McpListener.Prefix(AiOptions.AnyAddress, Port));
 			StringAssert.Contains(remedy, "Press Fix on the Issues tab");
 			StringAssert.Contains(remedy, "netsh http add urlacl url=http://+:" + Port + "/mcp/ sddl=D:(A;;GX;;;WD)");
-			Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.LastError);
-			Assert.IsFalse(McpListener.NeedsUrlReservation);
+			Assert.IsTrue(McpListener.Program.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.Program.LastError);
+			Assert.IsFalse(McpListener.Program.NeedsUrlReservation);
 			try
 			{
 				var refused = Assert.ThrowsExactly<McpHttpException>(() => McpClient.Post(Port, "wrong", List));
@@ -58,9 +58,9 @@ namespace x360ce.Tests
 			}
 			finally
 			{
-				McpListener.Stop();
+				McpListener.Program.Stop();
 			}
-			Assert.IsFalse(McpListener.IsRunning);
+			Assert.IsFalse(McpListener.Program.IsRunning);
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical"), Timeout(30000)]
@@ -72,22 +72,22 @@ namespace x360ce.Tests
 			{
 				// Every network needs the token whatever the setting says. Opening it needs a reservation Windows only
 				// grants to an Administrator; where it opens, a call without the token is refused.
-				if (McpListener.Start(AiOptions.AnyAddress, Port, "secret", true))
+				if (McpListener.Program.Start(AiOptions.AnyAddress, Port, "secret", true))
 					Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, null), "The door on every network let a call in without the token.");
-				Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret", true), McpListener.LastError);
+				Assert.IsTrue(McpListener.Program.Start(AiOptions.LoopbackAddress, Port, "secret", true), McpListener.Program.LastError);
 				Assert.AreEqual(HttpStatusCode.OK, Post(null, null), "A call from this computer without a token was refused while local connections are trusted.");
 				Assert.AreEqual(HttpStatusCode.OK, Post("secret", null), "The token stopped working.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post("wrong", null), "A wrong token was let in because local connections are trusted.");
 				Assert.AreEqual(HttpStatusCode.Forbidden, Post(null, "http://example.com"), "A page from another site reached the door without a token.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, "http://localhost:3000"), "A page served from this computer ran a tool without the token.");
 				Assert.AreEqual(HttpStatusCode.OK, Post("secret", "http://localhost:3000"), "A page on this computer with the token was refused.");
-				Assert.IsTrue(McpListener.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.LastError);
+				Assert.IsTrue(McpListener.Program.Start(AiOptions.LoopbackAddress, Port, "secret"), McpListener.Program.LastError);
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post(null, null), "A call without a token was let in with local connections not trusted.");
 				Assert.AreEqual(HttpStatusCode.Unauthorized, Post("wrong", null));
 			}
 			finally
 			{
-				McpListener.Stop();
+				McpListener.Program.Stop();
 			}
 		}
 

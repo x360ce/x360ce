@@ -58,7 +58,6 @@
 			//
 			// DeadZoneTrackBar
 			//
-			this.DeadZoneTrackBar.AutoSize = false;
 			this.DeadZoneTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DeadZoneTrackBar.LargeChange = 10;
 			this.DeadZoneTrackBar.Location = new System.Drawing.Point(217, 0);
@@ -114,7 +113,7 @@
 			this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
 			this.DeadZoneTextBox.TabIndex = 19;
 			this.DeadZoneTextBox.TabStop = false;
-			this.DeadZoneTextBox.Text = "0 % ";
+			this.DeadZoneTextBox.Text = "0 %";
 			this.DeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			//
 			// ArrowPictureBox

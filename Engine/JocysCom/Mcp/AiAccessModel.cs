@@ -46,7 +46,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessTrustLocalCheckBox", "AiAccessPortTextBox",
 			"AiAccessRegenerateButton", "AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton",
-			"AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelIdTextBox", "AiTunnelCreateButton",
+			"AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox", "AiTunnelIdComboBox", "AiTunnelCreateButton",
 			"AiTunnelDeleteButton", "AiTunnelApiKeyTextBox",
 		};
 
@@ -133,6 +133,12 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>The program's settings, or null before <see cref="Bind"/>.</summary>
 		public IAiAccessSettings Settings { get; private set; }
 
+		/// <summary>The settings of a door other than the program's own, or null when the page shows the program's.</summary>
+		public IAiDoorSettings Door { get { return Settings as IAiDoorSettings; } }
+
+		/// <summary>The door the page shows the state of.</summary>
+		McpListener Listener { get { return Door == null ? McpListener.Program : Door.Listener; } }
+
 		/// <summary>Whether AI assistant access is ticked.</summary>
 		public bool Enabled { get { return Settings != null && Settings.Enabled; } }
 
@@ -151,8 +157,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>False on every network, where the token is always needed, so the check box is greyed out.</summary>
 		public bool TrustLocalAllowed { get { return Address != McpListener.AnyAddress; } }
 
-		/// <summary>The port, as the port box shows it.</summary>
-		public string Port { get { return Settings == null ? "" : Settings.Port.ToString(CultureInfo.InvariantCulture); } }
+		/// <summary>The port, as the port box shows it; empty while the door has none, as a device that is on no controller.</summary>
+		public string Port { get { return Settings == null || Settings.Port == 0 ? "" : Settings.Port.ToString(CultureInfo.InvariantCulture); } }
 
 		/// <summary>
 		/// The address an agent that connects over HTTP is given. http.sys routes by the Host header: the loopback door
@@ -162,7 +168,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			get
 			{
-				if (Settings == null)
+				if (Settings == null || Settings.Port == 0)
 					return "";
 				return Address == McpListener.AnyAddress
 					? "http://" + Environment.MachineName.ToLowerInvariant() + ":" + Port + "/mcp/"
@@ -334,6 +340,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// </summary>
 		public string Prompt()
 		{
+			if (Door != null)
+				return Door.Prompt(Url, McpListener.TrustsLocal(Settings.Address, Settings.TrustLocal) ? null : "Authorization: Bearer " + Token);
 			var sb = new StringBuilder();
 			sb.AppendLine(PromptRequest);
 			sb.AppendLine();
@@ -368,8 +376,8 @@ namespace JocysCom.ClassLibrary.Mcp
 		void ShowDoor()
 		{
 			var level = Level;
-			Status = !Settings.Enabled ? "Off. Nothing can reach " + Subject + "."
-				: !McpListener.IsRunning ? "Not open: " + McpListener.LastError
+			Status = !Settings.Enabled ? "Off. Nothing can reach " + (Door == null ? Subject : Door.Subject) + "."
+				: !Listener.IsRunning ? "Not open: " + Listener.LastError
 				: Address == McpListener.AnyAddress ? "On, at the " + level + " level, on every network: calls and the token travel unencrypted."
 				: TrustLocal ? "On, at the " + level + " level. Programs on this computer need no token."
 				: "On, at the " + level + " level.";

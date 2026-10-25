@@ -522,14 +522,6 @@ namespace x360ce.Engine
 			catch { }
 		}
 
-		/// <summary>Enable double buffering to make redraw faster.</summary>
-		public static void EnableDoubleBuffering(DataGridView grid)
-		{
-			typeof(DataGridView).InvokeMember("DoubleBuffered",
-			BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
-			null, grid, new object[] { true });
-		}
-
 		/// <summary>Holds a status item at the width of its longest reading.</summary>
 		/// <remarks>
 		/// A rate climbing from one digit to four widens its label, and every item after it slides

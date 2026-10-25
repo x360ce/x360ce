@@ -151,6 +151,7 @@
     <Compile Include="Input\Processors\RawInputHubDevice.cs" />
     <Compile Include="Input\Processors\RawInputReader.cs" />
     <Compile Include="Input\Processors\TripleBuffer.cs" />
+    <Compile Include="Input\Script\ScriptChannel.cs" />
     <Compile Include="Input\States\SourceState.cs" />
     <Compile Include="Common\InputSourceType.cs" />
     <Compile Include="Common\DatabaseHelper.cs" />
@@ -204,7 +205,6 @@
     <Compile Include="Data\IUserRecord.cs" />
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
-    <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
     <Compile Include="UiTree\UiGameFlags.cs" />
@@ -423,6 +423,7 @@
     <Compile Include="JocysCom\Security\SecurityHelper.cs" />
     <Compile Include="JocysCom\Security\SHA256Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
+    <Compile Include="JocysCom\Security\TokenHelper.Secret.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.Web.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />
@@ -517,8 +518,6 @@
     <Compile Include="JocysCom\Win32\WinNT.cs" />
     <Compile Include="JocysCom\Windows\UacHelper.cs" />
     <Compile Include="Maps\Map.cs" />
-    <Compile Include="Maps\MapEventType.cs" />
-    <Compile Include="Maps\MapRpmType.cs" />
     <Compile Include="Maps\TargetType.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />

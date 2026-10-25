@@ -121,8 +121,8 @@ namespace x360ce.App.UiTree
 				"The vibration effects the device says it can produce.");
 			d["DirectInputUserControl.DiAxisDataGridView"] = new Text(null,
 				"What each axis reads right now. Move a control to see which line changes.");
-			d["DirectInputUserControl.DiButtonsDataGridView"] = new Text(null,
-				"Which buttons are pressed right now.");
+			d["DirectInputUserControl.DiButtonsTextBox"] = new Text("Buttons pressed",
+				"Which buttons are pressed right now, by the numbers the mapping boxes use.");
 			d["DirectInputUserControl.DiSlidersDataGridView"] = new Text(null,
 				"What each slider reads right now.");
 			d["DirectInputUserControl.DiPovsDataGridView"] = new Text(null,

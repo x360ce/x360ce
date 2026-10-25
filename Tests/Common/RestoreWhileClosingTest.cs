@@ -64,5 +64,47 @@ namespace x360ce.Tests
 				.ToList();
 			Assert.AreEqual(0, reports.Count, "Closing left a fault report: " + string.Join(", ", reports));
 		}
+
+		/// <remarks>
+		/// Taking the window off the task bar by changing ShowInTaskbar makes Windows Forms build the window
+		/// and every control on it again, at each minimise and at each restore. Four reports against
+		/// 4.26.38.0 failed inside that rebuild: three in a list reading its rows afresh (738017, 737939,
+		/// 737839) and one that ran out of window handles while making them (737772).
+		/// </remarks>
+		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]
+		[Description("Minimising to the tray and back keeps the window, rather than building it and every control on it again")]
+		public void Minimising_to_the_tray_keeps_the_window()
+		{
+			var exe = Ui.FindApp("App.v4");
+			if (exe == null)
+				Assert.Inconclusive("App.v4 is not built. Build the solution before running UI tests.");
+			if (Process.GetProcessesByName("x360ce").Length > 0)
+				Assert.Inconclusive("x360ce is running; this test starts a copy of its own.");
+			// A new profile: Minimize to Tray is on by default, and nothing of the person's is touched.
+			var profile = Path.Combine(Path.GetTempPath(), "x360ce-tray-" + Guid.NewGuid().ToString("N"));
+			try
+			{
+				_process = Process.Start(new ProcessStartInfo(exe, "\"/Profile=" + profile + "\"") { WorkingDirectory = Path.GetDirectoryName(exe), UseShellExecute = false });
+				Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
+				_process.Refresh();
+				var window = _process.MainWindowHandle;
+				Ui.Minimize(_process);
+				Ui.WaitFor(() =>
+				{
+					_process.Refresh();
+					return _process.MainWindowHandle == IntPtr.Zero ? "in the tray" : null;
+				}, TimeSpan.FromSeconds(15), "the window to go to the tray");
+				Ui.Restore(_process);
+				_process.Refresh();
+				Assert.AreEqual(window, _process.MainWindowHandle, "The window came back from the tray as a new window, built again.");
+			}
+			finally
+			{
+				Ui.CloseApp(_process);
+				_process = null;
+				if (Directory.Exists(profile))
+					Directory.Delete(profile, true);
+			}
+		}
 	}
 }

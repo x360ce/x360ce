@@ -1,6 +1,7 @@
 #nullable disable
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Mcp
@@ -94,6 +95,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				ShowRow(Model.Agents, AiSkillAgentsFolderTextBox, AiSkillAgentsStatusText, AiSkillAgentsButton);
 				AiSkillZipNoteText.Text = Model.ZipNote;
 				ShowTunnel();
+				ShowDoorOnly();
 			}
 			finally
 			{
@@ -117,7 +119,8 @@ namespace JocysCom.ClassLibrary.Mcp
 				AiTabControl.TabPages.Add(AiTunnelTabPage);
 			AiTunnelNoteText.Text = AiAccessModel.TunnelNote;
 			ShowText(AiTunnelOrganizationTextBox, Model.TunnelOrganization);
-			ShowText(AiTunnelIdTextBox, Model.TunnelId);
+			ShowChoices(AiTunnelIdComboBox, Model.TunnelChoices);
+			ShowText(AiTunnelIdComboBox, Model.TunnelId);
 			ShowText(AiTunnelApiKeyTextBox, Model.TunnelApiKey);
 			AiTunnelCreateButton.Enabled = !Model.TunnelBusy;
 			AiTunnelDeleteButton.Enabled = Model.TunnelDeleteAllowed;
@@ -130,10 +133,41 @@ namespace JocysCom.ClassLibrary.Mcp
 			AiTunnelStatusText.Text = Model.TunnelStatus;
 		}
 
+		/// <summary>
+		/// For a door other than the program's own, shows its rows alone, on the control itself, which the page holding it
+		/// names: the header, the skill and the snippet are about the program, the tunnel leads to the program's door, and
+		/// the command line the snippet starts reaches only the program's door.
+		/// </summary>
+		void ShowDoorOnly()
+		{
+			if (Model.Door == null || AiAccessPanel.Parent == this)
+				return;
+			AiPanel.Visible = false;
+			AiAccessSnippetLabel.Visible = false;
+			AiAccessSnippetTextBox.Visible = false;
+			AiAccessCopyButton.Visible = false;
+			Padding = AiAccessTabPage.Padding;
+			AutoScroll = true;
+			Controls.Add(AiAccessPanel);
+		}
+
 		/// <summary>Shows a value in a box the person can type in, unless they are typing in it: the tunnel's state changes on its own while they do.</summary>
-		static void ShowText(TextBox box, string text)
+		static void ShowText(Control box, string text)
 		{
 			if (!box.Focused)
+				box.Text = text;
+		}
+
+		/// <summary>Lists the organization's tunnels under the Tunnel ID box when the list changed, keeping what the box shows.</summary>
+		static void ShowChoices(ComboBox box, McpTunnel.Info[] choices)
+		{
+			var lines = choices.Select(x => x.ToString()).ToArray();
+			if (box.Items.Cast<string>().SequenceEqual(lines))
+				return;
+			var text = box.Text;
+			box.Items.Clear();
+			box.Items.AddRange(lines);
+			if (box.Text != text)
 				box.Text = text;
 		}
 
@@ -160,15 +194,28 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>The example's caption bold, and the token and the snippet in a fixed-width font, all from the page's own font.</summary>
 		void SetFonts()
 		{
-			var bold = new Font(Font, FontStyle.Bold);
-			var code = new Font("Consolas", Font.SizeInPoints);
+			// A control given a font equal to its own keeps its own, so a font equal to the one in use is kept.
+			var bold = Keep(new Font(Font, FontStyle.Bold), _bold);
+			var code = Keep(new Font("Consolas", Font.SizeInPoints), _code);
 			AiExampleLabel.Font = bold;
 			AiAccessTokenTextBox.Font = code;
 			AiAccessSnippetTextBox.Font = code;
-			AiTunnelIdTextBox.Font = code;
-			DisposeFonts();
+			AiTunnelIdComboBox.Font = code;
+			if (_bold != bold)
+				_bold?.Dispose();
+			if (_code != code)
+				_code?.Dispose();
 			_bold = bold;
 			_code = code;
+		}
+
+		/// <summary>The font in use when the new one equals it, the new one otherwise.</summary>
+		static Font Keep(Font font, Font used)
+		{
+			if (!font.Equals(used))
+				return font;
+			font.Dispose();
+			return used;
 		}
 
 		void DisposeFonts()
@@ -273,7 +320,17 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		void AiTunnelOrganizationTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelOrganization(AiTunnelOrganizationTextBox.Text); }
 
-		void AiTunnelIdTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelId(AiTunnelIdTextBox.Text); }
+		void AiTunnelIdComboBox_Validated(object sender, EventArgs e) { Model.SetTunnelId(AiTunnelIdComboBox.Text); }
+
+		/// <summary>Opening the list asks OpenAI for the organization's tunnels, with the admin key in its box.</summary>
+		void AiTunnelIdComboBox_DropDown(object sender, EventArgs e) { Model.ListTunnels(AiTunnelAdminKeyTextBox.Text.Trim()); }
+
+		void AiTunnelIdComboBox_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			Model.PickTunnel(AiTunnelIdComboBox.SelectedIndex);
+			// The box shows the picked line until the list has closed; then it holds the ID alone, as a typed one is.
+			BeginInvoke((Action)(() => AiTunnelIdComboBox.Text = Model.TunnelId));
+		}
 
 		void AiTunnelApiKeyTextBox_Validated(object sender, EventArgs e) { Model.SetTunnelApiKey(AiTunnelApiKeyTextBox.Text); }
 

@@ -36,8 +36,8 @@ namespace x360ce.App.Controls
 			AdvancedOptionsPanel.Enabled = false;
 			DeviceGroupBox.Text = "Device - x360ce 3 only";
 			CombineGroupBox.Text = "Combining - x360ce 3 only";
-			AxisToDPadGroupBox.Enabled = false;
-			AxisToDPadGroupBox.Text = "Axis To D-Pad - x360ce 3 only";
+			AxisToDPadEnabledCheckBox.CheckedChanged += (s, e) => AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
+			AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
@@ -46,8 +46,6 @@ namespace x360ce.App.Controls
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// These three stay pressed to say that something is on, rather than doing something and
 			// springing back. A bar cannot tell the two apart on its own, so it is said here: a screen
 			// reader then announces the state, and the interface tree offers them to be set.
@@ -58,6 +56,11 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
+			// The icon columns show a short heading or none, as on the Devices page. A screen reader still hears the full name,
+			// and the mouse finds it on the heading.
+			IconColumnHeaderCell.Apply(IsOnlineColumn, "Online");
+			IconColumnHeaderCell.Apply(ConnectionClassColumn, "Connection");
+			UpdateScriptColumn();
 			// Axis to Button DeadZones
 			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
 			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
@@ -79,10 +82,24 @@ namespace x360ce.App.Controls
 			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
-
+			// A page comes up to date as it is shown, once the engine has states to show, rather than at the next update.
+			VisibleChanged += (sender, e) =>
+			{
+				if (Visible && Global.DHelper?.PassCount > 0)
+					Global_UpdateControlFromStates(this, EventArgs.Empty);
+			};
 		}
+
+		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
+		const int HiddenUpdateEvery = 10;
+		int _HiddenUpdates;
+
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
+			// Nobody sees a page that is not shown, so it keeps up at a tenth of the rate: what reads it without showing it,
+			// an AI assistant among them, still gets values a second old at most.
+			if (!Visible && ++_HiddenUpdates % HiddenUpdateEvery != 0)
+				return;
 			UpdateControlFromDInput();
 			UpdateControlFromXInput();
 			UpdateSpringNote();
@@ -237,6 +254,15 @@ namespace x360ce.App.Controls
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				DrawMappedPoint(RightTriggerUserControl, map, axis, newState.Gamepad.RightTrigger);
+				// Axis to D-Pad reads the device's X and Y axes.
+				if (axis.Length >= 2)
+					AxisToDPadChart.SetReading(axis[0], axis[1]);
+				else
+					AxisToDPadChart.ClearReading();
+			}
+			else
+			{
+				AxisToDPadChart.ClearReading();
 			}
 			// Update Axis to Button Images.
 			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
@@ -333,6 +359,8 @@ namespace x360ce.App.Controls
 			// If control is not specified then return.
 			if (e.Item.Control == null)
 				return;
+			if (e.Item.Control == ForceSpringEnableCheckBox || e.Item.Control == WheelRangeComboBox)
+				KeepRangeForSpring();
 			// By default send vibration if force enabled/disabled changed.
 			var send = e.Item.Control == ForceEnableCheckBox;
 			// If force is enabled then...
@@ -376,6 +404,58 @@ namespace x360ce.App.Controls
 				{
 					UpdateGetXInputStatesWithNoEvents();
 				}
+				else if (e.PropertyDescriptor.Name == nameof(Options.AllowAutoHotkeyScripts))
+				{
+					UpdateScriptColumn();
+				}
+			}
+		}
+
+		/// <summary>Shows the AHK column while AutoHotkey scripts are allowed, the only time a script can use the names in it.</summary>
+		void UpdateScriptColumn()
+		{
+			ScriptNameColumn.Visible = SettingsManager.Options.AllowAutoHotkeyScripts;
+		}
+
+		/// <summary>A column heading that shows a short word or none, over a column of icons, and still names the column.</summary>
+		/// <remarks>
+		/// A grid gives a screen reader the heading's text as the column's name, so a blank heading left the column, and every
+		/// cell under it, without one. This heading gives the full name instead, and shows it as the heading's tooltip.
+		/// </remarks>
+		sealed class IconColumnHeaderCell : DataGridViewColumnHeaderCell
+		{
+			/// <summary>The column's name as a screen reader says it.</summary>
+			public string FullName { get; set; }
+
+			/// <summary>Gives the column this heading, keeping the text the designer gave it.</summary>
+			public static void Apply(DataGridViewColumn column, string fullName)
+			{
+				var text = column.HeaderText;
+				column.HeaderCell = new IconColumnHeaderCell { FullName = fullName };
+				column.HeaderText = text;
+				column.ToolTipText = fullName;
+			}
+
+			public override object Clone()
+			{
+				var clone = (IconColumnHeaderCell)base.Clone();
+				clone.FullName = FullName;
+				return clone;
+			}
+
+			protected override AccessibleObject CreateAccessibilityInstance()
+			{
+				return new NamedAccessibleObject(this);
+			}
+
+			sealed class NamedAccessibleObject : DataGridViewColumnHeaderCellAccessibleObject
+			{
+				public NamedAccessibleObject(IconColumnHeaderCell owner) : base(owner) { }
+
+				public override string Name
+				{
+					get { return ((IconColumnHeaderCell)Owner).FullName; }
+				}
 			}
 		}
 
@@ -405,6 +485,9 @@ namespace x360ce.App.Controls
 
 		public void InitPadData()
 		{
+			// The main window builds its pages before it reads the settings and chooses the game, and a change of game
+			// reaches a page only once it is given its settings, so the page takes the game's switches here.
+			UpdateFromCurrentGame();
 			// WORKAROUND: Remove SelectionChanged event.
 			MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
 			MappedDevicesDataGridView.DataSource = mappedItems;
@@ -465,9 +548,10 @@ namespace x360ce.App.Controls
 			ForcePassThroughIndexComboBox.ValueMember = "Value";
 			// The ranges a Logitech wheel takes, named by the cars each one suits. The wheel powers
 			// up at 200 and stays there until told otherwise, which is what the first choice leaves.
+			// The centering spring needs a range, so the first choice is for a wheel without it.
 			WheelRangeComboBox.DisplayMember = "Key";
 			WheelRangeComboBox.ValueMember = "Value";
-			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is", "0"));
+			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is (spring off)", "0"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("540° - GT and WRC cars", "540"));
@@ -502,7 +586,6 @@ namespace x360ce.App.Controls
 			_MappingBoxes = comboBoxes.ToArray();
 			if (_MappingBoxes.Length > 0)
 				_MappingBoxColor = _MappingBoxes[0].BackColor;
-			UpdateFromCurrentGame();
 		}
 
 		/// <summary>The mapping box a clicked chip goes into: the one last focused on the General tab.</summary>
@@ -591,6 +674,9 @@ namespace x360ce.App.Controls
 
 		SortableBindingList<Engine.Data.UserSetting> mappedItems = new SortableBindingList<Engine.Data.UserSetting>();
 
+		/// <summary>Each row's device number on its controller, which the AHK column shows.</summary>
+		Dictionary<Engine.Data.UserSetting, int> _deviceNumbers = new Dictionary<Engine.Data.UserSetting, int>();
+
 		/// <summary>True while the rows are being rebuilt.</summary>
 		bool _RowsUpdating;
 
@@ -639,8 +725,11 @@ namespace x360ce.App.Controls
 		{
 			var grid = MappedDevicesDataGridView;
 			var game = SettingsManager.CurrentGame;
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+			// The number a script names each device by, counted as the engine counts it.
+			_deviceNumbers = DInput.DeviceRouting.GetDeviceNumbers(game, settings);
 			// Get rows which must be displayed on the list.
-			var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
+			var itemsToShow = settings
 				// Filter devices by controller.
 				.Where(x => x.MapTo == (int)MappedTo)
 				// Filter devices by selected game (no items will be shown if game is not selected).
@@ -1190,17 +1279,35 @@ namespace x360ce.App.Controls
 			CreateItems(smi, text, tag, count, mask);
 		}
 
-		/// <summary>Create menu item.</summary>
+		/// <summary>The most items one list of the mapping menu shows before they are grouped by tens.</summary>
+		public const int MaxMenuItems = 20;
+
+		/// <summary>
+		/// Create menu items. More than <see cref="MaxMenuItems"/> are grouped by tens: "Button x" holds Buttons 1 to 9,
+		/// "Button 1x" Buttons 10 to 19, and so on, so a device with 128 buttons does not fill the screen.
+		/// </summary>
 		/// <param name="mask">Mask contains information if item is present.</param>
 		void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
 		{
+			var items = new List<KeyValuePair<int, ToolStripMenuItem>>();
 			for (int i = 0; i < count; i++)
 			{
 				// If mask specified and item is not present then...
 				if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
 					continue;
-				var item = CreateItem(text, tag, i + 1);
-				parent.DropDownItems.Add(item);
+				items.Add(new KeyValuePair<int, ToolStripMenuItem>(i + 1, CreateItem(text, tag, i + 1)));
+			}
+			if (items.Count <= MaxMenuItems)
+			{
+				foreach (var item in items)
+					parent.DropDownItems.Add(item.Value);
+				return;
+			}
+			foreach (var tens in items.GroupBy(x => x.Key / 10))
+			{
+				var group = new ToolStripMenuItem(string.Format(text, (tens.Key == 0 ? "" : tens.Key.ToString()) + "x"));
+				group.DropDownItems.AddRange(tens.Select(x => (ToolStripItem)x.Value).ToArray());
+				parent.DropDownItems.Add(group);
 			}
 		}
 
@@ -1335,13 +1442,13 @@ namespace x360ce.App.Controls
 		void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
+			ForceOverallTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		void ForceSpringStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			ForceSpringStrengthTextBox.Text = string.Format("{0} %", control.Value);
 			UpdateSpringChart();
 		}
 
@@ -1350,8 +1457,8 @@ namespace x360ce.App.Controls
 		{
 			ForceSpringCentreTextBox.Text = string.Format("{0}° ", ForceSpringCentreTrackBar.Value);
 			ForceSpringPeakTextBox.Text = ForceSpringPeakTrackBar.Value == 0 ? "Stop " : string.Format("{0}° ", ForceSpringPeakTrackBar.Value);
-			ForceSpringLighteningTextBox.Text = string.Format("{0} % ", ForceSpringLighteningTrackBar.Value);
-			ForceSpringDampingTextBox.Text = string.Format("{0} % ", ForceSpringDampingTrackBar.Value);
+			ForceSpringLighteningTextBox.Text = string.Format("{0} %", ForceSpringLighteningTrackBar.Value);
+			ForceSpringDampingTextBox.Text = string.Format("{0} %", ForceSpringDampingTrackBar.Value);
 			ForceSpringSpeedTextBox.Text = string.Format("{0} km/h ", ForceSpringSpeedTrackBar.Value);
 			ShowSpringCar();
 			UpdateSpringChart();
@@ -1362,6 +1469,24 @@ namespace x360ce.App.Controls
 			UpdateSpringChart();
 		}
 
+		/// <summary>Picks the cars' range when the centering spring is ticked with the range left as it is.</summary>
+		/// <remarks>
+		/// The spring's degrees are counted against the range, and no wheel says what range it turns, so the spring needs
+		/// one chosen: a wheel that takes it is sent it, and any other is counted against it. Left as it is, a Logitech
+		/// wheel turns the 200 degrees it powers up at, and a spring counted against 900 swung it at its centre.
+		/// </remarks>
+		void KeepRangeForSpring()
+		{
+			if (!ForceSpringEnableCheckBox.Checked || SelectedWheelRange() != 0)
+				return;
+			for (var r = 0; r < WheelRangeComboBox.Items.Count; r++)
+			{
+				var item = WheelRangeComboBox.Items[r] as KeyValuePair;
+				if (item != null && item.Value == RoadCarRange.ToString())
+					WheelRangeComboBox.SelectedIndex = r;
+			}
+		}
+
 		/// <summary>Shows the friction beside its slider, and keeps it with the wheel.</summary>
 		/// <remarks>
 		/// Kept with the device whose motors the engine drives, a Raw Input device's DirectInput twin, so it holds for
@@ -1369,7 +1494,7 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		void ForceSpringFrictionTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			ForceSpringFrictionTextBox.Text = string.Format("{0} % ", ForceSpringFrictionTrackBar.Value);
+			ForceSpringFrictionTextBox.Text = string.Format("{0} %", ForceSpringFrictionTrackBar.Value);
 			if (_showingFriction)
 				return;
 			var ud = GetSelectedDevice();
@@ -1513,11 +1638,13 @@ namespace x360ce.App.Controls
 			return item != null && int.TryParse(item.Value, out range) ? range : 0;
 		}
 
-		/// <summary>Gives the chart the curve the page's settings make. The chart draws it again only when it changed.</summary>
+		/// <summary>Gives the chart the curve the page's settings make, counted against the range the engine counts it against on the tab's wheel. The chart draws it again only when it changed.</summary>
 		void UpdateSpringChart()
 		{
+			var ud = GetSelectedDevice();
+			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
 			WheelChartUserControl.SetCurve(ForceSpringStrengthTrackBar.Value, ForceSpringCentreTrackBar.Value, ForceSpringPeakTrackBar.Value,
-				ForceSpringLighteningTrackBar.Value, SelectedWheelRange(), ForceSpringSpeedTrackBar.Value);
+				ForceSpringLighteningTrackBar.Value, ForceFeedbackState.SpringRange(SelectedWheelRange(), driven), ForceSpringSpeedTrackBar.Value);
 		}
 
 		/// <summary>Puts the wheel's angle, the live speed and the friction Auto measured on the chart, while the Wheel tab is shown.</summary>
@@ -1529,6 +1656,8 @@ namespace x360ce.App.Controls
 		{
 			if (PadTabControl.SelectedTab != WheelTabPage)
 				return;
+			// The wheel the range is counted for can change with the selection or arrive after the page was drawn.
+			UpdateSpringChart();
 			var ud = GetSelectedDevice();
 			var driven = ud == null ? null : DInput.DeviceRouting.Current.ForceDevice(ud);
 			// The friction is the wheel's, so the slider shows the wheel's, and the default greyed without one.
@@ -1586,7 +1715,7 @@ namespace x360ce.App.Controls
 			ForceSpringAutoButton.Text = "Wait...";
 			ForceSpringAutoButton.Enabled = false;
 			springAutoDevice = driven;
-			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride);
+			driven.SpringCalibration = new SpringCalibration(GetSelectedPadSetting(), driven.ForceSpringSpeedOverride, driven);
 			SpringAutoTimer.Start();
 		}
 
@@ -1704,8 +1833,8 @@ namespace x360ce.App.Controls
 			// Convert Direct Input Period force feedback effect parameter value.
 			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * PeriodMsPerStep;
 			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * PeriodMsPerStep;
-			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
-			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
+			LeftMotorPeriodTextBox.Text = string.Format("{0}", leftMotorPeriod);
+			RightMotorPeriodTextBox.Text = string.Format("{0}", rightMotorPeriod);
 			ShowMotorPeriodPreset(leftMotorPeriod, rightMotorPeriod);
 		}
 
@@ -1789,8 +1918,8 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.ControllerIndex == -1)
 				return;
-			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
-			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
+			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
+			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
 			SendVibration();
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);
@@ -1848,13 +1977,23 @@ namespace x360ce.App.Controls
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
+			AxisToDPadOffsetTextBox.Text = string.Format("{0} %", control.Value);
+			UpdateAxisToDPadChart();
 		}
 
 		void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
-			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
+			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} %", control.Value);
+			UpdateAxisToDPadChart();
+		}
+
+		/// <summary>Draws the Axis to D-Pad chart for the sliders, as the values they store.</summary>
+		void UpdateAxisToDPadChart()
+		{
+			Func<TrackBar, string, int> stored = (bar, key) => Convert.ToInt32(bar.Value / 100F * SettingsManager.TrackBarFullScale(key));
+			AxisToDPadChart.SetSettings(stored(AxisToDPadDeadZoneTrackBar, SettingName.AxisToDPadDeadZone),
+				stored(AxisToDPadOffsetTrackBar, SettingName.AxisToDPadOffset));
 		}
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
@@ -1956,13 +2095,13 @@ namespace x360ce.App.Controls
 		private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			var control = (TrackBar)sender;
-			LeftMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			LeftMotorStrengthTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		private void RightMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			var control = (TrackBar)sender;
-			RightMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
+			RightMotorStrengthTextBox.Text = string.Format("{0} %", control.Value);
 		}
 
 		private void PassThroughCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -2082,6 +2221,48 @@ namespace x360ce.App.Controls
 				+ "Copy - add here and leave others.";
 		}
 
+		/// <summary>Asks whether Xbox controllers picked through DirectInput are added through Raw Input instead: Yes uses Raw Input, No adds the rows picked, anything else adds nothing.</summary>
+		/// <remarks>Given the question, shown in bold, and what each answer does under it. A test replaces it, since the real one opens a window.</remarks>
+		public static Func<string, string, DialogResult> AskRawInput = AskAboutRawInput;
+
+		static DialogResult AskAboutRawInput(string heading, string text)
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(form);
+			var answer = form.ShowForm(text, "Xbox controller through DirectInput",
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button1,
+				new[] { "Use &Raw Input", "Add &DirectInput" }, heading);
+			form.Dispose();
+			return answer;
+		}
+
+		/// <summary>The devices to add, with each Xbox controller picked through DirectInput swapped for its Raw Input row when the person says so; null when they cancel.</summary>
+		/// <remarks>
+		/// Windows feeds an Xbox controller's DirectInput row only to the program in front, so the controller works on this
+		/// program's pages and does nothing in the game (<see cref="DInput.XInputPlaces.ReadsOnlyInFront"/>). Asked only when
+		/// the controller has a Raw Input row to offer instead.
+		/// </remarks>
+		public static UserDevice[] PreferRawInput(UserDevice[] devices)
+		{
+			var all = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var twins = devices.Select(x => DInput.XInputPlaces.ReadsOnlyInFront(x) ? x.RawInputTwin(all) : null).ToArray();
+			if (twins.All(x => x == null))
+				return devices;
+			var names = string.Join(", ", devices.Where((x, i) => twins[i] != null)
+				.Select(x => string.IsNullOrEmpty(x.ProductName) ? x.InstanceName : x.ProductName).Distinct());
+			var answer = AskRawInput(string.Format("Add {0} through Raw Input instead?", names),
+				"Windows lets only the program in front read an Xbox controller through DirectInput, so it stops working once a game is in front. Raw Input keeps working." + Environment.NewLine
+				+ "Use Raw Input - add the controller's Raw Input row." + Environment.NewLine
+				+ "Add DirectInput - add the row picked, which works only while x360ce is in front.");
+			if (answer == DialogResult.Yes)
+				return devices.Select((x, i) => twins[i] ?? x).Distinct().ToArray();
+			if (answer == DialogResult.No)
+				return devices;
+			return null;
+		}
+
 		/// <summary>Maps the devices to this controller for the game and selects the first of them.</summary>
 		/// <remarks>
 		/// A device just added is the one the person means to set up next. The list kept whatever row
@@ -2093,6 +2274,9 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
+			devices = PreferRawInput(devices);
+			if (devices == null)
+				return;
 			var copy = false;
 			var question = SharedDeviceQuestion(game, MappedTo, devices);
 			if (question != null)
@@ -2103,7 +2287,7 @@ namespace x360ce.App.Controls
 				copy = answer == DialogResult.No;
 			}
 			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
-				SettingsManager.Options.HidGuardianConfigureAutomatically, copy);
+				SettingsManager.Options.HidHideConfigureAutomatically, copy);
 			SettingsManager.Current.RaiseSettingsChanged(null);
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
@@ -2116,7 +2300,7 @@ namespace x360ce.App.Controls
 				return;
 			var setting = GetSelectedSetting();
 			SettingsManager.UnMapGamePadDevices(game, setting,
-				SettingsManager.Options.HidGuardianConfigureAutomatically);
+				SettingsManager.Options.HidHideConfigureAutomatically);
 		}
 
 		void UpdateGridButtons()
@@ -2190,6 +2374,11 @@ namespace x360ce.App.Controls
 			{
 				e.Value = AppHelper.GetInputSourceName(SettingsManager.GetDevice(item.InstanceGuid));
 			}
+			else if (column == ScriptNameColumn)
+			{
+				int number;
+				e.Value = _deviceNumbers.TryGetValue(item, out number) ? "c" + item.MapTo + ".d" + number : "";
+			}
 			else if (column == SettingIdColumn)
 			{
 				// Hide device Setting GUID from public eyes. Show part of checksum.
@@ -2201,6 +2390,13 @@ namespace x360ce.App.Controls
 				e.Value = device == null
 					? ""
 					: device.DevManufacturer;
+			}
+			else if (column == ProductNameColumn)
+			{
+				// The device's name as it is now: the setting keeps the one the device had when it was mapped.
+				var device = SettingsManager.GetDevice(item.InstanceGuid);
+				if (device != null && !string.IsNullOrEmpty(device.ProductName))
+					e.Value = device.ProductName;
 			}
 		}
 
@@ -2290,7 +2486,7 @@ namespace x360ce.App.Controls
 				item.IsEnabled = !item.IsEnabled;
 				// An unticked device is not used by the game, so it is not hidden from it either.
 				var game = SettingsManager.CurrentGame;
-				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+				if (game != null && SettingsManager.Options.HidHideConfigureAutomatically)
 					SettingsManager.HideMappedDevices(game, item.InstanceGuid);
 			}
 		}

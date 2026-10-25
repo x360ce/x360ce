@@ -18,10 +18,10 @@ namespace x360ce.App.Issues
 			// Keyed on a recorded failure, not on "not running yet", so the moment before the first
 			// start is not reported as a fault. The sentence carries its own remedy, and the one
 			// remedy the program can apply itself gets the Fix button.
-			var error = JocysCom.ClassLibrary.Mcp.McpListener.LastError;
+			var error = JocysCom.ClassLibrary.Mcp.McpListener.Program.LastError;
 			if (SettingsManager.AiOptions.AiAccessEnabled && error != null)
 			{
-				SetSeverity(IssueSeverity.Important, JocysCom.ClassLibrary.Mcp.McpListener.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
+				SetSeverity(IssueSeverity.Important, JocysCom.ClassLibrary.Mcp.McpListener.Program.NeedsUrlReservation ? 1 : 0, "AI assistant access: " + error);
 				return;
 			}
 			SetSeverity(IssueSeverity.None);

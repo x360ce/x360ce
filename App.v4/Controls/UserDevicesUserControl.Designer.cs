@@ -52,11 +52,12 @@
 			this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
 			this.CleanupVirtualPadsButton = new System.Windows.Forms.ToolStripButton();
 			this.ShowSystemDevicesButton = new System.Windows.Forms.ToolStripButton();
-			this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-			this.EnumeratedDevicesButton = new System.Windows.Forms.ToolStripMenuItem();
+			this.HidHideDropDownButton = new System.Windows.Forms.ToolStripDropDownButton();
+			this.GamingDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.UnhideAllDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.synchronizeToHidGuardianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.SynchronizeToHidHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.OpenHidHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -66,9 +67,6 @@
 			this.DevicesDataGridView.AllowUserToAddRows = false;
 			this.DevicesDataGridView.AllowUserToDeleteRows = false;
 			this.DevicesDataGridView.AllowUserToResizeRows = false;
-			this.DevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.DevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.DevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -97,7 +95,6 @@
 			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
 			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.DevicesDataGridView.Name = "DevicesDataGridView";
 			this.DevicesDataGridView.ReadOnly = true;
@@ -192,7 +189,7 @@
 			// 
 			this.DeviceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.DeviceIdColumn.DataPropertyName = "HidDeviceId";
-			this.DeviceIdColumn.HeaderText = "HID Device ID (HID Guardian)";
+			this.DeviceIdColumn.HeaderText = "HID Device ID";
 			this.DeviceIdColumn.Name = "DeviceIdColumn";
 			this.DeviceIdColumn.ReadOnly = true;
 			// 
@@ -202,6 +199,7 @@
 			this.XInputPlaceColumn.HeaderText = "XInput";
 			this.XInputPlaceColumn.Name = "XInputPlaceColumn";
 			this.XInputPlaceColumn.ReadOnly = true;
+			this.XInputPlaceColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			this.XInputPlaceColumn.ToolTipText = "Every XInput place a game feels this device through. Real means the device sits in that place itself, which a game reads with this program switched off. Virtual means this program carries it there, through a controller tab it is mapped to.";
 			this.XInputPlaceColumn.Width = 60;
 			// 
@@ -224,10 +222,9 @@
             this.HardwareButton,
             this.AddDemoDevice,
             this.CleanupVirtualPadsButton,
-            this.toolStripDropDownButton1});
+            this.HidHideDropDownButton});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
 			this.ControllersToolStrip.TabIndex = 1;
 			this.ControllersToolStrip.Text = "MySettingsToolStrip";
@@ -290,26 +287,27 @@
 			this.ShowSystemDevicesButton.Visible = false;
 			this.ShowSystemDevicesButton.CheckedChanged += new System.EventHandler(this.ShowSystemDevicesButton_CheckedChanged);
 			// 
-			// toolStripDropDownButton1
+			// HidHideDropDownButton
 			// 
-			this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EnumeratedDevicesButton,
+			this.HidHideDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.GamingDevicesMenuItem,
             this.HiddenDevicesMenuItem,
             this.UnhideAllDevicesMenuItem,
-            this.synchronizeToHidGuardianToolStripMenuItem});
-			this.toolStripDropDownButton1.Image = global::x360ce.App.Properties.Resources.enable_16x16;
-			this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-			this.toolStripDropDownButton1.Size = new System.Drawing.Size(100, 22);
-			this.toolStripDropDownButton1.Text = "HID Guardian...";
+            this.SynchronizeToHidHideMenuItem,
+            this.OpenHidHideMenuItem});
+			this.HidHideDropDownButton.Image = global::x360ce.App.Properties.Resources.enable_16x16;
+			this.HidHideDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.HidHideDropDownButton.Name = "HidHideDropDownButton";
+			this.HidHideDropDownButton.Size = new System.Drawing.Size(100, 22);
+			this.HidHideDropDownButton.Text = "HID Hide...";
 			// 
-			// EnumeratedDevicesButton
+			// GamingDevicesMenuItem
 			// 
-			this.EnumeratedDevicesButton.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
-			this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
-			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(227, 22);
-			this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
-			this.EnumeratedDevicesButton.Click += new System.EventHandler(this.ShowEnumeratedDevicesMenuItem_Click);
+			this.GamingDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.GamingDevicesMenuItem.Name = "GamingDevicesMenuItem";
+			this.GamingDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.GamingDevicesMenuItem.Text = "Show Gaming Devices";
+			this.GamingDevicesMenuItem.Click += new System.EventHandler(this.GamingDevicesMenuItem_Click);
 			// 
 			// HiddenDevicesMenuItem
 			// 
@@ -327,13 +325,21 @@
 			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
 			this.UnhideAllDevicesMenuItem.Click += new System.EventHandler(this.UnhideAllDevicesMenuItem_Click);
 			// 
-			// synchronizeToHidGuardianToolStripMenuItem
+			// SynchronizeToHidHideMenuItem
 			// 
-			this.synchronizeToHidGuardianToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.synchronizeToHidGuardianToolStripMenuItem.Name = "synchronizeToHidGuardianToolStripMenuItem";
-			this.synchronizeToHidGuardianToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
-			this.synchronizeToHidGuardianToolStripMenuItem.Text = "Synchronize To HID Guardian";
-			this.synchronizeToHidGuardianToolStripMenuItem.Click += new System.EventHandler(this.synchronizeToHidGuardianToolStripMenuItem_Click);
+			this.SynchronizeToHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.SynchronizeToHidHideMenuItem.Name = "SynchronizeToHidHideMenuItem";
+			this.SynchronizeToHidHideMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.SynchronizeToHidHideMenuItem.Text = "Synchronize To HID Hide";
+			this.SynchronizeToHidHideMenuItem.Click += new System.EventHandler(this.SynchronizeToHidHideMenuItem_Click);
+			// 
+			// OpenHidHideMenuItem
+			// 
+			this.OpenHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.OpenHidHideMenuItem.Name = "OpenHidHideMenuItem";
+			this.OpenHidHideMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.OpenHidHideMenuItem.Text = "Open HID Hide...";
+			this.OpenHidHideMenuItem.Click += new System.EventHandler(this.OpenHidHideMenuItem_Click);
 			// 
 			// UserDevicesUserControl
 			// 
@@ -361,11 +367,12 @@
 		private System.Windows.Forms.ToolStripButton AddDemoDevice;
 		private System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
         private System.Windows.Forms.ToolStripButton ShowSystemDevicesButton;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem EnumeratedDevicesButton;
+        private System.Windows.Forms.ToolStripDropDownButton HidHideDropDownButton;
+        private System.Windows.Forms.ToolStripMenuItem GamingDevicesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem UnhideAllDevicesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem synchronizeToHidGuardianToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem SynchronizeToHidHideMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem OpenHidHideMenuItem;
 		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
 		private System.Windows.Forms.DataGridViewImageColumn ConnectionClassColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;

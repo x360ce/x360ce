@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- A program that takes input as a game does and records it, so x360ce, its mappings and AutoHotkey scripts can be
+         checked with another program in front. Read by tests and AI assistants through its own AI door. -->
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>x360ce.TestGame</RootNamespace>
+    <AssemblyName>x360ce.TestGame</AssemblyName>
+    <LangVersion>8.0</LangVersion>
+    <Platforms>AnyCPU</Platforms>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Product>X360 Controller Emulator Test Game</Product>
+    <Company>Jocys.com</Company>
+    <Description>Records the keyboard, mouse and controller input it receives while it is in front, as a game takes it.</Description>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <!-- Untyped JSON for the door, in-box. -->
+    <Reference Include="System.Web.Extensions" />
+    <!-- DirectInput, the library x360ce reads devices with. -->
+    <Reference Include="SharpDX">
+      <HintPath>..\App.v4\Resources\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DirectInput">
+      <HintPath>..\App.v4\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\x360ce.Engine.csproj" />
+  </ItemGroup>
+</Project>

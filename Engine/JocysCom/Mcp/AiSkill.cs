@@ -68,6 +68,23 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.</summary>
 		public static string AgentsFolder { get { return Path.Combine(UserProfile, ".agents", "skills"); } }
 
+		/// <summary>
+		/// The skills folder of the source the program was built from: the nearest one above the program's own folder that
+		/// holds the named skill, or one in the program's own folder when it was not built from such a source.
+		/// </summary>
+		/// <remarks>Not the folder the program was started from: started from another project, it would write the skill there.</remarks>
+		public static string SourceSkillsFolder(string name)
+		{
+			var own = AppDomain.CurrentDomain.BaseDirectory;
+			for (var folder = new DirectoryInfo(own); folder != null; folder = folder.Parent)
+			{
+				var skills = Path.Combine(folder.FullName, "skills");
+				if (File.Exists(Path.Combine(skills, name, "SKILL.md")))
+					return skills;
+			}
+			return Path.Combine(own, "skills");
+		}
+
 		/// <summary>The version of the program that carries the skill, which an installed copy carries so a later program can tell it is out of date.</summary>
 		public static Version ProgramVersion { get { return ProgramAssembly.GetName().Version; } }
 

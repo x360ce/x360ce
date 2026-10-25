@@ -24,6 +24,9 @@ namespace x360ce.Engine
 		public const int MinRange = 40;
 		public const int MaxRange = 900;
 
+		/// <summary>The range these wheels turn until something sends them another.</summary>
+		public const int PowerUpRange = 200;
+
 		/// <summary>Whether the wheel takes the range report, by the identifiers Windows reports for it.</summary>
 		public static bool SupportsRange(int vendorId, int productId)
 		{

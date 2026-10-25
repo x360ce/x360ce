@@ -21,10 +21,7 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
-			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
 			// The device list is the program's and outlives this control. The Map Device window makes
 			// one of these each time it opens, and left subscribed, every later device change was
 			// handled for each control already gone, on whichever thread had made it.
@@ -75,9 +72,11 @@ namespace x360ce.App.Controls
 
 		/// <summary>Brings the list shown in line with the program's devices when a device has come or gone.</summary>
 		/// <remarks>
-		/// The list shown is this control's own copy, in <see cref="TwinsTogether"/> order, on the Devices page as in the
-		/// list Add opens. The program's list stays in the order devices were found, which is the order they are saved in.
-		/// Only a device that comes or goes changes the copy, so a sort chosen by a click on a heading stays.
+		/// The list shown is this control's own copy, on the Devices page as in the list Add opens: DirectInput devices
+		/// first, then Raw Input, then plugin devices, each source in the order its devices were found, and each tinted its
+		/// own colour (<see cref="AppHelper.GetInputSourceTint"/>). The program's list stays in the order devices were found,
+		/// which is the order they are saved in. Only a device that comes or goes changes the copy, so a sort chosen by a
+		/// click on a heading stays.
 		/// </remarks>
 		void RefreshList()
 		{
@@ -90,7 +89,7 @@ namespace x360ce.App.Controls
 				devices = SettingsManager.UserDevices.Items
 					.Where(x => !MapDeviceToControllerMode || ShowSystemDevicesButton.Checked || x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
 			}
-			var ordered = TwinsTogether(devices);
+			var ordered = devices.Concat(GetOffers(devices)).OrderBy(x => x.InputSource).ToArray();
 			if (_currentData == null)
 			{
 				var list = new SortableBindingList<UserDevice>();
@@ -104,26 +103,39 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		/// <summary>The devices in the order given, with each device's twins moved up beside it, DirectInput first.</summary>
+		/// <summary>In the list Add opens, a new device of each kind a plugin offers, by its kind's product.</summary>
+		/// <remarks>Made the first time it is offered and kept while the list is open, so the row stays the same row.</remarks>
+		readonly Dictionary<Guid, UserDevice> _offers = new Dictionary<Guid, UserDevice>();
+
+		/// <summary>In the list Add opens, a new device for each kind a loaded plugin offers that has no row yet; none on the Devices page.</summary>
 		/// <remarks>
-		/// A controller read through DirectInput and through Raw Input is two devices, usually with the same name, and the
-		/// two rows next to each other are how a person sees which is which (<see cref="UserDevice.IsTwinOf"/>).
+		/// A plugin device exists only once somebody adds it, so the list of devices to map had nothing to show for a plugin
+		/// that had loaded. Offered here, it is mapped as any device is, and gets its row when it is added (<see cref="AddOffered"/>).
+		/// A second one of a kind already listed comes from Add Plugin Device.
 		/// </remarks>
-		public static UserDevice[] TwinsTogether(IList<UserDevice> devices)
+		UserDevice[] GetOffers(UserDevice[] devices)
 		{
-			var ordered = new List<UserDevice>(devices.Count);
-			for (var i = 0; i < devices.Count; i++)
+			var manager = Plugins.PluginManager.Current;
+			if (!MapDeviceToControllerMode || manager == null)
+				return new UserDevice[0];
+			var offers = new List<UserDevice>();
+			foreach (var type in manager.DeviceTypes.Where(x => !x.Faulted))
 			{
-				var device = devices[i];
-				if (ordered.Contains(device))
+				if (devices.Any(x => x.ProductGuid == type.ProductGuid))
 					continue;
-				var group = new List<UserDevice> { device };
-				for (var j = i + 1; j < devices.Count; j++)
-					if (device.IsTwinOf(devices[j]))
-						group.Add(devices[j]);
-				ordered.AddRange(group.OrderBy(x => x.IsDirectInput ? 0 : 1));
+				UserDevice offer;
+				if (!_offers.TryGetValue(type.ProductGuid, out offer))
+					_offers[type.ProductGuid] = offer = Plugins.PluginDevices.NewUserDevice(type);
+				offers.Add(offer);
 			}
-			return ordered.ToArray();
+			return offers.ToArray();
+		}
+
+		/// <summary>Gives each offered plugin device among these its row in the program's device list, so it can be mapped.</summary>
+		public void AddOffered(IEnumerable<UserDevice> devices)
+		{
+			foreach (var ud in devices.Where(x => _offers.ContainsValue(x)).ToArray())
+				AddPluginDevice(ud);
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -171,6 +183,7 @@ namespace x360ce.App.Controls
 				return;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
+			e.CellStyle.BackColor = AppHelper.GetInputSourceTint(item);
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
@@ -355,14 +368,14 @@ namespace x360ce.App.Controls
 			}
 			if (types.Length == 1)
 			{
-				AddPluginDevice(types[0]);
+				AddPluginDevice(Plugins.PluginDevices.NewUserDevice(types[0]));
 				return;
 			}
 			var menu = new ContextMenuStrip();
 			foreach (var type in types)
 			{
 				var item = new ToolStripMenuItem(type.Name) { Tag = type };
-				item.Click += (s, a) => AddPluginDevice((Plugins.PluginDeviceType)((ToolStripMenuItem)s).Tag);
+				item.Click += (s, a) => AddPluginDevice(Plugins.PluginDevices.NewUserDevice((Plugins.PluginDeviceType)((ToolStripMenuItem)s).Tag));
 				menu.Items.Add(item);
 			}
 			menu.Closed += (s, a) => BeginInvoke((Action)menu.Dispose);
@@ -370,9 +383,8 @@ namespace x360ce.App.Controls
 			menu.Show(button.Owner, new Point(button.Bounds.Left, button.Bounds.Bottom));
 		}
 
-		static void AddPluginDevice(Plugins.PluginDeviceType type)
+		static void AddPluginDevice(UserDevice ud)
 		{
-			var ud = Plugins.PluginDevices.NewUserDevice(type);
 			lock (SettingsManager.UserDevices.SyncRoot)
 				SettingsManager.UserDevices.Items.Add(ud);
 			Global.DHelper.UpdateDevicesEnabled = true;
@@ -394,85 +406,99 @@ namespace x360ce.App.Controls
 				ud.IsEnabled = !ud.IsEnabled;
 				// An unticked device is not used by any game, so it is not hidden from one either.
 				var game = SettingsManager.CurrentGame;
-				if (game != null && SettingsManager.Options.HidGuardianConfigureAutomatically)
+				if (game != null && SettingsManager.Options.HidHideConfigureAutomatically)
 					SettingsManager.HideMappedDevices(game, ud.InstanceGuid);
 			}
 			else if (column == IsHiddenColumn)
 			{
 				if (ud.AllowHide)
 				{
-					var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-					if (canModify)
+					ud.IsHidden = !ud.IsHidden;
+					// Use begin invoke which will prevent mouse multi-select rows.
+					ControlsHelper.BeginInvoke(() =>
 					{
-						//var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-						var ids = new string[] { ud.DevDeviceId };
+						// The box shows what HID Hide does, so a change it refused is taken back.
+						if (AppHelper.SynchronizeToHidHide(ud.InstanceGuid))
+							return;
 						ud.IsHidden = !ud.IsHidden;
-						// Use begin invoke which will prevent mouse multi-select rows.
-						ControlsHelper.BeginInvoke(() =>
-						{
-							AppHelper.SynchronizeToHidGuardian(ud.InstanceGuid);
-						});
-					}
-					else
-					{
-						ShowHidGuardianPermissionDenied();
-					}
+						ShowHidHideRefused();
+					});
 				}
 			}
 		}
 
 		private void ShowHiddenDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			var devices = ViGEm.HidGuardianHelper.GetAffected();
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var text = devices.Length == 0
-				? "None"
-				// Join and make && visible.
-				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Affected Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			var state = DInput.VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered)
+			{
+				ShowHidHideRefused();
+				return;
+			}
+			ShowList(state.HiddenDevices, "Hidden Devices");
 		}
 
-		private void ShowEnumeratedDevicesMenuItem_Click(object sender, EventArgs e)
+		private void GamingDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			var devices = ViGEm.HidGuardianHelper.GetEnumeratedDevices();
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var text = devices.Length == 0
-				? "None"
-				// Join and make && visible.
-				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Enumerated Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
+			{
+				ShowHidHideRefused();
+				return;
+			}
+			ShowList(DInput.VirtualDriverInstaller.GetHidHideGamingDevices(), "Gaming Devices");
 		}
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
 		{
 			if (!AppHelper.UnhideAllDevices())
-				ShowHidGuardianPermissionDenied();
+				ShowHidHideRefused();
 		}
 
-		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SynchronizeToHidHideMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!AppHelper.SynchronizeToHidGuardian())
-				ShowHidGuardianPermissionDenied();
+			if (!AppHelper.SynchronizeToHidHide())
+				ShowHidHideRefused();
 		}
 
-		/// <summary>Says why HID Guardian's settings cannot be written: it is not installed, or this account may not write them yet.</summary>
-		void ShowHidGuardianPermissionDenied()
+		private void OpenHidHideMenuItem_Click(object sender, EventArgs e)
+		{
+			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
+			if (string.IsNullOrEmpty(client))
+				ControlsHelper.OpenUrl(DInput.VirtualDriverInstaller.HidHideDownloadUrl);
+			else
+				ControlsHelper.OpenPath(client);
+		}
+
+		/// <summary>Shows a list of devices, one on each line.</summary>
+		void ShowList(string[] devices, string caption)
 		{
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
-			if (!ViGEm.HidGuardianHelper.IsInstalled())
-				form.ShowForm(ViGEm.HidGuardianHelper.NotInstalledText, "HID Guardian", MessageBoxButtons.OK, MessageBoxIcon.Information);
+			var text = devices.Length == 0
+				? "None"
+				// Join and make && visible.
+				: string.Join("\r\n", devices).Replace("&", "&&");
+			form.ShowForm(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		/// <summary>Says why HID Hide did not do what was asked: it is not installed, or it did not answer or accept the change.</summary>
+		void ShowHidHideRefused()
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			if (!DInput.VirtualDriverInstaller.IsHidHideDevicePresent())
+				form.ShowForm("HID Hide is not installed, so x360ce cannot hide devices.\r\nThe HID Hide page on the Options tab downloads it.",
+					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			else
-				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				form.ShowForm("HID Hide did not accept the change.\r\nOpen HID Hide from this menu and make it there.",
+					"HID Hide", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(true), Browsable(true)]
 		public bool IsVisibleIsHiddenColumn
 		{
 			get { return IsHiddenColumn.Visible; }
-			set { IsHiddenColumn.Visible = false; }
+			set { IsHiddenColumn.Visible = value; }
 		}
 
 		private void DevicesDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)

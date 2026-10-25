@@ -35,10 +35,9 @@ namespace x360ce.App.UiTree
 				"Bends the middle of the travel and leaves both ends where they are.");
 			d["AxisMapUserControl.SensitivityCheckBox"] = new Text("Invert sensitivity",
 				"Bends the middle the other way: more sensitive in the centre instead of less.");
-			d["AxisMapUserControl.PresetMenuStrip"] = new Text("Ready-made settings",
-				"Common dead zone and anti-dead zone combinations, applied in one click.");
-			d["AxisMapUserControl.ApplyPresetMenuItem"] = new Text("Apply a ready-made setting",
-				"Fills the three settings above from a common combination.");
+			d["AxisMapUserControl.PresetComboBox"] = new Text("Preset",
+				"Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; " +
+				"\"Clear\" sets all three to nought. The list then shows \"Apply Preset\" again.");
 
 			// A button worked by something that is not a button.
 			d["AxisToButtonUserControl.MappedAxisTextBox"] = new Text("Mapped control",

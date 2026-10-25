@@ -38,9 +38,9 @@ namespace x360ce.App
 		public bool AiAccessTrustLocal { get { return _AiAccessTrustLocal; } set { _AiAccessTrustLocal = value; OnPropertyChanged(); } }
 		bool _AiAccessTrustLocal;
 
-		[DefaultValue(37360), Description("Local port the assistant connects to.")]
+		[DefaultValue(Mcp.PortPlan.AiAccess), Description("Local port the assistant connects to.")]
 		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
-		int _AiAccessPort = 37360;
+		int _AiAccessPort = Mcp.PortPlan.AiAccess;
 
 		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
 		public string AiAccessToken { get; set; }

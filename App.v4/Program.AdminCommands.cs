@@ -148,12 +148,6 @@ namespace x360ce.App
 				DInput.ElevatedDevices.Serve(ic.Parameters[AdminCommand.DeviceHelper.ToString()]);
 				return true;
 			}
-			if (ic.Parameters.ContainsKey(AdminCommand.UninstallDevice.ToString()))
-			{
-				var hwid = ic.Parameters[AdminCommand.UninstallDevice.ToString()];
-				DInput.VirtualDriverInstaller.UnInstallDevice(hwid);
-				return true;
-			}
 			return false;
 		}
 

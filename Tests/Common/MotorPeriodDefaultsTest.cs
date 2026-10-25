@@ -136,12 +136,33 @@ namespace x360ce.Tests
 			var ps = Pad("60", "120");
 			var was = ps.PadSettingChecksum;
 			var mapping = new UserSetting { PadSettingChecksum = was, MapTo = 1 };
-			var updated = SettingsManager.UpdateOldDefaultMotorPeriods(new[] { ps }, new[] { mapping });
+			var list = new List<PadSetting> { ps };
+			var updated = SettingsManager.UpdateOldDefaultMotorPeriods(list, new[] { mapping });
 			Assert.AreEqual(1, updated);
-			Assert.AreEqual(SettingName.DefaultLeftMotorPeriod, ps.LeftMotorPeriod);
-			Assert.AreEqual(SettingName.DefaultRightMotorPeriod, ps.RightMotorPeriod);
-			Assert.AreNotEqual(was, ps.PadSettingChecksum, "The checksum did not follow the values.");
-			Assert.AreEqual(ps.PadSettingChecksum, mapping.PadSettingChecksum, "The mapping lost its settings.");
+			Assert.AreNotEqual(was, mapping.PadSettingChecksum, "The checksum did not follow the values.");
+			var mine = list.SingleOrDefault(x => x.PadSettingChecksum == mapping.PadSettingChecksum);
+			Assert.IsNotNull(mine, "The mapping lost its settings.");
+			Assert.AreEqual(SettingName.DefaultLeftMotorPeriod, mine.LeftMotorPeriod);
+			Assert.AreEqual(SettingName.DefaultRightMotorPeriod, mine.RightMotorPeriod);
+			Assert.AreEqual(mine.CleanAndGetCheckSum(), mine.PadSettingChecksum, "The checksum is not the one of the values.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		public void A_server_preset_a_mapping_uses_keeps_its_settings()
+		{
+			// The Load Preset lists find a preset's settings by its checksum, and a mapping loaded from a
+			// preset points at those same settings. Changing them in place to give the mapping the new pair
+			// would leave the preset's row with nothing to load until the list is fetched from the server again.
+			var preset = Pad("60", "120");
+			var presetWas = preset.PadSettingChecksum;
+			var mapping = new UserSetting { PadSettingChecksum = presetWas, MapTo = 1 };
+			var list = new List<PadSetting> { preset };
+			SettingsManager.UpdateOldDefaultMotorPeriods(list, new[] { mapping });
+			var kept = list.SingleOrDefault(x => x.PadSettingChecksum == presetWas);
+			Assert.IsNotNull(kept, "The preset's settings are gone from the list, so its row loads nothing.");
+			Assert.AreEqual("60", kept.LeftMotorPeriod, "The preset's settings were changed.");
+			Assert.AreEqual("120", kept.RightMotorPeriod, "The preset's settings were changed.");
+			Assert.AreEqual(presetWas, kept.CleanAndGetCheckSum(), "The preset's settings no longer match its checksum.");
 		}
 
 		[TestMethod, TestCategory("force-feedback")]

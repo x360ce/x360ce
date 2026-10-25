@@ -43,7 +43,7 @@ namespace x360ce.App
 				if (IsDisposing) return;
 				_NumericUpDown.ValueChanged -= new System.EventHandler(_NumericUpDown_ValueChanged);
 				var percent = _TrackBar.Value;
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format("{0} %", percent);
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
 				// Update NumericUpDown.
@@ -62,7 +62,7 @@ namespace x360ce.App
 				var control = (NumericUpDown)sender;
 				_TrackBar.ValueChanged -= new System.EventHandler(_TrackBar_ValueChanged);
 				var percent = (int)Math.Round(((float)control.Value / (float)_NumericUpDown.Maximum) * 100f);
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format("{0} %", percent);
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
 				// Update TrackBar;

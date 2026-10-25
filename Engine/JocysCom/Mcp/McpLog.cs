@@ -68,12 +68,18 @@ namespace JocysCom.ClassLibrary.Mcp
 			return text.Length <= max ? text : text.Substring(0, max) + "... (" + text.Length + " chars)";
 		}
 
-		/// <summary>One line, and never the token: a read of the settings page carries it, and a log is for reading afterwards by anyone.</summary>
+		/// <summary>
+		/// One line, and never a token: a read of the settings page carries it, and a log is for reading afterwards by
+		/// anyone. A secret token is masked, so the line still says which kind it was; a token made before tokens had a
+		/// prefix, 64 hex digits, is replaced.
+		/// </summary>
 		static string Flat(string text)
 		{
-			return Token.Replace(text.Replace("\r", " ").Replace("\n", " ").Replace("\t", " "), "<token>");
+			text = text.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ");
+			text = Security.TokenHelper.SecretTokenPattern.Replace(text, m => Security.TokenHelper.IsSecretToken(m.Value) ? Security.TokenHelper.MaskSecret(m.Value) : m.Value);
+			return HexToken.Replace(text, "<token>");
 		}
 
-		static readonly Regex Token = new Regex("[0-9a-f]{64}");
+		static readonly Regex HexToken = new Regex("[0-9a-f]{64}");
 	}
 }

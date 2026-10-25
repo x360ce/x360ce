@@ -34,11 +34,11 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "axes 5, sliders 0, hat switches 1, buttons 10");
 			StringAssert.Contains(text, TestControllerDevice.Type.Description);
 			StringAssert.Contains(text, "\n### Its tab\n");
-			StringAssert.Contains(text, "- Move the axes (Movement, check box, starts at True): Moves the axes by themselves.");
+			StringAssert.Contains(text, "- Move the axes (Movement, true or false, starts at True): Moves the axes by themselves.");
 			StringAssert.Contains(text, "- Shape (Movement, one of: Swing and ramp, Circle, starts at Swing and ramp): ");
-			StringAssert.Contains(text, "- Moving time (s) (Movement, number, 0.5 to 20, starts at 4): ");
+			StringAssert.Contains(text, "- Moving time (s) (Movement, a number from 0.5 to 20, starts at 4): ");
 			StringAssert.Contains(text, "- Reads per second (Status, read only): ");
-			StringAssert.Contains(text, "- The plugin's own control, TestControllerPad, under the settings.");
+			StringAssert.Contains(text, "- The plugin's own control, TestControllerPad, on the first page, before Properties.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
@@ -128,8 +128,8 @@ namespace x360ce.Tests
 				// Run as a person runs it, from its own folder, naming only where the plugins go.
 				var built = Run("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -File Build-Plugins.ps1 -Output \"" + plugins + "\"", source);
 				Assert.AreEqual(0, built.Item1, "Build-Plugins.ps1 failed: " + built.Item2);
-				var files = Directory.GetFiles(plugins, "*", SearchOption.AllDirectories).Select(x => x.Substring(plugins.Length + 1)).ToArray();
-				CollectionAssert.AreEqual(new[] { @"TestController\TestController.dll" }, files,
+				var files = Directory.GetFiles(plugins, "*", SearchOption.AllDirectories).Select(x => x.Substring(plugins.Length + 1)).OrderBy(x => x).ToArray();
+				CollectionAssert.AreEqual(new[] { @"RemoteMcpController\RemoteMcpController.dll", @"TestController\TestController.dll" }, files,
 					"A plugin builds into one file in a folder of its own; the contract stays out.");
 			}
 			finally

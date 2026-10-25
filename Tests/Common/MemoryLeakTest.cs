@@ -173,8 +173,8 @@ namespace x360ce.Tests
 		[Description("Sending App.v4 to the tray and back repeatedly does not grow the process")]
 		public void V4_does_not_grow_across_minimize_restore_cycles()
 		{
-			// The first cycles legitimately allocate: the tray icon, the hidden owner window and
-			// one-time caches all appear the first time the window is minimised. Growth is only
+			// The first cycles legitimately allocate: the tray icon and one-time caches appear the
+			// first time the window is minimised. Growth is only
 			// meaningful once that has happened, so those cycles set the baseline instead of
 			// being measured against it.
 			const int warmupCycles = 2;
@@ -267,8 +267,12 @@ namespace x360ce.Tests
 			{
 				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(60));
-				var rate = Ui.WaitFor(() => Ui.FindByName(window, rateText), TimeSpan.FromSeconds(60),
-					"the status bar never reported an interface rate");
+				// The status bar appears once the Warnings window is answered.
+				var rate = Ui.WaitFor(() =>
+				{
+					Ui.FixWarnings(process, window);
+					return Ui.FindByName(window, rateText);
+				}, TimeSpan.FromSeconds(60), "the status bar never reported an interface rate");
 				// Questions about new controllers are answered No; the passes run once they are.
 				Ui.WaitFor(() =>
 				{

@@ -27,14 +27,15 @@ namespace x360ce.Engine
 		/// <remarks>Made on the interface thread, before the engine drives it.</remarks>
 		/// <param name="ps">The settings the spring runs with: its curve, its damping and the wheel range; the defaults when null.</param>
 		/// <param name="speedOverride">The car's speed from a live source, which replaces the Speed setting while it is not null (<see cref="UserDevice.ForceSpringSpeedOverride"/>).</param>
-		public SpringCalibration(PadSetting ps = null, int? speedOverride = null)
+		/// <param name="wheel">The wheel the run is on, whose range the spring is counted against when the setting leaves it as it is (<see cref="ForceFeedbackState.SpringRange"/>).</param>
+		public SpringCalibration(PadSetting ps = null, int? speedOverride = null, UserDevice wheel = null)
 		{
 			ps = ps ?? new PadSetting();
 			strength = ps.GetForceSpringStrength();
 			centreDegrees = ps.GetForceSpringCentre();
 			peakDegrees = ps.GetForceSpringPeak();
 			lighteningPercent = ps.GetForceSpringLightening();
-			rangeDegrees = ps.GetWheelRange();
+			rangeDegrees = ForceFeedbackState.SpringRange(ps.GetWheelRange(), wheel);
 			speed = speedOverride ?? ps.GetForceSpringSpeed();
 			damper = ForceFeedbackState.SpringDamper(ps.GetForceSpringDamping());
 		}

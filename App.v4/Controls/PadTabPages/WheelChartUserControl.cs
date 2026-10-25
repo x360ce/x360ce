@@ -61,7 +61,7 @@ namespace x360ce.App.Controls
 		PointF[] curvePoints = new PointF[0];
 
 		Pen curvePen;
-		Pen centrePen;
+		Pen gridPen;
 		Pen crossPen;
 		SolidBrush bandBrush;
 		SolidBrush dotBrush;
@@ -163,7 +163,7 @@ namespace x360ce.App.Controls
 			DisposePaintObjects();
 			curvePen = new Pen(Color.Red, 1.5f);
 			curvePen.LineJoin = LineJoin.Round;
-			centrePen = new Pen(Color.FromArgb(96, SystemColors.GrayText), 1f);
+			gridPen = new Pen(AppHelper.ChartLineColor, 1f);
 			// The crosshair and the force are blue and the angle green, as the thumb charts show their two values.
 			var forceColor = FormsTheme.GetColor("ColorBrand", Color.Blue);
 			var angleColor = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
@@ -180,7 +180,7 @@ namespace x360ce.App.Controls
 		void DisposePaintObjects()
 		{
 			if (curvePen != null) curvePen.Dispose();
-			if (centrePen != null) centrePen.Dispose();
+			if (gridPen != null) gridPen.Dispose();
 			if (crossPen != null) crossPen.Dispose();
 			if (bandBrush != null) bandBrush.Dispose();
 			if (dotBrush != null) dotBrush.Dispose();
@@ -218,7 +218,7 @@ namespace x360ce.App.Controls
 			return middle - forcePercent / 100f * middle;
 		}
 
-		/// <summary>Draws the picture behind the wheel's dot: the friction band, the centre lines, which way the force pushes, and the red curve.</summary>
+		/// <summary>Draws the picture behind the wheel's dot: the friction band, the frame and centre lines, which way the force pushes, and the red curve.</summary>
 		void DrawPicture(int w, int h)
 		{
 			curve.Set(strength, centre, peak, lightening, range, speedOverride ?? speed, strength == 0 ? 0 : friction);
@@ -236,8 +236,9 @@ namespace x360ce.App.Controls
 				}
 				var middleX = (float)Math.Floor((w - 1) / 2f);
 				var middleY = (float)Math.Floor((h - 1) / 2f);
-				g.DrawLine(centrePen, middleX, 0f, middleX, h);
-				g.DrawLine(centrePen, 0f, middleY, w, middleY);
+				g.DrawRectangle(gridPen, 0, 0, w - 1, h - 1);
+				g.DrawLine(gridPen, middleX, 0f, middleX, h);
+				g.DrawLine(gridPen, 0f, middleY, w, middleY);
 				g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 				var pushesLeft = "pushes left";
 				var size = g.MeasureString(pushesLeft, noteFont);
@@ -288,16 +289,21 @@ namespace x360ce.App.Controls
 
 		void MainPictureBox_Paint(object sender, PaintEventArgs e)
 		{
-			var w = MainPictureBox.ClientSize.Width;
-			var h = MainPictureBox.ClientSize.Height;
-			if (w < 2 || h < 2 || curvePen == null)
+			var g = e.Graphics;
+			AppHelper.PaintChartBox(g, MainPictureBox, Enabled);
+			var chart = AppHelper.ChartBounds(MainPictureBox);
+			var w = chart.Width;
+			var h = chart.Height;
+			if (!Enabled || w < 2 || h < 2 || curvePen == null)
 				return;
 			if (pictureOutOfDate || picture == null || picture.Width != w || picture.Height != h)
 				DrawPicture(w, h);
-			var g = e.Graphics;
-			g.DrawImageUnscaled(picture, 0, 0);
+			g.DrawImageUnscaled(picture, chart.Location);
 			if (position < 0)
 				return;
+			// The crosshair and the dot are drawn in the chart's own place.
+			g.TranslateTransform(chart.X, chart.Y);
+			g.SetClip(new Rectangle(0, 0, w, h));
 			var x = (float)Math.Floor(XOf(position, w));
 			var y = (float)Math.Floor(YOf(curve.Force(position), h));
 			g.DrawLine(crossPen, x, 0f, x, h);

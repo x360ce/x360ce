@@ -195,6 +195,34 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
+		[Description("An & is read as itself, except where it marks an access key: device IDs in a grid, a box that shows & as text")]
+		public void Ampersands_are_read_as_text_unless_they_mark_an_access_key()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var form = new Form { Name = "Main" })
+				{
+					var bar = new ToolStrip { Name = "Bar" };
+					bar.Items.Add(new ToolStripButton { Name = "Save", Text = "&Save && Close" });
+					var grid = new DataGridView { Name = "Grid", AllowUserToAddRows = false };
+					grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "NameColumn", HeaderText = "Name" });
+					grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "IdColumn", HeaderText = "HID Device ID" });
+					grid.Rows.Add("Pad", @"HID\VID_046D&PID_C219\1");
+					form.Controls.Add(grid);
+					form.Controls.Add(new Button { Name = "Fix", Text = "&Fix" });
+					form.Controls.Add(new CheckBox { Name = "Plain", Text = "Sliders & axes", UseMnemonic = false });
+					form.Controls.Add(bar);
+					form.Show();
+					var root = UiTreeWalker.Read(form, false, "");
+					Assert.AreEqual("Save & Close", Find(root, "Bar/Save").Name, "A bar entry's & marks its access key, and && is one &.");
+					Assert.AreEqual("Fix", Find(root, "Fix").Name, "A button's & marks its access key.");
+					Assert.AreEqual("Sliders & axes", Find(root, "Plain").Name, "A box that does not use access keys shows its & as text.");
+					StringAssert.Contains(Find(root, "Grid/rows/0").Value, @"HID\VID_046D&PID_C219\1", "A device ID read from a grid must be the device's ID.");
+				}
+			});
+		}
+
 		static UiNode Find(UiNode node, string path)
 		{
 			if (node.Path == path)

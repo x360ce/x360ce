@@ -49,6 +49,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				Attach(node, Read(item, raw, ChildPath(path, item.Name)), raw);
 			}
 			AddRows(node, control as DataGridView, path);
+			AddProperties(node, control as PropertyGrid, path);
 			return node;
 		}
 
@@ -165,7 +166,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				return tabs.TabPages.Cast<Control>();
 			// A grid, a box that spins and a box with a list attached are each one thing to a person.
 			// The scroll bars and edit boxes they are assembled from are not places to navigate to.
-			if (control is DataGridView || control is UpDownBase || control is ComboBox)
+			// A property grid's rows are read from the object it shows instead.
+			if (control is DataGridView || control is UpDownBase || control is ComboBox || control is PropertyGrid)
 				return Enumerable.Empty<Control>();
 			return control.Controls.Cast<Control>()
 				.OrderBy(x => x.TabIndex)
@@ -182,11 +184,36 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return Enumerable.Empty<ToolStripItem>();
 		}
 
+		/// <summary>Whether the control draws an &amp; in its text as the underline of its access key, not as itself.</summary>
+		static bool ShowsAccessKey(Control control)
+		{
+			if (control is Label label)
+				return label.UseMnemonic;
+			if (control is ButtonBase button)
+				return button.UseMnemonic;
+			return control is GroupBox;
+		}
+
+		/// <summary>Text as a person reads it where an &amp; marks the access key: that &amp; is not shown, and &amp;&amp; shows as one &amp;.</summary>
+		static string WithoutAccessKey(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var sb = new System.Text.StringBuilder(text.Length);
+			for (var i = 0; i < text.Length; i++)
+			{
+				if (text[i] == '&' && ++i == text.Length)
+					break;
+				sb.Append(text[i]);
+			}
+			return sb.ToString();
+		}
+
 		static UiNode Describe(Control control)
 		{
 			var node = new UiNode
 			{
-				Name = NameOf(control.AccessibleName, UiText.NameFor(control), control.Text, HoldsValue(control)),
+				Name = NameOf(control.AccessibleName, UiText.NameFor(control), ShowsAccessKey(control) ? WithoutAccessKey(control.Text) : control.Text, HoldsValue(control)),
 				Description = Clean(control.AccessibleDescription),
 				Role = RoleOf(control),
 				Id = control.Name,
@@ -226,6 +253,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			if (control is TabControl) return "Tabs";
 			if (control is Form) return "Window";
 			if (control is DataGridView) return "Grid";
+			if (control is PropertyGrid) return "Properties";
 			if (control is CheckBox) return "CheckBox";
 			if (control is RadioButton) return "Choice";
 			if (control is ComboBox) return "List";

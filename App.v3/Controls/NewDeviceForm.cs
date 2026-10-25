@@ -30,7 +30,6 @@ namespace x360ce.App.Controls
 
 		void NewDeviceForm_Load(object sender, EventArgs e)
 		{
-			EngineHelper.EnableDoubleBuffering(MySettingsDataGridView);
 			configs = new SortableBindingList<Summary>();
 			MySettingsDataGridView.AutoGenerateColumns = false;
 			MySettingsDataGridView.DataSource = configs;

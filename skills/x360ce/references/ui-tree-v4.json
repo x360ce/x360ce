@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.26.38.0",
-	"Built":"2026-10-17",
+	"Version":"4.27.53.0",
+	"Built":"2026-10-24",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -75,6 +75,12 @@
 									"Id":"AntiDeadZoneNumericUpDown"
 								},
 								{
+									"Name":"Dead zone",
+									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
+									"Role":"Number",
+									"Id":"DeadZoneNumericUpDown"
+								},
+								{
 									"Name":"Sensitivity",
 									"Description":"Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.",
 									"Role":"Number",
@@ -84,74 +90,16 @@
 									"Hidden":true
 								},
 								{
-									"Name":"Dead zone",
-									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
-									"Role":"Number",
-									"Id":"DeadZoneNumericUpDown"
-								},
-								{
 									"Name":"Invert sensitivity",
 									"Description":"Bends the middle the other way: more sensitive in the centre instead of less.",
 									"Role":"CheckBox",
 									"Id":"SensitivityCheckBox"
 								},
 								{
-									"Name":"Ready-made settings",
-									"Description":"Common dead zone and anti-dead zone combinations, applied in one click.",
-									"Role":"Toolbar",
-									"Id":"PresetMenuStrip",
-									"Items":[
-										{
-											"Name":"Apply a ready-made setting",
-											"Description":"Fills the three settings above from a common combination.",
-											"Role":"Button",
-											"Id":"ApplyPresetMenuItem",
-											"Items":[
-												{
-													"Name":"Clear",
-													"Description":"Clears the dead zone, anti-dead zone and sensitivity.",
-													"Role":"Button",
-													"Id":"P_0_0_0_MenuItem"
-												},
-												{
-													"Name":"5% DeadZone, 100% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 5% and the anti-dead zone to 100%.",
-													"Role":"Button",
-													"Id":"P_5_100_0_MenuItem"
-												},
-												{
-													"Name":"100% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 0% and the anti-dead zone to 100%.",
-													"Role":"Button",
-													"Id":"P_0_100_0_MenuItem"
-												},
-												{
-													"Name":"80% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 0% and the anti-dead zone to 80%.",
-													"Role":"Button",
-													"Id":"P_0_80_0_MenuItem"
-												},
-												{
-													"Name":"60% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 0% and the anti-dead zone to 60%.",
-													"Role":"Button",
-													"Id":"P_0_60_0_MenuItem"
-												},
-												{
-													"Name":"40% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 0% and the anti-dead zone to 40%.",
-													"Role":"Button",
-													"Id":"P_0_40_0_MenuItem"
-												},
-												{
-													"Name":"20% Controller Anti-DeadZone",
-													"Description":"Sets the dead zone to 0% and the anti-dead zone to 20%.",
-													"Role":"Button",
-													"Id":"P_0_20_0_MenuItem"
-												}
-											]
-										}
-									]
+									"Name":"Preset",
+									"Description":"Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; \"Clear\" sets all three to nought. The list then shows \"Apply Preset\" again.",
+									"Role":"List",
+									"Id":"PresetComboBox"
 								}
 							]
 						}
@@ -191,6 +139,11 @@
 							"Max":32767
 						}
 					]
+				},
+				{
+					"Name":"AxisToDPadChart",
+					"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.",
+					"Role":"Control"
 				},
 				{
 					"Name":"DirectInputUserControl",
@@ -318,6 +271,12 @@
 							"Id":"DiCapPovsTextBox"
 						},
 						{
+							"Name":"Buttons pressed",
+							"Description":"Which buttons are pressed right now, by the numbers the mapping boxes use.",
+							"Role":"Value",
+							"Id":"DiButtonsTextBox"
+						},
+						{
 							"Name":"Instance identifier",
 							"Description":"Device instance GUID.",
 							"Role":"Value",
@@ -334,12 +293,6 @@
 							"Description":"How many buttons the device has.",
 							"Role":"Value",
 							"Id":"DiCapButtonsTextBox"
-						},
-						{
-							"Name":"Button values reported by the device",
-							"Description":"Which buttons are pressed right now.",
-							"Role":"Grid",
-							"Id":"DiButtonsDataGridView"
 						}
 					]
 				},
@@ -1111,19 +1064,19 @@
 									"Items":[
 										{
 											"Name":"Axis to D-Pad",
-											"Description":"Turned the device's X and Y axes, its main stick, into the four pad directions. Read only by x360ce 3's XInput library, from the x360ce.ini file this version does not write, so greyed out here; kept with the settings so x360ce 3's settings in the cloud stay as they are.",
+											"Description":"Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.",
 											"Role":"Section",
 											"Id":"AxisToDPadGroupBox",
 											"Items":[
 												{
 													"Name":"Dead zone",
-													"Description":"How far the axis must move from the centre before a direction is pressed.",
+													"Description":"How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.",
 													"Role":"Value",
 													"Id":"AxisToDPadDeadZoneTextBox"
 												},
 												{
 													"Name":"Centre offset",
-													"Description":"Moves the point counted as centre, for a device that does not rest in the middle.",
+													"Description":"Moves the point counted as centre towards the right and the bottom, as part of half the travel, for a device that does not rest in the middle.",
 													"Role":"Value",
 													"Id":"AxisToDPadOffsetTextBox"
 												},
@@ -1148,6 +1101,14 @@
 													"Id":"AxisToDPadOffsetTrackBar",
 													"Min":0,
 													"Max":100
+												},
+												{
+													"Name":"Axis to D-Pad chart",
+													"Description":"The X and Y axes as a square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.",
+													"Role":"Group",
+													"Id":"AxisToDPadChart",
+													"Type":"AxisToDPadChart",
+													"SameAs":"AxisToDPadChart"
 												}
 											]
 										}
@@ -1302,6 +1263,27 @@
 											]
 										},
 										{
+											"Name":"Defaults",
+											"Description":"Puts every setting on this page back to its default.",
+											"Role":"Button",
+											"Id":"ForceDefaultsButton"
+										},
+										{
+											"Name":"Force source",
+											"Description":"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.",
+											"Role":"Section",
+											"Id":"ForceSourceGroupBox",
+											"Hidden":true,
+											"Items":[
+												{
+													"Name":"Force source",
+													"Description":"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.",
+													"Role":"Label",
+													"Id":"ForceSourceLabel"
+												}
+											]
+										},
+										{
 											"Name":"Left motor",
 											"Description":"The big, slow motor, which produces the heavy rumble.",
 											"Role":"Section",
@@ -1418,27 +1400,6 @@
 											"Description":"Explains what the settings on this page do.",
 											"Role":"Value",
 											"Id":"InforTextBox"
-										},
-										{
-											"Name":"Defaults",
-											"Description":"Puts every setting on this page back to its default.",
-											"Role":"Button",
-											"Id":"ForceDefaultsButton"
-										},
-										{
-											"Name":"Force source",
-											"Description":"Where the selected controller's force comes from. Shown only while the controller, or its twin read through another source, is on another controller tab too.",
-											"Role":"Section",
-											"Id":"ForceSourceGroupBox",
-											"Hidden":true,
-											"Items":[
-												{
-													"Name":"Force source",
-													"Description":"Which controller tab's settings shape the controller's force, the lowest enabled tab it is on, and which controllers' force it plays: on several, the strongest of each motor. Or why no force reaches it. On every other tab the settings that shape the force are greyed out.",
-													"Role":"Label",
-													"Id":"ForceSourceLabel"
-												}
-											]
 										}
 									]
 								},
@@ -2497,6 +2458,12 @@
 																	"Description":"Opens the HID Hide program, where hidden devices are chosen.",
 																	"Role":"Button",
 																	"Id":"HidHideConfigureButton"
+																},
+																{
+																	"Name":"Configure automatically",
+																	"Description":"Hide a device through HID Hide while it is mapped to a controller.",
+																	"Role":"CheckBox",
+																	"Id":"HidHideConfigureAutomaticallyCheckBox"
 																}
 															]
 														}
@@ -2531,12 +2498,6 @@
 																	"Description":"Removes HID Guardian. Needs Administrator.",
 																	"Role":"Button",
 																	"Id":"HidGuardianUninstallButton"
-																},
-																{
-																	"Name":"Configure automatically",
-																	"Description":"Configure Hid Guardian Automatically.",
-																	"Role":"CheckBox",
-																	"Id":"HidGuardianConfigureAutomaticallyCheckBox"
 																},
 																{
 																	"Name":"Refresh",
@@ -2895,7 +2856,7 @@
 																						},
 																						{
 																							"Name":"OpenAI admin key",
-																							"Description":"An admin key of the organization, used only by Create and Delete and never kept.",
+																							"Description":"An admin key of the organization, used only to list, create and delete tunnels and never kept.",
 																							"Role":"Text",
 																							"Id":"AiTunnelAdminKeyTextBox"
 																						},
@@ -2907,13 +2868,13 @@
 																						},
 																						{
 																							"Name":"Tunnel ID",
-																							"Description":"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Made by Create, or pasted from the OpenAI Platform.",
-																							"Role":"Text",
-																							"Id":"AiTunnelIdTextBox"
+																							"Description":"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.",
+																							"Role":"List",
+																							"Id":"AiTunnelIdComboBox"
 																						},
 																						{
 																							"Name":"Create tunnel",
-																							"Description":"Makes a tunnel in the organization with the admin key, and keeps its ID.",
+																							"Description":"Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.",
 																							"Role":"Button",
 																							"Id":"AiTunnelCreateButton"
 																						},
@@ -3001,7 +2962,7 @@
 												},
 												{
 													"Name":"Plugins",
-													"Description":"The plugins found, the devices each adds, and whether plugins from others may load.",
+													"Description":"The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.",
 													"Role":"Tab",
 													"Id":"PluginsTabPage",
 													"Items":[
@@ -3040,6 +3001,42 @@
 																	"Description":"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
 																	"Role":"Grid",
 																	"Id":"PluginsDataGridView"
+																},
+																{
+																	"Name":"AutoHotkey scripts",
+																	"Description":"Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.",
+																	"Role":"Section",
+																	"Id":"AutoHotkeyGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Allow AutoHotkey scripts",
+																			"Description":"Let AutoHotkey scripts read devices and change what controllers read.",
+																			"Role":"CheckBox",
+																			"Id":"AllowAutoHotkeyScriptsCheckBox"
+																		},
+																		{
+																			"Name":"About AutoHotkey scripts",
+																			"Description":"How a script reaches x360ce, and where the library it includes is written.",
+																			"Role":"Label",
+																			"Id":"ScriptsNoteLabel"
+																		},
+																		{
+																			"Name":"Heartbeat every (ms)",
+																			"Description":"How often an AutoHotkey script tells x360ce it still runs, in milliseconds.",
+																			"Role":"Number",
+																			"Id":"HeartbeatUpDown",
+																			"Min":10,
+																			"Max":1000
+																		},
+																		{
+																			"Name":"Let go of a hung script after (ms)",
+																			"Description":"How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.",
+																			"Role":"Number",
+																			"Id":"HangTimeoutUpDown",
+																			"Min":50,
+																			"Max":10000
+																		}
+																	]
 																}
 															]
 														}
@@ -3160,22 +3157,10 @@
 															"Id":"HookCOMCheckBox"
 														},
 														{
-															"Name":"Hook Load Library",
-															"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
-															"Role":"CheckBox",
-															"Id":"HookLLCheckBox"
-														},
-														{
 															"Name":"Hook Direct Input",
 															"Description":"Answers when the game asks for a controller through Direct Input.",
 															"Role":"CheckBox",
 															"Id":"HookDICheckBox"
-														},
-														{
-															"Name":"Hook SetupAPI",
-															"Description":"Answers when the game asks Windows to list devices.",
-															"Role":"CheckBox",
-															"Id":"HookSACheckBox"
 														},
 														{
 															"Name":"Hook product and vendor codes",
@@ -3184,28 +3169,40 @@
 															"Id":"HookPIDVIDCheckBox"
 														},
 														{
-															"Name":"Hook WinVerifyTrust",
-															"Description":"Answers when the game checks a file's signature.",
-															"Role":"CheckBox",
-															"Id":"HookWTCheckBox"
-														},
-														{
 															"Name":"Hook name",
 															"Description":"Reports a different controller name to the game.",
 															"Role":"CheckBox",
 															"Id":"HookNAMECheckBox"
 														},
 														{
-															"Name":"Disable",
-															"Description":"Turns every answer off, leaving the game with the real controllers.",
-															"Role":"CheckBox",
-															"Id":"HookDISABLECheckBox"
-														},
-														{
 															"Name":"Stop",
 															"Description":"Stops answering once the game has started.",
 															"Role":"CheckBox",
 															"Id":"HookSTOPCheckBox"
+														},
+														{
+															"Name":"Hook Load Library",
+															"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
+															"Role":"CheckBox",
+															"Id":"HookLLCheckBox"
+														},
+														{
+															"Name":"Hook SetupAPI",
+															"Description":"Answers when the game asks Windows to list devices.",
+															"Role":"CheckBox",
+															"Id":"HookSACheckBox"
+														},
+														{
+															"Name":"Hook WinVerifyTrust",
+															"Description":"Answers when the game checks a file's signature.",
+															"Role":"CheckBox",
+															"Id":"HookWTCheckBox"
+														},
+														{
+															"Name":"Disable",
+															"Description":"Turns every answer off, leaving the game with the real controllers.",
+															"Role":"CheckBox",
+															"Id":"HookDISABLECheckBox"
 														}
 													]
 												},
@@ -3290,16 +3287,16 @@
 															"Id":"Controller1CheckBox"
 														},
 														{
-															"Name":"Auto map controller 3",
-															"Description":"Lets the program assign controller 3 to a device when this game starts.",
-															"Role":"CheckBox",
-															"Id":"Controller3CheckBox"
-														},
-														{
 															"Name":"Auto map controller 2",
 															"Description":"Lets the program assign controller 2 to a device when this game starts.",
 															"Role":"CheckBox",
 															"Id":"Controller2CheckBox"
+														},
+														{
+															"Name":"Auto map controller 3",
+															"Description":"Lets the program assign controller 3 to a device when this game starts.",
+															"Role":"CheckBox",
+															"Id":"Controller3CheckBox"
 														},
 														{
 															"Name":"Auto map controller 4",
@@ -3330,74 +3327,6 @@
 													]
 												},
 												{
-													"Name":"Other options",
-													"Description":"How the game is started, and what it is told about the controller.",
-													"Role":"Section",
-													"Id":"OtherOptionsGroupBox",
-													"Items":[
-														{
-															"Name":"Architecture",
-															"Description":"Whether the game is a 32-bit or a 64-bit program.",
-															"Role":"List",
-															"Id":"ProcessorArchitectureComboBox"
-														},
-														{
-															"Name":"Emulation",
-															"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
-															"Role":"List",
-															"Id":"EmulationTypeComboBox"
-														},
-														{
-															"Name":"Fake product code",
-															"Description":"Product code reported to a game that only accepts one model of controller.",
-															"Role":"Value",
-															"Id":"HookModeFakePidTextBox"
-														},
-														{
-															"Name":"XInput path",
-															"Description":"Folder the XInput library is written into.",
-															"Role":"Text",
-															"Id":"XInputPathTextBox"
-														},
-														{
-															"Name":"DInput file",
-															"Description":"Name of the Direct Input library written for the game.",
-															"Role":"Text",
-															"Id":"DInputFileTextBox"
-														},
-														{
-															"Name":"Fake vendor code",
-															"Description":"Vendor code reported to a game that only accepts one make of controller.",
-															"Role":"Value",
-															"Id":"HookModeFakeVidTextBox"
-														},
-														{
-															"Name":"Fake product code",
-															"Description":"Product code reported to a game that only accepts one model of controller.",
-															"Role":"Number",
-															"Id":"HookModeFakePidNumericUpDown",
-															"Min":0,
-															"Max":65535
-														},
-														{
-															"Name":"Fake vendor code",
-															"Description":"Vendor code reported to a game that only accepts one make of controller.",
-															"Role":"Number",
-															"Id":"HookModeFakeVidNumericUpDown",
-															"Min":0,
-															"Max":65535
-														},
-														{
-															"Name":"Timeout",
-															"Description":"How long to wait for the game before giving up.",
-															"Role":"Number",
-															"Id":"TimeoutNumericUpDown",
-															"Min":-1,
-															"Max":65535
-														}
-													]
-												},
-												{
 													"Name":"Help",
 													"Description":"Searches the web for other people's settings for this game.",
 													"Role":"Section",
@@ -3420,6 +3349,74 @@
 															"Description":"Opens the NGemu forum.",
 															"Role":"Button",
 															"Id":"button4"
+														}
+													]
+												},
+												{
+													"Name":"Other options",
+													"Description":"How the game is started, and what it is told about the controller.",
+													"Role":"Section",
+													"Id":"OtherOptionsGroupBox",
+													"Items":[
+														{
+															"Name":"Fake vendor code",
+															"Description":"Vendor code reported to a game that only accepts one make of controller.",
+															"Role":"Number",
+															"Id":"HookModeFakeVidNumericUpDown",
+															"Min":0,
+															"Max":65535
+														},
+														{
+															"Name":"Fake vendor code",
+															"Description":"Vendor code reported to a game that only accepts one make of controller.",
+															"Role":"Value",
+															"Id":"HookModeFakeVidTextBox"
+														},
+														{
+															"Name":"Fake product code",
+															"Description":"Product code reported to a game that only accepts one model of controller.",
+															"Role":"Number",
+															"Id":"HookModeFakePidNumericUpDown",
+															"Min":0,
+															"Max":65535
+														},
+														{
+															"Name":"Fake product code",
+															"Description":"Product code reported to a game that only accepts one model of controller.",
+															"Role":"Value",
+															"Id":"HookModeFakePidTextBox"
+														},
+														{
+															"Name":"Timeout",
+															"Description":"How long to wait for the game before giving up.",
+															"Role":"Number",
+															"Id":"TimeoutNumericUpDown",
+															"Min":-1,
+															"Max":65535
+														},
+														{
+															"Name":"XInput path",
+															"Description":"Folder the XInput library is written into.",
+															"Role":"Text",
+															"Id":"XInputPathTextBox"
+														},
+														{
+															"Name":"Architecture",
+															"Description":"Whether the game is a 32-bit or a 64-bit program.",
+															"Role":"List",
+															"Id":"ProcessorArchitectureComboBox"
+														},
+														{
+															"Name":"DInput file",
+															"Description":"Name of the Direct Input library written for the game.",
+															"Role":"Text",
+															"Id":"DInputFileTextBox"
+														},
+														{
+															"Name":"Emulation",
+															"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
+															"Role":"List",
+															"Id":"EmulationTypeComboBox"
 														}
 													]
 												},
@@ -3531,7 +3528,7 @@
 									"Items":[
 										{
 											"Name":"Devices",
-											"Description":"Every controller the program can see, once for each source it is read through, the two rows of one controller next to each other. Unplugged ones are dimmed.",
+											"Description":"Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.",
 											"Role":"Grid",
 											"Id":"DevicesDataGridView"
 										},
@@ -3579,34 +3576,40 @@
 													"Id":"CleanupVirtualPadsButton"
 												},
 												{
-													"Name":"HID Guardian",
-													"Description":"Actions for the obsolete HID Guardian tool.",
+													"Name":"HID Hide",
+													"Description":"Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.",
 													"Role":"Button",
-													"Id":"toolStripDropDownButton1",
+													"Id":"HidHideDropDownButton",
 													"Items":[
 														{
-															"Name":"Show Enumerated Devices",
-															"Description":"Lists the devices HID Guardian knows about.",
+															"Name":"Show Gaming Devices",
+															"Description":"Lists the devices HID Hide counts as game controllers, with the path it knows each by.",
 															"Role":"Button",
-															"Id":"EnumeratedDevicesButton"
+															"Id":"GamingDevicesMenuItem"
 														},
 														{
 															"Name":"Show Hidden Devices",
-															"Description":"Lists the devices HID Guardian is hiding from games.",
+															"Description":"Lists the devices HID Hide is hiding from games.",
 															"Role":"Button",
 															"Id":"HiddenDevicesMenuItem"
 														},
 														{
 															"Name":"Unhide All Devices",
-															"Description":"Makes every hidden device visible to games again.",
+															"Description":"Makes every device HID Hide hides visible to games again, and clears every Hide box.",
 															"Role":"Button",
 															"Id":"UnhideAllDevicesMenuItem"
 														},
 														{
-															"Name":"Synchronize To HID Guardian",
-															"Description":"Hides exactly the devices that are mapped to a controller.",
+															"Name":"Synchronize To HID Hide",
+															"Description":"Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.",
 															"Role":"Button",
-															"Id":"synchronizeToHidGuardianToolStripMenuItem"
+															"Id":"SynchronizeToHidHideMenuItem"
+														},
+														{
+															"Name":"Open HID Hide",
+															"Description":"Opens HID Hide's own program, or its download page while it is not installed.",
+															"Role":"Button",
+															"Id":"OpenHidHideMenuItem"
 														}
 													]
 												}

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -311,15 +312,15 @@ namespace x360ce.Tests
 					ud.JoState.Buttons[1] = true;
 					tab.UpdateFrom(ud);
 					var axis = (DataTable)typeof(DirectInputUserControl).GetField("DiAxisTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
-					var buttons = (DataTable)typeof(DirectInputUserControl).GetField("DiButtonsTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
+					var buttons = tab.Controls.Find("DiButtonsTextBox", true).Single();
 					Assert.AreEqual(100, axis.Rows[0][1]);
-					Assert.AreEqual("02", buttons.Rows[0][0]);
+					Assert.AreEqual("02", buttons.Text);
 					// The engine fills the state it replaced two polls ago in place: the object the tab drew last.
 					ud.JoState.X = 200;
 					ud.JoState.Buttons[3] = true;
 					tab.UpdateFrom(ud);
 					Assert.AreEqual(200, axis.Rows[0][1], "The tab kept the engine's own state as the one it drew, so a value written into it was taken as already shown.");
-					Assert.AreEqual("02 04", buttons.Rows[0][0], "The tab kept the engine's own state as the one it drew, so a button written into it was not shown.");
+					Assert.AreEqual("02 04", buttons.Text, "The tab kept the engine's own state as the one it drew, so a button written into it was not shown.");
 				}
 			});
 		}

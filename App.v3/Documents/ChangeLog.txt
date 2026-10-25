@@ -1,4 +1,15 @@
-﻿## [3.7.8.0] - 2026-10-17
+﻿## [3.8.14.0] - 2026-10-25
+
+- Fixed: The AI Assistant Access tab stretched its Log button down the page.
+- Fixed: The window opened too narrow to show every tab.
+- Fixed: Minimizing to the tray and back built the window again; the window is now hidden there.
+- Fixed: AI assistants read lists and descriptions without their & signs, so a device's ID came out wrong.
+- Fixed: Asked to update the XInput file when it had not changed.
+- Changed: Controls look as they do in x360ce 5, in both themes, with check boxes sized from the font.
+- Changed: AI assistant access uses port 37102 by default.
+- Changed: New AI access tokens start with sk-x360ce-v3-mcp-.
+
+## [3.7.8.0] - 2026-10-17
 
 - Fixed: The program failed on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
 - Fixed: The program stopped at its first start when its settings went in a folder beside it (Issue #1649, PeeLetan).

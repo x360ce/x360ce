@@ -325,15 +325,18 @@ namespace x360ce.App
 		/// pair is what somebody who never touched the sliders has, and nobody chooses that pair on
 		/// purpose; it becomes the current pair, and anything else is left as it was set.
 		///
-		/// Only settings a mapping of this person's points at are touched. A preset from the server
-		/// keeps its checksum, which is how the server knows it, and the mapping is pointed at the
-		/// setting's new checksum so the two stay together.
+		/// Only settings a mapping of this person's points at are updated, and the mapping is given
+		/// them as a copy with the new pair, under the copy's own checksum. The settings it points at
+		/// stay as they are: a mapping loaded from a preset points at the preset's own settings, and
+		/// the Load Preset lists find those by the checksum the server knows them by.
 		/// </remarks>
+		/// <param name="padSettings">The stored settings; the copies are added to it.</param>
+		/// <param name="settings">The person's mappings.</param>
 		/// <returns>How many settings were updated.</returns>
 		public static int UpdateOldDefaultMotorPeriods(IList<PadSetting> padSettings, IList<UserSetting> settings)
 		{
 			var updated = 0;
-			foreach (var ps in padSettings)
+			foreach (var ps in padSettings.ToArray())
 			{
 				if (ps.LeftMotorPeriod != OldDefaultLeftMotorPeriod || ps.RightMotorPeriod != OldDefaultRightMotorPeriod)
 					continue;
@@ -341,11 +344,15 @@ namespace x360ce.App
 				var users = settings.Where(x => x.PadSettingChecksum == was).ToList();
 				if (users.Count == 0)
 					continue;
-				ps.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
-				ps.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
-				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+				var copy = new PadSetting();
+				JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyDataMembers(ps, copy);
+				copy.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
+				copy.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
+				copy.PadSettingChecksum = copy.CleanAndGetCheckSum();
+				if (!padSettings.Any(x => x.PadSettingChecksum == copy.PadSettingChecksum))
+					padSettings.Add(copy);
 				foreach (var user in users)
-					user.PadSettingChecksum = ps.PadSettingChecksum;
+					user.PadSettingChecksum = copy.PadSettingChecksum;
 				updated++;
 			}
 			return updated;
@@ -1135,7 +1142,7 @@ namespace x360ce.App
 		/// <param name="game">The game the tab belongs to.</param>
 		/// <param name="mappedTo">The tab.</param>
 		/// <param name="devices">The devices to put on it.</param>
-		/// <param name="configureHidGuardian">Whether to hide and show devices through HID Guardian to match.</param>
+		/// <param name="configureHidHide">Whether to hide and show devices through HID Hide to match.</param>
 		/// <param name="keep">
 		/// For a device already on another tab of the game: true leaves it there as well, on a second row that
 		/// starts with the same settings, force feedback included; false moves it here.
@@ -1149,7 +1156,7 @@ namespace x360ce.App
 		/// A device new to the game starts with the settings of its twin on this tab (<see cref="GetTwinSetting"/>),
 		/// or with an automatic preset. The twin stays: if both are ticked, both drive the controller.
 		/// </remarks>
-		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidGuardian, bool keep)
+		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, UserDevice[] devices, bool configureHidHide, bool keep)
 		{
 			var hadDevices = GetSettings(game.FileName, mappedTo).Count > 0;
 			// The tabs a device moved away from.
@@ -1227,18 +1234,18 @@ namespace x360ce.App
 			if (!hadDevices && devices.Length > 0 && (game.EnableMask & (int)AppHelper.GetMapFlag(mappedTo)) == 0)
 				SetTabEnabled(game, mappedTo, true);
 			SwitchOffEmptyTabs(game, left);
-			if (configureHidGuardian)
+			if (configureHidHide)
 				HideMappedDevices(game, devices.Select(x => x.InstanceGuid).ToArray());
 		}
 
-		/// <summary>Hides through HID Guardian those of these devices the game uses, and shows the others, as <see cref="AutoHideShowMappedDevices"/> judges them.</summary>
+		/// <summary>Hides through HID Hide those of these devices the game uses, and shows the others, as <see cref="AutoHideShowMappedDevices"/> judges them.</summary>
 		/// <remarks>Called when a device is put on a tab or taken off it, and when its tick in a tab's list or on the Devices page changes.</remarks>
 		/// <param name="game">The game.</param>
 		/// <param name="instanceGuids">The devices whose hiding may have changed.</param>
 		public static void HideMappedDevices(UserGame game, params Guid[] instanceGuids)
 		{
 			if (AutoHideShowMappedDevices(game, instanceGuids))
-				AppHelper.SynchronizeToHidGuardian(instanceGuids);
+				AppHelper.SynchronizeToHidHide(instanceGuids);
 		}
 
 		/// <summary>The row of the device's twin on a controller tab of the game, or null when its twin is not on that tab.</summary>
@@ -1305,7 +1312,7 @@ namespace x360ce.App
 		/// A tab left with no device is switched off, so the game is not offered a controller nothing
 		/// drives, and the last tab switched off takes the game off virtual emulation.
 		/// </remarks>
-		public static void UnMapGamePadDevices(UserGame game, UserSetting setting, bool configureHidGuardian)
+		public static void UnMapGamePadDevices(UserGame game, UserSetting setting, bool configureHidHide)
 		{
 			var tab = setting == null ? MapTo.None : (MapTo)setting.MapTo;
 			// Disable map.
@@ -1313,7 +1320,7 @@ namespace x360ce.App
 				setting.MapTo = (int)MapTo.Disabled;
 			SwitchOffEmptyTabs(game, new[] { tab });
 			// Unhide device if no longer mapped.
-			if (configureHidGuardian)
+			if (configureHidHide)
 				HideMappedDevices(game, setting.InstanceGuid);
 		}
 

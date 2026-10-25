@@ -195,11 +195,12 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				Invoke((Action<T>)InsertCarriedItem, item);
 				return;
 			}
-			foreach (PropertyDescriptor propDesc in TypeDescriptor.GetProperties(item))
-			{
-				if (propDesc.SupportsChangeEvents)
-					propDesc.AddValueChanged(item, OnItemChanged);
-			}
+			if (!ItemsNotify)
+				foreach (PropertyDescriptor propDesc in TypeDescriptor.GetProperties(item))
+				{
+					if (propDesc.SupportsChangeEvents)
+						propDesc.AddValueChanged(item, OnItemChanged);
+				}
 			// When a sort is active, ignore the caller's index and place the
 			// item at the position that preserves the sort order. Otherwise a
 			// caller doing Insert(0, ...) would always push new items to the
@@ -239,12 +240,12 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				return;
 			}
 			var item = Items[index];
-			var propDescs = TypeDescriptor.GetProperties(item);
-			foreach (PropertyDescriptor propDesc in propDescs)
-			{
-				if (propDesc.SupportsChangeEvents)
-					propDesc.RemoveValueChanged(item, OnItemChanged);
-			}
+			if (!ItemsNotify)
+				foreach (PropertyDescriptor propDesc in TypeDescriptor.GetProperties(item))
+				{
+					if (propDesc.SupportsChangeEvents)
+						propDesc.RemoveValueChanged(item, OnItemChanged);
+				}
 			// Mirror InsertItem: while sorted, every item is also tracked in
 			// _OriginalCollection so RemoveSort can restore the pre-sort view. Drop the
 			// removed item from that backing list too, otherwise it would silently
@@ -274,6 +275,13 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				_OriginalCollection.Clear();
 			base.ClearItems();
 		}
+
+		/// <summary>
+		/// Whether the items say themselves when a property changes, which <see cref="BindingList{T}"/> then reports as a
+		/// change to that property: listened to here as well, every change would be reported twice, the second time as a
+		/// change to the whole item.
+		/// </summary>
+		static readonly bool ItemsNotify = typeof(INotifyPropertyChanged).IsAssignableFrom(typeof(T));
 
 		private void OnItemChanged(object sender, EventArgs args)
 		{

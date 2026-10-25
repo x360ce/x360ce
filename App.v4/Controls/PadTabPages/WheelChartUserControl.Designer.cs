@@ -84,7 +84,6 @@ namespace x360ce.App.Controls
 			// AngleValueLabel
 			//
 			this.AngleValueLabel.AutoSize = true;
-			this.AngleValueLabel.ForeColor = System.Drawing.Color.Green;
 			this.AngleValueLabel.Location = new System.Drawing.Point(63, 5);
 			this.AngleValueLabel.Margin = new System.Windows.Forms.Padding(4, 5, 24, 5);
 			this.AngleValueLabel.Name = "AngleValueLabel";
@@ -105,7 +104,6 @@ namespace x360ce.App.Controls
 			// ForceValueLabel
 			//
 			this.ForceValueLabel.AutoSize = true;
-			this.ForceValueLabel.ForeColor = System.Drawing.Color.Blue;
 			this.ForceValueLabel.Location = new System.Drawing.Point(157, 5);
 			this.ForceValueLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.ForceValueLabel.Name = "ForceValueLabel";
@@ -115,8 +113,7 @@ namespace x360ce.App.Controls
 			//
 			// MainPictureBox
 			//
-			this.MainPictureBox.BackColor = System.Drawing.SystemColors.Window;
-			this.MainPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.MainPictureBox.BackColor = System.Drawing.Color.Transparent;
 			this.MainTableLayoutPanel.SetColumnSpan(this.MainPictureBox, 3);
 			this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPictureBox.Location = new System.Drawing.Point(4, 35);

@@ -55,8 +55,12 @@ namespace x360ce.Tests
 			try
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));
-				var rate = Ui.WaitFor(() => Ui.FindByName(window, RateText), TimeSpan.FromSeconds(60),
-					"the status bar never reported an interface rate");
+				// The status bar appears once the Warnings window is answered.
+				var rate = Ui.WaitFor(() =>
+				{
+					Ui.FixWarnings(app, window);
+					return Ui.FindByName(window, RateText);
+				}, TimeSpan.FromSeconds(60), "the status bar never reported an interface rate");
 
 				var last = -1;
 				try

@@ -49,9 +49,6 @@
 			this.SummariesDataGridView.AllowUserToAddRows = false;
 			this.SummariesDataGridView.AllowUserToDeleteRows = false;
 			this.SummariesDataGridView.AllowUserToResizeRows = false;
-			this.SummariesDataGridView.BackgroundColor = System.Drawing.Color.White;
-			this.SummariesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.SummariesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -75,7 +72,6 @@
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
 			this.SummariesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.SummariesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SummariesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.SummariesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.SummariesDataGridView.MultiSelect = false;
 			this.SummariesDataGridView.Name = "SummariesDataGridView";
@@ -146,7 +142,6 @@
             this.SummariesRefreshButton});
 			this.SummariesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SummariesToolStrip.Name = "SummariesToolStrip";
-			this.SummariesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.SummariesToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SummariesToolStrip.TabIndex = 4;
 			this.SummariesToolStrip.Text = "MySettingsToolStrip";

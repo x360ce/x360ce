@@ -15,6 +15,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.AiPanel = new TableLayoutPanel();
 			this.AiHeaderPanel = new TableLayoutPanel();
 			this.AiHeaderText = new Label();
 			this.AiExampleLabel = new Label();
@@ -67,7 +68,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelAdminKeyTextBox = new TextBox();
 			this.AiTunnelAdminKeyButton = new Button();
 			this.AiTunnelIdLabel = new Label();
-			this.AiTunnelIdTextBox = new TextBox();
+			this.AiTunnelIdComboBox = new ComboBox();
 			this.AiTunnelCreateButton = new Button();
 			this.AiTunnelCopyButton = new Button();
 			this.AiTunnelDeleteButton = new Button();
@@ -84,6 +85,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelFileButton = new Button();
 			this.AiTunnelKeysNoteText = new Label();
 			this.AiTunnelStatusText = new Label();
+			this.AiPanel.SuspendLayout();
 			this.AiHeaderPanel.SuspendLayout();
 			this.AiTabControl.SuspendLayout();
 			this.AiSkillTabPage.SuspendLayout();
@@ -93,6 +95,17 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelPanel.SuspendLayout();
 			this.AiSkillPanel.SuspendLayout();
 			this.SuspendLayout();
+			// AiPanel
+			this.AiPanel.ColumnCount = 1;
+			this.AiPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			this.AiPanel.Controls.Add(this.AiHeaderPanel, 0, 0);
+			this.AiPanel.Controls.Add(this.AiTabControl, 0, 1);
+			this.AiPanel.Dock = DockStyle.Fill;
+			this.AiPanel.Name = "AiPanel";
+			this.AiPanel.RowCount = 2;
+			this.AiPanel.RowStyles.Add(new RowStyle());
+			this.AiPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			this.AiPanel.TabIndex = 0;
 			// AiHeaderPanel
 			this.AiHeaderPanel.AutoSize = true;
 			this.AiHeaderPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -104,22 +117,22 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiHeaderPanel.Controls.Add(this.AiExampleLabel, 0, 1);
 			this.AiHeaderPanel.Controls.Add(this.AiExampleTextBox, 1, 1);
 			this.AiHeaderPanel.Controls.Add(this.AiExampleCopyButton, 2, 1);
-			this.AiHeaderPanel.Dock = DockStyle.Top;
+			this.AiHeaderPanel.Dock = DockStyle.Fill;
 			this.AiHeaderPanel.Name = "AiHeaderPanel";
-			this.AiHeaderPanel.Padding = new Padding(3, 3, 9, 6);
+			this.AiHeaderPanel.Margin = new Padding(0);
 			this.AiHeaderPanel.RowCount = 2;
 			this.AiHeaderPanel.TabIndex = 0;
 			// AiHeaderText
 			this.AiHeaderText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
 			this.AiHeaderText.AutoSize = true;
 			this.AiHeaderPanel.SetColumnSpan(this.AiHeaderText, 3);
-			this.AiHeaderText.Margin = new Padding(3, 0, 0, 6);
+			this.AiHeaderText.Margin = new Padding(3);
 			this.AiHeaderText.Name = "AiHeaderText";
 			this.AiHeaderText.TabIndex = 0;
 			// AiExampleLabel
 			this.AiExampleLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.AiExampleLabel.AutoSize = true;
-			this.AiExampleLabel.Margin = new Padding(3, 6, 8, 0);
+			this.AiExampleLabel.Margin = new Padding(3, 6, 3, 0);
 			this.AiExampleLabel.Name = "AiExampleLabel";
 			this.AiExampleLabel.TabIndex = 1;
 			this.AiExampleLabel.Text = "Example:";
@@ -131,8 +144,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiExampleTextBox.TabIndex = 2;
 			// AiExampleCopyButton
 			this.AiExampleCopyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiExampleCopyButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiExampleCopyButton.MinimumSize = new Size(90, 23);
 			this.AiExampleCopyButton.Name = "AiExampleCopyButton";
 			this.AiExampleCopyButton.TabIndex = 3;
 			this.AiExampleCopyButton.Text = "Copy";
@@ -150,7 +161,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillTabPage.BackColor = SystemColors.Control;
 			this.AiSkillTabPage.Controls.Add(this.AiSkillPanel);
 			this.AiSkillTabPage.Name = "AiSkillTabPage";
-			this.AiSkillTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiSkillTabPage.Padding = new Padding(3);
 			this.AiSkillTabPage.TabIndex = 0;
 			this.AiSkillTabPage.Text = "AI Skill";
 			// AiAccessTabPage
@@ -158,7 +169,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessTabPage.BackColor = SystemColors.Control;
 			this.AiAccessTabPage.Controls.Add(this.AiAccessPanel);
 			this.AiAccessTabPage.Name = "AiAccessTabPage";
-			this.AiAccessTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiAccessTabPage.Padding = new Padding(3);
 			this.AiAccessTabPage.TabIndex = 1;
 			this.AiAccessTabPage.Text = "MCP Server - AI Assistant Access";
 			// AiTunnelTabPage
@@ -166,7 +177,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelTabPage.BackColor = SystemColors.Control;
 			this.AiTunnelTabPage.Controls.Add(this.AiTunnelPanel);
 			this.AiTunnelTabPage.Name = "AiTunnelTabPage";
-			this.AiTunnelTabPage.Padding = new Padding(3, 3, 9, 3);
+			this.AiTunnelTabPage.Padding = new Padding(3);
 			this.AiTunnelTabPage.TabIndex = 2;
 			this.AiTunnelTabPage.Text = "OpenAI Tunnel";
 			// AiAccessPanel
@@ -204,7 +215,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessEnabledCheckBox.Anchor = AnchorStyles.Left;
 			this.AiAccessEnabledCheckBox.AutoSize = true;
 			this.AiAccessPanel.SetColumnSpan(this.AiAccessEnabledCheckBox, 3);
-			this.AiAccessEnabledCheckBox.Margin = new Padding(3, 0, 3, 6);
 			this.AiAccessEnabledCheckBox.Name = "AiAccessEnabledCheckBox";
 			this.AiAccessEnabledCheckBox.TabIndex = 1;
 			this.AiAccessEnabledCheckBox.Text = "AI assistant access";
@@ -212,7 +222,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessLevelLabel
 			this.AiAccessLevelLabel.Anchor = AnchorStyles.Left;
 			this.AiAccessLevelLabel.AutoSize = true;
-			this.AiAccessLevelLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiAccessLevelLabel.Name = "AiAccessLevelLabel";
 			this.AiAccessLevelLabel.TabIndex = 2;
 			this.AiAccessLevelLabel.Text = "Level";
@@ -226,7 +235,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessAddressLabel
 			this.AiAccessAddressLabel.Anchor = AnchorStyles.Left;
 			this.AiAccessAddressLabel.AutoSize = true;
-			this.AiAccessAddressLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiAccessAddressLabel.Name = "AiAccessAddressLabel";
 			this.AiAccessAddressLabel.TabIndex = 4;
 			this.AiAccessAddressLabel.Text = "Address";
@@ -247,7 +255,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessPortLabel
 			this.AiAccessPortLabel.Anchor = AnchorStyles.Left;
 			this.AiAccessPortLabel.AutoSize = true;
-			this.AiAccessPortLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiAccessPortLabel.Name = "AiAccessPortLabel";
 			this.AiAccessPortLabel.TabIndex = 7;
 			this.AiAccessPortLabel.Text = "Port";
@@ -260,7 +267,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessUrlLabel
 			this.AiAccessUrlLabel.Anchor = AnchorStyles.Left;
 			this.AiAccessUrlLabel.AutoSize = true;
-			this.AiAccessUrlLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiAccessUrlLabel.Name = "AiAccessUrlLabel";
 			this.AiAccessUrlLabel.TabIndex = 9;
 			this.AiAccessUrlLabel.Text = "URL";
@@ -271,8 +277,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessUrlTextBox.TabIndex = 10;
 			// AiAccessUrlCopyButton
 			this.AiAccessUrlCopyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiAccessUrlCopyButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiAccessUrlCopyButton.MinimumSize = new Size(90, 23);
 			this.AiAccessUrlCopyButton.Name = "AiAccessUrlCopyButton";
 			this.AiAccessUrlCopyButton.TabIndex = 11;
 			this.AiAccessUrlCopyButton.Text = "Copy";
@@ -280,7 +284,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessTokenLabel
 			this.AiAccessTokenLabel.Anchor = AnchorStyles.Left;
 			this.AiAccessTokenLabel.AutoSize = true;
-			this.AiAccessTokenLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiAccessTokenLabel.Name = "AiAccessTokenLabel";
 			this.AiAccessTokenLabel.TabIndex = 12;
 			this.AiAccessTokenLabel.Text = "Token";
@@ -292,8 +295,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessTokenTextBox.TabIndex = 13;
 			// AiAccessRegenerateButton
 			this.AiAccessRegenerateButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiAccessRegenerateButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiAccessRegenerateButton.MinimumSize = new Size(90, 23);
 			this.AiAccessRegenerateButton.Name = "AiAccessRegenerateButton";
 			this.AiAccessRegenerateButton.TabIndex = 14;
 			this.AiAccessRegenerateButton.Text = "Regenerate";
@@ -301,7 +302,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessSnippetLabel
 			this.AiAccessSnippetLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.AiAccessSnippetLabel.AutoSize = true;
-			this.AiAccessSnippetLabel.Margin = new Padding(3, 6, 8, 0);
+			this.AiAccessSnippetLabel.Margin = new Padding(3, 6, 3, 0);
 			this.AiAccessSnippetLabel.Name = "AiAccessSnippetLabel";
 			this.AiAccessSnippetLabel.TabIndex = 15;
 			this.AiAccessSnippetLabel.Text = "Assistant snippet";
@@ -313,8 +314,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessSnippetTextBox.TabIndex = 16;
 			// AiAccessCopyButton
 			this.AiAccessCopyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiAccessCopyButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiAccessCopyButton.MinimumSize = new Size(90, 23);
 			this.AiAccessCopyButton.Name = "AiAccessCopyButton";
 			this.AiAccessCopyButton.TabIndex = 17;
 			this.AiAccessCopyButton.Text = "Copy";
@@ -322,15 +321,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessPromptButton
 			this.AiAccessPromptButton.Anchor = AnchorStyles.Left;
 			this.AiAccessPromptButton.AutoSize = true;
-			this.AiAccessPromptButton.MinimumSize = new Size(90, 23);
 			this.AiAccessPromptButton.Name = "AiAccessPromptButton";
 			this.AiAccessPromptButton.TabIndex = 18;
 			this.AiAccessPromptButton.Text = "Copy prompt";
 			this.AiAccessPromptButton.Click += new EventHandler(this.AiAccessPromptButton_Click);
 			// AiAccessLogButton
 			this.AiAccessLogButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiAccessLogButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiAccessLogButton.MinimumSize = new Size(90, 23);
 			this.AiAccessLogButton.Name = "AiAccessLogButton";
 			this.AiAccessLogButton.TabIndex = 19;
 			this.AiAccessLogButton.Text = "Open log";
@@ -340,7 +336,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiAccessStatusText.AutoSize = true;
 			this.AiAccessPanel.SetColumnSpan(this.AiAccessStatusText, 3);
 			this.AiAccessStatusText.ForeColor = SystemColors.GrayText;
-			this.AiAccessStatusText.Margin = new Padding(3, 6, 0, 0);
+			this.AiAccessStatusText.Margin = new Padding(3);
 			this.AiAccessStatusText.Name = "AiAccessStatusText";
 			this.AiAccessStatusText.TabIndex = 20;
 			// AiTunnelPanel
@@ -358,7 +354,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyTextBox, 1, 2);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelAdminKeyButton, 2, 2);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdLabel, 0, 3);
-			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdTextBox, 1, 3);
+			this.AiTunnelPanel.Controls.Add(this.AiTunnelIdComboBox, 1, 3);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelCreateButton, 2, 3);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelCopyButton, 1, 4);
 			this.AiTunnelPanel.Controls.Add(this.AiTunnelDeleteButton, 2, 4);
@@ -384,13 +380,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelNoteText.AutoSize = true;
 			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelNoteText, 3);
 			this.AiTunnelNoteText.ForeColor = SystemColors.GrayText;
-			this.AiTunnelNoteText.Margin = new Padding(3, 0, 0, 6);
+			this.AiTunnelNoteText.Margin = new Padding(3);
 			this.AiTunnelNoteText.Name = "AiTunnelNoteText";
 			this.AiTunnelNoteText.TabIndex = 1;
 			// AiTunnelOrganizationLabel
 			this.AiTunnelOrganizationLabel.Anchor = AnchorStyles.Left;
 			this.AiTunnelOrganizationLabel.AutoSize = true;
-			this.AiTunnelOrganizationLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiTunnelOrganizationLabel.Name = "AiTunnelOrganizationLabel";
 			this.AiTunnelOrganizationLabel.TabIndex = 2;
 			this.AiTunnelOrganizationLabel.Text = "Organization ID";
@@ -401,8 +396,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelOrganizationTextBox.Validated += new EventHandler(this.AiTunnelOrganizationTextBox_Validated);
 			// AiTunnelOrganizationButton
 			this.AiTunnelOrganizationButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelOrganizationButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelOrganizationButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelOrganizationButton.Name = "AiTunnelOrganizationButton";
 			this.AiTunnelOrganizationButton.TabIndex = 4;
 			this.AiTunnelOrganizationButton.Text = "Find";
@@ -410,7 +403,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelAdminKeyLabel
 			this.AiTunnelAdminKeyLabel.Anchor = AnchorStyles.Left;
 			this.AiTunnelAdminKeyLabel.AutoSize = true;
-			this.AiTunnelAdminKeyLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiTunnelAdminKeyLabel.Name = "AiTunnelAdminKeyLabel";
 			this.AiTunnelAdminKeyLabel.TabIndex = 5;
 			this.AiTunnelAdminKeyLabel.Text = "Admin key";
@@ -421,8 +413,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelAdminKeyTextBox.UseSystemPasswordChar = true;
 			// AiTunnelAdminKeyButton
 			this.AiTunnelAdminKeyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelAdminKeyButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelAdminKeyButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelAdminKeyButton.Name = "AiTunnelAdminKeyButton";
 			this.AiTunnelAdminKeyButton.TabIndex = 7;
 			this.AiTunnelAdminKeyButton.Text = "Get key";
@@ -430,19 +420,18 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelIdLabel
 			this.AiTunnelIdLabel.Anchor = AnchorStyles.Left;
 			this.AiTunnelIdLabel.AutoSize = true;
-			this.AiTunnelIdLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiTunnelIdLabel.Name = "AiTunnelIdLabel";
 			this.AiTunnelIdLabel.TabIndex = 8;
 			this.AiTunnelIdLabel.Text = "Tunnel ID";
-			// AiTunnelIdTextBox
-			this.AiTunnelIdTextBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelIdTextBox.Name = "AiTunnelIdTextBox";
-			this.AiTunnelIdTextBox.TabIndex = 9;
-			this.AiTunnelIdTextBox.Validated += new EventHandler(this.AiTunnelIdTextBox_Validated);
+			// AiTunnelIdComboBox
+			this.AiTunnelIdComboBox.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			this.AiTunnelIdComboBox.Name = "AiTunnelIdComboBox";
+			this.AiTunnelIdComboBox.TabIndex = 9;
+			this.AiTunnelIdComboBox.DropDown += new EventHandler(this.AiTunnelIdComboBox_DropDown);
+			this.AiTunnelIdComboBox.SelectionChangeCommitted += new EventHandler(this.AiTunnelIdComboBox_SelectionChangeCommitted);
+			this.AiTunnelIdComboBox.Validated += new EventHandler(this.AiTunnelIdComboBox_Validated);
 			// AiTunnelCreateButton
 			this.AiTunnelCreateButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelCreateButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelCreateButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelCreateButton.Name = "AiTunnelCreateButton";
 			this.AiTunnelCreateButton.TabIndex = 10;
 			this.AiTunnelCreateButton.Text = "Create";
@@ -450,15 +439,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelCopyButton
 			this.AiTunnelCopyButton.Anchor = AnchorStyles.Left;
 			this.AiTunnelCopyButton.AutoSize = true;
-			this.AiTunnelCopyButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelCopyButton.Name = "AiTunnelCopyButton";
 			this.AiTunnelCopyButton.TabIndex = 11;
 			this.AiTunnelCopyButton.Text = "Copy tunnel ID";
 			this.AiTunnelCopyButton.Click += new EventHandler(this.AiTunnelCopyButton_Click);
 			// AiTunnelDeleteButton
 			this.AiTunnelDeleteButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelDeleteButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelDeleteButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelDeleteButton.Name = "AiTunnelDeleteButton";
 			this.AiTunnelDeleteButton.TabIndex = 12;
 			this.AiTunnelDeleteButton.Text = "Delete...";
@@ -466,7 +452,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelApiKeyLabel
 			this.AiTunnelApiKeyLabel.Anchor = AnchorStyles.Left;
 			this.AiTunnelApiKeyLabel.AutoSize = true;
-			this.AiTunnelApiKeyLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiTunnelApiKeyLabel.Name = "AiTunnelApiKeyLabel";
 			this.AiTunnelApiKeyLabel.TabIndex = 13;
 			this.AiTunnelApiKeyLabel.Text = "API key";
@@ -478,8 +463,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelApiKeyTextBox.Validated += new EventHandler(this.AiTunnelApiKeyTextBox_Validated);
 			// AiTunnelApiKeyButton
 			this.AiTunnelApiKeyButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelApiKeyButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelApiKeyButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelApiKeyButton.Name = "AiTunnelApiKeyButton";
 			this.AiTunnelApiKeyButton.TabIndex = 15;
 			this.AiTunnelApiKeyButton.Text = "Get key";
@@ -488,15 +471,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelEnabledCheckBox.Anchor = AnchorStyles.Left;
 			this.AiTunnelEnabledCheckBox.AutoSize = true;
 			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelEnabledCheckBox, 2);
-			this.AiTunnelEnabledCheckBox.Margin = new Padding(3, 3, 3, 3);
 			this.AiTunnelEnabledCheckBox.Name = "AiTunnelEnabledCheckBox";
 			this.AiTunnelEnabledCheckBox.TabIndex = 16;
 			this.AiTunnelEnabledCheckBox.Text = "Open the tunnel";
 			this.AiTunnelEnabledCheckBox.CheckedChanged += new EventHandler(this.AiTunnelEnabledCheckBox_CheckedChanged);
 			// AiTunnelPageButton
 			this.AiTunnelPageButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelPageButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelPageButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelPageButton.Name = "AiTunnelPageButton";
 			this.AiTunnelPageButton.TabIndex = 17;
 			this.AiTunnelPageButton.Text = "Status page";
@@ -504,20 +484,18 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelChatGptLabel
 			this.AiTunnelChatGptLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.AiTunnelChatGptLabel.AutoSize = true;
-			this.AiTunnelChatGptLabel.Margin = new Padding(3, 6, 8, 0);
+			this.AiTunnelChatGptLabel.Margin = new Padding(3, 6, 3, 0);
 			this.AiTunnelChatGptLabel.Name = "AiTunnelChatGptLabel";
 			this.AiTunnelChatGptLabel.TabIndex = 18;
 			this.AiTunnelChatGptLabel.Text = "In ChatGPT";
 			// AiTunnelChatGptText
 			this.AiTunnelChatGptText.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			this.AiTunnelChatGptText.AutoSize = true;
-			this.AiTunnelChatGptText.Margin = new Padding(3, 6, 3, 6);
+			this.AiTunnelChatGptText.Margin = new Padding(3, 6, 3, 3);
 			this.AiTunnelChatGptText.Name = "AiTunnelChatGptText";
 			this.AiTunnelChatGptText.TabIndex = 19;
 			// AiTunnelChatGptButton
 			this.AiTunnelChatGptButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelChatGptButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelChatGptButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelChatGptButton.Name = "AiTunnelChatGptButton";
 			this.AiTunnelChatGptButton.TabIndex = 20;
 			this.AiTunnelChatGptButton.Text = "Open ChatGPT";
@@ -525,7 +503,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiTunnelFileLabel
 			this.AiTunnelFileLabel.Anchor = AnchorStyles.Left;
 			this.AiTunnelFileLabel.AutoSize = true;
-			this.AiTunnelFileLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiTunnelFileLabel.Name = "AiTunnelFileLabel";
 			this.AiTunnelFileLabel.TabIndex = 21;
 			this.AiTunnelFileLabel.Text = "Kept in";
@@ -536,8 +513,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelFileTextBox.TabIndex = 22;
 			// AiTunnelFileButton
 			this.AiTunnelFileButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiTunnelFileButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiTunnelFileButton.MinimumSize = new Size(90, 23);
 			this.AiTunnelFileButton.Name = "AiTunnelFileButton";
 			this.AiTunnelFileButton.TabIndex = 23;
 			this.AiTunnelFileButton.Text = "Show file";
@@ -547,7 +522,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelKeysNoteText.AutoSize = true;
 			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelKeysNoteText, 2);
 			this.AiTunnelKeysNoteText.ForeColor = SystemColors.GrayText;
-			this.AiTunnelKeysNoteText.Margin = new Padding(3, 0, 0, 6);
+			this.AiTunnelKeysNoteText.Margin = new Padding(3);
 			this.AiTunnelKeysNoteText.Name = "AiTunnelKeysNoteText";
 			this.AiTunnelKeysNoteText.TabIndex = 24;
 			// AiTunnelStatusText
@@ -555,7 +530,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelStatusText.AutoSize = true;
 			this.AiTunnelPanel.SetColumnSpan(this.AiTunnelStatusText, 3);
 			this.AiTunnelStatusText.ForeColor = SystemColors.GrayText;
-			this.AiTunnelStatusText.Margin = new Padding(3, 6, 0, 0);
+			this.AiTunnelStatusText.Margin = new Padding(3);
 			this.AiTunnelStatusText.Name = "AiTunnelStatusText";
 			this.AiTunnelStatusText.TabIndex = 25;
 			// AiSkillPanel
@@ -586,13 +561,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillNoteText.AutoSize = true;
 			this.AiSkillPanel.SetColumnSpan(this.AiSkillNoteText, 3);
 			this.AiSkillNoteText.ForeColor = SystemColors.GrayText;
-			this.AiSkillNoteText.Margin = new Padding(3, 0, 0, 6);
+			this.AiSkillNoteText.Margin = new Padding(3);
 			this.AiSkillNoteText.Name = "AiSkillNoteText";
 			this.AiSkillNoteText.TabIndex = 1;
 			// AiSkillClaudeLabel
 			this.AiSkillClaudeLabel.Anchor = AnchorStyles.Left;
 			this.AiSkillClaudeLabel.AutoSize = true;
-			this.AiSkillClaudeLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiSkillClaudeLabel.Name = "AiSkillClaudeLabel";
 			this.AiSkillClaudeLabel.TabIndex = 2;
 			this.AiSkillClaudeLabel.Text = "Claude Code:";
@@ -603,8 +577,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillClaudeFolderTextBox.TabIndex = 3;
 			// AiSkillClaudeButton
 			this.AiSkillClaudeButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiSkillClaudeButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiSkillClaudeButton.MinimumSize = new Size(90, 23);
 			this.AiSkillClaudeButton.Name = "AiSkillClaudeButton";
 			this.AiSkillClaudeButton.TabIndex = 4;
 			this.AiSkillClaudeButton.Text = "Install";
@@ -612,13 +584,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiSkillClaudeStatusText
 			this.AiSkillClaudeStatusText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
 			this.AiSkillClaudeStatusText.AutoSize = true;
-			this.AiSkillClaudeStatusText.Margin = new Padding(3, 0, 3, 6);
+			this.AiSkillClaudeStatusText.Margin = new Padding(3);
 			this.AiSkillClaudeStatusText.Name = "AiSkillClaudeStatusText";
 			this.AiSkillClaudeStatusText.TabIndex = 5;
 			// AiSkillAgentsLabel
 			this.AiSkillAgentsLabel.Anchor = AnchorStyles.Left;
 			this.AiSkillAgentsLabel.AutoSize = true;
-			this.AiSkillAgentsLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiSkillAgentsLabel.Name = "AiSkillAgentsLabel";
 			this.AiSkillAgentsLabel.TabIndex = 6;
 			this.AiSkillAgentsLabel.Text = "Other agents:";
@@ -629,8 +600,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillAgentsFolderTextBox.TabIndex = 7;
 			// AiSkillAgentsButton
 			this.AiSkillAgentsButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiSkillAgentsButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiSkillAgentsButton.MinimumSize = new Size(90, 23);
 			this.AiSkillAgentsButton.Name = "AiSkillAgentsButton";
 			this.AiSkillAgentsButton.TabIndex = 8;
 			this.AiSkillAgentsButton.Text = "Install";
@@ -638,13 +607,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiSkillAgentsStatusText
 			this.AiSkillAgentsStatusText.Anchor = AnchorStyles.Left | AnchorStyles.Right;
 			this.AiSkillAgentsStatusText.AutoSize = true;
-			this.AiSkillAgentsStatusText.Margin = new Padding(3, 0, 3, 6);
+			this.AiSkillAgentsStatusText.Margin = new Padding(3);
 			this.AiSkillAgentsStatusText.Name = "AiSkillAgentsStatusText";
 			this.AiSkillAgentsStatusText.TabIndex = 9;
 			// AiSkillZipLabel
 			this.AiSkillZipLabel.Anchor = AnchorStyles.Left;
 			this.AiSkillZipLabel.AutoSize = true;
-			this.AiSkillZipLabel.Margin = new Padding(3, 0, 8, 0);
 			this.AiSkillZipLabel.Name = "AiSkillZipLabel";
 			this.AiSkillZipLabel.TabIndex = 10;
 			this.AiSkillZipLabel.Text = "Claude app:";
@@ -655,8 +623,6 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiSkillZipNoteText.TabIndex = 11;
 			// AiSkillZipButton
 			this.AiSkillZipButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-			this.AiSkillZipButton.Margin = new Padding(8, 3, 0, 3);
-			this.AiSkillZipButton.MinimumSize = new Size(90, 23);
 			this.AiSkillZipButton.Name = "AiSkillZipButton";
 			this.AiSkillZipButton.TabIndex = 12;
 			this.AiSkillZipButton.Text = "Save as ZIP...";
@@ -664,8 +630,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			// AiAccessUserControl
 			this.AutoScaleDimensions = new SizeF(6F, 13F);
 			this.AutoScaleMode = AutoScaleMode.Font;
-			this.Controls.Add(this.AiTabControl);
-			this.Controls.Add(this.AiHeaderPanel);
+			this.Controls.Add(this.AiPanel);
 			this.Name = "AiAccessUserControl";
 			this.Size = new Size(600, 560);
 			this.AiHeaderPanel.ResumeLayout(false);
@@ -683,11 +648,14 @@ namespace JocysCom.ClassLibrary.Mcp
 			this.AiTunnelTabPage.ResumeLayout(false);
 			this.AiTunnelTabPage.PerformLayout();
 			this.AiTabControl.ResumeLayout(false);
+			this.AiPanel.ResumeLayout(false);
+			this.AiPanel.PerformLayout();
 			this.ResumeLayout(false);
 		}
 
 		#endregion
 
+		private TableLayoutPanel AiPanel;
 		private TableLayoutPanel AiHeaderPanel;
 		private Label AiHeaderText;
 		private Label AiExampleLabel;
@@ -727,7 +695,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		private TextBox AiTunnelAdminKeyTextBox;
 		private Button AiTunnelAdminKeyButton;
 		private Label AiTunnelIdLabel;
-		private TextBox AiTunnelIdTextBox;
+		private ComboBox AiTunnelIdComboBox;
 		private Button AiTunnelCreateButton;
 		private Button AiTunnelCopyButton;
 		private Button AiTunnelDeleteButton;

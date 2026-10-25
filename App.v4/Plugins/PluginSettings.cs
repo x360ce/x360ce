@@ -12,14 +12,14 @@ using x360ce.Plugins;
 
 namespace x360ce.App.Plugins
 {
-	/// <summary>How a setting is shown on a plugin device's tab.</summary>
+	/// <summary>What kind of value a setting holds, which decides how its row on a plugin device's tab edits it.</summary>
 	public enum PluginSettingKind
 	{
-		/// <summary>A bool: a check box.</summary>
+		/// <summary>A bool: True or False.</summary>
 		CheckBox,
-		/// <summary>A number: a number box, held inside the property's [Range].</summary>
+		/// <summary>A number, held inside the property's [Range].</summary>
 		Number,
-		/// <summary>A string, or a type its converter writes as text: a text box.</summary>
+		/// <summary>A string, or a type its converter writes as text.</summary>
 		Text,
 		/// <summary>An enum, or a property whose type converter offers values: a drop-down list.</summary>
 		List,
@@ -47,13 +47,13 @@ namespace x360ce.App.Plugins
 
 	/// <summary>One setting of a kind of plugin device: a public property of its class.</summary>
 	/// <remarks>
-	/// Every public property is one, except the members of <see cref="IPluginDevice"/>, indexers, and those marked
-	/// [Browsable(false)]. A property with a public setter is edited: a bool with a check box, an enum with a drop-down
-	/// list, a number with a number box, a string with a text box. A type converter that offers standard values gives any
-	/// of them a drop-down list instead, which takes typed values too unless the converter says its values are the only
-	/// ones. A property without a public setter is shown as status. [DisplayName] names a setting, [Description] explains
-	/// it, [Category] groups it, and [Range] limits a number. The value a new instance of the class starts with is the
-	/// setting's default, which Reset gives back.
+	/// Every public property is one, except the members of <see cref="IPluginDevice"/>, indexers, a declared
+	/// <see cref="PluginMcpServer"/>, and those marked [Browsable(false)]. A property with a public setter is edited, as a
+	/// row of the tab's property grid: a bool and an enum from a drop-down list, a number and a string typed. A type
+	/// converter that offers standard values gives any of them a drop-down list, which takes typed values too unless the
+	/// converter says its values are the only ones. A property without a public setter is shown as status, read only.
+	/// [DisplayName] names a setting, [Description] explains it, [Category] groups it, and [Range] limits a number. The
+	/// value a new instance of the class starts with is the setting's default, which Reset gives back.
 	/// </remarks>
 	public sealed class PluginSetting
 	{
@@ -124,7 +124,8 @@ namespace x360ce.App.Plugins
 			var list = new List<PluginSetting>();
 			foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).OrderBy(x => x.MetadataToken))
 			{
-				if (own.Contains(property.Name) || property.GetIndexParameters().Length > 0 || property.GetGetMethod() == null)
+				if (own.Contains(property.Name) || property.GetIndexParameters().Length > 0 || property.GetGetMethod() == null
+					|| property.PropertyType == typeof(PluginMcpServer))
 					continue;
 				var browsable = property.GetCustomAttribute<BrowsableAttribute>();
 				if (browsable != null && !browsable.Browsable)
@@ -208,6 +209,64 @@ namespace x360ce.App.Plugins
 			if (values == null)
 				return new PluginSettingChoice[0];
 			return values.Cast<object>().Select(x => new PluginSettingChoice(Converter.ConvertToString(x), ToText(x))).ToArray();
+		}
+
+		/// <summary>What the setting takes, as the end of a sentence: "true or false", "a number from 1 to 65535"; "read only" for a status.</summary>
+		public string Takes
+		{
+			get
+			{
+				switch (Kind)
+				{
+					case PluginSettingKind.CheckBox:
+						return "true or false";
+					case PluginSettingKind.Number:
+						return "a number from " + Minimum.ToString(CultureInfo.InvariantCulture) + " to " + Maximum.ToString(CultureInfo.InvariantCulture);
+					case PluginSettingKind.List:
+						var choices = string.Join(", ", GetChoices().Select(x => x.Text));
+						return (ListOnly ? "one of: " : "a value such as: ") + choices;
+					case PluginSettingKind.Text:
+						return "text";
+					default:
+						return "read only";
+				}
+			}
+		}
+
+		/// <summary>
+		/// The text a value is kept as, from text a person or a caller typed: an entry of the list by the words it shows,
+		/// or the value itself. Throws an <see cref="ArgumentException"/> that says what the setting takes when the text
+		/// is no value it can hold, outside its [Range], or not among the only values its list allows.
+		/// </summary>
+		public string Parse(string typed)
+		{
+			if (Kind == PluginSettingKind.Status)
+				throw new ArgumentException(DisplayName + " is read only.");
+			typed = typed ?? "";
+			var choice = Kind == PluginSettingKind.List
+				? GetChoices().FirstOrDefault(x => string.Equals(x.Text, typed, StringComparison.OrdinalIgnoreCase))
+				: null;
+			var text = choice == null ? typed.Trim() : choice.Value;
+			object value;
+			try
+			{
+				value = FromText(text);
+			}
+			// A converter reports text it cannot read in its own way; the framework's number converters throw a bare Exception.
+			catch (Exception)
+			{
+				throw new ArgumentException(DisplayName + " takes " + Takes + ".");
+			}
+			if (Kind == PluginSettingKind.Number)
+			{
+				var number = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+				if (number < Minimum || number > Maximum)
+					throw new ArgumentException(DisplayName + " takes " + Takes + ".");
+			}
+			text = ToText(value);
+			if (ListOnly && !GetChoices().Any(x => x.Value == text))
+				throw new ArgumentException(DisplayName + " takes " + Takes + ".");
+			return text;
 		}
 
 		/// <summary>A value as the text it is kept as.</summary>
@@ -330,6 +389,20 @@ namespace x360ce.App.Plugins
 					return;
 				else
 					row.Value = value;
+				_version = _version + 1;
+			}
+		}
+
+		/// <summary>Forgets the value kept for one setting of a device, so it has the value a new device starts with.</summary>
+		public void Remove(Guid instanceGuid, string name)
+		{
+			lock (_lock)
+			{
+				EnsureLoaded();
+				var row = Find(instanceGuid, name);
+				if (row == null)
+					return;
+				_data.Items.Remove(row);
 				_version = _version + 1;
 			}
 		}

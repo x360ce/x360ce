@@ -119,6 +119,7 @@
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
     <Compile Include="Common\DInput\DInputHelper.Plugins.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Scripts.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step1.UpdateDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step2.UpdateDiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step4.CombineXiStates.cs" />
@@ -212,6 +213,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
+    <Compile Include="Controls\PadTabPages\AxisToDPadChart.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PadTabPages\WheelChartUserControl.cs">
       <SubType>UserControl</SubType>
@@ -395,6 +399,7 @@
     <Compile Include="Issues\UnfinishedVirtualPadsIssue.cs" />
     <Compile Include="Issues\RestartToFinishRemovalIssue.cs" />
     <Compile Include="Issues\SwitchedOffControllersIssue.cs" />
+    <Compile Include="Issues\XboxDirectInputIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Hotkey.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -410,11 +415,15 @@
     </Compile>
     <Compile Include="Mcp\AiAccessSettings.cs" />
     <Compile Include="Mcp\McpTools.cs" />
+    <Compile Include="Mcp\PortPlan.cs" />
     <Compile Include="Plugins\PluginDevices.cs" />
+    <Compile Include="Plugins\PluginDeviceTools.cs" />
     <Compile Include="Plugins\PluginDocs.cs" />
     <Compile Include="Plugins\PluginKit.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
+    <Compile Include="Plugins\PluginMcpDoors.cs" />
     <Compile Include="Plugins\PluginSettings.cs" />
+    <Compile Include="Plugins\PluginSettingsView.cs" />
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -545,6 +554,10 @@
     <EmbeddedResource Include="..\docs\Help.Plugins.md">
       <Link>Documents\Help.Plugins.md</Link>
     </EmbeddedResource>
+    <!-- How AutoHotkey scripts reach x360ce, for the AI skill's references. -->
+    <EmbeddedResource Include="..\docs\Help.AutoHotkey.md">
+      <Link>Documents\Help.AutoHotkey.md</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Plugins\Directory.Build.props">
       <LogicalName>x360ce.App.Documents.PluginKit.Directory.Build.props</LogicalName>
     </EmbeddedResource>
@@ -553,6 +566,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\Plugins\TestController\TestController.cs">
       <LogicalName>x360ce.App.Documents.PluginKit.TestController.cs</LogicalName>
+    </EmbeddedResource>
+    <!-- The AutoHotkey library x360ce writes to Documents\AutoHotkey\Lib when scripts are allowed. -->
+    <EmbeddedResource Include="..\AutoHotkey\x360ce.ahk">
+      <LogicalName>x360ce.App.Documents.x360ce.ahk</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="..\skills\x360ce\references\ui-tree-v4.md">
       <Link>Documents\x360ce.ui-tree-v4.md</Link>
