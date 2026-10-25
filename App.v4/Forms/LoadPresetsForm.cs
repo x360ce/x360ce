@@ -34,6 +34,8 @@ namespace x360ce.App.Controls
 			SettingsGridPanel.InitPanel();
 			SummariesGridPanel.InitPanel();
 			PresetsGridPanel.InitPanel();
+			// The form is shown again after it closes, and a fetch it closed during must not leave the buttons off.
+			_fetching = false;
 			UpdateControls();
 		}
 
@@ -46,10 +48,9 @@ namespace x360ce.App.Controls
 
 		public PadSetting SelectedItem;
 
-		/// <summary>The settings of the row selected on the open tab.</summary>
-		/// <param name="rowSelected">Whether a row is selected at all.</param>
-		/// <returns>Null when no row is selected, or when the server sent no settings for the one that is.</returns>
-		PadSetting GetSelectedPadSetting(out bool rowSelected)
+		/// <summary>The checksum of the settings of the row selected on the open tab.</summary>
+		/// <returns>Null when no row is selected.</returns>
+		Guid? GetSelectedChecksum()
 		{
 			Guid? checksum = null;
 			if (MainTabControl.SelectedTab == PresetsTabPage)
@@ -79,56 +80,114 @@ namespace x360ce.App.Controls
 					checksum = setting.PadSettingChecksum;
 				}
 			}
-			rowSelected = checksum.HasValue;
-			return checksum.HasValue
-				? SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value)
-				: null;
+			return checksum;
 		}
 
-		/// <summary>What the header says when the selected row came without its settings.</summary>
-		const string NoSettingsMessage = "The server sent no settings for this preset. Choose another.";
+		/// <summary>What a button does with the selected preset's settings.</summary>
+		enum PresetAction { Load, Copy, CopyFormat }
+
+		/// <summary>Gets a preset's settings from the server by their checksum, or null when the server has none.</summary>
+		/// <remarks>A test replaces it, since the real one asks the server.</remarks>
+		public static Func<Guid, PadSetting> LoadFromServer = checksum =>
+		{
+			var ws = new WebServiceClient();
+			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
+			var result = ws.LoadSetting(new[] { checksum });
+			return result?.PadSettings?.FirstOrDefault(x => x.PadSettingChecksum == checksum);
+		};
+
+		/// <summary>Whether the selected preset's settings are being fetched from the server.</summary>
+		bool _fetching;
+
+		/// <summary>Does what the button asks with the selected preset's settings.</summary>
+		/// <remarks>
+		/// Every row of the lists is a preset on the server. Its settings are used from this computer when
+		/// they are stored here, which is the same thing, as the checksum names them; otherwise they are
+		/// fetched from the server, as x360ce 3 does, and kept.
+		/// </remarks>
+		void UseSelectedPreset(PresetAction action)
+		{
+			var checksum = GetSelectedChecksum();
+			if (!checksum.HasValue)
+				return;
+			var padSetting = SettingsManager.GetPadSetting(checksum.Value);
+			if (padSetting != null)
+			{
+				UsePreset(action, padSetting);
+				return;
+			}
+			_fetching = true;
+			AddTask(TaskName.LoadSetting);
+			UpdateControls();
+			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			{
+				PadSetting fetched = null;
+				Exception error = null;
+				// Handed to the window, which says what went wrong; thrown here, it would stop the program.
+				try { fetched = LoadFromServer(checksum.Value); }
+				catch (Exception ex) { error = ex; }
+				if (!IsDisposed && IsHandleCreated)
+					BeginInvoke((Action)(() => PresetFetched(action, checksum.Value, fetched, error)));
+			});
+		}
+
+		void PresetFetched(PresetAction action, Guid checksum, PadSetting padSetting, Exception error)
+		{
+			_fetching = false;
+			RemoveTask(TaskName.LoadSetting);
+			UpdateControls();
+			if (error != null)
+			{
+				var message = error.Message;
+				if (error.InnerException != null)
+					message += "\r\n" + error.InnerException.Message;
+				SetHeaderError(message);
+				return;
+			}
+			if (padSetting == null)
+			{
+				// Listed by the server without settings it has, so it can never be loaded.
+				SettingsManager.Summaries.Remove(SettingsManager.Summaries.Items.Where(x => x.PadSettingChecksum == checksum).ToArray());
+				SettingsManager.Presets.Remove(SettingsManager.Presets.Items.Where(x => x.PadSettingChecksum == checksum).ToArray());
+				SetHeaderInfo("This preset is no longer on the server, so it was taken off the list.");
+				return;
+			}
+			SettingsManager.Current.UpsertPadSettings(padSetting);
+			// Closed while the server answered: kept for next time, and nothing more.
+			if (Visible)
+				UsePreset(action, padSetting);
+		}
+
+		void UsePreset(PresetAction action, PadSetting padSetting)
+		{
+			switch (action)
+			{
+				case PresetAction.Load:
+					SelectedItem = padSetting;
+					DialogResult = DialogResult.OK;
+					break;
+				case PresetAction.Copy:
+					SettingsManager.CopyPresetToClipboard(padSetting);
+					break;
+				case PresetAction.CopyFormat:
+					SettingsManager.ShowCopyPresetMenu(CopyPresetButton, padSetting);
+					break;
+			}
+		}
 
 		private void OkButton_Click(object sender, EventArgs e)
 		{
-			bool rowSelected;
-			var padSetting = GetSelectedPadSetting(out rowSelected);
-			if (rowSelected)
-			{
-				SelectedItem = padSetting;
-				// The lists come with their settings, so a missing one is missing on the server too.
-				// Closing with nothing looked like the button did not work; the form stays open and says.
-				if (SelectedItem == null)
-				{
-					SetHeaderError(NoSettingsMessage);
-					return;
-				}
-			}
-			DialogResult = DialogResult.OK;
-		}
-
-		/// <summary>The selected preset to copy as text, so what it holds can be read before it is loaded.</summary>
-		/// <returns>Null, having said so in the header, when the selected row came without its settings.</returns>
-		PadSetting GetPadSettingToCopy()
-		{
-			bool rowSelected;
-			var padSetting = GetSelectedPadSetting(out rowSelected);
-			if (padSetting == null && rowSelected)
-				SetHeaderError(NoSettingsMessage);
-			return padSetting;
+			UseSelectedPreset(PresetAction.Load);
 		}
 
 		private void CopyPresetButton_Click(object sender, EventArgs e)
 		{
-			var padSetting = GetPadSettingToCopy();
-			if (padSetting != null)
-				SettingsManager.CopyPresetToClipboard(padSetting);
+			UseSelectedPreset(PresetAction.Copy);
 		}
 
 		private void CopyPresetFormatButton_Click(object sender, EventArgs e)
 		{
-			var padSetting = GetPadSettingToCopy();
-			if (padSetting != null)
-				SettingsManager.ShowCopyPresetMenu(CopyPresetButton, padSetting);
+			UseSelectedPreset(PresetAction.CopyFormat);
 		}
 
 		private void OpenFileButton_Click(object sender, EventArgs e)
@@ -175,9 +234,11 @@ namespace x360ce.App.Controls
 				selected = SummariesGridPanel.SummariesDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SettingsTabPage)
 				selected = SettingsGridPanel.SettingsDataGridView.SelectedRows.Count > 0;
-			ControlsHelper.SetEnabled(OkButton, selected);
-			ControlsHelper.SetEnabled(CopyPresetButton, selected);
-			ControlsHelper.SetEnabled(CopyPresetFormatButton, selected);
+			// Off while the server answers, so one press fetches once.
+			var enabled = selected && !_fetching;
+			ControlsHelper.SetEnabled(OkButton, enabled);
+			ControlsHelper.SetEnabled(CopyPresetButton, enabled);
+			ControlsHelper.SetEnabled(CopyPresetFormatButton, enabled);
 		}
 
 	}

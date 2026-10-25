@@ -89,11 +89,15 @@ namespace x360ce.App.Controls
 			else
 			{
 				var result = (SearchResult)e.Result;
+				// Listed only with their settings, so every row can be loaded: the server lists some presets
+				// it has no settings for.
+				var sent = (result.PadSettings ?? new Engine.Data.PadSetting[0]).Select(x => x.PadSettingChecksum).ToList();
+				result.Presets = (result.Presets ?? new Preset[0]).Where(x => sent.Contains(x.PadSettingChecksum)).ToArray();
 				AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
 				SettingsManager.Current.UpsertPadSettings(result.PadSettings);
 				SettingsManager.Current.CleanupPadSettings();
-				var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
-				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
+				var presetsCount = result.Presets.Length;
+				var padSettingsCount = sent.Count;
 				_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
 			}
 			_ParentForm.RemoveTask(TaskName.SearchPresets);

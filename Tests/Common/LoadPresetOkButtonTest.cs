@@ -15,9 +15,8 @@ namespace x360ce.Tests
 	/// <remarks>
 	/// The lists fill from the server after the form is open. The button used to follow the tab:
 	/// enabled when the tab's list had rows at the moment the tab was chosen. A tab opened while
-	/// its list was still empty left the button off however much was selected afterwards. And a
-	/// preset whose settings the server did not send closed the form with nothing, which looked
-	/// the same as the button doing nothing.
+	/// its list was still empty left the button off however much was selected afterwards. Every
+	/// row is a preset on the server, so one whose settings are not stored here is fetched from it.
 	/// </remarks>
 	[TestClass]
 	public class LoadPresetOkButtonTest
@@ -114,21 +113,69 @@ namespace x360ce.Tests
 			});
 		}
 
-		[TestMethod, TestCategory("ui")]
-		public void A_preset_whose_settings_never_arrived_keeps_the_form_open_and_says_so()
+		/// <summary>Runs the test with the server answering as given, instead of the real one.</summary>
+		static void WithServer(Func<Guid, PadSetting> server, Action test)
 		{
-			OnFormWithOneSummary((form, summary) =>
+			var real = LoadPresetsForm.LoadFromServer;
+			LoadPresetsForm.LoadFromServer = server;
+			try
 			{
-				form.SelectedItem = null;
-				// Away and back, so the button is on whichever way it is enabled.
-				form.MainTabControl.SelectedTab = form.PresetsTabPage;
-				form.MainTabControl.SelectedTab = form.SummariesTabPage;
+				test();
+			}
+			finally
+			{
+				LoadPresetsForm.LoadFromServer = real;
+			}
+		}
+
+		/// <summary>Lets the form take the server's answer, which arrives from another thread.</summary>
+		static void WaitUntil(Func<bool> done)
+		{
+			for (var waited = 0; !done() && waited < 5000; waited += 20)
+			{
 				Application.DoEvents();
-				Assert.IsTrue(form.OkButton.Enabled, "The button is off, so this test cannot press it.");
-				form.OkButton.PerformClick();
-				Assert.AreEqual(DialogResult.None, form.DialogResult, "The form closed with nothing to load.");
-				Assert.IsNull(form.SelectedItem);
-			});
+				System.Threading.Thread.Sleep(20);
+			}
+			Application.DoEvents();
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		public void A_preset_not_stored_here_is_fetched_from_the_server_and_loaded()
+		{
+			var onServer = new PadSetting { ButtonA = "3" };
+			WithServer(checksum => checksum == onServer.PadSettingChecksum ? onServer : null, () =>
+				OnFormWithOneSummary((form, summary) =>
+				{
+					onServer.PadSettingChecksum = summary.PadSettingChecksum;
+					Assert.IsNull(SettingsManager.GetPadSetting(summary.PadSettingChecksum), "The preset is stored here, so this test cannot show the fetch.");
+					try
+					{
+						form.OkButton.PerformClick();
+						WaitUntil(() => form.DialogResult != DialogResult.None);
+						Assert.AreEqual(DialogResult.OK, form.DialogResult, "The server has the preset, yet it was not loaded.");
+						Assert.AreSame(onServer, form.SelectedItem, "The button did not hand over the server's settings.");
+						Assert.AreSame(onServer, SettingsManager.GetPadSetting(summary.PadSettingChecksum), "The fetched settings were not kept for next time.");
+					}
+					finally
+					{
+						SettingsManager.PadSettings.Remove(new[] { onServer });
+					}
+				}));
+		}
+
+		[TestMethod, TestCategory("ui")]
+		public void A_preset_the_server_does_not_have_is_taken_off_the_list()
+		{
+			WithServer(checksum => null, () =>
+				OnFormWithOneSummary((form, summary) =>
+				{
+					form.SelectedItem = null;
+					form.OkButton.PerformClick();
+					WaitUntil(() => !SettingsManager.Summaries.Items.Contains(summary));
+					Assert.IsFalse(SettingsManager.Summaries.Items.Contains(summary), "A row that can never be loaded stays on the list.");
+					Assert.AreEqual(DialogResult.None, form.DialogResult, "The form closed with nothing to load.");
+					Assert.IsNull(form.SelectedItem);
+				}));
 		}
 	}
 }

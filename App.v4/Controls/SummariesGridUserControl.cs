@@ -124,28 +124,25 @@ namespace x360ce.App.Controls
 			else
 			{
 				var result = (SearchResult)e.Result;
-				var summariesCount = result.Summaries?.Length ?? 0;
-				var padSettingsCount = result.PadSettings?.Length ?? 0;
+				// Listed only with their settings, so every row can be loaded: the server lists some presets
+				// it has no settings for.
+				var sent = (result.PadSettings ?? new PadSetting[0]).Select(x => x.PadSettingChecksum).ToList();
+				result.Summaries = (result.Summaries ?? new Summary[0]).Where(x => sent.Contains(x.PadSettingChecksum)).ToArray();
+				var summariesCount = result.Summaries.Length;
+				var padSettingsCount = sent.Count;
 				if (summariesCount == 0)
 				{
 					_ParentForm.SetHeaderInfo("0 default settings received.");
 				}
 				else
 				{
-					if (padSettingsCount == 0)
-					{
-						_ParentForm.SetHeaderError("Error: {0} default settings received, but no PAD settings.", summariesCount);
-					}
-					else
-					{
-						// Reorder summaries.
-						result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-						AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
-						// Update pad settings.
-						SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-						SettingsManager.Current.CleanupPadSettings();
-						_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
-					}
+					// Reorder summaries.
+					result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
+					AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
+					// Update pad settings.
+					SettingsManager.Current.UpsertPadSettings(result.PadSettings);
+					SettingsManager.Current.CleanupPadSettings();
+					_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
 				}
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSummaries);

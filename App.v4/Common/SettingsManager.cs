@@ -325,15 +325,18 @@ namespace x360ce.App
 		/// pair is what somebody who never touched the sliders has, and nobody chooses that pair on
 		/// purpose; it becomes the current pair, and anything else is left as it was set.
 		///
-		/// Only settings a mapping of this person's points at are touched. A preset from the server
-		/// keeps its checksum, which is how the server knows it, and the mapping is pointed at the
-		/// setting's new checksum so the two stay together.
+		/// Only settings a mapping of this person's points at are updated, and the mapping is given
+		/// them as a copy with the new pair, under the copy's own checksum. The settings it points at
+		/// stay as they are: a mapping loaded from a preset points at the preset's own settings, and
+		/// the Load Preset lists find those by the checksum the server knows them by.
 		/// </remarks>
+		/// <param name="padSettings">The stored settings; the copies are added to it.</param>
+		/// <param name="settings">The person's mappings.</param>
 		/// <returns>How many settings were updated.</returns>
 		public static int UpdateOldDefaultMotorPeriods(IList<PadSetting> padSettings, IList<UserSetting> settings)
 		{
 			var updated = 0;
-			foreach (var ps in padSettings)
+			foreach (var ps in padSettings.ToArray())
 			{
 				if (ps.LeftMotorPeriod != OldDefaultLeftMotorPeriod || ps.RightMotorPeriod != OldDefaultRightMotorPeriod)
 					continue;
@@ -341,11 +344,15 @@ namespace x360ce.App
 				var users = settings.Where(x => x.PadSettingChecksum == was).ToList();
 				if (users.Count == 0)
 					continue;
-				ps.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
-				ps.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
-				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+				var copy = new PadSetting();
+				JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyDataMembers(ps, copy);
+				copy.LeftMotorPeriod = SettingName.DefaultLeftMotorPeriod;
+				copy.RightMotorPeriod = SettingName.DefaultRightMotorPeriod;
+				copy.PadSettingChecksum = copy.CleanAndGetCheckSum();
+				if (!padSettings.Any(x => x.PadSettingChecksum == copy.PadSettingChecksum))
+					padSettings.Add(copy);
 				foreach (var user in users)
-					user.PadSettingChecksum = ps.PadSettingChecksum;
+					user.PadSettingChecksum = copy.PadSettingChecksum;
 				updated++;
 			}
 			return updated;
