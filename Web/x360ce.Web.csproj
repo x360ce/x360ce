@@ -137,6 +137,7 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Statistics.ashx" />
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +284,9 @@
     </Compile>
     <Compile Include="Security\Admin\Users.aspx.designer.cs">
       <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Statistics.ashx.cs">
+      <DependentUpon>Statistics.ashx</DependentUpon>
     </Compile>
     <Compile Include="WebServices\x360ce.asmx.cs">
       <DependentUpon>x360ce.asmx</DependentUpon>

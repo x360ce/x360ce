@@ -158,6 +158,7 @@
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DeviceStatsSvg.cs" />
+    <Compile Include="Common\TopListSvg.cs" />
     <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
