@@ -26,6 +26,12 @@ plugin. It can start and stop while x360ce runs; nothing is copied into games.
    `Documents\AutoHotkey\Lib`, where AutoHotkey finds it.
 2. Start a script with `#Include <x360ce>`, and run it as any AutoHotkey script.
 
+## Online games and anti-cheat
+
+Some online games forbid scripts, and their anti-cheat can refuse to run or flag the player while AutoHotkey runs,
+whatever the script does. Check a game's rules before using a script in it online, as for virtual controllers: see
+[Games with anti-cheat](Help.v4.md#games-with-anti-cheat).
+
 ## How `#Include <x360ce>` connects the script to x360ce
 
 `#Include <x360ce>` adds the file `x360ce.ahk` to your script. The angle brackets tell AutoHotkey to look in its
