@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
-using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
@@ -15,75 +14,6 @@ namespace x360ce.Web.WebServices
 {
 	public partial class x360ce
 	{
-		#region Security
-
-		public void SignOut(out int errorCode, out string errorMessage)
-		{
-			FormsAuthentication.SignOut();
-			var values = new KeyValueList();
-			errorCode = 0;
-			errorMessage = "Good bye!";
-		}
-
-		public void SignIn(string username, string password, out int errorCode, out string errorMessage)
-		{
-			errorCode = 0;
-			errorMessage = null;
-			if (string.IsNullOrEmpty(password))
-				errorMessage = "Please enter password";
-			if (string.IsNullOrEmpty(username))
-				errorMessage = "Please enter user name";
-			if (string.IsNullOrEmpty(errorMessage))
-			{
-				// Here must be validation with password. You can add third party validation here;
-				bool success = Membership.ValidateUser(username, password);
-				if (!success)
-					errorMessage = string.Format("Validation failed. User name '{0}' was not found.", username);
-			}
-			var values = new KeyValueList();
-			if (!string.IsNullOrEmpty(errorMessage))
-			{
-				errorCode = 1;
-				return;
-			}
-			FormsAuthentication.Initialize();
-			var user = Membership.GetUser(username, true);
-			if (user == null)
-			{
-				errorCode = 1;
-				errorMessage = string.Format("'{0}' was not found.", username);
-				return;
-			}
-			var roles = Roles.GetRolesForUser(username);
-			string rolesString = string.Empty;
-			for (int i = 0; i < roles.Length; i++)
-			{
-				if (i > 0)
-					rolesString += ",";
-				rolesString += roles[i];
-			}
-			var loginRememberMinutes = 30;
-			var ticket = new FormsAuthenticationTicket(1, user.UserName, DateTime.Now, DateTime.Now.AddMinutes(loginRememberMinutes), true, rolesString, FormsAuthentication.FormsCookiePath);
-			// Encrypt the cookie using the machine key for secure transport.
-			var hash = FormsAuthentication.Encrypt(ticket);
-			var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hash); // Hashed ticket
-			if (ticket.IsPersistent)
-			{
-				cookie.Expires = ticket.Expiration;
-			}
-			HttpContext.Current.Response.Cookies.Add(cookie);
-			// Create Identity.
-			var identity = new System.Security.Principal.GenericIdentity(user.UserName);
-			// Create Principal.
-			var principal = new RolePrincipal(identity);
-			System.Threading.Thread.CurrentPrincipal = principal;
-			// Create User.
-			HttpContext.Current.User = new System.Security.Principal.GenericPrincipal(identity, roles);
-			errorMessage = "Welcome!";
-		}
-
-		#endregion
-
 		[WebMethod(EnableSession = true, Description = "Get default list of games.")]
 		public SettingsData GetSettingsData()
 		{
@@ -159,19 +89,14 @@ namespace x360ce.Web.WebServices
 			var messages = new List<string>();
 			try
 			{
-				JocysCom.WebSites.Engine.Security.Data.User user;
 				string error;
 				bool fixSuccess;
 				switch (command.Action)
 				{
+					// The service has no user accounts: settings belong to a computer and profile ID.
 					case CloudAction.LogIn:
-						// Action requires valid user.
-						user = CloudHelper.GetUser(command, out error);
-						if (user == null)
-						{
-							messages.Add("Not authorized");
-							results.ErrorCode = (int)CloudErrorCode.Error;
-						}
+						messages.Add("Not authorized");
+						results.ErrorCode = (int)CloudErrorCode.Error;
 						break;
 					case CloudAction.GetPublicRsaKey:
 						AddRsaPublicKey(results);

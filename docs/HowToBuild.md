@@ -47,12 +47,6 @@ Check help: <http://learn.iis.net/page.aspx/517/url-rewriting-for-aspnet-web-for
 You can repair a URL Rewrite installation by using the manual installers:
 <http://www.iis.net/downloads/microsoft/url-rewrite#additionalDownloads>
 
-## URL Rewrite intellisense for Visual Studio
-
-```
-Racer_S\x360ce\x360ce.Web\Resources\Rewrite_Intellisense_VS2012\Install.bat
-```
-
 ## Configure Web Site
 
 Control Panel > Administrative Tools:
@@ -128,7 +122,7 @@ EXEC [dbo].[Tools_FixUser] 'x360ceAdmin', 'localdev', 1
 `Web/x360ce.Web.csproj` is the one C# project in the legacy format. Every other C# project uses
 `Microsoft.NET.Sdk`.
 
-The web project is ASP.NET Web Forms and `.asmx` on `System.Web`. `Microsoft.WebApplication.targets`,
+The web project is the `.asmx` web service and the `.ashx` statistics handler on `System.Web`. `Microsoft.WebApplication.targets`,
 `.aspx` designer generation and web publish are legacy-format features. v5 keeps Web and Data
 legacy too.
 
@@ -145,8 +139,7 @@ Three routes exist:
    Visual Studio MSBuild. It is worth it only if a uniform solution matters more than avoiding a
    third-party SDK. Not tried here.
 3. **W3, rewrite on ASP.NET Core.** SoapCore serves the `.asmx` contract on the same
-   `/WebServices/x360ce.asmx` path. The `.aspx` admin pages and the `aspnet_*` membership are
-   rebuilt or dropped. Nothing else in the repository depends on the web project. It is its own
+   `/WebServices/x360ce.asmx` path. Nothing else in the repository depends on the web project. It is its own
    project and the only route that ends on a supported runtime. Plan it when the server is next
    worked on.
 

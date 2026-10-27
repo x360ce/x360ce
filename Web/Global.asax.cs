@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Runtime;
-using JocysCom.Web.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,18 +21,6 @@ namespace x360ce.Web
 		// Application_End
 		// Application_Error
 
-		protected void Application_Start(object sender, EventArgs e)
-		{
-			JocysCom.WebSites.Engine.Security.Check.CreateDefault();
-			// Fix Information Disclosure vulnerability by removing 'X-AspNetMvc-Version:' header from HTTP response. -->
-			//MvcHandler.DisableMvcResponseHeader = true;
-		}
-
-		protected void Session_Start(object sender, EventArgs e)
-		{
-
-		}
-
 		protected void Application_BeginRequest(object sender, EventArgs e)
 		{
 			// The X - Frame - Options HTTP response header can be used To indicate whether Or Not 
@@ -49,11 +36,6 @@ namespace x360ce.Web
 			{
 				throw new HttpException((int)System.Net.HttpStatusCode.NotFound, "Not Found");
 			}
-		}
-
-		protected void Application_AuthenticateRequest(object sender, EventArgs e)
-		{
-
 		}
 
 		protected void Application_Error(object sender, EventArgs e)
@@ -93,16 +75,6 @@ namespace x360ce.Web
 					headers.Remove("X-AspNetMvc-Version");
 				}
 			}
-		}
-
-		protected void Session_End(object sender, EventArgs e)
-		{
-
-		}
-
-		protected void Application_End(object sender, EventArgs e)
-		{
-
 		}
 	}
 }
