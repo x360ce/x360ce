@@ -142,9 +142,10 @@ namespace x360ce.App.UiTree
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
 				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against. "
 				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing, "
-				+ "and is for a wheel without the centering spring: ticking the spring picks 900.");
+				+ "and is for a wheel without the centering spring: ticking the spring picks 900. Any other wheel turns the range its own software sets; "
+				+ "the page then says so, and a formula in the steering box, such as =a1*900/270, steers a shorter range.");
 			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
-				"What Auto is doing and what it found, or why the centering spring does nothing now.");
+				"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.");
 
 			// The chart on the Wheel page.
 			d["WheelChartUserControl.MainPictureBox"] = new Text("Centering chart",

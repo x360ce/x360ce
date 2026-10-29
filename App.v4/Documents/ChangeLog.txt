@@ -1,4 +1,15 @@
-﻿## [4.27.53.0] - 2026-10-24
+﻿## [4.28.14.0] - 2026-10-29
+
+- Fixed: x360ce could stop with an error as it closed (Issue #1650, Gron21).
+- Fixed: Formulas that switch quickly with now stuttered after a day of running.
+- Added: [Turbo] in the mapping menu presses a held button ten times a second.
+- Added: Help shows how a held button turns other buttons into a second set.
+- Added: The Wheel page says when x360ce cannot set a wheel's range, and what to do instead.
+- Added: Buttons held together on a controller turn emulation on and off. Off by default.
+- Added: Help shows an AutoHotkey script that moves a stick with the mouse.
+- Added: The Issues page records a problem into a file to post with a bug report.
+
+## [4.27.53.0] - 2026-10-24
 
 - Fixed: A Logitech wheel left at its own range shook at its centre with the centering spring on.
 - Fixed: F3 in the Mapped devices, Devices or Games list stopped x360ce with an error.

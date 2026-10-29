@@ -482,5 +482,7 @@ Test-EmbeddedSignatures
 Test-Detections
 Write-Result
 Write-ReleaseTitle
+# winget's manifest names the published zip's address and hash, so it is written once the release is out.
+Write-Host "Once the release is published, App_6_Winget.ps1 writes and checks its winget manifest; -Submit opens the pull request."
 Write-Host ""
 Write-Host "Done in $([int]((Get-Date) - $started).TotalMinutes) min $((((Get-Date) - $started).Seconds)) sec."

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SharpDX.XInput;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -188,5 +190,89 @@ namespace x360ce.App
 		{
 			UnregisterHotKey(handle, id);
 		}
+
+		#region Emulation buttons
+
+		/// <summary>Each button of an emulated controller and its name, in the order a combination is written.</summary>
+		/// <remarks>The names the mapping page gives the buttons, with the D-Pad's directions and the sticks' presses named as they are pressed.</remarks>
+		static readonly KeyValuePair<GamepadButtonFlags, string>[] ButtonNames =
+		{
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.Guide, "Guide"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.Back, "Back"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.Start, "Start"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.LeftShoulder, "Left Shoulder"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.RightShoulder, "Right Shoulder"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.LeftThumb, "Left Thumb"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.RightThumb, "Right Thumb"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.A, "A"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.B, "B"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.X, "X"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.Y, "Y"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.DPadUp, "D-Pad Up"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.DPadDown, "D-Pad Down"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.DPadLeft, "D-Pad Left"),
+			new KeyValuePair<GamepadButtonFlags, string>(GamepadButtonFlags.DPadRight, "D-Pad Right"),
+		};
+
+		/// <summary>Writes buttons as "Back + Start", in a fixed order whatever order they were pressed in.</summary>
+		public static string FormatButtons(GamepadButtonFlags buttons)
+		{
+			return string.Join(Joiner, ButtonNames.Where(x => (buttons & x.Key) != 0).Select(x => x.Value));
+		}
+
+		/// <summary>Reads text such as "Back + Start" into buttons; none when a word names no button.</summary>
+		public static GamepadButtonFlags ParseButtons(string text)
+		{
+			var buttons = GamepadButtonFlags.None;
+			if (string.IsNullOrWhiteSpace(text))
+				return buttons;
+			foreach (var part in text.Split('+'))
+			{
+				var name = ButtonNames.FirstOrDefault(x => string.Equals(x.Value, part.Trim(), StringComparison.OrdinalIgnoreCase));
+				if (name.Value == null)
+					return GamepadButtonFlags.None;
+				buttons |= name.Key;
+			}
+			return buttons;
+		}
+
+		/// <summary>Whether the buttons make a whole combination: two at least, so a single press in a game never turns the controllers off.</summary>
+		public static bool IsCompleteButtons(GamepadButtonFlags buttons)
+		{
+			var count = 0;
+			foreach (var name in ButtonNames)
+				if ((buttons & name.Key) != 0)
+					count++;
+			return count >= 2;
+		}
+
+		/// <summary>Every button held on any of the emulated controllers.</summary>
+		/// <param name="states">The controllers' states as the engine combined them on its last pass.</param>
+		public static GamepadButtonFlags HeldButtons(State[] states)
+		{
+			var buttons = GamepadButtonFlags.None;
+			for (var i = 0; i < states.Length; i++)
+				buttons |= states[i].Gamepad.Buttons;
+			return buttons;
+		}
+
+		/// <summary>Whether the combination has just been pressed: held together on one controller now, and not on the last look.</summary>
+		/// <remarks>Held down, it fires once; it has to be let go of before it fires again.</remarks>
+		/// <param name="buttons">The combination; an incomplete one is never pressed.</param>
+		/// <param name="states">The controllers' states as the engine combined them on its last pass.</param>
+		/// <param name="held">Whether it was held on the last look; updated here.</param>
+		public static bool ButtonsPressed(GamepadButtonFlags buttons, State[] states, ref bool held)
+		{
+			var now = false;
+			if (IsCompleteButtons(buttons))
+				for (var i = 0; i < states.Length; i++)
+					if ((states[i].Gamepad.Buttons & buttons) == buttons)
+						now = true;
+			var pressed = now && !held;
+			held = now;
+			return pressed;
+		}
+
+		#endregion
 	}
 }

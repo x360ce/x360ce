@@ -132,6 +132,8 @@ namespace x360ce.App.DInput
 			// The devices on the game's ticked rows, found when the routing was built. Found here, the settings and
 			// devices lists would be copied on every pass, under the lock the interface holds while it draws a change.
 			var userDevices = routing.MappedDevices;
+			// A recording that runs times each device call below, by the name its error reports give it.
+			var recording = Recording;
 			// Acquire copy of feedbacks for processing.
 			var feedbacks = CopyAndClearFeedbacks();
 			// Kept per pad, so a device whose force comes from several tabs is driven by what each asked for last.
@@ -233,19 +235,19 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
 								// Reacquire device in exclusive mode.
-								step = "Unacquire (Exclusive)";
+								step = Calling(recording, ud, "Unacquire (Exclusive)");
 								device.Unacquire();
 								directInput.KeepChanges();
-								step = "SetCooperativeLevel (Exclusive)";
+								step = Calling(recording, ud, "SetCooperativeLevel (Exclusive)");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
 								// Set here because it can only be set while the device is let go of.
 								if (autoCenter.HasValue)
 								{
-									step = "AutoCenter";
+									step = Calling(recording, ud, "AutoCenter");
 									SetAutoCenter(device, autoCenter.Value);
 									ud.AutoCenter = autoCenter.Value;
 								}
-								step = "Acquire (Exclusive)";
+								step = Calling(recording, ud, "Acquire (Exclusive)");
 								device.Acquire();
 								ud.IsExclusiveMode = true;
 								// Acquired: the running totals of axes that report movement may start anywhere.
@@ -257,17 +259,17 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
-								step = "Unacquire (NonExclusive)";
+								step = Calling(recording, ud, "Unacquire (NonExclusive)");
 								device.Unacquire();
 								directInput.KeepChanges();
-								step = "SetCooperativeLevel (NonExclusive)";
+								step = Calling(recording, ud, "SetCooperativeLevel (NonExclusive)");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-								step = "Acquire (NonExclusive)";
+								step = Calling(recording, ud, "Acquire (NonExclusive)");
 								device.Acquire();
 								ud.IsExclusiveMode = false;
 								ud.DiRelativeRestart = true;
 							}
-							step = "device.GetCurrentState()";
+							step = Calling(recording, ud, "device.GetCurrentState()");
 							// Polling - Retrieves data from polled objects on a DirectInput device.
 							// Some devices require pooling (For example original "Xbox Controller S" with XBCD drivers).
 							// If the device does not require polling, calling this method has no effect.
@@ -281,13 +283,13 @@ namespace x360ce.App.DInput
 							var reading = NextJoState(ud);
 							device.GetCurrentState(ref reading);
 							state = reading;
-							step = "GetDeviceData";
+							step = Calling(recording, ud, "GetDeviceData");
 							if (o.ReadEveryChange && directInput.ReadChanges())
 								kept = directInput.Changes;
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
-								step = "AppHelper.GetDeviceObjects(device)";
+								step = Calling(recording, ud, "AppHelper.GetDeviceObjects(device)");
 								var dos = AppHelper.GetDeviceObjects(device);
 								ud.DeviceObjects = dos;
 								// Update masks.
@@ -322,7 +324,7 @@ namespace x360ce.App.DInput
 							{
 								try
 								{
-									step = "AppHelper.GetDeviceEffects(device)";
+									step = Calling(recording, ud, "AppHelper.GetDeviceEffects(device)");
 									ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 									// The Direct Input tab draws the objects and effects once, when told the device
 									// changed. Told nothing, it kept what it drew before they were read: a device
@@ -372,8 +374,10 @@ namespace x360ce.App.DInput
 												// var st = ud.Device.GetForceFeedbackState();
 												//st == SharpDX.DirectInput.ForceFeedbackState
 												// ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
-												step = "ud.FFState.SetDeviceForces(device)";
+												step = Calling(recording, ud, "ud.FFState.SetDeviceForces(device)");
 												ud.FFState.SetDeviceForces(ud, device, ps, v);
+												if (recording != null)
+													recording.Force(ud, large, small);
 											}
 										}
 										// Force feedback and the spring off on every switched-on tab, or no stored settings for
@@ -381,7 +385,7 @@ namespace x360ce.App.DInput
 										else if (ud.FFState != null)
 										{
 											// Stop device forces.
-											step = "ud.FFState.StopDeviceForces()";
+											step = Calling(recording, ud, "ud.FFState.StopDeviceForces()");
 											ud.FFState.StopDeviceForces();
 											ud.FFState = null;
 											EndSpringRun(ud, SpringStopSpringOff);
@@ -395,7 +399,7 @@ namespace x360ce.App.DInput
 									// this game is not read at all, and ReleaseDroppedDevices stopped it.
 									else if (ud.FFState != null)
 									{
-										step = "ud.FFState.StopDeviceForces()";
+										step = Calling(recording, ud, "ud.FFState.StopDeviceForces()");
 										ud.FFState.StopDeviceForces();
 										ud.FFState = null;
 										EndSpringRun(ud, SpringStopTabOff);
@@ -411,7 +415,7 @@ namespace x360ce.App.DInput
 									if (ud.FFState != null && ud.SourceState != null && ud.FFState.SpringAxisIndex >= 0)
 									{
 										var run = ud.SpringCalibration;
-										step = "ud.FFState.UpdateSpring(device)";
+										step = Calling(recording, ud, "ud.FFState.UpdateSpring(device)");
 										ud.FFState.UpdateSpring(device, ud.SourceState.Axis[ud.FFState.SpringAxisIndex], run, run != null ? SpringCalibrationClock.ElapsedMilliseconds : 0,
 											ud.ForceSpringSpeedOverride, ud.GetForceSpringFriction());
 									}
@@ -455,6 +459,9 @@ namespace x360ce.App.DInput
 							}
 							ud.IsExclusiveMode = null;
 						}
+						// The last call ends here, so the recording has its time.
+						if (recording != null)
+							recording.Calling(ud, null);
 					}
 				}
 				ud.JoState = state;

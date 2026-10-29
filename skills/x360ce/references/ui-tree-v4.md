@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.27.53.0, built 2026-10-27.
+Version 4.28.14.0, built 2026-10-29.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -249,7 +249,7 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   ├── Speed 0..250                                            # The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
 [Value]     │   │   │   │   ├── Speed                                                   # The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.
 [List]      │   │   │   │   ├── Wheel range                                             # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
-[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, or why the centering spring does nothing now.
+[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.
 [Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
@@ -330,9 +330,11 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
-[Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
+[Section]   │       │           │   ├── Hotkeys                                         # Keys and controller buttons that reach this program from inside a game.
 [CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
 [Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[CheckBox]  │       │           │   │   ├── Controller                                  # Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.
+[Value]     │       │           │   │   ├── Emulation buttons                           # Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.
 [CheckBox]  │       │           │   │   ├── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
 [CheckBox]  │       │           │   │   └── Show a note when a device disconnects       # Shows a short note on the screen when a device mapped to the current game disconnects or connects again.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
@@ -590,15 +592,27 @@ not shown in this state of the program.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Issues list                                                 # Problems the program found, and what to do about each one.
-[Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
-[Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
-[CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.
-[Button]    │                   ├── Ignore                                              # Stops reporting the selected issue.
-[Button]    │                   ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
-[Status]    │                   ├── Check state                                         # What the program is checking right now.
-[Status]    │                   ├── Next check                                          # How long until the checks run again.
-[Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
+[Group]     │           ├── Issues list                                                 # Problems the program found, and what to do about each one.
+[Grid]      │           │   ├── Issues                                                  # Problems the program found, with what to do about each one.
+[Toolbar]   │           │   └── Issue actions                                           # Hides issues you have decided to live with.
+[CheckBox]  │           │       ├── Ignore All                                          # Stops reporting every issue listed.
+[Button]    │           │       ├── Ignore                                              # Stops reporting the selected issue.
+[Button]    │           │       ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
+[Status]    │           │       ├── Check state                                         # What the program is checking right now.
+[Status]    │           │       ├── Next check                                          # How long until the checks run again.
+[Status]    │           │       └── Check state                                         # Whether the checks are running or waiting.
+[Group]     │           └── (RecorderPanel)                                             # Records what the program reads and sends, into a file to post with a bug report.
+[Section]   │               └── Record for a bug report                                 # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.
+[Label]     │                   ├── What the recording leaves out                       # Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.
+[CheckBox]  │                   ├── Settings and devices                                # A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.
+[CheckBox]  │                   ├── Device input                                        # A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.
+[CheckBox]  │                   ├── Controller output                                   # A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.
+[CheckBox]  │                   ├── Force feedback                                      # A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.
+[CheckBox]  │                   ├── Engine timing                                       # A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.
+[CheckBox]  │                   ├── Window and errors                                   # A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.
+[Button]    │                   ├── Start Recording                                     # Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.
+[Button]    │                   ├── Open Folder                                         # Opens the folder the recordings are saved in, with the last one selected.
+[Label]     │                   └── Recording status                                    # How long the recording has run and how big it is, or the file it was saved to.
 [Section]   └── Tray                                                                    # The menu behind the icon in the notification area.
 [Button]        ├── Open Application                                                    # Brings the window back from the notification area.
 [CheckBox]      ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.

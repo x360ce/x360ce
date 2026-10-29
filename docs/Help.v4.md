@@ -113,8 +113,9 @@ The emulated controllers can be switched off without closing the program, so a g
 1. `[Options]` tab → `[General]` → `[Enable XInput]` turns them on or off. The right half of each controller tab light turns grey while they are off.
 2. The same switch is in the tray menu: right-click the `X360CE` icon in the notification area.
 3. `[Options]` tab → `[General]` → `[Hotkeys]`: tick `[Emulation]` to turn the hotkey on. The field beside it holds `Ctrl + Alt + X`; click it and press other keys to change them. The keys need `Ctrl`, `Alt` or `Shift` in them, `Backspace` clears the field, and red means another program already holds those keys.
-4. Pressing the hotkey shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. Untick `[Show a note on the screen when pressed]` to have the tray notification instead, which Windows hides while a full-screen game runs.
-5. The same kind of note names a device mapped to the current game when it disconnects or connects again, so a pad that drops out mid-game is not mistaken for a game that stopped answering. Untick `[Show a note when a device disconnects]` to turn it off.
+4. Tick `[Controller]` below it to do the same with buttons held together on a controller, `Back + Start` to begin with. To change them, click its field, hold two buttons or more on a controller mapped to the current game, then let go. They work while the emulated controllers are off too: x360ce goes on reading the mapped devices. The game also sees the buttons while the controllers are on.
+5. Pressing the hotkey or the buttons shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. Untick `[Show a note on the screen when pressed]` to have the tray notification instead, which Windows hides while a full-screen game runs.
+6. The same kind of note names a device mapped to the current game when it disconnects or connects again, so a pad that drops out mid-game is not mistaken for a game that stopped answering. Untick `[Show a note when a device disconnects]` to turn it off.
 
 ## Saving and loading a preset as a file
 
@@ -204,6 +205,31 @@ With the usual emulation, `Virtual`, `X360CE 4.x` puts nothing into the game or 
 
 Some anti-cheat systems refuse virtual controllers too, and some refuse to start a game while a program that makes them is running. If a game with anti-cheat ignores the emulated controller, or will not start while `X360CE` runs, that game does not allow virtual controllers, and `X360CE` does not try to get around it. Before playing online, check the game's rules: some ban controller remapping programs.
 
+## Recording a problem for a bug report
+
+Some problems a screenshot cannot show: a stick that drifts, vibration on the wrong motor, a game that will not start, a window that stops answering. Record the problem and attach the file to your issue on GitHub:
+
+1. Open the `[Issues]` tab. Under `Record for a bug report`, keep every box ticked, unless you are asked for less.
+2. Press `[Start Recording]`.
+3. Make the problem happen: start the game, move the controller, or wait for the freeze.
+4. Press `[Stop Recording]`, then `[Open Folder]`.
+5. Open the file and read it. Then drag it into your issue on GitHub.
+
+The file is plain text, made to be posted. It leaves out your user name, your PC's name, folders, web addresses and keys. Devices are written as `D1`, `D2` and so on, with their product name and their vendor and product ID. Controllers are `C1` to `C4`. The keys and buttons of keyboards and mice are never recorded. A recording stops by itself after 30 minutes or 20 MB. It is saved as it runs, so it holds everything up to the moment the program froze or was closed.
+
+What each box adds:
+
+- `Settings and devices`: the options, the game's settings, each controller's mapping, and every device.
+- `Device input`: what each device reports as it changes: buttons, axes, sliders and hats, a device going offline, and each failed read.
+- `Controller output`: what each controller sends to the game, whether its virtual controller is fed, and what XInput reads back from its place.
+- `Force feedback`: the vibration each game asks for, the force sent to each device, and whether each device is held exclusively.
+- `Engine timing`: how fast the engine runs each second, each device call that takes long, and a call that does not return.
+- `Window and errors`: whether the window answers, which program is in front, the window objects and handles `X360CE` holds, and its errors.
+
+The layers side by side show where a problem starts. A value already wrong in the device input comes from the device or its driver. A value right there but wrong in the controller output comes from the settings. A device call that does not return names the driver that holds everything up.
+
+If `X360CE` closes by itself or freezes completely, a memory dump shows more: see [Help.MemoryDump](Help.MemoryDump.md).
+
 ## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
 
 Reason: Microsoft Visual C++ v14 Redistributable is missing.
@@ -270,6 +296,12 @@ Do not calibrate the emulated controller in Windows or with a tool such as DXTwe
 - 540° (1.5 x 360°) - GT1 and 3 spec race cars, WRC Rally cars.
 - 360° (1.0 x 360°) - Formula 1 cars.
 
+## Steering a shorter range than the wheel turns
+
+`[Wheel range]` on the `[Wheel]` page sets the range of a Logitech G25, G27, G29 or Driving Force GT. Any other wheel turns the range its own software sets, and the page says so: set the range there.
+
+To leave the wheel at its range and steer as a shorter one, put a formula in the box that steers, usually `Left Thumb Axis X`: `=a1*900/270` steers as 270° on a wheel set to 900°, so the game reaches full lock at 135° each way. Past that the wheel turns on and nothing more happens. Write the wheel's range in place of 900, the range you want in place of 270, and keep the axis the box held: `=a1*900/270` for `Axis 1`. See "Expressions" below.
+
 ## Wheel centering spring
 
 A game made for a gamepad sends only rumble, so a wheel turns freely between bumps. On the wheel's controller tab, open the `[Wheel]` page and tick `[Centering spring]` to hold it at its centre. Take your hands off the wheel and press `[Auto]`. It measures the wheel's friction, the least force that turns it, and sets `[Friction]` a tenth above it.
@@ -313,7 +345,7 @@ A control is written as a letter and a number, the same way mappings are stored.
 - `h1` Half slider, 0 to 1. One half of a slider on its own.
 - `p1` D-pad, 0 to 1. The hat switch read as a direction rather than as separate buttons.
 - `d1` D-pad button, 0 or 1. One direction of the hat switch.
-- `now` Clock, counts up. Milliseconds since the program started. Divide by 1000 for seconds, or by 60000 for minutes. The only source that is not a control.
+- `now` Clock, counts up. Milliseconds since the program started. Divide by 1000 for seconds, or by 60000 for minutes. The only source that is not a control. It counts from 0 again every four hours, which every second, minute and hour divide evenly, so it stays exact to the millisecond however long the program runs.
 
   Counting minutes: `=now/60000`
 
@@ -372,6 +404,8 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=abs(b1-b2)` - either one but not both.
 - `=a1*b1` - full speed only while the button is held.
 - `=a1*(0.5+b1*0.5)` - half speed until the button is held.
+- `=b1*floor(now%100/50)` - turbo: presses ten times a second while the button is held. `[Turbo]` in the menu of a box mapped to a button writes it. For five a second, write `200` and `100` in place of `100` and `50`.
+- `=b1*(1-b5)` in the `A` box and `=b1*b5` in the `Y` box - a shift layer: button 1 presses A, or Y while button 5 is held. Empty the box that holds `Button 5`, or the shift button presses that box's button as well.
 
 ## Examples
 
@@ -386,6 +420,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=max(a1,0)` - one pedal axis split into the accelerator.
 - `=-min(a1,0)` - the same axis, its braking half.
 - `=a1-a2` - separate accelerator and brake onto one axis.
+- `=a1*900/270` - steer as 270° on a wheel set to 900° in its own software.
 
 ## Things worth knowing
 

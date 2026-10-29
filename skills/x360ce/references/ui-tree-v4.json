@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.27.53.0",
-	"Built":"2026-10-27",
+	"Version":"4.28.14.0",
+	"Built":"2026-10-29",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1541,7 +1541,7 @@
 										},
 										{
 											"Name":"Wheel message",
-											"Description":"What Auto is doing and what it found, or why the centering spring does nothing now.",
+											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.",
 											"Role":"Label",
 											"Id":"WheelDescriptionLabel"
 										}
@@ -2078,7 +2078,7 @@
 														},
 														{
 															"Name":"Hotkeys",
-															"Description":"Keys that reach this program from inside a game.",
+															"Description":"Keys and controller buttons that reach this program from inside a game.",
 															"Role":"Section",
 															"Id":"HotkeysGroupBox",
 															"Items":[
@@ -2093,6 +2093,18 @@
 																	"Description":"Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.",
 																	"Role":"Value",
 																	"Id":"EmulationHotkeyTextBox"
+																},
+																{
+																	"Name":"Controller",
+																	"Description":"Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.",
+																	"Role":"CheckBox",
+																	"Id":"EmulationButtonsCheckBox"
+																},
+																{
+																	"Name":"Emulation buttons",
+																	"Description":"Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.",
+																	"Role":"Value",
+																	"Id":"EmulationButtonsTextBox"
 																},
 																{
 																	"Name":"Show a note on the screen when pressed",
@@ -3860,6 +3872,83 @@
 													"Description":"Whether the checks are running or waiting.",
 													"Role":"Status",
 													"Id":"RunStateLabel"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":null,
+									"Description":"Records what the program reads and sends, into a file to post with a bug report.",
+									"Role":"Group",
+									"Id":"RecorderPanel",
+									"Type":"RecorderUserControl",
+									"Items":[
+										{
+											"Name":"Record for a bug report",
+											"Description":"Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.",
+											"Role":"Section",
+											"Id":"RecordGroupBox",
+											"Items":[
+												{
+													"Name":"What the recording leaves out",
+													"Description":"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.",
+													"Role":"Label",
+													"Id":"NoteLabel"
+												},
+												{
+													"Name":"Settings and devices",
+													"Description":"A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.",
+													"Role":"CheckBox",
+													"Id":"SettingsCheckBox"
+												},
+												{
+													"Name":"Device input",
+													"Description":"A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.",
+													"Role":"CheckBox",
+													"Id":"InputCheckBox"
+												},
+												{
+													"Name":"Controller output",
+													"Description":"A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.",
+													"Role":"CheckBox",
+													"Id":"OutputCheckBox"
+												},
+												{
+													"Name":"Force feedback",
+													"Description":"A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.",
+													"Role":"CheckBox",
+													"Id":"ForcesCheckBox"
+												},
+												{
+													"Name":"Engine timing",
+													"Description":"A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.",
+													"Role":"CheckBox",
+													"Id":"EngineCheckBox"
+												},
+												{
+													"Name":"Window and errors",
+													"Description":"A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.",
+													"Role":"CheckBox",
+													"Id":"WindowCheckBox"
+												},
+												{
+													"Name":"Start Recording",
+													"Description":"Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.",
+													"Role":"Button",
+													"Id":"RecordButton"
+												},
+												{
+													"Name":"Open Folder",
+													"Description":"Opens the folder the recordings are saved in, with the last one selected.",
+													"Role":"Button",
+													"Id":"OpenFolderButton"
+												},
+												{
+													"Name":"Recording status",
+													"Description":"How long the recording has run and how big it is, or the file it was saved to.",
+													"Role":"Label",
+													"Id":"StatusLabel"
 												}
 											]
 										}

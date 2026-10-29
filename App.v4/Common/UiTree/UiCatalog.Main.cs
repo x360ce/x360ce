@@ -55,6 +55,31 @@ namespace x360ce.App.UiTree
 				"Version, licence, and what changed in each release.");
 			d["MainForm.IssuesTabPage"] = new Text("Issues",
 				"Problems the program found, and what to do about each one.");
+			d["RecorderUserControl"] = new Text(null,
+				"Records what the program reads and sends, into a file to post with a bug report.");
+			d["RecorderUserControl.RecordGroupBox"] = new Text(null,
+				"Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. "
+				+ "Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.");
+			d["RecorderUserControl.NoteLabel"] = new Text("What the recording leaves out",
+				"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.");
+			d["RecorderUserControl.SettingsCheckBox"] = new Text(null,
+				"The recording holds the options, the game's settings, each controller's mapping and every device.");
+			d["RecorderUserControl.InputCheckBox"] = new Text(null,
+				"The recording holds what each device reports: buttons, axes, sliders and hats as they change, devices going offline, and failed reads.");
+			d["RecorderUserControl.OutputCheckBox"] = new Text(null,
+				"The recording holds what each controller sends to the game, whether its virtual controller is fed, and what XInput reads back.");
+			d["RecorderUserControl.ForcesCheckBox"] = new Text(null,
+				"The recording holds the vibration each game asks for, the force sent to each device, and whether each device is held exclusively.");
+			d["RecorderUserControl.EngineCheckBox"] = new Text(null,
+				"The recording holds how fast the engine runs each second, each device call that takes long, and one that does not return.");
+			d["RecorderUserControl.WindowCheckBox"] = new Text(null,
+				"The recording holds whether the window answers, how it is shown, which program is in front, the handles and memory the program holds, and its errors.");
+			d["RecorderUserControl.RecordButton"] = new Text(null,
+				"Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.");
+			d["RecorderUserControl.OpenFolderButton"] = new Text(null,
+				"Opens the folder the recordings are saved in, with the last one selected.");
+			d["RecorderUserControl.StatusLabel"] = Live("Recording status",
+				"How long the recording has run and how big it is, or the file it was saved to.");
 
 			// The bar along the top.
 			d["MainForm.GamesToolStrip"] = new Text("Game bar",

@@ -30,8 +30,17 @@ namespace x360ce.App.Controls
 			// is parented, so the cue is put back whenever a handle is made.
 			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
+			// The buttons field records the buttons held on the emulated controllers in the same way, while it has the focus.
+			EmulationButtonsTextBox.ReadOnly = true;
+			EmulationButtonsTextBox.ShortcutsEnabled = false;
+			EmulationButtonsTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationButtonsTextBox, "Click, then hold buttons");
+			EmulationButtonsTextBox.KeyDown += EmulationButtonsTextBox_KeyDown;
+			// Focus, not Enter and Leave, which stay put while another program is in front.
+			EmulationButtonsTextBox.GotFocus += (s, e) => RecordingButtonsChanged();
+			EmulationButtonsTextBox.LostFocus += (s, e) => RecordingButtonsChanged();
 			StartWithWindowsCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
 			EmulationHotkeyCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
+			EmulationButtonsCheckBox.CheckedChanged += (s, e) => UpdateDependentControls();
 			UpdateDependentControls();
 #if DEBUG
 			// Install stays available in development builds so that the removal path can
@@ -243,6 +252,8 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.XInputEnabled, XInputEnableCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyEnabled, EmulationHotkeyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkey, EmulationHotkeyTextBox);
+			SettingsManager.LoadAndMonitor(x => x.EmulationButtonsEnabled, EmulationButtonsCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.EmulationButtons, EmulationButtonsTextBox);
 			SettingsManager.LoadAndMonitor(x => x.EmulationHotkeyOverlay, EmulationOverlayCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.DeviceChangeOverlay, DeviceChangeOverlayCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
@@ -261,8 +272,8 @@ namespace x360ce.App.Controls
 		{
 			// Read only when the program is started with Windows.
 			StartWithWindowsStateComboBox.Enabled = StartWithWindowsCheckBox.Checked;
-			// Shown only when the hotkey is pressed.
-			EmulationOverlayCheckBox.Enabled = EmulationHotkeyCheckBox.Checked;
+			// Shown only when the hotkey or the emulation buttons are pressed.
+			EmulationOverlayCheckBox.Enabled = EmulationHotkeyCheckBox.Checked || EmulationButtonsCheckBox.Checked;
 		}
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -291,6 +302,10 @@ namespace x360ce.App.Controls
 						? System.Drawing.SystemColors.WindowText
 						: FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.Firebrick);
 					break;
+				case nameof(Options.EmulationButtonsEnabled):
+				case nameof(Options.EmulationButtons):
+					MainForm.Current.ApplyEmulationButtons();
+					break;
 				default:
 					break;
 			}
@@ -314,6 +329,47 @@ namespace x360ce.App.Controls
 				// Recording keys says the person wants the hotkey, so its box is ticked too.
 				EmulationHotkeyCheckBox.Checked = true;
 			}
+		}
+
+		/// <summary>Whether the buttons field has the focus, so the buttons held go into it rather than flipping emulation.</summary>
+		public bool RecordingButtons { get { return EmulationButtonsTextBox.Focused; } }
+
+		/// <summary>Every button held since the field took the focus or last recorded a combination.</summary>
+		SharpDX.XInput.GamepadButtonFlags _recordedButtons;
+
+		/// <summary>Starts a recording afresh as the field takes or loses the focus, and has the main window look at the controllers only while it is needed.</summary>
+		void RecordingButtonsChanged()
+		{
+			_recordedButtons = SharpDX.XInput.GamepadButtonFlags.None;
+			MainForm.Current?.ApplyEmulationButtons();
+		}
+
+		/// <summary>Records the buttons held: once all are let go of, two or more held together become the combination, and its box is ticked.</summary>
+		/// <remarks>A button on its own changes nothing, as a key without a modifier changes nothing in the hotkey field.</remarks>
+		/// <param name="held">The buttons held on the emulated controllers now.</param>
+		public void RecordButtons(SharpDX.XInput.GamepadButtonFlags held)
+		{
+			if (held != SharpDX.XInput.GamepadButtonFlags.None)
+			{
+				_recordedButtons |= held;
+				return;
+			}
+			if (HotkeyHelper.IsCompleteButtons(_recordedButtons))
+			{
+				EmulationButtonsTextBox.Text = HotkeyHelper.FormatButtons(_recordedButtons);
+				EmulationButtonsCheckBox.Checked = true;
+			}
+			_recordedButtons = SharpDX.XInput.GamepadButtonFlags.None;
+		}
+
+		/// <summary>Backspace and Delete clear the buttons field; Escape puts back what was there.</summary>
+		private void EmulationButtonsTextBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			e.SuppressKeyPress = true;
+			if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
+				EmulationButtonsTextBox.Text = "";
+			else if (e.KeyCode == Keys.Escape)
+				EmulationButtonsTextBox.Text = SettingsManager.Options.EmulationButtons;
 		}
 
 		private void AddLocationButton_Click(object sender, EventArgs e)

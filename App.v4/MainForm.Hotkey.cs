@@ -24,6 +24,60 @@ namespace x360ce.App
 			return HotkeyHelper.Register(Handle, EmulationHotkeyId, o.EmulationHotkey);
 		}
 
+		/// <summary>Looks at the emulated controllers for the emulation buttons, on the interface thread, while they are on or being recorded.</summary>
+		/// <remarks>
+		/// A timer of its own, because the window stops drawing while it is minimised, which is when a game runs. It reads the
+		/// states the engine has already combined, whether the emulated controllers are on or off, so the engine does nothing
+		/// more for it and never waits for it.
+		/// </remarks>
+		Timer EmulationButtonsTimer;
+
+		/// <summary>The emulation buttons, read from the options when they change.</summary>
+		SharpDX.XInput.GamepadButtonFlags _emulationButtons;
+
+		/// <summary>Whether the emulation buttons were held on the last look, so holding them flips emulation once.</summary>
+		bool _emulationButtonsHeld;
+
+		/// <summary>Starts looking for the emulation buttons while they are on or the Options page records them, and stops otherwise.</summary>
+		/// <remarks>Called once the settings are loaded, and again whenever the box, the field or the recording changes.</remarks>
+		public void ApplyEmulationButtons()
+		{
+			if (SettingsManager.OptionsData.Items.Count == 0)
+				return;
+			var o = SettingsManager.Options;
+			_emulationButtons = o.EmulationButtonsEnabled ? HotkeyHelper.ParseButtons(o.EmulationButtons) : SharpDX.XInput.GamepadButtonFlags.None;
+			var look = HotkeyHelper.IsCompleteButtons(_emulationButtons) || OptionsPanel.RecordingButtons;
+			if (look && EmulationButtonsTimer == null)
+			{
+				EmulationButtonsTimer = new Timer { Interval = 50 };
+				EmulationButtonsTimer.Tick += EmulationButtonsTimer_Tick;
+				EmulationButtonsTimer.Start();
+			}
+			else if (!look && EmulationButtonsTimer != null)
+			{
+				EmulationButtonsTimer.Stop();
+				EmulationButtonsTimer.Tick -= EmulationButtonsTimer_Tick;
+				EmulationButtonsTimer.Dispose();
+				EmulationButtonsTimer = null;
+			}
+		}
+
+		void EmulationButtonsTimer_Tick(object sender, EventArgs e)
+		{
+			var states = Global.DHelper?.CombinedXiStates;
+			if (states == null || Program.IsClosing)
+				return;
+			if (OptionsPanel.RecordingButtons)
+			{
+				OptionsPanel.RecordButtons(HotkeyHelper.HeldButtons(states));
+				// Still held when the recording ends, the buttons are let go of before they flip anything.
+				_emulationButtonsHeld = true;
+				return;
+			}
+			if (HotkeyHelper.ButtonsPressed(_emulationButtons, states, ref _emulationButtonsHeld))
+				ToggleEmulation();
+		}
+
 		/// <summary>Turns the emulated controllers on or off, and says so where the person is looking.</summary>
 		/// <remarks>
 		/// The window is usually minimised while a game runs. A note over the game is the one answer

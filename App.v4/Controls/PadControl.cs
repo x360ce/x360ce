@@ -1191,6 +1191,7 @@ namespace x360ce.App.Controls
 		string cRecord = "[Record]";
 		string cInvert = "[Invert]";
 		string cRecentre = "[Recentre]";
+		string cTurbo = "[Turbo]";
 		string cEmpty = "<empty>";
 		string cPOVs = "POVs";
 
@@ -1218,6 +1219,11 @@ namespace x360ce.App.Controls
 			// Add [Recentre] button, which makes where the box's axis rests now read as its middle.
 			mi = new ToolStripMenuItem(cRecentre);
 			mi.ToolTipText = "Leave the stick at rest, then pick this: where it rests now reads as the middle.";
+			mi.Click += new EventHandler(DiMenuStrip_Click);
+			DiMenuStrip.Items.Add(mi);
+			// Add [Turbo] button, which makes the box's button press ten times a second while it is held.
+			mi = new ToolStripMenuItem(cTurbo);
+			mi.ToolTipText = "On a box mapped to a button: while the button is held, it presses ten times a second.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
@@ -1376,6 +1382,16 @@ namespace x360ce.App.Controls
 						: "Recentred: where the stick rests now reads as the middle (" + recentred + ").";
 					CurrentCbx = null;
 				}
+				else if (item.Text == cTurbo)
+				{
+					var turbo = TurboText(cbx.Text);
+					if (turbo != null)
+						SettingsManager.Current.SetComboBoxValue(cbx, turbo);
+					MainForm.Current.StatusTimerLabel.Text = turbo == null
+						? "[Turbo] works on a box mapped to a button, such as Button 1."
+						: "Turbo: while the button is held, it presses ten times a second (" + turbo + ").";
+					CurrentCbx = null;
+				}
 				else if (item.Text == cEmpty)
 				{
 					SettingsManager.Current.SetComboBoxValue(cbx, string.Empty);
@@ -1413,6 +1429,21 @@ namespace x360ce.App.Controls
 				return (inverted ? "IAxis " : "Axis ") + index;
 			return "=" + (inverted ? "-a" : "a") + index + (offset > 0 ? "-" : "+")
 				+ Math.Abs(offset).ToString("0.###", System.Globalization.CultureInfo.InvariantCulture);
+		}
+
+		/// <summary>The mapping that presses a box's button ten times a second while it is held, or null when the box maps no button.</summary>
+		/// <remarks>The formula Help gives for turbo, <see cref="MapExpressionHelp.TurboFormula"/>. A button read the other way round
+		/// presses while it is released, so its turbo runs while it is released.</remarks>
+		/// <param name="text">The box's mapping: "Button N" or "IButton N".</param>
+		public static string TurboText(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+			var m = Regex.Match(text.Trim(), @"^(?<inv>I?)Button (?<n>\d+)$");
+			if (!m.Success)
+				return null;
+			var button = "b" + m.Groups["n"].Value;
+			return string.Format(MapExpressionHelp.TurboFormula, m.Groups["inv"].Value.Length > 0 ? "(1-" + button + ")" : button);
 		}
 
 		public void EnableDPadMenu(bool enable)
@@ -1755,21 +1786,45 @@ namespace x360ce.App.Controls
 			return null;
 		}
 
-		/// <summary>Whether the page shows <see cref="SpringNote"/>, and the text it showed before, put back when the note goes.</summary>
+		/// <summary>What the page says while a Wheel range is chosen for a wheel that x360ce cannot set the range of, or null.</summary>
+		/// <remarks>
+		/// Only the wheels <see cref="LogitechWheel.SupportsRange"/> names take a range from a program. Any other turns the range its own
+		/// software sets, and Wheel range only tells the centering spring what range that is, so a player who chose 270° still steered
+		/// the whole wheel (issue #1650).
+		/// </remarks>
+		/// <param name="wheelRange">The range chosen on the Wheel range list, or nought when it leaves the wheel as it is.</param>
+		/// <param name="takesRange">Whether the wheel whose motors the engine drives takes a range from x360ce.</param>
+		public static string RangeNote(int wheelRange, bool takesRange)
+		{
+			if (wheelRange <= 0 || takesRange)
+				return null;
+			return string.Format("x360ce cannot set this wheel's range: it turns what its own software sets. Set {0}° there, or shorten the steering with a formula in the steering box: =a1*900/270 steers as 270° on a wheel set to 900°.", wheelRange);
+		}
+
+		/// <summary>Whether the wheel whose motors the engine drives for this device takes a range from x360ce.</summary>
+		static bool TakesRange(UserDevice ud)
+		{
+			var driven = DInput.DeviceRouting.Current.ForceDevice(ud);
+			return LogitechWheel.SupportsRange(driven.DevVendorId, driven.DevProductId);
+		}
+
+		/// <summary>Whether the page shows <see cref="SpringNote"/> or <see cref="RangeNote"/>, and the text it showed before, put back when the note goes.</summary>
 		bool springNoteShown;
 		string springNoteHid;
 
-		/// <summary>Shows or takes away the note that the spring reaches nothing, when that changes.</summary>
+		/// <summary>Shows or takes away the note that the spring or the wheel range reaches nothing, when that changes.</summary>
 		/// <remarks>
-		/// The spring's strength changes nothing while the tab is switched off for the current game, so the page says
-		/// why. Left alone while Auto runs, which writes the same line.
+		/// The spring's strength changes nothing while the tab is switched off for the current game, and the wheel range
+		/// changes nothing on a wheel that takes no range, so the page says why. Left alone while Auto runs, which writes
+		/// the same line.
 		/// </remarks>
 		void UpdateSpringNote()
 		{
 			if (springAutoDevice != null)
 				return;
 			var ud = GetSelectedDevice();
-			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, (int)MappedTo - 1, ForceRoute(DInput.DeviceRouting.Current, ud));
+			var note = ud == null ? null : SpringNote(ForceSpringEnableCheckBox.Checked, (int)MappedTo - 1, ForceRoute(DInput.DeviceRouting.Current, ud))
+				?? RangeNote(SelectedWheelRange(), TakesRange(ud));
 			// A note already shown is written again when its reason changes, as when another tab comes to drive the wheel.
 			if (note != null && springNoteShown)
 			{

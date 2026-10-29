@@ -102,13 +102,27 @@ namespace x360ce.Engine
 			new MapExpressionExample("Wheels", "One pedal axis split into the accelerator", "=max(a1,0)"),
 			new MapExpressionExample("Wheels", "The same axis, its braking half", "=-min(a1,0)"),
 			new MapExpressionExample("Wheels", "Separate accelerator and brake onto one axis", "=a1-a2"),
+			new MapExpressionExample("Wheels", "Steer as a 270 degree wheel on a wheel set to 900 degrees", "=a1*900/270"),
 			new MapExpressionExample("Buttons", "Only while both buttons are held", "=b1*b2"),
 			new MapExpressionExample("Buttons", "While either button is held", "=max(b1,b2)"),
 			new MapExpressionExample("Buttons", "While the button is not held", "=1-b1"),
 			new MapExpressionExample("Buttons", "While one button is held but not the other", "=abs(b1-b2)"),
 			new MapExpressionExample("Buttons", "Full speed only while the button is held", "=a1*b1"),
 			new MapExpressionExample("Buttons", "Half speed until the button is held", "=a1*(0.5+b1*0.5)"),
+			new MapExpressionExample("Buttons", "Turbo: presses ten times a second while the button is held", string.Format(TurboFormula, "b1")),
+			new MapExpressionExample("Buttons", "Shift layer: the button alone, while the shift button is released", "=b1*(1-b5)"),
+			new MapExpressionExample("Buttons", "Shift layer: the same button, while the shift button is held", "=b1*b5"),
 		};
+
+		/// <summary>
+		/// Turbo, with {0} for what it presses: pressed for fifty milliseconds, released for fifty, ten times a second.
+		/// </summary>
+		/// <remarks>
+		/// The remainder of the clock over a hundred, halved and rounded down, is 0 for one half of every tenth of a
+		/// second and 1 for the other. Multiplied by a button, it presses only while the button is held. Ten a second
+		/// is what turbo pads are sold at, and fifty milliseconds is still three frames of a game at sixty.
+		/// </remarks>
+		public const string TurboFormula = "={0}*floor(now%100/50)";
 
 		/// <summary>
 		/// How the ordinary operators do the work of and, or and not, for sources that are 0 or 1.
@@ -131,7 +145,7 @@ namespace x360ce.Engine
 		{
 			"An expression starts with = and works out a number from other sources.",
 			"Sources are written as a letter and a number, the same way mappings are stored: a1 is axis 1, b2 is button 2.",
-			"The one source that is not a control is written as a word: now, the number of milliseconds since the program started. Divide it by 1000 for seconds, or by 60000 for minutes.",
+			"The one source that is not a control is written as a word: now, the number of milliseconds since the program started, counted from 0 again every four hours. Divide it by 1000 for seconds, or by 60000 for minutes.",
 			"Values are already scaled for you: an axis runs from -1 to 1, a trigger or slider from 0 to 1, a button is 0 or 1.",
 			"The result is fitted to whatever it drives, so going past the limit is safe and simply reaches full travel.",
 			"Anything that is not a real number, such as dividing by zero, becomes 0.",

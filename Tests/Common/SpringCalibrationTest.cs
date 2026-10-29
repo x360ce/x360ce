@@ -265,7 +265,8 @@ namespace x360ce.Tests
 			// Every force feedback device takes this call on every poll, so the clock is read only for a run,
 			// and the run is read once, so one started between two reads is never handed time 0.
 			var path = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs");
-			var call = Regex.Match(File.ReadAllText(path), @"\.UpdateSpring\((?<args>[^;]*)\);");
+			// The call itself, not its name in quotes, which the engine gives the call for error reports and a recording.
+			var call = Regex.Match(File.ReadAllText(path), @"(?<!"")ud\.FFState\.UpdateSpring\((?<args>[^;]*)\);");
 			Assert.IsTrue(call.Success, "The engine's call to UpdateSpring was not found.");
 			var args = call.Groups["args"].Value;
 			Assert.IsTrue(Regex.IsMatch(args, @",\s*(?<run>\w+),\s*\k<run> != null \? SpringCalibrationClock\.ElapsedMilliseconds : 0,\s*ud\.ForceSpringSpeedOverride,\s*ud\.GetForceSpringFriction\(\)$"),

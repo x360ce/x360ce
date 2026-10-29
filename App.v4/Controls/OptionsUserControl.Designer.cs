@@ -100,6 +100,8 @@
 			this.HotkeysGroupBox = new System.Windows.Forms.GroupBox();
 			this.EmulationHotkeyCheckBox = new System.Windows.Forms.CheckBox();
 			this.EmulationHotkeyTextBox = new System.Windows.Forms.TextBox();
+			this.EmulationButtonsCheckBox = new System.Windows.Forms.CheckBox();
+			this.EmulationButtonsTextBox = new System.Windows.Forms.TextBox();
 			this.EmulationOverlayCheckBox = new System.Windows.Forms.CheckBox();
 			this.DeviceChangeOverlayCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
@@ -837,11 +839,13 @@
 			// 
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationHotkeyTextBox);
+			this.HotkeysGroupBox.Controls.Add(this.EmulationButtonsCheckBox);
+			this.HotkeysGroupBox.Controls.Add(this.EmulationButtonsTextBox);
 			this.HotkeysGroupBox.Controls.Add(this.EmulationOverlayCheckBox);
 			this.HotkeysGroupBox.Controls.Add(this.DeviceChangeOverlayCheckBox);
 			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 391);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
-			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 93);
+			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 116);
 			this.HotkeysGroupBox.TabIndex = 32;
 			this.HotkeysGroupBox.TabStop = false;
 			this.HotkeysGroupBox.Text = "Hotkeys";
@@ -862,24 +866,41 @@
 			this.EmulationHotkeyTextBox.Name = "EmulationHotkeyTextBox";
 			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(160, 20);
 			this.EmulationHotkeyTextBox.TabIndex = 1;
-			// 
+			//
+			// EmulationButtonsCheckBox
+			//
+			this.EmulationButtonsCheckBox.AutoSize = true;
+			this.EmulationButtonsCheckBox.Location = new System.Drawing.Point(6, 44);
+			this.EmulationButtonsCheckBox.Name = "EmulationButtonsCheckBox";
+			this.EmulationButtonsCheckBox.Size = new System.Drawing.Size(76, 17);
+			this.EmulationButtonsCheckBox.TabIndex = 2;
+			this.EmulationButtonsCheckBox.Text = "Controller:";
+			this.EmulationButtonsCheckBox.UseVisualStyleBackColor = true;
+			//
+			// EmulationButtonsTextBox
+			//
+			this.EmulationButtonsTextBox.Location = new System.Drawing.Point(88, 42);
+			this.EmulationButtonsTextBox.Name = "EmulationButtonsTextBox";
+			this.EmulationButtonsTextBox.Size = new System.Drawing.Size(160, 20);
+			this.EmulationButtonsTextBox.TabIndex = 3;
+			//
 			// EmulationOverlayCheckBox
-			// 
+			//
 			this.EmulationOverlayCheckBox.AutoSize = true;
-			this.EmulationOverlayCheckBox.Location = new System.Drawing.Point(6, 44);
+			this.EmulationOverlayCheckBox.Location = new System.Drawing.Point(6, 67);
 			this.EmulationOverlayCheckBox.Name = "EmulationOverlayCheckBox";
 			this.EmulationOverlayCheckBox.Size = new System.Drawing.Size(214, 17);
-			this.EmulationOverlayCheckBox.TabIndex = 2;
+			this.EmulationOverlayCheckBox.TabIndex = 4;
 			this.EmulationOverlayCheckBox.Text = "Show a note on the screen when pressed";
 			this.EmulationOverlayCheckBox.UseVisualStyleBackColor = true;
 			//
 			// DeviceChangeOverlayCheckBox
 			//
 			this.DeviceChangeOverlayCheckBox.AutoSize = true;
-			this.DeviceChangeOverlayCheckBox.Location = new System.Drawing.Point(6, 67);
+			this.DeviceChangeOverlayCheckBox.Location = new System.Drawing.Point(6, 90);
 			this.DeviceChangeOverlayCheckBox.Name = "DeviceChangeOverlayCheckBox";
 			this.DeviceChangeOverlayCheckBox.Size = new System.Drawing.Size(212, 17);
-			this.DeviceChangeOverlayCheckBox.TabIndex = 3;
+			this.DeviceChangeOverlayCheckBox.TabIndex = 5;
 			this.DeviceChangeOverlayCheckBox.Text = "Show a note when a device disconnects";
 			this.DeviceChangeOverlayCheckBox.UseVisualStyleBackColor = true;
 			// 
@@ -1419,6 +1440,8 @@
 		private System.Windows.Forms.GroupBox HotkeysGroupBox;
 		private System.Windows.Forms.CheckBox EmulationHotkeyCheckBox;
 		private System.Windows.Forms.TextBox EmulationHotkeyTextBox;
+		private System.Windows.Forms.CheckBox EmulationButtonsCheckBox;
+		private System.Windows.Forms.TextBox EmulationButtonsTextBox;
 		private System.Windows.Forms.CheckBox EmulationOverlayCheckBox;
 		private System.Windows.Forms.CheckBox DeviceChangeOverlayCheckBox;
 		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;

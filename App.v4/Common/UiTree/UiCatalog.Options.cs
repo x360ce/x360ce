@@ -45,13 +45,18 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.GuideButtonActionTextBox"] = new Text("Guide button action",
 				"Program or command run when the Guide button is pressed.");
 			d["OptionsUserControl.HotkeysGroupBox"] = new Text("Hotkeys",
-				"Keys that reach this program from inside a game.");
+				"Keys and controller buttons that reach this program from inside a game.");
 			d["OptionsUserControl.EmulationHotkeyCheckBox"] = new Text("Emulation",
 				"Turns the hotkey on. Off by default, so the keys stay with other programs until you choose.");
 			d["OptionsUserControl.EmulationHotkeyTextBox"] = new Text("Emulation hotkey",
 				"The keys that turn the emulated controllers on and off from inside a game, once the box beside them is ticked. Click, then press other keys to change them, which ticks the box. Backspace clears it.");
 			d["OptionsUserControl.EmulationOverlayCheckBox"] = new Text("Show a note on the screen when pressed",
-				"Answers a hotkey press with a short note at the top of the screen, over the game, where the usual notification would be hidden. Greyed out while the hotkey is off.");
+				"Answers a hotkey or emulation buttons press with a short note at the top of the screen, over the game, where the usual notification would be hidden. Greyed out while both are off.");
+			d["OptionsUserControl.EmulationButtonsCheckBox"] = new Text("Controller",
+				"Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.");
+			d["OptionsUserControl.EmulationButtonsTextBox"] = new Text("Emulation buttons",
+				"Buttons of an emulated controller that, held together, turn the emulated controllers on and off from inside a game, once the box beside them is ticked. "
+				+ "Read from every mapped device, also while the emulated controllers are off. Click, then hold two buttons or more and let go, which ticks the box. Backspace clears it.");
 			d["OptionsUserControl.DeviceChangeOverlayCheckBox"] = new Text("Show a note when a device disconnects",
 				"Shows a short note at the top of the screen, over the game, when a device mapped to the current game disconnects or connects again.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",

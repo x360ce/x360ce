@@ -1,4 +1,8 @@
-﻿## [3.8.14.0] - 2026-10-25
+﻿## [3.9.7.0] - 2026-10-29
+
+- Fixed: x360ce could stop with an error as it closed (Issue #1650, Gron21).
+
+## [3.8.14.0] - 2026-10-25
 
 - Fixed: The AI Assistant Access tab stretched its Log button down the page.
 - Fixed: The window opened too narrow to show every tab.

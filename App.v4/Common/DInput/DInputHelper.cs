@@ -3,6 +3,7 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Threading;
+using x360ce.App.Recording;
 
 namespace x360ce.App.DInput
 {
@@ -462,6 +463,10 @@ namespace x360ce.App.DInput
 				// Retrieve XInput states from XInput controllers.
 				RetrieveXiStates(game, getXInputStates);
 				StepDone(7, ref mark);
+				// A recording that runs is handed what this pass made, once it is all made.
+				var recording = Recording;
+				if (recording != null)
+					RecordPass(recording, routing, getXInputStates);
 			}
 			else
 			{
@@ -525,7 +530,7 @@ namespace x360ce.App.DInput
 		static long _lastPassStart;
 		static long _longestGap;
 
-		/// <summary>The time to measure a step from when engine logging is on, or 0 when it is off.</summary>
+		/// <summary>The time to measure a step from when engine logging or a recording of the engine is on, or 0 when neither is.</summary>
 		/// <remarks>
 		/// The rate alone says the loop is slow without saying where. Timing each step says which
 		/// one is holding it, which is the difference between reading a number and knowing what to
@@ -534,7 +539,7 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static long StepMark()
 		{
-			return string.IsNullOrEmpty(EngineLogPath) ? 0 : System.Diagnostics.Stopwatch.GetTimestamp();
+			return string.IsNullOrEmpty(EngineLogPath) && !_timeSteps ? 0 : System.Diagnostics.Stopwatch.GetTimestamp();
 		}
 
 		/// <summary>Adds the time since <paramref name="mark"/> to the step, and starts the next step's time there.</summary>
@@ -587,9 +592,12 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static readonly string EngineLogPath = Environment.GetEnvironmentVariable("X360CE_ENGINE_LOG");
 
+		/// <summary>Writes the engine's line for the second just measured to the engine log, and to a recording of the engine.</summary>
 		void LogFrequency(long elapsedMilliseconds, long frequency)
 		{
-			if (string.IsNullOrEmpty(EngineLogPath))
+			var recording = Recording;
+			var toRecording = recording != null && recording.Has(RecordParts.Engine);
+			if (string.IsNullOrEmpty(EngineLogPath) && !toRecording)
 				return;
 			try
 			{
@@ -645,7 +653,10 @@ namespace x360ce.App.DInput
 					line.Append(',').Append(StepNames[i]).Append('=').Append(ms);
 					StepTicks[i] = 0;
 				}
-				System.IO.File.AppendAllText(EngineLogPath, line.ToString() + Environment.NewLine);
+				if (toRecording)
+					recording.EngineLine(line.ToString());
+				if (!string.IsNullOrEmpty(EngineLogPath))
+					System.IO.File.AppendAllText(EngineLogPath, line.ToString() + Environment.NewLine);
 			}
 			catch (System.IO.IOException) { }
 			catch (UnauthorizedAccessException) { }

@@ -67,6 +67,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
 				_hookProc = HookProc;
 				_hook = NativeMethods.SetWindowsHookEx(NativeMethods.WH_CBT, _hookProc, IntPtr.Zero, NativeMethods.GetCurrentThreadId());
+				AppDomain.CurrentDomain.ProcessExit += (sender, e) => RemoveHook();
 				// Every control's look is the theme's from now on, so the shared helpers leave it to the theme.
 				ControlsHelper.LookFromTheme = true;
 			}
@@ -3357,6 +3358,18 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return NativeMethods.CallNextHookEx(_hook, code, wParam, lParam);
 		}
 
+		/// <summary>
+		/// Takes the hook away as the process ends, while .NET still runs. Windows calls the hook for every window
+		/// the interface thread destroys, and some are destroyed later in the exit, by the text input service or a
+		/// game input library: a call into .NET after it stopped ends the process with an error (0xC0020001).
+		/// </summary>
+		static void RemoveHook()
+		{
+			if (_hook != IntPtr.Zero)
+				NativeMethods.UnhookWindowsHookEx(_hook);
+			_hook = IntPtr.Zero;
+		}
+
 		/// <summary>The Windows build number, or 0 when it cannot be read.</summary>
 		static int WindowsBuild
 		{
@@ -3494,6 +3507,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 			[DllImport("user32.dll")]
 			public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+			[DllImport("user32.dll")]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
 			[DllImport("kernel32.dll")]
 			public static extern int GetCurrentThreadId();

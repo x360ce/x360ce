@@ -126,6 +126,10 @@
     <Compile Include="Common\DInput\DInputHelper.Step3.UpdateXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Recording.cs" />
+    <Compile Include="Common\Recording\ReportRecorder.cs" />
+    <Compile Include="Common\Recording\ReportRecorder.Header.cs" />
+    <Compile Include="Common\Recording\ShareSafe.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
     <Compile Include="Common\DInput\DeviceSwitch.cs" />
     <Compile Include="Common\DInput\UsbPortCycle.cs" />
@@ -198,6 +202,12 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\RecorderUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\RecorderUserControl.Designer.cs">
+      <DependentUpon>RecorderUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\DebugUserControl.cs">
       <SubType>UserControl</SubType>
