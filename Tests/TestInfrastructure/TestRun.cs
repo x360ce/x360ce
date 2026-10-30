@@ -1,9 +1,10 @@
-// @under-test: Engine/JocysCom/Runtime/LogHelper.Exception.cs
+﻿// @under-test: Engine/JocysCom/Runtime/LogHelper.Exception.cs, Tests/TestInfrastructure/CrashLog.cs
 // @area: diagnostics   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace x360ce.Tests
 {
@@ -16,6 +17,12 @@ namespace x360ce.Tests
 
 		/// <summary>Folder every crash report written during this run goes to.</summary>
 		public static string LogsFolder { get; private set; }
+
+		/// <summary>When the run began, for the crashes Windows logged during it.</summary>
+		public static DateTime Started { get; private set; }
+
+		/// <summary>Where the crashes Windows logged during the run are written, when there are any.</summary>
+		public static string CrashesFile { get { return Path.Combine(Ui.RepoRoot.FullName, "Tests", "TestResults", "WindowsCrashes.txt"); } }
 
 		/// <summary>
 		/// Send crash reports somewhere harmless for the whole run.
@@ -31,6 +38,7 @@ namespace x360ce.Tests
 		[AssemblyInitialize]
 		public static void Initialize(TestContext context)
 		{
+			Started = DateTime.Now;
 			LogsFolder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "run-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(LogsFolder);
 			LogHelper.Current.OverrideLogFolder = LogsFolder;
@@ -39,12 +47,30 @@ namespace x360ce.Tests
 			x360ce.App.Mcp.McpTools.Register();
 		}
 
+		/// <summary>
+		/// Fails the run when Windows logged a crash or hang of x360ce, the test host, or a program run from the repository
+		/// while it ran, unless a test raised it on purpose (<see cref="CrashLog.Expect"/>).
+		/// </summary>
+		/// <remarks>
+		/// Each test passes or fails on what it looked at, and a crash it did not look at, such as one while a program
+		/// closes, passes unseen. The list, with each crash's full text, is written to <see cref="CrashesFile"/>.
+		/// </remarks>
 		[AssemblyCleanup]
 		public static void Cleanup()
 		{
 			try { Directory.Delete(LogsFolder, true); }
 			catch (IOException) { }
 			catch (UnauthorizedAccessException) { }
+			var crashes = CrashLog.Read(Started);
+			if (File.Exists(CrashesFile))
+				File.Delete(CrashesFile);
+			if (crashes.Count == 0)
+				return;
+			CrashLog.Export(CrashesFile, Started, crashes);
+			var unexpected = crashes.Where(x => !CrashLog.IsExpected(x)).ToArray();
+			if (unexpected.Length > 0)
+				Assert.Fail(unexpected.Length + " crash(es) or hang(s) Windows logged during the run, which no test raised on purpose: "
+					+ string.Join("; ", unexpected.Take(5).Select(x => x.ToString())) + ". Each one's text is in " + CrashesFile);
 		}
 
 	}

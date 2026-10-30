@@ -71,6 +71,10 @@ namespace x360ce.App.DInput
 		/// <summary>For each of <see cref="Rows"/>, how far its Axis to D-Pad's offset moves the centre, from <see cref="ConvertHelper.GetAxisToDPadShift"/>.</summary>
 		public readonly int[] RowAxisToDPadShifts;
 
+		/// <summary>For each of <see cref="Rows"/>, how a mouse moves its left and right stick, or null when its Mouse page is at its defaults.</summary>
+		/// <remarks>Made with the routing and kept by it, so a stick's position and speed carry from pass to pass until the settings change.</remarks>
+		public readonly MouseStick[][] RowMouse;
+
 		/// <summary>For each of <see cref="Rows"/>, its device's number on its controller, from <see cref="GetDeviceNumbers"/>.</summary>
 		public readonly int[] RowNumbers;
 
@@ -175,6 +179,7 @@ namespace x360ce.App.DInput
 			RowDPads = new int[rows.Length];
 			RowAxisToDPadPressPoints = Enumerable.Repeat(-1, rows.Length).ToArray();
 			RowAxisToDPadShifts = new int[rows.Length];
+			RowMouse = new MouseStick[rows.Length][];
 			for (var i = 0; i < rows.Length; i++)
 			{
 				UserDevice device;
@@ -197,6 +202,10 @@ namespace x360ce.App.DInput
 					RowAxisToDPadPressPoints[i] = ConvertHelper.GetAxisToDPadPressPoint(int.TryParse(ps.AxisToDPadDeadZone, out value) ? value : 256);
 					RowAxisToDPadShifts[i] = ConvertHelper.GetAxisToDPadShift(int.TryParse(ps.AxisToDPadOffset, out value) ? value : 0);
 				}
+				var left = MouseStickSettings.From(ps, false);
+				var right = MouseStickSettings.From(ps, true);
+				if (left != null || right != null)
+					RowMouse[i] = new[] { left == null ? null : new MouseStick(left), right == null ? null : new MouseStick(right) };
 			}
 			for (var pad = 0; pad < PadDevices.Length; pad++)
 			{

@@ -2542,6 +2542,342 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbStyle
+        {
+            get
+            {
+                return _MouseLeftThumbStyle;
+            }
+            set
+            {
+                OnMouseLeftThumbStyleChanging(value);
+                ReportPropertyChanging("MouseLeftThumbStyle");
+                _MouseLeftThumbStyle = StructuralObject.SetValidValue(value, false, "MouseLeftThumbStyle");
+                ReportPropertyChanged("MouseLeftThumbStyle");
+                OnMouseLeftThumbStyleChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbStyle;
+        partial void OnMouseLeftThumbStyleChanging(global::System.String value);
+        partial void OnMouseLeftThumbStyleChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbSensitivityX
+        {
+            get
+            {
+                return _MouseLeftThumbSensitivityX;
+            }
+            set
+            {
+                OnMouseLeftThumbSensitivityXChanging(value);
+                ReportPropertyChanging("MouseLeftThumbSensitivityX");
+                _MouseLeftThumbSensitivityX = StructuralObject.SetValidValue(value, false, "MouseLeftThumbSensitivityX");
+                ReportPropertyChanged("MouseLeftThumbSensitivityX");
+                OnMouseLeftThumbSensitivityXChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbSensitivityX;
+        partial void OnMouseLeftThumbSensitivityXChanging(global::System.String value);
+        partial void OnMouseLeftThumbSensitivityXChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbSensitivityY
+        {
+            get
+            {
+                return _MouseLeftThumbSensitivityY;
+            }
+            set
+            {
+                OnMouseLeftThumbSensitivityYChanging(value);
+                ReportPropertyChanging("MouseLeftThumbSensitivityY");
+                _MouseLeftThumbSensitivityY = StructuralObject.SetValidValue(value, false, "MouseLeftThumbSensitivityY");
+                ReportPropertyChanged("MouseLeftThumbSensitivityY");
+                OnMouseLeftThumbSensitivityYChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbSensitivityY;
+        partial void OnMouseLeftThumbSensitivityYChanging(global::System.String value);
+        partial void OnMouseLeftThumbSensitivityYChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbSmoothing
+        {
+            get
+            {
+                return _MouseLeftThumbSmoothing;
+            }
+            set
+            {
+                OnMouseLeftThumbSmoothingChanging(value);
+                ReportPropertyChanging("MouseLeftThumbSmoothing");
+                _MouseLeftThumbSmoothing = StructuralObject.SetValidValue(value, false, "MouseLeftThumbSmoothing");
+                ReportPropertyChanged("MouseLeftThumbSmoothing");
+                OnMouseLeftThumbSmoothingChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbSmoothing;
+        partial void OnMouseLeftThumbSmoothingChanging(global::System.String value);
+        partial void OnMouseLeftThumbSmoothingChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbReturn
+        {
+            get
+            {
+                return _MouseLeftThumbReturn;
+            }
+            set
+            {
+                OnMouseLeftThumbReturnChanging(value);
+                ReportPropertyChanging("MouseLeftThumbReturn");
+                _MouseLeftThumbReturn = StructuralObject.SetValidValue(value, false, "MouseLeftThumbReturn");
+                ReportPropertyChanged("MouseLeftThumbReturn");
+                OnMouseLeftThumbReturnChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbReturn;
+        partial void OnMouseLeftThumbReturnChanging(global::System.String value);
+        partial void OnMouseLeftThumbReturnChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbActive
+        {
+            get
+            {
+                return _MouseLeftThumbActive;
+            }
+            set
+            {
+                OnMouseLeftThumbActiveChanging(value);
+                ReportPropertyChanging("MouseLeftThumbActive");
+                _MouseLeftThumbActive = StructuralObject.SetValidValue(value, false, "MouseLeftThumbActive");
+                ReportPropertyChanged("MouseLeftThumbActive");
+                OnMouseLeftThumbActiveChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbActive;
+        partial void OnMouseLeftThumbActiveChanging(global::System.String value);
+        partial void OnMouseLeftThumbActiveChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseLeftThumbButton
+        {
+            get
+            {
+                return _MouseLeftThumbButton;
+            }
+            set
+            {
+                OnMouseLeftThumbButtonChanging(value);
+                ReportPropertyChanging("MouseLeftThumbButton");
+                _MouseLeftThumbButton = StructuralObject.SetValidValue(value, false, "MouseLeftThumbButton");
+                ReportPropertyChanged("MouseLeftThumbButton");
+                OnMouseLeftThumbButtonChanged();
+            }
+        }
+        private global::System.String _MouseLeftThumbButton;
+        partial void OnMouseLeftThumbButtonChanging(global::System.String value);
+        partial void OnMouseLeftThumbButtonChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbStyle
+        {
+            get
+            {
+                return _MouseRightThumbStyle;
+            }
+            set
+            {
+                OnMouseRightThumbStyleChanging(value);
+                ReportPropertyChanging("MouseRightThumbStyle");
+                _MouseRightThumbStyle = StructuralObject.SetValidValue(value, false, "MouseRightThumbStyle");
+                ReportPropertyChanged("MouseRightThumbStyle");
+                OnMouseRightThumbStyleChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbStyle;
+        partial void OnMouseRightThumbStyleChanging(global::System.String value);
+        partial void OnMouseRightThumbStyleChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbSensitivityX
+        {
+            get
+            {
+                return _MouseRightThumbSensitivityX;
+            }
+            set
+            {
+                OnMouseRightThumbSensitivityXChanging(value);
+                ReportPropertyChanging("MouseRightThumbSensitivityX");
+                _MouseRightThumbSensitivityX = StructuralObject.SetValidValue(value, false, "MouseRightThumbSensitivityX");
+                ReportPropertyChanged("MouseRightThumbSensitivityX");
+                OnMouseRightThumbSensitivityXChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbSensitivityX;
+        partial void OnMouseRightThumbSensitivityXChanging(global::System.String value);
+        partial void OnMouseRightThumbSensitivityXChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbSensitivityY
+        {
+            get
+            {
+                return _MouseRightThumbSensitivityY;
+            }
+            set
+            {
+                OnMouseRightThumbSensitivityYChanging(value);
+                ReportPropertyChanging("MouseRightThumbSensitivityY");
+                _MouseRightThumbSensitivityY = StructuralObject.SetValidValue(value, false, "MouseRightThumbSensitivityY");
+                ReportPropertyChanged("MouseRightThumbSensitivityY");
+                OnMouseRightThumbSensitivityYChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbSensitivityY;
+        partial void OnMouseRightThumbSensitivityYChanging(global::System.String value);
+        partial void OnMouseRightThumbSensitivityYChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbSmoothing
+        {
+            get
+            {
+                return _MouseRightThumbSmoothing;
+            }
+            set
+            {
+                OnMouseRightThumbSmoothingChanging(value);
+                ReportPropertyChanging("MouseRightThumbSmoothing");
+                _MouseRightThumbSmoothing = StructuralObject.SetValidValue(value, false, "MouseRightThumbSmoothing");
+                ReportPropertyChanged("MouseRightThumbSmoothing");
+                OnMouseRightThumbSmoothingChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbSmoothing;
+        partial void OnMouseRightThumbSmoothingChanging(global::System.String value);
+        partial void OnMouseRightThumbSmoothingChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbReturn
+        {
+            get
+            {
+                return _MouseRightThumbReturn;
+            }
+            set
+            {
+                OnMouseRightThumbReturnChanging(value);
+                ReportPropertyChanging("MouseRightThumbReturn");
+                _MouseRightThumbReturn = StructuralObject.SetValidValue(value, false, "MouseRightThumbReturn");
+                ReportPropertyChanged("MouseRightThumbReturn");
+                OnMouseRightThumbReturnChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbReturn;
+        partial void OnMouseRightThumbReturnChanging(global::System.String value);
+        partial void OnMouseRightThumbReturnChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbActive
+        {
+            get
+            {
+                return _MouseRightThumbActive;
+            }
+            set
+            {
+                OnMouseRightThumbActiveChanging(value);
+                ReportPropertyChanging("MouseRightThumbActive");
+                _MouseRightThumbActive = StructuralObject.SetValidValue(value, false, "MouseRightThumbActive");
+                ReportPropertyChanged("MouseRightThumbActive");
+                OnMouseRightThumbActiveChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbActive;
+        partial void OnMouseRightThumbActiveChanging(global::System.String value);
+        partial void OnMouseRightThumbActiveChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String MouseRightThumbButton
+        {
+            get
+            {
+                return _MouseRightThumbButton;
+            }
+            set
+            {
+                OnMouseRightThumbButtonChanging(value);
+                ReportPropertyChanging("MouseRightThumbButton");
+                _MouseRightThumbButton = StructuralObject.SetValidValue(value, false, "MouseRightThumbButton");
+                ReportPropertyChanged("MouseRightThumbButton");
+                OnMouseRightThumbButtonChanged();
+            }
+        }
+        private global::System.String _MouseRightThumbButton;
+        partial void OnMouseRightThumbButtonChanging(global::System.String value);
+        partial void OnMouseRightThumbButtonChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.String ButtonBig
         {
             get

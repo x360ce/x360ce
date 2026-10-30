@@ -6,7 +6,7 @@
 - Added: Help shows how a held button turns other buttons into a second set.
 - Added: The Wheel page says when x360ce cannot set a wheel's range, and what to do instead.
 - Added: Buttons held together on a controller turn emulation on and off. Off by default.
-- Added: Help shows an AutoHotkey script that moves a stick with the mouse.
+- Added: The Mouse page moves a stick by mouse position, speed or screen pointer (Issue #1319, fu11zero).
 - Added: The Issues page records a problem into a file to post with a bug report.
 
 ## [4.27.53.0] - 2026-10-24

@@ -68,6 +68,20 @@
     <Property Name="ForceSpringDamping" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSpringSpeed" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="WheelRange" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbStyle" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbSensitivityX" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbSensitivityY" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbSmoothing" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbReturn" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbActive" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseLeftThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbStyle" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbSensitivityX" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbSensitivityY" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbSmoothing" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbReturn" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbActive" Type="varchar" MaxLength="16" Nullable="false" />
+    <Property Name="MouseRightThumbButton" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceSwapMotor" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="ForceType" Type="varchar" MaxLength="16" Nullable="false" />
     <Property Name="GamePadType" Type="varchar" MaxLength="16" Nullable="false" />

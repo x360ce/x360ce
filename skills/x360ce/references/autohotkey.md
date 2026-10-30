@@ -232,65 +232,6 @@ Down up::dev.d3 := 0
 #HotIf
 ```
 
-### The mouse moves a stick
-
-Moving the mouse pushes the right stick, further the faster it moves, and gives the stick back to the device 50 ms
-after the mouse stops. The script reads the mouse's own movement, as games do, so it keeps working while a game holds
-the pointer still in the middle of the screen. Axes 4 and 5 are the right stick of an Xbox pad read through
-DirectInput; put the axes your device's right stick uses, as in "A controller as a mouse" below.
-
-```autohotkey
-#Requires AutoHotkey v2.0
-#Include <x360ce>
-
-dev := X360ce.c1.d1
-; Put the game's file name here: in any other window the mouse moves only the pointer.
-game := "ahk_exe game.exe"
-; Stick travel for one step of the mouse in 10 ms: larger is more sensitive.
-sensitivity := 0.05
-moveX := 0, moveY := 0
-
-; Ask Windows for every movement of every mouse (generic desktop, mouse), also while another window is in front.
-rid := Buffer(8 + A_PtrSize, 0)
-NumPut("UShort", 1, "UShort", 2, "UInt", 0x100, "Ptr", A_ScriptHwnd, rid)
-DllCall("RegisterRawInputDevices", "Ptr", rid, "UInt", 1, "UInt", rid.Size)
-OnMessage(0x00FF, MouseMoved) ; WM_INPUT
-
-MouseMoved(wParam, lParam, *) {
-	global moveX, moveY
-	header := 8 + 2 * A_PtrSize
-	size := header + 24
-	data := Buffer(size)
-	if DllCall("GetRawInputData", "Ptr", lParam, "UInt", 0x10000003, "Ptr", data, "UInt*", &size, "UInt", header) <= 0
-		return
-	; Only a mouse that says how far it moved; a remote desktop or a pen says where it is.
-	if NumGet(data, 0, "UInt") != 0 || NumGet(data, header, "UShort") & 1
-		return
-	moveX += NumGet(data, header + 12, "Int")
-	moveY += NumGet(data, header + 16, "Int")
-}
-
-; Every 10 ms the movement since the last look sets the stick.
-SetTimer(MoveStick, 10)
-
-MoveStick() {
-	global moveX, moveY
-	static still := 0
-	x := moveX, y := moveY
-	moveX := 0, moveY := 0
-	if (x = 0 && y = 0) || !WinActive(game) {
-		if ++still = 5 {
-			dev.a4 := ""
-			dev.a5 := ""
-		}
-		return
-	}
-	still := 0
-	dev.a4 := Max(-1, Min(1, x * sensitivity))
-	dev.a5 := Max(-1, Min(1, y * sensitivity))
-}
-```
-
 ### A controller as a keyboard
 
 ```autohotkey

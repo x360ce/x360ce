@@ -178,6 +178,11 @@
             this.OveralEffectsStengthLabel = new System.Windows.Forms.Label();
             this.ForceOverallTrackBar = new System.Windows.Forms.TrackBar();
             this.WheelTabPage = new System.Windows.Forms.TabPage();
+            this.MouseTabPage = new System.Windows.Forms.TabPage();
+            this.MouseTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.MouseNoteLabel = new System.Windows.Forms.Label();
+            this.LeftMouseStickPanel = new x360ce.App.Controls.MouseStickUserControl();
+            this.RightMouseStickPanel = new x360ce.App.Controls.MouseStickUserControl();
             this.WheelTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.WheelChartUserControl = new x360ce.App.Controls.WheelChartUserControl();
             this.WheelSettingsTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -306,6 +311,8 @@
             this.ForceSourceGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).BeginInit();
             this.WheelTabPage.SuspendLayout();
+            this.MouseTabPage.SuspendLayout();
+            this.MouseTableLayoutPanel.SuspendLayout();
             this.WheelTableLayoutPanel.SuspendLayout();
             this.WheelSettingsTableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ForceSpringFrictionTrackBar)).BeginInit();
@@ -1601,6 +1608,7 @@
             this.PadTabControl.Controls.Add(this.RightThumbTabPage);
             this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
             this.PadTabControl.Controls.Add(this.WheelTabPage);
+            this.PadTabControl.Controls.Add(this.MouseTabPage);
             this.PadTabControl.Controls.Add(this.DirectInputTabPage);
             this.PadTabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.PadTabControl.Multiline = true;
@@ -2217,6 +2225,64 @@
             this.WheelTabPage.Size = new System.Drawing.Size(1404, 681);
             this.WheelTabPage.TabIndex = 0;
             this.WheelTabPage.Text = "Wheel";
+            //
+            // MouseTabPage
+            //
+            this.MouseTabPage.BackColor = System.Drawing.SystemColors.Control;
+            this.MouseTabPage.Controls.Add(this.MouseTableLayoutPanel);
+            this.MouseTabPage.Location = new System.Drawing.Point(4, 29);
+            this.MouseTabPage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MouseTabPage.Name = "MouseTabPage";
+            this.MouseTabPage.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MouseTabPage.Size = new System.Drawing.Size(1404, 681);
+            this.MouseTabPage.TabIndex = 0;
+            this.MouseTabPage.Text = "Mouse";
+            //
+            // MouseTableLayoutPanel
+            //
+            this.MouseTableLayoutPanel.ColumnCount = 2;
+            this.MouseTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.MouseTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.MouseTableLayoutPanel.Controls.Add(this.MouseNoteLabel, 0, 0);
+            this.MouseTableLayoutPanel.Controls.Add(this.LeftMouseStickPanel, 0, 1);
+            this.MouseTableLayoutPanel.Controls.Add(this.RightMouseStickPanel, 1, 1);
+            this.MouseTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MouseTableLayoutPanel.Location = new System.Drawing.Point(4, 5);
+            this.MouseTableLayoutPanel.Name = "MouseTableLayoutPanel";
+            this.MouseTableLayoutPanel.RowCount = 3;
+            this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.MouseTableLayoutPanel.Size = new System.Drawing.Size(1396, 671);
+            this.MouseTableLayoutPanel.TabIndex = 0;
+            //
+            // MouseNoteLabel
+            //
+            this.MouseNoteLabel.AutoSize = true;
+            this.MouseTableLayoutPanel.SetColumnSpan(this.MouseNoteLabel, 2);
+            this.MouseNoteLabel.Location = new System.Drawing.Point(4, 5);
+            this.MouseNoteLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.MouseNoteLabel.Name = "MouseNoteLabel";
+            this.MouseNoteLabel.TabIndex = 0;
+            this.MouseNoteLabel.Text = "For a mouse, or any control that reports movement. Map its axes in the stick's boxes on the General page; this page sets how they move the stick.";
+            //
+            // LeftMouseStickPanel
+            //
+            this.LeftMouseStickPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.LeftMouseStickPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LeftMouseStickPanel.Name = "LeftMouseStickPanel";
+            this.LeftMouseStickPanel.Size = new System.Drawing.Size(690, 330);
+            this.LeftMouseStickPanel.StickName = "Left Stick";
+            this.LeftMouseStickPanel.TabIndex = 1;
+            //
+            // RightMouseStickPanel
+            //
+            this.RightMouseStickPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.RightMouseStickPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.RightMouseStickPanel.Name = "RightMouseStickPanel";
+            this.RightMouseStickPanel.Size = new System.Drawing.Size(690, 330);
+            this.RightMouseStickPanel.StickName = "Right Stick";
+            this.RightMouseStickPanel.TabIndex = 2;
             //
             // WheelTableLayoutPanel
             //
@@ -3515,6 +3581,9 @@
             this.ForceSourceGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ForceOverallTrackBar)).EndInit();
             this.WheelTabPage.ResumeLayout(false);
+            this.MouseTableLayoutPanel.ResumeLayout(false);
+            this.MouseTableLayoutPanel.PerformLayout();
+            this.MouseTabPage.ResumeLayout(false);
             this.WheelTableLayoutPanel.ResumeLayout(false);
             this.WheelSettingsTableLayoutPanel.ResumeLayout(false);
             this.WheelSettingsTableLayoutPanel.PerformLayout();
@@ -3669,6 +3738,11 @@
 		System.Windows.Forms.Label OveralEffectsStengthLabel;
 		System.Windows.Forms.TrackBar ForceOverallTrackBar;
 		System.Windows.Forms.TabPage WheelTabPage;
+		System.Windows.Forms.TabPage MouseTabPage;
+		System.Windows.Forms.TableLayoutPanel MouseTableLayoutPanel;
+		System.Windows.Forms.Label MouseNoteLabel;
+		public x360ce.App.Controls.MouseStickUserControl LeftMouseStickPanel;
+		public x360ce.App.Controls.MouseStickUserControl RightMouseStickPanel;
 		System.Windows.Forms.TableLayoutPanel WheelTableLayoutPanel;
 		public WheelChartUserControl WheelChartUserControl;
 		System.Windows.Forms.TableLayoutPanel WheelSettingsTableLayoutPanel;

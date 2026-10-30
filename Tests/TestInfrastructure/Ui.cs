@@ -383,14 +383,17 @@ namespace x360ce.Tests
 		/// </remarks>
 		const int ShutdownMs = 20000;
 
-		/// <summary>Close the window if open, then make sure the process is gone.</summary>
+		/// <summary>Close the window if open, then make sure the process is gone, and that it did not crash on the way.</summary>
 		public static void CloseApp(Process p)
 		{
 			var killed = false;
+			var processId = 0;
+			int? exitCode = null;
 			if (p != null)
 			{
 				try
 				{
+					processId = p.Id;
 					// Asked several times, with the window brought back into view and its handle read
 					// again each time. This program hides itself in the tray, and a close sent to a window
 					// that is no longer there does nothing and reports nothing. The test then killed it,
@@ -408,6 +411,8 @@ namespace x360ce.Tests
 						p.Kill();
 						p.WaitForExit(5000);
 					}
+					else
+						exitCode = p.ExitCode;
 				}
 				catch (InvalidOperationException)
 				{
@@ -419,6 +424,9 @@ namespace x360ce.Tests
 				}
 			}
 			AssertNoLeftoverVirtualPads(killed);
+			// A crash while closing shows nothing on screen: the window has gone either way.
+			if (processId != 0)
+				CrashLog.AssertExitedCleanly(processId, TestRun.Started, exitCode, "The program");
 		}
 
 		/// <summary>Fails when controllers the run just ended created are still plugged in.</summary>

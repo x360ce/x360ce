@@ -1061,6 +1061,21 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceSpringDamping, ForceSpringDampingTrackBar);
 			AddMap(() => SettingName.ForceSpringSpeed, ForceSpringSpeedTrackBar);
 			AddMap(() => SettingName.WheelRange, WheelRangeComboBox);
+			// Mouse to stick.
+			AddMap(() => SettingName.MouseLeftThumbStyle, LeftMouseStickPanel.StyleComboBox);
+			AddMap(() => SettingName.MouseLeftThumbSensitivityX, LeftMouseStickPanel.SensitivityXTrackBar);
+			AddMap(() => SettingName.MouseLeftThumbSensitivityY, LeftMouseStickPanel.SensitivityYTrackBar);
+			AddMap(() => SettingName.MouseLeftThumbSmoothing, LeftMouseStickPanel.SmoothingTrackBar);
+			AddMap(() => SettingName.MouseLeftThumbReturn, LeftMouseStickPanel.ReturnTrackBar);
+			AddMap(() => SettingName.MouseLeftThumbActive, LeftMouseStickPanel.ActiveComboBox);
+			AddMap(() => SettingName.MouseLeftThumbButton, LeftMouseStickPanel.ButtonComboBox);
+			AddMap(() => SettingName.MouseRightThumbStyle, RightMouseStickPanel.StyleComboBox);
+			AddMap(() => SettingName.MouseRightThumbSensitivityX, RightMouseStickPanel.SensitivityXTrackBar);
+			AddMap(() => SettingName.MouseRightThumbSensitivityY, RightMouseStickPanel.SensitivityYTrackBar);
+			AddMap(() => SettingName.MouseRightThumbSmoothing, RightMouseStickPanel.SmoothingTrackBar);
+			AddMap(() => SettingName.MouseRightThumbReturn, RightMouseStickPanel.ReturnTrackBar);
+			AddMap(() => SettingName.MouseRightThumbActive, RightMouseStickPanel.ActiveComboBox);
+			AddMap(() => SettingName.MouseRightThumbButton, RightMouseStickPanel.ButtonComboBox);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);

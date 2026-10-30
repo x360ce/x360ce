@@ -75,6 +75,20 @@
           <ScalarProperty Name="ForceSpringDamping" ColumnName="ForceSpringDamping" />
           <ScalarProperty Name="ForceSpringSpeed" ColumnName="ForceSpringSpeed" />
           <ScalarProperty Name="WheelRange" ColumnName="WheelRange" />
+          <ScalarProperty Name="MouseLeftThumbStyle" ColumnName="MouseLeftThumbStyle" />
+          <ScalarProperty Name="MouseLeftThumbSensitivityX" ColumnName="MouseLeftThumbSensitivityX" />
+          <ScalarProperty Name="MouseLeftThumbSensitivityY" ColumnName="MouseLeftThumbSensitivityY" />
+          <ScalarProperty Name="MouseLeftThumbSmoothing" ColumnName="MouseLeftThumbSmoothing" />
+          <ScalarProperty Name="MouseLeftThumbReturn" ColumnName="MouseLeftThumbReturn" />
+          <ScalarProperty Name="MouseLeftThumbActive" ColumnName="MouseLeftThumbActive" />
+          <ScalarProperty Name="MouseLeftThumbButton" ColumnName="MouseLeftThumbButton" />
+          <ScalarProperty Name="MouseRightThumbStyle" ColumnName="MouseRightThumbStyle" />
+          <ScalarProperty Name="MouseRightThumbSensitivityX" ColumnName="MouseRightThumbSensitivityX" />
+          <ScalarProperty Name="MouseRightThumbSensitivityY" ColumnName="MouseRightThumbSensitivityY" />
+          <ScalarProperty Name="MouseRightThumbSmoothing" ColumnName="MouseRightThumbSmoothing" />
+          <ScalarProperty Name="MouseRightThumbReturn" ColumnName="MouseRightThumbReturn" />
+          <ScalarProperty Name="MouseRightThumbActive" ColumnName="MouseRightThumbActive" />
+          <ScalarProperty Name="MouseRightThumbButton" ColumnName="MouseRightThumbButton" />
           <ScalarProperty Name="ForceSwapMotor" ColumnName="ForceSwapMotor" />
           <ScalarProperty Name="ForceOverall" ColumnName="ForceOverall" />
           <ScalarProperty Name="ForceEnable" ColumnName="ForceEnable" />

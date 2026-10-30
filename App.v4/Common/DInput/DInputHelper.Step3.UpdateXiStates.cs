@@ -28,6 +28,8 @@ namespace x360ce.App.DInput
 			var dPads = routing.RowDPads;
 			var axisDPadPressPoints = routing.RowAxisToDPadPressPoints;
 			var axisDPadShifts = routing.RowAxisToDPadShifts;
+			var rowMouse = routing.RowMouse;
+			var now = System.Diagnostics.Stopwatch.GetTimestamp();
 			var dPadButtons = _dPadButtons;
 			for (int i = 0; i < settings.Length; i++)
 			{
@@ -119,6 +121,16 @@ namespace x360ce.App.DInput
 						gp.Buttons |= GamepadButtonFlags.DPadDown;
 					if (dPadButtons[dPadIndex * 4 + 3])
 						gp.Buttons |= GamepadButtonFlags.DPadLeft;
+				}
+
+				// How a mouse moves each stick, when the row's Mouse page sets it: whether it is on this pass, and the pointer.
+				var mouse = rowMouse[i];
+				if (mouse != null)
+				{
+					if (mouse[0] != null)
+						mouse[0].BeginPass(diState);
+					if (mouse[1] != null)
+						mouse[1].BeginPass(diState);
 				}
 
 				// --------------------------------------------------------
@@ -310,6 +322,19 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target != TargetType.None)
 						{
+							// A control that reports movement, on a stick the Mouse page sets: read in that page's style, from the
+							// device's running totals, which only a DirectInput device that reports movement keeps.
+							if (relative && mouse != null && ud.SourceStateRead != null)
+							{
+								var left = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY;
+								var stick = mouse[left ? 0 : 1];
+								if (stick != null)
+								{
+									var totals = map.IsAxis ? ud.SourceStateRead.Axis : ud.SourceStateRead.Sliders;
+									var across = map.Target == TargetType.LeftThumbX || map.Target == TargetType.RightThumbX;
+									v = stick.Value(across ? 0 : 1, totals[map.Index - 1], ud.OriginSourceStateTime, now);
+								}
+							}
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
 							// Set negative center value (-1) to 0.
 							if (thumbValue == -1)

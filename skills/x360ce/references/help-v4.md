@@ -98,6 +98,28 @@ Some pads report their D-Pad as a stick: their X and Y axes jump to the ends whi
 - `[Offset]` moves the centre towards the right and the bottom, for a device that does not rest in the middle.
 - The chart beside them is the X and Y square: the shaded sides are where a direction is pressed, the dot is the device's reading, and a side it presses is lit.
 
+## A mouse as a stick
+
+A mouse can move a stick: to steer, fly, aim or turn a camera. Map the mouse's axes in the stick's boxes on the `[General]` tab as for any device: `Axis 1` is across, `Axis 2` is up and down. Then `[Controller 1]` tab → `[Mouse]` tab sets how the mouse moves each stick. It works for any control that reports how far it moved rather than where it is, such as a trackball or a mouse wheel.
+
+`[Style]`:
+
+- `Position`: the stick follows how far the mouse has moved, and stays there. For steering and flying. This is how a mouse moved a stick before the page existed, and the page starts with it.
+- `Speed`: the stick follows how fast the mouse moves, and returns to the centre when it stops. For a camera or aiming.
+- `Screen`: the stick follows where the pointer is on the screen, measured from the middle of the screen. For a game that shows a pointer, as a mouse yoke.
+
+The other settings:
+
+- `[Sensitivity across]` and `[Sensitivity up and down]`, in percent. At `100`, the whole stick is 2,048 counts of movement in `Position`, 4,096 counts a second in `Speed`, and half the screen's height in `Screen`. A mouse with a high DPI counts more for the same movement, so it needs less.
+- `[Smoothing]`, in milliseconds: how long the stick takes to follow a change in `Speed` and `Screen`, which evens out the mouse's uneven reports. `30` is barely felt.
+- `[Back to centre]`, in milliseconds: how long the stick takes to go back to the centre. In `Position`, `0` leaves it where the mouse left it, and a value makes a stick that centres itself. In `Speed`, it slows the return after the mouse stops.
+- `[Active]`: always, while a button is held, or turned on and off by a button. A stick turned on by a button starts from the centre each time, and `Screen` takes the pointer's place at that moment as the centre. Let go, the stick returns to the centre, or stays where it was if you choose that.
+- `[Button]`: the mouse's button that `[Active]` uses: button 1 is the left button, 2 the right, 3 the middle.
+
+The stick's own `[Dead Zone]`, `[Anti-Dead Zone]` and `[Sensitivity]` on the stick's tab shape the result as for any device.
+
+For example, to steer a car as in GTA, with a camera when not steering: on the left stick, `Position`, active while button 1 is held, then centre; on the right stick, `Speed`, always.
+
 ## Checking for a newer version
 
 The program can look for a newer release and install it, but only when asked to.

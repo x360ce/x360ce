@@ -384,6 +384,95 @@
 					"Role":"Control"
 				},
 				{
+					"Name":"MouseStickUserControl",
+					"Description":"How a mouse moves one stick.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Left Stick",
+							"Description":"How a mouse moves this stick.",
+							"Role":"Section",
+							"Id":"StickGroupBox",
+							"Items":[
+								{
+									"Name":"Style",
+									"Description":"How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.",
+									"Role":"List",
+									"Id":"StyleComboBox"
+								},
+								{
+									"Name":"Sensitivity across",
+									"Description":"How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Role":"Slider",
+									"Id":"SensitivityXTrackBar",
+									"Min":1,
+									"Max":400
+								},
+								{
+									"Name":"Sensitivity across value",
+									"Description":"The sensitivity across the slider is set to, in percent.",
+									"Role":"Value",
+									"Id":"SensitivityXTextBox"
+								},
+								{
+									"Name":"Sensitivity up and down",
+									"Description":"How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Role":"Slider",
+									"Id":"SensitivityYTrackBar",
+									"Min":1,
+									"Max":400
+								},
+								{
+									"Name":"Sensitivity up and down value",
+									"Description":"The sensitivity up and down the slider is set to, in percent.",
+									"Role":"Value",
+									"Id":"SensitivityYTextBox"
+								},
+								{
+									"Name":"Smoothing",
+									"Description":"How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.",
+									"Role":"Slider",
+									"Id":"SmoothingTrackBar",
+									"Min":0,
+									"Max":500
+								},
+								{
+									"Name":"Back to centre",
+									"Description":"How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.",
+									"Role":"Slider",
+									"Id":"ReturnTrackBar",
+									"Min":0,
+									"Max":2000
+								},
+								{
+									"Name":"Smoothing value",
+									"Description":"The smoothing the slider is set to, in milliseconds.",
+									"Role":"Value",
+									"Id":"SmoothingTextBox"
+								},
+								{
+									"Name":"Active",
+									"Description":"When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.",
+									"Role":"List",
+									"Id":"ActiveComboBox"
+								},
+								{
+									"Name":"Back to centre value",
+									"Description":"The time back to the centre the slider is set to, in milliseconds.",
+									"Role":"Value",
+									"Id":"ReturnTextBox"
+								},
+								{
+									"Name":"Button",
+									"Description":"The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.",
+									"Role":"List",
+									"Id":"ButtonComboBox"
+								}
+							]
+						}
+					]
+				},
+				{
 					"Name":"PadControl",
 					"Description":"Everything about one emulated Xbox controller: what works it, and how.",
 					"Role":"Control",
@@ -1544,6 +1633,36 @@
 											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.",
 											"Role":"Label",
 											"Id":"WheelDescriptionLabel"
+										}
+									]
+								},
+								{
+									"Name":"Mouse",
+									"Description":"How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.",
+									"Role":"Tab",
+									"Id":"MouseTabPage",
+									"Items":[
+										{
+											"Name":"What the Mouse page sets",
+											"Description":"The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.",
+											"Role":"Label",
+											"Id":"MouseNoteLabel"
+										},
+										{
+											"Name":null,
+											"Description":"How a mouse moves one stick.",
+											"Role":"Group",
+											"Id":"LeftMouseStickPanel",
+											"Type":"MouseStickUserControl",
+											"SameAs":"MouseStickUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"How a mouse moves one stick.",
+											"Role":"Group",
+											"Id":"RightMouseStickPanel",
+											"Type":"MouseStickUserControl",
+											"SameAs":"MouseStickUserControl"
 										}
 									]
 								},

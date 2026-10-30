@@ -127,6 +127,7 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Recording.cs" />
+    <Compile Include="Common\DInput\MouseStick.cs" />
     <Compile Include="Common\Recording\ReportRecorder.cs" />
     <Compile Include="Common\Recording\ReportRecorder.Header.cs" />
     <Compile Include="Common\Recording\ShareSafe.cs" />
@@ -202,6 +203,12 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MouseStickUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MouseStickUserControl.Designer.cs">
+      <DependentUpon>MouseStickUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\RecorderUserControl.cs">
       <SubType>UserControl</SubType>
