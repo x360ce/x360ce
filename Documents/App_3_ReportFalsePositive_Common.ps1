@@ -146,5 +146,13 @@ virtual device. Those are the same actions that input-stealing software performs
 so behavioural and machine-learning detections score it highly even though it does
 exactly what its users install it to do. It does not collect data, contact any
 service without being asked, or modify other programs.
+
+Version 4 also has an optional AI assistant access, off by default. When the user
+turns it on, a local MCP server listens on 127.0.0.1 only, asks for a token, and lets
+an AI assistant read the program's settings, or change them if the user allows it.
+An optional tunnel, also off by default and made with the user's own OpenAI key,
+lets ChatGPT on the web reach the same access. A listener that takes commands and
+a tunnel can look like remote-control software to a model, but neither runs unless
+the user enables it.
 "@
 }
