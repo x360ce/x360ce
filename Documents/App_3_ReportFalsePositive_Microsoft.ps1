@@ -47,6 +47,9 @@
     removed locally, or when scanning would quarantine a file you still need.
 .PARAMETER NoBrowser
     Writes the report and opens the page without filling anything.
+.PARAMETER Note
+    Something specific to this detection, added to the explanation before the request:
+    for example that only the archive is flagged and not the program inside it.
 .EXAMPLE
     PS> .\App_3_ReportFalsePositive_Microsoft.ps1
     Lists the release files, gathers everything about the one you pick, opens the
@@ -69,7 +72,8 @@ param(
     [string]$Company,
     [int]$Port = 9222,
     [switch]$SkipScan,
-    [switch]$NoBrowser
+    [switch]$NoBrowser,
+    [string]$Note
 )
 
 $ErrorActionPreference = "Stop"
@@ -132,6 +136,11 @@ function Start-SubmissionBrowser {
     catch { $running = $null }
     if ($running) {
         Write-Host "  Using the browser already listening on port $Port."
+        # It may be on another page, such as another vendor's report: the form gets a tab of its own.
+        $tabs = @(Invoke-RestMethod "http://127.0.0.1:$Port/json/list" -TimeoutSec 3)
+        if (-not ($tabs | Where-Object { $_.url -like "*filesubmission*" })) {
+            Invoke-RestMethod -Method Put "http://127.0.0.1:$Port/json/new?$submissionUrl" -TimeoutSec 10 | Out-Null
+        }
         return $true
     }
     $browsers = @(
@@ -280,6 +289,7 @@ $Detection
 What other engines report
 $virusTotalLine
 https://www.virustotal.com/gui/file/$hash
+$(if ($Note) { [Environment]::NewLine + "Note" + [Environment]::NewLine + $Note })
 
 Request
 Please review this detection and, if you agree it is a false positive, remove it.

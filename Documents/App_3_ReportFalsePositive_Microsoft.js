@@ -23,6 +23,7 @@ const FIELD = {
   file: 'input[type=file]',
   filePickerBox: '#filePickerBox',
   opinionFalsePositive: '#userOpinionClean',
+  priorityMedium: '#InternalPriorityMedium',
   detection: '#detectionName',
   definition: '#signatureVersion',
   comments: '#textareaAddComments',
@@ -42,7 +43,8 @@ async function waitForSignIn(browser, minutes) {
   let announced = false;
   while (Date.now() < deadline) {
     const page = await findPage(browser);
-    if (page && (await page.locator(FIELD.detection).count()) > 0) return page;
+    // Visible, not merely present: the page carries the field hidden before the sign-in.
+    if (page && (await page.locator(FIELD.detection).first().isVisible().catch(() => false))) return page;
     if (!announced) {
       console.log('  waiting for the sign-in to finish in the browser window...');
       announced = true;
@@ -126,6 +128,14 @@ async function chooseRadio(page, selector, labelText) {
     'Incorrectly detected as malware');
   console.log('  your opinion     : incorrectly detected as malware' +
     (marked ? '' : '  (NOT SET, choose it by hand)'));
+
+  // Where the form offers a priority it starts at Low, which "may never be processed by an analyst". Medium is
+  // reviewed within a few days; High is kept for emergencies with active malware. A developer is not offered
+  // one: the choice stays hidden.
+  if (await page.locator(FIELD.priorityMedium).isVisible().catch(() => false)) {
+    const medium = await chooseRadio(page, FIELD.priorityMedium, 'Submission priority medium');
+    console.log('  priority         : medium' + (medium ? '' : '  (NOT SET, choose it by hand)'));
+  }
 
   await page.fill(FIELD.detection, report.detectionName || '');
   console.log('  detection name   : ' + (report.detectionName || '(none given)'));
