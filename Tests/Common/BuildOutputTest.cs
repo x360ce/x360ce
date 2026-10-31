@@ -89,7 +89,6 @@ namespace x360ce.Tests
 		static readonly string[] ModelMetadata =
 		{
 			"Data.x360ceModel.csdl", "Data.x360ceModel.ssdl", "Data.x360ceModel.msl",
-			"JocysCom.Security.Data.SecurityModel.csdl", "JocysCom.Security.Data.SecurityModel.ssdl", "JocysCom.Security.Data.SecurityModel.msl",
 		};
 
 		[TestMethod, TestCategory("build"), TestCategory("critical")]

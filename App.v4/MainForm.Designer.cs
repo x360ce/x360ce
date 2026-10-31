@@ -45,6 +45,7 @@ namespace x360ce.App
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
 			this.IssuesTabPage = new System.Windows.Forms.TabPage();
 			this.IssuesPanel = new JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl();
+			this.RecorderPanel = new x360ce.App.Controls.RecorderUserControl();
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
 			this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.StatusTimerLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -338,6 +339,7 @@ namespace x360ce.App
 			// 
 			this.IssuesTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.IssuesTabPage.Controls.Add(this.IssuesPanel);
+			this.IssuesTabPage.Controls.Add(this.RecorderPanel);
 			this.IssuesTabPage.ImageKey = "refresh_16x16.png";
 			this.IssuesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.IssuesTabPage.Name = "IssuesTabPage";
@@ -353,6 +355,14 @@ namespace x360ce.App
 			this.IssuesPanel.Name = "IssuesPanel";
 			this.IssuesPanel.Size = new System.Drawing.Size(784, 587);
 			this.IssuesPanel.TabIndex = 0;
+			// 
+			// RecorderPanel
+			// 
+			this.RecorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.RecorderPanel.Location = new System.Drawing.Point(3, 470);
+			this.RecorderPanel.Name = "RecorderPanel";
+			this.RecorderPanel.Size = new System.Drawing.Size(784, 120);
+			this.RecorderPanel.TabIndex = 1;
 			// 
 			// BuletImageList
 			// 
@@ -671,7 +681,7 @@ namespace x360ce.App
 			this.Controls.Add(this.MainStatusStrip);
 			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(1000, 800);
+			this.MinimumSize = new System.Drawing.Size(1000, 600);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -757,6 +767,7 @@ namespace x360ce.App
 		private ToolStripComboBox GameToCustomizeComboBox;
 		private TabPage IssuesTabPage;
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
+		public x360ce.App.Controls.RecorderUserControl RecorderPanel;
 		private ToolStripButton TestButton;
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
 		private ToolStripButton InterfaceUpdatesButton;

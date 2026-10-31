@@ -4,7 +4,6 @@
 
 - Record controller actions over time, so a player can see their actions per minute.
 - Hide the real controller from games without leaving the program. Today HID Hide does it from its own window.
-- A controller button combination that turns emulation on and off, for when the keyboard is out of reach.
 - Install and update through winget.
 - Publish a nightly build as a GitHub pre-release, made by a GitHub Actions workflow.
 - Publish `docs/` as a website (MkDocs Material on GitHub Pages).

@@ -95,6 +95,24 @@ the same report becomes a guess. Three tests hold that in place:
   it. The first two tests run against this assembly and cannot prove what the shipped build
   does; this one can. Verified to fail when a `.pdb` is removed.
 
+## No run passes with a crash in the Windows log
+
+A program can crash with nothing on screen: x360ce crashed on every close for months (#1650),
+and only the Windows Application log knew. So every run ends by reading that log for its own
+time (`TestRun.Cleanup`, `TestInfrastructure\CrashLog.cs`): crashes and hangs of x360ce in any
+form, the test host, AutoHotkey, and any program run from the repository. They are written,
+each with its full text and the dump Windows kept of it, to `Tests\TestResults\WindowsCrashes.txt`,
+and the run fails with the assembly cleanup's error. Verified to fail on a program that crashes
+unannounced.
+
+The log alone misses some crashes: a program a test starts inherits an error mode that can keep
+Windows from reporting its crash, so nothing is logged, and only the exit code says it crashed.
+`Ui.CloseApp` therefore also fails a test whose program ended with a crash code
+(`CrashLog.AssertExitedCleanly`); a test that starts a program some other way should call it too.
+
+A test that makes a process crash on purpose says so first with `CrashLog.Expect(processId,
+reason)`, and that crash is listed as expected rather than failing the run.
+
 ## The web service tests
 
 `Tests/WebServices/` holds the contract every released v3 and v4 program was built against. The

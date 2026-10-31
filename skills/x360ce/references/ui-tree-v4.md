@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.27.53.0, built 2026-10-24.
+Version 4.28.16.0, built 2026-10-31.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -85,6 +85,19 @@ not shown in this state of the program.
 [Section]   │   │   └── POVs                                                            # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
 [Group]     │   │       └── POV chips -> InputChipGroup                                 # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
+[Control]   │   ├── MouseStickUserControl                                               # How a mouse moves one stick.
+[Section]   │   │   └── Left Stick                                                      # How a mouse moves this stick.
+[List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.
+[Slider]    │   │       ├── Sensitivity across 1..400                                   # How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
+[Value]     │   │       ├── Sensitivity across value                                    # The sensitivity across the slider is set to, in percent.
+[Slider]    │   │       ├── Sensitivity up and down 1..400                              # How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
+[Value]     │   │       ├── Sensitivity up and down value                               # The sensitivity up and down the slider is set to, in percent.
+[Slider]    │   │       ├── Smoothing 0..500                                            # How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.
+[Slider]    │   │       ├── Back to centre 0..2000                                      # How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.
+[Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
+[List]      │   │       ├── Active                                                      # When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.
+[Value]     │   │       ├── Back to centre value                                        # The time back to the centre the slider is set to, in milliseconds.
+[List]      │   │       └── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
 [Tabs]      │   │   ├── Controller pages                                                # Settings for this controller, grouped by the part being mapped.
 [Tab]       │   │   │   ├── General                                                     # Says which control on your device works each part of the Xbox controller.
@@ -249,7 +262,11 @@ not shown in this state of the program.
 [Slider]    │   │   │   │   ├── Speed 0..250                                            # The car's speed in km/h that the centering spring's curve is read at. At a lower speed the force builds over a wider angle. Below 10 counts as 10. A program that knows the car's speed can later set it live, without saving it. Range is 0 to 250. Default is 100.
 [Value]     │   │   │   │   ├── Speed                                                   # The car's speed in km/h the spring is read at. Slower spreads the force over a wider angle. Below 10 counts as 10. A program that knows the car's speed, such as one reading a game's own data, can later set it live, without saving it.
 [List]      │   │   │   │   ├── Wheel range                                             # Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).
-[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, or why the centering spring does nothing now.
+[Label]     │   │   │   │   └── Wheel message                                           # What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.
+[Tab]       │   │   │   ├── Mouse                                                       # How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.
+[Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
+[Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
+[Group]     │   │   │   │   └── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
 [Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
@@ -330,9 +347,11 @@ not shown in this state of the program.
 [CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
-[Section]   │       │           │   ├── Hotkeys                                         # Keys that reach this program from inside a game.
+[Section]   │       │           │   ├── Hotkeys                                         # Keys and controller buttons that reach this program from inside a game.
 [CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
 [Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[CheckBox]  │       │           │   │   ├── Controller                                  # Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.
+[Value]     │       │           │   │   ├── Emulation buttons                           # Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.
 [CheckBox]  │       │           │   │   ├── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
 [CheckBox]  │       │           │   │   └── Show a note when a device disconnects       # Shows a short note on the screen when a device mapped to the current game disconnects or connects again.
 [Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
@@ -590,15 +609,27 @@ not shown in this state of the program.
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Issues list                                                 # Problems the program found, and what to do about each one.
-[Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
-[Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
-[CheckBox]  │                   ├── Ignore All                                          # Stops reporting every issue listed.
-[Button]    │                   ├── Ignore                                              # Stops reporting the selected issue.
-[Button]    │                   ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
-[Status]    │                   ├── Check state                                         # What the program is checking right now.
-[Status]    │                   ├── Next check                                          # How long until the checks run again.
-[Status]    │                   └── Check state                                         # Whether the checks are running or waiting.
+[Group]     │           ├── Issues list                                                 # Problems the program found, and what to do about each one.
+[Grid]      │           │   ├── Issues                                                  # Problems the program found, with what to do about each one.
+[Toolbar]   │           │   └── Issue actions                                           # Hides issues you have decided to live with.
+[CheckBox]  │           │       ├── Ignore All                                          # Stops reporting every issue listed.
+[Button]    │           │       ├── Ignore                                              # Stops reporting the selected issue.
+[Button]    │           │       ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
+[Status]    │           │       ├── Check state                                         # What the program is checking right now.
+[Status]    │           │       ├── Next check                                          # How long until the checks run again.
+[Status]    │           │       └── Check state                                         # Whether the checks are running or waiting.
+[Group]     │           └── (RecorderPanel)                                             # Records what the program reads and sends, into a file to post with a bug report.
+[Section]   │               └── Record for a bug report                                 # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.
+[Label]     │                   ├── What the recording leaves out                       # Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.
+[CheckBox]  │                   ├── Settings and devices                                # A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.
+[CheckBox]  │                   ├── Device input                                        # A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.
+[CheckBox]  │                   ├── Controller output                                   # A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.
+[CheckBox]  │                   ├── Force feedback                                      # A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.
+[CheckBox]  │                   ├── Engine timing                                       # A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.
+[CheckBox]  │                   ├── Window and errors                                   # A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.
+[Button]    │                   ├── Start Recording                                     # Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.
+[Button]    │                   ├── Open Folder                                         # Opens the folder the recordings are saved in, with the last one selected.
+[Label]     │                   └── Recording status                                    # How long the recording has run and how big it is, or the file it was saved to.
 [Section]   └── Tray                                                                    # The menu behind the icon in the notification area.
 [Button]        ├── Open Application                                                    # Brings the window back from the notification area.
 [CheckBox]      ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.

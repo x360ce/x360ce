@@ -420,6 +420,82 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Steering range in degrees sent to a Logitech wheel, which powers up at 200. Range is 40 to 900. Default is 0 (leave the wheel as it is).")]
 		static public string WheelRange { get { return "WheelRange"; } }
 
+		#region Mouse to stick
+
+		// How a mouse, or any control that reports how far it moved rather than where it is, moves each stick. Every one
+		// of these is stored empty at its default, which is how a mouse moved a stick before they existed, so presets
+		// saved before keep their checksums and act as they did.
+
+		/// <summary>Position: the stick follows how far the mouse has moved, and stays there.</summary>
+		public const string DefaultMouseStyle = "0";
+		/// <summary>The whole stick for 2,048 counts in Position, 4,096 counts a second in Speed, half the screen in Screen.</summary>
+		public const string DefaultMouseSensitivity = "100";
+		/// <summary>Evens out a mouse's reports, which arrive in bursts, without a lag a player feels.</summary>
+		public const string DefaultMouseSmoothing = "30";
+		/// <summary>Position stays where the mouse left it; Speed returns as fast as it smooths.</summary>
+		public const string DefaultMouseReturn = "0";
+		/// <summary>Always.</summary>
+		public const string DefaultMouseActive = "0";
+		/// <summary>None.</summary>
+		public const string DefaultMouseButton = "0";
+
+		const string MouseStyleText = " 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.";
+		const string MouseSensitivityText = " in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.";
+		const string MouseSmoothingText = " takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.";
+		const string MouseReturnText = " takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.";
+		const string MouseActiveText = " 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.";
+		const string MouseButtonText = ", counted from 1: the button of the same device. 0 = none. Default is 0.";
+
+		[DefaultValue(DefaultMouseStyle), Description("How a mouse moves the left stick." + MouseStyleText)]
+		static public string MouseLeftThumbStyle { get { return "MouseLeftThumbStyle"; } }
+
+		[DefaultValue(DefaultMouseSensitivity), Description("How far the left stick moves for a movement across," + MouseSensitivityText)]
+		static public string MouseLeftThumbSensitivityX { get { return "MouseLeftThumbSensitivityX"; } }
+
+		[DefaultValue(DefaultMouseSensitivity), Description("How far the left stick moves for a movement up or down," + MouseSensitivityText)]
+		static public string MouseLeftThumbSensitivityY { get { return "MouseLeftThumbSensitivityY"; } }
+
+		[DefaultValue(DefaultMouseSmoothing), Description("How long the left stick" + MouseSmoothingText)]
+		static public string MouseLeftThumbSmoothing { get { return "MouseLeftThumbSmoothing"; } }
+
+		[DefaultValue(DefaultMouseReturn), Description("How long the left stick" + MouseReturnText)]
+		static public string MouseLeftThumbReturn { get { return "MouseLeftThumbReturn"; } }
+
+		[DefaultValue(DefaultMouseActive), Description("When the mouse moves the left stick." + MouseActiveText)]
+		static public string MouseLeftThumbActive { get { return "MouseLeftThumbActive"; } }
+
+		[DefaultValue(DefaultMouseButton), Description("The button that turns the mouse on the left stick on and off" + MouseButtonText)]
+		static public string MouseLeftThumbButton { get { return "MouseLeftThumbButton"; } }
+
+		[DefaultValue(DefaultMouseStyle), Description("How a mouse moves the right stick." + MouseStyleText)]
+		static public string MouseRightThumbStyle { get { return "MouseRightThumbStyle"; } }
+
+		[DefaultValue(DefaultMouseSensitivity), Description("How far the right stick moves for a movement across," + MouseSensitivityText)]
+		static public string MouseRightThumbSensitivityX { get { return "MouseRightThumbSensitivityX"; } }
+
+		[DefaultValue(DefaultMouseSensitivity), Description("How far the right stick moves for a movement up or down," + MouseSensitivityText)]
+		static public string MouseRightThumbSensitivityY { get { return "MouseRightThumbSensitivityY"; } }
+
+		[DefaultValue(DefaultMouseSmoothing), Description("How long the right stick" + MouseSmoothingText)]
+		static public string MouseRightThumbSmoothing { get { return "MouseRightThumbSmoothing"; } }
+
+		[DefaultValue(DefaultMouseReturn), Description("How long the right stick" + MouseReturnText)]
+		static public string MouseRightThumbReturn { get { return "MouseRightThumbReturn"; } }
+
+		[DefaultValue(DefaultMouseActive), Description("When the mouse moves the right stick." + MouseActiveText)]
+		static public string MouseRightThumbActive { get { return "MouseRightThumbActive"; } }
+
+		[DefaultValue(DefaultMouseButton), Description("The button that turns the mouse on the right stick on and off" + MouseButtonText)]
+		static public string MouseRightThumbButton { get { return "MouseRightThumbButton"; } }
+
+		/// <summary>True for the mouse settings chosen from a list: the style, when it is active, and its button.</summary>
+		public static bool IsMouseChoice(string key)
+		{
+			return key != null && key.StartsWith("Mouse") && (key.EndsWith("Style") || key.EndsWith("Active") || key.EndsWith("Button"));
+		}
+
+		#endregion
+
 		[DefaultValue(DefaultLeftMotorPeriod), Description("Left motor period at full drive, in milliseconds; it stretches as the drive falls, as the motor slows. The left motor is the low-frequency one. Range is 0 to 400. Default is 160, the measured motor played 4 times slower for a wheel.")]
 		static public string LeftMotorPeriod { get { return "LeftMotorPeriod"; } }
 		/// <summary>MotorModel.PeriodAtFullMs(MotorModel.DefaultMultiplier, true), spelt out because an attribute needs a constant.</summary>

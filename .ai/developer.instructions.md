@@ -47,6 +47,16 @@ against this list:
 A measurement is not optional for a change on this path. Two of these regressions passed the
 whole test suite and were caught by a person looking at the status bar.
 
+## No crash passes unseen
+
+A test run fails when Windows logged a crash or hang of x360ce, the test host or a program run
+from the repository while it ran (`Tests/TestInfrastructure/CrashLog.cs`, `TestRun.Cleanup`), and
+writes them to `Tests/TestResults/WindowsCrashes.txt`. A test that crashes a process on purpose
+calls `CrashLog.Expect` first; a test that starts a program checks its exit code with
+`CrashLog.AssertExitedCleanly` (`Ui.CloseApp` does), because a crash of a program a test starts can
+reach no log at all. After running the real program by hand, read the Windows Application log for
+its crashes too: a crash while closing shows nothing on screen.
+
 ## Changelog lines are short
 
 `App.v4/Documents/ChangeLog.txt` is read by people who are not technical. A line names what

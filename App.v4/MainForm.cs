@@ -148,10 +148,12 @@ namespace x360ce.App
 		void LoadPages()
 		{
 			OptionsPanel.InitOptions();
+			RecorderPanel.InitOptions();
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
-			// The hotkey is read from the settings just loaded.
+			// The hotkey and the emulation buttons are read from the settings just loaded.
 			ApplyEmulationHotkey();
+			ApplyEmulationButtons();
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
 			PadControls = BuiltPadControls;
@@ -1533,6 +1535,7 @@ namespace x360ce.App
 				}
 				DisposeUpdateProbe();
 				DisposeInterfaceUpdate();
+				EmulationButtonsTimer?.Dispose();
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();
 				components.Dispose();

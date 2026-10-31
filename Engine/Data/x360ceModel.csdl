@@ -46,6 +46,20 @@
     <Property Type="String" Name="ForceSpringDamping" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceSpringSpeed" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="WheelRange" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbStyle" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbSensitivityX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbSensitivityY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbSmoothing" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbReturn" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbActive" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseLeftThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbStyle" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbSensitivityX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbSensitivityY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbSmoothing" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbReturn" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbActive" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+    <Property Type="String" Name="MouseRightThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
     <Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />

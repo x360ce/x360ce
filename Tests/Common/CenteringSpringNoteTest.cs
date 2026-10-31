@@ -1,6 +1,7 @@
 // @under-test: Engine/Common/SpringCalibration.cs, App.v4/Controls/PadControl.cs, App.v4/Common/DInput/DInputHelper.Step2.UpdateDiStates.cs
 // @area: force-feedback   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using x360ce.App.Controls;
 using x360ce.App.DInput;
 using x360ce.Engine;
@@ -44,6 +45,20 @@ namespace x360ce.Tests
 				"The note does not name the tab whose settings drive the wheel.");
 			Assert.IsNull(PadControl.SpringNote(true, 0, fromFirst), "The note shows while the spring reaches the wheel.");
 			Assert.IsNull(PadControl.SpringNote(false, 1, null), "The note shows with the spring unticked.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("The page says x360ce cannot set the range of a wheel that takes none, and gives a formula that works")]
+		public void The_page_says_when_the_wheel_takes_no_range()
+		{
+			// A MOZA R9 set to 270° on the Wheel page still steered its whole range (issue #1650).
+			var note = PadControl.RangeNote(270, LogitechWheel.SupportsRange(0x346E, 0x0004));
+			StringAssert.Contains(note, "cannot set this wheel's range");
+			StringAssert.Contains(note, "Set 270° there", "The note does not name the range chosen.");
+			var formula = System.Text.RegularExpressions.Regex.Match(note, @"=\S+").Value;
+			Assert.IsTrue(MapExpressionHelp.Examples.Any(x => x.Expression == formula), "The note's formula '" + formula + "' is not one Help shows.");
+			Assert.IsNull(PadControl.RangeNote(270, LogitechWheel.SupportsRange(0x046D, 0xC29B)), "The note shows for a G27, which takes the range.");
+			Assert.IsNull(PadControl.RangeNote(0, false), "The note shows while the range is left as it is.");
 		}
 	}
 }

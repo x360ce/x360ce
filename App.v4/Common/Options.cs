@@ -249,6 +249,27 @@ namespace x360ce.App
 		}
 		string _EmulationHotkey = DefaultEmulationHotkey;
 
+		/// <summary>Whether the emulation buttons are looked for at all. Off by default, so a game gets every press unasked.</summary>
+		[DefaultValue(false), Description("Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.")]
+		public bool EmulationButtonsEnabled
+		{
+			get { return _EmulationButtonsEnabled; }
+			set { _EmulationButtonsEnabled = value; OnPropertyChanged(); }
+		}
+		bool _EmulationButtonsEnabled;
+
+		/// <summary>The buttons the field starts with, which few games ask to be held together.</summary>
+		public const string DefaultEmulationButtons = "Back + Start";
+
+		/// <summary>Buttons of an emulated controller that, held together, flip <see cref="XInputEnabled"/>, written as <see cref="HotkeyHelper.FormatButtons"/> writes them.</summary>
+		[DefaultValue(DefaultEmulationButtons), Description("Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.")]
+		public string EmulationButtons
+		{
+			get { return _EmulationButtons; }
+			set { _EmulationButtons = value; OnPropertyChanged(); }
+		}
+		string _EmulationButtons = DefaultEmulationButtons;
+
 		/// <summary>Whether a hotkey press answers with a note on the screen, where a game would hide the tray balloon.</summary>
 		[DefaultValue(true), Description("Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.")]
 		public bool EmulationHotkeyOverlay
@@ -266,6 +287,36 @@ namespace x360ce.App
 			set { _DeviceChangeOverlay = value; OnPropertyChanged(); }
 		}
 		bool _DeviceChangeOverlay = true;
+
+		/// <summary>Whether a recording for a bug report holds the options, the game's settings, each controller's mapping and the devices.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.")]
+		public bool RecordSettings { get { return _RecordSettings; } set { _RecordSettings = value; OnPropertyChanged(); } }
+		bool _RecordSettings = true;
+
+		/// <summary>Whether a recording holds what each device reports.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.")]
+		public bool RecordInput { get { return _RecordInput; } set { _RecordInput = value; OnPropertyChanged(); } }
+		bool _RecordInput = true;
+
+		/// <summary>Whether a recording holds what each controller sends to the game.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.")]
+		public bool RecordOutput { get { return _RecordOutput; } set { _RecordOutput = value; OnPropertyChanged(); } }
+		bool _RecordOutput = true;
+
+		/// <summary>Whether a recording holds the vibration games ask for and the force sent to each device.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.")]
+		public bool RecordForces { get { return _RecordForces; } set { _RecordForces = value; OnPropertyChanged(); } }
+		bool _RecordForces = true;
+
+		/// <summary>Whether a recording holds how fast the engine runs and each slow device call.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.")]
+		public bool RecordEngine { get { return _RecordEngine; } set { _RecordEngine = value; OnPropertyChanged(); } }
+		bool _RecordEngine = true;
+
+		/// <summary>Whether a recording holds whether the window answers, the program in front, the handles x360ce holds and its errors.</summary>
+		[DefaultValue(true), Description("A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.")]
+		public bool RecordWindow { get { return _RecordWindow; } set { _RecordWindow = value; OnPropertyChanged(); } }
+		bool _RecordWindow = true;
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 

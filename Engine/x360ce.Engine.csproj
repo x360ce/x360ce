@@ -158,6 +158,7 @@
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />
     <Compile Include="Common\DeviceStatsSvg.cs" />
+    <Compile Include="Common\TopListSvg.cs" />
     <Compile Include="Common\EngineHelper.Data.cs" />
     <Compile Include="Common\CloudKey.cs" />
     <Compile Include="Common\Enum\DInputMask.cs" />
@@ -406,17 +407,7 @@
     <Compile Include="JocysCom\Security\AESHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
-    <Compile Include="Security\Check.cs" />
     <Compile Include="JocysCom\Security\CRC32.cs" />
-    <Compile Include="Security\Data\Membership.cs" />
-    <Compile Include="Security\Data\Role.cs" />
-    <Compile Include="Security\Data\SecurityEntities.cs" />
-    <Compile Include="Security\Data\SecurityModel.Designer.cs">
-      <DependentUpon>SecurityModel.edmx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Security\Data\User.cs" />
     <Compile Include="JocysCom\Security\HashHelper.cs" />
     <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\PermissionHelper.cs" />
@@ -573,16 +564,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\x360ceModel.msl">
       <LogicalName>Data.x360ceModel.msl</LogicalName>
-    </EmbeddedResource>
-    <None Include="Security\Data\SecurityModel.edmx" />
-    <EmbeddedResource Include="Security\Data\SecurityModel.csdl">
-      <LogicalName>JocysCom.Security.Data.SecurityModel.csdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Security\Data\SecurityModel.ssdl">
-      <LogicalName>JocysCom.Security.Data.SecurityModel.ssdl</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Security\Data\SecurityModel.msl">
-      <LogicalName>JocysCom.Security.Data.SecurityModel.msl</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

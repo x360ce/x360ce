@@ -37,6 +37,36 @@ namespace x360ce.App.UiTree
 				"Turns vibration on and sets how strong it is.");
 			d["PadControl.WheelTabPage"] = new Text("Wheel",
 				"The centering spring that holds a wheel at its centre in games that send no steering force, with a chart of its force at every angle, and the wheel's steering range.");
+			d["PadControl.MouseTabPage"] = new Text("Mouse",
+				"How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.");
+			d["PadControl.MouseNoteLabel"] = new Text("What the Mouse page sets",
+				"The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.");
+			d["MouseStickUserControl"] = new Text(null,
+				"How a mouse moves one stick.");
+			d["MouseStickUserControl.StickGroupBox"] = new Text(null,
+				"How a mouse moves this stick.");
+			d["MouseStickUserControl.StyleComboBox"] = new Text("Style",
+				"Position: the stick follows how far the mouse has moved, and stays there, for steering or flying. Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops, for a camera or aiming. Screen: the stick follows where the pointer is on the screen, as a mouse yoke.");
+			d["MouseStickUserControl.SensitivityXTrackBar"] = new Text("Sensitivity across",
+				"How far the stick moves for a movement across, 1 to 400 percent. 100 is the whole stick for 2,048 counts in Position, for 4,096 counts a second in Speed, and half the screen's height in Screen.");
+			d["MouseStickUserControl.SensitivityXTextBox"] = Live("Sensitivity across value",
+				"The sensitivity across the slider is set to, in percent.");
+			d["MouseStickUserControl.SensitivityYTrackBar"] = new Text("Sensitivity up and down",
+				"How far the stick moves for a movement up or down, 1 to 400 percent, measured as across.");
+			d["MouseStickUserControl.SensitivityYTextBox"] = Live("Sensitivity up and down value",
+				"The sensitivity up and down the slider is set to, in percent.");
+			d["MouseStickUserControl.SmoothingTrackBar"] = new Text("Smoothing",
+				"How long the stick takes to follow a change in Speed and Screen, 0 to 500 milliseconds, which evens out a mouse's uneven reports. Greyed out in Position.");
+			d["MouseStickUserControl.SmoothingTextBox"] = Live("Smoothing value",
+				"The smoothing the slider is set to, in milliseconds.");
+			d["MouseStickUserControl.ReturnTrackBar"] = new Text("Back to centre",
+				"How long the stick takes to go back to the centre, 0 to 2,000 milliseconds. In Position, 0 leaves it where the mouse left it. Greyed out in Screen.");
+			d["MouseStickUserControl.ReturnTextBox"] = Live("Back to centre value",
+				"The time back to the centre the slider is set to, in milliseconds.");
+			d["MouseStickUserControl.ActiveComboBox"] = new Text("Active",
+				"When the mouse moves the stick: always, while the button is held, then back to the centre or staying where it was, or turned on and off by the button.");
+			d["MouseStickUserControl.ButtonComboBox"] = new Text("Button",
+				"The button of the same device that turns the mouse on the stick on and off. Greyed out while Active is Always.");
 			d["PadControl.DirectInputTabPage"] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 
@@ -142,9 +172,10 @@ namespace x360ce.App.UiTree
 			d["PadControl.WheelRangeComboBox"] = new Text("Wheel range",
 				"Degrees lock to lock sent to a Logitech wheel, which powers up at 200, and the range the spring's angles are counted against. "
 				+ "Sent while this tab drives the wheel: Enable on the Force Feedback page, or Centering spring. Leave as it is sends nothing, "
-				+ "and is for a wheel without the centering spring: ticking the spring picks 900.");
+				+ "and is for a wheel without the centering spring: ticking the spring picks 900. Any other wheel turns the range its own software sets; "
+				+ "the page then says so, and a formula in the steering box, such as =a1*900/270, steers a shorter range.");
 			d["PadControl.WheelDescriptionLabel"] = Live("Wheel message",
-				"What Auto is doing and what it found, or why the centering spring does nothing now.");
+				"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.");
 
 			// The chart on the Wheel page.
 			d["WheelChartUserControl.MainPictureBox"] = new Text("Centering chart",

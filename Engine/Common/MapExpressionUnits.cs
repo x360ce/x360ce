@@ -203,7 +203,7 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>
-		/// How long the program has been running, in whole milliseconds.
+		/// How long the program has been running, in whole milliseconds, counted from nought again every four hours.
 		/// </summary>
 		/// <remarks>
 		/// Given as a plain count so that a person can divide it into whatever they need: by a
@@ -215,14 +215,24 @@ namespace x360ce.Engine
 		/// something coarser than a second.
 		///
 		/// The values a formula works in hold whole numbers exactly up to about sixteen million, which
-		/// is a little under five hours. After that the count is still correct but stops being exact to
-		/// the millisecond, and anything oscillating quickly will slow its step. Something repeating on
-		/// a minute or an hour is unaffected.
+		/// is a little under five hours. A longer count would stop being exact to the millisecond, and a
+		/// turbo button, which switches every fifty, would stutter after a day of running. So the count
+		/// starts again every <see cref="ClockCycle"/>, which every second, minute and hour divides
+		/// evenly: anything repeating on one of those carries on across the restart unbroken.
 		/// </remarks>
 		public static float Milliseconds()
 		{
-			return (float)Clock.Elapsed.TotalMilliseconds;
+			return Milliseconds(Clock.Elapsed.TotalMilliseconds);
 		}
+
+		/// <summary>The clock as a formula reads it once the program has run for <paramref name="elapsed"/> milliseconds.</summary>
+		public static float Milliseconds(double elapsed)
+		{
+			return (float)(elapsed % ClockCycle);
+		}
+
+		/// <summary>Four hours, in milliseconds: the clock a formula reads counts from nought again after each.</summary>
+		public const double ClockCycle = 4 * 60 * 60 * 1000;
 
 		/// <summary>Started once, when the program first asks the time of anything.</summary>
 		private static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();

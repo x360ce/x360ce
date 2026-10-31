@@ -113,6 +113,21 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForceSpringDamping, SettingName.DefaultForceSpringDamping);
 			AddValue(ref list, x => x.ForceSpringSpeed, SettingName.DefaultForceSpringSpeed);
 			AddValue(ref list, x => x.WheelRange);
+			// Mouse to stick: each left out at its default, so a preset saved before these existed keeps its checksum.
+			AddValue(ref list, x => x.MouseLeftThumbStyle, SettingName.DefaultMouseStyle);
+			AddValue(ref list, x => x.MouseLeftThumbSensitivityX, SettingName.DefaultMouseSensitivity);
+			AddValue(ref list, x => x.MouseLeftThumbSensitivityY, SettingName.DefaultMouseSensitivity);
+			AddValue(ref list, x => x.MouseLeftThumbSmoothing, SettingName.DefaultMouseSmoothing);
+			AddValue(ref list, x => x.MouseLeftThumbReturn, SettingName.DefaultMouseReturn);
+			AddValue(ref list, x => x.MouseLeftThumbActive, SettingName.DefaultMouseActive);
+			AddValue(ref list, x => x.MouseLeftThumbButton, SettingName.DefaultMouseButton);
+			AddValue(ref list, x => x.MouseRightThumbStyle, SettingName.DefaultMouseStyle);
+			AddValue(ref list, x => x.MouseRightThumbSensitivityX, SettingName.DefaultMouseSensitivity);
+			AddValue(ref list, x => x.MouseRightThumbSensitivityY, SettingName.DefaultMouseSensitivity);
+			AddValue(ref list, x => x.MouseRightThumbSmoothing, SettingName.DefaultMouseSmoothing);
+			AddValue(ref list, x => x.MouseRightThumbReturn, SettingName.DefaultMouseReturn);
+			AddValue(ref list, x => x.MouseRightThumbActive, SettingName.DefaultMouseActive);
+			AddValue(ref list, x => x.MouseRightThumbButton, SettingName.DefaultMouseButton);
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
 			AddValue(ref list, x => x.LeftMotorStrength, "100");
@@ -392,6 +407,20 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeForceSpringDamping() { return !isDefault(ForceSpringDamping, SettingName.DefaultForceSpringDamping); }
 		public bool ShouldSerializeForceSpringSpeed() { return !isDefault(ForceSpringSpeed, SettingName.DefaultForceSpringSpeed); }
 		public bool ShouldSerializeWheelRange() { return !isDefault(WheelRange); }
+		public bool ShouldSerializeMouseLeftThumbStyle() { return !isDefault(MouseLeftThumbStyle, SettingName.DefaultMouseStyle); }
+		public bool ShouldSerializeMouseLeftThumbSensitivityX() { return !isDefault(MouseLeftThumbSensitivityX, SettingName.DefaultMouseSensitivity); }
+		public bool ShouldSerializeMouseLeftThumbSensitivityY() { return !isDefault(MouseLeftThumbSensitivityY, SettingName.DefaultMouseSensitivity); }
+		public bool ShouldSerializeMouseLeftThumbSmoothing() { return !isDefault(MouseLeftThumbSmoothing, SettingName.DefaultMouseSmoothing); }
+		public bool ShouldSerializeMouseLeftThumbReturn() { return !isDefault(MouseLeftThumbReturn, SettingName.DefaultMouseReturn); }
+		public bool ShouldSerializeMouseLeftThumbActive() { return !isDefault(MouseLeftThumbActive, SettingName.DefaultMouseActive); }
+		public bool ShouldSerializeMouseLeftThumbButton() { return !isDefault(MouseLeftThumbButton, SettingName.DefaultMouseButton); }
+		public bool ShouldSerializeMouseRightThumbStyle() { return !isDefault(MouseRightThumbStyle, SettingName.DefaultMouseStyle); }
+		public bool ShouldSerializeMouseRightThumbSensitivityX() { return !isDefault(MouseRightThumbSensitivityX, SettingName.DefaultMouseSensitivity); }
+		public bool ShouldSerializeMouseRightThumbSensitivityY() { return !isDefault(MouseRightThumbSensitivityY, SettingName.DefaultMouseSensitivity); }
+		public bool ShouldSerializeMouseRightThumbSmoothing() { return !isDefault(MouseRightThumbSmoothing, SettingName.DefaultMouseSmoothing); }
+		public bool ShouldSerializeMouseRightThumbReturn() { return !isDefault(MouseRightThumbReturn, SettingName.DefaultMouseReturn); }
+		public bool ShouldSerializeMouseRightThumbActive() { return !isDefault(MouseRightThumbActive, SettingName.DefaultMouseActive); }
+		public bool ShouldSerializeMouseRightThumbButton() { return !isDefault(MouseRightThumbButton, SettingName.DefaultMouseButton); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
 		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
 		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }

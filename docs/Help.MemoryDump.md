@@ -6,6 +6,10 @@ usually enough, and it holds little of your data.
 When x360ce shows its own error window, it sends an error report itself, so no dump is needed. A dump helps when it
 closes without one, or freezes.
 
+For a problem that is not a crash, such as a stick that drifts or a game that will not start, start with a recording from
+the Issues tab instead. It holds no names or folders, so it can be posted on GitHub as it is: see
+[Recording a problem for a bug report](Help.v4.md#recording-a-problem-for-a-bug-report).
+
 ## 1. Get ProcDump from Microsoft
 
 1. Download ProcDump from Microsoft's page: https://learn.microsoft.com/sysinternals/downloads/procdump

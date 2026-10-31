@@ -14,7 +14,7 @@
     A detection here is usually a false positive. A controller emulator presents a
     virtual device and reads real ones, which is what input-stealing software does,
     so behavioural and machine-learning families score it highly. Treat it as a
-    reason to report the file, which App_3_ReportFalsePositive.ps1 does, rather than
+    reason to report the file, which App_3_ReportFalsePositive_Microsoft.ps1 does, rather than
     as evidence the build is unsafe.
 
     Nothing is ever removed or quarantined. The scan runs with remediation off, so
@@ -214,7 +214,7 @@ if (-not $Quiet) { Write-Host "" }
 if ($flagged.Count -gt 0) {
     Write-Host "$($flagged.Count) file(s) flagged. On this software that is usually a false" -ForegroundColor Yellow
     Write-Host "positive: check the same file on VirusTotal with App_2_VirusTotal.ps1, and if" -ForegroundColor Yellow
-    Write-Host "other engines disagree, report it with App_3_ReportFalsePositive.ps1." -ForegroundColor Yellow
+    Write-Host "other engines disagree, report it with App_3_ReportFalsePositive_Microsoft.ps1." -ForegroundColor Yellow
 }
 elseif ($unscanned.Count -eq 0 -and -not $Quiet) {
     Write-Host "Defender finds nothing in this release." -ForegroundColor Green

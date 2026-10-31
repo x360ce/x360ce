@@ -855,7 +855,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
 				key.EndsWith(SettingName.CombinedIndex) ||
-				key.EndsWith(SettingName.WheelRange)
+				key.EndsWith(SettingName.WheelRange) ||
+				SettingName.IsMouseChoice(key)
 				)
 			)
 			{
@@ -968,7 +969,8 @@ namespace x360ce.App
 				key.EndsWith(SettingName.RightMotorDirection) ||
 				key.EndsWith(SettingName.PassThroughIndex) ||
 				key.EndsWith(SettingName.CombinedIndex) ||
-				key.EndsWith(SettingName.WheelRange))
+				key.EndsWith(SettingName.WheelRange) ||
+				SettingName.IsMouseChoice(key))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null)

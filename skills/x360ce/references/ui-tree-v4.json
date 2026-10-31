@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.27.53.0",
-	"Built":"2026-10-24",
+	"Version":"4.28.16.0",
+	"Built":"2026-10-31",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -382,6 +382,95 @@
 					"Name":"MapExpressionToggle",
 					"Description":"Writes the Left Trigger mapping as a formula instead of choosing one control.",
 					"Role":"Control"
+				},
+				{
+					"Name":"MouseStickUserControl",
+					"Description":"How a mouse moves one stick.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Left Stick",
+							"Description":"How a mouse moves this stick.",
+							"Role":"Section",
+							"Id":"StickGroupBox",
+							"Items":[
+								{
+									"Name":"Style",
+									"Description":"How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.",
+									"Role":"List",
+									"Id":"StyleComboBox"
+								},
+								{
+									"Name":"Sensitivity across",
+									"Description":"How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Role":"Slider",
+									"Id":"SensitivityXTrackBar",
+									"Min":1,
+									"Max":400
+								},
+								{
+									"Name":"Sensitivity across value",
+									"Description":"The sensitivity across the slider is set to, in percent.",
+									"Role":"Value",
+									"Id":"SensitivityXTextBox"
+								},
+								{
+									"Name":"Sensitivity up and down",
+									"Description":"How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.",
+									"Role":"Slider",
+									"Id":"SensitivityYTrackBar",
+									"Min":1,
+									"Max":400
+								},
+								{
+									"Name":"Sensitivity up and down value",
+									"Description":"The sensitivity up and down the slider is set to, in percent.",
+									"Role":"Value",
+									"Id":"SensitivityYTextBox"
+								},
+								{
+									"Name":"Smoothing",
+									"Description":"How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.",
+									"Role":"Slider",
+									"Id":"SmoothingTrackBar",
+									"Min":0,
+									"Max":500
+								},
+								{
+									"Name":"Back to centre",
+									"Description":"How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.",
+									"Role":"Slider",
+									"Id":"ReturnTrackBar",
+									"Min":0,
+									"Max":2000
+								},
+								{
+									"Name":"Smoothing value",
+									"Description":"The smoothing the slider is set to, in milliseconds.",
+									"Role":"Value",
+									"Id":"SmoothingTextBox"
+								},
+								{
+									"Name":"Active",
+									"Description":"When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.",
+									"Role":"List",
+									"Id":"ActiveComboBox"
+								},
+								{
+									"Name":"Back to centre value",
+									"Description":"The time back to the centre the slider is set to, in milliseconds.",
+									"Role":"Value",
+									"Id":"ReturnTextBox"
+								},
+								{
+									"Name":"Button",
+									"Description":"The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.",
+									"Role":"List",
+									"Id":"ButtonComboBox"
+								}
+							]
+						}
+					]
 				},
 				{
 					"Name":"PadControl",
@@ -1541,9 +1630,39 @@
 										},
 										{
 											"Name":"Wheel message",
-											"Description":"What Auto is doing and what it found, or why the centering spring does nothing now.",
+											"Description":"What Auto is doing and what it found, why the centering spring does nothing now, or that x360ce cannot set this wheel's range.",
 											"Role":"Label",
 											"Id":"WheelDescriptionLabel"
+										}
+									]
+								},
+								{
+									"Name":"Mouse",
+									"Description":"How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.",
+									"Role":"Tab",
+									"Id":"MouseTabPage",
+									"Items":[
+										{
+											"Name":"What the Mouse page sets",
+											"Description":"The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.",
+											"Role":"Label",
+											"Id":"MouseNoteLabel"
+										},
+										{
+											"Name":null,
+											"Description":"How a mouse moves one stick.",
+											"Role":"Group",
+											"Id":"LeftMouseStickPanel",
+											"Type":"MouseStickUserControl",
+											"SameAs":"MouseStickUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"How a mouse moves one stick.",
+											"Role":"Group",
+											"Id":"RightMouseStickPanel",
+											"Type":"MouseStickUserControl",
+											"SameAs":"MouseStickUserControl"
 										}
 									]
 								},
@@ -2078,7 +2197,7 @@
 														},
 														{
 															"Name":"Hotkeys",
-															"Description":"Keys that reach this program from inside a game.",
+															"Description":"Keys and controller buttons that reach this program from inside a game.",
 															"Role":"Section",
 															"Id":"HotkeysGroupBox",
 															"Items":[
@@ -2093,6 +2212,18 @@
 																	"Description":"Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.",
 																	"Role":"Value",
 																	"Id":"EmulationHotkeyTextBox"
+																},
+																{
+																	"Name":"Controller",
+																	"Description":"Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.",
+																	"Role":"CheckBox",
+																	"Id":"EmulationButtonsCheckBox"
+																},
+																{
+																	"Name":"Emulation buttons",
+																	"Description":"Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.",
+																	"Role":"Value",
+																	"Id":"EmulationButtonsTextBox"
 																},
 																{
 																	"Name":"Show a note on the screen when pressed",
@@ -3860,6 +3991,83 @@
 													"Description":"Whether the checks are running or waiting.",
 													"Role":"Status",
 													"Id":"RunStateLabel"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":null,
+									"Description":"Records what the program reads and sends, into a file to post with a bug report.",
+									"Role":"Group",
+									"Id":"RecorderPanel",
+									"Type":"RecorderUserControl",
+									"Items":[
+										{
+											"Name":"Record for a bug report",
+											"Description":"Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.",
+											"Role":"Section",
+											"Id":"RecordGroupBox",
+											"Items":[
+												{
+													"Name":"What the recording leaves out",
+													"Description":"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.",
+													"Role":"Label",
+													"Id":"NoteLabel"
+												},
+												{
+													"Name":"Settings and devices",
+													"Description":"A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.",
+													"Role":"CheckBox",
+													"Id":"SettingsCheckBox"
+												},
+												{
+													"Name":"Device input",
+													"Description":"A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.",
+													"Role":"CheckBox",
+													"Id":"InputCheckBox"
+												},
+												{
+													"Name":"Controller output",
+													"Description":"A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.",
+													"Role":"CheckBox",
+													"Id":"OutputCheckBox"
+												},
+												{
+													"Name":"Force feedback",
+													"Description":"A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.",
+													"Role":"CheckBox",
+													"Id":"ForcesCheckBox"
+												},
+												{
+													"Name":"Engine timing",
+													"Description":"A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.",
+													"Role":"CheckBox",
+													"Id":"EngineCheckBox"
+												},
+												{
+													"Name":"Window and errors",
+													"Description":"A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.",
+													"Role":"CheckBox",
+													"Id":"WindowCheckBox"
+												},
+												{
+													"Name":"Start Recording",
+													"Description":"Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.",
+													"Role":"Button",
+													"Id":"RecordButton"
+												},
+												{
+													"Name":"Open Folder",
+													"Description":"Opens the folder the recordings are saved in, with the last one selected.",
+													"Role":"Button",
+													"Id":"OpenFolderButton"
+												},
+												{
+													"Name":"Recording status",
+													"Description":"How long the recording has run and how big it is, or the file it was saved to.",
+													"Role":"Label",
+													"Id":"StatusLabel"
 												}
 											]
 										}
