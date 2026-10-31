@@ -48,11 +48,11 @@
 .PARAMETER NoBrowser
     Writes the report and opens the page without filling anything.
 .EXAMPLE
-    PS> .\App_3_ReportFalsePositive.ps1
+    PS> .\App_3_ReportFalsePositive_Microsoft.ps1
     Lists the release files, gathers everything about the one you pick, opens the
     form and fills it in. Sign in when the browser asks; it waits.
 .EXAMPLE
-    PS> .\App_3_ReportFalsePositive.ps1 -Path Files.v4\x360ce.exe -Detection "Trojan:Win32/Wacatac.B!ml"
+    PS> .\App_3_ReportFalsePositive_Microsoft.ps1 -Path Files.v4\x360ce.exe -Detection "Trojan:Win32/Wacatac.B!ml"
     Prepares the report for one file without scanning it again.
 .NOTES
     Report the file Defender objects to. That is whichever one it flags: the
@@ -82,35 +82,9 @@ $sizeLimit = 500MB
 # running does not refuse the debugging port.
 $browserProfile = Join-Path $env:LOCALAPPDATA "x360ce\submission-profile"
 
-#------------------------------------------------------------------------------
-# Configuration.
-#------------------------------------------------------------------------------
-
-function Resolve-Path2 {
-    param([string]$Path)
-    return [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($PSScriptRoot, $Path))
-}
-
-# The same list the release signs, so there is no second list to keep in step.
-function Get-ReleaseFile {
-    $configPath = Join-Path $PSScriptRoot "App_1_Sign_and_Zip.json"
-    if (-not (Test-Path -LiteralPath $configPath)) { return @() }
-    $json = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
-    $apps = @(if ($json.PSObject.Properties.Name -contains "Apps") { $json.Apps } else { $json })
-    $found = New-Object System.Collections.Generic.List[object]
-    $seen = @{}
-    foreach ($dir in ($apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
-        $full = Resolve-Path2 $dir
-        if (-not (Test-Path -LiteralPath $full)) { continue }
-        foreach ($file in Get-ChildItem -LiteralPath $full -File) {
-            if ($file.Extension -notin @(".exe", ".zip", ".cab", ".dll")) { continue }
-            if ($seen.ContainsKey($file.FullName)) { continue }
-            $seen[$file.FullName] = $true
-            $found.Add([PSCustomObject]@{ Name = "$dir/$($file.Name)"; Path = $file.FullName })
-        }
-    }
-    return $found
-}
+# The release files, their signature, VirusTotal and the description of the program,
+# shared with the reports to other vendors.
+. (Join-Path $PSScriptRoot "App_3_ReportFalsePositive_Common.ps1")
 
 #------------------------------------------------------------------------------
 # What the report is made of.
@@ -129,47 +103,6 @@ function Get-DefenderVerdict {
     if ($result.Clean) { return "Clean on this machine, with the definitions installed today." }
     if (-not $result.Scanned) { return "The scanner exited $($result.ExitCode) without scanning the file." }
     return ($result.Threats -join "; ")
-}
-
-# What the other engines say. A hash lookup, so the file is not sent anywhere.
-function Get-VirusTotalVerdict {
-    param([string]$Hash)
-    if ([string]::IsNullOrWhiteSpace($env:VIRUSTOTAL_API_KEY)) {
-        return "Not asked: VIRUSTOTAL_API_KEY is not set."
-    }
-    $response = Invoke-WebRequest -Uri "https://www.virustotal.com/api/v3/files/$Hash" `
-        -Headers @{ "x-apikey" = $env:VIRUSTOTAL_API_KEY } -SkipHttpErrorCheck -TimeoutSec 120
-    if ($response.StatusCode -eq 404) {
-        return "VirusTotal has never seen this file."
-    }
-    if ($response.StatusCode -ne 200) {
-        return "VirusTotal answered $($response.StatusCode)."
-    }
-    # As a hash table, because a report can carry a property with an empty name.
-    $body = $response.Content | ConvertFrom-Json -AsHashtable
-    $results = $body.data.attributes.last_analysis_results
-    if (-not $results) { return "VirusTotal has the file but has not analysed it yet." }
-    $flagged = @($results.Keys | Where-Object { $results[$_].category -in @("malicious", "suspicious") } | Sort-Object)
-    if ($flagged.Count -eq 0) {
-        return "$($results.Count) engines, none of which flags it."
-    }
-    return "$($results.Count) engines, $($flagged.Count) of which flag it: $($flagged -join ', ')."
-}
-
-function Get-SignatureLine {
-    param([string]$FilePath)
-    # A zip has nowhere to keep an Authenticode signature, so reporting it as
-    # unsigned reads like a fault when it is the format. Say which it is.
-    if ([System.IO.Path]::GetExtension($FilePath) -eq ".zip") {
-        return "A zip cannot carry a signature. The program inside it is signed."
-    }
-    $signature = Get-AuthenticodeSignature -LiteralPath $FilePath
-    if ($signature.Status -ne "Valid") {
-        return "Not signed, or the signature does not verify ($($signature.Status))."
-    }
-    $subject = ($signature.SignerCertificate.Subject -split ",")[0] -replace "^CN=", ""
-    $issuer = ($signature.SignerCertificate.Issuer -split ",")[0] -replace "^CN=", ""
-    return "Signed by $subject, issued by $issuer, valid to $($signature.SignerCertificate.NotAfter.ToString('yyyy-MM-dd'))."
 }
 
 #------------------------------------------------------------------------------
@@ -289,7 +222,7 @@ if (-not $Detection) {
 }
 Write-Host "  Defender:   $Detection"
 
-$virusTotalLine = Get-VirusTotalVerdict $hash
+$virusTotalLine = Format-VirusTotalVerdict (Get-VirusTotalResult $hash)
 Write-Host "  VirusTotal: $virusTotalLine"
 
 $definitionVersion = ""
@@ -303,12 +236,7 @@ if ($definitionVersion) { Write-Host "  Definitions: $definitionVersion" }
 # from the certificate rather than guessed. An archive carries no signature, so the
 # program beside it answers for it.
 if (-not $Company) {
-    $signed = $file.Path
-    if ($item.Extension -in @(".zip", ".cab")) {
-        $beside = Join-Path $item.DirectoryName ($item.BaseName + ".exe")
-        if (Test-Path -LiteralPath $beside) { $signed = $beside }
-    }
-    $certificate = (Get-AuthenticodeSignature -LiteralPath $signed).SignerCertificate
+    $certificate = Get-SigningCertificate $file.Path
     if ($certificate) {
         $organisation = ($certificate.Subject -split "," | ForEach-Object { $_.Trim() } |
             Where-Object { $_ -like "O=*" } | Select-Object -First 1)
@@ -321,14 +249,7 @@ if ($Company) { Write-Host "  Company:    $Company" }
 # Write the explanation.
 #------------------------------------------------------------------------------
 
-$version = $item.VersionInfo.FileVersion
-if (-not $version -and $item.Extension -in @(".zip", ".cab")) {
-    $beside = Join-Path $item.DirectoryName ($item.BaseName + ".exe")
-    if (Test-Path -LiteralPath $beside) {
-        $version = (Get-Item -LiteralPath $beside).VersionInfo.FileVersion + " (the program inside)"
-    }
-}
-if (-not $version) { $version = "not recorded in the file" }
+$version = Get-ReportVersion $file.Path
 
 # A report about a detection nobody can see wastes a reviewer's time and your own
 # standing with them. It is still worth writing when the detection was seen
@@ -351,19 +272,7 @@ Version:   $version
 SHA-256:   $hash
 Signature: $signatureLine
 
-What the program is
-x360ce is an open source Xbox 360 controller emulator. It lets a game that only
-supports Xbox controllers be played with any other controller, by presenting the
-player's device to the game as an Xbox one. It has been published since 2010 and
-its source is at https://github.com/x360ce/x360ce.
-
-Why it is likely being flagged
-To do its job the program presents a virtual controller to the system and reads
-input from real ones. Games load its library, and it can install a driver for the
-virtual device. Those are the same actions that input-stealing software performs,
-so behavioural and machine-learning detections score it highly even though it does
-exactly what its users install it to do. It does not collect data, contact any
-service without being asked, or modify other programs.
+$(Get-ProgramStatement)
 
 What Defender reports
 $Detection

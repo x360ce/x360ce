@@ -1,5 +1,5 @@
 // Fills Microsoft's file submission form in a browser that is already signed in,
-// and stops before sending. Driven by App_3_ReportFalsePositive.ps1, which gathers
+// and stops before sending. Driven by App_3_ReportFalsePositive_Microsoft.ps1, which gathers
 // the facts and writes them to the JSON file named as the only argument.
 //
 // It attaches to a browser started with a debugging port rather than starting one
