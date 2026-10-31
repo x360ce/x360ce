@@ -90,6 +90,21 @@ namespace x360ce.App.Controls
 			};
 		}
 
+		/// <summary>Gives the page room to scroll when the window is shorter than its rows need.</summary>
+		/// <remarks>
+		/// The table gives the tabs all the height they ask for even when the window has less, and moves them up
+		/// to find it: on a 1920 x 1080 screen at 150 % the tab strip slid under the tool bar and the device list,
+		/// and no tab could be chosen. Scrolling keeps every row where it belongs. The height comes from the rows
+		/// themselves, the device list with the devices it holds, so it follows the font and the screen's scale.
+		/// </remarks>
+		protected override void OnLayout(LayoutEventArgs e)
+		{
+			var needed = PadTableLayoutPanel.GetPreferredSize(new Size(ClientSize.Width, 0)).Height;
+			if (AutoScrollMinSize.Height != needed)
+				AutoScrollMinSize = new Size(0, needed);
+			base.OnLayout(e);
+		}
+
 		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
 		const int HiddenUpdateEvery = 10;
 		int _HiddenUpdates;

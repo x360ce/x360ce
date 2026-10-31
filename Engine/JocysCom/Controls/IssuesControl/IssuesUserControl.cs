@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Threading;
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -243,14 +244,32 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			base.Dispose(disposing);
 		}
 
+		/// <summary>The issue a row shows, or null when the list no longer has it.</summary>
+		/// <remarks>
+		/// The grid paints and measures from the row count it last knew, and by then the list can be
+		/// shorter: an issue fixed or ignored while the rows are drawn. The row's own bound item goes
+		/// through the binding, which fails for a row past the list's end and ends the program mid-paint,
+		/// so the list is asked directly, as <c>ControlsHelper</c> does for every other grid.
+		/// </remarks>
+		static IssueItem ItemAt(DataGridView grid, int rowIndex)
+		{
+			if (rowIndex < 0 || rowIndex >= grid.Rows.Count)
+				return null;
+			var list = grid.DataSource as IList;
+			if (list is null)
+				return grid.Rows[rowIndex].DataBoundItem as IssueItem;
+			return rowIndex < list.Count ? list[rowIndex] as IssueItem : null;
+		}
+
 		private void WarningsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+			if (e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
 			var column = grid.Columns[e.ColumnIndex];
-			var row = grid.Rows[e.RowIndex];
-			var item = (IssueItem)row.DataBoundItem;
+			var item = ItemAt(grid, e.RowIndex);
+			if (item is null)
+				return;
 			if (column == SolutionColumn)
 			{
 				Task.Factory.StartNew(new Action(() =>
@@ -326,7 +345,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var grid = (DataGridView)sender;
 			if (grid.Columns[e.ColumnIndex] != SolutionColumn)
 				return;
-			var item = grid.Rows[e.RowIndex].DataBoundItem as IssueItem;
+			var item = ItemAt(grid, e.RowIndex);
 			if (item is null || !item.FixNeedsAdmin || item.Severity == IssueSeverity.None)
 				return;
 			var text = e.FormattedValue as string ?? string.Empty;
@@ -346,12 +365,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+			if (e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
-			var item = (IssueItem)row.DataBoundItem;
+			var item = ItemAt(grid, e.RowIndex);
+			if (item is null)
+				return;
 			if (column == SeverityColumn)
 			{
 				switch (item.Severity)

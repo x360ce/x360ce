@@ -587,9 +587,8 @@
 			// 
 			// DeveloperToolsButton
 			// 
-			this.DeveloperToolsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.DeveloperToolsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 389);
+			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 513);
 			this.DeveloperToolsButton.Name = "DeveloperToolsButton";
 			this.DeveloperToolsButton.Size = new System.Drawing.Size(114, 23);
 			this.DeveloperToolsButton.TabIndex = 69;
@@ -768,6 +767,7 @@
 			this.GeneralPanel.Controls.Add(this.HotkeysGroupBox);
 			this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
 			this.GeneralPanel.Controls.Add(this.ProgramScanLocationsTabControl);
+			this.GeneralPanel.AutoScroll = true;
 			this.GeneralPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GeneralPanel.Location = new System.Drawing.Point(3, 3);
 			this.GeneralPanel.Name = "GeneralPanel";
