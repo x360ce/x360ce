@@ -1032,9 +1032,12 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		void AddValueLabels()
 		{
+			// Laid out once, as the page is shown: a panel that grows would lay out the table it is in, for every number.
+			GeneralTableLayoutPanel.SuspendLayout();
 			foreach (var ii in imageInfos)
 			{
 				var name = (Label)ii.Label;
+				name.Parent.SuspendLayout();
 				var value = new Label
 				{
 					Name = ii.Code + "ValueLabel",
@@ -1056,7 +1059,9 @@ namespace x360ce.App.Controls
 					SetValueFont(ii);
 				};
 				name.Parent.Controls.Add(value);
+				name.Parent.ResumeLayout(false);
 			}
+			GeneralTableLayoutPanel.ResumeLayout(false);
 			SetValueColors();
 			EventHandler themeChanged = (sender, e) => SetValueColors();
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;

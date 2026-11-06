@@ -127,7 +127,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Panel TopPanel;
+		internal System.Windows.Forms.Panel TopPanel;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		private System.Windows.Forms.PictureBox HeaderPictureBox;
 		private System.Windows.Forms.Label HelpBodyLabel;

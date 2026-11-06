@@ -1,4 +1,4 @@
-﻿## [4.29.51.0] - 2026-11-06
+﻿## [4.29.53.0] - 2026-11-06
 
 - Fixed: Bug report recordings said a pad's own centring was off when x360ce had left it alone.
 - Fixed: Bug report recordings read back another controller's XInput place when a real controller held an earlier one.
@@ -31,6 +31,8 @@
 - Changed: x360ce no longer wakes twenty times a second after it has started.
 - Changed: Controllers work at once at start-up, while the issue check still runs.
 - Changed: Resizing the window and switching the theme are faster.
+- Changed: Dragging the window's edge is smooth: the page is laid out when you let go.
+- Changed: x360ce starts faster.
 - Added: Bug report recordings name the force feedback driver, its motors, and the force calls made each second.
 - Added: Bug report recordings show where DirectInput and Raw Input readings part, and what games read back.
 - Added: Bug report recordings say why a device was let go of, and which other controller programs run.

@@ -1467,6 +1467,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (strip is null || DpiScale == 1f)
 				return;
 			var resized = !ScaledControls.TryGetValue(strip, out _);
+			// Laid out once, rather than again for each item given its image.
+			strip.SuspendLayout();
 			if (resized)
 			{
 				ScaledControls.Add(strip, null);
@@ -1488,6 +1490,7 @@ namespace JocysCom.ClassLibrary.Controls
 				if (item is ToolStripDropDownItem dropDownItem && dropDownItem.HasDropDownItems)
 					ScaleImages(dropDownItem.DropDown);
 			}
+			strip.ResumeLayout();
 		}
 
 		/// <summary>Puts other images in place of the ones on a control and on everything on it.</summary>
