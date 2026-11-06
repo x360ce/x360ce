@@ -76,8 +76,9 @@ namespace x360ce.Engine
 		{
 			if (eventType == EVENT_SYSTEM_FOREGROUND)
 			{
-				var process = GetActiveProcess(hWnd);
-				OnActivate?.Invoke(this, new EventArgs<Process>(process));
+				// Let go of once every handler has had it: the window in front changes all the time.
+				using (var process = GetActiveProcess(hWnd))
+					OnActivate?.Invoke(this, new EventArgs<Process>(process));
 			}
 		}
 
@@ -125,9 +126,8 @@ namespace x360ce.Engine
 
 		/// <summary>Full path of the process image, or an empty string when unavailable.</summary>
 		/// <remarks>
-		/// The handle from OpenProcess is always released. This runs for every process on the
-		/// machine each time the foreground window changes, so leaking one handle per call
-		/// exhausts the handle table over a session.
+		/// The handle from OpenProcess is always released. This runs each time the foreground
+		/// window changes, so leaking one handle per call exhausts the handle table over a session.
 		/// </remarks>
 		public static string GetProcessFileName(Process p)
 		{

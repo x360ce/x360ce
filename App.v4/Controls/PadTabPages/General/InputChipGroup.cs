@@ -36,7 +36,6 @@ namespace x360ce.App.Controls
 			set
 			{
 				_Chips = value ?? new List<InputChip>();
-				_Columns = Columns(_Chips);
 				Relayout();
 				Invalidate();
 			}
@@ -57,8 +56,8 @@ namespace x360ce.App.Controls
 		static readonly Color LitColor = ColorTranslator.FromHtml(AppHelper.StatusGreen);
 		static readonly Color DragColor = ColorTranslator.FromHtml(AppHelper.StatusRed);
 
+		/// <summary>At most eight chips a row, as x360ce 5 shows them.</summary>
 		const int ChipsPerRow = 8;
-		const int ChipsPerRowWide = 6;
 		const int Gap = 3;
 		const int Radius = 5;
 		const int PadX = 5;
@@ -72,13 +71,20 @@ namespace x360ce.App.Controls
 		Point _PressedAt;
 		InputChip _Dragging;
 
-		/// <summary>Eight chips a row; six once a caption reaches three characters.</summary>
-		static int Columns(IList<InputChip> chips)
+		/// <summary>The widest reading a chip shows: an axis at its lowest.</summary>
+		const string WidestReading = "-32768";
+
+		/// <summary>
+		/// As many chips a row as fit the width, each as wide as the widest caption needs, and the widest reading where readings
+		/// are shown, in the fonts they are drawn in; eight at most.
+		/// </summary>
+		int Columns()
 		{
-			foreach (var chip in chips)
-				if (chip.Caption.Length > 2)
-					return ChipsPerRowWide;
-			return ChipsPerRow;
+			var flags = TextFormatFlags.NoPadding;
+			var widest = ShowsValues ? TextRenderer.MeasureText(WidestReading, ValueFont, Size.Empty, flags).Width : 0;
+			foreach (var chip in _Chips)
+				widest = Math.Max(widest, TextRenderer.MeasureText(chip.Caption, Font, Size.Empty, flags).Width + PadX * 2);
+			return Math.Max(1, Math.Min(ChipsPerRow, (ClientSize.Width + Gap) / (widest + Gap)));
 		}
 
 		Font ValueFont
@@ -108,9 +114,10 @@ namespace x360ce.App.Controls
 			Relayout();
 		}
 
-		/// <summary>Sets the height the chips need at the current width, so the section above grows with them.</summary>
+		/// <summary>Sets the chips a row and the height they need at the current width, so the section above grows with them.</summary>
 		void Relayout()
 		{
+			_Columns = Columns();
 			_ChipHeight = Font.Height + PadY * 2;
 			_ValueHeight = ShowsValues ? ValueFont.Height + 2 : 0;
 			var rows = (_Chips.Count + _Columns - 1) / _Columns;

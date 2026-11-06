@@ -351,8 +351,18 @@ namespace x360ce.Tests
 					"The pad's objects are not named as DirectInput names its twin's.");
 				Assert.AreEqual(0, padUd.DeviceEffects.Length, "The pad was given force feedback effects.");
 				Assert.IsTrue(padUd.DeviceChanged, "The Direct Input tab is not told to draw the pad's objects.");
-				// Its objects are named and placed as DirectInput names and places its twin's, so the automatic preset is the same.
-				var padTwin = new UserDevice { CapType = padUd.CapType, DeviceObjects = RawInputFixtures.RumblePad2.Objects };
+				// Its objects are named and placed as DirectInput names and places its twin's, so the automatic preset is the same:
+				// the twin is the same product, with the same slots, whether the preset comes from SDL's database or the guess.
+				var padTwin = new UserDevice
+				{
+					CapType = padUd.CapType,
+					DeviceObjects = RawInputFixtures.RumblePad2.Objects,
+					ProductGuid = pad.ProductGuid,
+					DiAxeMask = Mask(padLayout, MapType.Axis),
+					DiSliderMask = Mask(padLayout, MapType.Slider),
+					CapButtonCount = Count(padLayout, MapType.Button),
+					CapPovCount = Count(padLayout, MapType.POV),
+				};
 				Assert.AreEqual(AutoMapHelper.GetAutoPreset(padTwin).PadSettingChecksum, AutoMapHelper.GetAutoPreset(padUd).PadSettingChecksum,
 					"The automatic preset for the pad read through Raw Input is not the one for its DirectInput twin.");
 
@@ -656,7 +666,7 @@ namespace x360ce.Tests
 				for (var round = 1; round <= 2; round++)
 				{
 					var where = "Round " + round;
-					// As on every change of Windows settings: the update thread stops, and starts again a second later.
+					// As for a reorder of the XInput places: the update thread stops, and starts again.
 					Assert.IsTrue(helper.Stop(), where + ": the update thread did not stop.");
 					Assert.IsTrue(helper.RawInput.IsRunning, where + ": the hub stopped with the update thread.");
 					Assert.AreEqual(window, helper.RawInput.WindowHandle, where + ": the hub was started again.");

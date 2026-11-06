@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.28.16.0, built 2026-10-31.
+Version 4.29.52.0, built 2026-11-06.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -102,81 +102,107 @@ not shown in this state of the program.
 [Tabs]      │   │   ├── Controller pages                                                # Settings for this controller, grouped by the part being mapped.
 [Tab]       │   │   │   ├── General                                                     # Says which control on your device works each part of the Xbox controller.
 [Group]     │   │   │   │   ├── Input -> InputUserControl                               # Every control of the selected device, lit while it is used, before anything is mapped.
-[Value]     │   │   │   │   ├── Left trigger value                                      # What the game is being given for the left trigger right now.
-[Value]     │   │   │   │   ├── Left stick value                                        # Across and up positions the game is being given for the left stick.
-[List]      │   │   │   │   ├── Left Trigger                                            # Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.
-[List]      │   │   │   │   ├── Left Shoulder                                           # Left Shoulder Button . Disable = 0.
-[List]      │   │   │   │   ├── Button Back                                             # Back button.
-[List]      │   │   │   │   ├── Button Start                                            # Start button.
-[List]      │   │   │   │   ├── Button Guide                                            # Guide button.
-[List]      │   │   │   │   ├── D-Pad                                                   # Disable = 0, POV Index = N.
-[List]      │   │   │   │   ├── Left Thumb Axis X                                       # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
-[List]      │   │   │   │   ├── Left Thumb Axis Y                                       # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
-[List]      │   │   │   │   ├── Left Thumb Button                                       # Left stick button. Disable = 0.
-[List]      │   │   │   │   ├── Left Thumb Up                                           # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Left Thumb Left                                         # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Left Thumb Right                                        # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Left Thumb Down                                         # Button Id. Disable = 0.
-[CheckBox]  │   │   │   │   ├── Left Trigger formula -> MapExpressionToggle             # Writes the Left Trigger mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── D-Pad formula -> MapExpressionToggle                    # Writes the D-Pad mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button Guide formula -> MapExpressionToggle             # Writes the Button Guide mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button Back formula -> MapExpressionToggle              # Writes the Button Back mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button Start formula -> MapExpressionToggle             # Writes the Button Start mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Shoulder formula -> MapExpressionToggle            # Writes the Left Shoulder mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Axis X formula -> MapExpressionToggle        # Writes the Left Thumb Axis X mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Axis Y formula -> MapExpressionToggle        # Writes the Left Thumb Axis Y mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Right formula -> MapExpressionToggle         # Writes the Left Thumb Right mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Left formula -> MapExpressionToggle          # Writes the Left Thumb Left mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Up formula -> MapExpressionToggle            # Writes the Left Thumb Up mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Down formula -> MapExpressionToggle          # Writes the Left Thumb Down mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Left Thumb Button formula -> MapExpressionToggle        # Writes the Left Thumb Button mapping as a formula instead of choosing one control.
-[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
-[List]      │   │   │   │   ├── D-Pad Up                                                # D-Pad up button.
-[List]      │   │   │   │   ├── D-Pad Left                                              # D-Pad left button.
-[List]      │   │   │   │   ├── D-Pad Right                                             # D-Pad right button.
-[List]      │   │   │   │   ├── D-Pad Down                                              # D-Pad down button.
-[List]      │   │   │   │   ├── Button layout                                           # Names the buttons after the controller in your hands instead of an Xbox one.
 [Button]    │   │   │   │   ├── Remap All                                               # Clears the mapping, then asks you to press each control in turn.
+[List]      │   │   │   │   ├── Button layout                                           # Names the buttons after the controller in your hands instead of an Xbox one.
+[CheckBox]  │   │   │   │   ├── Left Trigger formula -> MapExpressionToggle             # Writes the Left Trigger mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Trigger                                            # Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.
+[Label]     │   │   │   │   ├── Left Trigger value                                      # What the game is being given for the trigger right now, from 0 released to 255 pressed all the way.
+[CheckBox]  │   │   │   │   ├── Left Shoulder formula -> MapExpressionToggle            # Writes the Left Shoulder mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Shoulder                                           # Left Shoulder Button . Disable = 0.
+[Label]     │   │   │   │   ├── Left Shoulder value                                     # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button Back formula -> MapExpressionToggle              # Writes the Button Back mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button Back                                             # Back button.
+[Label]     │   │   │   │   ├── Button Back value                                       # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button Start formula -> MapExpressionToggle             # Writes the Button Start mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button Start                                            # Start button.
+[Label]     │   │   │   │   ├── Button Start value                                      # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button Guide formula -> MapExpressionToggle             # Writes the Button Guide mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button Guide                                            # Guide button.
+[Label]     │   │   │   │   ├── Button Guide value                                      # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── D-Pad formula -> MapExpressionToggle                    # Writes the D-Pad mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── D-Pad                                                   # Disable = 0, POV Index = N.
+[Label]     │   │   │   │   ├── D-Pad value                                             # The D-Pad directions the game is being given, added up: up 1, down 2, left 4, right 8; 0 while none is pressed.
+[CheckBox]  │   │   │   │   ├── Left Thumb Axis X formula -> MapExpressionToggle        # Writes the Left Thumb Axis X mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Axis X                                       # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
+[Label]     │   │   │   │   ├── Left Thumb Axis X value                                 # What the game is being given for the stick across right now, from -32768 at the left to 32767 at the right.
+[CheckBox]  │   │   │   │   ├── Left Thumb Axis Y formula -> MapExpressionToggle        # Writes the Left Thumb Axis Y mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Axis Y                                       # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
+[Label]     │   │   │   │   ├── Left Thumb Axis Y value                                 # What the game is being given for the stick up and down right now, from -32768 at the bottom to 32767 at the top.
+[CheckBox]  │   │   │   │   ├── Left Thumb Button formula -> MapExpressionToggle        # Writes the Left Thumb Button mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Button                                       # Left stick button. Disable = 0.
+[Label]     │   │   │   │   ├── Left Thumb Button value                                 # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Left Thumb Up formula -> MapExpressionToggle            # Writes the Left Thumb Up mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Up                                           # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Left Thumb Up value                                     # The stick's position the game is being given while the stick points this way, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Left Thumb Left formula -> MapExpressionToggle          # Writes the Left Thumb Left mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Left                                         # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Left Thumb Left value                                   # The stick's position the game is being given while the stick points this way, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Left Thumb Right formula -> MapExpressionToggle         # Writes the Left Thumb Right mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Right                                        # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Left Thumb Right value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Left Thumb Down formula -> MapExpressionToggle          # Writes the Left Thumb Down mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Left Thumb Down                                         # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Left Thumb Down value                                   # The stick's position the game is being given while the stick points this way, otherwise 0.
+[Group]     │   │   │   │   ├── Controller picture -> XboxImageUserControl              # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [CheckBox]  │   │   │   │   ├── D-Pad Up formula -> MapExpressionToggle                 # Writes the D-Pad Up mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── D-Pad Down formula -> MapExpressionToggle               # Writes the D-Pad Down mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── D-Pad Up                                                # D-Pad up button.
+[Label]     │   │   │   │   ├── D-Pad Up value                                          # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── D-Pad Left formula -> MapExpressionToggle               # Writes the D-Pad Left mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── D-Pad Left                                              # D-Pad left button.
+[Label]     │   │   │   │   ├── D-Pad Left value                                        # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── D-Pad Right formula -> MapExpressionToggle              # Writes the D-Pad Right mapping as a formula instead of choosing one control.
-[Value]     │   │   │   │   ├── Right trigger value                                     # What the game is being given for the right trigger right now.
-[Value]     │   │   │   │   ├── Right stick value                                       # Across and up positions the game is being given for the right stick.
-[List]      │   │   │   │   ├── Right Trigger                                           # Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.
-[List]      │   │   │   │   ├── Right Shoulder                                          # Right Shoulder Button. Disable = 0.
-[List]      │   │   │   │   ├── Button Y                                                # Button 'Y'
-[List]      │   │   │   │   ├── Button X                                                # Button 'X'
-[List]      │   │   │   │   ├── Button B                                                # Button 'B'
-[List]      │   │   │   │   ├── Button A                                                # Button 'A'
-[List]      │   │   │   │   ├── Right Thumb Axis X                                      # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
-[List]      │   │   │   │   ├── Right Thumb Axis Y                                      # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
-[List]      │   │   │   │   ├── Right Thumb Button                                      # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Right Thumb Up                                          # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Right Thumb Left                                        # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Right Thumb Right                                       # Button Id. Disable = 0.
-[List]      │   │   │   │   ├── Right Thumb Down                                        # Button Id. Disable = 0.
+[List]      │   │   │   │   ├── D-Pad Right                                             # D-Pad right button.
+[Label]     │   │   │   │   ├── D-Pad Right value                                       # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── D-Pad Down formula -> MapExpressionToggle               # Writes the D-Pad Down mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── D-Pad Down                                              # D-Pad down button.
+[Label]     │   │   │   │   ├── D-Pad Down value                                        # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Trigger formula -> MapExpressionToggle            # Writes the Right Trigger mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button A formula -> MapExpressionToggle                 # Writes the Button A mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button B formula -> MapExpressionToggle                 # Writes the Button B mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button X formula -> MapExpressionToggle                 # Writes the Button X mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Button Y formula -> MapExpressionToggle                 # Writes the Button Y mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Trigger                                           # Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.
+[Label]     │   │   │   │   ├── Right Trigger value                                     # What the game is being given for the trigger right now, from 0 released to 255 pressed all the way.
 [CheckBox]  │   │   │   │   ├── Right Shoulder formula -> MapExpressionToggle           # Writes the Right Shoulder mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Shoulder                                          # Right Shoulder Button. Disable = 0.
+[Label]     │   │   │   │   ├── Right Shoulder value                                    # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button Y formula -> MapExpressionToggle                 # Writes the Button Y mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button Y                                                # Button 'Y'
+[Label]     │   │   │   │   ├── Button Y value                                          # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button X formula -> MapExpressionToggle                 # Writes the Button X mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button X                                                # Button 'X'
+[Label]     │   │   │   │   ├── Button X value                                          # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button B formula -> MapExpressionToggle                 # Writes the Button B mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button B                                                # Button 'B'
+[Label]     │   │   │   │   ├── Button B value                                          # 1 while the game is being given this button pressed, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Button A formula -> MapExpressionToggle                 # Writes the Button A mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Button A                                                # Button 'A'
+[Label]     │   │   │   │   ├── Button A value                                          # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Axis X formula -> MapExpressionToggle       # Writes the Right Thumb Axis X mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Axis X                                      # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
+[Label]     │   │   │   │   ├── Right Thumb Axis X value                                # What the game is being given for the stick across right now, from -32768 at the left to 32767 at the right.
 [CheckBox]  │   │   │   │   ├── Right Thumb Axis Y formula -> MapExpressionToggle       # Writes the Right Thumb Axis Y mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Right Thumb Right formula -> MapExpressionToggle        # Writes the Right Thumb Right mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   ├── Right Thumb Left formula -> MapExpressionToggle         # Writes the Right Thumb Left mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Axis Y                                      # Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.
+[Label]     │   │   │   │   ├── Right Thumb Axis Y value                                # What the game is being given for the stick up and down right now, from -32768 at the bottom to 32767 at the top.
+[CheckBox]  │   │   │   │   ├── Right Thumb Button formula -> MapExpressionToggle       # Writes the Right Thumb Button mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Button                                      # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Right Thumb Button value                                # 1 while the game is being given this button pressed, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Up formula -> MapExpressionToggle           # Writes the Right Thumb Up mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Up                                          # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Right Thumb Up value                                    # The stick's position the game is being given while the stick points this way, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Right Thumb Left formula -> MapExpressionToggle         # Writes the Right Thumb Left mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Left                                        # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Right Thumb Left value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
+[CheckBox]  │   │   │   │   ├── Right Thumb Right formula -> MapExpressionToggle        # Writes the Right Thumb Right mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Right                                       # Button Id. Disable = 0.
+[Label]     │   │   │   │   ├── Right Thumb Right value                                 # The stick's position the game is being given while the stick points this way, otherwise 0.
 [CheckBox]  │   │   │   │   ├── Right Thumb Down formula -> MapExpressionToggle         # Writes the Right Thumb Down mapping as a formula instead of choosing one control.
-[CheckBox]  │   │   │   │   └── Right Thumb Button formula -> MapExpressionToggle       # Writes the Right Thumb Button mapping as a formula instead of choosing one control.
+[List]      │   │   │   │   ├── Right Thumb Down                                        # Button Id. Disable = 0.
+[Label]     │   │   │   │   └── Right Thumb Down value                                  # The stick's position the game is being given while the stick points this way, otherwise 0.
 [Tab]       │   │   │   ├── Advanced                                                    # Settings only x360ce 3's XInput library reads, from the x360ce.ini file this version does not write. Greyed out, and kept with the settings so x360ce 3's settings in the cloud stay as they are.
 [Section]   │   │   │   │   ├── Combining                                               # x360ce 3 only: combined this controller into another virtual controller.
 [CheckBox]  │   │   │   │   │   ├── Combine this controller                             # Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   └── Combine Into                                        # The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [Section]   │   │   │   │   └── Device                                                  # What x360ce 3's library told a game about the device, and whether it passed the real controller straight through.
-[List]      │   │   │   │       ├── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
 [CheckBox]  │   │   │   │       ├── Pass Through                                        # Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.
-[List]      │   │   │   │       └── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[List]      │   │   │   │       ├── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[List]      │   │   │   │       └── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
 [Tab]       │   │   │   ├── Buttons                                                     # How far a stick or pedal must move before a button mapped to it counts as pressed.
 [Section]   │   │   │   │   └── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
 [Group]     │   │   │   │       ├── A Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
@@ -204,10 +230,10 @@ not shown in this state of the program.
 [Tab]       │   │   │   ├── Triggers                                                    # Shapes what the game receives from the two triggers.
 [Group]     │   │   │   │   ├── (LeftTriggerUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (RightTriggerUserControl) -> AxisMapUserControl         # Shapes what the game receives from one control, without changing the device.
-[Tab]       │   │   │   ├── Left Thumb                                                  # Shapes what the game receives from the left stick.
+[Tab]       │   │   │   ├── Left Stick                                                  # Shapes what the game receives from the left stick.
 [Group]     │   │   │   │   ├── (LeftThumbXUserControl) -> AxisMapUserControl           # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (LeftThumbYUserControl) -> AxisMapUserControl           # Shapes what the game receives from one control, without changing the device.
-[Tab]       │   │   │   ├── Right Thumb                                                 # Shapes what the game receives from the right stick.
+[Tab]       │   │   │   ├── Right Stick                                                 # Shapes what the game receives from the right stick.
 [Group]     │   │   │   │   ├── (RightThumbXUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Group]     │   │   │   │   └── (RightThumbYUserControl) -> AxisMapUserControl          # Shapes what the game receives from one control, without changing the device.
 [Tab]       │   │   │   ├── Force Feedback                                              # Turns vibration on and sets how strong it is.
@@ -267,8 +293,10 @@ not shown in this state of the program.
 [Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
 [Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
 [Group]     │   │   │   │   └── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
-[Tab]       │   │   │   └── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
-[Group]     │   │   │       └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
+[Tab]       │   │   │   ├── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
+[Group]     │   │   │   │   └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
+[Tab]       │   │   │   └── SDL                                                         # What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.
+[Group]     │   │   │       └── (SdlPanel) -> SdlUserControl                            # What SDL's controller database says about the selected device.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
@@ -278,14 +306,22 @@ not shown in this state of the program.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
 [Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
-[Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from a preset that matches the selected device.
+[Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
 [Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
 [Button]    │   │   ├── Copy Preset                                                     # Copies this controller's settings to the clipboard as YAML, the easiest to read.
-[Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON.
-[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.
+[Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.
+[Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
+[Control]   │   ├── SdlUserControl                                                      # What SDL's controller database says about the selected device.
+[Label]     │   │   ├── SDL database version                                            # Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.
+[Label]     │   │   ├── SDL's row for the device                                        # Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.
+[Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.
+[Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.
+[Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
+[Button]    │   │   ├── Update SDL Database                                             # Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.
+[Label]     │   │   └── SDL update status                                               # How the last update of SDL's controller database went.
 [Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
 [Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
@@ -324,27 +360,21 @@ not shown in this state of the program.
 [Group]     │       │   └── (OptionsPanel)                                              # Settings for the program itself, rather than for one controller.
 [Tabs]      │       │       └── Options pages                                           # Settings for the program itself, rather than for one controller.
 [Tab]       │       │           ├── General                                             # How the program starts and runs, and which tabs it shows.
-[Section]   │       │           │   ├── Testing                                         # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
-[CheckBox]  │       │           │   │   ├── Enable XInput                               # Turns the emulated controllers on. Off leaves games with the real ones.
-[CheckBox]  │       │           │   │   ├── Show [Programs] Tab                         # Shows the Programs page, which lists what has been set up for each program.
-[CheckBox]  │       │           │   │   ├── Show [Devices] Tab                          # Shows the Devices page, which lists every controller found.
-[CheckBox]  │       │           │   │   └── Show [Settings] Tab                         # Shows the Settings page, which lists every stored setting.
 [Section]   │       │           │   ├── Operation                                       # How the program behaves while it runs.
 [CheckBox]  │       │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
 [CheckBox]  │       │           │   │   ├── Minimize to Tray                            # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │       │           │   │   ├── Always on Top                               # Make program Top Window
 [CheckBox]  │       │           │   │   ├── Start with Windows:                         # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
-[List]      │       │           │   │   ├── Start with Windows                          # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
-[List]      │       │           │   │   └── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
-[Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
-[CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
-[CheckBox]  │       │           │   │   └── Show [Test...] Button                       # Show [Test...] Button.
+[List]      │       │           │   │   └── Start with Windows                          # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
+[Section]   │       │           │   ├── Testing                                         # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
+[CheckBox]  │       │           │   │   ├── Enable XInput                               # Turns the emulated controllers on. Off leaves games with the real ones.
+[CheckBox]  │       │           │   │   ├── Show [Programs] Tab                         # Shows the Programs page, which lists what has been set up for each program.
+[CheckBox]  │       │           │   │   ├── Show [Devices] Tab                          # Shows the Devices page, which lists every controller found.
+[CheckBox]  │       │           │   │   └── Show [Settings] Tab                         # Shows the Settings page, which lists every stored setting.
 [Section]   │       │           │   ├── Direct Input Devices                            # Which devices the program lists and reads.
 [CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
 [CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
 [CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
-[Section]   │       │           │   ├── Configuration                                   # Switching settings to the game in front.
-[CheckBox]  │       │           │   │   └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
 [Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
 [Section]   │       │           │   ├── Hotkeys                                         # Keys and controller buttons that reach this program from inside a game.
@@ -361,7 +391,17 @@ not shown in this state of the program.
 [Button]    │       │           │   │           ├── Refresh                             # Reads the folder list again.
 [Button]    │       │           │   │           ├── Remove                              # Stops searching the selected folder.
 [Button]    │       │           │   │           └── Add...                              # Adds a folder to search for games.
-[Button]    │       │           │   └── Developer Tools...                              # Opens a window of aids for working on the program.
+[Section]   │       │           │   ├── Appearance                                      # The program's colours, and the font and size its windows are drawn in.
+[List]      │       │           │   │   ├── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
+[List]      │       │           │   │   ├── Font                                        # The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.
+[List]      │       │           │   │   ├── Size                                        # The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.
+[Button]    │       │           │   │   └── Restart x360ce (hidden)                     # Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.
+[Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
+[CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
+[CheckBox]  │       │           │   │   ├── Show [Test...] Button                       # Show [Test...] Button.
+[Button]    │       │           │   │   └── Developer Tools...                          # Opens a window of aids for working on the program.
+[Section]   │       │           │   └── Configuration                                   # Switching settings to the game in front.
+[CheckBox]  │       │           │       └── Auto switch configuration when game focused # Autodetect currently focussed game.
 [Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
 [Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
 [Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
@@ -372,7 +412,9 @@ not shown in this state of the program.
 [CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.
 [CheckBox]  │       │           │       │   ├── Save Settings to Cloud                  # Auto save settings to Internet Database.
 [List]      │       │           │       │   ├── Web service address                     # Internet settings database URL.
-[Button]    │       │           │       │   └── Test                                    # Asks the web service at that address who it is and says whether it answers.
+[Button]    │       │           │       │   ├── Test                                    # Asks the web service at that address who it is and says whether it answers.
+[List]      │       │           │       │   ├── SDL database address                    # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
+[Button]    │       │           │       │   └── Update SDL Database                     # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
 [Section]   │       │           │       ├── Online account                              # Identifies this computer to the online database.
 [Text]      │       │           │       │   ├── Computer disk                           # Disk the computer identifier is taken from.
 [Text]      │       │           │       │   ├── Computer identifier                     # Anonymous identifier for this computer.
@@ -402,12 +444,14 @@ not shown in this state of the program.
 [Button]    │       │           │       ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
 [Link]      │       │           │       └── Driver author                               # Opens the page the virtual controller driver comes from.
 [Tab]       │       │           ├── HID Hide                                            # Hides the real controller from games, so only the emulated one is seen.
-[Section]   │       │           │   └── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
-[Value]     │       │           │       ├── HID Hide state                              # Whether HID Hide is installed, and which version.
-[Button]    │       │           │       ├── Refresh                                     # Checks HID Hide again.
-[Button]    │       │           │       ├── Download HID Hide...                        # Opens the page HID Hide is downloaded from.
-[Button]    │       │           │       ├── Open Configuration                          # Opens the HID Hide program, where hidden devices are chosen.
-[CheckBox]  │       │           │       └── Configure automatically                     # Hide a device through HID Hide while it is mapped to a controller.
+[Section]   │       │           │   ├── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
+[Value]     │       │           │   │   ├── HID Hide state                              # Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.
+[Button]    │       │           │   │   ├── Refresh                                     # Checks HID Hide again.
+[Button]    │       │           │   │   ├── Install HID Hide                            # Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.
+[Button]    │       │           │   │   ├── Open Configuration                          # Opens the HID Hide program, where hidden devices are chosen.
+[Link]      │       │           │   │   ├── HID Hide releases                           # Opens the page HID Hide's setups are downloaded from, to download one by hand.
+[CheckBox]  │       │           │   │   └── Configure automatically                     # Hide a device through HID Hide while it is mapped to a controller.
+[Value]     │       │           │   └── HID Hide notes                                  # What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.
 [Tab]       │       │           ├── HID Guardian (obsolete)                             # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │       │           │   ├── HID Guardian                                    # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │       │           │   │   ├── HID Guardian state                          # Whether HID Guardian is still installed.
@@ -585,25 +629,21 @@ not shown in this state of the program.
 [Button]    │       │               └── Open HID Hide                                   # Opens HID Hide's own program, or its download page while it is not installed.
 [Tab]       │       ├── Cloud                                                           # Settings waiting to be sent to or fetched from the online database.
 [Group]     │       │   └── (CloudPanel)                                                # Settings waiting to be sent to or fetched from the online database.
-[Grid]      │       │       ├── Cloud tasks                                             # Settings waiting to be sent to or fetched from the online database.
+[Grid]      │       │       ├── Cloud tasks                                             # Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.
 [Toolbar]   │       │       └── Cloud actions                                           # Sends and fetches settings, and clears the queue.
-[Button]    │       │           ├── Refresh                                             # Reads the queue again.
+[Button]    │       │           ├── Retry                                               # Sends the tasks that failed again now, each with all its tries.
 [Button]    │       │           ├── Upload To Cloud                                     # Sends your settings to the online database.
 [Button]    │       │           ├── Download From Cloud                                 # Fetches settings other people have shared.
-[Status]    │       │           ├── Next run                                            # How long until the queue is worked through again.
+[Status]    │       │           ├── Next run                                            # How long until a task that failed is sent again, none while no task waits, and whether the network is on.
 [Status]    │       │           ├── Queue state                                         # Whether the queue is running, waiting, or stopped.
 [Button]    │       │           └── Delete                                              # Removes the selected task from the queue.
 [Tab]       │       ├── Help                                                            # Instructions for setting up a controller, and answers to common problems.
 [Value]     │       │   └── Help text                                                   # Instructions for setting up a controller, and answers to common problems.
-[Tab]       │       ├── About                                                           # Version, licence, and what changed in each release.
-[Group]     │       │   └── (AboutControl)                                              # Version, licence, and what changed in each release.
-[Link]      │       │       ├── https://www.x360ce.com                                  # Opens the program's website.
-[Link]      │       │       ├── https://github.com/x360ce/x360ce                        # Opens the source code.
-[Link]      │       │       ├── https://www.jocys.com                                   # Opens the publisher's website.
-[Link]      │       │       ├── https://github.com/Nucleoprotein                        # Opens a contributor's page.
-[Link]      │       │       ├── https://github.com/nefarius                             # Opens the page the virtual controller driver comes from.
-[Link]      │       │       ├── http://www.tocaedit.com                                 # Opens the site of the person who wrote the first version.
-[Tabs]      │       │       └── About pages                                             # What changed in each release, and the licence.
+[Tab]       │       ├── About                                                           # Version, who made the program and what it carries, what changed in each release, and the licence.
+[Group]     │       │   └── (AboutControl)                                              # Version, who made the program and what it carries, what changed in each release, and the licence.
+[Tabs]      │       │       └── About pages                                             # The program and who made it, what changed in each release, and the licence.
+[Tab]       │       │           ├── Program                                             # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
+[Value]     │       │           │   └── Program details                                 # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
 [Tab]       │       │           ├── Changes                                             # What changed in each release.
 [Text]      │       │           │   └── Change log                                      # What changed in each release.
 [Tab]       │       │           └── License                                             # Terms this program is given under.

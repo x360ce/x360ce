@@ -118,7 +118,7 @@ namespace x360ce.Tests
 		{
 			// The documents are rendered when their tab is opened. One that renders into malformed
 			// rich text shows an empty page, which nobody notices until a user asks why it is blank.
-			foreach (var file in new[] { "docs/Help.v3.md", "docs/Help.v4.md", "docs/Help.HidGuardian.md" })
+			foreach (var file in new[] { "docs/Help.v3.md", "docs/Help.v4.md", "docs/Help.HidGuardian.md", "docs/Help.HidHide.md" })
 			{
 				var rtf = MarkdownRtf.ToRtf(Read(file));
 				Assert.IsTrue(rtf.StartsWith(@"{\rtf1"), file + " did not render as a rich text document.");

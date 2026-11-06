@@ -1,4 +1,5 @@
 #nullable disable
+using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -196,7 +197,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			// A control given a font equal to its own keeps its own, so a font equal to the one in use is kept.
 			var bold = Keep(new Font(Font, FontStyle.Bold), _bold);
-			var code = Keep(new Font("Consolas", Font.SizeInPoints), _code);
+			var code = Keep(FormsTheme.NewCodeFont(Font.SizeInPoints), _code);
 			AiExampleLabel.Font = bold;
 			AiAccessTokenTextBox.Font = code;
 			AiAccessSnippetTextBox.Font = code;

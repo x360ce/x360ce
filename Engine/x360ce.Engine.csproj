@@ -138,6 +138,10 @@
     <Compile Include="Common\SettingsTransfer.cs" />
     <Compile Include="Common\MapExpressionHelp.cs" />
     <Compile Include="Common\MapExpressionSeed.cs" />
+    <Compile Include="Common\Sdl\SdlConverter.cs" />
+    <Compile Include="Common\Sdl\SdlDatabase.cs" />
+    <Compile Include="Common\Sdl\SdlMapping.cs" />
+    <Compile Include="Common\Sdl\SdlPositions.cs" />
     <Compile Include="Input\Devices\DirectInputDevice.cs" />
     <Compile Include="Input\Devices\IInputSourceDevice.cs" />
     <Compile Include="Input\Devices\RawInputControl.cs" />

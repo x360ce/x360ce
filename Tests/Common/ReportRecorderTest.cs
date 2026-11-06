@@ -212,6 +212,166 @@ namespace x360ce.Tests
 			Assert.IsTrue(lines.Any(x => x.Contains(" error System.InvalidOperationException: Could not open pad.xml")), "The error is missing, or keeps its folders.");
 		}
 
+		[TestMethod, TestCategory("recording")]
+		[Description("How a device is held says whether x360ce set its own centring, and letting go of it says why, with the error")]
+		public void A_device_let_go_of_says_why()
+		{
+			var pad = Device("Recording Test Hold Pad", SharpDX.DirectInput.DeviceType.Gamepad);
+			var recorder = Start(RecordParts.Input | RecordParts.Forces);
+			var now = System.Diagnostics.Stopwatch.GetTimestamp();
+			pad.IsExclusiveMode = true;
+			recorder.Device(pad, now);
+			pad.IsExclusiveMode = null;
+			pad.LetGoReason = (int)DInputHelper.LetGoReason.ReadFailed;
+			pad.LetGoError = unchecked((int)0x8007048F);
+			pad.DiReadFailures = 1;
+			pad.DiReadError = unchecked((int)0x8007048F);
+			recorder.Device(pad, now);
+			pad.IsExclusiveMode = true;
+			pad.AutoCenterSet = true;
+			pad.AutoCenter = true;
+			pad.DiReadFailures = 0;
+			recorder.Device(pad, now);
+			var lines = Finish(recorder);
+			var d = LabelOf(lines, "Recording Test Hold Pad");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " held exclusively, its own centring left as its driver has it")), "A pad whose centring x360ce left alone is said to have it off.");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " read failed 1 time in a row (0x8007048F)")), "The read's error is missing.");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " let go as a read failed (0x8007048F)")), "Why the device was let go of is missing.");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " held exclusively, its own centring on")), "Centring x360ce set is missing.");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " reads again")), "The read working again is missing.");
+		}
+
+		[TestMethod, TestCategory("recording")]
+		[Description("A device with force feedback is described with its driver's file and the axes its motors are on, and the other controller programs running are named")]
+		public void The_force_driver_and_motors_are_described()
+		{
+			var pad = Device("Recording Test Rumble Pad", SharpDX.DirectInput.DeviceType.Gamepad);
+			pad.CapFlags = (int)SharpDX.DirectInput.DeviceFlags.ForceFeedback;
+			pad.ForceFeedbackDriver = @"C:\Windows\System32\EZFRD64.DLL";
+			var actuator = SharpDX.DirectInput.DeviceObjectTypeFlags.AbsoluteAxis | SharpDX.DirectInput.DeviceObjectTypeFlags.ForceFeedbackActuator;
+			pad.DeviceObjects = new[]
+			{
+				new DeviceObjectItem(0, SharpDX.DirectInput.ObjectGuid.XAxis, SharpDX.DirectInput.ObjectAspect.Position, actuator, 0, "X Axis"),
+				new DeviceObjectItem(4, SharpDX.DirectInput.ObjectGuid.YAxis, SharpDX.DirectInput.ObjectAspect.Position, actuator, 1, "Y Axis"),
+				new DeviceObjectItem(8, SharpDX.DirectInput.ObjectGuid.ZAxis, SharpDX.DirectInput.ObjectAspect.Position, SharpDX.DirectInput.DeviceObjectTypeFlags.AbsoluteAxis, 2, "Z Axis"),
+			};
+			var recorder = Start(RecordParts.Input);
+			recorder.Device(pad, System.Diagnostics.Stopwatch.GetTimestamp());
+			var lines = Finish(recorder);
+			Assert.IsTrue(lines.Any(x => x.Contains(": Recording Test Rumble Pad, ") && x.Contains(", force feedback by EZFRD64.DLL, motors on X Axis and Y Axis, ")),
+				"The driver's file or the motors' axes are missing, or the driver's folder is written.");
+			Assert.IsTrue(lines.Any(x => x.StartsWith("Other programs that read controllers: ")), "The other controller programs are not named.");
+		}
+
+		[TestMethod, TestCategory("recording")]
+		[Description("What force updates asked of a device's effects is written once a second, only when it changed")]
+		public void Force_calls_are_written_each_second()
+		{
+			var pad = Device("Recording Test Force Pad", SharpDX.DirectInput.DeviceType.Gamepad);
+			pad.FFState = new ForceFeedbackState();
+			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
+			var row = new UserSetting { InstanceGuid = pad.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
+			var current = typeof(DeviceRouting).GetField("_current", BindingFlags.NonPublic | BindingFlags.Static);
+			var was = current.GetValue(null);
+			current.SetValue(null, DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { pad }));
+			string[] lines;
+			try
+			{
+				var recorder = Start(RecordParts.Forces);
+				Thread.Sleep(1300);
+				var counts = pad.FFState.Counts;
+				counts.Updates += 3;
+				counts.Changes += 3;
+				counts.Started += 3;
+				Thread.Sleep(1300);
+				Thread.Sleep(1300);
+				lines = Finish(recorder);
+			}
+			finally
+			{
+				current.SetValue(null, was);
+			}
+			var d = LabelOf(lines, "Recording Test Force Pad");
+			Assert.AreEqual(1, lines.Count(x => x.EndsWith(" " + d + " force in the last second: 3 updates, 3 changes sent to motor effects, 3 sent with a start, as the driver did not say they were playing")),
+				"The force calls are not written once, when they changed.");
+		}
+
+		[TestMethod, TestCategory("recording"), TestCategory("devices")]
+		[Description("A device is compared with its own reports as Raw Input reads them: a difference that lasts is written, and so is its end; a passing one is not")]
+		public void Where_Raw_Input_and_DirectInput_part_is_written()
+		{
+			var fixture = RawInputFixtures.RumblePad2;
+			var hub = new RawInputHub();
+			var raw = fixture.Device(0, @"\\?\HID#VID_046D&PID_C219#7&1A2B3C4D&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}", "Recording Test Raw Pad", 0x04);
+			var entry = hub.Add(raw);
+			// The twin's slots, as the device list hands them to the hub; on this pad they are the slots its usages give already.
+			Assert.IsTrue(hub.SetLayout(raw.InstanceGuid, RawInputLayout.FromTwin(raw.Controls, fixture.Objects)), "The twin's layout was refused.");
+			entry.ApplyLayout();
+			var pad = Device("Recording Test Direct Pad", SharpDX.DirectInput.DeviceType.Gamepad);
+			var twin = new UserDevice { InstanceGuid = raw.InstanceGuid, InputSourceType = (int)InputSourceType.RawInput, ProductName = "Recording Test Raw Pad" };
+			var ps = new PadSetting { PadSettingChecksum = Guid.NewGuid() };
+			var row = new UserSetting { InstanceGuid = pad.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
+			var routing = DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { pad, twin });
+			var recorder = Start(RecordParts.Input);
+			// Handed over as the writer hands it, without a device list to find the twin in: after the writer's first look,
+			// so the views stand until its next, a second later, long after these passes.
+			Thread.Sleep(400);
+			var viewType = typeof(ReportRecorder).GetNestedType("RawView", BindingFlags.NonPublic);
+			var views = Array.CreateInstance(viewType, 1);
+			views.SetValue(Activator.CreateInstance(viewType, pad, twin), 0);
+			typeof(ReportRecorder).GetField("_rawViews", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(recorder, views);
+			var f = System.Diagnostics.Stopwatch.Frequency;
+			var t = System.Diagnostics.Stopwatch.GetTimestamp();
+			// At rest Raw Input reads the stick at the centre. DirectInput agrees, then reads it fully left for a moment,
+			// then for half a second.
+			pad.SourceState.Axis[0] = 32767;
+			pad.SourceState.Axis[1] = 32767;
+			recorder.RawViews(hub, routing, t);
+			pad.SourceState.Axis[0] = 0;
+			recorder.RawViews(hub, routing, t + f / 100);
+			recorder.RawViews(hub, routing, t + f / 20);
+			pad.SourceState.Axis[0] = 32767;
+			recorder.RawViews(hub, routing, t + f / 10);
+			pad.SourceState.Axis[0] = 0;
+			recorder.RawViews(hub, routing, t + f / 5);
+			recorder.RawViews(hub, routing, t + f / 2);
+			pad.SourceState.Axis[0] = 32767;
+			recorder.RawViews(hub, routing, t + f * 7 / 10);
+			var lines = Finish(recorder);
+			var d = LabelOf(lines, "Recording Test Direct Pad");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " Raw Input: Axis 1 32767 (at start)")), "Raw Input's reading at the start is missing.");
+			Assert.AreEqual(1, lines.Count(x => x.EndsWith(" " + d + " Raw Input reads Axis 1 32767 while DirectInput reads 0")), "The lasting difference is not written once, or the passing one was written.");
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" " + d + " Raw Input and DirectInput agree on Axis 1 again after 0.5 s")), "The end of the difference is missing.");
+			Assert.IsFalse(lines.Any(x => x.Contains(" Axis 2 ") && x.Contains("while DirectInput")), "Axes that agree were written as differing.");
+		}
+
+		[TestMethod, TestCategory("recording"), TestCategory("engine")]
+		[Description("What XInput reads back is taken from the place Windows gave the controller, not the place of its number")]
+		public void XInput_is_read_back_from_the_controllers_place()
+		{
+			var helper = new DInputHelper();
+			var routing = DeviceRouting.Build(Game, new UserSetting[0], new PadSetting[0], new UserDevice[0]);
+			var recordPass = typeof(DInputHelper).GetMethod("RecordPass", BindingFlags.NonPublic | BindingFlags.Instance);
+			var recorder = Start(RecordParts.Output, helper);
+			try
+			{
+				// A real controller holds the first place, so controller 1's virtual controller was given the third.
+				helper.XiPlaceForPad[0] = 2;
+				helper.LiveXiConnected[0] = true;
+				helper.LiveXiStates[0].Gamepad.LeftThumbX = -3356;
+				helper.LiveXiConnected[2] = true;
+				helper.LiveXiStates[2].Gamepad.LeftThumbX = 12000;
+				recordPass.Invoke(helper, new object[] { recorder, routing, true });
+			}
+			finally
+			{
+				helper.Dispose();
+			}
+			var lines = Finish(recorder);
+			Assert.IsTrue(lines.Any(x => x.EndsWith(" C1 XInput reads: no buttons, LT 0, RT 0, LX 12000, LY 0, RX 0, RY 0")), "Controller 1's place is not the one read back.");
+			Assert.IsFalse(lines.Any(x => x.Contains(" XInput reads: ") && x.Contains("LX -3356")), "The real controller in the first place was recorded as controller 1.");
+		}
+
 		[TestMethod, TestCategory("recording"), TestCategory("engine")]
 		[Description("The engine hands a recording what a pass read from each mapped device and sent to each controller")]
 		public void The_engine_hands_a_pass_to_the_recording()

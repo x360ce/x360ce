@@ -316,6 +316,16 @@ namespace x360ce.App.Controls
 
 		#region Painting
 
+		/// <summary>The artwork's width at the screen's scale, and no height of its own.</summary>
+		/// <remarks>
+		/// On the General page the picture stands beside the rows of boxes and is drawn to fit the height they make, so it
+		/// never pushes them apart.
+		/// </remarks>
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			return new Size((int)Math.Round(CanvasWidth * ControlsHelper.DpiScale), 0);
+		}
+
 		/// <summary>Canvas units to control pixels, keeping the artwork's proportions.</summary>
 		float CanvasScale
 		{

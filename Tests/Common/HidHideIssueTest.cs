@@ -47,12 +47,12 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Without HID Hide, a mapped controller that is online brings the download")]
-		public void Without_HID_Hide_the_fix_is_the_download()
+		[Description("Without HID Hide, a mapped controller that is online brings the install")]
+		public void Without_HID_Hide_the_fix_is_the_install()
 		{
 			int fixType;
 			var text = HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { Pad(true) }, Exe, out fixType);
-			Assert.AreEqual(HidHideIssue.FixDownload, fixType);
+			Assert.AreEqual(HidHideIssue.FixInstall, fixType);
 			StringAssert.Contains(text, "RumblePad 2");
 			StringAssert.Contains(text, "Install HID Hide");
 		}

@@ -84,7 +84,6 @@ namespace x360ce.App
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			FillBuletImageList();
-			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
 			Pad1TabPage.Text = "Controller 1";
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
@@ -142,6 +141,43 @@ namespace x360ce.App
 		}
 
 		/// <summary>
+		/// Gives the window its first height: as tall as the controller page it opens on needs, within the work area of the
+		/// screen it opens on. A window Windows is placing, one with no saved place, is also centred there; one put back in a
+		/// saved place keeps its place and width, and is made taller only, and moved up as far as the work area needs.
+		/// </summary>
+		/// <remarks>
+		/// The page's need is its own measure, the one it scrolls by (<see cref="PadControl.NeededHeight"/>), and what the window
+		/// puts around the page (the header, the tool bar, the tab strips, the status bar and the borders) is read from the window
+		/// as it is built, so the size follows the font, the theme and the screen's scale. The other
+		/// controller pages need as much, as they differ only in the devices their lists hold. The window keeps its width, as the
+		/// page never asks for more, and is never made smaller than designed or saved. On a shorter screen it is as tall as the
+		/// work area, and the page scrolls. A maximised window is left as it is.
+		/// </remarks>
+		/// <param name="window">The window at its designed or saved size, built and laid out, before it is shown.</param>
+		/// <param name="page">The controller page the window opens on, laid out in the window.</param>
+		/// <param name="workArea">The work area of the screen the window opens on.</param>
+		public static void FitToPage(Form window, PadControl page, Rectangle workArea)
+		{
+			if (window.WindowState != FormWindowState.Normal)
+				return;
+			var height = Math.Max(window.Height, window.Height - page.Height + page.NeededHeight(page.Width));
+			height = Math.Min(height, workArea.Height);
+			if (window.StartPosition == FormStartPosition.WindowsDefaultLocation)
+			{
+				var width = Math.Min(window.Width, workArea.Width);
+				window.StartPosition = FormStartPosition.Manual;
+				window.Bounds = new Rectangle(workArea.Left + (workArea.Width - width) / 2, workArea.Top + (workArea.Height - height) / 2,
+					width, height);
+			}
+			else if (height > window.Height)
+			{
+				// A window kept off the screens, as an export keeps it, stays there.
+				var top = workArea.IntersectsWith(window.Bounds) ? Math.Max(workArea.Top, Math.Min(window.Top, workArea.Bottom - height)) : window.Top;
+				window.Bounds = new Rectangle(window.Left, top, window.Width, height);
+			}
+		}
+
+		/// <summary>
 		/// Gives the pages their settings, names and help, once the settings are read and before the window is first shown, so
 		/// it appears whole.
 		/// </summary>
@@ -157,10 +193,11 @@ namespace x360ce.App
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
 			PadControls = BuiltPadControls;
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
+			// Each device list belongs to its page, so a tick in it saves that page alone.
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView, MapTo.Controller1);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView, MapTo.Controller2);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView, MapTo.Controller3);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView, MapTo.Controller4);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
 			for (var i = 0; i < PadControls.Length; i++)
@@ -556,15 +593,7 @@ namespace x360ce.App
 		PadControl[] BuiltPadControls;
 		public TabPage[] ControlPages;
 
-		/// <summary>
-		/// Settings timer will be used to delay applying settings, which will heavy load application, as long as user is changing them.
-		/// </summary>
-		public System.Timers.Timer SettingsTimer;
-
-		public System.Timers.Timer UpdateTimer;
-
 		public System.Timers.Timer CleanStatusTimer;
-		public int DefaultPoolingInterval = 50;
 		private Forms.DebugForm DebugPanel;
 
 		private void MainForm_Load(object sender, EventArgs e)
@@ -595,6 +624,7 @@ namespace x360ce.App
 			_DeviceNotification = DeviceDetector.RegisterDeviceInterface(Handle, DeviceDetector.HidInterfaceClass);
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			ArmFaultInjection();
+			Program.StartupTrace.WatchInterfaceWakes();
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
 			Global.InitDHelperHelper();
@@ -618,20 +648,6 @@ namespace x360ce.App
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
 			InitGameToCustomizeComboBox();
-			UpdateTimer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				SynchronizingObject = this,
-				Interval = DefaultPoolingInterval
-			};
-			UpdateTimer.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
-			SettingsTimer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				SynchronizingObject = this,
-				Interval = 500
-			};
-			SettingsTimer.Elapsed += new System.Timers.ElapsedEventHandler(SettingsTimer_Elapsed);
 			CleanStatusTimer = new System.Timers.Timer
 			{
 				AutoReset = false,
@@ -644,6 +660,11 @@ namespace x360ce.App
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
 			LoadPages();
+			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
+			// the window, the one it was started from or else the main one, before the window appears there.
+			if (ControllerIndex >= 0)
+				FitToPage(this, PadControls[ControllerIndex], Screen.FromHandle(Handle).WorkingArea);
+			Program.StartupTrace.Mark("MainForm_Load: window fitted to the page");
 			// The status bar shows its values from the start, rather than appearing later and pushing the pages up.
 			StatusTimerLabel.Text = "";
 			StatusSaveLabel.Visible = false;
@@ -653,8 +674,6 @@ namespace x360ce.App
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
 			UpdateStatusAiAccessLabel();
-			// Start Timers.
-			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
 			if (AppVersionChanged)
@@ -671,6 +690,12 @@ namespace x360ce.App
 				SettingsManager.AutoHideShowMappedDevices(game);
 				AppHelper.SynchronizeToHidHide();
 			}
+			// The issues are checked on their own from now on, and what they find is shown on the Issues tab.
+			InitIssuesIcon();
+			UpdateForm1();
+			// After the work loading posted for each page, which selects its row and shows that row's settings: a box change
+			// is saved into a row only once the page shows it.
+			ControlsHelper.BeginInvoke(UpdateForm2);
 			Program.StartupTrace.Mark("MainForm_Load: end");
 		}
 
@@ -711,24 +736,10 @@ namespace x360ce.App
 			});
 		}
 
-		/// <summary>
-		/// Delay settings trough timer so interface will be more responsive on TrackBars.
-		/// Or fast changes. Library will be reloaded as soon as user calms down (no setting changes in 500ms).
-		/// </summary>
+		/// <summary>Saves a change into the row selected on the controller page it belongs to, at once, on every step of a slider's drag too.</summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
-			var changed = false;
-			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
-			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
-			// If settings changed then...
-			if (changed)
-			{
-				// Stop updating forms and controls.
-				// Update Timer will be started inside Settings timer.
-				UpdateTimer.Stop();
-				SettingsTimer.Stop();
-				SettingsTimer.Start();
-			}
+			SettingsManager.Current.ApplySettingsToXML(PadControls, e.Page);
 		}
 
 		private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
@@ -944,14 +955,6 @@ namespace x360ce.App
 			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
 		}
 
-		private void SettingsTimer_Elapsed(object sender, EventArgs e)
-		{
-			if (Program.IsClosing)
-				return;
-			Global.DHelper.SettingsChanged = true;
-			UpdateTimer.Start();
-		}
-
 		#endregion
 
 		/// <summary>Faults this build can be told to raise, so a report can be reproduced.</summary>
@@ -988,6 +991,31 @@ namespace x360ce.App
 			_faultTimer.Start();
 		}
 
+		/// <summary>A critical issue this build can be told to report, so a report of one standing can be reproduced.</summary>
+		/// <remarks>
+		/// The issues that are critical need a machine without a runtime or on an old Windows, and making one costs the
+		/// machine. Set X360CE_CRITICAL_ISSUE to the text it says; it is checked after every other issue. Nothing is reported
+		/// unless the variable is set.
+		/// </remarks>
+		class ToldCriticalIssue : JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem
+		{
+			public const string Variable = "X360CE_CRITICAL_ISSUE";
+
+			public ToldCriticalIssue(string text)
+			{
+				Name = "Told";
+				FixName = null;
+				_text = text;
+			}
+
+			readonly string _text;
+
+			public override void CheckTask()
+			{
+				SetSeverity(JocysCom.ClassLibrary.Controls.IssuesControl.IssueSeverity.Critical, 0, _text);
+			}
+		}
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
@@ -1012,8 +1040,6 @@ namespace x360ce.App
 		private void OnCloseAction()
 		{
 			// Disable force feedback effect before closing application.
-			if (UpdateTimer != null)
-				UpdateTimer.Stop();
 			// The Test sliders' motors are stopped through the path that started them. Nothing here takes a lock the
 			// input thread takes.
 			if (PadControls != null)
@@ -1039,46 +1065,11 @@ namespace x360ce.App
 		public bool forceRecountDevices = true;
 
 		public Guid AutoSelectControllerInstance = Guid.Empty;
-		private readonly object formLoadLock = new object();
-		public bool update1Enabled = true;
-		public bool? update2Enabled;
-		private bool update3Enabled;
 		public bool AllowDHelperStart;
-
-		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (Program.IsClosing)
-				return;
-			Program.TimerCount++;
-			lock (formLoadLock)
-			{
-				if (update1Enabled)
-				{
-					update1Enabled = false;
-					InitIssuesIcon();
-					UpdateForm1();
-					// Update 2 part will be enabled after all issues are checked.
-				}
-				if (update2Enabled.HasValue && update2Enabled.Value)
-				{
-					update2Enabled = false;
-					UpdateForm2();
-					update3Enabled = true;
-				}
-				if (update3Enabled && IsHandleCreated)
-				{
-					update3Enabled = false;
-					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
-					AllowDHelperStart = true;
-					Program.StartupTrace.Mark("device thread start");
-					Global.DHelper.Start();
-				}
-			}
-			UpdateTimer.Start();
-		}
 
 		#region Issue Icon Timer
 
+		/// <summary>Makes the Issues tab blink, and runs only while a critical issue stands.</summary>
 		public System.Timers.Timer IssueIconTimer;
 
 		private void InitIssuesIcon()
@@ -1090,10 +1081,17 @@ namespace x360ce.App
 				Interval = 1000
 			};
 			IssueIconTimer.Elapsed += IssueIconTimer_Elapsed;
-			IssueIconTimer.Start();
+			UpdateIssuesIcon();
 		}
 
 		private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			UpdateIssuesIcon();
+		}
+
+		/// <summary>Shows on the Issues tab how many issues the last round of checks found, blinking while one of them is critical.</summary>
+		/// <remarks>Called as each round ends, and by the blinking; nothing else changes what it shows.</remarks>
+		private void UpdateIssuesIcon()
 		{
 			var key = IssuesTabPage.ImageKey;
 			var moderateCount = IssuesPanel.ModerateIssuesCount;
@@ -1124,7 +1122,7 @@ namespace x360ce.App
 				IssuesTabPage.ImageKey = key;
 			// Set tab text.
 			ControlsHelper.SetText(IssuesTabPage, text);
-			if (Program.IsClosing)
+			if (Program.IsClosing || criticalCount == 0)
 				return;
 			IssueIconTimer.Start();
 		}
@@ -1139,13 +1137,27 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("UpdateForm1: end");
 		}
 
+		/// <summary>Starts what waited for the pages to be given their settings: the settings' events and the engine.</summary>
+		/// <remarks>
+		/// Neither waits for the issue checks: an issue gates only what it protects, and the virtual bus checks for itself
+		/// what it needs. So a machine with a critical issue reads its controllers, and keeps a box change, while the Issues tab
+		/// says what to fix.
+		/// </remarks>
 		private void UpdateForm2()
 		{
+			if (Program.IsClosing)
+				return;
 			Program.StartupTrace.Mark("UpdateForm2: start");
 			ScheduleUpdateProbe();
+			// The program an update replaced, which could not be deleted while it ran.
+			OptionsUpdateUserControl.DeleteLeftovers(Application.ExecutablePath);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 			Program.StartupTrace.Mark("UpdateForm2: end");
+			// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
+			AllowDHelperStart = true;
+			Program.StartupTrace.Mark("device thread start");
+			Global.DHelper.Start();
 		}
 
 		/// <summary>
@@ -1163,8 +1175,8 @@ namespace x360ce.App
 
 		public void UpdateStatus(string message = "")
 		{
-			ControlsHelper.SetText(StatusTimerLabel, "Count: {0}, Reloads: {1}, Errors: {2} {3}",
-				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
+			ControlsHelper.SetText(StatusTimerLabel, "Reloads: {0}, Errors: {1} {2}",
+				Program.ReloadCount, Program.ErrorCount, message);
 		}
 		#endregion
 
@@ -1320,16 +1332,6 @@ namespace x360ce.App
 			return otherCopy;
 		}
 
-		private const int WM_WININICHANGE = 0x001A;
-		private const int WM_SETTINGCHANGE = WM_WININICHANGE;
-		private readonly System.Timers.Timer _ResumeTimer = new System.Timers.Timer() { AutoReset = false, Interval = 1000 };
-
-		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (AllowDHelperStart)
-				Global.DHelper.Start();
-		}
-
 		/// <summary>
 		/// NOTE: you must be careful with this method, because this method is responsible for all the
 		/// windows messages that are coming to the form.
@@ -1338,13 +1340,6 @@ namespace x360ce.App
 		/// <remarks>This overrides the windows messaging processing</remarks>
 		protected override void DefWndProc(ref Message m)
 		{
-			if (m.Msg == WM_SETTINGCHANGE)
-			{
-				// Must stop all updates or interface will freeze during screen updates.
-				Global.DHelper.Stop();
-				_ResumeTimer.Stop();
-				_ResumeTimer.Start();
-			}
 			if (m.Msg == HotkeyHelper.WM_HOTKEY && m.WParam.ToInt32() == EmulationHotkeyId)
 				ToggleEmulation();
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
@@ -1405,9 +1400,11 @@ namespace x360ce.App
 					new AiSkillIssue(),
 					new PluginIssue(),
 				};
+				var told = Environment.GetEnvironmentVariable(ToldCriticalIssue.Variable);
+				if (!string.IsNullOrEmpty(told))
+					issues = _startupIssues = issues.Concat(new[] { new ToldCriticalIssue(told) }).ToArray();
 				IssuesPanel.AddIssues(issues);
-				// The controller pages are built only once the first round of checks is done, so each
-				// check of that round is marked in the start-up trace.
+				// Each check of the first round is marked in the start-up trace, which shows what the round costs.
 				foreach (var issue in issues)
 					issue.Checked += Issue_CheckedAtStartup;
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
@@ -1433,7 +1430,11 @@ namespace x360ce.App
 		}
 
 		/// <summary>The checks of the first round, marked in the start-up trace until that round is done.</summary>
-		private JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem[] _startupIssues;
+		private volatile JocysCom.ClassLibrary.Controls.IssuesControl.IssueItem[] _startupIssues;
+
+		/// <summary>Whether the first round of issue checks, which runs while the window and the controllers start, is still running.</summary>
+		/// <remarks>A check that is slow and that nothing needs at once waits for the next round, a few seconds later.</remarks>
+		public bool CheckingAtStartup { get { return _startupIssues != null; } }
 
 		private void Issue_CheckedAtStartup(object sender, EventArgs e)
 		{
@@ -1443,6 +1444,7 @@ namespace x360ce.App
 		// Remember previous has issues status.
 		private int oldCriticalIssueCount;
 
+		/// <summary>Shows what a round of checks found; runs on the checks' own thread.</summary>
 		private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
 		{
 			var startupIssues = _startupIssues;
@@ -1453,23 +1455,18 @@ namespace x360ce.App
 				foreach (var issue in startupIssues)
 					issue.Checked -= Issue_CheckedAtStartup;
 			}
-			var checkDone = IssuesPanel.CriticalIssuesCount != null;
-			// If check completed without issues then...
 			var newCriticalIssuesCount = IssuesPanel.CriticalIssuesCount ?? 00;
-			// If has new issues then...
-			if (oldCriticalIssueCount == 0 && newCriticalIssuesCount > 0)
-			{
-				ControlsHelper.BeginInvoke(() =>
-				{
-					// Focus issues tab automatically.
-					MainTabControl.SelectedTab = IssuesTabPage;
-				});
-			}
+			// A critical issue new since the last round brings the Issues tab to the front.
+			var focus = oldCriticalIssueCount == 0 && newCriticalIssuesCount > 0;
 			oldCriticalIssueCount = newCriticalIssuesCount;
-			// If Step 2 is still disabled and no critical issues found then...
-			if (!update2Enabled.HasValue && checkDone && checkDone && newCriticalIssuesCount == 0)
-				// Enabled update 2 step (Display PAD forms).
-				update2Enabled = true;
+			ControlsHelper.BeginInvoke(() =>
+			{
+				if (Program.IsClosing || IsDisposed)
+					return;
+				UpdateIssuesIcon();
+				if (focus)
+					MainTabControl.SelectedTab = IssuesTabPage;
+			});
 		}
 
 		#endregion
@@ -1593,7 +1590,7 @@ namespace x360ce.App
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
-			// Update PAD Control.
+			// Update PAD Control. A page whose rows change selects one and shows its settings itself.
 			foreach (var ps in PadControls)
 			{
 				if (ps != null)
@@ -1606,7 +1603,6 @@ namespace x360ce.App
 				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
 				GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 			}
-			SettingsManager.Current.RaiseSettingsChanged(null);
 		}
 
 		/// <summary>

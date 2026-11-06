@@ -16,10 +16,6 @@ namespace x360ce.App.DInput
 		public bool[] LiveXiConnected;
 		public State[] LiveXiStates;
 
-		// This value will be modified to true when settings on the form changes and 
-		// XInput library needs to be reload.
-		public bool SettingsChanged = false;
-
 		/// <summary>How long the display reads rest after XInput fails to answer, in milliseconds.</summary>
 		/// <remarks>
 		/// XInput stops answering while Windows takes controllers away and builds them again, which

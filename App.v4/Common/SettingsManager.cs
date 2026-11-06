@@ -53,7 +53,6 @@ namespace x360ce.App
 				CurrentGame = game;
 				// The engine reads the new game's mappings from its next pass.
 				DInput.DeviceRouting.Refresh();
-				Global.DHelper.SettingsChanged = true;
 				// Nobody may be listening: the main window lets go of this event while it closes, and
 				// the foreground window keeps changing after that.
 				CurrentGame_PropertyChanged?.Invoke(null, null);
@@ -956,11 +955,15 @@ namespace x360ce.App
 
 		public string GetSettingValue(Control control)
 		{
-			var item = SettingsMap.First(x => x.Control == control);
-			var path = item.IniPath;
-			var section = path.Split('\\')[0];
-			string key = path.Split('\\')[1];
-			var padIndex = SettingName.GetPadIndex(path);
+			return GetSettingValue(SettingsMap.First(x => x.Control == control));
+		}
+
+		/// <summary>The value a mapped box holds, as its setting stores it.</summary>
+		/// <remarks>Given the box's map, so a page read box by box does not look each one up in the whole map.</remarks>
+		public string GetSettingValue(SettingsMapItem item)
+		{
+			var control = item.Control;
+			string key = item.IniPath.Split('\\')[1];
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
@@ -983,9 +986,7 @@ namespace x360ce.App
 			// If DI menu strip attached.
 			else if (control is ComboBox)
 			{
-				var cbx = (ComboBox)control;
-				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
-				if (map != null && map.Code != default)
+				if (item.Code != default)
 				{
 					// A formula is stored exactly as it was typed. What follows translates the name of
 					// one control into how that control is stored, and a formula is not the name of a
@@ -993,7 +994,7 @@ namespace x360ce.App
 					// reverts to whatever it was mapped to before.
 					if (MapExpression.IsExpression(control.Text))
 						return control.Text.Trim();
-					v = SettingsConverter.ToIniValue(control.Text, map.Code);
+					v = SettingsConverter.ToIniValue(control.Text, item.Code);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
 						v = "0";

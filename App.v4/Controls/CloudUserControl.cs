@@ -22,6 +22,7 @@ namespace x360ce.App.Controls
 			TasksDataGridView.AutoGenerateColumns = false;
 			// Suspend errors.
 			TasksDataGridView.DataError += TasksDataGridView_DataError;
+			TasksDataGridView.CellToolTipTextNeeded += TasksDataGridView_CellToolTipTextNeeded;
 			// Enable task timer.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			Global.CloudClient.StartServer(scheduler, this);
@@ -29,8 +30,13 @@ namespace x360ce.App.Controls
 			EnableDataSource(true);
 			// Force to create handle.
 			var handle = this.Handle;
-			// Start monitoring tasks queue.
-			QueueMonitorTimer.Start();
+			// The queue's state is drawn while the page is shown, from the moment it is, and not at all while it is not.
+			VisibleChanged += (sender, e) =>
+			{
+				QueueMonitorTimer.Enabled = Visible;
+				if (Visible)
+					QueueMonitorTimer_Tick(this, EventArgs.Empty);
+			};
 		}
 
 		public void EnableDataSource(bool enable)
@@ -109,6 +115,28 @@ namespace x360ce.App.Controls
 			}));
 		}
 
+		/// <summary>Sends the tasks that failed again now, each with all its tries.</summary>
+		private void RetryButton_Click(object sender, EventArgs e)
+		{
+			if (CloudIsOff())
+				return;
+			var timer = Global.CloudClient.TasksTimer;
+			foreach (var item in timer.Queue.ToArraySynchronized())
+				if (item.State == CloudState.Error || item.State == CloudState.Stopped)
+					item.Retry();
+			timer.DoActionNow();
+		}
+
+		/// <summary>A task that failed says why when pointed at.</summary>
+		private void TasksDataGridView_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+		{
+			if (e.RowIndex < 0)
+				return;
+			var item = AppHelper.BoundItem<CloudItem>(TasksDataGridView, e.RowIndex);
+			if (item != null && item.Error != null)
+				e.ToolTipText = item.Error.Message;
+		}
+
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
 			Task.Run(new Action(() =>
@@ -121,10 +149,12 @@ namespace x360ce.App.Controls
 		{
 			var t = Global.CloudClient.TasksTimer;
 			var nextRunTime = t.NextRunTime;
-			TimeSpan remains = new TimeSpan();
-			if (nextRunTime.Ticks > 0)
-				remains = nextRunTime.Subtract(DateTime.Now);
-			var nextRun = string.Format("Next Run {2}: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m), Global.CloudClient.IsNetworkAvailable ? "ON" : "OFF");
+			var network = Global.CloudClient.IsNetworkAvailable ? "ON" : "OFF";
+			// The queue sleeps while no task waits: there is no next run to count down to.
+			var remains = nextRunTime.Subtract(DateTime.Now);
+			var nextRun = nextRunTime.Ticks == 0
+				? string.Format("Next Run {0}: none", network)
+				: string.Format("Next Run {2}: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m), network);
 			ControlsHelper.SetText(NextRunLabel, nextRun);
 			var lrt = t.LastActionDoneTime;
 			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));

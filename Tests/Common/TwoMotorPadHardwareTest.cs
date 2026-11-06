@@ -42,13 +42,25 @@ namespace x360ce.Tests
 			typeof(ForceFeedbackState).GetField(name, BindingFlags.NonPublic | BindingFlags.Instance).SetValue(ff, null);
 		}
 
-		static void Poll(ForceFeedbackState ff, UserDevice ud, Joystick device, PadSetting ps, Vibration v, int polls)
+		/// <param name="heldAgain">The device was held again before these polls, which the first one tells the state, as the engine does.</param>
+		static void Poll(ForceFeedbackState ff, UserDevice ud, Joystick device, PadSetting ps, Vibration v, int polls, bool heldAgain = false)
 		{
 			for (var i = 0; i < polls; i++)
 			{
-				ff.SetDeviceForces(ud, device, ps, v);
+				ff.SetDeviceForces(ud, device, ps, v, heldAgain && i == 0);
 				Thread.Sleep(1);
 			}
+		}
+
+		/// <summary>Polls at one speed, and checks that nothing is sent to the effects or started again after the first poll.</summary>
+		static void Steady(ForceFeedbackState ff, UserDevice ud, Joystick device, PadSetting ps, Vibration v, string when)
+		{
+			Poll(ff, ud, device, ps, v, 1);
+			var changes = ff.Counts.Changes;
+			var resumed = ff.Counts.Resumed;
+			Poll(ff, ud, device, ps, v, 200);
+			Assert.AreEqual(changes, ff.Counts.Changes, when + ": updates at a steady speed sent the effects " + (ff.Counts.Changes - changes) + " changes.");
+			Assert.AreEqual(resumed, ff.Counts.Resumed, when + ": updates that did not follow a new hold started the effects again.");
 		}
 
 		/// <summary>Both effects exist, play, and have the layout the type asks for.</summary>
@@ -115,14 +127,20 @@ namespace x360ce.Tests
 						var ff = new ForceFeedbackState();
 						try
 						{
-							Poll(ff, ud, device, ps, Full, 300);
+							Poll(ff, ud, device, ps, Full, 300, true);
 							BothPlay(ff, ForceEffectType.Constant2, instance.ProductName + " at full");
+							Steady(ff, ud, device, ps, Full, "At full");
+							// Only the left speed changes: only the left effect is sent anything.
+							var changes = ff.Counts.Changes;
+							Poll(ff, ud, device, ps, new Vibration { LeftMotorSpeed = 0, RightMotorSpeed = short.MaxValue }, 1);
+							Assert.AreEqual(changes + 1, ff.Counts.Changes, "A change of the left speed was sent to both effects.");
 							Poll(ff, ud, device, ps, Off, 200);
 							Poll(ff, ud, device, ps, Full, 200);
 							BothPlay(ff, ForceEffectType.Constant2, "Stopped and started again");
 							hold();
-							Poll(ff, ud, device, ps, Full, 300);
+							Poll(ff, ud, device, ps, Full, 300, true);
 							BothPlay(ff, ForceEffectType.Constant2, "After the device was let go and held again, with the speed unchanged");
+							Steady(ff, ud, device, ps, Full, "After the device was held again");
 							foreach (var effect in device.CreatedEffects.ToArray())
 								effect.Dispose();
 							Clear(ff, "effectL");

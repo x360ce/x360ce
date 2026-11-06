@@ -126,10 +126,11 @@ namespace x360ce.Tests
 				? "Target contract equals the live contract."
 				: "Target adds:" + Environment.NewLine + string.Join(Environment.NewLine, additions));
 			// The additions this release makes: the 4.22 wheel columns of PadSetting, GetServerInfo with
-			// its answer type, for the Options page's Test button, the 4.25 input source of a device, and the 4.26
-			// friction of a wheel.
+			// its answer type, for the Options page's Test button, the 4.25 input source of a device, the 4.26
+			// friction of a wheel, and the 4.28 mouse stick columns and ButtonBig of PadSetting.
 			var unexpected = additions
 				.Where(x => !x.StartsWith("PadSetting: +Force") && !x.StartsWith("PadSetting: +WheelRange"))
+				.Where(x => !x.StartsWith("PadSetting: +Mouse") && x != "PadSetting: +ButtonBig:s:string")
 				.Where(x => x != "ServerInfo: new type" && x != "message:GetServerInfo: new type" && x != "message:GetServerInfoResponse: new type")
 				.Where(x => x != "UserDevice: +InputSourceType:s:int" && x != "UserDevice: +ForceSpringFriction:s:int")
 				.ToArray();

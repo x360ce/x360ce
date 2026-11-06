@@ -139,7 +139,7 @@
 			this.SensitivityXTrackBar.Minimum = 1;
 			this.SensitivityXTrackBar.Name = "SensitivityXTrackBar";
 			this.SensitivityXTrackBar.TabIndex = 3;
-			this.SensitivityXTrackBar.TickFrequency = 25;
+			this.SensitivityXTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			this.SensitivityXTrackBar.Value = 100;
 			//
 			// SensitivityXTextBox
@@ -168,7 +168,7 @@
 			this.SensitivityYTrackBar.Minimum = 1;
 			this.SensitivityYTrackBar.Name = "SensitivityYTrackBar";
 			this.SensitivityYTrackBar.TabIndex = 5;
-			this.SensitivityYTrackBar.TickFrequency = 25;
+			this.SensitivityYTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			this.SensitivityYTrackBar.Value = 100;
 			//
 			// SensitivityYTextBox
@@ -196,7 +196,7 @@
 			this.SmoothingTrackBar.Maximum = 500;
 			this.SmoothingTrackBar.Name = "SmoothingTrackBar";
 			this.SmoothingTrackBar.TabIndex = 7;
-			this.SmoothingTrackBar.TickFrequency = 25;
+			this.SmoothingTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			this.SmoothingTrackBar.Value = 30;
 			//
 			// SmoothingTextBox
@@ -225,7 +225,7 @@
 			this.ReturnTrackBar.Name = "ReturnTrackBar";
 			this.ReturnTrackBar.SmallChange = 10;
 			this.ReturnTrackBar.TabIndex = 9;
-			this.ReturnTrackBar.TickFrequency = 100;
+			this.ReturnTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			//
 			// ReturnTextBox
 			//

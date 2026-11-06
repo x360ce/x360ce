@@ -267,7 +267,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.InternetDatabaseUrlComboBox.FormattingEnabled = true;
 			this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
-            "https://www.x360ce.com/webservices/x360ce.asmx",
+            "https://www.x360ce.com/x360ce/webservices/x360ce.asmx",
             "https://localhost:44360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 80);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";

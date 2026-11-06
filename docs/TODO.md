@@ -3,7 +3,6 @@
 ## Requested features
 
 - Record controller actions over time, so a player can see their actions per minute.
-- Hide the real controller from games without leaving the program. Today HID Hide does it from its own window.
 - Install and update through winget.
 - Publish a nightly build as a GitHub pre-release, made by a GitHub Actions workflow.
 - Publish `docs/` as a website (MkDocs Material on GitHub Pages).
@@ -14,6 +13,7 @@
 - A crash inside Microsoft's XInput driver ends the program.
 - A removed stale virtual controller record keeps its device open until the program closes, one handle per record.
 - A pad whose force feedback keeps failing on one motor plays neither motor.
+- The online database stores an uploaded setting under a new ID, so the next upload adds another row and a Delete finds nothing.
 
 ## Settings to finish
 
@@ -28,7 +28,7 @@ Force feedback:
 x360ce 3 settings:
 
 4. `[Axis to D-Pad]` could work for virtual controllers. x360ce 3 turned the device's X and Y axes into the D-pad and stopped sending both thumbsticks while it was on. Its X looks reversed (`Native/x360ce/Controller.cpp`).
-5. `Library` emulation makes this version do nothing for a game: it loads the library only to show states. Decide whether `[Games]` should still offer it. The architecture issue still checks `Library` games.
+5. `Library` emulation makes this version do nothing for a game: it loads the library only to show states. Decide whether `[Games]` should still offer it. The architecture issue still checks `Library` games. If it is kept and made to work, the library needs a way to hear of a settings change.
 6. `[Pass Through ID]`, `[Combine this controller]` and `[Combine Into]` have no column in the settings, so they are lost on reload and not kept for x360ce 3 either. Add the columns or remove them.
 7. `[Games]` tab: `[Hook Mask]`, `[XInput Files]`, `[DInput File]`, fake VID and PID, `[Timeout]`, `[XInput Path]` and the DInput file name are x360ce 3 only. Grey them out with the reason. `[Other Options]` holds them beside `[Emulation]`, which works, so it needs a new layout.
 

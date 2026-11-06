@@ -37,6 +37,13 @@ namespace x360ce.Tests
 			};
 		}
 
+		/// <summary>The notations that carry a whole preset. SDL carries a device's mapping only, and has tests of its own.</summary>
+		static SettingsManager.PresetFormat[] WholeFormats()
+		{
+			return Enum.GetValues(typeof(SettingsManager.PresetFormat)).Cast<SettingsManager.PresetFormat>()
+				.Where(x => x != SettingsManager.PresetFormat.Sdl).ToArray();
+		}
+
 		static void AssertSame(PadSetting expected, PadSetting actual, string format)
 		{
 			Assert.AreEqual(expected.PadSettingChecksum, actual.PadSettingChecksum, format + ": checksum");
@@ -49,7 +56,7 @@ namespace x360ce.Tests
 		public void Every_format_carries_the_whole_preset_there_and_back()
 		{
 			var preset = Sample();
-			foreach (SettingsManager.PresetFormat format in Enum.GetValues(typeof(SettingsManager.PresetFormat)))
+			foreach (var format in WholeFormats())
 			{
 				var text = SettingsManager.PadSettingToText(preset, format);
 				Console.WriteLine("--- " + format + Environment.NewLine + text);
@@ -92,7 +99,7 @@ namespace x360ce.Tests
 		{
 			var preset = Sample();
 			preset.ButtonB = "";
-			foreach (SettingsManager.PresetFormat format in Enum.GetValues(typeof(SettingsManager.PresetFormat)))
+			foreach (var format in WholeFormats())
 			{
 				var text = SettingsManager.PadSettingToText(preset, format);
 				Assert.IsFalse(text.Contains("ButtonB"), format + " carries an empty setting the XML leaves out.");

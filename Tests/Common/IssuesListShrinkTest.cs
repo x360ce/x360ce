@@ -27,7 +27,7 @@ namespace x360ce.Tests
 		[Description("The Issues list survives an issue leaving while its rows are drawn")]
 		public void The_issues_list_survives_an_issue_leaving_while_it_draws()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				using (var form = new Form { ClientSize = new Size(800, 400) })
 				using (var control = new IssuesUserControl { Dock = DockStyle.Fill })

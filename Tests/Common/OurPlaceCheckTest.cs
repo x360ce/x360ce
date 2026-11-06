@@ -130,7 +130,7 @@ namespace x360ce.Tests
 						pad.UpdateSettingsMap();
 						pad.InitPadData();
 						form.Show();
-						var trigger = pad.Controls.Find("LeftTriggerTextBox", true).Single();
+						var trigger = pad.Controls.Find("LeftTriggerValueLabel", true).Single();
 						helper.XiPlaceForPad[1] = 0;
 						update.Invoke(pad, null);
 						Application.DoEvents();

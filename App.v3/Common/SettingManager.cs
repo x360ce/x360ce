@@ -266,7 +266,7 @@ namespace x360ce.App
 		public void ReadSettingTo(Control control, string key, string value)
 		{
 			if (key == SettingName.InternetDatabaseUrl)
-				value = string.IsNullOrEmpty(value) ? SettingName.DefaultInternetDatabaseUrl : SettingName.WithHttps(value);
+				value = string.IsNullOrEmpty(value) ? SettingName.DefaultInternetDatabaseUrl : SettingName.CurrentAddress(value);
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
 				key.EndsWith(SettingName.ForceType) ||

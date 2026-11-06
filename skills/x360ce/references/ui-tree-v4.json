@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.28.16.0",
-	"Built":"2026-10-31",
+	"Version":"4.29.52.0",
+	"Built":"2026-11-06",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -498,94 +498,16 @@
 											"SameAs":"InputUserControl"
 										},
 										{
-											"Name":"Left trigger value",
-											"Description":"What the game is being given for the left trigger right now.",
-											"Role":"Value",
-											"Id":"LeftTriggerTextBox"
+											"Name":"Remap All",
+											"Description":"Clears the mapping, then asks you to press each control in turn.",
+											"Role":"Button",
+											"Id":"RemapAllButton"
 										},
 										{
-											"Name":"Left stick value",
-											"Description":"Across and up positions the game is being given for the left stick.",
-											"Role":"Value",
-											"Id":"LeftThumbTextBox"
-										},
-										{
-											"Name":"Left Trigger",
-											"Description":"Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.",
+											"Name":"Button layout",
+											"Description":"Names the buttons after the controller in your hands instead of an Xbox one.",
 											"Role":"List",
-											"Id":"LeftTriggerComboBox"
-										},
-										{
-											"Name":"Left Shoulder",
-											"Description":"Left Shoulder Button . Disable = 0.",
-											"Role":"List",
-											"Id":"LeftShoulderComboBox"
-										},
-										{
-											"Name":"Button Back",
-											"Description":"Back button.",
-											"Role":"List",
-											"Id":"ButtonBackComboBox"
-										},
-										{
-											"Name":"Button Start",
-											"Description":"Start button.",
-											"Role":"List",
-											"Id":"ButtonStartComboBox"
-										},
-										{
-											"Name":"Button Guide",
-											"Description":"Guide button.",
-											"Role":"List",
-											"Id":"ButtonGuideComboBox"
-										},
-										{
-											"Name":"D-Pad",
-											"Description":"Disable = 0, POV Index = N.",
-											"Role":"List",
-											"Id":"DPadComboBox"
-										},
-										{
-											"Name":"Left Thumb Axis X",
-											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
-											"Role":"List",
-											"Id":"LeftThumbAxisXComboBox"
-										},
-										{
-											"Name":"Left Thumb Axis Y",
-											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
-											"Role":"List",
-											"Id":"LeftThumbAxisYComboBox"
-										},
-										{
-											"Name":"Left Thumb Button",
-											"Description":"Left stick button. Disable = 0.",
-											"Role":"List",
-											"Id":"LeftThumbButtonComboBox"
-										},
-										{
-											"Name":"Left Thumb Up",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"LeftThumbUpComboBox"
-										},
-										{
-											"Name":"Left Thumb Left",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"LeftThumbLeftComboBox"
-										},
-										{
-											"Name":"Left Thumb Right",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"LeftThumbRightComboBox"
-										},
-										{
-											"Name":"Left Thumb Down",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"LeftThumbDownComboBox"
+											"Id":"MapNameComboBox"
 										},
 										{
 											"Name":"Left Trigger formula",
@@ -596,36 +518,16 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"D-Pad formula",
-											"Description":"Writes the D-Pad mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"D-PadExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Left Trigger",
+											"Description":"Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.",
+											"Role":"List",
+											"Id":"LeftTriggerComboBox"
 										},
 										{
-											"Name":"Button Guide formula",
-											"Description":"Writes the Button Guide mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonGuideExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Button Back formula",
-											"Description":"Writes the Button Back mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonBackExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Button Start formula",
-											"Description":"Writes the Button Start mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonStartExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Left Trigger value",
+											"Description":"What the game is being given for the trigger right now, from 0 released to 255 pressed all the way.",
+											"Role":"Label",
+											"Id":"LeftTriggerValueLabel"
 										},
 										{
 											"Name":"Left Shoulder formula",
@@ -636,12 +538,116 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
+											"Name":"Left Shoulder",
+											"Description":"Left Shoulder Button . Disable = 0.",
+											"Role":"List",
+											"Id":"LeftShoulderComboBox"
+										},
+										{
+											"Name":"Left Shoulder value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftShoulderValueLabel"
+										},
+										{
+											"Name":"Button Back formula",
+											"Description":"Writes the Button Back mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonBackExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Back",
+											"Description":"Back button.",
+											"Role":"List",
+											"Id":"ButtonBackComboBox"
+										},
+										{
+											"Name":"Button Back value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonBackValueLabel"
+										},
+										{
+											"Name":"Button Start formula",
+											"Description":"Writes the Button Start mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonStartExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Start",
+											"Description":"Start button.",
+											"Role":"List",
+											"Id":"ButtonStartComboBox"
+										},
+										{
+											"Name":"Button Start value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonStartValueLabel"
+										},
+										{
+											"Name":"Button Guide formula",
+											"Description":"Writes the Button Guide mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonGuideExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Guide",
+											"Description":"Guide button.",
+											"Role":"List",
+											"Id":"ButtonGuideComboBox"
+										},
+										{
+											"Name":"Button Guide value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonGuideValueLabel"
+										},
+										{
+											"Name":"D-Pad formula",
+											"Description":"Writes the D-Pad mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"D-Pad",
+											"Description":"Disable = 0, POV Index = N.",
+											"Role":"List",
+											"Id":"DPadComboBox"
+										},
+										{
+											"Name":"D-Pad value",
+											"Description":"The D-Pad directions the game is being given, added up: up 1, down 2, left 4, right 8; 0 while none is pressed.",
+											"Role":"Label",
+											"Id":"DPadValueLabel"
+										},
+										{
 											"Name":"Left Thumb Axis X formula",
 											"Description":"Writes the Left Thumb Axis X mapping as a formula instead of choosing one control.",
 											"Role":"CheckBox",
 											"Id":"LeftThumbAxisXExpressionToggle",
 											"Type":"MapExpressionToggle",
 											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Axis X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisXComboBox"
+										},
+										{
+											"Name":"Left Thumb Axis X value",
+											"Description":"What the game is being given for the stick across right now, from -32768 at the left to 32767 at the right.",
+											"Role":"Label",
+											"Id":"LeftThumbAxisXValueLabel"
 										},
 										{
 											"Name":"Left Thumb Axis Y formula",
@@ -652,36 +658,16 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Left Thumb Right formula",
-											"Description":"Writes the Left Thumb Right mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"LeftThumbRightExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Left Thumb Axis Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisYComboBox"
 										},
 										{
-											"Name":"Left Thumb Left formula",
-											"Description":"Writes the Left Thumb Left mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"LeftThumbLeftExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Left Thumb Up formula",
-											"Description":"Writes the Left Thumb Up mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"LeftThumbUpExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Left Thumb Down formula",
-											"Description":"Writes the Left Thumb Down mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"LeftThumbDownExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Left Thumb Axis Y value",
+											"Description":"What the game is being given for the stick up and down right now, from -32768 at the bottom to 32767 at the top.",
+											"Role":"Label",
+											"Id":"LeftThumbAxisYValueLabel"
 										},
 										{
 											"Name":"Left Thumb Button formula",
@@ -692,48 +678,104 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
+											"Name":"Left Thumb Button",
+											"Description":"Left stick button. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbButtonComboBox"
+										},
+										{
+											"Name":"Left Thumb Button value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftThumbButtonValueLabel"
+										},
+										{
+											"Name":"Left Thumb Up formula",
+											"Description":"Writes the Left Thumb Up mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbUpExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Up",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbUpComboBox"
+										},
+										{
+											"Name":"Left Thumb Up value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftThumbUpValueLabel"
+										},
+										{
+											"Name":"Left Thumb Left formula",
+											"Description":"Writes the Left Thumb Left mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbLeftExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Left",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbLeftComboBox"
+										},
+										{
+											"Name":"Left Thumb Left value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftThumbLeftValueLabel"
+										},
+										{
+											"Name":"Left Thumb Right formula",
+											"Description":"Writes the Left Thumb Right mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbRightExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Right",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbRightComboBox"
+										},
+										{
+											"Name":"Left Thumb Right value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftThumbRightValueLabel"
+										},
+										{
+											"Name":"Left Thumb Down formula",
+											"Description":"Writes the Left Thumb Down mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbDownExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Down",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbDownComboBox"
+										},
+										{
+											"Name":"Left Thumb Down value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"LeftThumbDownValueLabel"
+										},
+										{
 											"Name":"Controller picture",
 											"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye.",
 											"Role":"Group",
 											"Id":"XboxImage",
 											"Type":"XboxImageUserControl",
 											"SameAs":"XboxImageUserControl"
-										},
-										{
-											"Name":"D-Pad Up",
-											"Description":"D-Pad up button.",
-											"Role":"List",
-											"Id":"DPadUpComboBox"
-										},
-										{
-											"Name":"D-Pad Left",
-											"Description":"D-Pad left button.",
-											"Role":"List",
-											"Id":"DPadLeftComboBox"
-										},
-										{
-											"Name":"D-Pad Right",
-											"Description":"D-Pad right button.",
-											"Role":"List",
-											"Id":"DPadRightComboBox"
-										},
-										{
-											"Name":"D-Pad Down",
-											"Description":"D-Pad down button.",
-											"Role":"List",
-											"Id":"DPadDownComboBox"
-										},
-										{
-											"Name":"Button layout",
-											"Description":"Names the buttons after the controller in your hands instead of an Xbox one.",
-											"Role":"List",
-											"Id":"MapNameComboBox"
-										},
-										{
-											"Name":"Remap All",
-											"Description":"Clears the mapping, then asks you to press each control in turn.",
-											"Role":"Button",
-											"Id":"RemapAllButton"
 										},
 										{
 											"Name":"D-Pad Up formula",
@@ -744,12 +786,16 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"D-Pad Down formula",
-											"Description":"Writes the D-Pad Down mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"D-PadDownExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"D-Pad Up",
+											"Description":"D-Pad up button.",
+											"Role":"List",
+											"Id":"DPadUpComboBox"
+										},
+										{
+											"Name":"D-Pad Up value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"DPadUpValueLabel"
 										},
 										{
 											"Name":"D-Pad Left formula",
@@ -760,6 +806,18 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
+											"Name":"D-Pad Left",
+											"Description":"D-Pad left button.",
+											"Role":"List",
+											"Id":"DPadLeftComboBox"
+										},
+										{
+											"Name":"D-Pad Left value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"DPadLeftValueLabel"
+										},
+										{
 											"Name":"D-Pad Right formula",
 											"Description":"Writes the D-Pad Right mapping as a formula instead of choosing one control.",
 											"Role":"CheckBox",
@@ -768,94 +826,36 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Right trigger value",
-											"Description":"What the game is being given for the right trigger right now.",
-											"Role":"Value",
-											"Id":"RightTriggerTextBox"
-										},
-										{
-											"Name":"Right stick value",
-											"Description":"Across and up positions the game is being given for the right stick.",
-											"Role":"Value",
-											"Id":"RightThumbTextBox"
-										},
-										{
-											"Name":"Right Trigger",
-											"Description":"Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.",
+											"Name":"D-Pad Right",
+											"Description":"D-Pad right button.",
 											"Role":"List",
-											"Id":"RightTriggerComboBox"
+											"Id":"DPadRightComboBox"
 										},
 										{
-											"Name":"Right Shoulder",
-											"Description":"Right Shoulder Button. Disable = 0.",
-											"Role":"List",
-											"Id":"RightShoulderComboBox"
+											"Name":"D-Pad Right value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"DPadRightValueLabel"
 										},
 										{
-											"Name":"Button Y",
-											"Description":"Button 'Y'",
-											"Role":"List",
-											"Id":"ButtonYComboBox"
+											"Name":"D-Pad Down formula",
+											"Description":"Writes the D-Pad Down mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadDownExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Button X",
-											"Description":"Button 'X'",
+											"Name":"D-Pad Down",
+											"Description":"D-Pad down button.",
 											"Role":"List",
-											"Id":"ButtonXComboBox"
+											"Id":"DPadDownComboBox"
 										},
 										{
-											"Name":"Button B",
-											"Description":"Button 'B'",
-											"Role":"List",
-											"Id":"ButtonBComboBox"
-										},
-										{
-											"Name":"Button A",
-											"Description":"Button 'A'",
-											"Role":"List",
-											"Id":"ButtonAComboBox"
-										},
-										{
-											"Name":"Right Thumb Axis X",
-											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
-											"Role":"List",
-											"Id":"RightThumbAxisXComboBox"
-										},
-										{
-											"Name":"Right Thumb Axis Y",
-											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
-											"Role":"List",
-											"Id":"RightThumbAxisYComboBox"
-										},
-										{
-											"Name":"Right Thumb Button",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"RightThumbButtonComboBox"
-										},
-										{
-											"Name":"Right Thumb Up",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"RightThumbUpComboBox"
-										},
-										{
-											"Name":"Right Thumb Left",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"RightThumbLeftComboBox"
-										},
-										{
-											"Name":"Right Thumb Right",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"RightThumbRightComboBox"
-										},
-										{
-											"Name":"Right Thumb Down",
-											"Description":"Button Id. Disable = 0.",
-											"Role":"List",
-											"Id":"RightThumbDownComboBox"
+											"Name":"D-Pad Down value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"DPadDownValueLabel"
 										},
 										{
 											"Name":"Right Trigger formula",
@@ -866,36 +866,16 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Button A formula",
-											"Description":"Writes the Button A mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonAExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Right Trigger",
+											"Description":"Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.",
+											"Role":"List",
+											"Id":"RightTriggerComboBox"
 										},
 										{
-											"Name":"Button B formula",
-											"Description":"Writes the Button B mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonBExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Button X formula",
-											"Description":"Writes the Button X mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonXExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
-										},
-										{
-											"Name":"Button Y formula",
-											"Description":"Writes the Button Y mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"ButtonYExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Right Trigger value",
+											"Description":"What the game is being given for the trigger right now, from 0 released to 255 pressed all the way.",
+											"Role":"Label",
+											"Id":"RightTriggerValueLabel"
 										},
 										{
 											"Name":"Right Shoulder formula",
@@ -906,12 +886,116 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
+											"Name":"Right Shoulder",
+											"Description":"Right Shoulder Button. Disable = 0.",
+											"Role":"List",
+											"Id":"RightShoulderComboBox"
+										},
+										{
+											"Name":"Right Shoulder value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightShoulderValueLabel"
+										},
+										{
+											"Name":"Button Y formula",
+											"Description":"Writes the Button Y mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonYExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Y",
+											"Description":"Button 'Y'",
+											"Role":"List",
+											"Id":"ButtonYComboBox"
+										},
+										{
+											"Name":"Button Y value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonYValueLabel"
+										},
+										{
+											"Name":"Button X formula",
+											"Description":"Writes the Button X mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonXExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button X",
+											"Description":"Button 'X'",
+											"Role":"List",
+											"Id":"ButtonXComboBox"
+										},
+										{
+											"Name":"Button X value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonXValueLabel"
+										},
+										{
+											"Name":"Button B formula",
+											"Description":"Writes the Button B mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonBExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button B",
+											"Description":"Button 'B'",
+											"Role":"List",
+											"Id":"ButtonBComboBox"
+										},
+										{
+											"Name":"Button B value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonBValueLabel"
+										},
+										{
+											"Name":"Button A formula",
+											"Description":"Writes the Button A mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonAExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button A",
+											"Description":"Button 'A'",
+											"Role":"List",
+											"Id":"ButtonAComboBox"
+										},
+										{
+											"Name":"Button A value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"ButtonAValueLabel"
+										},
+										{
 											"Name":"Right Thumb Axis X formula",
 											"Description":"Writes the Right Thumb Axis X mapping as a formula instead of choosing one control.",
 											"Role":"CheckBox",
 											"Id":"RightThumbAxisXExpressionToggle",
 											"Type":"MapExpressionToggle",
 											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Axis X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisXComboBox"
+										},
+										{
+											"Name":"Right Thumb Axis X value",
+											"Description":"What the game is being given for the stick across right now, from -32768 at the left to 32767 at the right.",
+											"Role":"Label",
+											"Id":"RightThumbAxisXValueLabel"
 										},
 										{
 											"Name":"Right Thumb Axis Y formula",
@@ -922,20 +1006,36 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Right Thumb Right formula",
-											"Description":"Writes the Right Thumb Right mapping as a formula instead of choosing one control.",
+											"Name":"Right Thumb Axis Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisYComboBox"
+										},
+										{
+											"Name":"Right Thumb Axis Y value",
+											"Description":"What the game is being given for the stick up and down right now, from -32768 at the bottom to 32767 at the top.",
+											"Role":"Label",
+											"Id":"RightThumbAxisYValueLabel"
+										},
+										{
+											"Name":"Right Thumb Button formula",
+											"Description":"Writes the Right Thumb Button mapping as a formula instead of choosing one control.",
 											"Role":"CheckBox",
-											"Id":"RightThumbRightExpressionToggle",
+											"Id":"RightThumbButtonExpressionToggle",
 											"Type":"MapExpressionToggle",
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Right Thumb Left formula",
-											"Description":"Writes the Right Thumb Left mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"RightThumbLeftExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Right Thumb Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbButtonComboBox"
+										},
+										{
+											"Name":"Right Thumb Button value",
+											"Description":"1 while the game is being given this button pressed, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightThumbButtonValueLabel"
 										},
 										{
 											"Name":"Right Thumb Up formula",
@@ -946,6 +1046,58 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
+											"Name":"Right Thumb Up",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbUpComboBox"
+										},
+										{
+											"Name":"Right Thumb Up value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightThumbUpValueLabel"
+										},
+										{
+											"Name":"Right Thumb Left formula",
+											"Description":"Writes the Right Thumb Left mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbLeftExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Left",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbLeftComboBox"
+										},
+										{
+											"Name":"Right Thumb Left value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightThumbLeftValueLabel"
+										},
+										{
+											"Name":"Right Thumb Right formula",
+											"Description":"Writes the Right Thumb Right mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbRightExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Right",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbRightComboBox"
+										},
+										{
+											"Name":"Right Thumb Right value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightThumbRightValueLabel"
+										},
+										{
 											"Name":"Right Thumb Down formula",
 											"Description":"Writes the Right Thumb Down mapping as a formula instead of choosing one control.",
 											"Role":"CheckBox",
@@ -954,12 +1106,16 @@
 											"SameAs":"MapExpressionToggle"
 										},
 										{
-											"Name":"Right Thumb Button formula",
-											"Description":"Writes the Right Thumb Button mapping as a formula instead of choosing one control.",
-											"Role":"CheckBox",
-											"Id":"RightThumbButtonExpressionToggle",
-											"Type":"MapExpressionToggle",
-											"SameAs":"MapExpressionToggle"
+											"Name":"Right Thumb Down",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbDownComboBox"
+										},
+										{
+											"Name":"Right Thumb Down value",
+											"Description":"The stick's position the game is being given while the stick points this way, otherwise 0.",
+											"Role":"Label",
+											"Id":"RightThumbDownValueLabel"
 										}
 									]
 								},
@@ -996,12 +1152,6 @@
 											"Id":"DeviceGroupBox",
 											"Items":[
 												{
-													"Name":"Device Sub Type",
-													"Description":"Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.",
-													"Role":"List",
-													"Id":"DeviceSubTypeComboBox"
-												},
-												{
 													"Name":"Pass Through",
 													"Description":"Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.",
 													"Role":"CheckBox",
@@ -1012,6 +1162,12 @@
 													"Description":"The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.",
 													"Role":"List",
 													"Id":"PassThroughIndexComboBox"
+												},
+												{
+													"Name":"Device Sub Type",
+													"Description":"Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.",
+													"Role":"List",
+													"Id":"DeviceSubTypeComboBox"
 												}
 											]
 										}
@@ -1228,7 +1384,7 @@
 									]
 								},
 								{
-									"Name":"Left Thumb",
+									"Name":"Left Stick",
 									"Description":"Shapes what the game receives from the left stick.",
 									"Role":"Tab",
 									"Id":"LeftThumbTabPage",
@@ -1252,7 +1408,7 @@
 									]
 								},
 								{
-									"Name":"Right Thumb",
+									"Name":"Right Stick",
 									"Description":"Shapes what the game receives from the right stick.",
 									"Role":"Tab",
 									"Id":"RightThumbTabPage",
@@ -1681,6 +1837,22 @@
 											"SameAs":"DirectInputUserControl"
 										}
 									]
+								},
+								{
+									"Name":"SDL",
+									"Description":"What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.",
+									"Role":"Tab",
+									"Id":"SdlTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"What SDL's controller database says about the selected device.",
+											"Role":"Group",
+											"Id":"SdlPanel",
+											"Type":"SdlUserControl",
+											"SameAs":"SdlUserControl"
+										}
+									]
 								}
 							]
 						},
@@ -1742,7 +1914,7 @@
 						},
 						{
 							"Name":"Auto Preset",
-							"Description":"Fills the mapping from a preset that matches the selected device.",
+							"Description":"Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.",
 							"Role":"Button",
 							"Id":"AutoPresetButton"
 						},
@@ -1772,13 +1944,13 @@
 						},
 						{
 							"Name":"Copy Preset as",
-							"Description":"Copies this controller's settings in the format you choose: YAML, XML or JSON.",
+							"Description":"Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.",
 							"Role":"Button",
 							"Id":"CopyPresetFormatButton"
 						},
 						{
 							"Name":"Paste Preset",
-							"Description":"Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.",
+							"Description":"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.",
 							"Role":"Button",
 							"Id":"PastePresetButton"
 						},
@@ -1787,6 +1959,55 @@
 							"Description":"Configuration name of the section which is mapped to PAD1.",
 							"Role":"Grid",
 							"Id":"MappedDevicesDataGridView"
+						}
+					]
+				},
+				{
+					"Name":"SdlUserControl",
+					"Description":"What SDL's controller database says about the selected device.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"SDL database version",
+							"Description":"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.",
+							"Role":"Label",
+							"Id":"VersionLabel"
+						},
+						{
+							"Name":"SDL's row for the device",
+							"Description":"Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.",
+							"Role":"Label",
+							"Id":"DeviceLabel"
+						},
+						{
+							"Name":"Places",
+							"Description":"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.",
+							"Role":"Grid",
+							"Id":"PositionsDataGridView"
+						},
+						{
+							"Name":"Apply SDL Mapping",
+							"Description":"Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.",
+							"Role":"Button",
+							"Id":"ApplyButton"
+						},
+						{
+							"Name":"Copy as SDL",
+							"Description":"Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.",
+							"Role":"Button",
+							"Id":"CopyButton"
+						},
+						{
+							"Name":"Update SDL Database",
+							"Description":"Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.",
+							"Role":"Button",
+							"Id":"UpdateButton"
+						},
+						{
+							"Name":"SDL update status",
+							"Description":"How the last update of SDL's controller database went.",
+							"Role":"Label",
+							"Id":"StatusLabel"
 						}
 					]
 				},
@@ -2046,38 +2267,6 @@
 													"Id":"GeneralTabPage",
 													"Items":[
 														{
-															"Name":"Testing",
-															"Description":"Switching the emulated controllers off to try the real ones, and the pages that show more detail.",
-															"Role":"Section",
-															"Id":"TestingGroupBox",
-															"Items":[
-																{
-																	"Name":"Enable XInput",
-																	"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
-																	"Role":"CheckBox",
-																	"Id":"XInputEnableCheckBox"
-																},
-																{
-																	"Name":"Show [Programs] Tab",
-																	"Description":"Shows the Programs page, which lists what has been set up for each program.",
-																	"Role":"CheckBox",
-																	"Id":"ShowProgramsTabCheckBox"
-																},
-																{
-																	"Name":"Show [Devices] Tab",
-																	"Description":"Shows the Devices page, which lists every controller found.",
-																	"Role":"CheckBox",
-																	"Id":"ShowDevicesTabCheckBox"
-																},
-																{
-																	"Name":"Show [Settings] Tab",
-																	"Description":"Shows the Settings page, which lists every stored setting.",
-																	"Role":"CheckBox",
-																	"Id":"ShowSettingsTabCheckBox"
-																}
-															]
-														},
-														{
 															"Name":"Operation",
 															"Description":"How the program behaves while it runs.",
 															"Role":"Section",
@@ -2112,32 +2301,38 @@
 																	"Description":"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.",
 																	"Role":"List",
 																	"Id":"StartWithWindowsStateComboBox"
-																},
-																{
-																	"Name":"Theme",
-																	"Description":"Light or dark colours. System follows the Windows setting for apps.",
-																	"Role":"List",
-																	"Id":"ThemeComboBox"
 																}
 															]
 														},
 														{
-															"Name":"Developing",
-															"Description":"Aids for working on the program itself.",
+															"Name":"Testing",
+															"Description":"Switching the emulated controllers off to try the real ones, and the pages that show more detail.",
 															"Role":"Section",
-															"Id":"DevelopingGroupBox",
+															"Id":"TestingGroupBox",
 															"Items":[
 																{
-																	"Name":"Show Form Info on CTRL+SHIFT+RMB",
-																	"Description":"Enable Form Info (CTRL+SHIFT+RMB)",
+																	"Name":"Enable XInput",
+																	"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
 																	"Role":"CheckBox",
-																	"Id":"ShowFormInfoCheckBox"
+																	"Id":"XInputEnableCheckBox"
 																},
 																{
-																	"Name":"Show [Test...] Button",
-																	"Description":"Show [Test...] Button.",
+																	"Name":"Show [Programs] Tab",
+																	"Description":"Shows the Programs page, which lists what has been set up for each program.",
 																	"Role":"CheckBox",
-																	"Id":"ShowTestButtonCheckBox"
+																	"Id":"ShowProgramsTabCheckBox"
+																},
+																{
+																	"Name":"Show [Devices] Tab",
+																	"Description":"Shows the Devices page, which lists every controller found.",
+																	"Role":"CheckBox",
+																	"Id":"ShowDevicesTabCheckBox"
+																},
+																{
+																	"Name":"Show [Settings] Tab",
+																	"Description":"Shows the Settings page, which lists every stored setting.",
+																	"Role":"CheckBox",
+																	"Id":"ShowSettingsTabCheckBox"
 																}
 															]
 														},
@@ -2164,20 +2359,6 @@
 																	"Description":"Read every change a device reports, not only its state at each pass.",
 																	"Role":"CheckBox",
 																	"Id":"ReadEveryChangeCheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Configuration",
-															"Description":"Switching settings to the game in front.",
-															"Role":"Section",
-															"Id":"ConfigurationGroupBox",
-															"Items":[
-																{
-																	"Name":"Auto switch configuration when game focused",
-																	"Description":"Autodetect currently focussed game.",
-																	"Role":"CheckBox",
-																	"Id":"AutoDetectForegroundWindowCheckBox"
 																}
 															]
 														},
@@ -2288,10 +2469,77 @@
 															]
 														},
 														{
-															"Name":"Developer Tools...",
-															"Description":"Opens a window of aids for working on the program.",
-															"Role":"Button",
-															"Id":"DeveloperToolsButton"
+															"Name":"Appearance",
+															"Description":"The program's colours, and the font and size its windows are drawn in.",
+															"Role":"Section",
+															"Id":"AppearanceGroupBox",
+															"Items":[
+																{
+																	"Name":"Theme",
+																	"Description":"Light or dark colours. System follows the Windows setting for apps.",
+																	"Role":"List",
+																	"Id":"ThemeComboBox"
+																},
+																{
+																	"Name":"Font",
+																	"Description":"The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.",
+																	"Role":"List",
+																	"Id":"FontComboBox"
+																},
+																{
+																	"Name":"Size",
+																	"Description":"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.",
+																	"Role":"List",
+																	"Id":"SizeComboBox"
+																},
+																{
+																	"Name":"Restart x360ce",
+																	"Description":"Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.",
+																	"Role":"Button",
+																	"Id":"RestartButton",
+																	"Hidden":true
+																}
+															]
+														},
+														{
+															"Name":"Developing",
+															"Description":"Aids for working on the program itself.",
+															"Role":"Section",
+															"Id":"DevelopingGroupBox",
+															"Items":[
+																{
+																	"Name":"Show Form Info on CTRL+SHIFT+RMB",
+																	"Description":"Enable Form Info (CTRL+SHIFT+RMB)",
+																	"Role":"CheckBox",
+																	"Id":"ShowFormInfoCheckBox"
+																},
+																{
+																	"Name":"Show [Test...] Button",
+																	"Description":"Show [Test...] Button.",
+																	"Role":"CheckBox",
+																	"Id":"ShowTestButtonCheckBox"
+																},
+																{
+																	"Name":"Developer Tools...",
+																	"Description":"Opens a window of aids for working on the program.",
+																	"Role":"Button",
+																	"Id":"DeveloperToolsButton"
+																}
+															]
+														},
+														{
+															"Name":"Configuration",
+															"Description":"Switching settings to the game in front.",
+															"Role":"Section",
+															"Id":"ConfigurationGroupBox",
+															"Items":[
+																{
+																	"Name":"Auto switch configuration when game focused",
+																	"Description":"Autodetect currently focussed game.",
+																	"Role":"CheckBox",
+																	"Id":"AutoDetectForegroundWindowCheckBox"
+																}
+															]
 														}
 													]
 												},
@@ -2365,6 +2613,18 @@
 																			"Description":"Asks the web service at that address who it is and says whether it answers.",
 																			"Role":"Button",
 																			"Id":"TestServiceButton"
+																		},
+																		{
+																			"Name":"SDL database address",
+																			"Description":"Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.",
+																			"Role":"List",
+																			"Id":"SdlDatabaseUrlComboBox"
+																		},
+																		{
+																			"Name":"Update SDL Database",
+																			"Description":"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.",
+																			"Role":"Button",
+																			"Id":"UpdateSdlDatabaseButton"
 																		}
 																	]
 																},
@@ -2568,7 +2828,7 @@
 															"Items":[
 																{
 																	"Name":"HID Hide state",
-																	"Description":"Whether HID Hide is installed, and which version.",
+																	"Description":"Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.",
 																	"Role":"Value",
 																	"Id":"HidHideStatusTextBox"
 																},
@@ -2579,10 +2839,10 @@
 																	"Id":"HidHideRefreshButton"
 																},
 																{
-																	"Name":"Download HID Hide...",
-																	"Description":"Opens the page HID Hide is downloaded from.",
+																	"Name":"Install HID Hide",
+																	"Description":"Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.",
 																	"Role":"Button",
-																	"Id":"HidHideDownloadButton"
+																	"Id":"HidHideInstallButton"
 																},
 																{
 																	"Name":"Open Configuration",
@@ -2591,12 +2851,24 @@
 																	"Id":"HidHideConfigureButton"
 																},
 																{
+																	"Name":"HID Hide releases",
+																	"Description":"Opens the page HID Hide's setups are downloaded from, to download one by hand.",
+																	"Role":"Link",
+																	"Id":"HidHideDownloadLinkLabel"
+																},
+																{
 																	"Name":"Configure automatically",
 																	"Description":"Hide a device through HID Hide while it is mapped to a controller.",
 																	"Role":"CheckBox",
 																	"Id":"HidHideConfigureAutomaticallyCheckBox"
 																}
 															]
+														},
+														{
+															"Name":"HID Hide notes",
+															"Description":"What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.",
+															"Role":"Value",
+															"Id":"HidHideHelpRichTextBox"
 														}
 													]
 												},
@@ -3765,7 +4037,7 @@
 									"Items":[
 										{
 											"Name":"Cloud tasks",
-											"Description":"Settings waiting to be sent to or fetched from the online database.",
+											"Description":"Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.",
 											"Role":"Grid",
 											"Id":"TasksDataGridView"
 										},
@@ -3776,10 +4048,10 @@
 											"Id":"toolStrip1",
 											"Items":[
 												{
-													"Name":"Refresh",
-													"Description":"Reads the queue again.",
+													"Name":"Retry",
+													"Description":"Sends the tasks that failed again now, each with all its tries.",
 													"Role":"Button",
-													"Id":"toolStripButton1"
+													"Id":"RetryButton"
 												},
 												{
 													"Name":"Upload To Cloud",
@@ -3800,7 +4072,7 @@
 												},
 												{
 													"Name":"Next run",
-													"Description":"How long until the queue is worked through again.",
+													"Description":"How long until a task that failed is sent again, none while no task waits, and whether the network is on.",
 													"Role":"Status",
 													"Id":"NextRunLabel"
 												},
@@ -3838,59 +4110,37 @@
 						},
 						{
 							"Name":"About",
-							"Description":"Version, licence, and what changed in each release.",
+							"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
 							"Role":"Tab",
 							"Id":"AboutTabPage",
 							"Items":[
 								{
 									"Name":null,
-									"Description":"Version, licence, and what changed in each release.",
+									"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
 									"Role":"Group",
 									"Id":"AboutControl",
 									"Type":"AboutControl",
 									"Items":[
 										{
-											"Name":"https://www.x360ce.com",
-											"Description":"Opens the program's website.",
-											"Role":"Link",
-											"Id":"x360ceLinkLabel"
-										},
-										{
-											"Name":"https://github.com/x360ce/x360ce",
-											"Description":"Opens the source code.",
-											"Role":"Link",
-											"Id":"GoogleProjectLinkLabel"
-										},
-										{
-											"Name":"https://www.jocys.com",
-											"Description":"Opens the publisher's website.",
-											"Role":"Link",
-											"Id":"AboutJocysLinkLabel"
-										},
-										{
-											"Name":"https://github.com/Nucleoprotein",
-											"Description":"Opens a contributor's page.",
-											"Role":"Link",
-											"Id":"AboutVirusLinkLabel"
-										},
-										{
-											"Name":"https://github.com/nefarius",
-											"Description":"Opens the page the virtual controller driver comes from.",
-											"Role":"Link",
-											"Id":"AboutViGEmLinkLabel"
-										},
-										{
-											"Name":"http://www.tocaedit.com",
-											"Description":"Opens the site of the person who wrote the first version.",
-											"Role":"Link",
-											"Id":"AboutTocaEditLinkLabel"
-										},
-										{
 											"Name":"About pages",
-											"Description":"What changed in each release, and the licence.",
+											"Description":"The program and who made it, what changed in each release, and the licence.",
 											"Role":"Tabs",
 											"Id":"AboutTabControl",
 											"Items":[
+												{
+													"Name":"Program",
+													"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
+													"Role":"Tab",
+													"Id":"ProgramTabPage",
+													"Items":[
+														{
+															"Name":"Program details",
+															"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
+															"Role":"Value",
+															"Id":"ProgramRichTextBox"
+														}
+													]
+												},
 												{
 													"Name":"Changes",
 													"Description":"What changed in each release.",

@@ -30,7 +30,7 @@
             this.TryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ItemDetailsPanel = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.RetryButton = new System.Windows.Forms.ToolStripButton();
             this.UploadToCloudButton = new System.Windows.Forms.ToolStripButton();
             this.DownloadFromCloudButton = new System.Windows.Forms.ToolStripButton();
             this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -161,7 +161,7 @@
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
+            this.RetryButton,
             this.UploadToCloudButton,
             this.DownloadFromCloudButton,
             this.NextRunSeparator,
@@ -174,14 +174,15 @@
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "MySettingsToolStrip";
             // 
-            // toolStripButton1
+            // RetryButton
             // 
-            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton1.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(66, 22);
-            this.toolStripButton1.Text = "&Refresh";
+            this.RetryButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.RetryButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.RetryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RetryButton.Name = "RetryButton";
+            this.RetryButton.Size = new System.Drawing.Size(55, 22);
+            this.RetryButton.Text = "&Retry";
+            this.RetryButton.Click += new System.EventHandler(this.RetryButton_Click);
             // 
             // UploadToCloudButton
             // 
@@ -260,7 +261,7 @@
 		private System.Windows.Forms.DataGridView TasksDataGridView;
 		private System.Windows.Forms.Panel ItemDetailsPanel;
 		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
+		private System.Windows.Forms.ToolStripButton RetryButton;
         private System.Windows.Forms.ToolStripButton UploadToCloudButton;
         private System.Windows.Forms.ToolStripButton DownloadFromCloudButton;
 		private System.Windows.Forms.ToolStripSeparator NextRunSeparator;

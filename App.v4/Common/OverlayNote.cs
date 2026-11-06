@@ -80,7 +80,7 @@ namespace x360ce.App
 		sealed class Note : OverlayForm
 		{
 			static readonly Color Panel = Color.FromArgb(28, 28, 30);
-			static readonly Font Face = new Font(SystemFonts.MessageBoxFont.FontFamily, 12f, FontStyle.Bold);
+			static readonly Font Face = new Font(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Font?.FontFamily ?? SystemFonts.MessageBoxFont.FontFamily, 12f, FontStyle.Bold);
 
 			public string Words { get; private set; }
 			Color _mark;

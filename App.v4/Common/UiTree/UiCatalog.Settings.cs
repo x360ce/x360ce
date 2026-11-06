@@ -82,15 +82,6 @@ namespace x360ce.App.UiTree
 				"Undoes every change made to this game.");
 			d["IssuesUserControl.RunStateLabel"] = new Text("Check state",
 				"Whether the checks are running or waiting.");
-
-			d["AboutControl.x360ceLinkLabel"] = new Text(null, "Opens the program's website.");
-			d["AboutControl.GoogleProjectLinkLabel"] = new Text(null, "Opens the source code.");
-			d["AboutControl.AboutJocysLinkLabel"] = new Text(null, "Opens the publisher's website.");
-			d["AboutControl.AboutVirusLinkLabel"] = new Text(null, "Opens a contributor's page.");
-			d["AboutControl.AboutViGEmLinkLabel"] = new Text(null,
-				"Opens the page the virtual controller driver comes from.");
-			d["AboutControl.AboutTocaEditLinkLabel"] = new Text(null,
-				"Opens the site of the person who wrote the first version.");
 		}
 	}
 }

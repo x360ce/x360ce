@@ -123,9 +123,9 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap arrow_right_gray_16x16 {
+        public static System.Drawing.Bitmap Axis_Arrow {
             get {
-                object obj = ResourceManager.GetObject("arrow_right_gray_16x16", resourceCulture);
+                object obj = ResourceManager.GetObject("Axis_Arrow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

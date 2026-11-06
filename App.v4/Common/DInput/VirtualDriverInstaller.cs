@@ -1134,8 +1134,9 @@ namespace x360ce.App.DInput
 		#region HidHide
 
 		// HidHide is the maintained successor to HID Guardian, which its author archived in 2023.
-		// It ships as its own signed installer and carries its own configuration program, so this
-		// application only detects it and opens its tools; it never installs or configures it.
+		// It ships as its own signed setup and carries its own configuration program. This application
+		// runs that setup only when the person asks (HidHideSetupClient), and changes what it hides only
+		// through its command line program when the person asks.
 
 		/// <summary>Root device the HidHide driver installs under.</summary>
 		public const string HidHideHardwareId = "Root\\HidHide";

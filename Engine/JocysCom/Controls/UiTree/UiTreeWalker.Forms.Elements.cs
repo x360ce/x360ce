@@ -113,23 +113,32 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		#region Bar and menu entries
 
 		/// <summary>Describes a menu or tool strip entry and everything under it.</summary>
-		static UiNode Read(ToolStripItem item, bool raw, string path)
+		/// <param name="values">False leaves out what the entries hold, see <see cref="Read(object, bool, string, bool)"/>.</param>
+		static UiNode Read(ToolStripItem item, bool raw, string path, bool values)
+		{
+			var node = Describe(item, path, values);
+			var parent = item as ToolStripDropDownItem;
+			if (parent != null)
+				foreach (ToolStripItem child in parent.DropDownItems)
+					Attach(node, Read(child, raw, ChildPath(path, child.Name), values), raw);
+			return node;
+		}
+
+		/// <summary>An entry by itself: with a path, its path and, when asked, its value; without one, the name the document gives it.</summary>
+		static UiNode Describe(ToolStripItem item, string path, bool values)
 		{
 			var node = Describe(item);
 			if (path != null)
 			{
 				node.Path = path.Length == 0 ? null : path;
-				node.Value = GetValue(item);
+				if (values)
+					node.Value = GetValue(item);
 			}
 			else
 			{
 				// The document names an entry whose words follow the program's state the same on every computer.
 				node.Name = UiText.LiveNameFor(item) ?? node.Name;
 			}
-			var parent = item as ToolStripDropDownItem;
-			if (parent != null)
-				foreach (ToolStripItem child in parent.DropDownItems)
-					Attach(node, Read(child, raw, ChildPath(path, child.Name)), raw);
 			return node;
 		}
 
@@ -279,35 +288,49 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var rows = path.Length == 0 ? RowsSegment : path + "/" + RowsSegment;
 			for (var i = 0; i < grid.Rows.Count; i++)
 			{
-				var row = grid.Rows[i];
-				if (row.IsNewRow)
+				// The empty row a grid offers for typing a new one into is not a row of the data.
+				if (i == grid.NewRowIndex)
 					continue;
-				node.Add(Read(row, rows + "/" + i));
+				// Read shared, by its index: a row asked for by its index becomes a row of its own for the life of the grid.
+				node.Add(Read(grid.Rows.SharedRow(i), i, rows + "/" + i));
 			}
 		}
 
 		/// <summary>One row, named and read from the cells a person can see, with the cells a person acts on under it: its buttons and check boxes.</summary>
 		static UiNode Read(DataGridViewRow row, string path)
 		{
+			return Read(row, row.Index, path);
+		}
+
+		/// <summary>One row, by its index, which a shared row does not know itself. Each cell is formatted once, for the row's name and its value together.</summary>
+		static UiNode Read(DataGridViewRow row, int index, string path)
+		{
+			var texts = TextsOf(row, index);
 			var node = new UiNode
 			{
-				Name = RowName(row),
+				Name = RowName(texts),
 				Role = "Row",
-				Id = row.Index.ToString(),
-				Hidden = !row.Visible,
+				Id = index.ToString(),
+				Hidden = (row.DataGridView.Rows.GetRowState(index) & DataGridViewElementStates.Visible) == 0,
 				Path = path,
-				Value = RowValue(row),
+				Value = RowValue(texts),
 			};
 			foreach (var cell in row.Cells.Cast<DataGridViewCell>().Where(x => (x is DataGridViewButtonCell || x is DataGridViewCheckBoxCell) && IsShown(x)))
-				node.Add(Read(cell, ChildPath(path, cell.OwningColumn.Name)));
+				node.Add(Read(cell, index, ChildPath(path, cell.OwningColumn.Name)));
 			return node;
 		}
 
 		/// <summary>One cell: a button to press, a check box to tick, or a value to read.</summary>
 		static UiNode Read(DataGridViewCell cell, string path)
 		{
+			return Read(cell, cell.RowIndex, path);
+		}
+
+		/// <summary>One cell of the row at an index, as <see cref="Read(DataGridViewCell, string)"/> describes it.</summary>
+		static UiNode Read(DataGridViewCell cell, int rowIndex, string path)
+		{
 			var column = cell.OwningColumn;
-			var text = TextOf(cell);
+			var text = TextOf(cell, rowIndex);
 			var isCheck = cell is DataGridViewCheckBoxCell;
 			return new UiNode
 			{
@@ -325,17 +348,17 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// What the row is called: the cell under a column headed Name, because that is the column a
 		/// person reads a row by, and the first cell with anything in it where there is no such column.
 		/// </summary>
-		static string RowName(DataGridViewRow row)
+		static string RowName(List<KeyValuePair<DataGridViewColumn, string>> texts)
 		{
 			string first = null;
-			foreach (var cell in TextCells(row))
+			foreach (var text in texts)
 			{
-				var column = cell.OwningColumn;
+				var column = text.Key;
 				if (string.Equals(column.HeaderText, "Name", StringComparison.OrdinalIgnoreCase)
 					|| string.Equals(column.Name, "Name", StringComparison.OrdinalIgnoreCase))
-					return TextOf(cell);
+					return text.Value;
 				if (first == null)
-					first = TextOf(cell);
+					first = text.Value;
 			}
 			return first;
 		}
@@ -343,17 +366,27 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// <summary>The row as a person reads it: each column that says something, with its heading.</summary>
 		static string RowValue(DataGridViewRow row)
 		{
+			return RowValue(TextsOf(row, row.Index));
+		}
+
+		static string RowValue(List<KeyValuePair<DataGridViewColumn, string>> texts)
+		{
 			var parts = new List<string>();
-			foreach (var cell in TextCells(row))
+			foreach (var text in texts)
 			{
-				var text = TextOf(cell);
-				if (string.IsNullOrEmpty(text))
+				if (string.IsNullOrEmpty(text.Value))
 					continue;
-				var column = cell.OwningColumn;
+				var column = text.Key;
 				var header = Clean(column.HeaderText) ?? column.Name;
-				parts.Add(header + ": " + text);
+				parts.Add(header + ": " + text.Value);
 			}
 			return string.Join("; ", parts.ToArray());
+		}
+
+		/// <summary>What each cell that carries words says, with its column, in the row at an index: each formatted once.</summary>
+		static List<KeyValuePair<DataGridViewColumn, string>> TextsOf(DataGridViewRow row, int index)
+		{
+			return TextCells(row).Select(x => new KeyValuePair<DataGridViewColumn, string>(x.OwningColumn, TextOf(x, index))).ToList();
 		}
 
 		/// <summary>
@@ -373,7 +406,18 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 
 		static string TextOf(DataGridViewCell cell)
 		{
-			var value = cell.FormattedValue;
+			return TextOf(cell, cell.RowIndex);
+		}
+
+		/// <summary>
+		/// The words a cell shows in the row at an index. The cell of a shared row knows no index of its own, and is formatted
+		/// by the one given, as the grid draws it, which leaves the row shared.
+		/// </summary>
+		static string TextOf(DataGridViewCell cell, int rowIndex)
+		{
+			var value = cell.RowIndex == rowIndex
+				? cell.FormattedValue
+				: cell.GetEditedFormattedValue(rowIndex, DataGridViewDataErrorContexts.Formatting);
 			return value == null ? null : Clean(value.ToString());
 		}
 

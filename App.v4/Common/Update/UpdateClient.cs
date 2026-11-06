@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,6 +21,8 @@ namespace x360ce.App
 	{
 		public int StatusCode;
 		public string ETag;
+		/// <summary>When the server says the file last changed, in UTC; null when it does not say.</summary>
+		public DateTime? LastModified;
 		public byte[] Body;
 	}
 
@@ -108,11 +111,14 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>A release as GitHub's releases list, and its answer for the latest release, give it.</summary>
 		[DataContract]
-		class Release
+		internal class Release
 		{
 			[DataMember(Name = "name")]
 			public string Name { get; set; }
+			[DataMember(Name = "tag_name")]
+			public string Tag { get; set; }
 			[DataMember(Name = "prerelease")]
 			public bool Prerelease { get; set; }
 			[DataMember(Name = "draft")]
@@ -123,8 +129,9 @@ namespace x360ce.App
 			public Asset[] Assets { get; set; }
 		}
 
+		/// <summary>A file a release carries.</summary>
 		[DataContract]
-		class Asset
+		internal class Asset
 		{
 			[DataMember(Name = "name")]
 			public string Name { get; set; }
@@ -257,6 +264,11 @@ namespace x360ce.App
 					StatusCode = (int)response.StatusCode,
 					ETag = response.Headers[HttpResponseHeader.ETag],
 				};
+				// Read from the header itself: HttpWebResponse.LastModified gives the time now when the server says nothing.
+				DateTime lastModified;
+				if (DateTime.TryParse(response.Headers[HttpResponseHeader.LastModified], CultureInfo.InvariantCulture,
+					DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out lastModified))
+					result.LastModified = lastModified;
 				if (result.StatusCode == 200)
 					using (var stream = response.GetResponseStream())
 					using (var memory = new MemoryStream())

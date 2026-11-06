@@ -349,10 +349,11 @@ namespace JocysCom.ClassLibrary.Mcp
 				.LastOrDefault();
 		}
 
+		/// <summary>The version a release tag such as "v0.4.1" carries, or null.</summary>
 		static Version ReleaseVersion(string tag)
 		{
 			Version version;
-			return Version.TryParse(tag.TrimStart('v'), out version) ? version : null;
+			return Helper.TryParseVersion(tag, out version) ? version : null;
 		}
 
 		/// <summary>Downloads the latest release for this computer's processor, and uses it only when it matches the sum the release lists.</summary>

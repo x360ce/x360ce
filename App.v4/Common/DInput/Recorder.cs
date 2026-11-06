@@ -37,7 +37,19 @@ namespace x360ce.App
 
 		DateTime RecordingStarted = new DateTime();
 
-		public void StartRecording(SettingsMapItem map = null)
+		/// <summary>The longest a control recorded after another waits for the device to come to rest before it takes the state it has.</summary>
+		public static TimeSpan RestWait = TimeSpan.FromSeconds(1);
+
+		/// <summary>The device at rest, as it was when Remap All began, or null when this control is recorded on its own.</summary>
+		SourceState restState;
+
+		/// <summary>Starts recording a control.</summary>
+		/// <param name="map">The box the control is recorded into.</param>
+		/// <param name="rest">
+		/// The device at rest, for a control recorded right after another: the state it is compared with is taken once
+		/// the device is back at rest, so the control still held from the one before is not recorded again.
+		/// </param>
+		public void StartRecording(SettingsMapItem map = null, SourceState rest = null)
 		{
 			lock (recordingLock)
 			{
@@ -49,9 +61,12 @@ namespace x360ce.App
 				RecordingStarted = DateTime.Now;
 				Recording = true;
 				recordingSnapshot = null;
-				MainForm.Current.StatusTimerLabel.Text = (CurrentMap?.Code == MapCode.DPad)
-					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
-					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
+				restState = rest;
+				var form = MainForm.Current;
+				if (form != null)
+					form.StatusTimerLabel.Text = (CurrentMap?.Code == MapCode.DPad)
+						 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
+						 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
 			}
 		}
 
@@ -84,6 +99,11 @@ namespace x360ce.App
 					// If recording snapshot was not created yet then...
 					if (recordingSnapshot == null)
 					{
+						// The control recorded just before may still be held, and letting go of it would be recorded
+						// here. The first state is taken once the device is back at rest, or as it is once the wait is
+						// over, for a device that never settles.
+						if (restState != null && !IsAtRest(restState, state) && DateTime.Now - RecordingStarted < RestWait)
+							return false;
 						// Make snapshot out of the first state during recording.
 						// A copy: the input thread fills its states again two polls after it replaces them, and a
 						// snapshot kept for the whole recording would change under it.
@@ -216,7 +236,7 @@ namespace x360ce.App
 			var reading = SettingsConverter.IsHalf(type)
 				? (inverted ? "below the middle" : "above the middle")
 				: (inverted ? "low" : "high");
-			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Invert] in the box's menu.",
+			return string.Format("{0} recorded: pressed while reading {1}. Wrong way round? Choose [Adjust] > [Invert] in the box's menu.",
 				action, reading);
 		}
 
@@ -266,6 +286,37 @@ namespace x360ce.App
 			return list.ToArray();
 		}
 
+		/// <summary>How far an axis or a slider moves before the recorder records it: a tenth of its range.</summary>
+		const int MoveThreshold = ushort.MaxValue / 10;
+
+		/// <summary>
+		/// True when a device is as it was at rest: no button pressed and no hat pushed that was not then, and no axis or
+		/// slider moved from where it was by as much as the recorder records.
+		/// </summary>
+		public static bool IsAtRest(SourceState rest, SourceState state)
+		{
+			if (rest.Buttons.Length == state.Buttons.Length)
+				for (int i = 0; i < state.Buttons.Length; i++)
+					if (state.Buttons[i] && !rest.Buttons[i])
+						return false;
+			if (rest.Povs.Length == state.Povs.Length)
+				for (int i = 0; i < state.Povs.Length; i++)
+					// A centred hat reads 0xFFFF in its low word, which most drivers give as -1.
+					if (state.Povs[i] != rest.Povs[i] && (state.Povs[i] & 0xFFFF) != 0xFFFF)
+						return false;
+			return !Moved(rest.Axis, state.Axis) && !Moved(rest.Sliders, state.Sliders);
+		}
+
+		static bool Moved(int[] rest, int[] values)
+		{
+			if (rest.Length != values.Length)
+				return false;
+			for (int i = 0; i < values.Length; i++)
+				if (Math.Abs(values[i] - rest[i]) > MoveThreshold)
+					return true;
+			return false;
+		}
+
 		static string[] CompareAxisAndSliders(int[] oldValues, int[] newValues, string name, MapCode mappingTo)
 		{
 			// Threshold mark at which action on axis/slider is detected.
@@ -287,7 +338,7 @@ namespace x360ce.App
 				var diff = newValues[i] - oldValue;
 				var prefix = "";
 				// If moved more than 10%.
-				if (Math.Abs(diff) > (ushort.MaxValue / 10))
+				if (Math.Abs(diff) > MoveThreshold)
 				{
 					// If value is negative then add "I" prefix.
 					if (diff < 0)

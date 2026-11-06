@@ -390,12 +390,47 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static void Refresh()
 		{
+			// One change of several lists, such as a saved page, asks once for each list notice; it is built once, after.
+			if (_holding > 0)
+			{
+				_wanted = true;
+				return;
+			}
 			_current = Build(SettingsManager.CurrentGame,
 				SettingsManager.UserSettings.ItemsToArraySynchronized(),
 				SettingsManager.PadSettings.ItemsToArraySynchronized(),
 				SettingsManager.UserDevices.ItemsToArraySynchronized());
 			// A plugin device's MCP server listens on the port of the controller and place it is mapped to.
 			Plugins.PluginMcpDoors.Apply();
+		}
+
+		/// <summary>How many changes are holding the builds; read and written on the interface thread only, as <see cref="Refresh"/> is.</summary>
+		static int _holding;
+
+		/// <summary>A build was asked for while held.</summary>
+		static bool _wanted;
+
+		/// <summary>Makes one change of the settings lists and builds the routing once, after it, however many list notices the change makes.</summary>
+		/// <remarks>
+		/// Saving a page adds its settings, points the row at them, gives the row its completion and removes the settings no row
+		/// uses: four notices, each of which built the whole routing. The engine reads the routing once a pass, so it sees the
+		/// one from before the change until the change is whole. Interface thread only.
+		/// </remarks>
+		public static void BuildOnceAfter(Action change)
+		{
+			_holding++;
+			try
+			{
+				change();
+			}
+			finally
+			{
+				if (--_holding == 0 && _wanted)
+				{
+					_wanted = false;
+					Refresh();
+				}
+			}
 		}
 
 		static bool _watching;

@@ -97,6 +97,8 @@ namespace x360ce.Engine
 			new MapExpressionExample("Aim", "Correct a stick that drifts off centre", "=a1-0.05"),
 			new MapExpressionExample("Aim", "Round the corners of a square stick, for Stick X", "=a1*sqrt(1-a2^2/2)"),
 			new MapExpressionExample("Aim", "Round the corners of a square stick, for Stick Y", "=-a2*sqrt(1-a1^2/2)"),
+			new MapExpressionExample("Aim", "A round dead zone of 20 %, for Stick X", string.Format(RoundDeadZoneFormula, "a1", 1, 2, "0.2", "0.8")),
+			new MapExpressionExample("Aim", "A round dead zone of 20 %, for Stick Y", string.Format(RoundDeadZoneFormula, "-a2", 1, 2, "0.2", "0.8")),
 			new MapExpressionExample("Triggers", "Full throttle before the trigger bottoms out", "=a1*1.5"),
 			new MapExpressionExample("Triggers", "A firmer press before anything happens", "=a1*a1"),
 			new MapExpressionExample("Wheels", "One pedal axis split into the accelerator", "=max(a1,0)"),
@@ -123,6 +125,19 @@ namespace x360ce.Engine
 		/// is what turbo pads are sold at, and fifty milliseconds is still three frames of a game at sixty.
 		/// </remarks>
 		public const string TurboFormula = "={0}*floor(now%100/50)";
+
+		/// <summary>
+		/// A round dead zone, with {0} for the axis the box reads ("a1", or "-a2" for a stick's Y), {1} and {2} for the
+		/// stick's X and Y axis numbers, {3} for the dead zone's size and {4} for one less that size.
+		/// </summary>
+		/// <remarks>
+		/// The stick reads nothing while it is closer to its middle than the size, in any direction, and from there out
+		/// moves from nothing to all the way, so no part of its travel is lost. A dead zone set for each axis on its own
+		/// is a square: along a diagonal it holds the stick still further out than straight ahead, and near an axis it
+		/// pulls the stick onto that axis. Past the circle a corner can reach a little more than all the way, which a
+		/// stick takes as all the way.
+		/// </remarks>
+		public const string RoundDeadZoneFormula = "={0}*(1-{3}/max(sqrt(a{1}^2+a{2}^2),{3}))/{4}";
 
 		/// <summary>
 		/// How the ordinary operators do the work of and, or and not, for sources that are 0 or 1.

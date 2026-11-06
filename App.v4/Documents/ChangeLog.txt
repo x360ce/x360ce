@@ -1,4 +1,53 @@
-﻿## [4.28.16.0] - 2026-10-31
+﻿## [4.29.52.0] - 2026-11-05
+
+- Fixed: Bug report recordings said a pad's own centring was off when x360ce had left it alone.
+- Fixed: Bug report recordings read back another controller's XInput place when a real controller held an earlier one.
+- Fixed: Pictures on buttons line up with their text, also when greyed out.
+- Fixed: The Cloud page waits longer after each failed send and stops after 4 tries.
+- Fixed: Boxes on the Options page and the Hardware window no longer touch.
+- Fixed: Devices shows the Hide box only for devices that can be hidden.
+- Fixed: A change of Windows settings no longer pauses controllers for a second.
+- Fixed: Updating x360ce no longer freezes the window or leaves files behind.
+- Fixed: A window opened at a saved place is tall enough for its page.
+- Changed: Vibration updates only the motor that changed, as 4.17 did, instead of starting both again (Issue #1633, KhaledElSaiad).
+- Changed: The Left Thumb and Right Thumb pages are now Left Stick and Right Stick.
+- Changed: [Invert], [Recentre] and [Turbo] moved under [Adjust] in the mapping menu.
+- Changed: x360ce uses the Selawik and Inconsolata fonts, built in.
+- Changed: Sliders have their name on the left and no tick marks.
+- Changed: The General page shows each control's value under its name.
+- Changed: The Buttons page has new button pictures and arrows, sharp at any screen scale.
+- Changed: The About page opens on a Program tab with the links, the authors and the credits.
+- Changed: The About page has a smaller heading, so its tabs start higher.
+- Changed: The online database is called at its new address.
+- Changed: [Theme] moved to Options > Appearance.
+- Changed: [Developer Tools...] moved into Options > General > Developing.
+- Changed: The Controller page's General tab spaces its boxes like the other pages.
+- Changed: The main window first opens tall enough for the whole Controller page when the screen has room.
+- Changed: Lists stand edge to edge, with roomier titles and first column.
+- Changed: Remap All moves on as soon as the controller is at rest.
+- Changed: The Cloud queue sleeps while empty and sends when the network returns.
+- Changed: The AI door reads controls faster.
+- Changed: Switching windows no longer opens every running program.
+- Changed: A change on one controller page no longer rebuilds the other three.
+- Changed: x360ce no longer wakes twenty times a second after it has started.
+- Changed: Controllers work at once at start-up, while the issue check still runs.
+- Changed: The interface uses Segoe UI at Windows' text size, and Selawik where Segoe UI is missing.
+- Changed: Resizing the window and switching the theme are faster.
+- Added: Bug report recordings name the force feedback driver, its motors, and the force calls made each second.
+- Added: Bug report recordings show where DirectInput and Raw Input readings part, and what games read back.
+- Added: Bug report recordings say why a device was let go of, and which other controller programs run.
+- Added: [Adjust] > [Round Dead Zone] gives a stick one round dead zone.
+- Added: Auto Preset maps controllers that SDL's controller database knows.
+- Added: Copy Preset and Paste Preset also work in SDL's format.
+- Added: An SDL page on each controller, and an SDL tab in Load Preset.
+- Added: Options > HID Hide installs and updates HID Hide.
+- Added: The HID Hide page shows its help.
+- Added: [Retry] on the Cloud page sends failed tasks again.
+- Added: Options > Appearance chooses the program's font.
+- Added: Options > Internet sets where the SDL controller database is downloaded from.
+- Added: Options > Appearance > Size sets the interface font size.
+
+## [4.28.16.0] - 2026-10-31
 
 - Fixed: x360ce could stop with an error as it closed (Issue #1650, Gron21).
 - Fixed: Formulas that switch quickly with now stuttered after a day of running.

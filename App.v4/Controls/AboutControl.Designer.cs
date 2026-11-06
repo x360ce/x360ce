@@ -30,28 +30,21 @@
 		{
 			this.ChangeLogTextBox = new System.Windows.Forms.TextBox();
 			this.AboutDescriptionLabel = new System.Windows.Forms.Label();
-			this.AboutWikiLabel = new System.Windows.Forms.Label();
-			this.AboutTocaEditLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.AboutTocaLabel = new System.Windows.Forms.Label();
-			this.AboutJocysLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.AboutVirusLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.AboutJocysLabel = new System.Windows.Forms.Label();
-			this.AboutVirusLabel = new System.Windows.Forms.Label();
 			this.AboutProductLabel = new System.Windows.Forms.Label();
 			this.ProductPictureBox = new System.Windows.Forms.PictureBox();
-			this.GoogleProjectLabel = new System.Windows.Forms.Label();
-			this.GoogleProjectLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.AboutTabControl = new System.Windows.Forms.TabControl();
+			this.ProgramTabPage = new System.Windows.Forms.TabPage();
+			this.ProgramRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.ChangesTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTextBox = new System.Windows.Forms.TextBox();
-			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.x360ceLabel = new System.Windows.Forms.Label();
-			this.x360ceLinkLabel = new System.Windows.Forms.LinkLabel();
+			this.MainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).BeginInit();
 			this.AboutTabControl.SuspendLayout();
+			this.ProgramTabPage.SuspendLayout();
 			this.ChangesTabPage.SuspendLayout();
 			this.LicenseTabPage.SuspendLayout();
+			this.MainTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ChangeLogTextBox
@@ -68,86 +61,18 @@
 			// AboutDescriptionLabel
 			// 
 			this.AboutDescriptionLabel.AutoSize = true;
-			this.AboutDescriptionLabel.Location = new System.Drawing.Point(148, 37);
+			this.AboutDescriptionLabel.Location = new System.Drawing.Point(43, 16);
 			this.AboutDescriptionLabel.Name = "AboutDescriptionLabel";
 			this.AboutDescriptionLabel.Size = new System.Drawing.Size(328, 13);
 			this.AboutDescriptionLabel.TabIndex = 0;
 			this.AboutDescriptionLabel.Text = "Settings editor and test application for XBOX 360 Controller Emulator";
 			// 
-			// AboutWikiLabel
-			// 
-			this.AboutWikiLabel.AutoSize = true;
-			this.AboutWikiLabel.Location = new System.Drawing.Point(148, 109);
-			this.AboutWikiLabel.Name = "AboutWikiLabel";
-			this.AboutWikiLabel.Size = new System.Drawing.Size(39, 13);
-			this.AboutWikiLabel.TabIndex = 0;
-			this.AboutWikiLabel.Text = "Nefarius";
-			// 
-			// AboutTocaEditLinkLabel
-			// 
-			this.AboutTocaEditLinkLabel.AutoSize = true;
-			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(433, 109);
-			this.AboutTocaEditLinkLabel.Name = "AboutTocaEditLinkLabel";
-			this.AboutTocaEditLinkLabel.Size = new System.Drawing.Size(126, 13);
-			this.AboutTocaEditLinkLabel.TabIndex = 0;
-			this.AboutTocaEditLinkLabel.TabStop = true;
-			this.AboutTocaEditLinkLabel.Text = "http://www.tocaedit.com";
-			this.AboutTocaEditLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
-			// AboutTocaLabel
-			// 
-			this.AboutTocaLabel.AutoSize = true;
-			this.AboutTocaLabel.Location = new System.Drawing.Point(351, 109);
-			this.AboutTocaLabel.Name = "AboutTocaLabel";
-			this.AboutTocaLabel.Size = new System.Drawing.Size(62, 13);
-			this.AboutTocaLabel.TabIndex = 0;
-			this.AboutTocaLabel.Text = "ToCA EDIT";
-			// 
-			// AboutJocysLinkLabel
-			// 
-			this.AboutJocysLinkLabel.AutoSize = true;
-			this.AboutJocysLinkLabel.Location = new System.Drawing.Point(211, 87);
-			this.AboutJocysLinkLabel.Name = "AboutJocysLinkLabel";
-			this.AboutJocysLinkLabel.Size = new System.Drawing.Size(117, 13);
-			this.AboutJocysLinkLabel.TabIndex = 0;
-			this.AboutJocysLinkLabel.TabStop = true;
-			this.AboutJocysLinkLabel.Text = "https://www.jocys.com";
-			this.AboutJocysLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
-			// AboutVirusLinkLabel
-			// 
-			this.AboutVirusLinkLabel.AutoSize = true;
-			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(433, 87);
-			this.AboutVirusLinkLabel.Name = "AboutVirusLinkLabel";
-			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(166, 13);
-			this.AboutVirusLinkLabel.TabIndex = 0;
-			this.AboutVirusLinkLabel.TabStop = true;
-			this.AboutVirusLinkLabel.Text = "https://github.com/Nucleoprotein";
-			this.AboutVirusLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
-			// AboutJocysLabel
-			// 
-			this.AboutJocysLabel.AutoSize = true;
-			this.AboutJocysLabel.Location = new System.Drawing.Point(148, 87);
-			this.AboutJocysLabel.Name = "AboutJocysLabel";
-			this.AboutJocysLabel.Size = new System.Drawing.Size(57, 13);
-			this.AboutJocysLabel.TabIndex = 0;
-			this.AboutJocysLabel.Text = "Jocys.com";
-			// 
-			// AboutVirusLabel
-			// 
-			this.AboutVirusLabel.AutoSize = true;
-			this.AboutVirusLabel.Location = new System.Drawing.Point(351, 87);
-			this.AboutVirusLabel.Name = "AboutVirusLabel";
-			this.AboutVirusLabel.Size = new System.Drawing.Size(73, 13);
-			this.AboutVirusLabel.TabIndex = 0;
-			this.AboutVirusLabel.Text = "Nucleoprotein";
-			// 
 			// AboutProductLabel
 			// 
 			this.AboutProductLabel.AutoSize = true;
 			this.AboutProductLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.AboutProductLabel.Location = new System.Drawing.Point(148, 16);
+			this.AboutProductLabel.Location = new System.Drawing.Point(43, 3);
+			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
 			this.AboutProductLabel.Name = "AboutProductLabel";
 			this.AboutProductLabel.Size = new System.Drawing.Size(197, 13);
 			this.AboutProductLabel.TabIndex = 0;
@@ -157,43 +82,48 @@
 			// 
 			this.ProductPictureBox.Image = global::x360ce.App.Properties.Resources.app_128x128;
 			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
+			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
 			this.ProductPictureBox.Name = "ProductPictureBox";
-			this.ProductPictureBox.Size = new System.Drawing.Size(128, 128);
+			this.MainTableLayoutPanel.SetRowSpan(this.ProductPictureBox, 2);
+			this.ProductPictureBox.Size = new System.Drawing.Size(34, 26);
+			this.ProductPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.ProductPictureBox.TabIndex = 0;
 			this.ProductPictureBox.TabStop = false;
 			// 
-			// GoogleProjectLabel
-			// 
-			this.GoogleProjectLabel.AutoSize = true;
-			this.GoogleProjectLabel.Location = new System.Drawing.Point(351, 66);
-			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
-			this.GoogleProjectLabel.Size = new System.Drawing.Size(76, 13);
-			this.GoogleProjectLabel.TabIndex = 0;
-			this.GoogleProjectLabel.Text = "GitHub Project";
-			// 
-			// GoogleProjectLinkLabel
-			// 
-			this.GoogleProjectLinkLabel.AutoSize = true;
-			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(433, 66);
-			this.GoogleProjectLinkLabel.Name = "GoogleProjectLinkLabel";
-			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(175, 13);
-			this.GoogleProjectLinkLabel.TabIndex = 0;
-			this.GoogleProjectLinkLabel.TabStop = true;
-			this.GoogleProjectLinkLabel.Text = "https://github.com/x360ce/x360ce";
-			this.GoogleProjectLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
 			// AboutTabControl
 			// 
-			this.AboutTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.MainTableLayoutPanel.SetColumnSpan(this.AboutTabControl, 2);
+			this.AboutTabControl.Controls.Add(this.ProgramTabPage);
 			this.AboutTabControl.Controls.Add(this.ChangesTabPage);
 			this.AboutTabControl.Controls.Add(this.LicenseTabPage);
-			this.AboutTabControl.Location = new System.Drawing.Point(3, 137);
+			this.AboutTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AboutTabControl.Location = new System.Drawing.Point(3, 32);
 			this.AboutTabControl.Name = "AboutTabControl";
 			this.AboutTabControl.SelectedIndex = 0;
-			this.AboutTabControl.Size = new System.Drawing.Size(613, 356);
+			this.AboutTabControl.Size = new System.Drawing.Size(613, 461);
 			this.AboutTabControl.TabIndex = 1;
+			// 
+			// ProgramTabPage
+			// 
+			this.ProgramTabPage.Controls.Add(this.ProgramRichTextBox);
+			this.ProgramTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ProgramTabPage.Name = "ProgramTabPage";
+			this.ProgramTabPage.Size = new System.Drawing.Size(605, 330);
+			this.ProgramTabPage.TabIndex = 0;
+			this.ProgramTabPage.Text = "Program";
+			this.ProgramTabPage.UseVisualStyleBackColor = true;
+			// 
+			// ProgramRichTextBox
+			// 
+			this.ProgramRichTextBox.BackColor = System.Drawing.SystemColors.Window;
+			this.ProgramRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.ProgramRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramRichTextBox.Location = new System.Drawing.Point(0, 0);
+			this.ProgramRichTextBox.Name = "ProgramRichTextBox";
+			this.ProgramRichTextBox.ReadOnly = true;
+			this.ProgramRichTextBox.Size = new System.Drawing.Size(605, 330);
+			this.ProgramRichTextBox.TabIndex = 0;
+			this.ProgramRichTextBox.Text = "";
 			// 
 			// ChangesTabPage
 			// 
@@ -201,7 +131,7 @@
 			this.ChangesTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ChangesTabPage.Name = "ChangesTabPage";
 			this.ChangesTabPage.Size = new System.Drawing.Size(605, 330);
-			this.ChangesTabPage.TabIndex = 0;
+			this.ChangesTabPage.TabIndex = 1;
 			this.ChangesTabPage.Text = "Changes";
 			this.ChangesTabPage.UseVisualStyleBackColor = true;
 			// 
@@ -211,7 +141,7 @@
 			this.LicenseTabPage.Location = new System.Drawing.Point(4, 22);
 			this.LicenseTabPage.Name = "LicenseTabPage";
 			this.LicenseTabPage.Size = new System.Drawing.Size(605, 330);
-			this.LicenseTabPage.TabIndex = 1;
+			this.LicenseTabPage.TabIndex = 2;
 			this.LicenseTabPage.Text = "License";
 			this.LicenseTabPage.UseVisualStyleBackColor = true;
 			// 
@@ -226,68 +156,43 @@
 			this.LicenseTextBox.Size = new System.Drawing.Size(605, 330);
 			this.LicenseTextBox.TabIndex = 1;
 			// 
-			// AboutViGEmLinkLabel
+			// MainTableLayoutPanel
 			// 
-			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(211, 109);
-			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
-			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
-			this.AboutViGEmLinkLabel.TabIndex = 0;
-			this.AboutViGEmLinkLabel.TabStop = true;
-			this.AboutViGEmLinkLabel.Text = "https://github.com/nefarius";
-			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
-			// 
-			// x360ceLabel
-			// 
-			this.x360ceLabel.AutoSize = true;
-			this.x360ceLabel.Location = new System.Drawing.Point(148, 66);
-			this.x360ceLabel.Name = "x360ceLabel";
-			this.x360ceLabel.Size = new System.Drawing.Size(46, 13);
-			this.x360ceLabel.TabIndex = 0;
-			this.x360ceLabel.Text = "X360CE";
-			// 
-			// x360ceLinkLabel
-			// 
-			this.x360ceLinkLabel.AutoSize = true;
-			this.x360ceLinkLabel.Location = new System.Drawing.Point(211, 66);
-			this.x360ceLinkLabel.Name = "x360ceLinkLabel";
-			this.x360ceLinkLabel.Size = new System.Drawing.Size(128, 13);
-			this.x360ceLinkLabel.TabIndex = 0;
-			this.x360ceLinkLabel.TabStop = true;
-			this.x360ceLinkLabel.Text = "https://www.x360ce.com";
-			this.x360ceLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			this.MainTableLayoutPanel.ColumnCount = 2;
+			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainTableLayoutPanel.Controls.Add(this.ProductPictureBox, 0, 0);
+			this.MainTableLayoutPanel.Controls.Add(this.AboutProductLabel, 1, 0);
+			this.MainTableLayoutPanel.Controls.Add(this.AboutDescriptionLabel, 1, 1);
+			this.MainTableLayoutPanel.Controls.Add(this.AboutTabControl, 0, 2);
+			this.MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
+			this.MainTableLayoutPanel.RowCount = 3;
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainTableLayoutPanel.Size = new System.Drawing.Size(619, 496);
+			this.MainTableLayoutPanel.TabIndex = 0;
 			// 
 			// AboutControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.AboutTabControl);
-			this.Controls.Add(this.AboutDescriptionLabel);
-			this.Controls.Add(this.x360ceLinkLabel);
-			this.Controls.Add(this.x360ceLabel);
-			this.Controls.Add(this.AboutViGEmLinkLabel);
-			this.Controls.Add(this.AboutWikiLabel);
-			this.Controls.Add(this.AboutTocaEditLinkLabel);
-			this.Controls.Add(this.AboutTocaLabel);
-			this.Controls.Add(this.GoogleProjectLinkLabel);
-			this.Controls.Add(this.AboutJocysLinkLabel);
-			this.Controls.Add(this.AboutVirusLinkLabel);
-			this.Controls.Add(this.GoogleProjectLabel);
-			this.Controls.Add(this.AboutJocysLabel);
-			this.Controls.Add(this.AboutVirusLabel);
-			this.Controls.Add(this.AboutProductLabel);
-			this.Controls.Add(this.ProductPictureBox);
+			this.Controls.Add(this.MainTableLayoutPanel);
 			this.Name = "AboutControl";
 			this.Size = new System.Drawing.Size(619, 496);
 			this.Load += new System.EventHandler(this.AboutControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).EndInit();
 			this.AboutTabControl.ResumeLayout(false);
+			this.ProgramTabPage.ResumeLayout(false);
 			this.ChangesTabPage.ResumeLayout(false);
 			this.ChangesTabPage.PerformLayout();
 			this.LicenseTabPage.ResumeLayout(false);
 			this.LicenseTabPage.PerformLayout();
+			this.MainTableLayoutPanel.ResumeLayout(false);
+			this.MainTableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 
@@ -295,23 +200,14 @@
 
 		System.Windows.Forms.TextBox ChangeLogTextBox;
 		System.Windows.Forms.Label AboutDescriptionLabel;
-		System.Windows.Forms.Label AboutWikiLabel;
-		System.Windows.Forms.LinkLabel AboutTocaEditLinkLabel;
-		System.Windows.Forms.Label AboutTocaLabel;
-		System.Windows.Forms.LinkLabel AboutJocysLinkLabel;
-		System.Windows.Forms.LinkLabel AboutVirusLinkLabel;
-		System.Windows.Forms.Label AboutJocysLabel;
-		System.Windows.Forms.Label AboutVirusLabel;
 		System.Windows.Forms.Label AboutProductLabel;
 		System.Windows.Forms.PictureBox ProductPictureBox;
-		System.Windows.Forms.Label GoogleProjectLabel;
-		System.Windows.Forms.LinkLabel GoogleProjectLinkLabel;
 		private System.Windows.Forms.TabControl AboutTabControl;
+		private System.Windows.Forms.TabPage ProgramTabPage;
+		private System.Windows.Forms.RichTextBox ProgramRichTextBox;
 		private System.Windows.Forms.TabPage ChangesTabPage;
 		private System.Windows.Forms.TabPage LicenseTabPage;
 		private System.Windows.Forms.TextBox LicenseTextBox;
-		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
-		private System.Windows.Forms.Label x360ceLabel;
-		private System.Windows.Forms.LinkLabel x360ceLinkLabel;
+		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 	}
 }

@@ -19,14 +19,14 @@ namespace x360ce.Engine
 	/// </remarks>
 	public class RtfStyle
 	{
-		/// <summary>Body font.</summary>
-		public string FontName = "Segoe UI";
+		/// <summary>Body font: the theme's interface font, or Segoe UI while it has none.</summary>
+		public string FontName = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Font?.Name ?? "Segoe UI";
 
-		/// <summary>Font for code, where the letters have to line up.</summary>
-		public string CodeFontName = "Consolas";
+		/// <summary>Font for code, where the letters have to line up: the theme's code font, or Consolas while it has none.</summary>
+		public string CodeFontName = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.CodeFamily?.Name ?? "Consolas";
 
-		/// <summary>Body size in points.</summary>
-		public float FontSize = 9f;
+		/// <summary>Body size in points: the theme's interface font's, or 9 while it has none.</summary>
+		public float FontSize = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Font?.SizeInPoints ?? 9f;
 
 		/// <summary>Colour of a literal value: a file name, a formula, a setting.</summary>
 		public Color Literal = new Color(0, 176, 80);

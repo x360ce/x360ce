@@ -43,21 +43,22 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>Get secure user command.</summary>
+		/// <remarks>Applied again to a message sent again, it replaces the values it set before.</remarks>
 		public static void ApplySecurity(CloudMessage message, string localRsaPublicKey = null, string remoteRsaPublicKey = null, string username = null, string password = null)
 		{
 			// Add local RSA public key which will be used by remote side to encrypt reply password.
 			if (!string.IsNullOrEmpty(localRsaPublicKey))
-				message.Values.Add(CloudKey.RsaPublicKey, localRsaPublicKey, false, true);
+				message.Values.Add(CloudKey.RsaPublicKey, localRsaPublicKey);
 			// Create and add random pasword and encrypt with remote RSA public key.
 			// Password will be used to encrypt sensitive data with AES-256 symetric encryption.
 			if (!string.IsNullOrEmpty(remoteRsaPublicKey))
 				message.Values.UpsertRandomPassword(remoteRsaPublicKey);
 			// Add encrypted user name.
 			if (!string.IsNullOrEmpty(username))
-				message.Values.Add(CloudKey.Username, username, true, true);
+				message.Values.Add(CloudKey.Username, username, true);
 			// Add encrypted x360ce site password.
 			if (!string.IsNullOrEmpty(password))
-				message.Values.Add(CloudKey.Password, password, true, true);
+				message.Values.Add(CloudKey.Password, password, true);
 		}
 
 

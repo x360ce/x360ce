@@ -12,9 +12,10 @@ the shapes are G2's hand-tuned pixels and every icon softens by the same measure
 Each icon is written at the size the program asks for (16 pixels; the help bulb 24) and at 1.5 and 2
 times that: light under Resources/Images/{shared,v3,v4}/icons, dark under icons/dark, with the same
 file names. The light icon at the asked size is the one Properties/Resources.resx and the designer
-know. Every other size and every dark icon is listed in Properties/Icons.resx of each program, which
-this script writes, and the program picks from that list by screen scale and theme. The list also
-holds the versions of the controller glyphs that build_controller.py writes, so run that one first.
+know. Every other size and every dark icon is listed in Properties/Icons.resx of each program whose
+Resources.resx names the icon, which this script writes, and the program picks from that list by screen
+scale and theme. The list also holds the versions of the controller glyphs that build_controller.py
+writes and of the Buttons page pictures that build_buttons.py writes, so run those first.
 
 The controls of the JocysCom class library (the issues list, the hardware list and the message box)
 take their icons from the library itself. Those are written the same way under Controls/Themes/Images
@@ -291,7 +292,8 @@ def write_icons_resx(repo, app):
     header = resources[:resources.index("<data name=", resources.index("</xsd:schema>"))].rstrip(" ")
     entries = []
     for key, (folder, _) in ICONS.items():
-        if folder not in ("shared", app):
+        # A shared icon is listed for the programs whose Resources.resx names it.
+        if folder not in ("shared", app) or f'<data name="{key}"' not in resources:
             continue
         for i, size in enumerate(sizes_of(key)):
             name = file_name(key, size)[:-4]
@@ -306,19 +308,21 @@ def write_icons_resx(repo, app):
 
 
 def glyph_entries(repo, resources):
-    """The versions build_controller.py writes of the controller glyphs Resources.resx names: the larger
-    sizes beside each glyph, and the dark theme's glyphs in xbox/dark."""
-    xbox = repo / "Resources" / "Images" / "shared" / "xbox"
+    """The versions of the pictures Resources.resx names from an xbox folder: the controller glyphs that
+    build_controller.py writes in Resources/Images/shared/xbox, and the Buttons page pictures that
+    build_buttons.py writes in Resources/Images/v4/xbox. Those are the larger sizes beside each picture, and
+    the dark theme's pictures in xbox/dark."""
     entries = []
-    pattern = r'<data name="(\w+)" type="System\.Resources\.ResXFileRef[^>]*>\s*<value>[^;<]*\\xbox\\(\w+)\.png;'
-    for name, stem in re.findall(pattern, resources):
+    pattern = r'<data name="(\w+)" type="System\.Resources\.ResXFileRef[^>]*>\s*<value>[^;<]*\\Images\\(\w+)\\xbox\\(\w+)\.png;'
+    for name, images, stem in re.findall(pattern, resources):
+        xbox = repo / "Resources" / "Images" / images / "xbox"
         for folder, suffix in ((xbox, ""), (xbox / "dark", "_dark")):
             for path in sorted(folder.glob(f"{stem}*.png")):
                 size = path.stem[len(stem):]
-                # The glyph itself is the one Resources.resx names; other files only share the start of its name.
+                # The picture itself is the one Resources.resx names; other files only share the start of its name.
                 if (size == "" and suffix == "") or not re.fullmatch(r"(_\d+x\d+)?", size):
                     continue
-                file = "..\\..\\Resources\\Images\\shared\\xbox\\" + ("dark\\" if suffix else "") + path.name
+                file = f"..\\..\\Resources\\Images\\{images}\\xbox\\" + ("dark\\" if suffix else "") + path.name
                 entries.append((name + size + suffix, file))
     return entries
 

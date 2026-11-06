@@ -23,6 +23,8 @@ namespace x360ce.App
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
 			TrayContextMenuStrip.Opening += TrayContextMenuStrip_Opening;
+			// The default item, in bold, in the menu's own font.
+			OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font(TrayContextMenuStrip.Font, System.Drawing.FontStyle.Bold);
 			// Run event once to apply settings.
 			MainForm_Resize(this, new EventArgs());
 		}

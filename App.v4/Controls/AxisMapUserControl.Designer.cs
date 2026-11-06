@@ -34,6 +34,7 @@
 			this.DeadZoneTextBox = new System.Windows.Forms.TextBox();
 			this.DeadZoneNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.SensitivityLabel = new System.Windows.Forms.Label();
+			this.SensitivityNoteLabel = new System.Windows.Forms.Label();
 			this.SensitivityTextBox = new System.Windows.Forms.TextBox();
 			this.SensitivityFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.SensitivityCheckBox = new System.Windows.Forms.CheckBox();
@@ -65,7 +66,9 @@
 			//
 			// MainTableLayoutPanel
 			//
-			this.MainTableLayoutPanel.ColumnCount = 5;
+			this.MainTableLayoutPanel.ColumnCount = 7;
+			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -73,32 +76,31 @@
 			this.MainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.MainTableLayoutPanel.Controls.Add(this.ValuesFlowLayoutPanel, 0, 0);
 			this.MainTableLayoutPanel.Controls.Add(this.MainPictureBox, 0, 1);
-			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneLabel, 1, 0);
-			this.MainTableLayoutPanel.Controls.Add(this.PresetComboBox, 2, 0);
-			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneTrackBar, 1, 1);
-			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneTextBox, 2, 1);
-			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneNumericUpDown, 3, 1);
+			this.MainTableLayoutPanel.Controls.Add(this.PresetComboBox, 3, 0);
+			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneLabel, 1, 1);
+			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneTrackBar, 2, 1);
+			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneTextBox, 3, 1);
+			this.MainTableLayoutPanel.Controls.Add(this.AntiDeadZoneNumericUpDown, 4, 1);
 			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneLabel, 1, 2);
-			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneTrackBar, 1, 3);
-			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneTextBox, 2, 3);
-			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneNumericUpDown, 3, 3);
-			this.MainTableLayoutPanel.Controls.Add(this.SensitivityLabel, 1, 4);
-			this.MainTableLayoutPanel.Controls.Add(this.SensitivityTrackBar, 1, 5);
-			this.MainTableLayoutPanel.Controls.Add(this.SensitivityTextBox, 2, 5);
-			this.MainTableLayoutPanel.Controls.Add(this.SensitivityFlowLayoutPanel, 3, 5);
+			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneTrackBar, 2, 2);
+			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneTextBox, 3, 2);
+			this.MainTableLayoutPanel.Controls.Add(this.DeadZoneNumericUpDown, 4, 2);
+			this.MainTableLayoutPanel.Controls.Add(this.SensitivityLabel, 1, 3);
+			this.MainTableLayoutPanel.Controls.Add(this.SensitivityTrackBar, 2, 3);
+			this.MainTableLayoutPanel.Controls.Add(this.SensitivityTextBox, 3, 3);
+			this.MainTableLayoutPanel.Controls.Add(this.SensitivityFlowLayoutPanel, 4, 3);
+			this.MainTableLayoutPanel.Controls.Add(this.SensitivityNoteLabel, 5, 3);
 			this.MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTableLayoutPanel.Location = new System.Drawing.Point(3, 16);
 			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-			this.MainTableLayoutPanel.RowCount = 7;
-			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
-			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.MainTableLayoutPanel.RowCount = 5;
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.MainTableLayoutPanel.SetColumnSpan(this.PresetComboBox, 2);
-			this.MainTableLayoutPanel.SetRowSpan(this.MainPictureBox, 6);
+			this.MainTableLayoutPanel.SetRowSpan(this.MainPictureBox, 4);
 			this.MainTableLayoutPanel.Size = new System.Drawing.Size(572, 174);
 			this.MainTableLayoutPanel.TabIndex = 0;
 			//
@@ -168,7 +170,7 @@
 			//
 			// AntiDeadZoneLabel
 			//
-			this.AntiDeadZoneLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.AntiDeadZoneLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AntiDeadZoneLabel.AutoSize = true;
 			this.AntiDeadZoneLabel.Name = "AntiDeadZoneLabel";
 			this.AntiDeadZoneLabel.TabIndex = 16;
@@ -181,7 +183,7 @@
 			this.AntiDeadZoneTrackBar.Name = "AntiDeadZoneTrackBar";
 			this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.AntiDeadZoneTrackBar.TabIndex = 15;
-			this.AntiDeadZoneTrackBar.TickFrequency = 2;
+			this.AntiDeadZoneTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			//
 			// AntiDeadZoneTextBox
 			//
@@ -209,7 +211,7 @@
 			//
 			// DeadZoneLabel
 			//
-			this.DeadZoneLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.DeadZoneLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeadZoneLabel.AutoSize = true;
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
 			this.DeadZoneLabel.TabIndex = 13;
@@ -222,7 +224,7 @@
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.DeadZoneTrackBar.TabIndex = 15;
-			this.DeadZoneTrackBar.TickFrequency = 2;
+			this.DeadZoneTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			//
 			// DeadZoneTextBox
 			//
@@ -250,12 +252,19 @@
 			//
 			// SensitivityLabel
 			//
-			this.SensitivityLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.SensitivityLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SensitivityLabel.AutoSize = true;
-			this.MainTableLayoutPanel.SetColumnSpan(this.SensitivityLabel, 3);
 			this.SensitivityLabel.Name = "SensitivityLabel";
 			this.SensitivityLabel.TabIndex = 7;
 			this.SensitivityLabel.Text = "Sensitivity:";
+			//
+			// SensitivityNoteLabel
+			//
+			this.SensitivityNoteLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.SensitivityNoteLabel.AutoSize = true;
+			this.SensitivityNoteLabel.Name = "SensitivityNoteLabel";
+			this.SensitivityNoteLabel.TabIndex = 21;
+			this.SensitivityNoteLabel.Text = "Make less sensitive in the center";
 			//
 			// SensitivityTrackBar
 			//
@@ -264,7 +273,7 @@
 			this.SensitivityTrackBar.Name = "SensitivityTrackBar";
 			this.SensitivityTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.SensitivityTrackBar.TabIndex = 9;
-			this.SensitivityTrackBar.TickFrequency = 2;
+			this.SensitivityTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			this.SensitivityTrackBar.ValueChanged += new System.EventHandler(this.SensitivityTrackBar_ValueChanged);
 			//
 			// SensitivityTextBox
@@ -352,6 +361,7 @@
 		private System.Windows.Forms.Label XInputLabel;
 		private System.Windows.Forms.TextBox SensitivityTextBox;
 		private System.Windows.Forms.Label SensitivityLabel;
+		private System.Windows.Forms.Label SensitivityNoteLabel;
 		private System.Windows.Forms.Label DeadZoneLabel;
 		public System.Windows.Forms.TrackBar DeadZoneTrackBar;
 		private System.Windows.Forms.TextBox DeadZoneTextBox;

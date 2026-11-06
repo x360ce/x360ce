@@ -29,7 +29,7 @@ If you want `HELP` and have questions about installation or configuration, pleas
 
 ## Installing ViGEmBus Virtual Gamepad Emulation Driver
 
-`[Issues]` tab in `X360CE` will start blinking if `ViGEmBus Driver` is missing.
+The `[Issues]` tab in `X360CE` lists an issue when the `ViGEmBus Driver` is missing.
 
 1. Select `[Issues]` tab and click on `[Install]` button to install `ViGEmBus Driver`.
 
@@ -37,7 +37,7 @@ If you want `HELP` and have questions about installation or configuration, pleas
 
 1. Connect your `DirectInput Device (controller)` to computer.
 2. Select `[Controller 1]` tab and click on `[Add...]` button.
-3. Select `controller` you want to add-map and click on `[OK]` button.
+3. Select the `controller` you want to add and map, and click the `[Add Selected Device]` button.
 4. Enable `controller` by clicking on `[Enable # Mapped Device]` inside `[Controller 1]` tab.
 5. The `[Enabled]` box on a device's row in the list leaves the device out of the game without removing it. The box in front of a device on the `[Devices]` page leaves it out of every game, and greys its rows' `[Enabled]` box. An unticked device is not read, not held and sent no force feedback, so another program can use it. A Pass through that names the XInput place shown for it sends it nothing either. x360ce no longer hides it or asks for it to be hidden. A device you hid in HID Hide stays hidden until you untick it there. The tab's pages no longer show it live, and a centering spring `[Auto]` run on it stops.
 
@@ -80,13 +80,15 @@ A device can drive up to four emulated controllers at once.
 2. Click on `[drop-down]` (drop-down menu with options will appear).
 3. Map `button` or `axis` by selecting `[Record]` option and pressing `button` or moving `axis` on your `controller`.
 
-   A switch, stick or pedal recorded onto a button presses it where you moved it to, and the status bar says which way that is. If the button is held the wrong way round, click the box and choose `[Invert]`. How far the control must move is the button's press point on the `[Buttons]` tab; on the way back the button lets go a little before that point, so a switch that wobbles does not flicker.
+   A switch, stick or pedal recorded onto a button presses it where you moved it to, and the status bar says which way that is. If the button is held the wrong way round, click the box and choose `[Adjust]` → `[Invert]`. How far the control must move is the button's press point on the `[Buttons]` tab; on the way back the button lets go a little before that point, so a switch that wobbles does not flicker.
 
-   If a stick rests off centre, leave it at rest, click its box and choose `[Recentre]`. Where it rests now then reads as the middle; the box shows the formula that does it, such as `=a1-0.05`.
+   If a stick rests off centre, leave it at rest, click its box and choose `[Adjust]` → `[Recentre]`. Where it rests now then reads as the middle; the box shows the formula that does it, such as `=a1-0.05`.
 4. Or use the `[Input]` column on the left: it lights every button, axis, slider and POV of your device as you use it, with its reading, before anything is mapped. Click a mapping box, then click a chip to put it there, or pick the chip up and drop it on a box; the boxes that can take it turn green while you hold it.
 5. Click `[Save All]` button (at top right corner of application) when done.
 6. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 7. Launch the game and see how it works.
+
+The small green number under each name on the `[General]` tab is what the game is being given for that part right now, the same as the controller picture shows: `1` while a button is pressed and `0` while not, `0` to `255` for a trigger, and `-32768` to `32767` for a stick axis. A stick direction, such as `[Stick Up]`, shows the stick's position while it points that way and `0` otherwise. The D-Pad shows its directions added up: up `1`, down `2`, left `4`, right `8`.
 
 Buttons are numbered from 1 in the mapping boxes, the `[Input]` column and the `[Direct Input]` page's list of pressed buttons. Windows names them from 0, and the `[Direct Input]` page's list of the device's controls shows those names: its `[Maps as]` column says what a mapping box calls each one, so the button Windows calls `Button 0` is `Button 1` in a box.
 
@@ -139,11 +141,34 @@ The emulated controllers can be switched off without closing the program, so a g
 5. Pressing the hotkey or the buttons shows a short note at the top of the screen, over the game, saying whether the emulated controllers are on or off. Untick `[Show a note on the screen when pressed]` to have the tray notification instead, which Windows hides while a full-screen game runs.
 6. The same kind of note names a device mapped to the current game when it disconnects or connects again, so a pad that drops out mid-game is not mistaken for a game that stopped answering. Untick `[Show a note when a device disconnects]` to turn it off.
 
+## Colours and font
+
+1. `[Options]` tab → `[General]` → `[Appearance]`, on the right under `[Game Scan Locations]`: `[Theme]` chooses light or dark colours. `System` follows the Windows setting for apps. The colours change at once.
+2. `[Font]` chooses the font the windows are drawn in: `Segoe UI (default)`; `Selawik (built in)`, which x360ce carries and uses as the default where Windows has no Segoe UI; `Windows default`, Windows' own; or a font installed on the computer.
+3. `[Size]` chooses the size of the text: `Default`, Windows' text size (Windows' own size for `Windows default`), or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
+4. A new font or size is used when x360ce starts again. `[Restart x360ce]` appears under the lists to do that now; it saves the settings first.
+5. A font removed from Windows shows as `(not installed)`, and the default is used until the font is back.
+6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
+
 ## Saving and loading a preset as a file
 
 1. `[Controller #]` tab → `[Save Preset...]` writes the controller's settings to an `XML` file.
 2. `[Load Preset...]` → `[Open File...]` loads such a file onto the selected controller.
 3. `[Copy Preset]` and `[Paste Preset]` carry the same settings through the clipboard.
+
+## SDL controller database
+
+x360ce carries SDL's controller database, [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB), which many games use. For about 870 controllers it says which button, stick and hat is which part of a gamepad. It works offline.
+
+1. `[Auto Preset]` fills the mapping from SDL's row for the device. Only a device SDL has no row for, such as a keyboard, a mouse, a wheel or an unknown pad, gets x360ce's own guess. The status bar says which it was.
+2. `[Controller 1]` tab → `[SDL]` tab shows which copy of the database is in use, whether SDL knows the selected device, and each part of the Xbox controller: SDL's name for it, its label on your pad (A, Cross, B...), SDL's binding, the control of your device that binding names, and what the box holds now. `Differs` marks a box that holds something else. `[Apply SDL Mapping]` fills every mapping box from SDL's row and leaves the dead zones and other settings as they are.
+3. The arrow beside `[Copy Preset]` → `[Copy as SDL]` copies the mapping as a row of SDL's database for the selected device, for an SDL game or to send to SDL_GameControllerDB. Formulas and the other settings are left out. `[Paste Preset]` reads such a row, or a whole `gamecontrollerdb.txt`, and takes the row for the selected device.
+4. `[Load Preset...]` → `[SDL]` lists every row, the selected device's first, with a filter.
+5. `[Update SDL Database]` on either page, or on `[Options]` tab → `[Internet]`, fetches the newest database into the settings folder. It is the only time x360ce asks the internet for it. The `[SDL]` tabs say where the downloaded copy came from.
+6. `[Options]` tab → `[Internet]` → `[SDL Database URL]` sets where it is downloaded from: SDL_GameControllerDB's own file on GitHub, unless you pick or type another, such as your own copy if that one ever disappears. A `raw.githubusercontent.com` address of any fork, branch or file is checked against its newest commit, so an unchanged file is not downloaded again. Any other `http` or `https` address is downloaded as it is. Either way a file with too few rows for the database is not saved.
+7. A `gamecontrollerdb.txt` you put in the settings folder, `C:\ProgramData\X360CE\Settings` unless `[Options]` tab → `[Settings]` names another, adds its rows and wins over the built-in ones. So do the rows in the `SDL_GAMECONTROLLERCONFIG` environment variable, which Steam sets for the games it starts.
+
+SDL_GameControllerDB is by Sam Lantinga and its contributors, under the zlib licence. `[About]` tab → `[Program]` credits it, with the Selawik and Inconsolata fonts x360ce carries, and the licence tab shows each one's licence after x360ce's.
 
 ## What the light on each controller tab means
 
@@ -202,24 +227,7 @@ controller is moved to where its controller is, or, when that cannot be told, th
 
 ## Hiding the real controller from games (HID Hide)
 
-Duplicated controller, or the game sees two controllers? A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one: `[Options]` tab → `[HID Hide]` tab shows whether it is installed, `[Download HID Hide...]` opens its download page and `[Open Configuration]` opens its own program. There, add `x360ce.exe` to the application list, tick the controller under Devices, and make sure hiding is turned on.
-
-`X360CE` can make those changes itself once `HID Hide` is installed:
-
-- `[Devices]` tab → a device's `[Hide]` box hides it from games, or shows it again. Hiding a device also adds `x360ce.exe` to the application list and turns hiding on.
-- `[Devices]` tab → `[HID Hide...]` lists the gaming devices and the hidden ones, shows every device again, makes `HID Hide` hide exactly the devices whose `[Hide]` box is ticked, or opens `HID Hide`.
-- `[Options]` tab → `[HID Hide]` tab → `[Configure automatically]` hides a device while it is mapped to a controller, and shows it again when `X360CE` closes.
-
-Tick `[Hide]` before starting the game: a game already running keeps seeing the device until it is started again.
-
-While a controller is mapped to a virtual one, the `[Issues]` tab says when `HID Hide` is missing, when hiding is off, when the controller is not hidden, or when `HID Hide` hides it from x360ce as well. Its button opens the download page or `HID Hide`'s own program.
-
-`HID Guardian` is the tool `HID Hide` replaced. Its author stopped it in 2023, and keyboards, mice and USB devices dropping out while it was installed were its known side effects. This version only removes it: `[Options]` tab → `[HID Guardian (obsolete)]` tab → `[Uninstall]`.
-
-**DO NOT** attempt to remove `HIDGuardian` by simply deleting it from Windows OS `Device Manager`. This can result in **losing access** to your `Mouse` and `Keyboard` and you will be forced to follow Manual Uninstall Instructions below.
-
-How to remove `HIDGuardian` if access to your Mouse and Keyboard is lost:
-[How to Uninstall HID Guardian When Access to Keyboard and Mouse is Lost](Help.HidGuardian.md#how-to-uninstall-hid-guardian-when-access-to-keyboard-and-mouse-is-lost)
+Duplicated controller, or the game sees two controllers? A game that sees both the real controller and the emulated one gets every press twice. `HID Hide` hides the real one. `[Options]` tab → `[HID Hide]` tab installs and updates it, opens its own program, and shows its help. [Help.HidHide](Help.HidHide.md) says how to install it, choose what it hides and remove the obsolete `HID Guardian`, and what to do if it causes trouble.
 
 ## Games with anti-cheat
 
@@ -276,7 +284,7 @@ With the usual emulation, `Virtual`, a game reads an Xbox 360 gamepad whatever t
 ## How to reduce wheel dead zone?
 
 1. Select the `[tab]` with your wheel.
-2. Open the `[Left Thumb]` page. Steering is usually mapped to Left Thumb Axis X on the `[General]` page; if it is mapped elsewhere, open that axis's page.
+2. Open the `[Left Stick]` page. Steering is usually mapped to Left Thumb Axis X on the `[General]` page; if it is mapped elsewhere, open that axis's page.
 3. Lower `[Dead zone]` so the wheel answers sooner. To skip a dead zone the game applies of its own, raise `[Anti-dead zone]`, or pick a ready-made setting such as `[80% Controller Anti-DeadZone]`.
 4. Click `[Save All]`.
 
@@ -345,8 +353,8 @@ controller, so a game that reads only a gamepad can be flown with the real stick
 1. Plug the radio in by USB and choose its joystick mode. EdgeTX asks when the cable goes in: choose `USB Joystick (HID)`.
 2. Add the radio on the `[Controller 1]` tab, as in "Adding DirectInput Device (Controller)" above.
 3. Start from the preset. Open [x360ce-v4-rc-transmitter.xml](.attachments/x360ce-v4-rc-transmitter.xml), save it with GitHub's `Download raw file` button, then choose `[Load Preset...]` → `[Open File...]` and open it. It puts throttle and yaw on the left stick (Axis 3 up and down, Axis 4 left and right), pitch and roll on the right stick (Axis 2 and Axis 1), and the arm switch (Slider 1) on the left bumper.
-4. Radios send their channels in different orders, so the preset is a starting point. Move each stick and switch and watch the `[Input]` column. When a box names the wrong control, click it, choose `[Record]` and move the right stick. When a stick works backwards, click its box and choose `[Invert]`.
-5. The arm switch works as a button. Record it by flipping the switch into the armed position: the status bar then says which position presses the button. If the bumper is held while you are disarmed, click the box and choose `[Invert]`. The preset presses the bumper only in the last quarter of the switch's travel, so the middle of a three-position switch leaves it released; that point is the Left Bumper's press point on the `[Buttons]` tab.
+4. Radios send their channels in different orders, so the preset is a starting point. Move each stick and switch and watch the `[Input]` column. When a box names the wrong control, click it, choose `[Record]` and move the right stick. When a stick works backwards, click its box and choose `[Adjust]` → `[Invert]`.
+5. The arm switch works as a button. Record it by flipping the switch into the armed position: the status bar then says which position presses the button. If the bumper is held while you are disarmed, click the box and choose `[Adjust]` → `[Invert]`. The preset presses the bumper only in the last quarter of the switch's travel, so the middle of a three-position switch leaves it released; that point is the Left Bumper's press point on the `[Buttons]` tab.
 6. Hide the radio from the game with HID Hide, as in "Hiding the real controller from games (HID Hide)", so the game reads only the emulated controller.
 7. Click `[Save All]`, then keep x360ce running while you fly. Minimise it rather than closing it: the game sees the controller only while x360ce runs.
 
@@ -426,7 +434,7 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=abs(b1-b2)` - either one but not both.
 - `=a1*b1` - full speed only while the button is held.
 - `=a1*(0.5+b1*0.5)` - half speed until the button is held.
-- `=b1*floor(now%100/50)` - turbo: presses ten times a second while the button is held. `[Turbo]` in the menu of a box mapped to a button writes it. For five a second, write `200` and `100` in place of `100` and `50`.
+- `=b1*floor(now%100/50)` - turbo: presses ten times a second while the button is held. `[Adjust]` → `[Turbo]` in the menu of a box mapped to a button writes it. For five a second, write `200` and `100` in place of `100` and `50`.
 - `=b1*(1-b5)` in the `A` box and `=b1*b5` in the `Y` box - a shift layer: button 1 presses A, or Y while button 5 is held. Empty the box that holds `Button 5`, or the shift button presses that box's button as well.
 
 ## Examples
@@ -436,9 +444,10 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - `=a1*1.5` - more sensitive everywhere.
 - `=a1*0.5` - less sensitive, for aiming through a scope.
 - `=a1*(0.5+a2*0.5)` - walk slowly, run when the trigger is held.
-- `=a1-0.05` - correct a stick that drifts off centre. `[Recentre]` in the box's menu measures the offset and writes it.
+- `=a1-0.05` - correct a stick that drifts off centre. `[Adjust]` → `[Recentre]` in the box's menu measures the offset and writes it.
 - `=a1*sqrt(1-a2^2/2)` - round the corners of a stick that reaches the corners of a square, so a full diagonal is no stronger than straight ahead. Use it for Stick X; a1 and a2 are the stick's own two axes.
 - `=-a2*sqrt(1-a1^2/2)` - the same for Stick Y. Most devices report up as the low end of Axis 2, so Stick Y holds `IAxis 2` and the formula keeps its minus; drop the minus when Stick Y holds plain `Axis 2`.
+- `=a1*(1-0.2/max(sqrt(a1^2+a2^2),0.2))/0.8` for Stick X and `=-a2*(1-0.2/max(sqrt(a1^2+a2^2),0.2))/0.8` for Stick Y - a round dead zone: the stick reads nothing within 20 % of its middle in any direction, and moves through its whole travel past that. A `Dead Zone` slider works on one axis at a time, so together they make a square, which holds a diagonal still further out than straight ahead. `[Adjust]` → `[Round Dead Zone]` in a stick box's menu writes both formulas, sized by the stick's X `Dead Zone` slider, or 20 % while that is at nought.
 - `=max(a1,0)` - one pedal axis split into the accelerator.
 - `=-min(a1,0)` - the same axis, its braking half.
 - `=a1-a2` - separate accelerator and brake onto one axis.

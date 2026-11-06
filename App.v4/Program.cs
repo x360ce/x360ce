@@ -52,11 +52,20 @@ namespace x360ce.App
 			{
 				if (string.IsNullOrEmpty(Path))
 					return;
-				var ms = (long)(DateTime.Now - Started).TotalMilliseconds;
+				Write("startup," + Milliseconds() + "," + what);
+			}
+
+			static long Milliseconds()
+			{
+				return (long)(DateTime.Now - Started).TotalMilliseconds;
+			}
+
+			static void Write(string line)
+			{
 				try
 				{
 					lock (Lock)
-						File.AppendAllText(Path, "startup," + ms + "," + what + Environment.NewLine);
+						File.AppendAllText(Path, line + Environment.NewLine);
 				}
 				catch (IOException) { }
 				catch (UnauthorizedAccessException) { }
@@ -67,6 +76,49 @@ namespace x360ce.App
 				if (string.IsNullOrEmpty(Path))
 					return;
 				AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => Mark("load " + e.LoadedAssembly.GetName().Name);
+			}
+
+			/// <summary>
+			/// Writes, at most once a second, how many timer ticks and how much posted work woke the interface thread since it
+			/// began: "interface,{ms},timers={n},calls={n}". Called on the interface thread.
+			/// </summary>
+			/// <remarks>
+			/// An idle window should be woken only by the timers it draws with. Counted from what the thread takes from its own
+			/// queue: WM_TIMER, and the registered messages posted work arrives by. What another program sends the window, as an
+			/// accessibility tool asks a tab strip for its selection, is not the program's own doing and is not counted.
+			/// </remarks>
+			public static void WatchInterfaceWakes()
+			{
+				if (string.IsNullOrEmpty(Path))
+					return;
+				Application.AddMessageFilter(new WakeCounter());
+			}
+
+			sealed class WakeCounter : IMessageFilter
+			{
+				const int WM_TIMER = 0x0113;
+				/// <summary>Where the numbers RegisterWindowMessage gives out begin; work posted to the thread arrives as one of them.</summary>
+				const int FirstRegisteredMessage = 0xC000;
+				long _timers;
+				long _calls;
+				long _written = -1000;
+
+				public bool PreFilterMessage(ref Message m)
+				{
+					if (m.Msg == WM_TIMER)
+						_timers++;
+					else if (m.Msg >= FirstRegisteredMessage)
+						_calls++;
+					else
+						return false;
+					var ms = Milliseconds();
+					if (ms - _written >= 1000)
+					{
+						_written = ms;
+						Write("interface," + ms + ",timers=" + _timers + ",calls=" + _calls);
+					}
+					return false;
+				}
 			}
 		}
 
@@ -154,10 +206,11 @@ namespace x360ce.App
 		/// Waits for the window to finish building itself, then describes it.
 		/// </summary>
 		/// <remarks>
-		/// The window arrives in stages driven by its own timer - the four controller panels are
-		/// among the last things added - so a description taken the moment it appears is missing
-		/// most of the program. The same flag the program uses to decide it is ready to start
-		/// reading controllers says when there is something whole to describe.
+		/// The window finishes starting after it appears: each controller page selects its row and
+		/// shows that row's settings from work posted while loading, so a description taken the
+		/// moment it appears describes pages that are not filled yet. The same flag the program
+		/// uses to decide it is ready to start reading controllers says when there is something
+		/// whole to describe.
 		/// </remarks>
 		static void WaitThenExport(string folder)
 		{
@@ -255,6 +308,9 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			StartupTrace.Mark("StartApp: services ready");
+			// Before the first window, so every control is made in the font and at the size chosen in the options.
+			AppFonts.Load();
+			AppFonts.Apply(SettingsManager.Options.InterfaceFont, SettingsManager.Options.InterfaceFontSize);
 			// Before the first window, so every image it is made with is already the theme's and the screen's size.
 			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
 			// Before the first window, so every colour it is made with is already the theme's.
@@ -391,7 +447,6 @@ namespace x360ce.App
 
 		public static object DeviceLock = new object();
 
-		public static int TimerCount = 0;
 		public static int ReloadCount = 0;
 		public static int ErrorCount = 0;
 
@@ -404,9 +459,7 @@ namespace x360ce.App
 			if (IsClosing)
 				return;
 			ErrorCount++;
-			MainForm.Current.UpdateTimer.Stop();
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
-			MainForm.Current.UpdateTimer.Start();
 		}
 
 		/// <summary>Opens the folder the settings are kept in, the one the Options page names.</summary>

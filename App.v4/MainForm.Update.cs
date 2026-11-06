@@ -34,7 +34,7 @@ namespace x360ce.App
 			// The option may have been switched off while the timer was waiting.
 			if (!o.CheckForUpdates)
 				return;
-			var client = new UpdateClient(new Version(Application.ProductVersion));
+			var client = new UpdateClient(typeof(MainForm).Assembly.GetName().Version);
 			var etag = o.UpdateEtag;
 			Task.Run(() => client.Check(etag)).ContinueWith(t =>
 			{

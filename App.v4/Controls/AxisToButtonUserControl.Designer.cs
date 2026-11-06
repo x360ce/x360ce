@@ -66,7 +66,7 @@
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 28);
 			this.DeadZoneTrackBar.TabIndex = 7;
-			this.DeadZoneTrackBar.TickFrequency = 2;
+			this.DeadZoneTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			//
 			// ButtonNameLabel
 			//
@@ -119,14 +119,13 @@
 			// ArrowPictureBox
 			//
 			this.ArrowPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.ArrowPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.ArrowPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_gray_16x16;
-			this.ArrowPictureBox.Location = new System.Drawing.Point(81, 6);
+			this.ArrowPictureBox.Image = global::x360ce.App.Properties.Resources.Axis_Arrow;
+			this.ArrowPictureBox.Location = new System.Drawing.Point(81, 2);
 			this.ArrowPictureBox.Name = "ArrowPictureBox";
-			this.ArrowPictureBox.Size = new System.Drawing.Size(16, 16);
+			this.ArrowPictureBox.Size = new System.Drawing.Size(24, 24);
+			this.ArrowPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
 			this.ArrowPictureBox.TabIndex = 0;
 			this.ArrowPictureBox.TabStop = false;
-			this.ArrowPictureBox.EnabledChanged += new System.EventHandler(this.ArrowPictureBox_EnabledChanged);
 			//
 			// ButtonImagePictureBox
 			//

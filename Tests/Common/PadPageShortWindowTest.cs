@@ -2,6 +2,7 @@
 // @area: ui   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -55,6 +56,38 @@ namespace x360ce.Tests
 					}
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("In the main window at its default size the Controller page keeps room for two device rows in its list above the General tab, at 100 % and 150 %, in both themes")]
+		public void The_device_list_keeps_two_rows_above_the_general_tab_at_the_default_window_size()
+		{
+			var faults = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(MapTo.Controller2), "Controller 2") }, (window, when) =>
+			{
+				var page = window.Controls.OfType<Control>().SelectMany(Descendants).OfType<PadControl>().Single();
+				var grid = (DataGridView)page.Controls.Find("MappedDevicesDataGridView", true).Single();
+				var tabs = page.Controls.Find("PadTabControl", true).Single();
+				var general = page.Controls.Find("GeneralTabPage", true).Single();
+				var rows = (grid.ClientSize.Height - grid.ColumnHeadersHeight) / (double)grid.RowTemplate.Height;
+				var line = string.Format("{0}: the page is {1} and needs {2} px, the tabs {3} px tall, the General tab {4}, the device list {5} px with room for {6:0.0} rows of {7} px{8}",
+					when, page.ClientSize, page.AutoScrollMinSize.Height, tabs.Height, general.ClientSize, grid.Height, rows, grid.RowTemplate.Height,
+					page.VerticalScroll.Visible ? ", with a scroll bar" : "");
+				TestContext.WriteLine(line);
+				if (rows < 2)
+					faults.Add(line);
+			});
+			Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		public TestContext TestContext { get; set; }
+
+		static IEnumerable<Control> Descendants(Control parent)
+		{
+			yield return parent;
+			foreach (Control child in parent.Controls)
+				foreach (var deeper in Descendants(child))
+					yield return deeper;
 		}
 	}
 }

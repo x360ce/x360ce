@@ -57,6 +57,7 @@ namespace x360ce.App.Mcp
 		public static readonly Dictionary<string, string> SkillReferences = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			{ "references/help-v4.md", AppHelper.HelpV4Resource },
+			{ "references/help-hidhide.md", AppHelper.HelpHidHideResource },
 			{ "references/plugins.md", AppHelper.HelpPluginsResource },
 			{ "references/autohotkey.md", AppHelper.HelpAutoHotkeyResource },
 			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
@@ -77,7 +78,7 @@ namespace x360ce.App.Mcp
 			UiTreeExporter.BaseName = "ui-tree-v4";
 			UiTreeMarkdown.ExportCommand = "x360ce.exe /ExportUi=<folder>";
 			McpServer.ServerName = "x360ce";
-			McpServer.ServerVersion = System.Windows.Forms.Application.ProductVersion;
+			McpServer.ServerVersion = typeof(McpTools).Assembly.GetName().Version.ToString();
 			McpServer.Instructions = "X360CE (Xbox 360 Controller Emulator) maps real controllers, wheels and pedals to virtual Xbox 360 controllers that games read. "
 				+ "Begin with devices_list and ui_current; find a setting with ui_find, point the person at it with ui_show, change it with ui_set, and keep changes with settings_save. "
 				+ "When ui_find finds nothing, search the help before saying the program cannot do it: a formula in a mapping box does what no single setting does. "
@@ -341,9 +342,7 @@ namespace x360ce.App.Mcp
 			var selected = MainForm.Current.PadControls[controller - 1].GetSelectedSetting();
 			if (selected == null)
 				throw new InvalidOperationException("No device is selected on controller " + controller + ". Map one, or select its row.");
-			MainForm.Current.UpdateTimer.Stop();
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, selected, ps);
-			MainForm.Current.UpdateTimer.Start();
 			return null;
 		}
 

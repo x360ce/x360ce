@@ -120,6 +120,8 @@ namespace x360ce.Tests
 		[Description("Initialize names the protocol, the program and its version, and passes on the program's instructions followed by the door-only rule, which is sent even when the program has none")]
 		public void Initialize_names_protocol_and_program()
 		{
+			// The program names itself and its version as it starts.
+			McpTools.Register();
 			UseSample(AiAccess.Read);
 			var saved = McpServer.Instructions;
 			try
@@ -129,7 +131,8 @@ namespace x360ce.Tests
 				Assert.AreEqual(McpServer.ProtocolVersion, r["protocolVersion"]);
 				var serverInfo = (Dictionary<string, object>)r["serverInfo"];
 				Assert.IsTrue(serverInfo["name"].ToString().Contains("x360ce"));
-				Assert.AreEqual(Application.ProductVersion, serverInfo["version"], "The version is not the program's.");
+				// The program's own version: in a test, the process's product is the test host.
+				Assert.AreEqual(typeof(McpTools).Assembly.GetName().Version.ToString(), serverInfo["version"], "The version is not the program's.");
 				Assert.AreEqual(McpServer.DoorOnly, r["instructions"], "Without instructions of the program's own, the door-only rule is sent alone.");
 				McpServer.Instructions = "Start with devices_list.";
 				r = (Dictionary<string, object>)Call("initialize", new Dictionary<string, object>())["result"];

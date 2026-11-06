@@ -96,7 +96,7 @@ namespace x360ce.App.Controls
 			{
 				DeadZoneLabel, DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox,
 				AntiDeadZoneLabel, AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox,
-				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox,
+				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox, SensitivityNoteLabel,
 				PresetComboBox,
 			};
 			foreach (var control in controls)
@@ -156,9 +156,9 @@ namespace x360ce.App.Controls
 				return;
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
-			SensitivityLabel.Text = SensitivityCheckBox.Checked
-				? "Sensitivity - Make more sensitive in the center:"
-				: "Sensitivity - Make less sensitive in the center:";
+			SensitivityNoteLabel.Text = SensitivityCheckBox.Checked
+				? "Make more sensitive in the center"
+				: "Make less sensitive in the center";
 		}
 
 		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)

@@ -34,12 +34,12 @@ Note: You must install both packages on Windows 64-bit!
 
 ## Wheel doesn't work in the game, but it works inside x360ce Application.
 
-Some games work only when the controller is disguised as a GamePad, even if it is a wheel. Try to:
+Some games work only when the controller is disguised as a gamepad, even if it is a wheel. Try to:
 
 1. Run `x360ce.exe`.
 2. Select the tab with your `Wheel Controller`.
 3. Open the `[Advanced]` tab page.
-4. Set the "Device Type" drop-down list value to: `GamePad`.
+4. Set the "Device Sub Type" drop-down list value to: `Gamepad`.
 5. Click the `[Save]` button.
 6. Close the x360ce application and run the game.
 

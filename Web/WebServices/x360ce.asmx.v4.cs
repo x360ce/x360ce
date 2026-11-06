@@ -59,9 +59,86 @@ namespace x360ce.Web.WebServices
 		public static List<LogEntry> IpDate = new List<LogEntry>();
 
 
+		/// <summary>What a program that the service cannot serve is told, with no error so that it stops sending.</summary>
+		public const string OutdatedProgramMessage = "Nothing was done: this version of x360ce is too old for the online database. "
+			+ "Download the latest from https://github.com/x360ce/x360ce/releases";
+
 		[WebMethod(EnableSession = true, Description = "Update User Data")]
 		//[System.Web.Services.Protocols.SoapHeader("Authentication")]
 		public CloudMessage Execute(CloudMessage command)
+		{
+			var reply = OutdatedProgramReply(command);
+			if (reply != null)
+				return reply;
+			var repeated = KeepNewestValues(command);
+			reply = Run(command);
+			// A message that repeats its keys comes from a program that sends it again until it hears no error.
+			if (repeated && reply.ErrorCode != (int)CloudErrorCode.None)
+			{
+				reply.ErrorCode = (int)CloudErrorCode.None;
+				reply.ErrorMessage = OutdatedProgramMessage + " (" + reply.ErrorMessage + ")";
+			}
+			return reply;
+		}
+
+		/// <summary>
+		/// The answer for a message from a program older than June 2018, which the service cannot serve: success, with
+		/// nothing done; null for any other message.
+		/// </summary>
+		/// <remarks>
+		/// Every stored record belongs to a computer and a profile, and programs before June 2018 send no profile ID.
+		/// Answered with an error, such a program sends the same message again at once and for ever, adding its keys
+		/// to it every time, so one of them grew its message to 3 MB and sent it every few seconds for hours. It stops
+		/// only when it hears no error.
+		/// </remarks>
+		/// <param name="command">The message as it arrived.</param>
+		public static CloudMessage OutdatedProgramReply(CloudMessage command)
+		{
+			if (command == null || command.Values == null)
+				return null;
+			switch (command.Action)
+			{
+				case CloudAction.Insert:
+				case CloudAction.Update:
+				case CloudAction.Select:
+				case CloudAction.Delete:
+					break;
+				default:
+					return null;
+			}
+			// Such a program sends its computer ID and no profile ID; a message with neither is answered as before.
+			var keys = command.Values.Select(x => x.Key as string).ToList();
+			if (!keys.Contains(CloudKey.ComputerId) || keys.Contains(CloudKey.ProfileId))
+				return null;
+			return new CloudMessage { ErrorCode = (int)CloudErrorCode.None, ErrorMessage = OutdatedProgramMessage };
+		}
+
+		/// <summary>
+		/// Keeps only the last value of each key, which the program added on its latest try, and says whether any key
+		/// was there more than once.
+		/// </summary>
+		/// <remarks>
+		/// Programs before 4.14 (2020) add their keys again each time they send a message again, and read an error as
+		/// "send it again". The keys of one try belong together: the computer ID is encrypted with that try's password.
+		/// </remarks>
+		/// <param name="command">The message as it arrived; its values are replaced when a key repeats.</param>
+		public static bool KeepNewestValues(CloudMessage command)
+		{
+			if (command == null || command.Values == null)
+				return false;
+			var newest = new Dictionary<string, KeyValue>();
+			foreach (var item in command.Values)
+				newest[item.Key as string ?? ""] = item;
+			if (newest.Count == command.Values.Count)
+				return false;
+			var values = new KeyValueList();
+			values.AddRange(command.Values.Where(x => newest[x.Key as string ?? ""] == x));
+			command.Values = values;
+			return true;
+		}
+
+		/// <summary>Does what the message asks.</summary>
+		CloudMessage Run(CloudMessage command)
 		{
 			/*
 			var remoteIp = HttpContext.Current.Request.UserHostAddress;
@@ -99,7 +176,11 @@ namespace x360ce.Web.WebServices
 						results.ErrorCode = (int)CloudErrorCode.Error;
 						break;
 					case CloudAction.GetPublicRsaKey:
-						AddRsaPublicKey(results);
+						if (!AddRsaPublicKey(results))
+						{
+							messages.Add(MissingKeyMessage);
+							results.ErrorCode = (int)CloudErrorCode.Error;
+						}
 						break;
 					case CloudAction.Insert:
 					case CloudAction.Update:
@@ -175,19 +256,33 @@ namespace x360ce.Web.WebServices
 				results.ErrorCode = (int)CloudErrorCode.Error;
 				if (ex.Data.Contains(key) && Equals(ex.Data[key], CloudErrorCode.UnableToDecrypt))
 				{
-					results.ErrorCode = (int)CloudErrorCode.UnableToDecrypt;
-					AddRsaPublicKey(results);
+					if (AddRsaPublicKey(results))
+						results.ErrorCode = (int)CloudErrorCode.UnableToDecrypt;
+					else
+						results.ErrorMessage = MissingKeyMessage;
 				}
 			}
 			return results;
 		}
 
-		private void AddRsaPublicKey(CloudMessage results)
+		/// <summary>What the service answers when its Web.config holds no key pair.</summary>
+		public const string MissingKeyMessage = "Server: the service has no encryption key. "
+			+ "Its Web.config must hold CloudRsaPublicKey and CloudRsaPrivateKey.";
+
+		/// <summary>Adds the service's public key to a reply; false when the service has none.</summary>
+		/// <remarks>
+		/// The key pair is read from the application's settings and never made here. Every program keeps the key it
+		/// was given. A new pair, made because a publish left the settings without one and written into a Web.config
+		/// that the next publish replaces, changes the key under every program: programs from 4.14 fail once and take
+		/// the new key, older ones lose the message they were sending.
+		/// </remarks>
+		static bool AddRsaPublicKey(CloudMessage results)
 		{
-			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
-			if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
-				rsa.RsaNewKeysSave(2048);
-			results.Values.Add(CloudKey.RsaPublicKey, rsa.RsaPublicKeyValue);
+			var key = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud).RsaPublicKeyValue;
+			if (string.IsNullOrEmpty(key))
+				return false;
+			results.Values.Add(CloudKey.RsaPublicKey, key);
+			return true;
 		}
 
 		#region Programs

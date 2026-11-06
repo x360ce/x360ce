@@ -310,7 +310,8 @@ namespace x360ce.Tests
 				{
 					var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
 					combo.Items.Add("Gamepad");
-					var button = new Button { Top = 40 };
+					// Sized by itself, as the theme sizes a push button to Default.xaml's height.
+					var button = new Button { Top = 40, Text = "Apply", AutoSize = true };
 					form.Controls.AddRange(new Control[] { combo, button });
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
@@ -414,6 +415,57 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("interface")]
+		[Description("A slider without ticks shows none, its thumb is a rectangle edged one line wide, and the slider with the focus has it in the selection colours, in both themes")]
+		public void Slider_thumb_shows_the_focus_in_the_selection_colours()
+		{
+			OnUiThread(() =>
+			{
+				using (var form = new Form { ClientSize = new Size(300, 120), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+				{
+					var focused = new TrackBar { Width = 240, Maximum = 100, TickStyle = TickStyle.None };
+					var other = new TrackBar { Width = 240, Maximum = 100, TickStyle = TickStyle.None, Top = 60 };
+					form.Controls.AddRange(new Control[] { focused, other });
+					form.Show();
+					foreach (var theme in new[] { ThemeType.Dark, ThemeType.Light })
+					{
+						FormsTheme.SetTheme(theme);
+						FormsTheme.Apply(form);
+						focused.Focus();
+						Assert.IsTrue(focused.Focused, "The slider did not take the focus.");
+						var palette = theme == ThemeType.Dark ? FormsTheme.Palette : FormsTheme.LightPalette;
+						AssertThumb(focused, palette["SelectedBackground"], palette["BackgroundDarkSelected"], "In the " + theme + " theme, the focused slider");
+						AssertThumb(other, palette["ForegroundGray"], palette["BackgroundDark"], "In the " + theme + " theme, the slider without the focus");
+					}
+				}
+			});
+		}
+
+		/// <summary>
+		/// Checks the thumb of a slider at its lowest value, down the middle of its width: as tall as WPF's, its edge one line
+		/// wide in the colour given and filled in the other; and the slider's far end, where the track alone is drawn.
+		/// </summary>
+		static void AssertThumb(TrackBar track, Color edge, Color fill, string which)
+		{
+			var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+			var line = Math.Max(1, (int)Math.Floor(scale));
+			using (var bitmap = new Bitmap(track.Width, track.Height))
+			{
+				track.DrawToBitmap(bitmap, new Rectangle(Point.Empty, track.Size));
+				var x = (int)(11 * scale / 2);
+				var runs = Runs(bitmap, x, track.BackColor);
+				Assert.AreEqual(1, runs.Count, which + " shows " + runs.Count + " marks across its thumb, not the thumb alone.");
+				var thumb = runs[0];
+				Assert.AreEqual((int)Math.Round(18 * scale), thumb.Y, which + " has a thumb " + thumb.Y + " high.");
+				Assert.AreEqual(edge.ToArgb(), bitmap.GetPixel(x, thumb.X).ToArgb(), which + " has its thumb's top edge in " + bitmap.GetPixel(x, thumb.X) + ".");
+				Assert.AreEqual(edge.ToArgb(), bitmap.GetPixel(x, thumb.X + thumb.Y - 1).ToArgb(), which + " has its thumb's bottom edge in " + bitmap.GetPixel(x, thumb.X + thumb.Y - 1) + ".");
+				Assert.AreEqual(fill.ToArgb(), bitmap.GetPixel(x, thumb.X + line).ToArgb(), which + " has an edge wider than one line, or its thumb filled in " + bitmap.GetPixel(x, thumb.X + line) + ".");
+				Assert.AreEqual(fill.ToArgb(), bitmap.GetPixel(x, thumb.X + thumb.Y / 2).ToArgb(), which + " has its thumb filled in " + bitmap.GetPixel(x, thumb.X + thumb.Y / 2) + ".");
+				var far = Runs(bitmap, (int)(track.ClientSize.Width - 11 * scale / 2), track.BackColor);
+				Assert.AreEqual(1, far.Count, which + " shows " + far.Count + " marks at its far end, not the track alone: it has ticks.");
+			}
+		}
+
 		const int WM_MOUSEMOVE = 0x0200;
 		const int WM_LBUTTONDOWN = 0x0201;
 		const int WM_LBUTTONUP = 0x0202;
@@ -448,7 +500,12 @@ namespace x360ce.Tests
 					form.Show();
 					const int CB_GETITEMHEIGHT = 0x0154;
 					var height = combo.Font.Height + (int)Math.Round(10 * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
-					Assert.AreEqual(height, (int)SendMessage(combo.Handle, CB_GETITEMHEIGHT, IntPtr.Zero, IntPtr.Zero), "The items are not as tall as Default.xaml's.");
+					// The items are given their height as the list opens.
+					combo.DroppedDown = true;
+					Application.DoEvents();
+					var items = (int)SendMessage(combo.Handle, CB_GETITEMHEIGHT, IntPtr.Zero, IntPtr.Zero);
+					combo.DroppedDown = false;
+					Assert.AreEqual(height, items, "The items are not as tall as Default.xaml's.");
 					var info = new COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(COMBOBOXINFO)) };
 					Assert.IsTrue(GetComboBoxInfo(combo.Handle, ref info), "The drop-down list has no list.");
 					const int GWL_STYLE = -16;
@@ -459,7 +516,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("Every mapping box on a controller's General tab is as tall as the text boxes beside it, after the theme changes too")]
+		[Description("Every mapping box on a controller's General tab is as tall as a text box in the same font, after the theme changes too")]
 		public void Mapping_boxes_are_as_tall_as_the_text_boxes()
 		{
 			OnUiThread(() =>
@@ -470,6 +527,9 @@ namespace x360ce.Tests
 					page.Dock = DockStyle.Fill;
 					form.ClientSize = page.Size;
 					form.Controls.Add(page);
+					// The tab shows no text box of its own, so one in the window's font is themed beside it.
+					var box = new TextBox();
+					form.Controls.Add(box);
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					form.Show();
@@ -480,9 +540,8 @@ namespace x360ce.Tests
 						FormsTheme.Apply(form);
 						form.Width += 20;
 						Application.DoEvents();
-						var panel = page.Controls.Find("GeneralLeftPanel", true)[0];
-						var height = panel.Controls.OfType<TextBox>().First().Height;
-						var wrong = new[] { "GeneralLeftPanel", "GeneralCenterPanel", "GeneralRightPanel" }
+						var height = box.Height;
+						var wrong = new[] { "GeneralTableLayoutPanel", "RemapTableLayoutPanel" }
 							.SelectMany(x => page.Controls.Find(x, true)[0].Controls.OfType<ComboBox>())
 							.Where(x => x.Height != height).Select(x => x.Name + " " + x.Height).ToList();
 						Assert.AreEqual(0, wrong.Count, string.Format("Themed {0}, the text boxes are {1} px tall, but: {2}", theme, height, string.Join(", ", wrong)));
@@ -659,7 +718,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("A grid's pictures stand Default.xaml's cell padding in from each side of their cells, as its text does")]
+		[Description("A grid's pictures stand Default.xaml's cell padding in from each side of their cells, as its text does, and the first column's 3 px more")]
 		public void Grid_pictures_stand_in_from_their_cells()
 		{
 			OnUiThread(() =>
@@ -687,7 +746,8 @@ namespace x360ce.Tests
 						var row = grid.GetRowDisplayRectangle(0, false);
 						var pictures = Runs(bitmap, row.Top + row.Height / 2, grid.BackgroundColor, true).Where(x => x.Y == image.Width).ToList();
 						Assert.AreEqual(2, pictures.Count, "The row shows " + pictures.Count + " whole pictures, not two.");
-						Assert.AreEqual(padding, pictures[0].X, "The first picture stands " + pictures[0].X + " px from the grid's edge.");
+						// The first column has the room before it that keeps it off the grid's edge, as wide as the padding.
+						Assert.AreEqual(padding * 2, pictures[0].X, "The first picture stands " + pictures[0].X + " px from the grid's edge.");
 						var gap = pictures[1].X - pictures[0].X - pictures[0].Y;
 						Assert.AreEqual(padding * 2, gap, "The pictures stand " + gap + " px apart.");
 					}

@@ -38,6 +38,9 @@ namespace x360ce.Tests
 		[AssemblyInitialize]
 		public static void Initialize(TestContext context)
 		{
+			// Windows drawn at the scale of the main monitor, as App.v4\app.manifest (dpiAware) asks of Windows for the
+			// program. Set first, before anything reads the scale.
+			SetProcessDPIAware();
 			Started = DateTime.Now;
 			LogsFolder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "run-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(LogsFolder);
@@ -46,6 +49,9 @@ namespace x360ce.Tests
 			// built here names the program, its switches and its skill as it does when the program runs.
 			x360ce.App.Mcp.McpTools.Register();
 		}
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool SetProcessDPIAware();
 
 		/// <summary>
 		/// Fails the run when Windows logged a crash or hang of x360ce, the test host, or a program run from the repository

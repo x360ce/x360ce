@@ -197,6 +197,12 @@ namespace x360ce.App
 		public const string HelpAutoHotkeyResource = "Documents.Help.AutoHotkey.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
+		/// <summary>What HID Hide is for, installing it and choosing what it hides: the HID Hide page's help, and the AI skill's reference.</summary>
+		public const string HelpHidHideResource = "Documents.Help.HidHide.md";
+
+		/// <summary>What the program is, where to find it, who made it, and what it carries from other projects: the About page's Program tab.</summary>
+		public const string ProgramResource = "Documents.Program.md";
+
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
 		public static string ReadHelp(string resourceName)
 		{

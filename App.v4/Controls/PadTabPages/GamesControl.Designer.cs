@@ -43,12 +43,14 @@
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.ScanProgressPlacePanel = new System.Windows.Forms.Panel();
 			this.ScanProgressPanel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.ScanProgressLevel1Label = new System.Windows.Forms.Label();
 			this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
+			this.ScanProgressPlacePanel.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -311,13 +313,22 @@
 			this.ScanProgressLevel0Label.TabIndex = 0;
 			this.ScanProgressLevel0Label.Text = "[ScanProgressLevel0Label]";
 			// 
+			// ScanProgressPlacePanel
+			// 
+			this.ScanProgressPlacePanel.AutoSize = true;
+			this.ScanProgressPlacePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ScanProgressPlacePanel.Controls.Add(this.ScanProgressPanel);
+			this.ScanProgressPlacePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.ScanProgressPlacePanel.Name = "ScanProgressPlacePanel";
+			this.ScanProgressPlacePanel.TabIndex = 4;
+			// 
 			// ScanProgressPanel
 			// 
 			this.ScanProgressPanel.AutoSize = true;
 			this.ScanProgressPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.ScanProgressPanel.Controls.Add(this.tableLayoutPanel1);
-			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 313);
+			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 0);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
 			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 50);
 			this.ScanProgressPanel.TabIndex = 4;
@@ -365,7 +376,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ScanProgressPanel);
+			this.Controls.Add(this.ScanProgressPlacePanel);
 			this.Controls.Add(this.GamesDataGridView);
 			this.Controls.Add(this.GameDetailsControl);
 			this.Controls.Add(this.GamesToolStrip);
@@ -375,6 +386,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
+			this.ScanProgressPlacePanel.ResumeLayout(false);
+			this.ScanProgressPlacePanel.PerformLayout();
 			this.ScanProgressPanel.ResumeLayout(false);
 			this.ScanProgressPanel.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
@@ -402,6 +415,7 @@
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
+		private System.Windows.Forms.Panel ScanProgressPlacePanel;
 		private System.Windows.Forms.Panel ScanProgressPanel;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;

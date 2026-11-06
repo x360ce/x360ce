@@ -34,15 +34,16 @@ namespace x360ce.App.DInput
 		/// <summary>Reads the Raw Input game controllers on a thread of its own: the program's only Raw Input registration.</summary>
 		/// <remarks>
 		/// Started with the update thread the first time, and stopped when the helper is disposed, as the program closes.
-		/// It is not stopped with the update thread, which stops on every change of Windows settings: the hub draws
-		/// nothing, and a restart would read every device in the wrong slots until the device list found its twin again.
+		/// It is not stopped with the update thread, which stops for a reorder of the XInput places and while the error
+		/// reports are open: the hub draws nothing, and a restart would read every device in the wrong slots until the
+		/// device list found its twin again.
 		/// While it does not run its device list is empty, so the device list shows every Raw Input device offline and
 		/// DirectInput reads on as before.
 		/// </remarks>
 		public readonly Engine.RawInputHub RawInput = new Engine.RawInputHub();
 
 		/// <summary>Why the Raw Input hub did not start the last time the update thread started, or null when it started.</summary>
-		/// <remarks>A hub that did not start is tried again each time the update thread starts, which it does on every change of Windows settings, so the failure is logged the first time only. Read without a lock: one reference.</remarks>
+		/// <remarks>A hub that did not start is tried again each time the update thread starts, which it does again after each stop, so the failure is logged the first time only. Read without a lock: one reference.</remarks>
 		public Exception RawInputError { get { return _rawInputError; } }
 		volatile Exception _rawInputError;
 		bool _rawInputErrorLogged;
@@ -271,8 +272,8 @@ namespace x360ce.App.DInput
 				{
 					// Record it, but not as a fault. The worker is a background thread which
 					// stops on its own once the native call returns, and the runtime ends it at
-					// exit. Stop() also runs on a settings change and before the error window,
-					// so reporting turned an ordinary delay into an error report for the user.
+					// exit. Stop() also runs before the error window, so reporting turned an
+					// ordinary delay into an error report for the user.
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
 						System.Diagnostics.TraceLevel.Warning);
@@ -432,9 +433,12 @@ namespace x360ce.App.DInput
 				// Which rows each controller reads and where each device's force comes from, read once
 				// for the whole pass. The interface replaces it whole when the mappings change.
 				var routing = DeviceRouting.Current;
+				var recording = Recording;
 				// Note: Getting XInput states are not required in order to do emulation.
-				// Get states only when form is maximized in order to reduce CPU usage.
-				var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
+				// Get states only when form is maximized in order to reduce CPU usage. A recording of the controller
+				// output reads them back whatever the window does, so it holds what games read beside what was sent.
+				var getXInputStates = (SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled)
+					|| (recording != null && recording.Has(RecordParts.Output));
 				var mark = StepMark();
 				// Best place to unload XInput DLL is at the start, because
 				// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
@@ -464,7 +468,6 @@ namespace x360ce.App.DInput
 				RetrieveXiStates(game, getXInputStates);
 				StepDone(7, ref mark);
 				// A recording that runs is handed what this pass made, once it is all made.
-				var recording = Recording;
 				if (recording != null)
 					RecordPass(recording, routing, getXInputStates);
 			}

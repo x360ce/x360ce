@@ -95,7 +95,7 @@ namespace x360ce.Tests
 			{
 				// A program file in a game folder: what the reported scan was reading (GetMasks, Level 1).
 				File.Copy(typeof(XInputMaskScanner).Assembly.Location, Path.Combine(folder, "game.exe"));
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					using (var form = new Form { ShowInTaskbar = false })
 					using (var panel = new GamesGridUserControl())
@@ -127,7 +127,7 @@ namespace x360ce.Tests
 		[Description("A game found after the games list has closed stops the scan instead of failing on the worker")]
 		public void A_game_found_after_the_list_closed_stops_the_scan()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var panel = new GamesGridUserControl();
 				var handler = Handler(panel);
@@ -153,7 +153,7 @@ namespace x360ce.Tests
 		[Description("A listed game added again by hand, with no default settings and no product name, moves to where it was found")]
 		public void A_game_with_no_default_settings_is_updated()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				using (var form = new Form { ShowInTaskbar = false })
 				using (var panel = new GamesGridUserControl())
@@ -204,7 +204,7 @@ namespace x360ce.Tests
 				var source = typeof(XInputMaskScanner).Assembly.Location;
 				File.Copy(source, Path.Combine(folder, "game1.exe"));
 				File.Copy(source, Path.Combine(folder, "game2.exe"));
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					var panel = new GamesGridUserControl();
 					var handler = Handler(panel);
@@ -251,7 +251,7 @@ namespace x360ce.Tests
 				var copy = new FileInfo(Path.Combine(folder, "found.exe"));
 				File.Copy(typeof(XInputMaskScanner).Assembly.Location, copy.FullName);
 				copy.Refresh();
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					using (var form = new Form { ShowInTaskbar = false })
 					using (var panel = new GamesGridUserControl())

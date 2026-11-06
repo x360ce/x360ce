@@ -88,24 +88,29 @@ namespace JocysCom.ClassLibrary.Mcp
 			return current ?? CurrentOf(root as Control);
 		}
 
-		/// <summary>An element as ui_current reports it.</summary>
+		/// <summary>An element as ui_current reports it: the element alone, whatever it holds inside.</summary>
 		static Dictionary<string, object> Current(object element, string path)
 		{
-			var node = Withheld(UiTreeWalker.Read(element, false, path));
+			var node = Withheld(UiTreeWalker.ReadAlone(element, path));
 			return new Dictionary<string, object>
 			{
 				{ "Path", path }, { "Role", node?.Role }, { "Name", node?.Name }, { "Value", node?.Value },
 			};
 		}
 
-		[McpTool(AiAccess.Read, "The interface as a tree: every element with its kind, name, purpose, path and current value, as JSON. Pass a path to read one branch; a grid read this way lists its rows and the buttons in them. Sibling controls that read alike are listed once; setting the one shown sets both. A path may start with a window from ui_windows.")]
+		[McpTool(AiAccess.Read, "The interface as a tree: every element with its kind, name, purpose, path and current value, as JSON. Pass a path to read one branch; a grid read this way lists its rows and the buttons in them. Sibling controls that read alike are listed once; setting the one shown sets both. A path may start with a window from ui_windows.", OnUiThread = false)]
 		public static string UiRead([Description("Element path from an earlier ui_read; omit for the whole window.")] string path = null)
 		{
 			path = path ?? "";
-			var start = FindElement(path);
-			if (start == null)
-				throw new InvalidOperationException("No element at " + path + ".");
-			var node = Withheld(UiTreeWalker.Read(start, false, path));
+			UiNode node = null;
+			// Read on the interface thread and written out here, so the window waits only for the reading.
+			McpCatalog.OnUiThread(() =>
+			{
+				var start = FindElement(path);
+				if (start == null)
+					throw new InvalidOperationException("No element at " + path + ".");
+				node = Withheld(UiTreeWalker.Read(start, false, path));
+			});
 			return UiTreeExporter.ToJson(node, false);
 		}
 
@@ -227,12 +232,13 @@ namespace JocysCom.ClassLibrary.Mcp
 			if (string.IsNullOrWhiteSpace(query))
 				throw new InvalidOperationException("Give a word to look for.");
 			var words = query.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-			var found = new List<KeyValuePair<int, object>>();
-			Collect(Withheld(UiTreeWalker.Read(RootWindow, false, "")), words, found);
+			var found = new List<KeyValuePair<int, UiNode>>();
+			// Walked for the names alone: only what is found is asked for its value.
+			Collect(Withheld(UiTreeWalker.Read(RootWindow, false, "", false)), words, found);
 			foreach (var window in OtherWindows())
-				Collect(Withheld(UiTreeWalker.Read(window, false, WindowName(window))), words, found);
+				Collect(Withheld(UiTreeWalker.Read(window, false, WindowName(window), false)), words, found);
 			// The sort keeps the tree's order among equal matches.
-			var shown = found.OrderByDescending(x => x.Key).Select(x => x.Value).Take(FindLimit).ToList();
+			var shown = found.OrderByDescending(x => x.Key).Select(x => x.Value).Take(FindLimit).Select(Hit).ToList();
 			// Cut off without a word, a search reads as complete, and the setting that was left out is
 			// reported as one the program does not have.
 			if (found.Count > FindLimit)
@@ -244,16 +250,29 @@ namespace JocysCom.ClassLibrary.Mcp
 			return shown.ToArray();
 		}
 
-		static void Collect(UiNode node, string[] words, List<KeyValuePair<int, object>> found)
+		static void Collect(UiNode node, string[] words, List<KeyValuePair<int, UiNode>> found)
 		{
 			if (node.Path != null && words.All(w => Has(node.Name, w) || Has(node.Description, w) || Has(node.Id, w) || Has(node.Path, w)))
-				found.Add(new KeyValuePair<int, object>(Score(node, words), new Dictionary<string, object>
-				{
-					{ "Path", node.Path }, { "Role", node.Role }, { "Name", node.Name }, { "Description", node.Description }, { "Value", node.Value },
-				}));
+				found.Add(new KeyValuePair<int, UiNode>(Score(node, words), node));
 			if (node.Items != null)
 				foreach (var child in node.Items)
 					Collect(child, words, found);
+		}
+
+		/// <summary>An element found, as ui_find reports it, with its value read now: a grid's row brings its own from the walk, and a secret is never read.</summary>
+		static object Hit(UiNode node)
+		{
+			var value = node.Value;
+			if (value == null && !SecretControls.Contains(node.Id))
+			{
+				var element = FindElement(node.Path);
+				if (element != null)
+					value = UiTreeWalker.GetValue(element);
+			}
+			return new Dictionary<string, object>
+			{
+				{ "Path", node.Path }, { "Role", node.Role }, { "Name", node.Name }, { "Description", node.Description }, { "Value", value },
+			};
 		}
 
 		/// <summary>How well an element answers the words: each counts most in the name a person reads, then in its purpose, then in its field name, and nothing when only the path has it.</summary>

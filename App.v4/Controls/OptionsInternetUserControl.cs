@@ -33,6 +33,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.InternetFeatures, InternetFeaturesCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
+			SettingsManager.LoadAndMonitor(x => x.SdlDatabaseUrl, SdlDatabaseUrlComboBox, o.SdlDatabaseUrls);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -87,6 +88,21 @@ namespace x360ce.App.Controls
 				else
 					MainForm.Current.SetHeaderError(probe.Result.Value);
 			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		/// <summary>Fetches SDL's controller database from the address in the box, as the button on each controller's SDL tab does, and says in the header how it went.</summary>
+		private void UpdateSdlDatabaseButton_Click(object sender, EventArgs e)
+		{
+			SdlUserControl.StartUpdate(UpdateSdlDatabaseButton, (text, failed) =>
+			{
+				var header = MainForm.Current;
+				if (header == null)
+					return;
+				if (failed)
+					header.SetHeaderError(text);
+				else
+					header.SetHeaderInfo(text);
+			}, null);
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

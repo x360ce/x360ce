@@ -61,8 +61,19 @@ namespace x360ce.App.UiTree
 				"Shows a short note at the top of the screen, over the game, when a device mapped to the current game disconnects or connects again.");
 			d["OptionsUserControl.StartWithWindowsStateComboBox"] = new Text("Start with Windows",
 				"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.");
+			d["OptionsUserControl.AppearanceGroupBox"] = new Text("Appearance",
+				"The program's colours, and the font and size its windows are drawn in.");
 			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",
 				"Light or dark colours. System follows the Windows setting for apps.");
+			d["OptionsUserControl.FontComboBox"] = new Text("Font",
+				"The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; "
+				+ "Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.");
+			d["OptionsUserControl.SizeComboBox"] = new Text("Size",
+				"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, "
+				+ "or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows "
+				+ "grow or shrink with it. Takes effect when x360ce starts again.");
+			d["OptionsUserControl.RestartButton"] = new Text("Restart x360ce",
+				"Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.");
 			d["OptionsUserControl.ProgramScanLocationsTabControl"] = new Text("Scan locations",
 				"Folders searched when looking for installed games.");
 			d["OptionsUserControl.GameScanLocationsTabPage"] = new Text("Game Scan Locations",
@@ -119,13 +130,18 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.HidHideGroupBox"] = new Text("HID Hide",
 				"Hides the real controller from games, so only the emulated one is seen.");
 			d["OptionsUserControl.HidHideStatusTextBox"] = new Text("HID Hide state",
-				"Whether HID Hide is installed, and which version.");
+				"Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.");
 			d["OptionsUserControl.HidHideRefreshButton"] = new Text("Refresh",
 				"Checks HID Hide again.");
-			d["OptionsUserControl.HidHideDownloadButton"] = new Text("Download HID Hide...",
-				"Opens the page HID Hide is downloaded from.");
+			d["OptionsUserControl.HidHideInstallButton"] = new Text("Install HID Hide",
+				"Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. "
+				+ "Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.");
 			d["OptionsUserControl.HidHideConfigureButton"] = new Text("Open Configuration",
 				"Opens the HID Hide program, where hidden devices are chosen.");
+			d["OptionsUserControl.HidHideDownloadLinkLabel"] = new Text("HID Hide releases",
+				"Opens the page HID Hide's setups are downloaded from, to download one by hand.");
+			d["OptionsUserControl.HidHideHelpRichTextBox"] = new Text("HID Hide notes",
+				"What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.");
 			d["OptionsUserControl.HidHideConfigureAutomaticallyCheckBox"] = new Text("Configure automatically",
 				"Hides a device from games through HID Hide while it is mapped to a controller, and shows it again as this program closes. "
 				+ "Greyed out while HID Hide is not installed.");
@@ -185,6 +201,10 @@ namespace x360ce.App.UiTree
 				"Address of the online settings database.");
 			d["OptionsInternetUserControl.TestServiceButton"] = new Text("Test",
 				"Asks the web service at that address who it is and says whether it answers.");
+			// What it is for is the option's own description, which the box takes when it is bound.
+			d["OptionsInternetUserControl.SdlDatabaseUrlComboBox"] = new Text("SDL database address", null);
+			d["OptionsInternetUserControl.UpdateSdlDatabaseButton"] = new Text("Update SDL Database",
+				"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.");
 			d["OptionsInternetUserControl.GamesGroupBox"] = new Text("Default settings",
 				"How settings shared by other people are chosen.");
 			d["OptionsInternetUserControl.GetProgramsMinInstancesUpDown"] = new Text(

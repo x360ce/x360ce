@@ -22,18 +22,34 @@ namespace x360ce.App.Controls
 			SettingsGridPanel.SettingsDataGridView.SelectionChanged += Grid_SelectionChanged;
 			SummariesGridPanel.SummariesDataGridView.SelectionChanged += Grid_SelectionChanged;
 			PresetsGridPanel.PresetsDataGridView.SelectionChanged += Grid_SelectionChanged;
+			// The rows of SDL's controller database, beside x360ce's own lists.
+			SdlPresetsPanel = new SdlPresetsUserControl { Dock = DockStyle.Fill };
+			SdlPresetsPanel.SelectionChanged += Grid_SelectionChanged;
+			SdlTabPage = new TabPage { Name = "SdlTabPage", Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage.Controls.Add(SdlPresetsPanel);
+			MainTabControl.TabPages.Add(SdlTabPage);
 		}
+
+		/// <summary>The SDL tab: SDL's controller database, as presets for the selected device.</summary>
+		public readonly TabPage SdlTabPage;
+		public readonly SdlPresetsUserControl SdlPresetsPanel;
+
+		/// <summary>The device selected on the controller the window was opened for, or null.</summary>
+		UserDevice _device;
 
 		private void Grid_SelectionChanged(object sender, EventArgs e)
 		{
 			UpdateControls();
 		}
 
-		public void InitForm()
+		/// <param name="device">The device selected on the controller: the SDL tab lists its rows first and translates a row for it.</param>
+		public void InitForm(UserDevice device = null)
 		{
+			_device = device;
 			SettingsGridPanel.InitPanel();
 			SummariesGridPanel.InitPanel();
 			PresetsGridPanel.InitPanel();
+			SdlPresetsPanel.InitPanel(device);
 			// The form is shown again after it closes, and a fetch it closed during must not leave the buttons off.
 			_fetching = false;
 			UpdateControls();
@@ -107,6 +123,14 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		void UseSelectedPreset(PresetAction action)
 		{
+			// A row of SDL's database is not on the server: it is translated here, for the device.
+			if (MainTabControl.SelectedTab == SdlTabPage)
+			{
+				var sdl = SdlPresetsPanel.GetSelectedPreset();
+				if (sdl != null)
+					UsePreset(action, sdl);
+				return;
+			}
 			var checksum = GetSelectedChecksum();
 			if (!checksum.HasValue)
 				return;
@@ -170,7 +194,7 @@ namespace x360ce.App.Controls
 					SettingsManager.CopyPresetToClipboard(padSetting);
 					break;
 				case PresetAction.CopyFormat:
-					SettingsManager.ShowCopyPresetMenu(CopyPresetButton, padSetting);
+					SettingsManager.ShowCopyPresetMenu(CopyPresetButton, padSetting, _device);
 					break;
 			}
 		}
@@ -234,6 +258,8 @@ namespace x360ce.App.Controls
 				selected = SummariesGridPanel.SummariesDataGridView.SelectedRows.Count > 0;
 			if (MainTabControl.SelectedTab == SettingsTabPage)
 				selected = SettingsGridPanel.SettingsDataGridView.SelectedRows.Count > 0;
+			if (MainTabControl.SelectedTab == SdlTabPage)
+				selected = SdlPresetsPanel.SelectedMapping != null;
 			// Off while the server answers, so one press fetches once.
 			var enabled = selected && !_fetching;
 			ControlsHelper.SetEnabled(OkButton, enabled);

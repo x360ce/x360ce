@@ -43,6 +43,9 @@
             this.WebServiceUrlLabel = new System.Windows.Forms.Label();
             this.InternetDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
             this.TestServiceButton = new System.Windows.Forms.Button();
+            this.SdlDatabaseUrlLabel = new System.Windows.Forms.Label();
+            this.SdlDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
+            this.UpdateSdlDatabaseButton = new System.Windows.Forms.Button();
             this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
             this.OnlineAccountLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.ComputerDiskLabel = new System.Windows.Forms.Label();
@@ -190,7 +193,7 @@
             this.InternetGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.InternetGroupBox.Name = "InternetGroupBox";
             this.InternetGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.InternetGroupBox.Size = new System.Drawing.Size(958, 108);
+            this.InternetGroupBox.Size = new System.Drawing.Size(958, 153);
             this.InternetGroupBox.TabIndex = 1;
             this.InternetGroupBox.TabStop = false;
             this.InternetGroupBox.Text = "Internet";
@@ -207,13 +210,17 @@
             this.InternetLayoutPanel.Controls.Add(this.WebServiceUrlLabel, 0, 1);
             this.InternetLayoutPanel.Controls.Add(this.InternetDatabaseUrlComboBox, 1, 1);
             this.InternetLayoutPanel.Controls.Add(this.TestServiceButton, 2, 1);
+            this.InternetLayoutPanel.Controls.Add(this.SdlDatabaseUrlLabel, 0, 2);
+            this.InternetLayoutPanel.Controls.Add(this.SdlDatabaseUrlComboBox, 1, 2);
+            this.InternetLayoutPanel.Controls.Add(this.UpdateSdlDatabaseButton, 2, 2);
             this.InternetLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.InternetLayoutPanel.Location = new System.Drawing.Point(4, 24);
             this.InternetLayoutPanel.Name = "InternetLayoutPanel";
-            this.InternetLayoutPanel.RowCount = 2;
+            this.InternetLayoutPanel.RowCount = 3;
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.InternetLayoutPanel.Size = new System.Drawing.Size(950, 79);
+            this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.InternetLayoutPanel.Size = new System.Drawing.Size(950, 124);
             this.InternetLayoutPanel.TabIndex = 0;
             // 
             // InternetCheckBoxesPanel
@@ -284,7 +291,7 @@
             this.InternetDatabaseUrlComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.InternetDatabaseUrlComboBox.FormattingEnabled = true;
             this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
-            "https://www.x360ce.com/webservices/x360ce.asmx",
+            "https://www.x360ce.com/x360ce/webservices/x360ce.asmx",
             "https://localhost:44360/webservices/x360ce.asmx"});
             this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(147, 42);
             this.InternetDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -304,7 +311,41 @@
             this.TestServiceButton.Text = "Test";
             this.TestServiceButton.UseVisualStyleBackColor = true;
             this.TestServiceButton.Click += new System.EventHandler(this.TestServiceButton_Click);
-            // 
+            //
+            // SdlDatabaseUrlLabel
+            //
+            this.SdlDatabaseUrlLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.SdlDatabaseUrlLabel.AutoSize = true;
+            this.SdlDatabaseUrlLabel.Location = new System.Drawing.Point(4, 91);
+            this.SdlDatabaseUrlLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.SdlDatabaseUrlLabel.Name = "SdlDatabaseUrlLabel";
+            this.SdlDatabaseUrlLabel.Size = new System.Drawing.Size(139, 20);
+            this.SdlDatabaseUrlLabel.TabIndex = 4;
+            this.SdlDatabaseUrlLabel.Text = "SDL Database URL";
+            //
+            // SdlDatabaseUrlComboBox
+            //
+            this.SdlDatabaseUrlComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.SdlDatabaseUrlComboBox.FormattingEnabled = true;
+            this.SdlDatabaseUrlComboBox.Location = new System.Drawing.Point(151, 87);
+            this.SdlDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.SdlDatabaseUrlComboBox.Name = "SdlDatabaseUrlComboBox";
+            this.SdlDatabaseUrlComboBox.Size = new System.Drawing.Size(603, 28);
+            this.SdlDatabaseUrlComboBox.TabIndex = 5;
+            //
+            // UpdateSdlDatabaseButton
+            //
+            this.UpdateSdlDatabaseButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.UpdateSdlDatabaseButton.AutoSize = true;
+            this.UpdateSdlDatabaseButton.Location = new System.Drawing.Point(762, 84);
+            this.UpdateSdlDatabaseButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.UpdateSdlDatabaseButton.Name = "UpdateSdlDatabaseButton";
+            this.UpdateSdlDatabaseButton.Size = new System.Drawing.Size(184, 35);
+            this.UpdateSdlDatabaseButton.TabIndex = 6;
+            this.UpdateSdlDatabaseButton.Text = "Update SDL Database";
+            this.UpdateSdlDatabaseButton.UseVisualStyleBackColor = true;
+            this.UpdateSdlDatabaseButton.Click += new System.EventHandler(this.UpdateSdlDatabaseButton_Click);
+            //
             // OnlineAccountGroupBox
             // 
             this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -312,7 +353,7 @@
             this.OnlineAccountGroupBox.AutoSize = true;
             this.OnlineAccountGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OnlineAccountGroupBox.Controls.Add(this.OnlineAccountLayoutPanel);
-            this.OnlineAccountGroupBox.Location = new System.Drawing.Point(4, 234);
+            this.OnlineAccountGroupBox.Location = new System.Drawing.Point(4, 279);
             this.OnlineAccountGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
             this.OnlineAccountGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -460,7 +501,7 @@
             this.OnlineAccountLoginGroupBox.AutoSize = true;
             this.OnlineAccountLoginGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OnlineAccountLoginGroupBox.Controls.Add(this.OnlineAccountLoginLayoutPanel);
-            this.OnlineAccountLoginGroupBox.Location = new System.Drawing.Point(4, 426);
+            this.OnlineAccountLoginGroupBox.Location = new System.Drawing.Point(4, 471);
             this.OnlineAccountLoginGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.OnlineAccountLoginGroupBox.Name = "OnlineAccountLoginGroupBox";
             this.OnlineAccountLoginGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -635,6 +676,9 @@
 		public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
 		private System.Windows.Forms.Label WebServiceUrlLabel;
 		public System.Windows.Forms.Button TestServiceButton;
+		private System.Windows.Forms.Label SdlDatabaseUrlLabel;
+		public System.Windows.Forms.ComboBox SdlDatabaseUrlComboBox;
+		public System.Windows.Forms.Button UpdateSdlDatabaseButton;
 		public System.Windows.Forms.CheckBox InternetAutoLoadCheckBox;
 		public System.Windows.Forms.CheckBox InternetFeaturesCheckBox;
 		private System.Windows.Forms.GroupBox OnlineAccountGroupBox;

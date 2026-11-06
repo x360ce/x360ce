@@ -171,13 +171,6 @@ namespace x360ce.App.Controls
 			UpdateImage();
 		}
 
-		private void ArrowPictureBox_EnabledChanged(object sender, EventArgs e)
-		{
-			// Taken from the resources each time rather than kept, so it is the theme's.
-			var arrow = Properties.Resources.arrow_right_gray_16x16;
-			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrow : AppHelper.GetDisabledImage(arrow);
-		}
-
 		private State _gamepadState;
 		private Bitmap _markB;
 

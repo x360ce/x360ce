@@ -48,7 +48,7 @@ namespace x360ce.Tests
 		/// <summary>Builds a window with the pad on a tab, shown or not, and runs the game changes.</summary>
 		static void SwitchGames(bool padTabShown, bool selectRowFirst)
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
@@ -289,7 +289,7 @@ namespace x360ce.Tests
 
 		/// <summary>
 		/// Runs a body on a shown controller page for a selected game, with every settings change saved
-		/// from the page into the selected row, as the main window saves it (ApplyAllSettingsToXML).
+		/// from the page into the selected row, as the main window saves it (ApplySettingsToXML).
 		/// </summary>
 		static void OnPageThatSavesChanges(Action<PadControl, UserGame> body)
 		{
@@ -403,7 +403,7 @@ namespace x360ce.Tests
 		[Description("A page built before the settings are read shows the game's controller switch once it is given its settings, as the main window starts")]
 		public void A_page_built_before_the_settings_shows_the_game_s_controller_switch()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;

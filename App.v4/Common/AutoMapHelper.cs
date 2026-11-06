@@ -24,15 +24,61 @@ namespace x360ce.App
 				: ud.IsOnline && ud.DeviceObjects != null;
 		}
 
+		/// <summary>A preset made for the device: from SDL's controller database when it has a row for the device, otherwise guessed from the device's objects.</summary>
 		public static PadSetting GetAutoPreset(UserDevice ud)
 		{
+			string note;
+			return GetAutoPreset(ud, out note);
+		}
+
+		/// <summary>A preset made for the device, and what made it.</summary>
+		/// <remarks>
+		/// SDL's row for the device comes first: it says which control is which part of the pad, where the guess can only
+		/// go by the controls' names and places. The guess is used for a device SDL has no row for: a keyboard, a mouse, a
+		/// wheel, a plugin device, a pad SDL does not know.
+		/// </remarks>
+		/// <param name="ud">The device.</param>
+		/// <param name="note">What filled the preset, in a sentence for the status bar.</param>
+		/// <param name="database">The SDL database to look in; the program's own when null.</param>
+		public static PadSetting GetAutoPreset(UserDevice ud, out string note, SdlDatabase database = null)
+		{
+			note = "";
+			if (ud == null || ud.DeviceObjects == null)
+				return new PadSetting();
+			var sdl = GetSdlPreset(ud, database);
+			if (sdl != null)
+			{
+				var skipped = sdl.SkippedText();
+				note = "Auto Preset filled from SDL's controller database, as " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+				var setting = sdl.Setting;
+				setting.PadSettingChecksum = setting.CleanAndGetCheckSum();
+				return setting;
+			}
+			note = "Auto Preset filled by x360ce's own guess: SDL's controller database has no row for this device.";
+			return GetGuessedPreset(ud);
+		}
+
+		/// <summary>The device's SDL row as a mapping for the device; null when SDL has no row for it, or the row maps none of its controls.</summary>
+		/// <remarks>Keyboards, mice and plugin devices are left to the guess: SDL's database describes game controllers.</remarks>
+		/// <param name="ud">The device.</param>
+		/// <param name="database">The SDL database to look in; the program's own when null.</param>
+		public static SdlTranslation GetSdlPreset(UserDevice ud, SdlDatabase database = null)
+		{
+			if (ud == null || ud.IsKeyboard || ud.IsMouse || ud.InputSource == InputSourceType.Plugin)
+				return null;
+			var device = SdlDevice.From(ud);
+			var mapping = (database ?? SdlDatabase.Current).Find(device);
+			if (mapping == null)
+				return null;
+			var translation = SdlConverter.ToPadSetting(mapping, device);
+			return translation.Count == 0 ? null : translation;
+		}
+
+		/// <summary>A preset guessed from the device's objects: their kinds, names and places.</summary>
+		static PadSetting GetGuessedPreset(UserDevice ud)
+		{
 			var ps = new PadSetting();
-			if (ud == null)
-				return ps;
-			var objects = ud.DeviceObjects;
-			if (objects == null)
-				return ps;
-			var list = objects.ToList();
+			var list = ud.DeviceObjects.ToList();
 			// Get information about device.
 			var deviceType = (SharpDX.DirectInput.DeviceType)ud.CapType;
 			if (deviceType == DeviceType.Mouse)

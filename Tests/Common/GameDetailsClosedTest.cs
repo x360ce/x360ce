@@ -56,7 +56,7 @@ namespace x360ce.Tests
 		[Description("A later change on a game held by a closed panel is ignored")]
 		public void A_closed_panel_ignores_a_later_change_on_its_game()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var panel = new GameDetailsUserControl();
 				var game = Game();

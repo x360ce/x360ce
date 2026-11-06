@@ -47,4 +47,24 @@ A new version must also be embedded in `App.v3` and `App.v4` beside the picture 
 It also writes the glyphs, `Resources/Images/shared/xbox/Button_*.png`, each button cut out in its own
 shape, with the versions named by their size, such as `Button_A_30x30.png`. The dark theme's are in
 `xbox/dark`, cut from the dark master with their greys lifted as the dark icons' are, so a greyed-out
-glyph still shows on the dark background. The glyph list is at the top of the script.
+glyph still shows on the dark background. The glyph list is at the top of the script. v3's Buttons page
+shows them; v4's draws its own, below.
+
+# Buttons page pictures
+
+`build_buttons.py` draws the pictures of v4's Buttons page, a picture for each Xbox button and the grey
+arrow beside it, from the path data of x360ce 5's `AxisToButtonControl.xaml`, kept as
+`buttons/AxisToButtonControl.xaml` beside the script. It reads the path mini-language, fills each path in the
+XAML's colours, and writes each picture at 24 pixels, the size the page draws it at, and at 1.5 and 2 times
+that:
+
+```powershell
+python scripts/art/build_buttons.py
+```
+
+It writes `Resources/Images/v4/xbox/Button_*.png` and `Axis_Arrow.png`, with the versions named by their size,
+such as `Button_A_36x36.png`, and lists the versions in `App.v4/Properties/Icons.resx`. The arrow is drawn in a
+colour of the theme, so it also comes for the dark theme, in `xbox/dark`; the buttons are drawn in their own
+colours and are the same in both themes. Every pixel is counted from whole points, so running the script again
+writes the same bytes. To add a picture: add its line to the list at the top of the script, its 24-pixel entry
+to `App.v4/Properties/Resources.resx`, and run the script.

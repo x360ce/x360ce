@@ -77,11 +77,7 @@ namespace x360ce.App.Issues
 		public override void FixTask()
 		{
 			// The rows are bound to the controller tabs' lists, so they change on the interface thread.
-			ControlsHelper.Invoke(() =>
-			{
-				Apply(Moves(), SettingsManager.Options.HidHideConfigureAutomatically);
-				SettingsManager.Current.RaiseSettingsChanged(null);
-			});
+			ControlsHelper.Invoke(() => Apply(Moves(), SettingsManager.Options.HidHideConfigureAutomatically));
 		}
 
 		/// <summary>Maps each controller's Raw Input row where its DirectInput row was, and takes the DirectInput row off.</summary>

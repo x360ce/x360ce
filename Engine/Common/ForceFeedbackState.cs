@@ -158,6 +158,25 @@ namespace x360ce.Engine
         /// <summary>The last force update threw before it finished, so settings it recorded as sent may not have reached the device.</summary>
         bool interrupted;
 
+        /// <summary>What force updates asked of the motor effects since this state was made, counted for a bug report recording.</summary>
+        /// <remarks>Written by the engine thread only. Read by any thread: each count is one number, read whole.</remarks>
+        public sealed class CallCounts
+        {
+            /// <summary>Force updates that reached the device.</summary>
+            public int Updates;
+            /// <summary>Motor effects made.</summary>
+            public int Made;
+            /// <summary>Effects started again after the device was held again, the spring's among them.</summary>
+            public int Resumed;
+            /// <summary>Changes sent to a motor effect.</summary>
+            public int Changes;
+            /// <summary>Of <see cref="Changes"/>, those sent with a start, because the driver did not say the effect was playing.</summary>
+            public int Started;
+        }
+
+        /// <summary>What force updates asked of the motor effects, for a recording.</summary>
+        public readonly CallCounts Counts = new CallCounts();
+
         /// <summary>Takes every effect this state made off the device, before the state is dropped.</summary>
         /// <remarks>
         /// Disposed rather than stopped: disposing an effect takes its force off as a stop does, and asks the
@@ -193,7 +212,12 @@ namespace x360ce.Engine
         // Two small motors located inside each trigger,
         // that provide sharp bursts of vibration directly to the user's trigger fingers.
 
-        public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
+        /// <param name="heldAgain">
+        /// The device was held again since the last update that finished, and forgot what was playing, so the effects this
+        /// state holds are started again. Otherwise only the effects whose values changed are sent, as x360ce 5 does: with a
+        /// driver that never says an effect is playing, every update would start both motors' effects again, the right one last.
+        /// </param>
+        public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v, bool heldAgain)
 		{
 			Changed(ref old_ForceEnable, ps.ForceEnable);
 			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);
@@ -257,8 +281,9 @@ namespace x360ce.Engine
 			// refusal is not new, even when it holds nothing.
 			if (effectL == null && effectR == null && effectS == null && effectD == null && motorsRefused == MotorEffects.None)
 				DisposeDeviceEffects(device);
-			// Each one resumed, so not short-circuited.
-			var restarted = Resume(effectL) | Resume(effectR) | Resume(effectS) | Resume(effectD);
+			Counts.Updates++;
+			// Only after the device was held again; each one resumed, so not short-circuited.
+			var restarted = heldAgain && (Resume(effectL) | Resume(effectR) | Resume(effectS) | Resume(effectD));
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
@@ -479,6 +504,8 @@ namespace x360ce.Engine
                     effectL = CreateEffect(device, GUID_Force, paramsL);
                     if (effectL == null)
                         motorsRefused |= MotorEffects.Left;
+                    else
+                        Counts.Made++;
                 }
                 if (actuatorR != null)
                 {
@@ -490,6 +517,8 @@ namespace x360ce.Engine
                         effectR = CreateEffect(device, GUID_Force, paramsR);
                         if (effectR == null)
                             motorsRefused |= MotorEffects.Right;
+                        else
+                            Counts.Made++;
                     }
                 }
             }
@@ -852,6 +881,7 @@ namespace x360ce.Engine
             if (effect.Status == EffectStatus.Playing)
                 return false;
             effect.Start(1);
+            Counts.Resumed++;
             return true;
         }
 
@@ -880,8 +910,14 @@ namespace x360ce.Engine
             if (parameters == null || effect == null || unsupported.Contains(effect))
                 return;
             // Do not restart playing effect.
-            flags |= effect.Status == EffectStatus.Playing
-                ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
+            var playing = effect.Status == EffectStatus.Playing;
+            flags |= playing ? EffectParameterFlags.NoRestart : EffectParameterFlags.Start;
+            if (effect == effectL || effect == effectR)
+            {
+                Counts.Changes++;
+                if (!playing)
+                    Counts.Started++;
+            }
             try
             {
                 effect.SetParameters(parameters, flags);

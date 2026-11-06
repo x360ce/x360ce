@@ -41,6 +41,7 @@
 			this.NoIssuesPanel = new System.Windows.Forms.Panel();
 			this.NoIssuesLabel = new System.Windows.Forms.Label();
 			this.LinePanel = new System.Windows.Forms.Panel();
+			this.LineFillPanel = new System.Windows.Forms.Panel();
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.NoIssuesPanel.SuspendLayout();
@@ -256,13 +257,14 @@
 			this.NoIssuesPanel.Location = new System.Drawing.Point(0, 641);
 			this.NoIssuesPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.NoIssuesPanel.Name = "NoIssuesPanel";
-			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(16);
+			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(19, 16, 16, 16);
 			this.NoIssuesPanel.Size = new System.Drawing.Size(1072, 61);
 			this.NoIssuesPanel.TabIndex = 25;
 			// 
 			// NoIssuesLabel
 			// 
 			this.NoIssuesLabel.AutoSize = true;
+			this.NoIssuesLabel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.NoIssuesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.NoIssuesLabel.ForeColor = System.Drawing.Color.Green;
 			this.NoIssuesLabel.Location = new System.Drawing.Point(19, 16);
@@ -273,12 +275,19 @@
 			// 
 			// LinePanel
 			// 
-			this.LinePanel.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.LinePanel.Controls.Add(this.LineFillPanel);
 			this.LinePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.LinePanel.Location = new System.Drawing.Point(0, 640);
 			this.LinePanel.Name = "LinePanel";
 			this.LinePanel.Size = new System.Drawing.Size(1072, 1);
 			this.LinePanel.TabIndex = 26;
+			// 
+			// LineFillPanel
+			// 
+			this.LineFillPanel.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.LineFillPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LineFillPanel.Name = "LineFillPanel";
+			this.LineFillPanel.TabIndex = 0;
 			// 
 			// IssuesUserControl
 			// 
@@ -312,6 +321,7 @@
         private System.Windows.Forms.Panel NoIssuesPanel;
         private System.Windows.Forms.Label NoIssuesLabel;
         private System.Windows.Forms.Panel LinePanel;
+        private System.Windows.Forms.Panel LineFillPanel;
         private System.Windows.Forms.ToolStripButton IgnoreButton;
 		private System.Windows.Forms.DataGridViewImageColumn SeverityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;

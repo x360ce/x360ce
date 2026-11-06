@@ -2,9 +2,11 @@
 using JocysCom.ClassLibrary.Controls.Themes;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App.Forms;
 using x360ce.App.Mcp;
@@ -20,8 +22,12 @@ namespace x360ce.App.Controls
 			if (DesignMode)
 				return;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
+			AppHelper.LoadHelp(HidHideHelpRichTextBox, AppHelper.HelpHidHideResource);
 			// The theme that follows Windows is named the way Windows names it.
 			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
+			// The lists hold the choices as the options keep them, and show each by what it is.
+			FontComboBox.Format += (s, e) => e.Value = AppFonts.ChoiceText((string)e.ListItem, _InstalledFonts);
+			SizeComboBox.Format += (s, e) => e.Value = AppFonts.SizeText(SettingsManager.Options.InterfaceFont, (float)e.ListItem);
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
 			EmulationHotkeyTextBox.ReadOnly = true;
@@ -228,6 +234,128 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		#region Appearance
+
+		/// <summary>The installed families the font list offers; null until they are read.</summary>
+		List<string> _InstalledFonts;
+
+		/// <summary>True while the font or size list is filled, so filling it writes nothing back.</summary>
+		bool _LoadingFonts;
+
+		/// <summary>
+		/// Binds the theme, font and size lists to the options. A theme applies at once; a font and a size when x360ce starts
+		/// again, as every window is made in them.
+		/// </summary>
+		/// <remarks>
+		/// The installed fonts are read on a worker: two hundred families take about a fifth of a second, which every start
+		/// would wait for. Until they are read the font list holds the default, Selawik, Windows' own fonts and the saved
+		/// choice, so it shows the saved choice from the start; it is then filled again, keeping the choice, without writing it
+		/// back.
+		/// </remarks>
+		public void UpdateAppearanceMap()
+		{
+			SettingsManager.LoadAndMonitor(x => x.Theme, ThemeComboBox, Enum.GetValues(typeof(ThemeType)));
+			ShowFontChoices();
+			FontComboBox.SelectedIndexChanged -= FontComboBox_SelectedIndexChanged;
+			FontComboBox.SelectedIndexChanged += FontComboBox_SelectedIndexChanged;
+			SizeComboBox.SelectedIndexChanged -= SizeComboBox_SelectedIndexChanged;
+			SizeComboBox.SelectedIndexChanged += SizeComboBox_SelectedIndexChanged;
+			Task.Run(() => AppFonts.InstalledFamilies()).ContinueWith(t =>
+			{
+				if (IsDisposed)
+					return;
+				_InstalledFonts = t.Result;
+				ShowFontChoices();
+			}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		/// <summary>
+		/// Lists the font choices with the saved one selected, writing nothing back, and opens the list wide enough for the
+		/// longest name, however narrow the box; then the sizes, whose default follows the font.
+		/// </summary>
+		void ShowFontChoices()
+		{
+			var saved = SettingsManager.Options.InterfaceFont ?? "";
+			_LoadingFonts = true;
+			FontComboBox.BeginUpdate();
+			FontComboBox.Items.Clear();
+			FontComboBox.Items.AddRange(AppFonts.Choices(saved, _InstalledFonts).ToArray());
+			FontComboBox.SelectedItem = saved;
+			FontComboBox.EndUpdate();
+			FontComboBox.DropDownWidth = Math.Max(FontComboBox.Width, FormsTheme.GetComboBoxWidth(FontComboBox));
+			_LoadingFonts = false;
+			ShowSizeChoices();
+		}
+
+		/// <summary>
+		/// Lists the sizes around the default of the font chosen, with the saved one selected, writing nothing back; Restart
+		/// shows while the font or size chosen is not the one in use.
+		/// </summary>
+		void ShowSizeChoices()
+		{
+			var o = SettingsManager.Options;
+			_LoadingFonts = true;
+			SizeComboBox.BeginUpdate();
+			SizeComboBox.Items.Clear();
+			SizeComboBox.Items.AddRange(AppFonts.Sizes(o.InterfaceFont, o.InterfaceFontSize).Cast<object>().ToArray());
+			SizeComboBox.SelectedItem = o.InterfaceFontSize;
+			SizeComboBox.EndUpdate();
+			_LoadingFonts = false;
+			RestartButton.Visible = FontWaiting;
+		}
+
+		/// <summary>Whether the font or size chosen is not the one this run's windows are drawn in.</summary>
+		static bool FontWaiting
+		{
+			get
+			{
+				var o = SettingsManager.Options;
+				return (o.InterfaceFont ?? "") != AppFonts.Applied || o.InterfaceFontSize != AppFonts.AppliedSize;
+			}
+		}
+
+		/// <summary>Keeps the font chosen, lists the sizes around its default, and says in the header when it is used.</summary>
+		void FontComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var choice = FontComboBox.SelectedItem as string;
+			if (_LoadingFonts || choice == null)
+				return;
+			SettingsManager.Options.InterfaceFont = choice;
+			ShowSizeChoices();
+			SayWhenUsed();
+		}
+
+		/// <summary>Keeps the size chosen, and says in the header when it is used.</summary>
+		void SizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var size = SizeComboBox.SelectedItem as float?;
+			if (_LoadingFonts || size == null)
+				return;
+			SettingsManager.Options.InterfaceFontSize = size.Value;
+			RestartButton.Visible = FontWaiting;
+			SayWhenUsed();
+		}
+
+		/// <summary>Says in the header what the windows are drawn in when x360ce starts again, while it is not what they are drawn in now.</summary>
+		void SayWhenUsed()
+		{
+			if (!FontWaiting)
+				return;
+			var o = SettingsManager.Options;
+			MainForm.Current?.SetHeaderInfo(AppFonts.RestartNote(o.InterfaceFont, o.InterfaceFontSize, _InstalledFonts));
+		}
+
+		/// <summary>Starts the program again, as an update does, so its windows are made in the font and size chosen.</summary>
+		/// <remarks>
+		/// The window closes first, saving the settings, and the copy started takes the same command line. Posted, so a press
+		/// through the AI door is answered before the door closes with the window.
+		/// </remarks>
+		void RestartButton_Click(object sender, EventArgs e)
+		{
+			BeginInvoke((Action)Application.Restart);
+		}
+
+		#endregion
 
 		public void UpdateSettingsMap()
 		{
@@ -235,7 +363,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			InitWindowsStart();
-			SettingsManager.LoadAndMonitor(x => x.Theme, ThemeComboBox, Enum.GetValues(typeof(ThemeType)));
+			UpdateAppearanceMap();
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
@@ -290,6 +418,16 @@ namespace x360ce.App.Controls
 					break;
 				case nameof(Options.Theme):
 					FormsTheme.SetTheme(o.Theme);
+					break;
+				case nameof(Options.InterfaceFont):
+					// Changed by other than the list, which already shows it.
+					if (!Equals(FontComboBox.SelectedItem, o.InterfaceFont ?? ""))
+						ShowFontChoices();
+					break;
+				case nameof(Options.InterfaceFontSize):
+					// Changed by other than the list, which already shows it.
+					if (!Equals(SizeComboBox.SelectedItem, o.InterfaceFontSize))
+						ShowSizeChoices();
 					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
@@ -682,14 +820,18 @@ namespace x360ce.App.Controls
 
 		#region HID Hide
 
+		/// <summary>The latest release the last press of the button found; null until GitHub has been asked.</summary>
+		UpdateRelease HidHideLatest;
+
 		/// <summary>
 		/// Show whether HID Hide is installed, and offer only what makes sense from here.
 		/// </summary>
 		/// <remarks>
-		/// HID Hide is a separate product with its own installer and its own configuration
-		/// program. This application never installs it, and changes what it hides only when the
-		/// person asks: a device's Hide box on the Devices page, the HID Hide menu there, or
-		/// the box here that hides a device while it is mapped.
+		/// HID Hide is a separate product with its own setup and its own configuration program. It is
+		/// installed or updated only when the person presses the button, and what it hides changes only
+		/// when the person asks: a device's Hide box on the Devices page, the HID Hide menu there, or the
+		/// box here that hides a device while it is mapped. The button says what pressing it does: install,
+		/// ask GitHub for a newer version, or install the newer version an earlier press found.
 		/// </remarks>
 		void RefreshHidHideStatus()
 		{
@@ -697,11 +839,16 @@ namespace x360ce.App.Controls
 			HidHideConfigureAutomaticallyCheckBox.Enabled = installed;
 			var version = DInput.VirtualDriverInstaller.GetHidHideVersion();
 			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
+			var latest = HidHideLatest;
+			var outdated = installed && latest != null && HidHideSetupClient.Outdated(version, latest.Version);
 			if (installed)
 			{
-				HidHideStatusTextBox.Text = string.IsNullOrEmpty(version)
+				HidHideStatusTextBox.Text = (string.IsNullOrEmpty(version)
 					? "Installed."
-					: string.Format("Installed. Version {0}.", version);
+					: string.Format("Installed. Version {0}.", version))
+					+ (latest == null ? ""
+					: outdated ? string.Format(" Version {0} is available.", latest.Version)
+					: " It is the latest.");
 			}
 			else
 			{
@@ -711,7 +858,7 @@ namespace x360ce.App.Controls
 			}
 			// Nothing to open until its own setup has put the program on disk.
 			HidHideConfigureButton.Enabled = !string.IsNullOrEmpty(client);
-			HidHideDownloadButton.Text = installed ? "Check for Updates..." : "Download HID Hide...";
+			HidHideInstallButton.Text = !installed ? "Install HID Hide" : outdated ? "Update HID Hide" : "Check for Update";
 		}
 
 		private void HidHideRefreshButton_Click(object sender, EventArgs e)
@@ -719,7 +866,62 @@ namespace x360ce.App.Controls
 			RefreshHidHideStatus();
 		}
 
-		private void HidHideDownloadButton_Click(object sender, EventArgs e)
+		/// <summary>Installs HID Hide, asks GitHub whether a newer one exists, or installs the newer one found.</summary>
+		/// <remarks>The network and the setup are waited for on a worker; the box says each step as it starts.</remarks>
+		private void HidHideInstallButton_Click(object sender, EventArgs e)
+		{
+			HidHideInstallButton.Enabled = false;
+			var installed = DInput.VirtualDriverInstaller.IsHidHideDevicePresent();
+			var latest = HidHideLatest;
+			if (installed && latest != null && HidHideSetupClient.Outdated(DInput.VirtualDriverInstaller.GetHidHideVersion(), latest.Version))
+			{
+				InstallHidHide(latest);
+				return;
+			}
+			HidHideStatusTextBox.Text = "Asking GitHub for the latest HID Hide...";
+			string error = null;
+			Task.Run(() => new HidHideSetupClient().Latest(HidHideSetupClient.MachineArchitecture(), out error)).ContinueWith(t =>
+			{
+				if (IsDisposed)
+					return;
+				if (t.Result == null)
+				{
+					HidHideStatusTextBox.Text = error;
+					HidHideInstallButton.Enabled = true;
+					return;
+				}
+				HidHideLatest = t.Result;
+				// Installed, the press only asked: the box and the button now say what was found.
+				if (installed)
+				{
+					RefreshHidHideStatus();
+					HidHideInstallButton.Enabled = true;
+					return;
+				}
+				InstallHidHide(t.Result);
+			}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		/// <summary>Downloads, checks and runs the release's setup on a worker, then says what is installed, or why nothing changed.</summary>
+		void InstallHidHide(UpdateRelease release)
+		{
+			Action<string> say = text => ControlsHelper.BeginInvoke(() =>
+			{
+				if (!IsDisposed)
+					HidHideStatusTextBox.Text = text;
+			});
+			Task.Run(() => new HidHideSetupClient().Install(release, say)).ContinueWith(t =>
+			{
+				if (IsDisposed)
+					return;
+				RefreshHidHideStatus();
+				if (t.Result != null)
+					HidHideStatusTextBox.Text = t.Result;
+				HidHideInstallButton.Enabled = true;
+			}, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
+		private void HidHideDownloadLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			ControlsHelper.OpenUrl(DInput.VirtualDriverInstaller.HidHideDownloadUrl);
 		}

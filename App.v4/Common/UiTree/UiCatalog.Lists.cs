@@ -159,11 +159,12 @@ namespace x360ce.App.UiTree
 		static void AddCloudAndIssues(Dictionary<string, Text> d)
 		{
 			d["CloudUserControl.TasksDataGridView"] = new Text("Cloud tasks",
-				"Settings waiting to be sent to or fetched from the online database.");
+				"Settings waiting to be sent to or fetched from the online database. A task that fails waits longer "
+				+ "before each try and stops after its last one; point at it to read why.");
 			d["CloudUserControl.toolStrip1"] = new Text("Cloud actions",
 				"Sends and fetches settings, and clears the queue.");
-			d["CloudUserControl.toolStripButton1"] = new Text("Refresh",
-				"Reads the queue again.");
+			d["CloudUserControl.RetryButton"] = new Text("Retry",
+				"Sends the tasks that failed again now, each with all its tries.");
 			d["CloudUserControl.UploadToCloudButton"] = new Text("Upload To Cloud",
 				"Sends your settings to the online database.");
 			d["CloudUserControl.DownloadFromCloudButton"] = new Text("Download From Cloud",
@@ -171,7 +172,7 @@ namespace x360ce.App.UiTree
 			d["CloudUserControl.DeleteButton"] = new Text("Delete",
 				"Removes the selected task from the queue.");
 			d["CloudUserControl.NextRunLabel"] = new Text("Next run",
-				"How long until the queue is worked through again.");
+				"How long until a task that failed is sent again, none while no task waits, and whether the network is on.");
 			d["CloudUserControl.RunStateLabel"] = new Text("Queue state",
 				"Whether the queue is running, waiting, or stopped.");
 
@@ -194,7 +195,11 @@ namespace x360ce.App.UiTree
 		static void AddAbout(Dictionary<string, Text> d)
 		{
 			d["AboutControl.AboutTabControl"] = new Text("About pages",
-				"What changed in each release, and the licence.");
+				"The program and who made it, what changed in each release, and the licence.");
+			d["AboutControl.ProgramTabPage"] = new Text("Program",
+				"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.");
+			d["AboutControl.ProgramRichTextBox"] = new Text("Program details",
+				"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.");
 			d["AboutControl.ChangesTabPage"] = new Text("Changes",
 				"What changed in each release.");
 			d["AboutControl.ChangeLogTextBox"] = new Text("Change log",
@@ -203,12 +208,6 @@ namespace x360ce.App.UiTree
 				"Terms this program is given under.");
 			d["AboutControl.LicenseTextBox"] = new Text("Licence text",
 				"Terms this program is given under.");
-			d["AboutControl.x360ceLinkLabel"] = new Text("Program website", null);
-			d["AboutControl.GoogleProjectLinkLabel"] = new Text("Source code", null);
-			d["AboutControl.AboutJocysLinkLabel"] = new Text("Publisher website", null);
-			d["AboutControl.AboutVirusLinkLabel"] = new Text("Contributor", null);
-			d["AboutControl.AboutViGEmLinkLabel"] = new Text("Virtual controller driver author", null);
-			d["AboutControl.AboutTocaEditLinkLabel"] = new Text("Original author", null);
 		}
 	}
 }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using x360ce.Engine;
 using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
@@ -29,9 +31,9 @@ namespace x360ce.App.UiTree
 				"Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.");
 			d["PadControl.TriggersTabPage"] = new Text("Triggers",
 				"Shapes what the game receives from the two triggers.");
-			d["PadControl.LeftThumbTabPage"] = new Text("Left Thumb",
+			d["PadControl.LeftThumbTabPage"] = new Text("Left Stick",
 				"Shapes what the game receives from the left stick.");
-			d["PadControl.RightThumbTabPage"] = new Text("Right Thumb",
+			d["PadControl.RightThumbTabPage"] = new Text("Right Stick",
 				"Shapes what the game receives from the right stick.");
 			d["PadControl.ForceFeedbackTabPage"] = new Text("Force Feedback",
 				"Turns vibration on and sets how strong it is.");
@@ -69,16 +71,28 @@ namespace x360ce.App.UiTree
 				"The button of the same device that turns the mouse on the stick on and off. Greyed out while Active is Always.");
 			d["PadControl.DirectInputTabPage"] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
+			d["PadControl.SdlTabPage"] = new Text("SDL",
+				"What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.");
+			d["SdlUserControl"] = new Text(null,
+				"What SDL's controller database says about the selected device.");
+			d["SdlUserControl.VersionLabel"] = Live("SDL database version",
+				"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.");
+			d["SdlUserControl.DeviceLabel"] = Live("SDL's row for the device",
+				"Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.");
+			d["SdlUserControl.PositionsDataGridView"] = new Text("Places",
+				"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, "
+				+ "and what the box holds now, with Same or Differs beside it.");
+			d["SdlUserControl.ApplyButton"] = new Text("Apply SDL Mapping",
+				"Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.");
+			d["SdlUserControl.CopyButton"] = new Text("Copy as SDL",
+				"Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.");
+			d["SdlUserControl.UpdateButton"] = new Text("Update SDL Database",
+				"Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.");
+			d["SdlUserControl.StatusLabel"] = Live("SDL update status",
+				"How the last update of SDL's controller database went.");
 
 			// General page.
-			d["PadControl.LeftTriggerTextBox"] = new Text("Left trigger value",
-				"What the game is being given for the left trigger right now.");
-			d["PadControl.RightTriggerTextBox"] = new Text("Right trigger value",
-				"What the game is being given for the right trigger right now.");
-			d["PadControl.LeftThumbTextBox"] = new Text("Left stick value",
-				"Across and up positions the game is being given for the left stick.");
-			d["PadControl.RightThumbTextBox"] = new Text("Right stick value",
-				"Across and up positions the game is being given for the right stick.");
+			AddGeneralValues(d);
 			d["PadControl.MapNameComboBox"] = new Text("Button layout",
 				"Names the buttons after the controller in your hands instead of an Xbox one.");
 			d["PadControl.RemapAllButton"] = new Text("Remap All",
@@ -211,7 +225,7 @@ namespace x360ce.App.UiTree
 			d["PadControl.LoadPresetButton"] = new Text("Load Preset...",
 				"Replaces this controller's settings with a saved set.");
 			d["PadControl.AutoPresetButton"] = new Text("Auto Preset",
-				"Fills the mapping from a preset that matches the selected device.");
+				"Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
 			d["PadControl.SavePresetButton"] = new Text("Save Preset...",
 				"Writes this controller's settings to a file, to load again or pass on.");
 			d["PadControl.ClearPresetButton"] = new Text("Clear",
@@ -221,15 +235,71 @@ namespace x360ce.App.UiTree
 			d["PadControl.CopyPresetButton"] = new Text("Copy Preset",
 				"Copies this controller's settings to the clipboard as YAML, the easiest to read.");
 			d["PadControl.CopyPresetFormatButton"] = new Text("Copy Preset as",
-				"Copies this controller's settings in the format you choose: YAML, XML or JSON.");
+				"Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.");
 			d["PadControl.PastePresetButton"] = new Text("Paste Preset",
-				"Applies settings from the clipboard to this controller; YAML, XML and JSON are recognised.");
+				"Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.");
 			d["LoadPresetsForm.OpenFileButton"] = new Text("Open File...",
 				"Loads a preset from a file written by Save Preset.");
 			d["LoadPresetsForm.CopyPresetButton"] = new Text("Copy Preset",
 				"Copies the selected preset to the clipboard as YAML, to read it before loading.");
 			d["LoadPresetsForm.CopyPresetFormatButton"] = new Text("Copy Preset as",
-				"Copies the selected preset in the format you choose: YAML, XML or JSON.");
+				"Copies the selected preset in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.");
+			d["LoadPresetsForm.SdlTabPage"] = new Text("SDL",
+				"The rows of SDL's controller database, the selected device's first. The row chosen is loaded or copied translated for the device.");
+			d["SdlPresetsUserControl"] = new Text(null,
+				"The rows of SDL's controller database.");
+			d["SdlPresetsUserControl.VersionLabel"] = Live("SDL database version",
+				"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds.");
+			d["SdlPresetsUserControl.FilterLabel"] = new Text("Filter", null);
+			d["SdlPresetsUserControl.FilterTextBox"] = new Text("Filter",
+				"Lists only the rows whose name, vendor and product, or GUID hold this text.");
+			d["SdlPresetsUserControl.RowsDataGridView"] = new Text("SDL rows",
+				"The rows of SDL's controller database: the selected device's first, marked This device, then the rest by name.");
+			d["SdlPresetsUserControl.UpdateButton"] = new Text("Update SDL Database",
+				"Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.");
+			d["SdlPresetsUserControl.StatusLabel"] = Live("SDL update status",
+				"How the last update of SDL's controller database went.");
+		}
+
+		/// <summary>The number under each name on the General page, for every part of the controller the page maps.</summary>
+		/// <remarks>Named after the part's box, which carries the same words, so a value is found beside its box.</remarks>
+		static void AddGeneralValues(Dictionary<string, Text> d)
+		{
+			var codes = SettingsConverter.TriggerButtonCodes.Concat(SettingsConverter.ShoulderButtonCodes)
+				.Concat(SettingsConverter.MenuButtonCodes).Concat(SettingsConverter.MainButtonCodes)
+				.Concat(SettingsConverter.DPadCodes).Concat(SettingsConverter.LeftThumbCodes).Concat(SettingsConverter.RightThumbCodes);
+			foreach (var code in codes)
+				d["PadControl." + code + "ValueLabel"] = Live(ImageInfo.GetName(code) + " value", ValuePurpose(code));
+		}
+
+		/// <summary>What the number under a part's name says, as <see cref="ImageInfo.GetValue"/> works it out.</summary>
+		static string ValuePurpose(MapCode code)
+		{
+			switch (code)
+			{
+				case MapCode.LeftTrigger:
+				case MapCode.RightTrigger:
+					return "What the game is being given for the trigger right now, from 0 released to 255 pressed all the way.";
+				case MapCode.LeftThumbAxisX:
+				case MapCode.RightThumbAxisX:
+					return "What the game is being given for the stick across right now, from -32768 at the left to 32767 at the right.";
+				case MapCode.LeftThumbAxisY:
+				case MapCode.RightThumbAxisY:
+					return "What the game is being given for the stick up and down right now, from -32768 at the bottom to 32767 at the top.";
+				case MapCode.LeftThumbUp:
+				case MapCode.LeftThumbLeft:
+				case MapCode.LeftThumbRight:
+				case MapCode.LeftThumbDown:
+				case MapCode.RightThumbUp:
+				case MapCode.RightThumbLeft:
+				case MapCode.RightThumbRight:
+				case MapCode.RightThumbDown:
+					return "The stick's position the game is being given while the stick points this way, otherwise 0.";
+				case MapCode.DPad:
+					return "The D-Pad directions the game is being given, added up: up 1, down 2, left 4, right 8; 0 while none is pressed.";
+				default:
+					return "1 while the game is being given this button pressed, otherwise 0.";
+			}
 		}
 
 		/// <summary>Both motors carry the same settings, so both are described the same way.</summary>

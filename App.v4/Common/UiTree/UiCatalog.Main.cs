@@ -52,7 +52,7 @@ namespace x360ce.App.UiTree
 			d["MainForm.HelpRichTextBox"] = new Text("Help text",
 				"Instructions for setting up a controller, and answers to common problems.");
 			d["MainForm.AboutTabPage"] = new Text("About",
-				"Version, licence, and what changed in each release.");
+				"Version, who made the program and what it carries, what changed in each release, and the licence.");
 			d["MainForm.IssuesTabPage"] = new Text("Issues",
 				"Problems the program found, and what to do about each one.");
 			d["RecorderUserControl"] = new Text(null,

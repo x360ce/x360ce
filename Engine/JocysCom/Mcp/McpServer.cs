@@ -176,6 +176,16 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>Runs an action on the interface thread. A test running there already may make it a plain call.</summary>
 		public static Action<Action> OnUiThread = Marshal;
 
+		/// <summary>How long the interface thread has worked on the actions this thread gave <see cref="Marshal"/>, in stopwatch ticks.</summary>
+		/// <remarks>
+		/// Each request is answered on a thread of its own, so the difference across a call is that call's: how long it held
+		/// the window, which the log writes beside the call's whole time.
+		/// </remarks>
+		internal static long InterfaceTicks { get { return _interfaceTicks; } }
+
+		[ThreadStatic]
+		static long _interfaceTicks;
+
 		/// <summary>
 		/// Runs an action on the interface thread and waits until it is done, or until it waits on a window: a press
 		/// that opens a dialog answers with the dialog, as <see cref="WindowWaitingException"/>, rather than holding the
@@ -186,21 +196,26 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			if (!ControlsHelper.InvokeRequired)
 			{
-				action();
+				var began = System.Diagnostics.Stopwatch.GetTimestamp();
+				try { action(); }
+				finally { _interfaceTicks += System.Diagnostics.Stopwatch.GetTimestamp() - began; }
 				return;
 			}
 			ExceptionDispatchInfo failure = null;
 			string waiting = null;
 			var finished = false;
+			long worked = 0;
 			var settled = new ManualResetEventSlim();
 			ControlsHelper.BeginInvoke(() =>
 			{
+				var began = System.Diagnostics.Stopwatch.GetTimestamp();
 				try { action(); }
 				// The caller told of the window has gone, so a later failure goes to the program's error
 				// handler, as one after a person's click does.
 				catch (Exception ex) when (waiting == null) { failure = ExceptionDispatchInfo.Capture(ex); }
 				finally
 				{
+					worked = System.Diagnostics.Stopwatch.GetTimestamp() - began;
 					finished = true;
 					settled.Set();
 				}
@@ -221,6 +236,9 @@ namespace JocysCom.ClassLibrary.Mcp
 			};
 			ControlsHelper.BeginInvoke(look);
 			settled.Wait();
+			// Counted once the action is done; while a window it opened waits, the time is the person's.
+			if (waiting == null)
+				_interfaceTicks += worked;
 			if (waiting != null)
 				throw new WindowWaitingException(waiting);
 			if (failure != null)
@@ -505,6 +523,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				return Error(id, -32602, ex.Message);
 			}
 			var watch = System.Diagnostics.Stopwatch.StartNew();
+			var held = McpCatalog.InterfaceTicks;
 			object result;
 			try { result = tool.Call(values); }
 			catch (Exception ex)
@@ -513,7 +532,10 @@ namespace JocysCom.ClassLibrary.Mcp
 				return Result(id, Content(ex.Message, true));
 			}
 			var text = result == null ? "Done." : result as string ?? ToJson(result);
-			McpLog.Write(shown + " -> " + McpLog.Clip(text, 200) + " in " + watch.ElapsedMilliseconds + " ms");
+			// The whole time, and the part of it the window could not draw: reading the interface, and whatever else
+			// the tool did there.
+			var window = (McpCatalog.InterfaceTicks - held) * 1000 / System.Diagnostics.Stopwatch.Frequency;
+			McpLog.Write(shown + " -> " + McpLog.Clip(text, 200) + " in " + watch.ElapsedMilliseconds + " ms (" + window + " ms on the interface thread)");
 			return Result(id, Content(text, false));
 		}
 

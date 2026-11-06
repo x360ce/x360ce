@@ -27,6 +27,11 @@ namespace x360ce.App.Issues
 
 		public override void CheckTask()
 		{
+			// Not in the round of checks at start-up: the engine starts while it runs, and a controller it has just made is
+			// one Windows is still building. The next round, once the controllers have settled, answers it.
+			var form = MainForm.Current;
+			if (form != null && form.CheckingAtStartup)
+				return;
 			var pads = DInput.VirtualDriverInstaller.GetUnfinishedVirtualPads();
 			if (pads.Length == 0)
 			{

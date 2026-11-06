@@ -262,6 +262,7 @@
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapButtonsTextBox, 7, 3);
 			this.HeaderTableLayoutPanel.SetColumnSpan(this.DeviceTypeTextBox, 3);
 			this.HeaderTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HeaderTableLayoutPanel.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
 			this.HeaderTableLayoutPanel.Name = "HeaderTableLayoutPanel";
 			this.HeaderTableLayoutPanel.RowCount = 4;
 			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -297,6 +298,7 @@
 			this.AxisRowTableLayoutPanel.Controls.Add(this.DiSlidersDataGridView, 1, 0);
 			this.AxisRowTableLayoutPanel.Controls.Add(this.DiPovsDataGridView, 2, 0);
 			this.AxisRowTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AxisRowTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
 			this.AxisRowTableLayoutPanel.Name = "AxisRowTableLayoutPanel";
 			this.AxisRowTableLayoutPanel.RowCount = 1;
 			this.AxisRowTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -323,6 +325,7 @@
             this.DiColumnVr});
 			this.DiAxisDataGridView.AccessibleName = "Axis values reported by the device";
 			this.DiAxisDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DiAxisDataGridView.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.DiAxisDataGridView.Name = "DiAxisDataGridView";
 			this.DiAxisDataGridView.ReadOnly = true;
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -649,6 +652,7 @@
 			this.DeviceDetailsTabControl.Controls.Add(this.DiObjectsTabPage);
 			this.DeviceDetailsTabControl.Controls.Add(this.DiEffectsDataTabPage);
 			this.DeviceDetailsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DeviceDetailsTabControl.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
 			this.DeviceDetailsTabControl.Name = "DeviceDetailsTabControl";
 			this.DeviceDetailsTabControl.SelectedIndex = 0;
 			this.DeviceDetailsTabControl.TabIndex = 2;
@@ -860,6 +864,7 @@
             this.dataGridViewTextBoxColumn7});
 			this.DiPovsDataGridView.AccessibleName = "Point of view hat values";
 			this.DiPovsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DiPovsDataGridView.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this.DiPovsDataGridView.Name = "DiPovsDataGridView";
 			this.DiPovsDataGridView.ReadOnly = true;
 			this.DiPovsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;

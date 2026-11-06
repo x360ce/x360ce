@@ -106,11 +106,14 @@
   <ItemGroup>
     <Compile Include="Common\AdminCommand.cs" />
     <Compile Include="Common\AppHelper.cs" />
+    <Compile Include="Common\AppFonts.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
     <Compile Include="Common\Update\UpdateClient.cs" />
     <Compile Include="Common\Update\UpdateRelease.cs" />
+    <Compile Include="Common\Update\SdlUpdateClient.cs" />
+    <Compile Include="Common\Update\HidHideSetupClient.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
@@ -307,6 +310,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PadTabPages\PluginDeviceUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\PadTabPages\SdlUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SdlPresetsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PadTabPages\DirectInputControl.Designer.cs">
@@ -606,6 +615,9 @@
     <EmbeddedResource Include="..\docs\Help.HidGuardian.md">
       <Link>Documents\Help.HidGuardian.md</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\docs\Help.HidHide.md">
+      <Link>Documents\Help.HidHide.md</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\docs\Help.ForceFeedback.md">
       <Link>Documents\Help.ForceFeedback.md</Link>
     </EmbeddedResource>
@@ -633,6 +645,9 @@
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
+    <!-- SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is (SdlDatabase), and its zlib licence. -->
+    <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
+    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
     <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>
@@ -657,6 +672,8 @@
     </EmbeddedResource>
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Documents\ChangeLog.txt" />
+    <!-- The About page's Program tab: the program, who made it, and what it carries from others. -->
+    <EmbeddedResource Include="Documents\Program.md" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
     <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
     <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
@@ -771,6 +788,24 @@
       <Link>Images\Nav\NavUpRecord.png</Link>
     </EmbeddedResource>
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The fonts the program carries (Common\AppFonts.cs), each with its SIL Open Font Licence. -->
+    <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawk.ttf">
+      <Link>Resources\Fonts\Selawik\selawk.ttf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawkb.ttf">
+      <Link>Resources\Fonts\Selawik\selawkb.ttf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Selawik\OFL.txt">
+      <Link>Resources\Fonts\Selawik\OFL.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf">
+      <Link>Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\OFL.txt">
+      <Link>Resources\Fonts\Inconsolata\OFL.txt</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\x360ce.Engine.csproj" />

@@ -15,8 +15,8 @@ namespace x360ce.App.Issues
 	/// A game that reads both gets every press twice, or shows one player as two. HID Hide hides the real
 	/// controller from games, but only once it is installed, switched on, told which controllers to hide,
 	/// and told that this program may still see them. Each of those is a place people stop, so each is
-	/// named here, and the fix opens the page or program that settles it. Low, because many games are not
-	/// affected and nothing here stops the emulation working.
+	/// named here, and the fix installs HID Hide or opens the program that settles it. Low, because many
+	/// games are not affected and nothing here stops the emulation working.
 	///
 	/// A hidden controller is invisible to a program HID Hide does not allow, so to this program it looks
 	/// unplugged. That case is judged from mapped controllers whether or not they are online; waiting for
@@ -24,8 +24,8 @@ namespace x360ce.App.Issues
 	/// </remarks>
 	public class HidHideIssue : IssueItem
 	{
-		/// <summary>Fix type that opens HID Hide's download page.</summary>
-		public const int FixDownload = 1;
+		/// <summary>Fix type that installs HID Hide, as the Options page's HID Hide button does.</summary>
+		public const int FixInstall = 1;
 
 		/// <summary>Fix type that opens HID Hide's configuration program.</summary>
 		public const int FixConfigure = 2;
@@ -36,12 +36,15 @@ namespace x360ce.App.Issues
 			FixName = "Open HID Hide";
 		}
 
+		/// <summary>Why the last install did not finish; null when it ran to its end or has not run.</summary>
+		string LastInstallResult;
+
 		public override void CheckTask()
 		{
 			// Not in the round of checks at start-up: nothing here stops the program working, and reading
 			// HID Hide starts a process. The next round, once the controllers are running, answers it.
 			var form = MainForm.Current;
-			if (form != null && !form.AllowDHelperStart)
+			if (form != null && form.CheckingAtStartup)
 				return;
 			// HID Hide runs on 64-bit Windows only.
 			if (!Environment.Is64BitOperatingSystem)
@@ -63,15 +66,31 @@ namespace x360ce.App.Issues
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			var fixName = fixType == FixDownload ? "Download HID Hide" : "Open HID Hide";
+			var install = fixType == FixInstall;
+			var fixName = install ? "Install HID Hide" : "Open HID Hide";
 			if (FixName != fixName)
 				FixName = fixName;
+			// Its setup asks Windows for administrator rights; More... is the release page, to download it by hand.
+			FixNeedsAdmin = install;
+			var page = install ? VirtualDriverInstaller.HidHideDownloadUrl : null;
+			if ((MoreInfo == null ? null : MoreInfo.AbsoluteUri) != page)
+				MoreInfo = page == null ? null : new Uri(page);
+			if (install && LastInstallResult != null)
+				text += Environment.NewLine + LastInstallResult;
+			else if (!install)
+				LastInstallResult = null;
 			SetSeverity(IssueSeverity.Low, fixType, text);
 		}
 
 		public override void FixTask()
 		{
-			var client = FixType == FixConfigure ? VirtualDriverInstaller.GetHidHideClientPath() : null;
+			// On the Issues tab's worker, so waiting for the download and the setup holds up nothing.
+			if (FixType == FixInstall)
+			{
+				LastInstallResult = new HidHideSetupClient().Install(null);
+				return;
+			}
+			var client = VirtualDriverInstaller.GetHidHideClientPath();
 			if (string.IsNullOrEmpty(client))
 				ControlsHelper.OpenUrl(VirtualDriverInstaller.HidHideDownloadUrl);
 			else
@@ -101,7 +120,7 @@ namespace x360ce.App.Issues
 		/// <param name="state">What HID Hide is set to do.</param>
 		/// <param name="devices">Mapped devices on tabs that have a virtual controller, online or not.</param>
 		/// <param name="exePath">Full path of this program, as HID Hide lists programs.</param>
-		/// <param name="fixType"><see cref="FixDownload"/> or <see cref="FixConfigure"/>; 0 when there is nothing to say.</param>
+		/// <param name="fixType"><see cref="FixInstall"/> or <see cref="FixConfigure"/>; 0 when there is nothing to say.</param>
 		public static string Explain(VirtualDriverInstaller.HidHideState state, UserDevice[] devices, string exePath, out int fixType)
 		{
 			fixType = 0;
@@ -115,7 +134,7 @@ namespace x360ce.App.Issues
 			{
 				if (online.Length == 0)
 					return null;
-				fixType = FixDownload;
+				fixType = FixInstall;
 				return string.Format(online.Length == 1
 					? "A game can see {0} twice, as the real controller and as the virtual one. Install HID Hide to hide the real one."
 					: "A game can see {0} twice, as the real controllers and as the virtual ones. Install HID Hide to hide the real ones.",

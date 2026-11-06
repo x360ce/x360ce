@@ -83,7 +83,7 @@ namespace x360ce.App.UiTree
 			d["IssuesUserControl"] = new Text("Issues list",
 				"Problems the program found, and what to do about each one.");
 			d["AboutControl"] = new Text(null,
-				"Version, licence, and what changed in each release.");
+				"Version, who made the program and what it carries, what changed in each release, and the licence.");
 
 			// What the device says about itself. Each of these is read from the device and shown
 			// as it is; none of them can be edited.
