@@ -28,32 +28,33 @@ namespace x360ce.Tests
 		{
 			OnPage("", 0, (font, size, theme, restart) =>
 			{
-				Assert.AreEqual("Segoe UI (default)", font.Text, "The list does not show the default font saved.");
+				var byDefault = AppFonts.ChoiceText("");
+				StringAssert.StartsWith(byDefault, "Default (", "The default does not name its font.");
+				Assert.AreEqual(byDefault, font.Text, "The list does not show the default font saved.");
 				Assert.IsFalse(restart.Visible, "Restart shows while the font chosen is the one in use.");
 				Choose(font, "Selawik (built in)");
 				Assert.AreEqual(AppFonts.BuiltInName, SettingsManager.Options.InterfaceFont, "Selawik was not saved by its name.");
 				Assert.IsTrue(restart.Visible, "Restart is not offered for a font not in use.");
-				Choose(font, "Windows default");
-				Assert.AreEqual(AppFonts.WindowsDefault, SettingsManager.Options.InterfaceFont, "Windows default was not saved.");
-				var installed = font.Items.Cast<string>().Skip(3).First();
+				var installed = font.Items.Cast<string>().Skip(2).First();
 				Choose(font, installed);
 				Assert.AreEqual(installed, SettingsManager.Options.InterfaceFont, "An installed family was not saved by its name.");
-				Choose(font, "Segoe UI (default)");
+				Choose(font, byDefault);
 				Assert.AreEqual("", SettingsManager.Options.InterfaceFont, "The default font is not saved as empty.");
 				Assert.IsFalse(restart.Visible, "Restart stays after going back to the font in use.");
 			});
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("options")]
-		[Description("A saved font no longer installed shows as not installed, and showing it and filling the list leave the saved name alone")]
-		public void Font_not_installed_is_shown_and_kept()
+		[Description("A saved font no longer installed is not kept at start: the lists show the default font and its size, and no restart is offered")]
+		public void Font_not_installed_is_not_kept_at_start()
 		{
-			var saved = "No Such Font 4.29";
-			OnPage(saved, 0, (font, size, theme, restart) =>
+			OnPage("No Such Font 4.29", 0, (font, size, theme, restart) =>
 			{
-				Assert.AreEqual(saved + " (not installed)", font.Text, "The list does not show the saved font as missing.");
-				Assert.AreEqual(saved, SettingsManager.Options.InterfaceFont, "Showing the page changed the saved font.");
-			});
+				Assert.AreEqual(AppFonts.ChoiceText(""), font.Text, "The list does not show the default font.");
+				Assert.AreEqual(AppFonts.SizeText("", 0), size.Text, "The list does not show the default font's size.");
+				Assert.AreEqual("", SettingsManager.Options.InterfaceFont, "The font not installed was kept.");
+				Assert.IsFalse(restart.Visible, "Restart is offered while the windows are drawn in the font shown.");
+			}, true);
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("options")]
@@ -82,13 +83,13 @@ namespace x360ce.Tests
 				Choose(size, AppFonts.SizeText("", larger));
 				Assert.AreEqual(larger, SettingsManager.Options.InterfaceFontSize, "The size chosen was not saved.");
 				Assert.IsTrue(restart.Visible, "Restart is not offered for a size not in use.");
-				Assert.AreEqual(string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", "Segoe UI (default)", larger),
-					AppFonts.RestartNote("", larger, null), "The note does not say what is used when x360ce starts again.");
-				// Windows default is drawn at Windows Forms' own size by default, and the size chosen stays chosen.
-				Choose(font, "Windows default");
-				Assert.AreEqual(AppFonts.SizeText(AppFonts.WindowsDefault, 0), size.GetItemText(size.Items[0]), "The default size does not follow the font chosen.");
-				Assert.AreEqual(AppFonts.SizeText(AppFonts.WindowsDefault, larger), size.Text, "The size chosen is not kept when the font changes.");
-				Choose(font, "Segoe UI (default)");
+				Assert.AreEqual(string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", AppFonts.ChoiceText(""), larger),
+					AppFonts.RestartNote("", larger), "The note does not say what is used when x360ce starts again.");
+				// Another font is drawn at Windows' text size by default, and the size chosen stays chosen.
+				Choose(font, "Selawik (built in)");
+				Assert.AreEqual(AppFonts.SizeText(AppFonts.BuiltInName, 0), size.GetItemText(size.Items[0]), "The default size does not follow the font chosen.");
+				Assert.AreEqual(AppFonts.SizeText(AppFonts.BuiltInName, larger), size.Text, "The size chosen is not kept when the font changes.");
+				Choose(font, AppFonts.ChoiceText(""));
 				Choose(size, AppFonts.SizeText("", 0));
 				Assert.AreEqual(0f, SettingsManager.Options.InterfaceFontSize, "The default size is not saved as 0.");
 				Assert.IsFalse(restart.Visible, "Restart stays after going back to the size in use.");
@@ -140,7 +141,11 @@ namespace x360ce.Tests
 		/// size and theme lists and the Restart button.
 		/// </summary>
 		/// <remarks>The options and the settings map are put back afterwards.</remarks>
-		static void OnPage(string saved, float savedSize, Action<ComboBox, ComboBox, ComboBox, Button> test)
+		/// <param name="saved">The font the options hold.</param>
+		/// <param name="savedSize">The size the options hold.</param>
+		/// <param name="test">The test, given the font, size and theme lists and the Restart button.</param>
+		/// <param name="started">Whether the options are applied first, as the program does when it starts.</param>
+		static void OnPage(string saved, float savedSize, Action<ComboBox, ComboBox, ComboBox, Button> test, bool started = false)
 		{
 			var options = SettingsManager.Options;
 			var originalFont = options.InterfaceFont;
@@ -156,6 +161,8 @@ namespace x360ce.Tests
 				options.InterfaceFont = saved;
 				options.InterfaceFontSize = savedSize;
 				options.Theme = ThemeType.Light;
+				if (started)
+					AppFonts.Apply(options);
 				Ui.OnUiThread(() =>
 				{
 					using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-3000, -3000), ShowInTaskbar = false })

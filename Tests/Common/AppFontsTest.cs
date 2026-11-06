@@ -16,9 +16,9 @@ using x360ce.Engine;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The interface is drawn in Segoe UI at Windows' text size, or in Selawik, which the program carries, where Windows has no
-	/// Segoe UI; code in Inconsolata Medium, which it carries too. The theme draws the windows in them, and lays them out as
-	/// in Windows' font at the default size and larger or smaller by as much at another.
+	/// The interface is drawn in Windows Forms' own font at its own size unless another is chosen: an installed font or Selawik,
+	/// which the program carries, at Windows' text size, with code in Inconsolata Medium, which it carries too. The theme draws
+	/// the windows in them, and lays them out as in Windows' font at the default size and larger or smaller by as much at another.
 	/// </summary>
 	/// <remarks>
 	/// The theme's fonts belong to the whole process, so the test that sets them gives Windows Forms' own back, even when
@@ -27,6 +27,32 @@ namespace x360ce.Tests
 	[TestClass]
 	public class AppFontsTest
 	{
+		/// <summary>An installed family to choose, as the Options page's Font list keeps it.</summary>
+		internal const string Chosen = "Segoe UI";
+
+		[TestMethod, TestCategory("interface")]
+		[Description("With no font and no size chosen, the program leaves Windows Forms its own fonts")]
+		public void Default_leaves_windows_forms_its_own_fonts()
+		{
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					AppFonts.Apply(new Options());
+					Assert.IsNull(FormsTheme.Font, "The theme has a font of its own.");
+					using (var forms = SystemFonts.DefaultFont)
+					{
+						Assert.AreEqual(forms.Name, Control.DefaultFont.Name, "Controls are not drawn in Windows Forms' own font.");
+						Assert.AreEqual(forms.SizeInPoints, Control.DefaultFont.SizeInPoints, "Controls are not drawn at Windows Forms' own size.");
+					}
+				}
+				finally
+				{
+					FormsTheme.SetFonts(null, null);
+				}
+			});
+		}
+
 		[TestMethod, TestCategory("interface")]
 		[Description("The program carries Selawik and Inconsolata Medium with their licences, and Windows finds both faces by name")]
 		public void Fonts_are_carried_with_their_licences()
@@ -53,6 +79,33 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
+		[Description("A saved font this computer does not draw is not kept, so the options say what the windows are drawn in; a font it draws is kept")]
+		public void Saved_font_not_drawn_here_is_not_kept()
+		{
+			LoadFonts();
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					var missing = new Options { InterfaceFont = "No Such Font 4.29" };
+					AppFonts.Apply(missing);
+					Assert.AreEqual("", missing.InterfaceFont, "A font not installed was kept.");
+					Assert.AreEqual("", AppFonts.Applied, "The windows are not said to be in Windows' own font.");
+					Assert.IsNull(FormsTheme.Font, "The theme has a font of its own for a font not installed.");
+					var drawn = new Options { InterfaceFont = AppFonts.BuiltInName };
+					AppFonts.Apply(drawn);
+					Assert.AreEqual(AppFonts.BuiltInName, drawn.InterfaceFont, "A font this computer draws was not kept.");
+					Assert.AreEqual(AppFonts.BuiltInName, AppFonts.Applied, "The windows are not said to be in the font chosen.");
+				}
+				finally
+				{
+					FormsTheme.SetFonts(null, null);
+					AppFonts.Apply(new Options());
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("interface")]
 		[Description("At the default size a window keeps its layout in the program's fonts, is drawn in them, also by Windows' own controls, a font a control names is drawn at the interface size, and a rich text box keeps its own")]
 		public void Windows_keep_their_layout_in_the_programs_fonts()
 		{
@@ -61,10 +114,10 @@ namespace x360ce.Tests
 			{
 				FormsTheme.SetTheme(ThemeType.Light);
 				var windows = Bounds(false);
-				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(""), AppFonts.CodeFamily, AppFonts.SizeFor("", 0));
+				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(Chosen), AppFonts.CodeFamily, AppFonts.SizeFor(Chosen, 0));
 				try
 				{
-					Assert.AreEqual(AppFonts.DefaultName, Control.DefaultFont.Name, "Controls without a font of their own are not drawn in Segoe UI.");
+					Assert.AreEqual(Chosen, Control.DefaultFont.Name, "Controls without a font of their own are not drawn in the font chosen.");
 					using (var text = SystemFonts.MessageBoxFont)
 						Assert.AreEqual(text.SizeInPoints, Control.DefaultFont.SizeInPoints, "Controls without a font of their own are not drawn at Windows' text size.");
 					using (var menus = SystemFonts.MenuFont)
@@ -82,7 +135,7 @@ namespace x360ce.Tests
 					FormsTheme.SetFonts(null, null);
 					FormsTheme.SetTheme(ThemeType.Light);
 				}
-				Assert.AreNotEqual(AppFonts.DefaultName, Control.DefaultFont.Name, "Windows Forms' own font did not come back.");
+				Assert.AreNotEqual(Chosen, Control.DefaultFont.Name, "Windows Forms' own font did not come back.");
 			});
 		}
 
@@ -94,11 +147,11 @@ namespace x360ce.Tests
 			Ui.OnUiThread(() =>
 			{
 				FormsTheme.SetTheme(ThemeType.Light);
-				foreach (var choice in new[] { "", AppFonts.WindowsDefault })
+				foreach (var choice in new[] { Chosen, "" })
 				{
 					var size = 12f;
 					var ratio = size / AppFonts.DefaultSize(choice);
-					var when = (choice == "" ? "the default font" : choice) + " at " + size + " pt: ";
+					var when = (choice == "" ? "Windows' own font" : choice) + " at " + size + " pt: ";
 					var windows = Control.DefaultFont;
 					// Windows' font made larger by as much as the size is larger than the default.
 					var expected = Bounds(false, new Font(windows.FontFamily, windows.SizeInPoints * ratio, windows.Style));
@@ -126,16 +179,16 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("The interface is drawn at Windows' text size by default, at Windows Forms' own size for Windows default, and at the size set, whatever the font chosen")]
-		public void Size_is_windows_text_size_unless_one_is_set()
+		[Description("By default Windows' own font is drawn at Windows Forms' own size and any other at Windows' text size; a size set applies whatever the font chosen")]
+		public void Default_size_follows_the_font_unless_one_is_set()
 		{
 			using (var text = SystemFonts.MessageBoxFont)
 			using (var forms = SystemFonts.DefaultFont)
 			{
-				foreach (var choice in new[] { "", AppFonts.BuiltInName, "Arial" })
+				foreach (var choice in new[] { AppFonts.BuiltInName, "Arial" })
 					Assert.AreEqual(text.SizeInPoints, AppFonts.SizeFor(choice, 0), "The default size of " + choice + " is not Windows' text size.");
-				Assert.AreEqual(forms.SizeInPoints, AppFonts.SizeFor(AppFonts.WindowsDefault, 0), "The default size of Windows default is not Windows Forms' own.");
-				foreach (var choice in new[] { "", AppFonts.BuiltInName, AppFonts.WindowsDefault, "Arial" })
+				Assert.AreEqual(forms.SizeInPoints, AppFonts.SizeFor("", 0), "The default size of Windows' own font is not Windows Forms' own.");
+				foreach (var choice in new[] { "", AppFonts.BuiltInName, "Arial" })
 					Assert.AreEqual(10.5f, AppFonts.SizeFor(choice, 10.5f), "The size set does not apply to " + choice + ".");
 			}
 		}
@@ -144,7 +197,7 @@ namespace x360ce.Tests
 		[Description("The size list starts with the default, then one size for each whole pixel from three quarters of the default to half as large again, each shown in points and pixels, and keeps a saved size that is not among them in its place")]
 		public void Size_list_offers_the_default_then_one_size_a_pixel()
 		{
-			foreach (var choice in new[] { "", AppFonts.WindowsDefault })
+			foreach (var choice in new[] { "", AppFonts.BuiltInName })
 			{
 				var defaultSize = AppFonts.DefaultSize(choice);
 				var sizes = AppFonts.Sizes(choice, 0);
@@ -168,53 +221,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("The font chosen in the options gives Segoe UI when empty, Selawik for Selawik, Windows' own fonts for Windows default, an installed family by its name, and the default for a family not installed; where Windows has no Segoe UI, the default is Selawik")]
+		[Description("The font chosen in the options gives Windows' own fonts when empty and for a family not installed, Selawik for Selawik, and an installed family by its name")]
 		public void Chosen_font_gives_the_family_the_windows_are_drawn_in()
 		{
 			LoadFonts();
-			if (!AppFonts.DrawsDefault)
-				Assert.Inconclusive(AppFonts.DefaultName + " is not installed here, so the default cannot be checked.");
-			using (var family = AppFonts.InterfaceFamilyFor(null))
-				Assert.AreEqual(AppFonts.DefaultName, family?.Name, "No choice is not Segoe UI.");
-			using (var family = AppFonts.InterfaceFamilyFor(""))
-				Assert.AreEqual(AppFonts.DefaultName, family?.Name, "The default choice is not Segoe UI.");
+			Assert.IsNull(AppFonts.InterfaceFamilyFor(null), "No choice does not give Windows' own fonts.");
+			Assert.IsNull(AppFonts.InterfaceFamilyFor(""), "The default choice does not give Windows' own fonts.");
 			Assert.AreSame(AppFonts.BuiltInFamily, AppFonts.InterfaceFamilyFor(AppFonts.BuiltInName), "Selawik is not the built-in Selawik.");
-			Assert.IsNull(AppFonts.InterfaceFamilyFor(AppFonts.WindowsDefault), "Windows default does not give Windows' own fonts.");
 			var installed = AppFonts.InstalledFamilies();
 			var name = installed.Contains("Arial") ? "Arial" : installed.First();
 			using (var family = AppFonts.InterfaceFamilyFor(name))
 				Assert.AreEqual(name, family?.Name, "An installed family is not the one drawn in.");
-			using (var family = AppFonts.InterfaceFamilyFor("No Such Font 4.29"))
-				Assert.AreEqual(AppFonts.DefaultName, family?.Name, "A family not installed does not fall back to the default.");
+			Assert.IsNull(AppFonts.InterfaceFamilyFor("No Such Font 4.29"), "A family not installed does not fall back to the default.");
 			// A symbol font is installed, but would draw the windows in symbols.
 			using (var collection = new System.Drawing.Text.InstalledFontCollection())
 				if (collection.Families.Any(x => x.Name == "Wingdings"))
-					using (var family = AppFonts.InterfaceFamilyFor("Wingdings"))
-						Assert.AreEqual(AppFonts.DefaultName, family?.Name, "A symbol font is drawn in.");
-			// A computer without Segoe UI.
-			var defaultName = AppFonts.DefaultName;
-			try
-			{
-				AppFonts.DefaultName = "No Such Font 4.29";
-				Assert.IsFalse(AppFonts.DrawsDefault, "A family not installed is drawn.");
-				Assert.AreSame(AppFonts.BuiltInFamily, AppFonts.InterfaceFamilyFor(""), "Without Segoe UI the default is not Selawik.");
-				Assert.AreSame(AppFonts.BuiltInFamily, AppFonts.InterfaceFamilyFor("No Such Font 4.30"), "Without Segoe UI a family not installed does not fall back to Selawik.");
-			}
-			finally
-			{
-				AppFonts.DefaultName = defaultName;
-			}
+					Assert.IsNull(AppFonts.InterfaceFamilyFor("Wingdings"), "A symbol font is drawn in.");
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("The font list starts with the default, Segoe UI, then Selawik and Windows default, then the other installed families in order, each with a regular and a bold style that draws letters, and keeps a saved family that is not installed; where Windows has no Segoe UI, the default is Selawik and Selawik is not listed again")]
-		public void Font_list_offers_the_default_selawik_windows_default_then_installed_families()
+		[Description("The font list starts with the default, named after Windows' own font, then Selawik, then the installed families in order, each with a regular and a bold style that draws letters, and keeps a saved family that is not installed")]
+		public void Font_list_offers_the_default_selawik_then_installed_families()
 		{
 			LoadFonts();
 			var installed = AppFonts.InstalledFamilies();
 			Assert.IsTrue(installed.Count > 0, "No installed family was found.");
-			if (!installed.Contains(AppFonts.DefaultName))
-				Assert.Inconclusive(AppFonts.DefaultName + " is not installed here, so the default cannot be checked.");
 			CollectionAssert.AreEqual(installed.OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList(), installed, "The installed families are not in order.");
 			CollectionAssert.DoesNotContain(installed, AppFonts.BuiltInName, "Selawik is listed twice: built in and installed.");
 			foreach (var symbols in new[] { "Wingdings", "Webdings", "Marlett", "Symbol", "Segoe MDL2 Assets" })
@@ -222,39 +253,20 @@ namespace x360ce.Tests
 			using (var collection = new System.Drawing.Text.InstalledFontCollection())
 				foreach (var family in collection.Families.Where(x => installed.Contains(x.Name)))
 					Assert.IsTrue(family.IsStyleAvailable(FontStyle.Regular) && family.IsStyleAvailable(FontStyle.Bold), family.Name + " has no regular or no bold style.");
-			var others = installed.Where(x => x != AppFonts.DefaultName).ToList();
 			var choices = AppFonts.Choices("", installed);
 			Assert.AreEqual("", choices[0], "The default is not first.");
 			Assert.AreEqual(AppFonts.BuiltInName, choices[1], "Selawik is not second.");
-			Assert.AreEqual(AppFonts.WindowsDefault, choices[2], "Windows default is not third.");
-			CollectionAssert.AreEqual(others, choices.Skip(3).ToList(), "The other installed families do not follow, or Segoe UI is listed twice.");
-			Assert.AreEqual("Segoe UI (default)", AppFonts.ChoiceText(choices[0], installed));
-			Assert.AreEqual("Selawik (built in)", AppFonts.ChoiceText(choices[1], installed));
-			Assert.AreEqual("Windows default", AppFonts.ChoiceText(choices[2], installed));
-			Assert.AreEqual(others[0], AppFonts.ChoiceText(choices[3], installed));
-			// A family saved, then removed from Windows, is kept in its place and says it is missing.
+			CollectionAssert.AreEqual(installed, choices.Skip(2).ToList(), "The installed families do not follow.");
+			using (var forms = SystemFonts.DefaultFont)
+				Assert.AreEqual("Default (" + forms.Name + ")", AppFonts.ChoiceText(choices[0]));
+			Assert.AreEqual("Selawik (built in)", AppFonts.ChoiceText(choices[1]));
+			Assert.AreEqual(installed[0], AppFonts.ChoiceText(choices[2]));
+			// A family the options hold that is not among the installed ones is listed in its place, so the list shows what is saved.
 			var saved = "No Such Font 4.29";
 			choices = AppFonts.Choices(saved, installed);
-			Assert.AreEqual(others.Count + 4, choices.Count, "The saved family is not listed.");
-			CollectionAssert.AreEqual(choices.Skip(3).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList(), choices.Skip(3).ToList(), "The saved family is not in its place.");
-			Assert.AreEqual(saved + " (not installed)", AppFonts.ChoiceText(saved, installed));
-			Assert.AreEqual(saved, AppFonts.ChoiceText(saved, null), "A family is said to be missing before the installed ones are read.");
-			// A computer without Segoe UI: Selawik is the default, and Segoe UI here is one more installed family.
-			var defaultName = AppFonts.DefaultName;
-			try
-			{
-				AppFonts.DefaultName = "No Such Font 4.30";
-				choices = AppFonts.Choices("", installed);
-				Assert.AreEqual("", choices[0], "The default is not first.");
-				Assert.AreEqual(AppFonts.WindowsDefault, choices[1], "Selawik is listed again after the default, or Windows default is not second.");
-				CollectionAssert.AreEqual(installed, choices.Skip(2).ToList(), "The installed families do not follow.");
-				Assert.AreEqual("Selawik (default, built in)", AppFonts.ChoiceText("", installed));
-				CollectionAssert.Contains(AppFonts.Choices(AppFonts.BuiltInName, installed), AppFonts.BuiltInName, "Selawik saved is not listed.");
-			}
-			finally
-			{
-				AppFonts.DefaultName = defaultName;
-			}
+			Assert.AreEqual(installed.Count + 3, choices.Count, "The saved family is not listed.");
+			CollectionAssert.AreEqual(choices.Skip(2).OrderBy(x => x, StringComparer.OrdinalIgnoreCase).ToList(), choices.Skip(2).ToList(), "The saved family is not in its place.");
+			Assert.AreEqual(saved, AppFonts.ChoiceText(saved));
 		}
 
 		/// <summary>

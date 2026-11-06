@@ -36,7 +36,7 @@ Says which button, stick and hat of a controller is which part of a gamepad. Aut
 
 #### Selawik • interface font
 
-An open font made to the measures of Segoe UI, which x360ce's windows are written in where Windows has no Segoe UI, or when it is chosen.
+An open font made to the measures of Segoe UI, which x360ce's windows are written in when it is chosen.
 
 - GitHub: <https://github.com/microsoft/Selawik>
 - Licence: SIL Open Font License 1.1, <https://openfontlicense.org>

@@ -35,7 +35,7 @@ namespace x360ce.Tests
 				foreach (var programFonts in new[] { false, true })
 				{
 					if (programFonts)
-						FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(""), AppFonts.CodeFamily, AppFonts.SizeFor("", 0));
+						FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(AppFontsTest.Chosen), AppFonts.CodeFamily, AppFonts.SizeFor(AppFontsTest.Chosen, 0));
 					try
 					{
 						using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
@@ -176,8 +176,8 @@ namespace x360ce.Tests
 			});
 		}
 
-		/// <summary>The interface fonts the General tab is checked in, as the Options page's Font list keeps them: the default, Segoe UI, Windows' own, Selawik and three installed families.</summary>
-		internal static readonly string[] FontChoices = { "", AppFonts.WindowsDefault, AppFonts.BuiltInName, "Arial", "Tahoma", "Verdana" };
+		/// <summary>The interface fonts the General tab is checked in, as the Options page's Font list keeps them: the default, Windows' own, Selawik and four installed families.</summary>
+		internal static readonly string[] FontChoices = { "", AppFonts.BuiltInName, AppFontsTest.Chosen, "Arial", "Tahoma", "Verdana" };
 
 		/// <summary>The widest reading a number shows: an axis at its lowest.</summary>
 		const string WidestReading = "-32768";

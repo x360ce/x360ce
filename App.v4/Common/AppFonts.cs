@@ -14,11 +14,11 @@ namespace x360ce.App
 {
 	/// <summary>
 	/// The font and size the windows are drawn in, and the two fonts the program carries: Selawik, an open font made to the
-	/// measures of Segoe UI, for the interface where Windows has no Segoe UI or where it is chosen, and Inconsolata Medium for
-	/// code and values whose letters line up. Both are read from the program itself, so a computer without them shows them
-	/// too. The theme draws the windows in the font and size chosen on the Options page (<see cref="Apply"/>,
-	/// <c>FormsTheme.SetFonts</c>): Segoe UI at Windows' text size unless another is chosen. A font that cannot be read leaves
-	/// the one the program used before it.
+	/// measures of Segoe UI, for the interface where it is chosen, and Inconsolata Medium for code and values whose letters
+	/// line up, once a font is chosen. Both are read from the program itself, so a computer without them shows them too.
+	/// Windows Forms draws the windows in its own font and size unless another is chosen on the Options page; then the theme
+	/// does (<see cref="Apply"/>, <c>FormsTheme.SetFonts</c>). A font that cannot be read leaves the one the program used
+	/// before it.
 	/// </summary>
 	/// <remarks>
 	/// A font added by a program is known to that program only, and twice: to GDI, which Windows' own controls and
@@ -30,11 +30,7 @@ namespace x360ce.App
 	/// </remarks>
 	public static class AppFonts
 	{
-		/// <summary>The family the interface is drawn in by default, where Windows draws it.</summary>
-		/// <remarks>Settable, so the program can be tried as on a computer without it.</remarks>
-		public static string DefaultName { get; set; } = "Segoe UI";
-
-		/// <summary>The interface font the program carries, which is the default where Windows does not draw <see cref="DefaultName"/>.</summary>
+		/// <summary>The interface font the program carries.</summary>
 		public const string BuiltInName = "Selawik";
 
 		/// <summary>The code font's family name: Inconsolata's Medium weight is a family of its own to GDI.</summary>
@@ -50,7 +46,7 @@ namespace x360ce.App
 		static readonly PrivateFontCollection Collection = new PrivateFontCollection();
 
 		/// <summary>Selawik, read from the program the first time it is asked for; null when it could not be read.</summary>
-		/// <remarks>Read only by a run that draws in it: chosen, or the default where Windows has no Segoe UI.</remarks>
+		/// <remarks>Read only by a run that draws in it.</remarks>
 		public static FontFamily BuiltInFamily
 		{
 			get
@@ -114,12 +110,6 @@ namespace x360ce.App
 
 		#region The font chosen in the options
 
-		/// <summary>
-		/// What <see cref="Options.InterfaceFont"/> holds for Windows' own fonts. Empty holds the default, <see cref="DefaultName"/>,
-		/// and <see cref="BuiltInName"/> the built-in Selawik.
-		/// </summary>
-		public const string WindowsDefault = "Windows default";
-
 		/// <summary>The choice this run's windows are drawn in, as <see cref="Options.InterfaceFont"/> held it when they were made.</summary>
 		public static string Applied { get; private set; } = "";
 
@@ -128,52 +118,36 @@ namespace x360ce.App
 
 		/// <summary>
 		/// Draws the windows made from now on in the font and at the size chosen in the options, and code in Inconsolata Medium.
-		/// At a size other than the default, windows are laid out larger or smaller by as much. Interface thread, after
-		/// <see cref="Load"/> and before the first window: a window keeps the font it was made in.
+		/// At a size other than the default, windows are laid out larger or smaller by as much. Interface thread,
+		/// before the first window: a window keeps the font it was made in. With no font and no size chosen, Windows Forms keeps
+		/// its own fonts and the program's fonts are not read. A saved font this computer does not draw is not kept, so the
+		/// Options page says what the windows are drawn in.
 		/// </summary>
-		public static void Apply(string choice, float size)
+		public static void Apply(Options options)
 		{
-			Applied = choice ?? "";
-			AppliedSize = size;
-			var interfaceSize = SizeFor(choice, size);
-			FormsTheme.SetFonts(InterfaceFamilyFor(choice), CodeFamily, interfaceSize, interfaceSize / DefaultSize(choice));
+			var family = InterfaceFamilyFor(options.InterfaceFont);
+			if (family == null && !string.IsNullOrEmpty(options.InterfaceFont))
+				options.InterfaceFont = "";
+			Applied = options.InterfaceFont ?? "";
+			AppliedSize = options.InterfaceFontSize;
+			if (family == null && AppliedSize <= 0)
+				return;
+			Load();
+			var interfaceSize = SizeFor(Applied, AppliedSize);
+			FormsTheme.SetFonts(family, CodeFamily, interfaceSize, interfaceSize / DefaultSize(Applied));
 		}
 
 		/// <summary>
-		/// The family the interface is drawn in for a choice in <see cref="Options.InterfaceFont"/>: the default for none, the
-		/// built-in Selawik for Selawik, null for Windows' own fonts, otherwise the installed family of that name. A family no
-		/// longer installed, or one that cannot draw the interface's letters, gives the default; its name stays in the options,
-		/// so it is used again once it is back. The default is Segoe UI, or Selawik where Windows does not draw Segoe UI.
+		/// The family the interface is drawn in for a choice in <see cref="Options.InterfaceFont"/>: null for Windows' own fonts,
+		/// which an empty choice holds, the built-in Selawik for Selawik, otherwise the installed family of that name. A family
+		/// no longer installed, or one that cannot draw the interface's letters, gives Windows' own fonts.
 		/// </summary>
 		public static FontFamily InterfaceFamilyFor(string choice)
 		{
-			if (choice == WindowsDefault)
+			if (string.IsNullOrEmpty(choice))
 				return null;
-			if (choice == BuiltInName)
-				return BuiltInFamily;
-			var family = string.IsNullOrEmpty(choice) ? null : Installed(choice);
-			if (family != null)
-				return family;
-			return DrawsDefault ? new FontFamily(DefaultName) : BuiltInFamily;
+			return choice == BuiltInName ? BuiltInFamily : Installed(choice);
 		}
-
-		/// <summary>Whether Windows draws the interface in <see cref="DefaultName"/>, which is then the default in place of Selawik.</summary>
-		public static bool DrawsDefault
-		{
-			get
-			{
-				var name = DefaultName;
-				if (_checkedName != name)
-				{
-					using (var family = Installed(name))
-						_drawsDefault = family != null;
-					_checkedName = name;
-				}
-				return _drawsDefault;
-			}
-		}
-		static string _checkedName;
-		static bool _drawsDefault;
 
 		/// <summary>The installed family of a name, when it draws the interface's letters (<see cref="DrawsText"/>); null otherwise.</summary>
 		static FontFamily Installed(string name)
@@ -215,50 +189,39 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// The choices the Options page lists, as <see cref="Options.InterfaceFont"/> holds them: the default, Selawik, Windows'
-		/// own fonts, then the installed families in order, with a saved family that is not among them in its place, so the
-		/// page shows what is saved. The default's family is not listed again, unless it is the one saved.
+		/// The choices the Options page lists, as <see cref="Options.InterfaceFont"/> holds them: the default, Windows' own fonts,
+		/// then Selawik, then the installed families in order, with a saved family that is not among them in its place, so the
+		/// page shows what is saved.
 		/// </summary>
 		/// <param name="saved">The choice the options hold.</param>
 		/// <param name="installed">The installed families, as <see cref="InstalledFamilies"/> gives them; null while they are read.</param>
 		public static List<string> Choices(string saved, IEnumerable<string> installed)
 		{
-			var drawsDefault = DrawsDefault;
 			var names = new List<string>(installed ?? Enumerable.Empty<string>());
-			if (drawsDefault)
-				names.Remove(DefaultName);
-			if (!string.IsNullOrEmpty(saved) && saved != WindowsDefault && saved != BuiltInName && !names.Contains(saved))
+			if (!string.IsNullOrEmpty(saved) && saved != BuiltInName && !names.Contains(saved))
 				names.Add(saved);
 			names.Sort(StringComparer.OrdinalIgnoreCase);
-			var first = new List<string> { "" };
-			if (drawsDefault || saved == BuiltInName)
-				first.Add(BuiltInName);
-			first.Add(WindowsDefault);
-			names.InsertRange(0, first);
+			names.InsertRange(0, new[] { "", BuiltInName });
 			return names;
 		}
 
-		/// <summary>A choice as the Options page shows it; a family that is not installed says so once the installed ones are known.</summary>
+		/// <summary>A choice as the Options page shows it: the default names Windows' own font.</summary>
 		/// <param name="choice">A choice as <see cref="Options.InterfaceFont"/> holds it.</param>
-		/// <param name="installed">The installed families; null while they are read.</param>
-		public static string ChoiceText(string choice, ICollection<string> installed)
+		public static string ChoiceText(string choice)
 		{
 			if (string.IsNullOrEmpty(choice))
-				return DrawsDefault ? DefaultName + " (default)" : BuiltInName + " (default, built in)";
-			if (choice == BuiltInName)
-				return BuiltInName + " (built in)";
-			if (choice == WindowsDefault || installed == null || installed.Contains(choice))
-				return choice;
-			return choice + " (not installed)";
+				using (var font = SystemFonts.DefaultFont)
+					return string.Format("Default ({0})", font.Name);
+			return choice == BuiltInName ? BuiltInName + " (built in)" : choice;
 		}
 
 		/// <summary>
-		/// The size the interface is drawn at by default, in points: Windows' text size, larger where Windows' text is made
-		/// larger; for Windows' own fonts, Windows Forms' own size, so that choice keeps its look.
+		/// The size the interface is drawn at by default, in points: Windows Forms' own size for Windows' own fonts, which an
+		/// empty choice holds; for any other font Windows' text size, larger where Windows' text is made larger.
 		/// </summary>
 		public static float DefaultSize(string choice)
 		{
-			using (var font = choice == WindowsDefault ? SystemFonts.DefaultFont : SystemFonts.MessageBoxFont)
+			using (var font = string.IsNullOrEmpty(choice) ? SystemFonts.DefaultFont : SystemFonts.MessageBoxFont)
 				return font.SizeInPoints;
 		}
 
@@ -318,9 +281,9 @@ namespace x360ce.App
 		}
 
 		/// <summary>What the Options page says while the font or size chosen is not the one in use: what x360ce uses when it starts again.</summary>
-		public static string RestartNote(string choice, float size, ICollection<string> installed)
+		public static string RestartNote(string choice, float size)
 		{
-			return string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", ChoiceText(choice, installed), SizeFor(choice, size));
+			return string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", ChoiceText(choice), SizeFor(choice, size));
 		}
 
 		/// <summary>Letters and digits every family the interface is drawn in must draw itself.</summary>

@@ -97,12 +97,12 @@ namespace x360ce.App
 		ThemeType _Theme;
 
 		/// <summary>The font the windows are drawn in, as <see cref="AppFonts.InterfaceFamilyFor"/> reads it.</summary>
-		[DefaultValue(""), Description("The font the windows are drawn in: Segoe UI when empty, or Selawik, built in, where Windows has no Segoe UI; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; Windows' own fonts for \"" + AppFonts.WindowsDefault + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
+		[DefaultValue(""), Description("The font the windows are drawn in: Windows' own when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
 		public string InterfaceFont { get { return _InterfaceFont; } set { _InterfaceFont = value; OnPropertyChanged(); } }
 		string _InterfaceFont;
 
 		/// <summary>The size the windows' text is drawn at, in points, as <see cref="AppFonts.SizeFor"/> reads it.</summary>
-		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font: Windows' text size when 0, or Windows Forms' own for \"" + AppFonts.WindowsDefault + "\". Takes effect when x360ce starts again.")]
+		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font. When 0: Windows Forms' own for Windows' own font, Windows' text size for any other. Takes effect when x360ce starts again.")]
 		public float InterfaceFontSize { get { return _InterfaceFontSize; } set { _InterfaceFontSize = value; OnPropertyChanged(); } }
 		float _InterfaceFontSize;
 

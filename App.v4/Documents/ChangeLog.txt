@@ -1,4 +1,4 @@
-﻿## [4.29.52.0] - 2026-11-05
+﻿## [4.29.51.0] - 2026-11-06
 
 - Fixed: Bug report recordings said a pad's own centring was off when x360ce had left it alone.
 - Fixed: Bug report recordings read back another controller's XInput place when a real controller held an earlier one.
@@ -12,7 +12,6 @@
 - Changed: Vibration updates only the motor that changed, as 4.17 did, instead of starting both again (Issue #1633, KhaledElSaiad).
 - Changed: The Left Thumb and Right Thumb pages are now Left Stick and Right Stick.
 - Changed: [Invert], [Recentre] and [Turbo] moved under [Adjust] in the mapping menu.
-- Changed: x360ce uses the Selawik and Inconsolata fonts, built in.
 - Changed: Sliders have their name on the left and no tick marks.
 - Changed: The General page shows each control's value under its name.
 - Changed: The Buttons page has new button pictures and arrows, sharp at any screen scale.
@@ -31,7 +30,6 @@
 - Changed: A change on one controller page no longer rebuilds the other three.
 - Changed: x360ce no longer wakes twenty times a second after it has started.
 - Changed: Controllers work at once at start-up, while the issue check still runs.
-- Changed: The interface uses Segoe UI at Windows' text size, and Selawik where Segoe UI is missing.
 - Changed: Resizing the window and switching the theme are faster.
 - Added: Bug report recordings name the force feedback driver, its motors, and the force calls made each second.
 - Added: Bug report recordings show where DirectInput and Raw Input readings part, and what games read back.
@@ -43,7 +41,8 @@
 - Added: Options > HID Hide installs and updates HID Hide.
 - Added: The HID Hide page shows its help.
 - Added: [Retry] on the Cloud page sends failed tasks again.
-- Added: Options > Appearance chooses the program's font.
+- Added: Options > Appearance chooses the program's font, with Selawik built in.
+- Added: Inconsolata, built in, draws code once a font is chosen.
 - Added: Options > Internet sets where the SDL controller database is downloaded from.
 - Added: Options > Appearance > Size sets the interface font size.
 

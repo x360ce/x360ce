@@ -66,10 +66,11 @@ namespace x360ce.App.UiTree
 			d["OptionsUserControl.ThemeComboBox"] = new Text("Theme",
 				"Light or dark colours. System follows the Windows setting for apps.");
 			d["OptionsUserControl.FontComboBox"] = new Text("Font",
-				"The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; "
-				+ "Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.");
+				"The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. "
+				+ "Takes effect when x360ce starts again.");
 			d["OptionsUserControl.SizeComboBox"] = new Text("Size",
-				"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, "
+				"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its "
+				+ "own font and Windows' text size for any other, "
 				+ "or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows "
 				+ "grow or shrink with it. Takes effect when x360ce starts again.");
 			d["OptionsUserControl.RestartButton"] = new Text("Restart x360ce",

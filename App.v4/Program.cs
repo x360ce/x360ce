@@ -309,8 +309,7 @@ namespace x360ce.App
 			Global.InitializeCloudClient();
 			StartupTrace.Mark("StartApp: services ready");
 			// Before the first window, so every control is made in the font and at the size chosen in the options.
-			AppFonts.Load();
-			AppFonts.Apply(SettingsManager.Options.InterfaceFont, SettingsManager.Options.InterfaceFontSize);
+			AppFonts.Apply(SettingsManager.Options);
 			// Before the first window, so every image it is made with is already the theme's and the screen's size.
 			JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager.Install(typeof(Properties.Resources), "x360ce.App.Properties.Icons");
 			// Before the first window, so every colour it is made with is already the theme's.

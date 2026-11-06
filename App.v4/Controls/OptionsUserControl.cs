@@ -26,7 +26,7 @@ namespace x360ce.App.Controls
 			// The theme that follows Windows is named the way Windows names it.
 			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
 			// The lists hold the choices as the options keep them, and show each by what it is.
-			FontComboBox.Format += (s, e) => e.Value = AppFonts.ChoiceText((string)e.ListItem, _InstalledFonts);
+			FontComboBox.Format += (s, e) => e.Value = AppFonts.ChoiceText((string)e.ListItem);
 			SizeComboBox.Format += (s, e) => e.Value = AppFonts.SizeText(SettingsManager.Options.InterfaceFont, (float)e.ListItem);
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
@@ -342,7 +342,7 @@ namespace x360ce.App.Controls
 			if (!FontWaiting)
 				return;
 			var o = SettingsManager.Options;
-			MainForm.Current?.SetHeaderInfo(AppFonts.RestartNote(o.InterfaceFont, o.InterfaceFontSize, _InstalledFonts));
+			MainForm.Current?.SetHeaderInfo(AppFonts.RestartNote(o.InterfaceFont, o.InterfaceFontSize));
 		}
 
 		/// <summary>Starts the program again, as an update does, so its windows are made in the font and size chosen.</summary>

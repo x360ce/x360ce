@@ -144,10 +144,10 @@ The emulated controllers can be switched off without closing the program, so a g
 ## Colours and font
 
 1. `[Options]` tab → `[General]` → `[Appearance]`, on the right under `[Game Scan Locations]`: `[Theme]` chooses light or dark colours. `System` follows the Windows setting for apps. The colours change at once.
-2. `[Font]` chooses the font the windows are drawn in: `Segoe UI (default)`; `Selawik (built in)`, which x360ce carries and uses as the default where Windows has no Segoe UI; `Windows default`, Windows' own; or a font installed on the computer.
-3. `[Size]` chooses the size of the text: `Default`, Windows' text size (Windows' own size for `Windows default`), or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
+2. `[Font]` chooses the font the windows are drawn in: `Default`, which names Windows' own font; `Selawik (built in)`, which x360ce carries; or a font installed on the computer, such as Segoe UI.
+3. `[Size]` chooses the size of the text: `Default`, Windows' own size for its own font and Windows' text size for any other, or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
 4. A new font or size is used when x360ce starts again. `[Restart x360ce]` appears under the lists to do that now; it saves the settings first.
-5. A font removed from Windows shows as `(not installed)`, and the default is used until the font is back.
+5. A font removed from Windows is forgotten when x360ce starts, and the default is used.
 6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
 
 ## Saving and loading a preset as a file

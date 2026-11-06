@@ -75,8 +75,8 @@ namespace x360ce.Tests
 		/// off every screen, so nothing appears while it is measured.
 		/// </remarks>
 		/// <param name="fontChoice">
-		/// The interface font, as the Options page's Font list keeps it: empty for the default, Segoe UI, the built-in Selawik,
-		/// <see cref="AppFonts.WindowsDefault"/> or an installed family. It is drawn at its default size.
+		/// The interface font, as the Options page's Font list keeps it: empty for the default, Windows' own, the built-in
+		/// Selawik or an installed family. It is drawn at its default size.
 		/// </param>
 		internal static void OnEverySurface(IEnumerable<Func<Control>> surfaces, Action<Form, string> measure, string fontChoice = "")
 		{
@@ -85,8 +85,7 @@ namespace x360ce.Tests
 				var field = typeof(App.Properties.Resources).GetField("resourceMan", BindingFlags.NonPublic | BindingFlags.Static);
 				var before = field.GetValue(null);
 				AppFontsTest.LoadFonts();
-				FormsTheme.SetFonts(fontChoice == AppFonts.WindowsDefault ? Control.DefaultFont.FontFamily : AppFonts.InterfaceFamilyFor(fontChoice),
-					AppFonts.CodeFamily, AppFonts.SizeFor(fontChoice, 0));
+				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(fontChoice), AppFonts.CodeFamily, AppFonts.SizeFor(fontChoice, 0));
 				try
 				{
 					ThemeResourceManager.Install(typeof(App.Properties.Resources), "x360ce.App.Properties.Icons");
