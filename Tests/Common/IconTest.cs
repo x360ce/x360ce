@@ -200,8 +200,8 @@ namespace x360ce.Tests
 							using (var row = new AxisToButtonUserControl { GamepadButton = button })
 							{
 								var when = theme + " theme, " + button;
-								var picture = (PictureBox)row.Controls.Find("ButtonImagePictureBox", true).Single();
-								var arrow = (PictureBox)row.Controls.Find("ArrowPictureBox", true).Single();
+								var picture = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ButtonImagePictureBox), true).Single();
+								var arrow = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ArrowPictureBox), true).Single();
 								AssertPicture(Path.Combine(folder, "Button_" + button + ".png"), picture.BackgroundImage, when);
 								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow.png"), arrow.Image, when + ", arrow");
 								var enabled = ControlsHelper.GetOriginal(picture.BackgroundImage);

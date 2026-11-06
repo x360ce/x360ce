@@ -35,7 +35,7 @@ namespace x360ce.Tests
 			for (var i = 0; i < client.Targets.Length; i++)
 				client.Targets[i] = RefusedRemovalTest.FakePad.Make(VIGEM_ERROR.VIGEM_ERROR_NONE);
 			var helper = new DInputHelper();
-			var received = typeof(DInputHelper).GetMethod("Controller_FeedbackReceived", BindingFlags.NonPublic | BindingFlags.Instance);
+			var received = typeof(DInputHelper).GetMethod(nameof(DInputHelper.Controller_FeedbackReceived), BindingFlags.NonPublic | BindingFlags.Instance);
 			var oldClient = ViGEmClient.Current;
 			ViGEmClient.Current = client;
 			try
@@ -75,12 +75,12 @@ namespace x360ce.Tests
 		public void Every_way_a_controller_goes_drops_its_games_force()
 		{
 			var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-			var drop = typeof(DInputHelper).GetMethod("DropGameForce", flags);
+			var drop = typeof(DInputHelper).GetMethod(nameof(DInputHelper.DropGameForce), flags);
 			Assert.IsNotNull(drop, "Nothing drops what a pad's game asked for in one step when its controller is taken away.");
 			var helper = new DInputHelper();
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", flags).GetValue(helper);
-			var lastSmall = (byte[])typeof(DInputHelper).GetField("_lastSmallMotor", flags).GetValue(helper);
-			var dropped = typeof(DInputHelper).GetField("_forcesDropped", flags);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), flags).GetValue(helper);
+			var lastSmall = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastSmallMotor), flags).GetValue(helper);
+			var dropped = typeof(DInputHelper).GetField(nameof(DInputHelper._forcesDropped), flags);
 			var client = RefusedRemovalTest.Client();
 			var oldClient = ViGEmClient.Current;
 			ViGEmClient.Current = client;
@@ -149,16 +149,16 @@ namespace x360ce.Tests
 		{
 			var flags = BindingFlags.NonPublic | BindingFlags.Instance;
 			var helper = new DInputHelper();
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", flags).GetValue(helper);
-			var lastSmall = (byte[])typeof(DInputHelper).GetField("_lastSmallMotor", flags).GetValue(helper);
-			var active = typeof(DInputHelper).GetField("virtualModeActive", flags);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), flags).GetValue(helper);
+			var lastSmall = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastSmallMotor), flags).GetValue(helper);
+			var active = typeof(DInputHelper).GetField(nameof(DInputHelper.virtualModeActive), flags);
 			// In virtual emulation, with forces from Controllers 2 and 4 whose controllers there is no bus to let go of.
 			active.SetValue(helper, true);
 			lastLarge[1] = lastLarge[3] = 200;
 			lastSmall[1] = lastSmall[3] = 100;
 			// No bus client, and a refused connection still recent, so nothing asks the bus.
-			var errorField = typeof(ViGEmClient).GetField("_LastConnectError", BindingFlags.NonPublic | BindingFlags.Static);
-			var tickField = typeof(ViGEmClient).GetField("_LastConnectTick", BindingFlags.NonPublic | BindingFlags.Static);
+			var errorField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectError), BindingFlags.NonPublic | BindingFlags.Static);
+			var tickField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectTick), BindingFlags.NonPublic | BindingFlags.Static);
 			var oldClient = ViGEmClient.Current;
 			var oldError = errorField.GetValue(null);
 			var oldTick = tickField.GetValue(null);
@@ -171,7 +171,7 @@ namespace x360ce.Tests
 				tickField.SetValue(null, Environment.TickCount);
 				o.TestEnabled = false;
 				// No game any more, so nothing uses virtual emulation.
-				typeof(DInputHelper).GetMethod("UpdateVirtualDevices", flags).Invoke(helper, new object[] { null });
+				typeof(DInputHelper).GetMethod(nameof(DInputHelper.UpdateVirtualDevices), flags).Invoke(helper, new object[] { null });
 			}
 			finally
 			{
@@ -183,7 +183,7 @@ namespace x360ce.Tests
 			Assert.IsFalse((bool)active.GetValue(helper), "Virtual emulation was not left, so the test shows nothing.");
 			CollectionAssert.AreEqual(new byte[4], lastLarge, "A game's force goes on after leaving virtual emulation took its controller away.");
 			CollectionAssert.AreEqual(new byte[4], lastSmall, "A game's force goes on after leaving virtual emulation took its controller away.");
-			Assert.AreEqual(0xF, (int)typeof(DInputHelper).GetField("_forcesDropped", flags).GetValue(helper),
+			Assert.AreEqual(0xF, (int)typeof(DInputHelper).GetField(nameof(DInputHelper._forcesDropped), flags).GetValue(helper),
 				"The devices and places the games drove are not told that their controllers went.");
 		}
 
@@ -196,7 +196,7 @@ namespace x360ce.Tests
 			var pad = RefusedRemovalTest.FakePad.Make(VIGEM_ERROR.VIGEM_ERROR_NONE);
 			var lastLarge = Field<byte[]>(helper, "_lastLargeMotor");
 			var lastSmall = Field<byte[]>(helper, "_lastSmallMotor");
-			var dropped = typeof(DInputHelper).GetField("_forcesDropped", BindingFlags.NonPublic | BindingFlags.Instance);
+			var dropped = typeof(DInputHelper).GetField(nameof(DInputHelper._forcesDropped), BindingFlags.NonPublic | BindingFlags.Instance);
 			var rumbles = new[] { ForceFeedbackFixtures.Rumble(90, 30), ForceFeedbackFixtures.Rumble(60, 20) };
 			var results = new VirtualError[2];
 			var slots = new object[2];

@@ -33,7 +33,7 @@ namespace x360ce.Tests
 				using (var control = new IssuesUserControl { Dock = DockStyle.Fill })
 				{
 					form.Controls.Add(control);
-					var grid = (DataGridView)control.Controls.Find("WarningsDataGridView", true).Single();
+					var grid = (DataGridView)control.Controls.Find(nameof(IssuesUserControl.WarningsDataGridView), true).Single();
 					form.Show();
 					foreach (var i in Enumerable.Range(1, 3))
 						control.Warnings.Add(new IssueItem { Name = "Issue " + i, FixName = "Fix " + i, Severity = IssueSeverity.Moderate });

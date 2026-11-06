@@ -261,14 +261,14 @@ namespace x360ce.Tests
 				using (var page = new OptionsUserControl())
 				{
 					page.CreateControl();
-					var box = Find<RichTextBox>(page, "HidHideHelpRichTextBox");
+					var box = Find<RichTextBox>(page, nameof(OptionsUserControl.HidHideHelpRichTextBox));
 					StringAssert.Contains(box.Text, "hides original controllers from games", "The help box is empty.");
 					StringAssert.Contains(box.Text, "Install HID Hide");
-					Assert.AreEqual("HidHideTabPage", box.Parent.Parent.Name, "The help box is not on the HID Hide page.");
+					Assert.AreEqual(nameof(OptionsUserControl.HidHideTabPage), box.Parent.Parent.Name, "The help box is not on the HID Hide page.");
 					Assert.AreEqual(DockStyle.Fill, box.Dock);
 					Assert.IsTrue(box.ReadOnly);
-					Assert.IsNotNull(Find<LinkLabel>(page, "HidHideDownloadLinkLabel"));
-					Assert.IsNotNull(Find<Button>(page, "HidHideInstallButton"));
+					Assert.IsNotNull(Find<LinkLabel>(page, nameof(OptionsUserControl.HidHideDownloadLinkLabel)));
+					Assert.IsNotNull(Find<Button>(page, nameof(OptionsUserControl.HidHideInstallButton)));
 				}
 			});
 		}

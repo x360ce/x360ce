@@ -142,7 +142,7 @@ namespace x360ce.App.Issues
 		}
 
 		/// <summary>Reads what the input thread and the bus client have recorded, without a lock and without connecting.</summary>
-		static Health Read()
+		internal static Health Read()
 		{
 			var health = new Health
 			{

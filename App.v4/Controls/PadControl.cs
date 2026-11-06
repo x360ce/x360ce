@@ -32,7 +32,7 @@ namespace x360ce.App.Controls
 			SdlPanel = new SdlUserControl { Dock = DockStyle.Fill };
 			SdlPanel.ApplyClicked += SdlPanel_ApplyClicked;
 			SdlPanel.CopyClicked += SdlPanel_CopyClicked;
-			SdlTabPage = new TabPage { Name = "SdlTabPage", Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true };
 			SdlTabPage.Controls.Add(SdlPanel);
 			// Added, with the pages after Direct Input added again behind it: Insert does nothing while the tab control
 			// has no window yet, as here, so the page was in the list and never shown.
@@ -231,7 +231,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void UpdateControlFromXInput()
+		internal void UpdateControlFromXInput()
 		{
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
@@ -556,7 +556,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
-				MapNameComboBox.DisplayMember = "Name";
+				MapNameComboBox.DisplayMember = nameof(x360ce.Engine.Data.Layout.Name);
 				// A list selects its first row by itself only once its tab has been shown. Selected here, the
 				// page holds its device's settings from the start, so whatever reads a tab nobody has opened,
 				// an AI assistant among them, gets the real values rather than blank defaults.
@@ -605,13 +605,13 @@ namespace x360ce.App.Controls
 			for (var place = 1; place <= 4; place++)
 				forcePlaces.Add(new KeyValuePair(string.Format("XInput {0}", place), place.ToString()));
 			ForcePassThroughIndexComboBox.DataSource = new BindingSource(forcePlaces, null);
-			ForcePassThroughIndexComboBox.DisplayMember = "Key";
-			ForcePassThroughIndexComboBox.ValueMember = "Value";
+			ForcePassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			ForcePassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			// The ranges a Logitech wheel takes, named by the cars each one suits. The wheel powers
 			// up at 200 and stays there until told otherwise, which is what the first choice leaves.
 			// The centering spring needs a range, so the first choice is for a wheel without it.
-			WheelRangeComboBox.DisplayMember = "Key";
-			WheelRangeComboBox.ValueMember = "Value";
+			WheelRangeComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			WheelRangeComboBox.ValueMember = nameof(KeyValuePair.Value);
 			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is (spring off)", "0"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
@@ -624,11 +624,11 @@ namespace x360ce.App.Controls
 			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
 			ShowSpringCar();
 			UpdateSpringChart();
-			PassThroughIndexComboBox.DisplayMember = "Key";
-			PassThroughIndexComboBox.ValueMember = "Value";
+			PassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			PassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
-			CombinedIndexComboBox.DisplayMember = "Key";
-			CombinedIndexComboBox.ValueMember = "Value";
+			CombinedIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			CombinedIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			// Attach drop down menu with record and map choices.
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
@@ -896,7 +896,7 @@ namespace x360ce.App.Controls
 		/// any of which can happen first, leaving the click with nothing to write into. Keeping the
 		/// target here means the menu and the box it belongs to cannot disagree.
 		/// </remarks>
-		ComboBox MenuTargetCbx;
+		internal ComboBox MenuTargetCbx;
 
 		void ComboBox_DropDown(object sender, EventArgs e)
 		{
@@ -1355,7 +1355,7 @@ namespace x360ce.App.Controls
 		bool oldConnected;
 		// Current XInput state.
 		State newState;
-		bool newConnected;
+		internal bool newConnected;
 
 
 		// Check left thumbStick
@@ -2365,7 +2365,7 @@ namespace x360ce.App.Controls
 		#region SDL page
 
 		/// <summary>The SDL page: what SDL's controller database says about the selected device.</summary>
-		TabPage SdlTabPage;
+		internal TabPage SdlTabPage;
 		SdlUserControl SdlPanel;
 
 		/// <summary>Fills every mapping box from the device's SDL row, as the SDL page shows it, and leaves the controller's other settings as they are.</summary>
@@ -2898,7 +2898,7 @@ namespace x360ce.App.Controls
 			if (!show)
 				return;
 			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
-			PluginTabPage = new TabPage { Name = "PluginTabPage", Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
+			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
 			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
 			PluginTabPage.Controls.Add(PluginPanel);
 			PadTabControl.TabPages.Add(PluginTabPage);

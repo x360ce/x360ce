@@ -266,7 +266,7 @@
 		public System.Windows.Forms.TabPage SummariesTabPage;
 		public System.Windows.Forms.TabPage PresetsTabPage;
 		private System.Windows.Forms.Button CloseButton;
-		private System.Windows.Forms.Button OpenFileButton;
+		internal System.Windows.Forms.Button OpenFileButton;
 		public System.Windows.Forms.Button OkButton;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		public SettingsGridUserControl SettingsGridPanel;

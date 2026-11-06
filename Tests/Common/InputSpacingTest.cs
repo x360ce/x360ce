@@ -136,7 +136,7 @@ namespace x360ce.Tests
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new PadControl(x360ce.Engine.MapTo.Controller1) }, (form, when) =>
 			{
 				var gap = TableGap(form);
-				var page = form.Controls.Find("GeneralTabPage", true).Single();
+				var page = form.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
 				Func<string, Rectangle> at = part =>
 				{
 					var box = form.Controls.Find(part + "ComboBox", true).Single();
@@ -186,12 +186,12 @@ namespace x360ce.Tests
 					form.Controls.Add(pad);
 					form.Show();
 					Application.DoEvents();
-					var page = pad.Controls.Find("GeneralTabPage", true).Single();
+					var page = pad.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
 					var stops = new List<string>();
 					for (var c = page.GetNextControl(page, true); c != null; c = page.GetNextControl(c, true))
 						if (c.TabStop && (c is ButtonBase || c is ComboBox))
 							stops.Add(c.Name);
-					var expected = new[] { "RemapAllButton", "MapNameComboBox" }
+					var expected = new[] { nameof(PadControl.RemapAllButton), nameof(PadControl.MapNameComboBox) }
 						.Concat(new[] { GeneralLeft, GeneralCentre, GeneralRight }.SelectMany(x => x).SelectMany(x => x).Select(x => x + "ComboBox"))
 						.ToList();
 					CollectionAssert.AreEqual(expected, stops, "The Tab key goes: " + string.Join(", ", stops));

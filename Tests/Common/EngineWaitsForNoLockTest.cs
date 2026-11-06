@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nefarius.ViGEm.Client;
+using SharpDX.XInput;
 using System;
 using System.IO;
 using System.Reflection;
@@ -42,7 +43,7 @@ namespace x360ce.Tests
 		{
 			GC.KeepAlive(SettingsManager.Options);
 			Assert.IsTrue(HeldLock.Finishes(() => GC.KeepAlive(SettingsManager.Options.XInputEnabled), Limit,
-				StaticField(typeof(SettingsManager), "OptionsLock")),
+				StaticField(typeof(SettingsManager), nameof(SettingsManager.OptionsLock))),
 				"Reading an option waits for the lock the interface takes, and the engine reads options several times a pass.");
 			var settings = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "SettingsManager.cs"));
 			var getter = settings.IndexOf("public static XSettingsData<Options> OptionsData");
@@ -65,7 +66,7 @@ namespace x360ce.Tests
 
 		static object MapsLock(PadSetting ps)
 		{
-			return typeof(PadSetting).GetField("MapsLock", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ps);
+			return typeof(PadSetting).GetField(nameof(PadSetting.MapsLock), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ps);
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
@@ -109,7 +110,7 @@ namespace x360ce.Tests
 					// this one takes the failed-CAS branch a pass runs while a read is under way.
 					XInputPlaces.ReadWhenStale();
 					GC.KeepAlive(XInputPlaces.IsStale);
-				}, Limit, StaticField(typeof(XInputPlaces), "SyncRoot")),
+				}, Limit, StaticField(typeof(XInputPlaces), nameof(XInputPlaces.SyncRoot))),
 					"The engine's check, or a row's lookup, waits for the lock the reader publishes under.");
 			}
 			finally
@@ -163,8 +164,8 @@ namespace x360ce.Tests
 		[Description("A pass in virtual mode with no client takes no lock while a refusal is still recent")]
 		public void The_refusal_gate_is_answered_without_a_lock()
 		{
-			var errorField = typeof(ViGEmClient).GetField("_LastConnectError", BindingFlags.NonPublic | BindingFlags.Static);
-			var tickField = typeof(ViGEmClient).GetField("_LastConnectTick", BindingFlags.NonPublic | BindingFlags.Static);
+			var errorField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectError), BindingFlags.NonPublic | BindingFlags.Static);
+			var tickField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectTick), BindingFlags.NonPublic | BindingFlags.Static);
 			var oldClient = ViGEmClient.Current;
 			var oldError = errorField.GetValue(null);
 			var oldTick = tickField.GetValue(null);
@@ -190,10 +191,10 @@ namespace x360ce.Tests
 		[Description("A pass in virtual mode with no client takes no lock while a library load failure is still recent")]
 		public void The_load_failure_gate_is_answered_without_a_lock()
 		{
-			var errorField = typeof(ViGEmClient).GetField("_LastConnectError", BindingFlags.NonPublic | BindingFlags.Static);
-			var connectTickField = typeof(ViGEmClient).GetField("_LastConnectTick", BindingFlags.NonPublic | BindingFlags.Static);
-			var failedField = typeof(ViGEmClient).GetField("_LastLoadFailed", BindingFlags.NonPublic | BindingFlags.Static);
-			var loadTickField = typeof(ViGEmClient).GetField("_LastLoadFailTick", BindingFlags.NonPublic | BindingFlags.Static);
+			var errorField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectError), BindingFlags.NonPublic | BindingFlags.Static);
+			var connectTickField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectTick), BindingFlags.NonPublic | BindingFlags.Static);
+			var failedField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastLoadFailed), BindingFlags.NonPublic | BindingFlags.Static);
+			var loadTickField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastLoadFailTick), BindingFlags.NonPublic | BindingFlags.Static);
 			var oldClient = ViGEmClient.Current;
 			var oldError = errorField.GetValue(null);
 			var oldConnectTick = connectTickField.GetValue(null);
@@ -226,9 +227,9 @@ namespace x360ce.Tests
 		[Description("A pass in virtual mode with no client takes no lock while the Visual C++ runtime is known to be missing")]
 		public void The_missing_runtime_is_answered_without_a_lock()
 		{
-			var errorField = typeof(ViGEmClient).GetField("_LastConnectError", BindingFlags.NonPublic | BindingFlags.Static);
-			var failedField = typeof(ViGEmClient).GetField("_LastLoadFailed", BindingFlags.NonPublic | BindingFlags.Static);
-			var runtimeField = typeof(ViGEmClient).GetField("_Runtime", BindingFlags.NonPublic | BindingFlags.Static);
+			var errorField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastConnectError), BindingFlags.NonPublic | BindingFlags.Static);
+			var failedField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._LastLoadFailed), BindingFlags.NonPublic | BindingFlags.Static);
+			var runtimeField = typeof(ViGEmClient).GetField(nameof(ViGEmClient._Runtime), BindingFlags.NonPublic | BindingFlags.Static);
 			var oldClient = ViGEmClient.Current;
 			var oldError = errorField.GetValue(null);
 			var oldFailed = failedField.GetValue(null);
@@ -239,7 +240,7 @@ namespace x360ce.Tests
 				// The connect and load gates stay open, so only the runtime's answer can be answering this.
 				errorField.SetValue(null, VIGEM_ERROR.VIGEM_ERROR_NONE);
 				failedField.SetValue(null, false);
-				runtimeField.SetValue(null, StaticField(typeof(ViGEmClient), "RuntimeMissing"));
+				runtimeField.SetValue(null, StaticField(typeof(ViGEmClient), nameof(ViGEmClient.RuntimeMissing)));
 				var answer = true;
 				Assert.IsTrue(HeldLock.Finishes(() => answer = ViGEmClient.isVBusExists(true), Limit, ViGEmClient.ClientLock),
 					"A pass with no client waits for the lock the Install and Uninstall buttons take while the runtime is missing.");
@@ -339,16 +340,16 @@ namespace x360ce.Tests
 				Assert.IsTrue(HeldLock.Finishes(() => { for (var i = 0; i < 1000; i++) pass(null, null); }, Limit,
 					// The options, the game and its tab switches, the lists the interface holds while it delivers a change,
 					// the devices list's own root, the mappings, and the place table.
-					StaticField(typeof(SettingsManager), "OptionsLock"), ListLock(SettingsManager.OptionsData.Items),
+					StaticField(typeof(SettingsManager), nameof(SettingsManager.OptionsLock)), ListLock(SettingsManager.OptionsData.Items),
 					SettingsManager.CurrentGameLock, ListLock(SettingsManager.UserGames.Items),
 					ListLock(SettingsManager.UserSettings.Items), ListLock(SettingsManager.UserDevices.Items), ListLock(SettingsManager.PadSettings.Items),
-					SettingsManager.UserDevices.SyncRoot, MapsLock(ps), StaticField(typeof(XInputPlaces), "SyncRoot"),
+					SettingsManager.UserDevices.SyncRoot, MapsLock(ps), StaticField(typeof(XInputPlaces), nameof(XInputPlaces.SyncRoot)),
 					// XInput and the bus, which the interface and the workers read, load, let go of and connect under these.
-					SharpDX.XInput.Controller.XInputLock, StaticField(typeof(SharpDX.XInput.Controller), "loadLock"),
-					StaticField(typeof(SystemXInput), "LoadLock"), ViGEmClient.ClientLock,
+					SharpDX.XInput.Controller.XInputLock, StaticField(typeof(SharpDX.XInput.Controller), nameof(Controller.loadLock)),
+					StaticField(typeof(SystemXInput), nameof(SystemXInput.LoadLock)), ViGEmClient.ClientLock,
 					// The helper's own: the reorder worker takes the first to know the pass under way has finished, and the
 					// window starts a device list read under the second.
-					InstanceField(helper, "PassLock"), InstanceField(helper, "_deviceListStartLock")),
+					InstanceField(helper, nameof(DInputHelper.PassLock)), InstanceField(helper, nameof(DInputHelper._deviceListStartLock))),
 					"A thousand passes did not finish while the interface's locks were held: the pass waits for one of them.");
 				Assert.IsNotNull(ud.SourceState, "The test controller was not read, so the pass was not timed with a device.");
 			}

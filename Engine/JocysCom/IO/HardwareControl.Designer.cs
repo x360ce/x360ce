@@ -730,7 +730,7 @@
 		#endregion
 		private System.Windows.Forms.TabControl MainTabControl;
 		private System.Windows.Forms.TabPage DeviceListTabPage;
-		private System.Windows.Forms.DataGridView DeviceDataGridView;
+		internal System.Windows.Forms.DataGridView DeviceDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn RevisionColumn;
@@ -763,7 +763,7 @@
 		private System.Windows.Forms.TextBox ManufacturerTextBox;
 		private System.Windows.Forms.Label ManufacturerLabel;
 		private System.Windows.Forms.TextBox DescriptionTextBox;
-		private System.Windows.Forms.Label DescriptionLabel;
+		internal System.Windows.Forms.Label DescriptionLabel;
 		private System.Windows.Forms.TextBox RevisionTextBox;
 		private System.Windows.Forms.Label RevisionLabel;
 		private System.Windows.Forms.Label DeviceStatusLabel;

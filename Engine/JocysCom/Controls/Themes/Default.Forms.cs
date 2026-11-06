@@ -1164,7 +1164,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		static VisualStyleRenderer _checkRenderer;
 
-		static readonly MethodInfo GetContentBoundsMethod = typeof(DataGridViewCell).GetMethod("GetContentBounds",
+		static readonly MethodInfo GetContentBoundsMethod = typeof(DataGridViewCell).GetMethod(nameof(DataGridViewCell.GetContentBounds),
 			BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(Graphics), typeof(DataGridViewCellStyle), typeof(int) }, null);
 
 		/// <summary>True when Windows has a dark check box to draw, on Windows 10 1809 and later.</summary>

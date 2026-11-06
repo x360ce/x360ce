@@ -135,7 +135,7 @@ namespace x360ce.App.DInput
 		public volatile bool Suspended;
 
 		/// <summary>Held for each pass of the loop, so what a pass is using is not let go of half way through it.</summary>
-		readonly object PassLock = new object();
+		internal readonly object PassLock = new object();
 
 		/// <summary>The places taken, one bit each, when each controller was last put somewhere other than its own place, or given none; -1 while it is not held back.</summary>
 		/// <remarks>
@@ -147,15 +147,15 @@ namespace x360ce.App.DInput
 		/// thread while no plug is under way. Read by <see cref="BeginPlug"/> on the input thread, which starts a plug only
 		/// once the last one has been taken in.
 		/// </remarks>
-		readonly int[] _misplacedWith = { -1, -1, -1, -1 };
+		internal readonly int[] _misplacedWith = { -1, -1, -1, -1 };
 
 		/// <summary>What the attempt that held each controller back came to: PlaceWrong, PlaceNotGiven or NotAnswering.</summary>
 		/// <remarks>Written with <see cref="_misplacedWith"/>, and meaningful only while it is set. Each held attempt repeats it.</remarks>
-		readonly VirtualError[] _heldAs = new VirtualError[4];
+		internal readonly VirtualError[] _heldAs = new VirtualError[4];
 
 		/// <summary>Whether each controller's last plug was held back by <see cref="_misplacedWith"/>, so it reached no bus.</summary>
 		/// <remarks>Written by the plug worker before its plug finishes; read by the input thread when it takes the plug in.</remarks>
-		readonly bool[] _heldBack = new bool[4];
+		internal readonly bool[] _heldBack = new bool[4];
 
 		/// <summary>Whether each controller's last plug took its controller away: off the bus again, as it was not in its own place, or replaced by a new one while the bus keeps it.</summary>
 		/// <remarks>
@@ -420,7 +420,7 @@ namespace x360ce.App.DInput
 			return true;
 		}
 
-		void RefreshAll(DirectInput manager, DeviceDetector detector)
+		internal void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			var passStarted = StepMark();
 			// The places the interface shows are read on a worker, only when something has
@@ -489,7 +489,7 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// Time since the update thread started, for pacing and timing the work within it.
 		/// </summary>
-		System.Diagnostics.Stopwatch watch;
+		internal System.Diagnostics.Stopwatch watch;
 
 		/// <summary>Counts passes, for the rate the status bar shows.</summary>
 		readonly Engine.RateCounter passRate = new Engine.RateCounter();

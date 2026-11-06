@@ -258,17 +258,17 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView TasksDataGridView;
+		internal System.Windows.Forms.DataGridView TasksDataGridView;
 		private System.Windows.Forms.Panel ItemDetailsPanel;
-		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton RetryButton;
-        private System.Windows.Forms.ToolStripButton UploadToCloudButton;
-        private System.Windows.Forms.ToolStripButton DownloadFromCloudButton;
+		internal System.Windows.Forms.ToolStrip toolStrip1;
+		internal System.Windows.Forms.ToolStripButton RetryButton;
+        internal System.Windows.Forms.ToolStripButton UploadToCloudButton;
+        internal System.Windows.Forms.ToolStripButton DownloadFromCloudButton;
 		private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
-		private System.Windows.Forms.ToolStripLabel NextRunLabel;
+		internal System.Windows.Forms.ToolStripLabel NextRunLabel;
 		private System.Windows.Forms.Timer QueueMonitorTimer;
-		private System.Windows.Forms.ToolStripButton DeleteButton;
-		private System.Windows.Forms.ToolStripLabel RunStateLabel;
+		internal System.Windows.Forms.ToolStripButton DeleteButton;
+		internal System.Windows.Forms.ToolStripLabel RunStateLabel;
 		private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ActionColumn;

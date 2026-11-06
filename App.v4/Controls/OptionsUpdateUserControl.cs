@@ -34,7 +34,7 @@ namespace x360ce.App.Controls
 		}
 
 		readonly List<string> _lines = new List<string>();
-		string processFileName;
+		internal string processFileName;
 
 		/// <summary>Starts a new line of the log, shown by the next <see cref="Render"/>.</summary>
 		/// <remarks>The steps after the download write here on a worker while the window's thread leaves the log alone.</remarks>
@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 		/// Downloads the release and checks what it holds on a worker, so the window goes on drawing while the file arrives
 		/// and Windows reads its signature, then shows what each step found at once and installs the program it passed.
 		/// </summary>
-		void Step2Download(UpdateClient client, UpdateCheck check)
+		internal void Step2Download(UpdateClient client, UpdateCheck check)
 		{
 			Log("Download... {0}", check.Release.Url);
 			Render();

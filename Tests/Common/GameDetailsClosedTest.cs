@@ -46,7 +46,7 @@ namespace x360ce.Tests
 				using (var panel = new GameDetailsUserControl())
 				{
 					panel.CurrentItem = Game();
-					var box = panel.Controls.Find("XInputMaskGroupBox", true).Single();
+					var box = panel.Controls.Find(nameof(GameDetailsUserControl.XInputMaskGroupBox), true).Single();
 					StringAssert.EndsWith(box.Text, ((int)XInputMask.XInput13_x86).ToString("X8"));
 				}
 			});

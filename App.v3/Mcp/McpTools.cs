@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Mcp;
+using x360ce.App.Controls;
 using x360ce.App.UiTree;
 using x360ce.Engine;
 
@@ -18,13 +19,13 @@ namespace x360ce.App.Mcp
 		/// <summary>Elements that change how the program itself runs rather than a setting of a game. Below Administer these may not be touched.</summary>
 		public static readonly string[] AdminControls =
 		{
-			"DebugModeCheckBox",
+			nameof(OptionsControl.DebugModeCheckBox),
 		};
 
 		/// <summary>The door's own controls on the Options page, which no caller may touch at any level.</summary>
 		public static readonly string[] DoorControls =
 		{
-			"AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessPortNumericUpDown", "AiAccessRegenerateButton",
+			"AiAccessEnabledCheckBox", "AiAccessComboBox", nameof(OptionsControl.AiAccessPortNumericUpDown), "AiAccessRegenerateButton",
 		};
 
 		/// <summary>The elements whose value is a secret, never read out through the door nor written to its log.</summary>

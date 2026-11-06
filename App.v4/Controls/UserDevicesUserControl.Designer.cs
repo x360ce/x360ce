@@ -360,23 +360,23 @@
 
 		#endregion
 		public System.Windows.Forms.DataGridView DevicesDataGridView;
-		private System.Windows.Forms.ToolStrip ControllersToolStrip;
-		private System.Windows.Forms.ToolStripButton ControllerDeleteButton;
-		private System.Windows.Forms.ToolStripButton RefreshButton;
-		private System.Windows.Forms.ToolStripButton HardwareButton;
-		private System.Windows.Forms.ToolStripButton AddDemoDevice;
-		private System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
-        private System.Windows.Forms.ToolStripButton ShowSystemDevicesButton;
-        private System.Windows.Forms.ToolStripDropDownButton HidHideDropDownButton;
-        private System.Windows.Forms.ToolStripMenuItem GamingDevicesMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem UnhideAllDevicesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem SynchronizeToHidHideMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem OpenHidHideMenuItem;
+		internal System.Windows.Forms.ToolStrip ControllersToolStrip;
+		internal System.Windows.Forms.ToolStripButton ControllerDeleteButton;
+		internal System.Windows.Forms.ToolStripButton RefreshButton;
+		internal System.Windows.Forms.ToolStripButton HardwareButton;
+		internal System.Windows.Forms.ToolStripButton AddDemoDevice;
+		internal System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
+        internal System.Windows.Forms.ToolStripButton ShowSystemDevicesButton;
+        internal System.Windows.Forms.ToolStripDropDownButton HidHideDropDownButton;
+        internal System.Windows.Forms.ToolStripMenuItem GamingDevicesMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem UnhideAllDevicesMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem SynchronizeToHidHideMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem OpenHidHideMenuItem;
 		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
 		private System.Windows.Forms.DataGridViewImageColumn ConnectionClassColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SourceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;

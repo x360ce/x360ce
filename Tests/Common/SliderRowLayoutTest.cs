@@ -36,7 +36,7 @@ namespace x360ce.Tests
 					form.Show();
 					var problems = new List<string>();
 					var seen = new HashSet<TrackBar>();
-					var tabs = (TabControl)page.Controls.Find("PadTabControl", true).Single();
+					var tabs = (TabControl)page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
 					// A page is laid out once it is shown, so each is opened before its sliders are measured.
 					foreach (TabPage tab in tabs.TabPages)
 					{

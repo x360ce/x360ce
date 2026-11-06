@@ -215,14 +215,14 @@
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 		private System.Windows.Forms.Label CurrentLabel;
 		private System.Windows.Forms.TableLayoutPanel CurrentPanel;
-		private System.Windows.Forms.TextBox CurrentPathTextBox;
-		private System.Windows.Forms.Button OpenFolderButton;
+		internal System.Windows.Forms.TextBox CurrentPathTextBox;
+		internal System.Windows.Forms.Button OpenFolderButton;
 		private System.Windows.Forms.Label KeepLabel;
-		private System.Windows.Forms.ComboBox LocationComboBox;
+		internal System.Windows.Forms.ComboBox LocationComboBox;
 		private System.Windows.Forms.Label PathLabel;
 		private System.Windows.Forms.Label StatusLabel;
 		private System.Windows.Forms.Label MoveModeLabel;
-		private System.Windows.Forms.ComboBox MoveModeComboBox;
-		private System.Windows.Forms.Button ApplyButton;
+		internal System.Windows.Forms.ComboBox MoveModeComboBox;
+		internal System.Windows.Forms.Button ApplyButton;
 	}
 }

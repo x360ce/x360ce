@@ -34,7 +34,7 @@ namespace x360ce.App.Controls
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
 			{
-				Name = "MainTableLayoutPanel",
+				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
 				// None at the sides, so the list meets the tab's edges; the rows above and below it keep that room as margin.
 				Padding = new Padding(0, 3, 0, 3),
@@ -42,13 +42,13 @@ namespace x360ce.App.Controls
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			VersionLabel = new Label { Name = "VersionLabel", AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(6, 3, 6, 6) };
-			FilterLabel = new Label { Name = "FilterLabel", Text = "Filter:", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(6, 3, 3, 3) };
-			FilterTextBox = new TextBox { Name = "FilterTextBox", Dock = DockStyle.Fill, Margin = new Padding(3, 3, 6, 3) };
+			VersionLabel = new Label { Name = nameof(VersionLabel), AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(6, 3, 6, 6) };
+			FilterLabel = new Label { Name = nameof(FilterLabel), Text = "Filter:", AutoSize = true, Anchor = AnchorStyles.Left, Margin = new Padding(6, 3, 3, 3) };
+			FilterTextBox = new TextBox { Name = nameof(FilterTextBox), Dock = DockStyle.Fill, Margin = new Padding(3, 3, 6, 3) };
 			FilterTextBox.TextChanged += (s, e) => Fill();
 			RowsDataGridView = new DataGridView
 			{
-				Name = "RowsDataGridView",
+				Name = nameof(RowsDataGridView),
 				Dock = DockStyle.Fill,
 				Margin = new Padding(0, 3, 0, 3),
 				AutoGenerateColumns = false,
@@ -68,10 +68,10 @@ namespace x360ce.App.Controls
 			AddColumn("GuidColumn", "SDL GUID", "Guid", DataGridViewAutoSizeColumnMode.AllCells);
 			RowsDataGridView.SelectionChanged += (s, e) => SelectionChanged?.Invoke(this, EventArgs.Empty);
 			ControlsHelper.ApplyBorderStyle(RowsDataGridView);
-			UpdateButton = new Button { Name = "UpdateButton", Text = "Update SDL Database", AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, UseVisualStyleBackColor = true, Margin = new Padding(6, 3, 6, 3) };
+			UpdateButton = new Button { Name = nameof(UpdateButton), Text = "Update SDL Database", AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, UseVisualStyleBackColor = true, Margin = new Padding(6, 3, 6, 3) };
 			UpdateButton.Click += (s, e) => SdlUserControl.StartUpdate(UpdateButton, (text, failed) => StatusLabel.Text = text, Fill);
 			// Across the column, so a long answer wraps at the tab's width.
-			StatusLabel = new Label { Name = "StatusLabel", AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(6, 3, 6, 3) };
+			StatusLabel = new Label { Name = nameof(StatusLabel), AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(6, 3, 6, 3) };
 			AddRow(VersionLabel);
 			MainTableLayoutPanel.SetColumnSpan(VersionLabel, 2);
 			MainTableLayoutPanel.RowStyles.Add(new RowStyle());

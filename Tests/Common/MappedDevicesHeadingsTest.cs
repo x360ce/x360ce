@@ -25,8 +25,8 @@ namespace x360ce.Tests
 				using (var pad = new PadControl(MapTo.Controller1))
 				{
 					var grid = pad.MappedDevicesDataGridView;
-					var online = grid.Columns["IsOnlineColumn"];
-					var connection = grid.Columns["ConnectionClassColumn"];
+					var online = grid.Columns[nameof(PadControl.IsOnlineColumn)];
+					var connection = grid.Columns[nameof(PadControl.ConnectionClassColumn)];
 					Assert.AreEqual("On", online.HeaderText);
 					Assert.AreEqual("", connection.HeaderText);
 					Assert.AreEqual("Online", online.HeaderCell.AccessibilityObject.Name, "A screen reader does not hear the Online column's name.");
@@ -51,9 +51,9 @@ namespace x360ce.Tests
 					using (var pad = new PadControl(MapTo.Controller1))
 					{
 						var grid = pad.MappedDevicesDataGridView;
-						var ahk = grid.Columns["ScriptNameColumn"];
+						var ahk = grid.Columns[nameof(PadControl.ScriptNameColumn)];
 						Assert.AreEqual("AHK", ahk.HeaderText);
-						Assert.AreEqual(grid.Columns["InstanceIdColumn"].DisplayIndex - 1, ahk.DisplayIndex, "The AHK column is not just before Instance ID.");
+						Assert.AreEqual(grid.Columns[nameof(PadControl.InstanceIdColumn)].DisplayIndex - 1, ahk.DisplayIndex, "The AHK column is not just before Instance ID.");
 						Assert.IsFalse(ahk.Visible, "The AHK column shows while scripts are not allowed.");
 						SettingsManager.Options.AllowAutoHotkeyScripts = true;
 						Assert.IsTrue(ahk.Visible, "Allowing scripts did not show the AHK column.");

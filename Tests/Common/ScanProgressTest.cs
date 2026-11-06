@@ -14,6 +14,7 @@ using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using Program = x360ce.Engine.Data.Program;
 
 namespace x360ce.Tests
 {
@@ -72,7 +73,7 @@ namespace x360ce.Tests
 		/// <summary>The list's own handler for the scan's reports, as the scan attaches it.</summary>
 		static EventHandler<XInputMaskScannerEventArgs> Handler(GamesGridUserControl panel)
 		{
-			var method = typeof(GamesGridUserControl).GetMethod("Scanner_Progress", BindingFlags.Instance | BindingFlags.NonPublic);
+			var method = typeof(GamesGridUserControl).GetMethod(nameof(GamesGridUserControl.Scanner_Progress), BindingFlags.Instance | BindingFlags.NonPublic);
 			return (EventHandler<XInputMaskScannerEventArgs>)Delegate.CreateDelegate(
 				typeof(EventHandler<XInputMaskScannerEventArgs>), panel, method);
 		}
@@ -109,7 +110,7 @@ namespace x360ce.Tests
 						SpinWait.SpinUntil(() => scan.IsCompleted, TimeSpan.FromSeconds(10));
 						Assert.IsTrue(scan.IsCompleted, "The scan waited for the window to answer; it runs only as fast as the window draws.");
 						Assert.IsFalse(scan.IsFaulted, "Reporting progress failed on the worker, which ends the program: " + scan.Exception);
-						var label = panel.Controls.Find("ScanProgressLevel1Label", true).Single();
+						var label = panel.Controls.Find(nameof(GamesGridUserControl.ScanProgressLevel1Label), true).Single();
 						var deadline = DateTime.UtcNow.AddSeconds(10);
 						while (!label.Text.Contains("Scan file 1 of 1") && DateTime.UtcNow < deadline)
 							Application.DoEvents();
@@ -319,10 +320,10 @@ namespace x360ce.Tests
 						form.Controls.Add(panel);
 						form.Show();
 						Application.DoEvents();
-						var grid = (DataGridView)panel.Controls.Find("GamesDataGridView", true).Single();
+						var grid = (DataGridView)panel.Controls.Find(nameof(GamesGridUserControl.GamesDataGridView), true).Single();
 						var row = grid.Rows.Cast<DataGridViewRow>().First(r => ReferenceEquals(r.DataBoundItem, toEnable));
-						var column = grid.Columns["IsEnabledColumn"];
-						var method = typeof(GamesGridUserControl).GetMethod("GamesDataGridView_CellClick", BindingFlags.Instance | BindingFlags.NonPublic);
+						var column = grid.Columns[nameof(GamesGridUserControl.IsEnabledColumn)];
+						var method = typeof(GamesGridUserControl).GetMethod(nameof(GamesGridUserControl.GamesDataGridView_CellClick), BindingFlags.Instance | BindingFlags.NonPublic);
 						var args = new DataGridViewCellEventArgs(column.Index, row.Index);
 						method.Invoke(panel, new object[] { grid, args });
 						Assert.IsTrue(toEnable.IsEnabled, "The click did not enable the game.");

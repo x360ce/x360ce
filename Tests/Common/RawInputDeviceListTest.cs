@@ -33,7 +33,7 @@ namespace x360ce.Tests
 	{
 		const BindingFlags Private = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
-		static readonly Type ReadType = typeof(DInputHelper).GetNestedType("DeviceListRead", BindingFlags.NonPublic);
+		static readonly Type ReadType = typeof(DInputHelper).GetNestedType(nameof(DInputHelper.DeviceListRead), BindingFlags.NonPublic);
 
 		const string PadPath = @"\\?\HID#VID_046D&PID_C219#7&1A2B3C4D&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}";
 		const string WheelPath = @"\\?\HID#VID_046D&PID_C29B#7&2B3C4D5E&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}";
@@ -116,22 +116,22 @@ namespace x360ce.Tests
 		static object NewRead(params DeviceInstance[] devices)
 		{
 			var read = Activator.CreateInstance(ReadType, true);
-			ReadType.GetField("Devices").SetValue(read, devices.ToList());
-			ReadType.GetField("IntInfos").SetValue(read, Interfaces);
-			ReadType.GetField("DevInfos").SetValue(read, Nodes);
+			ReadType.GetField(nameof(DInputHelper.DeviceListRead.Devices)).SetValue(read, devices.ToList());
+			ReadType.GetField(nameof(DInputHelper.DeviceListRead.IntInfos)).SetValue(read, Interfaces);
+			ReadType.GetField(nameof(DInputHelper.DeviceListRead.DevInfos)).SetValue(read, Nodes);
 			return read;
 		}
 
 		/// <summary>The worker's Raw Input step: lists the hub's devices in the read.</summary>
 		static void FindRawInputDevices(object read, RawInputHub hub, DirectInput manager, Dictionary<string, DeviceInstance> twins, Dictionary<RawInputHubDevice, RawInputLayout> layouts)
 		{
-			Call(null, "FindRawInputDevices", read, hub, hub.Devices.Values.ToArray(), manager, twins, layouts);
+			Call(null, nameof(DInputHelper.FindRawInputDevices), read, hub, hub.Devices.Values.ToArray(), manager, twins, layouts);
 		}
 
 		/// <summary>What the read lists of each Raw Input device: its device, layout, interface and twin.</summary>
 		static object[] Listings(object read)
 		{
-			return ((IList)ReadType.GetField("RawInputDevices").GetValue(read)).Cast<object>().ToArray();
+			return ((IList)ReadType.GetField(nameof(DInputHelper.DeviceListRead.RawInputDevices)).GetValue(read)).Cast<object>().ToArray();
 		}
 
 		static T Field<T>(object listing, string name)
@@ -142,7 +142,7 @@ namespace x360ce.Tests
 		/// <summary>The device thread's take-in of a read.</summary>
 		static void TakeIn(DInputHelper helper, DirectInput manager, object read)
 		{
-			Call(helper, "TakeInDeviceList", manager, read);
+			Call(helper, nameof(DInputHelper.TakeInDeviceList), manager, read);
 		}
 
 		static object Call(object target, string name, params object[] args)
@@ -460,7 +460,7 @@ namespace x360ce.Tests
 				var layouts = new Dictionary<RawInputHubDevice, RawInputLayout>();
 				var read = NewRead();
 				FindRawInputDevices(read, hub, manager, twins, layouts);
-				var listed = Listings(read).Select(x => Field<RawInputDevice>(x, "Device")).ToArray();
+				var listed = Listings(read).Select(x => Field<RawInputDevice>(x, nameof(DInputHelper.RawInputListing.Device))).ToArray();
 				CollectionAssert.AreEqual(new[] { pad }, listed, "The devices the read lists.");
 				Assert.IsFalse(layouts.ContainsKey(oursEntry), "A layout was kept for a pad of ours.");
 				Assert.IsFalse(oursEntry.ApplyLayout(), "The hub was given a layout for a pad of ours.");
@@ -482,11 +482,11 @@ namespace x360ce.Tests
 		public void An_interface_is_found_by_its_path_in_either_case()
 		{
 			var interfaces = new[] { Interface(PadPath, PadHid, PadUsb, ""), Interface(WheelPath, WheelHid, WheelUsb, "") };
-			Assert.AreSame(interfaces[0], Call(null, "FindInterface", interfaces, PadPath.ToUpperInvariant()), "Upper case.");
-			Assert.AreSame(interfaces[1], Call(null, "FindInterface", interfaces, WheelPath), "Mixed case.");
-			Assert.AreSame(interfaces[1], Call(null, "FindInterface", interfaces, WheelPath.ToLowerInvariant()), "Lower case.");
-			Assert.IsNull(Call(null, "FindInterface", interfaces, OursPath), "A path no interface has.");
-			Assert.IsNull(Call(null, "FindInterface", null, PadPath), "No interfaces read.");
+			Assert.AreSame(interfaces[0], Call(null, nameof(DInputHelper.FindInterface), interfaces, PadPath.ToUpperInvariant()), "Upper case.");
+			Assert.AreSame(interfaces[1], Call(null, nameof(DInputHelper.FindInterface), interfaces, WheelPath), "Mixed case.");
+			Assert.AreSame(interfaces[1], Call(null, nameof(DInputHelper.FindInterface), interfaces, WheelPath.ToLowerInvariant()), "Lower case.");
+			Assert.IsNull(Call(null, nameof(DInputHelper.FindInterface), interfaces, OursPath), "A path no interface has.");
+			Assert.IsNull(Call(null, nameof(DInputHelper.FindInterface), null, PadPath), "No interfaces read.");
 		}
 
 		#endregion
@@ -509,13 +509,13 @@ namespace x360ce.Tests
 				var layouts = new Dictionary<RawInputHubDevice, RawInputLayout>();
 				// Without a twin: the slots the hub reads it by, its usages' as it arrived, nothing kept, and the hub not told.
 				var none = new Dictionary<RawInputHubDevice, RawInputLayout>();
-				var standard = (RawInputLayout)Call(null, "TakeTwinLayout", hub, entry, null, none);
+				var standard = (RawInputLayout)Call(null, nameof(DInputHelper.TakeTwinLayout), hub, entry, null, none);
 				Assert.AreSame(entry.Layout, standard, "Without a twin, the layout is not the one the hub reads the device by.");
 				CollectionAssert.AreEqual(usages.Types, standard.Types, "Without a twin, the kinds of slot are not the usages'.");
 				CollectionAssert.AreEqual(usages.Indexes, standard.Indexes, "Without a twin, the slots are not the usages'.");
 				Assert.AreEqual(0, none.Count, "A layout was kept for a device with no twin.");
 				Assert.IsFalse(entry.ApplyLayout(), "The hub was given a layout for a device with no twin.");
-				var layout = (RawInputLayout)Call(null, "TakeTwinLayout", hub, entry, fixture.Objects, layouts);
+				var layout = (RawInputLayout)Call(null, nameof(DInputHelper.TakeTwinLayout), hub, entry, fixture.Objects, layouts);
 				AssertSlot(layout, wheel, 0x30, MapType.Axis, 0, "wheel");
 				AssertSlot(layout, wheel, 0x31, MapType.Slider, 0, "combined pedals");
 				AssertSlot(layout, wheel, 0x32, MapType.Axis, 1, "accelerator");
@@ -530,15 +530,15 @@ namespace x360ce.Tests
 				Assert.IsTrue(hub.TryCopyState(wheel.InstanceGuid, state, out _));
 				RawInputTest.AssertState(fixture, sample, state);
 				// Without a twin now, the device keeps the twin's slots the hub reads it by.
-				Assert.AreSame(layout, Call(null, "TakeTwinLayout", hub, entry, null, none), "A device that lost sight of its twin went back to its usages.");
+				Assert.AreSame(layout, Call(null, nameof(DInputHelper.TakeTwinLayout), hub, entry, null, none), "A device that lost sight of its twin went back to its usages.");
 
 				// A later read keeps the layout it has: its twin, unknown to DirectInput, is not opened again.
 				var twins = new Dictionary<string, DeviceInstance>(StringComparer.OrdinalIgnoreCase) { { WheelPath, Instance("G27 Racing Wheel", wheel.ProductGuid, (int)DeviceType.Driving | HidFlag) } };
 				var read = NewRead();
 				FindRawInputDevices(read, hub, manager, twins, layouts);
 				var listing = Listings(read).Single();
-				Assert.AreSame(layout, Field<RawInputLayout>(listing, "Layout"), "A later read took the layout again.");
-				AssertTwinCopies(fixture.Objects, Field<DeviceObjectItem[]>(listing, "Objects"), "The device described by its twin's objects");
+				Assert.AreSame(layout, Field<RawInputLayout>(listing, nameof(DInputHelper.RawInputListing.Layout)), "A later read took the layout again.");
+				AssertTwinCopies(fixture.Objects, Field<DeviceObjectItem[]>(listing, nameof(DInputHelper.RawInputListing.Objects)), "The device described by its twin's objects");
 				// Back after leaving, the device is another entry: the hub reads it by the twin's slots from its first report,
 				// and the twin is asked again. This one cannot be opened, so the device is described by the layout it has.
 				hub.Remove(wheel.Handle);
@@ -548,8 +548,8 @@ namespace x360ce.Tests
 				FindRawInputDevices(read, hub, manager, twins, layouts);
 				Assert.IsFalse(layouts.ContainsKey(entry), "The layout of the device that left is kept.");
 				listing = Listings(read).Single();
-				Assert.AreSame(layout, Field<RawInputLayout>(listing, "Layout"), "A device back whose twin cannot be opened is not listed by the slots the hub reads it by.");
-				AssertTwinCopies(fixture.Objects, Field<DeviceObjectItem[]>(listing, "Objects"), "A device back whose twin cannot be opened, described by its twin's objects");
+				Assert.AreSame(layout, Field<RawInputLayout>(listing, nameof(DInputHelper.RawInputListing.Layout)), "A device back whose twin cannot be opened is not listed by the slots the hub reads it by.");
+				AssertTwinCopies(fixture.Objects, Field<DeviceObjectItem[]>(listing, nameof(DInputHelper.RawInputListing.Objects)), "A device back whose twin cannot be opened, described by its twin's objects");
 				Assert.IsFalse(layouts.ContainsKey(back), "A layout was kept for a device whose twin could not be opened, so it is never asked again.");
 			}
 			finally
@@ -596,33 +596,33 @@ namespace x360ce.Tests
 		static void ReadAndCheck(RawInputHub hub, Dictionary<Guid, string> known, string what)
 		{
 			var layouts = new Dictionary<RawInputHubDevice, RawInputLayout>();
-			var read = Call(null, "ReadDeviceList", known, hub, layouts);
-			var made = (Dictionary<Guid, DirectInputDevice>)ReadType.GetField("Made").GetValue(read);
+			var read = Call(null, nameof(DInputHelper.ReadDeviceList), known, hub, layouts);
+			var made = (Dictionary<Guid, DirectInputDevice>)ReadType.GetField(nameof(DInputHelper.DeviceListRead.Made)).GetValue(read);
 			try
 			{
-				var error = (Exception)ReadType.GetField("Error").GetValue(read);
+				var error = (Exception)ReadType.GetField(nameof(DInputHelper.DeviceListRead.Error)).GetValue(read);
 				Assert.IsNull(error, what + ": the read failed: " + error);
-				Console.WriteLine("{0}: {1}", what, ReadType.GetField("Phases").GetValue(read));
+				Console.WriteLine("{0}: {1}", what, ReadType.GetField(nameof(DInputHelper.DeviceListRead.Phases)).GetValue(read));
 				var listings = Listings(read);
 				Assert.IsTrue(listings.Length > 0, what + ": no Raw Input device listed.");
 				foreach (var listing in listings)
 				{
-					var device = Field<RawInputDevice>(listing, "Device");
-					var twin = Field<DeviceInstance>(listing, "Twin");
+					var device = Field<RawInputDevice>(listing, nameof(DInputHelper.RawInputListing.Device));
+					var twin = Field<DeviceInstance>(listing, nameof(DInputHelper.RawInputListing.Twin));
 					Console.WriteLine("{0}: \"{1}\" {2}, twin \"{3}\"", what, device.ProductName, device.InterfacePath, twin == null ? null : twin.InstanceName);
-					Assert.IsNotNull(Field<DeviceInfo>(listing, "Interface"), what + ": \"" + device.ProductName + "\" has no interface.");
+					Assert.IsNotNull(Field<DeviceInfo>(listing, nameof(DInputHelper.RawInputListing.Interface)), what + ": \"" + device.ProductName + "\" has no interface.");
 					var entry = hub.Devices[device.InstanceGuid];
 					// A device read from its row has no twin, since DirectInput lists it as no game controller: its usages place it.
 					if (device.Description != null)
 					{
 						Assert.IsNull(twin, what + ": \"" + device.ProductName + "\" has a DirectInput twin.");
 						Assert.IsFalse(layouts.ContainsKey(entry), what + ": \"" + device.ProductName + "\" took a layout from a twin it does not have.");
-						Assert.AreSame(entry.Layout, Field<RawInputLayout>(listing, "Layout"), what + ": the listing's layout is not the one the hub reads it by.");
+						Assert.AreSame(entry.Layout, Field<RawInputLayout>(listing, nameof(DInputHelper.RawInputListing.Layout)), what + ": the listing's layout is not the one the hub reads it by.");
 						continue;
 					}
 					Assert.IsNotNull(twin, what + ": \"" + device.ProductName + "\" has no DirectInput twin.");
 					Assert.IsTrue(layouts.ContainsKey(entry), what + ": \"" + device.ProductName + "\" did not take its twin's layout.");
-					Assert.AreSame(layouts[entry], Field<RawInputLayout>(listing, "Layout"), what + ": the listing's layout is not the twin's.");
+					Assert.AreSame(layouts[entry], Field<RawInputLayout>(listing, nameof(DInputHelper.RawInputListing.Layout)), what + ": the listing's layout is not the twin's.");
 				}
 				// Every device the read made for the list, twins among them when new, is handed over as it was opened: not acquired.
 				foreach (var joystick in made.Values.Select(x => x.Joystick))
@@ -675,7 +675,7 @@ namespace x360ce.Tests
 					Assert.IsNull(helper.RawInputError, where + ": " + helper.RawInputError);
 					// The hub raises its change on its own thread; the update thread is told by the flag it reads once a pass.
 					helper.UpdateDevicesEnabled = false;
-					var changed = (EventHandler)typeof(RawInputHub).GetField("DevicesChanged", Private).GetValue(helper.RawInput);
+					var changed = (EventHandler)typeof(RawInputHub).GetField(nameof(RawInputHub.DevicesChanged), Private).GetValue(helper.RawInput);
 					Assert.IsNotNull(changed, where + ": nothing listens to the hub.");
 					changed(helper.RawInput, EventArgs.Empty);
 					Assert.IsTrue(helper.UpdateDevicesEnabled, where + ": a Raw Input device that came or went does not ask for a device list read.");

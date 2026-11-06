@@ -112,7 +112,7 @@ namespace x360ce.App
 		static public void AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, Dictionary<string, Control> settingsMap)
 		{
 			// Validate
-			if (settingsMap == null) throw new ArgumentNullException("settingsMap");
+			if (settingsMap == null) throw new ArgumentNullException(nameof(settingsMap));
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
 			// Get the property
@@ -136,7 +136,7 @@ namespace x360ce.App
 		static public void AddMap(string sectionName, string settingName, Control control, Dictionary<string, Control> settingsMap)
 		{
 			// Validate
-			if (settingsMap == null) throw new ArgumentNullException("settingsMap");
+			if (settingsMap == null) throw new ArgumentNullException(nameof(settingsMap));
 			// Set the tool-tip
 			// MainForm.Current.ToolTip.SetToolTip(control, desc);
 			// Alternative (a little bit less obstructive) way to display help inside yellow header.

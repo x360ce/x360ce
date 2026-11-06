@@ -204,7 +204,7 @@ namespace x360ce.Tests
 							"The page's list has a window, so its tab was shown and this is not the state under test.");
 						Assert.AreEqual(setting.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid,
 							"The device is not selected on a tab nobody has opened.");
-						Assert.AreEqual("Axis 1", pad.Controls.Find("LeftThumbAxisXComboBox", true).Single().Text,
+						Assert.AreEqual("Axis 1", pad.Controls.Find(nameof(PadControl.LeftThumbAxisXComboBox), true).Single().Text,
 							"The page shows its blank defaults instead of the device's mapping until its tab is opened.");
 					}
 				}
@@ -429,8 +429,8 @@ namespace x360ce.Tests
 						pad.UpdateSettingsMap();
 						pad.InitPadData();
 						Application.DoEvents();
-						var bar = (ToolStrip)pad.Controls.Find("GamesToolStrip", true).Single();
-						var enable = (ToolStripButton)bar.Items["EnableButton"];
+						var bar = (ToolStrip)pad.Controls.Find(nameof(PadControl.GamesToolStrip), true).Single();
+						var enable = (ToolStripButton)bar.Items[nameof(PadControl.EnableButton)];
 						Assert.IsTrue(enable.Checked, "Controller 2 is on for the game, but its Enable box shows it off: clicking it would turn it off.");
 					}
 				}

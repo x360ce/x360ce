@@ -85,7 +85,7 @@ namespace x360ce.Tests
 		public void A_look_after_a_controller_of_ours_is_made_reads_again()
 		{
 			var held = (HashSet<uint>)typeof(Nefarius.ViGEm.Client.ViGEmClient)
-				.GetField("UsedSerialSet", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
+				.GetField(nameof(Nefarius.ViGEm.Client.ViGEmClient.UsedSerialSet), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
 			var first = VirtualDriverInstaller.GetLeftoverVirtualPads();
 			Assert.AreSame(first, VirtualDriverInstaller.GetLeftoverVirtualPads(), "With nothing changed the machine was read again, so this proves nothing.");
 			// A number the bus gives no controller, recorded as this program records one it has just made.

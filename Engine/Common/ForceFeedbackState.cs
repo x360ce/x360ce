@@ -43,8 +43,8 @@ namespace x360ce.Engine
         // Left
 
         DeviceObjectItem actuatorL;
-        EffectParameters paramsL;
-        Effect effectL;
+        internal EffectParameters paramsL;
+        internal Effect effectL;
 
         /// <summary>Effects the device said it will never take. Asked once, then left alone, or every poll would ask again and every answer would be reported.</summary>
         readonly HashSet<Effect> unsupported = new HashSet<Effect>();
@@ -56,8 +56,8 @@ namespace x360ce.Engine
         // Right
 
         DeviceObjectItem actuatorR;
-        EffectParameters paramsR;
-        Effect effectR;
+        internal EffectParameters paramsR;
+        internal Effect effectR;
         public PeriodicForce PeriodicForceR;
         public ConstantForce ConstantForceR;
 

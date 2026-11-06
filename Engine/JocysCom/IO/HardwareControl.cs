@@ -313,7 +313,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// <remarks>
 		/// Temporarily detaches SelectionChanged, sets DataSource, then re-attaches it asynchronously.
 		/// </remarks>
-		private void BindDeviceList(List<DeviceInfo> filtered)
+		internal void BindDeviceList(List<DeviceInfo> filtered)
 		{
 			// WORKAROUND: Remove SelectionChanged event.
 			DeviceDataGridView.SelectionChanged -= DeviceDataGridView_SelectionChanged;

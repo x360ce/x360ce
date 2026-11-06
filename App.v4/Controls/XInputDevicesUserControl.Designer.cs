@@ -238,21 +238,21 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private System.Windows.Forms.ToolStrip DevicesToolStrip;
-		private System.Windows.Forms.ToolStripButton ApplyButton;
-		private System.Windows.Forms.ToolStripButton AutoOrderButton;
-		private System.Windows.Forms.ToolStripButton RefreshButton;
-		private System.Windows.Forms.DataGridView DevicesDataGridView;
-		private System.Windows.Forms.TableLayoutPanel PlanPanel;
-		private System.Windows.Forms.Label PlanSubjectLabel;
-		private System.Windows.Forms.Label PlanBodyLabel;
-		private System.Windows.Forms.Button PlanOkButton;
-		private System.Windows.Forms.Button PlanCancelButton;
-		private System.Windows.Forms.DataGridViewImageColumn MoveUpColumn;
-		private System.Windows.Forms.DataGridViewImageColumn MoveDownColumn;
+		internal System.Windows.Forms.ToolStrip DevicesToolStrip;
+		internal System.Windows.Forms.ToolStripButton ApplyButton;
+		internal System.Windows.Forms.ToolStripButton AutoOrderButton;
+		internal System.Windows.Forms.ToolStripButton RefreshButton;
+		internal System.Windows.Forms.DataGridView DevicesDataGridView;
+		internal System.Windows.Forms.TableLayoutPanel PlanPanel;
+		internal System.Windows.Forms.Label PlanSubjectLabel;
+		internal System.Windows.Forms.Label PlanBodyLabel;
+		internal System.Windows.Forms.Button PlanOkButton;
+		internal System.Windows.Forms.Button PlanCancelButton;
+		internal System.Windows.Forms.DataGridViewImageColumn MoveUpColumn;
+		internal System.Windows.Forms.DataGridViewImageColumn MoveDownColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlaceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PadColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MappedColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn MappedColumn;
 	}
 }

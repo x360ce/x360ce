@@ -30,9 +30,9 @@ namespace x360ce.Tests
 				using (var page = new PadControl(MapTo.Controller1))
 				{
 					form.Controls.Add(page);
-					var tabs = (TabControl)typeof(PadControl).GetField("PadTabControl", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(page);
+					var tabs = (TabControl)typeof(PadControl).GetField(nameof(PadControl.PadTabControl), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(page);
 					var names = tabs.TabPages.Cast<TabPage>().Select(x => x.Name).ToList();
-					Assert.AreEqual(names.IndexOf("DirectInputTabPage") + 1, names.IndexOf("SdlTabPage"),
+					Assert.AreEqual(names.IndexOf(nameof(PadControl.DirectInputTabPage)) + 1, names.IndexOf("SdlTabPage"),
 						"The SDL page is not right after Direct Input: " + string.Join(", ", names));
 					// Made only now, after the page was added, as when the program opens.
 					var count = SendMessage(tabs.Handle, TCM_GETITEMCOUNT, IntPtr.Zero, IntPtr.Zero).ToInt32();

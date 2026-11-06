@@ -36,3 +36,4 @@ using System.Resources;
 [assembly: AssemblyFileVersion("4.29.51.0")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("x360ce.Tests")]

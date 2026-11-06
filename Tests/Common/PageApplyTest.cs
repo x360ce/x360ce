@@ -76,7 +76,7 @@ namespace x360ce.Tests
 		/// <summary>The slider of the left stick's X dead zone on a page.</summary>
 		static TrackBar DeadZoneSlider(PadControl page)
 		{
-			var axis = page.Controls.Find("LeftThumbXUserControl", true).Single();
+			var axis = page.Controls.Find(nameof(PadControl.LeftThumbXUserControl), true).Single();
 			return (TrackBar)axis.Controls.Find("DeadZoneTrackBar", true).Single();
 		}
 

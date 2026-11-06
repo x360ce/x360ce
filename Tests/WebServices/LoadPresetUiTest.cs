@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
+using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
@@ -45,15 +46,15 @@ namespace x360ce.Tests
 			var original = AddressShown(window);
 			try
 			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), url);
-				var features = Find(window, AutomationElement.AutomationIdProperty, "InternetFeaturesCheckBox");
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
+				var features = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetFeaturesCheckBox));
 				var toggle = (TogglePattern)features.GetCurrentPattern(TogglePattern.Pattern);
 				if (toggle.Current.ToggleState != ToggleState.On)
 					toggle.Toggle();
 
 				// Controller 1 > Load Preset... opens a dialog; the popular tab is inside it.
 				SelectTab(window, "Controller 1");
-				Invoke(Find(window, AutomationElement.AutomationIdProperty, "LoadPresetButton"));
+				Invoke(Find(window, AutomationElement.AutomationIdProperty, nameof(PadControl.LoadPresetButton)));
 				var dialog = Ui.WaitFor(() => TopLevelWindow(_process.Id, "Load Preset"),
 					TimeSpan.FromSeconds(20), "the Load Preset window");
 				SelectTab(dialog, "Default Settings for Most Popular Controllers");
@@ -77,7 +78,7 @@ namespace x360ce.Tests
 			var original = AddressShown(window);
 			try
 			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), url);
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
 				// Controller Settings holds the three lists on its own tabs; no dialog in v3.
 				SelectTab(window, "Controller Settings");
 				SelectTab(window, "Default Settings for Most Popular Controllers");
@@ -114,7 +115,7 @@ namespace x360ce.Tests
 
 			// A toolbar item has no automation id, only its text; the other tabs' toolbars are off screen.
 			Invoke(Find(scope, AutomationElement.NameProperty, "Refresh"));
-			var grid = Find(scope, AutomationElement.AutomationIdProperty, "PresetsDataGridView");
+			var grid = Find(scope, AutomationElement.AutomationIdProperty, nameof(PresetsGridUserControl.PresetsDataGridView));
 			string[] shown = null;
 			try
 			{
@@ -142,7 +143,7 @@ namespace x360ce.Tests
 
 		static string AddressShown(AutomationElement window)
 		{
-			var box = Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox");
+			var box = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox));
 			return ((ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern)).Current.Value;
 		}
 
@@ -155,7 +156,7 @@ namespace x360ce.Tests
 				if (innerTab != null)
 					SelectTab(window, innerTab);
 				// Found again: the element seen before a dialog does not answer after it.
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), original ?? "");
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), original ?? "");
 			}
 			catch (Exception ex)
 			{

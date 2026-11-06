@@ -278,7 +278,7 @@ namespace x360ce.Tests
 			ud.IsOnline = true;
 			// An effect lost to the failure: its settings made, the effect not. It reads as refused as well.
 			var state = new ForceFeedbackState();
-			typeof(ForceFeedbackState).GetField("paramsL", BindingFlags.NonPublic | BindingFlags.Instance)
+			typeof(ForceFeedbackState).GetField(nameof(ForceFeedbackState.paramsL), BindingFlags.NonPublic | BindingFlags.Instance)
 				.SetValue(state, new SharpDX.DirectInput.EffectParameters());
 			ud.FFState = state;
 			var issue = new ForceFeedbackIssue();

@@ -2,6 +2,7 @@
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.XInput;
+using x360ce.App.Controls;
 using x360ce.Engine;
 
 namespace x360ce.Tests
@@ -214,7 +215,7 @@ namespace x360ce.Tests
 		[Description("A row's name is read as the words shown on screen")]
 		public void A_rows_name_reads_as_the_words_on_screen()
 		{
-			var box = new System.Windows.Forms.ComboBox { Name = "RightTriggerComboBox" };
+			var box = new System.Windows.Forms.ComboBox { Name = nameof(PadControl.RightTriggerComboBox) };
 			try
 			{
 				Assert.AreEqual("Right Trigger", x360ce.App.Controls.MapExpressionToggle.RowNameFor(box));

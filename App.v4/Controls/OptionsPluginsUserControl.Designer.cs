@@ -333,20 +333,20 @@
 		#endregion
 
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
-		private System.Windows.Forms.CheckBox AllowThirdPartyPluginsCheckBox;
-		private System.Windows.Forms.Label NoteLabel;
-		private System.Windows.Forms.GroupBox AutoHotkeyGroupBox;
+		internal System.Windows.Forms.CheckBox AllowThirdPartyPluginsCheckBox;
+		internal System.Windows.Forms.Label NoteLabel;
+		internal System.Windows.Forms.GroupBox AutoHotkeyGroupBox;
 		private System.Windows.Forms.TableLayoutPanel AutoHotkeyLayoutPanel;
-		private System.Windows.Forms.CheckBox AllowAutoHotkeyScriptsCheckBox;
-		private System.Windows.Forms.Label ScriptsNoteLabel;
+		internal System.Windows.Forms.CheckBox AllowAutoHotkeyScriptsCheckBox;
+		internal System.Windows.Forms.Label ScriptsNoteLabel;
 		private System.Windows.Forms.Label HeartbeatLabel;
-		private System.Windows.Forms.NumericUpDown HeartbeatUpDown;
+		internal System.Windows.Forms.NumericUpDown HeartbeatUpDown;
 		private System.Windows.Forms.Label HangTimeoutLabel;
-		private System.Windows.Forms.NumericUpDown HangTimeoutUpDown;
-		private System.Windows.Forms.Label FolderLabel;
-		private System.Windows.Forms.TextBox FolderTextBox;
-		private System.Windows.Forms.Button OpenFolderButton;
-		private System.Windows.Forms.DataGridView PluginsDataGridView;
+		internal System.Windows.Forms.NumericUpDown HangTimeoutUpDown;
+		internal System.Windows.Forms.Label FolderLabel;
+		internal System.Windows.Forms.TextBox FolderTextBox;
+		internal System.Windows.Forms.Button OpenFolderButton;
+		internal System.Windows.Forms.DataGridView PluginsDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DevicesColumn;

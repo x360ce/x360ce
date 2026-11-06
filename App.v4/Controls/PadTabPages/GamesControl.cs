@@ -79,7 +79,7 @@ namespace x360ce.App.Controls
 		DateTime ScanStarted;
 		object GameAddLock = new object();
 
-		private void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
+		internal void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
 		{
 			var scanner = (XInputMaskScanner)sender;
 			// Posted to the interface thread, never sent. A failure there is reported where it happened,
@@ -243,7 +243,7 @@ namespace x360ce.App.Controls
 
 		#region Games (My Game Settings)
 
-		private void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
+		internal void Games_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
 			ShowHideRowsAfterBinding();
 		}
@@ -383,7 +383,7 @@ namespace x360ce.App.Controls
 				AddNewGame();
 		}
 
-		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		internal void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;

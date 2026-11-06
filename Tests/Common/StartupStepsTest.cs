@@ -12,6 +12,7 @@ using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Mcp;
 using JocysCom.ClassLibrary.Runtime;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -299,7 +300,7 @@ namespace x360ce.Tests
 				var seconds = copy.EngineSeconds();
 				WaitForDoor(ai.AiAccessPort);
 				var tree = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(ai, Call(1, "ui_read", "{}"))));
-				var path = PathOf(tree, "ForceOverallTrackBar", "Pad1TabPage");
+				var path = PathOf(tree, nameof(PadControl.ForceOverallTrackBar), nameof(MainForm.Pad1TabPage));
 				Assert.IsNotNull(path, "The overall force strength slider is not in the tree under controller 1.");
 				StringAssert.Contains(Text(Post(ai, Call(2, "ui_set", "{\"path\":\"" + path + "\",\"value\":\"35\"}"))), "Done");
 				Text(Post(ai, Call(3, "settings_save", "{}")));

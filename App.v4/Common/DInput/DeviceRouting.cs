@@ -30,7 +30,7 @@ namespace x360ce.App.DInput
 	{
 		/// <summary>The routing the engine reads. Replaced whole, never changed.</summary>
 		public static DeviceRouting Current { get { return _current; } }
-		static volatile DeviceRouting _current = Build(null, new UserSetting[0], new PadSetting[0]);
+		internal static volatile DeviceRouting _current = Build(null, new UserSetting[0], new PadSetting[0]);
 
 		/// <summary>Every routed row, in the order of the settings list.</summary>
 		public readonly UserSetting[] Rows;

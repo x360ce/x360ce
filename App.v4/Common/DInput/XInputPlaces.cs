@@ -46,10 +46,10 @@ namespace x360ce.App.DInput
 		/// the one moment it can be: between asking for it and it arriving, it is the one that was not
 		/// there before.
 		/// </remarks>
-		static readonly Dictionary<string, int> OursByHardware =
+		internal static readonly Dictionary<string, int> OursByHardware =
 			new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-		static readonly object SyncRoot = new object();
+		internal static readonly object SyncRoot = new object();
 
 		/// <summary>The controller family as the machine reports it. Replaced by tests that have no machine.</summary>
 		public static Func<DeviceInfo[]> ReadMachine = () => VirtualDriverInstaller.ReadControllerTree();

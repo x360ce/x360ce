@@ -633,13 +633,13 @@
 
 		#endregion
 
-		private System.Windows.Forms.TextBox XInputMaskTextBox;
+		internal System.Windows.Forms.TextBox XInputMaskTextBox;
 		private System.Windows.Forms.CheckBox XInput14_x86CheckBox;
 		private System.Windows.Forms.CheckBox XInput13_x86CheckBox;
 		private System.Windows.Forms.CheckBox XInput12_x86CheckBox;
 		private System.Windows.Forms.CheckBox XInput11_x86CheckBox;
 		private System.Windows.Forms.CheckBox XInput91_x86CheckBox;
-		private System.Windows.Forms.TextBox HookMaskTextBox;
+		internal System.Windows.Forms.TextBox HookMaskTextBox;
 		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
 		private System.Windows.Forms.CheckBox HookNAMECheckBox;
 		private System.Windows.Forms.CheckBox HookSTOPCheckBox;
@@ -657,27 +657,27 @@
 		private System.Windows.Forms.CheckBox XInput12_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput13_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput14_x64CheckBox;
-		private System.Windows.Forms.Button SynchronizeSettingsButton;
+		internal System.Windows.Forms.Button SynchronizeSettingsButton;
 		private System.Windows.Forms.CheckBox DInput8_x86CheckBox;
 		private System.Windows.Forms.Label DInputFilesLabel;
-		private System.Windows.Forms.TextBox DInputMaskTextBox;
+		internal System.Windows.Forms.TextBox DInputMaskTextBox;
 		private System.Windows.Forms.CheckBox DInput8_x64CheckBox;
 		private System.Windows.Forms.Label HookModeFakePidLabel;
 		private System.Windows.Forms.Label HookModeFakeVidLabel;
-		private System.Windows.Forms.TextBox HookModeFakePidTextBox;
-		private System.Windows.Forms.TextBox HookModeFakeVidTextBox;
-		private System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
-		private System.Windows.Forms.NumericUpDown TimeoutNumericUpDown;
+		internal System.Windows.Forms.TextBox HookModeFakePidTextBox;
+		internal System.Windows.Forms.TextBox HookModeFakeVidTextBox;
+		internal System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
+		internal System.Windows.Forms.NumericUpDown TimeoutNumericUpDown;
 		private System.Windows.Forms.Label TimeoutLabel;
-		private System.Windows.Forms.TextBox DInputFileTextBox;
+		internal System.Windows.Forms.TextBox DInputFileTextBox;
 		private System.Windows.Forms.Label DInputFileLabel;
-		private System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
-		private System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
-		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton ResetToDefaultButton;
-		private System.Windows.Forms.ToolStripDropDownButton HelpButton;
-		private System.Windows.Forms.ToolStripMenuItem NGEmuSearchButton;
+		internal System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
+		internal System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
+		internal System.Windows.Forms.ToolStrip toolStrip1;
+		internal System.Windows.Forms.ToolStripButton ResetToDefaultButton;
+		internal System.Windows.Forms.ToolStripDropDownButton HelpButton;
+		internal System.Windows.Forms.ToolStripMenuItem NGEmuSearchButton;
 		private System.Windows.Forms.ToolStripMenuItem GoogleSearchButton;
-		private System.Windows.Forms.ToolStripMenuItem NGEmuThreadButton;
+		internal System.Windows.Forms.ToolStripMenuItem NGEmuThreadButton;
 	}
 }

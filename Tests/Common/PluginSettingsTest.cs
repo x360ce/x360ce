@@ -1,5 +1,7 @@
 ﻿// @under-test: App.v4/Plugins/PluginSettings.cs, App.v4/Plugins/PluginDevices.cs, App.v4/Plugins/PluginManager.cs, App.v4/Controls/PadTabPages/PluginDeviceUserControl.cs, App.v4/Controls/PadControl.cs
 // @area: plugins   @layer: unit
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;
@@ -185,9 +187,9 @@ namespace x360ce.Tests
 					port.ResetValue(view);
 					Assert.IsNull(store.Get(guid, "Port"), "The row's Reset leaves its kept value.");
 					Assert.AreEqual(26760, port.GetValue(view), "The row's Reset does not give the first value back.");
-					((TabControl)Find(panel, "PluginTabControl")).SelectedTab = (TabPage)Find(panel, "PropertiesTabPage");
+					((TabControl)Find(panel, "PluginTabControl")).SelectedTab = (TabPage)Find(panel, nameof(InfoForm.PropertiesTabPage));
 					Application.DoEvents();
-					((Button)Find(panel, "ResetButton")).PerformClick();
+					((Button)Find(panel, nameof(OptionsInternetUserControl.ResetButton))).PerformClick();
 					Assert.IsNull(store.Get(guid, "Listen"), "Reset leaves a kept value.");
 					Assert.AreEqual(true, listen.GetValue(view), "Reset does not give the first value back.");
 					Assert.AreEqual(SettingsPluginMode.Fast, mode.GetValue(view));
@@ -204,7 +206,7 @@ namespace x360ce.Tests
 				var type = Type(SettingsPluginDevice.Product);
 				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, new SettingsPluginDevice(), new PluginSettings()))
 				{
-					var help = Find(panel, "DescriptionLabel");
+					var help = Find(panel, nameof(HardwareControl.DescriptionLabel));
 					Assert.AreEqual(type.Description, help.Text);
 					Assert.AreEqual(0, ((TableLayoutPanel)help.Parent).GetRow(help), "The help is not at the top of the tab.");
 				}
@@ -275,7 +277,7 @@ namespace x360ce.Tests
 					var control = (SettingsPluginControl)Find(panel, "SettingsPluginControl");
 					Assert.AreSame(device, control.Device, "The control was given another device than the one x360ce reads.");
 					var pages = ((TabControl)Find(panel, "PluginTabControl")).TabPages.Cast<TabPage>().ToArray();
-					CollectionAssert.AreEqual(new[] { "ControlTabPage", "PropertiesTabPage" }, pages.Select(x => x.Name).ToArray(),
+					CollectionAssert.AreEqual(new[] { "ControlTabPage", nameof(InfoForm.PropertiesTabPage) }, pages.Select(x => x.Name).ToArray(),
 						"The plugin's control and the properties are not on pages of their own, the control first.");
 					Assert.AreEqual("Properties", pages[1].Text);
 					Assert.AreSame(pages[0], control.Parent, "The control is not on its own page.");
@@ -299,7 +301,7 @@ namespace x360ce.Tests
 				using (var pad = new PadControl(MapTo.Controller1))
 				{
 					form.Controls.Add(pad);
-					var tabs = (TabControl)Find(pad, "PadTabControl");
+					var tabs = (TabControl)Find(pad, nameof(PadControl.PadTabControl));
 					var count = tabs.TabPages.Count;
 					pad.ShowPluginTab(Guid.NewGuid(), Type(SettingsPluginDevice.Product), new SettingsPluginDevice());
 					Assert.AreEqual(count + 1, tabs.TabPages.Count, "No tab was added for the plugin device.");

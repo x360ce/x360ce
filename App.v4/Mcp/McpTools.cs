@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Mcp;
+using x360ce.App.Controls;
 using x360ce.App.UiTree;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -31,10 +32,10 @@ namespace x360ce.App.Mcp
 		/// </summary>
 		public static readonly string[] AdminControls = new[]
 		{
-			"ViGEmBusInstallButton", "ViGEmBusUninstallButton",
-			"HidGuardianInstallButton", "HidGuardianUninstallButton",
-			"HidHideConfigureAutomaticallyCheckBox", "UnhideAllDevicesMenuItem", "SynchronizeToHidHideMenuItem",
-			"CleanupVirtualPadsButton",
+			nameof(OptionsUserControl.ViGEmBusInstallButton), nameof(OptionsUserControl.ViGEmBusUninstallButton),
+			nameof(OptionsUserControl.HidGuardianInstallButton), nameof(OptionsUserControl.HidGuardianUninstallButton),
+			nameof(OptionsUserControl.HidHideConfigureAutomaticallyCheckBox), nameof(UserDevicesUserControl.UnhideAllDevicesMenuItem), nameof(UserDevicesUserControl.SynchronizeToHidHideMenuItem),
+			nameof(UserDevicesUserControl.CleanupVirtualPadsButton),
 		}.Concat(AiAccessModel.AdminControls).ToArray();
 
 		/// <summary>The door's own controls on the Options tab's AI page, which no caller may touch at any level: the shared page's.</summary>

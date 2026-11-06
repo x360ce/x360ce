@@ -400,32 +400,32 @@
 		#endregion
 		private System.Windows.Forms.OpenFileDialog AddGameOpenFileDialog;
 		private System.Windows.Forms.Label ScanProgressLevel0Label;
-		private System.Windows.Forms.ToolStrip GamesToolStrip;
-        private System.Windows.Forms.ToolStripButton DeleteGamesButton;
-        private System.Windows.Forms.ToolStripButton SaveGamesButton;
-        private System.Windows.Forms.ToolStripButton ScanGamesButton;
-		private System.Windows.Forms.ToolStripButton AddGameButton;
+		internal System.Windows.Forms.ToolStrip GamesToolStrip;
+        internal System.Windows.Forms.ToolStripButton DeleteGamesButton;
+        internal System.Windows.Forms.ToolStripButton SaveGamesButton;
+        internal System.Windows.Forms.ToolStripButton ScanGamesButton;
+		internal System.Windows.Forms.ToolStripButton AddGameButton;
 		private GameDetailsUserControl GameDetailsControl;
-		private System.Windows.Forms.ToolStripButton StartGameButton;
-		private System.Windows.Forms.ToolStripButton OpenGameButton;
-		private System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
-		private System.Windows.Forms.ToolStripMenuItem ShowAllGamesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowEnabledGamesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowDisabledGamesMenuItem;
+		internal System.Windows.Forms.ToolStripButton StartGameButton;
+		internal System.Windows.Forms.ToolStripButton OpenGameButton;
+		internal System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
+		internal System.Windows.Forms.ToolStripMenuItem ShowAllGamesMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem ShowEnabledGamesMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem ShowDisabledGamesMenuItem;
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
 		private System.Windows.Forms.Panel ScanProgressPlacePanel;
-		private System.Windows.Forms.Panel ScanProgressPanel;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
+		internal System.Windows.Forms.Panel ScanProgressPanel;
+		internal System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlatformColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileFolderColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Label ScanProgressLevel1Label;
+		internal System.Windows.Forms.Label ScanProgressLevel1Label;
 	}
 }

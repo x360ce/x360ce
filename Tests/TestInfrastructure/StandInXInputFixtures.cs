@@ -101,11 +101,11 @@ namespace x360ce.Tests
 		public static void WithStandInXInput(Action action)
 		{
 			Assert.IsNotNull(DInputHelper.OccupiedPlaces(), "XInput does not answer before the test.");
-			var field = typeof(SystemXInput).GetField("_GetState", BindingFlags.NonPublic | BindingFlags.Static);
+			var field = typeof(SystemXInput).GetField(nameof(SystemXInput._GetState), BindingFlags.NonPublic | BindingFlags.Static);
 			var parameters = field.FieldType.GetMethod("Invoke").GetParameters().Select(x => Expression.Parameter(x.ParameterType)).ToArray();
 			var standIn = Expression.Lambda(field.FieldType,
 				Expression.Call(typeof(StandInXInputFixtures).GetMethod(nameof(Answer)), parameters[0]), parameters).Compile();
-			var capabilitiesField = typeof(SystemXInput).GetField("_GetCapabilitiesEx", BindingFlags.NonPublic | BindingFlags.Static);
+			var capabilitiesField = typeof(SystemXInput).GetField(nameof(SystemXInput._GetCapabilitiesEx), BindingFlags.NonPublic | BindingFlags.Static);
 			var capabilities = StandInCapabilities(capabilitiesField.FieldType);
 			var loadLock = XInputPlacesNotAnsweringTest.LoadLock();
 			object loaded;

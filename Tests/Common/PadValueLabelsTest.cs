@@ -54,7 +54,7 @@ namespace x360ce.Tests
 								Application.DoEvents();
 								var where = (programFonts ? "In the program's fonts" : "In Windows' fonts") + ", " + theme + ": ";
 								var green = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
-								var table = Find(pad, "GeneralTableLayoutPanel");
+								var table = Find(pad, nameof(PadControl.GeneralTableLayoutPanel));
 								Func<Control, Rectangle> at = c => table.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
 								foreach (var code in Codes())
 								{
@@ -105,7 +105,7 @@ namespace x360ce.Tests
 				var states = (State[])helper.CombinedXiStates.Clone();
 				var connected = (bool[])helper.CombinedXiConencted.Clone();
 				var getStates = SettingsManager.Options.GetXInputStates;
-				var update = typeof(PadControl).GetMethod("UpdateControlFromXInput", BindingFlags.NonPublic | BindingFlags.Instance);
+				var update = typeof(PadControl).GetMethod(nameof(PadControl.UpdateControlFromXInput), BindingFlags.NonPublic | BindingFlags.Instance);
 				try
 				{
 					// The state the engine works out for Controller 1, which the picture is drawn from while XInput is not read back.
@@ -192,7 +192,7 @@ namespace x360ce.Tests
 			foreach (var choice in FontChoices)
 				ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(WithFormulaSwitches(), "Controller 1") }, (form, when) =>
 				{
-					var page = Find(form, "GeneralTabPage");
+					var page = Find(form, nameof(PadControl.GeneralTabPage));
 					when += " " + page.Font.Name;
 					Func<Control, Rectangle> at = c => page.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
 					var shown = Leaves(page).ToList();
@@ -226,7 +226,7 @@ namespace x360ce.Tests
 							faults.Add(string.Format("{0}: {1} is {2} px wide and the longest mapping needs {3}.", when, box.Name, box.Width, boxNeeds));
 					}
 					// The Input column with eight axes and two sliders, each showing its reading under its name.
-					var input = (InputUserControl)Find(form, "InputPanel");
+					var input = (InputUserControl)Find(form, nameof(PadControl.InputPanel));
 					var chips = InputChips.Create(0, 0xFF, 0x3, 0);
 					input.AxisChips.Chips = chips.Where(x => x.Kind == InputChipKind.Axis).ToList();
 					input.SliderChips.Chips = chips.Where(x => x.Kind == InputChipKind.Slider).ToList();
@@ -258,7 +258,7 @@ namespace x360ce.Tests
 				var states = (State[])helper.CombinedXiStates.Clone();
 				var connected = (bool[])helper.CombinedXiConencted.Clone();
 				var getStates = SettingsManager.Options.GetXInputStates;
-				var update = typeof(PadControl).GetMethod("UpdateControlFromXInput", BindingFlags.NonPublic | BindingFlags.Instance);
+				var update = typeof(PadControl).GetMethod(nameof(PadControl.UpdateControlFromXInput), BindingFlags.NonPublic | BindingFlags.Instance);
 				try
 				{
 					SettingsManager.Options.GetXInputStates = false;
@@ -276,7 +276,7 @@ namespace x360ce.Tests
 						helper.CombinedXiStates[0] = new State();
 						update.Invoke(pad, null);
 						Application.DoEvents();
-						var page = Find(pad, "GeneralTabPage");
+						var page = Find(pad, nameof(PadControl.GeneralTabPage));
 						var passes = new Dictionary<string, int>();
 						foreach (var container in new[] { page }.Concat(Descendants(page)).Where(x => x.HasChildren))
 							container.Layout += (sender, e) =>

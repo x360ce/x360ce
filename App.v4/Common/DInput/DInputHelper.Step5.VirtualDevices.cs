@@ -17,13 +17,13 @@ namespace x360ce.App.DInput
 	{
 
 		/// <summary>True while the virtual bus client is in use by the current game.</summary>
-		bool virtualModeActive;
+		internal bool virtualModeActive;
 
 		/// <summary>
 		/// Enable or disable virtual controllers depending on game settings.
 		/// </summary>
 		/// <param name="game"></param>
-		void UpdateVirtualDevices(UserGame game)
+		internal void UpdateVirtualDevices(UserGame game)
 		{
 
 			// Allow if not testing or testing with option enabled.
@@ -179,7 +179,7 @@ namespace x360ce.App.DInput
 		/// The large motor's byte above the small motor's: -1 while nothing was sent, 0 once stopped, and above 0 while
 		/// any force is running.
 		/// </remarks>
-		readonly int[] _lastPassedForce = new int[] { -1, -1, -1, -1 };
+		internal readonly int[] _lastPassedForce = new int[] { -1, -1, -1, -1 };
 
 		/// <summary>The force each controller's game asked for last, 0 to 255 for each motor, by pad index.</summary>
 		/// <remarks>
@@ -188,11 +188,11 @@ namespace x360ce.App.DInput
 		/// Read and written only on the engine thread, and cleared by <see cref="DropGameForce"/> when a pad's controller is
 		/// taken away, on the engine thread or while it is suspended.
 		/// </remarks>
-		readonly byte[] _lastLargeMotor = new byte[4];
-		readonly byte[] _lastSmallMotor = new byte[4];
+		internal readonly byte[] _lastLargeMotor = new byte[4];
+		internal readonly byte[] _lastSmallMotor = new byte[4];
 
 		/// <summary>A bit for each pad whose controller was taken away since the last pass, so the devices it drove are told.</summary>
-		int _forcesDropped;
+		internal int _forcesDropped;
 
 		/// <summary>The routing the devices were last told their force by. Read and written only on the engine thread.</summary>
 		/// <remarks>
@@ -384,7 +384,7 @@ namespace x360ce.App.DInput
 		/// <summary>Sends one force to one place, and only when it differs from the last one sent.</summary>
 		/// <param name="limit">How long to wait for Windows' XInput to be free. The input thread passes zero and never waits.</param>
 		/// <returns>False when XInput was not free in time and nothing was sent.</returns>
-		bool PassForceTo(int place, byte largeMotor, byte smallMotor, TimeSpan limit)
+		internal bool PassForceTo(int place, byte largeMotor, byte smallMotor, TimeSpan limit)
 		{
 			if (place < 0 || place > 3)
 				return true;
@@ -449,7 +449,7 @@ namespace x360ce.App.DInput
 		/// up after a Repair, Remove Leftover Pads or Auto-Order. Runs on the input thread, or while it is suspended. Field
 		/// writes only: nothing is made or waited for.
 		/// </remarks>
-		void DropGameForce(uint userIndex)
+		internal void DropGameForce(uint userIndex)
 		{
 			var client = ViGEmClient.Current;
 			if (client != null)
@@ -470,7 +470,7 @@ namespace x360ce.App.DInput
 			System.Threading.Volatile.Write(ref client.Feedbacks[(int)userIndex - 1], e);
 		}
 
-		private void Controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
+		internal void Controller_FeedbackReceived(object sender, Xbox360FeedbackReceivedEventArgs e)
 		{
 			// Read once: the engine can let the client go at any moment.
 			var client = ViGEmClient.Current;
@@ -500,7 +500,7 @@ namespace x360ce.App.DInput
 		bool?[] FeedingState = new bool?[4];
 
 		/// <summary>The plug of each controller under way on a worker, or null.</summary>
-		readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
+		internal readonly System.Threading.Tasks.Task<VirtualError>[] _plugging = new System.Threading.Tasks.Task<VirtualError>[4];
 
 		/// <summary>Starts plugging in the controller for one pad on a worker; a later pass takes in the answer.</summary>
 		/// <remarks>
@@ -705,7 +705,7 @@ namespace x360ce.App.DInput
 		/// Issues tab reads then comes from an attempt made since, and Repair, which the Issues tab offers for one Windows
 		/// never built, tries it again instead of leaving it held until a controller comes or goes.
 		/// </remarks>
-		void ForgetBusHealth()
+		internal void ForgetBusHealth()
 		{
 			for (var i = 0; i < 4; i++)
 			{
@@ -1244,7 +1244,7 @@ namespace x360ce.App.DInput
 		/// and that place filling is not where ours went.
 		/// </remarks>
 		/// <param name="answered">Whether XInput answered any read in the wait, so a place that never came is told from one nobody could see.</param>
-		static int WaitForPlace(bool[] before, out bool answered)
+		internal static int WaitForPlace(bool[] before, out bool answered)
 		{
 			answered = false;
 			var products = new ushort[4];

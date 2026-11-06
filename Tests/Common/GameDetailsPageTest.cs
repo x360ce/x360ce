@@ -48,9 +48,9 @@ namespace x360ce.Tests
 							zoom, Environment.NewLine, string.Join(Environment.NewLine, covered)));
 						foreach (var row in new[]
 						{
-							new[] { "HookModeFakeVidNumericUpDown", "HookModeFakeVidTextBox", "HookModeFakePidNumericUpDown", "HookModeFakePidTextBox", "TimeoutNumericUpDown" },
-							new[] { "XInputPathTextBox", "ProcessorArchitectureComboBox" },
-							new[] { "DInputFileTextBox", "EmulationTypeComboBox" },
+							new[] { nameof(GameDetailsUserControl.HookModeFakeVidNumericUpDown), nameof(GameDetailsUserControl.HookModeFakeVidTextBox), nameof(GameDetailsUserControl.HookModeFakePidNumericUpDown), nameof(GameDetailsUserControl.HookModeFakePidTextBox), nameof(GameDetailsUserControl.TimeoutNumericUpDown) },
+							new[] { nameof(GameDetailsUserControl.XInputPathTextBox), nameof(GameDetailsUserControl.ProcessorArchitectureComboBox) },
+							new[] { nameof(GameDetailsUserControl.DInputFileTextBox), nameof(GameDetailsUserControl.EmulationTypeComboBox) },
 						})
 						{
 							var tops = row.Select(x => details.Controls.Find(x, true).Single().Top).Distinct().ToList();
@@ -59,7 +59,7 @@ namespace x360ce.Tests
 						}
 						// Windows Forms scales the margin of a number box, a container itself, again for each table round it
 						// while the settings scale themselves.
-						var margin = details.Controls.Find("HookCOMCheckBox", true).Single().Margin;
+						var margin = details.Controls.Find(nameof(GameDetailsUserControl.HookCOMCheckBox), true).Single().Margin;
 						foreach (var box in Descendants(details).OfType<NumericUpDown>())
 							Assert.AreEqual(margin, box.Margin, string.Format("At {0:P0} {1} has a margin of its own.", zoom, box.Name));
 					}

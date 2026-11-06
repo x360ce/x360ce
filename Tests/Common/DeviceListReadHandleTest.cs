@@ -53,7 +53,7 @@ namespace x360ce.Tests
 		{
 			if (!ViGEmClient.isVBusExists(true))
 				Assert.Inconclusive("The virtual bus is not installed on this machine.");
-			var updateDiDevices = typeof(DInputHelper).GetMethod("UpdateDiDevices", BindingFlags.Instance | BindingFlags.NonPublic);
+			var updateDiDevices = typeof(DInputHelper).GetMethod(nameof(DInputHelper.UpdateDiDevices), BindingFlags.Instance | BindingFlags.NonPublic);
 			Assert.IsNotNull(updateDiDevices, "DInputHelper.UpdateDiDevices was not found.");
 			var listed = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var padsBefore = XInputPlaces.VirtualHardwareNow();

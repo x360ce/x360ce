@@ -34,9 +34,9 @@ namespace x360ce.Tests
 				{
 					form.Controls.Add(panel);
 					form.Show();
-					var grid = (DataGridView)panel.Controls.Find("GamesDataGridView", true).Single();
+					var grid = (DataGridView)panel.Controls.Find(nameof(GamesGridUserControl.GamesDataGridView), true).Single();
 					var show = panel.Controls.OfType<ToolStrip>().SelectMany(x => x.Items.OfType<ToolStripDropDownButton>())
-						.Single(x => x.Name == "ShowGamesDropDownButton");
+						.Single(x => x.Name == nameof(GamesGridUserControl.ShowGamesDropDownButton));
 					show.Text = "Show: Enabled";
 					var games = new SortableBindingList<UserGame>();
 					for (var i = 0; i < 8; i++)
@@ -44,14 +44,14 @@ namespace x360ce.Tests
 					grid.DataSource = games;
 					// The program listens to its game list as well, and sorting raises that list's change too.
 					var listChanged = (ListChangedEventHandler)Delegate.CreateDelegate(typeof(ListChangedEventHandler), panel,
-						typeof(GamesGridUserControl).GetMethod("Games_Items_ListChanged", BindingFlags.Instance | BindingFlags.NonPublic));
+						typeof(GamesGridUserControl).GetMethod(nameof(GamesGridUserControl.Games_Items_ListChanged), BindingFlags.Instance | BindingFlags.NonPublic));
 					games.ListChanged += listChanged;
 					Application.DoEvents();
 					Assert.IsTrue(grid.Rows.Cast<DataGridViewRow>().Any(x => !x.Visible), "The filter hid nothing, so this measured nothing.");
 					// The current cell on the last game shown, so sorting moves the row it stands on.
 					var current = grid.Rows.Cast<DataGridViewRow>().Last(x => x.Visible);
-					grid.CurrentCell = current.Cells["FileNameColumn"];
-					var column = grid.Columns["FileNameColumn"];
+					grid.CurrentCell = current.Cells[nameof(GamesGridUserControl.FileNameColumn)];
+					var column = grid.Columns[nameof(GamesGridUserControl.FileNameColumn)];
 					grid.Sort(column, ListSortDirection.Descending);
 					Application.DoEvents();
 					grid.Sort(column, ListSortDirection.Ascending);

@@ -108,7 +108,7 @@ namespace x360ce.Tests
 
 		static Control Tabs(PadControl page)
 		{
-			return page.Controls.Find("PadTabControl", true).Single();
+			return page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
 		}
 
 		static IEnumerable<Control> Descendants(Control parent)

@@ -28,18 +28,18 @@ namespace x360ce.App.Controls
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
 			{
-				Name = "MainTableLayoutPanel",
+				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
 				// None at the sides, so the list meets the tab's edges; the rows above and below it keep that room as margin.
 				Padding = new Padding(0, 6, 0, 6),
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			VersionLabel = NewLabel("VersionLabel");
-			DeviceLabel = NewLabel("DeviceLabel");
+			VersionLabel = NewLabel(nameof(VersionLabel));
+			DeviceLabel = NewLabel(nameof(DeviceLabel));
 			PositionsDataGridView = new DataGridView
 			{
-				Name = "PositionsDataGridView",
+				Name = nameof(PositionsDataGridView),
 				Dock = DockStyle.Fill,
 				Margin = new Padding(0, 3, 0, 3),
 				AutoGenerateColumns = false,
@@ -64,10 +64,10 @@ namespace x360ce.App.Controls
 			PositionsDataGridView.CellFormatting += PositionsDataGridView_CellFormatting;
 			PositionsDataGridView.DataBindingComplete += (s, e) => PositionsDataGridView.ClearSelection();
 			ControlsHelper.ApplyBorderStyle(PositionsDataGridView);
-			ApplyButton = NewButton("ApplyButton", "Apply SDL Mapping");
-			CopyButton = NewButton("CopyButton", "Copy as SDL");
-			UpdateButton = NewButton("UpdateButton", "Update SDL Database");
-			StatusLabel = NewLabel("StatusLabel");
+			ApplyButton = NewButton(nameof(ApplyButton), "Apply SDL Mapping");
+			CopyButton = NewButton(nameof(CopyButton), "Copy as SDL");
+			UpdateButton = NewButton(nameof(UpdateButton), "Update SDL Database");
+			StatusLabel = NewLabel(nameof(StatusLabel));
 			ApplyButton.Click += (s, e) => ApplyClicked?.Invoke(this, EventArgs.Empty);
 			CopyButton.Click += (s, e) => CopyClicked?.Invoke(this, EventArgs.Empty);
 			UpdateButton.Click += UpdateButton_Click;

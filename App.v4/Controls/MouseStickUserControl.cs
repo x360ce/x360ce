@@ -17,8 +17,8 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			foreach (var box in new[] { StyleComboBox, ActiveComboBox, ButtonComboBox })
 			{
-				box.DisplayMember = "Key";
-				box.ValueMember = "Value";
+				box.DisplayMember = nameof(KeyValuePair.Key);
+				box.ValueMember = nameof(KeyValuePair.Value);
 			}
 			StyleComboBox.Items.Add(new KeyValuePair("Position: follows how far the mouse moved", ((int)MouseStyle.Position).ToString()));
 			StyleComboBox.Items.Add(new KeyValuePair("Speed: follows how fast the mouse moves", ((int)MouseStyle.Speed).ToString()));

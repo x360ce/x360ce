@@ -3,6 +3,7 @@
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace x360ce.Tests
 		};
 
 		/// <summary>Panels shown beside a list only at times: while games are scanned, and once no issue is left.</summary>
-		static readonly string[] ShownAtTimes = { "ScanProgressPanel", "NoIssuesPanel", "LinePanel" };
+		static readonly string[] ShownAtTimes = { nameof(GamesGridUserControl.ScanProgressPanel), nameof(IssuesUserControl.NoIssuesPanel), nameof(IssuesUserControl.LinePanel) };
 
 		[TestMethod, TestCategory("ui")]
 		[Description("Every list stands edge to edge in the area that holds it, what stands above and below it keeps its place, its titles have 3 px more room above and below, and its first shown column 3 px more on the left, at 100 % and 150 %, in both themes")]
@@ -154,7 +155,7 @@ namespace x360ce.Tests
 			{
 				try
 				{
-					var bind = typeof(JocysCom.ClassLibrary.IO.HardwareControl).GetMethod("BindDeviceList",
+					var bind = typeof(JocysCom.ClassLibrary.IO.HardwareControl).GetMethod(nameof(JocysCom.ClassLibrary.IO.HardwareControl.BindDeviceList),
 						System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 					Assert.IsNotNull(bind, "The Hardware window gives its list its devices some other way.");
 					foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
@@ -165,7 +166,7 @@ namespace x360ce.Tests
 							form.Controls.Add(hardware);
 							FormsTheme.Apply(form);
 							form.Show();
-							var grid = (DataGridView)hardware.Controls.Find("DeviceDataGridView", true).Single();
+							var grid = (DataGridView)hardware.Controls.Find(nameof(HardwareControl.DeviceDataGridView), true).Single();
 							ShowWhereItStands(grid);
 							// As its timer does, once and again with other devices.
 							var devices = new[] { "Wheel", "Pad" }.Select(x => new JocysCom.ClassLibrary.IO.DeviceInfo { Description = x, DeviceId = @"HID\" + x }).ToList();

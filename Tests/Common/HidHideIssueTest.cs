@@ -180,7 +180,7 @@ namespace x360ce.Tests
 				SettingsManager.UpdateCurrentGame(game);
 				CollectionAssert.AreEqual(new[] { ticked }, SettingsManager.GetMappedDevices(game.FileName, true),
 					"A device unticked in the tab's list or on the Devices page is hidden from games by HID Hide.");
-				var named = (UserDevice[])typeof(HidHideIssue).GetMethod("GetVirtualMappedDevices", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+				var named = (UserDevice[])typeof(HidHideIssue).GetMethod(nameof(HidHideIssue.GetVirtualMappedDevices), BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 				CollectionAssert.AreEqual(new[] { ticked }, named, "The Issues tab asks for an unticked device to be hidden with HID Hide.");
 				foreach (var ud in devices)
 					ud.IsHidden = ud != ticked;

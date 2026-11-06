@@ -149,7 +149,7 @@ namespace x360ce.App.DInput
 		static readonly System.Diagnostics.Stopwatch SpringCalibrationClock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <param name="routing">Which rows each controller reads and where each device's force comes from, for this pass.</param>
-		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing)
+		internal void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing)
 		{
 			// The devices on the game's ticked rows, found when the routing was built. Found here, the settings and
 			// devices lists would be copied on every pass, under the lock the interface holds while it draws a change.
@@ -858,7 +858,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>The device's reserved state the next poll reads into: its two, in turn, so a state is not written until one whole poll after it stops being shown.</summary>
-		static JoystickState NextJoState(UserDevice ud)
+		internal static JoystickState NextJoState(UserDevice ud)
 		{
 			var states = ud.JoStates;
 			if (states == null)

@@ -161,12 +161,12 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel LayoutPanel;
-        private System.Windows.Forms.PictureBox ButtonImagePictureBox;
-        private System.Windows.Forms.TrackBar DeadZoneTrackBar;
+        internal System.Windows.Forms.PictureBox ButtonImagePictureBox;
+        internal System.Windows.Forms.TrackBar DeadZoneTrackBar;
         private System.Windows.Forms.Label ButtonNameLabel;
-        private System.Windows.Forms.TextBox MappedAxisTextBox;
+        internal System.Windows.Forms.TextBox MappedAxisTextBox;
         public System.Windows.Forms.NumericUpDown DeadZoneNumericUpDown;
-        private System.Windows.Forms.TextBox DeadZoneTextBox;
-        private System.Windows.Forms.PictureBox ArrowPictureBox;
+        internal System.Windows.Forms.TextBox DeadZoneTextBox;
+        internal System.Windows.Forms.PictureBox ArrowPictureBox;
     }
 }

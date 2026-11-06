@@ -35,7 +35,7 @@ namespace x360ce.App.Controls
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
 			{
-				Name = "MainTableLayoutPanel",
+				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
 				Padding = new Padding(6),
 				ColumnCount = 1,
@@ -50,10 +50,10 @@ namespace x360ce.App.Controls
 					// Across the column, so the table wraps it at the tab's width.
 					Anchor = AnchorStyles.Left | AnchorStyles.Right,
 				});
-			PluginTabControl = new TabControl { Name = "PluginTabControl", Dock = DockStyle.Fill };
+			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill };
 			if (type.ControlType != null)
 			{
-				NoteLabel = new Label { Name = "NoteLabel", AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(3), Visible = false };
+				NoteLabel = new Label { Name = nameof(NoteLabel), AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(3), Visible = false };
 				var control = NewPluginControl();
 				if (control != null)
 					control.Dock = DockStyle.Fill;
@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 			{
 				McpServerUserControl = new AiAccessUserControl
 				{
-					Name = "McpServerUserControl",
+					Name = nameof(McpServerUserControl),
 					Dock = DockStyle.Fill,
 					AccessibleName = "MCP server",
 					AccessibleDescription = "The device's own MCP server, which a program or an AI assistant reaches this device alone through.",
@@ -79,7 +79,7 @@ namespace x360ce.App.Controls
 				View = new PluginSettingsView(instanceGuid, type, device, store);
 				SettingsPropertyGrid = new PropertyGrid
 				{
-					Name = "SettingsPropertyGrid",
+					Name = nameof(SettingsPropertyGrid),
 					Dock = DockStyle.Fill,
 					PropertySort = PropertySort.Categorized,
 					AccessibleName = "Settings",
@@ -96,7 +96,7 @@ namespace x360ce.App.Controls
 				{
 					ResetButton = new Button
 					{
-						Name = "ResetButton",
+						Name = nameof(ResetButton),
 						Text = "Reset",
 						AutoSize = true,
 						Anchor = AnchorStyles.Left,

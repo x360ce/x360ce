@@ -59,16 +59,16 @@ namespace x360ce.Tests
 		{
 			var device = RawInputDevice.FromPreparsedData(PreparsedBytes(), Description);
 			Assert.IsNotNull(device, Name + ": the HID parser refused the recorded preparsed data.");
-			Set(device, "Handle", new IntPtr(handle));
-			Set(device, "InterfacePath", path);
-			Set(device, "VendorId", VendorId);
-			Set(device, "ProductId", ProductId);
-			Set(device, "Version", 0x0100);
-			Set(device, "UsagePage", Description == null ? 1 : Description.UsagePage);
-			Set(device, "Usage", usage);
-			Set(device, "ProductName", productName);
-			Set(device, "InstanceGuid", RawInputDevice.GetInstanceGuid(path));
-			Set(device, "ProductGuid", RawInputDevice.GetProductGuid(VendorId, ProductId));
+			Set(device, nameof(RawInputDevice.Handle), new IntPtr(handle));
+			Set(device, nameof(RawInputDevice.InterfacePath), path);
+			Set(device, nameof(RawInputDevice.VendorId), VendorId);
+			Set(device, nameof(RawInputDevice.ProductId), ProductId);
+			Set(device, nameof(RawInputDevice.Version), 0x0100);
+			Set(device, nameof(RawInputDevice.UsagePage), Description == null ? 1 : Description.UsagePage);
+			Set(device, nameof(RawInputDevice.Usage), usage);
+			Set(device, nameof(RawInputDevice.ProductName), productName);
+			Set(device, nameof(RawInputDevice.InstanceGuid), RawInputDevice.GetInstanceGuid(path));
+			Set(device, nameof(RawInputDevice.ProductGuid), RawInputDevice.GetProductGuid(VendorId, ProductId));
 			return device;
 		}
 

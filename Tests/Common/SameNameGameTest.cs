@@ -7,6 +7,7 @@ using System.IO;
 using x360ce.App;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using Program = x360ce.Engine.Data.Program;
 
 namespace x360ce.Tests
 {

@@ -1,5 +1,6 @@
 ﻿// @under-test: App.v4/Common/SettingsManager.cs, App.v4/Controls/PadControl.cs
 // @area: mapping   @layer: unit
+using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -359,8 +360,8 @@ namespace x360ce.Tests
 					{
 						timer.Stop();
 						buttons = new[] { "Button1", "Button2", "Button3" }.Select(x => (Button)form.Controls.Find(x, true)[0]).ToArray();
-						heading = (Label)form.Controls.Find("HeadingLabel", true)[0];
-						text = (Label)form.Controls.Find("TextLabel", true)[0];
+						heading = (Label)form.Controls.Find(nameof(MessageBoxForm.HeadingLabel), true)[0];
+						text = (Label)form.Controls.Find(nameof(MessageBoxForm.TextLabel), true)[0];
 						Assert.AreEqual(3, buttons.Count(x => x.Visible));
 						form.DialogResult = DialogResult.Cancel;
 					};

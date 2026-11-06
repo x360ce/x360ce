@@ -115,7 +115,7 @@ namespace x360ce.Tests
 		{
 			OnPage("", 0, (font, size, theme, restart) =>
 			{
-				Assert.AreEqual("AppearanceLayoutPanel", theme.Parent.Name, "The theme list is not in the Appearance group.");
+				Assert.AreEqual(nameof(OptionsUserControl.AppearanceLayoutPanel), theme.Parent.Name, "The theme list is not in the Appearance group.");
 				Choose(theme, "Dark");
 				Assert.AreEqual(ThemeType.Dark, SettingsManager.Options.Theme, "The theme chosen was not saved.");
 				SettingsManager.Options.Theme = ThemeType.Light;
@@ -171,12 +171,12 @@ namespace x360ce.Tests
 						form.Controls.Add(page);
 						page.UpdateAppearanceMap();
 						form.Show();
-						var font = (ComboBox)page.Controls.Find("FontComboBox", true).Single();
-						var size = (ComboBox)page.Controls.Find("SizeComboBox", true).Single();
-						var theme = (ComboBox)page.Controls.Find("ThemeComboBox", true).Single();
-						var restart = (Button)page.Controls.Find("RestartButton", true).Single();
+						var font = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.FontComboBox), true).Single();
+						var size = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.SizeComboBox), true).Single();
+						var theme = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.ThemeComboBox), true).Single();
+						var restart = (Button)page.Controls.Find(nameof(OptionsUserControl.RestartButton), true).Single();
 						// Shown on its tab, as a person sees it, so Visible reads what the button is set to.
-						((TabControl)page.Controls.Find("MainTabControl", true).Single()).SelectedIndex = 0;
+						((TabControl)page.Controls.Find(nameof(OptionsUserControl.MainTabControl), true).Single()).SelectedIndex = 0;
 						// The installed fonts are read on a worker and listed when they arrive.
 						var watch = Stopwatch.StartNew();
 						while (font.Items.Count <= 4 && watch.ElapsedMilliseconds < 10000)

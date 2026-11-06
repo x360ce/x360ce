@@ -31,8 +31,8 @@ namespace x360ce.Tests
 
 		static ToolStripButton Switch(Control panel)
 		{
-			var strip = (ToolStrip)panel.Controls.Find("ControllersToolStrip", true).Single();
-			return (ToolStripButton)strip.Items["ShowSystemDevicesButton"];
+			var strip = (ToolStrip)panel.Controls.Find(nameof(UserDevicesUserControl.ControllersToolStrip), true).Single();
+			return (ToolStripButton)strip.Items[nameof(UserDevicesUserControl.ShowSystemDevicesButton)];
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("ui")]

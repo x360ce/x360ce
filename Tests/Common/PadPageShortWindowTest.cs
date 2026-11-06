@@ -40,7 +40,7 @@ namespace x360ce.Tests
 						form.Controls.Add(page);
 						form.Show();
 						Application.DoEvents();
-						var rows = new[] { "GamesToolStrip", "MappedDevicesDataGridView", "PadTabControl", "ButtonsPanel" }
+						var rows = new[] { nameof(PadControl.GamesToolStrip), nameof(PadControl.MappedDevicesDataGridView), nameof(PadControl.PadTabControl), nameof(PadControl.ButtonsPanel) }
 							.Select(name => page.Controls.Find(name, true).Single()).ToList();
 						var at = string.Join(", ", rows.Select(x => string.Format("{0} {1}-{2}", x.Name, x.Top, x.Bottom)));
 						for (var i = 1; i < rows.Count; i++)
@@ -66,9 +66,9 @@ namespace x360ce.Tests
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(MapTo.Controller2), "Controller 2") }, (window, when) =>
 			{
 				var page = window.Controls.OfType<Control>().SelectMany(Descendants).OfType<PadControl>().Single();
-				var grid = (DataGridView)page.Controls.Find("MappedDevicesDataGridView", true).Single();
-				var tabs = page.Controls.Find("PadTabControl", true).Single();
-				var general = page.Controls.Find("GeneralTabPage", true).Single();
+				var grid = (DataGridView)page.Controls.Find(nameof(PadControl.MappedDevicesDataGridView), true).Single();
+				var tabs = page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
+				var general = page.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
 				var rows = (grid.ClientSize.Height - grid.ColumnHeadersHeight) / (double)grid.RowTemplate.Height;
 				var line = string.Format("{0}: the page is {1} and needs {2} px, the tabs {3} px tall, the General tab {4}, the device list {5} px with room for {6:0.0} rows of {7} px{8}",
 					when, page.ClientSize, page.AutoScrollMinSize.Height, tabs.Height, general.ClientSize, grid.Height, rows, grid.RowTemplate.Height,

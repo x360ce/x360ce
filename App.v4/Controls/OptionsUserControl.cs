@@ -112,13 +112,13 @@ namespace x360ce.App.Controls
 		#region Operation
 
 		/// <summary>The programs Windows starts when the current user signs in. Writable without administrator rights.</summary>
-		static string RunKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+		internal static string RunKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
 
 		/// <summary>Task Manager's on/off switch for each entry in <see cref="RunKeyPath"/>, from its Startup apps page.</summary>
-		static string StartupApprovedKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run";
+		internal static string StartupApprovedKeyPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run";
 
 		/// <summary>Says why the Start with Windows box is unticked when Windows starts another copy or Task Manager switched it off.</summary>
-		ToolTip StartWithWindowsHint;
+		internal ToolTip StartWithWindowsHint;
 
 		/// <summary>True while the boxes show what Windows has, so showing it writes nothing back.</summary>
 		bool _LoadingWindowsStart;
@@ -142,7 +142,7 @@ namespace x360ce.App.Controls
 		/// Ticks the box only when Windows starts this copy, from this folder, and Task Manager leaves it on; the window
 		/// state comes from the same command.
 		/// </summary>
-		void LoadWindowsStart()
+		internal void LoadWindowsStart()
 		{
 			var command = ReadWindowsStart(out var approved);
 			var path = GetCommandPath(command);
@@ -454,7 +454,7 @@ namespace x360ce.App.Controls
 		/// A modifier on its own, or a key with no modifier, changes nothing: the first is not finished
 		/// and the second would take a plain key from every program on the machine.
 		/// </remarks>
-		private void EmulationHotkeyTextBox_KeyDown(object sender, KeyEventArgs e)
+		internal void EmulationHotkeyTextBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			e.SuppressKeyPress = true;
 			if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)

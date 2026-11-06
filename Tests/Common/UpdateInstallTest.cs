@@ -77,18 +77,18 @@ namespace x360ce.Tests
 				using (var page = new OptionsUpdateUserControl())
 				{
 					var handle = page.Handle;
-					typeof(OptionsUpdateUserControl).GetField("processFileName", Private).SetValue(page, Path.Combine(folder, "x360ce.exe"));
-					var button = (Button)page.Controls.Find("CheckButton", true).Single();
-					var log = (TextBox)page.Controls.Find("LogTextBox", true).Single();
-					((CheckBox)page.Controls.Find("CheckDigitalSignatureCheckBox", true).Single()).Checked = true;
+					typeof(OptionsUpdateUserControl).GetField(nameof(OptionsUpdateUserControl.processFileName), Private).SetValue(page, Path.Combine(folder, "x360ce.exe"));
+					var button = (Button)page.Controls.Find(nameof(OptionsUpdateUserControl.CheckButton), true).Single();
+					var log = (TextBox)page.Controls.Find(nameof(OptionsUpdateUserControl.LogTextBox), true).Single();
+					((CheckBox)page.Controls.Find(nameof(OptionsUpdateUserControl.CheckDigitalSignatureCheckBox), true).Single()).Checked = true;
 					// Kept on: a version that differs would replace the program and restart the process, the test host.
-					((CheckBox)page.Controls.Find("CheckVersionCheckBox", true).Single()).Checked = true;
+					((CheckBox)page.Controls.Find(nameof(OptionsUpdateUserControl.CheckVersionCheckBox), true).Single()).Checked = true;
 					var release = new UpdateRelease { Url = "https://example.invalid/x360ce.zip", Size = zip.Length, Sha256 = UpdateRelease.Sha256Of(zip) };
 					var check = new UpdateCheck { Outcome = UpdateOutcome.Available, Release = release };
 					var client = new UpdateClient(new Version("4.0.0.0"), r => new UpdateResponse { StatusCode = 200, Body = zip });
 					// As Check now leaves it once a newer release is found.
 					button.Enabled = false;
-					typeof(OptionsUpdateUserControl).GetMethod("Step2Download", Private).Invoke(page, new object[] { client, check });
+					typeof(OptionsUpdateUserControl).GetMethod(nameof(OptionsUpdateUserControl.Step2Download), Private).Invoke(page, new object[] { client, check });
 					var until = DateTime.UtcNow.AddSeconds(60);
 					var watch = new Stopwatch();
 					while (!button.Enabled && DateTime.UtcNow < until)

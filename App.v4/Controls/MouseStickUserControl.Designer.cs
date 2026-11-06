@@ -290,22 +290,22 @@
 
 		#endregion
 
-		private System.Windows.Forms.GroupBox StickGroupBox;
+		internal System.Windows.Forms.GroupBox StickGroupBox;
 		private System.Windows.Forms.TableLayoutPanel LayoutPanel;
 		private System.Windows.Forms.Label StyleLabel;
 		public System.Windows.Forms.ComboBox StyleComboBox;
 		private System.Windows.Forms.Label SensitivityXLabel;
 		public System.Windows.Forms.TrackBar SensitivityXTrackBar;
-		private System.Windows.Forms.TextBox SensitivityXTextBox;
+		internal System.Windows.Forms.TextBox SensitivityXTextBox;
 		private System.Windows.Forms.Label SensitivityYLabel;
 		public System.Windows.Forms.TrackBar SensitivityYTrackBar;
-		private System.Windows.Forms.TextBox SensitivityYTextBox;
+		internal System.Windows.Forms.TextBox SensitivityYTextBox;
 		private System.Windows.Forms.Label SmoothingLabel;
 		public System.Windows.Forms.TrackBar SmoothingTrackBar;
-		private System.Windows.Forms.TextBox SmoothingTextBox;
+		internal System.Windows.Forms.TextBox SmoothingTextBox;
 		private System.Windows.Forms.Label ReturnLabel;
 		public System.Windows.Forms.TrackBar ReturnTrackBar;
-		private System.Windows.Forms.TextBox ReturnTextBox;
+		internal System.Windows.Forms.TextBox ReturnTextBox;
 		private System.Windows.Forms.Label ActiveLabel;
 		public System.Windows.Forms.ComboBox ActiveComboBox;
 		private System.Windows.Forms.Label ButtonLabel;

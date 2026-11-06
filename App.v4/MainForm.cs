@@ -1557,7 +1557,7 @@ namespace x360ce.App
 		{
 			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
+			GameToCustomizeComboBox.ComboBox.DisplayMember = nameof(x360ce.Engine.Data.UserGame.DisplayName);
 			// Two games listed under one name are told apart by their folders.
 			GameToCustomizeComboBox.ComboBox.FormattingEnabled = true;
 			GameToCustomizeComboBox.ComboBox.Format += GameToCustomizeComboBox_Format;

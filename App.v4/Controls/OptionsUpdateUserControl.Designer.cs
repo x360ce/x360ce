@@ -154,10 +154,10 @@ namespace x360ce.App.Controls
 
 		private System.Windows.Forms.TableLayoutPanel LayoutPanel;
 		public System.Windows.Forms.CheckBox CheckForUpdatesCheckBox;
-		private System.Windows.Forms.Label PrivacyLabel;
-		private System.Windows.Forms.Button CheckButton;
-		private System.Windows.Forms.CheckBox CheckDigitalSignatureCheckBox;
-		private System.Windows.Forms.CheckBox CheckVersionCheckBox;
-		private System.Windows.Forms.TextBox LogTextBox;
+		internal System.Windows.Forms.Label PrivacyLabel;
+		internal System.Windows.Forms.Button CheckButton;
+		internal System.Windows.Forms.CheckBox CheckDigitalSignatureCheckBox;
+		internal System.Windows.Forms.CheckBox CheckVersionCheckBox;
+		internal System.Windows.Forms.TextBox LogTextBox;
 	}
 }

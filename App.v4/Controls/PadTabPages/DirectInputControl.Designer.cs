@@ -1102,12 +1102,12 @@
 
 		#endregion
 
-        System.Windows.Forms.DataGridView DiEffectsDataGridView;
+        internal System.Windows.Forms.DataGridView DiEffectsDataGridView;
 		System.Windows.Forms.TableLayoutPanel RootTableLayoutPanel;
 		System.Windows.Forms.TableLayoutPanel HeaderTableLayoutPanel;
 		System.Windows.Forms.TableLayoutPanel AxisRowTableLayoutPanel;
-		System.Windows.Forms.DataGridView DiAxisDataGridView;
-		System.Windows.Forms.TextBox DeviceTypeTextBox;
+		internal System.Windows.Forms.DataGridView DiAxisDataGridView;
+		internal System.Windows.Forms.TextBox DeviceTypeTextBox;
 		System.Windows.Forms.Label DevicePidLabel;
 		System.Windows.Forms.Label DeviceVidLabel;
 		System.Windows.Forms.Label DiDeviceTypeLabel;
@@ -1129,10 +1129,10 @@
         private System.Windows.Forms.Label DiPovsLabel;
         public System.Windows.Forms.TextBox ActuatorsTextBox;
         private System.Windows.Forms.Label ActuatorsLabel;
-        private System.Windows.Forms.TabControl DeviceDetailsTabControl;
-        private System.Windows.Forms.TabPage DiEffectsDataTabPage;
-        private System.Windows.Forms.TabPage DiObjectsTabPage;
-        private System.Windows.Forms.DataGridView DiObjectsDataGridView;
+        internal System.Windows.Forms.TabControl DeviceDetailsTabControl;
+        internal System.Windows.Forms.TabPage DiEffectsDataTabPage;
+        internal System.Windows.Forms.TabPage DiObjectsTabPage;
+        internal System.Windows.Forms.DataGridView DiObjectsDataGridView;
         public System.Windows.Forms.TextBox DiSlidersTextBox;
         private System.Windows.Forms.Label SlidersLabel;
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
@@ -1141,10 +1141,10 @@
 		private System.Windows.Forms.Label DeviceVendorNameLabel;
 		private System.Windows.Forms.Label DeviceRevLabel;
 		public System.Windows.Forms.TextBox DeviceRevTextBox;
-		private System.Windows.Forms.DataGridView DiSlidersDataGridView;
-		private System.Windows.Forms.DataGridView DiPovsDataGridView;
+		internal System.Windows.Forms.DataGridView DiSlidersDataGridView;
+		internal System.Windows.Forms.DataGridView DiPovsDataGridView;
 		private System.Windows.Forms.Label DiButtonsLabel;
-		private System.Windows.Forms.TextBox DiButtonsTextBox;
+		internal System.Windows.Forms.TextBox DiButtonsTextBox;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
@@ -1170,8 +1170,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsGuidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsAspectColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MapsAsColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn MapsAsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GranularityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SaturationColumn;

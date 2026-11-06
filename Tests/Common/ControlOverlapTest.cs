@@ -62,7 +62,7 @@ namespace x360ce.Tests
 					form.Controls.Add(page);
 					form.Show();
 					Application.DoEvents();
-					var table = page.Controls.Find("GeneralTableLayoutPanel", true).Single();
+					var table = page.Controls.Find(nameof(PadControl.GeneralTableLayoutPanel), true).Single();
 					var boxes = table.Controls.OfType<ComboBox>().ToList();
 					Assert.IsTrue(boxes.Count > 0, "The General tab has no mapping boxes.");
 					var widest = MappingTexts()

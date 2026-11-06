@@ -40,7 +40,7 @@ namespace x360ce.Tests
 		static List<XInputReorderPlan.Entry> ListOf(XInputDevicesUserControl control)
 		{
 			return (List<XInputReorderPlan.Entry>)typeof(XInputDevicesUserControl)
-				.GetField("_entries", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(control);
+				.GetField(nameof(XInputDevicesUserControl._entries), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(control);
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -59,7 +59,7 @@ namespace x360ce.Tests
 					list.Add(Entry("xbox", 0, false, 0));
 					list.Add(Entry("c2", 1, true, 2));
 					list.Add(Entry("c1", 2, true, 1));
-					var grid = (DataGridView)UiTreeWalker.Find(control, "DevicesDataGridView");
+					var grid = (DataGridView)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.DevicesDataGridView));
 					var gridHeight = grid.Height;
 
 					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "DevicesToolStrip/AutoOrderButton")),
@@ -71,12 +71,12 @@ namespace x360ce.Tests
 						"Switch off xbox", "The notice does not say what will happen.");
 					Assert.AreEqual(gridHeight, grid.Height, string.Format(
 						"The notice took its room from the list instead of adding its own: page {0}, notice {1}.",
-						control.Bounds, ((Control)UiTreeWalker.Find(control, "PlanPanel")).Bounds));
+						control.Bounds, ((Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.PlanPanel))).Bounds));
 					Assert.IsTrue(control.Height > 180, "The page did not grow to hold the notice.");
 					// Docked in the wrong order, the list took the whole page and the notice was drawn over
 					// the bar and the list, with the room it had been given left empty below.
-					var notice = (Control)UiTreeWalker.Find(control, "PlanPanel");
-					var bar = (Control)UiTreeWalker.Find(control, "DevicesToolStrip");
+					var notice = (Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.PlanPanel));
+					var bar = (Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.DevicesToolStrip));
 					Assert.IsTrue(bar.Bottom <= grid.Top && grid.Bottom <= notice.Top && notice.Bottom <= control.ClientSize.Height,
 						string.Format("The bar, the list and the notice are not one below the other: bar {0}, list {1}, notice {2}.",
 							bar.Bounds, grid.Bounds, notice.Bounds));
@@ -118,9 +118,9 @@ namespace x360ce.Tests
 						waiting.Waiting = true;
 						list.Add(waiting);
 						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "DevicesToolStrip/AutoOrderButton")));
-						var grid = (DataGridView)UiTreeWalker.Find(control, "DevicesDataGridView");
-						var device = grid.Columns["NameColumn"].Index;
-						var mapped = grid.Columns["MappedColumn"].Index;
+						var grid = (DataGridView)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.DevicesDataGridView));
+						var device = grid.Columns[nameof(XInputDevicesUserControl.NameColumn)].Index;
+						var mapped = grid.Columns[nameof(XInputDevicesUserControl.MappedColumn)].Index;
 						Assert.AreEqual(grid.Columns.Count - 1, mapped, "The mapped devices are not the last column.");
 						Assert.AreEqual("Logitech Cordless RumblePad 2", grid.Rows[0].Cells[mapped].Value,
 							"The waiting row does not say what is mapped to Controller 1.");

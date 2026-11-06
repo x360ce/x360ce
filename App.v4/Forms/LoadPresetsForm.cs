@@ -25,7 +25,7 @@ namespace x360ce.App.Controls
 			// The rows of SDL's controller database, beside x360ce's own lists.
 			SdlPresetsPanel = new SdlPresetsUserControl { Dock = DockStyle.Fill };
 			SdlPresetsPanel.SelectionChanged += Grid_SelectionChanged;
-			SdlTabPage = new TabPage { Name = "SdlTabPage", Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true };
 			SdlTabPage.Controls.Add(SdlPresetsPanel);
 			MainTabControl.TabPages.Add(SdlTabPage);
 		}

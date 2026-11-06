@@ -299,7 +299,7 @@ namespace x360ce.App.Recording
 		/// the two readings part, the report shows which one went wrong: a stick at the end in both was sent by the device;
 		/// at the end in DirectInput only was made by the driver's side. Made by the writer, and filled by the engine only.
 		/// </remarks>
-		sealed class RawView
+		internal sealed class RawView
 		{
 			public RawView(UserDevice device, UserDevice twin)
 			{
@@ -322,7 +322,7 @@ namespace x360ce.App.Recording
 		}
 
 		/// <summary>The devices compared with their Raw Input reading. Replaced whole by the writer, read by the engine.</summary>
-		RawView[] _rawViews;
+		internal RawView[] _rawViews;
 
 		/// <summary>Compares each device on a controller with its own reports as Raw Input reads them, and writes where the two part for longer than <see cref="RawDifferTicks"/>. Engine thread only.</summary>
 		/// <remarks>One copy of the device's newest report and a compare per control a pass, with nothing made.</remarks>
@@ -614,7 +614,7 @@ namespace x360ce.App.Recording
 			_wake.Dispose();
 		}
 
-		void LogHelper_WritingException(object sender, LogHelperEventArgs e)
+		internal void LogHelper_WritingException(object sender, LogHelperEventArgs e)
 		{
 			// Worded by the writer: the engine thread logs errors too, and must not wait while one is.
 			if (e.Exception != null)

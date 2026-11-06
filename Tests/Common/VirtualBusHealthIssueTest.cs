@@ -302,8 +302,8 @@ namespace x360ce.Tests
 			helper.VirtualErrors[0] = VirtualError.PlaceNotGiven;
 			helper.PlugFailures[0] = plugFailures;
 			var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
-			((int[])typeof(DInputHelper).GetField("_misplacedWith", flags).GetValue(helper))[0] = heldBack ? 0 : -1;
-			((VirtualError[])typeof(DInputHelper).GetField("_heldAs", flags).GetValue(helper))[0] = VirtualError.PlaceNotGiven;
+			((int[])typeof(DInputHelper).GetField(nameof(DInputHelper._misplacedWith), flags).GetValue(helper))[0] = heldBack ? 0 : -1;
+			((VirtualError[])typeof(DInputHelper).GetField(nameof(DInputHelper._heldAs), flags).GetValue(helper))[0] = VirtualError.PlaceNotGiven;
 			return ReadHealth(helper);
 		}
 
@@ -325,7 +325,7 @@ namespace x360ce.Tests
 				SettingsManager.UpdateCurrentGame(game);
 				SettingsManager.Options.XInputEnabled = true;
 				var health = (VirtualDriverNotWorkingIssue.Health)typeof(VirtualDriverNotWorkingIssue)
-					.GetMethod("Read", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).Invoke(null, null);
+					.GetMethod(nameof(VirtualDriverNotWorkingIssue.Read), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).Invoke(null, null);
 				// Whether this machine has the driver is not what is being tested.
 				health.BusInstalled = true;
 				health.ConnectError = VIGEM_ERROR.VIGEM_ERROR_NONE;

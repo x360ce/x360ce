@@ -166,8 +166,8 @@ namespace x360ce.App.Controls
 				}
 			}
 			ControllerComboBox.DataSource = options;
-			ControllerComboBox.DisplayMember = "Key";
-			ControllerComboBox.ValueMember = "Value";
+			ControllerComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			ControllerComboBox.ValueMember = nameof(KeyValuePair.Value);
 			ControllerComboBox.Enabled = ControllerComboBox.Items.Count > 1;
 			// Restore selection.
 			if (selection != null)
@@ -209,8 +209,8 @@ namespace x360ce.App.Controls
 				options.Add(new KeyValuePair(productName, item.Length.ToString()));
 			}
 			GameComboBox.DataSource = options;
-			GameComboBox.DisplayMember = "Key";
-			GameComboBox.ValueMember = "Value";
+			GameComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			GameComboBox.ValueMember = nameof(KeyValuePair.Value);
 			GameComboBox.Enabled = GameComboBox.Items.Count > 1;
 			if (selection == null)
 			{

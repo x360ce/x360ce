@@ -109,7 +109,7 @@ namespace x360ce.Tests
 					form.Controls.Add(page);
 					page.ResetDiMenuStrip(Radio());
 					SettingsManager.Current.SetComboBoxValue(box, "Slider 1");
-					var targetField = typeof(PadControl).GetField("MenuTargetCbx", BindingFlags.NonPublic | BindingFlags.Instance);
+					var targetField = typeof(PadControl).GetField(nameof(PadControl.MenuTargetCbx), BindingFlags.NonPublic | BindingFlags.Instance);
 					targetField.SetValue(page, box);
 					page.ShowAdjustFor(box);
 					((ToolStripMenuItem)Invert(page)).PerformClick();

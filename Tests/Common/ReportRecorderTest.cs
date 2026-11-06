@@ -205,7 +205,7 @@ namespace x360ce.Tests
 		public void A_logged_error_is_written_without_folders()
 		{
 			var recorder = Start(RecordParts.Window);
-			var logged = typeof(ReportRecorder).GetMethod("LogHelper_WritingException", BindingFlags.NonPublic | BindingFlags.Instance);
+			var logged = typeof(ReportRecorder).GetMethod(nameof(ReportRecorder.LogHelper_WritingException), BindingFlags.NonPublic | BindingFlags.Instance);
 			var error = new InvalidOperationException(@"Could not open C:\Users\Someone\Documents\pad.xml");
 			logged.Invoke(recorder, new object[] { null, new JocysCom.ClassLibrary.Runtime.LogHelperEventArgs { Exception = error } });
 			var lines = Finish(recorder);
@@ -271,7 +271,7 @@ namespace x360ce.Tests
 			pad.FFState = new ForceFeedbackState();
 			var ps = new PadSetting { ForceEnable = "1", PadSettingChecksum = Guid.NewGuid() };
 			var row = new UserSetting { InstanceGuid = pad.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
-			var current = typeof(DeviceRouting).GetField("_current", BindingFlags.NonPublic | BindingFlags.Static);
+			var current = typeof(DeviceRouting).GetField(nameof(DeviceRouting._current), BindingFlags.NonPublic | BindingFlags.Static);
 			var was = current.GetValue(null);
 			current.SetValue(null, DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { pad }));
 			string[] lines;
@@ -316,10 +316,10 @@ namespace x360ce.Tests
 			// Handed over as the writer hands it, without a device list to find the twin in: after the writer's first look,
 			// so the views stand until its next, a second later, long after these passes.
 			Thread.Sleep(400);
-			var viewType = typeof(ReportRecorder).GetNestedType("RawView", BindingFlags.NonPublic);
+			var viewType = typeof(ReportRecorder).GetNestedType(nameof(ReportRecorder.RawView), BindingFlags.NonPublic);
 			var views = Array.CreateInstance(viewType, 1);
 			views.SetValue(Activator.CreateInstance(viewType, pad, twin), 0);
-			typeof(ReportRecorder).GetField("_rawViews", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(recorder, views);
+			typeof(ReportRecorder).GetField(nameof(ReportRecorder._rawViews), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(recorder, views);
 			var f = System.Diagnostics.Stopwatch.Frequency;
 			var t = System.Diagnostics.Stopwatch.GetTimestamp();
 			// At rest Raw Input reads the stick at the centre. DirectInput agrees, then reads it fully left for a moment,
@@ -351,7 +351,7 @@ namespace x360ce.Tests
 		{
 			var helper = new DInputHelper();
 			var routing = DeviceRouting.Build(Game, new UserSetting[0], new PadSetting[0], new UserDevice[0]);
-			var recordPass = typeof(DInputHelper).GetMethod("RecordPass", BindingFlags.NonPublic | BindingFlags.Instance);
+			var recordPass = typeof(DInputHelper).GetMethod(nameof(DInputHelper.RecordPass), BindingFlags.NonPublic | BindingFlags.Instance);
 			var recorder = Start(RecordParts.Output, helper);
 			try
 			{
@@ -381,7 +381,7 @@ namespace x360ce.Tests
 			var ps = new PadSetting { LeftThumbAxisX = "a1", PadSettingChecksum = Guid.NewGuid() };
 			var row = new UserSetting { InstanceGuid = wheel.InstanceGuid, FileName = Game.FileName, MapTo = (int)MapTo.Controller1, IsEnabled = true, PadSettingChecksum = ps.PadSettingChecksum };
 			var routing = DeviceRouting.Build(Game, new[] { row }, new[] { ps }, new[] { wheel });
-			var recordPass = typeof(DInputHelper).GetMethod("RecordPass", BindingFlags.NonPublic | BindingFlags.Instance);
+			var recordPass = typeof(DInputHelper).GetMethod(nameof(DInputHelper.RecordPass), BindingFlags.NonPublic | BindingFlags.Instance);
 			var recorder = Start(RecordParts.Input | RecordParts.Output | RecordParts.Forces, helper);
 			try
 			{

@@ -99,7 +99,7 @@ namespace x360ce.App.Issues
 
 		/// <summary>Mapped devices, online or not, on the current game's tabs that have a virtual controller, ticked in the tab's list and on the Devices page.</summary>
 		/// <remarks>An unticked device is not used by the game, so it is never named for hiding.</remarks>
-		static UserDevice[] GetVirtualMappedDevices()
+		internal static UserDevice[] GetVirtualMappedDevices()
 		{
 			var game = SettingsManager.CurrentGame;
 			if (game == null)

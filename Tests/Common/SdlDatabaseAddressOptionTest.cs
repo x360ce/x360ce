@@ -87,9 +87,9 @@ namespace x360ce.Tests
 						panel.UpdateSettingsMap();
 						form.Show();
 						Application.DoEvents();
-						var label = panel.Controls.Find("SdlDatabaseUrlLabel", true).FirstOrDefault() as Label;
-						var box = panel.Controls.Find("SdlDatabaseUrlComboBox", true).FirstOrDefault() as ComboBox;
-						var button = panel.Controls.Find("UpdateSdlDatabaseButton", true).FirstOrDefault() as Button;
+						var label = panel.Controls.Find(nameof(OptionsInternetUserControl.SdlDatabaseUrlLabel), true).FirstOrDefault() as Label;
+						var box = panel.Controls.Find(nameof(OptionsInternetUserControl.SdlDatabaseUrlComboBox), true).FirstOrDefault() as ComboBox;
+						var button = panel.Controls.Find(nameof(OptionsInternetUserControl.UpdateSdlDatabaseButton), true).FirstOrDefault() as Button;
 						Assert.IsNotNull(label, "Options > Internet has no SDL database label.");
 						Assert.IsNotNull(box, "Options > Internet has no SDL database address box.");
 						Assert.IsNotNull(button, "Options > Internet has no [Update SDL Database] button.");

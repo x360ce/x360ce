@@ -84,11 +84,11 @@ namespace x360ce.App.Controls
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes) playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
-			PassThroughIndexComboBox.DisplayMember = "Key";
-			PassThroughIndexComboBox.ValueMember = "Value";
+			PassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			PassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
-			CombinedIndexComboBox.DisplayMember = "Key";
-			CombinedIndexComboBox.ValueMember = "Value";
+			CombinedIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			CombinedIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
 			// Attach context strip with button names to every ComboBox on general tab.

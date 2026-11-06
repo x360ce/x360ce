@@ -1219,8 +1219,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (box.Sorted)
 				box.Sorted = false;
 			box.DataSource = list;
-			box.DisplayMember = "Key";
-			box.ValueMember = "Value";
+			box.DisplayMember = nameof(DictionaryEntry.Key);
+			box.ValueMember = nameof(DictionaryEntry.Value);
 			if (selected.HasValue)
 				SelectEnumValue(box, selected.Value);
 		}

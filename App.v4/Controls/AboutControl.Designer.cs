@@ -198,16 +198,16 @@
 
 		#endregion
 
-		System.Windows.Forms.TextBox ChangeLogTextBox;
-		System.Windows.Forms.Label AboutDescriptionLabel;
-		System.Windows.Forms.Label AboutProductLabel;
-		System.Windows.Forms.PictureBox ProductPictureBox;
-		private System.Windows.Forms.TabControl AboutTabControl;
-		private System.Windows.Forms.TabPage ProgramTabPage;
-		private System.Windows.Forms.RichTextBox ProgramRichTextBox;
-		private System.Windows.Forms.TabPage ChangesTabPage;
-		private System.Windows.Forms.TabPage LicenseTabPage;
-		private System.Windows.Forms.TextBox LicenseTextBox;
+		internal System.Windows.Forms.TextBox ChangeLogTextBox;
+		internal System.Windows.Forms.Label AboutDescriptionLabel;
+		internal System.Windows.Forms.Label AboutProductLabel;
+		internal System.Windows.Forms.PictureBox ProductPictureBox;
+		internal System.Windows.Forms.TabControl AboutTabControl;
+		internal System.Windows.Forms.TabPage ProgramTabPage;
+		internal System.Windows.Forms.RichTextBox ProgramRichTextBox;
+		internal System.Windows.Forms.TabPage ChangesTabPage;
+		internal System.Windows.Forms.TabPage LicenseTabPage;
+		internal System.Windows.Forms.TextBox LicenseTextBox;
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 	}
 }

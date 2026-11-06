@@ -34,7 +34,7 @@ namespace x360ce.App.DInput
 
 		/// <summary>Hands the recording what this pass read from each device and sent to each controller. Input thread only.</summary>
 		/// <param name="xinputRead">Whether XInput was read back this pass, so what it read is news.</param>
-		void RecordPass(ReportRecorder recording, DeviceRouting routing, bool xinputRead)
+		internal void RecordPass(ReportRecorder recording, DeviceRouting routing, bool xinputRead)
 		{
 			var now = Stopwatch.GetTimestamp();
 			if (recording.Has(RecordParts.Input) || recording.Has(RecordParts.Forces))

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.App.Mcp;
 using x360ce.App.UiTree;
 using JocysCom.ClassLibrary.Mcp;
@@ -475,11 +476,11 @@ namespace x360ce.Tests
 		{
 			WithWindow(AiAccess.Configure, form =>
 			{
-				var install = new Button { Name = "ViGEmBusInstallButton" };
-				var configure = new CheckBox { Name = "HidHideConfigureAutomaticallyCheckBox" };
-				var level = new ComboBox { Name = "AiAccessComboBox" };
+				var install = new Button { Name = nameof(OptionsUserControl.ViGEmBusInstallButton) };
+				var configure = new CheckBox { Name = nameof(OptionsUserControl.HidHideConfigureAutomaticallyCheckBox) };
+				var level = new ComboBox { Name = nameof(AiAccessUserControl.AiAccessComboBox) };
 				level.Items.AddRange(Enum.GetNames(typeof(AiAccess)));
-				var regenerate = new Button { Name = "AiAccessRegenerateButton" };
+				var regenerate = new Button { Name = nameof(AiAccessUserControl.AiAccessRegenerateButton) };
 				form.Controls.AddRange(new Control[] { install, configure, level, regenerate });
 				form.Show();
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(install.Name)).Message, "Administer");
@@ -501,7 +502,7 @@ namespace x360ce.Tests
 			WithWindow(AiAccess.Read, form =>
 			{
 				var group = new GroupBox { Name = "Ai" };
-				var tokenBox = new TextBox { Name = "AiAccessTokenTextBox", Text = token, ReadOnly = true, AccessibleName = "Token", AccessibleDescription = "What a caller presents." };
+				var tokenBox = new TextBox { Name = nameof(AiAccessUserControl.AiAccessTokenTextBox), Text = token, ReadOnly = true, AccessibleName = "Token", AccessibleDescription = "What a caller presents." };
 				var port = new TextBox { Name = "Port", Text = "37360", AccessibleName = "Port", AccessibleDescription = "Where the door listens." };
 				group.Controls.AddRange(new Control[] { tokenBox, port });
 				form.Controls.Add(group);
@@ -580,9 +581,9 @@ namespace x360ce.Tests
 			// page it belongs to, which a rename changes the same day.
 			var bar = new Dictionary<string, Type>
 			{
-				{ "CleanupVirtualPadsButton", typeof(ToolStripButton) },
-				{ "UnhideAllDevicesMenuItem", typeof(ToolStripMenuItem) },
-				{ "SynchronizeToHidHideMenuItem", typeof(ToolStripMenuItem) },
+				{ nameof(UserDevicesUserControl.CleanupVirtualPadsButton), typeof(ToolStripButton) },
+				{ nameof(UserDevicesUserControl.UnhideAllDevicesMenuItem), typeof(ToolStripMenuItem) },
+				{ nameof(UserDevicesUserControl.SynchronizeToHidHideMenuItem), typeof(ToolStripMenuItem) },
 			};
 			foreach (var name in McpUiTools.AdminControls.Where(x => !bar.ContainsKey(x)))
 				AssertField(name, typeof(Button), typeof(CheckBox));

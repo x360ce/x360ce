@@ -98,7 +98,7 @@ namespace x360ce.Tests
 		public static void ReleaseInvokeContext()
 		{
 			typeof(ControlsHelper)
-				.GetProperty("MainTaskScheduler")
+				.GetProperty(nameof(ControlsHelper.MainTaskScheduler))
 				.SetValue(null, null, null);
 		}
 

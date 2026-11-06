@@ -309,20 +309,20 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView WarningsDataGridView;
-		private System.Windows.Forms.ToolStrip GamesToolStrip;
-		private System.Windows.Forms.ToolStripButton IgnoreAllButton;
-        private System.Windows.Forms.ToolStripLabel StatusLabel;
+		public System.Windows.Forms.DataGridView WarningsDataGridView;
+		public System.Windows.Forms.ToolStrip GamesToolStrip;
+		public System.Windows.Forms.ToolStripButton IgnoreAllButton;
+        public System.Windows.Forms.ToolStripLabel StatusLabel;
         private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
-        private System.Windows.Forms.ToolStripLabel NextRunLabel;
+        public System.Windows.Forms.ToolStripLabel NextRunLabel;
         private System.Windows.Forms.Timer QueueMonitorTimer;
-        private System.Windows.Forms.ToolStripLabel RunStateLabel;
-        private System.Windows.Forms.ToolStripButton ExceptionInfoButton;
-        private System.Windows.Forms.Panel NoIssuesPanel;
+        public System.Windows.Forms.ToolStripLabel RunStateLabel;
+        public System.Windows.Forms.ToolStripButton ExceptionInfoButton;
+        internal System.Windows.Forms.Panel NoIssuesPanel;
         private System.Windows.Forms.Label NoIssuesLabel;
-        private System.Windows.Forms.Panel LinePanel;
+        internal System.Windows.Forms.Panel LinePanel;
         private System.Windows.Forms.Panel LineFillPanel;
-        private System.Windows.Forms.ToolStripButton IgnoreButton;
+        public System.Windows.Forms.ToolStripButton IgnoreButton;
 		private System.Windows.Forms.DataGridViewImageColumn SeverityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;

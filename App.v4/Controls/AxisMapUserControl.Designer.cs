@@ -353,28 +353,28 @@
 		#endregion
 
 		private System.Windows.Forms.Label DInputLabel;
-		private System.Windows.Forms.PictureBox MainPictureBox;
-		private System.Windows.Forms.GroupBox MainGroupBox;
+		internal System.Windows.Forms.PictureBox MainPictureBox;
+		internal System.Windows.Forms.GroupBox MainGroupBox;
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 		private System.Windows.Forms.FlowLayoutPanel ValuesFlowLayoutPanel;
 		public System.Windows.Forms.TrackBar SensitivityTrackBar;
 		private System.Windows.Forms.Label XInputLabel;
-		private System.Windows.Forms.TextBox SensitivityTextBox;
+		internal System.Windows.Forms.TextBox SensitivityTextBox;
 		private System.Windows.Forms.Label SensitivityLabel;
 		private System.Windows.Forms.Label SensitivityNoteLabel;
 		private System.Windows.Forms.Label DeadZoneLabel;
 		public System.Windows.Forms.TrackBar DeadZoneTrackBar;
-		private System.Windows.Forms.TextBox DeadZoneTextBox;
+		internal System.Windows.Forms.TextBox DeadZoneTextBox;
 		public System.Windows.Forms.NumericUpDown AntiDeadZoneNumericUpDown;
 		private System.Windows.Forms.Label AntiDeadZoneLabel;
 		public System.Windows.Forms.NumericUpDown DeadZoneNumericUpDown;
 		public System.Windows.Forms.TrackBar AntiDeadZoneTrackBar;
-		private System.Windows.Forms.TextBox AntiDeadZoneTextBox;
+		internal System.Windows.Forms.TextBox AntiDeadZoneTextBox;
 		private System.Windows.Forms.FlowLayoutPanel SensitivityFlowLayoutPanel;
-		private System.Windows.Forms.CheckBox SensitivityCheckBox;
+		internal System.Windows.Forms.CheckBox SensitivityCheckBox;
 		public System.Windows.Forms.NumericUpDown SensitivityNumericUpDown;
 		private System.Windows.Forms.Label XInputValueLabel;
 		private System.Windows.Forms.Label DInputValueLabel;
-		private System.Windows.Forms.ComboBox PresetComboBox;
+		internal System.Windows.Forms.ComboBox PresetComboBox;
 	}
 }

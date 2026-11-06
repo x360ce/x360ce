@@ -42,9 +42,9 @@ namespace x360ce.App.Controls
 			e.FormattingApplied = true;
 		}
 
-		DataTable DiAxisTable;
-		DataTable DiSlidersTable;
-		DataTable DiPovsTable;
+		internal DataTable DiAxisTable;
+		internal DataTable DiSlidersTable;
+		internal DataTable DiPovsTable;
 		DataTable DiEffectsTable;
 
 		void InitDirectInputTab()

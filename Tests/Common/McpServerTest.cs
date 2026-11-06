@@ -9,6 +9,7 @@ using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.App.Mcp;
 using JocysCom.ClassLibrary.Mcp;
 
@@ -100,8 +101,8 @@ namespace x360ce.Tests
 				var secret = McpListener.NewToken();
 				CallTool("poke_value", new Dictionary<string, object> { { "value", "Bearer " + secret } });
 				var log = System.IO.File.ReadAllText(McpLog.Path);
-				StringAssert.Contains(log, "RemotePasswordTextBox");
-				StringAssert.Contains(log, "AiAccessTokenTextBox");
+				StringAssert.Contains(log, nameof(OptionsUserControl.RemotePasswordTextBox));
+				StringAssert.Contains(log, nameof(AiAccessUserControl.AiAccessTokenTextBox));
 				Assert.IsFalse(log.Contains("hunter2"), "The password was written to the log.");
 				Assert.IsFalse(log.Contains("typed-secret"), "The value given to the token box was written to the log.");
 				Assert.IsFalse(log.Contains(token), "A token made before tokens had a prefix was written to the log.");

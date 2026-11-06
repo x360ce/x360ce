@@ -90,8 +90,8 @@ namespace x360ce.Tests
 					a.Width = b.Width = 554;
 					a.PerformLayout();
 					b.PerformLayout();
-					var sliderA = Part(a, "DeadZoneTrackBar");
-					var sliderB = Part(b, "DeadZoneTrackBar");
+					var sliderA = Part(a, nameof(AxisToButtonUserControl.DeadZoneTrackBar));
+					var sliderB = Part(b, nameof(AxisToButtonUserControl.DeadZoneTrackBar));
 					Assert.AreEqual(sliderA.Left, sliderB.Left, "'A Button' and 'Right Stick Button' rows start their sliders at different places.");
 				}
 			});
@@ -105,7 +105,7 @@ namespace x360ce.Tests
 				when, outside.Count, string.Join(", ", outside.Select(p => p.Name))));
 			var covered = ControlOverlapTest.Covered(row).ToList();
 			Assert.AreEqual(0, covered.Count, string.Format("Row {0}:{1}{2}", when, Environment.NewLine, string.Join(Environment.NewLine, covered)));
-			var value = Part(row, "DeadZoneNumericUpDown");
+			var value = Part(row, nameof(AxisToButtonUserControl.DeadZoneNumericUpDown));
 			var right = row.RectangleToClient(value.RectangleToScreen(value.ClientRectangle)).Right;
 			Assert.IsTrue(row.ClientSize.Width - right <= 4, string.Format("Row {0}: the value box ends {1} px short of the right edge.", when, row.ClientSize.Width - right));
 		}

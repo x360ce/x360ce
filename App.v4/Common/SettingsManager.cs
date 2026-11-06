@@ -32,7 +32,7 @@ namespace x360ce.App
 		public static UserGame CurrentGame;
 		public static object CurrentGameLock = new object();
 
-		static object OptionsLock = new object();
+		internal static object OptionsLock = new object();
 
 		public static event PropertyChangedEventHandler CurrentGame_PropertyChanged;
 

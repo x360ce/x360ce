@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
@@ -541,7 +542,7 @@ namespace x360ce.Tests
 						form.Width += 20;
 						Application.DoEvents();
 						var height = box.Height;
-						var wrong = new[] { "GeneralTableLayoutPanel", "RemapTableLayoutPanel" }
+						var wrong = new[] { nameof(PadControl.GeneralTableLayoutPanel), nameof(PadControl.RemapTableLayoutPanel) }
 							.SelectMany(x => page.Controls.Find(x, true)[0].Controls.OfType<ComboBox>())
 							.Where(x => x.Height != height).Select(x => x.Name + " " + x.Height).ToList();
 						Assert.AreEqual(0, wrong.Count, string.Format("Themed {0}, the text boxes are {1} px tall, but: {2}", theme, height, string.Join(", ", wrong)));
@@ -566,10 +567,10 @@ namespace x360ce.Tests
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					form.Show();
-					var tabs = (TabControl)page.Controls.Find("PadTabControl", true).Single();
-					tabs.SelectedTab = (TabPage)page.Controls.Find("LeftThumbTabPage", true).Single();
+					var tabs = (TabControl)page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
+					tabs.SelectedTab = (TabPage)page.Controls.Find(nameof(PadControl.LeftThumbTabPage), true).Single();
 					Application.DoEvents();
-					var panel = page.Controls.Find("LeftThumbXUserControl", true).Single();
+					var panel = page.Controls.Find(nameof(PadControl.LeftThumbXUserControl), true).Single();
 					foreach (var name in new[] { "AntiDeadZone", "DeadZone" })
 					{
 						var percent = panel.Controls.Find(name + "TextBox", true).Single();
@@ -879,12 +880,12 @@ namespace x360ce.Tests
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					form.Show();
-					var tabs = (TabControl)page.Controls.Find("PadTabControl", true).Single();
-					tabs.SelectedTab = (TabPage)page.Controls.Find("LeftThumbTabPage", true).Single();
-					foreach (var name in new[] { "LeftThumbXUserControl", "LeftThumbYUserControl" })
+					var tabs = (TabControl)page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
+					tabs.SelectedTab = (TabPage)page.Controls.Find(nameof(PadControl.LeftThumbTabPage), true).Single();
+					foreach (var name in new[] { nameof(PadControl.LeftThumbXUserControl), nameof(PadControl.LeftThumbYUserControl) })
 					{
 						var axis = (x360ce.App.Controls.AxisMapUserControl)page.Controls.Find(name, true).Single();
-						var chart = axis.Controls.Find("MainPictureBox", true).Single();
+						var chart = axis.Controls.Find(nameof(AxisMapUserControl.MainPictureBox), true).Single();
 						// The line is drawn off the interface thread, so give it the time a person would, while the point
 						// moves as often as the device loop moves it.
 						var drawn = false;

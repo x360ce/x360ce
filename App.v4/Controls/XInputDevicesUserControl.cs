@@ -89,7 +89,7 @@ namespace x360ce.App.Controls
 			return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(new Form());
 		}
 
-		readonly List<XInputReorderPlan.Entry> _entries = new List<XInputReorderPlan.Entry>();
+		internal readonly List<XInputReorderPlan.Entry> _entries = new List<XInputReorderPlan.Entry>();
 
 		/// <summary>Reads the machine, on a worker, and shows what is there.</summary>
 		/// <remarks>

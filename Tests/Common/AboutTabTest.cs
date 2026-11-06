@@ -58,11 +58,11 @@ namespace x360ce.Tests
 				using (var about = new AboutControl())
 				{
 					about.CreateControl();
-					var tabs = Find<TabControl>(about, "AboutTabControl");
-					Assert.AreEqual("ProgramTabPage", tabs.TabPages[0].Name, "The Program tab is not the first tab.");
+					var tabs = Find<TabControl>(about, nameof(AboutControl.AboutTabControl));
+					Assert.AreEqual(nameof(AboutControl.ProgramTabPage), tabs.TabPages[0].Name, "The Program tab is not the first tab.");
 					Assert.AreEqual("Program", tabs.TabPages[0].Text);
 					Assert.AreEqual(0, tabs.SelectedIndex, "The About page does not open on the Program tab.");
-					var box = Find<RichTextBox>(about, "ProgramRichTextBox");
+					var box = Find<RichTextBox>(about, nameof(AboutControl.ProgramRichTextBox));
 					Assert.AreSame(tabs.TabPages[0], box.Parent, "The program's details are not on the Program tab.");
 					Assert.AreEqual(DockStyle.Fill, box.Dock);
 					Assert.IsTrue(box.ReadOnly);
@@ -78,10 +78,10 @@ namespace x360ce.Tests
 						Assert.IsTrue(IsLink(box, at) && IsLink(box, at + url.Length - 1), url + " is shown, but clicking it opens nothing.");
 					}
 					// The picture, the title and the subtitle stay; the names and links that sat beside them are on the Program tab.
-					Assert.IsNotNull(Find<PictureBox>(about, "ProductPictureBox").Image);
+					Assert.IsNotNull(Find<PictureBox>(about, nameof(AboutControl.ProductPictureBox)).Image);
 					// The program's own version: in a test, the process's product is the test host.
-					StringAssert.Contains(Find<Label>(about, "AboutProductLabel").Text, typeof(AboutControl).Assembly.GetName().Version.ToString());
-					Find<Label>(about, "AboutDescriptionLabel");
+					StringAssert.Contains(Find<Label>(about, nameof(AboutControl.AboutProductLabel)).Text, typeof(AboutControl).Assembly.GetName().Version.ToString());
+					Find<Label>(about, nameof(AboutControl.AboutDescriptionLabel));
 					Assert.IsFalse(All(about).OfType<LinkLabel>().Any(), "A link is still shown above the tabs.");
 				}
 			});
@@ -100,10 +100,10 @@ namespace x360ce.Tests
 					form.Controls.Add(about);
 					form.Show();
 					Application.DoEvents();
-					var picture = Find<PictureBox>(about, "ProductPictureBox");
-					var title = Find<Label>(about, "AboutProductLabel");
-					var subtitle = Find<Label>(about, "AboutDescriptionLabel");
-					var tabs = Find<TabControl>(about, "AboutTabControl");
+					var picture = Find<PictureBox>(about, nameof(AboutControl.ProductPictureBox));
+					var title = Find<Label>(about, nameof(AboutControl.AboutProductLabel));
+					var subtitle = Find<Label>(about, nameof(AboutControl.AboutDescriptionLabel));
+					var tabs = Find<TabControl>(about, nameof(AboutControl.AboutTabControl));
 					var where = string.Format(" Picture {0}, title {1}, subtitle {2}, tabs {3}.", picture.Bounds, title.Bounds, subtitle.Bounds, tabs.Bounds);
 					Assert.AreEqual(title.Top, picture.Top, "The picture does not start level with the title." + where);
 					Assert.AreEqual(subtitle.Bottom, picture.Bottom, "The picture does not end level with the subtitle." + where);
@@ -150,8 +150,8 @@ namespace x360ce.Tests
 					about.CreateControl();
 					// The tab names the program, not the process that hosts it: in a test, that is the test host.
 					var version = typeof(AboutControl).Assembly.GetName().Version;
-					Assert.AreEqual("X360 Controller Emulator " + version.ToString(2) + " License", Find<TabPage>(about, "LicenseTabPage").Text);
-					var licence = Find<TextBox>(about, "LicenseTextBox").Text.TrimStart('\uFEFF');
+					Assert.AreEqual("X360 Controller Emulator " + version.ToString(2) + " License", Find<TabPage>(about, nameof(AboutControl.LicenseTabPage)).Text);
+					var licence = Find<TextBox>(about, nameof(AboutControl.LicenseTextBox)).Text.TrimStart('\uFEFF');
 					var own = AppHelper.ReadHelp("Documents.License.txt").TrimStart('\uFEFF').Split('\n')[0].Trim();
 					StringAssert.StartsWith(licence.TrimStart(), own, "x360ce's own licence is not shown first.");
 					var at = new[] { "Sam Lantinga", "Reserved Font Name Selawik", "The Inconsolata Project Authors" }

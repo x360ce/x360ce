@@ -50,7 +50,7 @@ namespace x360ce.Tests
 		{
 			foreach (var factor in WidthFactors)
 			{
-				var boxes = MeasurePanel("VirtualDeviceGroupBox", factor);
+				var boxes = MeasurePanel(nameof(OptionsUserControl.VirtualDeviceGroupBox), factor);
 				Assert.IsTrue(boxes.Count >= 9,
 					"Expected the whole Virtual Device panel, measured " + boxes.Count + " controls.");
 				AssertWhole(boxes, factor);
@@ -78,7 +78,7 @@ namespace x360ce.Tests
 		{
 			foreach (var factor in WidthFactors)
 			{
-				var boxes = MeasurePanel("HidHideGroupBox", factor);
+				var boxes = MeasurePanel(nameof(OptionsUserControl.HidHideGroupBox), factor);
 				Assert.IsTrue(boxes.Count >= 7,
 					"Expected the whole HID Hide panel, measured " + boxes.Count + " controls.");
 				AssertWhole(boxes, factor);
@@ -94,7 +94,7 @@ namespace x360ce.Tests
 			{
 				WithOptionsPage(factor, page =>
 				{
-					var group = Descendants(page).FirstOrDefault(x => x.Name == "HotkeysGroupBox");
+					var group = Descendants(page).FirstOrDefault(x => x.Name == nameof(OptionsUserControl.HotkeysGroupBox));
 					Assert.IsNotNull(group, "HotkeysGroupBox was not found on the Options page.");
 					Show(group);
 					// Measured on the group, wherever its table puts each control.
@@ -118,7 +118,7 @@ namespace x360ce.Tests
 							"The " + row + " row " + caption + " is painted over the row above it.");
 						rowBottom = Math.Max(caption.Bottom, field.Bottom);
 					}
-					var note = on("EmulationOverlayCheckBox");
+					var note = on(nameof(OptionsUserControl.EmulationOverlayCheckBox));
 					Assert.IsTrue(note.Top >= rowBottom,
 						"The note box " + note + " is painted over the emulation buttons row.");
 					Assert.IsTrue(note.Bottom <= group.ClientSize.Height && note.Right <= group.ClientSize.Width,
@@ -135,7 +135,7 @@ namespace x360ce.Tests
 			{
 				WithOptionsPage(factor, page =>
 				{
-					var columns = new[] { "GeneralLeftColumnPanel", "GeneralRightColumnPanel" }
+					var columns = new[] { nameof(OptionsUserControl.GeneralLeftColumnPanel), nameof(OptionsUserControl.GeneralRightColumnPanel) }
 						.Select(name => Descendants(page).FirstOrDefault(x => x.Name == name)).ToList();
 					Assert.IsTrue(columns.All(x => x != null), "The two columns of the General page were not found on the Options page.");
 					Show(columns[0]);
@@ -156,10 +156,10 @@ namespace x360ce.Tests
 					Assert.AreSame(columns[0].Parent, columns[1].Parent, "The two columns are not in one table.");
 					Assert.IsTrue(columns[0].Right <= columns[1].Left,
 						"The left column " + columns[0].Bounds + " runs under the right one " + columns[1].Bounds + ".");
-					Assert.AreEqual("HotkeysGroupBox", columns[0].Controls.Cast<Control>().OrderBy(x => x.Top).Last().Name,
+					Assert.AreEqual(nameof(OptionsUserControl.HotkeysGroupBox), columns[0].Controls.Cast<Control>().OrderBy(x => x.Top).Last().Name,
 						"The left column does not end with Hotkeys.");
-					var tools = Descendants(page).Single(x => x.Name == "DeveloperToolsButton");
-					Assert.IsTrue(Holders(tools, page).Any(x => x.Name == "DevelopingGroupBox"), "Developer Tools is not in the Developing group.");
+					var tools = Descendants(page).Single(x => x.Name == nameof(OptionsUserControl.DeveloperToolsButton));
+					Assert.IsTrue(Holders(tools, page).Any(x => x.Name == nameof(OptionsUserControl.DevelopingGroupBox)), "Developer Tools is not in the Developing group.");
 				});
 			}
 		}
@@ -172,13 +172,13 @@ namespace x360ce.Tests
 			{
 				WithOptionsPage(factor, page =>
 				{
-					var column = Descendants(page).OfType<TableLayoutPanel>().FirstOrDefault(x => x.Name == "GeneralRightColumnPanel");
+					var column = Descendants(page).OfType<TableLayoutPanel>().FirstOrDefault(x => x.Name == nameof(OptionsUserControl.GeneralRightColumnPanel));
 					Assert.IsNotNull(column, "The right column of the General page was not found on the Options page.");
-					var appearance = Descendants(page).FirstOrDefault(x => x.Name == "AppearanceGroupBox");
+					var appearance = Descendants(page).FirstOrDefault(x => x.Name == nameof(OptionsUserControl.AppearanceGroupBox));
 					Assert.IsNotNull(appearance, "AppearanceGroupBox was not found on the Options page.");
 					Assert.AreSame(column, appearance.Parent, "The Appearance group is not in the right column of the General page.");
-					var scan = column.Controls["ProgramScanLocationsTabControl"];
-					var developing = column.Controls["DevelopingGroupBox"];
+					var scan = column.Controls[nameof(OptionsUserControl.ProgramScanLocationsTabControl)];
+					var developing = column.Controls[nameof(OptionsUserControl.DevelopingGroupBox)];
 					Assert.AreEqual(column.GetRow(scan) + 1, column.GetRow(appearance), "The Appearance group is not directly under the scan locations.");
 					Assert.AreEqual(column.GetRow(appearance) + 1, column.GetRow(developing), "Developing is not directly under the Appearance group.");
 					Show(appearance);
@@ -202,7 +202,7 @@ namespace x360ce.Tests
 							"The list " + list + " runs past the group, which is " + appearance.ClientSize + ".");
 						rowBottom = Math.Max(caption.Bottom, list.Bottom);
 					}
-					foreach (var name in new[] { "FontComboBox", "SizeComboBox" })
+					foreach (var name in new[] { nameof(OptionsUserControl.FontComboBox), nameof(OptionsUserControl.SizeComboBox) })
 					{
 						var list = (ComboBox)appearance.Controls.Find(name, true).Single();
 						Assert.AreEqual(ComboBoxStyle.DropDownList, list.DropDownStyle, name + " is typed in rather than chosen from the list.");
@@ -218,7 +218,7 @@ namespace x360ce.Tests
 			var faults = new List<string>();
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(null) }, (window, when) =>
 			{
-				var panel = (ScrollableControl)window.Controls.Find("GeneralPanel", true).Single();
+				var panel = (ScrollableControl)window.Controls.Find(nameof(OptionsUserControl.GeneralPanel), true).Single();
 				var end = Shown(panel).Max(x => panel.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds)).Bottom);
 				var line = string.Format("{0}: the General page is {1} and what it holds ends {2} px down{3}.", when, panel.ClientSize, end,
 					panel.VerticalScroll.Visible || panel.HorizontalScroll.Visible ? ", with a scroll bar" : "");
@@ -237,7 +237,7 @@ namespace x360ce.Tests
 			foreach (var font in Fonts)
 				ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(font()) }, (window, when) =>
 				{
-					var page = window.Controls.Find("GeneralTabPage", true).Single();
+					var page = window.Controls.Find(nameof(OptionsUserControl.GeneralTabPage), true).Single();
 					when += " " + page.Font.Name;
 					Func<Control, Control, Rectangle> on = (control, place) => place.RectangleToClient(control.Parent.RectangleToScreen(control.Bounds));
 					// What stands on the page in a place of its own: the groups, the scan locations and the button below the groups.
@@ -275,9 +275,9 @@ namespace x360ce.Tests
 			foreach (var font in Fonts)
 				ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(font()) }, (window, when) =>
 				{
-					var theme = (ComboBox)window.Controls.Find("ThemeComboBox", true).Single();
-					var list = (ComboBox)window.Controls.Find("FontComboBox", true).Single();
-					var size = (ComboBox)window.Controls.Find("SizeComboBox", true).Single();
+					var theme = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.ThemeComboBox), true).Single();
+					var list = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.FontComboBox), true).Single();
+					var size = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.SizeComboBox), true).Single();
 					when += " " + list.Font.Name;
 					if (theme.Width != list.Width || size.Width != list.Width)
 						faults.Add(string.Format("{0}: Theme is {1} px wide, Font {2} and Size {3}.", when, theme.Width, list.Width, size.Width));
@@ -305,8 +305,8 @@ namespace x360ce.Tests
 			var faults = new List<string>();
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(null) }, (window, when) =>
 			{
-				var page = window.Controls.Find("GeneralTabPage", true).Single();
-				var right = window.Controls.Find("GeneralRightColumnPanel", true).Single();
+				var page = window.Controls.Find(nameof(OptionsUserControl.GeneralTabPage), true).Single();
+				var right = window.Controls.Find(nameof(OptionsUserControl.GeneralRightColumnPanel), true).Single();
 				// The places the Tab key stops at, in the order it stops at them.
 				var stops = new List<Control>();
 				for (var c = page.GetNextControl(page, true); c != null; c = page.GetNextControl(c, true))
@@ -456,11 +456,11 @@ namespace x360ce.Tests
 					// The program's settings keep a tunnel, so its tab is shown and measured too.
 					ai.Bind(new AiAccessSettings());
 					// The longest status the page writes: a copy from a newer program, with a version of full width.
-					foreach (var name in new[] { "AiSkillClaudeStatusText", "AiSkillAgentsStatusText" })
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiSkillClaudeStatusText), nameof(AiAccessUserControl.AiSkillAgentsStatusText) })
 						ai.Controls.Find(name, true).Single().Text = "Version 4.25.300.0, from a newer program.";
-					ai.Controls.Find("AiAccessTokenTextBox", true).Single().Text = McpListener.NewToken();
+					ai.Controls.Find(nameof(AiAccessUserControl.AiAccessTokenTextBox), true).Single().Text = McpListener.NewToken();
 					ai.PerformLayout();
-					foreach (var section in new[] { "AiHeaderPanel", "AiSkillPanel", "AiAccessPanel", "AiTunnelPanel" })
+					foreach (var section in new[] { nameof(AiAccessUserControl.AiHeaderPanel), nameof(AiAccessUserControl.AiSkillPanel), nameof(AiAccessUserControl.AiAccessPanel), nameof(AiAccessUserControl.AiTunnelPanel) })
 					{
 						var table = (TableLayoutPanel)ai.Controls.Find(section, true).Single();
 						// A section is measured on its tab, in front, as a person sees it.
@@ -478,7 +478,7 @@ namespace x360ce.Tests
 								", with the page " + factor + " times its designed width.");
 					}
 					// A box that wraps grows to its lines; a line below its bottom edge is cut off.
-					foreach (var name in new[] { "AiExampleTextBox", "AiAccessTokenTextBox", "AiAccessSnippetTextBox" })
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiExampleTextBox), nameof(AiAccessUserControl.AiAccessTokenTextBox), nameof(AiAccessUserControl.AiAccessSnippetTextBox) })
 					{
 						var box = (TextBox)ai.Controls.Find(name, true).Single();
 						var last = box.GetPositionFromCharIndex(box.TextLength - 1);
@@ -509,12 +509,12 @@ namespace x360ce.Tests
 						FormsTheme.Apply(page);
 						page.CreateControl();
 						page.PerformLayout();
-						var box = content.Controls.Find("CurrentPathTextBox", true).Single();
+						var box = content.Controls.Find(nameof(OptionsSettingsUserControl.CurrentPathTextBox), true).Single();
 						var button = content.Controls.Find("OpenFolderButton", true).Single();
 						Assert.AreSame(box.Parent, button.Parent);
 						Assert.IsTrue(box.Right <= button.Left, string.Format(
 							"At {0:P0} the folder's box {1} runs under Open Folder {2}.", zoom, box.Bounds, button.Bounds));
-						foreach (var name in new[] { "LocationComboBox", "MoveModeComboBox" })
+						foreach (var name in new[] { nameof(OptionsSettingsUserControl.LocationComboBox), nameof(OptionsSettingsUserControl.MoveModeComboBox) })
 						{
 							var list = (ComboBox)content.Controls.Find(name, true).Single();
 							Assert.AreEqual(FormsTheme.GetComboBoxWidth(list), list.Width, string.Format(
@@ -529,16 +529,16 @@ namespace x360ce.Tests
 		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
 		public void Update_log_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), "LogTextBox", null, "CheckButton",
-				"CheckForUpdatesCheckBox", "PrivacyLabel", "CheckButton", "CheckDigitalSignatureCheckBox", "CheckVersionCheckBox");
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), nameof(OptionsUpdateUserControl.LogTextBox), null, nameof(OptionsUpdateUserControl.CheckButton),
+				nameof(OptionsUpdateUserControl.CheckForUpdatesCheckBox), nameof(OptionsUpdateUserControl.PrivacyLabel), nameof(OptionsUpdateUserControl.CheckButton), nameof(OptionsUpdateUserControl.CheckDigitalSignatureCheckBox), nameof(OptionsUpdateUserControl.CheckVersionCheckBox));
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("The plugin list starts just below the folder row and ends just above the AutoHotkey group, which ends at the bottom of the page, and the note wraps inside the page, at every zoom")]
 		public void Plugins_list_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), "PluginsDataGridView", "AutoHotkeyGroupBox", "OpenFolderButton",
-				"AllowThirdPartyPluginsCheckBox", "NoteLabel", "FolderLabel", "FolderTextBox", "OpenFolderButton");
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), nameof(OptionsPluginsUserControl.PluginsDataGridView), nameof(OptionsPluginsUserControl.AutoHotkeyGroupBox), "OpenFolderButton",
+				nameof(OptionsPluginsUserControl.AllowThirdPartyPluginsCheckBox), nameof(OptionsPluginsUserControl.NoteLabel), nameof(OptionsPluginsUserControl.FolderLabel), nameof(OptionsPluginsUserControl.FolderTextBox), "OpenFolderButton");
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]

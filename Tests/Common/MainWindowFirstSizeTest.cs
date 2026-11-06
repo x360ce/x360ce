@@ -49,10 +49,10 @@ namespace x360ce.Tests
 					var designed = window.Size;
 					var work = WorkArea(TallScreen);
 					OpenWithNoSavedPlace(window, page, work);
-					var reset = page.Controls.Find("ResetPresetButton", true).Single();
+					var reset = page.Controls.Find(nameof(PadControl.ResetPresetButton), true).Single();
 					var resetAt = page.RectangleToClient(reset.Parent.RectangleToScreen(reset.Bounds));
-					var general = page.Controls.Find("GeneralTabPage", true).Single();
-					var table = page.Controls.Find("GeneralTableLayoutPanel", true).Single();
+					var general = page.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
+					var table = page.Controls.Find(nameof(PadControl.GeneralTableLayoutPanel), true).Single();
 					var tableAt = general.RectangleToClient(table.Parent.RectangleToScreen(table.Bounds));
 					// As tall as the page needs, or as designed where that is taller; as wide as designed.
 					var measured = new Size(designed.Width,
@@ -104,9 +104,9 @@ namespace x360ce.Tests
 					var c = page.Controls.Find(name, true).Single();
 					return page.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
 				};
-				var grid = at("MappedDevicesDataGridView");
-				var tabs = (TabControl)page.Controls.Find("PadTabControl", true).Single();
-				var strip = at("PadTabControl");
+				var grid = at(nameof(PadControl.MappedDevicesDataGridView));
+				var tabs = (TabControl)page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
+				var strip = at(nameof(PadControl.PadTabControl));
 				var line = string.Format("{0}: opened at {1} in {2}; the page is {3} and needs {4} px{5}; device list {6}, tabs {7}",
 					when, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height,
 					page.VerticalScroll.Visible ? ", with a scroll bar" : "", grid, strip);
