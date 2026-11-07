@@ -370,7 +370,7 @@ namespace x360ce.App
 				case CloudAction.Select:
 					if (result.UserGames != null)
 					{
-						MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
+						MainForm.Current.Main.GameSettingsPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
 								MainForm.Current.SetHeaderError(result.ErrorMessage);
@@ -379,7 +379,7 @@ namespace x360ce.App
 					}
 					if (result.UserDevices != null)
 					{
-						MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
+						MainForm.Current.Main.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
 								MainForm.Current.SetHeaderError(result.ErrorMessage);

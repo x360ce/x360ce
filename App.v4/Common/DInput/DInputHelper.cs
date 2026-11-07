@@ -248,6 +248,8 @@ namespace x360ce.App.DInput
 				// The count starts again with the clock; left over from the previous run, it
 				// silenced the rate for as long as that run had lasted.
 				passRate.Reset();
+				// So does the time of the last display read, which held the reads back for as long, the recording's among them.
+				_lastDisplayRead = 0;
 				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();

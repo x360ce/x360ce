@@ -409,6 +409,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)
 		{
+			// Nobody reads these while the page is not shown, and each new text lays out the tool bar and the page.
+			if (!Visible)
+				return;
 			var nextRunTime = TasksTimer.NextRunTime;
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)

@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.29.53.0",
-	"Built":"2026-11-06",
+	"Version":"4.29.58.0",
+	"Built":"2026-11-07",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -2139,328 +2139,576 @@
 					"Id":"HelpBodyLabel"
 				},
 				{
-					"Name":"Game bar",
-					"Description":"Chooses the game being set up, and saves the settings.",
-					"Role":"Toolbar",
-					"Id":"GamesToolStrip",
+					"Name":null,
+					"Description":"The game being set up, and the tabs for the four controllers and everything else.",
+					"Role":"Group",
+					"Id":"MainControl",
+					"Type":"MainControl",
 					"Items":[
 						{
-							"Name":"Game",
-							"Description":"Which game the settings on every page below belong to.",
-							"Role":"List",
-							"Id":""
-						},
-						{
-							"Name":"Save All",
-							"Description":"Writes every setting to disk now.",
-							"Role":"Button",
-							"Id":"SaveAllButton"
-						},
-						{
-							"Name":"Test...",
-							"Description":"Opens a window for trying the emulated controller without a game.",
-							"Role":"Button",
-							"Id":"TestButton",
-							"Hidden":true
-						},
-						{
-							"Name":"Add Game...",
-							"Description":"Sets this program up for another game.",
-							"Role":"Button",
-							"Id":"AddGameButton"
-						}
-					]
-				},
-				{
-					"Name":"Main",
-					"Description":"The four controllers, and the pages for everything else.",
-					"Role":"Tabs",
-					"Id":"MainTabControl",
-					"Items":[
-						{
-							"Name":"Controller 1",
-							"Description":"Settings for the first emulated Xbox controller.",
-							"Role":"Tab",
-							"Id":"Pad1TabPage",
+							"Name":"Game bar",
+							"Description":"Chooses the game being set up, and saves the settings.",
+							"Role":"Toolbar",
+							"Id":"GamesToolStrip",
 							"Items":[
 								{
-									"Name":null,
-									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
-									"Role":"Group",
-									"Id":"ControlPad1",
-									"Type":"PadControl",
-									"SameAs":"PadControl"
+									"Name":"Game",
+									"Description":"Which game the settings on every page below belong to.",
+									"Role":"List",
+									"Id":""
+								},
+								{
+									"Name":"Save All",
+									"Description":"Writes every setting to disk now.",
+									"Role":"Button",
+									"Id":"SaveAllButton"
+								},
+								{
+									"Name":"Test...",
+									"Description":"Opens a window for trying the emulated controller without a game.",
+									"Role":"Button",
+									"Id":"TestButton",
+									"Hidden":true
+								},
+								{
+									"Name":"Add Game...",
+									"Description":"Sets this program up for another game.",
+									"Role":"Button",
+									"Id":"AddGameButton"
 								}
 							]
 						},
 						{
-							"Name":"Controller 2",
-							"Description":"Settings for the second emulated Xbox controller.",
-							"Role":"Tab",
-							"Id":"Pad2TabPage",
+							"Name":"Main",
+							"Description":"The four controllers, and the pages for everything else.",
+							"Role":"Tabs",
+							"Id":"MainTabControl",
 							"Items":[
 								{
-									"Name":null,
-									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
-									"Role":"Group",
-									"Id":"ControlPad2",
-									"Type":"PadControl",
-									"SameAs":"PadControl"
-								}
-							]
-						},
-						{
-							"Name":"Controller 3",
-							"Description":"Settings for the third emulated Xbox controller.",
-							"Role":"Tab",
-							"Id":"Pad3TabPage",
-							"Items":[
-								{
-									"Name":null,
-									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
-									"Role":"Group",
-									"Id":"ControlPad3",
-									"Type":"PadControl",
-									"SameAs":"PadControl"
-								}
-							]
-						},
-						{
-							"Name":"Controller 4",
-							"Description":"Settings for the fourth emulated Xbox controller.",
-							"Role":"Tab",
-							"Id":"Pad4TabPage",
-							"Items":[
-								{
-									"Name":null,
-									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
-									"Role":"Group",
-									"Id":"ControlPad4",
-									"Type":"PadControl",
-									"SameAs":"PadControl"
-								}
-							]
-						},
-						{
-							"Name":"Options",
-							"Description":"Settings for the program itself, and for the drivers it needs.",
-							"Role":"Tab",
-							"Id":"OptionsTabPage",
-							"Items":[
-								{
-									"Name":null,
-									"Description":"Settings for the program itself, rather than for one controller.",
-									"Role":"Group",
-									"Id":"OptionsPanel",
-									"Type":"OptionsUserControl",
+									"Name":"Controller 1",
+									"Description":"Settings for the first emulated Xbox controller.",
+									"Role":"Tab",
+									"Id":"Pad1TabPage",
 									"Items":[
 										{
-											"Name":"Options pages",
+											"Name":null,
+											"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+											"Role":"Group",
+											"Id":"ControlPad1",
+											"Type":"PadControl",
+											"SameAs":"PadControl"
+										}
+									]
+								},
+								{
+									"Name":"Controller 2",
+									"Description":"Settings for the second emulated Xbox controller.",
+									"Role":"Tab",
+									"Id":"Pad2TabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+											"Role":"Group",
+											"Id":"ControlPad2",
+											"Type":"PadControl",
+											"SameAs":"PadControl"
+										}
+									]
+								},
+								{
+									"Name":"Controller 3",
+									"Description":"Settings for the third emulated Xbox controller.",
+									"Role":"Tab",
+									"Id":"Pad3TabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+											"Role":"Group",
+											"Id":"ControlPad3",
+											"Type":"PadControl",
+											"SameAs":"PadControl"
+										}
+									]
+								},
+								{
+									"Name":"Controller 4",
+									"Description":"Settings for the fourth emulated Xbox controller.",
+									"Role":"Tab",
+									"Id":"Pad4TabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+											"Role":"Group",
+											"Id":"ControlPad4",
+											"Type":"PadControl",
+											"SameAs":"PadControl"
+										}
+									]
+								},
+								{
+									"Name":"Options",
+									"Description":"Settings for the program itself, and for the drivers it needs.",
+									"Role":"Tab",
+									"Id":"OptionsTabPage",
+									"Items":[
+										{
+											"Name":null,
 											"Description":"Settings for the program itself, rather than for one controller.",
-											"Role":"Tabs",
-											"Id":"MainTabControl",
+											"Role":"Group",
+											"Id":"OptionsPanel",
+											"Type":"OptionsUserControl",
 											"Items":[
 												{
-													"Name":"General",
-													"Description":"How the program starts and runs, and which tabs it shows.",
-													"Role":"Tab",
-													"Id":"GeneralTabPage",
+													"Name":"Options pages",
+													"Description":"Settings for the program itself, rather than for one controller.",
+													"Role":"Tabs",
+													"Id":"MainTabControl",
 													"Items":[
 														{
-															"Name":"Operation",
-															"Description":"How the program behaves while it runs.",
-															"Role":"Section",
-															"Id":"OperationGroupBox",
+															"Name":"General",
+															"Description":"How the program starts and runs, and which tabs it shows.",
+															"Role":"Tab",
+															"Id":"GeneralTabPage",
 															"Items":[
 																{
-																	"Name":"Allow only one copy of Application at a time",
-																	"Description":"Allow only one instance of the application to run at a time.",
-																	"Role":"CheckBox",
-																	"Id":"AllowOnlyOneCopyCheckBox"
-																},
-																{
-																	"Name":"Minimize to Tray",
-																	"Description":"Hides the window to the notification area instead of the taskbar.",
-																	"Role":"CheckBox",
-																	"Id":"MinimizeToTrayCheckBox"
-																},
-																{
-																	"Name":"Always on Top",
-																	"Description":"Make program Top Window",
-																	"Role":"CheckBox",
-																	"Id":"AlwaysOnTopCheckBox"
-																},
-																{
-																	"Name":"Start with Windows:",
-																	"Description":"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.",
-																	"Role":"CheckBox",
-																	"Id":"StartWithWindowsCheckBox"
-																},
-																{
-																	"Name":"Start with Windows",
-																	"Description":"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.",
-																	"Role":"List",
-																	"Id":"StartWithWindowsStateComboBox"
-																}
-															]
-														},
-														{
-															"Name":"Testing",
-															"Description":"Switching the emulated controllers off to try the real ones, and the pages that show more detail.",
-															"Role":"Section",
-															"Id":"TestingGroupBox",
-															"Items":[
-																{
-																	"Name":"Enable XInput",
-																	"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
-																	"Role":"CheckBox",
-																	"Id":"XInputEnableCheckBox"
-																},
-																{
-																	"Name":"Show [Programs] Tab",
-																	"Description":"Shows the Programs page, which lists what has been set up for each program.",
-																	"Role":"CheckBox",
-																	"Id":"ShowProgramsTabCheckBox"
-																},
-																{
-																	"Name":"Show [Devices] Tab",
-																	"Description":"Shows the Devices page, which lists every controller found.",
-																	"Role":"CheckBox",
-																	"Id":"ShowDevicesTabCheckBox"
-																},
-																{
-																	"Name":"Show [Settings] Tab",
-																	"Description":"Shows the Settings page, which lists every stored setting.",
-																	"Role":"CheckBox",
-																	"Id":"ShowSettingsTabCheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Direct Input Devices",
-															"Description":"Which devices the program lists and reads.",
-															"Role":"Section",
-															"Id":"DirectInputDevicesGroupBox",
-															"Items":[
-																{
-																	"Name":"Exclude Supplemental Devices",
-																	"Description":"For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.",
-																	"Role":"CheckBox",
-																	"Id":"ExcludeSupplementalDevicesCheckBox"
-																},
-																{
-																	"Name":"Exclude Virtual Devices",
-																	"Description":"For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.",
-																	"Role":"CheckBox",
-																	"Id":"ExcludeVirtualDevicesCheckBox"
-																},
-																{
-																	"Name":"Read Every Change",
-																	"Description":"Read every change a device reports, not only its state at each pass.",
-																	"Role":"CheckBox",
-																	"Id":"ReadEveryChangeCheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Guide Button",
-															"Description":"What happens when the Guide button is pressed.",
-															"Role":"Section",
-															"Id":"GuideButtonGroupBox",
-															"Items":[
-																{
-																	"Name":"Guide button action",
-																	"Description":"Program or command run when the Guide button is pressed.",
-																	"Role":"Text",
-																	"Id":"GuideButtonActionTextBox"
-																}
-															]
-														},
-														{
-															"Name":"Hotkeys",
-															"Description":"Keys and controller buttons that reach this program from inside a game.",
-															"Role":"Section",
-															"Id":"HotkeysGroupBox",
-															"Items":[
-																{
-																	"Name":"Emulation",
-																	"Description":"Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.",
-																	"Role":"CheckBox",
-																	"Id":"EmulationHotkeyCheckBox"
-																},
-																{
-																	"Name":"Emulation hotkey",
-																	"Description":"Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.",
-																	"Role":"Value",
-																	"Id":"EmulationHotkeyTextBox"
-																},
-																{
-																	"Name":"Controller",
-																	"Description":"Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.",
-																	"Role":"CheckBox",
-																	"Id":"EmulationButtonsCheckBox"
-																},
-																{
-																	"Name":"Emulation buttons",
-																	"Description":"Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.",
-																	"Role":"Value",
-																	"Id":"EmulationButtonsTextBox"
-																},
-																{
-																	"Name":"Show a note on the screen when pressed",
-																	"Description":"Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.",
-																	"Role":"CheckBox",
-																	"Id":"EmulationOverlayCheckBox"
-																},
-																{
-																	"Name":"Show a note when a device disconnects",
-																	"Description":"Shows a short note on the screen when a device mapped to the current game disconnects or connects again.",
-																	"Role":"CheckBox",
-																	"Id":"DeviceChangeOverlayCheckBox"
-																}
-															]
-														},
-														{
-															"Name":"Scan locations",
-															"Description":"Folders searched when looking for installed games.",
-															"Role":"Tabs",
-															"Id":"ProgramScanLocationsTabControl",
-															"Items":[
-																{
-																	"Name":"Game Scan Locations",
-																	"Description":"Folders searched when looking for installed games.",
-																	"Role":"Tab",
-																	"Id":"GameScanLocationsTabPage",
+																	"Name":"Operation",
+																	"Description":"How the program behaves while it runs.",
+																	"Role":"Section",
+																	"Id":"OperationGroupBox",
 																	"Items":[
 																		{
-																			"Name":"Scanned folders",
-																			"Description":"The locations to scan for games.",
-																			"Role":"List",
-																			"Id":"GameScanLocationsListBox"
+																			"Name":"Allow only one copy of Application at a time",
+																			"Description":"Allow only one instance of the application to run at a time.",
+																			"Role":"CheckBox",
+																			"Id":"AllowOnlyOneCopyCheckBox"
 																		},
 																		{
-																			"Name":"Scan location actions",
-																			"Description":"Adds and removes the folders searched for games.",
-																			"Role":"Toolbar",
-																			"Id":"LocationsToolStrip",
+																			"Name":"Minimize to Tray",
+																			"Description":"Hides the window to the notification area instead of the taskbar.",
+																			"Role":"CheckBox",
+																			"Id":"MinimizeToTrayCheckBox"
+																		},
+																		{
+																			"Name":"Always on Top",
+																			"Description":"Make program Top Window",
+																			"Role":"CheckBox",
+																			"Id":"AlwaysOnTopCheckBox"
+																		},
+																		{
+																			"Name":"Start with Windows:",
+																			"Description":"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.",
+																			"Role":"CheckBox",
+																			"Id":"StartWithWindowsCheckBox"
+																		},
+																		{
+																			"Name":"Start with Windows",
+																			"Description":"How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.",
+																			"Role":"List",
+																			"Id":"StartWithWindowsStateComboBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Testing",
+																	"Description":"Switching the emulated controllers off to try the real ones, and the pages that show more detail.",
+																	"Role":"Section",
+																	"Id":"TestingGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Enable XInput",
+																			"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
+																			"Role":"CheckBox",
+																			"Id":"XInputEnableCheckBox"
+																		},
+																		{
+																			"Name":"Show [Programs] Tab",
+																			"Description":"Shows the Programs page, which lists what has been set up for each program.",
+																			"Role":"CheckBox",
+																			"Id":"ShowProgramsTabCheckBox"
+																		},
+																		{
+																			"Name":"Show [Devices] Tab",
+																			"Description":"Shows the Devices page, which lists every controller found.",
+																			"Role":"CheckBox",
+																			"Id":"ShowDevicesTabCheckBox"
+																		},
+																		{
+																			"Name":"Show [Settings] Tab",
+																			"Description":"Shows the Settings page, which lists every stored setting.",
+																			"Role":"CheckBox",
+																			"Id":"ShowSettingsTabCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Direct Input Devices",
+																	"Description":"Which devices the program lists and reads.",
+																	"Role":"Section",
+																	"Id":"DirectInputDevicesGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Exclude Supplemental Devices",
+																			"Description":"For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.",
+																			"Role":"CheckBox",
+																			"Id":"ExcludeSupplementalDevicesCheckBox"
+																		},
+																		{
+																			"Name":"Exclude Virtual Devices",
+																			"Description":"For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.",
+																			"Role":"CheckBox",
+																			"Id":"ExcludeVirtualDevicesCheckBox"
+																		},
+																		{
+																			"Name":"Read Every Change",
+																			"Description":"Read every change a device reports, not only its state at each pass.",
+																			"Role":"CheckBox",
+																			"Id":"ReadEveryChangeCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Guide Button",
+																	"Description":"What happens when the Guide button is pressed.",
+																	"Role":"Section",
+																	"Id":"GuideButtonGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Guide button action",
+																			"Description":"Program or command run when the Guide button is pressed.",
+																			"Role":"Text",
+																			"Id":"GuideButtonActionTextBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Hotkeys",
+																	"Description":"Keys and controller buttons that reach this program from inside a game.",
+																	"Role":"Section",
+																	"Id":"HotkeysGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Emulation",
+																			"Description":"Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.",
+																			"Role":"CheckBox",
+																			"Id":"EmulationHotkeyCheckBox"
+																		},
+																		{
+																			"Name":"Emulation hotkey",
+																			"Description":"Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.",
+																			"Role":"Value",
+																			"Id":"EmulationHotkeyTextBox"
+																		},
+																		{
+																			"Name":"Controller",
+																			"Description":"Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.",
+																			"Role":"CheckBox",
+																			"Id":"EmulationButtonsCheckBox"
+																		},
+																		{
+																			"Name":"Emulation buttons",
+																			"Description":"Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.",
+																			"Role":"Value",
+																			"Id":"EmulationButtonsTextBox"
+																		},
+																		{
+																			"Name":"Show a note on the screen when pressed",
+																			"Description":"Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.",
+																			"Role":"CheckBox",
+																			"Id":"EmulationOverlayCheckBox"
+																		},
+																		{
+																			"Name":"Show a note when a device disconnects",
+																			"Description":"Shows a short note on the screen when a device mapped to the current game disconnects or connects again.",
+																			"Role":"CheckBox",
+																			"Id":"DeviceChangeOverlayCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Scan locations",
+																	"Description":"Folders searched when looking for installed games.",
+																	"Role":"Tabs",
+																	"Id":"ProgramScanLocationsTabControl",
+																	"Items":[
+																		{
+																			"Name":"Game Scan Locations",
+																			"Description":"Folders searched when looking for installed games.",
+																			"Role":"Tab",
+																			"Id":"GameScanLocationsTabPage",
 																			"Items":[
 																				{
-																					"Name":"Refresh",
-																					"Description":"Reads the folder list again.",
-																					"Role":"Button",
-																					"Id":"RefreshLocationsButton"
+																					"Name":"Scanned folders",
+																					"Description":"The locations to scan for games.",
+																					"Role":"List",
+																					"Id":"GameScanLocationsListBox"
 																				},
 																				{
-																					"Name":"Remove",
-																					"Description":"Stops searching the selected folder.",
-																					"Role":"Button",
-																					"Id":"RemoveLocationButton"
+																					"Name":"Scan location actions",
+																					"Description":"Adds and removes the folders searched for games.",
+																					"Role":"Toolbar",
+																					"Id":"LocationsToolStrip",
+																					"Items":[
+																						{
+																							"Name":"Refresh",
+																							"Description":"Reads the folder list again.",
+																							"Role":"Button",
+																							"Id":"RefreshLocationsButton"
+																						},
+																						{
+																							"Name":"Remove",
+																							"Description":"Stops searching the selected folder.",
+																							"Role":"Button",
+																							"Id":"RemoveLocationButton"
+																						},
+																						{
+																							"Name":"Add...",
+																							"Description":"Adds a folder to search for games.",
+																							"Role":"Button",
+																							"Id":"AddLocationButton"
+																						}
+																					]
+																				}
+																			]
+																		}
+																	]
+																},
+																{
+																	"Name":"Appearance",
+																	"Description":"The program's colours, and the font and size its windows are drawn in.",
+																	"Role":"Section",
+																	"Id":"AppearanceGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Theme",
+																			"Description":"Light or dark colours. System follows the Windows setting for apps.",
+																			"Role":"List",
+																			"Id":"ThemeComboBox"
+																		},
+																		{
+																			"Name":"Font",
+																			"Description":"The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.",
+																			"Role":"List",
+																			"Id":"FontComboBox"
+																		},
+																		{
+																			"Name":"Size",
+																			"Description":"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its own font and Windows' text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.",
+																			"Role":"List",
+																			"Id":"SizeComboBox"
+																		},
+																		{
+																			"Name":"Restart x360ce",
+																			"Description":"Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.",
+																			"Role":"Button",
+																			"Id":"RestartButton",
+																			"Hidden":true
+																		}
+																	]
+																},
+																{
+																	"Name":"Developing",
+																	"Description":"Aids for working on the program itself.",
+																	"Role":"Section",
+																	"Id":"DevelopingGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Show Form Info on CTRL+SHIFT+RMB",
+																			"Description":"Enable Form Info (CTRL+SHIFT+RMB)",
+																			"Role":"CheckBox",
+																			"Id":"ShowFormInfoCheckBox"
+																		},
+																		{
+																			"Name":"Show [Test...] Button",
+																			"Description":"Show [Test...] Button.",
+																			"Role":"CheckBox",
+																			"Id":"ShowTestButtonCheckBox"
+																		},
+																		{
+																			"Name":"Developer Tools...",
+																			"Description":"Opens a window of aids for working on the program.",
+																			"Role":"Button",
+																			"Id":"DeveloperToolsButton"
+																		}
+																	]
+																},
+																{
+																	"Name":"Configuration",
+																	"Description":"Switching settings to the game in front.",
+																	"Role":"Section",
+																	"Id":"ConfigurationGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Auto switch configuration when game focused",
+																			"Description":"Autodetect currently focussed game.",
+																			"Role":"CheckBox",
+																			"Id":"AutoDetectForegroundWindowCheckBox"
+																		}
+																	]
+																}
+															]
+														},
+														{
+															"Name":"Internet",
+															"Description":"Whether settings are shared with the online database, and the account used.",
+															"Role":"Tab",
+															"Id":"InternetOptionsTabPage",
+															"Items":[
+																{
+																	"Name":null,
+																	"Description":"Whether settings are shared with the online database, and the account used.",
+																	"Role":"Group",
+																	"Id":"InternetPanel",
+																	"Type":"OptionsInternetUserControl",
+																	"Items":[
+																		{
+																			"Name":"Default settings",
+																			"Description":"How settings shared by other people are chosen.",
+																			"Role":"Section",
+																			"Id":"GamesGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Minimum instances",
+																					"Description":"How many people must use a setting before it is offered as the default.",
+																					"Role":"Number",
+																					"Id":"GetProgramsMinInstancesUpDown",
+																					"Min":0,
+																					"Max":100
 																				},
 																				{
-																					"Name":"Add...",
-																					"Description":"Adds a folder to search for games.",
+																					"Name":"Include Enabled",
+																					"Description":"Counts only games that are switched on when choosing a default.",
+																					"Role":"CheckBox",
+																					"Id":"GetProgramsIncludeEnabledCheckBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Internet",
+																			"Description":"Whether the program contacts the online settings database at all.",
+																			"Role":"Section",
+																			"Id":"InternetGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Enable Internet Features",
+																					"Description":"Enable the use of Internet features like the settings database.",
+																					"Role":"CheckBox",
+																					"Id":"InternetFeaturesCheckBox"
+																				},
+																				{
+																					"Name":"Load Settings from Cloud",
+																					"Description":"Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.",
+																					"Role":"CheckBox",
+																					"Id":"InternetAutoLoadCheckBox"
+																				},
+																				{
+																					"Name":"Save Settings to Cloud",
+																					"Description":"Auto save settings to Internet Database.",
+																					"Role":"CheckBox",
+																					"Id":"InternetAutoSaveCheckBox"
+																				},
+																				{
+																					"Name":"Web service address",
+																					"Description":"Internet settings database URL.",
+																					"Role":"List",
+																					"Id":"InternetDatabaseUrlComboBox"
+																				},
+																				{
+																					"Name":"Test",
+																					"Description":"Asks the web service at that address who it is and says whether it answers.",
 																					"Role":"Button",
-																					"Id":"AddLocationButton"
+																					"Id":"TestServiceButton"
+																				},
+																				{
+																					"Name":"SDL database address",
+																					"Description":"Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.",
+																					"Role":"List",
+																					"Id":"SdlDatabaseUrlComboBox"
+																				},
+																				{
+																					"Name":"Update SDL Database",
+																					"Description":"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.",
+																					"Role":"Button",
+																					"Id":"UpdateSdlDatabaseButton"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Online account",
+																			"Description":"Identifies this computer to the online database.",
+																			"Role":"Section",
+																			"Id":"OnlineAccountGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Computer disk",
+																					"Description":"Disk the computer identifier is taken from.",
+																					"Role":"Text",
+																					"Id":"ComputerDiskTextBox"
+																				},
+																				{
+																					"Name":"Computer identifier",
+																					"Description":"Anonymous identifier for this computer.",
+																					"Role":"Text",
+																					"Id":"ComputerIdTextBox"
+																				},
+																				{
+																					"Name":"Profile path",
+																					"Description":"Folder the profile identifier is taken from.",
+																					"Role":"Text",
+																					"Id":"ProfilePathTextBox"
+																				},
+																				{
+																					"Name":"Open",
+																					"Description":"Opens the folder the profile identifier is taken from.",
+																					"Role":"Button",
+																					"Id":"OpenSettingsFolderButton"
+																				},
+																				{
+																					"Name":"Profile identifier",
+																					"Description":"Anonymous identifier for this profile.",
+																					"Role":"Text",
+																					"Id":"ProfileIdTextBox"
+																				}
+																			]
+																		},
+																		{
+																			"Name":"Sign in",
+																			"Description":"Signs in, so settings can be kept with an account instead of this computer.",
+																			"Role":"Section",
+																			"Id":"OnlineAccountLoginGroupBox",
+																			"Hidden":true,
+																			"Items":[
+																				{
+																					"Name":"Username",
+																					"Description":"E-mail address the account was created with.",
+																					"Role":"Text",
+																					"Id":"UsernameTextBox"
+																				},
+																				{
+																					"Name":"Password",
+																					"Description":"Password for the account.",
+																					"Role":"Text",
+																					"Id":"PasswordTextBox"
+																				},
+																				{
+																					"Name":"Log In",
+																					"Description":"Signs in with the username and password above.",
+																					"Role":"Button",
+																					"Id":"LoginButton"
+																				},
+																				{
+																					"Name":"Create...",
+																					"Description":"Creates an account on the online database.",
+																					"Role":"Button",
+																					"Id":"CreateButton"
+																				},
+																				{
+																					"Name":"Reset...",
+																					"Description":"Sends a password reset to the address above.",
+																					"Role":"Button",
+																					"Id":"ResetButton"
 																				}
 																			]
 																		}
@@ -2469,889 +2717,650 @@
 															]
 														},
 														{
-															"Name":"Appearance",
-															"Description":"The program's colours, and the font and size its windows are drawn in.",
-															"Role":"Section",
-															"Id":"AppearanceGroupBox",
+															"Name":"Virtual Device",
+															"Description":"The driver that presents the emulated controllers to Windows.",
+															"Role":"Tab",
+															"Id":"VirtualDeviceTabPage",
 															"Items":[
 																{
-																	"Name":"Theme",
-																	"Description":"Light or dark colours. System follows the Windows setting for apps.",
-																	"Role":"List",
-																	"Id":"ThemeComboBox"
-																},
-																{
-																	"Name":"Font",
-																	"Description":"The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.",
-																	"Role":"List",
-																	"Id":"FontComboBox"
-																},
-																{
-																	"Name":"Size",
-																	"Description":"The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.",
-																	"Role":"List",
-																	"Id":"SizeComboBox"
-																},
-																{
-																	"Name":"Restart x360ce",
-																	"Description":"Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.",
-																	"Role":"Button",
-																	"Id":"RestartButton",
-																	"Hidden":true
-																}
-															]
-														},
-														{
-															"Name":"Developing",
-															"Description":"Aids for working on the program itself.",
-															"Role":"Section",
-															"Id":"DevelopingGroupBox",
-															"Items":[
-																{
-																	"Name":"Show Form Info on CTRL+SHIFT+RMB",
-																	"Description":"Enable Form Info (CTRL+SHIFT+RMB)",
-																	"Role":"CheckBox",
-																	"Id":"ShowFormInfoCheckBox"
-																},
-																{
-																	"Name":"Show [Test...] Button",
-																	"Description":"Show [Test...] Button.",
-																	"Role":"CheckBox",
-																	"Id":"ShowTestButtonCheckBox"
-																},
-																{
-																	"Name":"Developer Tools...",
-																	"Description":"Opens a window of aids for working on the program.",
-																	"Role":"Button",
-																	"Id":"DeveloperToolsButton"
-																}
-															]
-														},
-														{
-															"Name":"Configuration",
-															"Description":"Switching settings to the game in front.",
-															"Role":"Section",
-															"Id":"ConfigurationGroupBox",
-															"Items":[
-																{
-																	"Name":"Auto switch configuration when game focused",
-																	"Description":"Autodetect currently focussed game.",
-																	"Role":"CheckBox",
-																	"Id":"AutoDetectForegroundWindowCheckBox"
-																}
-															]
-														}
-													]
-												},
-												{
-													"Name":"Internet",
-													"Description":"Whether settings are shared with the online database, and the account used.",
-													"Role":"Tab",
-													"Id":"InternetOptionsTabPage",
-													"Items":[
-														{
-															"Name":null,
-															"Description":"Whether settings are shared with the online database, and the account used.",
-															"Role":"Group",
-															"Id":"InternetPanel",
-															"Type":"OptionsInternetUserControl",
-															"Items":[
-																{
-																	"Name":"Default settings",
-																	"Description":"How settings shared by other people are chosen.",
+																	"Name":"Allow Remote Controllers",
+																	"Description":"Lets another computer on the network work these controllers.",
 																	"Role":"Section",
-																	"Id":"GamesGroupBox",
-																	"Items":[
-																		{
-																			"Name":"Minimum instances",
-																			"Description":"How many people must use a setting before it is offered as the default.",
-																			"Role":"Number",
-																			"Id":"GetProgramsMinInstancesUpDown",
-																			"Min":0,
-																			"Max":100
-																		},
-																		{
-																			"Name":"Include Enabled",
-																			"Description":"Counts only games that are switched on when choosing a default.",
-																			"Role":"CheckBox",
-																			"Id":"GetProgramsIncludeEnabledCheckBox"
-																		}
-																	]
-																},
-																{
-																	"Name":"Internet",
-																	"Description":"Whether the program contacts the online settings database at all.",
-																	"Role":"Section",
-																	"Id":"InternetGroupBox",
-																	"Items":[
-																		{
-																			"Name":"Enable Internet Features",
-																			"Description":"Enable the use of Internet features like the settings database.",
-																			"Role":"CheckBox",
-																			"Id":"InternetFeaturesCheckBox"
-																		},
-																		{
-																			"Name":"Load Settings from Cloud",
-																			"Description":"Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.",
-																			"Role":"CheckBox",
-																			"Id":"InternetAutoLoadCheckBox"
-																		},
-																		{
-																			"Name":"Save Settings to Cloud",
-																			"Description":"Auto save settings to Internet Database.",
-																			"Role":"CheckBox",
-																			"Id":"InternetAutoSaveCheckBox"
-																		},
-																		{
-																			"Name":"Web service address",
-																			"Description":"Internet settings database URL.",
-																			"Role":"List",
-																			"Id":"InternetDatabaseUrlComboBox"
-																		},
-																		{
-																			"Name":"Test",
-																			"Description":"Asks the web service at that address who it is and says whether it answers.",
-																			"Role":"Button",
-																			"Id":"TestServiceButton"
-																		},
-																		{
-																			"Name":"SDL database address",
-																			"Description":"Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.",
-																			"Role":"List",
-																			"Id":"SdlDatabaseUrlComboBox"
-																		},
-																		{
-																			"Name":"Update SDL Database",
-																			"Description":"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.",
-																			"Role":"Button",
-																			"Id":"UpdateSdlDatabaseButton"
-																		}
-																	]
-																},
-																{
-																	"Name":"Online account",
-																	"Description":"Identifies this computer to the online database.",
-																	"Role":"Section",
-																	"Id":"OnlineAccountGroupBox",
-																	"Items":[
-																		{
-																			"Name":"Computer disk",
-																			"Description":"Disk the computer identifier is taken from.",
-																			"Role":"Text",
-																			"Id":"ComputerDiskTextBox"
-																		},
-																		{
-																			"Name":"Computer identifier",
-																			"Description":"Anonymous identifier for this computer.",
-																			"Role":"Text",
-																			"Id":"ComputerIdTextBox"
-																		},
-																		{
-																			"Name":"Profile path",
-																			"Description":"Folder the profile identifier is taken from.",
-																			"Role":"Text",
-																			"Id":"ProfilePathTextBox"
-																		},
-																		{
-																			"Name":"Open",
-																			"Description":"Opens the folder the profile identifier is taken from.",
-																			"Role":"Button",
-																			"Id":"OpenSettingsFolderButton"
-																		},
-																		{
-																			"Name":"Profile identifier",
-																			"Description":"Anonymous identifier for this profile.",
-																			"Role":"Text",
-																			"Id":"ProfileIdTextBox"
-																		}
-																	]
-																},
-																{
-																	"Name":"Sign in",
-																	"Description":"Signs in, so settings can be kept with an account instead of this computer.",
-																	"Role":"Section",
-																	"Id":"OnlineAccountLoginGroupBox",
+																	"Id":"AllowRemoteControllersGroupBox",
 																	"Hidden":true,
 																	"Items":[
 																		{
-																			"Name":"Username",
-																			"Description":"E-mail address the account was created with.",
+																			"Name":"Remote password",
+																			"Description":"Password another computer must give before it may work these controllers.",
 																			"Role":"Text",
-																			"Id":"UsernameTextBox"
+																			"Id":"RemotePasswordTextBox"
 																		},
 																		{
-																			"Name":"Password",
-																			"Description":"Password for the account.",
+																			"Name":"Allow remote controller 1",
+																			"Description":"Lets a remote computer work controller 1.",
+																			"Role":"CheckBox",
+																			"Id":"AllowRemote1CheckBox"
+																		},
+																		{
+																			"Name":"Allow remote controller 2",
+																			"Description":"Lets a remote computer work controller 2.",
+																			"Role":"CheckBox",
+																			"Id":"AllowRemote2CheckBox"
+																		},
+																		{
+																			"Name":"Allow remote controller 3",
+																			"Description":"Lets a remote computer work controller 3.",
+																			"Role":"CheckBox",
+																			"Id":"AllowRemote3CheckBox"
+																		},
+																		{
+																			"Name":"Allow remote controller 4",
+																			"Description":"Lets a remote computer work controller 4.",
+																			"Role":"CheckBox",
+																			"Id":"AllowRemote4CheckBox"
+																		},
+																		{
+																			"Name":"Remote port",
+																			"Description":"Network port listened on for a remote controller.",
+																			"Role":"Number",
+																			"Id":"RemotePortNumericUpDown",
+																			"Min":1024,
+																			"Max":49151
+																		},
+																		{
+																			"Name":"Enabled",
+																			"Description":"Accepts controllers from another computer.",
+																			"Role":"CheckBox",
+																			"Id":"RemoteEnabledCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Virtual controller driver",
+																	"Description":"The driver that presents the emulated controllers to Windows.",
+																	"Role":"Section",
+																	"Id":"VirtualDeviceGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Polling rate",
+																			"Description":"Virtual Controller update frequency.",
+																			"Role":"List",
+																			"Id":"PollingRateComboBox"
+																		},
+																		{
+																			"Name":"Driver version",
+																			"Description":"Which version of the virtual controller driver is installed.",
 																			"Role":"Text",
-																			"Id":"PasswordTextBox"
+																			"Id":"ViGEmBusTextBox"
 																		},
 																		{
-																			"Name":"Log In",
-																			"Description":"Signs in with the username and password above.",
+																			"Name":"Refresh",
+																			"Description":"Checks the driver again.",
 																			"Role":"Button",
-																			"Id":"LoginButton"
+																			"Id":"ViGEmBusRefreshButton"
 																		},
 																		{
-																			"Name":"Create...",
-																			"Description":"Creates an account on the online database.",
+																			"Name":"Install",
+																			"Description":"Installs the virtual controller driver. Needs Administrator.",
 																			"Role":"Button",
-																			"Id":"CreateButton"
+																			"Id":"ViGEmBusInstallButton"
 																		},
 																		{
-																			"Name":"Reset...",
-																			"Description":"Sends a password reset to the address above.",
+																			"Name":"Uninstall",
+																			"Description":"Removes the virtual controller driver. Needs Administrator.",
 																			"Role":"Button",
-																			"Id":"ResetButton"
+																			"Id":"ViGEmBusUninstallButton"
+																		},
+																		{
+																			"Name":"Driver author",
+																			"Description":"Opens the page the virtual controller driver comes from.",
+																			"Role":"Link",
+																			"Id":"AboutViGEmLinkLabel"
 																		}
 																	]
 																}
 															]
-														}
-													]
-												},
-												{
-													"Name":"Virtual Device",
-													"Description":"The driver that presents the emulated controllers to Windows.",
-													"Role":"Tab",
-													"Id":"VirtualDeviceTabPage",
-													"Items":[
-														{
-															"Name":"Allow Remote Controllers",
-															"Description":"Lets another computer on the network work these controllers.",
-															"Role":"Section",
-															"Id":"AllowRemoteControllersGroupBox",
-															"Hidden":true,
-															"Items":[
-																{
-																	"Name":"Remote password",
-																	"Description":"Password another computer must give before it may work these controllers.",
-																	"Role":"Text",
-																	"Id":"RemotePasswordTextBox"
-																},
-																{
-																	"Name":"Allow remote controller 1",
-																	"Description":"Lets a remote computer work controller 1.",
-																	"Role":"CheckBox",
-																	"Id":"AllowRemote1CheckBox"
-																},
-																{
-																	"Name":"Allow remote controller 2",
-																	"Description":"Lets a remote computer work controller 2.",
-																	"Role":"CheckBox",
-																	"Id":"AllowRemote2CheckBox"
-																},
-																{
-																	"Name":"Allow remote controller 3",
-																	"Description":"Lets a remote computer work controller 3.",
-																	"Role":"CheckBox",
-																	"Id":"AllowRemote3CheckBox"
-																},
-																{
-																	"Name":"Allow remote controller 4",
-																	"Description":"Lets a remote computer work controller 4.",
-																	"Role":"CheckBox",
-																	"Id":"AllowRemote4CheckBox"
-																},
-																{
-																	"Name":"Remote port",
-																	"Description":"Network port listened on for a remote controller.",
-																	"Role":"Number",
-																	"Id":"RemotePortNumericUpDown",
-																	"Min":1024,
-																	"Max":49151
-																},
-																{
-																	"Name":"Enabled",
-																	"Description":"Accepts controllers from another computer.",
-																	"Role":"CheckBox",
-																	"Id":"RemoteEnabledCheckBox"
-																}
-															]
 														},
-														{
-															"Name":"Virtual controller driver",
-															"Description":"The driver that presents the emulated controllers to Windows.",
-															"Role":"Section",
-															"Id":"VirtualDeviceGroupBox",
-															"Items":[
-																{
-																	"Name":"Polling rate",
-																	"Description":"Virtual Controller update frequency.",
-																	"Role":"List",
-																	"Id":"PollingRateComboBox"
-																},
-																{
-																	"Name":"Driver version",
-																	"Description":"Which version of the virtual controller driver is installed.",
-																	"Role":"Text",
-																	"Id":"ViGEmBusTextBox"
-																},
-																{
-																	"Name":"Refresh",
-																	"Description":"Checks the driver again.",
-																	"Role":"Button",
-																	"Id":"ViGEmBusRefreshButton"
-																},
-																{
-																	"Name":"Install",
-																	"Description":"Installs the virtual controller driver. Needs Administrator.",
-																	"Role":"Button",
-																	"Id":"ViGEmBusInstallButton"
-																},
-																{
-																	"Name":"Uninstall",
-																	"Description":"Removes the virtual controller driver. Needs Administrator.",
-																	"Role":"Button",
-																	"Id":"ViGEmBusUninstallButton"
-																},
-																{
-																	"Name":"Driver author",
-																	"Description":"Opens the page the virtual controller driver comes from.",
-																	"Role":"Link",
-																	"Id":"AboutViGEmLinkLabel"
-																}
-															]
-														}
-													]
-												},
-												{
-													"Name":"HID Hide",
-													"Description":"Hides the real controller from games, so only the emulated one is seen.",
-													"Role":"Tab",
-													"Id":"HidHideTabPage",
-													"Items":[
 														{
 															"Name":"HID Hide",
 															"Description":"Hides the real controller from games, so only the emulated one is seen.",
-															"Role":"Section",
-															"Id":"HidHideGroupBox",
+															"Role":"Tab",
+															"Id":"HidHideTabPage",
 															"Items":[
 																{
-																	"Name":"HID Hide state",
-																	"Description":"Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.",
+																	"Name":"HID Hide",
+																	"Description":"Hides the real controller from games, so only the emulated one is seen.",
+																	"Role":"Section",
+																	"Id":"HidHideGroupBox",
+																	"Items":[
+																		{
+																			"Name":"HID Hide state",
+																			"Description":"Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.",
+																			"Role":"Value",
+																			"Id":"HidHideStatusTextBox"
+																		},
+																		{
+																			"Name":"Refresh",
+																			"Description":"Checks HID Hide again.",
+																			"Role":"Button",
+																			"Id":"HidHideRefreshButton"
+																		},
+																		{
+																			"Name":"Install HID Hide",
+																			"Description":"Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.",
+																			"Role":"Button",
+																			"Id":"HidHideInstallButton"
+																		},
+																		{
+																			"Name":"Open Configuration",
+																			"Description":"Opens the HID Hide program, where hidden devices are chosen.",
+																			"Role":"Button",
+																			"Id":"HidHideConfigureButton"
+																		},
+																		{
+																			"Name":"HID Hide releases",
+																			"Description":"Opens the page HID Hide's setups are downloaded from, to download one by hand.",
+																			"Role":"Link",
+																			"Id":"HidHideDownloadLinkLabel"
+																		},
+																		{
+																			"Name":"Configure automatically",
+																			"Description":"Hide a device through HID Hide while it is mapped to a controller.",
+																			"Role":"CheckBox",
+																			"Id":"HidHideConfigureAutomaticallyCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"HID Hide notes",
+																	"Description":"What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.",
 																	"Role":"Value",
-																	"Id":"HidHideStatusTextBox"
-																},
-																{
-																	"Name":"Refresh",
-																	"Description":"Checks HID Hide again.",
-																	"Role":"Button",
-																	"Id":"HidHideRefreshButton"
-																},
-																{
-																	"Name":"Install HID Hide",
-																	"Description":"Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.",
-																	"Role":"Button",
-																	"Id":"HidHideInstallButton"
-																},
-																{
-																	"Name":"Open Configuration",
-																	"Description":"Opens the HID Hide program, where hidden devices are chosen.",
-																	"Role":"Button",
-																	"Id":"HidHideConfigureButton"
-																},
-																{
-																	"Name":"HID Hide releases",
-																	"Description":"Opens the page HID Hide's setups are downloaded from, to download one by hand.",
-																	"Role":"Link",
-																	"Id":"HidHideDownloadLinkLabel"
-																},
-																{
-																	"Name":"Configure automatically",
-																	"Description":"Hide a device through HID Hide while it is mapped to a controller.",
-																	"Role":"CheckBox",
-																	"Id":"HidHideConfigureAutomaticallyCheckBox"
+																	"Id":"HidHideHelpRichTextBox"
 																}
 															]
 														},
 														{
-															"Name":"HID Hide notes",
-															"Description":"What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.",
-															"Role":"Value",
-															"Id":"HidHideHelpRichTextBox"
-														}
-													]
-												},
-												{
-													"Name":"HID Guardian (obsolete)",
-													"Description":"The tool HID Hide replaced. Kept so an old installation can be removed.",
-													"Role":"Tab",
-													"Id":"HidGuardianTabPage",
-													"Items":[
-														{
-															"Name":"HID Guardian",
+															"Name":"HID Guardian (obsolete)",
 															"Description":"The tool HID Hide replaced. Kept so an old installation can be removed.",
-															"Role":"Section",
-															"Id":"groupBox1",
+															"Role":"Tab",
+															"Id":"HidGuardianTabPage",
 															"Items":[
 																{
-																	"Name":"HID Guardian state",
-																	"Description":"Whether HID Guardian is still installed.",
-																	"Role":"Text",
-																	"Id":"HidGuardianTextBox"
+																	"Name":"HID Guardian",
+																	"Description":"The tool HID Hide replaced. Kept so an old installation can be removed.",
+																	"Role":"Section",
+																	"Id":"groupBox1",
+																	"Items":[
+																		{
+																			"Name":"HID Guardian state",
+																			"Description":"Whether HID Guardian is still installed.",
+																			"Role":"Text",
+																			"Id":"HidGuardianTextBox"
+																		},
+																		{
+																			"Name":"Install",
+																			"Description":"Installs HID Guardian. Use HID Hide instead.",
+																			"Role":"Button",
+																			"Id":"HidGuardianInstallButton"
+																		},
+																		{
+																			"Name":"Uninstall",
+																			"Description":"Removes HID Guardian. Needs Administrator.",
+																			"Role":"Button",
+																			"Id":"HidGuardianUninstallButton"
+																		},
+																		{
+																			"Name":"Refresh",
+																			"Description":"Checks HID Guardian again.",
+																			"Role":"Button",
+																			"Id":"HidGuardianRefreshButton"
+																		}
+																	]
 																},
 																{
-																	"Name":"Install",
-																	"Description":"Installs HID Guardian. Use HID Hide instead.",
-																	"Role":"Button",
-																	"Id":"HidGuardianInstallButton"
-																},
-																{
-																	"Name":"Uninstall",
-																	"Description":"Removes HID Guardian. Needs Administrator.",
-																	"Role":"Button",
-																	"Id":"HidGuardianUninstallButton"
-																},
-																{
-																	"Name":"Refresh",
-																	"Description":"Checks HID Guardian again.",
-																	"Role":"Button",
-																	"Id":"HidGuardianRefreshButton"
+																	"Name":"HID Guardian notes",
+																	"Description":"Explains why HID Guardian is no longer recommended.",
+																	"Role":"Value",
+																	"Id":"HelpRichTextBox"
 																}
 															]
 														},
 														{
-															"Name":"HID Guardian notes",
-															"Description":"Explains why HID Guardian is no longer recommended.",
-															"Role":"Value",
-															"Id":"HelpRichTextBox"
-														}
-													]
-												},
-												{
-													"Name":"Settings",
-													"Description":"Where your settings are kept, and how to move them somewhere else.",
-													"Role":"Tab",
-													"Id":"SettingsTabPage",
-													"Items":[
-														{
-															"Name":null,
+															"Name":"Settings",
 															"Description":"Where your settings are kept, and how to move them somewhere else.",
-															"Role":"Group",
-															"Id":"SettingsPanel",
-															"Type":"OptionsSettingsUserControl",
+															"Role":"Tab",
+															"Id":"SettingsTabPage",
 															"Items":[
 																{
-																	"Name":"Settings folder in use",
-																	"Description":"Folder the settings are being read from and written to.",
-																	"Role":"Value",
-																	"Id":"CurrentPathTextBox"
-																},
-																{
-																	"Name":"Open Folder",
-																	"Description":"Opens the settings folder in Explorer.",
-																	"Role":"Button",
-																	"Id":"OpenFolderButton"
-																},
-																{
-																	"Name":"Keep settings in",
-																	"Description":"Which folder to keep settings in. Your own user folder cannot be locked by another account.",
-																	"Role":"List",
-																	"Id":"LocationComboBox"
-																},
-																{
-																	"Name":"What to do with existing settings",
-																	"Description":"Whether the settings you have are copied to the new folder, or left behind.",
-																	"Role":"List",
-																	"Id":"MoveModeComboBox"
-																},
-																{
-																	"Name":"Apply",
-																	"Description":"Moves the settings to the chosen folder and starts using it.",
-																	"Role":"Button",
-																	"Id":"ApplyButton"
+																	"Name":null,
+																	"Description":"Where your settings are kept, and how to move them somewhere else.",
+																	"Role":"Group",
+																	"Id":"SettingsPanel",
+																	"Type":"OptionsSettingsUserControl",
+																	"Items":[
+																		{
+																			"Name":"Settings folder in use",
+																			"Description":"Folder the settings are being read from and written to.",
+																			"Role":"Value",
+																			"Id":"CurrentPathTextBox"
+																		},
+																		{
+																			"Name":"Open Folder",
+																			"Description":"Opens the settings folder in Explorer.",
+																			"Role":"Button",
+																			"Id":"OpenFolderButton"
+																		},
+																		{
+																			"Name":"Keep settings in",
+																			"Description":"Which folder to keep settings in. Your own user folder cannot be locked by another account.",
+																			"Role":"List",
+																			"Id":"LocationComboBox"
+																		},
+																		{
+																			"Name":"What to do with existing settings",
+																			"Description":"Whether the settings you have are copied to the new folder, or left behind.",
+																			"Role":"List",
+																			"Id":"MoveModeComboBox"
+																		},
+																		{
+																			"Name":"Apply",
+																			"Description":"Moves the settings to the chosen folder and starts using it.",
+																			"Role":"Button",
+																			"Id":"ApplyButton"
+																		}
+																	]
 																}
 															]
-														}
-													]
-												},
-												{
-													"Name":"Update",
-													"Description":"Looks for a newer version of the program and installs it.",
-													"Role":"Tab",
-													"Id":"UpdateTabPage",
-													"Items":[
+														},
 														{
 															"Name":"Update",
-															"Description":"Looks for a newer version of the program and installs it, step by step, in the log below.",
-															"Role":"Group",
-															"Id":"UpdatePanel",
-															"Type":"OptionsUpdateUserControl",
+															"Description":"Looks for a newer version of the program and installs it.",
+															"Role":"Tab",
+															"Id":"UpdateTabPage",
 															"Items":[
 																{
-																	"Name":"Check for updates on startup",
-																	"Description":"Look for a newer version after the program starts. Off means no request is made.",
-																	"Role":"CheckBox",
-																	"Id":"CheckForUpdatesCheckBox"
-																},
-																{
-																	"Name":"What the check sends",
-																	"Description":"When the check runs and the one thing it sends: this program's version, to github.com.",
-																	"Role":"Label",
-																	"Id":"PrivacyLabel"
-																},
-																{
-																	"Name":"Check now",
-																	"Description":"Looks for a newer version now, downloads it, checks it and installs it.",
-																	"Role":"Button",
-																	"Id":"CheckButton"
-																},
-																{
-																	"Name":"Check Digital Signature",
-																	"Description":"Install only an update whose program file carries a trusted digital signature.",
-																	"Role":"CheckBox",
-																	"Id":"CheckDigitalSignatureCheckBox"
-																},
-																{
-																	"Name":"Check Version",
-																	"Description":"Install only an update whose program file is newer than this one and is the version its release announces.",
-																	"Role":"CheckBox",
-																	"Id":"CheckVersionCheckBox"
-																},
-																{
-																	"Name":"Update log",
-																	"Description":"Each step of the last check and what it found.",
-																	"Role":"Value",
-																	"Id":"LogTextBox"
-																}
-															]
-														}
-													]
-												},
-												{
-													"Name":"AI",
-													"Description":"The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.",
-													"Role":"Tab",
-													"Id":"AiTabPage",
-													"Items":[
-														{
-															"Name":"AI assistant access",
-															"Description":"Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.",
-															"Role":"Group",
-															"Id":"AiControl",
-															"Type":"AiAccessUserControl",
-															"Items":[
-																{
-																	"Name":"About AI assistant access",
-																	"Description":"What AI assistant access does, and an example of what to ask an assistant once it is on.",
+																	"Name":"Update",
+																	"Description":"Looks for a newer version of the program and installs it, step by step, in the log below.",
 																	"Role":"Group",
-																	"Id":"AiHeaderPanel",
+																	"Id":"UpdatePanel",
+																	"Type":"OptionsUpdateUserControl",
 																	"Items":[
 																		{
-																			"Name":"What AI assistant access does",
-																			"Description":"Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.",
+																			"Name":"Check for updates on startup",
+																			"Description":"Look for a newer version after the program starts. Off means no request is made.",
+																			"Role":"CheckBox",
+																			"Id":"CheckForUpdatesCheckBox"
+																		},
+																		{
+																			"Name":"What the check sends",
+																			"Description":"When the check runs and the one thing it sends: this program's version, to github.com.",
 																			"Role":"Label",
-																			"Id":"AiHeaderText"
+																			"Id":"PrivacyLabel"
 																		},
 																		{
-																			"Name":"Example request",
-																			"Description":"Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.",
-																			"Role":"Value",
-																			"Id":"AiExampleTextBox"
-																		},
-																		{
-																			"Name":"Copy example",
-																			"Description":"Copies the example request to the clipboard, to paste into an AI assistant.",
+																			"Name":"Check now",
+																			"Description":"Looks for a newer version now, downloads it, checks it and installs it.",
 																			"Role":"Button",
-																			"Id":"AiExampleCopyButton"
+																			"Id":"CheckButton"
+																		},
+																		{
+																			"Name":"Check Digital Signature",
+																			"Description":"Install only an update whose program file carries a trusted digital signature.",
+																			"Role":"CheckBox",
+																			"Id":"CheckDigitalSignatureCheckBox"
+																		},
+																		{
+																			"Name":"Check Version",
+																			"Description":"Install only an update whose program file is newer than this one and is the version its release announces.",
+																			"Role":"CheckBox",
+																			"Id":"CheckVersionCheckBox"
+																		},
+																		{
+																			"Name":"Update log",
+																			"Description":"Each step of the last check and what it found.",
+																			"Role":"Value",
+																			"Id":"LogTextBox"
 																		}
 																	]
-																},
+																}
+															]
+														},
+														{
+															"Name":"AI",
+															"Description":"The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.",
+															"Role":"Tab",
+															"Id":"AiTabPage",
+															"Items":[
 																{
-																	"Name":"AI tabs",
-																	"Description":"The skill, the door, and the tunnel for ChatGPT on the web, each on a tab of its own.",
-																	"Role":"Tabs",
-																	"Id":"AiTabControl",
+																	"Name":"AI assistant access",
+																	"Description":"Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.",
+																	"Role":"Group",
+																	"Id":"AiControl",
+																	"Type":"AiAccessUserControl",
 																	"Items":[
 																		{
-																			"Name":"AI Skill",
-																			"Description":"Installs the skill that teaches an AI agent how to use this program.",
-																			"Role":"Tab",
-																			"Id":"AiSkillTabPage",
+																			"Name":"About AI assistant access",
+																			"Description":"What AI assistant access does, and an example of what to ask an assistant once it is on.",
+																			"Role":"Group",
+																			"Id":"AiHeaderPanel",
 																			"Items":[
 																				{
-																					"Name":"AI skill",
-																					"Description":"Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.",
-																					"Role":"Group",
-																					"Id":"AiSkillPanel",
-																					"Items":[
-																						{
-																							"Name":"Claude Code skills folder",
-																							"Description":"Where Claude Code reads skills.",
-																							"Role":"Value",
-																							"Id":"AiSkillClaudeFolderTextBox"
-																						},
-																						{
-																							"Name":"Install for Claude Code",
-																							"Description":"Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.",
-																							"Role":"Button",
-																							"Id":"AiSkillClaudeButton"
-																						},
-																						{
-																							"Name":"Claude Code skill",
-																							"Description":"Whether the skill is in that folder, and whether it is this program's version.",
-																							"Role":"Label",
-																							"Id":"AiSkillClaudeStatusText"
-																						},
-																						{
-																							"Name":"Other agents' skills folder",
-																							"Description":"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.",
-																							"Role":"Value",
-																							"Id":"AiSkillAgentsFolderTextBox"
-																						},
-																						{
-																							"Name":"Install for other agents",
-																							"Description":"Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.",
-																							"Role":"Button",
-																							"Id":"AiSkillAgentsButton"
-																						},
-																						{
-																							"Name":"Other agents' skill",
-																							"Description":"Whether the skill is in that folder, and whether it is this program's version.",
-																							"Role":"Label",
-																							"Id":"AiSkillAgentsStatusText"
-																						},
-																						{
-																							"Name":"Claude app",
-																							"Description":"What to do with the ZIP, or why it was not saved.",
-																							"Role":"Label",
-																							"Id":"AiSkillZipNoteText"
-																						},
-																						{
-																							"Name":"Save as ZIP",
-																							"Description":"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.",
-																							"Role":"Button",
-																							"Id":"AiSkillZipButton"
-																						}
-																					]
+																					"Name":"What AI assistant access does",
+																					"Description":"Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.",
+																					"Role":"Label",
+																					"Id":"AiHeaderText"
+																				},
+																				{
+																					"Name":"Example request",
+																					"Description":"Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.",
+																					"Role":"Value",
+																					"Id":"AiExampleTextBox"
+																				},
+																				{
+																					"Name":"Copy example",
+																					"Description":"Copies the example request to the clipboard, to paste into an AI assistant.",
+																					"Role":"Button",
+																					"Id":"AiExampleCopyButton"
 																				}
 																			]
 																		},
 																		{
-																			"Name":"MCP Server - AI Assistant Access",
-																			"Description":"Opens the door an AI assistant or a script reaches this program by, at the level chosen there.",
-																			"Role":"Tab",
-																			"Id":"AiAccessTabPage",
+																			"Name":"AI tabs",
+																			"Description":"The skill, the door, and the tunnel for ChatGPT on the web, each on a tab of its own.",
+																			"Role":"Tabs",
+																			"Id":"AiTabControl",
 																			"Items":[
 																				{
-																					"Name":"AI assistant access (MCP server)",
-																					"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
-																					"Role":"Group",
-																					"Id":"AiAccessPanel",
+																					"Name":"AI Skill",
+																					"Description":"Installs the skill that teaches an AI agent how to use this program.",
+																					"Role":"Tab",
+																					"Id":"AiSkillTabPage",
 																					"Items":[
 																						{
-																							"Name":"AI assistant access",
-																							"Description":"Lets an AI assistant or a script reach this program at all. Off until a person ticks it.",
-																							"Role":"CheckBox",
-																							"Id":"AiAccessEnabledCheckBox"
-																						},
-																						{
-																							"Name":"AI assistant level",
-																							"Description":"Read, Configure or Administer: how much a connected assistant or script may do.",
-																							"Role":"List",
-																							"Id":"AiAccessComboBox"
-																						},
-																						{
-																							"Name":"AI assistant address",
-																							"Description":"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.",
-																							"Role":"List",
-																							"Id":"AiAccessAddressComboBox"
-																						},
-																						{
-																							"Name":"Trust local connections (no token)",
-																							"Description":"Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.",
-																							"Role":"CheckBox",
-																							"Id":"AiAccessTrustLocalCheckBox"
-																						},
-																						{
-																							"Name":"AI assistant port",
-																							"Description":"Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.",
-																							"Role":"Text",
-																							"Id":"AiAccessPortTextBox"
-																						},
-																						{
-																							"Name":"AI assistant URL",
-																							"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.",
-																							"Role":"Value",
-																							"Id":"AiAccessUrlTextBox"
-																						},
-																						{
-																							"Name":"Copy URL",
-																							"Description":"Copies the URL to the clipboard.",
-																							"Role":"Button",
-																							"Id":"AiAccessUrlCopyButton"
-																						},
-																						{
-																							"Name":"AI assistant token",
-																							"Description":"What a caller must present to be let in. Made by this program.",
-																							"Role":"Value",
-																							"Id":"AiAccessTokenTextBox"
-																						},
-																						{
-																							"Name":"Regenerate token",
-																							"Description":"Makes a new token, so anything holding the old one is shut out.",
-																							"Role":"Button",
-																							"Id":"AiAccessRegenerateButton"
-																						},
-																						{
-																							"Name":"Assistant snippet",
-																							"Description":"Settings to paste into an assistant so it can start this program as an MCP server.",
-																							"Role":"Value",
-																							"Id":"AiAccessSnippetTextBox"
-																						},
-																						{
-																							"Name":"Copy snippet",
-																							"Description":"Copies the assistant snippet to the clipboard. The snippet holds no token.",
-																							"Role":"Button",
-																							"Id":"AiAccessCopyButton"
-																						},
-																						{
-																							"Name":"Copy prompt",
-																							"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.",
-																							"Role":"Button",
-																							"Id":"AiAccessPromptButton"
-																						},
-																						{
-																							"Name":"Open log",
-																							"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
-																							"Role":"Button",
-																							"Id":"AiAccessLogButton"
-																						},
-																						{
-																							"Name":"Door state",
-																							"Description":"Whether the door is open and at which level, or why it could not open; after a press, what it did.",
-																							"Role":"Label",
-																							"Id":"AiAccessStatusText"
+																							"Name":"AI skill",
+																							"Description":"Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.",
+																							"Role":"Group",
+																							"Id":"AiSkillPanel",
+																							"Items":[
+																								{
+																									"Name":"Claude Code skills folder",
+																									"Description":"Where Claude Code reads skills.",
+																									"Role":"Value",
+																									"Id":"AiSkillClaudeFolderTextBox"
+																								},
+																								{
+																									"Name":"Install for Claude Code",
+																									"Description":"Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.",
+																									"Role":"Button",
+																									"Id":"AiSkillClaudeButton"
+																								},
+																								{
+																									"Name":"Claude Code skill",
+																									"Description":"Whether the skill is in that folder, and whether it is this program's version.",
+																									"Role":"Label",
+																									"Id":"AiSkillClaudeStatusText"
+																								},
+																								{
+																									"Name":"Other agents' skills folder",
+																									"Description":"Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.",
+																									"Role":"Value",
+																									"Id":"AiSkillAgentsFolderTextBox"
+																								},
+																								{
+																									"Name":"Install for other agents",
+																									"Description":"Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.",
+																									"Role":"Button",
+																									"Id":"AiSkillAgentsButton"
+																								},
+																								{
+																									"Name":"Other agents' skill",
+																									"Description":"Whether the skill is in that folder, and whether it is this program's version.",
+																									"Role":"Label",
+																									"Id":"AiSkillAgentsStatusText"
+																								},
+																								{
+																									"Name":"Claude app",
+																									"Description":"What to do with the ZIP, or why it was not saved.",
+																									"Role":"Label",
+																									"Id":"AiSkillZipNoteText"
+																								},
+																								{
+																									"Name":"Save as ZIP",
+																									"Description":"Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.",
+																									"Role":"Button",
+																									"Id":"AiSkillZipButton"
+																								}
+																							]
 																						}
 																					]
-																				}
-																			]
-																		},
-																		{
-																			"Name":"OpenAI Tunnel",
-																			"Description":"Lets ChatGPT on the web reach this program through the door. Only the person can change it.",
-																			"Role":"Tab",
-																			"Id":"AiTunnelTabPage",
-																			"Items":[
+																				},
 																				{
-																					"Name":"ChatGPT on the web (OpenAI tunnel)",
-																					"Description":"Opens an OpenAI Secure MCP Tunnel, so ChatGPT on the web reaches this program through the door. Only the person can change it.",
-																					"Role":"Group",
-																					"Id":"AiTunnelPanel",
+																					"Name":"MCP Server - AI Assistant Access",
+																					"Description":"Opens the door an AI assistant or a script reaches this program by, at the level chosen there.",
+																					"Role":"Tab",
+																					"Id":"AiAccessTabPage",
 																					"Items":[
 																						{
-																							"Name":"About the tunnel",
-																							"Description":"Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.",
-																							"Role":"Label",
-																							"Id":"AiTunnelNoteText"
-																						},
+																							"Name":"AI assistant access (MCP server)",
+																							"Description":"Lets an AI assistant or a script read or operate this program, at the level chosen here.",
+																							"Role":"Group",
+																							"Id":"AiAccessPanel",
+																							"Items":[
+																								{
+																									"Name":"AI assistant access",
+																									"Description":"Lets an AI assistant or a script reach this program at all. Off until a person ticks it.",
+																									"Role":"CheckBox",
+																									"Id":"AiAccessEnabledCheckBox"
+																								},
+																								{
+																									"Name":"AI assistant level",
+																									"Description":"Read, Configure or Administer: how much a connected assistant or script may do.",
+																									"Role":"List",
+																									"Id":"AiAccessComboBox"
+																								},
+																								{
+																									"Name":"AI assistant address",
+																									"Description":"127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.",
+																									"Role":"List",
+																									"Id":"AiAccessAddressComboBox"
+																								},
+																								{
+																									"Name":"Trust local connections (no token)",
+																									"Description":"Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.",
+																									"Role":"CheckBox",
+																									"Id":"AiAccessTrustLocalCheckBox"
+																								},
+																								{
+																									"Name":"AI assistant port",
+																									"Description":"Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.",
+																									"Role":"Text",
+																									"Id":"AiAccessPortTextBox"
+																								},
+																								{
+																									"Name":"AI assistant URL",
+																									"Description":"Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.",
+																									"Role":"Value",
+																									"Id":"AiAccessUrlTextBox"
+																								},
+																								{
+																									"Name":"Copy URL",
+																									"Description":"Copies the URL to the clipboard.",
+																									"Role":"Button",
+																									"Id":"AiAccessUrlCopyButton"
+																								},
+																								{
+																									"Name":"AI assistant token",
+																									"Description":"What a caller must present to be let in. Made by this program.",
+																									"Role":"Value",
+																									"Id":"AiAccessTokenTextBox"
+																								},
+																								{
+																									"Name":"Regenerate token",
+																									"Description":"Makes a new token, so anything holding the old one is shut out.",
+																									"Role":"Button",
+																									"Id":"AiAccessRegenerateButton"
+																								},
+																								{
+																									"Name":"Assistant snippet",
+																									"Description":"Settings to paste into an assistant so it can start this program as an MCP server.",
+																									"Role":"Value",
+																									"Id":"AiAccessSnippetTextBox"
+																								},
+																								{
+																									"Name":"Copy snippet",
+																									"Description":"Copies the assistant snippet to the clipboard. The snippet holds no token.",
+																									"Role":"Button",
+																									"Id":"AiAccessCopyButton"
+																								},
+																								{
+																									"Name":"Copy prompt",
+																									"Description":"Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.",
+																									"Role":"Button",
+																									"Id":"AiAccessPromptButton"
+																								},
+																								{
+																									"Name":"Open log",
+																									"Description":"Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.",
+																									"Role":"Button",
+																									"Id":"AiAccessLogButton"
+																								},
+																								{
+																									"Name":"Door state",
+																									"Description":"Whether the door is open and at which level, or why it could not open; after a press, what it did.",
+																									"Role":"Label",
+																									"Id":"AiAccessStatusText"
+																								}
+																							]
+																						}
+																					]
+																				},
+																				{
+																					"Name":"OpenAI Tunnel",
+																					"Description":"Lets ChatGPT on the web reach this program through the door. Only the person can change it.",
+																					"Role":"Tab",
+																					"Id":"AiTunnelTabPage",
+																					"Items":[
 																						{
-																							"Name":"OpenAI organization ID",
-																							"Description":"The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.",
-																							"Role":"Text",
-																							"Id":"AiTunnelOrganizationTextBox"
-																						},
-																						{
-																							"Name":"Find organization ID",
-																							"Description":"Opens the OpenAI Platform page that shows the organization ID.",
-																							"Role":"Button",
-																							"Id":"AiTunnelOrganizationButton"
-																						},
-																						{
-																							"Name":"OpenAI admin key",
-																							"Description":"An admin key of the organization, used only to list, create and delete tunnels and never kept.",
-																							"Role":"Text",
-																							"Id":"AiTunnelAdminKeyTextBox"
-																						},
-																						{
-																							"Name":"Get admin key",
-																							"Description":"Opens the OpenAI Platform page that makes admin keys.",
-																							"Role":"Button",
-																							"Id":"AiTunnelAdminKeyButton"
-																						},
-																						{
-																							"Name":"Tunnel ID",
-																							"Description":"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.",
-																							"Role":"List",
-																							"Id":"AiTunnelIdComboBox"
-																						},
-																						{
-																							"Name":"Create tunnel",
-																							"Description":"Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.",
-																							"Role":"Button",
-																							"Id":"AiTunnelCreateButton"
-																						},
-																						{
-																							"Name":"Copy tunnel ID",
-																							"Description":"Copies the tunnel ID, to paste into ChatGPT.",
-																							"Role":"Button",
-																							"Id":"AiTunnelCopyButton"
-																						},
-																						{
-																							"Name":"Delete tunnel",
-																							"Description":"Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.",
-																							"Role":"Button",
-																							"Id":"AiTunnelDeleteButton"
-																						},
-																						{
-																							"Name":"OpenAI API key",
-																							"Description":"The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.",
-																							"Role":"Text",
-																							"Id":"AiTunnelApiKeyTextBox"
-																						},
-																						{
-																							"Name":"Get API key",
-																							"Description":"Opens the OpenAI Platform page that makes the API key.",
-																							"Role":"Button",
-																							"Id":"AiTunnelApiKeyButton"
-																						},
-																						{
-																							"Name":"Open the tunnel",
-																							"Description":"Opens the tunnel while AI assistant access is on, now and each time this program starts.",
-																							"Role":"CheckBox",
-																							"Id":"AiTunnelEnabledCheckBox"
-																						},
-																						{
-																							"Name":"Tunnel status page",
-																							"Description":"Opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. Only while the tunnel runs.",
-																							"Role":"Button",
-																							"Id":"AiTunnelPageButton"
-																						},
-																						{
-																							"Name":"In ChatGPT",
-																							"Description":"What to choose in ChatGPT's Add custom MCP server once the tunnel is open.",
-																							"Role":"Label",
-																							"Id":"AiTunnelChatGptText"
-																						},
-																						{
-																							"Name":"Open ChatGPT",
-																							"Description":"Opens the ChatGPT page where custom MCP servers are added.",
-																							"Role":"Button",
-																							"Id":"AiTunnelChatGptButton"
-																						},
-																						{
-																							"Name":"Tunnel settings file",
-																							"Description":"The file the tunnel's ID, organization and encrypted API key are kept in.",
-																							"Role":"Value",
-																							"Id":"AiTunnelFileTextBox"
-																						},
-																						{
-																							"Name":"Show file",
-																							"Description":"Shows the settings file in File Explorer.",
-																							"Role":"Button",
-																							"Id":"AiTunnelFileButton"
-																						},
-																						{
-																							"Name":"Where the keys are",
-																							"Description":"How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.",
-																							"Role":"Label",
-																							"Id":"AiTunnelKeysNoteText"
-																						},
-																						{
-																							"Name":"Tunnel state",
-																							"Description":"Whether the tunnel is open, why not, or what the last press did.",
-																							"Role":"Label",
-																							"Id":"AiTunnelStatusText"
+																							"Name":"ChatGPT on the web (OpenAI tunnel)",
+																							"Description":"Opens an OpenAI Secure MCP Tunnel, so ChatGPT on the web reaches this program through the door. Only the person can change it.",
+																							"Role":"Group",
+																							"Id":"AiTunnelPanel",
+																							"Items":[
+																								{
+																									"Name":"About the tunnel",
+																									"Description":"Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.",
+																									"Role":"Label",
+																									"Id":"AiTunnelNoteText"
+																								},
+																								{
+																									"Name":"OpenAI organization ID",
+																									"Description":"The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.",
+																									"Role":"Text",
+																									"Id":"AiTunnelOrganizationTextBox"
+																								},
+																								{
+																									"Name":"Find organization ID",
+																									"Description":"Opens the OpenAI Platform page that shows the organization ID.",
+																									"Role":"Button",
+																									"Id":"AiTunnelOrganizationButton"
+																								},
+																								{
+																									"Name":"OpenAI admin key",
+																									"Description":"An admin key of the organization, used only to list, create and delete tunnels and never kept.",
+																									"Role":"Text",
+																									"Id":"AiTunnelAdminKeyTextBox"
+																								},
+																								{
+																									"Name":"Get admin key",
+																									"Description":"Opens the OpenAI Platform page that makes admin keys.",
+																									"Role":"Button",
+																									"Id":"AiTunnelAdminKeyButton"
+																								},
+																								{
+																									"Name":"Tunnel ID",
+																									"Description":"The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.",
+																									"Role":"List",
+																									"Id":"AiTunnelIdComboBox"
+																								},
+																								{
+																									"Name":"Create tunnel",
+																									"Description":"Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.",
+																									"Role":"Button",
+																									"Id":"AiTunnelCreateButton"
+																								},
+																								{
+																									"Name":"Copy tunnel ID",
+																									"Description":"Copies the tunnel ID, to paste into ChatGPT.",
+																									"Role":"Button",
+																									"Id":"AiTunnelCopyButton"
+																								},
+																								{
+																									"Name":"Delete tunnel",
+																									"Description":"Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.",
+																									"Role":"Button",
+																									"Id":"AiTunnelDeleteButton"
+																								},
+																								{
+																									"Name":"OpenAI API key",
+																									"Description":"The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.",
+																									"Role":"Text",
+																									"Id":"AiTunnelApiKeyTextBox"
+																								},
+																								{
+																									"Name":"Get API key",
+																									"Description":"Opens the OpenAI Platform page that makes the API key.",
+																									"Role":"Button",
+																									"Id":"AiTunnelApiKeyButton"
+																								},
+																								{
+																									"Name":"Open the tunnel",
+																									"Description":"Opens the tunnel while AI assistant access is on, now and each time this program starts.",
+																									"Role":"CheckBox",
+																									"Id":"AiTunnelEnabledCheckBox"
+																								},
+																								{
+																									"Name":"Tunnel status page",
+																									"Description":"Opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. Only while the tunnel runs.",
+																									"Role":"Button",
+																									"Id":"AiTunnelPageButton"
+																								},
+																								{
+																									"Name":"In ChatGPT",
+																									"Description":"What to choose in ChatGPT's Add custom MCP server once the tunnel is open.",
+																									"Role":"Label",
+																									"Id":"AiTunnelChatGptText"
+																								},
+																								{
+																									"Name":"Open ChatGPT",
+																									"Description":"Opens the ChatGPT page where custom MCP servers are added.",
+																									"Role":"Button",
+																									"Id":"AiTunnelChatGptButton"
+																								},
+																								{
+																									"Name":"Tunnel settings file",
+																									"Description":"The file the tunnel's ID, organization and encrypted API key are kept in.",
+																									"Role":"Value",
+																									"Id":"AiTunnelFileTextBox"
+																								},
+																								{
+																									"Name":"Show file",
+																									"Description":"Shows the settings file in File Explorer.",
+																									"Role":"Button",
+																									"Id":"AiTunnelFileButton"
+																								},
+																								{
+																									"Name":"Where the keys are",
+																									"Description":"How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.",
+																									"Role":"Label",
+																									"Id":"AiTunnelKeysNoteText"
+																								},
+																								{
+																									"Name":"Tunnel state",
+																									"Description":"Whether the tunnel is open, why not, or what the last press did.",
+																									"Role":"Label",
+																									"Id":"AiTunnelStatusText"
+																								}
+																							]
 																						}
 																					]
 																				}
@@ -3360,84 +3369,84 @@
 																	]
 																}
 															]
-														}
-													]
-												},
-												{
-													"Name":"Plugins",
-													"Description":"The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.",
-													"Role":"Tab",
-													"Id":"PluginsTabPage",
-													"Items":[
+														},
 														{
-															"Name":null,
-															"Role":"Group",
-															"Id":"PluginsPanel",
-															"Type":"OptionsPluginsUserControl",
+															"Name":"Plugins",
+															"Description":"The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.",
+															"Role":"Tab",
+															"Id":"PluginsTabPage",
 															"Items":[
 																{
-																	"Name":"Allow third-party plugins",
-																	"Description":"Load plugins that are not signed by the publisher of x360ce.",
-																	"Role":"CheckBox",
-																	"Id":"AllowThirdPartyPluginsCheckBox"
-																},
-																{
-																	"Name":"About plugins",
-																	"Description":"Which plugins load by themselves, and why plugins from others need permission.",
-																	"Role":"Label",
-																	"Id":"NoteLabel"
-																},
-																{
-																	"Name":"Plugins folder",
-																	"Description":"The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.",
-																	"Role":"Value",
-																	"Id":"FolderTextBox"
-																},
-																{
-																	"Name":"Open Folder",
-																	"Description":"Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\\MyDevice.dll, loads at once.",
-																	"Role":"Button",
-																	"Id":"OpenFolderButton"
-																},
-																{
-																	"Name":"Plugins",
-																	"Description":"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
-																	"Role":"Grid",
-																	"Id":"PluginsDataGridView"
-																},
-																{
-																	"Name":"AutoHotkey scripts",
-																	"Description":"Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.",
-																	"Role":"Section",
-																	"Id":"AutoHotkeyGroupBox",
+																	"Name":null,
+																	"Role":"Group",
+																	"Id":"PluginsPanel",
+																	"Type":"OptionsPluginsUserControl",
 																	"Items":[
 																		{
-																			"Name":"Allow AutoHotkey scripts",
-																			"Description":"Let AutoHotkey scripts read devices and change what controllers read.",
+																			"Name":"Allow third-party plugins",
+																			"Description":"Load plugins that are not signed by the publisher of x360ce.",
 																			"Role":"CheckBox",
-																			"Id":"AllowAutoHotkeyScriptsCheckBox"
+																			"Id":"AllowThirdPartyPluginsCheckBox"
 																		},
 																		{
-																			"Name":"About AutoHotkey scripts",
-																			"Description":"How a script reaches x360ce, and where the library it includes is written.",
+																			"Name":"About plugins",
+																			"Description":"Which plugins load by themselves, and why plugins from others need permission.",
 																			"Role":"Label",
-																			"Id":"ScriptsNoteLabel"
+																			"Id":"NoteLabel"
 																		},
 																		{
-																			"Name":"Heartbeat every (ms)",
-																			"Description":"How often an AutoHotkey script tells x360ce it still runs, in milliseconds.",
-																			"Role":"Number",
-																			"Id":"HeartbeatUpDown",
-																			"Min":10,
-																			"Max":1000
+																			"Name":"Plugins folder",
+																			"Description":"The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.",
+																			"Role":"Value",
+																			"Id":"FolderTextBox"
 																		},
 																		{
-																			"Name":"Let go of a hung script after (ms)",
-																			"Description":"How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.",
-																			"Role":"Number",
-																			"Id":"HangTimeoutUpDown",
-																			"Min":50,
-																			"Max":10000
+																			"Name":"Open Folder",
+																			"Description":"Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\\MyDevice.dll, loads at once.",
+																			"Role":"Button",
+																			"Id":"OpenFolderButton"
+																		},
+																		{
+																			"Name":"Plugins",
+																			"Description":"Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.",
+																			"Role":"Grid",
+																			"Id":"PluginsDataGridView"
+																		},
+																		{
+																			"Name":"AutoHotkey scripts",
+																			"Description":"Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.",
+																			"Role":"Section",
+																			"Id":"AutoHotkeyGroupBox",
+																			"Items":[
+																				{
+																					"Name":"Allow AutoHotkey scripts",
+																					"Description":"Let AutoHotkey scripts read devices and change what controllers read.",
+																					"Role":"CheckBox",
+																					"Id":"AllowAutoHotkeyScriptsCheckBox"
+																				},
+																				{
+																					"Name":"About AutoHotkey scripts",
+																					"Description":"How a script reaches x360ce, and where the library it includes is written.",
+																					"Role":"Label",
+																					"Id":"ScriptsNoteLabel"
+																				},
+																				{
+																					"Name":"Heartbeat every (ms)",
+																					"Description":"How often an AutoHotkey script tells x360ce it still runs, in milliseconds.",
+																					"Role":"Number",
+																					"Id":"HeartbeatUpDown",
+																					"Min":10,
+																					"Max":1000
+																				},
+																				{
+																					"Name":"Let go of a hung script after (ms)",
+																					"Description":"How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.",
+																					"Role":"Number",
+																					"Id":"HangTimeoutUpDown",
+																					"Min":50,
+																					"Max":10000
+																				}
+																			]
 																		}
 																	]
 																}
@@ -3448,93 +3457,473 @@
 											]
 										}
 									]
-								}
-							]
-						},
-						{
-							"Name":"Games",
-							"Description":"Games this program is set up for, and what it does for each one.",
-							"Role":"Tab",
-							"Id":"GamesTabPage",
-							"Items":[
+								},
 								{
-									"Name":null,
-									"Description":"Games this program is set up for.",
-									"Role":"Group",
-									"Id":"GameSettingsPanel",
-									"Type":"GamesGridUserControl",
+									"Name":"Games",
+									"Description":"Games this program is set up for, and what it does for each one.",
+									"Role":"Tab",
+									"Id":"GamesTabPage",
 									"Items":[
 										{
-											"Name":"Games",
-											"Description":"Games this program is set up for. The tick says whether it is switched on.",
-											"Role":"Grid",
-											"Id":"GamesDataGridView"
-										},
-										{
-											"Name":"Game actions",
-											"Description":"Finds, adds, starts and removes games.",
-											"Role":"Toolbar",
-											"Id":"GamesToolStrip",
+											"Name":null,
+											"Description":"Games this program is set up for.",
+											"Role":"Group",
+											"Id":"GameSettingsPanel",
+											"Type":"GamesGridUserControl",
 											"Items":[
 												{
-													"Name":"Scan",
-													"Description":"Searches the folders listed in Options for games it knows.",
-													"Role":"Button",
-													"Id":"ScanGamesButton"
+													"Name":"Games",
+													"Description":"Games this program is set up for. The tick says whether it is switched on.",
+													"Role":"Grid",
+													"Id":"GamesDataGridView"
 												},
 												{
-													"Name":"Add...",
-													"Description":"Adds a game by choosing its program file.",
-													"Role":"Button",
-													"Id":"AddGameButton"
-												},
-												{
-													"Name":"Delete",
-													"Description":"Removes the selected game from the list.",
-													"Role":"Button",
-													"Id":"DeleteGamesButton"
-												},
-												{
-													"Name":"Save",
-													"Description":"Writes the settings file the selected game reads.",
-													"Role":"Button",
-													"Id":"SaveGamesButton"
-												},
-												{
-													"Name":"Start",
-													"Description":"Runs the selected game.",
-													"Role":"Button",
-													"Id":"StartGameButton"
-												},
-												{
-													"Name":"Open...",
-													"Description":"Opens the folder the selected game is installed in.",
-													"Role":"Button",
-													"Id":"OpenGameButton"
-												},
-												{
-													"Name":"Show",
-													"Description":"Limits the list to games that are switched on, or off.",
-													"Role":"Button",
-													"Id":"ShowGamesDropDownButton",
+													"Name":"Game actions",
+													"Description":"Finds, adds, starts and removes games.",
+													"Role":"Toolbar",
+													"Id":"GamesToolStrip",
 													"Items":[
 														{
-															"Name":"Show: All",
-															"Description":"Lists every game.",
+															"Name":"Scan",
+															"Description":"Searches the folders listed in Options for games it knows.",
 															"Role":"Button",
-															"Id":"ShowAllGamesMenuItem"
+															"Id":"ScanGamesButton"
 														},
 														{
-															"Name":"Show: Enabled",
-															"Description":"Lists only the games that are switched on.",
+															"Name":"Add...",
+															"Description":"Adds a game by choosing its program file.",
 															"Role":"Button",
-															"Id":"ShowEnabledGamesMenuItem"
+															"Id":"AddGameButton"
 														},
 														{
-															"Name":"Show: Disabled",
-															"Description":"Lists only the games that are switched off.",
+															"Name":"Delete",
+															"Description":"Removes the selected game from the list.",
 															"Role":"Button",
-															"Id":"ShowDisabledGamesMenuItem"
+															"Id":"DeleteGamesButton"
+														},
+														{
+															"Name":"Save",
+															"Description":"Writes the settings file the selected game reads.",
+															"Role":"Button",
+															"Id":"SaveGamesButton"
+														},
+														{
+															"Name":"Start",
+															"Description":"Runs the selected game.",
+															"Role":"Button",
+															"Id":"StartGameButton"
+														},
+														{
+															"Name":"Open...",
+															"Description":"Opens the folder the selected game is installed in.",
+															"Role":"Button",
+															"Id":"OpenGameButton"
+														},
+														{
+															"Name":"Show",
+															"Description":"Limits the list to games that are switched on, or off.",
+															"Role":"Button",
+															"Id":"ShowGamesDropDownButton",
+															"Items":[
+																{
+																	"Name":"Show: All",
+																	"Description":"Lists every game.",
+																	"Role":"Button",
+																	"Id":"ShowAllGamesMenuItem"
+																},
+																{
+																	"Name":"Show: Enabled",
+																	"Description":"Lists only the games that are switched on.",
+																	"Role":"Button",
+																	"Id":"ShowEnabledGamesMenuItem"
+																},
+																{
+																	"Name":"Show: Disabled",
+																	"Description":"Lists only the games that are switched off.",
+																	"Role":"Button",
+																	"Id":"ShowDisabledGamesMenuItem"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":null,
+													"Description":"How the selected game is set up.",
+													"Role":"Group",
+													"Id":"GameDetailsControl",
+													"Type":"GameDetailsUserControl",
+													"Items":[
+														{
+															"Name":"Hook mask",
+															"Description":"Which questions a game asks about controllers this program answers for it.",
+															"Role":"Section",
+															"Id":"HookMaskGroupBox",
+															"Items":[
+																{
+																	"Name":"Hook COM",
+																	"Description":"Answers when the game asks Windows for a controller through COM.",
+																	"Role":"CheckBox",
+																	"Id":"HookCOMCheckBox"
+																},
+																{
+																	"Name":"Hook Direct Input",
+																	"Description":"Answers when the game asks for a controller through Direct Input.",
+																	"Role":"CheckBox",
+																	"Id":"HookDICheckBox"
+																},
+																{
+																	"Name":"Hook product and vendor codes",
+																	"Description":"Reports the fake product and vendor codes instead of the real ones.",
+																	"Role":"CheckBox",
+																	"Id":"HookPIDVIDCheckBox"
+																},
+																{
+																	"Name":"Hook name",
+																	"Description":"Reports a different controller name to the game.",
+																	"Role":"CheckBox",
+																	"Id":"HookNAMECheckBox"
+																},
+																{
+																	"Name":"Stop",
+																	"Description":"Stops answering once the game has started.",
+																	"Role":"CheckBox",
+																	"Id":"HookSTOPCheckBox"
+																},
+																{
+																	"Name":"Hook Load Library",
+																	"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
+																	"Role":"CheckBox",
+																	"Id":"HookLLCheckBox"
+																},
+																{
+																	"Name":"Hook SetupAPI",
+																	"Description":"Answers when the game asks Windows to list devices.",
+																	"Role":"CheckBox",
+																	"Id":"HookSACheckBox"
+																},
+																{
+																	"Name":"Hook WinVerifyTrust",
+																	"Description":"Answers when the game checks a file's signature.",
+																	"Role":"CheckBox",
+																	"Id":"HookWTCheckBox"
+																},
+																{
+																	"Name":"Disable",
+																	"Description":"Turns every answer off, leaving the game with the real controllers.",
+																	"Role":"CheckBox",
+																	"Id":"HookDISABLECheckBox"
+																}
+															]
+														},
+														{
+															"Name":"XInput files",
+															"Description":"Which XInput library files this program supplies to the game.",
+															"Role":"Section",
+															"Id":"XInputMaskGroupBox",
+															"Items":[
+																{
+																	"Name":"XInput 9.1, 32-bit",
+																	"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput91_x86CheckBox"
+																},
+																{
+																	"Name":"XInput 9.1, 64-bit",
+																	"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput91_x64CheckBox"
+																},
+																{
+																	"Name":"XInput 1.1, 32-bit",
+																	"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput11_x86CheckBox"
+																},
+																{
+																	"Name":"XInput 1.1, 64-bit",
+																	"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput11_x64CheckBox"
+																},
+																{
+																	"Name":"XInput 1.2, 32-bit",
+																	"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput12_x86CheckBox"
+																},
+																{
+																	"Name":"XInput 1.2, 64-bit",
+																	"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput12_x64CheckBox"
+																},
+																{
+																	"Name":"XInput 1.3, 32-bit",
+																	"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput13_x86CheckBox"
+																},
+																{
+																	"Name":"XInput 1.3, 64-bit",
+																	"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput13_x64CheckBox"
+																},
+																{
+																	"Name":"XInput 1.4, 32-bit",
+																	"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput14_x86CheckBox"
+																},
+																{
+																	"Name":"XInput 1.4, 64-bit",
+																	"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"XInput14_x64CheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Auto map",
+															"Description":"Not available yet, so greyed out: the program does not map devices to controllers by itself.",
+															"Role":"Section",
+															"Id":"AutoMapMaskGroupBox",
+															"Items":[
+																{
+																	"Name":"Auto map controller 1",
+																	"Description":"Lets the program assign controller 1 to a device when this game starts.",
+																	"Role":"CheckBox",
+																	"Id":"Controller1CheckBox"
+																},
+																{
+																	"Name":"Auto map controller 2",
+																	"Description":"Lets the program assign controller 2 to a device when this game starts.",
+																	"Role":"CheckBox",
+																	"Id":"Controller2CheckBox"
+																},
+																{
+																	"Name":"Auto map controller 3",
+																	"Description":"Lets the program assign controller 3 to a device when this game starts.",
+																	"Role":"CheckBox",
+																	"Id":"Controller3CheckBox"
+																},
+																{
+																	"Name":"Auto map controller 4",
+																	"Description":"Lets the program assign controller 4 to a device when this game starts.",
+																	"Role":"CheckBox",
+																	"Id":"Controller4CheckBox"
+																}
+															]
+														},
+														{
+															"Name":"DInput file",
+															"Description":"Whether the Direct Input library is supplied to the game as well.",
+															"Role":"Section",
+															"Id":"DInputMaskGroupBox",
+															"Items":[
+																{
+																	"Name":"DInput 8, 32-bit",
+																	"Description":"Supplies the 32-bit Direct Input library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"DInput8_x86CheckBox"
+																},
+																{
+																	"Name":"DInput 8, 64-bit",
+																	"Description":"Supplies the 64-bit Direct Input library to the game.",
+																	"Role":"CheckBox",
+																	"Id":"DInput8_x64CheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Help",
+															"Description":"Searches the web for other people's settings for this game.",
+															"Role":"Section",
+															"Id":"groupBox5",
+															"Items":[
+																{
+																	"Name":"Search on Google...",
+																	"Description":"Searches the web for this game.",
+																	"Role":"Button",
+																	"Id":"GoogleSearchButton"
+																},
+																{
+																	"Name":"Search on NGemu...",
+																	"Description":"Searches the NGemu forum for this game.",
+																	"Role":"Button",
+																	"Id":"button3"
+																},
+																{
+																	"Name":"Open NGemu...",
+																	"Description":"Opens the NGemu forum.",
+																	"Role":"Button",
+																	"Id":"button4"
+																}
+															]
+														},
+														{
+															"Name":"Other options",
+															"Description":"How the game is started, and what it is told about the controller.",
+															"Role":"Section",
+															"Id":"OtherOptionsGroupBox",
+															"Items":[
+																{
+																	"Name":"Fake vendor code",
+																	"Description":"Vendor code reported to a game that only accepts one make of controller.",
+																	"Role":"Number",
+																	"Id":"HookModeFakeVidNumericUpDown",
+																	"Min":0,
+																	"Max":65535
+																},
+																{
+																	"Name":"Fake vendor code",
+																	"Description":"Vendor code reported to a game that only accepts one make of controller.",
+																	"Role":"Value",
+																	"Id":"HookModeFakeVidTextBox"
+																},
+																{
+																	"Name":"Fake product code",
+																	"Description":"Product code reported to a game that only accepts one model of controller.",
+																	"Role":"Number",
+																	"Id":"HookModeFakePidNumericUpDown",
+																	"Min":0,
+																	"Max":65535
+																},
+																{
+																	"Name":"Fake product code",
+																	"Description":"Product code reported to a game that only accepts one model of controller.",
+																	"Role":"Value",
+																	"Id":"HookModeFakePidTextBox"
+																},
+																{
+																	"Name":"Timeout",
+																	"Description":"How long to wait for the game before giving up.",
+																	"Role":"Number",
+																	"Id":"TimeoutNumericUpDown",
+																	"Min":-1,
+																	"Max":65535
+																},
+																{
+																	"Name":"XInput path",
+																	"Description":"Folder the XInput library is written into.",
+																	"Role":"Text",
+																	"Id":"XInputPathTextBox"
+																},
+																{
+																	"Name":"Architecture",
+																	"Description":"Whether the game is a 32-bit or a 64-bit program.",
+																	"Role":"List",
+																	"Id":"ProcessorArchitectureComboBox"
+																},
+																{
+																	"Name":"DInput file",
+																	"Description":"Name of the Direct Input library written for the game.",
+																	"Role":"Text",
+																	"Id":"DInputFileTextBox"
+																},
+																{
+																	"Name":"Emulation",
+																	"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
+																	"Role":"List",
+																	"Id":"EmulationTypeComboBox"
+																}
+															]
+														},
+														{
+															"Name":"Action",
+															"Description":"Undoes every change made to this game.",
+															"Role":"Section",
+															"Id":"ActionGroupBox",
+															"Items":[
+																{
+																	"Name":"Reset to Default",
+																	"Description":"Puts this game's settings back the way they started.",
+																	"Role":"Button",
+																	"Id":"ResetToDefaultButton"
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Devices",
+									"Description":"Every controller the program can see, whether mapped or not.",
+									"Role":"Tab",
+									"Id":"DevicesTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Role":"Group",
+											"Id":"XInputDevicesPanel",
+											"Type":"XInputDevicesUserControl",
+											"Items":[
+												{
+													"Name":"XInput devices",
+													"Description":"Every emulated controller and the XInput place it holds, in the order games see them.",
+													"Role":"Grid",
+													"Id":"DevicesDataGridView"
+												},
+												{
+													"Name":"Order notice",
+													"Description":"Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.",
+													"Role":"Group",
+													"Id":"PlanPanel",
+													"Hidden":true,
+													"Items":[
+														{
+															"Name":"Notice subject",
+															"Description":"What the notice is about: an order waiting for OK, the order being made, or how it went.",
+															"Role":"Label",
+															"Id":"PlanSubjectLabel"
+														},
+														{
+															"Name":"Notice text",
+															"Description":"The steps, what happened at each, and why it stopped when it did.",
+															"Role":"Label",
+															"Id":"PlanBodyLabel"
+														},
+														{
+															"Name":"OK",
+															"Description":"Puts the controllers in the order shown. Once it is over, closes the notice.",
+															"Role":"Button",
+															"Id":"PlanOkButton"
+														},
+														{
+															"Name":"Cancel",
+															"Description":"Closes the notice without touching any controller.",
+															"Role":"Button",
+															"Id":"PlanCancelButton"
+														}
+													]
+												},
+												{
+													"Name":"Emulated controller actions",
+													"Description":"Buttons that act on the emulated controllers shown below.",
+													"Role":"Toolbar",
+													"Id":"DevicesToolStrip",
+													"Items":[
+														{
+															"Name":"Apply",
+															"Description":"Recreates the controllers in the order shown. Needs Administrator.",
+															"Role":"Button",
+															"Id":"ApplyButton"
+														},
+														{
+															"Name":"Auto-Order",
+															"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
+															"Role":"Button",
+															"Id":"AutoOrderButton"
+														},
+														{
+															"Name":"Refresh",
+															"Description":"Reads the controllers again, for when one has arrived or left.",
+															"Role":"Button",
+															"Id":"RefreshButton"
 														}
 													]
 												}
@@ -3542,782 +3931,402 @@
 										},
 										{
 											"Name":null,
-											"Description":"How the selected game is set up.",
+											"Description":"Every controller the program can see.",
 											"Role":"Group",
-											"Id":"GameDetailsControl",
-											"Type":"GameDetailsUserControl",
+											"Id":"DevicesPanel",
+											"Type":"UserDevicesUserControl",
 											"Items":[
 												{
-													"Name":"Hook mask",
-													"Description":"Which questions a game asks about controllers this program answers for it.",
-													"Role":"Section",
-													"Id":"HookMaskGroupBox",
-													"Items":[
-														{
-															"Name":"Hook COM",
-															"Description":"Answers when the game asks Windows for a controller through COM.",
-															"Role":"CheckBox",
-															"Id":"HookCOMCheckBox"
-														},
-														{
-															"Name":"Hook Direct Input",
-															"Description":"Answers when the game asks for a controller through Direct Input.",
-															"Role":"CheckBox",
-															"Id":"HookDICheckBox"
-														},
-														{
-															"Name":"Hook product and vendor codes",
-															"Description":"Reports the fake product and vendor codes instead of the real ones.",
-															"Role":"CheckBox",
-															"Id":"HookPIDVIDCheckBox"
-														},
-														{
-															"Name":"Hook name",
-															"Description":"Reports a different controller name to the game.",
-															"Role":"CheckBox",
-															"Id":"HookNAMECheckBox"
-														},
-														{
-															"Name":"Stop",
-															"Description":"Stops answering once the game has started.",
-															"Role":"CheckBox",
-															"Id":"HookSTOPCheckBox"
-														},
-														{
-															"Name":"Hook Load Library",
-															"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
-															"Role":"CheckBox",
-															"Id":"HookLLCheckBox"
-														},
-														{
-															"Name":"Hook SetupAPI",
-															"Description":"Answers when the game asks Windows to list devices.",
-															"Role":"CheckBox",
-															"Id":"HookSACheckBox"
-														},
-														{
-															"Name":"Hook WinVerifyTrust",
-															"Description":"Answers when the game checks a file's signature.",
-															"Role":"CheckBox",
-															"Id":"HookWTCheckBox"
-														},
-														{
-															"Name":"Disable",
-															"Description":"Turns every answer off, leaving the game with the real controllers.",
-															"Role":"CheckBox",
-															"Id":"HookDISABLECheckBox"
-														}
-													]
+													"Name":"Devices",
+													"Description":"Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.",
+													"Role":"Grid",
+													"Id":"DevicesDataGridView"
 												},
 												{
-													"Name":"XInput files",
-													"Description":"Which XInput library files this program supplies to the game.",
-													"Role":"Section",
-													"Id":"XInputMaskGroupBox",
+													"Name":"Device actions",
+													"Description":"Refreshes the list and works on the selected device.",
+													"Role":"Toolbar",
+													"Id":"ControllersToolStrip",
 													"Items":[
 														{
-															"Name":"XInput 9.1, 32-bit",
-															"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput91_x86CheckBox"
-														},
-														{
-															"Name":"XInput 9.1, 64-bit",
-															"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput91_x64CheckBox"
-														},
-														{
-															"Name":"XInput 1.1, 32-bit",
-															"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput11_x86CheckBox"
-														},
-														{
-															"Name":"XInput 1.1, 64-bit",
-															"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput11_x64CheckBox"
-														},
-														{
-															"Name":"XInput 1.2, 32-bit",
-															"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput12_x86CheckBox"
-														},
-														{
-															"Name":"XInput 1.2, 64-bit",
-															"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput12_x64CheckBox"
-														},
-														{
-															"Name":"XInput 1.3, 32-bit",
-															"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput13_x86CheckBox"
-														},
-														{
-															"Name":"XInput 1.3, 64-bit",
-															"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput13_x64CheckBox"
-														},
-														{
-															"Name":"XInput 1.4, 32-bit",
-															"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput14_x86CheckBox"
-														},
-														{
-															"Name":"XInput 1.4, 64-bit",
-															"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
-															"Role":"CheckBox",
-															"Id":"XInput14_x64CheckBox"
-														}
-													]
-												},
-												{
-													"Name":"Auto map",
-													"Description":"Not available yet, so greyed out: the program does not map devices to controllers by itself.",
-													"Role":"Section",
-													"Id":"AutoMapMaskGroupBox",
-													"Items":[
-														{
-															"Name":"Auto map controller 1",
-															"Description":"Lets the program assign controller 1 to a device when this game starts.",
-															"Role":"CheckBox",
-															"Id":"Controller1CheckBox"
-														},
-														{
-															"Name":"Auto map controller 2",
-															"Description":"Lets the program assign controller 2 to a device when this game starts.",
-															"Role":"CheckBox",
-															"Id":"Controller2CheckBox"
-														},
-														{
-															"Name":"Auto map controller 3",
-															"Description":"Lets the program assign controller 3 to a device when this game starts.",
-															"Role":"CheckBox",
-															"Id":"Controller3CheckBox"
-														},
-														{
-															"Name":"Auto map controller 4",
-															"Description":"Lets the program assign controller 4 to a device when this game starts.",
-															"Role":"CheckBox",
-															"Id":"Controller4CheckBox"
-														}
-													]
-												},
-												{
-													"Name":"DInput file",
-													"Description":"Whether the Direct Input library is supplied to the game as well.",
-													"Role":"Section",
-													"Id":"DInputMaskGroupBox",
-													"Items":[
-														{
-															"Name":"DInput 8, 32-bit",
-															"Description":"Supplies the 32-bit Direct Input library to the game.",
-															"Role":"CheckBox",
-															"Id":"DInput8_x86CheckBox"
-														},
-														{
-															"Name":"DInput 8, 64-bit",
-															"Description":"Supplies the 64-bit Direct Input library to the game.",
-															"Role":"CheckBox",
-															"Id":"DInput8_x64CheckBox"
-														}
-													]
-												},
-												{
-													"Name":"Help",
-													"Description":"Searches the web for other people's settings for this game.",
-													"Role":"Section",
-													"Id":"groupBox5",
-													"Items":[
-														{
-															"Name":"Search on Google...",
-															"Description":"Searches the web for this game.",
+															"Name":"Refresh",
+															"Description":"Reads every device again.",
 															"Role":"Button",
-															"Id":"GoogleSearchButton"
+															"Id":"RefreshButton"
 														},
 														{
-															"Name":"Search on NGemu...",
-															"Description":"Searches the NGemu forum for this game.",
+															"Name":"Delete",
+															"Description":"Forgets the selected device and its settings.",
 															"Role":"Button",
-															"Id":"button3"
+															"Id":"ControllerDeleteButton"
 														},
 														{
-															"Name":"Open NGemu...",
-															"Description":"Opens the NGemu forum.",
+															"Name":"Show System Devices",
+															"Description":"Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.",
+															"Role":"CheckBox",
+															"Id":"ShowSystemDevicesButton",
+															"Hidden":true
+														},
+														{
+															"Name":"Hardware...",
+															"Description":"Opens the selected device in Windows Device Manager.",
 															"Role":"Button",
-															"Id":"button4"
+															"Id":"HardwareButton"
+														},
+														{
+															"Name":"Add Plugin Device",
+															"Description":"Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.",
+															"Role":"Button",
+															"Id":"AddDemoDevice"
+														},
+														{
+															"Name":"Remove Leftover Pads",
+															"Description":"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.",
+															"Role":"Button",
+															"Id":"CleanupVirtualPadsButton"
+														},
+														{
+															"Name":"HID Hide",
+															"Description":"Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.",
+															"Role":"Button",
+															"Id":"HidHideDropDownButton",
+															"Items":[
+																{
+																	"Name":"Show Gaming Devices",
+																	"Description":"Lists the devices HID Hide counts as game controllers, with the path it knows each by.",
+																	"Role":"Button",
+																	"Id":"GamingDevicesMenuItem"
+																},
+																{
+																	"Name":"Show Hidden Devices",
+																	"Description":"Lists the devices HID Hide is hiding from games.",
+																	"Role":"Button",
+																	"Id":"HiddenDevicesMenuItem"
+																},
+																{
+																	"Name":"Unhide All Devices",
+																	"Description":"Makes every device HID Hide hides visible to games again, and clears every Hide box.",
+																	"Role":"Button",
+																	"Id":"UnhideAllDevicesMenuItem"
+																},
+																{
+																	"Name":"Synchronize To HID Hide",
+																	"Description":"Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.",
+																	"Role":"Button",
+																	"Id":"SynchronizeToHidHideMenuItem"
+																},
+																{
+																	"Name":"Open HID Hide",
+																	"Description":"Opens HID Hide's own program, or its download page while it is not installed.",
+																	"Role":"Button",
+																	"Id":"OpenHidHideMenuItem"
+																}
+															]
 														}
 													]
-												},
-												{
-													"Name":"Other options",
-													"Description":"How the game is started, and what it is told about the controller.",
-													"Role":"Section",
-													"Id":"OtherOptionsGroupBox",
-													"Items":[
-														{
-															"Name":"Fake vendor code",
-															"Description":"Vendor code reported to a game that only accepts one make of controller.",
-															"Role":"Number",
-															"Id":"HookModeFakeVidNumericUpDown",
-															"Min":0,
-															"Max":65535
-														},
-														{
-															"Name":"Fake vendor code",
-															"Description":"Vendor code reported to a game that only accepts one make of controller.",
-															"Role":"Value",
-															"Id":"HookModeFakeVidTextBox"
-														},
-														{
-															"Name":"Fake product code",
-															"Description":"Product code reported to a game that only accepts one model of controller.",
-															"Role":"Number",
-															"Id":"HookModeFakePidNumericUpDown",
-															"Min":0,
-															"Max":65535
-														},
-														{
-															"Name":"Fake product code",
-															"Description":"Product code reported to a game that only accepts one model of controller.",
-															"Role":"Value",
-															"Id":"HookModeFakePidTextBox"
-														},
-														{
-															"Name":"Timeout",
-															"Description":"How long to wait for the game before giving up.",
-															"Role":"Number",
-															"Id":"TimeoutNumericUpDown",
-															"Min":-1,
-															"Max":65535
-														},
-														{
-															"Name":"XInput path",
-															"Description":"Folder the XInput library is written into.",
-															"Role":"Text",
-															"Id":"XInputPathTextBox"
-														},
-														{
-															"Name":"Architecture",
-															"Description":"Whether the game is a 32-bit or a 64-bit program.",
-															"Role":"List",
-															"Id":"ProcessorArchitectureComboBox"
-														},
-														{
-															"Name":"DInput file",
-															"Description":"Name of the Direct Input library written for the game.",
-															"Role":"Text",
-															"Id":"DInputFileTextBox"
-														},
-														{
-															"Name":"Emulation",
-															"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
-															"Role":"List",
-															"Id":"EmulationTypeComboBox"
-														}
-													]
-												},
-												{
-													"Name":"Action",
-													"Description":"Undoes every change made to this game.",
-													"Role":"Section",
-													"Id":"ActionGroupBox",
-													"Items":[
-														{
-															"Name":"Reset to Default",
-															"Description":"Puts this game's settings back the way they started.",
-															"Role":"Button",
-															"Id":"ResetToDefaultButton"
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"Name":"Devices",
-							"Description":"Every controller the program can see, whether mapped or not.",
-							"Role":"Tab",
-							"Id":"DevicesTabPage",
-							"Items":[
-								{
-									"Name":null,
-									"Role":"Group",
-									"Id":"XInputDevicesPanel",
-									"Type":"XInputDevicesUserControl",
-									"Items":[
-										{
-											"Name":"XInput devices",
-											"Description":"Every emulated controller and the XInput place it holds, in the order games see them.",
-											"Role":"Grid",
-											"Id":"DevicesDataGridView"
-										},
-										{
-											"Name":"Order notice",
-											"Description":"Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.",
-											"Role":"Group",
-											"Id":"PlanPanel",
-											"Hidden":true,
-											"Items":[
-												{
-													"Name":"Notice subject",
-													"Description":"What the notice is about: an order waiting for OK, the order being made, or how it went.",
-													"Role":"Label",
-													"Id":"PlanSubjectLabel"
-												},
-												{
-													"Name":"Notice text",
-													"Description":"The steps, what happened at each, and why it stopped when it did.",
-													"Role":"Label",
-													"Id":"PlanBodyLabel"
-												},
-												{
-													"Name":"OK",
-													"Description":"Puts the controllers in the order shown. Once it is over, closes the notice.",
-													"Role":"Button",
-													"Id":"PlanOkButton"
-												},
-												{
-													"Name":"Cancel",
-													"Description":"Closes the notice without touching any controller.",
-													"Role":"Button",
-													"Id":"PlanCancelButton"
-												}
-											]
-										},
-										{
-											"Name":"Emulated controller actions",
-											"Description":"Buttons that act on the emulated controllers shown below.",
-											"Role":"Toolbar",
-											"Id":"DevicesToolStrip",
-											"Items":[
-												{
-													"Name":"Apply",
-													"Description":"Recreates the controllers in the order shown. Needs Administrator.",
-													"Role":"Button",
-													"Id":"ApplyButton"
-												},
-												{
-													"Name":"Auto-Order",
-													"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
-													"Role":"Button",
-													"Id":"AutoOrderButton"
-												},
-												{
-													"Name":"Refresh",
-													"Description":"Reads the controllers again, for when one has arrived or left.",
-													"Role":"Button",
-													"Id":"RefreshButton"
 												}
 											]
 										}
 									]
 								},
 								{
-									"Name":null,
-									"Description":"Every controller the program can see.",
-									"Role":"Group",
-									"Id":"DevicesPanel",
-									"Type":"UserDevicesUserControl",
-									"Items":[
-										{
-											"Name":"Devices",
-											"Description":"Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.",
-											"Role":"Grid",
-											"Id":"DevicesDataGridView"
-										},
-										{
-											"Name":"Device actions",
-											"Description":"Refreshes the list and works on the selected device.",
-											"Role":"Toolbar",
-											"Id":"ControllersToolStrip",
-											"Items":[
-												{
-													"Name":"Refresh",
-													"Description":"Reads every device again.",
-													"Role":"Button",
-													"Id":"RefreshButton"
-												},
-												{
-													"Name":"Delete",
-													"Description":"Forgets the selected device and its settings.",
-													"Role":"Button",
-													"Id":"ControllerDeleteButton"
-												},
-												{
-													"Name":"Show System Devices",
-													"Description":"Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.",
-													"Role":"CheckBox",
-													"Id":"ShowSystemDevicesButton",
-													"Hidden":true
-												},
-												{
-													"Name":"Hardware...",
-													"Description":"Opens the selected device in Windows Device Manager.",
-													"Role":"Button",
-													"Id":"HardwareButton"
-												},
-												{
-													"Name":"Add Plugin Device",
-													"Description":"Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.",
-													"Role":"Button",
-													"Id":"AddDemoDevice"
-												},
-												{
-													"Name":"Remove Leftover Pads",
-													"Description":"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.",
-													"Role":"Button",
-													"Id":"CleanupVirtualPadsButton"
-												},
-												{
-													"Name":"HID Hide",
-													"Description":"Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.",
-													"Role":"Button",
-													"Id":"HidHideDropDownButton",
-													"Items":[
-														{
-															"Name":"Show Gaming Devices",
-															"Description":"Lists the devices HID Hide counts as game controllers, with the path it knows each by.",
-															"Role":"Button",
-															"Id":"GamingDevicesMenuItem"
-														},
-														{
-															"Name":"Show Hidden Devices",
-															"Description":"Lists the devices HID Hide is hiding from games.",
-															"Role":"Button",
-															"Id":"HiddenDevicesMenuItem"
-														},
-														{
-															"Name":"Unhide All Devices",
-															"Description":"Makes every device HID Hide hides visible to games again, and clears every Hide box.",
-															"Role":"Button",
-															"Id":"UnhideAllDevicesMenuItem"
-														},
-														{
-															"Name":"Synchronize To HID Hide",
-															"Description":"Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.",
-															"Role":"Button",
-															"Id":"SynchronizeToHidHideMenuItem"
-														},
-														{
-															"Name":"Open HID Hide",
-															"Description":"Opens HID Hide's own program, or its download page while it is not installed.",
-															"Role":"Button",
-															"Id":"OpenHidHideMenuItem"
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"Name":"Cloud",
-							"Description":"Settings waiting to be sent to or fetched from the online database.",
-							"Role":"Tab",
-							"Id":"CloudTabPage",
-							"Items":[
-								{
-									"Name":null,
+									"Name":"Cloud",
 									"Description":"Settings waiting to be sent to or fetched from the online database.",
-									"Role":"Group",
-									"Id":"CloudPanel",
-									"Type":"CloudUserControl",
+									"Role":"Tab",
+									"Id":"CloudTabPage",
 									"Items":[
 										{
-											"Name":"Cloud tasks",
-											"Description":"Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.",
-											"Role":"Grid",
-											"Id":"TasksDataGridView"
-										},
-										{
-											"Name":"Cloud actions",
-											"Description":"Sends and fetches settings, and clears the queue.",
-											"Role":"Toolbar",
-											"Id":"toolStrip1",
+											"Name":null,
+											"Description":"Settings waiting to be sent to or fetched from the online database.",
+											"Role":"Group",
+											"Id":"CloudPanel",
+											"Type":"CloudUserControl",
 											"Items":[
 												{
-													"Name":"Retry",
-													"Description":"Sends the tasks that failed again now, each with all its tries.",
-													"Role":"Button",
-													"Id":"RetryButton"
+													"Name":"Cloud tasks",
+													"Description":"Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.",
+													"Role":"Grid",
+													"Id":"TasksDataGridView"
 												},
 												{
-													"Name":"Upload To Cloud",
-													"Description":"Sends your settings to the online database.",
-													"Role":"Button",
-													"Id":"UploadToCloudButton"
-												},
-												{
-													"Name":"Download From Cloud",
-													"Description":"Fetches settings other people have shared.",
-													"Role":"Button",
-													"Id":"DownloadFromCloudButton"
-												},
-												{
-													"Name":null,
-													"Role":"Separator",
-													"Id":"NextRunSeparator"
-												},
-												{
-													"Name":"Next run",
-													"Description":"How long until a task that failed is sent again, none while no task waits, and whether the network is on.",
-													"Role":"Status",
-													"Id":"NextRunLabel"
-												},
-												{
-													"Name":"Queue state",
-													"Description":"Whether the queue is running, waiting, or stopped.",
-													"Role":"Status",
-													"Id":"RunStateLabel"
-												},
-												{
-													"Name":"Delete",
-													"Description":"Removes the selected task from the queue.",
-													"Role":"Button",
-													"Id":"DeleteButton"
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"Name":"Help",
-							"Description":"Instructions for setting up a controller, and answers to common problems.",
-							"Role":"Tab",
-							"Id":"HelpTabPage",
-							"Items":[
-								{
-									"Name":"Help text",
-									"Description":"Instructions for setting up a controller, and answers to common problems.",
-									"Role":"Value",
-									"Id":"HelpRichTextBox"
-								}
-							]
-						},
-						{
-							"Name":"About",
-							"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
-							"Role":"Tab",
-							"Id":"AboutTabPage",
-							"Items":[
-								{
-									"Name":null,
-									"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
-									"Role":"Group",
-									"Id":"AboutControl",
-									"Type":"AboutControl",
-									"Items":[
-										{
-											"Name":"About pages",
-											"Description":"The program and who made it, what changed in each release, and the licence.",
-											"Role":"Tabs",
-											"Id":"AboutTabControl",
-											"Items":[
-												{
-													"Name":"Program",
-													"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
-													"Role":"Tab",
-													"Id":"ProgramTabPage",
+													"Name":"Cloud actions",
+													"Description":"Sends and fetches settings, and clears the queue.",
+													"Role":"Toolbar",
+													"Id":"toolStrip1",
 													"Items":[
 														{
-															"Name":"Program details",
-															"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
-															"Role":"Value",
-															"Id":"ProgramRichTextBox"
-														}
-													]
-												},
-												{
-													"Name":"Changes",
-													"Description":"What changed in each release.",
-													"Role":"Tab",
-													"Id":"ChangesTabPage",
-													"Items":[
+															"Name":"Retry",
+															"Description":"Sends the tasks that failed again now, each with all its tries.",
+															"Role":"Button",
+															"Id":"RetryButton"
+														},
 														{
-															"Name":"Change log",
-															"Description":"What changed in each release.",
-															"Role":"Text",
-															"Id":"ChangeLogTextBox"
-														}
-													]
-												},
-												{
-													"Name":"License",
-													"Description":"Terms this program is given under.",
-													"Role":"Tab",
-													"Id":"LicenseTabPage",
-													"Items":[
+															"Name":"Upload To Cloud",
+															"Description":"Sends your settings to the online database.",
+															"Role":"Button",
+															"Id":"UploadToCloudButton"
+														},
 														{
-															"Name":"Licence text",
-															"Description":"Terms this program is given under.",
-															"Role":"Text",
-															"Id":"LicenseTextBox"
+															"Name":"Download From Cloud",
+															"Description":"Fetches settings other people have shared.",
+															"Role":"Button",
+															"Id":"DownloadFromCloudButton"
+														},
+														{
+															"Name":null,
+															"Role":"Separator",
+															"Id":"NextRunSeparator"
+														},
+														{
+															"Name":"Next run",
+															"Description":"How long until a task that failed is sent again, none while no task waits, and whether the network is on.",
+															"Role":"Status",
+															"Id":"NextRunLabel"
+														},
+														{
+															"Name":"Queue state",
+															"Description":"Whether the queue is running, waiting, or stopped.",
+															"Role":"Status",
+															"Id":"RunStateLabel"
+														},
+														{
+															"Name":"Delete",
+															"Description":"Removes the selected task from the queue.",
+															"Role":"Button",
+															"Id":"DeleteButton"
 														}
 													]
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"Name":"Issues",
-							"Description":"Problems the program found, and what to do about each one.",
-							"Role":"Tab",
-							"Id":"IssuesTabPage",
-							"Items":[
-								{
-									"Name":"Issues list",
-									"Description":"Problems the program found, and what to do about each one.",
-									"Role":"Group",
-									"Id":"IssuesPanel",
-									"Type":"IssuesUserControl",
-									"Items":[
-										{
-											"Name":"Issues",
-											"Description":"Problems the program found, with what to do about each one.",
-											"Role":"Grid",
-											"Id":"WarningsDataGridView"
-										},
-										{
-											"Name":"Issue actions",
-											"Description":"Hides issues you have decided to live with.",
-											"Role":"Toolbar",
-											"Id":"GamesToolStrip",
-											"Items":[
-												{
-													"Name":"Ignore All",
-													"Description":"Stops reporting every issue listed.",
-													"Role":"CheckBox",
-													"Id":"IgnoreAllButton"
-												},
-												{
-													"Name":"Ignore",
-													"Description":"Stops reporting the selected issue.",
-													"Role":"Button",
-													"Id":"IgnoreButton"
-												},
-												{
-													"Name":"Exception Info",
-													"Description":"Shows the fault behind the selected issue in full.",
-													"Role":"Button",
-													"Id":"ExceptionInfoButton",
-													"Hidden":true
-												},
-												{
-													"Name":"Check state",
-													"Description":"What the program is checking right now.",
-													"Role":"Status",
-													"Id":"StatusLabel"
-												},
-												{
-													"Name":null,
-													"Role":"Separator",
-													"Id":"NextRunSeparator"
-												},
-												{
-													"Name":"Next check",
-													"Description":"How long until the checks run again.",
-													"Role":"Status",
-													"Id":"NextRunLabel"
-												},
-												{
-													"Name":"Check state",
-													"Description":"Whether the checks are running or waiting.",
-													"Role":"Status",
-													"Id":"RunStateLabel"
 												}
 											]
 										}
 									]
 								},
 								{
-									"Name":null,
-									"Description":"Records what the program reads and sends, into a file to post with a bug report.",
-									"Role":"Group",
-									"Id":"RecorderPanel",
-									"Type":"RecorderUserControl",
+									"Name":"Help",
+									"Description":"Instructions for setting up a controller, and answers to common problems.",
+									"Role":"Tab",
+									"Id":"HelpTabPage",
 									"Items":[
 										{
-											"Name":"Record for a bug report",
-											"Description":"Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.",
-											"Role":"Section",
-											"Id":"RecordGroupBox",
+											"Name":"Help text",
+											"Description":"Instructions for setting up a controller, and answers to common problems.",
+											"Role":"Value",
+											"Id":"HelpRichTextBox"
+										}
+									]
+								},
+								{
+									"Name":"About",
+									"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
+									"Role":"Tab",
+									"Id":"AboutTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Version, who made the program and what it carries, what changed in each release, and the licence.",
+											"Role":"Group",
+											"Id":"AboutControl",
+											"Type":"AboutControl",
 											"Items":[
 												{
-													"Name":"What the recording leaves out",
-													"Description":"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.",
-													"Role":"Label",
-													"Id":"NoteLabel"
+													"Name":"About pages",
+													"Description":"The program and who made it, what changed in each release, and the licence.",
+													"Role":"Tabs",
+													"Id":"AboutTabControl",
+													"Items":[
+														{
+															"Name":"Program",
+															"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
+															"Role":"Tab",
+															"Id":"ProgramTabPage",
+															"Items":[
+																{
+																	"Name":"Program details",
+																	"Description":"What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.",
+																	"Role":"Value",
+																	"Id":"ProgramRichTextBox"
+																}
+															]
+														},
+														{
+															"Name":"Changes",
+															"Description":"What changed in each release.",
+															"Role":"Tab",
+															"Id":"ChangesTabPage",
+															"Items":[
+																{
+																	"Name":"Change log",
+																	"Description":"What changed in each release.",
+																	"Role":"Text",
+																	"Id":"ChangeLogTextBox"
+																}
+															]
+														},
+														{
+															"Name":"License",
+															"Description":"Terms this program is given under.",
+															"Role":"Tab",
+															"Id":"LicenseTabPage",
+															"Items":[
+																{
+																	"Name":"Licence text",
+																	"Description":"Terms this program is given under.",
+																	"Role":"Text",
+																	"Id":"LicenseTextBox"
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Issues",
+									"Description":"Problems the program found, and what to do about each one.",
+									"Role":"Tab",
+									"Id":"IssuesTabPage",
+									"Items":[
+										{
+											"Name":"Issues list",
+											"Description":"Problems the program found, and what to do about each one.",
+											"Role":"Group",
+											"Id":"IssuesPanel",
+											"Type":"IssuesUserControl",
+											"Items":[
+												{
+													"Name":"Issues",
+													"Description":"Problems the program found, with what to do about each one.",
+													"Role":"Grid",
+													"Id":"WarningsDataGridView"
 												},
 												{
-													"Name":"Settings and devices",
-													"Description":"A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.",
-													"Role":"CheckBox",
-													"Id":"SettingsCheckBox"
-												},
+													"Name":"Issue actions",
+													"Description":"Hides issues you have decided to live with.",
+													"Role":"Toolbar",
+													"Id":"GamesToolStrip",
+													"Items":[
+														{
+															"Name":"Ignore All",
+															"Description":"Stops reporting every issue listed.",
+															"Role":"CheckBox",
+															"Id":"IgnoreAllButton"
+														},
+														{
+															"Name":"Ignore",
+															"Description":"Stops reporting the selected issue.",
+															"Role":"Button",
+															"Id":"IgnoreButton"
+														},
+														{
+															"Name":"Exception Info",
+															"Description":"Shows the fault behind the selected issue in full.",
+															"Role":"Button",
+															"Id":"ExceptionInfoButton",
+															"Hidden":true
+														},
+														{
+															"Name":"Check state",
+															"Description":"What the program is checking right now.",
+															"Role":"Status",
+															"Id":"StatusLabel"
+														},
+														{
+															"Name":null,
+															"Role":"Separator",
+															"Id":"NextRunSeparator"
+														},
+														{
+															"Name":"Next check",
+															"Description":"How long until the checks run again.",
+															"Role":"Status",
+															"Id":"NextRunLabel"
+														},
+														{
+															"Name":"Check state",
+															"Description":"Whether the checks are running or waiting.",
+															"Role":"Status",
+															"Id":"RunStateLabel"
+														}
+													]
+												}
+											]
+										},
+										{
+											"Name":null,
+											"Description":"Records what the program reads and sends, into a file to post with a bug report.",
+											"Role":"Group",
+											"Id":"RecorderPanel",
+											"Type":"RecorderUserControl",
+											"Items":[
 												{
-													"Name":"Device input",
-													"Description":"A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.",
-													"Role":"CheckBox",
-													"Id":"InputCheckBox"
-												},
-												{
-													"Name":"Controller output",
-													"Description":"A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.",
-													"Role":"CheckBox",
-													"Id":"OutputCheckBox"
-												},
-												{
-													"Name":"Force feedback",
-													"Description":"A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.",
-													"Role":"CheckBox",
-													"Id":"ForcesCheckBox"
-												},
-												{
-													"Name":"Engine timing",
-													"Description":"A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.",
-													"Role":"CheckBox",
-													"Id":"EngineCheckBox"
-												},
-												{
-													"Name":"Window and errors",
-													"Description":"A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.",
-													"Role":"CheckBox",
-													"Id":"WindowCheckBox"
-												},
-												{
-													"Name":"Start Recording",
-													"Description":"Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.",
-													"Role":"Button",
-													"Id":"RecordButton"
-												},
-												{
-													"Name":"Open Folder",
-													"Description":"Opens the folder the recordings are saved in, with the last one selected.",
-													"Role":"Button",
-													"Id":"OpenFolderButton"
-												},
-												{
-													"Name":"Recording status",
-													"Description":"How long the recording has run and how big it is, or the file it was saved to.",
-													"Role":"Label",
-													"Id":"StatusLabel"
+													"Name":"Record for a bug report",
+													"Description":"Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.",
+													"Role":"Section",
+													"Id":"RecordGroupBox",
+													"Items":[
+														{
+															"Name":"What the recording leaves out",
+															"Description":"Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.",
+															"Role":"Label",
+															"Id":"NoteLabel"
+														},
+														{
+															"Name":"Settings and devices",
+															"Description":"A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.",
+															"Role":"CheckBox",
+															"Id":"SettingsCheckBox"
+														},
+														{
+															"Name":"Device input",
+															"Description":"A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.",
+															"Role":"CheckBox",
+															"Id":"InputCheckBox"
+														},
+														{
+															"Name":"Controller output",
+															"Description":"A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.",
+															"Role":"CheckBox",
+															"Id":"OutputCheckBox"
+														},
+														{
+															"Name":"Force feedback",
+															"Description":"A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.",
+															"Role":"CheckBox",
+															"Id":"ForcesCheckBox"
+														},
+														{
+															"Name":"Engine timing",
+															"Description":"A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.",
+															"Role":"CheckBox",
+															"Id":"EngineCheckBox"
+														},
+														{
+															"Name":"Window and errors",
+															"Description":"A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.",
+															"Role":"CheckBox",
+															"Id":"WindowCheckBox"
+														},
+														{
+															"Name":"Start Recording",
+															"Description":"Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.",
+															"Role":"Button",
+															"Id":"RecordButton"
+														},
+														{
+															"Name":"Open Folder",
+															"Description":"Opens the folder the recordings are saved in, with the last one selected.",
+															"Role":"Button",
+															"Id":"OpenFolderButton"
+														},
+														{
+															"Name":"Recording status",
+															"Description":"How long the recording has run and how big it is, or the file it was saved to.",
+															"Role":"Label",
+															"Id":"StatusLabel"
+														}
+													]
 												}
 											]
 										}

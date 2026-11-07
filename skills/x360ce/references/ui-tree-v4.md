@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.29.53.0, built 2026-11-06.
+Version 4.29.58.0, built 2026-11-07.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -342,334 +342,335 @@ not shown in this state of the program.
 [Status]    │   │   └── XInput library                                                  # Which XInput library the program loaded, and its version.
 [Label]     │   ├── Help subject                                                        # Name of whatever the mouse is over.
 [Label]     │   ├── Help text                                                           # What whatever the mouse is over is for.
-[Toolbar]   │   ├── Game bar                                                            # Chooses the game being set up, and saves the settings.
-[List]      │   │   ├── Game                                                            # Which game the settings on every page below belong to.
-[Button]    │   │   ├── Save All                                                        # Writes every setting to disk now.
-[Button]    │   │   ├── Test... (hidden)                                                # Opens a window for trying the emulated controller without a game.
-[Button]    │   │   └── Add Game...                                                     # Sets this program up for another game.
-[Tabs]      │   └── Main                                                                # The four controllers, and the pages for everything else.
-[Tab]       │       ├── Controller 1                                                    # Settings for the first emulated Xbox controller.
-[Group]     │       │   └── (ControlPad1) -> PadControl                                 # Everything about one emulated Xbox controller: what works it, and how.
-[Tab]       │       ├── Controller 2                                                    # Settings for the second emulated Xbox controller.
-[Group]     │       │   └── (ControlPad2) -> PadControl                                 # Everything about one emulated Xbox controller: what works it, and how.
-[Tab]       │       ├── Controller 3                                                    # Settings for the third emulated Xbox controller.
-[Group]     │       │   └── (ControlPad3) -> PadControl                                 # Everything about one emulated Xbox controller: what works it, and how.
-[Tab]       │       ├── Controller 4                                                    # Settings for the fourth emulated Xbox controller.
-[Group]     │       │   └── (ControlPad4) -> PadControl                                 # Everything about one emulated Xbox controller: what works it, and how.
-[Tab]       │       ├── Options                                                         # Settings for the program itself, and for the drivers it needs.
-[Group]     │       │   └── (OptionsPanel)                                              # Settings for the program itself, rather than for one controller.
-[Tabs]      │       │       └── Options pages                                           # Settings for the program itself, rather than for one controller.
-[Tab]       │       │           ├── General                                             # How the program starts and runs, and which tabs it shows.
-[Section]   │       │           │   ├── Operation                                       # How the program behaves while it runs.
-[CheckBox]  │       │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
-[CheckBox]  │       │           │   │   ├── Minimize to Tray                            # Hides the window to the notification area instead of the taskbar.
-[CheckBox]  │       │           │   │   ├── Always on Top                               # Make program Top Window
-[CheckBox]  │       │           │   │   ├── Start with Windows:                         # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
-[List]      │       │           │   │   └── Start with Windows                          # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
-[Section]   │       │           │   ├── Testing                                         # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
-[CheckBox]  │       │           │   │   ├── Enable XInput                               # Turns the emulated controllers on. Off leaves games with the real ones.
-[CheckBox]  │       │           │   │   ├── Show [Programs] Tab                         # Shows the Programs page, which lists what has been set up for each program.
-[CheckBox]  │       │           │   │   ├── Show [Devices] Tab                          # Shows the Devices page, which lists every controller found.
-[CheckBox]  │       │           │   │   └── Show [Settings] Tab                         # Shows the Settings page, which lists every stored setting.
-[Section]   │       │           │   ├── Direct Input Devices                            # Which devices the program lists and reads.
-[CheckBox]  │       │           │   │   ├── Exclude Supplemental Devices                # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
-[CheckBox]  │       │           │   │   ├── Exclude Virtual Devices                     # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
-[CheckBox]  │       │           │   │   └── Read Every Change                           # Read every change a device reports, not only its state at each pass.
-[Section]   │       │           │   ├── Guide Button                                    # What happens when the Guide button is pressed.
-[Text]      │       │           │   │   └── Guide button action                         # Program or command run when the Guide button is pressed.
-[Section]   │       │           │   ├── Hotkeys                                         # Keys and controller buttons that reach this program from inside a game.
-[CheckBox]  │       │           │   │   ├── Emulation                                   # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
-[Value]     │       │           │   │   ├── Emulation hotkey                            # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
-[CheckBox]  │       │           │   │   ├── Controller                                  # Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.
-[Value]     │       │           │   │   ├── Emulation buttons                           # Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.
-[CheckBox]  │       │           │   │   ├── Show a note on the screen when pressed      # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
-[CheckBox]  │       │           │   │   └── Show a note when a device disconnects       # Shows a short note on the screen when a device mapped to the current game disconnects or connects again.
-[Tabs]      │       │           │   ├── Scan locations                                  # Folders searched when looking for installed games.
-[Tab]       │       │           │   │   └── Game Scan Locations                         # Folders searched when looking for installed games.
-[List]      │       │           │   │       ├── Scanned folders                         # The locations to scan for games.
-[Toolbar]   │       │           │   │       └── Scan location actions                   # Adds and removes the folders searched for games.
-[Button]    │       │           │   │           ├── Refresh                             # Reads the folder list again.
-[Button]    │       │           │   │           ├── Remove                              # Stops searching the selected folder.
-[Button]    │       │           │   │           └── Add...                              # Adds a folder to search for games.
-[Section]   │       │           │   ├── Appearance                                      # The program's colours, and the font and size its windows are drawn in.
-[List]      │       │           │   │   ├── Theme                                       # Light or dark colours. System follows the Windows setting for apps.
-[List]      │       │           │   │   ├── Font                                        # The font the program's windows are drawn in: Segoe UI, the default, or Selawik, built in, where Windows has no Segoe UI; Selawik, built in; Windows default, Windows' own; or an installed font. Takes effect when x360ce starts again.
-[List]      │       │           │   │   ├── Size                                        # The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' text size, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.
-[Button]    │       │           │   │   └── Restart x360ce (hidden)                     # Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.
-[Section]   │       │           │   ├── Developing                                      # Aids for working on the program itself.
-[CheckBox]  │       │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB            # Enable Form Info (CTRL+SHIFT+RMB)
-[CheckBox]  │       │           │   │   ├── Show [Test...] Button                       # Show [Test...] Button.
-[Button]    │       │           │   │   └── Developer Tools...                          # Opens a window of aids for working on the program.
-[Section]   │       │           │   └── Configuration                                   # Switching settings to the game in front.
-[CheckBox]  │       │           │       └── Auto switch configuration when game focused # Autodetect currently focussed game.
-[Tab]       │       │           ├── Internet                                            # Whether settings are shared with the online database, and the account used.
-[Group]     │       │           │   └── (InternetPanel)                                 # Whether settings are shared with the online database, and the account used.
-[Section]   │       │           │       ├── Default settings                            # How settings shared by other people are chosen.
-[Number]    │       │           │       │   ├── Minimum instances 0..100                # How many people must use a setting before it is offered as the default.
-[CheckBox]  │       │           │       │   └── Include Enabled                         # Counts only games that are switched on when choosing a default.
-[Section]   │       │           │       ├── Internet                                    # Whether the program contacts the online settings database at all.
-[CheckBox]  │       │           │       │   ├── Enable Internet Features                # Enable the use of Internet features like the settings database.
-[CheckBox]  │       │           │       │   ├── Load Settings from Cloud                # Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.
-[CheckBox]  │       │           │       │   ├── Save Settings to Cloud                  # Auto save settings to Internet Database.
-[List]      │       │           │       │   ├── Web service address                     # Internet settings database URL.
-[Button]    │       │           │       │   ├── Test                                    # Asks the web service at that address who it is and says whether it answers.
-[List]      │       │           │       │   ├── SDL database address                    # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
-[Button]    │       │           │       │   └── Update SDL Database                     # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
-[Section]   │       │           │       ├── Online account                              # Identifies this computer to the online database.
-[Text]      │       │           │       │   ├── Computer disk                           # Disk the computer identifier is taken from.
-[Text]      │       │           │       │   ├── Computer identifier                     # Anonymous identifier for this computer.
-[Text]      │       │           │       │   ├── Profile path                            # Folder the profile identifier is taken from.
-[Button]    │       │           │       │   ├── Open                                    # Opens the folder the profile identifier is taken from.
-[Text]      │       │           │       │   └── Profile identifier                      # Anonymous identifier for this profile.
-[Section]   │       │           │       └── Sign in (hidden)                            # Signs in, so settings can be kept with an account instead of this computer.
-[Text]      │       │           │           ├── Username                                # E-mail address the account was created with.
-[Text]      │       │           │           ├── Password                                # Password for the account.
-[Button]    │       │           │           ├── Log In                                  # Signs in with the username and password above.
-[Button]    │       │           │           ├── Create...                               # Creates an account on the online database.
-[Button]    │       │           │           └── Reset...                                # Sends a password reset to the address above.
-[Tab]       │       │           ├── Virtual Device                                      # The driver that presents the emulated controllers to Windows.
-[Section]   │       │           │   ├── Allow Remote Controllers (hidden)               # Lets another computer on the network work these controllers.
-[Text]      │       │           │   │   ├── Remote password                             # Password another computer must give before it may work these controllers.
-[CheckBox]  │       │           │   │   ├── Allow remote controller 1                   # Lets a remote computer work controller 1.
-[CheckBox]  │       │           │   │   ├── Allow remote controller 2                   # Lets a remote computer work controller 2.
-[CheckBox]  │       │           │   │   ├── Allow remote controller 3                   # Lets a remote computer work controller 3.
-[CheckBox]  │       │           │   │   ├── Allow remote controller 4                   # Lets a remote computer work controller 4.
-[Number]    │       │           │   │   ├── Remote port 1024..49151                     # Network port listened on for a remote controller.
-[CheckBox]  │       │           │   │   └── Enabled                                     # Accepts controllers from another computer.
-[Section]   │       │           │   └── Virtual controller driver                       # The driver that presents the emulated controllers to Windows.
-[List]      │       │           │       ├── Polling rate                                # Virtual Controller update frequency.
-[Text]      │       │           │       ├── Driver version                              # Which version of the virtual controller driver is installed.
-[Button]    │       │           │       ├── Refresh                                     # Checks the driver again.
-[Button]    │       │           │       ├── Install                                     # Installs the virtual controller driver. Needs Administrator.
-[Button]    │       │           │       ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
-[Link]      │       │           │       └── Driver author                               # Opens the page the virtual controller driver comes from.
-[Tab]       │       │           ├── HID Hide                                            # Hides the real controller from games, so only the emulated one is seen.
-[Section]   │       │           │   ├── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
-[Value]     │       │           │   │   ├── HID Hide state                              # Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.
-[Button]    │       │           │   │   ├── Refresh                                     # Checks HID Hide again.
-[Button]    │       │           │   │   ├── Install HID Hide                            # Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.
-[Button]    │       │           │   │   ├── Open Configuration                          # Opens the HID Hide program, where hidden devices are chosen.
-[Link]      │       │           │   │   ├── HID Hide releases                           # Opens the page HID Hide's setups are downloaded from, to download one by hand.
-[CheckBox]  │       │           │   │   └── Configure automatically                     # Hide a device through HID Hide while it is mapped to a controller.
-[Value]     │       │           │   └── HID Hide notes                                  # What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.
-[Tab]       │       │           ├── HID Guardian (obsolete)                             # The tool HID Hide replaced. Kept so an old installation can be removed.
-[Section]   │       │           │   ├── HID Guardian                                    # The tool HID Hide replaced. Kept so an old installation can be removed.
-[Text]      │       │           │   │   ├── HID Guardian state                          # Whether HID Guardian is still installed.
-[Button]    │       │           │   │   ├── Install                                     # Installs HID Guardian. Use HID Hide instead.
-[Button]    │       │           │   │   ├── Uninstall                                   # Removes HID Guardian. Needs Administrator.
-[Button]    │       │           │   │   └── Refresh                                     # Checks HID Guardian again.
-[Value]     │       │           │   └── HID Guardian notes                              # Explains why HID Guardian is no longer recommended.
-[Tab]       │       │           ├── Settings                                            # Where your settings are kept, and how to move them somewhere else.
-[Group]     │       │           │   └── (SettingsPanel)                                 # Where your settings are kept, and how to move them somewhere else.
-[Value]     │       │           │       ├── Settings folder in use                      # Folder the settings are being read from and written to.
-[Button]    │       │           │       ├── Open Folder                                 # Opens the settings folder in Explorer.
-[List]      │       │           │       ├── Keep settings in                            # Which folder to keep settings in. Your own user folder cannot be locked by another account.
-[List]      │       │           │       ├── What to do with existing settings           # Whether the settings you have are copied to the new folder, or left behind.
-[Button]    │       │           │       └── Apply                                       # Moves the settings to the chosen folder and starts using it.
-[Tab]       │       │           ├── Update                                              # Looks for a newer version of the program and installs it.
-[Group]     │       │           │   └── Update                                          # Looks for a newer version of the program and installs it, step by step, in the log below.
-[CheckBox]  │       │           │       ├── Check for updates on startup                # Look for a newer version after the program starts. Off means no request is made.
-[Label]     │       │           │       ├── What the check sends                        # When the check runs and the one thing it sends: this program's version, to github.com.
-[Button]    │       │           │       ├── Check now                                   # Looks for a newer version now, downloads it, checks it and installs it.
-[CheckBox]  │       │           │       ├── Check Digital Signature                     # Install only an update whose program file carries a trusted digital signature.
-[CheckBox]  │       │           │       ├── Check Version                               # Install only an update whose program file is newer than this one and is the version its release announces.
-[Value]     │       │           │       └── Update log                                  # Each step of the last check and what it found.
-[Tab]       │       │           ├── AI                                                  # The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.
-[Group]     │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
-[Group]     │       │           │       ├── About AI assistant access                   # What AI assistant access does, and an example of what to ask an assistant once it is on.
-[Label]     │       │           │       │   ├── What AI assistant access does           # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
-[Value]     │       │           │       │   ├── Example request                         # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
-[Button]    │       │           │       │   └── Copy example                            # Copies the example request to the clipboard, to paste into an AI assistant.
-[Tabs]      │       │           │       └── AI tabs                                     # The skill, the door, and the tunnel for ChatGPT on the web, each on a tab of its own.
-[Tab]       │       │           │           ├── AI Skill                                # Installs the skill that teaches an AI agent how to use this program.
-[Group]     │       │           │           │   └── AI skill                            # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
-[Value]     │       │           │           │       ├── Claude Code skills folder       # Where Claude Code reads skills.
-[Button]    │       │           │           │       ├── Install for Claude Code         # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
-[Label]     │       │           │           │       ├── Claude Code skill               # Whether the skill is in that folder, and whether it is this program's version.
-[Value]     │       │           │           │       ├── Other agents' skills folder     # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
-[Button]    │       │           │           │       ├── Install for other agents        # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
-[Label]     │       │           │           │       ├── Other agents' skill             # Whether the skill is in that folder, and whether it is this program's version.
-[Label]     │       │           │           │       ├── Claude app                      # What to do with the ZIP, or why it was not saved.
-[Button]    │       │           │           │       └── Save as ZIP                     # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
-[Tab]       │       │           │           ├── MCP Server - AI Assistant Access        # Opens the door an AI assistant or a script reaches this program by, at the level chosen there.
-[Group]     │       │           │           │   └── AI assistant access (MCP server)    # Lets an AI assistant or a script read or operate this program, at the level chosen here.
-[CheckBox]  │       │           │           │       ├── AI assistant access             # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
-[List]      │       │           │           │       ├── AI assistant level              # Read, Configure or Administer: how much a connected assistant or script may do.
-[List]      │       │           │           │       ├── AI assistant address            # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
-[CheckBox]  │       │           │           │       ├── Trust local connections (no token)  # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
-[Text]      │       │           │           │       ├── AI assistant port               # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
-[Value]     │       │           │           │       ├── AI assistant URL                # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
-[Button]    │       │           │           │       ├── Copy URL                        # Copies the URL to the clipboard.
-[Value]     │       │           │           │       ├── AI assistant token              # What a caller must present to be let in. Made by this program.
-[Button]    │       │           │           │       ├── Regenerate token                # Makes a new token, so anything holding the old one is shut out.
-[Value]     │       │           │           │       ├── Assistant snippet               # Settings to paste into an assistant so it can start this program as an MCP server.
-[Button]    │       │           │           │       ├── Copy snippet                    # Copies the assistant snippet to the clipboard. The snippet holds no token.
-[Button]    │       │           │           │       ├── Copy prompt                     # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
-[Button]    │       │           │           │       ├── Open log                        # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
-[Label]     │       │           │           │       └── Door state                      # Whether the door is open and at which level, or why it could not open; after a press, what it did.
-[Tab]       │       │           │           └── OpenAI Tunnel                           # Lets ChatGPT on the web reach this program through the door. Only the person can change it.
-[Group]     │       │           │               └── ChatGPT on the web (OpenAI tunnel)  # Opens an OpenAI Secure MCP Tunnel, so ChatGPT on the web reaches this program through the door. Only the person can change it.
-[Label]     │       │           │                   ├── About the tunnel                # Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.
-[Text]      │       │           │                   ├── OpenAI organization ID          # The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.
-[Button]    │       │           │                   ├── Find organization ID            # Opens the OpenAI Platform page that shows the organization ID.
-[Text]      │       │           │                   ├── OpenAI admin key                # An admin key of the organization, used only to list, create and delete tunnels and never kept.
-[Button]    │       │           │                   ├── Get admin key                   # Opens the OpenAI Platform page that makes admin keys.
-[List]      │       │           │                   ├── Tunnel ID                       # The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.
-[Button]    │       │           │                   ├── Create tunnel                   # Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.
-[Button]    │       │           │                   ├── Copy tunnel ID                  # Copies the tunnel ID, to paste into ChatGPT.
-[Button]    │       │           │                   ├── Delete tunnel                   # Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.
-[Text]      │       │           │                   ├── OpenAI API key                  # The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.
-[Button]    │       │           │                   ├── Get API key                     # Opens the OpenAI Platform page that makes the API key.
-[CheckBox]  │       │           │                   ├── Open the tunnel                 # Opens the tunnel while AI assistant access is on, now and each time this program starts.
-[Button]    │       │           │                   ├── Tunnel status page              # Opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. Only while the tunnel runs.
-[Label]     │       │           │                   ├── In ChatGPT                      # What to choose in ChatGPT's Add custom MCP server once the tunnel is open.
-[Button]    │       │           │                   ├── Open ChatGPT                    # Opens the ChatGPT page where custom MCP servers are added.
-[Value]     │       │           │                   ├── Tunnel settings file            # The file the tunnel's ID, organization and encrypted API key are kept in.
-[Button]    │       │           │                   ├── Show file                       # Shows the settings file in File Explorer.
-[Label]     │       │           │                   ├── Where the keys are              # How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.
-[Label]     │       │           │                   └── Tunnel state                    # Whether the tunnel is open, why not, or what the last press did.
-[Tab]       │       │           └── Plugins                                             # The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.
-[Group]     │       │               └── (PluginsPanel)
-[CheckBox]  │       │                   ├── Allow third-party plugins                   # Load plugins that are not signed by the publisher of x360ce.
-[Label]     │       │                   ├── About plugins                               # Which plugins load by themselves, and why plugins from others need permission.
-[Value]     │       │                   ├── Plugins folder                              # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
-[Button]    │       │                   ├── Open Folder                                 # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
-[Grid]      │       │                   ├── Plugins                                     # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
-[Section]   │       │                   └── AutoHotkey scripts                          # Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.
-[CheckBox]  │       │                       ├── Allow AutoHotkey scripts                # Let AutoHotkey scripts read devices and change what controllers read.
-[Label]     │       │                       ├── About AutoHotkey scripts                # How a script reaches x360ce, and where the library it includes is written.
-[Number]    │       │                       ├── Heartbeat every (ms) 10..1000           # How often an AutoHotkey script tells x360ce it still runs, in milliseconds.
-[Number]    │       │                       └── Let go of a hung script after (ms) 50..10000  # How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.
-[Tab]       │       ├── Games                                                           # Games this program is set up for, and what it does for each one.
-[Group]     │       │   └── (GameSettingsPanel)                                         # Games this program is set up for.
-[Grid]      │       │       ├── Games                                                   # Games this program is set up for. The tick says whether it is switched on.
-[Toolbar]   │       │       ├── Game actions                                            # Finds, adds, starts and removes games.
-[Button]    │       │       │   ├── Scan                                                # Searches the folders listed in Options for games it knows.
-[Button]    │       │       │   ├── Add...                                              # Adds a game by choosing its program file.
-[Button]    │       │       │   ├── Delete                                              # Removes the selected game from the list.
-[Button]    │       │       │   ├── Save                                                # Writes the settings file the selected game reads.
-[Button]    │       │       │   ├── Start                                               # Runs the selected game.
-[Button]    │       │       │   ├── Open...                                             # Opens the folder the selected game is installed in.
-[Button]    │       │       │   └── Show                                                # Limits the list to games that are switched on, or off.
-[Button]    │       │       │       ├── Show: All                                       # Lists every game.
-[Button]    │       │       │       ├── Show: Enabled                                   # Lists only the games that are switched on.
-[Button]    │       │       │       └── Show: Disabled                                  # Lists only the games that are switched off.
-[Group]     │       │       └── (GameDetailsControl)                                    # How the selected game is set up.
-[Section]   │       │           ├── Hook mask                                           # Which questions a game asks about controllers this program answers for it.
-[CheckBox]  │       │           │   ├── Hook COM                                        # Answers when the game asks Windows for a controller through COM.
-[CheckBox]  │       │           │   ├── Hook Direct Input                               # Answers when the game asks for a controller through Direct Input.
-[CheckBox]  │       │           │   ├── Hook product and vendor codes                   # Reports the fake product and vendor codes instead of the real ones.
-[CheckBox]  │       │           │   ├── Hook name                                       # Reports a different controller name to the game.
-[CheckBox]  │       │           │   ├── Stop                                            # Stops answering once the game has started.
-[CheckBox]  │       │           │   ├── Hook Load Library                               # Answers when the game loads a library, so the replacement is loaded instead.
-[CheckBox]  │       │           │   ├── Hook SetupAPI                                   # Answers when the game asks Windows to list devices.
-[CheckBox]  │       │           │   ├── Hook WinVerifyTrust                             # Answers when the game checks a file's signature.
-[CheckBox]  │       │           │   └── Disable                                         # Turns every answer off, leaving the game with the real controllers.
-[Section]   │       │           ├── XInput files                                        # Which XInput library files this program supplies to the game.
-[CheckBox]  │       │           │   ├── XInput 9.1, 32-bit                              # Supplies the 32-bit XInput 9.1 library to the game.
-[CheckBox]  │       │           │   ├── XInput 9.1, 64-bit                              # Supplies the 64-bit XInput 9.1 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.1, 32-bit                              # Supplies the 32-bit XInput 1.1 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.1, 64-bit                              # Supplies the 64-bit XInput 1.1 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.2, 32-bit                              # Supplies the 32-bit XInput 1.2 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.2, 64-bit                              # Supplies the 64-bit XInput 1.2 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.3, 32-bit                              # Supplies the 32-bit XInput 1.3 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.3, 64-bit                              # Supplies the 64-bit XInput 1.3 library to the game.
-[CheckBox]  │       │           │   ├── XInput 1.4, 32-bit                              # Supplies the 32-bit XInput 1.4 library to the game.
-[CheckBox]  │       │           │   └── XInput 1.4, 64-bit                              # Supplies the 64-bit XInput 1.4 library to the game.
-[Section]   │       │           ├── Auto map                                            # Not available yet, so greyed out: the program does not map devices to controllers by itself.
-[CheckBox]  │       │           │   ├── Auto map controller 1                           # Lets the program assign controller 1 to a device when this game starts.
-[CheckBox]  │       │           │   ├── Auto map controller 2                           # Lets the program assign controller 2 to a device when this game starts.
-[CheckBox]  │       │           │   ├── Auto map controller 3                           # Lets the program assign controller 3 to a device when this game starts.
-[CheckBox]  │       │           │   └── Auto map controller 4                           # Lets the program assign controller 4 to a device when this game starts.
-[Section]   │       │           ├── DInput file                                         # Whether the Direct Input library is supplied to the game as well.
-[CheckBox]  │       │           │   ├── DInput 8, 32-bit                                # Supplies the 32-bit Direct Input library to the game.
-[CheckBox]  │       │           │   └── DInput 8, 64-bit                                # Supplies the 64-bit Direct Input library to the game.
-[Section]   │       │           ├── Help                                                # Searches the web for other people's settings for this game.
-[Button]    │       │           │   ├── Search on Google...                             # Searches the web for this game.
-[Button]    │       │           │   ├── Search on NGemu...                              # Searches the NGemu forum for this game.
-[Button]    │       │           │   └── Open NGemu...                                   # Opens the NGemu forum.
-[Section]   │       │           ├── Other options                                       # How the game is started, and what it is told about the controller.
-[Number]    │       │           │   ├── Fake vendor code 0..65535                       # Vendor code reported to a game that only accepts one make of controller.
-[Value]     │       │           │   ├── Fake vendor code                                # Vendor code reported to a game that only accepts one make of controller.
-[Number]    │       │           │   ├── Fake product code 0..65535                      # Product code reported to a game that only accepts one model of controller.
-[Value]     │       │           │   ├── Fake product code                               # Product code reported to a game that only accepts one model of controller.
-[Number]    │       │           │   ├── Timeout -1..65535                               # How long to wait for the game before giving up.
-[Text]      │       │           │   ├── XInput path                                     # Folder the XInput library is written into.
-[List]      │       │           │   ├── Architecture                                    # Whether the game is a 32-bit or a 64-bit program.
-[Text]      │       │           │   ├── DInput file                                     # Name of the Direct Input library written for the game.
-[List]      │       │           │   └── Emulation                                       # Whether the controller is presented by the virtual driver or by replaced library files.
-[Section]   │       │           └── Action                                              # Undoes every change made to this game.
-[Button]    │       │               └── Reset to Default                                # Puts this game's settings back the way they started.
-[Tab]       │       ├── Devices                                                         # Every controller the program can see, whether mapped or not.
-[Group]     │       │   ├── (XInputDevicesPanel)
-[Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
-[Group]     │       │   │   ├── Order notice (hidden)                                   # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
-[Label]     │       │   │   │   ├── Notice subject                                      # What the notice is about: an order waiting for OK, the order being made, or how it went.
-[Label]     │       │   │   │   ├── Notice text                                         # The steps, what happened at each, and why it stopped when it did.
-[Button]    │       │   │   │   ├── OK                                                  # Puts the controllers in the order shown. Once it is over, closes the notice.
-[Button]    │       │   │   │   └── Cancel                                              # Closes the notice without touching any controller.
-[Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
-[Button]    │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
-[Button]    │       │   │       ├── Auto-Order                                          # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
-[Button]    │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
-[Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
-[Grid]      │       │       ├── Devices                                                 # Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.
-[Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
-[Button]    │       │           ├── Refresh                                             # Reads every device again.
-[Button]    │       │           ├── Delete                                              # Forgets the selected device and its settings.
-[CheckBox]  │       │           ├── Show System Devices (hidden)                        # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
-[Button]    │       │           ├── Hardware...                                         # Opens the selected device in Windows Device Manager.
-[Button]    │       │           ├── Add Plugin Device                                   # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
-[Button]    │       │           ├── Remove Leftover Pads                                # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
-[Button]    │       │           └── HID Hide                                            # Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.
-[Button]    │       │               ├── Show Gaming Devices                             # Lists the devices HID Hide counts as game controllers, with the path it knows each by.
-[Button]    │       │               ├── Show Hidden Devices                             # Lists the devices HID Hide is hiding from games.
-[Button]    │       │               ├── Unhide All Devices                              # Makes every device HID Hide hides visible to games again, and clears every Hide box.
-[Button]    │       │               ├── Synchronize To HID Hide                         # Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.
-[Button]    │       │               └── Open HID Hide                                   # Opens HID Hide's own program, or its download page while it is not installed.
-[Tab]       │       ├── Cloud                                                           # Settings waiting to be sent to or fetched from the online database.
-[Group]     │       │   └── (CloudPanel)                                                # Settings waiting to be sent to or fetched from the online database.
-[Grid]      │       │       ├── Cloud tasks                                             # Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.
-[Toolbar]   │       │       └── Cloud actions                                           # Sends and fetches settings, and clears the queue.
-[Button]    │       │           ├── Retry                                               # Sends the tasks that failed again now, each with all its tries.
-[Button]    │       │           ├── Upload To Cloud                                     # Sends your settings to the online database.
-[Button]    │       │           ├── Download From Cloud                                 # Fetches settings other people have shared.
-[Status]    │       │           ├── Next run                                            # How long until a task that failed is sent again, none while no task waits, and whether the network is on.
-[Status]    │       │           ├── Queue state                                         # Whether the queue is running, waiting, or stopped.
-[Button]    │       │           └── Delete                                              # Removes the selected task from the queue.
-[Tab]       │       ├── Help                                                            # Instructions for setting up a controller, and answers to common problems.
-[Value]     │       │   └── Help text                                                   # Instructions for setting up a controller, and answers to common problems.
-[Tab]       │       ├── About                                                           # Version, who made the program and what it carries, what changed in each release, and the licence.
-[Group]     │       │   └── (AboutControl)                                              # Version, who made the program and what it carries, what changed in each release, and the licence.
-[Tabs]      │       │       └── About pages                                             # The program and who made it, what changed in each release, and the licence.
-[Tab]       │       │           ├── Program                                             # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
-[Value]     │       │           │   └── Program details                                 # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
-[Tab]       │       │           ├── Changes                                             # What changed in each release.
-[Text]      │       │           │   └── Change log                                      # What changed in each release.
-[Tab]       │       │           └── License                                             # Terms this program is given under.
-[Text]      │       │               └── Licence text                                    # Terms this program is given under.
-[Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           ├── Issues list                                                 # Problems the program found, and what to do about each one.
-[Grid]      │           │   ├── Issues                                                  # Problems the program found, with what to do about each one.
-[Toolbar]   │           │   └── Issue actions                                           # Hides issues you have decided to live with.
-[CheckBox]  │           │       ├── Ignore All                                          # Stops reporting every issue listed.
-[Button]    │           │       ├── Ignore                                              # Stops reporting the selected issue.
-[Button]    │           │       ├── Exception Info (hidden)                             # Shows the fault behind the selected issue in full.
-[Status]    │           │       ├── Check state                                         # What the program is checking right now.
-[Status]    │           │       ├── Next check                                          # How long until the checks run again.
-[Status]    │           │       └── Check state                                         # Whether the checks are running or waiting.
-[Group]     │           └── (RecorderPanel)                                             # Records what the program reads and sends, into a file to post with a bug report.
-[Section]   │               └── Record for a bug report                                 # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.
-[Label]     │                   ├── What the recording leaves out                       # Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.
-[CheckBox]  │                   ├── Settings and devices                                # A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.
-[CheckBox]  │                   ├── Device input                                        # A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.
-[CheckBox]  │                   ├── Controller output                                   # A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.
-[CheckBox]  │                   ├── Force feedback                                      # A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.
-[CheckBox]  │                   ├── Engine timing                                       # A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.
-[CheckBox]  │                   ├── Window and errors                                   # A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.
-[Button]    │                   ├── Start Recording                                     # Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.
-[Button]    │                   ├── Open Folder                                         # Opens the folder the recordings are saved in, with the last one selected.
-[Label]     │                   └── Recording status                                    # How long the recording has run and how big it is, or the file it was saved to.
+[Group]     │   └── (MainControl)                                                       # The game being set up, and the tabs for the four controllers and everything else.
+[Toolbar]   │       ├── Game bar                                                        # Chooses the game being set up, and saves the settings.
+[List]      │       │   ├── Game                                                        # Which game the settings on every page below belong to.
+[Button]    │       │   ├── Save All                                                    # Writes every setting to disk now.
+[Button]    │       │   ├── Test... (hidden)                                            # Opens a window for trying the emulated controller without a game.
+[Button]    │       │   └── Add Game...                                                 # Sets this program up for another game.
+[Tabs]      │       └── Main                                                            # The four controllers, and the pages for everything else.
+[Tab]       │           ├── Controller 1                                                # Settings for the first emulated Xbox controller.
+[Group]     │           │   └── (ControlPad1) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.
+[Tab]       │           ├── Controller 2                                                # Settings for the second emulated Xbox controller.
+[Group]     │           │   └── (ControlPad2) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.
+[Tab]       │           ├── Controller 3                                                # Settings for the third emulated Xbox controller.
+[Group]     │           │   └── (ControlPad3) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.
+[Tab]       │           ├── Controller 4                                                # Settings for the fourth emulated Xbox controller.
+[Group]     │           │   └── (ControlPad4) -> PadControl                             # Everything about one emulated Xbox controller: what works it, and how.
+[Tab]       │           ├── Options                                                     # Settings for the program itself, and for the drivers it needs.
+[Group]     │           │   └── (OptionsPanel)                                          # Settings for the program itself, rather than for one controller.
+[Tabs]      │           │       └── Options pages                                       # Settings for the program itself, rather than for one controller.
+[Tab]       │           │           ├── General                                         # How the program starts and runs, and which tabs it shows.
+[Section]   │           │           │   ├── Operation                                   # How the program behaves while it runs.
+[CheckBox]  │           │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
+[CheckBox]  │           │           │   │   ├── Minimize to Tray                        # Hides the window to the notification area instead of the taskbar.
+[CheckBox]  │           │           │   │   ├── Always on Top                           # Make program Top Window
+[CheckBox]  │           │           │   │   ├── Start with Windows:                     # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
+[List]      │           │           │   │   └── Start with Windows                      # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
+[Section]   │           │           │   ├── Testing                                     # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
+[CheckBox]  │           │           │   │   ├── Enable XInput                           # Turns the emulated controllers on. Off leaves games with the real ones.
+[CheckBox]  │           │           │   │   ├── Show [Programs] Tab                     # Shows the Programs page, which lists what has been set up for each program.
+[CheckBox]  │           │           │   │   ├── Show [Devices] Tab                      # Shows the Devices page, which lists every controller found.
+[CheckBox]  │           │           │   │   └── Show [Settings] Tab                     # Shows the Settings page, which lists every stored setting.
+[Section]   │           │           │   ├── Direct Input Devices                        # Which devices the program lists and reads.
+[CheckBox]  │           │           │   │   ├── Exclude Supplemental Devices            # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
+[CheckBox]  │           │           │   │   ├── Exclude Virtual Devices                 # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
+[CheckBox]  │           │           │   │   └── Read Every Change                       # Read every change a device reports, not only its state at each pass.
+[Section]   │           │           │   ├── Guide Button                                # What happens when the Guide button is pressed.
+[Text]      │           │           │   │   └── Guide button action                     # Program or command run when the Guide button is pressed.
+[Section]   │           │           │   ├── Hotkeys                                     # Keys and controller buttons that reach this program from inside a game.
+[CheckBox]  │           │           │   │   ├── Emulation                               # Turns the emulation hotkey on. Off by default, so the keys stay with other programs until you choose.
+[Value]     │           │           │   │   ├── Emulation hotkey                        # Keys that turn the emulated controllers on and off from inside a game, once the hotkey is on. Click the field and press other keys to change them.
+[CheckBox]  │           │           │   │   ├── Controller                              # Turns the emulation buttons on. Off by default, so the buttons do only what the game makes of them until you choose.
+[Value]     │           │           │   │   ├── Emulation buttons                       # Controller buttons that, held together, turn the emulated controllers on and off from inside a game, once they are on. Click the field and hold other buttons to change them.
+[CheckBox]  │           │           │   │   ├── Show a note on the screen when pressed  # Shows a short note on the screen when the hotkey is pressed, where a game would hide the usual notification.
+[CheckBox]  │           │           │   │   └── Show a note when a device disconnects   # Shows a short note on the screen when a device mapped to the current game disconnects or connects again.
+[Tabs]      │           │           │   ├── Scan locations                              # Folders searched when looking for installed games.
+[Tab]       │           │           │   │   └── Game Scan Locations                     # Folders searched when looking for installed games.
+[List]      │           │           │   │       ├── Scanned folders                     # The locations to scan for games.
+[Toolbar]   │           │           │   │       └── Scan location actions               # Adds and removes the folders searched for games.
+[Button]    │           │           │   │           ├── Refresh                         # Reads the folder list again.
+[Button]    │           │           │   │           ├── Remove                          # Stops searching the selected folder.
+[Button]    │           │           │   │           └── Add...                          # Adds a folder to search for games.
+[Section]   │           │           │   ├── Appearance                                  # The program's colours, and the font and size its windows are drawn in.
+[List]      │           │           │   │   ├── Theme                                   # Light or dark colours. System follows the Windows setting for apps.
+[List]      │           │           │   │   ├── Font                                    # The font the program's windows are drawn in: the default, Windows' own; Selawik, built in; or an installed font. Takes effect when x360ce starts again.
+[List]      │           │           │   │   ├── Size                                    # The size the program's text is drawn at, in points and in pixels on this screen: the default, Windows' own for its own font and Windows' text size for any other, or one size for each pixel from three quarters of it to half as large again. Applies to every font, and the windows grow or shrink with it. Takes effect when x360ce starts again.
+[Button]    │           │           │   │   └── Restart x360ce (hidden)                 # Closes x360ce, saving its settings, and starts it again in the font and size chosen. Shown while the font or size chosen is not the one in use.
+[Section]   │           │           │   ├── Developing                                  # Aids for working on the program itself.
+[CheckBox]  │           │           │   │   ├── Show Form Info on CTRL+SHIFT+RMB        # Enable Form Info (CTRL+SHIFT+RMB)
+[CheckBox]  │           │           │   │   ├── Show [Test...] Button                   # Show [Test...] Button.
+[Button]    │           │           │   │   └── Developer Tools...                      # Opens a window of aids for working on the program.
+[Section]   │           │           │   └── Configuration                               # Switching settings to the game in front.
+[CheckBox]  │           │           │       └── Auto switch configuration when game focused  # Autodetect currently focussed game.
+[Tab]       │           │           ├── Internet                                        # Whether settings are shared with the online database, and the account used.
+[Group]     │           │           │   └── (InternetPanel)                             # Whether settings are shared with the online database, and the account used.
+[Section]   │           │           │       ├── Default settings                        # How settings shared by other people are chosen.
+[Number]    │           │           │       │   ├── Minimum instances 0..100            # How many people must use a setting before it is offered as the default.
+[CheckBox]  │           │           │       │   └── Include Enabled                     # Counts only games that are switched on when choosing a default.
+[Section]   │           │           │       ├── Internet                                # Whether the program contacts the online settings database at all.
+[CheckBox]  │           │           │       │   ├── Enable Internet Features            # Enable the use of Internet features like the settings database.
+[CheckBox]  │           │           │       │   ├── Load Settings from Cloud            # Meant to load settings for a device from the Internet Database as soon as it is added. Nothing does that yet: use Download From Cloud on the Cloud page.
+[CheckBox]  │           │           │       │   ├── Save Settings to Cloud              # Auto save settings to Internet Database.
+[List]      │           │           │       │   ├── Web service address                 # Internet settings database URL.
+[Button]    │           │           │       │   ├── Test                                # Asks the web service at that address who it is and says whether it answers.
+[List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
+[Button]    │           │           │       │   └── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
+[Section]   │           │           │       ├── Online account                          # Identifies this computer to the online database.
+[Text]      │           │           │       │   ├── Computer disk                       # Disk the computer identifier is taken from.
+[Text]      │           │           │       │   ├── Computer identifier                 # Anonymous identifier for this computer.
+[Text]      │           │           │       │   ├── Profile path                        # Folder the profile identifier is taken from.
+[Button]    │           │           │       │   ├── Open                                # Opens the folder the profile identifier is taken from.
+[Text]      │           │           │       │   └── Profile identifier                  # Anonymous identifier for this profile.
+[Section]   │           │           │       └── Sign in (hidden)                        # Signs in, so settings can be kept with an account instead of this computer.
+[Text]      │           │           │           ├── Username                            # E-mail address the account was created with.
+[Text]      │           │           │           ├── Password                            # Password for the account.
+[Button]    │           │           │           ├── Log In                              # Signs in with the username and password above.
+[Button]    │           │           │           ├── Create...                           # Creates an account on the online database.
+[Button]    │           │           │           └── Reset...                            # Sends a password reset to the address above.
+[Tab]       │           │           ├── Virtual Device                                  # The driver that presents the emulated controllers to Windows.
+[Section]   │           │           │   ├── Allow Remote Controllers (hidden)           # Lets another computer on the network work these controllers.
+[Text]      │           │           │   │   ├── Remote password                         # Password another computer must give before it may work these controllers.
+[CheckBox]  │           │           │   │   ├── Allow remote controller 1               # Lets a remote computer work controller 1.
+[CheckBox]  │           │           │   │   ├── Allow remote controller 2               # Lets a remote computer work controller 2.
+[CheckBox]  │           │           │   │   ├── Allow remote controller 3               # Lets a remote computer work controller 3.
+[CheckBox]  │           │           │   │   ├── Allow remote controller 4               # Lets a remote computer work controller 4.
+[Number]    │           │           │   │   ├── Remote port 1024..49151                 # Network port listened on for a remote controller.
+[CheckBox]  │           │           │   │   └── Enabled                                 # Accepts controllers from another computer.
+[Section]   │           │           │   └── Virtual controller driver                   # The driver that presents the emulated controllers to Windows.
+[List]      │           │           │       ├── Polling rate                            # Virtual Controller update frequency.
+[Text]      │           │           │       ├── Driver version                          # Which version of the virtual controller driver is installed.
+[Button]    │           │           │       ├── Refresh                                 # Checks the driver again.
+[Button]    │           │           │       ├── Install                                 # Installs the virtual controller driver. Needs Administrator.
+[Button]    │           │           │       ├── Uninstall                               # Removes the virtual controller driver. Needs Administrator.
+[Link]      │           │           │       └── Driver author                           # Opens the page the virtual controller driver comes from.
+[Tab]       │           │           ├── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
+[Section]   │           │           │   ├── HID Hide                                    # Hides the real controller from games, so only the emulated one is seen.
+[Value]     │           │           │   │   ├── HID Hide state                          # Whether HID Hide is installed, which version, whether a newer one was found, and each step of an install as it happens.
+[Button]    │           │           │   │   ├── Refresh                                 # Checks HID Hide again.
+[Button]    │           │           │   │   ├── Install HID Hide                        # Installs HID Hide from its latest release on GitHub: downloads the setup, checks it is the file the release describes and signed by its authors, then runs it. Windows asks for Administrator. Once installed it reads Check for Update, and Update HID Hide when a newer version was found.
+[Button]    │           │           │   │   ├── Open Configuration                      # Opens the HID Hide program, where hidden devices are chosen.
+[Link]      │           │           │   │   ├── HID Hide releases                       # Opens the page HID Hide's setups are downloaded from, to download one by hand.
+[CheckBox]  │           │           │   │   └── Configure automatically                 # Hide a device through HID Hide while it is mapped to a controller.
+[Value]     │           │           │   └── HID Hide notes                              # What HID Hide is for, installing it, choosing what it hides, and what to do if it causes trouble.
+[Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
+[Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
+[Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
+[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
+[Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
+[Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.
+[Tab]       │           │           ├── Settings                                        # Where your settings are kept, and how to move them somewhere else.
+[Group]     │           │           │   └── (SettingsPanel)                             # Where your settings are kept, and how to move them somewhere else.
+[Value]     │           │           │       ├── Settings folder in use                  # Folder the settings are being read from and written to.
+[Button]    │           │           │       ├── Open Folder                             # Opens the settings folder in Explorer.
+[List]      │           │           │       ├── Keep settings in                        # Which folder to keep settings in. Your own user folder cannot be locked by another account.
+[List]      │           │           │       ├── What to do with existing settings       # Whether the settings you have are copied to the new folder, or left behind.
+[Button]    │           │           │       └── Apply                                   # Moves the settings to the chosen folder and starts using it.
+[Tab]       │           │           ├── Update                                          # Looks for a newer version of the program and installs it.
+[Group]     │           │           │   └── Update                                      # Looks for a newer version of the program and installs it, step by step, in the log below.
+[CheckBox]  │           │           │       ├── Check for updates on startup            # Look for a newer version after the program starts. Off means no request is made.
+[Label]     │           │           │       ├── What the check sends                    # When the check runs and the one thing it sends: this program's version, to github.com.
+[Button]    │           │           │       ├── Check now                               # Looks for a newer version now, downloads it, checks it and installs it.
+[CheckBox]  │           │           │       ├── Check Digital Signature                 # Install only an update whose program file carries a trusted digital signature.
+[CheckBox]  │           │           │       ├── Check Version                           # Install only an update whose program file is newer than this one and is the version its release announces.
+[Value]     │           │           │       └── Update log                              # Each step of the last check and what it found.
+[Tab]       │           │           ├── AI                                              # The skill that teaches AI agents to use this program, AI assistant access, and the tunnel for ChatGPT on the web.
+[Group]     │           │           │   └── AI assistant access                         # Lets an AI assistant or a script read or operate this program, and installs the skill that teaches it how.
+[Group]     │           │           │       ├── About AI assistant access               # What AI assistant access does, and an example of what to ask an assistant once it is on.
+[Label]     │           │           │       │   ├── What AI assistant access does       # Says that an AI assistant you run can read and use this program only at the level you choose, and that nothing can reach it until AI assistant access is ticked.
+[Value]     │           │           │       │   ├── Example request                     # Something to ask an AI assistant that has this program's skill, once AI assistant access is on. It can be selected and copied.
+[Button]    │           │           │       │   └── Copy example                        # Copies the example request to the clipboard, to paste into an AI assistant.
+[Tabs]      │           │           │       └── AI tabs                                 # The skill, the door, and the tunnel for ChatGPT on the web, each on a tab of its own.
+[Tab]       │           │           │           ├── AI Skill                            # Installs the skill that teaches an AI agent how to use this program.
+[Group]     │           │           │           │   └── AI skill                        # Installs the skill that teaches an AI agent what this program does and how to use it, where agents read skills.
+[Value]     │           │           │           │       ├── Claude Code skills folder   # Where Claude Code reads skills.
+[Button]    │           │           │           │       ├── Install for Claude Code     # Writes the skill and its reference files into the Claude Code folder, replacing only this program's skill.
+[Label]     │           │           │           │       ├── Claude Code skill           # Whether the skill is in that folder, and whether it is this program's version.
+[Value]     │           │           │           │       ├── Other agents' skills folder # Where Codex, GitHub Copilot, Gemini CLI, Cursor, OpenCode and Windsurf read skills.
+[Button]    │           │           │           │       ├── Install for other agents    # Writes the skill and its reference files into the folder the other agents share, replacing only this program's skill.
+[Label]     │           │           │           │       ├── Other agents' skill         # Whether the skill is in that folder, and whether it is this program's version.
+[Label]     │           │           │           │       ├── Claude app                  # What to do with the ZIP, or why it was not saved.
+[Button]    │           │           │           │       └── Save as ZIP                 # Saves the skill as a ZIP, which the Claude app takes under Customize, Skills.
+[Tab]       │           │           │           ├── MCP Server - AI Assistant Access    # Opens the door an AI assistant or a script reaches this program by, at the level chosen there.
+[Group]     │           │           │           │   └── AI assistant access (MCP server)  # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[CheckBox]  │           │           │           │       ├── AI assistant access         # Lets an AI assistant or a script reach this program at all. Off until a person ticks it.
+[List]      │           │           │           │       ├── AI assistant level          # Read, Configure or Administer: how much a connected assistant or script may do.
+[List]      │           │           │           │       ├── AI assistant address        # 127.0.0.1 keeps the door on this computer; 0.0.0.0 opens it to every network the computer is on, where calls and the token travel unencrypted.
+[CheckBox]  │           │           │           │       ├── Trust local connections (no token)  # Lets programs on this computer reach the door without the token. Greyed out while the address is 0.0.0.0: on every network the token is always needed.
+[Text]      │           │           │           │       ├── AI assistant port           # Local port an assistant connects to, from 1024 to 49151. Change it if another program holds it.
+[Value]     │           │           │           │       ├── AI assistant URL            # Address an agent that connects over HTTP is given, with the token as a bearer header unless local connections are trusted.
+[Button]    │           │           │           │       ├── Copy URL                    # Copies the URL to the clipboard.
+[Value]     │           │           │           │       ├── AI assistant token          # What a caller must present to be let in. Made by this program.
+[Button]    │           │           │           │       ├── Regenerate token            # Makes a new token, so anything holding the old one is shut out.
+[Value]     │           │           │           │       ├── Assistant snippet           # Settings to paste into an assistant so it can start this program as an MCP server.
+[Button]    │           │           │           │       ├── Copy snippet                # Copies the assistant snippet to the clipboard. The snippet holds no token.
+[Button]    │           │           │           │       ├── Copy prompt                 # Copies instructions for any AI: how to connect to this program, both ways, and a first thing to ask. Unless local connections are trusted it holds the token, so paste it only to an assistant you trust.
+[Button]    │           │           │           │       ├── Open log                    # Opens the record of everything an assistant did through this door: each call, its arguments and what came of it.
+[Label]     │           │           │           │       └── Door state                  # Whether the door is open and at which level, or why it could not open; after a press, what it did.
+[Tab]       │           │           │           └── OpenAI Tunnel                       # Lets ChatGPT on the web reach this program through the door. Only the person can change it.
+[Group]     │           │           │               └── ChatGPT on the web (OpenAI tunnel)  # Opens an OpenAI Secure MCP Tunnel, so ChatGPT on the web reaches this program through the door. Only the person can change it.
+[Label]     │           │           │                   ├── About the tunnel            # Why ChatGPT on the web needs a tunnel, and that its IDs and keys come from the OpenAI Platform.
+[Text]      │           │           │                   ├── OpenAI organization ID      # The OpenAI organization new tunnels are made in, org- and letters and digits. Personal for ChatGPT Plus or Pro.
+[Button]    │           │           │                   ├── Find organization ID        # Opens the OpenAI Platform page that shows the organization ID.
+[Text]      │           │           │                   ├── OpenAI admin key            # An admin key of the organization, used only to list, create and delete tunnels and never kept.
+[Button]    │           │           │                   ├── Get admin key               # Opens the OpenAI Platform page that makes admin keys.
+[List]      │           │           │                   ├── Tunnel ID                   # The tunnel ChatGPT's Add custom MCP server asks for, tunnel_ and 32 characters. Opening the list shows the organization's tunnels, listed with the admin key, so the one a ChatGPT plugin was made with can be picked; or made by Create, or pasted.
+[Button]    │           │           │                   ├── Create tunnel               # Keeps the ID of the tunnel made earlier for this computer, or makes one in the organization with the admin key when there is none.
+[Button]    │           │           │                   ├── Copy tunnel ID              # Copies the tunnel ID, to paste into ChatGPT.
+[Button]    │           │           │                   ├── Delete tunnel               # Deletes the tunnel at OpenAI with the admin key, after asking, and forgets its ID.
+[Text]      │           │           │                   ├── OpenAI API key              # The restricted API key the tunnel runs with, made in the same organization with Tunnels: Read and Use. Kept encrypted for this Windows account.
+[Button]    │           │           │                   ├── Get API key                 # Opens the OpenAI Platform page that makes the API key.
+[CheckBox]  │           │           │                   ├── Open the tunnel             # Opens the tunnel while AI assistant access is on, now and each time this program starts.
+[Button]    │           │           │                   ├── Tunnel status page          # Opens tunnel-client's own page, which shows whether ChatGPT's calls arrive. Only while the tunnel runs.
+[Label]     │           │           │                   ├── In ChatGPT                  # What to choose in ChatGPT's Add custom MCP server once the tunnel is open.
+[Button]    │           │           │                   ├── Open ChatGPT                # Opens the ChatGPT page where custom MCP servers are added.
+[Value]     │           │           │                   ├── Tunnel settings file        # The file the tunnel's ID, organization and encrypted API key are kept in.
+[Button]    │           │           │                   ├── Show file                   # Shows the settings file in File Explorer.
+[Label]     │           │           │                   ├── Where the keys are          # How the API key is kept, that the admin key is never kept, and where tunnel-client is downloaded to.
+[Label]     │           │           │                   └── Tunnel state                # Whether the tunnel is open, why not, or what the last press did.
+[Tab]       │           │           └── Plugins                                         # The plugins found, the devices each adds, whether plugins from others may load, and whether AutoHotkey scripts may change controllers.
+[Group]     │           │               └── (PluginsPanel)
+[CheckBox]  │           │                   ├── Allow third-party plugins               # Load plugins that are not signed by the publisher of x360ce.
+[Label]     │           │                   ├── About plugins                           # Which plugins load by themselves, and why plugins from others need permission.
+[Value]     │           │                   ├── Plugins folder                          # The folder plugins load from: a folder for each plugin, holding the DLL named like it and the DLLs it needs.
+[Button]    │           │                   ├── Open Folder                             # Opens the folder plugins load from. A plugin put there in a folder of its own, MyDevice\MyDevice.dll, loads at once.
+[Grid]      │           │                   ├── Plugins                                 # Each plugin found: the devices it adds, whether it loaded, who signed it, and why it did not load or was switched off.
+[Section]   │           │                   └── AutoHotkey scripts                      # Whether an AutoHotkey script may read the devices and change what their controllers read, and how quickly x360ce notices one that stopped.
+[CheckBox]  │           │                       ├── Allow AutoHotkey scripts            # Let AutoHotkey scripts read devices and change what controllers read.
+[Label]     │           │                       ├── About AutoHotkey scripts            # How a script reaches x360ce, and where the library it includes is written.
+[Number]    │           │                       ├── Heartbeat every (ms) 10..1000       # How often an AutoHotkey script tells x360ce it still runs, in milliseconds.
+[Number]    │           │                       └── Let go of a hung script after (ms) 50..10000  # How long x360ce waits before it lets go of what a hung AutoHotkey script held, in milliseconds.
+[Tab]       │           ├── Games                                                       # Games this program is set up for, and what it does for each one.
+[Group]     │           │   └── (GameSettingsPanel)                                     # Games this program is set up for.
+[Grid]      │           │       ├── Games                                               # Games this program is set up for. The tick says whether it is switched on.
+[Toolbar]   │           │       ├── Game actions                                        # Finds, adds, starts and removes games.
+[Button]    │           │       │   ├── Scan                                            # Searches the folders listed in Options for games it knows.
+[Button]    │           │       │   ├── Add...                                          # Adds a game by choosing its program file.
+[Button]    │           │       │   ├── Delete                                          # Removes the selected game from the list.
+[Button]    │           │       │   ├── Save                                            # Writes the settings file the selected game reads.
+[Button]    │           │       │   ├── Start                                           # Runs the selected game.
+[Button]    │           │       │   ├── Open...                                         # Opens the folder the selected game is installed in.
+[Button]    │           │       │   └── Show                                            # Limits the list to games that are switched on, or off.
+[Button]    │           │       │       ├── Show: All                                   # Lists every game.
+[Button]    │           │       │       ├── Show: Enabled                               # Lists only the games that are switched on.
+[Button]    │           │       │       └── Show: Disabled                              # Lists only the games that are switched off.
+[Group]     │           │       └── (GameDetailsControl)                                # How the selected game is set up.
+[Section]   │           │           ├── Hook mask                                       # Which questions a game asks about controllers this program answers for it.
+[CheckBox]  │           │           │   ├── Hook COM                                    # Answers when the game asks Windows for a controller through COM.
+[CheckBox]  │           │           │   ├── Hook Direct Input                           # Answers when the game asks for a controller through Direct Input.
+[CheckBox]  │           │           │   ├── Hook product and vendor codes               # Reports the fake product and vendor codes instead of the real ones.
+[CheckBox]  │           │           │   ├── Hook name                                   # Reports a different controller name to the game.
+[CheckBox]  │           │           │   ├── Stop                                        # Stops answering once the game has started.
+[CheckBox]  │           │           │   ├── Hook Load Library                           # Answers when the game loads a library, so the replacement is loaded instead.
+[CheckBox]  │           │           │   ├── Hook SetupAPI                               # Answers when the game asks Windows to list devices.
+[CheckBox]  │           │           │   ├── Hook WinVerifyTrust                         # Answers when the game checks a file's signature.
+[CheckBox]  │           │           │   └── Disable                                     # Turns every answer off, leaving the game with the real controllers.
+[Section]   │           │           ├── XInput files                                    # Which XInput library files this program supplies to the game.
+[CheckBox]  │           │           │   ├── XInput 9.1, 32-bit                          # Supplies the 32-bit XInput 9.1 library to the game.
+[CheckBox]  │           │           │   ├── XInput 9.1, 64-bit                          # Supplies the 64-bit XInput 9.1 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.1, 32-bit                          # Supplies the 32-bit XInput 1.1 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.1, 64-bit                          # Supplies the 64-bit XInput 1.1 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.2, 32-bit                          # Supplies the 32-bit XInput 1.2 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.2, 64-bit                          # Supplies the 64-bit XInput 1.2 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.3, 32-bit                          # Supplies the 32-bit XInput 1.3 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.3, 64-bit                          # Supplies the 64-bit XInput 1.3 library to the game.
+[CheckBox]  │           │           │   ├── XInput 1.4, 32-bit                          # Supplies the 32-bit XInput 1.4 library to the game.
+[CheckBox]  │           │           │   └── XInput 1.4, 64-bit                          # Supplies the 64-bit XInput 1.4 library to the game.
+[Section]   │           │           ├── Auto map                                        # Not available yet, so greyed out: the program does not map devices to controllers by itself.
+[CheckBox]  │           │           │   ├── Auto map controller 1                       # Lets the program assign controller 1 to a device when this game starts.
+[CheckBox]  │           │           │   ├── Auto map controller 2                       # Lets the program assign controller 2 to a device when this game starts.
+[CheckBox]  │           │           │   ├── Auto map controller 3                       # Lets the program assign controller 3 to a device when this game starts.
+[CheckBox]  │           │           │   └── Auto map controller 4                       # Lets the program assign controller 4 to a device when this game starts.
+[Section]   │           │           ├── DInput file                                     # Whether the Direct Input library is supplied to the game as well.
+[CheckBox]  │           │           │   ├── DInput 8, 32-bit                            # Supplies the 32-bit Direct Input library to the game.
+[CheckBox]  │           │           │   └── DInput 8, 64-bit                            # Supplies the 64-bit Direct Input library to the game.
+[Section]   │           │           ├── Help                                            # Searches the web for other people's settings for this game.
+[Button]    │           │           │   ├── Search on Google...                         # Searches the web for this game.
+[Button]    │           │           │   ├── Search on NGemu...                          # Searches the NGemu forum for this game.
+[Button]    │           │           │   └── Open NGemu...                               # Opens the NGemu forum.
+[Section]   │           │           ├── Other options                                   # How the game is started, and what it is told about the controller.
+[Number]    │           │           │   ├── Fake vendor code 0..65535                   # Vendor code reported to a game that only accepts one make of controller.
+[Value]     │           │           │   ├── Fake vendor code                            # Vendor code reported to a game that only accepts one make of controller.
+[Number]    │           │           │   ├── Fake product code 0..65535                  # Product code reported to a game that only accepts one model of controller.
+[Value]     │           │           │   ├── Fake product code                           # Product code reported to a game that only accepts one model of controller.
+[Number]    │           │           │   ├── Timeout -1..65535                           # How long to wait for the game before giving up.
+[Text]      │           │           │   ├── XInput path                                 # Folder the XInput library is written into.
+[List]      │           │           │   ├── Architecture                                # Whether the game is a 32-bit or a 64-bit program.
+[Text]      │           │           │   ├── DInput file                                 # Name of the Direct Input library written for the game.
+[List]      │           │           │   └── Emulation                                   # Whether the controller is presented by the virtual driver or by replaced library files.
+[Section]   │           │           └── Action                                          # Undoes every change made to this game.
+[Button]    │           │               └── Reset to Default                            # Puts this game's settings back the way they started.
+[Tab]       │           ├── Devices                                                     # Every controller the program can see, whether mapped or not.
+[Group]     │           │   ├── (XInputDevicesPanel)
+[Grid]      │           │   │   ├── XInput devices                                      # Every emulated controller and the XInput place it holds, in the order games see them.
+[Group]     │           │   │   ├── Order notice (hidden)                               # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
+[Label]     │           │   │   │   ├── Notice subject                                  # What the notice is about: an order waiting for OK, the order being made, or how it went.
+[Label]     │           │   │   │   ├── Notice text                                     # The steps, what happened at each, and why it stopped when it did.
+[Button]    │           │   │   │   ├── OK                                              # Puts the controllers in the order shown. Once it is over, closes the notice.
+[Button]    │           │   │   │   └── Cancel                                          # Closes the notice without touching any controller.
+[Toolbar]   │           │   │   └── Emulated controller actions                         # Buttons that act on the emulated controllers shown below.
+[Button]    │           │   │       ├── Apply                                           # Recreates the controllers in the order shown. Needs Administrator.
+[Button]    │           │   │       ├── Auto-Order                                      # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
+[Button]    │           │   │       └── Refresh                                         # Reads the controllers again, for when one has arrived or left.
+[Group]     │           │   └── (DevicesPanel)                                          # Every controller the program can see.
+[Grid]      │           │       ├── Devices                                             # Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.
+[Toolbar]   │           │       └── Device actions                                      # Refreshes the list and works on the selected device.
+[Button]    │           │           ├── Refresh                                         # Reads every device again.
+[Button]    │           │           ├── Delete                                          # Forgets the selected device and its settings.
+[CheckBox]  │           │           ├── Show System Devices (hidden)                    # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
+[Button]    │           │           ├── Hardware...                                     # Opens the selected device in Windows Device Manager.
+[Button]    │           │           ├── Add Plugin Device                               # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
+[Button]    │           │           ├── Remove Leftover Pads                            # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
+[Button]    │           │           └── HID Hide                                        # Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.
+[Button]    │           │               ├── Show Gaming Devices                         # Lists the devices HID Hide counts as game controllers, with the path it knows each by.
+[Button]    │           │               ├── Show Hidden Devices                         # Lists the devices HID Hide is hiding from games.
+[Button]    │           │               ├── Unhide All Devices                          # Makes every device HID Hide hides visible to games again, and clears every Hide box.
+[Button]    │           │               ├── Synchronize To HID Hide                     # Makes HID Hide hide exactly the devices whose Hide box is ticked, and lets this program see them.
+[Button]    │           │               └── Open HID Hide                               # Opens HID Hide's own program, or its download page while it is not installed.
+[Tab]       │           ├── Cloud                                                       # Settings waiting to be sent to or fetched from the online database.
+[Group]     │           │   └── (CloudPanel)                                            # Settings waiting to be sent to or fetched from the online database.
+[Grid]      │           │       ├── Cloud tasks                                         # Settings waiting to be sent to or fetched from the online database. A task that fails waits longer before each try and stops after its last one; point at it to read why.
+[Toolbar]   │           │       └── Cloud actions                                       # Sends and fetches settings, and clears the queue.
+[Button]    │           │           ├── Retry                                           # Sends the tasks that failed again now, each with all its tries.
+[Button]    │           │           ├── Upload To Cloud                                 # Sends your settings to the online database.
+[Button]    │           │           ├── Download From Cloud                             # Fetches settings other people have shared.
+[Status]    │           │           ├── Next run                                        # How long until a task that failed is sent again, none while no task waits, and whether the network is on.
+[Status]    │           │           ├── Queue state                                     # Whether the queue is running, waiting, or stopped.
+[Button]    │           │           └── Delete                                          # Removes the selected task from the queue.
+[Tab]       │           ├── Help                                                        # Instructions for setting up a controller, and answers to common problems.
+[Value]     │           │   └── Help text                                               # Instructions for setting up a controller, and answers to common problems.
+[Tab]       │           ├── About                                                       # Version, who made the program and what it carries, what changed in each release, and the licence.
+[Group]     │           │   └── (AboutControl)                                          # Version, who made the program and what it carries, what changed in each release, and the licence.
+[Tabs]      │           │       └── About pages                                         # The program and who made it, what changed in each release, and the licence.
+[Tab]       │           │           ├── Program                                         # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
+[Value]     │           │           │   └── Program details                             # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
+[Tab]       │           │           ├── Changes                                         # What changed in each release.
+[Text]      │           │           │   └── Change log                                  # What changed in each release.
+[Tab]       │           │           └── License                                         # Terms this program is given under.
+[Text]      │           │               └── Licence text                                # Terms this program is given under.
+[Tab]       │           └── Issues                                                      # Problems the program found, and what to do about each one.
+[Group]     │               ├── Issues list                                             # Problems the program found, and what to do about each one.
+[Grid]      │               │   ├── Issues                                              # Problems the program found, with what to do about each one.
+[Toolbar]   │               │   └── Issue actions                                       # Hides issues you have decided to live with.
+[CheckBox]  │               │       ├── Ignore All                                      # Stops reporting every issue listed.
+[Button]    │               │       ├── Ignore                                          # Stops reporting the selected issue.
+[Button]    │               │       ├── Exception Info (hidden)                         # Shows the fault behind the selected issue in full.
+[Status]    │               │       ├── Check state                                     # What the program is checking right now.
+[Status]    │               │       ├── Next check                                      # How long until the checks run again.
+[Status]    │               │       └── Check state                                     # Whether the checks are running or waiting.
+[Group]     │               └── (RecorderPanel)                                         # Records what the program reads and sends, into a file to post with a bug report.
+[Section]   │                   └── Record for a bug report                             # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.
+[Label]     │                       ├── What the recording leaves out                   # Says that the file holds no names, folders or keys, so it can be posted in a GitHub issue.
+[CheckBox]  │                       ├── Settings and devices                            # A recording for a bug report holds the options, the game's settings, each controller's mapping and every device.
+[CheckBox]  │                       ├── Device input                                    # A recording for a bug report holds what each device reports: buttons, axes, sliders and hats as they change, and each failed read. Keyboards and mice are never recorded.
+[CheckBox]  │                       ├── Controller output                               # A recording for a bug report holds what each controller sends to the game, its virtual controller, and what XInput reads back.
+[CheckBox]  │                       ├── Force feedback                                  # A recording for a bug report holds the vibration each game asks for, the force sent to each device, and how each device is held.
+[CheckBox]  │                       ├── Engine timing                                   # A recording for a bug report holds how fast the engine runs, and each device call that takes long or does not return.
+[CheckBox]  │                       ├── Window and errors                               # A recording for a bug report holds whether the window answers, which program is in front, the handles and memory x360ce holds, and its errors.
+[Button]    │                       ├── Start Recording                                 # Starts a new recording, or stops the one that runs and keeps its file. A recording stops by itself after 30 minutes or 20 MB.
+[Button]    │                       ├── Open Folder                                     # Opens the folder the recordings are saved in, with the last one selected.
+[Label]     │                       └── Recording status                                # How long the recording has run and how big it is, or the file it was saved to.
 [Section]   └── Tray                                                                    # The menu behind the icon in the notification area.
 [Button]        ├── Open Application                                                    # Brings the window back from the notification area.
 [CheckBox]      ├── Enable XInput                                                       # Turns the emulated controllers on or off without opening the window.

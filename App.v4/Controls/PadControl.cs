@@ -42,6 +42,12 @@ namespace x360ce.App.Controls
 			PadTabControl.TabPages.Add(SdlTabPage);
 			PadTabControl.TabPages.AddRange(after);
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			PadTabControl.Selected += (s, e) =>
+			{
+				if (e.TabPage == GeneralTabPage)
+					HoldTables();
+			};
+			PadTabControl.SelectedIndexChanged += (s, e) => ReleaseTables();
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
@@ -168,6 +174,53 @@ namespace x360ce.App.Controls
 			UpdateWheelChart();
 		}
 
+		/// <summary>Whether the page's two largest tables hold their layout.</summary>
+		bool _TablesHeld;
+
+		/// <summary>Holds the layout of the page's two largest tables until <see cref="ReleaseTables"/>, which lays them out once.</summary>
+		/// <remarks>
+		/// Each auto-sized panel on them lays itself out as it comes into view and then asks its parent to, so one opening of
+		/// the page laid these two out 67 times with nothing changing size, and building the page hundreds of times.
+		/// </remarks>
+		internal void HoldTables()
+		{
+			if (_TablesHeld)
+				return;
+			_TablesHeld = true;
+			tableLayoutPanel1.SuspendLayout();
+			GeneralTableLayoutPanel.SuspendLayout();
+		}
+
+		/// <summary>Lays out once what <see cref="HoldTables"/> held.</summary>
+		internal void ReleaseTables()
+		{
+			if (!_TablesHeld)
+				return;
+			_TablesHeld = false;
+			GeneralTableLayoutPanel.ResumeLayout();
+			tableLayoutPanel1.ResumeLayout();
+		}
+
+		/// <summary>Enables what needs a device, when the selected row has one.</summary>
+		void UpdateEnabledFromDevice(UserDevice ud)
+		{
+			var enable = ud != null;
+			ControlsHelper.SetEnabled(LoadPresetButton, enable);
+			ControlsHelper.SetEnabled(SavePresetButton, enable);
+			ControlsHelper.SetEnabled(AutoPresetButton, enable);
+			ControlsHelper.SetEnabled(ClearPresetButton, enable);
+			ControlsHelper.SetEnabled(ResetPresetButton, enable);
+			ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
+			var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+			for (int p = 0; p < pages.Length; p++)
+			{
+				// Get first control to disable which must be Panel.
+				var controls = pages[p].Controls.Cast<Control>().ToArray();
+				for (int c = 0; c < controls.Length; c++)
+					ControlsHelper.SetEnabled(controls[c], enable);
+			}
+		}
+
 		private void UpdateControlFromDInput()
 		{
 			lock (updateFromDirectInputLock)
@@ -177,20 +230,7 @@ namespace x360ce.App.Controls
 				var enable = ud != null;
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
-				ControlsHelper.SetEnabled(LoadPresetButton, enable);
-				ControlsHelper.SetEnabled(SavePresetButton, enable);
-				ControlsHelper.SetEnabled(AutoPresetButton, enable);
-				ControlsHelper.SetEnabled(ClearPresetButton, enable);
-				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
-				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-				for (int p = 0; p < pages.Length; p++)
-				{
-					// Get first control to disable which must be Panel.
-					var controls = pages[p].Controls.Cast<Control>().ToArray();
-					for (int c = 0; c < controls.Length; c++)
-						ControlsHelper.SetEnabled(controls[c], enable);
-				}
+				UpdateEnabledFromDevice(ud);
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
 				{
@@ -563,6 +603,8 @@ namespace x360ce.App.Controls
 				ControlsHelper.RestoreSelection(MappedDevicesDataGridView, nameof(UserSetting.InstanceGuid), new List<Guid>());
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
+				// Before the page shows, and before its controls have windows, rather than on the first update after it has appeared.
+				UpdateEnabledFromDevice(GetSelectedDevice());
 			});
 			UserSettings_Items_ListChanged(null, null);
 			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
@@ -573,6 +615,8 @@ namespace x360ce.App.Controls
 			var dv = new System.Data.DataView();
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
+			// Without a context of its own, each window made above the list would rebuild its rows and load the selection again.
+			grid.BindingContext = BindingContext;
 			// Show disabled images by default.
 			_Imager.SetImages(false);
 			// Add GamePad typed to ComboBox.
@@ -840,8 +884,9 @@ namespace x360ce.App.Controls
 				catch (InvalidOperationException)
 				{
 				}
-				// The rows are in place, so the selection can be acted on.
-				AnnounceSelection();
+				// The rows are in place, so the selection can be acted on. A list not bound yet does so once it is.
+				if (grid.DataSource != null)
+					AnnounceSelection();
 			}
 			var visibleCount = mappedItems.Count();
 			var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
@@ -2230,7 +2275,7 @@ namespace x360ce.App.Controls
 
 		public void UpdateForceFeedBack()
 		{
-			if (MainForm.Current.ControllerIndex == -1)
+			if (MainForm.Current.Main.ControllerIndex == -1)
 				return;
 			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
@@ -2279,13 +2324,14 @@ namespace x360ce.App.Controls
 		/// Both sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
 		/// by the sliders' own handler, which sends only while a controller tab is shown.
 		/// </remarks>
-		public void StopTestVibration()
+		public bool StopTestVibration()
 		{
 			if (LeftMotorTestTrackBar.Value == 0 && RightMotorTestTrackBar.Value == 0)
-				return;
+				return false;
 			LeftMotorTestTrackBar.Value = 0;
 			RightMotorTestTrackBar.Value = 0;
 			SendVibration();
+			return true;
 		}
 
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
@@ -2649,7 +2695,7 @@ namespace x360ce.App.Controls
 
 		void UpdateGridButtons()
 		{
-			RemoveMapButton.Enabled = MappedDevicesDataGridView.SelectedRows.Count > 0;
+			ControlsHelper.SetEnabled(RemoveMapButton, MappedDevicesDataGridView.SelectedRows.Count > 0);
 		}
 
 		/// <summary>Shows the XInput places again, sized to what they now say.</summary>
@@ -2755,15 +2801,27 @@ namespace x360ce.App.Controls
 			AnnounceSelection();
 		}
 
-		/// <summary>Loads the selected device's settings into the form and tells the listeners.</summary>
+		/// <summary>Whether a selection has been put on the page yet, and which row with which settings.</summary>
+		bool _Announced;
+		UserSetting _AnnouncedSetting;
+		Guid _AnnouncedChecksum;
+
+		/// <summary>Loads the selected device's settings into the form and tells the listeners, when they are not there already.</summary>
+		/// <remarks>The grid raises its selection whenever it is bound, given its window or shown, with the same row selected.</remarks>
 		void AnnounceSelection()
 		{
 			var setting = GetSelectedSetting();
-			var padSetting = setting == null
-				? null
-				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
-			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
+			if (!_Announced || setting != _AnnouncedSetting || (setting != null && setting.PadSettingChecksum != _AnnouncedChecksum))
+			{
+				var padSetting = setting == null
+					? null
+					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
+				_Announced = true;
+				_AnnouncedSetting = setting;
+				_AnnouncedChecksum = setting == null ? Guid.Empty : setting.PadSettingChecksum;
+				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
+			}
 			UpdateGridButtons();
 			UpdateForceFeedbackTitle();
 			UpdateEffectDescription();

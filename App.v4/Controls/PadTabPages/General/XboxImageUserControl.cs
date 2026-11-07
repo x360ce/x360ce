@@ -266,6 +266,9 @@ namespace x360ce.App.Controls
 		public void SetThumbPosition(bool isLeft, float x, float y)
 		{
 			var value = new PointF(Clamp(x), Clamp(y));
+			// Called on every state update, for a stick that mostly rests.
+			if (value == (isLeft ? _LeftThumb : _RightThumb))
+				return;
 			if (isLeft)
 				_LeftThumb = value;
 			else
@@ -277,6 +280,8 @@ namespace x360ce.App.Controls
 		public void SetTriggerLevel(bool isLeft, float level)
 		{
 			level = level < 0f ? 0f : level > 1f ? 1f : level;
+			if (level == (isLeft ? _LeftTrigger : _RightTrigger))
+				return;
 			if (isLeft)
 				_LeftTrigger = level;
 			else

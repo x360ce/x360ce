@@ -48,7 +48,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>A game with Controller 1 switched on, as it is once a device has been added there.</summary>
-		static UserGame NewGame()
+		internal static UserGame NewGame()
 		{
 			return new UserGame
 			{
@@ -59,13 +59,13 @@ namespace x360ce.Tests
 			};
 		}
 
-		static UserDevice NewDevice(string name)
+		internal static UserDevice NewDevice(string name)
 		{
 			return new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = name, InstanceName = name };
 		}
 
 		/// <summary>Puts the device on a tab with stored settings that play force feedback.</summary>
-		static UserSetting Map(UserGame game, UserDevice device, MapTo controller)
+		internal static UserSetting Map(UserGame game, UserDevice device, MapTo controller)
 		{
 			var ps = new PadSetting { ForceEnable = "1", ForceOverall = "80" };
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();

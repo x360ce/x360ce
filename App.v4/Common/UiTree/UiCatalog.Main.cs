@@ -30,31 +30,33 @@ namespace x360ce.App.UiTree
 		/// <summary>The window itself: its tabs, its bar along the top, and the status line.</summary>
 		static void AddMainWindow(Dictionary<string, Text> d)
 		{
-			d[nameof(MainForm) + "." + nameof(MainForm.MainTabControl)] = new Text("Main pages",
+			d[nameof(MainControl)] = new Text(null,
+				"The game being set up, and the tabs for the four controllers and everything else.");
+			d[nameof(MainControl) + "." + nameof(MainControl.MainTabControl)] = new Text("Main pages",
 				"The four controllers, and the pages for everything else.");
-			d[nameof(MainForm) + "." + nameof(MainForm.Pad1TabPage)] = new Text("Controller 1",
+			d[nameof(MainControl) + "." + nameof(MainControl.Pad1TabPage)] = new Text("Controller 1",
 				"Settings for the first emulated Xbox controller.");
-			d[nameof(MainForm) + "." + nameof(MainForm.Pad2TabPage)] = new Text("Controller 2",
+			d[nameof(MainControl) + "." + nameof(MainControl.Pad2TabPage)] = new Text("Controller 2",
 				"Settings for the second emulated Xbox controller.");
-			d[nameof(MainForm) + "." + nameof(MainForm.Pad3TabPage)] = new Text("Controller 3",
+			d[nameof(MainControl) + "." + nameof(MainControl.Pad3TabPage)] = new Text("Controller 3",
 				"Settings for the third emulated Xbox controller.");
-			d[nameof(MainForm) + "." + nameof(MainForm.Pad4TabPage)] = new Text("Controller 4",
+			d[nameof(MainControl) + "." + nameof(MainControl.Pad4TabPage)] = new Text("Controller 4",
 				"Settings for the fourth emulated Xbox controller.");
-			d[nameof(MainForm) + "." + nameof(MainForm.OptionsTabPage)] = new Text("Options",
+			d[nameof(MainControl) + "." + nameof(MainControl.OptionsTabPage)] = new Text("Options",
 				"Settings for the program itself, and for the drivers it needs.");
-			d[nameof(MainForm) + "." + nameof(MainForm.GamesTabPage)] = new Text("Games",
+			d[nameof(MainControl) + "." + nameof(MainControl.GamesTabPage)] = new Text("Games",
 				"Games this program is set up for, and what it does for each one.");
-			d[nameof(MainForm) + "." + nameof(MainForm.DevicesTabPage)] = new Text("Devices",
+			d[nameof(MainControl) + "." + nameof(MainControl.DevicesTabPage)] = new Text("Devices",
 				"Every controller the program can see, whether mapped or not.");
-			d[nameof(MainForm) + "." + nameof(MainForm.CloudTabPage)] = new Text("Cloud",
+			d[nameof(MainControl) + "." + nameof(MainControl.CloudTabPage)] = new Text("Cloud",
 				"Settings waiting to be sent to or fetched from the online database.");
-			d[nameof(MainForm) + "." + nameof(MainForm.HelpTabPage)] = new Text("Help",
+			d[nameof(MainControl) + "." + nameof(MainControl.HelpTabPage)] = new Text("Help",
 				"Instructions for setting up a controller, and answers to common problems.");
-			d[nameof(MainForm) + "." + nameof(MainForm.HelpRichTextBox)] = new Text("Help text",
+			d[nameof(MainControl) + "." + nameof(MainControl.HelpRichTextBox)] = new Text("Help text",
 				"Instructions for setting up a controller, and answers to common problems.");
-			d[nameof(MainForm) + "." + nameof(MainForm.AboutTabPage)] = new Text("About",
+			d[nameof(MainControl) + "." + nameof(MainControl.AboutTabPage)] = new Text("About",
 				"Version, who made the program and what it carries, what changed in each release, and the licence.");
-			d[nameof(MainForm) + "." + nameof(MainForm.IssuesTabPage)] = new Text("Issues",
+			d[nameof(MainControl) + "." + nameof(MainControl.IssuesTabPage)] = new Text("Issues",
 				"Problems the program found, and what to do about each one.");
 			d[nameof(RecorderUserControl)] = new Text(null,
 				"Records what the program reads and sends, into a file to post with a bug report.");
@@ -83,15 +85,15 @@ namespace x360ce.App.UiTree
 				"How long the recording has run and how big it is, or the file it was saved to.");
 
 			// The bar along the top.
-			d[nameof(MainForm) + "." + nameof(MainForm.GamesToolStrip)] = new Text("Game bar",
+			d[nameof(MainControl) + "." + nameof(MainControl.GamesToolStrip)] = new Text("Game bar",
 				"Chooses the game being set up, and saves the settings.");
-			d[nameof(MainForm) + "." + nameof(MainForm.GameToCustomizeComboBox)] = new Text("Game",
+			d[nameof(MainControl) + "." + nameof(MainControl.GameToCustomizeComboBox)] = new Text("Game",
 				"Which game the settings on every page below belong to.");
-			d[nameof(MainForm) + "." + nameof(MainForm.SaveAllButton)] = new Text("Save All",
+			d[nameof(MainControl) + "." + nameof(MainControl.SaveAllButton)] = new Text("Save All",
 				"Writes every setting to disk now.");
-			d[nameof(MainForm) + "." + nameof(MainForm.AddGameButton)] = new Text("Add Game...",
+			d[nameof(MainControl) + "." + nameof(MainControl.AddGameButton)] = new Text("Add Game...",
 				"Sets this program up for another game.");
-			d[nameof(MainForm) + "." + nameof(MainForm.TestButton)] = new Text("Test...",
+			d[nameof(MainControl) + "." + nameof(MainControl.TestButton)] = new Text("Test...",
 				"Opens a window for trying the emulated controller without a game.");
 
 			// The help header, which follows the mouse.

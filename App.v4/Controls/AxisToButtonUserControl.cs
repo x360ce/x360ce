@@ -176,10 +176,17 @@ namespace x360ce.App.Controls
 
 		public void Refresh(State gamePadState, Bitmap markB)
 		{
+			// Painted from whether this button is on, so only that needs a new picture. This runs on every state update.
+			var on = (gamePadState.Gamepad.Buttons & _GamepadButton) == _GamepadButton;
+			var changed = on != _shownOn || markB != _markB;
 			_gamepadState = gamePadState;
 			_markB = markB;
-			ButtonImagePictureBox.Refresh();
+			_shownOn = on;
+			if (changed)
+				ButtonImagePictureBox.Invalidate();
 		}
+
+		bool _shownOn;
 
 		private void ButtonImagePictureBox_Paint(object sender, PaintEventArgs e)
 		{

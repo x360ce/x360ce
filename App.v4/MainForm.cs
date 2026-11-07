@@ -78,66 +78,17 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("MainForm: after InitializeComponent");
 			if (IsDesignMode)
 				return;
-			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
-
-			// Map event handler.
-			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
-			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
-			FillBuletImageList();
-			Pad1TabPage.Text = "Controller 1";
-			Pad2TabPage.Text = "Controller 2";
-			Pad3TabPage.Text = "Controller 3";
-			Pad4TabPage.Text = "Controller 4";
+			Text = EngineHelper.GetProductFullName();
 			InitMinimize();
 			InitiInterfaceUpdate();
-			GamesToolStrip_Resize(null, null);
-			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Check if app version changed.
 			var o = SettingsManager.Options;
 			var appVersion = new AssemblyInfo().Version.ToString();
 			AppVersionChanged = o.AppVersion != appVersion;
 			o.AppVersion = appVersion;
-			// Attach property monitoring first.
-			o.PropertyChanged += Options_PropertyChanged;
-			SettingsManager.AiOptions.PropertyChanged += AiOptions_PropertyChanged;
-			LoadSettings();
-			BuildPages();
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
 			o.WindowPosition?.LoadPosition(this);
-		}
-
-		/// <summary>
-		/// Builds the four controller pages and the About page with the window, before Windows makes any of it: the theme then
-		/// shapes them before they are first drawn, and nothing is built while the window is on the screen. They are given their
-		/// settings once the settings are read (<see cref="LoadPages"/>).
-		/// </summary>
-		void BuildPages()
-		{
-			ControlPages = new[] { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
-			foreach (var item in ControlPages)
-				item.ImageKey = "bullet_square_glass_grey.png";
-			Program.StartupTrace.Mark("BuildPages: before pads");
-			BuiltPadControls = new PadControl[4];
-			for (var i = 0; i < BuiltPadControls.Length; i++)
-			{
-				var mapTo = (MapTo)(i + 1);
-				BuiltPadControls[i] = new Controls.PadControl(mapTo)
-				{
-					Name = string.Format("ControlPad{0}", (int)mapTo),
-					Dock = DockStyle.Fill
-				};
-				Program.StartupTrace.Mark("BuildPages: pad " + (i + 1) + " built");
-				ControlPages[i].Controls.Add(BuiltPadControls[i]);
-				BuiltPadControls[i].InitPadControl();
-				Program.StartupTrace.Mark("BuildPages: pad " + (i + 1) + " initialised");
-			}
-			ControlAbout = new AboutControl
-			{
-				Dock = DockStyle.Fill
-			};
-			AboutTabPage.Controls.Add(ControlAbout);
-			Program.StartupTrace.Mark("BuildPages: about built");
 		}
 
 		/// <summary>
@@ -183,8 +134,8 @@ namespace x360ce.App
 		/// </summary>
 		void LoadPages()
 		{
-			OptionsPanel.InitOptions();
-			RecorderPanel.InitOptions();
+			Main.OptionsPanel.InitOptions();
+			Main.RecorderPanel.InitOptions();
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// The hotkey and the emulation buttons are read from the settings just loaded.
@@ -192,80 +143,41 @@ namespace x360ce.App
 			ApplyEmulationButtons();
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
-			PadControls = BuiltPadControls;
+			Main.PadControls = Main.BuiltPadControls;
 			// Each device list belongs to its page, so a tick in it saves that page alone.
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView, MapTo.Controller1);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView, MapTo.Controller2);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView, MapTo.Controller3);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView, MapTo.Controller4);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, Main.PadControls[0].MappedDevicesDataGridView, MapTo.Controller1);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, Main.PadControls[1].MappedDevicesDataGridView, MapTo.Controller2);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, Main.PadControls[2].MappedDevicesDataGridView, MapTo.Controller3);
+			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, Main.PadControls[3].MappedDevicesDataGridView, MapTo.Controller4);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
-			for (var i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < Main.PadControls.Length; i++)
 			{
-				PadControls[i].UpdateSettingsMap();
-				PadControls[i].InitPadData();
+				Main.PadControls[i].HoldTables();
+				Main.PadControls[i].UpdateSettingsMap();
+				Main.PadControls[i].InitPadData();
+				Main.PadControls[i].ReleaseTables();
 				Program.StartupTrace.Mark("LoadPages: pad " + (i + 1) + " data");
 			}
 			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
-			// The header names the page shown from the start, as it does once another is chosen.
-			if (MainTabControl.SelectedTab != null)
-				SetHeaderSubject(MainTabControl.SelectedTab.Text);
+			Main.MainTabControl.SelectedIndexChanged += new System.EventHandler(Main.MainTabControl_SelectedIndexChanged);
 			// Name and describe everything, now that every panel exists. This is what a screen
 			// reader announces, what an automation tool searches by, and what the exported
 			// navigation tree is built from.
 			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(this);
+			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(Main);
 			// The tray menu hangs off the notification icon rather than off the window, so it is
 			// not reached by walking the window.
 			JocysCom.ClassLibrary.Controls.UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
 			// Images are drawn at the size they were made, so they are enlarged to the screen's scale
 			// too, now that every panel that shows one exists.
-			ControlsHelper.ScaleImages(this);
+			ControlsHelper.ScaleImages(Main);
 			ControlsHelper.ScaleImages(TrayContextMenuStrip);
 			// One call wires the header help for every control at once, from the same two
 			// properties, so what a screen reader announces and what the header shows agree.
 			UiTree.UiHelp.Attach(this);
+			UiTree.UiHelp.Attach(Main);
 			Program.StartupTrace.Mark("LoadPages: end");
-		}
-
-		/// <summary>Fills the tab image list with the status lights and the icons of the theme in use.</summary>
-		/// <remarks>
-		/// Filled again when the theme changes: a list keeps copies of its images, so it does not follow the
-		/// resources. Each image is put in place of the one under its name, so a tab showing it never goes blank,
-		/// the lights of two colours (<see cref="StatusImageKey"/>) among them.
-		/// </remarks>
-		void FillBuletImageList()
-		{
-			// A list draws every image at its own size, so it is set to the screen's before anything goes in.
-			// Setting the size empties the list, so it is set only while it differs.
-			if (BuletImageList.ImageSize != SystemInformation.SmallIconSize)
-				BuletImageList.ImageSize = SystemInformation.SmallIconSize;
-			SetBuletImage("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
-			SetBuletImage("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
-			SetBuletImage("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
-			SetBuletImage("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
-			SetBuletImage("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
-			SetBuletImage("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
-			SetBuletImage("ok_16x16.png", Resources.ok_16x16);
-			SetBuletImage("ok_off_16x16.png", Resources.ok_off_16x16);
-			SetBuletImage("fix_16x16.png", Resources.fix_16x16);
-			SetBuletImage("fix_off_16x16.png", Resources.fix_off_16x16);
-			SetBuletImage("refresh_16x16.png", Resources.refresh_16x16);
-			foreach (var key in BuletImageList.Images.Keys.Cast<string>().Where(x => x.Contains("|")).ToArray())
-			{
-				var colours = key.Split('|');
-				SetBuletImage(key, AppHelper.GetStatusIcon(colours[0], colours[1]));
-			}
-		}
-
-		/// <summary>Puts an image in the tab image list under its name, in place of the one there.</summary>
-		void SetBuletImage(string key, Image image)
-		{
-			var index = BuletImageList.Images.IndexOfKey(key);
-			if (index < 0)
-				BuletImageList.Images.Add(key, image);
-			else
-				BuletImageList.Images[index] = image;
 		}
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
@@ -274,20 +186,6 @@ namespace x360ce.App
 		{
 			get { return TrayContextMenuStrip; }
 		}
-		/// <summary>The name of a light in that colour, adding it to the list if it is new.</summary>
-		/// <remarks>
-		/// Tabs draw from an image list by name, so a colour mixed at run time has to be put in it before
-		/// it can be shown. The colour itself is the name, which means each one is made once however many
-		/// tabs ask for it.
-		/// </remarks>
-		string StatusImageKey(string left, string right)
-		{
-			var key = left + "|" + right;
-			if (!BuletImageList.Images.ContainsKey(key))
-				BuletImageList.Images.Add(key, AppHelper.GetStatusIcon(left, right));
-			return key;
-		}
-
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -303,7 +201,7 @@ namespace x360ce.App
 			var routing = x360ce.App.DInput.DeviceRouting.Current;
 			for (var i = 0; i < 4; i++)
 			{
-				var padControl = PadControls[i];
+				var padControl = Main.PadControls[i];
 				// Whether this tab is to have an emulated controller, asked the way the engine asks: the master switch,
 				// the game's emulation and the tab's own Enable. Off is a choice, not a fault, and the lights must not
 				// say otherwise.
@@ -387,11 +285,11 @@ namespace x360ce.App
 						right = AppHelper.StatusColor(Math.Min(1.0, wrong / 3.0));
 					}
 				}
-				var bullet = StatusImageKey(left, right);
-				var page = ControlPages[i];
+				var bullet = Main.StatusImageKey(left, right);
+				var page = Main.ControlPages[i];
 				// A page being moved in or out of the tab control has no place in it for a moment, and
 				// an image or hint set then is refused as an index of minus one. The next tick sets it.
-				if (MainTabControl.TabPages.IndexOf(page) < 0)
+				if (Main.MainTabControl.TabPages.IndexOf(page) < 0)
 					continue;
 				if (page.ImageKey != bullet)
 					page.ImageKey = bullet;
@@ -556,7 +454,7 @@ namespace x360ce.App
 			switch (e.PropertyName)
 			{
 				case nameof(Options.ShowTestButton):
-					TestButton.Visible = o.ShowTestButton;
+					Main.TestButton.Visible = o.ShowTestButton;
 					break;
 			}
 		}
@@ -572,35 +470,115 @@ namespace x360ce.App
 			}
 		}
 
-		public void LoadSettings()
-		{
-			// Load XML settings into control.
-			var o = SettingsManager.Options;
-			// Other option.
-			TestButton.Visible = o.ShowTestButton;
-		}
-
 		public static MainForm Current { get; set; }
 
-		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
-
-		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
-
-		public AboutControl ControlAbout;
-		/// <summary>The controller pages, once they hold their settings; null before.</summary>
-		public PadControl[] PadControls;
-		/// <summary>The controller pages as built with the window, before they are given their settings.</summary>
-		PadControl[] BuiltPadControls;
-		public TabPage[] ControlPages;
+		/// <summary>The Game row and the tabs; null until they are built, after the window has appeared.</summary>
+		public MainControl Main;
 
 		public System.Timers.Timer CleanStatusTimer;
-		private Forms.DebugForm DebugPanel;
+		internal Forms.DebugForm DebugPanel;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode)
 				return;
 			Program.StartupTrace.Mark("MainForm_Load: start");
+			// Nothing is on the window yet for the header to name.
+			SetHeaderSubject("");
+			// The status bar shows its values from the start, rather than appearing later and pushing the pages up.
+			StatusTimerLabel.Text = "";
+			StatusSaveLabel.Visible = false;
+			StatusEventsLabel.Visible = false;
+			StatusDllLabel.Text = "";
+			StatusIsAdminLabel.Text = WinAPI.IsVista
+				? string.Format("Elevated: {0}", WinAPI.IsElevated())
+				: "";
+			UpdateStatusAiAccessLabel();
+			LoadSteps = BuildMainControl().GetEnumerator();
+			LoadTimer = new System.Windows.Forms.Timer { Interval = 1 };
+			LoadTimer.Tick += LoadTimer_Tick;
+			LoadTimer.Start();
+			AddTask(TaskName.Loading);
+		}
+
+		/// <summary>What is left of building the main control.</summary>
+		IEnumerator<object> LoadSteps;
+
+		/// <summary>Takes the next step, with what the window has to do going first: a timer's message comes after everything else.</summary>
+		/// <remarks>So the window is drawn before the first step, and can be moved between them. Null once the control is on the window.</remarks>
+		System.Windows.Forms.Timer LoadTimer;
+
+		private void LoadTimer_Tick(object sender, EventArgs e)
+		{
+			try
+			{
+				if (!Program.IsClosing && LoadSteps.MoveNext())
+					return;
+			}
+			catch (Exception ex)
+			{
+				ShowLoadingFailed(ex);
+				throw;
+			}
+			LoadTimer.Dispose();
+			LoadTimer = null;
+		}
+
+		/// <summary>Says that loading stopped, as nothing else would: the next steps never run, and nothing starts behind the words.</summary>
+		void ShowLoadingFailed(Exception ex)
+		{
+			LoadTimer?.Dispose();
+			LoadTimer = null;
+			TabWindowsTimer?.Dispose();
+			TabWindowsTimer = null;
+			RemoveTask(TaskName.Loading);
+			LoadingLabel.Text = "Loading failed: " + ex.Message;
+			Program.StartupTrace.Mark("loading failed");
+		}
+
+		/// <summary>
+		/// Builds the Game row and the tabs while the window shows that it is loading, then gives them their settings and puts them on the window.
+		/// </summary>
+		/// <remarks>
+		/// Built apart from the window, so Windows makes none of it until it joins the window, whole and in the theme: controls
+		/// made on a window already on the screen are drawn and themed one by one. Windows Forms builds on the interface thread
+		/// alone, so each step holds the window for as long as it takes, and the window answers between steps.
+		/// </remarks>
+		IEnumerable<object> BuildMainControl()
+		{
+			Program.StartupTrace.Mark("MainControl: before InitializeComponent");
+			// At the size it will have on the window, as its pages keep what they were last laid out at.
+			Main = new MainControl { Dock = DockStyle.Fill, Bounds = LoadingLabel.Bounds };
+			Program.StartupTrace.Mark("MainControl: after InitializeComponent");
+			yield return null;
+			for (var i = 0; i < Main.ControlPages.Length; i++)
+			{
+				Main.BuildPad(i);
+				yield return null;
+			}
+			Main.BuildAbout();
+			yield return null;
+			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(Main);
+			Program.StartupTrace.Mark("MainControl: themed");
+			yield return null;
+			LoadMainControl();
+		}
+
+		/// <summary>Reads the settings, gives the control its data, puts it on the window and starts what waited for it.</summary>
+		void LoadMainControl()
+		{
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_WHILE_LOADING")))
+				throw new InvalidOperationException("Injected fault: X360CE_THROW_WHILE_LOADING.");
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			// Map event handler.
+			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
+			Main.OptionsPanel.MinimizeToTrayCheckBox.Checked = SettingsManager.Options.MinimizeToTray;
+			Main.OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged += MinimizeToTrayCheckBox_CheckedChanged;
+			// Attach property monitoring first.
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			SettingsManager.AiOptions.PropertyChanged += AiOptions_PropertyChanged;
 			// Anything an earlier run switched off to put the controllers in order, and never got
 			// to switch back on. A controller left off by a program that then stopped is one the
 			// person has to find in a window they never opened, with nothing anywhere saying who
@@ -631,9 +609,8 @@ namespace x360ce.App
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
-			SettingsGridPanel._ParentForm = this;
-			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
-			SettingsGridPanel.InitPanel();
+			Main.SettingsGridPanel._ParentForm = this;
+			Main.SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
@@ -642,12 +619,14 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("MainForm_Load: before SettingsManager.Load");
 			SettingsManager.Load(scheduler);
 			Program.StartupTrace.Mark("MainForm_Load: after SettingsManager.Load");
+			// After the rows are read, so its grid is bound once rather than again for each row.
+			Main.SettingsGridPanel.InitPanel();
 			// The devices are read while the rest of the window is built, so they are known when
 			// the device thread starts rather than half a second after.
 			Global.DHelper.BeginDeviceListRead();
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
-			InitGameToCustomizeComboBox();
+			Main.InitGameToCustomizeComboBox();
 			CleanStatusTimer = new System.Timers.Timer
 			{
 				AutoReset = false,
@@ -655,25 +634,16 @@ namespace x360ce.App
 				Interval = 3000
 			};
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
-			Text = EngineHelper.GetProductFullName();
-			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
-			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
-			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			Main.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
+			Main.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
+			Main.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
 			LoadPages();
+			AddMainControl();
 			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
-			// the window, the one it was started from or else the main one, before the window appears there.
-			if (ControllerIndex >= 0)
-				FitToPage(this, PadControls[ControllerIndex], Screen.FromHandle(Handle).WorkingArea);
+			// the window, the one it was started from or else the main one.
+			if (Main.ControllerIndex >= 0)
+				FitToPage(this, Main.PadControls[Main.ControllerIndex], Screen.FromHandle(Handle).WorkingArea);
 			Program.StartupTrace.Mark("MainForm_Load: window fitted to the page");
-			// The status bar shows its values from the start, rather than appearing later and pushing the pages up.
-			StatusTimerLabel.Text = "";
-			StatusSaveLabel.Visible = false;
-			StatusEventsLabel.Visible = false;
-			StatusDllLabel.Text = "";
-			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format("Elevated: {0}", WinAPI.IsElevated())
-				: "";
-			UpdateStatusAiAccessLabel();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
 			if (AppVersionChanged)
@@ -692,11 +662,26 @@ namespace x360ce.App
 			}
 			// The issues are checked on their own from now on, and what they find is shown on the Issues tab.
 			InitIssuesIcon();
-			UpdateForm1();
 			// After the work loading posted for each page, which selects its row and shows that row's settings: a box change
 			// is saved into a row only once the page shows it.
 			ControlsHelper.BeginInvoke(UpdateForm2);
 			Program.StartupTrace.Mark("MainForm_Load: end");
+		}
+
+		/// <summary>Puts the control on the window, behind the words that say it is loading, which stay until its tabs are ready.</summary>
+		void AddMainControl()
+		{
+			var shownPad = Main.PadOn(Main.MainTabControl.SelectedTab);
+			shownPad?.HoldTables();
+			SuspendLayout();
+			Controls.Add(Main);
+			// In front of the header and the status bar, so it is docked after them and takes what they leave. The words fill the
+			// same place in front of it, and hide it.
+			Controls.SetChildIndex(Main, 0);
+			Controls.SetChildIndex(LoadingLabel, 0);
+			ResumeLayout();
+			shownPad?.ReleaseTables();
+			Program.StartupTrace.Mark("MainControl: added");
 		}
 
 		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
@@ -719,12 +704,12 @@ namespace x360ce.App
 				}
 				if (Controller.IsLoaded)
 				{
-					if (PadControls != null)
+					if (Main?.PadControls != null)
 					{
 						for (var i = 0; i < 4; i++)
 						{
 
-							var currentPadControl = PadControls[i];
+							var currentPadControl = Main.PadControls[i];
 							currentPadControl.UpdateForceFeedBack();
 						}
 					}
@@ -739,7 +724,7 @@ namespace x360ce.App
 		/// <summary>Saves a change into the row selected on the controller page it belongs to, at once, on every step of a slider's drag too.</summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
-			SettingsManager.Current.ApplySettingsToXML(PadControls, e.Page);
+			SettingsManager.Current.ApplySettingsToXML(Main.PadControls, e.Page);
 		}
 
 		private void DHelper_StatesRetrieved(object sender, DInput.DInputEventArgs e)
@@ -853,9 +838,9 @@ namespace x360ce.App
 		{
 			// INI setting keys with controls.
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
-			OptionsPanel.UpdateSettingsMap();
-			OptionsPanel.InternetPanel.UpdateSettingsMap();
-			OptionsPanel.UpdatePanel.UpdateSettingsMap();
+			Main.OptionsPanel.UpdateSettingsMap();
+			Main.OptionsPanel.InternetPanel.UpdateSettingsMap();
+			Main.OptionsPanel.UpdatePanel.UpdateSettingsMap();
 		}
 
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
@@ -923,14 +908,14 @@ namespace x360ce.App
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
-			if (PadControls == null)
+			if (Main?.PadControls == null)
 				return;
-			for (var i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < Main.PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
 				{
-					var recordingWasStopped = PadControls[i].StopRecording();
+					var recordingWasStopped = Main.PadControls[i].StopRecording();
 					if (recordingWasStopped)
 					{
 						e.Handled = true;
@@ -1042,17 +1027,20 @@ namespace x360ce.App
 			// Disable force feedback effect before closing application.
 			// The Test sliders' motors are stopped through the path that started them. Nothing here takes a lock the
 			// input thread takes.
-			if (PadControls != null)
-				for (var i = 0; i < PadControls.Length; i++)
-					PadControls[i].StopTestVibration();
+			var testMotorsRan = false;
+			if (Main?.PadControls != null)
+				for (var i = 0; i < Main.PadControls.Length; i++)
+					testMotorsRan |= Main.PadControls[i].StopTestVibration();
 			//BeginInvoke((Action)delegate()
 			//{
 			//	XInput.FreeLibrary();
 			//});
-			// Logical delay without blocking the current thread.
-			System.Threading.Tasks.Task.Delay(100).Wait();
+			// The engine's next pass takes that to the motors.
+			if (testMotorsRan)
+				System.Threading.Tasks.Task.Delay(100).Wait();
+			StopLoops();
 			// An export only describes the window, so it leaves the settings, and what HID Hide hides, as it found them.
-			if (Program.ExportUiFolder == null)
+			if (Program.ExportUiFolder == null && AllowDHelperStart)
 			{
 				SaveAll();
 				AppHelper.UnInitializeHidHide();
@@ -1093,9 +1081,9 @@ namespace x360ce.App
 		/// <remarks>Called as each round ends, and by the blinking; nothing else changes what it shows.</remarks>
 		private void UpdateIssuesIcon()
 		{
-			var key = IssuesTabPage.ImageKey;
-			var moderateCount = IssuesPanel.ModerateIssuesCount;
-			var criticalCount = IssuesPanel.CriticalIssuesCount ?? 0;
+			var key = Main.IssuesTabPage.ImageKey;
+			var moderateCount = Main.IssuesPanel.ModerateIssuesCount;
+			var criticalCount = Main.IssuesPanel.CriticalIssuesCount ?? 0;
 			var text = (moderateCount ?? 0) == 0
 				? "Issues"
 				: string.Format("{0} Issue{1}", moderateCount, moderateCount == 1 ? "" : "s");
@@ -1118,10 +1106,10 @@ namespace x360ce.App
 			else
 				key = "ok_off_16x16.png";
 			// Set tab image.
-			if (IssuesTabPage.ImageKey != key)
-				IssuesTabPage.ImageKey = key;
+			if (Main.IssuesTabPage.ImageKey != key)
+				Main.IssuesTabPage.ImageKey = key;
 			// Set tab text.
-			ControlsHelper.SetText(IssuesTabPage, text);
+			ControlsHelper.SetText(Main.IssuesTabPage, text);
 			if (Program.IsClosing || criticalCount == 0)
 				return;
 			IssueIconTimer.Start();
@@ -1156,9 +1144,171 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("UpdateForm2: end");
 			// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 			AllowDHelperStart = true;
+			TabSteps = MakeTabsReady().GetEnumerator();
+			TabWindowsTimer = new System.Windows.Forms.Timer { Interval = 1 };
+			TabWindowsTimer.Tick += TabWindowsTimer_Tick;
+			UpdateTabWindowsTimer();
+		}
+
+		#region Tabs slowest to open, made ready before they are opened
+
+		/// <summary>What is left of making the tabs ready.</summary>
+		IEnumerator<object> TabSteps;
+
+		/// <summary>Takes the next steps of making the tabs ready, so that a tab opens as fast the first time as later.</summary>
+		/// <remarks>Null once they are ready. A timer's message comes after everything else the window has to do, so the window answers between runs of steps.</remarks>
+		System.Windows.Forms.Timer TabWindowsTimer;
+
+		/// <summary>How long one run of steps goes on.</summary>
+		const int TabWindowsStepMilliseconds = 30;
+
+		/// <summary>Makes the tabs ready only while somebody can open one: not minimised or in the tray, where a game may be running.</summary>
+		/// <remarks>Nobody is waiting for the window then, and a game may be waiting for its controller, so the loops do not wait for the window.</remarks>
+		void UpdateTabWindowsTimer()
+		{
+			if (TabWindowsTimer == null || Program.IsClosing)
+				return;
+			var canOpen = Visible && WindowState != FormWindowState.Minimized;
+			TabWindowsTimer.Enabled = canOpen;
+			if (!canOpen)
+				StartLoops();
+		}
+
+		/// <summary>Whether <see cref="StartLoops"/> has run.</summary>
+		bool _LoopsStarted;
+
+		/// <summary>Starts what runs over and over behind the window: the issue round and the engine, whose counters on the status bar count their passes.</summary>
+		/// <remarks>When the main control shows, or as soon as loading is done when nobody is waiting for the window.</remarks>
+		void StartLoops()
+		{
+			if (_LoopsStarted)
+				return;
+			_LoopsStarted = true;
+			UpdateForm1();
 			Program.StartupTrace.Mark("device thread start");
 			Global.DHelper.Start();
 		}
+
+		/// <summary>Stops what runs over and over, as soon as the program is certain to close, so the status bar's counters say what still runs.</summary>
+		void StopLoops()
+		{
+			LoadTimer?.Dispose();
+			LoadTimer = null;
+			TabWindowsTimer?.Dispose();
+			TabWindowsTimer = null;
+			IssueIconTimer?.Stop();
+			InterfaceTimer.Stop();
+			ShowInterfaceRate();
+			// A recording that runs keeps its file.
+			Main?.RecorderPanel.StopRecording();
+			Main?.IssuesPanel.TasksTimer.SleepTimerStop();
+			if (Global.DHelper != null)
+			{
+				Global.DHelper.Stop();
+				ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", 0);
+			}
+			Program.StartupTrace.Mark("loops stopped");
+		}
+
+		private void TabWindowsTimer_Tick(object sender, EventArgs e)
+		{
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			try
+			{
+				while (watch.ElapsedMilliseconds < TabWindowsStepMilliseconds)
+				{
+					if (TabSteps.MoveNext())
+						continue;
+					TabWindowsTimer.Dispose();
+					TabWindowsTimer = null;
+					return;
+				}
+			}
+			catch (Exception ex)
+			{
+				// Past the words the page is in use, and its next opening does what was left.
+				if (!LoadingLabel.IsDisposed)
+					ShowLoadingFailed(ex);
+				throw;
+			}
+		}
+
+		/// <summary>Does before anybody asks what opening each tab slowest to open would do.</summary>
+		/// <remarks>
+		/// The tabs across the top are made ready behind the words that say the window is loading, which then give way to the
+		/// control. The tabs inside each controller page then have their windows made, with the window in use. Windows come
+		/// one at a time, because showing a page makes all of them in one go, which held the window for up to two seconds a
+		/// page. The Cloud tab is left out: its queue starts sending once it has a window.
+		/// </remarks>
+		IEnumerable<object> MakeTabsReady()
+		{
+			var tabs = Main.MainTabControl;
+			foreach (var page in Main.ControlPages.Concat(new[] { Main.OptionsTabPage, Main.GamesTabPage }).Where(x => x != tabs.SelectedTab).ToArray())
+			{
+				Main.PadOn(page)?.HoldTables();
+				foreach (var step in MakeWindows(ShownWith(page)))
+					yield return step;
+				// Shown once, unseen: everything on it is created and runs its Load, as on a first opening.
+				if (page != tabs.SelectedTab)
+				{
+					page.Visible = true;
+					page.Visible = false;
+				}
+				Main.PadOn(page)?.ReleaseTables();
+				yield return null;
+			}
+			Program.StartupTrace.Mark("tabs ready");
+			Controls.Remove(LoadingLabel);
+			LoadingLabel.Dispose();
+			RemoveTask(TaskName.Loading);
+			// The header names the page shown from here on, as it does each one chosen after it.
+			if (tabs.SelectedTab != null)
+				SetHeaderSubject(tabs.SelectedTab.Text);
+			Program.StartupTrace.Mark("MainControl: shown");
+			StartLoops();
+			InterfaceTimer.Start();
+			ShowInterfaceRate();
+			yield return null;
+			foreach (var pad in Main.PadControls)
+				foreach (var page in pad.PadTabControl.TabPages.Cast<TabPage>().ToArray())
+					foreach (var step in MakeWindows(ShownWith(page)))
+						yield return step;
+			Program.StartupTrace.Mark("controller tabs ready");
+		}
+
+		/// <summary>Makes the windows of these controls that have none, one a step.</summary>
+		/// <remarks>
+		/// Each window made tells the controls on it that their binding context is new, and a bound grid rebuilds its rows
+		/// every time it hears that. Holding the context itself, a grid does not hear it.
+		/// </remarks>
+		internal static IEnumerable<object> MakeWindows(IEnumerable<Control> controls)
+		{
+			var all = controls.ToArray();
+			foreach (var grid in all.OfType<DataGridView>())
+				grid.BindingContext = grid.BindingContext;
+			foreach (var control in all)
+			{
+				// A control a list of inputs has let go of since is gone. Asking for the handle makes the window.
+				if (!control.IsDisposed && !control.IsHandleCreated)
+				{
+					var handle = control.Handle;
+				}
+				yield return null;
+			}
+		}
+
+		/// <summary>A control and what is on it as far as it shows with it: the tabs of a tab control not open are left out.</summary>
+		internal static IEnumerable<Control> ShownWith(Control control)
+		{
+			yield return control;
+			var tabs = control as TabControl;
+			foreach (var child in control.Controls.Cast<Control>().ToArray())
+				if (tabs == null || child == tabs.SelectedTab)
+					foreach (var item in ShownWith(child))
+						yield return item;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// This method will run continuously if form is not minimized.
@@ -1179,29 +1329,6 @@ namespace x360ce.App
 				Program.ReloadCount, Program.ErrorCount, message);
 		}
 		#endregion
-
-		private bool HelpInit = false;
-
-		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (MainTabControl.SelectedTab == HelpTabPage && !HelpInit)
-			{
-				// Move this here so interface will load one second faster.
-				HelpInit = true;
-				AppHelper.LoadHelp(HelpRichTextBox, AppHelper.HelpV4Resource);
-			}
-			else if (MainTabControl.SelectedTab == SettingsTabPage)
-			{
-				var o = SettingsManager.Options;
-				if (o.InternetFeatures && o.InternetAutoLoad)
-				{
-					//SettingsDatabasePanel.RefreshGrid(true);
-				}
-			}
-			var tab = MainTabControl.SelectedTab;
-			if (tab != null)
-				SetHeaderSubject(tab.Text);
-		}
 
 		#region Check Files
 
@@ -1348,7 +1475,7 @@ namespace x360ce.App
 				// not, so the rule is asked for rather than restated here. All this does is raise a flag
 				// which the device thread reads once per pass.
 				var change = (JocysCom.ClassLibrary.Win32.DBT)m.WParam.ToInt32();
-				if (DeviceDetector.IsDeviceListChange(change))
+				if (Global.DHelper != null && DeviceDetector.IsDeviceListChange(change))
 					Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
@@ -1403,15 +1530,15 @@ namespace x360ce.App
 				var told = Environment.GetEnvironmentVariable(ToldCriticalIssue.Variable);
 				if (!string.IsNullOrEmpty(told))
 					issues = _startupIssues = issues.Concat(new[] { new ToldCriticalIssue(told) }).ToArray();
-				IssuesPanel.AddIssues(issues);
+				Main.IssuesPanel.AddIssues(issues);
 				// Each check of the first round is marked in the start-up trace, which shows what the round costs.
 				foreach (var issue in issues)
 					issue.Checked += Issue_CheckedAtStartup;
-				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
-				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
+				Main.IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
+				Main.IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
 				// This will start execution of Tasks Timer.
-				IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
-				IssuesPanel.TasksTimer.DoActionNow();
+				Main.IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
+				Main.IssuesPanel.TasksTimer.DoActionNow();
 			}
 		}
 
@@ -1455,7 +1582,7 @@ namespace x360ce.App
 				foreach (var issue in startupIssues)
 					issue.Checked -= Issue_CheckedAtStartup;
 			}
-			var newCriticalIssuesCount = IssuesPanel.CriticalIssuesCount ?? 00;
+			var newCriticalIssuesCount = Main.IssuesPanel.CriticalIssuesCount ?? 00;
 			// A critical issue new since the last round brings the Issues tab to the front.
 			var focus = oldCriticalIssueCount == 0 && newCriticalIssuesCount > 0;
 			oldCriticalIssueCount = newCriticalIssuesCount;
@@ -1465,7 +1592,7 @@ namespace x360ce.App
 					return;
 				UpdateIssuesIcon();
 				if (focus)
-					MainTabControl.SelectedTab = IssuesTabPage;
+					Main.MainTabControl.SelectedTab = Main.IssuesTabPage;
 			});
 		}
 
@@ -1533,9 +1660,18 @@ namespace x360ce.App
 				DisposeUpdateProbe();
 				DisposeInterfaceUpdate();
 				EmulationButtonsTimer?.Dispose();
+				LoadTimer?.Dispose();
+				TabWindowsTimer?.Dispose();
+				// Off the screen first, so closing shows at once whatever is left to do.
+				Hide();
+				// Before the controls, so the devices and the virtual controllers are let go of as soon as the window is closed.
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();
 				components.Dispose();
+				if (Program.IsClosing)
+					Program.EndProcess();
+				// Not on the window yet when the window is closed while it loads.
+				Main?.Dispose();
 				//lock (checkTimerLock)
 				//{
 				//	// If timer is disposed then return;
@@ -1553,55 +1689,29 @@ namespace x360ce.App
 
 		#region Current Game
 
-		private void InitGameToCustomizeComboBox()
-		{
-			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
-			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.ComboBox.DisplayMember = nameof(x360ce.Engine.Data.UserGame.DisplayName);
-			// Two games listed under one name are told apart by their folders.
-			GameToCustomizeComboBox.ComboBox.FormattingEnabled = true;
-			GameToCustomizeComboBox.ComboBox.Format += GameToCustomizeComboBox_Format;
-			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
-			// Select game by manually trigger event.
-			Global.SelectOpenGame();
-		}
-
-		private void GameToCustomizeComboBox_Format(object sender, ListControlConvertEventArgs e)
-		{
-			var game = e.ListItem as UserGame;
-			if (game != null)
-				e.Value = SettingsManager.DisplayNameInList(game);
-		}
-
-		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var game = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
-			SettingsManager.UpdateCurrentGame(game);
-		}
-
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
-			if (PadControls == null)
+			if (Main?.PadControls == null)
 				return;
 			// The event is static and can arrive while the window is going away; its controls are gone then.
-			if (IsDisposed || Disposing || GameToCustomizeComboBox.ComboBox == null)
+			if (IsDisposed || Disposing || Main.GameToCustomizeComboBox.ComboBox == null)
 				return;
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
 			// Update PAD Control. A page whose rows change selects one and shows its settings itself.
-			foreach (var ps in PadControls)
+			foreach (var ps in Main.PadControls)
 			{
 				if (ps != null)
 					ps.UpdateFromCurrentGame();
 			}
-			var selectedGame = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
+			var selectedGame = (UserGame)Main.GameToCustomizeComboBox.ComboBox.SelectedItem;
 			if (selectedGame != game)
 			{
-				GameToCustomizeComboBox.SelectedIndexChanged -= GameToCustomizeComboBox_SelectedIndexChanged;
-				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
-				GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
+				Main.GameToCustomizeComboBox.SelectedIndexChanged -= Main.GameToCustomizeComboBox_SelectedIndexChanged;
+				Main.GameToCustomizeComboBox.ComboBox.SelectedItem = game;
+				Main.GameToCustomizeComboBox.SelectedIndexChanged += Main.GameToCustomizeComboBox_SelectedIndexChanged;
 			}
 		}
 
@@ -1627,31 +1737,9 @@ namespace x360ce.App
 		/// <summary>What Windows recorded when this window asked to hear about controllers.</summary>
 		IntPtr _DeviceNotification;
 
-		private void GamesToolStrip_Resize(object sender, EventArgs e)
-		{
-			GameToCustomizeComboBox.AutoSize = false;
-			var width = GamesToolStrip.DisplayRectangle.Width;
-			foreach (ToolStripItem tsi in GamesToolStrip.Items)
-			{
-				if (!(tsi == GameToCustomizeComboBox))
-				{
-					width -= tsi.Width;
-					width -= tsi.Margin.Horizontal;
-				}
-			}
-			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
-			// Resolve disappearing.
-			GamesToolStrip.PerformLayout();
-		}
-
 		#endregion
 
 		#region Save and Synchronize Settings
-
-		private void SaveAllButton_Click(object sender, EventArgs e)
-		{
-			Save();
-		}
 
 		/// <summary>
 		/// This method will be called during manual saving and automatically when form is closing.
@@ -1680,7 +1768,7 @@ namespace x360ce.App
 		public void Save()
 		{
 			// Disable buttons to make sure that user is not pressing it twice.
-			SaveAllButton.Enabled = false;
+			Main.SaveAllButton.Enabled = false;
 			// Update interface.
 			Application.DoEvents();
 			// Save application settings.
@@ -1698,7 +1786,7 @@ namespace x360ce.App
 
 		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			SaveAllButton.Enabled = true;
+			Main.SaveAllButton.Enabled = true;
 			// Dispose original timer.
 			var timer = (System.Timers.Timer)sender;
 			timer.Elapsed -= Timer_Elapsed;
@@ -1773,10 +1861,10 @@ namespace x360ce.App
 		/// <summary>Shows the places again in every list that shows them.</summary>
 		void ShowPlacesAgain()
 		{
-			XInputDevicesPanel.ReloadPlaces();
-			DevicesPanel.RefreshPlaces();
-			if (PadControls != null)
-				foreach (var pad in PadControls)
+			Main.XInputDevicesPanel.ReloadPlaces();
+			Main.DevicesPanel.RefreshPlaces();
+			if (Main?.PadControls != null)
+				foreach (var pad in Main.PadControls)
 					pad.RefreshPlaces();
 		}
 
@@ -1891,7 +1979,6 @@ namespace x360ce.App
 			InterfaceTimer = new System.Windows.Forms.Timer();
 			InterfaceTimer.Tick += InterfaceTimer_Tick;
 			ShowInterfaceRate();
-			InterfaceTimer.Start();
 		}
 
 
@@ -1936,7 +2023,7 @@ namespace x360ce.App
 		private void ShowInterfaceRate()
 		{
 			var on = SettingsManager.Options.UpdateInterface;
-			var rate = !on ? 0
+			var rate = !on || !InterfaceTimer.Enabled ? 0
 				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
 			if (InterfaceTimer != null)
 				InterfaceTimer.Interval = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
@@ -1949,46 +2036,6 @@ namespace x360ce.App
 		#region Show/Hide tabs.
 
 
-		public void ShowTab(bool show, TabPage page)
-		{
-			var tc = MainTabControl;
-			// If must hide then...
-			if (!show && tc.TabPages.Contains(page))
-			{
-				// Hide and return.
-				tc.TabPages.Remove(page);
-				return;
-			}
-			// If must show then..
-			if (show && !tc.TabPages.Contains(page))
-			{
-				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabPage>() { ProgramsTabPage, SettingsTabPage, DevicesTabPage };
-				// Get index of always displayed tab.
-				var index = tc.TabPages.IndexOf(GamesTabPage);
-				// Get tabs in front of tab which must be inserted.
-				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
-				// Count visible tabs.
-				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
-				tc.TabPages.Insert(index + countBefore + 1, page);
-			}
-		}
-
-		public void ShowProgramsTab(bool show)
-		{
-			ShowTab(show, ProgramsTabPage);
-		}
-
-		public void ShowSettingsTab(bool show)
-		{
-			ShowTab(show, SettingsTabPage);
-		}
-
-		public void ShowDevicesTab(bool show)
-		{
-			ShowTab(show, DevicesTabPage);
-		}
-
 		#endregion
 
 
@@ -2000,13 +2047,9 @@ namespace x360ce.App
 			game.EmulationType = (int)type;
 		}
 
-		private void TestButton_Click(object sender, EventArgs e)
-		{
-			DebugPanel.ShowPanel();
-		}
-
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
+			Program.StartupTrace.Mark("MainForm: shown");
 			if (SettingsManager.Options.ShowDebugPanel)
 			{
 				DebugPanel.ShowPanel();
@@ -2016,20 +2059,12 @@ namespace x360ce.App
 			// loading the settings restores the tip in the header and would wipe it.
 		}
 
-		private void AddGameButton_Click(object sender, EventArgs e)
-		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				MainTabControl.SelectedTab = GamesTabPage;
-				Application.DoEvents();
-				GameSettingsPanel.AddNewGame();
-			});
-		}
-
 		private Forms.ErrorReportForm win;
 
 		private void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
+			if (!AllowDHelperStart)
+				return;
 			ShowErrorReport();
 		}
 
@@ -2044,7 +2079,7 @@ namespace x360ce.App
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
-			CloudPanel.EnableDataSource(false);
+			Main.CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors += ErrorReportPanel_ClearErrors;
 			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
@@ -2052,7 +2087,7 @@ namespace x360ce.App
 			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
 			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
-			CloudPanel.EnableDataSource(true);
+			Main.CloudPanel.EnableDataSource(true);
 			if (AllowDHelperStart)
 			{
 				FormEventsEnabled = true;
@@ -2216,7 +2251,9 @@ namespace x360ce.App
 
 		void StatusAiAccessLabel_Click(object sender, EventArgs e)
 		{
-			MainTabControl.SelectedTab = OptionsTabPage;
+			if (!AllowDHelperStart)
+				return;
+			Main.MainTabControl.SelectedTab = Main.OptionsTabPage;
 		}
 
 		private void UpdateStatusErrorsLabel()
@@ -2251,7 +2288,7 @@ namespace x360ce.App
 		void FormsTheme_ThemeChanged(object sender, EventArgs e)
 		{
 			UpdateStatusErrorsLabel();
-			FillBuletImageList();
+			Main.FillBuletImageList();
 			if (Resources.ResourceManager is JocysCom.ClassLibrary.Controls.Themes.ThemeResourceManager manager)
 				ControlsHelper.ReplaceImages(TrayContextMenuStrip, manager.Themed);
 		}

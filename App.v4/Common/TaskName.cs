@@ -12,5 +12,6 @@ namespace x360ce.App
 		CloudCommand,
         GetPrograms,
 		LoadSetting,
+		Loading,
     }
 }

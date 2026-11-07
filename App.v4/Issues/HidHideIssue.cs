@@ -19,8 +19,9 @@ namespace x360ce.App.Issues
 	/// games are not affected and nothing here stops the emulation working.
 	///
 	/// A hidden controller is invisible to a program HID Hide does not allow, so to this program it looks
-	/// unplugged. That case is judged from mapped controllers whether or not they are online; waiting for
-	/// one to be online would wait for ever.
+	/// unplugged. That case is judged whether or not a controller is online, or mapped at all: waiting for one
+	/// would wait for ever, and a copy of the program in a new folder is a new program to HID Hide, whose
+	/// controllers are simply missing from its lists.
 	/// </remarks>
 	public class HidHideIssue : IssueItem
 	{
@@ -53,11 +54,6 @@ namespace x360ce.App.Issues
 				return;
 			}
 			var devices = GetVirtualMappedDevices();
-			if (devices.Length == 0)
-			{
-				SetSeverity(IssueSeverity.None);
-				return;
-			}
 			int fixType;
 			var text = Explain(VirtualDriverInstaller.GetHidHideState(), devices,
 				System.Windows.Forms.Application.ExecutablePath, out fixType);
@@ -145,12 +141,17 @@ namespace x360ce.App.Issues
 				return null;
 			var lines = new List<string>();
 			var hidden = hideable.Where(x => IsHidden(state, x)).ToArray();
-			if (state.CloakOn && hidden.Length > 0 && !state.IsAllowed(exePath))
+			var refused = state.CloakOn && !state.IsAllowed(exePath);
+			var allow = state.Inverse
+				? "Remove " + Path.GetFileName(exePath) + " from the application list in HID Hide."
+				: "Add " + Path.GetFileName(exePath) + " to the application list in HID Hide.";
+			if (refused && hidden.Length > 0)
 				lines.Add(string.Format("HID Hide hides {0} from this program as well, so it cannot read {1}. {2}",
-					Names(hidden), hidden.Length == 1 ? "it" : "them",
-					state.Inverse
-						? "Remove " + Path.GetFileName(exePath) + " from the application list in HID Hide."
-						: "Add " + Path.GetFileName(exePath) + " to the application list in HID Hide."));
+					Names(hidden), hidden.Length == 1 ? "it" : "them", allow));
+			else if (refused && state.HiddenDevices.Length > 0)
+				lines.Add(string.Format("HID Hide hides {0} from this program, so {1} missing from its lists. {2}",
+					state.HiddenDevices.Length == 1 ? "a device" : state.HiddenDevices.Length + " devices",
+					state.HiddenDevices.Length == 1 ? "it is" : "they are", allow));
 			if (!state.CloakOn && online.Length > 0)
 				lines.Add(string.Format("HID Hide is installed but hiding is off, so a game can see {0} twice. Turn hiding on in HID Hide.",
 					Names(online)));

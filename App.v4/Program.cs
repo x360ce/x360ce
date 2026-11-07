@@ -208,9 +208,8 @@ namespace x360ce.App
 		/// <remarks>
 		/// The window finishes starting after it appears: each controller page selects its row and
 		/// shows that row's settings from work posted while loading, so a description taken the
-		/// moment it appears describes pages that are not filled yet. The same flag the program
-		/// uses to decide it is ready to start reading controllers says when there is something
-		/// whole to describe.
+		/// moment it appears describes pages that are not filled yet. The words that say the window
+		/// is loading go last, so their going says when there is something whole to describe.
 		/// </remarks>
 		static void WaitThenExport(string folder)
 		{
@@ -221,7 +220,7 @@ namespace x360ce.App
 				waited++;
 				// Written anyway after a minute rather than waiting for a window that never settles.
 				// What is missing then shows up as a failure of the test that checks the contents.
-				if (!MainForm.Current.AllowDHelperStart && waited < 600)
+				if (!MainForm.Current.LoadingLabel.IsDisposed && waited < 600)
 					return;
 				wait.Stop();
 				ExportUi(folder);
@@ -370,6 +369,18 @@ namespace x360ce.App
 			}
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
+		}
+
+		/// <summary>Ends the program from a closing window, once it has let go of what it holds outside itself.</summary>
+		/// <remarks>
+		/// All that is left is the program's own windows, and Windows takes those with the process. Destroyed one at a time
+		/// first, about 3,500 of them held the process for eight seconds, which a second start and the next game wait out.
+		/// </remarks>
+		internal static void EndProcess()
+		{
+			Global.DisposeCloudClient();
+			Global.DisposeServices();
+			Environment.Exit(Environment.ExitCode);
 		}
 
 		/// <summary>The command line, read without regard to case: the install context lower-cases every name.</summary>

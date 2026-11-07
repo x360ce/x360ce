@@ -94,12 +94,12 @@ namespace x360ce.App.Controls
 
 		public void InitOptions()
 		{
-			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
+			MainForm.Current.Main.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
 		}
 
 		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.Parent)
+			if (MainForm.Current.Main.MainTabControl.SelectedTab == MainForm.Current.Main.OptionsPanel.Parent)
 			{
 				// Task Manager or another copy may have changed it since.
 				LoadWindowsStart();
@@ -633,17 +633,17 @@ namespace x360ce.App.Controls
 
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.ShowProgramsTab(ShowProgramsTabCheckBox.Checked);
+			MainForm.Current.Main.ShowProgramsTab(ShowProgramsTabCheckBox.Checked);
 		}
 
 		private void ShowSettingsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.ShowSettingsTab(ShowSettingsTabCheckBox.Checked);
+			MainForm.Current.Main.ShowSettingsTab(ShowSettingsTabCheckBox.Checked);
 		}
 
 		private void ShowDevicesTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
+			MainForm.Current.Main.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
 		}
 
 		DeveloperToolsForm _ToolsForm;

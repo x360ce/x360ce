@@ -50,9 +50,21 @@ namespace x360ce.App.Controls
 			if (IsDisposed)
 				return;
 			if (InvokeRequired)
-				BeginInvoke((Action)Bind);
+				BeginInvoke((Action)ShowMapped);
 			else
-				Bind();
+				ShowMapped();
+		}
+
+		/// <summary>Shows again what is mapped to each row, leaving the rows and the selection in place.</summary>
+		void ShowMapped()
+		{
+			foreach (DataGridViewRow row in DevicesDataGridView.Rows)
+			{
+				var cell = row.Cells[MappedColumn.Index];
+				var text = MappedText((XInputReorderPlan.Entry)row.Tag);
+				if (cell.Value as string != text)
+					cell.Value = text;
+			}
 		}
 
 		/// <summary>The game, or which tabs it emulates, changed, so which tabs are waiting is worked out again.</summary>
@@ -126,7 +138,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		void Bind()
+		internal void Bind()
 		{
 			var selected = DevicesDataGridView.CurrentRow == null ? -1 : DevicesDataGridView.CurrentRow.Index;
 			DevicesDataGridView.Rows.Clear();

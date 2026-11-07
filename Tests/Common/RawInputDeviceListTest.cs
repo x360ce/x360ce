@@ -688,6 +688,28 @@ namespace x360ce.Tests
 			Assert.IsFalse(helper.RawInput.IsRunning, "The hub outlived the helper.");
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("The XInput read-back goes on once the update thread starts again, rather than waiting for as long as the last run lasted")]
+		public void The_display_reads_go_on_after_the_update_thread_starts_again()
+		{
+			// Suspended: the thread runs and reads nothing, so only this test asks whether a read is due.
+			var helper = new DInputHelper { Suspended = true };
+			try
+			{
+				helper.Start();
+				System.Threading.Thread.Sleep(200);
+				Assert.IsTrue(helper.DueForDisplayRead(), "No read was due in the first run.");
+				Assert.IsTrue(helper.Stop(), "The update thread did not stop.");
+				helper.Start();
+				System.Threading.Thread.Sleep(50);
+				Assert.IsTrue(helper.DueForDisplayRead(), "The clock started again, and the reads wait for it to pass where it was.");
+			}
+			finally
+			{
+				helper.Dispose();
+			}
+		}
+
 		/// <summary>A helper whose Raw Input hub never starts, as when Windows refuses its window or registration.</summary>
 		class RefusedHub : DInputHelper
 		{

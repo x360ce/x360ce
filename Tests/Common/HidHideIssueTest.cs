@@ -112,6 +112,26 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "Remove x360ce.exe from the application list");
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A copy of the program HID Hide does not allow, with nothing mapped yet, is told why its controllers are missing from its lists")]
+		public void A_new_copy_with_nothing_mapped_is_told_what_is_hidden_from_it()
+		{
+			var state = Installed(true, PadPath);
+			int fixType;
+			const string copy = @"D:\New folder\x360ce1.exe";
+			var text = HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType);
+			Assert.AreEqual(HidHideIssue.FixConfigure, fixType);
+			StringAssert.Contains(text, "hides a device from this program");
+			StringAssert.Contains(text, "Add x360ce1.exe to the application list");
+			state.HiddenDevices = new[] { PadPath, @"HID\VID_0079&PID_0006\7&1&0&0000" };
+			StringAssert.Contains(HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType), "hides 2 devices from this program");
+			// The copy HID Hide allows, a program hiding nothing and hiding switched off have nothing to be told.
+			Assert.IsNull(HidHideIssue.Explain(state, new UserDevice[0], Exe, out fixType));
+			state.HiddenDevices = new string[0];
+			Assert.IsNull(HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType));
+			Assert.IsNull(HidHideIssue.Explain(Installed(false, PadPath), new UserDevice[0], copy, out fixType));
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("Keyboards, mice and devices without a HID path are never asked to be hidden")]
 		public void Keyboards_and_non_HID_devices_are_left_alone()

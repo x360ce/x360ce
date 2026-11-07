@@ -46,7 +46,7 @@ namespace x360ce.App
 				return;
 			var o = SettingsManager.Options;
 			_emulationButtons = o.EmulationButtonsEnabled ? HotkeyHelper.ParseButtons(o.EmulationButtons) : SharpDX.XInput.GamepadButtonFlags.None;
-			var look = HotkeyHelper.IsCompleteButtons(_emulationButtons) || OptionsPanel.RecordingButtons;
+			var look = HotkeyHelper.IsCompleteButtons(_emulationButtons) || Main.OptionsPanel.RecordingButtons;
 			if (look && EmulationButtonsTimer == null)
 			{
 				EmulationButtonsTimer = new Timer { Interval = 50 };
@@ -67,9 +67,9 @@ namespace x360ce.App
 			var states = Global.DHelper?.CombinedXiStates;
 			if (states == null || Program.IsClosing)
 				return;
-			if (OptionsPanel.RecordingButtons)
+			if (Main.OptionsPanel.RecordingButtons)
 			{
-				OptionsPanel.RecordButtons(HotkeyHelper.HeldButtons(states));
+				Main.OptionsPanel.RecordButtons(HotkeyHelper.HeldButtons(states));
 				// Still held when the recording ends, the buttons are let go of before they flip anything.
 				_emulationButtonsHeld = true;
 				return;

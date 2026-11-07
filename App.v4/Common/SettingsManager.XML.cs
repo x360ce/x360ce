@@ -589,8 +589,9 @@ namespace x360ce.App
 
 		public void LoadPadSettingAndCleanup(UserSetting setting, PadSetting ps, bool add = false)
 		{
-			// Link setting with pad setting.
-			setting.PadSettingChecksum = ps.PadSettingChecksum;
+			// Link setting with pad setting. The list reports every write, and each report rebuilds the rows of all four pages.
+			if (setting.PadSettingChecksum != ps.PadSettingChecksum)
+				setting.PadSettingChecksum = ps.PadSettingChecksum;
 			// Insert pad setting first, because it will be linked with the setting.
 			UpsertPadSettings(ps);
 			// Insert setting if not in the list.

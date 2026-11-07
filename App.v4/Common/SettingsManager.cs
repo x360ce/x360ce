@@ -834,6 +834,9 @@ namespace x360ce.App
 		/// </remarks>
 		static void ShowComboBoxValue(ComboBox cbx, string text)
 		{
+			// Filled again, the box reports a change to everything watching it, a dead zone among them.
+			if (cbx.SelectedIndex == 0 && cbx.Items.Count == 1 && cbx.Items[0] as string == text)
+				return;
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;

@@ -240,7 +240,12 @@ namespace x360ce.Tests
 				if (p.MainWindowHandle == IntPtr.Zero)
 					return null;
 				var element = AutomationElement.FromHandle(p.MainWindowHandle);
-				return string.IsNullOrEmpty(element?.Current.Name) ? null : element;
+				if (string.IsNullOrEmpty(element?.Current.Name))
+					return null;
+				// The window appears first, and its tabs join it behind the words that say it is loading, until they are ready.
+				if (element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.MainControl.MainTabControl))) == null)
+					return null;
+				return element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.MainForm.LoadingLabel))) == null ? element : null;
 			}, timeout, "the main window");
 		}
 
