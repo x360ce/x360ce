@@ -1,5 +1,6 @@
-﻿## [3.10.9.0] - 2026-11-07
+﻿## [3.10.10.0] - 2026-11-07
 
+- Fixed: The presets tab on Controller Settings has its own title again.
 - Changed: x360ce now connects to the online database at its new address.
 - Changed: x360ce no longer loads ASP.NET, Microsoft's website engine.
 - Changed: Icons are now drawn from one large picture at every screen scale.

@@ -165,6 +165,6 @@ namespace x360ce.Tests
 			}
 		}
 
-		static readonly Regex RateText = new Regex(@"^UI Hz:\s*(\d+)");
+		internal static readonly Regex RateText = new Regex(@"^UI Hz:\s*(\d+)");
 	}
 }

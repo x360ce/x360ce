@@ -89,8 +89,8 @@ namespace x360ce.App.Controls
 		void UpdateControlsFromPresets()
 		{
 			PresetsTabPage.Text = SettingManager.Presets.Items.Count == 0
-				? _globalSummariesTitle
-				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingManager.Presets.Items.Count);
+				? _globalPresetsTitle
+				: string.Format("{0} [{1}]", _globalPresetsTitle, SettingManager.Presets.Items.Count);
 		}
 
 		void Presets_ListChanged(object sender, ListChangedEventArgs e)

@@ -27,9 +27,12 @@ namespace x360ce.Tests
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));
 				// The header is wired once the window has finished building itself, which is also
-				// when the controller pages arrive.
-				var target = Ui.WaitFor(() => ByName(window, "Load Preset..."), TimeSpan.FromSeconds(90),
-					"the Load Preset button never appeared");
+				// when the controller pages arrive and the words that say it is loading go.
+				Ui.WaitFor(() => ByAutomationId(window, nameof(x360ce.App.MainForm.LoadingLabel)) == null ? "loaded" : null, TimeSpan.FromSeconds(90),
+					"the window never finished loading");
+				// A button that works with no device mapped: a disabled one hears nothing of the mouse.
+				var target = Ui.WaitFor(() => ByName(window, "Copy Preset"), TimeSpan.FromSeconds(90),
+					"the Copy Preset button never appeared");
 				var subject = Ui.WaitFor(() => ByAutomationId(window, "HelpSubjectLabel"), TimeSpan.FromSeconds(10),
 					"the header has no subject label");
 				var body = Ui.WaitFor(() => ByAutomationId(window, "HelpBodyLabel"), TimeSpan.FromSeconds(10),
@@ -39,7 +42,7 @@ namespace x360ce.Tests
 				// The centre of where it is drawn, rather than a clickable point: another window
 				// lying over this one makes the second unavailable and says nothing about the wiring.
 				var box = target.Current.BoundingRectangle;
-				Assert.IsFalse(box.IsEmpty, "Load Preset is not drawn anywhere.");
+				Assert.IsFalse(box.IsEmpty, "Copy Preset is not drawn anywhere.");
 				// Windows sends the move to whichever window is under the pointer, so a window lying
 				// over this one would swallow it and the header would rightly say nothing.
 				SetForegroundWindow(app.MainWindowHandle);
@@ -53,13 +56,13 @@ namespace x360ce.Tests
 				// The header is filled by the window's own message loop, so this waits for it rather
 				// than reading straight after moving, which reads what was there before.
 				var shown = Ui.WaitFor(
-					() => body.Current.Name != null && body.Current.Name.Contains("saved set")
+					() => body.Current.Name != null && body.Current.Name.Contains("to the clipboard")
 						? body.Current.Name : null,
 					TimeSpan.FromSeconds(10),
 					"the header never reported what the mouse was over. It said: " + body.Current.Name);
-				Assert.IsTrue(shown.Contains("saved set"),
+				Assert.IsTrue(shown.Contains("to the clipboard"),
 					"The header body should describe the control under the mouse.");
-				Assert.AreEqual("Load Preset...", subject.Current.Name,
+				Assert.AreEqual("Copy Preset", subject.Current.Name,
 					"The header subject should name the control under the mouse.");
 				// A description of a control is not an event, so it must not be stamped with a time.
 				Assert.IsFalse(shown.Contains(DateTime.Now.Year.ToString()),
