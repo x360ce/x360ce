@@ -72,6 +72,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public IssueSeverity? Severity { get => _Severity; set => SetProperty(ref _Severity, value); }
 		IssueSeverity? _Severity;
 
+		/// <summary>Whether the round of checks should check this issue now.</summary>
+		/// <remarks>Always, unless the check is costly and the issue knows that nothing it reads has changed.</remarks>
+		public virtual bool IsDue()
+		{
+			return true;
+		}
+
 		public virtual void CheckTask()
 		{
 			throw new NotImplementedException();

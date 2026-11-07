@@ -25,24 +25,36 @@ namespace x360ce.Tests
 	/// program writes when X360CE_ENGINE_LOG names a file, because a number read off the window
 	/// one glance at a time can be made to say whatever the reader hoped.
 	///
-	/// The controller pages appear at 1.0-1.5 s and the program is ready at 2.3-2.9 s. The first
-	/// issue round gates the pages, so the leftover-pad read is cached and skipped in that round:
-	/// read there, it puts the pages at 4.6-7.4 s and the program ready at 6-9 s. What remains:
-	/// the pads at 1.3-1.4 s (about 150 ms to construct each, pad 1 initialisation about 440 ms),
-	/// InitializeComponent about 0.4 s, and the first take-in 250-350 ms.
+	/// The engine and the settings start once the controller pages have their settings, whatever the
+	/// first issue round finds. That round runs beside them, and its slow readings, the leftover pads
+	/// and HID Hide, wait for the round after it. The engine waited for that round once: with a
+	/// person's own profile the pages appeared at 1.0-1.5 s and the program was ready at 2.3-2.9 s.
+	/// What remains: InitializeComponent about 0.6 s, the pads about 0.3-0.45 s to construct each,
+	/// and each page's settings about 0.2 s.
+	///
+	/// The test runs a copy with a profile of its own, on a laptop in Debug, measured on 2026-11-05.
 	/// </remarks>
 	[TestClass]
 	public class StartupPerformanceTest
 	{
-		/// <summary>Measured 1850 to 2250 ms on a laptop in Debug; a collapse back to a whole-machine read is seconds more.</summary>
-		const int DeviceListTakenInMs = 8000;
+		/// <summary>Measured 5100 to 6950 ms, and 7400 ms on a first start with no record to compile ahead from.</summary>
+		/// <remarks>A collapse back to a whole-machine read is seconds more, and <see cref="ReadTotalMs"/> catches the read itself.</remarks>
+		const int DeviceListTakenInMs = 12000;
 
 		/// <summary>
-		/// Measured 10 to 30 ms. The read is started before the panels are built and the panels take
-		/// longer, so the list is already waiting when the device thread asks for it. If this grows the
-		/// read is no longer being prefetched and the device thread is waiting for the machine again.
+		/// From the pages having their settings to the engine starting. Measured 160 to 180 ms, and 320 to 380 ms on a first
+		/// start with no record to compile ahead from. With the first issue round between them it was 280 to 330 ms here, where
+		/// the round has little to check, and about 1300 ms with a person's own profile.
 		/// </summary>
-		const int PrefetchGapMs = 700;
+		const int EngineStartMs = 700;
+
+		/// <summary>
+		/// From the engine starting to its first take-in of the list. Measured 15 to 560 ms, as it was before the engine stopped
+		/// waiting for the issue round (12 to 350 ms). The read is started before the panels are given their settings, so the
+		/// list is waiting when the device thread asks for it. If this grows the read is no longer being prefetched and the
+		/// device thread is waiting for the machine again, which takes seconds.
+		/// </summary>
+		const int PrefetchGapMs = 1200;
 
 		/// <summary>Measured 38 ms of interfaces and devices; DirectInput's own enumeration is a floor this cannot move.</summary>
 		const int ReadOwnWorkMs = 400;
@@ -69,14 +81,20 @@ namespace x360ce.Tests
 			if (Process.GetProcessesByName("x360ce").Length > 0)
 				Assert.Inconclusive("Another x360ce instance is already running, so this test could not drive its own. "
 					+ "Close it and run again.");
-			// Named after this process and this run, so two test hosts never write into one trace, and
-			// set for the program alone rather than for this one: a variable left behind in the test
-			// host makes every later test write a trace nobody reads.
-			var log = Path.Combine(Path.GetTempPath(),
-				"x360ce.startup-performance." + Process.GetCurrentProcess().Id + "." + Guid.NewGuid().ToString("N") + ".log");
-			var info = new ProcessStartInfo(exe)
+			// A copy in a folder of its own, with a profile of its own, so no settings of the person's are read or written. The
+			// profile is kept from run to run, as a person's is, with the record the runtime compiles ahead from at the next start.
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "startup-performance-" + Guid.NewGuid().ToString("N"));
+			var profile = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "startup-performance-profile");
+			Directory.CreateDirectory(folder);
+			Directory.CreateDirectory(profile);
+			var copy = Path.Combine(folder, "x360ce.exe");
+			File.Copy(exe, copy);
+			// Named after this run, so two test hosts never write into one trace, and set for the program alone rather
+			// than for this one: a variable left behind in the test host makes every later test write a trace nobody reads.
+			var log = Path.Combine(folder, "startup.log");
+			var info = new ProcessStartInfo(copy, "\"/Profile=" + profile + "\"")
 			{
-				WorkingDirectory = Path.GetDirectoryName(exe),
+				WorkingDirectory = folder,
 				UseShellExecute = false,
 			};
 			info.EnvironmentVariables["X360CE_ENGINE_LOG"] = log;
@@ -117,12 +135,18 @@ namespace x360ce.Tests
 					"The device list was taken in " + takenIn + " ms after the process started, over " + DeviceListTakenInMs
 					+ " ms. Reading every device on the machine is what used to cost that.");
 
-				var formBuilt = FirstMilestone(log, "UpdateForm2: end");
-				Assert.IsNotNull(formBuilt, "The trace has no 'UpdateForm2: end' milestone, so the prefetch cannot be measured.");
-				var gap = takenIn - MillisecondsOf(formBuilt);
+				var pages = FirstMilestone(log, "LoadPages: end");
+				var engine = FirstMilestone(log, "device thread start");
+				Assert.IsNotNull(pages, "The trace has no 'LoadPages: end' milestone, so the engine's start cannot be measured.");
+				Assert.IsNotNull(engine, "The trace has no 'device thread start' milestone, so the prefetch cannot be measured.");
+				var start = MillisecondsOf(engine) - MillisecondsOf(pages);
+				Assert.IsTrue(start <= EngineStartMs,
+					"The engine started " + start + " ms after the pages had their settings, over " + EngineStartMs + " ms. "
+					+ "Nothing it needs comes after them; waiting for the first issue round is what used to cost that.");
+				var gap = takenIn - MillisecondsOf(engine);
 				Assert.IsTrue(gap <= PrefetchGapMs,
-					"The device list arrived " + gap + " ms after the panels were built (list at " + takenIn + " ms, panels at "
-					+ MillisecondsOf(formBuilt) + " ms), over " + PrefetchGapMs + " ms. The read is meant to run on a worker "
+					"The device list arrived " + gap + " ms after the engine started (list at " + takenIn + " ms, engine at "
+					+ MillisecondsOf(engine) + " ms), over " + PrefetchGapMs + " ms. The read is meant to run on a worker "
 					+ "while the panels are built, so it is finished before the device thread asks for it.");
 
 				var read = engineLines.Select(Parse).FirstOrDefault(x => x.Read > 0);
@@ -156,8 +180,9 @@ namespace x360ce.Tests
 				power.Dispose();
 				if (process != null)
 					Ui.CloseApp(process);
-				try { File.Delete(log); }
+				try { Directory.Delete(folder, true); }
 				catch (IOException) { }
+				catch (UnauthorizedAccessException) { }
 			}
 		}
 

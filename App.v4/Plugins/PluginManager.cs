@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using x360ce.Plugins;
 
@@ -153,7 +152,7 @@ namespace x360ce.App.Plugins
 				// A DLL not named like its folder is a dependency of the plugin beside it.
 				if (!string.Equals(Path.GetFileName(folder), Path.GetFileNameWithoutExtension(path), StringComparison.OrdinalIgnoreCase))
 					continue;
-				var file = known ?? new PluginFile(path, false) { Signer = GetSigner(path) };
+				var file = known ?? new PluginFile(path, false) { Signer = CertificateHelper.GetSigner(path) };
 				var trust = Trust(file.Signer, OwnSigner, _allowThirdParty());
 				if (trust == PluginTrust.Refused)
 				{
@@ -192,24 +191,6 @@ namespace x360ce.App.Plugins
 			if (!string.IsNullOrEmpty(signer) && !string.IsNullOrEmpty(ownSigner) && string.Equals(signer, ownSigner, StringComparison.Ordinal))
 				return PluginTrust.SameSigner;
 			return allowThirdParty ? PluginTrust.ThirdParty : PluginTrust.Refused;
-		}
-
-		/// <summary>The subject of the certificate that signed a file, or null when it has no valid Authenticode signature.</summary>
-		/// <remarks>Checked by Windows, offline: no revocation lookup, so a plugin loads the same without a network.</remarks>
-		public static string GetSigner(string path)
-		{
-			Exception error;
-			CertificateHelper.VerifySignature(path, out error);
-			if (error != null)
-				return null;
-			try
-			{
-				return X509Certificate.CreateFromSignedFile(path).Subject;
-			}
-			catch (System.Security.Cryptography.CryptographicException)
-			{
-				return null;
-			}
 		}
 
 		#endregion
@@ -330,7 +311,7 @@ namespace x360ce.App.Plugins
 			var path = Path.Combine(Path.GetDirectoryName(file.Source), name + ".dll");
 			if (!File.Exists(path))
 				return null;
-			if (Trust(GetSigner(path), OwnSigner, _allowThirdParty()) == PluginTrust.Refused)
+			if (Trust(CertificateHelper.GetSigner(path), OwnSigner, _allowThirdParty()) == PluginTrust.Refused)
 				return null;
 			return Assembly.Load(File.ReadAllBytes(path));
 		}

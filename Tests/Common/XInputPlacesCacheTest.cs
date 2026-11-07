@@ -312,7 +312,7 @@ namespace x360ce.Tests
 			// A table published, so the fault below is the first since one was.
 			XInputPlaces.Read();
 			var helper = new DInputHelper();
-			var passForceTo = typeof(DInputHelper).GetMethod("PassForceTo", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+			var passForceTo = typeof(DInputHelper).GetMethod(nameof(DInputHelper.PassForceTo), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 			const string fault = "The device tree could not be read.";
 			var faults = 0;
 			EventHandler<LogHelperEventArgs> keep = (sender, e) =>

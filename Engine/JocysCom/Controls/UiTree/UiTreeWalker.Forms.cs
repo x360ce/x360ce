@@ -24,21 +24,17 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// </param>
 		public static UiNode Read(Control control, bool raw = false, string path = null)
 		{
-			var node = Describe(control);
-			if (path != null)
-			{
-				node.Path = path.Length == 0 ? null : path;
-				node.Value = GetValue(control);
-			}
-			else
-			{
-				// The document names an element whose words follow the program's state the same on every computer.
-				node.Name = UiText.LiveNameFor(control) ?? node.Name;
-			}
+			return Read(control, raw, path, true);
+		}
+
+		/// <param name="values">False leaves out what the controls hold, see <see cref="Read(object, bool, string, bool)"/>.</param>
+		static UiNode Read(Control control, bool raw, string path, bool values)
+		{
+			var node = Describe(control, path, values);
 			foreach (var child in ChildrenOf(control))
 			{
 				// A control without a name cannot be addressed, so it and its subtree carry no path.
-				var childNode = Read(child, raw, ChildPath(path, child.Name));
+				var childNode = Read(child, raw, ChildPath(path, child.Name), values);
 				if (childNode != null)
 					Attach(node, childNode, raw);
 			}
@@ -46,10 +42,28 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			{
 				if (!raw && IsSpacer(item))
 					continue;
-				Attach(node, Read(item, raw, ChildPath(path, item.Name)), raw);
+				Attach(node, Read(item, raw, ChildPath(path, item.Name), values), raw);
 			}
 			AddRows(node, control as DataGridView, path);
 			AddProperties(node, control as PropertyGrid, path);
+			return node;
+		}
+
+		/// <summary>A control by itself: with a path, its path and, when asked, its value; without one, the name the document gives it.</summary>
+		static UiNode Describe(Control control, string path, bool values)
+		{
+			var node = Describe(control);
+			if (path != null)
+			{
+				node.Path = path.Length == 0 ? null : path;
+				if (values)
+					node.Value = GetValue(control);
+			}
+			else
+			{
+				// The document names an element whose words follow the program's state the same on every computer.
+				node.Name = UiText.LiveNameFor(control) ?? node.Name;
+			}
 			return node;
 		}
 

@@ -9,7 +9,7 @@ namespace x360ce.App.Issues
     /// <summary>
     /// Required by ViGEm.
     /// </summary>
-    public class HotfixIssue : IssueItem
+    public class HotfixIssue : OnChangeIssue
     {
         public HotfixIssue() : base()
         {

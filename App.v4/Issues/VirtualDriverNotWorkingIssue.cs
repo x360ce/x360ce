@@ -63,6 +63,24 @@ namespace x360ce.App.Issues
 		/// </remarks>
 		public const int ConnectErrorFreshMs = 3 * ViGEmClient.ConnectRetryMs;
 
+		/// <summary>The count of changes the bus driver was last asked after, none yet.</summary>
+		static int _busCheckedAt = -1;
+
+		/// <summary>Whether the bus driver was installed when last asked.</summary>
+		static bool _busInstalled;
+
+		/// <summary>Whether the bus driver is installed. Asking reads the list of drivers, so it is asked again only after a change.</summary>
+		static bool IsBusInstalled()
+		{
+			var changes = OnChangeIssue.Changes;
+			if (changes != _busCheckedAt)
+			{
+				_busInstalled = VirtualDriverInstaller.GetInstalledViGEmBusVersion() != null;
+				_busCheckedAt = changes;
+			}
+			return _busInstalled;
+		}
+
 		public VirtualDriverNotWorkingIssue() : base()
 		{
 			Name = Title(IssueSeverity.Moderate);
@@ -142,11 +160,11 @@ namespace x360ce.App.Issues
 		}
 
 		/// <summary>Reads what the input thread and the bus client have recorded, without a lock and without connecting.</summary>
-		static Health Read()
+		internal static Health Read()
 		{
 			var health = new Health
 			{
-				BusInstalled = VirtualDriverInstaller.GetInstalledViGEmBusVersion() != null,
+				BusInstalled = IsBusInstalled(),
 				// The answer before its time: the bus client stores the time first, so a new answer read
 				// here is never paired with an older time.
 				ConnectError = ViGEmClient.LastConnectError,

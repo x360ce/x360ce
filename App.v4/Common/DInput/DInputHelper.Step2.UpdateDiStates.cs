@@ -50,6 +50,28 @@ namespace x360ce.App.DInput
 				|| result == SharpDX.DirectInput.ResultCode.NotExclusiveAcquired;
 		}
 
+		/// <summary>Why the engine let go of a device it held, as a recording says it.</summary>
+		public enum LetGoReason
+		{
+			/// <summary>No reason noted.</summary>
+			None = 0,
+			/// <summary>Its own centering is to change, which DirectInput takes only while the device is let go of.</summary>
+			Centering = 1,
+			/// <summary>Force feedback and the centering spring were switched off, so a wheel takes its own centering back.</summary>
+			ForceOff = 2,
+			/// <summary>A force call found the device no longer held.</summary>
+			ForceHoldLost = 3,
+			/// <summary>A read of the device failed.</summary>
+			ReadFailed = 4,
+		}
+
+		/// <summary>Notes why the engine lets go of a device, and the error that made it, for a recording to say. Two field writes.</summary>
+		static void NoteLetGo(UserDevice ud, LetGoReason reason, int error)
+		{
+			ud.LetGoReason = (int)reason;
+			ud.LetGoError = error;
+		}
+
 		/// <summary>How long a device that failed to read twice in a row rests before it is tried again, in milliseconds.</summary>
 		/// <remarks>
 		/// A device mid-reset is back on the next poll, so one failure is tried again at once. One that keeps
@@ -122,12 +144,12 @@ namespace x360ce.App.DInput
 		/// The run marks a time not yet taken with -1, so it needs a time that is never negative, and one
 		/// that never goes back. <see cref="Environment.TickCount"/> is negative from 24.9 to 49.7 days
 		/// after Windows starts, and <see cref="watch"/> starts again with the update thread, which a
-		/// change of Windows settings restarts in the middle of a run.
+		/// reorder of the XInput places restarts in the middle of a run.
 		/// </remarks>
 		static readonly System.Diagnostics.Stopwatch SpringCalibrationClock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <param name="routing">Which rows each controller reads and where each device's force comes from, for this pass.</param>
-		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing)
+		internal void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing)
 		{
 			// The devices on the game's ticked rows, found when the routing was built. Found here, the settings and
 			// devices lists would be copied on every pass, under the lock the interface holds while it draws a change.
@@ -229,7 +251,10 @@ namespace x360ce.App.DInput
 							// only be changed while the device is let go of.
 							var autoCenter = AutoCenterFor(ud.CapType, ud.DiActuatorCount, mapped && route.Spring);
 							if (ud.IsExclusiveMode == true && autoCenter.HasValue && ud.AutoCenter != autoCenter.Value)
+							{
+								NoteLetGo(ud, LetGoReason.Centering, 0);
 								ud.IsExclusiveMode = null;
+							}
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{
@@ -247,12 +272,15 @@ namespace x360ce.App.DInput
 									SetAutoCenter(device, autoCenter.Value);
 									ud.AutoCenter = autoCenter.Value;
 								}
+								ud.AutoCenterSet = autoCenter.HasValue;
 								step = Calling(recording, ud, "Acquire (Exclusive)");
 								device.Acquire();
 								ud.IsExclusiveMode = true;
 								// Acquired: the running totals of axes that report movement may start anywhere.
 								ud.DiRelativeRestart = true;
 								held = true;
+								// The device forgot what was playing; its effects start again on the next force update.
+								ud.ForceResumeDue = true;
 							}
 							// If current mode must be non exclusive and mode is unknown or exclusive then...
 							else if (!exclusiveRequired && (!ud.IsExclusiveMode.HasValue || ud.IsExclusiveMode.Value))
@@ -375,7 +403,8 @@ namespace x360ce.App.DInput
 												//st == SharpDX.DirectInput.ForceFeedbackState
 												// ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
 												step = Calling(recording, ud, "ud.FFState.SetDeviceForces(device)");
-												ud.FFState.SetDeviceForces(ud, device, ps, v);
+												ud.FFState.SetDeviceForces(ud, device, ps, v, ud.ForceResumeDue);
+												ud.ForceResumeDue = false;
 												if (recording != null)
 													recording.Force(ud, large, small);
 											}
@@ -391,6 +420,7 @@ namespace x360ce.App.DInput
 											EndSpringRun(ud, SpringStopSpringOff);
 											// Still held, and a wheel keeps its own centering off after an effect until it is held
 											// again, so it is held again and centres itself.
+											NoteLetGo(ud, LetGoReason.ForceOff, 0);
 											ud.IsExclusiveMode = null;
 										}
 									}
@@ -435,7 +465,10 @@ namespace x360ce.App.DInput
 									}
 									// Held again only when the hold was lost. Any other failure leaves the device held, and read.
 									if (fault != null && IsDeviceHoldLost(fault.ResultCode))
+									{
+										NoteLetGo(ud, LetGoReason.ForceHoldLost, ex.HResult);
 										ud.IsExclusiveMode = null;
+									}
 								}
 							}
 							// A poll that failed nothing ends the run's report, so the next fault is reported.
@@ -457,6 +490,8 @@ namespace x360ce.App.DInput
 								cx.Data.Add("FFInfo", step + " // ud.IsExclusiveMode = " + ud.IsExclusiveMode);
 								JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
 							}
+							ud.DiReadError = ex.HResult;
+							NoteLetGo(ud, LetGoReason.ReadFailed, ex.HResult);
 							ud.IsExclusiveMode = null;
 						}
 						// The last call ends here, so the recording has its time.
@@ -823,7 +858,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>The device's reserved state the next poll reads into: its two, in turn, so a state is not written until one whole poll after it stops being shown.</summary>
-		static JoystickState NextJoState(UserDevice ud)
+		internal static JoystickState NextJoState(UserDevice ud)
 		{
 			var states = ud.JoStates;
 			if (states == null)

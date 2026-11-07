@@ -74,5 +74,36 @@ namespace x360ce.Tests
 			Assert.AreSame(first, second, "The second look read the machine again although nothing had changed.");
 			Assert.IsTrue(secondMs < 500, "The second look took " + secondMs + " ms; asking which ids exist should take milliseconds.");
 		}
+
+		/// <remarks>
+		/// The engine starts while the first round of issue checks runs, so a look can come before the program has put its
+		/// controllers on the bus and the next one after. Which of the controllers found are its own is judged by their bus
+		/// numbers (<see cref="VirtualDriverInstallerTest"/>), so an answer kept from before cannot stand once it holds another.
+		/// </remarks>
+		[TestMethod, TestCategory("devices")]
+		[Description("A look after the program puts a controller of its own on the bus reads again, so that controller is never counted as left behind")]
+		public void A_look_after_a_controller_of_ours_is_made_reads_again()
+		{
+			var held = (HashSet<uint>)typeof(Nefarius.ViGEm.Client.ViGEmClient)
+				.GetField(nameof(Nefarius.ViGEm.Client.ViGEmClient.UsedSerialSet), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static).GetValue(null);
+			var first = VirtualDriverInstaller.GetLeftoverVirtualPads();
+			Assert.AreSame(first, VirtualDriverInstaller.GetLeftoverVirtualPads(), "With nothing changed the machine was read again, so this proves nothing.");
+			// A number the bus gives no controller, recorded as this program records one it has just made.
+			const uint serial = 0xFFFE;
+			bool added;
+			lock (held)
+				added = held.Add(serial);
+			try
+			{
+				Assert.AreNotSame(first, VirtualDriverInstaller.GetLeftoverVirtualPads(),
+					"The answer from before the program made a controller was kept after it made one.");
+			}
+			finally
+			{
+				if (added)
+					lock (held)
+						held.Remove(serial);
+			}
+		}
 	}
 }

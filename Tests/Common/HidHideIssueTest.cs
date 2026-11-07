@@ -47,12 +47,12 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Without HID Hide, a mapped controller that is online brings the download")]
-		public void Without_HID_Hide_the_fix_is_the_download()
+		[Description("Without HID Hide, a mapped controller that is online brings the install")]
+		public void Without_HID_Hide_the_fix_is_the_install()
 		{
 			int fixType;
 			var text = HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { Pad(true) }, Exe, out fixType);
-			Assert.AreEqual(HidHideIssue.FixDownload, fixType);
+			Assert.AreEqual(HidHideIssue.FixInstall, fixType);
 			StringAssert.Contains(text, "RumblePad 2");
 			StringAssert.Contains(text, "Install HID Hide");
 		}
@@ -110,6 +110,26 @@ namespace x360ce.Tests
 			state.Applications = new[] { Exe };
 			text = HidHideIssue.Explain(state, new[] { Pad(false) }, Exe, out fixType);
 			StringAssert.Contains(text, "Remove x360ce.exe from the application list");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A copy of the program HID Hide does not allow, with nothing mapped yet, is told why its controllers are missing from its lists")]
+		public void A_new_copy_with_nothing_mapped_is_told_what_is_hidden_from_it()
+		{
+			var state = Installed(true, PadPath);
+			int fixType;
+			const string copy = @"D:\New folder\x360ce1.exe";
+			var text = HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType);
+			Assert.AreEqual(HidHideIssue.FixConfigure, fixType);
+			StringAssert.Contains(text, "hides a device from this program");
+			StringAssert.Contains(text, "Add x360ce1.exe to the application list");
+			state.HiddenDevices = new[] { PadPath, @"HID\VID_0079&PID_0006\7&1&0&0000" };
+			StringAssert.Contains(HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType), "hides 2 devices from this program");
+			// The copy HID Hide allows, a program hiding nothing and hiding switched off have nothing to be told.
+			Assert.IsNull(HidHideIssue.Explain(state, new UserDevice[0], Exe, out fixType));
+			state.HiddenDevices = new string[0];
+			Assert.IsNull(HidHideIssue.Explain(state, new UserDevice[0], copy, out fixType));
+			Assert.IsNull(HidHideIssue.Explain(Installed(false, PadPath), new UserDevice[0], copy, out fixType));
 		}
 
 		[TestMethod, TestCategory("devices")]
@@ -180,7 +200,7 @@ namespace x360ce.Tests
 				SettingsManager.UpdateCurrentGame(game);
 				CollectionAssert.AreEqual(new[] { ticked }, SettingsManager.GetMappedDevices(game.FileName, true),
 					"A device unticked in the tab's list or on the Devices page is hidden from games by HID Hide.");
-				var named = (UserDevice[])typeof(HidHideIssue).GetMethod("GetVirtualMappedDevices", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+				var named = (UserDevice[])typeof(HidHideIssue).GetMethod(nameof(HidHideIssue.GetVirtualMappedDevices), BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 				CollectionAssert.AreEqual(new[] { ticked }, named, "The Issues tab asks for an unticked device to be hidden with HID Hide.");
 				foreach (var ud in devices)
 					ud.IsHidden = ud != ticked;

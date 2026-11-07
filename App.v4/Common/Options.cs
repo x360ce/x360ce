@@ -27,7 +27,7 @@ namespace x360ce.App
 		{
 			InternetDatabaseUrl = string.IsNullOrEmpty(InternetDatabaseUrl)
 				? DefaultInternetDatabaseUrl
-				: SettingName.WithHttps(InternetDatabaseUrl);
+				: SettingName.CurrentAddress(InternetDatabaseUrl);
 			if (InternetDatabaseUrls == null)
 				InternetDatabaseUrls = new BindingList<string>();
 			if (InternetDatabaseUrls.Count == 0)
@@ -35,11 +35,11 @@ namespace x360ce.App
 				InternetDatabaseUrls.Add(DefaultInternetDatabaseUrl);
 				InternetDatabaseUrls.Add(SettingName.LocalInternetDatabaseUrl);
 			}
-			var withHttps = InternetDatabaseUrls.Select(SettingName.WithHttps).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-			if (!withHttps.SequenceEqual(InternetDatabaseUrls))
+			var current = InternetDatabaseUrls.Select(SettingName.CurrentAddress).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			if (!current.SequenceEqual(InternetDatabaseUrls))
 			{
 				InternetDatabaseUrls.Clear();
-				foreach (var url in withHttps)
+				foreach (var url in current)
 					InternetDatabaseUrls.Add(url);
 			}
 			// The address box shows only what is in its list. A saved address missing from the list
@@ -47,6 +47,15 @@ namespace x360ce.App
 			// over the saved one.
 			if (!InternetDatabaseUrls.Contains(InternetDatabaseUrl))
 				InternetDatabaseUrls.Add(InternetDatabaseUrl);
+			if (string.IsNullOrEmpty(SdlDatabaseUrl))
+				SdlDatabaseUrl = DefaultSdlDatabaseUrl;
+			if (SdlDatabaseUrls == null)
+				SdlDatabaseUrls = new BindingList<string>();
+			if (SdlDatabaseUrls.Count == 0)
+				SdlDatabaseUrls.Add(DefaultSdlDatabaseUrl);
+			// As for the web service address: the box shows only what is in its list.
+			if (!SdlDatabaseUrls.Contains(SdlDatabaseUrl))
+				SdlDatabaseUrls.Add(SdlDatabaseUrl);
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>() { };
 			if (string.IsNullOrEmpty(ComputerDisk))
@@ -86,6 +95,16 @@ namespace x360ce.App
 		[DefaultValue(ThemeType.Auto), Description("Light or dark colours. System follows the Windows setting for apps.")]
 		public ThemeType Theme { get { return _Theme; } set { _Theme = value; OnPropertyChanged(); } }
 		ThemeType _Theme;
+
+		/// <summary>The font the windows are drawn in, as <see cref="AppFonts.InterfaceFamilyFor"/> reads it.</summary>
+		[DefaultValue(""), Description("The font the windows are drawn in: Windows' own when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
+		public string InterfaceFont { get { return _InterfaceFont; } set { _InterfaceFont = value; OnPropertyChanged(); } }
+		string _InterfaceFont;
+
+		/// <summary>The size the windows' text is drawn at, in points, as <see cref="AppFonts.SizeFor"/> reads it.</summary>
+		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font. When 0: Windows Forms' own for Windows' own font, Windows' text size for any other. Takes effect when x360ce starts again.")]
+		public float InterfaceFontSize { get { return _InterfaceFontSize; } set { _InterfaceFontSize = value; OnPropertyChanged(); } }
+		float _InterfaceFontSize;
 
 		public bool ShowProgramsTab { get; set; }
 		public bool ShowSettingsTab { get; set; }
@@ -319,6 +338,16 @@ namespace x360ce.App
 		bool _RecordWindow = true;
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
+
+		public const string DefaultSdlDatabaseUrl = SdlUpdateClient.DefaultUrl;
+
+		/// <summary>Where the [Update SDL Database] buttons download SDL's controller database from, as <see cref="SdlUpdateClient.Update"/> reads it.</summary>
+		[DefaultValue(DefaultSdlDatabaseUrl), Description("Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.")]
+		public string SdlDatabaseUrl { get { return _SdlDatabaseUrl; } set { _SdlDatabaseUrl = value; OnPropertyChanged(); } }
+		string _SdlDatabaseUrl;
+
+		/// <summary>The addresses the SDL database address box offers.</summary>
+		public BindingList<string> SdlDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
 		public BindingList<string> GameScanLocations { get; set; }

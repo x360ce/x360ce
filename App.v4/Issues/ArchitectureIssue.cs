@@ -11,7 +11,7 @@ using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Issues
 {
-	public class ArchitectureIssue : IssueItem
+	public class ArchitectureIssue : OnChangeIssue
 	{
 		public ArchitectureIssue() : base()
 		{
@@ -42,7 +42,7 @@ namespace x360ce.App.Issues
 				// Update current settings file.
 				MainForm.Current.Invoke((Action)delegate ()
 				{
-					MainForm.Current.GameSettingsPanel.ProcessExecutable(exes[0]);
+					MainForm.Current.Main.GameSettingsPanel.ProcessExecutable(exes[0]);
 				});
 			}
 			foreach (var exe in exes)

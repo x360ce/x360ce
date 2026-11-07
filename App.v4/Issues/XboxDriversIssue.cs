@@ -9,7 +9,7 @@ namespace x360ce.App.Issues
     /// <summary>
     /// Required by ViGEm.
     /// </summary>
-    public class XboxDriversIssue : IssueItem
+    public class XboxDriversIssue : OnChangeIssue
     {
 
         public XboxDriversIssue() : base()

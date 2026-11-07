@@ -88,13 +88,13 @@ namespace x360ce.Tests
 			};
 			OnLoadedPage(preset, box =>
 			{
-				Assert.AreEqual("Button 3", box("ButtonBComboBox"), "B button");
-				Assert.AreEqual("Button 1", box("ButtonXComboBox"), "X button");
-				Assert.AreEqual("POV 1", box("DPadComboBox"), "D-Pad");
-				Assert.AreEqual("Axis 1", box("LeftThumbAxisXComboBox"), "Left stick across");
-				Assert.AreEqual("IAxis 2", box("LeftThumbAxisYComboBox"), "Left stick up");
-				Assert.AreEqual("Axis 3", box("RightThumbAxisXComboBox"), "Right stick across");
-				Assert.AreEqual("IAxis 6", box("RightThumbAxisYComboBox"), "Right stick up");
+				Assert.AreEqual("Button 3", box(nameof(PadControl.ButtonBComboBox)), "B button");
+				Assert.AreEqual("Button 1", box(nameof(PadControl.ButtonXComboBox)), "X button");
+				Assert.AreEqual("POV 1", box(nameof(PadControl.DPadComboBox)), "D-Pad");
+				Assert.AreEqual("Axis 1", box(nameof(PadControl.LeftThumbAxisXComboBox)), "Left stick across");
+				Assert.AreEqual("IAxis 2", box(nameof(PadControl.LeftThumbAxisYComboBox)), "Left stick up");
+				Assert.AreEqual("Axis 3", box(nameof(PadControl.RightThumbAxisXComboBox)), "Right stick across");
+				Assert.AreEqual("IAxis 6", box(nameof(PadControl.RightThumbAxisYComboBox)), "Right stick up");
 			});
 		}
 
@@ -172,7 +172,7 @@ namespace x360ce.Tests
 			var preset = SettingsManager.PadSettingFromText(string.Join(Environment.NewLine, CloudPreset));
 			OnLoadedPage(preset, pad =>
 			{
-				SettingsManager.Current.SetComboBoxValue((ComboBox)Box(pad, "RightThumbAxisXComboBox"), "Axis 4");
+				SettingsManager.Current.SetComboBoxValue((ComboBox)Box(pad, nameof(PadControl.RightThumbAxisXComboBox)), "Axis 4");
 				var readBack = pad.CloneCurrentPadSetting();
 				Assert.AreEqual("a4", readBack.RightThumbAxisX, "The new mapping was not given back.");
 				Assert.AreEqual("-6", readBack.RightThumbAxisY, "A box left alone was rewritten.");
@@ -191,7 +191,7 @@ namespace x360ce.Tests
 			preset.PadSettingChecksum = preset.CleanAndGetCheckSum();
 			OnLoadedPage(preset, pad =>
 			{
-				SettingsManager.Current.SetComboBoxValue((ComboBox)Box(pad, "RightThumbAxisXComboBox"), "Axis 4");
+				SettingsManager.Current.SetComboBoxValue((ComboBox)Box(pad, nameof(PadControl.RightThumbAxisXComboBox)), "Axis 4");
 				var readBack = pad.CloneCurrentPadSetting();
 				var atDefault = typeof(PadSetting).GetProperties()
 					.Where(p => p.PropertyType == typeof(string) && typeof(SettingName).GetProperty(p.Name) != null)
@@ -218,8 +218,8 @@ namespace x360ce.Tests
 			var preset = new PadSetting { ButtonB = "3", ButtonY = "3" };
 			OnLoadedPage(preset, box =>
 			{
-				Assert.AreEqual("Button 3", box("ButtonBComboBox"), "B button");
-				Assert.AreEqual("Button 3", box("ButtonYComboBox"), "Y button");
+				Assert.AreEqual("Button 3", box(nameof(PadControl.ButtonBComboBox)), "B button");
+				Assert.AreEqual("Button 3", box(nameof(PadControl.ButtonYComboBox)), "Y button");
 			});
 		}
 

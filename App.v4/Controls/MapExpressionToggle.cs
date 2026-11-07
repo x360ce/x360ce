@@ -20,11 +20,10 @@ namespace x360ce.App.Controls
 	public class MapExpressionToggle : CheckBox
 	{
 
-		/// <summary>Width taken from the box it sits beside, so the row still ends where it did.</summary>
+		/// <summary>The switch's width, beside its box.</summary>
 		public const int ToggleWidth = 20;
 
-		/// <summary>The room between the switch and its box, and the rounding of its corners, in device-independent pixels.</summary>
-		const int ToggleGap = 3;
+		/// <summary>The rounding of its corners, in device-independent pixels.</summary>
 		const int ToggleRadius = 3;
 
 		/// <summary>The two letters on the face, which are the same on every one of these.</summary>
@@ -275,32 +274,30 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Puts a switch just before a mapping box, taking its width and a little room beside it from the
-		/// box so that the row still ends exactly where it did.
+		/// Puts a switch just before a mapping box, in the cell its table keeps for it, as tall as the box.
 		/// </summary>
 		/// <remarks>
-		/// Narrowing the box rather than moving it is what keeps this safe on a dense pane: nothing to
-		/// the left or right of the row moves, and the two mirrored columns need no separate treatment.
+		/// The box's own margins stand the switch apart from it and from the row above and below, so the row keeps the
+		/// height and the gaps of every other row of boxes. A box that does not stand in a table gets no switch.
 		/// </remarks>
 		public static MapExpressionToggle AttachTo(ComboBox box)
 		{
-			if (box == null || box.Parent == null || Attached.ContainsKey(box))
+			var table = box == null ? null : box.Parent as TableLayoutPanel;
+			if (table == null || Attached.ContainsKey(box))
 				return For(box);
 			var toggle = new MapExpressionToggle
 			{
-				Location = new Point(box.Left, box.Top),
 				Size = new Size(ToggleWidth, box.Height),
-				Anchor = box.Anchor,
+				Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right,
+				Margin = new Padding(box.Margin.Left, box.Margin.Top, 0, box.Margin.Bottom),
+				// Read with its box by the interface tree, which lists a table's controls in this order.
+				TabIndex = box.TabIndex,
 			};
 			// Named after the box it belongs to, which already carries the row. "RightTriggerComboBox"
 			// becomes "Right Trigger", so the switch answers to the same words a person reads on screen.
 			toggle.NameAfterRow(RowNameFor(box));
-			// The box gives up the switch's width and a little room between them.
-			var taken = ToggleWidth + (int)Math.Round(ToggleGap * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
-			box.Left += taken;
-			box.Width -= taken;
-			box.Parent.Controls.Add(toggle);
-			toggle.BringToFront();
+			var cell = table.GetCellPosition(box);
+			table.Controls.Add(toggle, cell.Column - 1, cell.Row);
 			Attached.Add(box, toggle);
 			toggle.CheckedChanged += (sender, e) => Switch(box, toggle.Checked);
 			// Every keystroke is checked, so the switch says whether the formula works while it is

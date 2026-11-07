@@ -248,9 +248,9 @@
 
 		#endregion
 
-		private System.Windows.Forms.GroupBox RecordGroupBox;
+		internal System.Windows.Forms.GroupBox RecordGroupBox;
 		private System.Windows.Forms.TableLayoutPanel LayoutPanel;
-		private System.Windows.Forms.Label NoteLabel;
+		internal System.Windows.Forms.Label NoteLabel;
 		private System.Windows.Forms.FlowLayoutPanel PartsPanel;
 		public System.Windows.Forms.CheckBox SettingsCheckBox;
 		public System.Windows.Forms.CheckBox InputCheckBox;
@@ -260,7 +260,7 @@
 		public System.Windows.Forms.CheckBox WindowCheckBox;
 		private System.Windows.Forms.FlowLayoutPanel ActionsPanel;
 		public System.Windows.Forms.Button RecordButton;
-		private System.Windows.Forms.Button OpenFolderButton;
+		internal System.Windows.Forms.Button OpenFolderButton;
 		public System.Windows.Forms.Label StatusLabel;
 		private System.Windows.Forms.Timer BeatTimer;
 	}

@@ -17,18 +17,36 @@ namespace x360ce.Tests
 	public static class Ui
 	{
 
+		/// <summary>
+		/// Runs <paramref name="action"/> on an interface thread of its own, and fails the test when it failed there, or when
+		/// work that thread's message loop ran meanwhile failed.
+		/// </summary>
 		/// <remarks>
 		/// Creating the page raises Load, which starts the driver-status query on a background
 		/// thread. That thread asks for the interface scheduler a running application sets up in
 		/// its main form, and without it the request throws where no test can catch it. Setting
 		/// the same scheduler here is what the application does, and it makes the queued work a
 		/// no-op instead of an unhandled exception.
+		/// <para>
+		/// Work the message loop runs, such as a window's Load raised as it is shown or work posted with
+		/// <c>ControlsHelper.BeginInvoke</c>, raises its failure on that loop, not to the test's code. Unwatched, the
+		/// framework shows its error dialog there, and the whole run waits on it until somebody closes it.
+		/// </para>
 		/// </remarks>
-		public static void OnUiThread(Action action)
+		/// <param name="action">The test's work.</param>
+		/// <param name="what">What the work does, for the failure message, which reads "{what} failed on the interface thread".</param>
+		public static void OnUiThread(Action action, string what = "The test's work")
 		{
 			Exception failure = null;
 			var thread = new Thread(() =>
 			{
+				Exception pumpError = null;
+				// One handler to a thread: a test that sets its own replaces this one.
+				Application.ThreadException += (s, e) =>
+				{
+					if (pumpError == null)
+						pumpError = e.Exception;
+				};
 				try
 				{
 					SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
@@ -38,6 +56,8 @@ namespace x360ce.Tests
 					ReleaseInvokeContext();
 					ControlsHelper.InitInvokeContext();
 					action();
+					if (pumpError != null)
+						throw new AssertFailedException(what + " failed on the interface thread: " + pumpError, pumpError);
 				}
 				catch (Exception ex) { failure = ex; }
 			});
@@ -50,42 +70,6 @@ namespace x360ce.Tests
 			// a list change that fails inside the grid arrives wrapped twice.
 			if (failure != null)
 				throw new AssertFailedException(failure.ToString(), failure);
-		}
-
-		/// <summary>
-		/// Runs <paramref name="body"/> on an interface thread, as <see cref="OnUiThread"/> does, and fails
-		/// the test when work posted to that thread failed meanwhile.
-		/// </summary>
-		/// <remarks>
-		/// Work posted to the interface thread (<c>ControlsHelper.BeginInvoke</c>) that fails is raised again
-		/// on that thread's message loop, not on the thread the test's assertions run on. Unwatched, it is
-		/// dropped in a run nobody watches, or waits behind the framework's error dialog in one somebody does,
-		/// and either way the test does not see it fail.
-		/// </remarks>
-		/// <param name="body">The test's work.</param>
-		/// <param name="what">What the work does, for the failure message, which reads "{what} failed on the interface thread".</param>
-		public static void OnUiThreadWatched(Action body, string what)
-		{
-			OnUiThread(() =>
-			{
-				Exception pumpError = null;
-				ThreadExceptionEventHandler onPumpError = (s, e) =>
-				{
-					if (pumpError == null)
-						pumpError = e.Exception;
-				};
-				Application.ThreadException += onPumpError;
-				try
-				{
-					body();
-					if (pumpError != null)
-						throw new AssertFailedException(what + " failed on the interface thread: " + pumpError, pumpError);
-				}
-				finally
-				{
-					Application.ThreadException -= onPumpError;
-				}
-			});
 		}
 
 		/// <summary>Where a thread that never came back is standing, so a hang names its cause.</summary>
@@ -114,7 +98,7 @@ namespace x360ce.Tests
 		public static void ReleaseInvokeContext()
 		{
 			typeof(ControlsHelper)
-				.GetProperty("MainTaskScheduler")
+				.GetProperty(nameof(ControlsHelper.MainTaskScheduler))
 				.SetValue(null, null, null);
 		}
 
@@ -256,7 +240,12 @@ namespace x360ce.Tests
 				if (p.MainWindowHandle == IntPtr.Zero)
 					return null;
 				var element = AutomationElement.FromHandle(p.MainWindowHandle);
-				return string.IsNullOrEmpty(element?.Current.Name) ? null : element;
+				if (string.IsNullOrEmpty(element?.Current.Name))
+					return null;
+				// The window appears first, and its tabs join it behind the words that say it is loading, until they are ready.
+				if (element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.MainControl.MainTabControl))) == null)
+					return null;
+				return element.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.MainForm.LoadingLabel))) == null ? element : null;
 			}, timeout, "the main window");
 		}
 
@@ -480,19 +469,30 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>Beside the application when it is carried around, otherwise the shared folder.</summary>
+		/// <summary>Beside the application when it is carried around, otherwise the settings folder of the run.</summary>
 		public static IEnumerable<string> ErrorFolders(string exePath)
 		{
 			yield return Path.Combine(Path.GetDirectoryName(exePath), "x360ce", "Errors");
-			yield return Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "X360CE", "Errors");
+			yield return Path.Combine(TestRun.ProfileFolder, "Errors");
 		}
 
 		/// <summary>Minimise the main window, the way a user sends the application to the tray.</summary>
 		public static void Minimize(Process p)
 		{
 			p.Refresh();
-			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_MINIMIZE);
+			Minimize(p.MainWindowHandle);
+		}
+
+		/// <summary>Minimise a window known by its handle, which stays its own while the window is hidden in the tray.</summary>
+		public static void Minimize(IntPtr window)
+		{
+			NativeMethods.ShowWindow(window, NativeMethods.SW_MINIMIZE);
+		}
+
+		/// <summary>Whether a window is minimised, on the task bar or hidden in the tray.</summary>
+		public static bool IsMinimized(IntPtr window)
+		{
+			return NativeMethods.IsIconic(window);
 		}
 
 		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
@@ -575,6 +575,9 @@ namespace x360ce.Tests
 
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool ShowWindow(IntPtr window, int command);
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern bool IsIconic(IntPtr window);
 		}
 
 		/// <summary>True when an x360ce process other than this one is alive.</summary>

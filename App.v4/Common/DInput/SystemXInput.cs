@@ -29,11 +29,11 @@ namespace x360ce.App.DInput
 	/// </remarks>
 	public static class SystemXInput
 	{
-		delegate int GetStateDelegate(int index, out RawState state);
+		internal delegate int GetStateDelegate(int index, out RawState state);
 		delegate int SetStateDelegate(int index, ref RawVibration vibration);
 
 		[StructLayout(LayoutKind.Sequential)]
-		struct RawState
+		internal struct RawState
 		{
 			public uint PacketNumber;
 			public ushort Buttons;
@@ -51,7 +51,7 @@ namespace x360ce.App.DInput
 
 		/// <summary>What XInputGetCapabilitiesEx, the library's export number 108, answers: the controller's identity.</summary>
 		[StructLayout(LayoutKind.Sequential)]
-		struct RawCapabilitiesEx
+		internal struct RawCapabilitiesEx
 		{
 			public byte Type, SubType;
 			public ushort Flags;
@@ -63,7 +63,7 @@ namespace x360ce.App.DInput
 			public uint Unknown2;
 		}
 
-		delegate int GetCapabilitiesExDelegate(int one, int index, int flags, out RawCapabilitiesEx caps);
+		internal delegate int GetCapabilitiesExDelegate(int one, int index, int flags, out RawCapabilitiesEx caps);
 
 		/// <summary>The export is not named in the library, so it is found by its number.</summary>
 		[DllImport("kernel32.dll", EntryPoint = "GetProcAddress", ExactSpelling = true)]
@@ -71,7 +71,7 @@ namespace x360ce.App.DInput
 
 		const int CapabilitiesExNumber = 108;
 
-		static readonly object LoadLock = new object();
+		internal static readonly object LoadLock = new object();
 
 		/// <summary>Above 0 while a thread holds <see cref="LoadLock"/> or waits for it, so the input thread passes it by without trying it.</summary>
 		static int _loadLockBusy;
@@ -88,13 +88,13 @@ namespace x360ce.App.DInput
 			DInputHelper.ExitPublished(LoadLock, ref _loadLockBusy);
 		}
 
-		static bool _Attempted;
+		internal static bool _Attempted;
 
 		static IntPtr _Library;
-		static GetStateDelegate _GetState;
+		internal static GetStateDelegate _GetState;
 		static SetStateDelegate _SetState;
 		/// <summary>Null when the library has no such export, as the oldest one has not.</summary>
-		static GetCapabilitiesExDelegate _GetCapabilitiesEx;
+		internal static GetCapabilitiesExDelegate _GetCapabilitiesEx;
 
 		/// <summary>Full path of the library in use, or null while none is loaded.</summary>
 		public static string LibraryPath { get; private set; }

@@ -187,13 +187,13 @@ namespace x360ce.Tests
 						form.Controls.Add(ai);
 						ai.Bind(s);
 						form.Show();
-						var box = (ComboBox)ai.Controls.Find("AiTunnelIdComboBox", true).Single();
+						var box = (ComboBox)ai.Controls.Find(nameof(AiAccessUserControl.AiTunnelIdComboBox), true).Single();
 						Assert.AreEqual(ComboBoxStyle.DropDown, box.DropDownStyle, "A tunnel ID can no longer be typed or pasted.");
 						box.DroppedDown = true;
 						StringAssert.Contains(ai.Model.TunnelStatus, "admin key", "Without the admin key the list did not say what it needs.");
 						Assert.AreEqual(0, Calls(folder).Length, "tunnel-client was started without an admin key.");
 						box.DroppedDown = false;
-						((TextBox)ai.Controls.Find("AiTunnelAdminKeyTextBox", true).Single()).Text = "admin-key";
+						((TextBox)ai.Controls.Find(nameof(AiAccessUserControl.AiTunnelAdminKeyTextBox), true).Single()).Text = "admin-key";
 						box.DroppedDown = true;
 						Ui.WaitFor(() =>
 						{

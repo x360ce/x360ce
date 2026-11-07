@@ -11,7 +11,7 @@ namespace x360ce.App.Issues
 	/// A copy a newer program wrote is left alone too. Low, because the program works the same either way; only an
 	/// agent's advice drifts.
 	/// </remarks>
-	public class AiSkillIssue : IssueItem
+	public class AiSkillIssue : OnChangeIssue
 	{
 		public AiSkillIssue() : base()
 		{

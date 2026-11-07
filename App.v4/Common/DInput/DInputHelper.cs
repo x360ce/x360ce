@@ -34,15 +34,16 @@ namespace x360ce.App.DInput
 		/// <summary>Reads the Raw Input game controllers on a thread of its own: the program's only Raw Input registration.</summary>
 		/// <remarks>
 		/// Started with the update thread the first time, and stopped when the helper is disposed, as the program closes.
-		/// It is not stopped with the update thread, which stops on every change of Windows settings: the hub draws
-		/// nothing, and a restart would read every device in the wrong slots until the device list found its twin again.
+		/// It is not stopped with the update thread, which stops for a reorder of the XInput places and while the error
+		/// reports are open: the hub draws nothing, and a restart would read every device in the wrong slots until the
+		/// device list found its twin again.
 		/// While it does not run its device list is empty, so the device list shows every Raw Input device offline and
 		/// DirectInput reads on as before.
 		/// </remarks>
 		public readonly Engine.RawInputHub RawInput = new Engine.RawInputHub();
 
 		/// <summary>Why the Raw Input hub did not start the last time the update thread started, or null when it started.</summary>
-		/// <remarks>A hub that did not start is tried again each time the update thread starts, which it does on every change of Windows settings, so the failure is logged the first time only. Read without a lock: one reference.</remarks>
+		/// <remarks>A hub that did not start is tried again each time the update thread starts, which it does again after each stop, so the failure is logged the first time only. Read without a lock: one reference.</remarks>
 		public Exception RawInputError { get { return _rawInputError; } }
 		volatile Exception _rawInputError;
 		bool _rawInputErrorLogged;
@@ -134,7 +135,7 @@ namespace x360ce.App.DInput
 		public volatile bool Suspended;
 
 		/// <summary>Held for each pass of the loop, so what a pass is using is not let go of half way through it.</summary>
-		readonly object PassLock = new object();
+		internal readonly object PassLock = new object();
 
 		/// <summary>The places taken, one bit each, when each controller was last put somewhere other than its own place, or given none; -1 while it is not held back.</summary>
 		/// <remarks>
@@ -146,15 +147,19 @@ namespace x360ce.App.DInput
 		/// thread while no plug is under way. Read by <see cref="BeginPlug"/> on the input thread, which starts a plug only
 		/// once the last one has been taken in.
 		/// </remarks>
-		readonly int[] _misplacedWith = { -1, -1, -1, -1 };
+		internal readonly int[] _misplacedWith = { -1, -1, -1, -1 };
+
+		/// <summary>The <see cref="XInputPlaces.Generation"/> each pad's controller last found no place for it at, or -1.</summary>
+		/// <remarks>Not asked about again until that moves: asking opens every controller on the machine for the same answer.</remarks>
+		internal readonly int[] _heldAtChange = { -1, -1, -1, -1 };
 
 		/// <summary>What the attempt that held each controller back came to: PlaceWrong, PlaceNotGiven or NotAnswering.</summary>
 		/// <remarks>Written with <see cref="_misplacedWith"/>, and meaningful only while it is set. Each held attempt repeats it.</remarks>
-		readonly VirtualError[] _heldAs = new VirtualError[4];
+		internal readonly VirtualError[] _heldAs = new VirtualError[4];
 
 		/// <summary>Whether each controller's last plug was held back by <see cref="_misplacedWith"/>, so it reached no bus.</summary>
 		/// <remarks>Written by the plug worker before its plug finishes; read by the input thread when it takes the plug in.</remarks>
-		readonly bool[] _heldBack = new bool[4];
+		internal readonly bool[] _heldBack = new bool[4];
 
 		/// <summary>Whether each controller's last plug took its controller away: off the bus again, as it was not in its own place, or replaced by a new one while the bus keeps it.</summary>
 		/// <remarks>
@@ -247,6 +252,8 @@ namespace x360ce.App.DInput
 				// The count starts again with the clock; left over from the previous run, it
 				// silenced the rate for as long as that run had lasted.
 				passRate.Reset();
+				// So does the time of the last display read, which held the reads back for as long, the recording's among them.
+				_lastDisplayRead = -DisplayReadIntervalMs;
 				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
@@ -271,8 +278,8 @@ namespace x360ce.App.DInput
 				{
 					// Record it, but not as a fault. The worker is a background thread which
 					// stops on its own once the native call returns, and the runtime ends it at
-					// exit. Stop() also runs on a settings change and before the error window,
-					// so reporting turned an ordinary delay into an error report for the user.
+					// exit. Stop() also runs before the error window, so reporting turned an
+					// ordinary delay into an error report for the user.
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
 						System.Diagnostics.TraceLevel.Warning);
@@ -398,8 +405,11 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		/// <summary>How often the states shown on screen are read back, in milliseconds.</summary>
-		const long DisplayReadIntervalMs = 16;
+		/// <summary>How often the states the window shows are read back, in milliseconds: as often as it redraws them.</summary>
+		const long DisplayReadIntervalMs = 100;
+
+		/// <summary>How often a recording of the controller output reads them back, in milliseconds.</summary>
+		const long RecordingReadIntervalMs = 16;
 
 		long _lastDisplayRead;
 
@@ -413,13 +423,15 @@ namespace x360ce.App.DInput
 		internal bool DueForDisplayRead()
 		{
 			var now = watch.ElapsedMilliseconds;
-			if (now - _lastDisplayRead < DisplayReadIntervalMs)
+			var recording = Recording;
+			var interval = recording != null && recording.Has(RecordParts.Output) ? RecordingReadIntervalMs : DisplayReadIntervalMs;
+			if (now - _lastDisplayRead < interval)
 				return false;
 			_lastDisplayRead = now;
 			return true;
 		}
 
-		void RefreshAll(DirectInput manager, DeviceDetector detector)
+		internal void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			var passStarted = StepMark();
 			// The places the interface shows are read on a worker, only when something has
@@ -432,9 +444,12 @@ namespace x360ce.App.DInput
 				// Which rows each controller reads and where each device's force comes from, read once
 				// for the whole pass. The interface replaces it whole when the mappings change.
 				var routing = DeviceRouting.Current;
+				var recording = Recording;
 				// Note: Getting XInput states are not required in order to do emulation.
-				// Get states only when form is maximized in order to reduce CPU usage.
-				var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
+				// Get states only when form is maximized in order to reduce CPU usage. A recording of the controller
+				// output reads them back whatever the window does, so it holds what games read beside what was sent.
+				var getXInputStates = (SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled)
+					|| (recording != null && recording.Has(RecordParts.Output));
 				var mark = StepMark();
 				// Best place to unload XInput DLL is at the start, because
 				// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
@@ -464,7 +479,6 @@ namespace x360ce.App.DInput
 				RetrieveXiStates(game, getXInputStates);
 				StepDone(7, ref mark);
 				// A recording that runs is handed what this pass made, once it is all made.
-				var recording = Recording;
 				if (recording != null)
 					RecordPass(recording, routing, getXInputStates);
 			}
@@ -486,7 +500,7 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// Time since the update thread started, for pacing and timing the work within it.
 		/// </summary>
-		System.Diagnostics.Stopwatch watch;
+		internal System.Diagnostics.Stopwatch watch;
 
 		/// <summary>Counts passes, for the rate the status bar shows.</summary>
 		readonly Engine.RateCounter passRate = new Engine.RateCounter();

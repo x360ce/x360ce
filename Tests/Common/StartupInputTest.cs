@@ -46,13 +46,13 @@ namespace x360ce.Tests
 
 				// The field is read from the loop the handler runs, so renaming it cannot silently
 				// take this test out of service.
-				var field = Regex.Match(body, @"<\s*(\w+)\.Length");
+				var field = Regex.Match(body, @"<\s*([\w.]+)\.Length");
 				Assert.IsTrue(field.Success,
 					relative + " no longer walks a pad-control array in MainForm_KeyDown; " +
 					"check whether this test still describes it.");
 				var name = field.Groups[1].Value;
 
-				var guard = Regex.Match(body, @"if\s*\(\s*" + name + @"\s*==\s*null\s*\)\s*(?:\r?\n\s*)?return\s*;");
+				var guard = Regex.Match(body, @"if\s*\(\s*" + Regex.Escape(name).Replace(@"\.", @"\??\.") + @"\s*==\s*null\s*\)\s*(?:\r?\n\s*)?return\s*;");
 				Assert.IsTrue(guard.Success,
 					relative + " reads " + name + " in MainForm_KeyDown without checking it for null first. " +
 					"A key pressed before the pad controls are created crashes the application.");
@@ -81,7 +81,7 @@ namespace x360ce.Tests
 			if (exe == null)
 				Assert.Inconclusive(appFolder + " is not built. Build the solution before running UI tests.");
 
-			_process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
+			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = Path.GetDirectoryName(exe) });
 
 			// Not WaitForMainWindow: that waits for a title, and the window takes keys before then.
 			var handle = Ui.WaitFor(() =>

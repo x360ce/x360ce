@@ -51,12 +51,12 @@ namespace x360ce.Tests
 					var boxes = InputChips.Create(14, 0, 0, 0).Select(x => x.Payload).ToArray();
 					Assert.AreEqual("Button 1", boxes[0]);
 
-					var pressed = tab.Controls.Find("DiButtonsTextBox", true).Single();
+					var pressed = tab.Controls.Find(nameof(DirectInputUserControl.DiButtonsTextBox), true).Single();
 					Assert.AreEqual("01", pressed.Text, "The first button, pressed, is not numbered as the box that takes it: " + boxes[0] + ".");
 
-					var grid = (DataGridView)tab.Controls.Find("DiObjectsDataGridView", true).Single();
-					var mapsAs = grid.Columns["MapsAsColumn"].Index;
-					Assert.AreEqual(grid.Columns["ObjectsInstanceColumn"].Index + 1, mapsAs, "What a box shows is not beside the number Windows gives.");
+					var grid = (DataGridView)tab.Controls.Find(nameof(DirectInputUserControl.DiObjectsDataGridView), true).Single();
+					var mapsAs = grid.Columns[nameof(DirectInputUserControl.MapsAsColumn)].Index;
+					Assert.AreEqual(grid.Columns[nameof(DirectInputUserControl.ObjectsInstanceColumn)].Index + 1, mapsAs, "What a box shows is not beside the number Windows gives.");
 					var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
 					Assert.AreEqual(16, rows.Length);
 					foreach (var row in rows)

@@ -30,7 +30,7 @@ namespace x360ce.Tests
 		/// <summary>The plug's wait for a place: the place a new controller filled, or -1.</summary>
 		static int WaitForPlace(out bool answered)
 		{
-			var wait = typeof(DInputHelper).GetMethod("WaitForPlace", BindingFlags.NonPublic | BindingFlags.Static, null,
+			var wait = typeof(DInputHelper).GetMethod(nameof(DInputHelper.WaitForPlace), BindingFlags.NonPublic | BindingFlags.Static, null,
 				new[] { typeof(bool[]), typeof(bool).MakeByRefType() }, null);
 			var args = new object[] { new bool[4], false };
 			var place = (int)wait.Invoke(null, args);
@@ -119,7 +119,7 @@ namespace x360ce.Tests
 		/// <summary>The places Controller 1 is held back for: -1 while it is not held back.</summary>
 		static int Hold(DInputHelper helper)
 		{
-			return Field<int[]>(helper, "_misplacedWith")[0];
+			return Field<int[]>(helper, nameof(DInputHelper._misplacedWith))[0];
 		}
 
 		/// <summary>A helper whose Controller 1 was last taken away again as <paramref name="last"/>, with every place free.</summary>
@@ -127,8 +127,8 @@ namespace x360ce.Tests
 		{
 			var helper = new DInputHelper();
 			helper.VirtualErrors[0] = last;
-			Field<int[]>(helper, "_misplacedWith")[0] = 0;
-			Field<VirtualError[]>(helper, "_heldAs")[0] = last;
+			Field<int[]>(helper, nameof(DInputHelper._misplacedWith))[0] = 0;
+			Field<VirtualError[]>(helper, nameof(DInputHelper._heldAs))[0] = last;
 			helper.MisplacedIn[0] = last == VirtualError.PlaceNotGiven ? -1 : GivenPlace;
 			return helper;
 		}
@@ -164,7 +164,7 @@ namespace x360ce.Tests
 				Assert.IsTrue(plugging.Wait(20000), "The plug did not finish.");
 				result = plugging.Result;
 				helper.VirtualErrors[0] = result;
-				if (!Field<bool[]>(helper, "_heldBack")[0])
+				if (!Field<bool[]>(helper, nameof(DInputHelper._heldBack))[0])
 					helper.PlugFailures[0] = DInputHelper.NextPlugFailures(helper.PlugFailures[0], result);
 			});
 			return result;
@@ -251,7 +251,7 @@ namespace x360ce.Tests
 		[Description("A plug held back is not counted for or against the bus, and the pad goes on saying why it waits")]
 		public void A_held_plug_is_not_counted_as_a_failed_one()
 		{
-			var update = typeof(DInputHelper).GetMethod("UpdateVirtualDevices", BindingFlags.NonPublic | BindingFlags.Instance);
+			var update = typeof(DInputHelper).GetMethod(nameof(DInputHelper.UpdateVirtualDevices), BindingFlags.NonPublic | BindingFlags.Instance);
 			var game = new UserGame
 			{
 				FileName = "misplaced-plug.exe",
@@ -269,9 +269,9 @@ namespace x360ce.Tests
 				{
 					var helper = new DInputHelper();
 					helper.PlugFailures[0] = 2;
-					Field<bool[]>(helper, "_heldBack")[0] = heldBack;
+					Field<bool[]>(helper, nameof(DInputHelper._heldBack))[0] = heldBack;
 					// Finished, and taken in by this pass.
-					Field<Task<VirtualError>[]>(helper, "_plugging")[0] = Task.FromResult(VirtualError.PlaceNotGiven);
+					Field<Task<VirtualError>[]>(helper, nameof(DInputHelper._plugging))[0] = Task.FromResult(VirtualError.PlaceNotGiven);
 					OnStandInBus(RefusedRemovalTest.Client(), RefusedRemovalTest.FakePad.Make(VIGEM_ERROR.VIGEM_ERROR_NONE),
 						() => update.Invoke(helper, new object[] { game }));
 					Assert.AreEqual(VirtualError.PlaceNotGiven, helper.VirtualErrors[0], "The pad does not say why it waits.");
@@ -309,7 +309,7 @@ namespace x360ce.Tests
 			// Leaving virtual emulation forgets what the bus did, and the holds with it, so the Issues tab never reads a hold
 			// from before the game came back.
 			var left = HeldAfter(VirtualError.NotAnswering);
-			var forget = typeof(DInputHelper).GetMethod("ForgetBusHealth", BindingFlags.NonPublic | BindingFlags.Instance);
+			var forget = typeof(DInputHelper).GetMethod(nameof(DInputHelper.ForgetBusHealth), BindingFlags.NonPublic | BindingFlags.Instance);
 			OnStandInBus(RefusedRemovalTest.Client(), RefusedRemovalTest.FakePad.Make(VIGEM_ERROR.VIGEM_ERROR_NONE), () => forget.Invoke(left, null));
 			Assert.AreEqual(VirtualError.None, left.HeldAs(0), "A hold outlives leaving virtual emulation, so the Issues tab reports a pad nothing has tried since.");
 			var step5 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step5.VirtualDevices.cs"));
@@ -361,7 +361,7 @@ namespace x360ce.Tests
 		public void A_plug_that_ends_early_is_not_taken_as_held_back()
 		{
 			var helper = HeldAfter(VirtualError.PlaceNotGiven);
-			var heldBack = Field<bool[]>(helper, "_heldBack");
+			var heldBack = Field<bool[]>(helper, nameof(DInputHelper._heldBack));
 			// Held back once, so the last plug taken in was held back.
 			RefusedRemovalTest.Faults(() => Logged(() => WithStandInXInput(() =>
 				PlugAgain(helper, RefusedRemovalTest.Client(), RefusedRemovalTest.FakePad.Make(VIGEM_ERROR.VIGEM_ERROR_NONE)))));

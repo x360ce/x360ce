@@ -269,7 +269,7 @@
 
 		#endregion
 
-		System.Windows.Forms.TextBox ChangeLogTextBox;
+		internal System.Windows.Forms.TextBox ChangeLogTextBox;
 		System.Windows.Forms.Label AboutDescriptionLabel;
 		System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
 		System.Windows.Forms.Label AboutWikiLabel;
@@ -286,6 +286,6 @@
 		private System.Windows.Forms.TabControl AboutTabControl;
 		private System.Windows.Forms.TabPage ChangesTabPage;
 		private System.Windows.Forms.TabPage LicenseTabPage;
-		private System.Windows.Forms.TextBox LicenseTextBox;
+		internal System.Windows.Forms.TextBox LicenseTextBox;
 	}
 }

@@ -267,7 +267,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.InternetDatabaseUrlComboBox.FormattingEnabled = true;
 			this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
-            "https://www.x360ce.com/webservices/x360ce.asmx",
+            "https://www.x360ce.com/x360ce/webservices/x360ce.asmx",
             "https://localhost:44360/webservices/x360ce.asmx"});
 			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 80);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
@@ -354,7 +354,7 @@
 			// RefreshLocationsButton
 			// 
 			this.RefreshLocationsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshLocationsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshLocationsButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshLocationsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshLocationsButton.Name = "RefreshLocationsButton";
 			this.RefreshLocationsButton.Size = new System.Drawing.Size(66, 22);
@@ -364,7 +364,7 @@
 			// RemoveLocationButton
 			// 
 			this.RemoveLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
+			this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_32x32;
 			this.RemoveLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RemoveLocationButton.Name = "RemoveLocationButton";
 			this.RemoveLocationButton.Size = new System.Drawing.Size(70, 22);
@@ -374,7 +374,7 @@
 			// AddLocationButton
 			// 
 			this.AddLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddLocationButton.Name = "AddLocationButton";
 			this.AddLocationButton.Size = new System.Drawing.Size(58, 22);
@@ -421,7 +421,7 @@
 			// 
 			// OpenSettingsFolderButton
 			// 
-			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(397, 354);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
@@ -668,10 +668,10 @@
 		private System.Windows.Forms.FlowLayoutPanel LeftFlowPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonsFlowPanel;
         private System.Windows.Forms.GroupBox TestingAndLoggingGroupBox;
-        private System.Windows.Forms.CheckBox XInputEnableCheckBox;
+        internal System.Windows.Forms.CheckBox XInputEnableCheckBox;
         private System.Windows.Forms.CheckBox UseInitBeepCheckBox;
         private System.Windows.Forms.CheckBox ConsoleCheckBox;
-        private System.Windows.Forms.CheckBox DebugModeCheckBox;
+        internal System.Windows.Forms.CheckBox DebugModeCheckBox;
         private System.Windows.Forms.CheckBox EnableLoggingCheckBox;
         private System.Windows.Forms.GroupBox OperationGroupBox;
         public System.Windows.Forms.CheckBox AllowOnlyOneCopyCheckBox;
@@ -686,32 +686,32 @@
         public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
         private System.Windows.Forms.GroupBox ConfigurationGroupBox;
         private System.Windows.Forms.Label ConfigurationVersionLabel;
-        private System.Windows.Forms.TextBox ConfigurationVersionTextBox;
-        private System.Windows.Forms.ToolStrip LocationsToolStrip;
-        private System.Windows.Forms.ToolStripButton RefreshLocationsButton;
-        private System.Windows.Forms.ToolStripButton AddLocationButton;
-        private System.Windows.Forms.ToolStripButton RemoveLocationButton;
-		private System.Windows.Forms.Button SaveSettingsButton;
-		private System.Windows.Forms.Button OpenSettingsFolderButton;
+        internal System.Windows.Forms.TextBox ConfigurationVersionTextBox;
+        internal System.Windows.Forms.ToolStrip LocationsToolStrip;
+        internal System.Windows.Forms.ToolStripButton RefreshLocationsButton;
+        internal System.Windows.Forms.ToolStripButton AddLocationButton;
+        internal System.Windows.Forms.ToolStripButton RemoveLocationButton;
+		internal System.Windows.Forms.Button SaveSettingsButton;
+		internal System.Windows.Forms.Button OpenSettingsFolderButton;
         private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
 		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;
-		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
-		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
+		internal System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
+		internal System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
 		private System.Windows.Forms.Label ThemeLabel;
 		public System.Windows.Forms.ComboBox ThemeComboBox;
-		private System.Windows.Forms.TabPage AiAccessTabPage;
+		internal System.Windows.Forms.TabPage AiAccessTabPage;
 		private System.Windows.Forms.TableLayoutPanel AiAccessTableLayoutPanel;
-		private System.Windows.Forms.CheckBox AiAccessEnabledCheckBox;
+		internal System.Windows.Forms.CheckBox AiAccessEnabledCheckBox;
 		private System.Windows.Forms.Label AiAccessLabel;
-		private System.Windows.Forms.ComboBox AiAccessComboBox;
+		internal System.Windows.Forms.ComboBox AiAccessComboBox;
 		private System.Windows.Forms.Label AiAccessPortLabel;
-		private System.Windows.Forms.NumericUpDown AiAccessPortNumericUpDown;
+		internal System.Windows.Forms.NumericUpDown AiAccessPortNumericUpDown;
 		private System.Windows.Forms.Label AiAccessTokenLabel;
-		private System.Windows.Forms.TextBox AiAccessTokenTextBox;
-		private System.Windows.Forms.Button AiAccessRegenerateButton;
-		private System.Windows.Forms.Label AiAccessStatusLabel;
-		private System.Windows.Forms.Button AiAccessCopyButton;
-		private System.Windows.Forms.Button AiAccessLogButton;
+		internal System.Windows.Forms.TextBox AiAccessTokenTextBox;
+		internal System.Windows.Forms.Button AiAccessRegenerateButton;
+		internal System.Windows.Forms.Label AiAccessStatusLabel;
+		internal System.Windows.Forms.Button AiAccessCopyButton;
+		internal System.Windows.Forms.Button AiAccessLogButton;
 	}
 }

@@ -57,7 +57,7 @@ namespace x360ce.Tests
 					var inverted = Children(buttons.First(x => x.Text == "Inverted"));
 					Assert.AreEqual("IButton x", inverted[0].Text, "The inverted buttons are not grouped as well.");
 					// Picking a button in a group maps it; picking a group itself only opens it.
-					var target = typeof(PadControl).GetField("MenuTargetCbx", BindingFlags.NonPublic | BindingFlags.Instance);
+					var target = typeof(PadControl).GetField(nameof(PadControl.MenuTargetCbx), BindingFlags.NonPublic | BindingFlags.Instance);
 					SettingsManager.Current.SetComboBoxValue(box, "Button 1");
 					target.SetValue(page, box);
 					groups[5].PerformClick();

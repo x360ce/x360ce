@@ -400,14 +400,14 @@ namespace x360ce.App.Controls
 		private void ShowNavImagesButton_Click(object sender, EventArgs e)
 		{
 			var form = MainForm.Current;
-			if (form == null || form.PadControls == null)
+			if (form?.Main?.PadControls == null)
 				return;
 			_NavImagesShown = !_NavImagesShown;
 			ShowNavImagesButton.Text = _NavImagesShown
 				? "Hide All Pad Images"
 				: "Show All Pad Images";
 			var shown = 0;
-			foreach (var pad in form.PadControls)
+			foreach (var pad in form.Main.PadControls)
 			{
 				if (pad == null)
 					continue;

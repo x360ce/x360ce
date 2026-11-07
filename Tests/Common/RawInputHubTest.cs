@@ -356,7 +356,7 @@ namespace x360ce.Tests
 				Assert.AreEqual(1, hub.ReadInput(input), "Reports read.");
 				Assert.IsTrue(hub.TryCopyState(guid, state, out _));
 				RawInputTest.AssertState(fixture, sample, state);
-				// The hub stopped and started, as it was on every change of Windows settings: its devices go, their layouts stay.
+				// The hub stopped and started: its devices go, their layouts stay.
 				hub.Stop();
 				Assert.AreEqual(0, hub.Devices.Count, "Devices left after Stop.");
 				var again = hub.Add(fixture.Device(0, WheelPath, null, 0x04));

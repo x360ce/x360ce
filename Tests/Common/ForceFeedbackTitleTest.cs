@@ -81,19 +81,19 @@ namespace x360ce.Tests
 						SettingsManager.CurrentGame = game;
 						DeviceRouting.Refresh();
 						pad.UpdateFromCurrentGame();
-						var tabs = (TabControl)pad.Controls.Find("PadTabControl", true).Single();
-						tabs.SelectedTab = (TabPage)pad.Controls.Find("ForceFeedbackTabPage", true).Single();
+						var tabs = (TabControl)pad.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
+						tabs.SelectedTab = (TabPage)pad.Controls.Find(nameof(PadControl.ForceFeedbackTabPage), true).Single();
 						Application.DoEvents();
-						var box = pad.Controls.Find("ForceSourceGroupBox", true).Single();
+						var box = pad.Controls.Find(nameof(PadControl.ForceSourceGroupBox), true).Single();
 						Assert.IsTrue(box.Visible, "The Force Source box is hidden while the device is on another tab too.");
-						var source = pad.Controls.Find("ForceSourceLabel", true).Single();
+						var source = pad.Controls.Find(nameof(PadControl.ForceSourceLabel), true).Single();
 						StringAssert.Contains(source.Text, "Controller 2 is the lowest enabled controller tab", "The page does not name the tab that shapes the force.");
-						Assert.IsFalse(pad.Controls.Find("ForceTypeComboBox", true).Single().Enabled, "Controller 3's effect type is live while Controller 2's shapes the force.");
-						Assert.IsFalse(pad.Controls.Find("LeftMotorStrengthTrackBar", true).Single().Enabled);
-						Assert.IsFalse(pad.Controls.Find("ForceSpringEnableCheckBox", true).Single().Enabled);
-						Assert.IsTrue(pad.Controls.Find("ForceEnableCheckBox", true).Single().Enabled, "Enable, which says whether this tab's game is felt, is greyed out.");
-						Assert.IsTrue(pad.Controls.Find("ForcePassThroughCheckBox", true).Single().Enabled, "Pass Through, which belongs to this tab, is greyed out.");
-						Assert.IsTrue(pad.Controls.Find("LeftMotorTestTrackBar", true).Single().Enabled, "The Test slider, which belongs to this tab, is greyed out.");
+						Assert.IsFalse(pad.Controls.Find(nameof(PadControl.ForceTypeComboBox), true).Single().Enabled, "Controller 3's effect type is live while Controller 2's shapes the force.");
+						Assert.IsFalse(pad.Controls.Find(nameof(PadControl.LeftMotorStrengthTrackBar), true).Single().Enabled);
+						Assert.IsFalse(pad.Controls.Find(nameof(PadControl.ForceSpringEnableCheckBox), true).Single().Enabled);
+						Assert.IsTrue(pad.Controls.Find(nameof(PadControl.ForceEnableCheckBox), true).Single().Enabled, "Enable, which says whether this tab's game is felt, is greyed out.");
+						Assert.IsTrue(pad.Controls.Find(nameof(PadControl.ForcePassThroughCheckBox), true).Single().Enabled, "Pass Through, which belongs to this tab, is greyed out.");
+						Assert.IsTrue(pad.Controls.Find(nameof(PadControl.LeftMotorTestTrackBar), true).Single().Enabled, "The Test slider, which belongs to this tab, is greyed out.");
 
 						// Controller 2 switched off: Controller 3 is now the lowest enabled tab.
 						game.EnableMask = (int)MapToMask.Controller3;
@@ -101,7 +101,7 @@ namespace x360ce.Tests
 						pad.UpdateFromCurrentGame();
 						Application.DoEvents();
 						StringAssert.Contains(source.Text, "these settings shape its force");
-						Assert.IsTrue(pad.Controls.Find("ForceTypeComboBox", true).Single().Enabled, "The effect type stays greyed out on the tab that now shapes the force.");
+						Assert.IsTrue(pad.Controls.Find(nameof(PadControl.ForceTypeComboBox), true).Single().Enabled, "The effect type stays greyed out on the tab that now shapes the force.");
 
 						// Taken off Controller 2: on one tab only, so there is nothing to explain.
 						rows[0].MapTo = (int)MapTo.Disabled;
@@ -172,7 +172,7 @@ namespace x360ce.Tests
 						SettingsManager.CurrentGame = game;
 						pad.UpdateFromCurrentGame();
 						Application.DoEvents();
-						var box = pad.Controls.Find("ForceFeedbackGroupBox", true).Single();
+						var box = pad.Controls.Find(nameof(PadControl.ForceFeedbackGroupBox), true).Single();
 						Assert.AreEqual("Force Feedback - Shared with Controller 3", box.Text,
 							"The page does not say the device is on another tab too.");
 

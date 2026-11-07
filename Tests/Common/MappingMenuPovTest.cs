@@ -43,12 +43,12 @@ namespace x360ce.Tests
 					form.Controls.Add(page);
 					page.ResetDiMenuStrip(new UserDevice { InstanceGuid = Guid.NewGuid(), CapButtonCount = 4, CapPovCount = 1 });
 					SettingsManager.Current.SetComboBoxValue(box, "POV 1 Up");
-					var target = typeof(PadControl).GetField("MenuTargetCbx", BindingFlags.NonPublic | BindingFlags.Instance);
+					var target = typeof(PadControl).GetField(nameof(PadControl.MenuTargetCbx), BindingFlags.NonPublic | BindingFlags.Instance);
 					target.SetValue(page, box);
 					Pov(page).PerformClick();
 					Assert.AreEqual("POV 1 Up", box.Text,
 						"Clicking the POV on the way to one of its directions mapped the whole POV into a box that cannot use it.");
-					var dPad = (ComboBox)typeof(PadControl).GetField("DPadComboBox", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(page);
+					var dPad = (ComboBox)typeof(PadControl).GetField(nameof(PadControl.DPadComboBox), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(page);
 					target.SetValue(page, dPad);
 					Pov(page).PerformClick();
 					Assert.AreEqual("POV 1", dPad.Text, "The D-Pad box does not take the whole POV.");

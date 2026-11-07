@@ -382,7 +382,7 @@
 			// MySettingsRefreshButton
 			// 
 			this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
 			this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -392,7 +392,7 @@
 			// MySettingsLoadButton
 			// 
 			this.MySettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.MySettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsLoadButton.Name = "MySettingsLoadButton";
 			this.MySettingsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -402,7 +402,7 @@
 			// MySettingsDeleteButton
 			// 
 			this.MySettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.MySettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsDeleteButton.Name = "MySettingsDeleteButton";
 			this.MySettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
@@ -418,7 +418,7 @@
             this.MapToController2MenuItem,
             this.MapToController3MenuItem,
             this.MapToController4MenuItem});
-			this.MapToDropDownButton.Image = global::x360ce.App.Properties.Resources.map_to_16x16;
+			this.MapToDropDownButton.Image = global::x360ce.App.Properties.Resources.map_to_32x32;
 			this.MapToDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MapToDropDownButton.Name = "MapToDropDownButton";
 			this.MapToDropDownButton.Size = new System.Drawing.Size(77, 22);
@@ -596,7 +596,7 @@
 			// GlobalSettingsRefreshButton
 			// 
 			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
 			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -606,7 +606,7 @@
 			// GlobalSettingsLoadButton
 			// 
 			this.GlobalSettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.GlobalSettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GlobalSettingsLoadButton.Name = "GlobalSettingsLoadButton";
 			this.GlobalSettingsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -690,7 +690,7 @@
 			// PresetRefreshButton
 			// 
 			this.PresetRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.PresetRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.PresetRefreshButton.Name = "PresetRefreshButton";
 			this.PresetRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -700,7 +700,7 @@
 			// PresetsLoadButton
 			// 
 			this.PresetsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.PresetsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.PresetsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.PresetsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.PresetsLoadButton.Name = "PresetsLoadButton";
 			this.PresetsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -709,7 +709,7 @@
 			// 
 			// MySettingsSaveButton
 			// 
-			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.MySettingsSaveButton.Location = new System.Drawing.Point(562, 15);
 			this.MySettingsSaveButton.Name = "MySettingsSaveButton";
 			this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);
@@ -793,36 +793,36 @@
 
 		#endregion
 
-        System.Windows.Forms.DataGridView MyDevicesDataGridView;
-		System.Windows.Forms.ComboBox ControllerComboBox;
+        internal System.Windows.Forms.DataGridView MyDevicesDataGridView;
+		internal System.Windows.Forms.ComboBox ControllerComboBox;
 		System.Windows.Forms.Label ControllerLabel;
-		System.Windows.Forms.ComboBox GameComboBox;
+		internal System.Windows.Forms.ComboBox GameComboBox;
         System.Windows.Forms.Label GameLabel;
-		System.Windows.Forms.TextBox CommentTextBox;
+		internal System.Windows.Forms.TextBox CommentTextBox;
 		System.Windows.Forms.Label CommentLabel;
-		System.Windows.Forms.TextBox CommentSelectedTextBox;
-		System.Windows.Forms.TabControl SettingsListTabControl;
+		internal System.Windows.Forms.TextBox CommentSelectedTextBox;
+		internal System.Windows.Forms.TabControl SettingsListTabControl;
 		System.Windows.Forms.TabPage MyDeviceSettingsTabPage;
 		System.Windows.Forms.TabPage SummariesTabPage;
-		System.Windows.Forms.DataGridView SummariesDataGridView;
+		internal System.Windows.Forms.DataGridView SummariesDataGridView;
 		System.Windows.Forms.DataGridViewTextBoxColumn SidColumn;
 		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
 		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
 		System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
         private System.Windows.Forms.TabPage PresetsTabPage;
-        private System.Windows.Forms.DataGridView PresetsDataGridView;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton MySettingsDeleteButton;
-        private System.Windows.Forms.Button MySettingsSaveButton;
-        private System.Windows.Forms.ToolStripButton MySettingsLoadButton;
-        private System.Windows.Forms.ToolStripButton MySettingsRefreshButton;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
-        private System.Windows.Forms.ToolStripButton GlobalSettingsLoadButton;
-        private System.Windows.Forms.ToolStrip toolStrip3;
-        private System.Windows.Forms.ToolStripButton PresetRefreshButton;
-        private System.Windows.Forms.ToolStripButton PresetsLoadButton;
+        internal System.Windows.Forms.DataGridView PresetsDataGridView;
+        internal System.Windows.Forms.ToolStrip toolStrip1;
+        internal System.Windows.Forms.ToolStripButton MySettingsDeleteButton;
+        internal System.Windows.Forms.Button MySettingsSaveButton;
+        internal System.Windows.Forms.ToolStripButton MySettingsLoadButton;
+        internal System.Windows.Forms.ToolStripButton MySettingsRefreshButton;
+        internal System.Windows.Forms.ToolStrip toolStrip2;
+        internal System.Windows.Forms.ToolStripButton GlobalSettingsRefreshButton;
+        internal System.Windows.Forms.ToolStripButton GlobalSettingsLoadButton;
+        internal System.Windows.Forms.ToolStrip toolStrip3;
+        internal System.Windows.Forms.ToolStripButton PresetRefreshButton;
+        internal System.Windows.Forms.ToolStripButton PresetsLoadButton;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
@@ -832,7 +832,7 @@
 		private System.Windows.Forms.TableLayoutPanel MainLayoutPanel;
 		private System.Windows.Forms.TableLayoutPanel TopLayoutPanel;
 		private System.Windows.Forms.TableLayoutPanel NotesLayoutPanel;
-		private System.Windows.Forms.ToolStripDropDownButton MapToDropDownButton;
+		internal System.Windows.Forms.ToolStripDropDownButton MapToDropDownButton;
 		private System.Windows.Forms.ToolStripMenuItem MapToDisabledMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem MapToAutoMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem MapToController1MenuItem;

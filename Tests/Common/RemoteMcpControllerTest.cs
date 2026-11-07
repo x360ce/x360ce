@@ -241,25 +241,25 @@ namespace x360ce.Tests
 					Assert.IsTrue(tabs.TabPages[1].Contains(Find(panel, "SettingsPropertyGrid")), "The grid is not on the Properties page.");
 					var section = (AiAccessUserControl)Find(panel, "McpServerUserControl");
 					Assert.AreSame(tabs.TabPages[0], section.Parent, "The server is not on the MCP Server page.");
-					Assert.IsTrue(Find(panel, "AiAccessEnabledCheckBox").Visible, "The server's rows are not shown.");
-					Assert.IsFalse(Find(panel, "AiTabControl").Visible, "The server shows the AI page's tabs inside its own page.");
+					Assert.IsTrue(Find(panel, nameof(AiAccessUserControl.AiAccessEnabledCheckBox)).Visible, "The server's rows are not shown.");
+					Assert.IsFalse(Find(panel, nameof(AiAccessUserControl.AiTabControl)).Visible, "The server shows the AI page's tabs inside its own page.");
 					var door = section.Model.Door as PluginDeviceDoor;
 					Assert.IsNotNull(door, "The section shows another door than the device's.");
 					Assert.AreEqual(guid, door.InstanceGuid);
-					foreach (var name in new[] { "AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortTextBox", "AiAccessRegenerateButton" })
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiAccessEnabledCheckBox), nameof(AiAccessUserControl.AiAccessComboBox), nameof(AiAccessUserControl.AiAccessAddressComboBox), nameof(AiAccessUserControl.AiAccessPortTextBox), nameof(AiAccessUserControl.AiAccessRegenerateButton) })
 					{
 						Find(panel, name);
 						CollectionAssert.Contains(McpTools.DoorControls, name, name + " is not one the program's door refuses.");
 					}
-					CollectionAssert.Contains(McpTools.SecretControls, "AiAccessTokenTextBox");
-					Assert.AreEqual("", Find(panel, "AiAccessPortTextBox").Text, "A device on no controller shows a port.");
-					Assert.AreEqual("", Find(panel, "AiAccessUrlTextBox").Text, "A device on no controller shows a URL.");
-					Assert.IsFalse(Find(panel, "AiAccessSnippetTextBox").Visible, "The device's server shows the program's command line.");
-					Assert.IsFalse(Find(panel, "AiHeaderPanel").Visible, "The device's server shows the AI page's header.");
-					StringAssert.Contains(Find(panel, "AiAccessStatusText").Text, "Nothing can reach Remote MCP Controller");
+					CollectionAssert.Contains(McpTools.SecretControls, nameof(AiAccessUserControl.AiAccessTokenTextBox));
+					Assert.AreEqual("", Find(panel, nameof(AiAccessUserControl.AiAccessPortTextBox)).Text, "A device on no controller shows a port.");
+					Assert.AreEqual("", Find(panel, nameof(AiAccessUserControl.AiAccessUrlTextBox)).Text, "A device on no controller shows a URL.");
+					Assert.IsFalse(Find(panel, nameof(AiAccessUserControl.AiAccessSnippetTextBox)).Visible, "The device's server shows the program's command line.");
+					Assert.IsFalse(Find(panel, nameof(AiAccessUserControl.AiHeaderPanel)).Visible, "The device's server shows the AI page's header.");
+					StringAssert.Contains(Find(panel, nameof(AiAccessUserControl.AiAccessStatusText)).Text, "Nothing can reach Remote MCP Controller");
 					door.Port = 37141;
 					section.Model.Refresh();
-					Assert.AreEqual("37141", Find(panel, "AiAccessPortTextBox").Text);
+					Assert.AreEqual("37141", Find(panel, nameof(AiAccessUserControl.AiAccessPortTextBox)).Text);
 					var prompt = section.Model.Prompt();
 					StringAssert.Contains(prompt, "http://localhost:37141/mcp/");
 					StringAssert.Contains(prompt, "read, set_state");
@@ -332,9 +332,9 @@ namespace x360ce.Tests
 						Application.DoEvents();
 						var grid = pad.MappedDevicesDataGridView;
 						Assert.AreEqual(1, grid.Rows.Count, "The mapped device is not listed.");
-						Assert.AreEqual("Remote MCP Controller", grid.Rows[0].Cells["ProductNameColumn"].FormattedValue,
+						Assert.AreEqual("Remote MCP Controller", grid.Rows[0].Cells[nameof(PadControl.ProductNameColumn)].FormattedValue,
 							"The controller tab shows the name the device had when it was mapped.");
-						Assert.AreEqual("x360ce", grid.Rows[0].Cells["VendorNameColumn"].FormattedValue);
+						Assert.AreEqual("x360ce", grid.Rows[0].Cells[nameof(PadControl.VendorNameColumn)].FormattedValue);
 					}
 				}
 				finally

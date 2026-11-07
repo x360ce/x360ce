@@ -9,7 +9,6 @@ using System.Net.NetworkInformation;
 using System.Reflection;
 #if NETFRAMEWORK // .NET Framework
 using System.Net.Configuration;
-using System.Web;
 #endif
 
 namespace JocysCom.ClassLibrary.Mail
@@ -139,9 +138,7 @@ namespace JocysCom.ClassLibrary.Mail
 			var sp = Configuration.SettingsParser.Current;
 			string settingsFrom = null;
 #if NETFRAMEWORK // .NET Framework
-			System.Configuration.Configuration config;
-			var settings = GetCurrentSmtpSettings(out config);
-			settingsFrom = settings.From;
+			settingsFrom = GetCurrentSmtpSettings().From;
 #endif
 			SmtpFrom = sp.Parse("SmtpFrom", settingsFrom);
 			var credentials = (NetworkCredential)Credentials ?? new NetworkCredential();
@@ -183,28 +180,9 @@ namespace JocysCom.ClassLibrary.Mail
 
 #if NETFRAMEWORK // .NET Framework
 
-		/// <summary>Get configuration settings from current web.config or app.config.</summary>
-		static System.Configuration.Configuration GetCurrentConfiguration()
-		{
-			// If executable then...
-			if (HttpRuntime.IISVersion is null)
-				return System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
-			// If web request then...
-			if (HttpContext.Current != null
-				// Avoid Exception: Request is not available in this context...
-				&& HttpContext.Current.Handler != null && HttpContext.Current.Request != null)
-				return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
-			// If web application then...
-			return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpRuntime.AppDomainAppVirtualPath);
-		}
-
-		public static SmtpSection GetCurrentSmtpSettings(out System.Configuration.Configuration config)
-		{
-			config = GetCurrentConfiguration();
-			// Get Mail settings.
-			var settings = NetSectionGroup.GetSectionGroup(config).MailSettings;
-			return settings.Smtp;
-		}
+		/// <summary>Get mail settings from current web.config or app.config.</summary>
+		public static SmtpSection GetCurrentSmtpSettings()
+			=> (SmtpSection)System.Configuration.ConfigurationManager.GetSection("system.net/mailSettings/smtp");
 
 #endif
 

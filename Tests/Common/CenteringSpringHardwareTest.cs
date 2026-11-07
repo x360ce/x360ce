@@ -134,7 +134,7 @@ namespace x360ce.Tests
 					Hold(device, form);
 					// The first state pushes the wheel out with its motor, so the new one has somewhere to bring it home from.
 					var first = new ForceFeedbackState();
-					first.SetDeviceForces(ud, device, ps, full);
+					first.SetDeviceForces(ud, device, ps, full, true);
 					SpringFor(first, device, pacer, 1500);
 					// Let go of as the engine lets go of a device its routing drops, and held again as one routed again.
 					first.StopDeviceForces();
@@ -144,12 +144,12 @@ namespace x360ce.Tests
 					var second = new ForceFeedbackState();
 					try
 					{
-						second.SetDeviceForces(ud, device, ps, silence);
+						second.SetDeviceForces(ud, device, ps, silence, true);
 						var home = SpringFor(second, device, pacer, SettleMs);
 						Console.WriteLine("New state's spring: from {0} to {1} ({2} degrees of 900 from the centre).", home[0], home[1], Degrees(home[1] - SpringCalibration.Center));
 						Assert.IsTrue(Math.Abs(home[0] - SpringCalibration.Center) > StopZone, "The old state's motor did not push the wheel out, so the return proves nothing.");
 						Assert.IsTrue(Math.Abs(home[1] - SpringCalibration.Center) <= StopZone, "The new state's spring did not bring the wheel home: it drives nothing.");
-						second.SetDeviceForces(ud, device, ps, full);
+						second.SetDeviceForces(ud, device, ps, full, false);
 						var pushed = SpringFor(second, device, pacer, 1500);
 						Console.WriteLine("New state's motor: from {0} to {1}.", pushed[0], pushed[1]);
 						Assert.IsTrue(Math.Abs(pushed[1] - pushed[0]) > StopZone, "The new state's motor did not move the wheel.");
@@ -315,7 +315,7 @@ namespace x360ce.Tests
 					// No rumble, said the way the program says it.
 					var silence = new Vibration { LeftMotorSpeed = short.MinValue, RightMotorSpeed = short.MinValue };
 					var ff = new ForceFeedbackState();
-					Assert.IsTrue(ff.SetDeviceForces(ud, device, ps, silence), "The device offered no actuator.");
+					Assert.IsTrue(ff.SetDeviceForces(ud, device, ps, silence, true), "The device offered no actuator.");
 					Assert.IsTrue(ff.SpringAxisIndex >= 0, "The spring found no axis to read.");
 					var actuator = ud.DeviceObjects.First(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator));
 					var pushParameters = WheelHardwareTest.PushParameters(actuator.ObjectId);
@@ -447,7 +447,7 @@ namespace x360ce.Tests
 		static void SetStrength(Bench b, int strength)
 		{
 			b.Ps.ForceSpringStrength = strength.ToString();
-			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence);
+			b.Ff.SetDeviceForces(b.Ud, b.Device, b.Ps, b.Silence, false);
 			b.Ff.UpdateSpring(b.Device, Position(b.Device), null, 0, null, b.Friction);
 		}
 

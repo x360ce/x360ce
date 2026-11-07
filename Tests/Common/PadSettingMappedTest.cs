@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using x360ce.App.Controls;
 using x360ce.Engine.Data;
 
 namespace x360ce.Tests
@@ -72,8 +73,8 @@ namespace x360ce.Tests
 				"App.v4", "Controls", "PadControl.cs"));
 			var pairs = new Dictionary<string, string>
 			{
-				{ "SettingName.ForcePassThrough", "ForcePassThroughCheckBox" },
-				{ "SettingName.ForcePassThroughIndex", "ForcePassThroughIndexComboBox" },
+				{ "SettingName.ForcePassThrough", nameof(PadControl.ForcePassThroughCheckBox) },
+				{ "SettingName.ForcePassThroughIndex", nameof(PadControl.ForcePassThroughIndexComboBox) },
 			};
 			foreach (var pair in pairs)
 			{

@@ -21,7 +21,7 @@ namespace x360ce.Engine.Data
 		}
 
 		bool MapsChanged;
-		object MapsLock = new object();
+		internal object MapsLock = new object();
 
 		[XmlIgnore]
 		public List<Map> Maps

@@ -102,10 +102,10 @@ namespace x360ce.Tests
 		[Description("After a successful install the virtual bus asks about the runtime again instead of keeping its first answer")]
 		public void The_bus_forgets_its_runtime_answer()
 		{
-			var field = typeof(ViGEmClient).GetField("_Runtime", BindingFlags.NonPublic | BindingFlags.Static);
+			var field = typeof(ViGEmClient).GetField(nameof(ViGEmClient._Runtime), BindingFlags.NonPublic | BindingFlags.Static);
 			Assert.IsNotNull(field, "The runtime answer is no longer where this test looks for it.");
-			var missing = typeof(ViGEmClient).GetField("RuntimeMissing", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
-			var unknown = typeof(ViGEmClient).GetField("RuntimeUnknown", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			var missing = typeof(ViGEmClient).GetField(nameof(ViGEmClient.RuntimeMissing), BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			var unknown = typeof(ViGEmClient).GetField(nameof(ViGEmClient.RuntimeUnknown), BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 			var before = field.GetValue(null);
 			try
 			{

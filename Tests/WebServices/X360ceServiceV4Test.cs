@@ -55,9 +55,9 @@ namespace x360ce.Tests
 			var userKeys = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User).RsaNewKeys(2048);
 			var message = new CloudMessage(action);
 			CloudHelper.ApplySecurity(message, userKeys.Public, CloudPublicKey(ws));
-			message.Values.Add(CloudKey.ComputerId, computerId, true, true);
-			message.Values.Add(CloudKey.ProfileId, profileId, true, true);
-			message.Values.Add(CloudKey.ClientVersion, "4.23.0.0", false, true);
+			message.Values.Add(CloudKey.ComputerId, computerId, true);
+			message.Values.Add(CloudKey.ProfileId, profileId, true);
+			message.Values.Add(CloudKey.ClientVersion, "4.23.0.0");
 			return message;
 		}
 
@@ -187,6 +187,108 @@ namespace x360ce.Tests
 					}
 				}
 			}
+		}
+
+		/// <summary>A device as a program can hold one: without the ID, computer and checksum the cloud knows it by.</summary>
+		static UserDevice WithoutIds(Guid instanceGuid)
+		{
+			return new UserDevice
+			{
+				InstanceGuid = instanceGuid,
+				InstanceName = "Twin USB Gamepad",
+				ProductGuid = new Guid("00010810-0000-0000-0000-504944564944"),
+				ProductName = "Twin USB Gamepad",
+				HidVendorId = 0x0810,
+				HidProductId = 1,
+			};
+		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4"), TestCategory("cloud")]
+		[Description("A Delete of a record the cloud does not hold succeeds, so the program does not send it again")]
+		public void Execute_delete_of_a_record_the_cloud_does_not_hold_succeeds()
+		{
+			using (var ws = WebServiceTarget.Client())
+			{
+				var delete = Secured(ws, CloudAction.Delete, Guid.NewGuid(), Guid.NewGuid());
+				delete.UserDevices = new[] { WithoutIds(Guid.NewGuid()) };
+				var reply = ws.Execute(delete);
+				Assert.AreEqual((int)CloudErrorCode.None, reply.ErrorCode, reply.ErrorMessage);
+				StringAssert.Contains(reply.ErrorMessage ?? "", "UserDevices: 0 deleted.");
+			}
+		}
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4"), TestCategory("cloud"), TestCategory("writes")]
+		[Description("A device sent without an ID is stored under its own instance and deleted by a copy without an ID")]
+		public void Execute_delete_finds_a_device_sent_without_an_id()
+		{
+			if (WebServiceTarget.IsLive)
+				Assert.Inconclusive("Writes are not run against the public site.");
+			using (var ws = WebServiceTarget.Client())
+			{
+				var computerId = Guid.NewGuid();
+				var profileId = Guid.NewGuid();
+				var instanceGuid = Guid.NewGuid();
+				var insert = Secured(ws, CloudAction.Insert, computerId, profileId);
+				insert.UserDevices = new[] { WithoutIds(instanceGuid) };
+				var reply = ws.Execute(insert);
+				Assert.AreEqual((int)CloudErrorCode.None, reply.ErrorCode, reply.ErrorMessage);
+				var select = Secured(ws, CloudAction.Select, computerId, profileId);
+				select.UserDevices = new UserDevice[0];
+				var stored = ws.Execute(select).UserDevices ?? new UserDevice[0];
+				// Download From Cloud finds a device by its instance, so the service must store it under that one.
+				CollectionAssert.AreEqual(new[] { instanceGuid }, stored.Select(x => x.InstanceGuid).ToArray(), "The device was stored under another instance.");
+				var delete = Secured(ws, CloudAction.Delete, computerId, profileId);
+				delete.UserDevices = new[] { WithoutIds(instanceGuid) };
+				var gone = ws.Execute(delete);
+				Assert.AreEqual((int)CloudErrorCode.None, gone.ErrorCode, gone.ErrorMessage);
+				StringAssert.Contains(gone.ErrorMessage ?? "", "UserDevices: 1 deleted.");
+				select = Secured(ws, CloudAction.Select, computerId, profileId);
+				select.UserDevices = new UserDevice[0];
+				Assert.AreEqual(0, (ws.Execute(select).UserDevices ?? new UserDevice[0]).Length, "The device is still on the cloud.");
+			}
+		}
+
+		#endregion
+
+		#region Requests no program sends
+
+		[TestMethod, TestCategory("webservice"), TestCategory("v4"), TestCategory("cloud")]
+		[Description("A request bigger than the service takes is refused before its body is read")]
+		public void A_request_over_the_size_limit_is_refused_unread()
+		{
+			if (WebServiceTarget.IsLive)
+				Assert.Inconclusive("Not sent to the public site.");
+			var url = WebServiceTarget.Require();
+			// 4 MB and one byte: the limit Web.config sets for the service, and ASP.NET's own.
+			var body = new byte[4 * 1024 * 1024 + 1];
+			var request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
+			request.Method = "POST";
+			request.ContentType = "text/xml; charset=utf-8";
+			request.Headers["SOAPAction"] = WebServiceTarget.SoapNamespace + "Execute";
+			request.ContentLength = body.Length;
+			System.Net.HttpStatusCode status;
+			try
+			{
+				using (var stream = request.GetRequestStream())
+					stream.Write(body, 0, body.Length);
+				using (var response = (System.Net.HttpWebResponse)request.GetResponse())
+					status = response.StatusCode;
+			}
+			catch (System.Net.WebException ex)
+			{
+				var response = ex.Response as System.Net.HttpWebResponse;
+				if (response == null)
+				{
+					// The server may close the connection while a refused body is still being sent.
+					Assert.AreEqual(System.Net.WebExceptionStatus.ConnectionClosed, ex.Status, ex.ToString());
+					return;
+				}
+				status = response.StatusCode;
+				response.Dispose();
+			}
+			// Request filtering answers 404.13, or 413.1 on newer IIS; ASP.NET, had it read the body, 500.
+			Assert.IsTrue(status == System.Net.HttpStatusCode.NotFound || status == System.Net.HttpStatusCode.RequestEntityTooLarge,
+				"Not refused by request filtering: " + status);
 		}
 
 		#endregion

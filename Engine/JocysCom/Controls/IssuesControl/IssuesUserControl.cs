@@ -19,9 +19,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			InitializeComponent();
 			var icons = ThemeResourceManager.Library;
-			IgnoreAllButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
-			IgnoreButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
-			ExceptionInfoButton.Image = (System.Drawing.Image)icons.GetObject("exception_16x16");
+			IgnoreAllButton.Image = (System.Drawing.Image)icons.GetObject("ignore_32x32");
+			IgnoreButton.Image = (System.Drawing.Image)icons.GetObject("ignore_32x32");
+			ExceptionInfoButton.Image = (System.Drawing.Image)icons.GetObject("exception_32x32");
 			if (IsDesignMode)
 				return;
 			// Set tool strip to the same font.
@@ -133,7 +133,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			{
 				if (IsDisposing)
 					return;
-				issue.Check();
+				if (issue.IsDue())
+					issue.Check();
 				if (IsDisposing)
 					return;
 				// If issue is critical then...
@@ -409,6 +410,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)
 		{
+			// Nobody reads these while the page is not shown, and each new text lays out the tool bar and the page.
+			if (!Visible)
+				return;
 			var nextRunTime = TasksTimer.NextRunTime;
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)

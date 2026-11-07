@@ -16,35 +16,6 @@ namespace JocysCom.ClassLibrary.Mail
 	{
 
 
-#if NETFRAMEWORK // .NET Framework
-
-		public virtual MailAddress[] GetMailAddress(Guid[] userIds)
-		{
-			return userIds.Select(x => GetMailAddress(x)).ToArray();
-		}
-
-		public virtual MailAddress GetMailAddress(Guid userId)
-		{
-			var user = System.Web.Security.Membership.GetUser(userId);
-			if (user is null)
-				throw new Exception("User with Id '" + userId + "' doesn't exist!");
-			return new MailAddress(user.Email, user.UserName);
-		}
-
-		public virtual MailAddress[] GetMailAddress(string[] usernames)
-		{
-			return usernames.Select(x => GetMailAddress(x)).ToArray();
-		}
-
-		public virtual MailAddress GetMailAddress(string username)
-		{
-			var user = System.Web.Security.Membership.GetUser(username);
-			if (user is null)
-				throw new Exception("User '" + username + "' doesn't exist!");
-			return new MailAddress(user.Email, user.UserName);
-		}
-
-#endif
 
 		#region GetMailAddress - ASP.NET Membership Provider
 

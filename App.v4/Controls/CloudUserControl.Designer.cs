@@ -30,7 +30,7 @@
             this.TryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ItemDetailsPanel = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.RetryButton = new System.Windows.Forms.ToolStripButton();
             this.UploadToCloudButton = new System.Windows.Forms.ToolStripButton();
             this.DownloadFromCloudButton = new System.Windows.Forms.ToolStripButton();
             this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -161,7 +161,7 @@
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
+            this.RetryButton,
             this.UploadToCloudButton,
             this.DownloadFromCloudButton,
             this.NextRunSeparator,
@@ -174,18 +174,19 @@
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "MySettingsToolStrip";
             // 
-            // toolStripButton1
+            // RetryButton
             // 
-            this.toolStripButton1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButton1.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(66, 22);
-            this.toolStripButton1.Text = "&Refresh";
+            this.RetryButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.RetryButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
+            this.RetryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RetryButton.Name = "RetryButton";
+            this.RetryButton.Size = new System.Drawing.Size(55, 22);
+            this.RetryButton.Text = "&Retry";
+            this.RetryButton.Click += new System.EventHandler(this.RetryButton_Click);
             // 
             // UploadToCloudButton
             // 
-            this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_16x16;
+            this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_32x32;
             this.UploadToCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.UploadToCloudButton.Name = "UploadToCloudButton";
             this.UploadToCloudButton.Size = new System.Drawing.Size(116, 22);
@@ -195,7 +196,7 @@
             // 
             // DownloadFromCloudButton
             // 
-            this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_16x16;
+            this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_32x32;
             this.DownloadFromCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DownloadFromCloudButton.Name = "DownloadFromCloudButton";
             this.DownloadFromCloudButton.Size = new System.Drawing.Size(147, 22);
@@ -226,7 +227,7 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
             this.DeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(60, 22);
@@ -257,17 +258,17 @@
 
 		#endregion
 
-		private System.Windows.Forms.DataGridView TasksDataGridView;
+		internal System.Windows.Forms.DataGridView TasksDataGridView;
 		private System.Windows.Forms.Panel ItemDetailsPanel;
-		private System.Windows.Forms.ToolStrip toolStrip1;
-		private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton UploadToCloudButton;
-        private System.Windows.Forms.ToolStripButton DownloadFromCloudButton;
+		internal System.Windows.Forms.ToolStrip toolStrip1;
+		internal System.Windows.Forms.ToolStripButton RetryButton;
+        internal System.Windows.Forms.ToolStripButton UploadToCloudButton;
+        internal System.Windows.Forms.ToolStripButton DownloadFromCloudButton;
 		private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
-		private System.Windows.Forms.ToolStripLabel NextRunLabel;
+		internal System.Windows.Forms.ToolStripLabel NextRunLabel;
 		private System.Windows.Forms.Timer QueueMonitorTimer;
-		private System.Windows.Forms.ToolStripButton DeleteButton;
-		private System.Windows.Forms.ToolStripLabel RunStateLabel;
+		internal System.Windows.Forms.ToolStripButton DeleteButton;
+		internal System.Windows.Forms.ToolStripLabel RunStateLabel;
 		private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ActionColumn;

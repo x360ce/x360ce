@@ -166,7 +166,7 @@ namespace x360ce.Tests
 			var gate = source.IndexOf("if (hasForceFeedback && !IsForceResting(ud, Environment.TickCount))");
 			Assert.IsTrue(reset > source.IndexOf("device.GetCurrentState(ref reading);") && gate > reset,
 				"The force is not skipped while it rests, or is sent before the device is read.");
-			var send = source.IndexOf("ud.FFState.SetDeviceForces(ud, device, ps, v);", gate);
+			var send = source.IndexOf("ud.FFState.SetDeviceForces(ud, device, ps, v, ud.ForceResumeDue);", gate);
 			Assert.IsTrue(send > gate && SharedForceTest.LastTry(source, send) > gate,
 				"The force is sent in the read's try, so a force failure counts as a failed read and the device is held again.");
 			// From the gate to the end of the poll's read: the force's own try and catch.
@@ -183,8 +183,8 @@ namespace x360ce.Tests
 			var failure = block.Substring(caught);
 			StringAssert.Contains(failure, "if (CountForceFailure(ud, Environment.TickCount, ex.HResult, ",
 				"A force failure is not counted apart from the read, or is reported on every attempt.");
-			Assert.IsTrue(Regex.IsMatch(failure, @"if \(fault != null && IsDeviceHoldLost\(fault\.ResultCode\)\)\s*ud\.IsExclusiveMode = null;"),
-				"A force failure lets go of the device whatever the error, so a device still held is held again.");
+			Assert.IsTrue(Regex.IsMatch(failure, @"if \(fault != null && IsDeviceHoldLost\(fault\.ResultCode\)\)\s*\{\s*NoteLetGo\(ud, LetGoReason\.ForceHoldLost, ex\.HResult\);\s*ud\.IsExclusiveMode = null;\s*\}"),
+				"A force failure lets go of the device whatever the error, so a device still held is held again, or the recording is not told why.");
 			Assert.AreEqual(1, Ui.Count(failure, "ud.IsExclusiveMode = null;"), "A force failure lets go of the device in more than one place.");
 			// Every force call in the block sits in the force's own try, and its catch does not throw on.
 			var forceTry = SharedForceTest.LastTry(source, send);
@@ -193,6 +193,31 @@ namespace x360ce.Tests
 				for (var at = source.IndexOf(call, gate); at >= 0 && at < end; at = source.IndexOf(call, at + 1))
 					Assert.AreEqual(forceTry, SharedForceTest.LastTry(source, at), call + " is outside the force's own try, so its failure counts as a failed read.");
 			Assert.IsFalse(Regex.IsMatch(failure, @"\bthrow\b"), "The force's catch throws on, so a force failure reaches the read's catch.");
+		}
+
+		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
+		[Description("Effects are started again only by the force update after the device was held again; any other update sends only what changed")]
+		public void Effects_start_again_only_after_the_device_was_held_again()
+		{
+			// Issue #1633: with a driver that never says an effect is playing, both motors' effects were started on every
+			// update, the right one last, and under Constant2 each effect is addressed to both motors. x360ce 5 and 4.17,
+			// which drove the reporter's pad, send only the effect that changed.
+			var state = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "Engine", "Common", "ForceFeedbackState.cs"));
+			var start = state.IndexOf("public bool SetDeviceForces(");
+			StringAssert.Contains(state, "public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v, bool heldAgain)");
+			var resume = state.IndexOf("var restarted = heldAgain && (Resume(effectL) | Resume(effectR) | Resume(effectS) | Resume(effectD));", start);
+			Assert.IsTrue(resume > start, "Effects are started again on updates that did not follow a new hold.");
+			Assert.AreEqual(4, Regex.Matches(state, @"\bResume\(effect").Count, "An effect is started again somewhere else as well.");
+			// The engine notes the new hold on the device, so a poll that skips the force while it rests does not lose it.
+			var step2 = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput", "DInputHelper.Step2.UpdateDiStates.cs"));
+			var hold = step2.IndexOf("ud.IsExclusiveMode = true;");
+			var due = step2.IndexOf("ud.ForceResumeDue = true;", hold);
+			Assert.IsTrue(hold > 0 && due > hold && due < step2.IndexOf("ud.IsExclusiveMode = false;"), "A device held again is not noted as owing its effects a start.");
+			var send = step2.IndexOf("ud.FFState.SetDeviceForces(ud, device, ps, v, ud.ForceResumeDue);");
+			var told = step2.IndexOf("ud.ForceResumeDue = false;", send);
+			Assert.IsTrue(send > 0 && told > send && told < step2.IndexOf("recording.Force(ud, large, small);", send),
+				"The note is not cleared once the device was told, so every update would start the effects again.");
+			Assert.AreEqual(1, Ui.Count(step2, "ud.ForceResumeDue = false;"), "The note is cleared before the device was told.");
 		}
 
 		[TestMethod, TestCategory("force-feedback"), TestCategory("critical")]
@@ -253,7 +278,7 @@ namespace x360ce.Tests
 			ud.IsOnline = true;
 			// An effect lost to the failure: its settings made, the effect not. It reads as refused as well.
 			var state = new ForceFeedbackState();
-			typeof(ForceFeedbackState).GetField("paramsL", BindingFlags.NonPublic | BindingFlags.Instance)
+			typeof(ForceFeedbackState).GetField(nameof(ForceFeedbackState.paramsL), BindingFlags.NonPublic | BindingFlags.Instance)
 				.SetValue(state, new SharpDX.DirectInput.EffectParameters());
 			ud.FFState = state;
 			var issue = new ForceFeedbackIssue();

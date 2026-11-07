@@ -29,7 +29,7 @@ namespace x360ce.App.Controls
 			markB.SetResolution(rH, rV);
 			markA.SetResolution(rH, rV);
 			markC.SetResolution(rH, rV);
-			Recorder = new Recorder(rH, rV);
+			Recorder = new Recorder();
 		}
 
 		public Recorder Recorder;
@@ -209,7 +209,7 @@ namespace x360ce.App.Controls
 
 		void setLabelColor(bool on, Control label)
 		{
-			var c = on ? System.Drawing.Color.Green : SystemColors.ControlText;
+			var c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
 			if (label.ForeColor != c)
 				label.ForeColor = c;
 		}

@@ -136,7 +136,7 @@
 			// PresetRefreshButton
 			// 
 			this.PresetRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.PresetRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.PresetRefreshButton.Name = "PresetRefreshButton";
 			this.PresetRefreshButton.Size = new System.Drawing.Size(66, 22);

@@ -28,7 +28,26 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// The SDL page, after Direct Input: what SDL's controller database says about the selected device.
+			SdlPanel = new SdlUserControl { Dock = DockStyle.Fill };
+			SdlPanel.ApplyClicked += SdlPanel_ApplyClicked;
+			SdlPanel.CopyClicked += SdlPanel_CopyClicked;
+			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage.Controls.Add(SdlPanel);
+			// Added, with the pages after Direct Input added again behind it: Insert does nothing while the tab control
+			// has no window yet, as here, so the page was in the list and never shown.
+			var after = PadTabControl.TabPages.Cast<TabPage>().Skip(PadTabControl.TabPages.IndexOf(DirectInputTabPage) + 1).ToArray();
+			foreach (var page in after)
+				PadTabControl.TabPages.Remove(page);
+			PadTabControl.TabPages.Add(SdlTabPage);
+			PadTabControl.TabPages.AddRange(after);
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			PadTabControl.Selected += (s, e) =>
+			{
+				if (e.TabPage == GeneralTabPage)
+					HoldTables();
+			};
+			PadTabControl.SelectedIndexChanged += (s, e) => ReleaseTables();
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
@@ -46,6 +65,7 @@ namespace x360ce.App.Controls
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
+			AddValueLabels();
 			// These three stay pressed to say that something is on, rather than doing something and
 			// springing back. A bar cannot tell the two apart on its own, so it is said here: a screen
 			// reader then announces the state, and the interface tree offers them to be set.
@@ -94,15 +114,47 @@ namespace x360ce.App.Controls
 		/// <remarks>
 		/// The table gives the tabs all the height they ask for even when the window has less, and moves them up
 		/// to find it: on a 1920 x 1080 screen at 150 % the tab strip slid under the tool bar and the device list,
-		/// and no tab could be chosen. Scrolling keeps every row where it belongs. The height comes from the rows
-		/// themselves, the device list with the devices it holds, so it follows the font and the screen's scale.
+		/// and no tab could be chosen. Scrolling keeps every row where it belongs.
 		/// </remarks>
 		protected override void OnLayout(LayoutEventArgs e)
 		{
-			var needed = PadTableLayoutPanel.GetPreferredSize(new Size(ClientSize.Width, 0)).Height;
+			var needed = NeededHeight(ClientSize.Width);
 			if (AutoScrollMinSize.Height != needed)
 				AutoScrollMinSize = new Size(0, needed);
 			base.OnLayout(e);
+		}
+
+		/// <summary>The height the page's rows need to be shown whole: the tool bar, the device list, the tabs and the buttons.</summary>
+		/// <remarks>
+		/// What the page scrolls by when it is shorter, and what the main window first opens tall enough for
+		/// (<see cref="MainForm.FitToPage"/>). The height comes from the rows themselves, so it follows the font, the theme and
+		/// the screen's scale. The device list counts at its designed height, whatever devices it holds, and takes any height
+		/// the page has to spare.
+		/// </remarks>
+		/// <param name="width">The width the page is laid out at.</param>
+		public int NeededHeight(int width)
+		{
+			FitTabsToGeneralRows();
+			return PadTableLayoutPanel.GetPreferredSize(new Size(width, 0)).Height;
+		}
+
+		/// <summary>Makes the controller pages as tall as the rows of the General page, and never shorter than they were drawn.</summary>
+		/// <remarks>
+		/// The tabs ask for the height they were drawn at, while the General page's table is as tall as its rows, whose boxes,
+		/// names and numbers are as tall as the font makes them. In a font taller than the one the page was drawn in, the last
+		/// row would run past the bottom of the page and be cut off. The height wanted is read from the table, so it follows
+		/// the font. The General page is given the room the tabs gain, as the tabs give it once they lay their pages out: tabs
+		/// not shown do not lay their pages out, and without it the next call would find the page as before and grow the tabs
+		/// again.
+		/// </remarks>
+		void FitTabsToGeneralRows()
+		{
+			var rows = GeneralTableLayoutPanel.GetPreferredSize(Size.Empty).Height + GeneralTableLayoutPanel.Margin.Vertical;
+			var grow = rows + GeneralTabPage.Padding.Vertical - GeneralTabPage.ClientSize.Height;
+			if (grow <= 0)
+				return;
+			PadTabControl.Height += grow;
+			GeneralTabPage.Height += grow;
 		}
 
 		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
@@ -122,6 +174,53 @@ namespace x360ce.App.Controls
 			UpdateWheelChart();
 		}
 
+		/// <summary>Whether the page's two largest tables hold their layout.</summary>
+		bool _TablesHeld;
+
+		/// <summary>Holds the layout of the page's two largest tables until <see cref="ReleaseTables"/>, which lays them out once.</summary>
+		/// <remarks>
+		/// Each auto-sized panel on them lays itself out as it comes into view and then asks its parent to, so one opening of
+		/// the page laid these two out 67 times with nothing changing size, and building the page hundreds of times.
+		/// </remarks>
+		internal void HoldTables()
+		{
+			if (_TablesHeld)
+				return;
+			_TablesHeld = true;
+			tableLayoutPanel1.SuspendLayout();
+			GeneralTableLayoutPanel.SuspendLayout();
+		}
+
+		/// <summary>Lays out once what <see cref="HoldTables"/> held.</summary>
+		internal void ReleaseTables()
+		{
+			if (!_TablesHeld)
+				return;
+			_TablesHeld = false;
+			GeneralTableLayoutPanel.ResumeLayout();
+			tableLayoutPanel1.ResumeLayout();
+		}
+
+		/// <summary>Enables what needs a device, when the selected row has one.</summary>
+		void UpdateEnabledFromDevice(UserDevice ud)
+		{
+			var enable = ud != null;
+			ControlsHelper.SetEnabled(LoadPresetButton, enable);
+			ControlsHelper.SetEnabled(SavePresetButton, enable);
+			ControlsHelper.SetEnabled(AutoPresetButton, enable);
+			ControlsHelper.SetEnabled(ClearPresetButton, enable);
+			ControlsHelper.SetEnabled(ResetPresetButton, enable);
+			ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
+			var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+			for (int p = 0; p < pages.Length; p++)
+			{
+				// Get first control to disable which must be Panel.
+				var controls = pages[p].Controls.Cast<Control>().ToArray();
+				for (int c = 0; c < controls.Length; c++)
+					ControlsHelper.SetEnabled(controls[c], enable);
+			}
+		}
+
 		private void UpdateControlFromDInput()
 		{
 			lock (updateFromDirectInputLock)
@@ -131,20 +230,7 @@ namespace x360ce.App.Controls
 				var enable = ud != null;
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
-				ControlsHelper.SetEnabled(LoadPresetButton, enable);
-				ControlsHelper.SetEnabled(SavePresetButton, enable);
-				ControlsHelper.SetEnabled(AutoPresetButton, enable);
-				ControlsHelper.SetEnabled(ClearPresetButton, enable);
-				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.SourceState != null);
-				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-				for (int p = 0; p < pages.Length; p++)
-				{
-					// Get first control to disable which must be Panel.
-					var controls = pages[p].Controls.Cast<Control>().ToArray();
-					for (int c = 0; c < controls.Length; c++)
-						ControlsHelper.SetEnabled(controls[c], enable);
-				}
+				UpdateEnabledFromDevice(ud);
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
 				{
@@ -155,6 +241,9 @@ namespace x360ce.App.Controls
 				UpdateDirectInputTabPage(ud);
 				UpdatePluginTab(ud);
 				DirectInputPanel.UpdateFrom(ud);
+				// Drawn while it is shown, and again only when the device, its settings or the database changed.
+				if (Visible && PadTabControl.SelectedTab == SdlTabPage)
+					SdlPanel.UpdateFrom(ud, GetSelectedPadSetting());
 				InputPanel.UpdateFrom(ud);
 				if (enable && _Imager.Recorder.Recording)
 				{
@@ -175,18 +264,14 @@ namespace x360ce.App.Controls
 							RemapAllButton.Text = RemapName;
 							return;
 						}
-						else
-						{
-							XboxImage.SetHelpText("");
-						}
-						// Try to record next available control from the list.
-						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
+						// The next control from the list at once: it waits for the device to come to rest before it compares.
+						StartRecording();
 					}
 				}
 			}
 		}
 
-		void UpdateControlFromXInput()
+		internal void UpdateControlFromXInput()
 		{
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
@@ -238,11 +323,9 @@ namespace x360ce.App.Controls
 				foreach (var ii in imageInfos)
 					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
 			}
-			// Set values.
-			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
-			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
-			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
-			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
+			// The numbers under the names, from the state the picture is drawn from.
+			foreach (var ii in imageInfos)
+				ii.ShowValue(newState.Gamepad);
 			// Process device.
 			var ud = GetSelectedDevice();
 			if (ud != null && ud.SourceState != null)
@@ -344,17 +427,20 @@ namespace x360ce.App.Controls
 
 		void StartRecording(SettingsMapItem map = null)
 		{
+			// A control of Remap All is compared once the device is back as it was when Remap All began.
+			SourceState rest = null;
 			if (map == null)
 			{
 				map = RecordAllMaps.FirstOrDefault();
 				if (map == null)
 					return;
 				RecordAllMaps.Remove(map);
+				rest = RemapRest;
 			}
 			var cbx = (ComboBox)map.Control;
 			if (_CurrentCbx != cbx)
 				_CurrentCbx = cbx;
-			_Imager.Recorder.StartRecording(map);
+			_Imager.Recorder.StartRecording(map, rest);
 			var helpText =
 				SettingsConverter.ThumbDirections.Contains(map.Code) ||
 				SettingsConverter.TriggerButtonCodes.Contains(map.Code)
@@ -485,8 +571,8 @@ namespace x360ce.App.Controls
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
 				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
-				   ? Properties.Resources.checkbox_16x16
-				   : Properties.Resources.checkbox_unchecked_16x16);
+				   ? Properties.Resources.checkbox_32x32
+				   : Properties.Resources.checkbox_unchecked_32x32);
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -510,13 +596,15 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
-				MapNameComboBox.DisplayMember = "Name";
+				MapNameComboBox.DisplayMember = nameof(x360ce.Engine.Data.Layout.Name);
 				// A list selects its first row by itself only once its tab has been shown. Selected here, the
 				// page holds its device's settings from the start, so whatever reads a tab nobody has opened,
 				// an AI assistant among them, gets the real values rather than blank defaults.
 				ControlsHelper.RestoreSelection(MappedDevicesDataGridView, nameof(UserSetting.InstanceGuid), new List<Guid>());
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
+				// Before the page shows, and before its controls have windows, rather than on the first update after it has appeared.
+				UpdateEnabledFromDevice(GetSelectedDevice());
 			});
 			UserSettings_Items_ListChanged(null, null);
 			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
@@ -527,6 +615,8 @@ namespace x360ce.App.Controls
 			var dv = new System.Data.DataView();
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
+			// Without a context of its own, each window made above the list would rebuild its rows and load the selection again.
+			grid.BindingContext = BindingContext;
 			// Show disabled images by default.
 			_Imager.SetImages(false);
 			// Add GamePad typed to ComboBox.
@@ -559,13 +649,13 @@ namespace x360ce.App.Controls
 			for (var place = 1; place <= 4; place++)
 				forcePlaces.Add(new KeyValuePair(string.Format("XInput {0}", place), place.ToString()));
 			ForcePassThroughIndexComboBox.DataSource = new BindingSource(forcePlaces, null);
-			ForcePassThroughIndexComboBox.DisplayMember = "Key";
-			ForcePassThroughIndexComboBox.ValueMember = "Value";
+			ForcePassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			ForcePassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			// The ranges a Logitech wheel takes, named by the cars each one suits. The wheel powers
 			// up at 200 and stays there until told otherwise, which is what the first choice leaves.
 			// The centering spring needs a range, so the first choice is for a wheel without it.
-			WheelRangeComboBox.DisplayMember = "Key";
-			WheelRangeComboBox.ValueMember = "Value";
+			WheelRangeComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			WheelRangeComboBox.ValueMember = nameof(KeyValuePair.Value);
 			WheelRangeComboBox.Items.Add(new KeyValuePair("Leave as it is (spring off)", "0"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("900° - Road and sports cars", "900"));
 			WheelRangeComboBox.Items.Add(new KeyValuePair("720° - Drift and rally cars", "720"));
@@ -578,11 +668,11 @@ namespace x360ce.App.Controls
 			ForceSpringCarComboBox.Items.Add(CustomSpringCar);
 			ShowSpringCar();
 			UpdateSpringChart();
-			PassThroughIndexComboBox.DisplayMember = "Key";
-			PassThroughIndexComboBox.ValueMember = "Value";
+			PassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			PassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
-			CombinedIndexComboBox.DisplayMember = "Key";
-			CombinedIndexComboBox.ValueMember = "Value";
+			CombinedIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			CombinedIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			// Attach drop down menu with record and map choices.
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
@@ -666,8 +756,8 @@ namespace x360ce.App.Controls
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
 			ControlsHelper.SetImage(EnableButton, virt
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
+				? x360ce.App.Properties.Resources.checkbox_32x32
+				: x360ce.App.Properties.Resources.checkbox_unchecked_32x32);
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
@@ -794,8 +884,9 @@ namespace x360ce.App.Controls
 				catch (InvalidOperationException)
 				{
 				}
-				// The rows are in place, so the selection can be acted on.
-				AnnounceSelection();
+				// The rows are in place, so the selection can be acted on. A list not bound yet does so once it is.
+				if (grid.DataSource != null)
+					AnnounceSelection();
 			}
 			var visibleCount = mappedItems.Count();
 			var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
@@ -850,7 +941,7 @@ namespace x360ce.App.Controls
 		/// any of which can happen first, leaving the click with nothing to write into. Keeping the
 		/// target here means the menu and the box it belongs to cannot disagree.
 		/// </remarks>
-		ComboBox MenuTargetCbx;
+		internal ComboBox MenuTargetCbx;
 
 		void ComboBox_DropDown(object sender, EventArgs e)
 		{
@@ -885,7 +976,7 @@ namespace x360ce.App.Controls
 				if (cbx == DPadComboBox)
 					EnableDPadMenu(true);
 				else
-					ShowInvertFor(cbx);
+					ShowAdjustFor(cbx);
 				MenuTargetCbx = cbx;
 				menu.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
 			}
@@ -893,15 +984,26 @@ namespace x360ce.App.Controls
 				cbx.SelectedIndex = 0;
 		}
 
-		/// <summary>Offers [Invert] in the mapping menu only while the box holds a control that has another way round.</summary>
-		/// <remarks>A button, an axis and a slider each have one. A D-Pad, a formula and an empty box do not.</remarks>
+		/// <summary>Offers the [Adjust] items in the mapping menu only where they can do something for the box.</summary>
+		/// <remarks>
+		/// [Invert] shows while the box holds a control that has another way round: a button, an axis and a slider each
+		/// have one, a D-Pad, a formula and an empty box do not. [Round Dead Zone] shows on a stick's X and Y boxes.
+		/// </remarks>
 		/// <param name="cbx">The box the menu is about to open for.</param>
-		public void ShowInvertFor(ComboBox cbx)
+		public void ShowAdjustFor(ComboBox cbx)
 		{
 			var invertible = cbx != null && SettingsConverter.InvertTextValue(cbx.Text) != null;
-			foreach (ToolStripItem item in DiMenuStrip.Items)
-				if (item.Text == cInvert)
-					item.Visible = invertible;
+			var stick = cbx != null && StickOf(cbx) != null;
+			foreach (var adjust in DiMenuStrip.Items.OfType<ToolStripMenuItem>().Where(x => x.Text == cAdjust))
+			{
+				foreach (ToolStripItem item in adjust.DropDownItems)
+				{
+					if (item.Text == cInvert)
+						item.Visible = invertible;
+					else if (item.Text == cRoundDeadZone)
+						item.Visible = stick;
+				}
+			}
 		}
 
 		#endregion
@@ -930,7 +1032,7 @@ namespace x360ce.App.Controls
 					_imageInfos.Add(2, MapCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
 					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
 					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
+					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
 					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
 					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
@@ -963,6 +1065,102 @@ namespace x360ce.App.Controls
 			}
 		}
 		ImageInfos _imageInfos;
+
+		/// <summary>
+		/// Puts a small green number under each control's name on the General page: the emulated controller's value for that
+		/// part, the value the controller picture is drawn from, as x360ce 5 shows it.
+		/// </summary>
+		/// <remarks>
+		/// One is made for each name in <see cref="imageInfos"/>, under it in the name's panel, which holds the pair in one cell
+		/// of the General page's table, in the middle of its box's row. No second list is kept in step with that one. Each is
+		/// named after its part, as LeftTriggerValueLabel, which is how the interface catalog and the AI door find it.
+		/// </remarks>
+		void AddValueLabels()
+		{
+			// Laid out once, as the page is shown: a panel that grows would lay out the table it is in, for every number.
+			GeneralTableLayoutPanel.SuspendLayout();
+			foreach (var ii in imageInfos)
+			{
+				var name = (Label)ii.Label;
+				name.Parent.SuspendLayout();
+				var value = new Label
+				{
+					Name = ii.Code + "ValueLabel",
+					AutoSize = false,
+					Margin = Padding.Empty,
+					UseMnemonic = false,
+					// Measured as it is drawn, with GDI, as the program draws all its text.
+					UseCompatibleTextRendering = false,
+					Text = "0",
+				};
+				ii.ValueLabel = value;
+				name.AutoSize = false;
+				FitName(name);
+				SetValueFont(ii);
+				name.TextChanged += (sender, e) => FitName(name);
+				name.FontChanged += (sender, e) =>
+				{
+					FitName(name);
+					SetValueFont(ii);
+				};
+				name.Parent.Controls.Add(value);
+				name.Parent.ResumeLayout(false);
+			}
+			GeneralTableLayoutPanel.ResumeLayout(false);
+			SetValueColors();
+			EventHandler themeChanged = (sender, e) => SetValueColors();
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (sender, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
+		}
+
+		/// <summary>Sizes a number from its name's font: four fifths of it, the size the Input column's readings use.</summary>
+		static void SetValueFont(ImageInfo ii)
+		{
+			var font = ii.Label.Font;
+			ii.ValueLabel.Font = new Font(font.FontFamily, font.Size * 0.8f, font.Style, font.Unit);
+			FitValue(ii.ValueLabel);
+		}
+
+		/// <summary>A label at a width, one line of its font tall.</summary>
+		/// <remarks>
+		/// A label left to size itself is about a third taller than its line, room under the text that holds nothing. A name
+		/// and its number at that height would be taller than a row of boxes, and would push the rows apart.
+		/// </remarks>
+		static Size TextSize(Label label, int width)
+		{
+			return new Size(width, TextRenderer.MeasureText(" ", label.Font, Size.Empty, TextFormatFlags.NoPadding).Height);
+		}
+
+		/// <summary>Sizes a name to its text.</summary>
+		static void FitName(Label name)
+		{
+			var size = TextSize(name, name.PreferredWidth);
+			if (name.Size != size)
+				name.Size = size;
+		}
+
+		/// <summary>The widest number a part shows: a stick's axis at its lowest.</summary>
+		const string WidestValue = "-32768";
+
+		/// <summary>Sizes a number to the widest it shows, measured as the label measures its text.</summary>
+		/// <remarks>
+		/// The numbers change ten times a second on four controller pages. One that sized itself to each value would lay the
+		/// page out each time its width changed; at one width, a new value is only drawn.
+		/// </remarks>
+		static void FitValue(Label value)
+		{
+			var size = TextSize(value, TextRenderer.MeasureText(WidestValue, value.Font).Width + value.Padding.Horizontal);
+			if (value.Size != size)
+				value.Size = size;
+		}
+
+		/// <summary>The numbers are the theme's success colour, the green the lit names and the other values are drawn in.</summary>
+		void SetValueColors()
+		{
+			var color = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green);
+			foreach (var ii in imageInfos)
+				ii.ValueLabel.ForeColor = color;
+		}
 
 		#endregion
 
@@ -1164,15 +1362,14 @@ namespace x360ce.App.Controls
 		public PadSetting CloneCurrentPadSetting()
 		{
 			// Get settings related to PAD.
-			var maps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo).ToArray();
+			var maps = SettingsManager.Current.GetPageMaps(MappedTo);
 			PropertyInfo[] properties;
 			if (!SettingsManager.ValidatePropertyNames(maps, out properties))
 				return null;
 			var ps = new PadSetting();
 			foreach (var p in properties)
 			{
-				var map = maps.First(x => x.PropertyName == p.Name);
-				var key = map.IniPath.Split('\\')[1];
+				var map = maps[p.Name];
 				// Get setting value from the form.
 				var v = SettingsManager.Current.GetPresetValue(map);
 				// Set value onto padSetting.
@@ -1208,7 +1405,7 @@ namespace x360ce.App.Controls
 		bool oldConnected;
 		// Current XInput state.
 		State newState;
-		bool newConnected;
+		internal bool newConnected;
 
 
 		// Check left thumbStick
@@ -1219,8 +1416,10 @@ namespace x360ce.App.Controls
 		}
 
 		string cRecord = "[Record]";
+		string cAdjust = "[Adjust]";
 		string cInvert = "[Invert]";
 		string cRecentre = "[Recentre]";
+		string cRoundDeadZone = "[Round Dead Zone]";
 		string cTurbo = "[Turbo]";
 		string cEmpty = "<empty>";
 		string cPOVs = "POVs";
@@ -1241,21 +1440,29 @@ namespace x360ce.App.Controls
 			mi = new ToolStripMenuItem(cRecord);
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
-			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_16x16);
-			// Add [Invert] button, which reads the box's control the other way round.
+			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_32x32);
+			// Add [Adjust], which holds the changes made to what the box already reads.
+			var adjust = new ToolStripMenuItem(cAdjust);
+			DiMenuStrip.Items.Add(adjust);
+			// [Invert] reads the box's control the other way round.
 			mi = new ToolStripMenuItem(cInvert);
 			mi.Click += new EventHandler(DiMenuStrip_Click);
-			DiMenuStrip.Items.Add(mi);
-			// Add [Recentre] button, which makes where the box's axis rests now read as its middle.
+			adjust.DropDownItems.Add(mi);
+			// [Recentre] makes where the box's axis rests now read as its middle.
 			mi = new ToolStripMenuItem(cRecentre);
 			mi.ToolTipText = "Leave the stick at rest, then pick this: where it rests now reads as the middle.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
-			DiMenuStrip.Items.Add(mi);
-			// Add [Turbo] button, which makes the box's button press ten times a second while it is held.
+			adjust.DropDownItems.Add(mi);
+			// [Round Dead Zone] gives the stick one dead zone for both of its axes, a circle round its middle.
+			mi = new ToolStripMenuItem(cRoundDeadZone);
+			mi.ToolTipText = "On a stick's X or Y box: the stick reads nothing inside a circle round its middle, in every direction.";
+			mi.Click += new EventHandler(DiMenuStrip_Click);
+			adjust.DropDownItems.Add(mi);
+			// [Turbo] makes the box's button press ten times a second while it is held.
 			mi = new ToolStripMenuItem(cTurbo);
 			mi.ToolTipText = "On a box mapped to a button: while the button is held, it presses ten times a second.";
 			mi.Click += new EventHandler(DiMenuStrip_Click);
-			DiMenuStrip.Items.Add(mi);
+			adjust.DropDownItems.Add(mi);
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
 			// Recording feature is preferred way to map keyboard button.
 			if (!ud.IsKeyboard)
@@ -1412,6 +1619,22 @@ namespace x360ce.App.Controls
 						: "Recentred: where the stick rests now reads as the middle (" + recentred + ").";
 					CurrentCbx = null;
 				}
+				else if (item.Text == cRoundDeadZone)
+				{
+					var stick = StickOf(cbx);
+					var percent = stick == null ? 0 : stick.Item3.DeadZoneTrackBar.Value;
+					var size = percent > 0 ? percent / 100.0 : DefaultRoundDeadZone;
+					var texts = stick == null ? null : RoundDeadZoneTexts(stick.Item1.Text, stick.Item2.Text, size);
+					if (texts != null)
+					{
+						SettingsManager.Current.SetComboBoxValue(stick.Item1, texts[0]);
+						SettingsManager.Current.SetComboBoxValue(stick.Item2, texts[1]);
+					}
+					MainForm.Current.StatusTimerLabel.Text = texts == null
+						? "[Round Dead Zone] works on a stick's X or Y box, with both boxes mapped to axes."
+						: string.Format("Round dead zone: the stick reads nothing within {0:0} % of its middle, in every direction.", size * 100);
+					CurrentCbx = null;
+				}
 				else if (item.Text == cTurbo)
 				{
 					var turbo = TurboText(cbx.Text);
@@ -1474,6 +1697,57 @@ namespace x360ce.App.Controls
 				return null;
 			var button = "b" + m.Groups["n"].Value;
 			return string.Format(MapExpressionHelp.TurboFormula, m.Groups["inv"].Value.Length > 0 ? "(1-" + button + ")" : button);
+		}
+
+		/// <summary>The round dead zone's size, as a part of the stick's travel, while the stick's own Dead Zone slider is at nought.</summary>
+		public const double DefaultRoundDeadZone = 0.2;
+
+		/// <summary>The stick a box belongs to: its X box, its Y box and its X axis settings, or null for a box of no stick axis.</summary>
+		Tuple<ComboBox, ComboBox, AxisMapUserControl> StickOf(ComboBox cbx)
+		{
+			if (cbx == LeftThumbAxisXComboBox || cbx == LeftThumbAxisYComboBox)
+				return Tuple.Create(LeftThumbAxisXComboBox, LeftThumbAxisYComboBox, LeftThumbXUserControl);
+			if (cbx == RightThumbAxisXComboBox || cbx == RightThumbAxisYComboBox)
+				return Tuple.Create(RightThumbAxisXComboBox, RightThumbAxisYComboBox, RightThumbXUserControl);
+			return null;
+		}
+
+		/// <summary>The axis a stick box reads, signed as a formula writes it ("a1", "-a2"), or null when the box reads something else.</summary>
+		/// <remarks>Takes the box's axis back out of a round dead zone already there, so picking it again changes only its size.</remarks>
+		static string StickAxisOf(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return null;
+			var m = Regex.Match(text.Trim(),
+				@"^(?:(?<inv>I?)Axis (?<n>\d+)|=(?<inv>-?)a(?<n>\d+)(?:\*\(1-[0-9.]+/max\(sqrt\(a\d+\^2\+a\d+\^2\),[0-9.]+\)\)/[0-9.]+)?)$");
+			if (!m.Success)
+				return null;
+			return (m.Groups["inv"].Value.Length > 0 ? "-a" : "a") + m.Groups["n"].Value;
+		}
+
+		/// <summary>
+		/// The mappings that give a stick one round dead zone for both axes, X first then Y, or null when either box maps no axis.
+		/// </summary>
+		/// <remarks>The formula Help gives, <see cref="MapExpressionHelp.RoundDeadZoneFormula"/>, keeping each box's axis and its way round.</remarks>
+		/// <param name="xText">The stick's X box: "Axis N", "IAxis N", "=aN", "=-aN" or a round dead zone made here.</param>
+		/// <param name="yText">The stick's Y box, read the same way.</param>
+		/// <param name="size">The dead zone's radius, as a part of the stick's travel, more than 0 and less than 1.</param>
+		public static string[] RoundDeadZoneTexts(string xText, string yText, double size)
+		{
+			var x = StickAxisOf(xText);
+			var y = StickAxisOf(yText);
+			if (x == null || y == null || size <= 0 || size >= 1)
+				return null;
+			var culture = System.Globalization.CultureInfo.InvariantCulture;
+			var r = Math.Round(size, 2).ToString("0.##", culture);
+			var rest = Math.Round(1 - size, 2).ToString("0.##", culture);
+			var xn = x.TrimStart('-').Substring(1);
+			var yn = y.TrimStart('-').Substring(1);
+			return new[]
+			{
+				string.Format(MapExpressionHelp.RoundDeadZoneFormula, x, xn, yn, r, rest),
+				string.Format(MapExpressionHelp.RoundDeadZoneFormula, y, xn, yn, r, rest),
+			};
 		}
 
 		public void EnableDPadMenu(bool enable)
@@ -2001,7 +2275,7 @@ namespace x360ce.App.Controls
 
 		public void UpdateForceFeedBack()
 		{
-			if (MainForm.Current.ControllerIndex == -1)
+			if (MainForm.Current.Main.ControllerIndex == -1)
 				return;
 			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
@@ -2050,13 +2324,14 @@ namespace x360ce.App.Controls
 		/// Both sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
 		/// by the sliders' own handler, which sends only while a controller tab is shown.
 		/// </remarks>
-		public void StopTestVibration()
+		public bool StopTestVibration()
 		{
 			if (LeftMotorTestTrackBar.Value == 0 && RightMotorTestTrackBar.Value == 0)
-				return;
+				return false;
 			LeftMotorTestTrackBar.Value = 0;
 			RightMotorTestTrackBar.Value = 0;
 			SendVibration();
+			return true;
 		}
 
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
@@ -2130,10 +2405,44 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
 			if (result != DialogResult.Yes)
 				return;
-			var padSetting = AutoMapHelper.GetAutoPreset(ud);
+			string note;
+			var padSetting = AutoMapHelper.GetAutoPreset(ud, out note);
 			// Load created setting.
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), padSetting);
+			// Says whether SDL's controller database or x360ce's own guess filled it.
+			MainForm.Current.StatusTimerLabel.Text = note;
 		}
+
+		#region SDL page
+
+		/// <summary>The SDL page: what SDL's controller database says about the selected device.</summary>
+		internal TabPage SdlTabPage;
+		SdlUserControl SdlPanel;
+
+		/// <summary>Fills every mapping box from the device's SDL row, as the SDL page shows it, and leaves the controller's other settings as they are.</summary>
+		/// <remarks>A box the row leaves empty is emptied, so nothing mapped before stays beside SDL's mapping.</remarks>
+		void SdlPanel_ApplyClicked(object sender, EventArgs e)
+		{
+			var sdl = SdlPanel.Translation;
+			var setting = GetSelectedSetting();
+			var ps = sdl == null || setting == null ? null : CloneCurrentPadSetting();
+			if (ps == null)
+				return;
+			foreach (var code in SdlConverter.MappingBoxes)
+				SdlConverter.SetValue(ps, code, SdlConverter.GetValue(sdl.Setting, code));
+			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, ps);
+			var skipped = sdl.SkippedText();
+			MainForm.Current.StatusTimerLabel.Text = "Mapped as SDL's controller database maps " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+		}
+
+		void SdlPanel_CopyClicked(object sender, EventArgs e)
+		{
+			SettingsManager.CopyPresetToClipboard(GetSelectedPadSetting(), SettingsManager.PresetFormat.Sdl, GetSelectedDevice());
+			MainForm.Current.StatusTimerLabel.Text = "Copied this controller's mapping as a row of SDL's controller database.";
+		}
+
+		#endregion
 
 
 		/// <summary> 
@@ -2222,18 +2531,14 @@ namespace x360ce.App.Controls
 				presetForm.Owner = MainForm.Current;
 			}
 			presetForm.StartPosition = FormStartPosition.CenterParent;
-			presetForm.InitForm();
+			presetForm.InitForm(GetSelectedDevice());
 			ControlsHelper.CheckTopMost(presetForm);
 			var result = presetForm.ShowDialog();
 			if (result == DialogResult.OK)
 			{
 				var ps = presetForm.SelectedItem;
 				if (ps != null)
-				{
-					MainForm.Current.UpdateTimer.Stop();
 					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
-					MainForm.Current.UpdateTimer.Start();
-				}
 			}
 			presetForm.UnInitForm();
 		}
@@ -2373,7 +2678,7 @@ namespace x360ce.App.Controls
 			}
 			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
 				SettingsManager.Options.HidHideConfigureAutomatically, copy);
-			SettingsManager.Current.RaiseSettingsChanged(null);
+			// Selecting the row loads its settings into the page and saves the page into it.
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
 
@@ -2390,7 +2695,7 @@ namespace x360ce.App.Controls
 
 		void UpdateGridButtons()
 		{
-			RemoveMapButton.Enabled = MappedDevicesDataGridView.SelectedRows.Count > 0;
+			ControlsHelper.SetEnabled(RemoveMapButton, MappedDevicesDataGridView.SelectedRows.Count > 0);
 		}
 
 		/// <summary>Shows the XInput places again, sized to what they now say.</summary>
@@ -2496,15 +2801,27 @@ namespace x360ce.App.Controls
 			AnnounceSelection();
 		}
 
-		/// <summary>Loads the selected device's settings into the form and tells the listeners.</summary>
+		/// <summary>Whether a selection has been put on the page yet, and which row with which settings.</summary>
+		bool _Announced;
+		UserSetting _AnnouncedSetting;
+		Guid _AnnouncedChecksum;
+
+		/// <summary>Loads the selected device's settings into the form and tells the listeners, when they are not there already.</summary>
+		/// <remarks>The grid raises its selection whenever it is bound, given its window or shown, with the same row selected.</remarks>
 		void AnnounceSelection()
 		{
 			var setting = GetSelectedSetting();
-			var padSetting = setting == null
-				? null
-				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
-			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
+			if (!_Announced || setting != _AnnouncedSetting || (setting != null && setting.PadSettingChecksum != _AnnouncedChecksum))
+			{
+				var padSetting = setting == null
+					? null
+					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, padSetting);
+				_Announced = true;
+				_AnnouncedSetting = setting;
+				_AnnouncedChecksum = setting == null ? Guid.Empty : setting.PadSettingChecksum;
+				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
+			}
 			UpdateGridButtons();
 			UpdateForceFeedbackTitle();
 			UpdateEffectDescription();
@@ -2644,7 +2961,7 @@ namespace x360ce.App.Controls
 			if (!show)
 				return;
 			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
-			PluginTabPage = new TabPage { Name = "PluginTabPage", Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
+			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
 			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
 			PluginTabPage.Controls.Add(PluginPanel);
 			PadTabControl.TabPages.Add(PluginTabPage);
@@ -2851,7 +3168,7 @@ namespace x360ce.App.Controls
 
 		private void CopyPresetFormatButton_Click(object sender, EventArgs e)
 		{
-			SettingsManager.ShowCopyPresetMenu(CopyPresetButton, GetSelectedPadSetting());
+			SettingsManager.ShowCopyPresetMenu(CopyPresetButton, GetSelectedPadSetting(), GetSelectedDevice());
 		}
 
 		private void SavePresetButton_Click(object sender, EventArgs e)
@@ -2889,9 +3206,12 @@ namespace x360ce.App.Controls
 		{
 			try
 			{
-				// XML, JSON or YAML, whichever Copy Preset wrote or a person typed.
-				var ps = SettingsManager.PadSettingFromText(Clipboard.GetText());
+				// XML, JSON or YAML, whichever Copy Preset wrote or a person typed, or SDL rows, read for the device.
+				string note;
+				var ps = SettingsManager.PadSettingFromText(Clipboard.GetText(), GetSelectedDevice(), out note);
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, GetSelectedSetting(), ps);
+				if (note.Length > 0)
+					MainForm.Current.StatusTimerLabel.Text = note;
 			}
 			catch (Exception ex)
 			{
@@ -2905,6 +3225,9 @@ namespace x360ce.App.Controls
 		}
 
 		List<SettingsMapItem> RecordAllMaps = new List<SettingsMapItem>();
+
+		/// <summary>The device as it was when Remap All began: at rest, which each next control waits for.</summary>
+		SourceState RemapRest;
 
 		public string RemapName = "Remap All";
 		public string RemapStopName = "STOP";
@@ -2944,6 +3267,8 @@ namespace x360ce.App.Controls
 				// Order as same as in the list above.
 				.OrderBy(x => codes.IndexOf(x.Code))
 				.ToList();
+			// A copy: the input thread fills its states again as it reads.
+			RemapRest = GetSelectedDevice()?.SourceState?.Clone();
 			StartRecording();
 		}
 

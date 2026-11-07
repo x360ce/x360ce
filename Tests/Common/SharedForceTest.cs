@@ -67,7 +67,7 @@ namespace x360ce.Tests
 				GC.SuppressFinalize(pad);
 				client.Targets = new Xbox360Controller[4];
 				client.Targets[1] = pad;
-				var received = typeof(DInputHelper).GetMethod("Controller_FeedbackReceived", BindingFlags.NonPublic | BindingFlags.Instance);
+				var received = typeof(DInputHelper).GetMethod(nameof(DInputHelper.Controller_FeedbackReceived), BindingFlags.NonPublic | BindingFlags.Instance);
 				var rumble = Rumble(90, 30);
 				received.Invoke(helper, new object[] { pad, rumble });
 				Assert.AreSame(rumble, helper.CopyAndClearFeedbacks()[1], "A game's rumble does not reach the engine.");
@@ -88,7 +88,7 @@ namespace x360ce.Tests
 			Assert.IsFalse(step5.Contains("FeedbackLock"), "The engine takes a lock on every pass for what its writers store in one step.");
 			Assert.AreEqual(1, Ui.Count(Body(step5, "public void SetVibration("), "ViGEmClient.Current"),
 				"The Test sliders read the bus client twice, and the engine can let it go between the two reads.");
-			Assert.AreEqual(1, Ui.Count(Body(step5, "private void Controller_FeedbackReceived("), "ViGEmClient.Current"),
+			Assert.AreEqual(1, Ui.Count(Body(step5, "void " + nameof(DInputHelper.Controller_FeedbackReceived) + "("), "ViGEmClient.Current"),
 				"A game's rumble reads the bus client more than once, and the engine can let it go in between.");
 		}
 
@@ -366,7 +366,7 @@ namespace x360ce.Tests
 			var helper = new DInputHelper();
 			EngineSteps.UpdateDiStates(helper)(null, game, null, reading);
 			var last = SharedForcePassThroughTest.LastPassedForce(helper);
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
 			lastLarge[1] = 200;
 			helper.PassForcesThrough(passing, 1 << 1);
 			Assert.AreEqual(200 << 8, last[place], "The game's force was not passed on.");
@@ -473,8 +473,8 @@ namespace x360ce.Tests
 			var helper = new DInputHelper();
 			var last = SharedForcePassThroughTest.LastPassedForce(helper);
 			var flags = BindingFlags.NonPublic | BindingFlags.Instance;
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", flags).GetValue(helper);
-			var lastSmall = (byte[])typeof(DInputHelper).GetField("_lastSmallMotor", flags).GetValue(helper);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), flags).GetValue(helper);
+			var lastSmall = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastSmallMotor), flags).GetValue(helper);
 			// Controller 1's game asks for a rumble, and it is passed on.
 			lastLarge[0] = 200;
 			helper.PassForcesThrough(routing, 1 << 0);
@@ -508,7 +508,7 @@ namespace x360ce.Tests
 			helper.PassForcesThrough(routing, 0);
 			Assert.AreEqual(0, last[place], "The force the game asked for before the controllers were let go of came back.");
 			// A DirectInput device the game drove is told on the next pass, at no force.
-			var dropped = (int)typeof(DInputHelper).GetField("_forcesDropped", flags).GetValue(helper);
+			var dropped = (int)typeof(DInputHelper).GetField(nameof(DInputHelper._forcesDropped), flags).GetValue(helper);
 			byte l, s;
 			Assert.IsTrue(DInputHelper.MergeForces(new[] { 0 }, dropped, lastLarge, lastSmall, out l, out s),
 				"A device the game drove is not told once the controllers are picked back up.");

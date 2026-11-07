@@ -7,7 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using x360ce.App.Controls;
@@ -30,6 +33,7 @@ namespace x360ce.Tests
 	[TestClass]
 	public class OptionsLayoutTest
 	{
+		public TestContext TestContext { get; set; }
 
 		/// <summary>
 		/// The page at the size it was designed at, and half as wide again to move the anchors.
@@ -46,7 +50,7 @@ namespace x360ce.Tests
 		{
 			foreach (var factor in WidthFactors)
 			{
-				var boxes = MeasurePanel("VirtualDeviceGroupBox", factor);
+				var boxes = MeasurePanel(nameof(OptionsUserControl.VirtualDeviceGroupBox), factor);
 				Assert.IsTrue(boxes.Count >= 9,
 					"Expected the whole Virtual Device panel, measured " + boxes.Count + " controls.");
 				AssertWhole(boxes, factor);
@@ -69,6 +73,20 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("Nothing a user reads, types in or clicks on the HID Hide panel is painted over, the release page link included")]
+		public void Hid_hide_controls_never_overlap()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				var boxes = MeasurePanel(nameof(OptionsUserControl.HidHideGroupBox), factor);
+				Assert.IsTrue(boxes.Count >= 7,
+					"Expected the whole HID Hide panel, measured " + boxes.Count + " controls.");
+				AssertWhole(boxes, factor);
+				AssertNoOverlap(boxes, factor);
+			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("The hotkey and emulation buttons boxes sit whole to the left of their fields on the Hotkeys panel, one row under the other")]
 		public void Hotkey_box_and_field_never_overlap()
 		{
@@ -76,31 +94,351 @@ namespace x360ce.Tests
 			{
 				WithOptionsPage(factor, page =>
 				{
-					var group = Descendants(page).FirstOrDefault(x => x.Name == "HotkeysGroupBox");
+					var group = Descendants(page).FirstOrDefault(x => x.Name == nameof(OptionsUserControl.HotkeysGroupBox));
 					Assert.IsNotNull(group, "HotkeysGroupBox was not found on the Options page.");
 					Show(group);
+					// Measured on the group, wherever its table puts each control.
+					Func<string, Rectangle> on = name =>
+					{
+						var control = group.Controls.Find(name, true).Single();
+						return group.RectangleToClient(control.Parent.RectangleToScreen(control.Bounds));
+					};
 					var rowBottom = 0;
 					foreach (var row in new[] { "EmulationHotkey", "EmulationButtons" })
 					{
-						var caption = group.Controls.Find(row + "CheckBox", false).Single();
-						var field = group.Controls.Find(row + "TextBox", false).Single();
-						Assert.IsTrue(caption.Bounds.Right <= field.Bounds.Left,
-							"The caption " + caption.Bounds + " runs into the field " + field.Bounds +
+						var caption = on(row + "CheckBox");
+						var field = on(row + "TextBox");
+						Assert.IsTrue(caption.Right <= field.Left,
+							"The caption " + caption + " runs into the field " + field +
 							" with the page " + factor + " times its designed width.");
-						Assert.IsTrue(field.Bounds.Right <= group.ClientSize.Width,
-							"The field " + field.Bounds + " runs past the panel, which is " +
+						Assert.IsTrue(field.Right <= group.ClientSize.Width,
+							"The field " + field + " runs past the panel, which is " +
 							group.ClientSize.Width + " px wide.");
-						Assert.IsTrue(caption.Bounds.Top >= rowBottom && field.Bounds.Top >= rowBottom,
-							"The " + row + " row " + caption.Bounds + " is painted over the row above it.");
-						rowBottom = Math.Max(caption.Bounds.Bottom, field.Bounds.Bottom);
+						Assert.IsTrue(caption.Top >= rowBottom && field.Top >= rowBottom,
+							"The " + row + " row " + caption + " is painted over the row above it.");
+						rowBottom = Math.Max(caption.Bottom, field.Bottom);
 					}
-					var note = group.Controls.Find("EmulationOverlayCheckBox", false).Single();
-					Assert.IsTrue(note.Bounds.Top >= rowBottom,
-						"The note box " + note.Bounds + " is painted over the emulation buttons row.");
-					Assert.IsTrue(note.Bounds.Bottom <= group.ClientSize.Height && note.Bounds.Right <= group.ClientSize.Width,
-						"The note box " + note.Bounds + " runs past the panel, which is " + group.ClientSize + ".");
+					var note = on(nameof(OptionsUserControl.EmulationOverlayCheckBox));
+					Assert.IsTrue(note.Top >= rowBottom,
+						"The note box " + note + " is painted over the emulation buttons row.");
+					Assert.IsTrue(note.Bottom <= group.ClientSize.Height && note.Right <= group.ClientSize.Width,
+						"The note box " + note + " runs past the panel, which is " + group.ClientSize + ".");
 				});
 			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("The groups down each side of the General page are one width a side, each under the one above it, the left column ends with Hotkeys where the right one starts, and Developer Tools stands in the Developing group")]
+		public void General_page_groups_stand_in_two_columns()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				WithOptionsPage(factor, page =>
+				{
+					var columns = new[] { nameof(OptionsUserControl.GeneralLeftColumnPanel), nameof(OptionsUserControl.GeneralRightColumnPanel) }
+						.Select(name => Descendants(page).FirstOrDefault(x => x.Name == name)).ToList();
+					Assert.IsTrue(columns.All(x => x != null), "The two columns of the General page were not found on the Options page.");
+					Show(columns[0]);
+					// The left column holds Operation, Testing, Direct Input Devices, Guide Button and Hotkeys; the right one the
+					// scan locations, Appearance, Developing and Configuration.
+					var least = new[] { 5, 4 };
+					for (var c = 0; c < columns.Count; c++)
+					{
+						var items = columns[c].Controls.Cast<Control>().Where(x => x is GroupBox || x is TabControl).OrderBy(x => x.Top).ToList();
+						Assert.IsTrue(items.Count >= least[c], "Expected " + least[c] + " groups in " + columns[c].Name + ", found " + items.Count + ".");
+						var widths = items.Select(x => x.Name + " " + x.Width).ToList();
+						Assert.AreEqual(1, items.Select(x => x.Width).Distinct().Count(),
+							"The groups of " + columns[c].Name + " are not one width: " + string.Join(", ", widths) + ".");
+						for (var i = 1; i < items.Count; i++)
+							Assert.IsTrue(items[i].Top >= items[i - 1].Bottom,
+								items[i].Name + " " + items[i].Bounds + " is painted over " + items[i - 1].Name + " " + items[i - 1].Bounds + ".");
+					}
+					Assert.AreSame(columns[0].Parent, columns[1].Parent, "The two columns are not in one table.");
+					Assert.IsTrue(columns[0].Right <= columns[1].Left,
+						"The left column " + columns[0].Bounds + " runs under the right one " + columns[1].Bounds + ".");
+					Assert.AreEqual(nameof(OptionsUserControl.HotkeysGroupBox), columns[0].Controls.Cast<Control>().OrderBy(x => x.Top).Last().Name,
+						"The left column does not end with Hotkeys.");
+					var tools = Descendants(page).Single(x => x.Name == nameof(OptionsUserControl.DeveloperToolsButton));
+					Assert.IsTrue(Holders(tools, page).Any(x => x.Name == nameof(OptionsUserControl.DevelopingGroupBox)), "Developer Tools is not in the Developing group.");
+				});
+			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("The Appearance group stands in the right column of the General page, directly under the scan locations and above Developing, and holds Theme, Font and Size, each name to the left of its drop-down list, one under another")]
+		public void Theme_and_font_stand_in_the_appearance_group_under_the_scan_locations()
+		{
+			foreach (var factor in WidthFactors)
+			{
+				WithOptionsPage(factor, page =>
+				{
+					var column = Descendants(page).OfType<TableLayoutPanel>().FirstOrDefault(x => x.Name == nameof(OptionsUserControl.GeneralRightColumnPanel));
+					Assert.IsNotNull(column, "The right column of the General page was not found on the Options page.");
+					var appearance = Descendants(page).FirstOrDefault(x => x.Name == nameof(OptionsUserControl.AppearanceGroupBox));
+					Assert.IsNotNull(appearance, "AppearanceGroupBox was not found on the Options page.");
+					Assert.AreSame(column, appearance.Parent, "The Appearance group is not in the right column of the General page.");
+					var scan = column.Controls[nameof(OptionsUserControl.ProgramScanLocationsTabControl)];
+					var developing = column.Controls[nameof(OptionsUserControl.DevelopingGroupBox)];
+					Assert.AreEqual(column.GetRow(scan) + 1, column.GetRow(appearance), "The Appearance group is not directly under the scan locations.");
+					Assert.AreEqual(column.GetRow(appearance) + 1, column.GetRow(developing), "Developing is not directly under the Appearance group.");
+					Show(appearance);
+					Assert.IsTrue(appearance.Top >= scan.Bottom, "The Appearance group " + appearance.Bounds + " is painted over the scan locations " + scan.Bounds + ".");
+					Assert.IsTrue(developing.Top >= appearance.Bottom, "Developing " + developing.Bounds + " is painted over the Appearance group " + appearance.Bounds + ".");
+					// Measured on the group, wherever its table puts each control.
+					Func<string, Rectangle> on = name =>
+					{
+						var found = appearance.Controls.Find(name, true);
+						Assert.AreEqual(1, found.Length, name + " is not in the Appearance group.");
+						return appearance.RectangleToClient(found[0].Parent.RectangleToScreen(found[0].Bounds));
+					};
+					var rowBottom = 0;
+					foreach (var row in new[] { "Theme", "Font", "Size" })
+					{
+						var caption = on(row + "Label");
+						var list = on(row + "ComboBox");
+						Assert.IsTrue(caption.Right <= list.Left, "The caption " + caption + " runs into the list " + list + ".");
+						Assert.IsTrue(caption.Top >= rowBottom && list.Top >= rowBottom, "The " + row + " row " + list + " is painted over the row above it.");
+						Assert.IsTrue(list.Right <= appearance.ClientSize.Width && list.Bottom <= appearance.ClientSize.Height,
+							"The list " + list + " runs past the group, which is " + appearance.ClientSize + ".");
+						rowBottom = Math.Max(caption.Bottom, list.Bottom);
+					}
+					foreach (var name in new[] { nameof(OptionsUserControl.FontComboBox), nameof(OptionsUserControl.SizeComboBox) })
+					{
+						var list = (ComboBox)appearance.Controls.Find(name, true).Single();
+						Assert.AreEqual(ComboBoxStyle.DropDownList, list.DropDownStyle, name + " is typed in rather than chosen from the list.");
+					}
+				});
+			}
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("In the main window at its default size the General page shows all it holds without a scroll bar, at 100 % and 150 %, in both themes")]
+		public void General_page_fits_the_main_window_at_its_default_size()
+		{
+			var faults = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(null) }, (window, when) =>
+			{
+				var panel = (ScrollableControl)window.Controls.Find(nameof(OptionsUserControl.GeneralPanel), true).Single();
+				var end = Shown(panel).Max(x => panel.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds)).Bottom);
+				var line = string.Format("{0}: the General page is {1} and what it holds ends {2} px down{3}.", when, panel.ClientSize, end,
+					panel.VerticalScroll.Visible || panel.HorizontalScroll.Visible ? ", with a scroll bar" : "");
+				TestContext.WriteLine(line);
+				if (panel.VerticalScroll.Visible || panel.HorizontalScroll.Visible || end > panel.ClientSize.Height)
+					faults.Add(line);
+			});
+			Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("On the General page no group covers another, every group holds what it shows inside its frame, and every button is as wide as its text, in the program's font, in Windows' own and in a wider one, at 100 % and 150 %, in the main window at its default size")]
+		public void General_page_groups_hold_their_controls_and_stand_apart_in_every_font()
+		{
+			var faults = new List<string>();
+			foreach (var font in Fonts)
+				ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(font()) }, (window, when) =>
+				{
+					var page = window.Controls.Find(nameof(OptionsUserControl.GeneralTabPage), true).Single();
+					when += " " + page.Font.Name;
+					Func<Control, Control, Rectangle> on = (control, place) => place.RectangleToClient(control.Parent.RectangleToScreen(control.Bounds));
+					// What stands on the page in a place of its own: the groups, the scan locations and the button below the groups.
+					var items = Shown(page).Where(x => (x is GroupBox || x is TabControl || x is ButtonBase)
+						&& !Holders(x, page).Any(h => h is GroupBox || h is TabControl)).ToList();
+					TestContext.WriteLine("{0}: {1}", when, string.Join(", ", items.Select(x => x.Name + " " + on(x, page))));
+					for (var i = 0; i < items.Count; i++)
+						for (var j = i + 1; j < items.Count; j++)
+						{
+							var shared = Rectangle.Intersect(on(items[i], page), on(items[j], page));
+							if (!shared.IsEmpty)
+								faults.Add(string.Format("{0}: {1} {2} and {3} {4} cover each other by {5}x{6} px.", when,
+									items[i].Name, on(items[i], page), items[j].Name, on(items[j], page), shared.Width, shared.Height));
+						}
+					// Inside the room the group keeps for what it holds: below its caption and clear of its frame on every side.
+					foreach (var group in items.OfType<GroupBox>())
+						foreach (var child in Shown(group).Where(x => !group.DisplayRectangle.Contains(on(x, group))))
+							faults.Add(string.Format("{0}: {1} {2} is not inside the frame of {3}, which keeps {4} for what it holds.", when,
+								child.Name, on(child, group), group.Name, group.DisplayRectangle));
+					foreach (var button in Shown(page).OfType<Button>())
+					{
+						var needs = button.GetPreferredSize(Size.Empty).Width;
+						if (button.Width < needs)
+							faults.Add(string.Format("{0}: {1} is {2} px wide and its text needs {3}.", when, button.Name, button.Width, needs));
+					}
+				});
+			Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("Theme, Font and Size are one width, which the column does not stretch, and show a long family name whole, in the program's font, in Windows' own and in a wider one, at 100 % and 150 %")]
+		public void Theme_and_font_lists_keep_one_width_that_shows_a_long_family_name()
+		{
+			var faults = new List<string>();
+			foreach (var font in Fonts)
+				ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(font()) }, (window, when) =>
+				{
+					var theme = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.ThemeComboBox), true).Single();
+					var list = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.FontComboBox), true).Single();
+					var size = (ComboBox)window.Controls.Find(nameof(OptionsUserControl.SizeComboBox), true).Single();
+					when += " " + list.Font.Name;
+					if (theme.Width != list.Width || size.Width != list.Width)
+						faults.Add(string.Format("{0}: Theme is {1} px wide, Font {2} and Size {3}.", when, theme.Width, list.Width, size.Width));
+					list.Items.Add(LongFamilyName);
+					var needs = FormsTheme.GetComboBoxWidth(list);
+					if (list.Width < needs)
+						faults.Add(string.Format("{0}: Font is {1} px wide and \"{2}\" needs {3}.", when, list.Width, LongFamilyName, needs));
+					// A window a quarter wider gives the column more room, which the lists leave to it.
+					var before = list.Width;
+					window.Width += window.Width / 4;
+					Application.DoEvents();
+					if (list.Width != before)
+						faults.Add(string.Format("{0}: Font grows from {1} to {2} px with the column.", when, before, list.Width));
+				});
+			Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		/// <summary>A usual family name, as long as the Font list should show whole in its field.</summary>
+		const string LongFamilyName = "Segoe UI Variable Display";
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("The Tab key moves through the General page as the eye reads it: down the left column, row by row and left to right in a row, then down the right column the same way")]
+		public void General_page_tab_order_follows_the_eye()
+		{
+			var faults = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => MainWindowAtDefaultSize(null) }, (window, when) =>
+			{
+				var page = window.Controls.Find(nameof(OptionsUserControl.GeneralTabPage), true).Single();
+				var right = window.Controls.Find(nameof(OptionsUserControl.GeneralRightColumnPanel), true).Single();
+				// The places the Tab key stops at, in the order it stops at them.
+				var stops = new List<Control>();
+				for (var c = page.GetNextControl(page, true); c != null; c = page.GetNextControl(c, true))
+					if (c.TabStop && c.Visible && (c is ButtonBase || c is ComboBox || c is TextBoxBase || c is ListControl || c is TabControl))
+						stops.Add(c);
+				Func<Control, Rectangle> at = c => page.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
+				Func<Control, int> column = c => Holders(c, page).Contains(right) ? 1 : 0;
+				TestContext.WriteLine("{0}: {1}", when, string.Join(", ", stops.Select(x => x.Name)));
+				for (var i = 1; i < stops.Count; i++)
+				{
+					var a = stops[i - 1];
+					var b = stops[i];
+					var ra = at(a);
+					var rb = at(b);
+					// Two controls whose heights overlap stand in one row and are read left to right; otherwise the lower is read later.
+					var oneRow = rb.Top < ra.Bottom && ra.Top < rb.Bottom;
+					var back = column(b) < column(a)
+						|| column(b) == column(a) && (oneRow ? rb.Left <= ra.Left : rb.Top < ra.Top);
+					if (back)
+						faults.Add(string.Format("{0}: Tab goes from {1} {2} back to {3} {4}.", when, a.Name, ra, b.Name, rb));
+				}
+			});
+			Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		/// <summary>The fonts the General page is drawn in: the program's, Windows' own, which is narrower, and a wider one, at the size of the interface font.</summary>
+		static readonly Func<Font>[] Fonts = { () => null, () => new Font(SystemFonts.DefaultFont.FontFamily, Control.DefaultFont.SizeInPoints), WiderFont };
+
+		/// <summary>The Options page in a window held as the main window holds it at its default size.</summary>
+		/// <param name="font">The font the page is drawn in, as a font chosen on the Appearance group draws it; null for the program's.</param>
+		static Form MainWindowAtDefaultSize(Font font)
+		{
+			var options = new OptionsUserControl();
+			if (font != null)
+				options.Font = font;
+			return MainWindowAtDefaultSize(options, "Options");
+		}
+
+		/// <summary>
+		/// A page of the main window in a window held as the main window holds it at its default size: under the header and a
+		/// games tool bar, above a status bar, on a page of a tab strip with pictures, inside the main window's padding.
+		/// </summary>
+		/// <remarks>
+		/// The main window starts the engine and reads the settings as it is made, so the parts around its pages are made here
+		/// as its designer makes them, and its size is read from its designer file.
+		/// </remarks>
+		/// <param name="content">The page's control, which fills its tab.</param>
+		/// <param name="caption">The tab's caption.</param>
+		internal static Form MainWindowAtDefaultSize(Control content, string caption)
+		{
+			content.Dock = DockStyle.Fill;
+			// The controller pictures, which set the height of the tab strip, are Windows' small icons at the screen's scale, as
+			// the main window makes them.
+			var side = (int)Math.Round(16 * ControlsHelper.DpiScale);
+			var pictures = new ImageList { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(side, side) };
+			pictures.Images.Add(new Bitmap(side, side));
+			// Padded as the main window's designer pads its pages: one that holds a list, every page but Options, has no padding
+			// at its sides, so the list meets the page's edges.
+			var padding = content is OptionsUserControl ? new Padding(3) : new Padding(0, 3, 0, 3);
+			var page = new TabPage(caption) { Padding = padding, ImageIndex = 0 };
+			// The control that fills its page with a list keeps the page's inset at its sides, which the theme gives to what
+			// stands above and below the list.
+			if (content.Controls.OfType<DataGridView>().Any(x => x.Dock == DockStyle.Fill))
+				content.Padding = new Padding(3, 0, 3, 0);
+			page.Controls.Add(content);
+			var tabs = new TabControl { Dock = DockStyle.Fill, ImageList = pictures };
+			tabs.TabPages.Add(page);
+			var holder = new Panel { Dock = DockStyle.Fill, Padding = new Padding(3) };
+			holder.Controls.Add(tabs);
+			var tools = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Padding = new Padding(4, 2, 4, 0) };
+			tools.Items.Add(new ToolStripLabel("Game:"));
+			tools.Items.Add(new ToolStripComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
+			tools.Items.Add(new ToolStripButton("Save All", App.Properties.Resources.save_32x32)
+			{
+				Alignment = ToolStripItemAlignment.Right,
+				ImageScaling = ToolStripItemImageScaling.None,
+				Margin = new Padding(1),
+				Padding = new Padding(0, 0, 0, 2),
+			});
+			var status = new StatusStrip { SizingGrip = false };
+			status.Items.Add(new ToolStripStatusLabel("Ready"));
+			status.Items.Add(new ToolStripButton("UI Hz: 0") { DisplayStyle = ToolStripItemDisplayStyle.Text });
+			status.Items.Add(new ToolStripStatusLabel("Errors: 0 | 0", App.Properties.Resources.error_32x32)
+			{
+				BorderSides = ToolStripStatusLabelBorderSides.Left,
+				ImageAlign = ContentAlignment.MiddleRight,
+				ImageScaling = ToolStripItemImageScaling.None,
+				Padding = new Padding(4, 0, 0, 0),
+			});
+			var window = new BaseFormWithHeader();
+			window.SuspendLayout();
+			window.AutoScaleDimensions = new SizeF(6F, 13F);
+			window.AutoScaleMode = AutoScaleMode.Font;
+			window.ClientSize = MainWindowSize();
+			window.Controls.Add(holder);
+			window.Controls.Add(tools);
+			window.Controls.Add(status);
+			// Docked as the main window docks them: the header, the status bar, the tool bar, then the tabs in what is left.
+			window.Controls.SetChildIndex(status, 0);
+			window.Controls.SetChildIndex(tools, 0);
+			window.Controls.SetChildIndex(holder, 0);
+			window.ResumeLayout(false);
+			return window;
+		}
+
+		/// <summary>The main window's default size, as its designer file sets it.</summary>
+		static Size MainWindowSize()
+		{
+			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.Designer.cs"));
+			var match = Regex.Match(source, @"this\.ClientSize = new System\.Drawing\.Size\((\d+), (\d+)\);");
+			Assert.IsTrue(match.Success, "The main window's size was not found in its designer file.");
+			return new Size(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+		}
+
+		/// <summary>
+		/// A font wider than Windows', at the size of the interface font: Verdana, which Windows carries, or the interface font a
+		/// quarter larger where it is missing.
+		/// </summary>
+		static Font WiderFont()
+		{
+			var size = Control.DefaultFont.SizeInPoints;
+			using (var installed = new InstalledFontCollection())
+				return installed.Families.Any(x => x.Name == "Verdana")
+					? new Font("Verdana", size)
+					: new Font(Control.DefaultFont.FontFamily, size * 1.25f);
+		}
+
+		/// <summary>The controls a control stands in, from its own parent up to, and not including, <paramref name="top"/>.</summary>
+		static IEnumerable<Control> Holders(Control control, Control top)
+		{
+			for (var parent = control.Parent; parent != null && parent != top; parent = parent.Parent)
+				yield return parent;
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
@@ -118,11 +456,11 @@ namespace x360ce.Tests
 					// The program's settings keep a tunnel, so its tab is shown and measured too.
 					ai.Bind(new AiAccessSettings());
 					// The longest status the page writes: a copy from a newer program, with a version of full width.
-					foreach (var name in new[] { "AiSkillClaudeStatusText", "AiSkillAgentsStatusText" })
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiSkillClaudeStatusText), nameof(AiAccessUserControl.AiSkillAgentsStatusText) })
 						ai.Controls.Find(name, true).Single().Text = "Version 4.25.300.0, from a newer program.";
-					ai.Controls.Find("AiAccessTokenTextBox", true).Single().Text = McpListener.NewToken();
+					ai.Controls.Find(nameof(AiAccessUserControl.AiAccessTokenTextBox), true).Single().Text = McpListener.NewToken();
 					ai.PerformLayout();
-					foreach (var section in new[] { "AiHeaderPanel", "AiSkillPanel", "AiAccessPanel", "AiTunnelPanel" })
+					foreach (var section in new[] { nameof(AiAccessUserControl.AiHeaderPanel), nameof(AiAccessUserControl.AiSkillPanel), nameof(AiAccessUserControl.AiAccessPanel), nameof(AiAccessUserControl.AiTunnelPanel) })
 					{
 						var table = (TableLayoutPanel)ai.Controls.Find(section, true).Single();
 						// A section is measured on its tab, in front, as a person sees it.
@@ -140,7 +478,7 @@ namespace x360ce.Tests
 								", with the page " + factor + " times its designed width.");
 					}
 					// A box that wraps grows to its lines; a line below its bottom edge is cut off.
-					foreach (var name in new[] { "AiExampleTextBox", "AiAccessTokenTextBox", "AiAccessSnippetTextBox" })
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiExampleTextBox), nameof(AiAccessUserControl.AiAccessTokenTextBox), nameof(AiAccessUserControl.AiAccessSnippetTextBox) })
 					{
 						var box = (TextBox)ai.Controls.Find(name, true).Single();
 						var last = box.GetPositionFromCharIndex(box.TextLength - 1);
@@ -171,12 +509,12 @@ namespace x360ce.Tests
 						FormsTheme.Apply(page);
 						page.CreateControl();
 						page.PerformLayout();
-						var box = content.Controls.Find("CurrentPathTextBox", true).Single();
+						var box = content.Controls.Find(nameof(OptionsSettingsUserControl.CurrentPathTextBox), true).Single();
 						var button = content.Controls.Find("OpenFolderButton", true).Single();
 						Assert.AreSame(box.Parent, button.Parent);
 						Assert.IsTrue(box.Right <= button.Left, string.Format(
 							"At {0:P0} the folder's box {1} runs under Open Folder {2}.", zoom, box.Bounds, button.Bounds));
-						foreach (var name in new[] { "LocationComboBox", "MoveModeComboBox" })
+						foreach (var name in new[] { nameof(OptionsSettingsUserControl.LocationComboBox), nameof(OptionsSettingsUserControl.MoveModeComboBox) })
 						{
 							var list = (ComboBox)content.Controls.Find(name, true).Single();
 							Assert.AreEqual(FormsTheme.GetComboBoxWidth(list), list.Width, string.Format(
@@ -191,16 +529,16 @@ namespace x360ce.Tests
 		[Description("The update log starts just below the Check now row and ends at the bottom of the page, at every zoom")]
 		public void Update_log_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), "LogTextBox", null, "CheckButton",
-				"CheckForUpdatesCheckBox", "PrivacyLabel", "CheckButton", "CheckDigitalSignatureCheckBox", "CheckVersionCheckBox");
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsUpdateUserControl(), nameof(OptionsUpdateUserControl.LogTextBox), null, nameof(OptionsUpdateUserControl.CheckButton),
+				nameof(OptionsUpdateUserControl.CheckForUpdatesCheckBox), nameof(OptionsUpdateUserControl.PrivacyLabel), nameof(OptionsUpdateUserControl.CheckButton), nameof(OptionsUpdateUserControl.CheckDigitalSignatureCheckBox), nameof(OptionsUpdateUserControl.CheckVersionCheckBox));
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("The plugin list starts just below the folder row and ends just above the AutoHotkey group, which ends at the bottom of the page, and the note wraps inside the page, at every zoom")]
 		public void Plugins_list_follows_the_rows_above_it_at_every_zoom()
 		{
-			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), "PluginsDataGridView", "AutoHotkeyGroupBox", "OpenFolderButton",
-				"AllowThirdPartyPluginsCheckBox", "NoteLabel", "FolderLabel", "FolderTextBox", "OpenFolderButton");
+			FollowsTheRowsAboveItAtEveryZoom(() => new OptionsPluginsUserControl(), nameof(OptionsPluginsUserControl.PluginsDataGridView), nameof(OptionsPluginsUserControl.AutoHotkeyGroupBox), "OpenFolderButton",
+				nameof(OptionsPluginsUserControl.AllowThirdPartyPluginsCheckBox), nameof(OptionsPluginsUserControl.NoteLabel), nameof(OptionsPluginsUserControl.FolderLabel), nameof(OptionsPluginsUserControl.FolderTextBox), "OpenFolderButton");
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
@@ -262,11 +600,12 @@ namespace x360ce.Tests
 
 		/// <summary>
 		/// Where a page's content starts, from the page's own edge: the left of its leftmost control and the top of its
-		/// topmost, leaving out the panels and tables that only place them.
+		/// topmost, leaving out the panels and tables that only place them, and the lists, which stand edge to edge.
 		/// </summary>
 		static Point Start(Control page)
 		{
-			var shown = Shown(page).Select(x => page.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds))).ToList();
+			var shown = Shown(page).Where(x => !(x is DataGridView) && !(x.Parent is DataGridView))
+				.Select(x => page.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds))).ToList();
 			return new Point(shown.Min(x => x.Left), shown.Min(x => x.Top));
 		}
 

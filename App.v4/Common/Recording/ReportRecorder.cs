@@ -118,6 +118,9 @@ namespace x360ce.App.Recording
 			PadLive,
 			GameForce,
 			Text,
+			RawViewAtStart,
+			RawDiffers,
+			RawAgrees,
 		}
 
 		/// <summary>One change the engine handed over. Plain fields, so a write makes nothing.</summary>
@@ -201,7 +204,7 @@ namespace x360ce.App.Recording
 				if (ud.DiReadFailures != t.ReadFailures)
 				{
 					t.ReadFailures = ud.DiReadFailures;
-					Add(now, Kind.ReadFailures, ud, 0, t.ReadFailures);
+					Add(now, Kind.ReadFailures, ud, 0, t.ReadFailures, t.ReadFailures == 0 ? 0 : ud.DiReadError);
 				}
 				if (ud.RawInputMissing != t.RawInputMissing)
 				{
@@ -215,14 +218,16 @@ namespace x360ce.App.Recording
 			if (Has(RecordParts.Forces))
 			{
 				var held = ud.IsExclusiveMode.HasValue ? (ud.IsExclusiveMode.Value ? 1 : 0) : -1;
-				var heldKey = held * 2 + (ud.AutoCenter ? 1 : 0);
+				// Its own centring as the engine set it, or 2 when the engine left it as the driver has it.
+				var centring = ud.AutoCenterSet ? (ud.AutoCenter ? 1 : 0) : 2;
+				var heldKey = held * 3 + centring;
 				if (heldKey != t.Held)
 				{
 					// A device never held, such as one with no force feedback, says nothing.
 					var first = t.Held == int.MinValue;
 					t.Held = heldKey;
 					if (!first || held >= 0)
-						Add(now, Kind.Held, ud, 0, held, ud.AutoCenter ? 1 : 0);
+						Add(now, Kind.Held, ud, 0, held, centring, held < 0 ? ud.LetGoReason : 0, held < 0 ? ud.LetGoError : 0);
 				}
 				var hasForce = ud.FFState != null;
 				if (hasForce != t.HasForce)
@@ -279,6 +284,123 @@ namespace x360ce.App.Recording
 				Add(now, kind, ud, i, (int)MapType.Slider, state.Sliders[i]);
 			}
 		}
+
+		#region Raw Input view
+
+		/// <summary>How far an axis or slider read through Raw Input may be from DirectInput's reading before the two differ: one sixteenth of the travel.</summary>
+		public const int RawAxisGap = 4096;
+
+		/// <summary>How long the two readings must differ before it is written: a moving control reaches one a moment before the other.</summary>
+		public static readonly long RawDifferTicks = Stopwatch.Frequency / 10;
+
+		/// <summary>A device read through DirectInput on a controller, beside the same controller read through Raw Input.</summary>
+		/// <remarks>
+		/// Raw Input hands over each report the device sends, before any driver of DirectInput's makes anything of it. Where
+		/// the two readings part, the report shows which one went wrong: a stick at the end in both was sent by the device;
+		/// at the end in DirectInput only was made by the driver's side. Made by the writer, and filled by the engine only.
+		/// </remarks>
+		internal sealed class RawView
+		{
+			public RawView(UserDevice device, UserDevice twin)
+			{
+				Device = device;
+				Twin = twin;
+				var count = State.Axis.Length + State.Sliders.Length + State.Povs.Length + State.Buttons.Length;
+				DifferSince = new long[count];
+				Said = new bool[count];
+			}
+
+			public readonly UserDevice Device;
+			public readonly UserDevice Twin;
+			public readonly SourceState State = new SourceState();
+			/// <summary>When each control's two readings began to differ, or nought while they agree. Axes, then sliders, hats and buttons.</summary>
+			public readonly long[] DifferSince;
+			/// <summary>Whether the difference of each control was written.</summary>
+			public readonly bool[] Said;
+			public bool StartWritten;
+			public bool Missing;
+		}
+
+		/// <summary>The devices compared with their Raw Input reading. Replaced whole by the writer, read by the engine.</summary>
+		internal RawView[] _rawViews;
+
+		/// <summary>Compares each device on a controller with its own reports as Raw Input reads them, and writes where the two part for longer than <see cref="RawDifferTicks"/>. Engine thread only.</summary>
+		/// <remarks>One copy of the device's newest report and a compare per control a pass, with nothing made.</remarks>
+		public void RawViews(RawInputHub hub, DeviceRouting routing, long now)
+		{
+			var views = Volatile.Read(ref _rawViews);
+			if (views == null || hub == null)
+				return;
+			var mapped = routing.MappedDevices;
+			for (var v = 0; v < views.Length; v++)
+			{
+				var view = views[v];
+				var state = view.Device.SourceState;
+				// A Raw Input device on a controller itself is read, and recorded, as a device of its own: a second copy
+				// taken here would take the news of its reports from the engine.
+				if (state == null || IsMapped(mapped, view.Twin))
+					continue;
+				bool fresh;
+				var found = hub.TryCopyState(view.Twin.InstanceGuid, view.State, out fresh);
+				if (found == view.Missing)
+				{
+					view.Missing = !found;
+					Add(now, Kind.RawInputMissing, view.Device, 0, found ? 0 : 1);
+				}
+				if (!found)
+					continue;
+				var raw = view.State;
+				var c = 0;
+				var moving = (view.Device.DiRelativeAxisMask | view.Device.DiRelativeSliderMask) != 0;
+				for (var i = 0; i < raw.Axis.Length; i++, c++)
+					Compare(view, now, c, MapType.Axis, i, raw.Axis[i], state.Axis[i], !moving && (view.Device.DiAxeMask & (1 << i)) != 0);
+				for (var i = 0; i < raw.Sliders.Length; i++, c++)
+					Compare(view, now, c, MapType.Slider, i, raw.Sliders[i], state.Sliders[i], !moving && (view.Device.DiSliderMask & (1 << i)) != 0);
+				for (var i = 0; i < raw.Povs.Length; i++, c++)
+					Compare(view, now, c, MapType.POV, i, raw.Povs[i], state.Povs[i], i < view.Device.CapPovCount);
+				for (var i = 0; i < raw.Buttons.Length; i++, c++)
+					Compare(view, now, c, MapType.Button, i, raw.Buttons[i] ? 1 : 0, state.Buttons[i] ? 1 : 0, i < view.Device.CapButtonCount);
+				view.StartWritten = true;
+			}
+		}
+
+		static bool IsMapped(UserDevice[] mapped, UserDevice device)
+		{
+			for (var i = 0; i < mapped.Length; i++)
+				if (ReferenceEquals(mapped[i], device))
+					return true;
+			return false;
+		}
+
+		void Compare(RawView view, long now, int c, MapType type, int index, int raw, int direct, bool has)
+		{
+			if (!has)
+				return;
+			if (!view.StartWritten && (type != MapType.Button || raw != 0))
+				Add(now, Kind.RawViewAtStart, view.Device, index, (int)type, raw);
+			var differs = type == MapType.Axis || type == MapType.Slider ? Math.Abs(raw - direct) >= RawAxisGap : raw != direct;
+			var since = view.DifferSince[c];
+			if (!differs)
+			{
+				if (since != 0 && view.Said[c])
+					Add(now, Kind.RawAgrees, view.Device, index, (int)type, (int)Math.Min(int.MaxValue, (now - since) * 1000L / Stopwatch.Frequency));
+				view.DifferSince[c] = 0;
+				view.Said[c] = false;
+				return;
+			}
+			if (since == 0)
+			{
+				view.DifferSince[c] = now;
+				return;
+			}
+			if (!view.Said[c] && now - since >= RawDifferTicks)
+			{
+				view.Said[c] = true;
+				Add(now, Kind.RawDiffers, view.Device, index, (int)type, raw, direct);
+			}
+		}
+
+		#endregion
 
 		/// <summary>Records the force sent to a device: each motor 0 to 255, as merged from its controllers. Engine thread only.</summary>
 		public void Force(UserDevice ud, byte large, byte small)
@@ -492,7 +614,7 @@ namespace x360ce.App.Recording
 			_wake.Dispose();
 		}
 
-		void LogHelper_WritingException(object sender, LogHelperEventArgs e)
+		internal void LogHelper_WritingException(object sender, LogHelperEventArgs e)
 		{
 			// Worded by the writer: the engine thread logs errors too, and must not wait while one is.
 			if (e.Exception != null)
@@ -625,6 +747,31 @@ namespace x360ce.App.Recording
 			return value < 0 ? "centred" : (value / 100).ToString(CultureInfo.InvariantCulture) + "°";
 		}
 
+		/// <summary>A control's reading as words: a button down or up, a hat's direction, an axis's or slider's number.</summary>
+		static string ControlValue(MapType type, int value)
+		{
+			return type == MapType.Button ? (value != 0 ? "down" : "up") : type == MapType.POV ? Hat(value) : value.ToString(CultureInfo.InvariantCulture);
+		}
+
+		/// <summary>An error code in brackets, or nothing for nought.</summary>
+		static string Error(int code)
+		{
+			return code == 0 ? "" : " (0x" + code.ToString("X8", CultureInfo.InvariantCulture) + ")";
+		}
+
+		/// <summary>Why the engine let go of a device, as words, or nothing when it noted no reason.</summary>
+		static string LetGo(DInputHelper.LetGoReason reason)
+		{
+			switch (reason)
+			{
+				case DInputHelper.LetGoReason.Centering: return " to change its own centring";
+				case DInputHelper.LetGoReason.ForceOff: return " as force feedback was switched off";
+				case DInputHelper.LetGoReason.ForceHoldLost: return " as a force call found it no longer held";
+				case DInputHelper.LetGoReason.ReadFailed: return " as a read failed";
+			}
+			return "";
+		}
+
 		static string Pad(int index)
 		{
 			return "C" + (index + 1).ToString(CultureInfo.InvariantCulture);
@@ -640,15 +787,25 @@ namespace x360ce.App.Recording
 				case Kind.Input:
 				case Kind.InputAtStart:
 					var type = (MapType)e.A;
-					var value = type == MapType.Button ? (e.B != 0 ? "down" : "up") : type == MapType.POV ? Hat(e.B) : e.B.ToString(CultureInfo.InvariantCulture);
-					return d + " " + ControlName(type, e.Index) + " " + value + (e.Kind == Kind.InputAtStart ? " (at start)" : "");
+					return d + " " + ControlName(type, e.Index) + " " + ControlValue(type, e.B) + (e.Kind == Kind.InputAtStart ? " (at start)" : "");
+				case Kind.RawViewAtStart:
+					return d + " Raw Input: " + ControlName((MapType)e.A, e.Index) + " " + ControlValue((MapType)e.A, e.B) + " (at start)";
+				case Kind.RawDiffers:
+					return d + " Raw Input reads " + ControlName((MapType)e.A, e.Index) + " " + ControlValue((MapType)e.A, e.B)
+						+ " while DirectInput reads " + ControlValue((MapType)e.A, e.C);
+				case Kind.RawAgrees:
+					return d + " Raw Input and DirectInput agree on " + ControlName((MapType)e.A, e.Index) + " again after "
+						+ (e.B / 1000.0).ToString("0.0", CultureInfo.InvariantCulture) + " s";
 				case Kind.ReadFailures:
-					return e.A == 0 ? d + " reads again" : d + " read failed " + e.A + " time" + (e.A == 1 ? "" : "s") + " in a row";
+					return e.A == 0 ? d + " reads again" : d + " read failed " + e.A + " time" + (e.A == 1 ? "" : "s") + " in a row" + Error(e.B);
 				case Kind.RawInputMissing:
 					return e.A != 0 ? d + " is missing from Raw Input" : d + " is back in Raw Input";
 				case Kind.Held:
-					var held = e.A < 0 ? "let go" : e.A > 0 ? "held exclusively" : "held shared";
-					return d + " " + held + (e.A > 0 ? ", its own centring " + (e.B != 0 ? "on" : "off") : "");
+					if (e.A < 0)
+						return d + " let go" + LetGo((DInputHelper.LetGoReason)e.C) + Error(e.D);
+					if (e.A == 0)
+						return d + " held shared";
+					return d + " held exclusively, its own centring " + (e.B == 2 ? "left as its driver has it" : e.B != 0 ? "on" : "off");
 				case Kind.ForceState:
 					return d + (e.A != 0 ? " force effects made" : " force effects stopped");
 				case Kind.ForceFailed:
@@ -742,6 +899,10 @@ namespace x360ce.App.Recording
 			}
 			if (Has(RecordParts.Settings) || Has(RecordParts.Input))
 				SampleDevices();
+			if (Has(RecordParts.Input))
+				SampleRawViews();
+			if (Has(RecordParts.Forces))
+				SampleForceCalls();
 			if (Has(RecordParts.Settings))
 				SampleSettings();
 			WriteDue();

@@ -17,19 +17,21 @@ namespace x360ce.App
 
 		void InitMinimize()
 		{
-			OptionsPanel.MinimizeToTrayCheckBox.Checked = SettingsManager.Options.MinimizeToTray;
-			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged += MinimizeToTrayCheckBox_CheckedChanged;
 			Resize += MainForm_Resize;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
 			TrayContextMenuStrip.Opening += TrayContextMenuStrip_Opening;
+			// The default item, in bold, in the menu's own font.
+			OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font(TrayContextMenuStrip.Font, System.Drawing.FontStyle.Bold);
 			// Run event once to apply settings.
 			MainForm_Resize(this, new EventArgs());
 		}
 
 		void UnInitMinimize()
 		{
-			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged -= MinimizeToTrayCheckBox_CheckedChanged;
+			if (Main == null)
+				return;
+			Main.OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged -= MinimizeToTrayCheckBox_CheckedChanged;
 		}
 
 		FormWindowState? oldWindowState;
@@ -53,12 +55,13 @@ namespace x360ce.App
 				// Form GUI update is very heavy on CPU.
 				// Enable form GUI update only if form is not minimized.
 				EnableFormUpdates(WindowState != FormWindowState.Minimized && !Program.IsClosing);
+				UpdateTabWindowsTimer();
 			}
 		}
 
 		private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.MinimizeToTray = OptionsPanel.MinimizeToTrayCheckBox.Checked;
+			SettingsManager.Options.MinimizeToTray = Main.OptionsPanel.MinimizeToTrayCheckBox.Checked;
 		}
 
 		private void TrayNotifyIcon_Click(object sender, EventArgs e)

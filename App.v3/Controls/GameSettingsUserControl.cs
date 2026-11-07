@@ -360,7 +360,7 @@ namespace x360ce.App.Controls
 			//else
 			if (column == MyIconColumn)
 			{
-				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
+				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_32x32;
 			}
 			else
 			{

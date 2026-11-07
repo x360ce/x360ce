@@ -28,7 +28,7 @@ namespace x360ce.Tests
 	{
 		internal static object LoadLock()
 		{
-			return typeof(SystemXInput).GetField("LoadLock", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+			return typeof(SystemXInput).GetField(nameof(SystemXInput.LoadLock), BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]
@@ -99,7 +99,7 @@ namespace x360ce.Tests
 			var limit = TimeSpan.FromSeconds(1);
 			Assert.IsTrue(SystemXInput.ReadPlaces(places, limit), "XInput does not answer before the test.");
 			// A driver that faults inside the read stands in for anything the reader does not expect.
-			var field = typeof(SystemXInput).GetField("_GetState", BindingFlags.NonPublic | BindingFlags.Static);
+			var field = typeof(SystemXInput).GetField(nameof(SystemXInput._GetState), BindingFlags.NonPublic | BindingFlags.Static);
 			var loaded = field.GetValue(null);
 			var faulting = Expression.Lambda(field.FieldType,
 				Expression.Throw(Expression.New(typeof(InvalidOperationException)), typeof(int)),
@@ -132,7 +132,7 @@ namespace x360ce.Tests
 		[Description("A plug whose place XInput never says during the whole wait is put down to XInput, not to the bus")]
 		public void A_place_wait_xinput_never_answers_is_not_blamed_on_the_bus()
 		{
-			var wait = typeof(DInputHelper).GetMethod("WaitForPlace", BindingFlags.NonPublic | BindingFlags.Static, null,
+			var wait = typeof(DInputHelper).GetMethod(nameof(DInputHelper.WaitForPlace), BindingFlags.NonPublic | BindingFlags.Static, null,
 				new[] { typeof(bool[]), typeof(bool).MakeByRefType() }, null);
 			Assert.IsNotNull(wait, "The wait for a place does not say whether XInput answered.");
 			var silent = new object[] { new bool[4], true };
@@ -336,8 +336,8 @@ namespace x360ce.Tests
 		public void Vibration_is_sent_only_under_the_load_lock()
 		{
 			var helper = new DInputHelper();
-			var passForceTo = typeof(DInputHelper).GetMethod("PassForceTo", BindingFlags.NonPublic | BindingFlags.Instance);
-			var last = (int[])typeof(DInputHelper).GetField("_lastPassedForce", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			var passForceTo = typeof(DInputHelper).GetMethod(nameof(DInputHelper.PassForceTo), BindingFlags.NonPublic | BindingFlags.Instance);
+			var last = (int[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastPassedForce), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
 			bool? sent = true;
 			long took = -1;
 			long engineTook = -1;

@@ -224,16 +224,16 @@ namespace x360ce.App
 						e.Value = null;
 						break;
 					case IssueSeverity.Low:
-						e.Value = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Information_64x64");
 						break;
 					case IssueSeverity.Important:
-						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_64x64");
 						break;
 					case IssueSeverity.Moderate:
-						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Warning_64x64");
 						break;
 					case IssueSeverity.Critical:
-						e.Value = (Image)icons.GetObject("MessageBoxIcon_Error_32x32");
+						e.Value = (Image)icons.GetObject("MessageBoxIcon_Error_64x64");
 						break;
 					default:
 						break;

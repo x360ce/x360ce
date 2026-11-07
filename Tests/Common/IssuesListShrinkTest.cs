@@ -27,13 +27,13 @@ namespace x360ce.Tests
 		[Description("The Issues list survives an issue leaving while its rows are drawn")]
 		public void The_issues_list_survives_an_issue_leaving_while_it_draws()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				using (var form = new Form { ClientSize = new Size(800, 400) })
 				using (var control = new IssuesUserControl { Dock = DockStyle.Fill })
 				{
 					form.Controls.Add(control);
-					var grid = (DataGridView)control.Controls.Find("WarningsDataGridView", true).Single();
+					var grid = (DataGridView)control.Controls.Find(nameof(IssuesUserControl.WarningsDataGridView), true).Single();
 					form.Show();
 					foreach (var i in Enumerable.Range(1, 3))
 						control.Warnings.Add(new IssueItem { Name = "Issue " + i, FixName = "Fix " + i, Severity = IssueSeverity.Moderate });

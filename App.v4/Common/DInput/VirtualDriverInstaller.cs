@@ -1134,8 +1134,9 @@ namespace x360ce.App.DInput
 		#region HidHide
 
 		// HidHide is the maintained successor to HID Guardian, which its author archived in 2023.
-		// It ships as its own signed installer and carries its own configuration program, so this
-		// application only detects it and opens its tools; it never installs or configures it.
+		// It ships as its own signed setup and carries its own configuration program. This application
+		// runs that setup only when the person asks (HidHideSetupClient), and changes what it hides only
+		// through its command line program when the person asks.
 
 		/// <summary>Root device the HidHide driver installs under.</summary>
 		public const string HidHideHardwareId = "Root\\HidHide";
@@ -1239,9 +1240,6 @@ namespace x360ce.App.DInput
 			/// <summary>Full paths of the programs on the application list.</summary>
 			public string[] Applications = new string[0];
 
-			/// <summary>When this was read, in universal time.</summary>
-			public DateTime ReadTime;
-
 			/// <summary>Whether a device instance path is on the hidden list.</summary>
 			/// <remarks>Windows ignores case in device instance paths, so this does too.</remarks>
 			public bool IsHidden(string deviceInstancePath)
@@ -1265,35 +1263,33 @@ namespace x360ce.App.DInput
 		/// <summary>Longest wait for HidHide's command line program to answer, in milliseconds.</summary>
 		const int HidHideCliTimeout = 3000;
 
-		/// <summary>How long one reading of HidHide's settings is used before it is read again.</summary>
-		/// <remarks>
-		/// The issue check runs every five seconds and every reading starts a process. The settings change
-		/// only when somebody uses HidHide's own program, so a reading a quarter of a minute old is soon enough.
-		/// </remarks>
-		static readonly TimeSpan HidHideStateLifetime = TimeSpan.FromSeconds(15);
-
 		/// <summary>The last reading. Replaced whole and never changed, so any thread may read it.</summary>
 		static HidHideState LastHidHideState;
+
+		/// <summary>Lets go of the last reading, because HID Hide's settings may have changed.</summary>
+		public static void ForgetHidHideState()
+		{
+			LastHidHideState = null;
+		}
 
 		/// <summary>What HidHide is set to do, read through its command line program.</summary>
 		/// <remarks>
 		/// HidHide keeps its settings where only an administrator can read them, but HidHideCLI.exe answers
 		/// anybody. Starting a process and waiting up to <see cref="HidHideCliTimeout"/> for it is no work for
-		/// the device thread, so only the issue check calls this, and a reading is reused for
-		/// <see cref="HidHideStateLifetime"/>. It only reads; it never changes HidHide's settings.
+		/// the device thread, so only the issue check calls this, and a reading stands until
+		/// <see cref="ForgetHidHideState"/>. It only reads; it never changes HidHide's settings.
 		/// </remarks>
 		/// <param name="fresh">Read again rather than use the last reading: before a change, which starts from what HID Hide holds now.</param>
 		public static HidHideState GetHidHideState(bool fresh = false)
 		{
 			var state = LastHidHideState;
-			if (!fresh && state != null && DateTime.UtcNow - state.ReadTime < HidHideStateLifetime)
+			if (!fresh && state != null)
 				return state;
 			var installed = IsHidHideDevicePresent();
 			var cli = installed ? GetHidHideProgramPath("HidHideCLI.exe") : null;
 			var output = cli == null ? null : RunHidHideCli(cli, "--cloak-state --inv-state --dev-list --app-list");
 			state = ParseHidHideCli(output);
 			state.Installed = installed;
-			state.ReadTime = DateTime.UtcNow;
 			LastHidHideState = state;
 			return state;
 		}

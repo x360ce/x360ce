@@ -171,22 +171,22 @@ namespace x360ce.App.Controls
 			UpdateImage();
 		}
 
-		private void ArrowPictureBox_EnabledChanged(object sender, EventArgs e)
-		{
-			// Taken from the resources each time rather than kept, so it is the theme's.
-			var arrow = Properties.Resources.arrow_right_gray_16x16;
-			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrow : AppHelper.GetDisabledImage(arrow);
-		}
-
 		private State _gamepadState;
 		private Bitmap _markB;
 
 		public void Refresh(State gamePadState, Bitmap markB)
 		{
+			// Painted from whether this button is on, so only that needs a new picture. This runs on every state update.
+			var on = (gamePadState.Gamepad.Buttons & _GamepadButton) == _GamepadButton;
+			var changed = on != _shownOn || markB != _markB;
 			_gamepadState = gamePadState;
 			_markB = markB;
-			ButtonImagePictureBox.Refresh();
+			_shownOn = on;
+			if (changed)
+				ButtonImagePictureBox.Invalidate();
 		}
+
+		bool _shownOn;
 
 		private void ButtonImagePictureBox_Paint(object sender, PaintEventArgs e)
 		{

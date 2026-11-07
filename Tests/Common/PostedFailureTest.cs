@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/JocysCom/Controls/ControlsHelper.cs
+﻿// @under-test: Engine/JocysCom/Controls/ControlsHelper.cs, Tests/TestInfrastructure/Ui.cs
 // @area: diagnostics   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,6 +37,22 @@ namespace x360ce.Tests
 				StringAssert.Contains(ui.Failure.StackTrace ?? "", "PostedFailureTest.cs",
 					"The report does not name the file that failed, so it cannot be acted on.");
 			}
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("ui")]
+		[Description("A window that fails as a test shows it fails that test with its failure, rather than leaving the run waiting on the framework's error dialog")]
+		public void A_failure_while_a_test_shows_a_window_fails_the_test()
+		{
+			var failed = Assert.ThrowsExactly<AssertFailedException>(() => Ui.OnUiThread(() =>
+			{
+				using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-5000, -5000), ShowInTaskbar = false })
+				{
+					form.Load += (s, e) => { throw new FormatException("Deliberate failure while the window is shown"); };
+					form.Show();
+				}
+			}, "Showing the window"));
+			StringAssert.Contains(failed.Message, "Showing the window failed on the interface thread");
+			StringAssert.Contains(failed.Message, "Deliberate failure while the window is shown");
 		}
 
 		/// <summary>Fails the way posted work fails: on the interface thread, with nobody waiting.</summary>

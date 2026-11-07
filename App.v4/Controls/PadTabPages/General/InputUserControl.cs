@@ -39,7 +39,7 @@ namespace x360ce.App.Controls
 			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			SourceLabel = new Label
 			{
-				Name = "SourceLabel",
+				Name = nameof(SourceLabel),
 				AutoSize = true,
 				Dock = DockStyle.Top,
 				AutoEllipsis = true,

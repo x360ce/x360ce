@@ -23,7 +23,7 @@ namespace x360ce.App.Issues
 	/// badly carries dozens, each walked by every read of the machine and each a line in Device Manager
 	/// that looks like a fault. They are named here as well, and the same removal takes them away.
 	/// </remarks>
-	class LeftoverVirtualPadsIssue : IssueItem
+	class LeftoverVirtualPadsIssue : OnChangeIssue
 	{
 		public LeftoverVirtualPadsIssue() : base()
 		{
@@ -36,12 +36,12 @@ namespace x360ce.App.Issues
 
 		public override void CheckTask()
 		{
-			// Not in the round of checks at start-up. The controller pages wait for that round, and on a
-			// machine that keeps hundreds of records of old controllers the first reading takes seconds,
-			// under the lock the device list read also waits on. Nothing here can stop the program
+			// Not in the round of checks at start-up. On a machine that keeps hundreds of records of old
+			// controllers the first reading takes seconds, under the lock the device list read also waits
+			// on, while the engine starts and plugs its controllers in. Nothing here can stop the program
 			// working, so the next round, a few seconds after the controllers are running, answers it.
 			var form = MainForm.Current;
-			if (form != null && !form.AllowDHelperStart)
+			if (form != null && form.CheckingAtStartup)
 				return;
 			var pads = DInput.VirtualDriverInstaller.GetLeftoverVirtualPads();
 			if (pads.Length == 0)

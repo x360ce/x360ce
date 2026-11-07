@@ -112,7 +112,7 @@ namespace x360ce.Tests
 		static Process Start(int faultAfterSeconds)
 		{
 			var exe = Ui.FindApp("App.v4");
-			var info = new ProcessStartInfo(exe)
+			var info = new ProcessStartInfo(exe, TestRun.ProfileArgument)
 			{
 				WorkingDirectory = Path.GetDirectoryName(exe),
 				UseShellExecute = false,

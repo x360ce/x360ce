@@ -1,5 +1,5 @@
-"""Writes the controller pictures and button glyphs of x360ce v3 and v4, at 1, 1.5 and 2 times the
-size the programs draw them at.
+"""Writes the controller pictures and button glyphs of x360ce v3 and v4, at twice the size the programs
+show them at 100%.
 
 Pictures and glyphs are cut from the masters, controller/xboxController_6x.png and
 controller/xboxControllerDark_6x.png beside this script, which hold both views of the controller at six
@@ -8,15 +8,13 @@ times the size: the top view in rows 0-630, an 8-pixel gap (48 at 6x) and the fr
 the background is made fully clear where it is almost clear. Every size is cut from the same master, so
 each part stays where the programs' marks expect it.
 
-- Pictures: Resources/Images/shared/xbox/xboxController{Top,Front}{,Dark}.png at 256 x 105 and
-  256 x 176, and their versions named by their size, such as xboxControllerTop_384x158.png. The
-  programs load a picture with its versions (EngineHelper.GetResourcePicture) and draw the one nearest
-  above the size they need.
-- Button glyphs: Resources/Images/shared/xbox/Button_*.png, each button cut out in its own shape (the
-  D-pad glyphs are its four sides), with its versions named by their size, and the dark theme's in
+- Pictures: Resources/Images/shared/xbox/xboxController{Top,Front}{,Dark}_512x{210,352}.png. The programs load
+  each once (EngineHelper.GetResourcePicture) and bring it down to the size they need.
+- Button glyphs: Resources/Images/shared/xbox/Button_*_{w}x{h}.png, each button cut out in its own shape (the
+  D-pad glyphs are its four sides), and the dark theme's in
   xbox/dark, its greys lifted as the dark icons' are, so a greyed-out glyph still shows on the dark
   background. Back and Start get the arrows the real buttons carry, which the masters lack.
-  build_icons.py lists the versions in Properties/Icons.resx: run it after this script.
+  build_icons.py lists the dark ones in Properties/Icons.resx: run it after this script.
 
     python scripts/art/build_controller.py
 
@@ -33,7 +31,7 @@ from build_icons import pastel
 SCALE = 6
 # View -> (first row and height at 1x in the master, width at 1x).
 VIEWS = {"Top": (0, 105, 256), "Front": (113, 176, 256)}
-MULTIPLES = (1, 1.5, 2)
+MULTIPLES = (2,)
 
 # Button glyph -> (centre x, centre y in master pixels, width and height at 1x, master pixels to a glyph
 # pixel, shape, arrow). Shape: ("circle", r) round on the centre; ("ellipse", rx, ry) on the centre;

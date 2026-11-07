@@ -277,7 +277,7 @@
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(T));
 		}
 
-		private static object loadLock = new object();
+		internal static object loadLock = new object();
 		private static ManualResetEvent resetEvent = new ManualResetEvent(false);
 		private static Exception LastLoadException;
 

@@ -112,8 +112,8 @@ namespace x360ce.Tests
 				var connected = (bool[])helper.LiveXiConnected.Clone();
 				var states = (SharpDX.XInput.State[])helper.LiveXiStates.Clone();
 				var getStates = SettingsManager.Options.GetXInputStates;
-				var update = typeof(PadControl).GetMethod("UpdateControlFromXInput", BindingFlags.NonPublic | BindingFlags.Instance);
-				var drawn = typeof(PadControl).GetField("newConnected", BindingFlags.NonPublic | BindingFlags.Instance);
+				var update = typeof(PadControl).GetMethod(nameof(PadControl.UpdateControlFromXInput), BindingFlags.NonPublic | BindingFlags.Instance);
+				var drawn = typeof(PadControl).GetField(nameof(PadControl.newConnected), BindingFlags.NonPublic | BindingFlags.Instance);
 				try
 				{
 					SettingsManager.Options.GetXInputStates = true;
@@ -130,7 +130,7 @@ namespace x360ce.Tests
 						pad.UpdateSettingsMap();
 						pad.InitPadData();
 						form.Show();
-						var trigger = pad.Controls.Find("LeftTriggerTextBox", true).Single();
+						var trigger = pad.Controls.Find("LeftTriggerValueLabel", true).Single();
 						helper.XiPlaceForPad[1] = 0;
 						update.Invoke(pad, null);
 						Application.DoEvents();

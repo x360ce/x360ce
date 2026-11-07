@@ -49,7 +49,7 @@ namespace x360ce.Tests
 				var pad = (FakePad)FormatterServices.GetUninitializedObject(typeof(FakePad));
 				// Nothing native is behind it, so nothing is freed when it is collected.
 				GC.SuppressFinalize(pad);
-				typeof(Xbox360Controller).GetProperty("RumbleError").SetValue(pad, VIGEM_ERROR.VIGEM_ERROR_NONE);
+				typeof(Xbox360Controller).GetProperty(nameof(Xbox360Controller.RumbleError)).SetValue(pad, VIGEM_ERROR.VIGEM_ERROR_NONE);
 				pad.RemovalAnswer = removalAnswer;
 				return pad;
 			}
@@ -83,7 +83,7 @@ namespace x360ce.Tests
 		/// <summary>The controller each pad keeps for the bus, by pad index.</summary>
 		static Xbox360Controller[] Kept(ViGEmClient client)
 		{
-			return (Xbox360Controller[])typeof(ViGEmClient).GetField("_keptTargets", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(client);
+			return (Xbox360Controller[])typeof(ViGEmClient).GetField(nameof(ViGEmClient._keptTargets), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(client);
 		}
 
 		/// <summary>Runs the action and returns every fault it wrote to the log, which goes nowhere else meanwhile.</summary>
@@ -381,7 +381,7 @@ namespace x360ce.Tests
 			// The controller the bus kept is still ours and can still be listed. Its note pointing at the place the new one
 			// arrived in made two claims on one place, and then neither controller was shown in it.
 			var notes = (Dictionary<string, int>)typeof(XInputPlaces)
-				.GetField("OursByHardware", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+				.GetField(nameof(XInputPlaces.OursByHardware), BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 			const string old = @"RefusedRemovalTest\Old";
 			const string fresh = @"RefusedRemovalTest\New";
 			const string other = @"RefusedRemovalTest\Other";

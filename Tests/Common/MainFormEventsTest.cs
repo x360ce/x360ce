@@ -34,7 +34,7 @@ namespace x360ce.Tests
 		public void The_current_game_handler_stops_once_disposed()
 		{
 			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
-			var handler = Ui.Between(source, "private void CurrentGame_PropertyChanged", "SettingsManager.Current.RaiseSettingsChanged");
+			var handler = Ui.Between(source, "private void CurrentGame_PropertyChanged", "ps.UpdateFromCurrentGame();");
 			StringAssert.Contains(handler, "IsDisposed", "The handler reads disposed controls.");
 		}
 	}

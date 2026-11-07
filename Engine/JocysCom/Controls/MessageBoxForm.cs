@@ -92,22 +92,22 @@ namespace JocysCom.ClassLibrary.Controls
 			LayoutButtons();
 			Message_Resize(this, EventArgs.Empty);
 			var icons = Themes.ThemeResourceManager.Library;
-			var image = (Image)icons.GetObject("MessageBoxIcon_Information_32x32");
+			var image = (Image)icons.GetObject("MessageBoxIcon_Information_64x64");
 			switch (icon)
 			{
 				case MessageBoxIcon.None:
 					if (PlaySounds) System.Media.SystemSounds.Beep.Play();
 					break;
 				case MessageBoxIcon.Error: // Same as 'Hand' and 'Stop'.
-					image = (Image)icons.GetObject("MessageBoxIcon_Error_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Error_64x64");
 					if (PlaySounds) System.Media.SystemSounds.Hand.Play();
 					break;
 				case MessageBoxIcon.Question:
-					image = (Image)icons.GetObject("MessageBoxIcon_Question_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Question_64x64");
 					if (PlaySounds) System.Media.SystemSounds.Question.Play();
 					break;
 				case MessageBoxIcon.Warning: // Same as 'Exclamation'.
-					image = (Image)icons.GetObject("MessageBoxIcon_Warning_32x32");
+					image = (Image)icons.GetObject("MessageBoxIcon_Warning_64x64");
 					if (PlaySounds) System.Media.SystemSounds.Exclamation.Play();
 					break;
 				case MessageBoxIcon.Information: // Same as 'Asterisk'.

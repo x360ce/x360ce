@@ -32,7 +32,7 @@ namespace x360ce.App
 		public static UserGame CurrentGame;
 		public static object CurrentGameLock = new object();
 
-		static object OptionsLock = new object();
+		internal static object OptionsLock = new object();
 
 		public static event PropertyChangedEventHandler CurrentGame_PropertyChanged;
 
@@ -53,7 +53,6 @@ namespace x360ce.App
 				CurrentGame = game;
 				// The engine reads the new game's mappings from its next pass.
 				DInput.DeviceRouting.Refresh();
-				Global.DHelper.SettingsChanged = true;
 				// Nobody may be listening: the main window lets go of this event while it closes, and
 				// the foreground window keeps changing after that.
 				CurrentGame_PropertyChanged?.Invoke(null, null);
@@ -835,6 +834,9 @@ namespace x360ce.App
 		/// </remarks>
 		static void ShowComboBoxValue(ComboBox cbx, string text)
 		{
+			// Filled again, the box reports a change to everything watching it, a dead zone among them.
+			if (cbx.SelectedIndex == 0 && cbx.Items.Count == 1 && cbx.Items[0] as string == text)
+				return;
 			cbx.Items.Clear();
 			cbx.Items.Add(text);
 			cbx.SelectedIndex = 0;
@@ -956,11 +958,15 @@ namespace x360ce.App
 
 		public string GetSettingValue(Control control)
 		{
-			var item = SettingsMap.First(x => x.Control == control);
-			var path = item.IniPath;
-			var section = path.Split('\\')[0];
-			string key = path.Split('\\')[1];
-			var padIndex = SettingName.GetPadIndex(path);
+			return GetSettingValue(SettingsMap.First(x => x.Control == control));
+		}
+
+		/// <summary>The value a mapped box holds, as its setting stores it.</summary>
+		/// <remarks>Given the box's map, so a page read box by box does not look each one up in the whole map.</remarks>
+		public string GetSettingValue(SettingsMapItem item)
+		{
+			var control = item.Control;
+			string key = item.IniPath.Split('\\')[1];
 			string v = string.Empty;
 			if (key == SettingName.HookMode ||
 				key.EndsWith(SettingName.GamePadType) ||
@@ -983,9 +989,7 @@ namespace x360ce.App
 			// If DI menu strip attached.
 			else if (control is ComboBox)
 			{
-				var cbx = (ComboBox)control;
-				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
-				if (map != null && map.Code != default)
+				if (item.Code != default)
 				{
 					// A formula is stored exactly as it was typed. What follows translates the name of
 					// one control into how that control is stored, and a formula is not the name of a
@@ -993,7 +997,7 @@ namespace x360ce.App
 					// reverts to whatever it was mapped to before.
 					if (MapExpression.IsExpression(control.Text))
 						return control.Text.Trim();
-					v = SettingsConverter.ToIniValue(control.Text, map.Code);
+					v = SettingsConverter.ToIniValue(control.Text, item.Code);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
 						v = "0";

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Automation;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.Engine;
 
 namespace x360ce.Tests
@@ -65,7 +66,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				var combos = Ui.WaitFor(() =>
@@ -121,7 +122,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				var tabs = Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(
@@ -135,7 +136,7 @@ namespace x360ce.Tests
 					"The tab strip is called \"" + tabName + "\", which is the help text rather than a name.");
 
 				var grid = Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(
-					AutomationElement.AutomationIdProperty, "MappedDevicesDataGridView")),
+					AutomationElement.AutomationIdProperty, nameof(PadControl.MappedDevicesDataGridView))),
 					TimeSpan.FromSeconds(30), "the mapped devices list");
 
 				var headers = grid

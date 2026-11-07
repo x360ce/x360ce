@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using x360ce.App.DInput;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -63,7 +65,18 @@ namespace x360ce.App.Recording
 				return text.Append(", its keys and buttons are not recorded").ToString();
 			text.Append(", ").Append(Count(ud.CapAxeCount, "axis", "axes")).Append(", ").Append(Count(ud.CapButtonCount, "button", "buttons")).Append(", ").Append(Count(ud.CapPovCount, "hat", "hats"));
 			if ((ud.CapFlags & (int)SharpDX.DirectInput.DeviceFlags.ForceFeedback) != 0)
+			{
 				text.Append(", force feedback");
+				// The driver file, which tells drivers apart where two makers' pads share one.
+				if (!string.IsNullOrEmpty(ud.ForceFeedbackDriver))
+					text.Append(" by ").Append(ShareSafe.Clean(Path.GetFileName(ud.ForceFeedbackDriver)));
+				var objects = ud.DeviceObjects;
+				var motors = objects == null ? new string[0] : objects
+					.Where(x => x.Flags.HasFlag(SharpDX.DirectInput.DeviceObjectTypeFlags.ForceFeedbackActuator))
+					.Select(x => ShareSafe.Clean(x.Name)).ToArray();
+				if (motors.Length > 0)
+					text.Append(", motors on ").Append(string.Join(" and ", motors));
+			}
 			text.Append(", read by ").Append(ud.InputSource);
 			text.Append(ud.IsOnline ? ", online" : ", offline");
 			if (!ud.IsEnabled)
@@ -107,8 +120,11 @@ namespace x360ce.App.Recording
 			WriteLine("Virtual controller driver: " + (vigem == null ? "not installed" : "ViGEmBus " + vigem));
 			var hidHide = VirtualDriverInstaller.GetHidHideVersion();
 			WriteLine("HID Hide: " + (hidHide == null ? "not installed" : ShareSafe.Clean(hidHide)));
-			WriteLine("XInput read back with: " + (string.IsNullOrEmpty(SharpDX.XInput.Controller.LibraryName) ? "nothing yet" : ShareSafe.Clean(SharpDX.XInput.Controller.LibraryName))
-				+ (SharpDX.XInput.Controller.IsLoaded ? ", loaded" : ", not loaded"));
+			if (Has(RecordParts.Output))
+				WriteLine("XInput read back: while recording, so the file holds what games read beside what x360ce sent");
+			else
+				WriteLine("XInput read back with: " + (string.IsNullOrEmpty(SharpDX.XInput.Controller.LibraryName) ? "nothing yet" : ShareSafe.Clean(SharpDX.XInput.Controller.LibraryName))
+					+ (SharpDX.XInput.Controller.IsLoaded ? ", loaded" : ", not loaded"));
 			var engine = _engine;
 			if (engine == null)
 				WriteLine("Engine: not running");
@@ -117,6 +133,8 @@ namespace x360ce.App.Recording
 			WriteLine("Emulated controllers: " + (SettingsManager.Options.XInputEnabled ? "on" : "off (Enable XInput is unticked)"));
 			var game = SettingsManager.CurrentGame;
 			WriteLine("Game: " + (game == null ? "none selected" : ShareSafe.Clean(game.FileName) + ", emulation " + (EmulationType)game.EmulationType));
+			_programs = OtherControllerPrograms();
+			WriteLine("Other programs that read controllers: " + _programs);
 			// Every device, so a device that is not mapped but takes a controller's place shows too.
 			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized()
 				.OrderByDescending(x => game != null && SettingsManager.GetDeviceTabs(game.FileName, x.InstanceGuid).Length > 0)
@@ -302,6 +320,149 @@ namespace x360ce.App.Recording
 			}
 		}
 
+		/// <summary>The devices on a controller with a Raw Input twin, and those found to have none. Writer thread.</summary>
+		readonly HashSet<UserDevice> _noRawView = new HashSet<UserDevice>();
+
+		/// <summary>Hands the engine each device on a controller that is read through DirectInput and has a Raw Input twin, to compare the two. Writer thread.</summary>
+		void SampleRawViews()
+		{
+			var all = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var was = Volatile.Read(ref _rawViews) ?? new RawView[0];
+			var views = new List<RawView>();
+			foreach (var ud in DeviceRouting.Current.MappedDevices)
+			{
+				if (!ud.IsDirectInput || ud.IsKeyboard || ud.IsMouse || !ud.IsOnline)
+					continue;
+				var twin = ud.RawInputTwin(all);
+				if (twin == null)
+				{
+					if (_noRawView.Add(ud))
+						Note(Label(ud) + " has no Raw Input reading to compare with");
+					continue;
+				}
+				views.Add(was.FirstOrDefault(x => x.Device == ud && x.Twin == twin) ?? new RawView(ud, twin));
+			}
+			if (views.Count != was.Length || views.Where((x, i) => x != was[i]).Any())
+				Volatile.Write(ref _rawViews, views.ToArray());
+		}
+
+		/// <summary>What each device's force state had counted at the last look, by device. Writer thread.</summary>
+		readonly Dictionary<UserDevice, int[]> _forceCalls = new Dictionary<UserDevice, int[]>();
+		readonly Dictionary<UserDevice, ForceFeedbackState.CallCounts> _forceCallsOf = new Dictionary<UserDevice, ForceFeedbackState.CallCounts>();
+		readonly Dictionary<UserDevice, string> _forceRefused = new Dictionary<UserDevice, string>();
+
+		/// <summary>Writes what force updates asked of each device's effects in the last second, and what the device refused, when either changed. Writer thread.</summary>
+		void SampleForceCalls()
+		{
+			foreach (var ud in DeviceRouting.Current.MappedDevices)
+			{
+				var ff = ud.FFState;
+				if (ff == null)
+					continue;
+				var c = ff.Counts;
+				var now = new[] { c.Updates, c.Changes, c.Started, c.Made, c.Resumed };
+				int[] last;
+				ForceFeedbackState.CallCounts of;
+				// What a state counted before the recording started is not news. One made since counts from nought.
+				if (!_forceCalls.TryGetValue(ud, out last) || !_forceCallsOf.TryGetValue(ud, out of) || of != c)
+					last = _forceCallsStarted ? new int[now.Length] : now;
+				_forceCalls[ud] = now;
+				_forceCallsOf[ud] = c;
+				var parts = new List<string>();
+				AddCount(parts, now[0] - last[0], "update", "updates");
+				AddCount(parts, now[1] - last[1], "change sent to a motor effect", "changes sent to motor effects");
+				AddCount(parts, now[2] - last[2], "sent with a start, as the driver did not say it was playing", "sent with a start, as the driver did not say they were playing");
+				AddCount(parts, now[3] - last[3], "motor effect made", "motor effects made");
+				AddCount(parts, now[4] - last[4], "effect started again after the device was held again", "effects started again after the device was held again");
+				if (parts.Count > 0)
+					Note(Label(ud) + " force in the last second: " + string.Join(", ", parts));
+				var refused = string.Join(" and ", ff.Refused);
+				string wasRefused;
+				_forceRefused.TryGetValue(ud, out wasRefused);
+				if (refused != (wasRefused ?? ""))
+				{
+					_forceRefused[ud] = refused;
+					Note(Label(ud) + (refused.Length == 0 ? " takes every effect asked of it" : " refused " + refused));
+				}
+			}
+			_forceCallsStarted = true;
+		}
+
+		/// <summary>True after the first look, which takes what each force state had counted as the start.</summary>
+		bool _forceCallsStarted;
+
+		static void AddCount(List<string> parts, int count, string one, string many)
+		{
+			if (count > 0)
+				parts.Add(Count(count, one, many));
+		}
+
+		/// <summary>The start of the process names of programs that read or replace controllers, and can hold a device or play its force themselves.</summary>
+		static readonly string[] ControllerPrograms = {
+			"x360ce", "reWASD", "DS4Windows", "DSX", "Steam", "JoyToKey", "AntiMicroX", "PadRevive", "InputMapper", "BetterJoy",
+			"XOutput", "ScpService", "ScpToolkit", "Xpadder", "Gopher", "JoyXoff" };
+
+		string _programs;
+
+		/// <summary>The other programs running that read or replace controllers, by process name, or "none".</summary>
+		/// <remarks>
+		/// This program's own file run again is left out: it is a command line call, such as the AI door's, that hands its
+		/// work to this copy and ends. Another copy of x360ce, from another folder, holds devices of its own and is named.
+		/// </remarks>
+		static string OtherControllerPrograms()
+		{
+			var found = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+			int self;
+			string selfFile;
+			using (var current = Process.GetCurrentProcess())
+			{
+				self = current.Id;
+				selfFile = current.MainModule.FileName;
+			}
+			foreach (var process in Process.GetProcesses())
+			{
+				using (process)
+				{
+					if (process.Id == self)
+						continue;
+					var name = process.ProcessName;
+					if (!ControllerPrograms.Any(x => name.StartsWith(x, StringComparison.OrdinalIgnoreCase)))
+						continue;
+					if (string.Equals(FileOf(process), selfFile, StringComparison.OrdinalIgnoreCase))
+						continue;
+					found.Add(name);
+				}
+			}
+			return found.Count == 0 ? "none" : ShareSafe.Clean(string.Join(", ", found));
+		}
+
+		/// <summary>The file a process runs, or null when Windows does not say: one run as administrator, or one that has just ended.</summary>
+		static string FileOf(Process process)
+		{
+			try
+			{
+				return process.MainModule.FileName;
+			}
+			catch (System.ComponentModel.Win32Exception)
+			{
+				return null;
+			}
+			catch (InvalidOperationException)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>Writes the other controller programs when the list changed. Writer thread.</summary>
+		void SamplePrograms()
+		{
+			var programs = OtherControllerPrograms();
+			if (programs == _programs)
+				return;
+			_programs = programs;
+			Note("other programs that read controllers: " + programs);
+		}
+
 		/// <summary>Writes the controllers again when a row or a mapping changed. Writer thread.</summary>
 		void SampleSettings()
 		{
@@ -354,6 +515,7 @@ namespace x360ce.App.Recording
 		/// <remarks>Windows gives a program at most 10,000 window objects; past that, no window can be made and the program stops drawing.</remarks>
 		void EveryTenSeconds()
 		{
+			SamplePrograms();
 			if (!Has(RecordParts.Window))
 				return;
 			using (var process = Process.GetCurrentProcess())

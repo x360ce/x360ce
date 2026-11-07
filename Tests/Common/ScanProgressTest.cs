@@ -14,6 +14,7 @@ using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using Program = x360ce.Engine.Data.Program;
 
 namespace x360ce.Tests
 {
@@ -72,7 +73,7 @@ namespace x360ce.Tests
 		/// <summary>The list's own handler for the scan's reports, as the scan attaches it.</summary>
 		static EventHandler<XInputMaskScannerEventArgs> Handler(GamesGridUserControl panel)
 		{
-			var method = typeof(GamesGridUserControl).GetMethod("Scanner_Progress", BindingFlags.Instance | BindingFlags.NonPublic);
+			var method = typeof(GamesGridUserControl).GetMethod(nameof(GamesGridUserControl.Scanner_Progress), BindingFlags.Instance | BindingFlags.NonPublic);
 			return (EventHandler<XInputMaskScannerEventArgs>)Delegate.CreateDelegate(
 				typeof(EventHandler<XInputMaskScannerEventArgs>), panel, method);
 		}
@@ -95,7 +96,7 @@ namespace x360ce.Tests
 			{
 				// A program file in a game folder: what the reported scan was reading (GetMasks, Level 1).
 				File.Copy(typeof(XInputMaskScanner).Assembly.Location, Path.Combine(folder, "game.exe"));
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					using (var form = new Form { ShowInTaskbar = false })
 					using (var panel = new GamesGridUserControl())
@@ -109,7 +110,7 @@ namespace x360ce.Tests
 						SpinWait.SpinUntil(() => scan.IsCompleted, TimeSpan.FromSeconds(10));
 						Assert.IsTrue(scan.IsCompleted, "The scan waited for the window to answer; it runs only as fast as the window draws.");
 						Assert.IsFalse(scan.IsFaulted, "Reporting progress failed on the worker, which ends the program: " + scan.Exception);
-						var label = panel.Controls.Find("ScanProgressLevel1Label", true).Single();
+						var label = panel.Controls.Find(nameof(GamesGridUserControl.ScanProgressLevel1Label), true).Single();
 						var deadline = DateTime.UtcNow.AddSeconds(10);
 						while (!label.Text.Contains("Scan file 1 of 1") && DateTime.UtcNow < deadline)
 							Application.DoEvents();
@@ -127,7 +128,7 @@ namespace x360ce.Tests
 		[Description("A game found after the games list has closed stops the scan instead of failing on the worker")]
 		public void A_game_found_after_the_list_closed_stops_the_scan()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var panel = new GamesGridUserControl();
 				var handler = Handler(panel);
@@ -153,7 +154,7 @@ namespace x360ce.Tests
 		[Description("A listed game added again by hand, with no default settings and no product name, moves to where it was found")]
 		public void A_game_with_no_default_settings_is_updated()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				using (var form = new Form { ShowInTaskbar = false })
 				using (var panel = new GamesGridUserControl())
@@ -204,7 +205,7 @@ namespace x360ce.Tests
 				var source = typeof(XInputMaskScanner).Assembly.Location;
 				File.Copy(source, Path.Combine(folder, "game1.exe"));
 				File.Copy(source, Path.Combine(folder, "game2.exe"));
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					var panel = new GamesGridUserControl();
 					var handler = Handler(panel);
@@ -251,7 +252,7 @@ namespace x360ce.Tests
 				var copy = new FileInfo(Path.Combine(folder, "found.exe"));
 				File.Copy(typeof(XInputMaskScanner).Assembly.Location, copy.FullName);
 				copy.Refresh();
-				Ui.OnUiThreadWatched(() =>
+				Ui.OnUiThread(() =>
 				{
 					using (var form = new Form { ShowInTaskbar = false })
 					using (var panel = new GamesGridUserControl())
@@ -319,10 +320,10 @@ namespace x360ce.Tests
 						form.Controls.Add(panel);
 						form.Show();
 						Application.DoEvents();
-						var grid = (DataGridView)panel.Controls.Find("GamesDataGridView", true).Single();
+						var grid = (DataGridView)panel.Controls.Find(nameof(GamesGridUserControl.GamesDataGridView), true).Single();
 						var row = grid.Rows.Cast<DataGridViewRow>().First(r => ReferenceEquals(r.DataBoundItem, toEnable));
-						var column = grid.Columns["IsEnabledColumn"];
-						var method = typeof(GamesGridUserControl).GetMethod("GamesDataGridView_CellClick", BindingFlags.Instance | BindingFlags.NonPublic);
+						var column = grid.Columns[nameof(GamesGridUserControl.IsEnabledColumn)];
+						var method = typeof(GamesGridUserControl).GetMethod(nameof(GamesGridUserControl.GamesDataGridView_CellClick), BindingFlags.Instance | BindingFlags.NonPublic);
 						var args = new DataGridViewCellEventArgs(column.Index, row.Index);
 						method.Invoke(panel, new object[] { grid, args });
 						Assert.IsTrue(toEnable.IsEnabled, "The click did not enable the game.");

@@ -43,12 +43,14 @@
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.ScanProgressPlacePanel = new System.Windows.Forms.Panel();
 			this.ScanProgressPanel = new System.Windows.Forms.Panel();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.ScanProgressLevel1Label = new System.Windows.Forms.Label();
 			this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
+			this.ScanProgressPlacePanel.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -207,7 +209,7 @@
 			// 
 			// ScanGamesButton
 			// 
-			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_32x32;
 			this.ScanGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ScanGamesButton.Name = "ScanGamesButton";
 			this.ScanGamesButton.Size = new System.Drawing.Size(64, 28);
@@ -216,7 +218,7 @@
 			// 
 			// AddGameButton
 			// 
-			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddGameButton.Name = "AddGameButton";
@@ -226,7 +228,7 @@
 			// 
 			// DeleteGamesButton
 			// 
-			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.DeleteGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DeleteGamesButton.Name = "DeleteGamesButton";
 			this.DeleteGamesButton.Size = new System.Drawing.Size(77, 28);
@@ -235,7 +237,7 @@
 			// 
 			// SaveGamesButton
 			// 
-			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.SaveGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SaveGamesButton.Name = "SaveGamesButton";
 			this.SaveGamesButton.Size = new System.Drawing.Size(64, 28);
@@ -245,7 +247,7 @@
 			// StartGameButton
 			// 
 			this.StartGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.StartGameButton.Image = global::x360ce.App.Properties.Resources.launch_16x16;
+			this.StartGameButton.Image = global::x360ce.App.Properties.Resources.launch_32x32;
 			this.StartGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.StartGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.StartGameButton.Name = "StartGameButton";
@@ -256,7 +258,7 @@
 			// OpenGameButton
 			// 
 			this.OpenGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.OpenGameButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenGameButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
 			this.OpenGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.OpenGameButton.Name = "OpenGameButton";
@@ -270,7 +272,7 @@
             this.ShowAllGamesMenuItem,
             this.ShowEnabledGamesMenuItem,
             this.ShowDisabledGamesMenuItem});
-			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_32x32;
 			this.ShowGamesDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ShowGamesDropDownButton.Name = "ShowGamesDropDownButton";
 			this.ShowGamesDropDownButton.Size = new System.Drawing.Size(104, 28);
@@ -278,7 +280,7 @@
 			// 
 			// ShowAllGamesMenuItem
 			// 
-			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_32x32;
 			this.ShowAllGamesMenuItem.Name = "ShowAllGamesMenuItem";
 			this.ShowAllGamesMenuItem.Size = new System.Drawing.Size(194, 26);
 			this.ShowAllGamesMenuItem.Text = "Show: All";
@@ -286,7 +288,7 @@
 			// 
 			// ShowEnabledGamesMenuItem
 			// 
-			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_16x16;
+			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_32x32;
 			this.ShowEnabledGamesMenuItem.Name = "ShowEnabledGamesMenuItem";
 			this.ShowEnabledGamesMenuItem.Size = new System.Drawing.Size(194, 26);
 			this.ShowEnabledGamesMenuItem.Text = "Show: Enabled";
@@ -294,7 +296,7 @@
 			// 
 			// ShowDisabledGamesMenuItem
 			// 
-			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
 			this.ShowDisabledGamesMenuItem.Name = "ShowDisabledGamesMenuItem";
 			this.ShowDisabledGamesMenuItem.Size = new System.Drawing.Size(194, 26);
 			this.ShowDisabledGamesMenuItem.Text = "Show: Disabled";
@@ -311,13 +313,22 @@
 			this.ScanProgressLevel0Label.TabIndex = 0;
 			this.ScanProgressLevel0Label.Text = "[ScanProgressLevel0Label]";
 			// 
+			// ScanProgressPlacePanel
+			// 
+			this.ScanProgressPlacePanel.AutoSize = true;
+			this.ScanProgressPlacePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ScanProgressPlacePanel.Controls.Add(this.ScanProgressPanel);
+			this.ScanProgressPlacePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.ScanProgressPlacePanel.Name = "ScanProgressPlacePanel";
+			this.ScanProgressPlacePanel.TabIndex = 4;
+			// 
 			// ScanProgressPanel
 			// 
 			this.ScanProgressPanel.AutoSize = true;
 			this.ScanProgressPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.ScanProgressPanel.Controls.Add(this.tableLayoutPanel1);
-			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 313);
+			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 0);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
 			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 50);
 			this.ScanProgressPanel.TabIndex = 4;
@@ -365,7 +376,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ScanProgressPanel);
+			this.Controls.Add(this.ScanProgressPlacePanel);
 			this.Controls.Add(this.GamesDataGridView);
 			this.Controls.Add(this.GameDetailsControl);
 			this.Controls.Add(this.GamesToolStrip);
@@ -375,6 +386,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
+			this.ScanProgressPlacePanel.ResumeLayout(false);
+			this.ScanProgressPlacePanel.PerformLayout();
 			this.ScanProgressPanel.ResumeLayout(false);
 			this.ScanProgressPanel.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
@@ -387,31 +400,32 @@
 		#endregion
 		private System.Windows.Forms.OpenFileDialog AddGameOpenFileDialog;
 		private System.Windows.Forms.Label ScanProgressLevel0Label;
-		private System.Windows.Forms.ToolStrip GamesToolStrip;
-        private System.Windows.Forms.ToolStripButton DeleteGamesButton;
-        private System.Windows.Forms.ToolStripButton SaveGamesButton;
-        private System.Windows.Forms.ToolStripButton ScanGamesButton;
-		private System.Windows.Forms.ToolStripButton AddGameButton;
+		internal System.Windows.Forms.ToolStrip GamesToolStrip;
+        internal System.Windows.Forms.ToolStripButton DeleteGamesButton;
+        internal System.Windows.Forms.ToolStripButton SaveGamesButton;
+        internal System.Windows.Forms.ToolStripButton ScanGamesButton;
+		internal System.Windows.Forms.ToolStripButton AddGameButton;
 		private GameDetailsUserControl GameDetailsControl;
-		private System.Windows.Forms.ToolStripButton StartGameButton;
-		private System.Windows.Forms.ToolStripButton OpenGameButton;
-		private System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
-		private System.Windows.Forms.ToolStripMenuItem ShowAllGamesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowEnabledGamesMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ShowDisabledGamesMenuItem;
+		internal System.Windows.Forms.ToolStripButton StartGameButton;
+		internal System.Windows.Forms.ToolStripButton OpenGameButton;
+		internal System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
+		internal System.Windows.Forms.ToolStripMenuItem ShowAllGamesMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem ShowEnabledGamesMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem ShowDisabledGamesMenuItem;
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
 		public System.Windows.Forms.DataGridView GamesDataGridView;
-		private System.Windows.Forms.Panel ScanProgressPanel;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
+		private System.Windows.Forms.Panel ScanProgressPlacePanel;
+		internal System.Windows.Forms.Panel ScanProgressPanel;
+		internal System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewImageColumn MyIconColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GameIdColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn FileNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlatformColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileFolderColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Label ScanProgressLevel1Label;
+		internal System.Windows.Forms.Label ScanProgressLevel1Label;
 	}
 }

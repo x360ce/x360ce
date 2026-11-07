@@ -78,6 +78,7 @@
 			this.AllowThirdPartyPluginsCheckBox.AutoSize = true;
 			this.MainTableLayoutPanel.SetColumnSpan(this.AllowThirdPartyPluginsCheckBox, 3);
 			this.AllowThirdPartyPluginsCheckBox.Location = new System.Drawing.Point(9, 9);
+			this.AllowThirdPartyPluginsCheckBox.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
 			this.AllowThirdPartyPluginsCheckBox.Name = "AllowThirdPartyPluginsCheckBox";
 			this.AllowThirdPartyPluginsCheckBox.Size = new System.Drawing.Size(140, 17);
 			this.AllowThirdPartyPluginsCheckBox.TabIndex = 0;
@@ -90,7 +91,7 @@
 			this.MainTableLayoutPanel.SetColumnSpan(this.NoteLabel, 3);
 			this.NoteLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.NoteLabel.Location = new System.Drawing.Point(26, 29);
-			this.NoteLabel.Margin = new System.Windows.Forms.Padding(20, 0, 3, 3);
+			this.NoteLabel.Margin = new System.Windows.Forms.Padding(23, 0, 6, 3);
 			this.NoteLabel.Name = "NoteLabel";
 			this.NoteLabel.Size = new System.Drawing.Size(600, 26);
 			this.NoteLabel.TabIndex = 1;
@@ -104,7 +105,7 @@
 			this.AutoHotkeyGroupBox.Controls.Add(this.AutoHotkeyLayoutPanel);
 			this.AutoHotkeyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AutoHotkeyGroupBox.Location = new System.Drawing.Point(9, 300);
-			this.AutoHotkeyGroupBox.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+			this.AutoHotkeyGroupBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 3);
 			this.AutoHotkeyGroupBox.Name = "AutoHotkeyGroupBox";
 			this.AutoHotkeyGroupBox.Size = new System.Drawing.Size(626, 101);
 			this.AutoHotkeyGroupBox.TabIndex = 6;
@@ -209,7 +210,7 @@
 			this.FolderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.FolderLabel.AutoSize = true;
 			this.FolderLabel.Location = new System.Drawing.Point(9, 70);
-			this.FolderLabel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+			this.FolderLabel.Margin = new System.Windows.Forms.Padding(6, 4, 3, 3);
 			this.FolderLabel.Name = "FolderLabel";
 			this.FolderLabel.Size = new System.Drawing.Size(36, 13);
 			this.FolderLabel.TabIndex = 2;
@@ -230,7 +231,7 @@
 			this.OpenFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.OpenFolderButton.AutoSize = true;
 			this.OpenFolderButton.Location = new System.Drawing.Point(552, 64);
-			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(3, 4, 6, 3);
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Size = new System.Drawing.Size(80, 23);
 			this.OpenFolderButton.TabIndex = 4;
@@ -254,7 +255,7 @@
 			this.MainTableLayoutPanel.SetColumnSpan(this.PluginsDataGridView, 3);
 			this.PluginsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PluginsDataGridView.Location = new System.Drawing.Point(9, 96);
-			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(0, 6, 0, 3);
 			this.PluginsDataGridView.Name = "PluginsDataGridView";
 			this.PluginsDataGridView.ReadOnly = true;
 			this.PluginsDataGridView.RowHeadersVisible = false;
@@ -332,20 +333,20 @@
 		#endregion
 
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
-		private System.Windows.Forms.CheckBox AllowThirdPartyPluginsCheckBox;
-		private System.Windows.Forms.Label NoteLabel;
-		private System.Windows.Forms.GroupBox AutoHotkeyGroupBox;
+		internal System.Windows.Forms.CheckBox AllowThirdPartyPluginsCheckBox;
+		internal System.Windows.Forms.Label NoteLabel;
+		internal System.Windows.Forms.GroupBox AutoHotkeyGroupBox;
 		private System.Windows.Forms.TableLayoutPanel AutoHotkeyLayoutPanel;
-		private System.Windows.Forms.CheckBox AllowAutoHotkeyScriptsCheckBox;
-		private System.Windows.Forms.Label ScriptsNoteLabel;
+		internal System.Windows.Forms.CheckBox AllowAutoHotkeyScriptsCheckBox;
+		internal System.Windows.Forms.Label ScriptsNoteLabel;
 		private System.Windows.Forms.Label HeartbeatLabel;
-		private System.Windows.Forms.NumericUpDown HeartbeatUpDown;
+		internal System.Windows.Forms.NumericUpDown HeartbeatUpDown;
 		private System.Windows.Forms.Label HangTimeoutLabel;
-		private System.Windows.Forms.NumericUpDown HangTimeoutUpDown;
-		private System.Windows.Forms.Label FolderLabel;
-		private System.Windows.Forms.TextBox FolderTextBox;
-		private System.Windows.Forms.Button OpenFolderButton;
-		private System.Windows.Forms.DataGridView PluginsDataGridView;
+		internal System.Windows.Forms.NumericUpDown HangTimeoutUpDown;
+		internal System.Windows.Forms.Label FolderLabel;
+		internal System.Windows.Forms.TextBox FolderTextBox;
+		internal System.Windows.Forms.Button OpenFolderButton;
+		internal System.Windows.Forms.DataGridView PluginsDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DevicesColumn;

@@ -349,7 +349,7 @@
 		private System.Windows.Forms.FlowLayoutPanel ButtonsFlowPanel;
 		private System.Windows.Forms.Button CloseButton;
 		private System.Windows.Forms.Button ClearErrorsButton;
-		private System.Windows.Forms.Button SendErrorButton;
+		internal System.Windows.Forms.Button SendErrorButton;
 		public System.Windows.Forms.Label StatusLabel;
 	}
 }

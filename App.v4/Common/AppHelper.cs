@@ -197,6 +197,12 @@ namespace x360ce.App
 		public const string HelpAutoHotkeyResource = "Documents.Help.AutoHotkey.md";
 		public const string HelpForceFeedbackResource = "Documents.Help.ForceFeedback.md";
 
+		/// <summary>What HID Hide is for, installing it and choosing what it hides: the HID Hide page's help, and the AI skill's reference.</summary>
+		public const string HelpHidHideResource = "Documents.Help.HidHide.md";
+
+		/// <summary>What the program is, where to find it, who made it, and what it carries from other projects: the About page's Program tab.</summary>
+		public const string ProgramResource = "Documents.Program.md";
+
 		/// <summary>The text of an embedded document, or empty when the program does not carry it.</summary>
 		public static string ReadHelp(string resourceName)
 		{
@@ -252,9 +258,8 @@ namespace x360ce.App
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
 		/// <remarks>
-		/// Made faded (<see cref="EngineHelper.Faded"/>) from the image as it was drawn at 100% and at each larger size
-		/// it was drawn at, and then scaled to the size of the one given, so a faded icon is as sharp as the full one and
-		/// is known as enlarged, never enlarged again.
+		/// Made faded (<see cref="EngineHelper.Faded"/>) from the original picture, and then scaled to the size of the one
+		/// given, so a faded icon is as sharp as the full one.
 		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{
@@ -264,8 +269,6 @@ namespace x360ce.App
 				{
 					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
 					var faded = EngineHelper.Faded(original);
-					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(faded,
-						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(EngineHelper.Faded).ToArray());
 					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(faded, image.Size));
 				}
 				return DisabledImageCache[image];
