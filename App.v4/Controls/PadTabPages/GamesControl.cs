@@ -508,7 +508,7 @@ namespace x360ce.App.Controls
 			if (column == MyIconColumn)
 			{
 				// The button's image is the size the tool strip shows it; a cell shows it at the screen's.
-				e.Value = isCurrent ? ControlsHelper.ScaleImage(SaveGamesButton.Image) : Properties.Resources.empty_16x16;
+				e.Value = isCurrent ? ControlsHelper.ScaleImage(SaveGamesButton.Image) : Properties.Resources.empty_32x32;
 			}
 			else if (column == FileFolderColumn)
 			{

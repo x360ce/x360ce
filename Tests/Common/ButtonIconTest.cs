@@ -245,8 +245,8 @@ namespace x360ce.Tests
 				: (image.Top * 2 + image.Height) - (text.Top * 2 + text.Height);
 			var inside = client.Contains(image);
 			var original = ControlsHelper.GetOriginal(picture);
-			var wanted = new Size((int)Math.Round(original.Width * ControlsHelper.DpiScale), (int)Math.Round(original.Height * ControlsHelper.DpiScale));
-			var drawn = picture.Size == shown && (ReferenceEquals(picture, original) ? picture.Size == wanted : ControlsHelper.GetDrawnSizes(original).Contains(picture));
+			var wanted = new Size((int)Math.Round(original.Width * ControlsHelper.DpiScale / 2), (int)Math.Round(original.Height * ControlsHelper.DpiScale / 2));
+			var drawn = picture.Size == shown && picture.Size == wanted;
 			var line = string.Format("{0}: client {1}, image {2}, text {3}, centre offset {4:0.0} px, inside {5}, picture {6} shown {7} drawn {8}",
 				name, client, image, text, offset / 2.0, inside, picture.Size, shown, drawn);
 			report.Add(line);

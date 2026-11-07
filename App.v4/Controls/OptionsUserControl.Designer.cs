@@ -534,7 +534,7 @@
 			// RefreshLocationsButton
 			// 
 			this.RefreshLocationsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshLocationsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshLocationsButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshLocationsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshLocationsButton.Name = "RefreshLocationsButton";
 			this.RefreshLocationsButton.Size = new System.Drawing.Size(70, 24);
@@ -544,7 +544,7 @@
 			// RemoveLocationButton
 			// 
 			this.RemoveLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
+			this.RemoveLocationButton.Image = global::x360ce.App.Properties.Resources.remove_32x32;
 			this.RemoveLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RemoveLocationButton.Name = "RemoveLocationButton";
 			this.RemoveLocationButton.Size = new System.Drawing.Size(74, 24);
@@ -554,7 +554,7 @@
 			// AddLocationButton
 			// 
 			this.AddLocationButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddLocationButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddLocationButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddLocationButton.Name = "AddLocationButton";
 			this.AddLocationButton.Size = new System.Drawing.Size(62, 24);

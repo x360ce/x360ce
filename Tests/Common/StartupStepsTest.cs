@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web.Script.Serialization;
 using System.Windows.Automation;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Mcp;
@@ -522,7 +521,7 @@ namespace x360ce.Tests
 				var row = WriteRow(copy, MapTo.Controller4);
 				copy.Start();
 				WaitForDoor(ai.AiAccessPort);
-				var tree = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(ai, Call(1, "ui_read", "{}"))));
+				var tree = (Dictionary<string, object>)JocysCom.ClassLibrary.Mcp.McpServer.FromJson(Text(Post(ai, Call(1, "ui_read", "{}"))));
 				var path = PathOf(tree, nameof(PadControl.ForceOverallTrackBar), nameof(MainControl.Pad4TabPage));
 				Assert.IsNotNull(path, "The overall force strength slider is not in the door's first reading under Controller 4.");
 				var read = ValueOf(tree, path);
@@ -564,7 +563,7 @@ namespace x360ce.Tests
 				copy.WaitForMark("issues checked", 60);
 				var seconds = copy.EngineSeconds();
 				WaitForDoor(ai.AiAccessPort);
-				var tree = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(ai, Call(1, "ui_read", "{}"))));
+				var tree = (Dictionary<string, object>)JocysCom.ClassLibrary.Mcp.McpServer.FromJson(Text(Post(ai, Call(1, "ui_read", "{}"))));
 				var path = PathOf(tree, nameof(PadControl.ForceOverallTrackBar), nameof(MainControl.Pad1TabPage));
 				Assert.IsNotNull(path, "The overall force strength slider is not in the tree under controller 1.");
 				StringAssert.Contains(Text(Post(ai, Call(2, "ui_set", "{\"path\":\"" + path + "\",\"value\":\"35\"}"))), "Done");
@@ -634,8 +633,6 @@ namespace x360ce.Tests
 			return row;
 		}
 
-		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
-
 		/// <summary>Waits for the door to take connections: it opens once the window has its pages.</summary>
 		static void WaitForDoor(int port)
 		{
@@ -668,7 +665,7 @@ namespace x360ce.Tests
 
 		static string Text(string response)
 		{
-			var answer = (Dictionary<string, object>)Json.DeserializeObject(response);
+			var answer = (Dictionary<string, object>)JocysCom.ClassLibrary.Mcp.McpServer.FromJson(response);
 			Assert.IsFalse(answer.ContainsKey("error"), "The program answered with an error: " + response);
 			return (string)((Dictionary<string, object>)((object[])((Dictionary<string, object>)answer["result"])["content"])[0])["text"];
 		}

@@ -379,7 +379,7 @@ namespace x360ce.Tests
 			var tools = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Padding = new Padding(4, 2, 4, 0) };
 			tools.Items.Add(new ToolStripLabel("Game:"));
 			tools.Items.Add(new ToolStripComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
-			tools.Items.Add(new ToolStripButton("Save All", App.Properties.Resources.save_16x16)
+			tools.Items.Add(new ToolStripButton("Save All", App.Properties.Resources.save_32x32)
 			{
 				Alignment = ToolStripItemAlignment.Right,
 				ImageScaling = ToolStripItemImageScaling.None,
@@ -389,7 +389,7 @@ namespace x360ce.Tests
 			var status = new StatusStrip { SizingGrip = false };
 			status.Items.Add(new ToolStripStatusLabel("Ready"));
 			status.Items.Add(new ToolStripButton("UI Hz: 0") { DisplayStyle = ToolStripItemDisplayStyle.Text });
-			status.Items.Add(new ToolStripStatusLabel("Errors: 0 | 0", App.Properties.Resources.error_16x16)
+			status.Items.Add(new ToolStripStatusLabel("Errors: 0 | 0", App.Properties.Resources.error_32x32)
 			{
 				BorderSides = ToolStripStatusLabelBorderSides.Left,
 				ImageAlign = ContentAlignment.MiddleRight,

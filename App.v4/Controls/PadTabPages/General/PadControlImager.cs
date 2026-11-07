@@ -29,7 +29,7 @@ namespace x360ce.App.Controls
 			markB.SetResolution(rH, rV);
 			markA.SetResolution(rH, rV);
 			markC.SetResolution(rH, rV);
-			Recorder = new Recorder(rH, rV);
+			Recorder = new Recorder();
 		}
 
 		public Recorder Recorder;

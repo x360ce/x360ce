@@ -10,7 +10,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Services.Protocols;
+using JocysCom.ClassLibrary.Web.Services;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;

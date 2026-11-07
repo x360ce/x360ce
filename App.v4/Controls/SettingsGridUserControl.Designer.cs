@@ -179,7 +179,7 @@
 			// SettingsRefreshButton
 			// 
 			this.SettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.SettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.SettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.SettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsRefreshButton.Name = "SettingsRefreshButton";
 			this.SettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -189,7 +189,7 @@
 			// SettingsDeleteButton
 			// 
 			this.SettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.SettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.SettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.SettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsDeleteButton.Name = "SettingsDeleteButton";
 			this.SettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
@@ -198,7 +198,7 @@
 			// 
 			// SettingsEditNoteButton
 			// 
-			this.SettingsEditNoteButton.Image = global::x360ce.App.Properties.Resources.edit_note_16x16;
+			this.SettingsEditNoteButton.Image = global::x360ce.App.Properties.Resources.edit_note_32x32;
 			this.SettingsEditNoteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsEditNoteButton.Name = "SettingsEditNoteButton";
 			this.SettingsEditNoteButton.Size = new System.Drawing.Size(76, 22);

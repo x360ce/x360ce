@@ -130,7 +130,7 @@
 			// ButtonImagePictureBox
 			//
 			this.ButtonImagePictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_16x16;
+			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_32x32;
 			this.ButtonImagePictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ButtonImagePictureBox.Location = new System.Drawing.Point(103, 0);
 			this.ButtonImagePictureBox.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);

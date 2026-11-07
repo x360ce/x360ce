@@ -1,8 +1,6 @@
 ﻿#nullable disable
 
-#if NETFRAMEWORK // .NET Framework
-using System.Web;
-#else
+#if !NETFRAMEWORK
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 #endif
@@ -54,18 +52,9 @@ namespace JocysCom.ClassLibrary.Security
 			return GetFullUrl(path);
 		}
 
-#if NETFRAMEWORK // .NET Framework
-
-		public static string GetApplicationPath()
-			=> System.Web.HttpContext.Current?.Request?.ApplicationPath;
-
-		public static Uri GetRequestUrl()
-			=> System.Web.HttpContext.Current?.Request?.Url;
-
-#else
 
 		/*
-			// Call InitializeParser to initialize parser in .NET Core.
+			// Call Configure when the website starts.
 			public class Startup
 			{
 				public void Configure()
@@ -78,7 +67,7 @@ namespace JocysCom.ClassLibrary.Security
 		private static string _ApplicationPath;
 
 		/// <summary>
-		/// Use this method to initialize configuration in .NET core.
+		/// Use this method to tell the library the address of the website it runs on.
 		/// </summary>
 		/// <param name="configuration"></param>
 		public static void Configure(string applicationPath)
@@ -88,9 +77,7 @@ namespace JocysCom.ClassLibrary.Security
 			=> _ApplicationPath;
 
 		public static Uri GetRequestUrl()
-			=> new Uri(_ApplicationPath);
-
-#endif
+			=> _ApplicationPath is null ? null : new Uri(_ApplicationPath);
 
 	}
 

@@ -214,7 +214,7 @@
 			// 
 			// BrowsePictureBox
 			// 
-			this.BrowsePictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_16x16;
+			this.BrowsePictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_32x32;
 			this.BrowsePictureBox.Location = new System.Drawing.Point(6, 98);
 			this.BrowsePictureBox.Name = "BrowsePictureBox";
 			this.BrowsePictureBox.Size = new System.Drawing.Size(16, 16);
@@ -223,7 +223,7 @@
 			// 
 			// SearchPictureBox
 			// 
-			this.SearchPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_16x16;
+			this.SearchPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_32x32;
 			this.SearchPictureBox.Location = new System.Drawing.Point(6, 33);
 			this.SearchPictureBox.Name = "SearchPictureBox";
 			this.SearchPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -275,7 +275,7 @@
 			// 
 			// InternetPictureBox
 			// 
-			this.InternetPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
+			this.InternetPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_32x32;
 			this.InternetPictureBox.Location = new System.Drawing.Point(6, 28);
 			this.InternetPictureBox.Name = "InternetPictureBox";
 			this.InternetPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -284,7 +284,7 @@
 			// 
 			// LocalPictureBox
 			// 
-			this.LocalPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
+			this.LocalPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_32x32;
 			this.LocalPictureBox.Location = new System.Drawing.Point(6, 6);
 			this.LocalPictureBox.Name = "LocalPictureBox";
 			this.LocalPictureBox.Size = new System.Drawing.Size(16, 16);

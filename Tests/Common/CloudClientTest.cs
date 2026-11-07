@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Web.Services.Protocols;
+using JocysCom.ClassLibrary.Web.Services;
 using x360ce.App;
 using x360ce.Engine;
 using x360ce.Engine.Data;

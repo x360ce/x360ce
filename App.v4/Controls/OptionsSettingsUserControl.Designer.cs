@@ -105,7 +105,7 @@
 			this.OpenFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.OpenFolderButton.AutoSize = true;
 			this.OpenFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.OpenFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenFolderButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
 			this.OpenFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Padding = new System.Windows.Forms.Padding(4, 0, 6, 0);
@@ -184,7 +184,7 @@
 			//
 			this.ApplyButton.AutoSize = true;
 			this.ApplyButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.ApplyButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.ApplyButton.Location = new System.Drawing.Point(9, 212);
 			this.ApplyButton.Name = "ApplyButton";

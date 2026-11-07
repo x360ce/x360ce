@@ -1,302 +1,254 @@
-﻿#nullable disable
+#nullable disable
 
 using System;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Net;
-using System.Web.Services.Protocols;
+using System.Reflection;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Web.Services
 {
-
-	/// <summary>
-	/// Adds the ability to retrieve the SOAP request/response, Specify IP address to send from.
-	/// </summary>
-	/// <remarks>
-	/// Declare custom logger service as public class ServiceLogger : OriginalService
-	/// {
-	/// }
-	///
-	/// How to add timeout.
-	/// wsRef = new MySoapHttpClientBase
-	/// {
-	///     Url = url,
-	///     Timeout = timeout,
-	///     ServicePointIP = servicePointIP ?? IPAddress.Any
-	/// };
-	/// </remarks>
-	public class SoapHttpClientBase : SoapHttpClientProtocol
+	/// <summary>A fault a SOAP web service answered with.</summary>
+	public class SoapException : Exception
 	{
+		internal const string Envelope = "http://schemas.xmlsoap.org/soap/envelope/";
 
-		// This class can generate "WebServiceBindingAttribute is required on proxy classes" error during build.
-		// Solution: Set "Generate Serialization assembly:" to "Auto" or "Off" in the [Build] tab of project properties.
+		/// <summary>The fault of a service that could not do what it was asked: asking again later may work.</summary>
+		public static readonly XmlQualifiedName ServerFaultCode = new XmlQualifiedName("Server", Envelope);
 
-		// HttpWebRequest.Timeout - Time to wait until server accepts the client's request (TCP ACK). Default value: 100 seconds.
-		//   This doesn't include the DNS resolution time, which is managed by the ServicePointManager.
-		// HttpWebRequest.ReadWriteTimeout - Time to wait until server sends all the data. Default value: 5 minutes.
-		//   This timeout starts only after the server accepts the request.
-		// HttpWebRequest.ContinueTimeout - Time to wait until the 100-Continue is received from the server.
-		//   ContinueTimeout used when HttpWebRequest.ServicePoint.Expect100Continue = true and only header is sent with the initial request.
-		// Note: These timeouts have no effect on asynchronous requests.
+		/// <summary>The fault of a request the service will not take, however often it is sent.</summary>
+		public static readonly XmlQualifiedName ClientFaultCode = new XmlQualifiedName("Client", Envelope);
 
-		#region Main Methods
-
-		bool useDefaultCredentialsSetExplicitly;
-
-		/// <remarks/>
-		public SoapHttpClientBase()
+		public SoapException(string message, XmlQualifiedName code) : base(message)
 		{
+			Code = code;
+		}
+
+		public XmlQualifiedName Code { get; }
+	}
+
+	/// <summary>Calls the methods of a SOAP web service, with System.Net and XmlSerializer.</summary>
+	/// <remarks>
+	/// <para>
+	/// A derived class declares a public method for each method of the service, under the same name. Its parameters
+	/// are what is sent and its return type what is read: <c>return Invoke&lt;Answer&gt;("Ask", question);</c>
+	/// </para>
+	/// <para>
+	/// HttpWebRequest.Timeout is the time to wait for the answer to start, 100 seconds unless set here.
+	/// HttpWebRequest.ReadWriteTimeout is the time to wait for its data, 5 minutes.
+	/// </para>
+	/// </remarks>
+	public class SoapHttpClientBase : IDisposable
+	{
+		/// <param name="serviceNamespace">The XML namespace of the service, which also starts the name of each of its methods.</param>
+		protected SoapHttpClientBase(string serviceNamespace)
+		{
+			ServiceNamespace = serviceNamespace;
 			// Enable TLS 1.1, 1.2 and 1.3
 			var Tls11 = 0x0300; //   768
 			var Tls12 = 0x0C00; //  3072
 			ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
 			// This will allow to validate certificates and allow SSL connection if certificate have problem.
 			ServicePointManager.ServerCertificateValidationCallback = Security.SecurityHelper.ValidateServerCertificate;
-			if (IsLocalFileSystemWebService(Url))
-			{
-				UseDefaultCredentials = true;
-				useDefaultCredentialsSetExplicitly = false;
-			}
-			else
-			{
-				useDefaultCredentialsSetExplicitly = true;
-			}
 		}
 
-		public new string Url
+		readonly string ServiceNamespace;
+
+		/// <summary>The address of the service.</summary>
+		public string Url { get; set; }
+
+		/// <summary>How long to wait for the answer to start, in milliseconds.</summary>
+		public int Timeout { get; set; } = 100000;
+
+		/// <summary>What the client calls itself. The service has always been called with this name.</summary>
+		static readonly string UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; MS Web Services Client Protocol " + Environment.Version + ")";
+
+		/// <summary>Nothing is held between calls. Kept so a client can be used in a using statement.</summary>
+		public void Dispose()
 		{
-			get { return base.Url; }
-			set
-			{
-				if (IsLocalFileSystemWebService(base.Url) &&
-					!IsLocalFileSystemWebService(value) &&
-					!useDefaultCredentialsSetExplicitly)
-				{
-					base.UseDefaultCredentials = false;
-				}
-				base.Url = value;
-			}
 		}
 
-		public new bool UseDefaultCredentials
-		{
-			get
-			{
-				return base.UseDefaultCredentials;
-			}
-			set
-			{
-				base.UseDefaultCredentials = value;
-				useDefaultCredentialsSetExplicitly = true;
-			}
-		}
+		#region Calls
 
-		public new void CancelAsync(object userState)
-		{
-			base.CancelAsync(userState);
-		}
-
-		bool IsLocalFileSystemWebService(string url)
-		{
-			if (string.IsNullOrEmpty(url))
-				return false;
-			var wsUri = new Uri(url);
-			var isLocal = wsUri.Port >= 1024 && string.Compare(wsUri.Host, "localHost", StringComparison.OrdinalIgnoreCase) == 0;
-			return isLocal;
-		}
-
-		class InvokeUserState
-		{
-			public InvokeUserState(object userState, EventHandler<SoapHttpClientEventArgs> handler)
-			{
-				UserState = userState;
-				Handler = handler;
-			}
-			public object UserState;
-			public EventHandler<SoapHttpClientEventArgs> Handler;
-		}
-
+		/// <summary>Calls a method of the service and waits for its answer.</summary>
+		/// <exception cref="SoapException">The service answered with a fault.</exception>
+		/// <exception cref="WebException">There was no answer, or the answer was an HTTP error other than 400 and 500.</exception>
+		/// <exception cref="InvalidOperationException">The answer was not the SOAP message asked for, a web page for one.</exception>
 		public T Invoke<T>(string method, params object[] args)
 		{
-			var results = Invoke(method, args);
-			return (T)results[0];
+			return (T)Send(method, args)[0];
 		}
 
+		/// <summary>Calls a method of the service on a worker, and raises the event on the thread that called, when it has answered.</summary>
 		public void InvokeAsync(string method, EventHandler<SoapHttpClientEventArgs> completedEvent, object userState, params object[] args)
 		{
-			var invokeUserState = new InvokeUserState(userState, completedEvent);
-			InvokeAsync(method, args, OnAsyncOperationCompleted, invokeUserState);
+			var operation = AsyncOperationManager.CreateOperation(userState);
+			Task.Run(() =>
+			{
+				object[] results = null;
+				Exception error = null;
+				try { results = Send(method, args); }
+				catch (Exception ex) { error = ex; }
+				operation.PostOperationCompleted(_ => completedEvent?.Invoke(this, new SoapHttpClientEventArgs(results, error, false, userState)), null);
+			});
 		}
 
-		void OnAsyncOperationCompleted(object arg)
+		object[] Send(string method, object[] args)
 		{
-			var invokeArgs = (InvokeCompletedEventArgs)arg;
-			var invokeUserState = (InvokeUserState)invokeArgs.UserState;
-			if (invokeUserState.Handler is null)
-				return;
-			var args = new SoapHttpClientEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeUserState.UserState);
-			invokeUserState.Handler(this, args);
+			var serializers = SerializersOf(method);
+			var request = (HttpWebRequest)WebRequest.Create(Url);
+			request.Method = "POST";
+			request.ContentType = "text/xml; charset=utf-8";
+			request.Headers["SOAPAction"] = "\"" + ServiceNamespace + method + "\"";
+			request.UserAgent = UserAgent;
+			request.Timeout = Timeout;
+			request.AllowAutoRedirect = false;
+			using (var stream = request.GetRequestStream())
+				WriteMessage(stream, serializers.Request, args);
+			HttpWebResponse response;
+			try
+			{
+				response = (HttpWebResponse)request.GetResponse();
+			}
+			catch (WebException ex) when (ex.Response is HttpWebResponse)
+			{
+				response = (HttpWebResponse)ex.Response;
+			}
+			var body = new MemoryStream();
+			// The stream and not the response is closed: a failure hands the response on, and the caller reads its status.
+			using (var stream = response.GetResponseStream())
+				stream.CopyTo(body);
+			var status = (int)response.StatusCode;
+			var type = response.ContentType ?? "";
+			var isXml = type.StartsWith("text/xml", StringComparison.OrdinalIgnoreCase);
+			if (status >= 300 && status != 500 && !(status == 400 && isXml))
+				throw new WebException(body.Length == 0
+					? "The request failed with an empty response."
+					: "The request failed with HTTP status " + status + ": " + response.StatusDescription + ".",
+					null, WebExceptionStatus.ProtocolError, response);
+			if (body.Length == 0)
+				throw new InvalidOperationException("Client found response content type of '" + type + "', but expected 'text/xml'.\r\nThe request failed with an empty response.");
+			if (!isXml)
+				throw new InvalidOperationException("Client found response content type of '" + type + "', but expected 'text/xml'.\r\nThe request failed with the error message:\r\n--\r\n"
+					+ Encoding.UTF8.GetString(body.ToArray()) + "\r\n--.");
+			body.Position = 0;
+			return ReadMessage(body, serializers.Response);
 		}
 
 		#endregion
 
-		#region Copy Reader and Writer Streams
+		#region Messages
 
-		/// <summary>Stream Logger for Request</summary>
-		public SoapHttpClientLogger WriterStreamLogger;
-		/// <summary>Stream Logger for Response</summary>
-		public SoapHttpClientLogger ReaderStreamLogger;
-
-		/// <summary>Web Request</summary>
-		public HttpWebRequest CurrentWebRequest;
-
-
-		/// <summary>Get Writer for Request</summary>
-		protected override XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize)
+		/// <summary>Writes the message that calls a method, as the service reads it.</summary>
+		static void WriteMessage(Stream stream, XmlSerializer serializer, object[] args)
 		{
-			DisposeWriterStreamLogger();
-			// Dispose reader too in case it was created by previous call.
-			DisposeReaderStreamLogger();
-			var writer = SoapHttpClientLogger.GetWriterForMessage(message, bufferSize, base.RequestEncoding, CurrentWebRequest, out WriterStreamLogger);
-			return writer;
-		}
-
-		/// <summary>Get Reader for Response</summary>
-		protected override XmlReader GetReaderForMessage(SoapClientMessage message, int bufferSize)
-		{
-			DisposeReaderStreamLogger();
-			var reader = SoapHttpClientLogger.GetReaderForMessage(message, bufferSize, CurrentWebRequest, out ReaderStreamLogger);
-			return reader;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.Dispose(disposing);
-			// Remove all events.
-			WebRequestCreated = null;
-			DisposeWriterStreamLogger();
-			DisposeReaderStreamLogger();
-		}
-
-		public void DisposeWriterStreamLogger()
-		{
-			if (WriterStreamLogger != null)
+			using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Encoding = new UTF8Encoding(false) }))
 			{
-				WriterStreamLogger.Dispose();
-				WriterStreamLogger = null;
+				writer.WriteStartDocument();
+				writer.WriteStartElement("soap", "Envelope", SoapException.Envelope);
+				writer.WriteAttributeString("xmlns", "soap", null, SoapException.Envelope);
+				writer.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
+				writer.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+				writer.WriteStartElement("soap", "Body", SoapException.Envelope);
+				serializer.Serialize(writer, args);
+				writer.WriteEndElement();
+				writer.WriteEndElement();
 			}
 		}
 
-		public void DisposeReaderStreamLogger()
+		/// <summary>Reads what the service answered: what its method returned, or the fault it sent in its place.</summary>
+		static object[] ReadMessage(Stream stream, XmlSerializer serializer)
 		{
-			if (ReaderStreamLogger != null)
+			const string NotXml = "Response is not well-formed XML.";
+			try
 			{
-				ReaderStreamLogger.Dispose();
-				ReaderStreamLogger = null;
-			}
-		}
-
-		#endregion
-
-		#region Specifying an originator IP Address on a WebService
-
-		public IPAddress ServicePointIP
-		{
-			get { return _ServicePointIP; }
-			set { _ServicePointIP = value; }
-		}
-		private IPAddress _ServicePointIP;
-
-		protected override WebRequest GetWebRequest(Uri uri)
-		{
-			CurrentWebRequest = (HttpWebRequest)base.GetWebRequest(uri);
-			// Bind to specific local IP.
-			CurrentWebRequest.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
-			InitPreAuthenticate(CurrentWebRequest);
-			var ev = WebRequestCreated;
-			if (ev != null)
-				ev(this, new EventArgs());
-			return CurrentWebRequest;
-		}
-
-		public EventHandler<EventArgs> WebRequestCreated;
-
-		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
-		{
-			var point = ServicePointIP != null
-				? ServicePointIP
-				: remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
-					? IPAddress.IPv6Any : IPAddress.Any;
-			return new IPEndPoint(point, 0);
-		}
-
-		#endregion
-
-		#region Set Credentials
-
-		/// <summary>
-		/// Create the network credentials and assign
-		/// them to the service credentials
-		/// </summary>
-		/// <param name="username"></param>
-		/// <param name="password"></param>
-		public void SetCredentials(string username, string password)
-		{
-			var nc = new NetworkCredential(username, password);
-			var uri = new Uri(Url);
-			var credentials = nc.GetCredential(uri, "Basic");
-			Credentials = credentials;
-			// Be sure to set PreAuthenticate to true or else authentication will not be sent.
-			PreAuthenticate = true;
-		}
-
-		void InitPreAuthenticate(HttpWebRequest request)
-		{
-			// If pre-authenticate then...
-			if (PreAuthenticate)
-			{
-				var credentials = Credentials.GetCredential(request.RequestUri, "Basic");
-				if (credentials != null)
+				using (var reader = XmlReader.Create(stream, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null }))
 				{
-					var bytes = System.Text.Encoding.UTF8.GetBytes(
-					credentials.UserName + ":" +
-					credentials.Password);
-					request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(bytes);
+					reader.MoveToContent();
+					if (!reader.IsStartElement("Envelope", SoapException.Envelope))
+						throw new InvalidOperationException(NotXml);
+					reader.ReadStartElement();
+					reader.MoveToContent();
+					if (reader.IsStartElement("Header", SoapException.Envelope))
+					{
+						reader.Skip();
+						reader.MoveToContent();
+					}
+					if (!reader.IsStartElement("Body", SoapException.Envelope))
+						throw new InvalidOperationException(NotXml);
+					reader.ReadStartElement();
+					reader.MoveToContent();
+					if (reader.IsStartElement("Fault", SoapException.Envelope))
+						throw ReadFault(reader);
+					return (object[])serializer.Deserialize(reader);
 				}
+			}
+			catch (XmlException ex)
+			{
+				throw new InvalidOperationException(NotXml, ex);
+			}
+		}
+
+		static SoapException ReadFault(XmlReader reader)
+		{
+			var code = new XmlQualifiedName("");
+			var text = "";
+			reader.ReadStartElement();
+			reader.MoveToContent();
+			while (reader.NodeType == XmlNodeType.Element)
+			{
+				if (reader.LocalName == "faultcode")
+				{
+					var parts = reader.ReadElementContentAsString().Trim().Split(':');
+					code = parts.Length == 2
+						? new XmlQualifiedName(parts[1], reader.LookupNamespace(parts[0]))
+						: new XmlQualifiedName(parts[0]);
+				}
+				else if (reader.LocalName == "faultstring")
+					text = reader.ReadElementContentAsString();
 				else
-				{
-					throw new ApplicationException("No network credentials");
-				}
+					reader.Skip();
+				reader.MoveToContent();
+			}
+			return new SoapException(text, code);
+		}
+
+		sealed class MethodSerializers
+		{
+			public XmlSerializer Request;
+			public XmlSerializer Response;
+		}
+
+		/// <summary>What reads and writes each method's messages, made once a method: making one compiles code.</summary>
+		static readonly Dictionary<string, MethodSerializers> Serializers = new Dictionary<string, MethodSerializers>();
+
+		MethodSerializers SerializersOf(string method)
+		{
+			var key = GetType().FullName + "." + method;
+			lock (Serializers)
+			{
+				if (Serializers.TryGetValue(key, out var known))
+					return known;
+				var info = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance).Single(x => x.Name == method);
+				// Made apart, because a type a method both takes and returns may be in one set of mappings only once.
+				var request = SerializerOf(method, info.GetParameters().Select(x => new XmlReflectionMember { MemberName = x.Name, MemberType = x.ParameterType }).ToArray());
+				var response = SerializerOf(method + "Response", new[] { new XmlReflectionMember { MemberName = method + "Result", MemberType = info.ReturnType } });
+				return Serializers[key] = new MethodSerializers { Request = request, Response = response };
 			}
 		}
 
+		XmlSerializer SerializerOf(string element, XmlReflectionMember[] members)
+		{
+			var mapping = new XmlReflectionImporter(ServiceNamespace).ImportMembersMapping(element, ServiceNamespace, members, true);
+			return XmlSerializer.FromMappings(new XmlMapping[] { mapping })[0];
+		}
+
 		#endregion
-
-		//#region Method: Test
-
-		//public event EventHandler<ResultEventArgs> TestCompleted;
-
-		//const string ns = "http://domain.com/AppName";
-
-		///// <remarks/>
-		//[SoapDocumentMethod(ns + "/Test",
-		//	RequestNamespace = ns,
-		//	ResponseNamespace = ns,
-		//	Use = System.Web.Services.Description.SoapBindingUse.Literal,
-		//	ParameterStyle = SoapParameterStyle.Wrapped)]
-		//public string Test(string message)
-		//{
-		//	object[] results = this.Invoke("Test", new object[] { message });
-		//	return (string)results[0];
-		//}
-
-		//public void TestAsync(string message, object userState = null)
-		//{
-		//	InvokeAsync("Test", TestCompleted, userState, new object[] { message });
-		//}
-
-		//#endregion
-
-
 	}
-
 }

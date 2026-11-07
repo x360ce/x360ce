@@ -147,9 +147,9 @@ namespace x360ce.App.DInput
 				}
 				Volatile.Write(ref _displayRead, DisplayReadIdle);
 			}
-			// These states are shown on screen and nowhere else, and a screen cannot show more than sixty readings a
-			// second. Paced here and not by the caller, because the caller uses the same answer to decide whether the
-			// XInput library stays loaded, and pacing that made it load and unload all day.
+			// These states are shown on screen, and kept by a recording of the controller output. Paced here and not by
+			// the caller, because the caller uses the same answer to decide whether the XInput library stays loaded, and
+			// pacing that made it load and unload all day.
 			var due = DueForDisplayRead();
 			var wanted = Controller.IsLoaded && getXInputStates;
 			if (wanted && XiReadsPaused)
@@ -272,9 +272,12 @@ namespace x360ce.App.DInput
 				try
 				{
 					var loaded = Controller.IsLoaded;
+					// Read empty, a place makes XInput open every controller it can find. The places are read again when a
+					// device comes or goes, so an empty one stays empty until then.
+					var taken = XInputPlaces.Taken;
 					for (var p = 0; p < 4; p++)
 					{
-						if (loaded)
+						if (loaded && (taken == null || taken[p]))
 						{
 							_displayConnected[p] = LiveXiControllers[p].GetState(out _displayStates[p]);
 						}

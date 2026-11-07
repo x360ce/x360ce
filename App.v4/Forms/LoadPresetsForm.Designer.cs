@@ -191,7 +191,7 @@
 			//
 			this.CopyPresetButton.AutoSize = true;
 			this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
+			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_32x32;
 			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this.CopyPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CopyPresetButton.Name = "CopyPresetButton";

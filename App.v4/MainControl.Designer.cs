@@ -331,7 +331,7 @@ namespace x360ce.App
 			this.IssuesTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.IssuesTabPage.Controls.Add(this.IssuesPanel);
 			this.IssuesTabPage.Controls.Add(this.RecorderPanel);
-			this.IssuesTabPage.ImageKey = "refresh_16x16.png";
+			this.IssuesTabPage.ImageKey = "refresh_32x32.png";
 			this.IssuesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.IssuesTabPage.Name = "IssuesTabPage";
 			this.IssuesTabPage.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
@@ -383,7 +383,7 @@ namespace x360ce.App
 			// SaveAllButton
 			// 
 			this.SaveAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.SaveAllButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveAllButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.SaveAllButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.SaveAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SaveAllButton.Margin = new System.Windows.Forms.Padding(1);
@@ -396,7 +396,7 @@ namespace x360ce.App
 			// TestButton
 			// 
 			this.TestButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.TestButton.Image = global::x360ce.App.Properties.Resources.test_16x16;
+			this.TestButton.Image = global::x360ce.App.Properties.Resources.test_32x32;
 			this.TestButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.TestButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.TestButton.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -422,7 +422,7 @@ namespace x360ce.App
 			// AddGameButton
 			// 
 			this.AddGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.AddGameButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;

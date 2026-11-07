@@ -151,7 +151,7 @@ namespace x360ce.App.Controls
             // ClearLogButton
             // 
             this.ClearLogButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.ClearLogButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.ClearLogButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
             this.ClearLogButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ClearLogButton.Name = "ClearLogButton";
             this.ClearLogButton.Size = new System.Drawing.Size(54, 25);

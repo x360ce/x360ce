@@ -230,7 +230,7 @@ namespace x360ce.Web.WebServices
 						var clientVersion = command.Values.GetValue<string>(CloudKey.ClientVersion);
 						results.Values.Add(CloudKey.ServerVersion, clientVersion);
 						//results.Values.Add(CloudKey.UpdateUrl, "https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true");
-						results.Values.Add(CloudKey.UpdateUrl, JocysCom.ClassLibrary.Security.TokenHelper.GetApplicationUrl() + "/Files/x360ce_beta.zip");
+						results.Values.Add(CloudKey.UpdateUrl, new Uri(HttpContext.Current.Request.Url, HttpContext.Current.Request.ApplicationPath) + "/Files/x360ce_beta.zip");
 						break;
 					case CloudAction.SendMailMessage:
 						foreach (var message in command.MailMessages)

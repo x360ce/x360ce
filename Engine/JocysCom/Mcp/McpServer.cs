@@ -7,7 +7,10 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Text;
 #if NETFRAMEWORK
-using System.Web.Script.Serialization;
+using System.Collections;
+using System.Globalization;
+using System.Runtime.Serialization.Json;
+using System.Xml;
 #else
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -333,50 +336,221 @@ namespace JocysCom.ClassLibrary.Mcp
 			+ "If the door is off, ask the person to switch it on; never switch it on yourself.";
 
 #if NETFRAMEWORK
-		/// <summary>
-		/// The serialiser .NET Framework carries, which reads and writes JSON of any shape without a package. No
-		/// limit on length: a whole tree read is one answer.
-		/// </summary>
-		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
+		/// <summary>How deep JSON may nest: all a request can ask of the reader, and what stops a value that refers to itself.</summary>
+		const int JsonDepth = 100;
 
-		/// <summary>A value as JSON: dictionaries, arrays, text, numbers and true or false, as the tools answer.</summary>
+		/// <summary>A value as JSON: dictionaries, lists, text, numbers and true or false, as the tools answer, and any other object by its public members.</summary>
 		public static string ToJson(object value)
 		{
-			return Json.Serialize(value);
+			var json = new StringBuilder();
+			WriteJson(json, value, 0);
+			return json.ToString();
+		}
+
+		static void WriteJson(StringBuilder json, object value, int depth)
+		{
+			if (depth > JsonDepth)
+				throw new InvalidOperationException("A value nested too deep to write as JSON, or one that refers to itself.");
+			switch (value)
+			{
+				case null:
+				case DBNull _:
+					json.Append("null");
+					return;
+				case string text:
+					WriteJsonText(json, text);
+					return;
+				case char letter:
+					WriteJsonText(json, letter.ToString());
+					return;
+				case bool yes:
+					json.Append(yes ? "true" : "false");
+					return;
+				case Enum choice:
+					json.Append(System.Convert.ToString(System.Convert.ChangeType(choice, choice.GetTypeCode(), CultureInfo.InvariantCulture), CultureInfo.InvariantCulture));
+					return;
+				case Guid _:
+				case Uri _:
+					WriteJsonText(json, value.ToString());
+					return;
+				case DateTime time:
+					json.Append("\"\\/Date(").Append((time.ToUniversalTime().Ticks - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks) / 10000).Append(")\\/\"");
+					return;
+				case double wide:
+					json.Append(double.IsNaN(wide) || double.IsInfinity(wide) ? "null" : wide.ToString("R", CultureInfo.InvariantCulture));
+					return;
+				case float narrow:
+					json.Append(float.IsNaN(narrow) || float.IsInfinity(narrow) ? "null" : narrow.ToString("R", CultureInfo.InvariantCulture));
+					return;
+				case decimal exact:
+					json.Append(exact.ToString(CultureInfo.InvariantCulture));
+					return;
+				case IDictionary map:
+					var firstKey = true;
+					json.Append('{');
+					foreach (DictionaryEntry entry in map)
+					{
+						if (!firstKey)
+							json.Append(',');
+						firstKey = false;
+						WriteJsonText(json, System.Convert.ToString(entry.Key, CultureInfo.InvariantCulture));
+						json.Append(':');
+						WriteJson(json, entry.Value, depth + 1);
+					}
+					json.Append('}');
+					return;
+				case IEnumerable list:
+					var firstItem = true;
+					json.Append('[');
+					foreach (var item in list)
+					{
+						if (!firstItem)
+							json.Append(',');
+						firstItem = false;
+						WriteJson(json, item, depth + 1);
+					}
+					json.Append(']');
+					return;
+			}
+			var type = value.GetType();
+			if (type.IsPrimitive)
+			{
+				json.Append(System.Convert.ToString(value, CultureInfo.InvariantCulture));
+				return;
+			}
+			var firstMember = true;
+			json.Append('{');
+			void Member(string name, object member)
+			{
+				if (!firstMember)
+					json.Append(',');
+				firstMember = false;
+				WriteJsonText(json, name);
+				json.Append(':');
+				WriteJson(json, member, depth + 1);
+			}
+			foreach (var field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+				Member(field.Name, field.GetValue(value));
+			foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+				if (property.CanRead && property.GetIndexParameters().Length == 0)
+					Member(property.Name, property.GetValue(value, null));
+			json.Append('}');
+		}
+
+		static void WriteJsonText(StringBuilder json, string text)
+		{
+			json.Append('"');
+			foreach (var c in text)
+			{
+				switch (c)
+				{
+					case '"': json.Append("\\\""); break;
+					case '\\': json.Append("\\\\"); break;
+					case '\b': json.Append("\\b"); break;
+					case '\f': json.Append("\\f"); break;
+					case '\n': json.Append("\\n"); break;
+					case '\r': json.Append("\\r"); break;
+					case '\t': json.Append("\\t"); break;
+					default:
+						if (c < ' ' || c == '\u2028' || c == '\u2029')
+							json.Append("\\u").Append(((int)c).ToString("x4", CultureInfo.InvariantCulture));
+						else
+							json.Append(c);
+						break;
+				}
+			}
+			json.Append('"');
 		}
 
 		/// <summary>
 		/// JSON read into the plain shapes the tools take: a dictionary for an object, an array, text,
-		/// a long or a double for a number, true or false, and null. What is not JSON throws an ArgumentException,
-		/// or a FormatException for a \u escape that is not four hex digits.
+		/// a long or a double for a number, true or false, and null. What is not JSON throws an ArgumentException.
 		/// </summary>
 		public static object FromJson(string json)
 		{
-			return Plain(Json.DeserializeObject(json));
+			if (string.IsNullOrWhiteSpace(json))
+				return null;
+			var quotas = new XmlDictionaryReaderQuotas
+			{
+				MaxDepth = JsonDepth,
+				MaxStringContentLength = int.MaxValue,
+				MaxArrayLength = int.MaxValue,
+				MaxBytesPerRead = int.MaxValue,
+				MaxNameTableCharCount = int.MaxValue,
+			};
+			try
+			{
+				using (var reader = JsonReaderWriterFactory.CreateJsonReader(Encoding.UTF8.GetBytes(json), quotas))
+				{
+					reader.MoveToContent();
+					var value = ReadJson(reader);
+					// Whatever follows the value is read too, so text after it is found.
+					while (reader.Read())
+						if (reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.Text)
+							throw new ArgumentException("Text follows the JSON value.");
+					return value;
+				}
+			}
+			catch (XmlException ex)
+			{
+				throw new ArgumentException("Not JSON: " + ex.Message, ex);
+			}
+			catch (FormatException ex)
+			{
+				throw new ArgumentException("Not JSON: " + ex.Message, ex);
+			}
+			catch (OverflowException ex)
+			{
+				throw new ArgumentException("Not JSON: " + ex.Message, ex);
+			}
 		}
 
-		/// <summary>
-		/// The reader's own shapes made the ones .NET's reader gives: a whole number it read as an int a long, and a
-		/// number with a fraction, which it reads as a decimal, a double.
-		/// </summary>
-		static object Plain(object value)
+		/// <summary>Reads one value from .NET's JSON reader, which shows JSON as elements that say their type in an attribute.</summary>
+		static object ReadJson(XmlReader reader)
 		{
-			var map = value as Dictionary<string, object>;
-			if (map != null)
+			switch (reader.GetAttribute("type"))
 			{
-				var plain = new Dictionary<string, object>();
-				foreach (var pair in map)
-					plain[pair.Key] = Plain(pair.Value);
-				return plain;
+				case "object":
+					var map = new Dictionary<string, object>();
+					if (reader.IsEmptyElement)
+					{
+						reader.Read();
+						return map;
+					}
+					reader.ReadStartElement();
+					while (reader.NodeType == XmlNodeType.Element)
+					{
+						// A name that cannot be an element's is held in an item attribute of an element in the item namespace.
+						var key = reader.NamespaceURI == "item" ? reader.GetAttribute("item") : reader.LocalName;
+						map[key] = ReadJson(reader);
+					}
+					reader.ReadEndElement();
+					return map;
+				case "array":
+					var items = new List<object>();
+					if (reader.IsEmptyElement)
+					{
+						reader.Read();
+						return items.ToArray();
+					}
+					reader.ReadStartElement();
+					while (reader.NodeType == XmlNodeType.Element)
+						items.Add(ReadJson(reader));
+					reader.ReadEndElement();
+					return items.ToArray();
+				case "null":
+					reader.Skip();
+					return null;
+				case "boolean":
+					return reader.ReadElementContentAsString() == "true";
+				case "number":
+					var number = reader.ReadElementContentAsString();
+					return long.TryParse(number, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var whole)
+						? (object)whole
+						: double.Parse(number, NumberStyles.Float, CultureInfo.InvariantCulture);
+				default:
+					return reader.ReadElementContentAsString();
 			}
-			var array = value as object[];
-			if (array != null)
-				return array.Select(Plain).ToArray();
-			if (value is int)
-				return (long)(int)value;
-			if (value is decimal)
-				return (double)(decimal)value;
-			return value;
 		}
 #else
 		static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
@@ -435,7 +609,7 @@ namespace JocysCom.ClassLibrary.Mcp
 			Dictionary<string, object> request;
 			try { request = FromJson(requestJson) as Dictionary<string, object>; }
 #if NETFRAMEWORK
-			catch (Exception ex) when (ex is ArgumentException || ex is FormatException) { return Error(null, -32700, "Parse error: " + ex.Message); }
+			catch (ArgumentException ex) { return Error(null, -32700, "Parse error: " + ex.Message); }
 #else
 			catch (JsonException ex) { return Error(null, -32700, "Parse error: " + ex.Message); }
 #endif

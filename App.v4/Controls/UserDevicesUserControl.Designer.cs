@@ -232,7 +232,7 @@
 			// RefreshButton
 			// 
 			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshButton.Name = "RefreshButton";
 			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -242,7 +242,7 @@
 			// ControllerDeleteButton
 			// 
 			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
 			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
@@ -251,7 +251,7 @@
 			// 
 			// HardwareButton
 			// 
-			this.HardwareButton.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.HardwareButton.Image = global::x360ce.App.Properties.Resources.hardware_32x32;
 			this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.HardwareButton.Name = "HardwareButton";
 			this.HardwareButton.Size = new System.Drawing.Size(87, 22);
@@ -260,7 +260,7 @@
 			// 
 			// AddDemoDevice
 			// 
-			this.AddDemoDevice.Image = global::x360ce.App.Properties.Resources.test_16x16;
+			this.AddDemoDevice.Image = global::x360ce.App.Properties.Resources.test_32x32;
 			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddDemoDevice.Name = "AddDemoDevice";
 			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
@@ -269,7 +269,7 @@
 			// 
 			// CleanupVirtualPadsButton
 			// 
-			this.CleanupVirtualPadsButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
+			this.CleanupVirtualPadsButton.Image = global::x360ce.App.Properties.Resources.remove_32x32;
 			this.CleanupVirtualPadsButton.Name = "CleanupVirtualPadsButton";
 			this.CleanupVirtualPadsButton.Size = new System.Drawing.Size(132, 22);
 			this.CleanupVirtualPadsButton.Text = "Remove Leftover Pads";
@@ -279,7 +279,7 @@
 			// ShowSystemDevicesButton
 			//
 			this.ShowSystemDevicesButton.CheckOnClick = true;
-			this.ShowSystemDevicesButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.ShowSystemDevicesButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
 			this.ShowSystemDevicesButton.Name = "ShowSystemDevicesButton";
 			this.ShowSystemDevicesButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
 			this.ShowSystemDevicesButton.Size = new System.Drawing.Size(137, 22);
@@ -295,7 +295,7 @@
             this.UnhideAllDevicesMenuItem,
             this.SynchronizeToHidHideMenuItem,
             this.OpenHidHideMenuItem});
-			this.HidHideDropDownButton.Image = global::x360ce.App.Properties.Resources.enable_16x16;
+			this.HidHideDropDownButton.Image = global::x360ce.App.Properties.Resources.enable_32x32;
 			this.HidHideDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.HidHideDropDownButton.Name = "HidHideDropDownButton";
 			this.HidHideDropDownButton.Size = new System.Drawing.Size(100, 22);
@@ -303,7 +303,7 @@
 			// 
 			// GamingDevicesMenuItem
 			// 
-			this.GamingDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.GamingDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_32x32;
 			this.GamingDevicesMenuItem.Name = "GamingDevicesMenuItem";
 			this.GamingDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.GamingDevicesMenuItem.Text = "Show Gaming Devices";
@@ -311,7 +311,7 @@
 			// 
 			// HiddenDevicesMenuItem
 			// 
-			this.HiddenDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.HiddenDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.folder_view_32x32;
 			this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
 			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
@@ -319,7 +319,7 @@
 			// 
 			// UnhideAllDevicesMenuItem
 			// 
-			this.UnhideAllDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.ok_16x16;
+			this.UnhideAllDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
 			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
@@ -327,7 +327,7 @@
 			// 
 			// SynchronizeToHidHideMenuItem
 			// 
-			this.SynchronizeToHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.SynchronizeToHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.SynchronizeToHidHideMenuItem.Name = "SynchronizeToHidHideMenuItem";
 			this.SynchronizeToHidHideMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.SynchronizeToHidHideMenuItem.Text = "Synchronize To HID Hide";
@@ -335,7 +335,7 @@
 			// 
 			// OpenHidHideMenuItem
 			// 
-			this.OpenHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.OpenHidHideMenuItem.Image = global::x360ce.App.Properties.Resources.hardware_32x32;
 			this.OpenHidHideMenuItem.Name = "OpenHidHideMenuItem";
 			this.OpenHidHideMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.OpenHidHideMenuItem.Text = "Open HID Hide...";

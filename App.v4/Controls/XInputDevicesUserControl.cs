@@ -147,8 +147,8 @@ namespace x360ce.App.Controls
 				var entry = _entries[i];
 				// Each row carries its own arrows, blank where there is nowhere to go.
 				var index = DevicesDataGridView.Rows.Add(
-					i > 0 ? Properties.Resources.nav_up_16x16 : null,
-					i < _entries.Count - 1 ? Properties.Resources.nav_down_16x16 : null,
+					i > 0 ? Properties.Resources.nav_up_32x32 : null,
+					i < _entries.Count - 1 ? Properties.Resources.nav_down_32x32 : null,
 					entry.Waiting
 						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
@@ -278,7 +278,7 @@ namespace x360ce.App.Controls
 			if (!_noticeOpen)
 				_restingHeight = Height;
 			_noticeOpen = true;
-			PlanOkButton.Image = Properties.Resources.ok_16x16;
+			PlanOkButton.Image = Properties.Resources.ok_32x32;
 			PlanSubjectLabel.Text = subject;
 			PlanBodyLabel.Text = body;
 			PlanOkButton.Visible = closable;

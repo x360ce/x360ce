@@ -49,11 +49,8 @@ namespace x360ce.App.Controls
 		{
 			var side = AboutProductLabel.PreferredHeight + AboutProductLabel.Margin.Bottom
 				+ AboutDescriptionLabel.Margin.Top + AboutDescriptionLabel.PreferredHeight;
-			var drawn = new Image[] { Properties.Resources.app_16x16, Properties.Resources.app_48x48, Properties.Resources.app_128x128 }
-				.Select(ControlsHelper.GetOriginal).ToArray();
-			var source = drawn.FirstOrDefault(x => x.Height >= side) ?? drawn.Last();
 			ProductPictureBox.Size = new Size(side, side);
-			ProductPictureBox.Image = ControlsHelper.ScaleImage(source, ProductPictureBox.Size);
+			ProductPictureBox.Image = ControlsHelper.ScaleImage(Properties.Resources.app_128x128, ProductPictureBox.Size);
 		}
 
 		/// <summary>The licence of a project x360ce carries a part of, to put under x360ce's own; empty when the program does not carry its text.</summary>

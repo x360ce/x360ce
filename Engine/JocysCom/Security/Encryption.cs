@@ -4,9 +4,6 @@ using System;
 using System.Configuration;
 using System.Text;
 
-#if NETFRAMEWORK // .NET Framework
-using System.Web.Security;
-#endif
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -95,36 +92,6 @@ namespace JocysCom.ClassLibrary.Security
 			}
 			set { _RsaUseOaepValue = value; }
 		}
-
-#if NETFRAMEWORK // .NET Framework
-
-		#region Machine Key
-
-		/// <summary>Encrypts text with MachineKey and converts to Base64 string.</summary>
-		public static string ProtectWithMachineKey(string text, string purpose, Encoding encoding = null)
-		{
-			if (string.IsNullOrEmpty(text))
-				return text;
-			var stream = (encoding ?? Encoding.UTF8).GetBytes(text);
-			var encrypted = MachineKey.Protect(stream, purpose);
-			var base64 = System.Convert.ToBase64String(encrypted);
-			return base64;
-		}
-
-		/// <summary>Decrypts text with MachineKey from Base64 string.</summary>
-		public static string UnProtectWithMachineKey(string base64, string purpose, Encoding encoding = null)
-		{
-			if (string.IsNullOrEmpty(base64))
-				return base64;
-			var encrypted = System.Convert.FromBase64String(base64);
-			var decrypted = MachineKey.Unprotect(encrypted, purpose);
-			var text = (encoding ?? Encoding.UTF8).GetString(decrypted);
-			return text;
-		}
-
-		#endregion
-
-#endif
 
 		#region MD5
 
@@ -436,10 +403,9 @@ namespace JocysCom.ClassLibrary.Security
 
 #if NETFRAMEWORK
 
-			// Get the configuration file.
-			var config = System.Web.HttpRuntime.IISVersion is null
-				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
-				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+			// Get the configuration file: web.config on a website, the program's own elsewhere.
+			var map = new ExeConfigurationFileMap { ExeConfigFilename = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile };
+			var config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
 #else
 			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 #endif

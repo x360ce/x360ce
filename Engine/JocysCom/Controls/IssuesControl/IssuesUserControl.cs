@@ -19,9 +19,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			InitializeComponent();
 			var icons = ThemeResourceManager.Library;
-			IgnoreAllButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
-			IgnoreButton.Image = (System.Drawing.Image)icons.GetObject("ignore_16x16");
-			ExceptionInfoButton.Image = (System.Drawing.Image)icons.GetObject("exception_16x16");
+			IgnoreAllButton.Image = (System.Drawing.Image)icons.GetObject("ignore_32x32");
+			IgnoreButton.Image = (System.Drawing.Image)icons.GetObject("ignore_32x32");
+			ExceptionInfoButton.Image = (System.Drawing.Image)icons.GetObject("exception_32x32");
 			if (IsDesignMode)
 				return;
 			// Set tool strip to the same font.
@@ -133,7 +133,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			{
 				if (IsDisposing)
 					return;
-				issue.Check();
+				if (issue.IsDue())
+					issue.Check();
 				if (IsDisposing)
 					return;
 				// If issue is critical then...

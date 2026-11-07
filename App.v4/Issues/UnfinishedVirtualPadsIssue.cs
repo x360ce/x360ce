@@ -15,7 +15,7 @@ namespace x360ce.App.Issues
 	/// It has been seen after many controllers were removed in quick succession while something still
 	/// held them open, which is what pressing Remove used to do.
 	/// </remarks>
-	class UnfinishedVirtualPadsIssue : IssueItem
+	class UnfinishedVirtualPadsIssue : OnChangeIssue
 	{
 		public UnfinishedVirtualPadsIssue() : base()
 		{

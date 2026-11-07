@@ -267,8 +267,8 @@ namespace x360ce.App.Controls
 			CurrentSetting = GetCurrentSetting();
 			MySettingsSaveButton.Enabled = controllerSelected && refreshed;
 			MySettingsSaveButton.Image = ContainsSetting(CurrentSetting)
-				? Properties.Resources.save_16x16
-				: Properties.Resources.save_add_16x16;
+				? Properties.Resources.save_32x32
+				: Properties.Resources.save_add_32x32;
 			MySettingsDeleteButton.Enabled = settingsSelected == 1;
 			MapToDropDownButton.Enabled = settingsSelected > 0;
 			MyDevicesDataGridView.Refresh();
@@ -500,7 +500,7 @@ namespace x360ce.App.Controls
 			}
 			else if (column == MyIconColumn)
 			{
-				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_16x16;
+				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_32x32;
 			}
 			else
 			{

@@ -1,4 +1,4 @@
-﻿## [4.29.58.0] - 2026-11-07
+﻿## [4.29.62.0] - 2026-11-07
 
 - Fixed: Bug report recordings said a pad's own centring was off when x360ce had left it alone.
 - Fixed: Bug report recordings read back another controller's XInput place when a real controller held an earlier one.
@@ -12,6 +12,8 @@
 - Fixed: A copy of x360ce that HID Hide hides controllers from says so on the Issues tab (Issue #1633, KhaledElSaiad).
 - Fixed: The XInput values shown stayed frozen after the error window was closed.
 - Fixed: x360ce leaves the screen as soon as it is closed, and lets go of controllers first.
+- Fixed: x360ce no longer checks files and drivers on a timer, only after something changes.
+- Fixed: An idle x360ce no longer keeps asking about empty controller places.
 - Changed: Vibration updates only the motor that changed, as 4.17 did, instead of starting both again (Issue #1633, KhaledElSaiad).
 - Changed: The Left Thumb and Right Thumb pages are now Left Stick and Right Stick.
 - Changed: [Invert], [Recentre] and [Turbo] moved under [Adjust] in the mapping menu.
@@ -38,6 +40,8 @@
 - Changed: x360ce starts faster.
 - Changed: The window appears at once and says Loading. Please wait... until its tabs are ready.
 - Changed: Tabs open as fast the first time as later.
+- Changed: x360ce no longer loads ASP.NET; Cloud runs on System.Net.
+- Changed: Each icon has one large picture, scaled down when drawn.
 - Added: Bug report recordings name the force feedback driver, its motors, and the force calls made each second.
 - Added: Bug report recordings show where DirectInput and Raw Input readings part, and what games read back.
 - Added: Bug report recordings say why a device was let go of, and which other controller programs run.

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web.Script.Serialization;
 using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.App.Mcp;
@@ -22,7 +21,6 @@ namespace x360ce.Tests
 	[TestClass]
 	public class McpEndToEndTest
 	{
-		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
 		[TestMethod, TestCategory("mcp"), TestCategory("ui-interactive"), Timeout(120000)]
 		[Description("An assistant can list tools, find the overall force strength by reading the tree, set it and read it back")]
@@ -54,11 +52,11 @@ namespace x360ce.Tests
 				Assert.IsNotNull(process, "The client said the program answers, but no such process is running.");
 				StringAssert.Contains(Post("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}"), "ui_set");
 				// The path is read from the tree, the way an assistant finds it, not written here.
-				var tree = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(Call(2, "ui_read", "{}"))));
+				var tree = (Dictionary<string, object>)McpServer.FromJson(Text(Post(Call(2, "ui_read", "{}"))));
 				var path = PathOf(tree, nameof(PadControl.ForceOverallTrackBar), nameof(MainControl.Pad1TabPage));
 				Assert.IsNotNull(path, "The overall force strength slider is not in the tree under controller 1.");
 				StringAssert.Contains(Text(Post(Call(3, "ui_set", "{\"path\":\"" + path + "\",\"value\":\"35\"}"))), "Done");
-				var read = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(Call(4, "ui_read", "{\"path\":\"" + path + "\"}"))));
+				var read = (Dictionary<string, object>)McpServer.FromJson(Text(Post(Call(4, "ui_read", "{\"path\":\"" + path + "\"}"))));
 				Assert.AreEqual("35", read["Value"]);
 			}
 			finally
@@ -171,7 +169,7 @@ namespace x360ce.Tests
 
 		static string Text(string response)
 		{
-			var answer = (Dictionary<string, object>)Json.DeserializeObject(response);
+			var answer = (Dictionary<string, object>)McpServer.FromJson(response);
 			Assert.IsFalse(answer.ContainsKey("error"), "The program answered with an error: " + response);
 			return (string)((Dictionary<string, object>)((object[])((Dictionary<string, object>)answer["result"])["content"])[0])["text"];
 		}

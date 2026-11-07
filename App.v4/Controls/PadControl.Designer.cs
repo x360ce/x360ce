@@ -1288,7 +1288,7 @@
             // 
             this.RemapAllButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.RemapAllButton.Enabled = false;
-            this.RemapAllButton.Image = global::x360ce.App.Properties.Resources.bullet_ball_glass_red_16x16;
+            this.RemapAllButton.Image = global::x360ce.App.Properties.Resources.bullet_ball_glass_red_32x32;
             this.RemapAllButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.RemapAllButton.Name = "RemapAllButton";
             this.RemapAllButton.Size = new System.Drawing.Size(150, 35);
@@ -2496,7 +2496,7 @@
             // 
             this.MotorInfoButton.AutoSize = true;
             this.MotorInfoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.MotorInfoButton.Image = global::x360ce.App.Properties.Resources.information_16x16;
+            this.MotorInfoButton.Image = global::x360ce.App.Properties.Resources.information_32x32;
             this.MotorInfoButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MotorInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.MotorInfoButton.Name = "MotorInfoButton";
@@ -3470,7 +3470,7 @@
             // 
             this.PastePresetButton.AutoSize = true;
             this.PastePresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.PastePresetButton.Image = global::x360ce.App.Properties.Resources.paste_16x16;
+            this.PastePresetButton.Image = global::x360ce.App.Properties.Resources.paste_32x32;
             this.PastePresetButton.Location = new System.Drawing.Point(398, 5);
             this.PastePresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.PastePresetButton.Name = "PastePresetButton";
@@ -3486,7 +3486,7 @@
             // 
             this.CopyPresetButton.AutoSize = true;
             this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
+            this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_32x32;
             this.CopyPresetButton.Location = new System.Drawing.Point(239, 5);
             this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 5, 0, 5);
             this.CopyPresetButton.Name = "CopyPresetButton";
@@ -3833,7 +3833,7 @@
             // RemoveMapButton
             // 
             this.RemoveMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.RemoveMapButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.RemoveMapButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
             this.RemoveMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RemoveMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
             this.RemoveMapButton.Name = "RemoveMapButton";
@@ -3844,7 +3844,7 @@
             // AddMapButton
             // 
             this.AddMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.AddMapButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+            this.AddMapButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
             this.AddMapButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.AddMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AddMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
@@ -3856,7 +3856,7 @@
             // AutoMapButton
             // 
             this.AutoMapButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.AutoMapButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+            this.AutoMapButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
             this.AutoMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.AutoMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
             this.AutoMapButton.Name = "AutoMapButton";
@@ -3867,7 +3867,7 @@
             // 
             // EnableButton
             // 
-            this.EnableButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+            this.EnableButton.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
             this.EnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.EnableButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
             this.EnableButton.Name = "EnableButton";
@@ -3877,7 +3877,7 @@
             // 
             // GetXInputStatesCheckBox
             // 
-            this.GetXInputStatesCheckBox.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+            this.GetXInputStatesCheckBox.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
             this.GetXInputStatesCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
             this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";

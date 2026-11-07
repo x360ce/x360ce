@@ -319,6 +319,15 @@ namespace x360ce.App.DInput
 			System.Threading.Interlocked.Increment(ref _generation);
 		}
 
+		/// <summary>Counts what may have moved the places: a device that came or went, a controller of ours made or let go of.</summary>
+		public static int Generation { get { return System.Threading.Volatile.Read(ref _generation); } }
+
+		/// <summary>The places XInput last reported a controller in, or null before its first answer.</summary>
+		/// <remarks>Replaced whole and never changed after it is published.</remarks>
+		public static bool[] Taken { get { return System.Threading.Volatile.Read(ref _taken); } }
+
+		static bool[] _taken;
+
 		/// <summary>Whether the last answer is older than the machine.</summary>
 		public static bool IsStale
 		{
@@ -394,6 +403,8 @@ namespace x360ce.App.DInput
 				// read does not keep it from loading. Asked once a read, and the table is worked out from that answer.
 				var products = new ushort[4];
 				var taken = DInputHelper.OccupiedPlaces(products);
+				if (taken != null)
+					System.Threading.Volatile.Write(ref _taken, taken);
 				var all = ReadMachine();
 				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
 				madeNotPluggedIn = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

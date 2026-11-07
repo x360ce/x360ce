@@ -149,6 +149,10 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		internal readonly int[] _misplacedWith = { -1, -1, -1, -1 };
 
+		/// <summary>The <see cref="XInputPlaces.Generation"/> each pad's controller last found no place for it at, or -1.</summary>
+		/// <remarks>Not asked about again until that moves: asking opens every controller on the machine for the same answer.</remarks>
+		internal readonly int[] _heldAtChange = { -1, -1, -1, -1 };
+
 		/// <summary>What the attempt that held each controller back came to: PlaceWrong, PlaceNotGiven or NotAnswering.</summary>
 		/// <remarks>Written with <see cref="_misplacedWith"/>, and meaningful only while it is set. Each held attempt repeats it.</remarks>
 		internal readonly VirtualError[] _heldAs = new VirtualError[4];
@@ -249,7 +253,7 @@ namespace x360ce.App.DInput
 				// silenced the rate for as long as that run had lasted.
 				passRate.Reset();
 				// So does the time of the last display read, which held the reads back for as long, the recording's among them.
-				_lastDisplayRead = 0;
+				_lastDisplayRead = -DisplayReadIntervalMs;
 				_ResetEvent.Reset();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
@@ -401,8 +405,11 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		/// <summary>How often the states shown on screen are read back, in milliseconds.</summary>
-		const long DisplayReadIntervalMs = 16;
+		/// <summary>How often the states the window shows are read back, in milliseconds: as often as it redraws them.</summary>
+		const long DisplayReadIntervalMs = 100;
+
+		/// <summary>How often a recording of the controller output reads them back, in milliseconds.</summary>
+		const long RecordingReadIntervalMs = 16;
 
 		long _lastDisplayRead;
 
@@ -416,7 +423,9 @@ namespace x360ce.App.DInput
 		internal bool DueForDisplayRead()
 		{
 			var now = watch.ElapsedMilliseconds;
-			if (now - _lastDisplayRead < DisplayReadIntervalMs)
+			var recording = Recording;
+			var interval = recording != null && recording.Has(RecordParts.Output) ? RecordingReadIntervalMs : DisplayReadIntervalMs;
+			if (now - _lastDisplayRead < interval)
 				return false;
 			_lastDisplayRead = now;
 			return true;

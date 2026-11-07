@@ -154,7 +154,7 @@ namespace x360ce.App
 			// StatusErrorsLabel
 			// 
 			this.StatusErrorsLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
-			this.StatusErrorsLabel.Image = global::x360ce.App.Properties.Resources.error_16x16;
+			this.StatusErrorsLabel.Image = global::x360ce.App.Properties.Resources.error_32x32;
 			this.StatusErrorsLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.StatusErrorsLabel.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this.StatusErrorsLabel.IsLink = true;
@@ -185,7 +185,7 @@ namespace x360ce.App
 			// 
 			// HelpPictureBox
 			// 
-			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_24x24;
+			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_48x48;
 			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
 			this.HelpPictureBox.Name = "HelpPictureBox";
 			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
@@ -207,7 +207,7 @@ namespace x360ce.App
 			// HeaderPictureBox
 			// 
 			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_48x48;
+			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_96x96;
 			this.HeaderPictureBox.Location = new System.Drawing.Point(630, 9);
 			this.HeaderPictureBox.Name = "HeaderPictureBox";
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
@@ -232,7 +232,7 @@ namespace x360ce.App
 			// 
 			// OpenApplicationToolStripMenuItem
 			// 
-			this.OpenApplicationToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.app_16x16;
+			this.OpenApplicationToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.app_32x32;
 			this.OpenApplicationToolStripMenuItem.Name = "OpenApplicationToolStripMenuItem";
 			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
@@ -248,7 +248,7 @@ namespace x360ce.App
 			// 
 			// ExitToolStripMenuItem
 			// 
-			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_16x16;
+			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_32x32;
 			this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
 			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
 			this.ExitToolStripMenuItem.Text = "Exit";

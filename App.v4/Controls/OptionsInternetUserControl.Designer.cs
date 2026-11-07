@@ -461,7 +461,7 @@
             // 
             this.OpenSettingsFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.OpenSettingsFolderButton.AutoSize = true;
-            this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+            this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
             this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.OpenSettingsFolderButton.Location = new System.Drawing.Point(834, 77);
             this.OpenSettingsFolderButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);

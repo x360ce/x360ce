@@ -16,7 +16,7 @@ namespace x360ce.App.Issues
 	///
 	/// Not asked while controllers are being put in order, when the controller is off for a moment on purpose.
 	/// </remarks>
-	class SwitchedOffControllersIssue : IssueItem
+	class SwitchedOffControllersIssue : OnChangeIssue
 	{
 		public SwitchedOffControllersIssue() : base()
 		{

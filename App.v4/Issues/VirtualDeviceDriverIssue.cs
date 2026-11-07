@@ -13,7 +13,7 @@ namespace x360ce.App.Issues
 	/// not answer is a different fault with a different fix, and <see cref="VirtualDriverNotWorkingIssue"/>
 	/// reports it.
 	/// </remarks>
-	public class VirtualDeviceDriverIssue : IssueItem
+	public class VirtualDeviceDriverIssue : OnChangeIssue
 	{
 		public VirtualDeviceDriverIssue() : base()
 		{

@@ -5,15 +5,12 @@ Each Xbox button there is a ControlTemplate of Paths drawn in a 142 x 142 square
 and Axis_Arrow is the rounded triangle shown between the mapped axis and the button, drawn the same way. This
 script reads the Paths in the path mini-language (M, L, H, V, C, S, Q, T, A and Z, absolute and relative, and
 the fill rule: F1 fills non-zero, F0 or none even-odd, as WPF does), fills each with its colour, a later Path over
-an earlier one, and writes the square at 24, 36 and 48 pixels: the size the page draws it at, and 1.5 and 2 times
-that.
+an earlier one, and writes the square at 48 pixels, twice the size the page shows it at 100%.
 
-- Resources/Images/v4/xbox/Button_*.png and Axis_Arrow.png at 24 pixels, and their versions named by their size,
-  such as Button_A_36x36.png. A picture with a colour of the theme also comes for the dark theme, in xbox/dark
-  with the same file names.
-- App.v4/Properties/Icons.resx, through build_icons.write_icons_resx: the versions and the dark pictures of every
-  picture Properties/Resources.resx names. Resources.resx names the light picture at 24 pixels, as the designer
-  and the program know it.
+- Resources/Images/v4/xbox/Button_*_48x48.png and Axis_Arrow_48x48.png. A picture with a colour of the theme also
+  comes for the dark theme, in xbox/dark with the same file names.
+- App.v4/Properties/Icons.resx, through build_icons.write_icons_resx: the dark pictures of those
+  Properties/Resources.resx names.
 
 Colours are the XAML's. The arrow's, BackgroundDark, is a colour of the theme rather than of the file: #DEDEDE in
 the light theme (x360ce 5's Default.xaml) and #454545 in the dark one (Default_DarkTheme.xaml), so the arrow comes
@@ -63,7 +60,7 @@ THEME = {"BackgroundDark": ("#DEDEDE", "#454545")}
 # The square the paths are drawn in, and the size the page draws a picture at.
 BOX = 142
 SIZE = 24
-MULTIPLES = (1, 1.5, 2)
+MULTIPLES = (2,)
 # Points across a pixel, and steps a curve is drawn in.
 POINTS = 16
 STEPS = 32
@@ -313,7 +310,7 @@ def main():
             layers = [(figures, even_odd, colour_of(brush, brushes, dark)) for figures, even_odd, brush in paths]
             for multiple in MULTIPLES:
                 size = round(SIZE * multiple)
-                file = name if multiple == 1 else f"{name}_{size}x{size}"
+                file = f"{name}_{size}x{size}"
                 save(draw(layers, size), (xbox / "dark" if dark else xbox) / f"{file}.png", xbox)
     print(f"App.v4/Properties/Icons.resx: {write_icons_resx(repo, 'v4')} entries")
 

@@ -270,8 +270,6 @@ namespace x360ce.App
 				{
 					var original = JocysCom.ClassLibrary.Controls.ControlsHelper.GetOriginal(image);
 					var faded = EngineHelper.Faded(original);
-					JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(faded,
-						JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(original).Select(EngineHelper.Faded).ToArray());
 					DisabledImageCache.Add(image, (Bitmap)JocysCom.ClassLibrary.Controls.ControlsHelper.ScaleImage(faded, image.Size));
 				}
 				return DisabledImageCache[image];

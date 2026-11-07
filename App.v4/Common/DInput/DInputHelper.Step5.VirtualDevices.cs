@@ -109,6 +109,9 @@ namespace x360ce.App.DInput
 						// wheel fed at that rate swings from side to side.
 						if (IsWaiting(_NextPlugAttempt[i - 1], Environment.TickCount, PlugRetryMs))
 							continue;
+						// It has no place until a controller comes or goes.
+						if (_heldAtChange[i - 1] == XInputPlaces.Generation)
+							continue;
 						// Plugging in waits up to five seconds for Windows to give the controller a place
 						// and reads the device tree twice: three to four seconds a controller, measured.
 						// On this thread that stopped every controller being polled for as long, and a
@@ -715,6 +718,7 @@ namespace x360ce.App.DInput
 				PlugFailures[i] = 0;
 				FeedDrops[i] = 0;
 				_misplacedWith[i] = -1;
+				_heldAtChange[i] = -1;
 			}
 			// The client outlives a Repair, and so would its record of each failed plug and unplug.
 			var client = ViGEmClient.Current;
@@ -1294,6 +1298,8 @@ namespace x360ce.App.DInput
 			// Put somewhere else or given no place last time: held back until a controller has come or gone. Asked before
 			// whether the bus still holds it, since one the bus would not let go of reads as connected while in another tab's
 			// place. One the bus would not let go of is not held back: it goes on to be kept below, and the pad says so.
+			// Read before the places, so a change while they are read is not missed.
+			var change = XInputPlaces.Generation;
 			bool[] before = null;
 			if (misplacedWith >= 0)
 			{
@@ -1305,6 +1311,7 @@ namespace x360ce.App.DInput
 				{
 					// Said as it was when the controller was taken away, and not counted as a plug the bus failed.
 					_heldBack[own] = true;
+					_heldAtChange[own] = change;
 					return _heldAs[own];
 				}
 				// A controller has come or gone since: the hold is over, and whatever this attempt comes to says why.
@@ -1343,7 +1350,10 @@ namespace x360ce.App.DInput
 				return VirtualError.NotAnswering;
 			// Most likely held by this pad's own kept controller, which only Repair or a restart takes away.
 			if (before[own])
+			{
+				_heldAtChange[own] = change;
 				return client.HasKept(userIndex) ? VirtualError.RemovalRefused : VirtualError.PlaceTaken;
+			}
 			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
 			// was not before is ours, which is the only way of knowing that does not rest on reading a
 			// number off a name and hoping it means what it looks like.

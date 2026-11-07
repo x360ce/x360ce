@@ -11,16 +11,6 @@ namespace x360ce.App
 	public class Recorder : IDisposable
 	{
 
-		public Recorder(float horizontalResolution = 0, float verticalResolution = 0)
-		{
-			if (horizontalResolution > 0 && verticalResolution > 0)
-			{
-				markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
-				markR.SetResolution(horizontalResolution, verticalResolution);
-			}
-		}
-
-		Bitmap markR;
 		public bool Recording;
 		public bool DrawRecordingImage
 		{
@@ -378,10 +368,6 @@ namespace x360ce.App
 		{
 			if (disposing)
 			{
-				if (markR != null)
-				{
-					markR.Dispose();
-				}
 			}
 		}
 

@@ -382,7 +382,7 @@
 			// MySettingsRefreshButton
 			// 
 			this.MySettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.MySettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.MySettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsRefreshButton.Name = "MySettingsRefreshButton";
 			this.MySettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -392,7 +392,7 @@
 			// MySettingsLoadButton
 			// 
 			this.MySettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.MySettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.MySettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsLoadButton.Name = "MySettingsLoadButton";
 			this.MySettingsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -402,7 +402,7 @@
 			// MySettingsDeleteButton
 			// 
 			this.MySettingsDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.MySettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.MySettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MySettingsDeleteButton.Name = "MySettingsDeleteButton";
 			this.MySettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
@@ -418,7 +418,7 @@
             this.MapToController2MenuItem,
             this.MapToController3MenuItem,
             this.MapToController4MenuItem});
-			this.MapToDropDownButton.Image = global::x360ce.App.Properties.Resources.map_to_16x16;
+			this.MapToDropDownButton.Image = global::x360ce.App.Properties.Resources.map_to_32x32;
 			this.MapToDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.MapToDropDownButton.Name = "MapToDropDownButton";
 			this.MapToDropDownButton.Size = new System.Drawing.Size(77, 22);
@@ -596,7 +596,7 @@
 			// GlobalSettingsRefreshButton
 			// 
 			this.GlobalSettingsRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.GlobalSettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.GlobalSettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GlobalSettingsRefreshButton.Name = "GlobalSettingsRefreshButton";
 			this.GlobalSettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -606,7 +606,7 @@
 			// GlobalSettingsLoadButton
 			// 
 			this.GlobalSettingsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.GlobalSettingsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.GlobalSettingsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GlobalSettingsLoadButton.Name = "GlobalSettingsLoadButton";
 			this.GlobalSettingsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -690,7 +690,7 @@
 			// PresetRefreshButton
 			// 
 			this.PresetRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.PresetRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.PresetRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.PresetRefreshButton.Name = "PresetRefreshButton";
 			this.PresetRefreshButton.Size = new System.Drawing.Size(66, 22);
@@ -700,7 +700,7 @@
 			// PresetsLoadButton
 			// 
 			this.PresetsLoadButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.PresetsLoadButton.Image = global::x360ce.App.Properties.Resources.load_16x16;
+			this.PresetsLoadButton.Image = global::x360ce.App.Properties.Resources.load_32x32;
 			this.PresetsLoadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.PresetsLoadButton.Name = "PresetsLoadButton";
 			this.PresetsLoadButton.Size = new System.Drawing.Size(53, 22);
@@ -709,7 +709,7 @@
 			// 
 			// MySettingsSaveButton
 			// 
-			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.MySettingsSaveButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.MySettingsSaveButton.Location = new System.Drawing.Point(562, 15);
 			this.MySettingsSaveButton.Name = "MySettingsSaveButton";
 			this.MySettingsSaveButton.Size = new System.Drawing.Size(75, 23);

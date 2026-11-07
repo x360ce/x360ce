@@ -23,7 +23,7 @@ namespace x360ce.App.Issues
 	/// badly carries dozens, each walked by every read of the machine and each a line in Device Manager
 	/// that looks like a fault. They are named here as well, and the same removal takes them away.
 	/// </remarks>
-	class LeftoverVirtualPadsIssue : IssueItem
+	class LeftoverVirtualPadsIssue : OnChangeIssue
 	{
 		public LeftoverVirtualPadsIssue() : base()
 		{

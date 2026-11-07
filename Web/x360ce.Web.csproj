@@ -14,6 +14,7 @@
     <RootNamespace>x360ce.Web</RootNamespace>
     <AssemblyName>x360ce.Web</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
     <UseIISExpress>true</UseIISExpress>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -81,6 +82,9 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Engine\JocysCom\Diagnostics\RawDataLogHttpModule.cs">
+      <Link>JocysCom\Diagnostics\RawDataLogHttpModule.cs</Link>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

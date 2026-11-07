@@ -571,8 +571,8 @@ namespace x360ce.App.Controls
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
 				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
-				   ? Properties.Resources.checkbox_16x16
-				   : Properties.Resources.checkbox_unchecked_16x16);
+				   ? Properties.Resources.checkbox_32x32
+				   : Properties.Resources.checkbox_unchecked_32x32);
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -756,8 +756,8 @@ namespace x360ce.App.Controls
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
 			ControlsHelper.SetImage(EnableButton, virt
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16);
+				? x360ce.App.Properties.Resources.checkbox_32x32
+				: x360ce.App.Properties.Resources.checkbox_unchecked_32x32);
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
@@ -1440,7 +1440,7 @@ namespace x360ce.App.Controls
 			mi = new ToolStripMenuItem(cRecord);
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
-			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_16x16);
+			ControlsHelper.SetImage(mi, Properties.Resources.bullet_ball_glass_red_32x32);
 			// Add [Adjust], which holds the changes made to what the box already reads.
 			var adjust = new ToolStripMenuItem(cAdjust);
 			DiMenuStrip.Items.Add(adjust);

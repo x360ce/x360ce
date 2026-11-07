@@ -162,7 +162,7 @@
 			// RefreshProgramsButton
 			// 
 			this.RefreshProgramsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshProgramsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshProgramsButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshProgramsButton.Name = "RefreshProgramsButton";
 			this.RefreshProgramsButton.Size = new System.Drawing.Size(66, 22);
@@ -171,7 +171,7 @@
 			// 
 			// ImportProgramsButton
 			// 
-			this.ImportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_into_16x16;
+			this.ImportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_into_32x32;
 			this.ImportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ImportProgramsButton.Name = "ImportProgramsButton";
 			this.ImportProgramsButton.Size = new System.Drawing.Size(72, 22);
@@ -180,7 +180,7 @@
 			// 
 			// ExportProgramsButton
 			// 
-			this.ExportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_out_16x16;
+			this.ExportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_out_32x32;
 			this.ExportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ExportProgramsButton.Name = "ExportProgramsButton";
 			this.ExportProgramsButton.Size = new System.Drawing.Size(69, 22);
@@ -189,7 +189,7 @@
 			// 
 			// DeleteProgramsButton
 			// 
-			this.DeleteProgramsButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteProgramsButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.DeleteProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DeleteProgramsButton.Name = "DeleteProgramsButton";
 			this.DeleteProgramsButton.Size = new System.Drawing.Size(60, 22);

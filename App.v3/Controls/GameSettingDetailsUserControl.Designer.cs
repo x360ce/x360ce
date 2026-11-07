@@ -507,7 +507,7 @@
 			// SynchronizeSettingsButton
 			// 
 			this.SynchronizeSettingsButton.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
+			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_32x32;
 			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(3, 449);
 			this.SynchronizeSettingsButton.Name = "SynchronizeSettingsButton";
@@ -532,7 +532,7 @@
 			// 
 			// ResetToDefaultButton
 			// 
-			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_16x16;
+			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_32x32;
 			this.ResetToDefaultButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
 			this.ResetToDefaultButton.Size = new System.Drawing.Size(110, 22);
@@ -545,7 +545,7 @@
             this.GoogleSearchButton,
             this.NGEmuSearchButton,
             this.NGEmuThreadButton});
-			this.HelpButton.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.HelpButton.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.HelpButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.HelpButton.Name = "HelpButton";
 			this.HelpButton.Size = new System.Drawing.Size(91, 20);

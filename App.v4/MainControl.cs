@@ -104,11 +104,11 @@ namespace x360ce.App
 			SetBuletImage("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
 			SetBuletImage("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
 			SetBuletImage("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusOff));
-			SetBuletImage("ok_16x16.png", Resources.ok_16x16);
-			SetBuletImage("ok_off_16x16.png", Resources.ok_off_16x16);
-			SetBuletImage("fix_16x16.png", Resources.fix_16x16);
-			SetBuletImage("fix_off_16x16.png", Resources.fix_off_16x16);
-			SetBuletImage("refresh_16x16.png", Resources.refresh_16x16);
+			SetBuletImage("ok_32x32.png", Resources.ok_32x32);
+			SetBuletImage("ok_off_32x32.png", Resources.ok_off_32x32);
+			SetBuletImage("fix_32x32.png", Resources.fix_32x32);
+			SetBuletImage("fix_off_32x32.png", Resources.fix_off_32x32);
+			SetBuletImage("refresh_32x32.png", Resources.refresh_32x32);
 			foreach (var key in BuletImageList.Images.Keys.Cast<string>().Where(x => x.Contains("|")).ToArray())
 			{
 				var colours = key.Split('|');

@@ -448,6 +448,7 @@ namespace x360ce.App
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			Issues.OnChangeIssue.Changed();
 			var o = SettingsManager.Options;
 			//SettingsManager.Sync(o, e.PropertyName);
 			// Update controls by specific property.
@@ -724,6 +725,7 @@ namespace x360ce.App
 		/// <summary>Saves a change into the row selected on the controller page it belongs to, at once, on every step of a slider's drag too.</summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
+			Issues.OnChangeIssue.Changed();
 			SettingsManager.Current.ApplySettingsToXML(Main.PadControls, e.Page);
 		}
 
@@ -1091,20 +1093,20 @@ namespace x360ce.App
 			if (!moderateCount.HasValue)
 			{
 				// Show refreshing icon.
-				key = "refresh_16x16.png";
+				key = "refresh_32x32.png";
 			}
 			// If critical issues found then...
 			if (criticalCount > 0)
 			{
 				// Make it blink.
-				key = key == "fix_16x16.png"
-					? "fix_off_16x16.png"
-					: "fix_16x16.png";
+				key = key == "fix_32x32.png"
+					? "fix_off_32x32.png"
+					: "fix_32x32.png";
 			}
 			else if (moderateCount > 0)
-				key = "fix_16x16.png";
+				key = "fix_32x32.png";
 			else
-				key = "ok_off_16x16.png";
+				key = "ok_off_32x32.png";
 			// Set tab image.
 			if (Main.IssuesTabPage.ImageKey != key)
 				Main.IssuesTabPage.ImageKey = key;
@@ -1535,6 +1537,12 @@ namespace x360ce.App
 				foreach (var issue in issues)
 					issue.Checked += Issue_CheckedAtStartup;
 				Main.IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
+				// The person is looking: what they changed elsewhere, in an installer or HID Hide's own program, is read now.
+				Main.IssuesPanel.VisibleChanged += (sender, e) =>
+				{
+					if (Main.IssuesPanel.Visible)
+						Issues.OnChangeIssue.Changed();
+				};
 				Main.IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
 				// This will start execution of Tasks Timer.
 				Main.IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
@@ -1829,6 +1837,7 @@ namespace x360ce.App
 
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
 		{
+			Issues.OnChangeIssue.Changed();
 			// Ahead of the check below, which skips the rest while the window is minimised, as it is while a game
 			// runs. Only the device thread's call asks: the same change comes through here again on the interface thread.
 			if (InvokeRequired)
@@ -2274,8 +2283,8 @@ namespace x360ce.App
 			StatusErrorsLabel.AccessibleDescription = "Opens the error report window";
 			StatusErrorsLabel.AccessibleRole = AccessibleRole.PushButton;
 			ControlsHelper.SetImage(StatusErrorsLabel, ErrorFilesCount > 0
-				? Resources.error_16x16
-				: AppHelper.GetDisabledImage(Resources.error_16x16));
+				? Resources.error_32x32
+				: AppHelper.GetDisabledImage(Resources.error_32x32));
 		}
 
 		#region Exception Handling and Reporting

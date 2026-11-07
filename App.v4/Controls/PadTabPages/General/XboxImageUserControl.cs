@@ -78,7 +78,7 @@ namespace x360ce.App.Controls
 		/// <remarks>
 		/// GDI+ draws a premultiplied picture at its own size without converting or resampling it, the fastest way it
 		/// draws: measured at a quarter of the time of fading the picture as loaded while drawing it, and faster than
-		/// GDI's AlphaBlend. Each is made once, by one draw from the version nearest above the size, when first painted.
+		/// GDI's AlphaBlend. Each is made once, by one draw from the picture, when first painted.
 		/// </remarks>
 		Bitmap Painted(Bitmap picture, string name, Size size, bool faded)
 		{
@@ -92,7 +92,7 @@ namespace x360ce.App.Controls
 				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 				g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-				ControlsHelper.DrawImageWithOpacity(g, ControlsHelper.GetDrawnSize(picture, size),
+				ControlsHelper.DrawImageWithOpacity(g, picture,
 					new Rectangle(Point.Empty, size), faded ? EngineHelper.DisabledOpacity : 1f);
 			}
 			_Painted.Add(key, painted);

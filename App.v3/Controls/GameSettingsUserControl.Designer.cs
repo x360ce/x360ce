@@ -247,7 +247,7 @@
 			// 
 			// ScanGamesButton
 			// 
-			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
+			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_32x32;
 			this.ScanGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ScanGamesButton.Name = "ScanGamesButton";
 			this.ScanGamesButton.Size = new System.Drawing.Size(52, 22);
@@ -256,7 +256,7 @@
 			// 
 			// AddGameButton
 			// 
-			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_32x32;
 			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddGameButton.Name = "AddGameButton";
@@ -266,7 +266,7 @@
 			// 
 			// DeleteGamesButton
 			// 
-			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.DeleteGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DeleteGamesButton.Name = "DeleteGamesButton";
 			this.DeleteGamesButton.Size = new System.Drawing.Size(60, 22);
@@ -275,7 +275,7 @@
 			// 
 			// SaveGamesButton
 			// 
-			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
+			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.SaveGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SaveGamesButton.Name = "SaveGamesButton";
 			this.SaveGamesButton.Size = new System.Drawing.Size(51, 22);
@@ -285,7 +285,7 @@
 			// StartGameButton
 			// 
 			this.StartGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.StartGameButton.Image = global::x360ce.App.Properties.Resources.launch_16x16;
+			this.StartGameButton.Image = global::x360ce.App.Properties.Resources.launch_32x32;
 			this.StartGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.StartGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.StartGameButton.Name = "StartGameButton";
@@ -296,7 +296,7 @@
 			// OpenGameButton
 			// 
 			this.OpenGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.OpenGameButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenGameButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
 			this.OpenGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.OpenGameButton.Name = "OpenGameButton";
@@ -310,7 +310,7 @@
             this.ShowAllGamesMenuItem,
             this.ShowEnabledGamesMenuItem,
             this.ShowDisabledGamesMenuItem});
-			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_32x32;
 			this.ShowGamesDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ShowGamesDropDownButton.Name = "ShowGamesDropDownButton";
 			this.ShowGamesDropDownButton.Size = new System.Drawing.Size(85, 22);
@@ -318,7 +318,7 @@
 			// 
 			// ShowAllGamesMenuItem
 			// 
-			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
+			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_32x32;
 			this.ShowAllGamesMenuItem.Name = "ShowAllGamesMenuItem";
 			this.ShowAllGamesMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.ShowAllGamesMenuItem.Text = "Show: All";
@@ -326,7 +326,7 @@
 			// 
 			// ShowEnabledGamesMenuItem
 			// 
-			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_16x16;
+			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_32x32;
 			this.ShowEnabledGamesMenuItem.Name = "ShowEnabledGamesMenuItem";
 			this.ShowEnabledGamesMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.ShowEnabledGamesMenuItem.Text = "Show: Enabled";
@@ -334,7 +334,7 @@
 			// 
 			// ShowDisabledGamesMenuItem
 			// 
-			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_32x32;
 			this.ShowDisabledGamesMenuItem.Name = "ShowDisabledGamesMenuItem";
 			this.ShowDisabledGamesMenuItem.Size = new System.Drawing.Size(154, 22);
 			this.ShowDisabledGamesMenuItem.Text = "Show: Disabled";
@@ -488,7 +488,7 @@
 			// RefreshProgramsButton
 			// 
 			this.RefreshProgramsButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshProgramsButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshProgramsButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RefreshProgramsButton.Name = "RefreshProgramsButton";
 			this.RefreshProgramsButton.Size = new System.Drawing.Size(66, 22);
@@ -497,7 +497,7 @@
 			// 
 			// ImportProgramsButton
 			// 
-			this.ImportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_into_16x16;
+			this.ImportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_into_32x32;
 			this.ImportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ImportProgramsButton.Name = "ImportProgramsButton";
 			this.ImportProgramsButton.Size = new System.Drawing.Size(72, 22);
@@ -506,7 +506,7 @@
 			// 
 			// ExportProgramsButton
 			// 
-			this.ExportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_out_16x16;
+			this.ExportProgramsButton.Image = global::x360ce.App.Properties.Resources.data_out_32x32;
 			this.ExportProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ExportProgramsButton.Name = "ExportProgramsButton";
 			this.ExportProgramsButton.Size = new System.Drawing.Size(69, 22);
@@ -515,7 +515,7 @@
 			// 
 			// DeleteProgramsButton
 			// 
-			this.DeleteProgramsButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.DeleteProgramsButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
 			this.DeleteProgramsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DeleteProgramsButton.Name = "DeleteProgramsButton";
 			this.DeleteProgramsButton.Size = new System.Drawing.Size(60, 22);

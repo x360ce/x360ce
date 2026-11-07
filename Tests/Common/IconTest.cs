@@ -79,17 +79,16 @@ namespace x360ce.Tests
 				{
 					var manager = ThemeResourceManager.Install(typeof(App.Properties.Resources), "x360ce.App.Properties.Icons");
 					FormsTheme.SetTheme(ThemeType.Light);
-					var light = App.Properties.Resources.ok_16x16;
+					var light = App.Properties.Resources.ok_32x32;
 					FormsTheme.SetTheme(ThemeType.Dark);
-					var dark = App.Properties.Resources.ok_16x16;
+					var dark = App.Properties.Resources.ok_32x32;
 					Assert.AreNotSame(light, dark, "The dark theme handed out the light icon.");
 					var folder = Path.Combine(Ui.RepoRoot.FullName, "Resources", "Images", "v4", "icons");
-					AssertSamePixels(Path.Combine(folder, "ok_16x16.png"), ControlsHelper.GetOriginal(light));
-					AssertSamePixels(Path.Combine(folder, "dark", "ok_16x16.png"), ControlsHelper.GetOriginal(dark));
+					AssertSamePixels(Path.Combine(folder, "ok_32x32.png"), ControlsHelper.GetOriginal(light));
+					AssertSamePixels(Path.Combine(folder, "dark", "ok_32x32.png"), ControlsHelper.GetOriginal(dark));
 					var swapped = manager.Themed(light);
 					Assert.AreEqual(light.Size, swapped.Size);
 					Assert.AreSame(ControlsHelper.GetOriginal(dark), ControlsHelper.GetOriginal(swapped), "An icon handed out in the light theme was not swapped for the dark one.");
-					Assert.AreEqual(2, ControlsHelper.GetDrawnSizes(dark).Length, "The dark icon does not carry its versions drawn at 24 and 32 pixels.");
 				}
 				finally
 				{
@@ -112,34 +111,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every Buttons page picture comes at 1.5 and 2 times its size, and a dark one at all three sizes or at none")]
-		public void Every_glyph_has_its_sizes_and_its_dark_versions()
+		[Description("Every Buttons page picture is one file at twice the size it shows at 100%, and a dark one of the same size or none")]
+		public void Every_glyph_is_one_picture_at_twice_its_size()
 		{
 			var versions = new ResourceManager("x360ce.App.Properties.Icons", typeof(App.Properties.Resources).Assembly);
 			var glyphs = DesignerGlyphs();
 			Assert.AreEqual(15, glyphs.Count, "Resources.resx does not name a picture for each of the 14 buttons and the arrow.");
-			var missing = new List<string>();
+			var wrong = new List<string>();
 			foreach (var glyph in glyphs)
 			{
-				Size asked;
+				Size size;
 				using (var image = Image.FromFile(glyph.Value))
-					asked = image.Size;
+					size = image.Size;
 				// A picture drawn in the file's own colours only is the same in both themes and has no dark one.
-				var dark = versions.GetObject(glyph.Key + "_dark") != null;
-				foreach (var m in new[] { 1.0, 1.5, 2.0 })
-				{
-					var size = new Size((int)Math.Round(asked.Width * m), (int)Math.Round(asked.Height * m));
-					var sized = glyph.Key + (m == 1.0 ? "" : "_" + size.Width + "x" + size.Height);
-					foreach (var name in m == 1.0 ? new[] { sized + "_dark" } : new[] { sized, sized + "_dark" })
-					{
-						var image = versions.GetObject(name) as Image;
-						var wanted = dark || !name.EndsWith("_dark");
-						if (wanted ? image == null || image.Size != size : image != null)
-							missing.Add(name);
-					}
-				}
+				var dark = versions.GetObject(glyph.Key + "_dark") as Image;
+				if (size != new Size(48, 48) || (dark != null && dark.Size != size))
+					wrong.Add(glyph.Key);
 			}
-			Assert.AreEqual(0, missing.Count, "Missing, of the wrong size, or a dark version without the dark picture: " + string.Join(", ", missing));
+			Assert.AreEqual(0, wrong.Count, "Of the wrong size: " + string.Join(", ", wrong));
 		}
 
 		[TestMethod, TestCategory("ui")]
@@ -157,12 +146,10 @@ namespace x360ce.Tests
 					var folder = Path.Combine(Ui.RepoRoot.FullName, "Resources", "Images", "v4", "xbox");
 					// The arrow is drawn in a colour of the theme.
 					var arrow = App.Properties.Resources.Axis_Arrow;
-					AssertSamePixels(Path.Combine(folder, "dark", "Axis_Arrow.png"), ControlsHelper.GetOriginal(arrow));
-					Assert.AreEqual(2, ControlsHelper.GetDrawnSizes(arrow).Length, "The dark arrow does not carry its versions drawn at 36 and 48 pixels.");
+					AssertSamePixels(Path.Combine(folder, "dark", "Axis_Arrow_48x48.png"), ControlsHelper.GetOriginal(arrow));
 					// A button is drawn in its own colours, the same in both themes.
 					var button = App.Properties.Resources.Button_A;
-					AssertSamePixels(Path.Combine(folder, "Button_A.png"), ControlsHelper.GetOriginal(button));
-					Assert.AreEqual(2, ControlsHelper.GetDrawnSizes(button).Length, "The button does not carry its versions drawn at 36 and 48 pixels in the dark theme.");
+					AssertSamePixels(Path.Combine(folder, "Button_A_48x48.png"), ControlsHelper.GetOriginal(button));
 				}
 				finally
 				{
@@ -202,14 +189,13 @@ namespace x360ce.Tests
 								var when = theme + " theme, " + button;
 								var picture = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ButtonImagePictureBox), true).Single();
 								var arrow = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ArrowPictureBox), true).Single();
-								AssertPicture(Path.Combine(folder, "Button_" + button + ".png"), picture.BackgroundImage, when);
-								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow.png"), arrow.Image, when + ", arrow");
+								AssertPicture(Path.Combine(folder, "Button_" + button + "_48x48.png"), picture.BackgroundImage, when);
+								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow_48x48.png"), arrow.Image, when + ", arrow");
 								var enabled = ControlsHelper.GetOriginal(picture.BackgroundImage);
 								row.Enabled = false;
 								var greyed = ControlsHelper.GetOriginal(picture.BackgroundImage);
 								Assert.IsNotNull(greyed, when + ": no picture when greyed out.");
 								Assert.AreNotSame(enabled, greyed, when + ": the picture is not greyed out with its row.");
-								AssertDrawnAt(greyed, when + ", greyed out");
 							}
 						}
 					}
@@ -222,55 +208,34 @@ namespace x360ce.Tests
 			});
 		}
 
-		/// <summary>The picture shown is the file's, and has versions drawn at 1.5 and 2 times its size.</summary>
+		/// <summary>The picture shown is the file's.</summary>
 		static void AssertPicture(string file, Image shown, string when)
 		{
 			Assert.IsNotNull(shown, when + ": no picture.");
 			var original = ControlsHelper.GetOriginal(shown);
 			AssertSamePixels(file, original);
-			AssertDrawnAt(original, when);
-		}
-
-		/// <summary>At 150 % and 200 % the picture is a version drawn at that size, never an enlargement.</summary>
-		static void AssertDrawnAt(Image original, string when)
-		{
-			var drawn = ControlsHelper.GetDrawnSizes(original);
-			foreach (var m in new[] { 1.5, 2.0 })
-			{
-				var size = new Size((int)Math.Round(original.Width * m), (int)Math.Round(original.Height * m));
-				var scaled = ControlsHelper.ScaleImage(original, size);
-				Assert.IsTrue(drawn.Contains(scaled), string.Format("{0}: at {1:P0} the picture is enlarged from {2} rather than drawn at {3}.", when, m, original.Size, size));
-			}
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every icon of the library's own controls comes at 1.5 and 2 times its size, and each in both themes")]
-		public void Every_library_icon_has_its_sizes_and_a_dark_version()
+		[Description("Every icon of the library's own controls is one picture at twice the size it shows at 100%, in both themes")]
+		public void Every_library_icon_is_one_picture_in_both_themes()
 		{
 			var type = typeof(ThemeResourceManager);
 			var set = new ResourceManager(type.FullName, type.Assembly)
 				.GetResourceSet(System.Globalization.CultureInfo.InvariantCulture, true, true);
-			var names = new HashSet<string>(set.Cast<System.Collections.DictionaryEntry>().Select(x => (string)x.Key));
-			var icons = names.Where(x => !x.EndsWith("_dark"))
-				.Select(x => Regex.Match(x, @"^(\w+)_(\d+)x\2$"))
-				.GroupBy(x => x.Groups[1].Value, x => int.Parse(x.Groups[2].Value))
-				.ToDictionary(x => x.Key, x => x.Min());
-			Assert.IsTrue(icons.Count >= 15, "Only " + icons.Count + " library icons were found.");
-			var missing = new List<string>();
-			foreach (var icon in icons)
+			var names = set.Cast<System.Collections.DictionaryEntry>().Select(x => (string)x.Key).Where(x => !x.EndsWith("_dark")).ToArray();
+			Assert.IsTrue(names.Length >= 15, "Only " + names.Length + " library icons were found.");
+			var wrong = new List<string>();
+			foreach (var name in names)
 			{
-				foreach (var size in new[] { icon.Value, icon.Value * 3 / 2, icon.Value * 2 })
-				{
-					foreach (var suffix in new[] { "", "_dark" })
-					{
-						var name = icon.Key + "_" + size + "x" + size + suffix;
-						var image = set.GetObject(name) as Image;
-						if (image == null || image.Size != new Size(size, size))
-							missing.Add(name);
-					}
-				}
+				var side = name.StartsWith("MessageBoxIcon_") ? 64 : 32;
+				var size = new Size(side, side);
+				var light = set.GetObject(name) as Image;
+				var dark = set.GetObject(name + "_dark") as Image;
+				if (light == null || dark == null || light.Size != size || dark.Size != size || !name.EndsWith("_" + side + "x" + side))
+					wrong.Add(name);
 			}
-			Assert.AreEqual(0, missing.Count, "Missing or of the wrong size: " + string.Join(", ", missing));
+			Assert.AreEqual(0, wrong.Count, "Missing or of the wrong size: " + string.Join(", ", wrong));
 		}
 
 		[TestMethod, TestCategory("ui")]
@@ -283,16 +248,15 @@ namespace x360ce.Tests
 				{
 					var icons = ThemeResourceManager.Library;
 					FormsTheme.SetTheme(ThemeType.Light);
-					var light = (Image)icons.GetObject("refresh_16x16");
+					var light = (Image)icons.GetObject("refresh_32x32");
 					FormsTheme.SetTheme(ThemeType.Dark);
-					var dark = (Image)icons.GetObject("refresh_16x16");
+					var dark = (Image)icons.GetObject("refresh_32x32");
 					Assert.AreNotSame(light, dark, "The dark theme handed out the light icon.");
 					var folder = Path.Combine(Ui.RepoRoot.FullName, "Engine", "JocysCom", "Controls", "Themes", "Images");
-					AssertSamePixels(Path.Combine(folder, "refresh_16x16.png"), ControlsHelper.GetOriginal(light));
-					AssertSamePixels(Path.Combine(folder, "dark", "refresh_16x16.png"), ControlsHelper.GetOriginal(dark));
+					AssertSamePixels(Path.Combine(folder, "refresh_32x32.png"), ControlsHelper.GetOriginal(light));
+					AssertSamePixels(Path.Combine(folder, "dark", "refresh_32x32.png"), ControlsHelper.GetOriginal(dark));
 					var swapped = icons.Themed(light);
 					Assert.AreSame(ControlsHelper.GetOriginal(dark), ControlsHelper.GetOriginal(swapped), "An icon handed out in the light theme was not swapped for the dark one.");
-					Assert.AreEqual(2, ControlsHelper.GetDrawnSizes(dark).Length, "The dark icon does not carry its versions drawn at 24 and 32 pixels.");
 				}
 				finally
 				{

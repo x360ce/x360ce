@@ -596,7 +596,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.GoogleSearchButton.AutoSize = true;
 			this.GoogleSearchButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.GoogleSearchButton.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.GoogleSearchButton.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.GoogleSearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.GoogleSearchButton.Name = "GoogleSearchButton";
 			this.GoogleSearchButton.TabIndex = 0;
@@ -612,7 +612,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.button3.AutoSize = true;
 			this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button3.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.button3.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button3.Name = "button3";
 			this.button3.TabIndex = 1;
@@ -628,7 +628,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.button4.AutoSize = true;
 			this.button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button4.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.button4.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button4.Name = "button4";
 			this.button4.TabIndex = 2;
@@ -879,7 +879,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ResetToDefaultButton.AutoSize = true;
 			this.ResetToDefaultButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_16x16;
+			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_32x32;
 			this.ResetToDefaultButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
 			this.ResetToDefaultButton.TabIndex = 0;

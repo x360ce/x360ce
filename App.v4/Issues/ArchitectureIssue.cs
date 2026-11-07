@@ -11,7 +11,7 @@ using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Issues
 {
-	public class ArchitectureIssue : IssueItem
+	public class ArchitectureIssue : OnChangeIssue
 	{
 		public ArchitectureIssue() : base()
 		{

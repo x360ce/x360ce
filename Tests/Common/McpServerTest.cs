@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Controls;
@@ -39,7 +38,6 @@ namespace x360ce.Tests
 			public static string UiSet(string path, string value) { return null; }
 		}
 
-		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
 
 		/// <summary>Where the tests' own calls are logged: a temp folder, so the machine's log stays a record of real assistants.</summary>
 		public static readonly string LogFolder = System.IO.Directory.CreateDirectory(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "x360ce-tests")).FullName;
@@ -54,8 +52,8 @@ namespace x360ce.Tests
 
 		static Dictionary<string, object> Call(string method, object @params)
 		{
-			var request = Json.Serialize(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", 1 }, { "method", method }, { "params", @params } });
-			return (Dictionary<string, object>)Json.DeserializeObject(McpServer.Handle(request));
+			var request = McpServer.ToJson(new Dictionary<string, object> { { "jsonrpc", "2.0" }, { "id", 1 }, { "method", method }, { "params", @params } });
+			return (Dictionary<string, object>)McpServer.FromJson(McpServer.Handle(request));
 		}
 
 		static Dictionary<string, object> CallTool(string name, Dictionary<string, object> arguments)
@@ -197,12 +195,12 @@ namespace x360ce.Tests
 			var mixedCase = new Dictionary<string, object> { { "VALUE", "y" } };
 			Assert.AreEqual("poked y", Text((Dictionary<string, object>)CallTool("poke_value", mixedCase)["result"]), "The command line lower-cases names; binding must not care.");
 			var missing = (Dictionary<string, object>)CallTool("poke_value", new Dictionary<string, object>())["error"];
-			Assert.AreEqual(-32602, missing["code"]);
+			Assert.AreEqual(-32602L, missing["code"]);
 			var wrongType = (Dictionary<string, object>)CallTool("poke_value", new Dictionary<string, object> { { "value", "x" }, { "times", "many" } })["error"];
-			Assert.AreEqual(-32602, wrongType["code"]);
+			Assert.AreEqual(-32602L, wrongType["code"]);
 			// Dropped, an invented argument looks as if it worked: one caller asked for depth 3 and got the whole branch.
 			var unknown = (Dictionary<string, object>)CallTool("poke_value", new Dictionary<string, object> { { "value", "x" }, { "depth", "3" } })["error"];
-			Assert.AreEqual(-32602, unknown["code"]);
+			Assert.AreEqual(-32602L, unknown["code"]);
 			StringAssert.Contains((string)unknown["message"], "depth");
 			StringAssert.Contains((string)unknown["message"], "value, times", "The refusal names the arguments the tool does take.");
 		}
@@ -213,11 +211,11 @@ namespace x360ce.Tests
 		{
 			UseSample(AiAccess.Administer);
 			StringAssert.Contains(Text((Dictionary<string, object>)CallTool("rows", null)["result"]), "\"Name\":\"A\"");
-			Assert.AreEqual(-32601, ((Dictionary<string, object>)Call("nothing/here", null)["error"])["code"]);
-			var bad = (Dictionary<string, object>)Json.DeserializeObject(McpServer.Handle("{not json"));
-			Assert.AreEqual(-32700, ((Dictionary<string, object>)bad["error"])["code"]);
-			var notObject = (Dictionary<string, object>)Json.DeserializeObject(McpServer.Handle("null"));
-			Assert.AreEqual(-32600, ((Dictionary<string, object>)notObject["error"])["code"]);
+			Assert.AreEqual(-32601L, ((Dictionary<string, object>)Call("nothing/here", null)["error"])["code"]);
+			var bad = (Dictionary<string, object>)McpServer.FromJson(McpServer.Handle("{not json"));
+			Assert.AreEqual(-32700L, ((Dictionary<string, object>)bad["error"])["code"]);
+			var notObject = (Dictionary<string, object>)McpServer.FromJson(McpServer.Handle("null"));
+			Assert.AreEqual(-32600L, ((Dictionary<string, object>)notObject["error"])["code"]);
 			var failed = (Dictionary<string, object>)CallTool("boom", null)["result"];
 			Assert.AreEqual(true, failed["isError"]);
 			StringAssert.Contains(Text(failed), "no device");

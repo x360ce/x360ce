@@ -74,42 +74,17 @@ namespace x360ce.Tests
 			}
 		}
 
-		[TestMethod, TestCategory("pad-images")]
-		[Description("Every controller picture comes with its versions drawn at 1.5 and 2 times its size, showing the controller in the same place")]
-		public void Pictures_come_with_versions_drawn_at_larger_sizes()
+		[TestMethod, TestCategory("ui")]
+		[Description("Every controller picture is one image, at twice the size it shows at 100%")]
+		public void Each_picture_is_one_image_at_twice_its_size()
 		{
 			// The program's own assembly carries the pictures; naming a type in it loads it.
 			Assert.IsNotNull(typeof(XboxImageUserControl).Assembly);
 			foreach (var name in new[] { "Top", "Front", "TopDark", "FrontDark" })
 			{
 				var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png");
-				var drawn = JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture);
-				var expected = new[] { 1.5, 2.0 }
-					.Select(m => new Size((int)Math.Round(picture.Width * m), (int)Math.Round(picture.Height * m))).ToArray();
-				CollectionAssert.AreEqual(expected, drawn.Select(x => x.Size).ToArray(),
-					name + ": a version drawn at a larger size is missing or of the wrong size.");
-				// The largest version, reduced to the picture's size, must cover the same outline, or the marks land elsewhere.
-				using (var reduced = new Bitmap(picture.Width, picture.Height))
-				{
-					using (var g = Graphics.FromImage(reduced))
-					{
-						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-						g.DrawImage(drawn[drawn.Length - 1], new Rectangle(Point.Empty, reduced.Size));
-					}
-					int both = 0, either = 0;
-					for (var y = 0; y < picture.Height; y++)
-						for (var x = 0; x < picture.Width; x++)
-						{
-							var inPicture = picture.GetPixel(x, y).A > 127;
-							var inReduced = reduced.GetPixel(x, y).A > 127;
-							if (inPicture && inReduced)
-								both++;
-							if (inPicture || inReduced)
-								either++;
-						}
-					var overlap = both / (double)either;
-					Assert.IsTrue(overlap > 0.98, name + ": the largest version overlaps the picture " + overlap.ToString("P1") + " only.");
-				}
+				Assert.AreEqual(512, picture.Width, name + " is not at twice the size it shows at 100%.");
+				Assert.AreEqual(0, picture.Height % 2, name + " has no whole size at 100%.");
 			}
 		}
 
@@ -150,7 +125,7 @@ namespace x360ce.Tests
 			foreach (var name in new[] { "Top", "Front", "TopDark", "FrontDark" })
 			{
 				var picture = x360ce.Engine.EngineHelper.GetResourcePicture("Images.xboxController" + name + ".png");
-				foreach (Bitmap source in new Image[] { picture }.Concat(JocysCom.ClassLibrary.Controls.ControlsHelper.GetDrawnSizes(picture)))
+				foreach (Bitmap source in new Image[] { picture })
 				{
 					using (var faded = x360ce.Engine.EngineHelper.Faded(source))
 					{

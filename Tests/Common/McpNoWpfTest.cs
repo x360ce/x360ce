@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 namespace x360ce.Tests
@@ -65,7 +64,7 @@ namespace x360ce.Tests
 		/// <summary>The text of a tool's answer, failing on an error or a refusal.</summary>
 		static string Text(string response)
 		{
-			var answer = (Dictionary<string, object>)new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.DeserializeObject(response);
+			var answer = (Dictionary<string, object>)McpServer.FromJson(response);
 			Assert.IsFalse(answer.ContainsKey("error"), "The door answered with an error: " + response);
 			var result = (Dictionary<string, object>)answer["result"];
 			Assert.IsFalse(result.ContainsKey("isError"), "The tool refused: " + response);

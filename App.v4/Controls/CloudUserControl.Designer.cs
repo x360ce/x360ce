@@ -177,7 +177,7 @@
             // RetryButton
             // 
             this.RetryButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.RetryButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.RetryButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
             this.RetryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RetryButton.Name = "RetryButton";
             this.RetryButton.Size = new System.Drawing.Size(55, 22);
@@ -186,7 +186,7 @@
             // 
             // UploadToCloudButton
             // 
-            this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_16x16;
+            this.UploadToCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_upload_32x32;
             this.UploadToCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.UploadToCloudButton.Name = "UploadToCloudButton";
             this.UploadToCloudButton.Size = new System.Drawing.Size(116, 22);
@@ -196,7 +196,7 @@
             // 
             // DownloadFromCloudButton
             // 
-            this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_16x16;
+            this.DownloadFromCloudButton.Image = global::x360ce.App.Properties.Resources.cloud_computing_download_32x32;
             this.DownloadFromCloudButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DownloadFromCloudButton.Name = "DownloadFromCloudButton";
             this.DownloadFromCloudButton.Size = new System.Drawing.Size(147, 22);
@@ -227,7 +227,7 @@
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.DeleteButton.Image = global::x360ce.App.Properties.Resources.delete_32x32;
             this.DeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(60, 22);

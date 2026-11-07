@@ -7,7 +7,6 @@ using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 
 namespace x360ce.Engine
 {
@@ -47,8 +46,6 @@ namespace x360ce.Engine
 	/// </remarks>
 	public sealed class InstanceChannel : IDisposable
 	{
-		static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue };
-
 		/// <summary>No byte order mark: it would arrive at the start of the first line and make it no message.</summary>
 		static readonly UTF8Encoding Utf8 = new UTF8Encoding(false);
 
@@ -142,7 +139,7 @@ namespace x360ce.Engine
 		{
 			if (_closed || message == null || !_reading)
 				return false;
-			var line = Json.Serialize(new Dictionary<string, object>
+			var line = JocysCom.ClassLibrary.Mcp.McpServer.ToJson(new Dictionary<string, object>
 			{
 				{ "Type", message.Type },
 				{ "Text", message.Text },
@@ -231,7 +228,7 @@ namespace x360ce.Engine
 			Dictionary<string, object> map;
 			try
 			{
-				map = Json.DeserializeObject(line.TrimStart('﻿')) as Dictionary<string, object>;
+				map = JocysCom.ClassLibrary.Mcp.McpServer.FromJson(line.TrimStart('﻿')) as Dictionary<string, object>;
 			}
 			catch (ArgumentException) { return null; }
 			catch (InvalidOperationException) { return null; }
@@ -259,7 +256,7 @@ namespace x360ce.Engine
 				return yes ? "true" : "false";
 			if (value is IFormattable number)
 				return number.ToString(null, CultureInfo.InvariantCulture);
-			return Json.Serialize(value);
+			return JocysCom.ClassLibrary.Mcp.McpServer.ToJson(value);
 		}
 
 		void Close()
