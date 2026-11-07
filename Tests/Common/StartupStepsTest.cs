@@ -324,7 +324,7 @@ namespace x360ce.Tests
 				Assert.IsTrue(built >= 0 && built < added, "Controller " + pad + "'s page was not built before the control joined the window.");
 			}
 			Assert.AreEqual(1, _marks.Count(x => x == TabsReady), "The tabs were not made ready once.");
-			Assert.IsTrue(Array.IndexOf(_marks, "device thread start") > Array.IndexOf(_marks, ControlShown), "The engine ran before the main control showed, with nothing yet to show it.");
+			Assert.IsTrue(Array.IndexOf(_marks, "device thread start") < Array.IndexOf(_marks, ControlShown), "The engine waited for the main control to show, while a game may be waiting for its controller.");
 			Assert.AreEqual(1, _marks.Count(x => x == ControllerTabsReady), "The tabs inside the controller pages were not made ready once.");
 			Assert.IsTrue(Array.IndexOf(_marks, ControllerTabsReady) > Array.IndexOf(_marks, ControlShown), "The window waited for the tabs inside the controller pages before it showed the control.");
 		}

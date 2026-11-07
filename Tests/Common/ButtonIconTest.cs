@@ -159,14 +159,15 @@ namespace x360ce.Tests
 				var alone = Ink(button, image, text, true);
 				button.Enabled = false;
 				var off = Ink(button, image, text, false);
+				var offAlone = Ink(button, image, text, true);
 				var line = string.Format("{0}: picture alone at {1:0.0},{2:0.0}; drawn enabled, picture at {3:0.0},{4:0.0}, text at {5:0.0},{6:0.0}; disabled, picture at {7:0.0},{8:0.0}, text at {9:0.0},{10:0.0}",
 					name, alone[0].X, alone[0].Y, up[0].X, up[0].Y, up[1].X, up[1].Y, off[0].X, off[0].Y, off[1].X, off[1].Y);
 				report.Add(line);
 				// A button on a disabled panel cannot be drawn enabled.
 				if (!button.Parent.Enabled)
 					return;
-				if (Apart(alone[0], up[0]) || Apart(up[0], off[0]) || Apart(up[1], off[1]))
-					faults.Add(line);
+				if (Apart(alone[0], up[0]) || Apart(offAlone[0], off[0]) || Apart(up[1], off[1]))
+					faults.Add(line + string.Format("; disabled alone at {0:0.0},{1:0.0}", offAlone[0].X, offAlone[0].Y));
 			}
 			finally
 			{
@@ -199,7 +200,13 @@ namespace x360ce.Tests
 					using (var g = Graphics.FromImage(bitmap))
 					{
 						g.Clear(face);
-						g.DrawImage(button.Image, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+						using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+						{
+							// As the theme draws a disabled button's picture.
+							if (!button.Enabled)
+								attributes.SetColorMatrix(new System.Drawing.Imaging.ColorMatrix { Matrix33 = 0.5f });
+							g.DrawImage(button.Image, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+						}
 					}
 				var textLeft = image.Left < text.Left && image.Right > text.Left ? image.Right : text.Left;
 				var textRight = image.Right > text.Right && image.Left < text.Right ? image.Left : text.Right;
@@ -208,8 +215,8 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>
-		/// The middle of the pixels unlike the face between two columns, each weighed by how unlike it is, so a picture or text
-		/// faded to half strength has the same middle as at full strength.
+		/// The middle of the pixels unlike the face between two columns, each weighed by how unlike it is. A picture with pixels
+		/// both lighter and darker than the face has another middle on another face, so each state is compared with itself alone.
 		/// </summary>
 		static PointF Ink(Bitmap bitmap, Color face, int left, int right)
 		{

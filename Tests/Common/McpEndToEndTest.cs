@@ -146,7 +146,7 @@ namespace x360ce.Tests
 		/// <summary>Runs the program with a switch that answers and stops, and returns its exit code, with what it printed.</summary>
 		static int RunSwitch(string exe, string arguments, out string output)
 		{
-			var start = new ProcessStartInfo(exe, TestRun.ProfileArgument + " " + arguments) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
+			var start = new ProcessStartInfo(exe, arguments) { UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
 			using (var p = Process.Start(start))
 			{
 				var error = p.StandardError.ReadToEndAsync();

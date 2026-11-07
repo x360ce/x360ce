@@ -1146,6 +1146,7 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("UpdateForm2: end");
 			// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 			AllowDHelperStart = true;
+			StartLoops();
 			TabSteps = MakeTabsReady().GetEnumerator();
 			TabWindowsTimer = new System.Windows.Forms.Timer { Interval = 1 };
 			TabWindowsTimer.Tick += TabWindowsTimer_Tick;
@@ -1165,27 +1166,21 @@ namespace x360ce.App
 		const int TabWindowsStepMilliseconds = 30;
 
 		/// <summary>Makes the tabs ready only while somebody can open one: not minimised or in the tray, where a game may be running.</summary>
-		/// <remarks>Nobody is waiting for the window then, and a game may be waiting for its controller, so the loops do not wait for the window.</remarks>
 		void UpdateTabWindowsTimer()
 		{
 			if (TabWindowsTimer == null || Program.IsClosing)
 				return;
 			var canOpen = Visible && WindowState != FormWindowState.Minimized;
 			TabWindowsTimer.Enabled = canOpen;
-			if (!canOpen)
-				StartLoops();
 		}
 
-		/// <summary>Whether <see cref="StartLoops"/> has run.</summary>
-		bool _LoopsStarted;
-
-		/// <summary>Starts what runs over and over behind the window: the issue round and the engine, whose counters on the status bar count their passes.</summary>
-		/// <remarks>When the main control shows, or as soon as loading is done when nobody is waiting for the window.</remarks>
+		/// <summary>Starts what runs over and over behind the window: the issue round and the engine.</summary>
+		/// <remarks>
+		/// As soon as the pages have their settings, because a game may be waiting for its controller. The status bar's
+		/// counters start when the main control shows: they are written by the interface timer and <see cref="ShowDevicesRead"/>.
+		/// </remarks>
 		void StartLoops()
 		{
-			if (_LoopsStarted)
-				return;
-			_LoopsStarted = true;
 			UpdateForm1();
 			Program.StartupTrace.Mark("device thread start");
 			Global.DHelper.Start();
@@ -1267,9 +1262,9 @@ namespace x360ce.App
 			if (tabs.SelectedTab != null)
 				SetHeaderSubject(tabs.SelectedTab.Text);
 			Program.StartupTrace.Mark("MainControl: shown");
-			StartLoops();
 			InterfaceTimer.Start();
 			ShowInterfaceRate();
+			ShowDevicesRead();
 			yield return null;
 			foreach (var pad in Main.PadControls)
 				foreach (var page in pad.PadTabControl.TabPages.Cast<TabPage>().ToArray())
@@ -1836,6 +1831,13 @@ namespace x360ce.App
 				DHelper_DevicesUpdated(null, null);
 		}
 
+		/// <summary>Shows how many times the devices were read, once the window is past saying it is loading.</summary>
+		void ShowDevicesRead()
+		{
+			if (LoadingLabel.IsDisposed)
+				ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
+		}
+
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
 		{
 			Issues.OnChangeIssue.Changed();
@@ -1857,7 +1859,7 @@ namespace x360ce.App
 				return;
 			}
 			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
-			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
+			ShowDevicesRead();
 			// A controller arriving or leaving changes which XInput place everything holds, so the
 			// answers kept for the lists are thrown away and the places are shown again. Without
 			// this a list keeps showing where things were before somebody plugged something in.
@@ -2033,10 +2035,11 @@ namespace x360ce.App
 		private void ShowInterfaceRate()
 		{
 			var on = SettingsManager.Options.UpdateInterface;
-			var rate = !on || !InterfaceTimer.Enabled ? 0
-				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
+			// A window can be minimised without losing its activation, so being in front is not enough.
+			var fps = interfaceIsForeground && WindowState != FormWindowState.Minimized ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
+			var rate = !on || !InterfaceTimer.Enabled ? 0 : fps;
 			if (InterfaceTimer != null)
-				InterfaceTimer.Interval = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
+				InterfaceTimer.Interval = 1000 / fps;
 			ControlsHelper.SetText(InterfaceUpdatesButton, "UI Hz: {0}", on ? rate.ToString() : "OFF");
 		}
 

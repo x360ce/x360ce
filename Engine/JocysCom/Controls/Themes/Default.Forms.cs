@@ -317,6 +317,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>The family Windows shows code in, which <see cref="CodeFamily"/> stands in for.</summary>
 		const string WindowsCodeFamily = "Consolas";
 
+		/// <summary>The size Windows Forms' designer writes for its default font, which a control naming it means as the interface size.</summary>
+		const float DesignerFontSize = 8.25f;
+
 		/// <summary>Windows Forms' own default font, read before <see cref="SetFonts"/> first changed it.</summary>
 		static Font _windowsFont;
 
@@ -398,7 +401,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 			if (sizeInPoints <= 0)
 				sizeInPoints = _windowsFont.SizeInPoints;
-			_textScale = sizeInPoints / _windowsFont.SizeInPoints;
+			_textScale = sizeInPoints / DesignerFontSize;
 			_interfaceFamily = interfaceFamily;
 			// Asked for by face name only, so Windows finds the face whatever the language of the default font.
 			Font = interfaceFamily == null && sizeInPoints == _windowsFont.SizeInPoints ? null
@@ -2891,8 +2894,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			// The shape lying flat, pointing down, in its own units; turned to the side the ticks are on.
 			var shape = new[] { new PointF(0, 0), new PointF(11, 0), new PointF(11, 12), new PointF(5.5f, 18), new PointF(0, 12) };
 			// Across the slider the shape is 11 wide; along the way to the ticks it is 18 long.
-			var left = thumb.X + (thumb.Width - (vertical ? length : width)) / 2;
-			var top = thumb.Y + (thumb.Height - (vertical ? width : length)) / 2;
+			var left = (float)Math.Round(thumb.X + (thumb.Width - (vertical ? length : width)) / 2);
+			var top = (float)Math.Round(thumb.Y + (thumb.Height - (vertical ? width : length)) / 2);
 			var flip = track.TickStyle == TickStyle.TopLeft;
 			var points = shape.Select(p =>
 			{

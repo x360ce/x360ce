@@ -42,9 +42,9 @@ namespace x360ce.Tests
 		const int DeviceListTakenInMs = 12000;
 
 		/// <summary>
-		/// From the pages having their settings to the engine starting. Measured 160 to 180 ms, and 320 to 380 ms on a first
-		/// start with no record to compile ahead from. With the first issue round between them it was 280 to 330 ms here, where
-		/// the round has little to check, and about 1300 ms with a person's own profile.
+		/// From the main control joining the window to the engine starting. Measured 140 to 160 ms. With the first issue round
+		/// between them it was 280 to 330 ms here, where the round has little to check, and about 1300 ms with a person's own
+		/// profile.
 		/// </summary>
 		const int EngineStartMs = 700;
 
@@ -135,13 +135,13 @@ namespace x360ce.Tests
 					"The device list was taken in " + takenIn + " ms after the process started, over " + DeviceListTakenInMs
 					+ " ms. Reading every device on the machine is what used to cost that.");
 
-				var pages = FirstMilestone(log, "LoadPages: end");
+				var pages = FirstMilestone(log, "MainControl: added");
 				var engine = FirstMilestone(log, "device thread start");
-				Assert.IsNotNull(pages, "The trace has no 'LoadPages: end' milestone, so the engine's start cannot be measured.");
+				Assert.IsNotNull(pages, "The trace has no 'MainControl: added' milestone, so the engine's start cannot be measured.");
 				Assert.IsNotNull(engine, "The trace has no 'device thread start' milestone, so the prefetch cannot be measured.");
 				var start = MillisecondsOf(engine) - MillisecondsOf(pages);
 				Assert.IsTrue(start <= EngineStartMs,
-					"The engine started " + start + " ms after the pages had their settings, over " + EngineStartMs + " ms. "
+					"The engine started " + start + " ms after the main control joined the window, over " + EngineStartMs + " ms. "
 					+ "Nothing it needs comes after them; waiting for the first issue round is what used to cost that.");
 				var gap = takenIn - MillisecondsOf(engine);
 				Assert.IsTrue(gap <= PrefetchGapMs,

@@ -56,6 +56,8 @@ namespace x360ce.App
 				// Enable form GUI update only if form is not minimized.
 				EnableFormUpdates(WindowState != FormWindowState.Minimized && !Program.IsClosing);
 				UpdateTabWindowsTimer();
+				if (InterfaceTimer != null)
+					ShowInterfaceRate();
 			}
 		}
 

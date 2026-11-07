@@ -34,7 +34,8 @@ namespace x360ce.Tests
 			// The page suspends its own containers only; a row lays itself out as it is sized.
 			page.SuspendLayout();
 			// The screen's zoom reaches the controls as a larger font; that is what auto-scaling reads.
-			page.Font = new Font(page.Font.FontFamily, page.Font.Size * zoom);
+			// This screen's own zoom is taken out, so a zoom means the same on any screen.
+			page.Font = new Font(page.Font.FontFamily, page.Font.Size * zoom / JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
 			group.SuspendLayout();
 			group.Controls.Add(row);
 			row.Location = new Point(9, 29);

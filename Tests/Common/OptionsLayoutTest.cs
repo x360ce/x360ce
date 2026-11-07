@@ -207,7 +207,7 @@ namespace x360ce.Tests
 						var list = (ComboBox)appearance.Controls.Find(name, true).Single();
 						Assert.AreEqual(ComboBoxStyle.DropDownList, list.DropDownStyle, name + " is typed in rather than chosen from the list.");
 					}
-				});
+				}, true);
 			}
 		}
 
@@ -548,6 +548,7 @@ namespace x360ce.Tests
 			Ui.OnUiThread(() =>
 			{
 				FormsTheme.SetTheme(ThemeType.Light);
+				var faults = new List<string>();
 				// The zooms Windows offers; the page was drawn at 100 %.
 				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 2f })
 					using (var form = new Form { ClientSize = new Size(1600, 1000), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
@@ -557,7 +558,7 @@ namespace x360ce.Tests
 						var tab = new TabPage("Options") { Padding = new Padding(3) };
 						var window = new UserControl { Dock = DockStyle.Fill };
 						window.SuspendLayout();
-						window.Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom);
+						window.Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom / JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
 						var tabs = new TabControl { Dock = DockStyle.Fill };
 						tab.Controls.Add(options);
 						tabs.TabPages.Add(tab);
@@ -588,13 +589,14 @@ namespace x360ce.Tests
 							// as a screen at 100 % makes it.
 							if (zoom != 1f && page.Controls.OfType<UserControl>().Any())
 								continue;
-							Assert.IsTrue(AsFar(general.Value, start), string.Format(
-								"At {0:P0} {1} starts at {2}, and General at {3}.", zoom, page.Text, start, general.Value));
+							if (!AsFar(general.Value, start))
+								faults.Add(string.Format("At {0:P0} {1} starts at {2}, and General at {3}.", zoom, page.Text, start, general.Value));
 							// A table squeezes a control that cannot grow, even to nothing, as the page is scaled.
 							foreach (var control in Shown(page).Where(x => x.Bounds.Width <= 0 || x.Bounds.Height <= 0))
 								Assert.Fail(string.Format("At {0:P0} {1} on {2} is {3}, so it cannot be seen.", zoom, control.Name, page.Text, control.Bounds));
 						}
 					}
+				Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
 			});
 		}
 
@@ -801,12 +803,23 @@ namespace x360ce.Tests
 		/// answers for itself. Windows Forms needs a single-threaded apartment, which MSTest does
 		/// not provide.
 		/// </remarks>
-		static void WithOptionsPage(double widthFactor, Action<Control> assert)
+		/// <param name="onWindow">On a shown window, which scales the page to this screen as the program's window does.</param>
+		static void WithOptionsPage(double widthFactor, Action<Control> assert, bool onWindow = false)
 		{
 			Ui.OnUiThread(() =>
 			{
 				using (var page = new OptionsUserControl())
+				using (var window = onWindow ? new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false } : null)
 				{
+					if (window != null)
+					{
+						window.SuspendLayout();
+						window.AutoScaleDimensions = new SizeF(6F, 13F);
+						window.AutoScaleMode = AutoScaleMode.Font;
+						window.Controls.Add(page);
+						window.ResumeLayout(false);
+						window.Show();
+					}
 					// A tab strip hands out its pages only once it has a window, and until then
 					// every control below it reads as hidden.
 					page.CreateControl();

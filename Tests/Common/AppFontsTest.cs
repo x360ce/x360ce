@@ -160,10 +160,10 @@ namespace x360ce.Tests
 					{
 						Assert.AreEqual(size, Control.DefaultFont.SizeInPoints, when + "controls without a font of their own are not drawn at the size set.");
 						var made = Bounds(false);
-						CollectionAssert.AreEqual(expected, made, when + "a window is laid out " + string.Join(", ", made)
+						AssertSameLayout(expected, made, when + "a window is laid out " + string.Join(", ", made)
 							+ " instead of as in Windows' font made larger: " + string.Join(", ", expected));
 						var shown = Bounds(true);
-						CollectionAssert.AreEqual(expected, shown, when + "a window themed once shown is laid out " + string.Join(", ", shown)
+						AssertSameLayout(expected, shown, when + "a window themed once shown is laid out " + string.Join(", ", shown)
 							+ " instead of " + string.Join(", ", expected));
 						using (var menus = SystemFonts.MenuFont)
 							Assert.AreEqual(menus.SizeInPoints * ratio, MenuFont().SizeInPoints, 0.01f,
@@ -176,6 +176,21 @@ namespace x360ce.Tests
 					}
 				}
 			});
+		}
+
+		/// <summary>
+		/// The same layout within a pixel: on a screen not at 100 % the expected one is scaled twice, once for Windows' font and
+		/// again for the larger one, and rounds each time, where the program's window is scaled once.
+		/// </summary>
+		static void AssertSameLayout(List<Rectangle> expected, List<Rectangle> actual, string message)
+		{
+			Assert.AreEqual(expected.Count, actual.Count, message);
+			for (var i = 0; i < expected.Count; i++)
+			{
+				var e = expected[i];
+				var a = actual[i];
+				Assert.IsTrue(Math.Abs(e.X - a.X) <= 1 && Math.Abs(e.Y - a.Y) <= 1 && Math.Abs(e.Width - a.Width) <= 1 && Math.Abs(e.Height - a.Height) <= 1, message);
+			}
 		}
 
 		[TestMethod, TestCategory("interface")]
