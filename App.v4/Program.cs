@@ -633,7 +633,7 @@ namespace x360ce.App
 			var path = GetResourcePath(name);
 			if (path == null)
 				return null;
-			var assembly = Assembly.GetEntryAssembly();
+			var assembly = typeof(Program).Assembly;
 			var sr = assembly.GetManifestResourceStream(path);
 			return sr;
 		}
@@ -643,7 +643,7 @@ namespace x360ce.App
 		/// </summary>
 		public static string GetResourcePath(string name)
 		{
-			var assembly = Assembly.GetEntryAssembly();
+			var assembly = typeof(Program).Assembly;
 			var names = assembly.GetManifestResourceNames()
 				.Where(x => x.EndsWith(name));
 			var a = Environment.Is64BitProcess ? ".x64." : ".x86.";
