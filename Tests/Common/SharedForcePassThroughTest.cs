@@ -184,7 +184,7 @@ namespace x360ce.Tests
 			var unticked = DeviceRouting.Build(game, new[] { row }, new[] { ps });
 			var helper = new DInputHelper();
 			var last = LastPassedForce(helper);
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
 			// Controller 1's game asks for a rumble, and it is passed on.
 			lastLarge[0] = 200;
 			helper.PassForcesThrough(ticked, 1 << 0);
@@ -240,13 +240,13 @@ namespace x360ce.Tests
 
 		static bool PassForceTo(DInputHelper helper, int place, byte large, byte small)
 		{
-			var method = typeof(DInputHelper).GetMethod("PassForceTo", BindingFlags.NonPublic | BindingFlags.Instance);
+			var method = typeof(DInputHelper).GetMethod(nameof(DInputHelper.PassForceTo), BindingFlags.NonPublic | BindingFlags.Instance);
 			return (bool)method.Invoke(helper, new object[] { place, large, small, TimeSpan.FromSeconds(1) });
 		}
 
 		internal static int[] LastPassedForce(DInputHelper helper)
 		{
-			return (int[])typeof(DInputHelper).GetField("_lastPassedForce", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			return (int[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastPassedForce), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
 		}
 
 		/// <summary>Controller 1 passing its force to place 1, with the strengths left unset, as a loaded setting at full strength leaves them.</summary>
@@ -301,7 +301,7 @@ namespace x360ce.Tests
 			var full = PassingToPlaceOne();
 			var helper = new DInputHelper();
 			var last = LastPassedForce(helper);
-			var lastLarge = (byte[])typeof(DInputHelper).GetField("_lastLargeMotor", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			var lastLarge = (byte[])typeof(DInputHelper).GetField(nameof(DInputHelper._lastLargeMotor), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
 			lastLarge[0] = 200;
 			Assert.IsNotNull(DInputHelper.OccupiedPlaces(), "XInput does not answer, so the library is not loaded before the test.");
 			// The game's force is sent at full strength, the setting left unset.

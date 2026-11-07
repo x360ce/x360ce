@@ -196,7 +196,7 @@ namespace x360ce.Tests
 		{
 			var helper = new DInputHelper();
 			var plugging = (System.Threading.Tasks.Task<x360ce.App.VirtualError>[])typeof(DInputHelper)
-				.GetField("_plugging", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(helper);
+				.GetField(nameof(DInputHelper._plugging), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(helper);
 			var underWay = new System.Threading.Tasks.TaskCompletionSource<x360ce.App.VirtualError>();
 			plugging[0] = underWay.Task;
 			var stopped = true;

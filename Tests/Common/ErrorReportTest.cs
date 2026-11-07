@@ -162,7 +162,7 @@ namespace x360ce.Tests
 			// shown when there is no report, and Send was live.
 			WithReports(0, (form, control) =>
 			{
-				var send = Descendants(control).OfType<Button>().First(x => x.Name == "SendErrorButton");
+				var send = Descendants(control).OfType<Button>().First(x => x.Name == nameof(ErrorReportUserControl.SendErrorButton));
 				var browser = Descendants(control).OfType<WebBrowser>().First();
 				PumpUntil(() => browser.ReadyState == WebBrowserReadyState.Complete);
 				Assert.IsFalse(send.Enabled, "Send is live with no report to choose.");
@@ -181,7 +181,7 @@ namespace x360ce.Tests
 			{
 				// The hosting application sets the address; a bare control has none to send to.
 				control.SupportEmail = "support@example.test";
-				var send = Descendants(control).OfType<Button>().First(x => x.Name == "SendErrorButton");
+				var send = Descendants(control).OfType<Button>().First(x => x.Name == nameof(ErrorReportUserControl.SendErrorButton));
 				PumpUntil(() => !string.IsNullOrWhiteSpace(control.GetBody()));
 				Assert.IsTrue(send.Enabled, "Send is not live with a report chosen.");
 				var sent = 0;

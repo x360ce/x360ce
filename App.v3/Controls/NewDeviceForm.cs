@@ -77,8 +77,8 @@ namespace x360ce.App.Controls
 
 		void UpdateButtons()
 		{
-			SearchPictureBox.Image = SearchRadioButton.Checked ? Properties.Resources.arrow_right_16x16 : Properties.Resources.empty_16x16;
-			BrowsePictureBox.Image = BrowseRadioButton.Checked ? Properties.Resources.arrow_right_16x16 : Properties.Resources.empty_16x16;
+			SearchPictureBox.Image = SearchRadioButton.Checked ? Properties.Resources.arrow_right_32x32 : Properties.Resources.empty_32x32;
+			BrowsePictureBox.Image = BrowseRadioButton.Checked ? Properties.Resources.arrow_right_32x32 : Properties.Resources.empty_32x32;
 			FolderPathTextBox.Enabled = BrowseRadioButton.Checked;
 			BrowseButton.Enabled = BrowseRadioButton.Checked;
 			IncludeSubfoldersCheckBox.Enabled = BrowseRadioButton.Checked;
@@ -169,8 +169,8 @@ namespace x360ce.App.Controls
 			BackButton.Visible = false;
 			LocalLabel.Text = LocalLabel.Text.Replace(" Done", "");
 			InternetLabel.Text = InternetLabel.Text.Replace(" Done", "");
-			LocalPictureBox.Image = Properties.Resources.check_disabled_16x16;
-			InternetPictureBox.Image = Properties.Resources.check_disabled_16x16;
+			LocalPictureBox.Image = Properties.Resources.check_disabled_32x32;
+			InternetPictureBox.Image = Properties.Resources.check_disabled_32x32;
 		}
 
 		void SearchLabel_Click(object sender, EventArgs e)
@@ -211,7 +211,7 @@ namespace x360ce.App.Controls
 					configs.Add(s);
 				}
 			}
-			LocalPictureBox.Image = Properties.Resources.check_16x16;
+			LocalPictureBox.Image = Properties.Resources.check_32x32;
 			LocalLabel.Text += " Done";
 			if (SearchTheInternetCheckBox.Checked)
 			{
@@ -254,12 +254,12 @@ namespace x360ce.App.Controls
 				if (e.Error != null)
 				{
 					// Said and finished, rather than left turning with nothing to say it has stopped.
-					InternetPictureBox.Image = Properties.Resources.delete_16x16;
+					InternetPictureBox.Image = Properties.Resources.delete_32x32;
 					MainForm.Current.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: Online settings could not be reached: {1}", DateTime.Now, e.Error.Message), MessageBoxIcon.Error);
 					Complete();
 					return;
 				}
-				InternetPictureBox.Image = Properties.Resources.check_16x16;
+				InternetPictureBox.Image = Properties.Resources.check_32x32;
 				InternetLabel.Text += " Done";
 				var result = (SearchResult)e.Result;
 				sr = result;

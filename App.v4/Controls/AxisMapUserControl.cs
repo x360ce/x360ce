@@ -96,7 +96,7 @@ namespace x360ce.App.Controls
 			{
 				DeadZoneLabel, DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox,
 				AntiDeadZoneLabel, AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox,
-				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox,
+				SensitivityLabel, SensitivityTrackBar, SensitivityNumericUpDown, SensitivityTextBox, SensitivityCheckBox, SensitivityNoteLabel,
 				PresetComboBox,
 			};
 			foreach (var control in controls)
@@ -156,9 +156,9 @@ namespace x360ce.App.Controls
 				return;
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
-			SensitivityLabel.Text = SensitivityCheckBox.Checked
-				? "Sensitivity - Make more sensitive in the center:"
-				: "Sensitivity - Make less sensitive in the center:";
+			SensitivityNoteLabel.Text = SensitivityCheckBox.Checked
+				? "Make more sensitive in the center"
+				: "Make less sensitive in the center";
 		}
 
 		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
@@ -221,22 +221,27 @@ namespace x360ce.App.Controls
 
 		int _dInput;
 		int _xInput;
+		bool _pointShown;
 
 		public void DrawPoint(int dInput, int xInput, bool invert, bool half)
 		{
-			DInputValueLabel.Text = dInput.ToString();
-			XInputValueLabel.Text = xInput.ToString();
 			// The red path is part of the background image and is
 			// built from these two values, so the image has to be rebuilt when the map
 			// supplies different ones. Only on change: this runs on every state update.
 			var pathChanged = _invert != invert || _half != half;
+			var pointMoved = _dInput != dInput || _xInput != xInput || !_pointShown;
+			if (!pathChanged && !pointMoved)
+				return;
 			_invert = invert;
 			_half = half;
 			_dInput = dInput;
 			_xInput = xInput;
+			_pointShown = true;
+			DInputValueLabel.Text = dInput.ToString();
+			XInputValueLabel.Text = xInput.ToString();
 			if (pathChanged)
 				RefreshBackgroundImageAsync();
-			MainPictureBox.Refresh();
+			MainPictureBox.Invalidate();
 		}
 
 		public void InitPaintObjects()

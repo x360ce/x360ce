@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
+using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
@@ -38,22 +39,24 @@ namespace x360ce.Tests
 		public void V4_loads_popular_presets_from_the_configured_service()
 		{
 			var url = WebServiceTarget.Require();
-			var window = Start("App.v4");
+			// A folder of its own, as the device added below stays on the controller in the settings it is added to.
+			var window = Start("App.v4", Path.Combine(TestRun.LogsFolder, "load-preset-profile"));
 			// Options > Internet: the address the program will call, and the switch that lets it.
 			SelectTab(window, "Options");
 			SelectTab(window, "Internet");
 			var original = AddressShown(window);
 			try
 			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), url);
-				var features = Find(window, AutomationElement.AutomationIdProperty, "InternetFeaturesCheckBox");
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
+				var features = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetFeaturesCheckBox));
 				var toggle = (TogglePattern)features.GetCurrentPattern(TogglePattern.Pattern);
 				if (toggle.Current.ToggleState != ToggleState.On)
 					toggle.Toggle();
 
 				// Controller 1 > Load Preset... opens a dialog; the popular tab is inside it.
 				SelectTab(window, "Controller 1");
-				Invoke(Find(window, AutomationElement.AutomationIdProperty, "LoadPresetButton"));
+				AddDevice(window);
+				Invoke(Find(window, AutomationElement.AutomationIdProperty, nameof(PadControl.LoadPresetButton)));
 				var dialog = Ui.WaitFor(() => TopLevelWindow(_process.Id, "Load Preset"),
 					TimeSpan.FromSeconds(20), "the Load Preset window");
 				SelectTab(dialog, "Default Settings for Most Popular Controllers");
@@ -73,15 +76,32 @@ namespace x360ce.Tests
 		{
 			var url = WebServiceTarget.Require();
 			var window = Start("App.v3");
+			// On a clean folder version 3 first asks about its warnings and each new controller, in front of the window.
+			Ui.WaitFor(() =>
+			{
+				Ui.FixWarnings(_process, window);
+				Ui.CloseDialogs(_process, window);
+				var rate = Ui.FindByName(window, V3NewDeviceTest.RateText);
+				return rate != null && Ui.ReadNumber(rate, V3NewDeviceTest.RateText) >= 7 ? rate : null;
+			}, TimeSpan.FromSeconds(60), "the program to read the controllers after its questions were answered");
 			SelectTab(window, "Options");
 			var original = AddressShown(window);
 			try
 			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), url);
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
 				// Controller Settings holds the three lists on its own tabs; no dialog in v3.
 				SelectTab(window, "Controller Settings");
 				SelectTab(window, "Default Settings for Most Popular Controllers");
-				PopularPresetsComeFromTheService(window, url, "v3-controller-settings-popular");
+				int served;
+				using (var ws = WebServiceTarget.Client())
+					served = ws.SearchSettings(new[] { new Engine.SearchParameter() }).Presets.Length;
+				Assert.IsTrue(served > 0, "The service has no popular presets to show");
+				Invoke(Find(window, AutomationElement.NameProperty, "Refresh"));
+				// Version 3's list has no SID column, so its tab says how many arrived.
+				var title = "Default Settings for Most Popular Controllers [" + served + "]";
+				Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, title)),
+					TimeSpan.FromSeconds(60), "the tab to say '" + title + "'");
+				Capture(window, "v3-controller-settings-popular.png");
 			}
 			finally
 			{
@@ -91,12 +111,31 @@ namespace x360ce.Tests
 
 		#region The shared walk
 
-		AutomationElement Start(string appFolder)
+		/// <summary>Adds an attached device to the controller shown, as a person does: Load Preset needs one, and a clean folder has none.</summary>
+		void AddDevice(AutomationElement window)
+		{
+			// UI Automation does not list this tool bar's Add button, so it is clicked, right beside the Auto Map button it lists.
+			var box = Find(window, AutomationElement.NameProperty, "Auto Map").Current.BoundingRectangle;
+			window.SetFocus();
+			NativeMethods.SetCursorPos((int)(box.Right + box.Height), (int)(box.Top + box.Height / 2));
+			NativeMethods.mouse_event(NativeMethods.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+			NativeMethods.mouse_event(NativeMethods.MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+			var add = Ui.WaitFor(() => TopLevelWindow(_process.Id, "Map Device To Controller"), TimeSpan.FromSeconds(20), "the window that adds a device");
+			var grid = Find(add, AutomationElement.AutomationIdProperty, nameof(UserDevicesUserControl.DevicesDataGridView));
+			if (grid.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>().All(x => !Regex.IsMatch(x.Current.Name ?? "", @"^Row \d+$")))
+				Assert.Inconclusive("No device is attached to add.");
+			Invoke(Find(add, AutomationElement.AutomationIdProperty, "OkButton"));
+			Ui.WaitFor(() => Find(window, AutomationElement.AutomationIdProperty, nameof(PadControl.LoadPresetButton)).Current.IsEnabled ? "enabled" : null,
+				TimeSpan.FromSeconds(20), "Load Preset to be enabled once a device is on the controller");
+		}
+
+		AutomationElement Start(string appFolder, string profile = null)
 		{
 			var exe = Ui.FindApp(appFolder);
 			if (exe == null)
 				Assert.Inconclusive(appFolder + " is not built. Build the solution before running UI tests.");
-			_process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
+			var argument = profile == null ? TestRun.ProfileArgument : "\"/Profile=" + profile + "\"";
+			_process = Process.Start(new ProcessStartInfo(exe, argument) { WorkingDirectory = Path.GetDirectoryName(exe) });
 			return Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
 		}
 
@@ -107,14 +146,19 @@ namespace x360ce.Tests
 		{
 			string[] served;
 			using (var ws = WebServiceTarget.Client())
-				served = ws.SearchSettings(new[] { new Engine.SearchParameter() }).Presets
+			{
+				var answer = ws.SearchSettings(new[] { new Engine.SearchParameter() });
+				// Version 4 lists a preset only with its settings, so every row can be loaded.
+				var settings = answer.PadSettings.Select(x => x.PadSettingChecksum).ToArray();
+				served = answer.Presets.Where(x => settings.Contains(x.PadSettingChecksum))
 					.Select(x => x.PadSettingChecksum.ToString("N").Substring(0, 8).ToUpperInvariant())
 					.OrderBy(x => x).ToArray();
+			}
 			Assert.IsTrue(served.Length > 0, "The service has no popular presets to show");
 
 			// A toolbar item has no automation id, only its text; the other tabs' toolbars are off screen.
 			Invoke(Find(scope, AutomationElement.NameProperty, "Refresh"));
-			var grid = Find(scope, AutomationElement.AutomationIdProperty, "PresetsDataGridView");
+			var grid = Find(scope, AutomationElement.AutomationIdProperty, nameof(PresetsGridUserControl.PresetsDataGridView));
 			string[] shown = null;
 			try
 			{
@@ -142,7 +186,7 @@ namespace x360ce.Tests
 
 		static string AddressShown(AutomationElement window)
 		{
-			var box = Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox");
+			var box = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox));
 			return ((ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern)).Current.Value;
 		}
 
@@ -155,7 +199,7 @@ namespace x360ce.Tests
 				if (innerTab != null)
 					SelectTab(window, innerTab);
 				// Found again: the element seen before a dialog does not answer after it.
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, "InternetDatabaseUrlComboBox"), original ?? "");
+				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), original ?? "");
 			}
 			catch (Exception ex)
 			{
@@ -238,9 +282,9 @@ namespace x360ce.Tests
 
 		static void SelectTab(AutomationElement root, string name)
 		{
-			var tab = Ui.WaitFor(() => root.FindFirst(TreeScope.Descendants, new AndCondition(
-				new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem),
-				new PropertyCondition(AutomationElement.NameProperty, name))),
+			// A tab that holds a list says how many rows it has after its name.
+			var tab = Ui.WaitFor(() => root.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem))
+				.Cast<AutomationElement>().FirstOrDefault(x => x.Current.Name == name || (x.Current.Name ?? "").StartsWith(name + " [", StringComparison.Ordinal)),
 				TimeSpan.FromSeconds(20), "tab '" + name + "'");
 			((SelectionItemPattern)tab.GetCurrentPattern(SelectionItemPattern.Pattern)).Select();
 		}
@@ -288,6 +332,12 @@ namespace x360ce.Tests
 
 		static class NativeMethods
 		{
+			public const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+			public const uint MOUSEEVENTF_LEFTUP = 0x0004;
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern bool SetCursorPos(int x, int y);
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern void mouse_event(uint flags, uint x, uint y, uint data, UIntPtr extra);
 			public delegate bool EnumWindowsProc(IntPtr handle, IntPtr lParam);
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
 			public static extern bool EnumWindows(EnumWindowsProc callback, IntPtr lParam);

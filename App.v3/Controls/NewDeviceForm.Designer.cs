@@ -214,7 +214,7 @@
 			// 
 			// BrowsePictureBox
 			// 
-			this.BrowsePictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_16x16;
+			this.BrowsePictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_32x32;
 			this.BrowsePictureBox.Location = new System.Drawing.Point(6, 98);
 			this.BrowsePictureBox.Name = "BrowsePictureBox";
 			this.BrowsePictureBox.Size = new System.Drawing.Size(16, 16);
@@ -223,7 +223,7 @@
 			// 
 			// SearchPictureBox
 			// 
-			this.SearchPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_16x16;
+			this.SearchPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_32x32;
 			this.SearchPictureBox.Location = new System.Drawing.Point(6, 33);
 			this.SearchPictureBox.Name = "SearchPictureBox";
 			this.SearchPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -275,7 +275,7 @@
 			// 
 			// InternetPictureBox
 			// 
-			this.InternetPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
+			this.InternetPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_32x32;
 			this.InternetPictureBox.Location = new System.Drawing.Point(6, 28);
 			this.InternetPictureBox.Name = "InternetPictureBox";
 			this.InternetPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -284,7 +284,7 @@
 			// 
 			// LocalPictureBox
 			// 
-			this.LocalPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_16x16;
+			this.LocalPictureBox.Image = global::x360ce.App.Properties.Resources.check_disabled_32x32;
 			this.LocalPictureBox.Location = new System.Drawing.Point(6, 6);
 			this.LocalPictureBox.Name = "LocalPictureBox";
 			this.LocalPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -480,32 +480,32 @@
 		System.Windows.Forms.PictureBox SearchPictureBox;
 		System.Windows.Forms.Label SearchLabel;
 		System.Windows.Forms.Label BrowseLabel;
-		System.Windows.Forms.Button CloseButton;
+		internal System.Windows.Forms.Button CloseButton;
 		System.Windows.Forms.Label label5;
-		System.Windows.Forms.TabControl WizzardTabControl;
+		internal System.Windows.Forms.TabControl WizzardTabControl;
 		System.Windows.Forms.TabPage Step1TabPage;
 		System.Windows.Forms.TabPage Step2TabPage;
 		System.Windows.Forms.PictureBox BrowsePictureBox;
-		System.Windows.Forms.RadioButton BrowseRadioButton;
-		System.Windows.Forms.RadioButton SearchRadioButton;
-		System.Windows.Forms.Button NextButton;
-		System.Windows.Forms.TextBox FolderPathTextBox;
-		System.Windows.Forms.Button BrowseButton;
+		internal System.Windows.Forms.RadioButton BrowseRadioButton;
+		internal System.Windows.Forms.RadioButton SearchRadioButton;
+		internal System.Windows.Forms.Button NextButton;
+		internal System.Windows.Forms.TextBox FolderPathTextBox;
+		internal System.Windows.Forms.Button BrowseButton;
 		System.Windows.Forms.Label DescriptionLabel;
 		System.Windows.Forms.FolderBrowserDialog SettingsFolderBrowserDialog;
 		System.Windows.Forms.TabControl SettingsListTabControl;
 		System.Windows.Forms.TabPage MySettingsTabPage;
-		System.Windows.Forms.DataGridView MySettingsDataGridView;
-		System.Windows.Forms.CheckBox IncludeSubfoldersCheckBox;
+		internal System.Windows.Forms.DataGridView MySettingsDataGridView;
+		internal System.Windows.Forms.CheckBox IncludeSubfoldersCheckBox;
 		System.Windows.Forms.Label ResultsLabel;
 		System.Windows.Forms.Label LocalLabel;
 		MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		System.Windows.Forms.Label InternetLabel;
 		System.Windows.Forms.PictureBox InternetPictureBox;
 		System.Windows.Forms.PictureBox LocalPictureBox;
-		System.Windows.Forms.Button BackButton;
+		internal System.Windows.Forms.Button BackButton;
 		System.Windows.Forms.DataGridViewTextBoxColumn DateColumn;
 		System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-		System.Windows.Forms.CheckBox SearchTheInternetCheckBox;
+		internal System.Windows.Forms.CheckBox SearchTheInternetCheckBox;
 	}
 }

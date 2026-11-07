@@ -64,24 +64,24 @@ namespace x360ce.Tests
 			};
 			PresetLoadTest.OnLoadedPage(preset, pad =>
 			{
-				var car = (ComboBox)Find(pad, "ForceSpringCarComboBox");
+				var car = (ComboBox)Find(pad, nameof(PadControl.ForceSpringCarComboBox));
 				Assert.AreEqual(PadControl.SpringCars[3].Name, car.GetItemText(car.SelectedItem), "The loaded sports car is not shown.");
 				car.SelectedIndex = 4;
 				var van = PadControl.SpringCars[4];
-				Assert.AreEqual(van.Centre, Slider(pad, "ForceSpringCentreTrackBar"));
-				Assert.AreEqual(van.Peak, Slider(pad, "ForceSpringPeakTrackBar"));
-				Assert.AreEqual(van.Lightening, Slider(pad, "ForceSpringLighteningTrackBar"));
-				Assert.AreEqual(van.Damping, Slider(pad, "ForceSpringDampingTrackBar"));
-				Assert.AreEqual(van.Speed, Slider(pad, "ForceSpringSpeedTrackBar"));
-				Assert.AreEqual(44, Slider(pad, "ForceSpringStrengthTrackBar"), "Choosing a car changed Strength.");
+				Assert.AreEqual(van.Centre, Slider(pad, nameof(PadControl.ForceSpringCentreTrackBar)));
+				Assert.AreEqual(van.Peak, Slider(pad, nameof(PadControl.ForceSpringPeakTrackBar)));
+				Assert.AreEqual(van.Lightening, Slider(pad, nameof(PadControl.ForceSpringLighteningTrackBar)));
+				Assert.AreEqual(van.Damping, Slider(pad, nameof(PadControl.ForceSpringDampingTrackBar)));
+				Assert.AreEqual(van.Speed, Slider(pad, nameof(PadControl.ForceSpringSpeedTrackBar)));
+				Assert.AreEqual(44, Slider(pad, nameof(PadControl.ForceSpringStrengthTrackBar)), "Choosing a car changed Strength.");
 				var saved = pad.CloneCurrentPadSetting();
 				Assert.AreEqual("30", saved.ForceSpringCentre, "The car's values do not reach the settings.");
 				Assert.AreEqual("80", saved.ForceSpringSpeed, "The car's values do not reach the settings.");
 				Assert.AreEqual("900", saved.WheelRange, "The car does not set the wheel range its name says.");
 				Assert.AreEqual(van.Name, car.GetItemText(car.SelectedItem), "The list left the car it set.");
-				((TrackBar)Find(pad, "ForceSpringDampingTrackBar")).Value = 11;
+				((TrackBar)Find(pad, nameof(PadControl.ForceSpringDampingTrackBar))).Value = 11;
 				Assert.AreEqual(PadControl.CustomSpringCar, car.GetItemText(car.SelectedItem), "Values that match no car are not shown as Custom.");
-				((TrackBar)Find(pad, "ForceSpringDampingTrackBar")).Value = van.Damping;
+				((TrackBar)Find(pad, nameof(PadControl.ForceSpringDampingTrackBar))).Value = van.Damping;
 				Assert.AreEqual(van.Name, car.GetItemText(car.SelectedItem), "Values moved back onto a car do not show it.");
 			});
 		}
@@ -96,8 +96,8 @@ namespace x360ce.Tests
 		{
 			PresetLoadTest.OnLoadedPage(new PadSetting { WheelRange = "0" }, pad =>
 			{
-				var range = (ComboBox)Find(pad, "WheelRangeComboBox");
-				var spring = (CheckBox)Find(pad, "ForceSpringEnableCheckBox");
+				var range = (ComboBox)Find(pad, nameof(PadControl.WheelRangeComboBox));
+				var spring = (CheckBox)Find(pad, nameof(PadControl.ForceSpringEnableCheckBox));
 				Assert.AreEqual("Leave as it is (spring off)", range.GetItemText(range.Items[0]));
 				Assert.AreEqual(0, pad.CloneCurrentPadSetting().GetWheelRange(), "The range was not loaded as left as it is.");
 				// The settings' events start suspended and the main window resumes them once it has loaded.
@@ -140,7 +140,7 @@ namespace x360ce.Tests
 					chart.CreateControl();
 					chart.PerformLayout();
 					chart.SetCurve(60, 12, 60, 40, 900, 100);
-					var picture = (PictureBox)Find(chart, "MainPictureBox");
+					var picture = (PictureBox)Find(chart, nameof(WheelChartUserControl.MainPictureBox));
 					var area = AppHelper.ChartBounds(picture);
 					var w = area.Width;
 					var h = area.Height;
@@ -162,17 +162,17 @@ namespace x360ce.Tests
 					// car's on top, pushes right.
 					var position = (int)Math.Round(SpringCalibration.Center - 32.0 / 450 * SpringCalibration.Center);
 					chart.UpdateWheel(position, null, 20);
-					Assert.AreEqual("-32°", Find(chart, "AngleValueLabel").Text);
+					Assert.AreEqual("-32°", Find(chart, nameof(WheelChartUserControl.AngleValueLabel)).Text);
 					var played = new SpringCurve();
 					played.Set(60, 12, 60, 40, 900, 100, 20);
-					Assert.AreEqual(played.Force(position) + " % to the right", Find(chart, "ForceValueLabel").Text,
+					Assert.AreEqual(played.Force(position) + " % to the right", Find(chart, nameof(WheelChartUserControl.ForceValueLabel)).Text,
 						"The chart leaves the friction out of the force.");
 					// A live speed replaces the Speed setting, as it does in the engine.
 					chart.UpdateWheel(position, 40, 20);
 					var slower = new SpringCurve();
 					slower.Set(60, 12, 60, 40, 900, 40, 20);
 					Assert.AreNotEqual(played.Force(position), slower.Force(position), "The test angle cannot tell the two speeds apart.");
-					Assert.AreEqual(slower.Force(position) + " % to the right", Find(chart, "ForceValueLabel").Text,
+					Assert.AreEqual(slower.Force(position) + " % to the right", Find(chart, nameof(WheelChartUserControl.ForceValueLabel)).Text,
 						"The chart ignores the live speed.");
 				}
 			});
@@ -237,9 +237,9 @@ namespace x360ce.Tests
 					pad.Dock = DockStyle.Fill;
 					form.ClientSize = pad.Size;
 					form.Controls.Add(pad);
-					var tabs = (TabControl)Find(pad, "PadTabControl");
-					var page = (TabPage)Find(pad, "WheelTabPage");
-					Assert.AreEqual(tabs.TabPages.IndexOf((TabPage)Find(pad, "ForceFeedbackTabPage")) + 1, tabs.TabPages.IndexOf(page),
+					var tabs = (TabControl)Find(pad, nameof(PadControl.PadTabControl));
+					var page = (TabPage)Find(pad, nameof(PadControl.WheelTabPage));
+					Assert.AreEqual(tabs.TabPages.IndexOf((TabPage)Find(pad, nameof(PadControl.ForceFeedbackTabPage))) + 1, tabs.TabPages.IndexOf(page),
 						"The Wheel tab is not right after Force Feedback.");
 					tabs.SelectedTab = page;
 					form.Show();
@@ -253,7 +253,7 @@ namespace x360ce.Tests
 						Assert.AreEqual(0, covered.Count, string.Format(
 							"At {0} pixels wide, {1} control(s) are covered by another:{2}{3}",
 							width, covered.Count, Environment.NewLine, string.Join(Environment.NewLine, covered)));
-						var outside = page.Controls.Find("WheelSettingsTableLayoutPanel", true).Single().Controls.Cast<Control>()
+						var outside = page.Controls.Find(nameof(PadControl.WheelSettingsTableLayoutPanel), true).Single().Controls.Cast<Control>()
 							.Where(x => x.Visible && x.Right > x.Parent.ClientSize.Width).Select(x => x.Name).ToList();
 						Assert.AreEqual(0, outside.Count, "At " + width + " pixels wide, past the edge: " + string.Join(", ", outside));
 					}

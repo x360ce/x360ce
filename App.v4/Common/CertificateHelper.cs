@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -7,35 +8,6 @@ namespace x360ce.App
 {
     public class CertificateHelper
     {
-
-        /// <summary>
-        /// Check is file certificate is trusted.
-        /// </summary>
-        /// <param name="mode">Online - validate certificate online. Online - validate certificate offline.</param>
-        /// <returns>True - trusted certificate, false - erorr or self-signed certificate.</returns>
-        public static bool VerifyCertificate(string filePath, out X509Certificate2 certificate, out Exception error, X509RevocationMode mode = X509RevocationMode.Online)
-        {
-            certificate = null;
-            error = null;
-            try
-            {
-                var singingCertificate = X509Certificate.CreateFromSignedFile(filePath);
-                certificate = new X509Certificate2(singingCertificate);
-            }
-            catch (Exception ex)
-            {
-                error = ex;
-                return false;
-            }
-            var chain = new X509Chain();
-            chain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-            chain.ChainPolicy.RevocationMode = mode;
-            chain.ChainPolicy.UrlRetrievalTimeout = new TimeSpan(0, 1, 0);
-            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
-            // Check if trusted and not self-signed certificate.
-            var isTrusted = chain.Build(certificate);
-            return isTrusted;
-        }
 
         public static string ToString(X509Certificate2 certificate)
         {
@@ -67,13 +39,55 @@ namespace x360ce.App
             }
         }
 
-        public static bool IsSignedAndTrusted(string fileName, out X509Certificate2 certificate, out Exception error)
+        /// <summary>Whether a file carries a valid signature from a trusted root, as Windows decides it: without a revocation lookup, so offline too.</summary>
+        /// <param name="fileName">The file to check.</param>
+        /// <param name="error">Why the file is not trusted, or null.</param>
+        public static bool IsSignedAndTrusted(string fileName, out Exception error)
         {
-            VerifyCertificate(fileName, out certificate, out error);
-            if (error != null)
-                return false;
             VerifySignature(fileName, out error);
             return error == null;
+        }
+
+        /// <summary>The subject of the certificate that signed a file, or null when it has no valid Authenticode signature.</summary>
+        /// <remarks>Checked by Windows, offline: no revocation lookup, so the answer is the same without a network.</remarks>
+        public static string GetSigner(string path)
+        {
+            Exception error;
+            VerifySignature(path, out error);
+            if (error != null)
+                return null;
+            try
+            {
+                return X509Certificate.CreateFromSignedFile(path).Subject;
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>The organisation (O) a certificate's subject names, or null when it names none, or more than one.</summary>
+        public static string OrganisationOf(string subject)
+        {
+            if (string.IsNullOrEmpty(subject))
+                return null;
+            X500DistinguishedName name;
+            try
+            {
+                name = new X500DistinguishedName(subject);
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                return null;
+            }
+            // One part a line; a value holding a comma or a quote comes quoted, its quotes doubled.
+            var found = name.Decode(X500DistinguishedNameFlags.UseNewLines)
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(x => x.StartsWith("O=", StringComparison.Ordinal))
+                .Select(x => x.Substring(2).Trim())
+                .Select(x => x.Length > 1 && x[0] == '"' && x[x.Length - 1] == '"' ? x.Substring(1, x.Length - 2).Replace("\"\"", "\"") : x)
+                .ToArray();
+            return found.Length == 1 ? found[0] : null;
         }
 
     }

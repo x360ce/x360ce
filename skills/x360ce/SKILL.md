@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.28.16.0"
+  version: "4.29.62.0"
 ---
 
 # X360CE
@@ -151,8 +151,9 @@ it needs, and let them decide; do not look for a way around it.
    inverted. The help's formula section says what formulas can do and which letter names which control. Which axis
    moves which way shows only while the person moves the control. So finish and save what they asked for with the
    likely axes (a stick's are usually Axis 1 across and Axis 2 inverted up and down, `IAxis 2`, because most
-   devices report up as the low end), then ask them to move it while you read the row's value, such as
-   `Left stick value`. Until they have, tell them the direction is unchecked; never call it verified.
+   devices report up as the low end), then ask them to move it while you read the row's value, the number under
+   its name, such as `Left Thumb Axis X value`. Until they have, tell them the direction is unchecked; never call it
+   verified.
 6. **Keep.** Changes are saved only by `settings_save`, the same as the Save All button. Read the value back
    afterwards to confirm it took.
 
@@ -169,7 +170,7 @@ again before calling it a fault.
   Below, the pages: General (the button and stick mapping, one box for each part of the Xbox controller: the left
   and right sticks are Left Thumb and Right Thumb, each with an Axis X and an Axis Y box; with a picture of the
   controller and an Input column that lights each control of the device as it moves), Buttons (how far a stick
-  or pedal must move to press a button), D-Pad, Triggers, Left Thumb and Right Thumb (the dead zone, anti-dead
+  or pedal must move to press a button), D-Pad, Triggers, Left Stick and Right Stick (the dead zone, anti-dead
   zone and sensitivity of each trigger and stick axis), Force Feedback (rumble strength and motor tests), Wheel
   (for wheels: the centering spring with Friction, which Auto measures, a Car list that fills its curve and the
   wheel range, a chart of its force at every angle,
@@ -188,8 +189,9 @@ again before calling it a fault.
   `DirectInput` row for anything else. Windows feeds an Xbox controller's `DirectInput` row only to the program in
   front, so mapped that way it works in x360ce and stops once a game is in front. Force feedback reaches the
   controller from either.
-- **Options** pages: General (start-up, theme, Enable XInput, hotkeys), Internet, Virtual Device (the ViGEmBus
-  driver), HID Hide, HID Guardian (obsolete), Settings, Update, AI.
+- **Options** pages: General (start-up; Appearance: theme, and the font, used after x360ce starts again; Enable
+  XInput; hotkeys), Internet, Virtual Device (the ViGEmBus driver), HID Hide, HID Guardian (obsolete), Settings,
+  Update, AI, Plugins.
 - **Games**: the games with their own settings. **Devices**: every device the program knows, with the XInput place
   of each controller and Auto-Order. **Issues**: problems the program found, each with what to do and often a Fix
   button.
@@ -214,7 +216,7 @@ Work through these, reading each from the program rather than assuming it:
 5. The game. It must be set to use an Xbox or XInput controller; many games keep a separate controller option.
 6. A controller waiting for its place, or games reading the wrong player: the Devices page shows the XInput place
    of each controller, and Auto-Order puts them in order.
-7. Seen twice: HID Hide hides the real device from games (Options, HID Hide).
+7. Seen twice: HID Hide hides the real device from games (Options, HID Hide); `help-hidhide.md` says how.
 8. Games with anti-cheat may refuse virtual controllers; the help explains what X360CE can and cannot do there.
 
 For wheels and pedals (combined pedals, wheel degrees, dead zones, the centering spring) the help has a section on
@@ -259,6 +261,9 @@ Beside this skill, in `references/`, are the help and the interface description 
 version. The program also prints them, whether AI assistant access is on or not:
 
 - `help-v4.md`, the help version 4 shows: `x360ce.exe -Skill=help`, or the `help` tool.
+- `help-hidhide.md`, HID Hide, which hides the real controller from games: installing and updating it from the
+  Options tab's HID Hide page, choosing what it hides, and what to do if it causes trouble:
+  `x360ce.exe -Skill=help-hidhide`.
 - `ui-tree-v4.md`, every element of version 4's interface with its purpose: `x360ce.exe -Skill=ui-tree`, or the
   `ui_tree` tool. `ui-tree-v4.json` is the same for a program to read.
 - `help-v3.md`, `ui-tree-v3.md` and `ui-tree-v3.json`: the same for version 3, the older program that works through a

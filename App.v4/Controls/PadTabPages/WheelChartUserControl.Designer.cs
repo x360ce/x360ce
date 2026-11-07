@@ -193,10 +193,10 @@ namespace x360ce.App.Controls
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
 		private System.Windows.Forms.FlowLayoutPanel ValuesFlowLayoutPanel;
 		private System.Windows.Forms.Label AngleLabel;
-		private System.Windows.Forms.Label AngleValueLabel;
+		internal System.Windows.Forms.Label AngleValueLabel;
 		private System.Windows.Forms.Label ForceLabel;
-		private System.Windows.Forms.Label ForceValueLabel;
-		private System.Windows.Forms.PictureBox MainPictureBox;
+		internal System.Windows.Forms.Label ForceValueLabel;
+		internal System.Windows.Forms.PictureBox MainPictureBox;
 		private System.Windows.Forms.Label LeftStopLabel;
 		private System.Windows.Forms.Label CentreLabel;
 		private System.Windows.Forms.Label RightStopLabel;

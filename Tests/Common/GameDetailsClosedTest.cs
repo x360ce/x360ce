@@ -46,7 +46,7 @@ namespace x360ce.Tests
 				using (var panel = new GameDetailsUserControl())
 				{
 					panel.CurrentItem = Game();
-					var box = panel.Controls.Find("XInputMaskGroupBox", true).Single();
+					var box = panel.Controls.Find(nameof(GameDetailsUserControl.XInputMaskGroupBox), true).Single();
 					StringAssert.EndsWith(box.Text, ((int)XInputMask.XInput13_x86).ToString("X8"));
 				}
 			});
@@ -56,7 +56,7 @@ namespace x360ce.Tests
 		[Description("A later change on a game held by a closed panel is ignored")]
 		public void A_closed_panel_ignores_a_later_change_on_its_game()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var panel = new GameDetailsUserControl();
 				var game = Game();

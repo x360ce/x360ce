@@ -80,8 +80,7 @@ namespace x360ce.Tests
 			try
 			{
 				var exe = @"C:\Games\O'Brien's ""Game""\x360ce.exe";
-				var json = new System.Web.Script.Serialization.JavaScriptSerializer();
-				var settings = (Dictionary<string, object>)json.DeserializeObject(McpClient.ServerSettings(exe));
+				var settings = (Dictionary<string, object>)McpServer.FromJson(McpClient.ServerSettings(exe));
 				var server = (Dictionary<string, object>)((Dictionary<string, object>)settings["mcpServers"])["x360ce-v3"];
 				Assert.AreEqual(exe, server["command"], "The path must survive quoting unchanged.");
 				CollectionAssert.AreEqual(new object[] { "/Mcp" }, (object[])server["args"]);

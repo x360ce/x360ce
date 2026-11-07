@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Plugins/PluginManager.cs
+﻿// @under-test: App.v4/Plugins/PluginManager.cs, App.v4/Common/CertificateHelper.cs
 // @area: plugins   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -81,11 +81,11 @@ namespace x360ce.Tests
 		public void The_signer_is_read_from_the_signature()
 		{
 			var signed = typeof(Uri).Assembly.Location;
-			var signer = PluginManager.GetSigner(signed);
+			var signer = x360ce.App.CertificateHelper.GetSigner(signed);
 			if (signer == null)
 				Assert.Inconclusive("System.dll on this machine carries no signature to read: " + signed);
 			StringAssert.Contains(signer, "Microsoft", signed);
-			Assert.IsNull(PluginManager.GetSigner(typeof(PluginManagerTest).Assembly.Location), "The test library is not signed.");
+			Assert.IsNull(x360ce.App.CertificateHelper.GetSigner(typeof(PluginManagerTest).Assembly.Location), "The test library is not signed.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]

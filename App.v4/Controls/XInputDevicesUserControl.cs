@@ -50,9 +50,21 @@ namespace x360ce.App.Controls
 			if (IsDisposed)
 				return;
 			if (InvokeRequired)
-				BeginInvoke((Action)Bind);
+				BeginInvoke((Action)ShowMapped);
 			else
-				Bind();
+				ShowMapped();
+		}
+
+		/// <summary>Shows again what is mapped to each row, leaving the rows and the selection in place.</summary>
+		void ShowMapped()
+		{
+			foreach (DataGridViewRow row in DevicesDataGridView.Rows)
+			{
+				var cell = row.Cells[MappedColumn.Index];
+				var text = MappedText((XInputReorderPlan.Entry)row.Tag);
+				if (cell.Value as string != text)
+					cell.Value = text;
+			}
 		}
 
 		/// <summary>The game, or which tabs it emulates, changed, so which tabs are waiting is worked out again.</summary>
@@ -89,7 +101,7 @@ namespace x360ce.App.Controls
 			return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(new Form());
 		}
 
-		readonly List<XInputReorderPlan.Entry> _entries = new List<XInputReorderPlan.Entry>();
+		internal readonly List<XInputReorderPlan.Entry> _entries = new List<XInputReorderPlan.Entry>();
 
 		/// <summary>Reads the machine, on a worker, and shows what is there.</summary>
 		/// <remarks>
@@ -126,7 +138,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		void Bind()
+		internal void Bind()
 		{
 			var selected = DevicesDataGridView.CurrentRow == null ? -1 : DevicesDataGridView.CurrentRow.Index;
 			DevicesDataGridView.Rows.Clear();
@@ -135,8 +147,8 @@ namespace x360ce.App.Controls
 				var entry = _entries[i];
 				// Each row carries its own arrows, blank where there is nowhere to go.
 				var index = DevicesDataGridView.Rows.Add(
-					i > 0 ? Properties.Resources.nav_up_16x16 : null,
-					i < _entries.Count - 1 ? Properties.Resources.nav_down_16x16 : null,
+					i > 0 ? Properties.Resources.nav_up_32x32 : null,
+					i < _entries.Count - 1 ? Properties.Resources.nav_down_32x32 : null,
 					entry.Waiting
 						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
@@ -266,7 +278,7 @@ namespace x360ce.App.Controls
 			if (!_noticeOpen)
 				_restingHeight = Height;
 			_noticeOpen = true;
-			PlanOkButton.Image = Properties.Resources.ok_16x16;
+			PlanOkButton.Image = Properties.Resources.ok_32x32;
 			PlanSubjectLabel.Text = subject;
 			PlanBodyLabel.Text = body;
 			PlanOkButton.Visible = closable;

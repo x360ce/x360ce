@@ -9,7 +9,7 @@ namespace x360ce.App.Issues
 	/// <summary>
 	/// Where the program is running from, and whether it can write beside itself there.
 	/// </summary>
-	public class ExeFileIssue : IssueItem
+	public class ExeFileIssue : OnChangeIssue
 	{
 		public ExeFileIssue() : base()
 		{

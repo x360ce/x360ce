@@ -71,18 +71,17 @@ namespace x360ce.App.Controls
 			_Painted.Clear();
 		}
 
-		/// <summary>The pictures as painted, by picture, size and state: see <see cref="Painted"/>.</summary>
+		/// <summary>The pictures as painted, by picture and size: see <see cref="Painted"/>.</summary>
 		readonly Dictionary<string, Bitmap> _Painted = new Dictionary<string, Bitmap>();
 
-		/// <summary>A picture at the size it fills, premultiplied, and at <see cref="EngineHelper.DisabledOpacity"/> when faded.</summary>
+		/// <summary>A picture at the size it fills, premultiplied, made once when first painted.</summary>
 		/// <remarks>
 		/// GDI+ draws a premultiplied picture at its own size without converting or resampling it, the fastest way it
-		/// draws: measured at a quarter of the time of fading the picture as loaded while drawing it, and faster than
-		/// GDI's AlphaBlend. Each is made once, by one draw from the version nearest above the size, when first painted.
+		/// draws, which counts because a moving stick paints this control again and again.
 		/// </remarks>
-		Bitmap Painted(Bitmap picture, string name, Size size, bool faded)
+		Bitmap Painted(Bitmap picture, string name, Size size)
 		{
-			var key = name + "|" + size.Width + "x" + size.Height + "|" + faded;
+			var key = name + "|" + size.Width + "x" + size.Height;
 			Bitmap painted;
 			if (_Painted.TryGetValue(key, out painted))
 				return painted;
@@ -92,8 +91,7 @@ namespace x360ce.App.Controls
 				g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
 				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 				g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-				ControlsHelper.DrawImageWithOpacity(g, ControlsHelper.GetDrawnSize(picture, size),
-					new Rectangle(Point.Empty, size), faded ? EngineHelper.DisabledOpacity : 1f);
+				g.DrawImage(picture, new Rectangle(Point.Empty, size));
 			}
 			_Painted.Add(key, painted);
 			return painted;
@@ -266,6 +264,9 @@ namespace x360ce.App.Controls
 		public void SetThumbPosition(bool isLeft, float x, float y)
 		{
 			var value = new PointF(Clamp(x), Clamp(y));
+			// Called on every state update, for a stick that mostly rests.
+			if (value == (isLeft ? _LeftThumb : _RightThumb))
+				return;
 			if (isLeft)
 				_LeftThumb = value;
 			else
@@ -277,6 +278,8 @@ namespace x360ce.App.Controls
 		public void SetTriggerLevel(bool isLeft, float level)
 		{
 			level = level < 0f ? 0f : level > 1f ? 1f : level;
+			if (level == (isLeft ? _LeftTrigger : _RightTrigger))
+				return;
 			if (isLeft)
 				_LeftTrigger = level;
 			else
@@ -316,6 +319,16 @@ namespace x360ce.App.Controls
 
 		#region Painting
 
+		/// <summary>The artwork's width at the screen's scale, and no height of its own.</summary>
+		/// <remarks>
+		/// On the General page the picture stands beside the rows of boxes and is drawn to fit the height they make, so it
+		/// never pushes them apart.
+		/// </remarks>
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			return new Size((int)Math.Round(CanvasWidth * ControlsHelper.DpiScale), 0);
+		}
+
 		/// <summary>Canvas units to control pixels, keeping the artwork's proportions.</summary>
 		float CanvasScale
 		{
@@ -353,11 +366,21 @@ namespace x360ce.App.Controls
 					(int)Math.Round((TopImageHeight + ImageGap) * scale),
 					(int)Math.Round(CanvasWidth * scale),
 					(int)Math.Round((CanvasHeight - TopImageHeight - ImageGap) * scale));
-				// Pixel for pixel: each picture is already the size it fills, faded or not.
+				// Pixel for pixel: each picture is already the size it fills.
 				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 				e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
-				e.Graphics.DrawImage(Painted(_Top, "top", topBounds.Size, !_Enabled), topBounds);
-				e.Graphics.DrawImage(Painted(_Front, "front", frontBounds.Size, !_Enabled), frontBounds);
+				var top = Painted(_Top, "top", topBounds.Size);
+				var front = Painted(_Front, "front", frontBounds.Size);
+				if (_Enabled)
+				{
+					e.Graphics.DrawImage(top, topBounds);
+					e.Graphics.DrawImage(front, frontBounds);
+				}
+				else
+				{
+					ControlsHelper.DrawImageWithOpacity(e.Graphics, top, topBounds, EngineHelper.DisabledOpacity);
+					ControlsHelper.DrawImageWithOpacity(e.Graphics, front, frontBounds, EngineHelper.DisabledOpacity);
+				}
 				e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 				e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 

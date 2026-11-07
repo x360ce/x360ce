@@ -215,17 +215,9 @@ namespace x360ce.Engine
 			return null;
 		}
 
-		/// <summary>An embedded picture as drawn at 100%, with the versions of it drawn at 1.5 and 2 times its size, shared by every caller and never disposed.</summary>
+		/// <summary>An embedded picture, made at twice the size it shows at 100%, shared by every caller and never to be disposed.</summary>
 		/// <param name="name">The picture's resource name, such as "Images.xboxControllerTop.png".</param>
-		/// <remarks>
-		/// A version is embedded beside the picture under its name and its own size, such as
-		/// "Images.xboxControllerTop_384x158.png". On a screen set above 100% the picture is drawn from the version
-		/// nearest above the size needed (<see cref="JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes"/>)
-		/// rather than enlarged.
-		///
-		/// Each picture is loaded once: the four controller pages draw the same pictures, and a copy for each page would
-		/// hold the pictures and their versions four times over, about 10 MB more.
-		/// </remarks>
+		/// <remarks>Loaded once: the four controller pages draw the same pictures.</remarks>
 		public static System.Drawing.Bitmap GetResourcePicture(string name)
 		{
 			lock (Pictures)
@@ -234,14 +226,6 @@ namespace x360ce.Engine
 				if (Pictures.TryGetValue(name, out picture))
 					return picture;
 				picture = new System.Drawing.Bitmap(GetResourceStream(name));
-				var stem = Path.ChangeExtension(name, null);
-				var extension = Path.GetExtension(name);
-				var versions = new[] { 1.5, 2.0 }
-					.Select(m => GetResourceStream(stem + "_" + (int)Math.Round(picture.Width * m) + "x" + (int)Math.Round(picture.Height * m) + extension))
-					.Where(x => x != null)
-					.Select(x => (System.Drawing.Image)new System.Drawing.Bitmap(x))
-					.ToArray();
-				JocysCom.ClassLibrary.Controls.ControlsHelper.SetDrawnSizes(picture, versions);
 				Pictures.Add(name, picture);
 				return picture;
 			}
@@ -751,18 +735,12 @@ namespace x360ce.Engine
 					var sr = GetResourceStream(name);
 					if (sr == null)
 						return new Exception("Resource not found.");
-					FileStream sw = null;
-					sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-					var buffer = new byte[1024];
-					while (true)
-					{
-						var count = sr.Read(buffer, 0, buffer.Length);
-						if (count == 0)
-							break;
-						sw.Write(buffer, 0, count);
-					}
-					sr.Close();
-					sw.Close();
+					// Written under another name and then moved, so a copy cut short never takes the file's name.
+					var partName = fileName + ".part";
+					using (sr)
+					using (var sw = new FileStream(partName, FileMode.Create, FileAccess.Write))
+						sr.CopyTo(sw);
+					File.Move(partName, fileName);
 				}
 			}
 			catch (Exception ex)

@@ -274,6 +274,13 @@ namespace x360ce.Engine
 			return string.Format("{0}s: {1} deleted.", items.GetType().GetElementType().Name, deleted);
 		}
 
+		/// <summary>The stored record of the message's computer and profile that the given record is, or null.</summary>
+		/// <remarks>
+		/// A record is found by its own keys, never by its ID: the program can hold a record it sent without the ID the
+		/// service gave it. A device or controller instance keeps its instance GUID when it is stored, because that is
+		/// how the next upload, a Delete and the program's Download From Cloud find it again.
+		/// </remarks>
+		/// <param name="updateGuid">True when a record that is not found is to be stored: a game or setting then gets a new ID.</param>
 		static T GetExistingItem<T>(ObjectSet<T> table, T item, bool updateGuid = false) where T : EntityObject, IUserRecord
 		{
 			var computerId = item.ComputerId;
@@ -296,8 +303,6 @@ namespace x360ce.Engine
 				dbItem = ((ObjectSet<UserDevice>)(object)table)
 					.FirstOrDefault(x => x.ComputerId == computerId && x.ProfileId == profileId &&
 						x.InstanceGuid == ud.InstanceGuid) as T;
-				if (dbItem == null && updateGuid)
-					ud.InstanceGuid = Guid.NewGuid();
 			}
 			// User Instance.
 			var ui = item as UserInstance;
@@ -306,8 +311,6 @@ namespace x360ce.Engine
 				dbItem = ((ObjectSet<UserInstance>)(object)table)
 					.FirstOrDefault(x => x.ComputerId == computerId && x.ProfileId == profileId &&
 						x.InstanceGuid == ui.InstanceGuid) as T;
-				if (dbItem == null && updateGuid)
-					ui.InstanceGuid = Guid.NewGuid();
 			}
 			// User Instance.
 			var us = item as UserSetting;

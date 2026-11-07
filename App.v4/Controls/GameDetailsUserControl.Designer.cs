@@ -596,7 +596,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.GoogleSearchButton.AutoSize = true;
 			this.GoogleSearchButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.GoogleSearchButton.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.GoogleSearchButton.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.GoogleSearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.GoogleSearchButton.Name = "GoogleSearchButton";
 			this.GoogleSearchButton.TabIndex = 0;
@@ -612,7 +612,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.button3.AutoSize = true;
 			this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button3.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.button3.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button3.Name = "button3";
 			this.button3.TabIndex = 1;
@@ -628,7 +628,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.button4.AutoSize = true;
 			this.button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.button4.Image = global::x360ce.App.Properties.Resources.online_help_16x16;
+			this.button4.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.button4.Name = "button4";
 			this.button4.TabIndex = 2;
@@ -879,7 +879,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ResetToDefaultButton.AutoSize = true;
 			this.ResetToDefaultButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_16x16;
+			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_32x32;
 			this.ResetToDefaultButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
 			this.ResetToDefaultButton.TabIndex = 0;
@@ -935,9 +935,9 @@
 
 		#endregion
 		private System.Windows.Forms.TableLayoutPanel MainLayoutPanel;
-		private System.Windows.Forms.GroupBox HookMaskGroupBox;
+		internal System.Windows.Forms.GroupBox HookMaskGroupBox;
 		private System.Windows.Forms.TableLayoutPanel HookMaskLayoutPanel;
-		private System.Windows.Forms.CheckBox HookCOMCheckBox;
+		internal System.Windows.Forms.CheckBox HookCOMCheckBox;
 		private System.Windows.Forms.CheckBox HookDICheckBox;
 		private System.Windows.Forms.CheckBox HookPIDVIDCheckBox;
 		private System.Windows.Forms.CheckBox HookNAMECheckBox;
@@ -946,7 +946,7 @@
 		private System.Windows.Forms.CheckBox HookSACheckBox;
 		private System.Windows.Forms.CheckBox HookWTCheckBox;
 		private System.Windows.Forms.CheckBox HookDISABLECheckBox;
-		private System.Windows.Forms.GroupBox XInputMaskGroupBox;
+		internal System.Windows.Forms.GroupBox XInputMaskGroupBox;
 		private System.Windows.Forms.TableLayoutPanel XInputMaskLayoutPanel;
 		private System.Windows.Forms.Label v91;
 		private System.Windows.Forms.Label label1;
@@ -963,41 +963,41 @@
 		private System.Windows.Forms.CheckBox XInput12_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput13_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput14_x64CheckBox;
-		private System.Windows.Forms.GroupBox AutoMapMaskGroupBox;
+		internal System.Windows.Forms.GroupBox AutoMapMaskGroupBox;
 		private System.Windows.Forms.TableLayoutPanel AutoMapMaskLayoutPanel;
 		private System.Windows.Forms.CheckBox Controller1CheckBox;
 		private System.Windows.Forms.CheckBox Controller2CheckBox;
 		private System.Windows.Forms.CheckBox Controller3CheckBox;
 		private System.Windows.Forms.CheckBox Controller4CheckBox;
-		private System.Windows.Forms.GroupBox DInputMaskGroupBox;
+		internal System.Windows.Forms.GroupBox DInputMaskGroupBox;
 		private System.Windows.Forms.TableLayoutPanel DInputMaskLayoutPanel;
 		private System.Windows.Forms.CheckBox DInput8_x86CheckBox;
 		private System.Windows.Forms.CheckBox DInput8_x64CheckBox;
-		private System.Windows.Forms.GroupBox groupBox5;
+		internal System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.TableLayoutPanel HelpLayoutPanel;
-		private System.Windows.Forms.Button GoogleSearchButton;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Button button4;
-		private System.Windows.Forms.GroupBox OtherOptionsGroupBox;
+		internal System.Windows.Forms.Button GoogleSearchButton;
+		internal System.Windows.Forms.Button button3;
+		internal System.Windows.Forms.Button button4;
+		internal System.Windows.Forms.GroupBox OtherOptionsGroupBox;
 		private System.Windows.Forms.TableLayoutPanel OtherOptionsLayoutPanel;
 		private System.Windows.Forms.Label HookModeFakeVidLabel;
-		private System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
-		private System.Windows.Forms.TextBox HookModeFakeVidTextBox;
+		internal System.Windows.Forms.NumericUpDown HookModeFakeVidNumericUpDown;
+		internal System.Windows.Forms.TextBox HookModeFakeVidTextBox;
 		private System.Windows.Forms.Label HookModeFakePidLabel;
-		private System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
-		private System.Windows.Forms.TextBox HookModeFakePidTextBox;
+		internal System.Windows.Forms.NumericUpDown HookModeFakePidNumericUpDown;
+		internal System.Windows.Forms.TextBox HookModeFakePidTextBox;
 		private System.Windows.Forms.Label TimeoutLabel;
-		private System.Windows.Forms.NumericUpDown TimeoutNumericUpDown;
+		internal System.Windows.Forms.NumericUpDown TimeoutNumericUpDown;
 		private System.Windows.Forms.Label XInputPathLabel;
-		private System.Windows.Forms.TextBox XInputPathTextBox;
+		internal System.Windows.Forms.TextBox XInputPathTextBox;
 		private System.Windows.Forms.Label ProcessorArchitectureLabel;
-		private System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
+		internal System.Windows.Forms.ComboBox ProcessorArchitectureComboBox;
 		private System.Windows.Forms.Label DInputFileLabel;
-		private System.Windows.Forms.TextBox DInputFileTextBox;
+		internal System.Windows.Forms.TextBox DInputFileTextBox;
 		private System.Windows.Forms.Label EmulationTypeLabel;
-		private System.Windows.Forms.ComboBox EmulationTypeComboBox;
-		private System.Windows.Forms.GroupBox ActionGroupBox;
+		internal System.Windows.Forms.ComboBox EmulationTypeComboBox;
+		internal System.Windows.Forms.GroupBox ActionGroupBox;
 		private System.Windows.Forms.TableLayoutPanel ActionLayoutPanel;
-		private System.Windows.Forms.Button ResetToDefaultButton;
+		internal System.Windows.Forms.Button ResetToDefaultButton;
 	}
 }

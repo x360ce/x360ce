@@ -158,7 +158,7 @@ namespace x360ce.Tests
 			Assert.IsTrue(devices.Switch(false, new[] { A, B }, out error), "Switching off failed: " + error);
 			// The program ends as a crash ends it: the channel goes, and nothing says Exit.
 			var channel = (IDisposable)typeof(ElevatedDevices)
-				.GetField("_channel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+				.GetField(nameof(ElevatedDevices._channel), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
 				.GetValue(devices);
 			channel.Dispose();
 			Assert.IsTrue(admin.Serving.Wait(TimeSpan.FromSeconds(10)), "The Administrator copy did not stop when its program went.");

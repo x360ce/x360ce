@@ -898,14 +898,14 @@
 
 		#endregion
 
-        System.Windows.Forms.DataGridView DiEffectsDataGridView;
+        internal System.Windows.Forms.DataGridView DiEffectsDataGridView;
         System.Windows.Forms.Label DiDPadLabel;
         System.Windows.Forms.Label DiUvaLabel;
 		System.Windows.Forms.Label DiExtraVLabel;
 		System.Windows.Forms.Label DiExtraFLabel;
 		System.Windows.Forms.Label DiExtraALabel;
 		System.Windows.Forms.Label DiButtonsLabel;
-		System.Windows.Forms.DataGridView DiAxisDataGridView;
+		internal System.Windows.Forms.DataGridView DiAxisDataGridView;
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAxis;
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnM;
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnR;
@@ -915,13 +915,13 @@
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnFr;
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnV;
 		System.Windows.Forms.DataGridViewTextBoxColumn DiColumnVr;
-		System.Windows.Forms.TextBox DiDPadTextBox;
-		System.Windows.Forms.TextBox DiUvSliderTextBox;
-		System.Windows.Forms.TextBox DiVSliderTextBox;
-		System.Windows.Forms.TextBox DiFSliderTextBox;
-		System.Windows.Forms.TextBox DiASliderTextBox;
-		System.Windows.Forms.TextBox DiButtonsTextBox;
-		System.Windows.Forms.TextBox DeviceTypeTextBox;
+		internal System.Windows.Forms.TextBox DiDPadTextBox;
+		internal System.Windows.Forms.TextBox DiUvSliderTextBox;
+		internal System.Windows.Forms.TextBox DiVSliderTextBox;
+		internal System.Windows.Forms.TextBox DiFSliderTextBox;
+		internal System.Windows.Forms.TextBox DiASliderTextBox;
+		internal System.Windows.Forms.TextBox DiButtonsTextBox;
+		internal System.Windows.Forms.TextBox DeviceTypeTextBox;
 		System.Windows.Forms.Label DiDevicePidLabel;
 		System.Windows.Forms.Label DiDeviceVidLabel;
 		System.Windows.Forms.Label DiDeviceTypeLabel;
@@ -946,7 +946,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
         public System.Windows.Forms.TextBox ActuatorsTextBox;
         private System.Windows.Forms.Label ActuatorsLabel;
-        private System.Windows.Forms.TabControl DeviceDetailsTabControl;
+        internal System.Windows.Forms.TabControl DeviceDetailsTabControl;
         private System.Windows.Forms.TabPage DiEffectsDataTabPage;
         private System.Windows.Forms.TabPage DiObjectsTabPage;
         public System.Windows.Forms.TextBox SlidersTextBox;
@@ -954,10 +954,10 @@
 		private System.Windows.Forms.Label MapToControllerLabel;
 		public System.Windows.Forms.ComboBox MapToPadComboBox;
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
-		private System.Windows.Forms.ToolStripMenuItem CopyWithHeadersMenuItem;
+		internal System.Windows.Forms.ToolStripMenuItem CopyWithHeadersMenuItem;
 		public System.Windows.Forms.TextBox DeviceVendorNameTextBox;
 		private System.Windows.Forms.Label DeviceVendorNameLabel;
-		private System.Windows.Forms.DataGridView DiObjectsDataGridView;
+		internal System.Windows.Forms.DataGridView DiObjectsDataGridView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsOffsetColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn OffsetNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsGuidColumn;

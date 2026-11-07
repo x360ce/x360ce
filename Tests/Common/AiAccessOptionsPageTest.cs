@@ -60,8 +60,8 @@ namespace x360ce.Tests
 				using (var page = new OptionsUserControl())
 				{
 					page.CreateControl();
-					var ai = Find<AiAccessUserControl>(page, "AiControl");
-					Assert.AreEqual("AiTabPage", ai.Parent.Name, "The shared page is not on the AI tab.");
+					var ai = Find<AiAccessUserControl>(page, nameof(OptionsUserControl.AiControl));
+					Assert.AreEqual(nameof(OptionsUserControl.AiTabPage), ai.Parent.Name, "The shared page is not on the AI tab.");
 					Assert.AreEqual(DockStyle.Fill, ai.Dock);
 					// The AI tab holds only the shared page: the Options page has no AI control of its own.
 					var left =typeof(OptionsUserControl).GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
@@ -70,31 +70,31 @@ namespace x360ce.Tests
 					ai.Bind(new AiAccessSettings());
 					var o = SettingsManager.AiOptions;
 					// Typed text would leave the list's selection empty.
-					var level = Find<ComboBox>(ai, "AiAccessComboBox");
+					var level = Find<ComboBox>(ai, nameof(AiAccessUserControl.AiAccessComboBox));
 					Assert.AreEqual(ComboBoxStyle.DropDownList, level.DropDownStyle);
 					CollectionAssert.AreEqual(AiAccessModel.Levels, level.Items.Cast<string>().ToArray());
 					Assert.AreEqual(o.AiAccess.ToString(), level.SelectedItem);
-					var address = Find<ComboBox>(ai, "AiAccessAddressComboBox");
+					var address = Find<ComboBox>(ai, nameof(AiAccessUserControl.AiAccessAddressComboBox));
 					Assert.AreEqual(ComboBoxStyle.DropDownList, address.DropDownStyle);
 					CollectionAssert.AreEqual(new[] { AiOptions.LoopbackAddress, AiOptions.AnyAddress }, address.Items.Cast<string>().ToArray());
-					Assert.AreEqual(o.AiAccessPort.ToString(), Find<TextBox>(ai, "AiAccessPortTextBox").Text);
-					Assert.AreEqual(o.AiAccessToken ?? "", Find<TextBox>(ai, "AiAccessTokenTextBox").Text);
+					Assert.AreEqual(o.AiAccessPort.ToString(), Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessPortTextBox)).Text);
+					Assert.AreEqual(o.AiAccessToken ?? "", Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessTokenTextBox)).Text);
 					// http.sys routes by the Host header: the door on this computer answers to localhost, and 127.0.0.1 gets 400.
-					var url = Find<TextBox>(ai, "AiAccessUrlTextBox");
+					var url = Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessUrlTextBox));
 					Assert.IsTrue(url.ReadOnly);
 					if (o.AiAccessAddress != AiOptions.AnyAddress)
 						Assert.AreEqual("http://localhost:" + o.AiAccessPort + "/mcp/", url.Text);
-					var snippet = Find<TextBox>(ai, "AiAccessSnippetTextBox");
+					var snippet = Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessSnippetTextBox));
 					StringAssert.Contains(snippet.Text, "\"/Mcp\"");
 					StringAssert.Contains(snippet.Text, Application.ExecutablePath.Replace("\\", "\\\\"));
-					Find<CheckBox>(ai, "AiAccessEnabledCheckBox");
-					Find<CheckBox>(ai, "AiAccessTrustLocalCheckBox");
-					foreach (var name in new[] { "AiAccessRegenerateButton", "AiAccessCopyButton", "AiAccessUrlCopyButton", "AiAccessPromptButton", "AiAccessLogButton", "AiSkillZipButton" })
+					Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessEnabledCheckBox));
+					Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessTrustLocalCheckBox));
+					foreach (var name in new[] { nameof(AiAccessUserControl.AiAccessRegenerateButton), nameof(AiAccessUserControl.AiAccessCopyButton), nameof(AiAccessUserControl.AiAccessUrlCopyButton), nameof(AiAccessUserControl.AiAccessPromptButton), nameof(AiAccessUserControl.AiAccessLogButton), nameof(AiAccessUserControl.AiSkillZipButton) })
 						Find<Button>(ai, name);
-					Assert.AreEqual(ai.Model.Status, Find<Label>(ai, "AiAccessStatusText").Text);
+					Assert.AreEqual(ai.Model.Status, Find<Label>(ai, nameof(AiAccessUserControl.AiAccessStatusText)).Text);
 					// The door's own controls, which the door refuses at every level, are the shared page's, and the program adds its own to the others.
-					CollectionAssert.IsSubsetOf(new[] { "AiAccessEnabledCheckBox", "AiAccessComboBox", "AiAccessAddressComboBox", "AiAccessPortTextBox",
-						"AiAccessTrustLocalCheckBox", "AiAccessRegenerateButton", "AiSkillClaudeButton", "AiSkillAgentsButton", "AiSkillZipButton" }, McpTools.DoorControls);
+					CollectionAssert.IsSubsetOf(new[] { nameof(AiAccessUserControl.AiAccessEnabledCheckBox), nameof(AiAccessUserControl.AiAccessComboBox), nameof(AiAccessUserControl.AiAccessAddressComboBox), nameof(AiAccessUserControl.AiAccessPortTextBox),
+						nameof(AiAccessUserControl.AiAccessTrustLocalCheckBox), nameof(AiAccessUserControl.AiAccessRegenerateButton), nameof(AiAccessUserControl.AiSkillClaudeButton), nameof(AiAccessUserControl.AiSkillAgentsButton), nameof(AiAccessUserControl.AiSkillZipButton) }, McpTools.DoorControls);
 					foreach (var name in McpTools.DoorControls)
 						Assert.AreEqual(1, ai.Controls.Find(name, true).Length, "The door guards " + name + ", which is not a control on the page.");
 					CollectionAssert.IsSubsetOf(AiAccessModel.SecretControls, McpTools.SecretControls);
@@ -114,16 +114,16 @@ namespace x360ce.Tests
 				using (var ai = new AiAccessUserControl())
 				{
 					UiText.Apply(ai);
-					var header = Find<Label>(ai, "AiHeaderText").Text;
+					var header = Find<Label>(ai, nameof(AiAccessUserControl.AiHeaderText)).Text;
 					StringAssert.Contains(header, "An AI assistant you run, such as Claude Code or Codex, can read and use this program for you, only at the level you choose.");
 					StringAssert.Contains(header, "Nothing can reach this program until you tick AI assistant access.");
-					Assert.AreEqual("Example:", Find<Label>(ai, "AiExampleLabel").Text);
-					var example = Find<TextBox>(ai, "AiExampleTextBox");
+					Assert.AreEqual("Example:", Find<Label>(ai, nameof(AiAccessUserControl.AiExampleLabel)).Text);
+					var example = Find<TextBox>(ai, nameof(AiAccessUserControl.AiExampleTextBox));
 					Assert.AreEqual("In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2's left stick is mapped, "
 						+ "then round the corners of its square range.", example.Text);
 					Assert.IsTrue(example.ReadOnly, "The example is to read and copy, not to edit.");
 					Assert.IsTrue(example.Multiline && example.WordWrap, "The example does not wrap.");
-					var buttons = new[] { "AiExampleCopyButton", "AiAccessUrlCopyButton", "AiAccessCopyButton" }.Select(x => Find<Button>(ai, x)).ToArray();
+					var buttons = new[] { nameof(AiAccessUserControl.AiExampleCopyButton), nameof(AiAccessUserControl.AiAccessUrlCopyButton), nameof(AiAccessUserControl.AiAccessCopyButton) }.Select(x => Find<Button>(ai, x)).ToArray();
 					CollectionAssert.AreEqual(new[] { "Copy example", "Copy URL", "Copy snippet" }, buttons.Select(x => x.AccessibleName).ToArray());
 					foreach (var button in buttons)
 						StringAssert.StartsWith(button.AccessibleName, button.Text, "The name hides the caption a person reads.");
@@ -146,8 +146,8 @@ namespace x360ce.Tests
 				{
 					ai.PerformLayout();
 					var root = Find<TableLayoutPanel>(ai, "AiPanel");
-					var header = Find<TableLayoutPanel>(ai, "AiHeaderPanel");
-					var tabs = Find<TabControl>(ai, "AiTabControl");
+					var header = Find<TableLayoutPanel>(ai, nameof(AiAccessUserControl.AiHeaderPanel));
+					var tabs = Find<TabControl>(ai, nameof(AiAccessUserControl.AiTabControl));
 					Assert.AreSame(ai, root.Parent);
 					Assert.AreSame(root, header.Parent);
 					Assert.AreSame(root, tabs.Parent);
@@ -172,13 +172,13 @@ namespace x360ce.Tests
 				var onUiThread = McpCatalog.OnUiThread;
 				using (var form = new Form { Name = "Main" })
 				{
-					var ai = new AiAccessUserControl { Name = "AiControl", Dock = DockStyle.Fill };
+					var ai = new AiAccessUserControl { Name = nameof(OptionsUserControl.AiControl), Dock = DockStyle.Fill };
 					form.Controls.Add(ai);
 					var settings = new CountingSettings();
 					ai.Bind(settings);
-					var table = Find<TableLayoutPanel>(ai, "AiAccessPanel");
-					var trust = Find<CheckBox>(ai, "AiAccessTrustLocalCheckBox");
-					var address = Find<ComboBox>(ai, "AiAccessAddressComboBox");
+					var table = Find<TableLayoutPanel>(ai, nameof(AiAccessUserControl.AiAccessPanel));
+					var trust = Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessTrustLocalCheckBox));
+					var address = Find<ComboBox>(ai, nameof(AiAccessUserControl.AiAccessAddressComboBox));
 					Assert.AreEqual(table.GetRow(address) + 1, table.GetRow(trust), "The check box is not under Address.");
 					Assert.AreEqual(table.GetColumn(address), table.GetColumn(trust), "The check box is not in the value column.");
 					Assert.AreEqual("Trust local connections (no token)", trust.Text);
@@ -192,7 +192,7 @@ namespace x360ce.Tests
 					Assert.AreEqual(McpListener.AnyAddress, settings.Address);
 					Assert.IsFalse(trust.Enabled, "On every network the token is always needed, so the check box is greyed out.");
 					Assert.IsTrue(trust.Checked, "Greying it out changed the person's choice.");
-					StringAssert.StartsWith(Find<TextBox>(ai, "AiAccessUrlTextBox").Text, "http://" + Environment.MachineName.ToLowerInvariant() + ":");
+					StringAssert.StartsWith(Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessUrlTextBox)).Text, "http://" + Environment.MachineName.ToLowerInvariant() + ":");
 					address.SelectedItem = McpListener.LoopbackAddress;
 					Assert.IsTrue(trust.Enabled);
 					form.Show();
@@ -230,10 +230,10 @@ namespace x360ce.Tests
 					// A button is pressed on its tab, in front, as a person presses it. A tab strip brings a page to the front
 					// only once it has a window.
 					ai.CreateControl();
-					Find<TabControl>(ai, "AiTabControl").SelectedTab = Find<TabPage>(ai, "AiAccessTabPage");
-					var status = Find<Label>(ai, "AiAccessStatusText");
+					Find<TabControl>(ai, nameof(AiAccessUserControl.AiTabControl)).SelectedTab = Find<TabPage>(ai, nameof(AiAccessUserControl.AiAccessTabPage));
+					var status = Find<Label>(ai, nameof(AiAccessUserControl.AiAccessStatusText));
 					Assert.AreEqual("Off. Nothing can reach this program.", status.Text);
-					var port = Find<TextBox>(ai, "AiAccessPortTextBox");
+					var port = Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessPortTextBox));
 					port.Text = "80";
 					Validated(port);
 					Assert.AreEqual(AiAccessModel.PortRange, status.Text);
@@ -244,14 +244,14 @@ namespace x360ce.Tests
 					Assert.AreEqual(41000, settings.Port);
 					Assert.AreEqual(1, settings.Saves);
 					Assert.AreEqual(1, settings.Applies);
-					Assert.AreEqual("http://localhost:41000/mcp/", Find<TextBox>(ai, "AiAccessUrlTextBox").Text);
-					Find<ComboBox>(ai, "AiAccessComboBox").SelectedItem = "Configure";
+					Assert.AreEqual("http://localhost:41000/mcp/", Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessUrlTextBox)).Text);
+					Find<ComboBox>(ai, nameof(AiAccessUserControl.AiAccessComboBox)).SelectedItem = "Configure";
 					Assert.AreEqual(AiAccess.Configure, settings.Access);
 					var token = settings.Token;
-					Find<Button>(ai, "AiAccessRegenerateButton").PerformClick();
+					Find<Button>(ai, nameof(AiAccessUserControl.AiAccessRegenerateButton)).PerformClick();
 					Assert.AreNotEqual(token, settings.Token, "Regenerate made no new token.");
-					Assert.AreEqual(settings.Token, Find<TextBox>(ai, "AiAccessTokenTextBox").Text);
-					Find<CheckBox>(ai, "AiAccessEnabledCheckBox").Checked = true;
+					Assert.AreEqual(settings.Token, Find<TextBox>(ai, nameof(AiAccessUserControl.AiAccessTokenTextBox)).Text);
+					Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessEnabledCheckBox)).Checked = true;
 					Assert.IsTrue(settings.Enabled);
 					var prompt = ai.Model.Prompt();
 					StringAssert.StartsWith(prompt, "Connect to my Jocys.com X360 Controller Emulator (x360ce) as an MCP server, then list my controllers.");
@@ -280,7 +280,7 @@ namespace x360ce.Tests
 			// A caption names what is beside or below it and stays out of the tree, as a field ending in Label; the skill
 			// note says what its section's purpose says; the page's own table only places the header above the tabs.
 			var uncatalogued = fields.Where(x => !x.EndsWith("Label")).Except(entries).ToArray();
-			CollectionAssert.AreEquivalent(new[] { "AiSkillNoteText", "AiPanel" }, uncatalogued,
+			CollectionAssert.AreEquivalent(new[] { nameof(AiAccessUserControl.AiSkillNoteText), "AiPanel" }, uncatalogued,
 				"Elements without a name and purpose: " + string.Join(", ", uncatalogued));
 			foreach (var name in AiAccessModel.DoorControls.Concat(AiAccessModel.SecretControls).Concat(AiAccessModel.AdminControls))
 				CollectionAssert.Contains(fields, name, name + " is guarded, but it is not an element of the page.");
@@ -293,8 +293,8 @@ namespace x360ce.Tests
 						.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ai);
 					var order = new List<string>();
 					// The header, then each section on its own tab.
-					foreach (var section in new[] { new[] { null, "AiHeaderPanel" }, new[] { "AiSkillTabPage", "AiSkillPanel" },
-						new[] { "AiAccessTabPage", "AiAccessPanel" }, new[] { "AiTunnelTabPage", "AiTunnelPanel" } })
+					foreach (var section in new[] { new[] { null, nameof(AiAccessUserControl.AiHeaderPanel) }, new[] { nameof(AiAccessUserControl.AiSkillTabPage), nameof(AiAccessUserControl.AiSkillPanel) },
+						new[] { nameof(AiAccessUserControl.AiAccessTabPage), nameof(AiAccessUserControl.AiAccessPanel) }, new[] { nameof(AiAccessUserControl.AiTunnelTabPage), nameof(AiAccessUserControl.AiTunnelPanel) } })
 					{
 						var table = (TableLayoutPanel)field(section[1]);
 						if (section[0] == null)
@@ -305,8 +305,8 @@ namespace x360ce.Tests
 						else
 						{
 							Assert.AreSame(field(section[0]), table.Parent, section[1] + " is not straight inside " + section[0] + ".");
-							if (order.Count > 0 && !order.Contains("AiTabControl"))
-								order.Add("AiTabControl");
+							if (order.Count > 0 && !order.Contains(nameof(AiAccessUserControl.AiTabControl)))
+								order.Add(nameof(AiAccessUserControl.AiTabControl));
 							order.Add(section[0]);
 							order.Add(section[1]);
 						}
@@ -330,13 +330,13 @@ namespace x360ce.Tests
 				using (var ai = new AiAccessUserControl())
 				{
 					UiText.Apply(ai);
-					var button = Find<Button>(ai, "AiSkillClaudeButton");
+					var button = Find<Button>(ai, nameof(AiAccessUserControl.AiSkillClaudeButton));
 					// What the page writes on a computer that holds an older copy of the skill.
 					button.Text = "Update";
 					button.AccessibleName = "Update for Claude Code";
-					Assert.AreEqual("Install for Claude Code", NodeOf(UiTreeWalker.Read(ai), "AiSkillClaudeButton").Name,
+					Assert.AreEqual("Install for Claude Code", NodeOf(UiTreeWalker.Read(ai), nameof(AiAccessUserControl.AiSkillClaudeButton)).Name,
 						"The exported document names the button after this computer's skill.");
-					Assert.AreEqual("Update for Claude Code", NodeOf(UiTreeWalker.Read(ai, false, ""), "AiSkillClaudeButton").Name,
+					Assert.AreEqual("Update for Claude Code", NodeOf(UiTreeWalker.Read(ai, false, ""), nameof(AiAccessUserControl.AiSkillClaudeButton)).Name,
 						"A live read must name the button by the caption the person sees.");
 				}
 			});
@@ -380,10 +380,10 @@ namespace x360ce.Tests
 					using (var ai = new AiAccessUserControl())
 					{
 						ai.Bind(new AiAccessSettings());
-						Find<CheckBox>(ai, "AiAccessEnabledCheckBox").Checked = true;
+						Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessEnabledCheckBox)).Checked = true;
 						Assert.IsTrue(McpListener.Program.IsRunning, "Ticking AI assistant access did not open the door.");
 						Assert.AreEqual(HttpStatusCode.Unauthorized, McpListenerTest.Post(null, null), "A call without the token was answered before Trust local connections was ticked.");
-						Find<CheckBox>(ai, "AiAccessTrustLocalCheckBox").Checked = true;
+						Find<CheckBox>(ai, nameof(AiAccessUserControl.AiAccessTrustLocalCheckBox)).Checked = true;
 						Assert.IsTrue(o.AiAccessTrustLocal, "The page did not pass Trust local connections to the options.");
 						Assert.AreEqual(HttpStatusCode.OK, McpListenerTest.Post(null, null), "Trust local connections was kept, but the door was not opened again with it.");
 					}
@@ -425,14 +425,14 @@ namespace x360ce.Tests
 						ai.CreateControl();
 						ai.Bind(new AiAccessSettings());
 						Assert.IsNotNull(ai.Model.Tunnel, "The program's settings keep no tunnel, so the page shows no tunnel section.");
-						var file = Find<TextBox>(ai, "AiTunnelFileTextBox").Text;
+						var file = Find<TextBox>(ai, nameof(AiAccessUserControl.AiTunnelFileTextBox)).Text;
 						Assert.AreEqual(SettingsManager.AiOptionsData.XmlFile.FullName, file, "The page does not name the file the keys are kept in.");
 						StringAssert.EndsWith(file, "x360ce.AI.xml");
-						Assert.IsTrue(Find<TextBox>(ai, "AiTunnelApiKeyTextBox").UseSystemPasswordChar, "The API key shows as typed.");
-						Assert.IsTrue(Find<TextBox>(ai, "AiTunnelAdminKeyTextBox").UseSystemPasswordChar, "The admin key shows as typed.");
-						CollectionAssert.IsSubsetOf(new[] { "AiTunnelAdminKeyTextBox", "AiTunnelApiKeyTextBox" }, McpTools.SecretControls);
-						CollectionAssert.IsSubsetOf(new[] { "AiTunnelEnabledCheckBox", "AiTunnelOrganizationTextBox", "AiTunnelAdminKeyTextBox",
-							"AiTunnelIdComboBox", "AiTunnelCreateButton", "AiTunnelDeleteButton", "AiTunnelApiKeyTextBox" }, McpTools.DoorControls);
+						Assert.IsTrue(Find<TextBox>(ai, nameof(AiAccessUserControl.AiTunnelApiKeyTextBox)).UseSystemPasswordChar, "The API key shows as typed.");
+						Assert.IsTrue(Find<TextBox>(ai, nameof(AiAccessUserControl.AiTunnelAdminKeyTextBox)).UseSystemPasswordChar, "The admin key shows as typed.");
+						CollectionAssert.IsSubsetOf(new[] { nameof(AiAccessUserControl.AiTunnelAdminKeyTextBox), nameof(AiAccessUserControl.AiTunnelApiKeyTextBox) }, McpTools.SecretControls);
+						CollectionAssert.IsSubsetOf(new[] { nameof(AiAccessUserControl.AiTunnelEnabledCheckBox), nameof(AiAccessUserControl.AiTunnelOrganizationTextBox), nameof(AiAccessUserControl.AiTunnelAdminKeyTextBox),
+							nameof(AiAccessUserControl.AiTunnelIdComboBox), nameof(AiAccessUserControl.AiTunnelCreateButton), nameof(AiAccessUserControl.AiTunnelDeleteButton), nameof(AiAccessUserControl.AiTunnelApiKeyTextBox) }, McpTools.DoorControls);
 						o.TunnelId = "";
 						ai.Model.SetTunnelId("not a tunnel");
 						Assert.AreEqual("", o.TunnelId, "Text that is no tunnel ID was kept.");

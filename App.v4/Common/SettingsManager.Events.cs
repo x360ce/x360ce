@@ -43,6 +43,15 @@ namespace x360ce.App
             ev(this, e);
         }
 
+        /// <summary>Tells the listeners that a controller page was loaded with other settings, a row's or a preset's.</summary>
+        public void RaiseSettingsChanged(Engine.MapTo page)
+        {
+            var ev = SettingChanged;
+            if (ev == null)
+                return;
+            ev(this, new SettingChangedEventArgs(page));
+        }
+
         public void ResumeEvents()
 		{
 			lock (eventsLock)

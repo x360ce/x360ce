@@ -361,16 +361,16 @@ namespace x360ce.Tests
 			SettingsManager.Options.XInputEnabled = true;
 			// Controller 1 is being plugged in on a worker that has not finished. Controllers 2 and 4 want one too, and
 			// Controller 3 was put in the wrong place last time, with other places taken than now.
-			var plugging = HelperField<Task<VirtualError>[]>(_helper, "_plugging");
+			var plugging = HelperField<Task<VirtualError>[]>(_helper, nameof(DInputHelper._plugging));
 			var underWay = new TaskCompletionSource<VirtualError>().Task;
 			plugging[0] = underWay;
 			_helper.VirtualErrors[2] = VirtualError.PlaceWrong;
-			HelperField<int[]>(_helper, "_misplacedWith")[2] = 0xF;
+			HelperField<int[]>(_helper, nameof(DInputHelper._misplacedWith))[2] = 0xF;
 			SettingsManager.UpdateCurrentGame(game);
 			// XInput answers no controller without a library, so a pass that looks at the places costs what it makes and
 			// never reaches the system's XInput.
-			var attempted = typeof(SystemXInput).GetField("_Attempted", BindingFlags.NonPublic | BindingFlags.Static);
-			var getState = typeof(SystemXInput).GetField("_GetState", BindingFlags.NonPublic | BindingFlags.Static);
+			var attempted = typeof(SystemXInput).GetField(nameof(SystemXInput._Attempted), BindingFlags.NonPublic | BindingFlags.Static);
+			var getState = typeof(SystemXInput).GetField(nameof(SystemXInput._GetState), BindingFlags.NonPublic | BindingFlags.Static);
 			var oldAttempted = attempted.GetValue(null);
 			var oldGetState = getState.GetValue(null);
 			attempted.SetValue(null, true);

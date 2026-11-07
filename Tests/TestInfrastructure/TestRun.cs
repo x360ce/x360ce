@@ -18,6 +18,12 @@ namespace x360ce.Tests
 		/// <summary>Folder every crash report written during this run goes to.</summary>
 		public static string LogsFolder { get; private set; }
 
+		/// <summary>Clean settings folder of this run, used by the test host and by every program a test starts.</summary>
+		public static string ProfileFolder { get; private set; }
+
+		/// <summary>The switch that starts a program on <see cref="ProfileFolder"/>.</summary>
+		public static string ProfileArgument { get { return "\"/Profile=" + ProfileFolder + "\""; } }
+
 		/// <summary>When the run began, for the crashes Windows logged during it.</summary>
 		public static DateTime Started { get; private set; }
 
@@ -38,14 +44,23 @@ namespace x360ce.Tests
 		[AssemblyInitialize]
 		public static void Initialize(TestContext context)
 		{
+			// Windows drawn at the scale of the main monitor, as App.v4\app.manifest (dpiAware) asks of Windows for the
+			// program. Set first, before anything reads the scale.
+			SetProcessDPIAware();
 			Started = DateTime.Now;
 			LogsFolder = Path.Combine(Path.GetTempPath(), "x360ce.Tests", "run-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(LogsFolder);
 			LogHelper.Current.OverrideLogFolder = LogsFolder;
+			// The test host starts without /Profile, so settings read or saved in it would otherwise be the real ones.
+			ProfileFolder = Directory.CreateDirectory(Path.Combine(LogsFolder, "Profile")).FullName;
+			x360ce.Engine.EngineHelper.AppDataPath = ProfileFolder;
 			// The program points the shared door, interface tree and skill at itself before anything else, so a page
 			// built here names the program, its switches and its skill as it does when the program runs.
 			x360ce.App.Mcp.McpTools.Register();
 		}
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool SetProcessDPIAware();
 
 		/// <summary>
 		/// Fails the run when Windows logged a crash or hang of x360ce, the test host, or a program run from the repository

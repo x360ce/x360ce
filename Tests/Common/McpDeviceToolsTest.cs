@@ -226,7 +226,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("The semantic tools are catalogued at the levels the spec gives them, and only the tools that wait leave the interface thread")]
+		[Description("The semantic tools are catalogued at the levels the spec gives them, and only the tools that wait, and the tree read that writes its answer on its own thread, leave the interface thread")]
 		public void Semantic_tools_carry_their_levels()
 		{
 			McpTools.Register();
@@ -238,7 +238,8 @@ namespace x360ce.Tests
 			Assert.IsFalse(tools["input_wait"].OnUiThread, "Waiting on the interface thread would freeze the window.");
 			Assert.IsFalse(tools["input_log"].OnUiThread, "Logging waits for its seconds, which on the interface thread would freeze the window.");
 			Assert.IsFalse(tools["ui_show"].OnUiThread, "Pointing waits too, so the balloon can be read while the window keeps drawing.");
-			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "input_log" && t.Name != "ui_show" && t.Name != "ui_script").All(t => t.OnUiThread));
+			Assert.IsFalse(tools["ui_read"].OnUiThread, "The tree read holds the window only while it reads; its answer is written on the request's thread.");
+			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "input_log" && t.Name != "ui_show" && t.Name != "ui_script" && t.Name != "ui_read").All(t => t.OnUiThread));
 			StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.InputLog(1, "not a guid")).Message, "devices_list",
 				"A device that cannot be named must be refused with where to take its name from, before anything is logged.");
 		}

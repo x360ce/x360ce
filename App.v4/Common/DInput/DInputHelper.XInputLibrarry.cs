@@ -113,15 +113,6 @@ namespace x360ce.App.DInput
 						e.Error = new Exception(caption);
 					}
 				}
-				// If x360ce DLL loaded and settings changed then...
-				var IsLibrary = game != null && game.IsLibrary;
-				if (Controller.IsLoaded && IsLibrary && SettingsChanged)
-				{
-					// Reset configuration.
-					Controller.Reset();
-					SettingsChanged = false;
-				}
-
 				var ev = XInputReloaded;
 				if (ev != null)
 					ev(this, e);

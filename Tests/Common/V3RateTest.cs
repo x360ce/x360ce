@@ -51,7 +51,7 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp("App.v3");
 			if (exe == null)
 				Assert.Inconclusive("App.v3 is not built. Build it before running UI tests.");
-			var app = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			try
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));

@@ -378,6 +378,30 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public bool AutoCenter;
 
+		/// <summary>Whether the engine set the device's own centering when it last held it exclusively, as <see cref="AutoCenter"/> says, or left it as the driver has it. Set by the engine only.</summary>
+		[XmlIgnore]
+		public bool AutoCenterSet;
+
+		/// <summary>Why the engine last let go of the device, as a <c>DInputHelper.LetGoReason</c>, for a recording to say. Set by the engine only.</summary>
+		[XmlIgnore]
+		public int LetGoReason;
+
+		/// <summary>The error that made the engine let go of the device, or nought when none did. Set by the engine only.</summary>
+		[XmlIgnore]
+		public int LetGoError;
+
+		/// <summary>The device was held again since its force effects were last told so. Set by the engine only.</summary>
+		/// <remarks>
+		/// A device let go of and held again forgets what was playing, so the next force update starts its effects again.
+		/// Kept here rather than read from the poll that held it, because that poll can skip the force while it rests.
+		/// </remarks>
+		[XmlIgnore]
+		public bool ForceResumeDue;
+
+		/// <summary>The error of the last failed read of this device. Set by the engine only.</summary>
+		[XmlIgnore]
+		public int DiReadError;
+
 		/// <summary>Reads of this device that failed in a row. Set by the engine only.</summary>
 		/// <remarks>After two, the engine rests the device until <see cref="DiReadRetryAt"/>.</remarks>
 		[XmlIgnore]

@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 namespace x360ce.App
 {
 	/// <summary>
-	/// The release an update check chose, as GitHub publishes it: the version its title carries, its page, and
-	/// the address, size and SHA-256 of its x360ce.zip. The zip downloaded is checked against these before
-	/// anything is installed.
+	/// A release as GitHub publishes it: its version, its page, and the address, size and SHA-256 of the one file
+	/// taken from it, such as x360ce's own x360ce.zip or HID Hide's setup. The file downloaded is checked against
+	/// these before anything is installed.
 	/// </summary>
 	public class UpdateRelease
 	{
@@ -16,18 +16,33 @@ namespace x360ce.App
 		/// <summary>Address of the release page, where its notes are.</summary>
 		public string Page { get; set; }
 
-		/// <summary>Address the zip is downloaded from: this release's own, never "latest". Null when the release has no zip.</summary>
+		/// <summary>Address the file is downloaded from: this release's own, never "latest". Null when the release has no such file.</summary>
 		public string Url { get; set; }
 
 		public long Size { get; set; }
 
-		/// <summary>SHA-256 of the zip, lower-case hex, as GitHub computed it when the zip was uploaded. Null when GitHub shows none.</summary>
+		/// <summary>SHA-256 of the file, lower-case hex, as GitHub computed it when the file was uploaded. Null when GitHub shows none.</summary>
 		public string Sha256 { get; set; }
 
-		/// <summary>Whether the bytes are the file the release describes.</summary>
+		/// <summary>Whether the bytes are the file the release describes, its SHA-256 included.</summary>
 		public bool Describes(byte[] data)
 		{
-			return data != null && data.LongLength == Size && Sha256 != null && Sha256Of(data) == Sha256;
+			return Sha256 != null && Mismatch(data) == null;
+		}
+
+		/// <summary>
+		/// Why the bytes are not the file the release describes, or null when they are: the size, and the SHA-256 when
+		/// GitHub shows one.
+		/// </summary>
+		public string Mismatch(byte[] data)
+		{
+			if (data == null)
+				return "nothing was downloaded.";
+			if (data.LongLength != Size)
+				return string.Format("the download is {0:N0} bytes, and the release says {1:N0}.", data.LongLength, Size);
+			if (Sha256 != null && Sha256Of(data) != Sha256)
+				return "the download's SHA-256 differs from the one GitHub publishes for it.";
+			return null;
 		}
 
 		public static string Sha256Of(byte[] data)

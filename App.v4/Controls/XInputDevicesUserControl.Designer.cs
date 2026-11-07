@@ -51,7 +51,7 @@ namespace x360ce.App.Controls
 			//
 			this.ApplyButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.ApplyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.ok_16x16;
+			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.ApplyButton.Name = "ApplyButton";
 			this.ApplyButton.Text = "Apply";
 			this.ApplyButton.ToolTipText = "Show what would be done to put the controllers in this order, then do it.";
@@ -61,7 +61,7 @@ namespace x360ce.App.Controls
 			//
 			this.AutoOrderButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.AutoOrderButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this.AutoOrderButton.Image = global::x360ce.App.Properties.Resources.map_to_16x16;
+			this.AutoOrderButton.Image = global::x360ce.App.Properties.Resources.map_to_32x32;
 			this.AutoOrderButton.Name = "AutoOrderButton";
 			this.AutoOrderButton.Text = "Auto-Order";
 			this.AutoOrderButton.ToolTipText = "Put the virtual controller of Controller 1 in XInput 1, of Controller 2 in XInput 2, and so on. Real controllers take the places left.";
@@ -71,7 +71,7 @@ namespace x360ce.App.Controls
 			//
 			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.RefreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshButton.Name = "RefreshButton";
 			this.RefreshButton.Text = "Refresh";
 			this.RefreshButton.ToolTipText = "Read the places again.";
@@ -122,7 +122,7 @@ namespace x360ce.App.Controls
 			// PlanOkButton
 			//
 			this.PlanOkButton.AutoSize = true;
-			this.PlanOkButton.Image = global::x360ce.App.Properties.Resources.ok_16x16;
+			this.PlanOkButton.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.PlanOkButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.PlanOkButton.Name = "PlanOkButton";
 			this.PlanOkButton.TabIndex = 2;
@@ -238,21 +238,21 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private System.Windows.Forms.ToolStrip DevicesToolStrip;
-		private System.Windows.Forms.ToolStripButton ApplyButton;
-		private System.Windows.Forms.ToolStripButton AutoOrderButton;
-		private System.Windows.Forms.ToolStripButton RefreshButton;
-		private System.Windows.Forms.DataGridView DevicesDataGridView;
-		private System.Windows.Forms.TableLayoutPanel PlanPanel;
-		private System.Windows.Forms.Label PlanSubjectLabel;
-		private System.Windows.Forms.Label PlanBodyLabel;
-		private System.Windows.Forms.Button PlanOkButton;
-		private System.Windows.Forms.Button PlanCancelButton;
-		private System.Windows.Forms.DataGridViewImageColumn MoveUpColumn;
-		private System.Windows.Forms.DataGridViewImageColumn MoveDownColumn;
+		internal System.Windows.Forms.ToolStrip DevicesToolStrip;
+		internal System.Windows.Forms.ToolStripButton ApplyButton;
+		internal System.Windows.Forms.ToolStripButton AutoOrderButton;
+		internal System.Windows.Forms.ToolStripButton RefreshButton;
+		internal System.Windows.Forms.DataGridView DevicesDataGridView;
+		internal System.Windows.Forms.TableLayoutPanel PlanPanel;
+		internal System.Windows.Forms.Label PlanSubjectLabel;
+		internal System.Windows.Forms.Label PlanBodyLabel;
+		internal System.Windows.Forms.Button PlanOkButton;
+		internal System.Windows.Forms.Button PlanCancelButton;
+		internal System.Windows.Forms.DataGridViewImageColumn MoveUpColumn;
+		internal System.Windows.Forms.DataGridViewImageColumn MoveDownColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlaceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PadColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MappedColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn MappedColumn;
 	}
 }

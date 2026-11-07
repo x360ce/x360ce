@@ -412,7 +412,7 @@ namespace x360ce.Engine
 			for (int i = 0; i < args.Length; i++)
 				types[i] = typeof(double);
 			if (method == "Sign")
-				return Expression.Call(typeof(Math).GetMethod("Sign", types), args);
+				return Expression.Call(typeof(Math).GetMethod(nameof(Math.Sign), types), args);
 			return Expression.Call(typeof(Math).GetMethod(method, types), args);
 		}
 

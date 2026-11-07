@@ -56,7 +56,8 @@ namespace x360ce.Tests
 			// icons; rounded, it spends the few pixels it has on a curve nobody can see at this size.
 			foreach (var hex in All)
 			{
-				var image = AppHelper.GetStatusIcon(hex);
+				Assert.AreEqual(System.Windows.Forms.SystemInformation.SmallIconSize.Width, AppHelper.GetStatusIcon(hex).Width, "A light is not drawn at the screen's icon size.");
+				var image = AppHelper.GetStatusIcon(hex, 16);
 				Assert.AreEqual(16, image.Width);
 				Assert.AreEqual(16, image.Height);
 				var covered = Covered(image);
@@ -78,7 +79,7 @@ namespace x360ce.Tests
 			foreach (var hex in All)
 			{
 				var wanted = ColorTranslator.FromHtml(hex);
-				var middle = AppHelper.GetStatusIcon(hex).GetPixel(8, 9);
+				var middle = AppHelper.GetStatusIcon(hex, 16).GetPixel(8, 9);
 				var apart = Math.Abs(middle.R - wanted.R) + Math.Abs(middle.G - wanted.G) + Math.Abs(middle.B - wanted.B);
 				Assert.IsTrue(apart < 60,
 					"The middle of the " + hex + " light is " + ColorTranslator.ToHtml(middle) +

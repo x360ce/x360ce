@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Web.Services;
-using System.Web.Services.Protocols;
-using System.Web.Services.Description;
 using x360ce.Engine.Data;
 using System.Collections.Generic;
 using JocysCom.ClassLibrary.Web.Services;
@@ -9,13 +6,16 @@ using JocysCom.ClassLibrary.Web.Services;
 namespace x360ce.Engine
 {
 
-	[WebServiceBinding(Name = "x360ceSoap", Namespace = ns)]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(StructuralObject))]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]
 	public partial class WebServiceClient : SoapHttpClientBase, IWebService
 	{
 
 		const string ns = "http://x360ce.com/";
+
+		public WebServiceClient() : base(ns)
+		{
+		}
 
 		#region Method: SignIn
 
@@ -26,9 +26,6 @@ namespace x360ce.Engine
 			InvokeAsync("SignIn", SignInCompleted, userState, new object[] { username, password });
 		}
 
-		[SoapDocumentMethod(ns + "SignIn",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage SignIn(string username, string password)
 		{
 			return Invoke<CloudMessage>("SignIn", username, password);
@@ -40,9 +37,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> SearchSettingsCompleted;
 
-		[SoapDocumentMethod(ns + "SearchSettings",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
 			// The array is one argument. Passed bare it would spread into the params list.
@@ -60,9 +54,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> SaveSettingCompleted;
 
-		[SoapDocumentMethod(ns + "SaveSetting",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string SaveSetting(UserSetting s, PadSetting ps)
 		{
 			return Invoke<string>("SaveSetting", s, ps);
@@ -79,9 +70,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> DeleteSettingCompleted;
 
-		[SoapDocumentMethod(ns + "DeleteSetting",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string DeleteSetting(UserSetting s)
 		{
 			return Invoke<string>("DeleteSetting", s);
@@ -98,9 +86,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> LoadSettingCompleted;
 
-		[SoapDocumentMethod(ns + "LoadSetting",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult LoadSetting(System.Guid[] checksum)
 		{
 			return Invoke<SearchResult>("LoadSetting", checksum);
@@ -117,9 +102,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> GetProgramsCompleted;
 
-		[SoapDocumentMethod(ns + "GetPrograms",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
 		{
 			return Invoke<List<Program>>("GetPrograms", isEnabled, minInstanceCount);
@@ -134,9 +116,6 @@ namespace x360ce.Engine
 
 		#region Method: GetServerInfo
 
-		[SoapDocumentMethod(ns + "GetServerInfo",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public ServerInfo GetServerInfo()
 		{
 			return Invoke<ServerInfo>("GetServerInfo");
@@ -199,9 +178,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> GetVendorsCompleted;
 
-		[SoapDocumentMethod(ns + "GetVendors",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Vendor> GetVendors()
 		{
 			return Invoke<List<Vendor>>("GetVendors");
@@ -218,9 +194,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> GetSettingsDataCompleted;
 
-		[SoapDocumentMethod(ns + "GetSettingsData",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SettingsData GetSettingsData()
 		{
 			return Invoke<SettingsData>("GetSettingsData");
@@ -237,9 +210,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> SignOutCompleted;
 
-		[SoapDocumentMethod(ns + "SignOut",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage SignOut()
 		{
 			return Invoke<CloudMessage>("SignOut");
@@ -256,9 +226,6 @@ namespace x360ce.Engine
 
 		public event EventHandler<SoapHttpClientEventArgs> ExecuteCompleted;
 
-		[SoapDocumentMethod(ns + "Execute",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage Execute(CloudMessage command)
 		{
 			return Invoke<CloudMessage>("Execute", command);

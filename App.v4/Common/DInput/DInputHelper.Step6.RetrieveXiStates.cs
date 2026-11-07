@@ -16,10 +16,6 @@ namespace x360ce.App.DInput
 		public bool[] LiveXiConnected;
 		public State[] LiveXiStates;
 
-		// This value will be modified to true when settings on the form changes and 
-		// XInput library needs to be reload.
-		public bool SettingsChanged = false;
-
 		/// <summary>How long the display reads rest after XInput fails to answer, in milliseconds.</summary>
 		/// <remarks>
 		/// XInput stops answering while Windows takes controllers away and builds them again, which
@@ -139,7 +135,7 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		void RetrieveXiStates(UserGame game, bool getXInputStates)
+		internal void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
 			// A read the reader has answered is taken at once: four states copied into the arrays kept for them.
 			if (Volatile.Read(ref _displayRead) == DisplayReadAnswered)
@@ -151,9 +147,9 @@ namespace x360ce.App.DInput
 				}
 				Volatile.Write(ref _displayRead, DisplayReadIdle);
 			}
-			// These states are shown on screen and nowhere else, and a screen cannot show more than sixty readings a
-			// second. Paced here and not by the caller, because the caller uses the same answer to decide whether the
-			// XInput library stays loaded, and pacing that made it load and unload all day.
+			// These states are shown on screen, and kept by a recording of the controller output. Paced here and not by
+			// the caller, because the caller uses the same answer to decide whether the XInput library stays loaded, and
+			// pacing that made it load and unload all day.
 			var due = DueForDisplayRead();
 			var wanted = Controller.IsLoaded && getXInputStates;
 			if (wanted && XiReadsPaused)
@@ -208,10 +204,10 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>The display read's state: nothing asked, a read asked of the reader, or a read answered and not yet taken.</summary>
-		const int DisplayReadIdle = 0;
-		const int DisplayReadAsked = 1;
-		const int DisplayReadAnswered = 2;
-		int _displayRead;
+		internal const int DisplayReadIdle = 0;
+		internal const int DisplayReadAsked = 1;
+		internal const int DisplayReadAnswered = 2;
+		internal int _displayRead;
 
 		/// <summary>When the read under way was asked for, as <see cref="Environment.TickCount"/>.</summary>
 		int _displayReadAskedAt;
@@ -224,7 +220,7 @@ namespace x360ce.App.DInput
 		readonly AutoResetEvent _displayReadWake = new AutoResetEvent(false);
 
 		/// <summary>The thread the display reads run on, made on the first read, or null before it.</summary>
-		Thread _displayReader;
+		internal Thread _displayReader;
 
 		/// <summary>Set when the helper is let go of, so the reader ends at its next wake.</summary>
 		volatile bool _displayReaderStop;
@@ -233,7 +229,7 @@ namespace x360ce.App.DInput
 		Type _displayReadFault;
 
 		/// <summary>Asks the reader for one read of the four places, making the reader on the first read.</summary>
-		void AskDisplayRead()
+		internal void AskDisplayRead()
 		{
 			_displayReadAskedAt = Environment.TickCount;
 			Volatile.Write(ref _displayRead, DisplayReadAsked);
@@ -268,7 +264,7 @@ namespace x360ce.App.DInput
 		/// since it never waits for this lock, and reads that it is held rather than trying it, it goes on reading the
 		/// controllers.
 		/// </remarks>
-		void ReadDisplayStates()
+		internal void ReadDisplayStates()
 		{
 			try
 			{
@@ -276,9 +272,12 @@ namespace x360ce.App.DInput
 				try
 				{
 					var loaded = Controller.IsLoaded;
+					// Read empty, a place makes XInput open every controller it can find. The places are read again when a
+					// device comes or goes, so an empty one stays empty until then.
+					var taken = XInputPlaces.Taken;
 					for (var p = 0; p < 4; p++)
 					{
-						if (loaded)
+						if (loaded && (taken == null || taken[p]))
 						{
 							_displayConnected[p] = LiveXiControllers[p].GetState(out _displayStates[p]);
 						}

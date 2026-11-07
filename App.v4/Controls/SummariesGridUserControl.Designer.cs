@@ -149,7 +149,7 @@
 			// SummariesRefreshButton
 			// 
 			this.SummariesRefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.SummariesRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.SummariesRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.SummariesRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SummariesRefreshButton.Name = "SummariesRefreshButton";
 			this.SummariesRefreshButton.Size = new System.Drawing.Size(66, 22);

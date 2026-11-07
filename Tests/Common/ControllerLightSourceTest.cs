@@ -83,7 +83,7 @@ namespace x360ce.Tests
 			// setting only decides where the numbers on screen come from - it does not unplug anything.
 			var main = Read(Path.Combine("App.v4", "MainForm.cs"));
 			var light = main.Substring(main.IndexOf("string left, right;"));
-			light = light.Substring(0, light.IndexOf("var bullet = StatusImageKey"));
+			light = light.Substring(0, light.IndexOf("var bullet = Main.StatusImageKey"));
 			var unchecked_ = light.IndexOf("if (!checking)");
 			var mixed = light.IndexOf("StatusColor");
 			Assert.IsTrue(unchecked_ >= 0,

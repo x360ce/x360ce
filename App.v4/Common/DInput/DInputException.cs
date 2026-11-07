@@ -16,7 +16,7 @@ namespace x360ce.App.DInput
 		protected DInputException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 			if (info == null)
-				throw new ArgumentNullException("info");
+				throw new ArgumentNullException(nameof(info));
 			//CustomProperty = info.GetString("CustomProperty");
 		}
 
@@ -32,7 +32,7 @@ namespace x360ce.App.DInput
 		{
 			base.GetObjectData(info, context);
 			if (info == null)
-				throw new ArgumentNullException("info");
+				throw new ArgumentNullException(nameof(info));
 			// Add custom values here.
 			//info.AddValue("CustomProperty", CustomProperty);
 		}

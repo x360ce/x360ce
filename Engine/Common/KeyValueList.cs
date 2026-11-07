@@ -10,17 +10,19 @@ namespace x360ce.Engine
 		{
 		}
 
-		/// <summary>Add new key and value item to collection.</summary>
+		/// <summary>Sets the value of a key: a value the key already has is replaced, so the list holds each key once.</summary>
+		/// <remarks>
+		/// A message that fails is secured again before each try; keys added beside the old ones would make it grow
+		/// with every try, as messages of programs before 4.14 do.
+		/// </remarks>
 		/// <typeparam name="T">Type of the value.</typeparam>
 		/// <param name="key">Key.</param>
 		/// <param name="value">Value.</param>
 		/// <param name="encrypt">Encrypt value (random password must be set)</param>
-		/// <param name="replace">Remove old values with the same key.</param>
-		public void Add<T>(object key, T value, bool encrypt = false, bool replace = false)
+		public void Add<T>(object key, T value, bool encrypt = false)
 		{
 			var t = typeof(T);
-			if (replace)
-				RemoveAll(x => Equals(x.Key, key));
+			RemoveAll(x => Equals(x.Key, key));
 			// If can be serialized automatically then...
 			if (t.IsPrimitive && !encrypt)
 			{
@@ -49,9 +51,6 @@ namespace x360ce.Engine
 			rsa.RsaPublicKeyValue = remoteRsaPublicKey;
 			// Encrypt random password with RSA public key...
 			var randomPasswordEncrypted = rsa.RsaEncrypt(_RandomPassword);
-			// Reomove old random password if exist.
-			RemoveAll(x => Equals(x.Key, CloudKey.RandomPassword));
-			// Add new random password to the list.
 			Add(CloudKey.RandomPassword, randomPasswordEncrypted);
 		}
 

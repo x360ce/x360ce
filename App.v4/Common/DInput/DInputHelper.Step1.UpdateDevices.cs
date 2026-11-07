@@ -24,7 +24,7 @@ namespace x360ce.App.DInput
 		#region Device list read on a worker
 
 		/// <summary>What one read of the machine found: the DirectInput instances and the device tree.</summary>
-		class DeviceListRead
+		internal class DeviceListRead
 		{
 			public List<DeviceInstance> Devices;
 			public DeviceInfo[] DevInfos;
@@ -42,7 +42,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>A Raw Input game controller as one read of the machine found it: what the device list shows of it.</summary>
-		class RawInputListing
+		internal class RawInputListing
 		{
 			/// <summary>The device the hub reads: who it is and its controls.</summary>
 			public RawInputDevice Device;
@@ -74,7 +74,7 @@ namespace x360ce.App.DInput
 		volatile DeviceListRead _deviceListRead;
 
 		/// <summary>Whether a worker is reading the machine now.</summary>
-		volatile bool _deviceListReading;
+		internal volatile bool _deviceListReading;
 
 		/// <summary>The DirectInput the worker enumerates with. Kept for the life of the process, like the device thread's own.</summary>
 		static DirectInput _readManager;
@@ -95,7 +95,7 @@ namespace x360ce.App.DInput
 		/// <param name="knownPaths">Interface path of every listed device, by instance, where one is known.</param>
 		/// <param name="hub">The Raw Input hub, whose devices the read lists beside DirectInput's.</param>
 		/// <param name="twinLayouts">The layout each hub device took from its twin since it arrived; see <see cref="_rawInputTwinLayouts"/>.</param>
-		static DeviceListRead ReadDeviceList(Dictionary<Guid, string> knownPaths, RawInputHub hub, Dictionary<RawInputHubDevice, RawInputLayout> twinLayouts)
+		internal static DeviceListRead ReadDeviceList(Dictionary<Guid, string> knownPaths, RawInputHub hub, Dictionary<RawInputHubDevice, RawInputLayout> twinLayouts)
 		{
 			var read = new DeviceListRead { Devices = new List<DeviceInstance>() };
 			var started = System.Diagnostics.Stopwatch.StartNew();
@@ -185,7 +185,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>The interface with <paramref name="path"/>, which Windows reports in either case, or null.</summary>
-		static DeviceInfo FindInterface(DeviceInfo[] interfaces, string path)
+		internal static DeviceInfo FindInterface(DeviceInfo[] interfaces, string path)
 		{
 			return interfaces?.FirstOrDefault(x => string.Equals(x.DevicePath, path, StringComparison.OrdinalIgnoreCase));
 		}
@@ -203,7 +203,7 @@ namespace x360ce.App.DInput
 		/// <param name="manager">Opens a twin that the read has not opened already.</param>
 		/// <param name="twins">Each DirectInput HID device the read found, by interface path, ignoring case.</param>
 		/// <param name="twinLayouts">The layout each hub device took from its twin since it arrived. Devices no longer in <paramref name="rawDevices"/> are forgotten.</param>
-		static void FindRawInputDevices(DeviceListRead read, RawInputHub hub, RawInputHubDevice[] rawDevices, DirectInput manager,
+		internal static void FindRawInputDevices(DeviceListRead read, RawInputHub hub, RawInputHubDevice[] rawDevices, DirectInput manager,
 			Dictionary<string, DeviceInstance> twins, Dictionary<RawInputHubDevice, RawInputLayout> twinLayouts)
 		{
 			var byId = VirtualDriverInstaller.IndexById(read.DevInfos);
@@ -263,7 +263,7 @@ namespace x360ce.App.DInput
 
 		/// <summary>The layout a hub device is read by: its twin's slots when <paramref name="twinObjects"/> is given, which the hub is told and <paramref name="twinLayouts"/> keeps; otherwise the one the hub reads it by already.</summary>
 		/// <param name="twinObjects">The twin's controls as <see cref="ReadTwinObjects"/> reads them, or null when there is no twin.</param>
-		static RawInputLayout TakeTwinLayout(RawInputHub hub, RawInputHubDevice entry, DeviceObjectItem[] twinObjects,
+		internal static RawInputLayout TakeTwinLayout(RawInputHub hub, RawInputHubDevice entry, DeviceObjectItem[] twinObjects,
 			Dictionary<RawInputHubDevice, RawInputLayout> twinLayouts)
 		{
 			if (twinObjects == null)
@@ -298,14 +298,14 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Guards the start of a read, which the window and the device thread can both ask for.</summary>
-		readonly object _deviceListStartLock = new object();
+		internal readonly object _deviceListStartLock = new object();
 
 		/// <summary>Takes a finished device list read in when a list is wanted, and asks for one when none is waiting.</summary>
 		/// <remarks>
 		/// Runs on every pass, so it only decides. The take-in is a method of its own: its lambdas share locals, and the
 		/// object that holds them is made on entry to the method that declares them, whether or not a read is waiting.
 		/// </remarks>
-		void UpdateDiDevices(DirectInput manager)
+		internal void UpdateDiDevices(DirectInput manager)
 		{
 			if (!UpdateDevicesPending)
 				return;
@@ -322,7 +322,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>Takes a finished read of the device list in: lists the devices that came, refreshes those still here, and marks those gone as offline.</summary>
-		void TakeInDeviceList(DirectInput manager, DeviceListRead read)
+		internal void TakeInDeviceList(DirectInput manager, DeviceListRead read)
 		{
 			_deviceListRead = null;
 			_deviceListReading = false;

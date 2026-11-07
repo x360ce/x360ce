@@ -55,7 +55,7 @@ namespace Nefarius.ViGEm.Client
 		/// and reading that gap as somebody else's leftover made the program offer to remove the very
 		/// controller it had just made.
 		/// </remarks>
-		static readonly HashSet<uint> UsedSerialSet = new HashSet<uint>();
+		internal static readonly HashSet<uint> UsedSerialSet = new HashSet<uint>();
 
 		/// <summary>Copy of the bus numbers this program has used.</summary>
 		public static uint[] UsedSerials
@@ -152,7 +152,7 @@ namespace Nefarius.ViGEm.Client
 		/// plugs in, and cleared by <see cref="UnPlugKept"/> once the bus lets it go. Letting go of the client closes its
 		/// connection to the bus, which takes away everything the bus still holds for it.
 		/// </remarks>
-		readonly Xbox360Controller[] _keptTargets = new Xbox360Controller[PlaceCount];
+		internal readonly Xbox360Controller[] _keptTargets = new Xbox360Controller[PlaceCount];
 
 		/// <summary>Whether this pad already has a controller the bus would not let go of.</summary>
 		/// <param name="userIndex">The pad, 1 to 4.</param>
@@ -420,7 +420,7 @@ namespace Nefarius.ViGEm.Client
 		/// before <see cref="LastConnectTick"/>.
 		/// </remarks>
 		public static VIGEM_ERROR LastConnectError { get { return _LastConnectError; } }
-		static volatile VIGEM_ERROR _LastConnectError = VIGEM_ERROR.VIGEM_ERROR_NONE;
+		internal static volatile VIGEM_ERROR _LastConnectError = VIGEM_ERROR.VIGEM_ERROR_NONE;
 
 		/// <summary><see cref="Environment.TickCount"/> when a connection was last attempted and <see cref="LastConnectError"/> answered.</summary>
 		/// <remarks>
@@ -428,7 +428,7 @@ namespace Nefarius.ViGEm.Client
 		/// never pairs a new answer with an older time.
 		/// </remarks>
 		public static int LastConnectTick { get { return _LastConnectTick; } }
-		static volatile int _LastConnectTick;
+		internal static volatile int _LastConnectTick;
 
 		/// <summary>Keeps what connecting answered, and writes it to the log when it differs from the last answer.</summary>
 		/// <remarks>
@@ -477,10 +477,10 @@ namespace Nefarius.ViGEm.Client
 
 		/// <summary>Whether the Visual C++ runtime is installed: <see cref="RuntimeUnknown"/>, <see cref="RuntimePresent"/> or <see cref="RuntimeMissing"/>.</summary>
 		/// <remarks>Written under <see cref="ClientLock"/>. Read without it by <see cref="isVBusExists"/>, one whole number.</remarks>
-		static volatile int _Runtime;
-		const int RuntimeUnknown = 0;
+		internal static volatile int _Runtime;
+		internal const int RuntimeUnknown = 0;
 		const int RuntimePresent = 1;
-		const int RuntimeMissing = 2;
+		internal const int RuntimeMissing = 2;
 
 		/// <summary>Forgets whether the Visual C++ runtime is installed, so the next bus check looks again.</summary>
 		/// <remarks>
@@ -579,16 +579,16 @@ namespace Nefarius.ViGEm.Client
 			}
 		}
 
-		static Exception LastLoadException;
+		internal static Exception LastLoadException;
 
 		/// <summary><see cref="Environment.TickCount"/> when the library last failed to load.</summary>
-		static volatile int _LastLoadFailTick;
+		internal static volatile int _LastLoadFailTick;
 
 		/// <summary>Whether the library's last load attempt failed. Cleared by a load that leaves it loaded.</summary>
-		static volatile bool _LastLoadFailed;
+		internal static volatile bool _LastLoadFailed;
 
 		/// <summary>Whether the library is due to be tried again, from when it last failed to load.</summary>
-		static bool LibraryLoadDue()
+		internal static bool LibraryLoadDue()
 		{
 			return !_LastLoadFailed || !DInputHelper.IsRecent(_LastLoadFailTick, Environment.TickCount, ConnectRetryMs);
 		}
@@ -599,7 +599,7 @@ namespace Nefarius.ViGEm.Client
 		/// tried again every <see cref="ConnectRetryMs"/> while a game uses virtual emulation, and a line
 		/// each time would bury everything else in the log.
 		/// </remarks>
-		static void RecordLoad(bool failed)
+		internal static void RecordLoad(bool failed)
 		{
 			var previous = _LastLoadFailed;
 			_LastLoadFailTick = Environment.TickCount;

@@ -89,8 +89,8 @@ namespace x360ce.App.Controls
 		void UpdateControlsFromPresets()
 		{
 			PresetsTabPage.Text = SettingManager.Presets.Items.Count == 0
-				? _globalSummariesTitle
-				: string.Format("{0} [{1}]", _globalSummariesTitle, SettingManager.Presets.Items.Count);
+				? _globalPresetsTitle
+				: string.Format("{0} [{1}]", _globalPresetsTitle, SettingManager.Presets.Items.Count);
 		}
 
 		void Presets_ListChanged(object sender, ListChangedEventArgs e)
@@ -166,8 +166,8 @@ namespace x360ce.App.Controls
 				}
 			}
 			ControllerComboBox.DataSource = options;
-			ControllerComboBox.DisplayMember = "Key";
-			ControllerComboBox.ValueMember = "Value";
+			ControllerComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			ControllerComboBox.ValueMember = nameof(KeyValuePair.Value);
 			ControllerComboBox.Enabled = ControllerComboBox.Items.Count > 1;
 			// Restore selection.
 			if (selection != null)
@@ -209,8 +209,8 @@ namespace x360ce.App.Controls
 				options.Add(new KeyValuePair(productName, item.Length.ToString()));
 			}
 			GameComboBox.DataSource = options;
-			GameComboBox.DisplayMember = "Key";
-			GameComboBox.ValueMember = "Value";
+			GameComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			GameComboBox.ValueMember = nameof(KeyValuePair.Value);
 			GameComboBox.Enabled = GameComboBox.Items.Count > 1;
 			if (selection == null)
 			{
@@ -267,8 +267,8 @@ namespace x360ce.App.Controls
 			CurrentSetting = GetCurrentSetting();
 			MySettingsSaveButton.Enabled = controllerSelected && refreshed;
 			MySettingsSaveButton.Image = ContainsSetting(CurrentSetting)
-				? Properties.Resources.save_16x16
-				: Properties.Resources.save_add_16x16;
+				? Properties.Resources.save_32x32
+				: Properties.Resources.save_add_32x32;
 			MySettingsDeleteButton.Enabled = settingsSelected == 1;
 			MapToDropDownButton.Enabled = settingsSelected > 0;
 			MyDevicesDataGridView.Refresh();
@@ -500,7 +500,7 @@ namespace x360ce.App.Controls
 			}
 			else if (column == MyIconColumn)
 			{
-				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_16x16;
+				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_32x32;
 			}
 			else
 			{

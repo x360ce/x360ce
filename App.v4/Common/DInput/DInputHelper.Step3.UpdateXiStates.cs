@@ -13,7 +13,7 @@ namespace x360ce.App.DInput
 		/// Convert DiStates to XInput states.
 		/// </summary>
 		/// <param name="routing">The rows to convert this pass: the current game's, on a tab and switched on.</param>
-		void UpdateXiStates(DeviceRouting routing)
+		internal void UpdateXiStates(DeviceRouting routing)
 		{
 			// The devices a formula can name, c1.d2.b1, for this pass.
 			_expressionRouting = routing;

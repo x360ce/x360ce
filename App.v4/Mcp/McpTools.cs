@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using JocysCom.ClassLibrary.Controls.UiTree;
 using JocysCom.ClassLibrary.Mcp;
+using x360ce.App.Controls;
 using x360ce.App.UiTree;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -31,10 +32,10 @@ namespace x360ce.App.Mcp
 		/// </summary>
 		public static readonly string[] AdminControls = new[]
 		{
-			"ViGEmBusInstallButton", "ViGEmBusUninstallButton",
-			"HidGuardianInstallButton", "HidGuardianUninstallButton",
-			"HidHideConfigureAutomaticallyCheckBox", "UnhideAllDevicesMenuItem", "SynchronizeToHidHideMenuItem",
-			"CleanupVirtualPadsButton",
+			nameof(OptionsUserControl.ViGEmBusInstallButton), nameof(OptionsUserControl.ViGEmBusUninstallButton),
+			nameof(OptionsUserControl.HidGuardianInstallButton), nameof(OptionsUserControl.HidGuardianUninstallButton),
+			nameof(OptionsUserControl.HidHideConfigureAutomaticallyCheckBox), nameof(UserDevicesUserControl.UnhideAllDevicesMenuItem), nameof(UserDevicesUserControl.SynchronizeToHidHideMenuItem),
+			nameof(UserDevicesUserControl.CleanupVirtualPadsButton),
 		}.Concat(AiAccessModel.AdminControls).ToArray();
 
 		/// <summary>The door's own controls on the Options tab's AI page, which no caller may touch at any level: the shared page's.</summary>
@@ -57,6 +58,7 @@ namespace x360ce.App.Mcp
 		public static readonly Dictionary<string, string> SkillReferences = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			{ "references/help-v4.md", AppHelper.HelpV4Resource },
+			{ "references/help-hidhide.md", AppHelper.HelpHidHideResource },
 			{ "references/plugins.md", AppHelper.HelpPluginsResource },
 			{ "references/autohotkey.md", AppHelper.HelpAutoHotkeyResource },
 			{ "references/ui-tree-v4.md", "Documents.x360ce.ui-tree-v4.md" },
@@ -77,7 +79,7 @@ namespace x360ce.App.Mcp
 			UiTreeExporter.BaseName = "ui-tree-v4";
 			UiTreeMarkdown.ExportCommand = "x360ce.exe /ExportUi=<folder>";
 			McpServer.ServerName = "x360ce";
-			McpServer.ServerVersion = System.Windows.Forms.Application.ProductVersion;
+			McpServer.ServerVersion = typeof(McpTools).Assembly.GetName().Version.ToString();
 			McpServer.Instructions = "X360CE (Xbox 360 Controller Emulator) maps real controllers, wheels and pedals to virtual Xbox 360 controllers that games read. "
 				+ "Begin with devices_list and ui_current; find a setting with ui_find, point the person at it with ui_show, change it with ui_set, and keep changes with settings_save. "
 				+ "When ui_find finds nothing, search the help before saying the program cannot do it: a formula in a mapping box does what no single setting does. "
@@ -338,12 +340,10 @@ namespace x360ce.App.Mcp
 				throw new InvalidOperationException("No preset for " + productName + ". The Load Preset window lists the names.");
 			// The selected row is the device the tab's form shows; loading elsewhere would show one
 			// device's values under another, and the button itself works on the selection.
-			var selected = MainForm.Current.PadControls[controller - 1].GetSelectedSetting();
+			var selected = MainForm.Current.Main.PadControls[controller - 1].GetSelectedSetting();
 			if (selected == null)
 				throw new InvalidOperationException("No device is selected on controller " + controller + ". Map one, or select its row.");
-			MainForm.Current.UpdateTimer.Stop();
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice((MapTo)controller, selected, ps);
-			MainForm.Current.UpdateTimer.Start();
 			return null;
 		}
 

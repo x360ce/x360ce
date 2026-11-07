@@ -42,7 +42,7 @@ namespace x360ce.Tests
 							Assert.IsFalse(page.IsHandleCreated, "The page was shown before the plugin arrived.");
 							// Opening the page.
 							page.CreateControl();
-							var grid = (DataGridView)page.Controls.Find("PluginsDataGridView", true).Single();
+							var grid = (DataGridView)page.Controls.Find(nameof(OptionsPluginsUserControl.PluginsDataGridView), true).Single();
 							var rows = (OptionsPluginsUserControl.PluginRow[])grid.DataSource;
 							var row = rows.SingleOrDefault(x => x.Name == "SamplePlugin");
 							Assert.IsNotNull(row, "The plugin found before the page was shown is not on the list.");
@@ -71,7 +71,7 @@ namespace x360ce.Tests
 				{
 					FormsTheme.Apply(page);
 					var grids = Descendants(page).OfType<DataGridView>().ToList();
-					CollectionAssert.Contains(grids.Select(x => x.Name).ToArray(), "PluginsDataGridView");
+					CollectionAssert.Contains(grids.Select(x => x.Name).ToArray(), nameof(OptionsPluginsUserControl.PluginsDataGridView));
 					foreach (var grid in grids)
 					{
 						Assert.AreEqual(SystemColors.Window.ToArgb(), grid.BackgroundColor.ToArgb(), grid.Name + " is not on the window colour.");

@@ -49,6 +49,19 @@ namespace x360ce.Tests
 			StringAssert.StartsWith(Engine.SettingName.DefaultInternetDatabaseUrl, "https://www.x360ce.com/");
 		}
 
+		[TestMethod, TestCategory("critical")]
+		[Description("The default address is the service's own over HTTPS, and the address 4.23 to 4.28 saved is read as it")]
+		public void The_default_address_is_the_services_own_over_https()
+		{
+			Assert.AreEqual("https://www.x360ce.com/x360ce/webservices/x360ce.asmx", Engine.SettingName.DefaultInternetDatabaseUrl,
+				"The default goes through the site's forwarding, or not over HTTPS.");
+			var options = new Options { InternetDatabaseUrl = "https://www.x360ce.com/webservices/x360ce.asmx" };
+			options.InitDefaults();
+			Assert.AreEqual(Engine.SettingName.DefaultInternetDatabaseUrl, options.InternetDatabaseUrl, "The old default was kept.");
+			CollectionAssert.DoesNotContain(options.InternetDatabaseUrls, "https://www.x360ce.com/webservices/x360ce.asmx", "The list still offers the old default.");
+			Assert.AreEqual(OwnServer, Engine.SettingName.CurrentAddress(OwnServer), "A person's own server was changed.");
+		}
+
 		[TestMethod]
 		public void A_saved_address_missing_from_the_list_is_added_to_it()
 		{

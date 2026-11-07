@@ -6,7 +6,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.28.16.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
+Digitally Signed Application v4.29.62.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -108,7 +108,7 @@ x360ce has no AI inside. If you use an AI assistant of your own, it can map and 
 
 # Download v3.x
 
-Digitally Signed Application v3.7.8.0 and Libraries 3.4.1
+Digitally Signed Application v3.10.10.0 and Libraries 3.4.1
 
 Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 32-bit games
 
@@ -205,7 +205,7 @@ In v3.x, try to:
 
   1. Run x360ce.exe
   2. Select the [Controller #] tab page corresponding to your controller.
-  3. Open the [Direct Input Device] tab page (visible when the controller is connected).
+  3. Open the tab page named after your device (visible when the controller is connected).
   4. Set "Map To" drop down list value to: 1.
   5. Set "Map To" drop down list values *(repeat steps 2. to 4.)* for other controllers, if you have them, to: 2, 3 or 4.
   6. Click [Save] button.
@@ -219,9 +219,9 @@ value untouched.
 To use more than one controller in game, you may need to combine them. Try to:
 
   1. Run x360ce.exe
-  2. Select the [Controller #] tab page corresponding to your additional controller.
+  2. Select the [Controller #] tab page corresponding to a controller you want to combine.
   3. Open the [Advanced] tab page.
-  4. Set "Combine Into" drop down list value to: One.
+  4. Set "Combine Into" drop down list value to: One, and tick "Combine this controller" *(repeat steps 2. to 4. for each controller to combine)*.
   5. Select [Options] tab page.
   6. Check "Enable Combining" check-box. *(Note: Uncheck "Enable Combining" check-box when you want to configure the controller.)*
   7. Click [Save] button.

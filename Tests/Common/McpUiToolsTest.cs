@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.App.Mcp;
 using x360ce.App.UiTree;
 using JocysCom.ClassLibrary.Mcp;
@@ -388,17 +389,98 @@ namespace x360ce.Tests
 			});
 		}
 
+		/// <summary>A row of the grids below, bound as the program's lists are.</summary>
+		public class Pad
+		{
+			public string Name { get; set; }
+			public string Kind { get; set; }
+		}
+
+		/// <summary>A grid bound to a hundred rows, which stay shared until something asks for one by its index.</summary>
+		static DataGridView PadGrid()
+		{
+			var grid = new DataGridView { Name = "Grid", AllowUserToAddRows = false, AutoGenerateColumns = false };
+			grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "NameColumn", HeaderText = "Name", DataPropertyName = "Name" });
+			grid.Columns.Add(new DataGridViewTextBoxColumn { Name = "KindColumn", HeaderText = "Kind", DataPropertyName = "Kind" });
+			grid.DataSource = Enumerable.Range(0, 100).Select(i => new Pad { Name = "Pad " + i, Kind = i == 42 ? "wheel" : "gamepad" }).ToList();
+			return grid;
+		}
+
+		static int UnsharedRows(DataGridView grid)
+		{
+			return Enumerable.Range(0, grid.Rows.Count).Count(i => grid.Rows.SharedRow(i).Index >= 0);
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("The element with focus is described by itself: what is inside it is not read")]
+		public void The_focus_is_described_without_what_is_inside_it()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var page = new TabPage { Name = "Page", Text = "Page" };
+				var grid = PadGrid();
+				page.Controls.Add(grid);
+				tabs.TabPages.Add(page);
+				form.Controls.Add(tabs);
+				form.Show();
+				Application.DoEvents();
+				form.ActiveControl = tabs;
+				var formatted = 0;
+				grid.CellFormatting += (s, e) => formatted++;
+				var current = (Dictionary<string, object>)McpUiTools.UiCurrent();
+				var focus = (Dictionary<string, object>)current["Focus"];
+				Assert.AreEqual("Tabs", focus["Path"]);
+				Assert.AreEqual("Tabs", focus["Role"]);
+				Assert.AreEqual("Page", focus["Value"], "The page the tab strip shows is its value.");
+				Assert.AreEqual(0, formatted, "Describing the tab strip with focus read " + formatted + " cells of the grid inside it.");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Finding reads each cell of a grid once and leaves its rows shared, and gives the values of what it found")]
+		public void Finding_reads_each_cell_once_and_leaves_rows_shared()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var grid = PadGrid();
+				var slider = new TrackBar { Name = "Strength", Maximum = 100, Value = 30, AccessibleName = "Pad strength", Top = 300 };
+				form.Controls.AddRange(new Control[] { grid, slider });
+				form.Show();
+				Application.DoEvents();
+				var unshared = UnsharedRows(grid);
+				var formatted = new Dictionary<string, int>();
+				grid.CellFormatting += (s, e) =>
+				{
+					var key = e.RowIndex + "/" + e.ColumnIndex;
+					int count;
+					formatted.TryGetValue(key, out count);
+					formatted[key] = count + 1;
+				};
+				var hits = ((object[])McpUiTools.UiFind("Pad 42")).Cast<Dictionary<string, object>>().ToList();
+				Assert.AreEqual(1, hits.Count, "One row is called Pad 42.");
+				Assert.AreEqual("Grid/rows/42", hits[0]["Path"]);
+				StringAssert.Contains((string)hits[0]["Value"], "Kind: wheel", "The row found came without its value.");
+				var most = formatted.Count == 0 ? 0 : formatted.Values.Max();
+				Assert.AreEqual(1, most, "A cell was formatted " + most + " times by one search.");
+				Assert.AreEqual(unshared, UnsharedRows(grid), "The search made rows of their own out of the grid's shared ones.");
+				var strength = ((object[])McpUiTools.UiFind("strength")).Cast<Dictionary<string, object>>().Single();
+				Assert.AreEqual("Strength", strength["Path"]);
+				Assert.AreEqual("30", strength["Value"], "A control found came without its value.");
+			});
+		}
+
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("A control that administers is refused below Administer, and the door's own controls at every level")]
 		public void Administering_and_door_controls_are_refused()
 		{
 			WithWindow(AiAccess.Configure, form =>
 			{
-				var install = new Button { Name = "ViGEmBusInstallButton" };
-				var configure = new CheckBox { Name = "HidHideConfigureAutomaticallyCheckBox" };
-				var level = new ComboBox { Name = "AiAccessComboBox" };
+				var install = new Button { Name = nameof(OptionsUserControl.ViGEmBusInstallButton) };
+				var configure = new CheckBox { Name = nameof(OptionsUserControl.HidHideConfigureAutomaticallyCheckBox) };
+				var level = new ComboBox { Name = nameof(AiAccessUserControl.AiAccessComboBox) };
 				level.Items.AddRange(Enum.GetNames(typeof(AiAccess)));
-				var regenerate = new Button { Name = "AiAccessRegenerateButton" };
+				var regenerate = new Button { Name = nameof(AiAccessUserControl.AiAccessRegenerateButton) };
 				form.Controls.AddRange(new Control[] { install, configure, level, regenerate });
 				form.Show();
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiInvoke(install.Name)).Message, "Administer");
@@ -420,7 +502,7 @@ namespace x360ce.Tests
 			WithWindow(AiAccess.Read, form =>
 			{
 				var group = new GroupBox { Name = "Ai" };
-				var tokenBox = new TextBox { Name = "AiAccessTokenTextBox", Text = token, ReadOnly = true, AccessibleName = "Token", AccessibleDescription = "What a caller presents." };
+				var tokenBox = new TextBox { Name = nameof(AiAccessUserControl.AiAccessTokenTextBox), Text = token, ReadOnly = true, AccessibleName = "Token", AccessibleDescription = "What a caller presents." };
 				var port = new TextBox { Name = "Port", Text = "37360", AccessibleName = "Port", AccessibleDescription = "Where the door listens." };
 				group.Controls.AddRange(new Control[] { tokenBox, port });
 				form.Controls.Add(group);
@@ -499,9 +581,9 @@ namespace x360ce.Tests
 			// page it belongs to, which a rename changes the same day.
 			var bar = new Dictionary<string, Type>
 			{
-				{ "CleanupVirtualPadsButton", typeof(ToolStripButton) },
-				{ "UnhideAllDevicesMenuItem", typeof(ToolStripMenuItem) },
-				{ "SynchronizeToHidHideMenuItem", typeof(ToolStripMenuItem) },
+				{ nameof(UserDevicesUserControl.CleanupVirtualPadsButton), typeof(ToolStripButton) },
+				{ nameof(UserDevicesUserControl.UnhideAllDevicesMenuItem), typeof(ToolStripMenuItem) },
+				{ nameof(UserDevicesUserControl.SynchronizeToHidHideMenuItem), typeof(ToolStripMenuItem) },
 			};
 			foreach (var name in McpUiTools.AdminControls.Where(x => !bar.ContainsKey(x)))
 				AssertField(name, typeof(Button), typeof(CheckBox));

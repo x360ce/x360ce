@@ -124,7 +124,7 @@ namespace x360ce.Tests
 		public void V4_memory_stays_within_a_sane_ceiling()
 		{
 			// A ceiling rather than a tight number: exact usage varies with the machine and the
-			// devices attached. Without WPF this settles around 85 MB; it measured 198 MB when the
+			// devices attached. Without WPF this settles around 100 MB; it measured 198 MB when the
 			// controller picture was still WPF, so this also fails if WPF ever returns.
 			const long ceilingMb = 120;
 
@@ -135,18 +135,20 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
-				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				// Asked of the process rather than through UI Automation, which makes an accessible object in the program for every
+				// control it walks: about 30 MB this test would then measure.
+				Ui.WaitFor(() => { process.Refresh(); return process.MainWindowHandle != IntPtr.Zero ? "shown" : null; }, TimeSpan.FromSeconds(45), "the window");
 
-				// Let startup settle: device enumeration allocates before it reaches a steady state.
+				// Let startup settle: the tabs inside the controller pages and device enumeration allocate before it reaches a steady state.
 				var settled = Ui.WaitFor(() =>
 				{
 					process.Refresh();
 					var before = process.PrivateMemorySize64;
-					System.Threading.Thread.Sleep(1500);
+					System.Threading.Thread.Sleep(3000);
 					process.Refresh();
-					// Steady means the last one and a half seconds moved it less than 5 MB.
-					return Math.Abs(process.PrivateMemorySize64 - before) < 5L * 1024 * 1024
+					// Steady means the last three seconds moved it less than 1 MB.
+					return Math.Abs(process.PrivateMemorySize64 - before) < 1024 * 1024
 						? (object)process.PrivateMemorySize64 : null;
 				}, TimeSpan.FromSeconds(60), "memory to settle");
 
@@ -191,7 +193,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				for (var i = 0; i < warmupCycles; i++)
@@ -265,7 +267,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(60));
 				// The status bar appears once the Warnings window is answered.
 				var rate = Ui.WaitFor(() =>

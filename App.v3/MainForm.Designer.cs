@@ -338,7 +338,7 @@ namespace x360ce.App
 			// 
 			// HelpPictureBox
 			// 
-			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_24x24;
+			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_48x48;
 			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
 			this.HelpPictureBox.Name = "HelpPictureBox";
 			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
@@ -360,7 +360,7 @@ namespace x360ce.App
 			// HeaderPictureBox
 			// 
 			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_48x48;
+			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_96x96;
 			this.HeaderPictureBox.Location = new System.Drawing.Point(670, 9);
 			this.HeaderPictureBox.Name = "HeaderPictureBox";
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
@@ -390,7 +390,7 @@ namespace x360ce.App
 			// OpenApplicationToolStripMenuItem
 			// 
 			this.OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.OpenApplicationToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.app_16x16;
+			this.OpenApplicationToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.app_32x32;
 			this.OpenApplicationToolStripMenuItem.Name = "OpenApplicationToolStripMenuItem";
 			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
@@ -398,7 +398,7 @@ namespace x360ce.App
 			// 
 			// ExitToolStripMenuItem
 			// 
-			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_16x16;
+			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_32x32;
 			this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
 			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
 			this.ExitToolStripMenuItem.Text = "Exit";
@@ -463,25 +463,25 @@ namespace x360ce.App
 
 		#endregion
 
-		TabPage AboutTabPage;
-		StatusStrip MainStatusStrip;
-        TabPage OptionsTabPage;
-		TabPage Pad1TabPage;
-		TabPage Pad2TabPage;
-		TabPage Pad3TabPage;
-		TabPage Pad4TabPage;
+		internal TabPage AboutTabPage;
+		internal StatusStrip MainStatusStrip;
+        internal TabPage OptionsTabPage;
+		internal TabPage Pad1TabPage;
+		internal TabPage Pad2TabPage;
+		internal TabPage Pad3TabPage;
+		internal TabPage Pad4TabPage;
 		ImageList BuletImageList;
 		public ToolStripStatusLabel StatusTimerLabel;
-		ToolStripStatusLabel InterfaceFrequencyLabel;
-		ToolStripStatusLabel StatusEventsLabel;
-		ToolStripStatusLabel StatusSaveLabel;
+		internal ToolStripStatusLabel InterfaceFrequencyLabel;
+		internal ToolStripStatusLabel StatusEventsLabel;
+		internal ToolStripStatusLabel StatusSaveLabel;
 		ToolStripStatusLabel toolStripStatusLabel2;
-		TabPage HelpTabPage;
-        RichTextBox HelpRichTextBox;
-		ToolStripStatusLabel StatusIsAdminLabel;
-		ToolStripStatusLabel StatusIniLabel;
-        ToolStripStatusLabel StatusDllLabel;
-        TabPage ControllerSettingsTabPage;
+		internal TabPage HelpTabPage;
+        internal RichTextBox HelpRichTextBox;
+		internal ToolStripStatusLabel StatusIsAdminLabel;
+		internal ToolStripStatusLabel StatusIniLabel;
+        internal ToolStripStatusLabel StatusDllLabel;
+        internal TabPage ControllerSettingsTabPage;
 		Panel TopPanel;
 		internal Label HelpBodyLabel;
 		internal PictureBox HelpPictureBox;
@@ -491,15 +491,15 @@ namespace x360ce.App
         Timer LoadinngCircleTimeout;
         public Controls.ControllerSettingsUserControl SettingsDatabasePanel;
         public TabControl MainTabControl;
-		TabPage GameSettingsTabPage;
+		internal TabPage GameSettingsTabPage;
         public Controls.OptionsControl OptionsPanel;
         public ToolTip ToolTip;
 		public Controls.GameSettingsUserControl GameSettingsPanel;
 		private NotifyIcon TrayNotifyIcon;
 		private ContextMenuStrip TrayContextMenuStrip;
-		private ToolStripMenuItem OpenApplicationToolStripMenuItem;
-		private ToolStripMenuItem ExitToolStripMenuItem;
+		internal ToolStripMenuItem OpenApplicationToolStripMenuItem;
+		internal ToolStripMenuItem ExitToolStripMenuItem;
 		private Label label1;
-		private ComboBox GameToCustomizeComboBox;
+		internal ComboBox GameToCustomizeComboBox;
 	}
 }

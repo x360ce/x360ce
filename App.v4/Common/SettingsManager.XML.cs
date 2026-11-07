@@ -52,18 +52,23 @@ namespace x360ce.App
 		#region Preset as text
 
 		/// <summary>The notations a preset can be copied in, in the order the Copy Preset menu lists them.</summary>
+		/// <remarks>
+		/// YAML, XML and JSON carry the whole preset. SDL is a row of SDL's controller database for one device: its
+		/// buttons, axes and hats, and nothing else (<see cref="SdlConverter.ToMapping"/>).
+		/// </remarks>
 		public enum PresetFormat
 		{
 			Yaml,
 			Xml,
 			Json,
+			Sdl,
 		}
 
-		/// <summary>What Copy Preset copies in when no notation is chosen: YAML, the easiest of the three to read.</summary>
+		/// <summary>What Copy Preset copies in when no notation is chosen: YAML, the easiest of them to read.</summary>
 		public const PresetFormat DefaultPresetFormat = PresetFormat.Yaml;
 
 		/// <summary>What a paste that holds no preset says.</summary>
-		public const string NotAPresetMessage = "The text is not a preset in YAML, XML or JSON.";
+		public const string NotAPresetMessage = "The text is not a preset in YAML, XML or JSON, nor a row of SDL's controller database.";
 
 		/// <summary>A controller's settings as text, in the notation asked for.</summary>
 		/// <remarks>
@@ -71,8 +76,13 @@ namespace x360ce.App
 		/// it: JSON and YAML carry exactly the fields the XML carries, in the same order, so the three
 		/// can never disagree about what a preset holds.
 		/// </remarks>
-		public static string PadSettingToText(PadSetting padSetting, PresetFormat format)
+		/// <param name="padSetting">The settings.</param>
+		/// <param name="format">The notation.</param>
+		/// <param name="device">The device the settings map, whose controls and ids an SDL row is written for.</param>
+		public static string PadSettingToText(PadSetting padSetting, PresetFormat format, UserDevice device = null)
 		{
+			if (format == PresetFormat.Sdl)
+				return SdlConverter.ToMapping(padSetting, SdlDevice.From(device)).ToString();
 			var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(padSetting, null, true);
 			if (format == PresetFormat.Xml)
 				return xml;
@@ -89,9 +99,33 @@ namespace x360ce.App
 		/// <exception cref="System.IO.InvalidDataException">The text is not a preset.</exception>
 		public static PadSetting PadSettingFromText(string text)
 		{
+			string note;
+			return PadSettingFromText(text, null, out note);
+		}
+
+		/// <summary>Reads a controller's settings from text in any of the notations, or from rows of SDL's controller database.</summary>
+		/// <remarks>
+		/// SDL rows, one or a whole file of them, are read for the device: its own row when the text has one, else the first
+		/// Windows row, translated for the device's controls (<see cref="SdlConverter.ToPadSetting"/>).
+		/// </remarks>
+		/// <param name="text">The text.</param>
+		/// <param name="device">The device the settings are for, or null.</param>
+		/// <param name="note">For SDL rows, which row was read and what was left out; otherwise empty.</param>
+		/// <exception cref="System.IO.InvalidDataException">The text is not a preset.</exception>
+		public static PadSetting PadSettingFromText(string text, UserDevice device, out string note)
+		{
+			note = "";
 			var t = (text ?? "").Trim().TrimStart('﻿');
 			if (t.Length == 0)
 				throw new System.IO.InvalidDataException(NotAPresetMessage);
+			var sdl = SdlFromText(t, device);
+			if (sdl != null)
+			{
+				var skipped = sdl.SkippedText();
+				note = "Pasted SDL's row for " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+				sdl.Setting.PadSettingChecksum = sdl.Setting.CleanAndGetCheckSum();
+				return sdl.Setting;
+			}
 			if (t[0] == '<')
 				return JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(t);
 			var fields = t[0] == '{' ? FieldsOfJson(t) : FieldsOfYaml(t);
@@ -100,19 +134,40 @@ namespace x360ce.App
 			return JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(XmlOfFields(fields));
 		}
 
-		/// <summary>Puts a preset on the clipboard as text, or says why it could not.</summary>
-		public static void CopyPresetToClipboard(PadSetting padSetting, PresetFormat format = DefaultPresetFormat)
+		/// <summary>SDL rows in the text, translated for the device; null when the text holds no SDL row.</summary>
+		/// <exception cref="System.IO.InvalidDataException">The rows are for other systems only.</exception>
+		static SdlTranslation SdlFromText(string text, UserDevice device)
 		{
-			JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(PadSettingToText(padSetting, format));
+			SdlMapping any;
+			if (!text.Split('\n').Any(x => SdlMapping.TryParse(x, out any)))
+				return null;
+			var rows = SdlDatabase.Merge(SdlSource.Parse(text, SdlSourceKind.File));
+			if (rows.Mappings.Count == 0)
+				throw new System.IO.InvalidDataException("The SDL rows are for other systems: x360ce reads rows for Windows, or for no system in particular.");
+			var sdlDevice = SdlDevice.From(device);
+			var mapping = rows.Find(sdlDevice) ?? rows.Mappings[0];
+			return SdlConverter.ToPadSetting(mapping, sdlDevice);
+		}
+
+		/// <summary>Puts a preset on the clipboard as text, or says why it could not.</summary>
+		/// <param name="padSetting">The settings.</param>
+		/// <param name="format">The notation.</param>
+		/// <param name="device">The device the settings map, which an SDL row is written for.</param>
+		public static void CopyPresetToClipboard(PadSetting padSetting, PresetFormat format = DefaultPresetFormat, UserDevice device = null)
+		{
+			JocysCom.ClassLibrary.Controls.ControlsHelper.CopyToClipboardOrWarn(PadSettingToText(padSetting, format, device));
 		}
 
 		/// <summary>Opens the format menu under a Copy Preset button, and copies the preset in the format chosen.</summary>
 		/// <remarks>
 		/// The Copy Preset button copies in the default format with one click; the arrow button beside
 		/// it opens this menu, so the other formats are one step away for the mouse, the keyboard and a
-		/// screen reader alike.
+		/// screen reader alike. SDL is offered while a device is selected: its row is written for that device.
 		/// </remarks>
-		public static void ShowCopyPresetMenu(Control button, PadSetting padSetting)
+		/// <param name="button">The button the menu opens under.</param>
+		/// <param name="padSetting">The settings.</param>
+		/// <param name="device">The device the settings map, or null.</param>
+		public static void ShowCopyPresetMenu(Control button, PadSetting padSetting, UserDevice device = null)
 		{
 			var menu = new ContextMenuStrip();
 			foreach (PresetFormat format in System.Enum.GetValues(typeof(PresetFormat)))
@@ -120,6 +175,10 @@ namespace x360ce.App
 				{
 					Name = "CopyAs" + format + "MenuItem",
 					Tag = format,
+					Enabled = format != PresetFormat.Sdl || device != null,
+					ToolTipText = format == PresetFormat.Sdl
+						? "A row of SDL's controller database for the selected device: its buttons, axes and hats, without formulas or other settings."
+						: null,
 				});
 			PresetFormat? chosen = null;
 			menu.ItemClicked += (s, e) => chosen = (PresetFormat)e.ClickedItem.Tag;
@@ -129,7 +188,7 @@ namespace x360ce.App
 			{
 				menu.Dispose();
 				if (chosen.HasValue)
-					CopyPresetToClipboard(padSetting, chosen.Value);
+					CopyPresetToClipboard(padSetting, chosen.Value, device);
 			}));
 			menu.Show(button, new System.Drawing.Point(0, button.Height));
 		}
@@ -396,20 +455,31 @@ namespace x360ce.App
 		#endregion
 
 		/// <summary>
-		/// Apply all settings to XML.
+		/// Saves a controller page into the mapping row selected on it, and leaves the other pages and their rows as they are.
 		/// </summary>
-		public bool ApplyAllSettingsToXML()
+		/// <remarks>
+		/// A change belongs to one page (<see cref="SettingChangedEventArgs.Page"/>): a box's own page, the page whose device list
+		/// it is, or the page a row's settings or a preset were loaded into. A box of the Options page belongs to none and saves
+		/// itself into the options. A page left alone is not saved, so what it shows is never written over a row changed
+		/// elsewhere, as a download from the settings database changes one.
+		///
+		/// The settings are added, the row is pointed at them and the settings no row uses are removed as one change, so the
+		/// engine's routing is built once, after it.
+		/// </remarks>
+		/// <param name="pages">The controller pages.</param>
+		/// <param name="page">The page the change belongs to; <see cref="MapTo.None"/> saves none.</param>
+		public void ApplySettingsToXML(IList<Controls.PadControl> pages, MapTo page)
 		{
-			var padControls = MainForm.Current.PadControls;
-			for (int i = 0; i < padControls.Length; i++)
+			var padControl = pages?.FirstOrDefault(x => x.MappedTo == page);
+			if (padControl == null)
+				return;
+			var setting = padControl.GetSelectedSetting();
+			// Skip if not selected.
+			if (setting == null)
+				return;
+			var padSetting = padControl.CloneCurrentPadSetting();
+			DInput.DeviceRouting.BuildOnceAfter(() =>
 			{
-				// Get pad control with settings.
-				var padControl = MainForm.Current.PadControls[i];
-				var setting = padControl.GetSelectedSetting();
-				// Skip if not selected.
-				if (setting == null)
-					continue;
-				var padSetting = padControl.CloneCurrentPadSetting();
 				// If setting doesn't exists then...
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
 				{
@@ -425,9 +495,8 @@ namespace x360ce.App
 					var ud = SettingsManager.GetDevice(setting.InstanceGuid);
 					setting.Completion = UserSetting.GetCompletionPoints(padSetting, ud);
 				}
-			}
-			CleanupPadSettings();
-			return true;
+				CleanupPadSettings();
+			});
 		}
 
 		/// <summary>
@@ -496,13 +565,12 @@ namespace x360ce.App
 		/// <summary>What has already been complained about, so it is complained about once.</summary>
 		static readonly HashSet<string> _unmappedReported = new HashSet<string>();
 
-		public static bool ValidatePropertyNames(SettingsMapItem[] maps, out PropertyInfo[] propertiesToSet)
+		public static bool ValidatePropertyNames(Dictionary<string, SettingsMapItem> maps, out PropertyInfo[] propertiesToSet)
 		{
-			var availableNames = maps.Select(x => x.PropertyName);
 			var properties = typeof(PadSetting).GetProperties();
 			propertiesToSet = properties.Where(x => x.PropertyType == typeof(string) && x.Name != "ButtonBig").ToArray();
 			var requiredNames = propertiesToSet.Select(x => x.Name);
-			var missing = requiredNames.Except(availableNames);
+			var missing = requiredNames.Where(x => !maps.ContainsKey(x));
 			if (missing.Count() > 0)
 			{
 				var list = string.Join(", ", missing);
@@ -521,8 +589,9 @@ namespace x360ce.App
 
 		public void LoadPadSettingAndCleanup(UserSetting setting, PadSetting ps, bool add = false)
 		{
-			// Link setting with pad setting.
-			setting.PadSettingChecksum = ps.PadSettingChecksum;
+			// Link setting with pad setting. The list reports every write, and each report rebuilds the rows of all four pages.
+			if (setting.PadSettingChecksum != ps.PadSettingChecksum)
+				setting.PadSettingChecksum = ps.PadSettingChecksum;
 			// Insert pad setting first, because it will be linked with the setting.
 			UpsertPadSettings(ps);
 			// Insert setting if not in the list.
@@ -548,7 +617,7 @@ namespace x360ce.App
 				ps = new PadSetting();
 			LoadPadSettingAndCleanup(setting, ps);
 			SyncFormFromPadSetting(padIndex, ps);
-			RaiseSettingsChanged(null);
+			RaiseSettingsChanged(padIndex);
 			loadCount++;
 			var ev = ConfigLoaded;
 			if (ev != null)
@@ -557,10 +626,21 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>A controller page's boxes by the setting each holds, as loading and saving the page find them.</summary>
+		/// <remarks>Built once for a page read or loaded whole; the first box mapped to a setting of the page answers.</remarks>
+		public Dictionary<string, SettingsMapItem> GetPageMaps(MapTo padIndex)
+		{
+			var maps = new Dictionary<string, SettingsMapItem>();
+			foreach (var map in SettingsMap)
+				if (map.MapTo == padIndex && map.PropertyName != null && !maps.ContainsKey(map.PropertyName))
+					maps.Add(map.PropertyName, map);
+			return maps;
+		}
+
 		public void SyncFormFromPadSetting(MapTo padIndex, PadSetting ps)
 		{
 			// Get setting maps for specified PAD Control.
-			var maps = SettingsMap.Where(x => x.MapTo == padIndex).ToArray();
+			var maps = GetPageMaps(padIndex);
 			PropertyInfo[] properties;
 			if (!ValidatePropertyNames(maps, out properties))
 				return;
@@ -568,7 +648,7 @@ namespace x360ce.App
 			SuspendEvents();
 			foreach (var p in properties)
 			{
-				var map = maps.First(x => x.PropertyName == p.Name);
+				var map = maps[p.Name];
 				var key = map.IniPath.Split('\\')[1];
 				var v = (string)p.GetValue(ps, null) ?? "";
 				// If value is not set then...
@@ -583,7 +663,7 @@ namespace x360ce.App
 			foreach (var p in properties)
 			{
 				source.Stored[p.Name] = (string)p.GetValue(ps, null) ?? "";
-				source.Shown[p.Name] = GetPresetValue(maps.First(x => x.PropertyName == p.Name));
+				source.Shown[p.Name] = GetPresetValue(maps[p.Name]);
 			}
 			_pageSources[padIndex] = source;
 		}
@@ -596,7 +676,7 @@ namespace x360ce.App
 		/// </remarks>
 		public string GetPresetValue(SettingsMapItem map)
 		{
-			var v = GetSettingValue(map.Control);
+			var v = GetSettingValue(map);
 			return v == string.Format("{0}", map.DefaultValue) ? "" : v;
 		}
 

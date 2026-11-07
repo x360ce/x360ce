@@ -92,12 +92,12 @@ namespace x360ce.Tests
 					Assert.IsFalse(state.Enabled, "The start-up window state is live while the program does not start with Windows.");
 					start.Checked = true;
 					Assert.IsTrue(state.Enabled);
-					var hotkey = Find<CheckBox>(page, "EmulationHotkeyCheckBox");
-					var note = Find<CheckBox>(page, "EmulationOverlayCheckBox");
+					var hotkey = Find<CheckBox>(page, nameof(OptionsUserControl.EmulationHotkeyCheckBox));
+					var note = Find<CheckBox>(page, nameof(OptionsUserControl.EmulationOverlayCheckBox));
 					hotkey.Checked = false;
 					Assert.IsFalse(note.Enabled, "The hotkey's note is live while the hotkey is off.");
-					var keys = Find<TextBox>(page, "EmulationHotkeyTextBox");
-					typeof(OptionsUserControl).GetMethod("EmulationHotkeyTextBox_KeyDown", BindingFlags.NonPublic | BindingFlags.Instance)
+					var keys = Find<TextBox>(page, nameof(OptionsUserControl.EmulationHotkeyTextBox));
+					typeof(OptionsUserControl).GetMethod(nameof(OptionsUserControl.EmulationHotkeyTextBox_KeyDown), BindingFlags.NonPublic | BindingFlags.Instance)
 						.Invoke(page, new object[] { keys, new KeyEventArgs(Keys.Control | Keys.Alt | Keys.X) });
 					Assert.IsTrue(hotkey.Checked, "Recording keys left the hotkey's box unticked.");
 					Assert.IsTrue(note.Enabled);
@@ -110,8 +110,8 @@ namespace x360ce.Tests
 		public void Start_with_Windows_is_the_Windows_setting()
 		{
 			const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
-			var runField = typeof(OptionsUserControl).GetField("RunKeyPath", flags);
-			var approvedField = typeof(OptionsUserControl).GetField("StartupApprovedKeyPath", flags);
+			var runField = typeof(OptionsUserControl).GetField(nameof(OptionsUserControl.RunKeyPath), flags);
+			var approvedField = typeof(OptionsUserControl).GetField(nameof(OptionsUserControl.StartupApprovedKeyPath), flags);
 			var oldRun = runField.GetValue(null);
 			var oldApproved = approvedField.GetValue(null);
 			const string root = "Software\\x360ce.Tests.WindowsStart";
@@ -129,10 +129,10 @@ namespace x360ce.Tests
 						page.CreateControl();
 						var start = Find<CheckBox>(page, "StartWithWindowsCheckBox");
 						var state = Find<ComboBox>(page, "StartWithWindowsStateComboBox");
-						var load = typeof(OptionsUserControl).GetMethod("LoadWindowsStart", BindingFlags.NonPublic | BindingFlags.Instance);
+						var load = typeof(OptionsUserControl).GetMethod(nameof(OptionsUserControl.LoadWindowsStart), BindingFlags.NonPublic | BindingFlags.Instance);
 						run.SetValue(name, "\"C:\\Other copy\\x360ce.exe\" /WindowState=Normal");
 						page.InitWindowsStart();
-						var hint = Field<ToolTip>(page, "StartWithWindowsHint");
+						var hint = Field<ToolTip>(page, nameof(OptionsUserControl.StartWithWindowsHint));
 						Assert.IsFalse(start.Checked, "The box is ticked while Windows starts another copy.");
 						StringAssert.Contains(hint.GetToolTip(start), "C:\\Other copy\\x360ce.exe");
 
@@ -190,9 +190,9 @@ namespace x360ce.Tests
 					using (var page = new OptionsUpdateUserControl())
 					{
 						page.UpdateSettingsMap();
-						var box = Find<CheckBox>(page, "CheckDigitalSignatureCheckBox");
+						var box = Find<CheckBox>(page, nameof(OptionsUpdateUserControl.CheckDigitalSignatureCheckBox));
 						Assert.IsFalse(box.Checked, "The box does not show the kept choice.");
-						Assert.IsTrue(Find<CheckBox>(page, "CheckVersionCheckBox").Checked);
+						Assert.IsTrue(Find<CheckBox>(page, nameof(OptionsUpdateUserControl.CheckVersionCheckBox)).Checked);
 						box.Checked = true;
 						Assert.IsTrue(o.CheckUpdateSignature, "Ticking the box was not kept.");
 					}
@@ -237,7 +237,7 @@ namespace x360ce.Tests
 				using (var details = new GameDetailsUserControl())
 				{
 					details.CurrentItem = new UserGame { FileName = "auto-map.exe", AutoMapMask = (int)MapToMask.Controller1 };
-					var group = Find<GroupBox>(details, "AutoMapMaskGroupBox");
+					var group = Find<GroupBox>(details, nameof(GameDetailsUserControl.AutoMapMaskGroupBox));
 					Assert.IsFalse(group.Enabled, "Auto Map can still be ticked.");
 					Assert.IsFalse(group.Controls.OfType<CheckBox>().Any(x => x.Checked), "Auto Map shows a mask nothing acts on.");
 				}
@@ -279,13 +279,13 @@ namespace x360ce.Tests
 						SettingsManager.CurrentGame = game;
 						pad.UpdateFromCurrentGame();
 						Assert.AreEqual((int)MapTo.Controller2, setting.MapTo, "Auto Map took the device off the controller.");
-						var autoMap = Field<ToolStripButton>(pad, "AutoMapButton");
+						var autoMap = Field<ToolStripButton>(pad, nameof(PadControl.AutoMapButton));
 						Assert.IsFalse(autoMap.Enabled, "Auto Map can still be pressed.");
 						StringAssert.Contains(autoMap.ToolTipText, "Add");
-						Assert.IsTrue(Field<ToolStripButton>(pad, "AddMapButton").Enabled, "Add is greyed out by a kept Auto Map.");
+						Assert.IsTrue(Field<ToolStripButton>(pad, nameof(PadControl.AddMapButton)).Enabled, "Add is greyed out by a kept Auto Map.");
 
-						var type = Find<ComboBox>(pad, "ForceTypeComboBox");
-						var period = Find<TrackBar>(pad, "LeftMotorPeriodTrackBar");
+						var type = Find<ComboBox>(pad, nameof(PadControl.ForceTypeComboBox));
+						var period = Find<TrackBar>(pad, nameof(PadControl.LeftMotorPeriodTrackBar));
 						type.SelectedItem = ForceEffectType.Constant;
 						Assert.IsFalse(period.Enabled, "The motor period is live under Constant, which has no period.");
 						Assert.IsFalse(Find<ComboBox>(pad, "MotorPeriodPresetComboBox").Enabled);
@@ -293,16 +293,16 @@ namespace x360ce.Tests
 						Assert.IsTrue(period.Enabled, "The motor period is greyed out under Sine.");
 
 						var tabs = Find<TabControl>(pad, "PadTabControl");
-						var advanced = tabs.TabPages.Cast<TabPage>().SingleOrDefault(x => x.Name == "AdvancedTabPage");
+						var advanced = tabs.TabPages.Cast<TabPage>().SingleOrDefault(x => x.Name == nameof(PadControl.AdvancedTabPage));
 						Assert.IsNotNull(advanced, "The Advanced page is hidden for a virtual controller.");
-						Assert.IsFalse(Find<Panel>(pad, "AdvancedOptionsPanel").Enabled, "x360ce 3's settings can be changed here, where nothing reads them.");
-						StringAssert.Contains(Find<GroupBox>(pad, "DeviceGroupBox").Text, "x360ce 3");
-						Find<CheckBox>(pad, "PassThroughCheckBox").Checked = true;
-						Assert.IsTrue(Find<CheckBox>(pad, "ForcePassThroughCheckBox").Enabled,
+						Assert.IsFalse(Find<Panel>(pad, nameof(PadControl.AdvancedOptionsPanel)).Enabled, "x360ce 3's settings can be changed here, where nothing reads them.");
+						StringAssert.Contains(Find<GroupBox>(pad, nameof(PadControl.DeviceGroupBox)).Text, "x360ce 3");
+						Find<CheckBox>(pad, nameof(PadControl.PassThroughCheckBox)).Checked = true;
+						Assert.IsTrue(Find<CheckBox>(pad, nameof(PadControl.ForcePassThroughCheckBox)).Enabled,
 							"x360ce 3's full pass-through greys out this version's force pass-through.");
-						Find<CheckBox>(pad, "PassThroughCheckBox").Checked = false;
+						Find<CheckBox>(pad, nameof(PadControl.PassThroughCheckBox)).Checked = false;
 
-						var dpad = Find<GroupBox>(pad, "AxisToDPadGroupBox");
+						var dpad = Find<GroupBox>(pad, nameof(PadControl.AxisToDPadGroupBox));
 						Assert.IsTrue(dpad.Enabled, "Axis to D-Pad is greyed out, though the engine reads it.");
 						Assert.IsFalse(dpad.Text.Contains("x360ce 3"), "Axis to D-Pad is called x360ce 3's, though this version reads it.");
 						game.EmulationType = (int)EmulationType.Library;

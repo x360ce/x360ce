@@ -32,7 +32,7 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp("App.v4");
 			if (exe == null)
 				Assert.Inconclusive("App.v4 is not built.");
-			var process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+			var process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			try
 			{
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
@@ -67,70 +67,50 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp("App.v4");
 			if (exe == null)
 				Assert.Inconclusive("App.v4 is not built.");
-			// The program rewrites this file whenever it saves, so the copy goes back unconditionally. Named
-			// after this process, so two test hosts running at once do not take away each other's copy.
-			var backup = Path.Combine(Path.GetTempPath(), "x360ce.Options.emulation-hotkey-test." + Process.GetCurrentProcess().Id + ".xml");
-			File.Copy(OptionsFile, backup, true);
+			// A folder of its own, as the hotkey stays on in the settings it is switched on in.
+			var profile = Path.Combine(TestRun.LogsFolder, "hotkey-profile");
+			EnableEmulationHotkey(profile);
+			var process = Process.Start(new ProcessStartInfo(exe, "\"/Profile=" + profile + "\"") { WorkingDirectory = Path.GetDirectoryName(exe) });
 			try
 			{
-				EnableEmulationHotkey();
-				var process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
-				try
+				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
+				var label = Ui.WaitFor(() => window.FindAll(TreeScope.Descendants, Condition.TrueCondition).Cast<AutomationElement>()
+					.FirstOrDefault(x => (x.Current.Name ?? "").StartsWith("HW Hz:")), TimeSpan.FromSeconds(30), "the rate label");
+				var samples = Enumerable.Range(0, 40).Select(i =>
 				{
-					var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
-					var label = Ui.WaitFor(() => window.FindAll(TreeScope.Descendants, Condition.TrueCondition).Cast<AutomationElement>()
-						.FirstOrDefault(x => (x.Current.Name ?? "").StartsWith("HW Hz:")), TimeSpan.FromSeconds(30), "the rate label");
-					var samples = Enumerable.Range(0, 40).Select(i =>
-					{
-						Thread.Sleep(1000);
-						var second = i + 1;
-						var text = label.Current.Name ?? "";
-						var m = Regex.Match(text, @"(\d+)");
-						var hz = m.Success ? int.Parse(m.Groups[1].Value) : -1;
-						Console.WriteLine("{0,3}s  {1}", second, text);
-						// Off, then on again. Each press unplugs or plugs every controller the game enables,
-						// and each of those raises a device change that asks for the device tree again.
-						if (second == 15 || second == 25)
-							PressEmulationHotkey(process);
-						return hz;
-					}).ToArray();
-					// The first seconds cover start-up, when the devices are still being read for the
-					// first time. Everything after that, toggles included, has to hold the rate.
-					var settled = samples.Skip(5).ToArray();
-					Assert.IsTrue(settled.All(hz => hz >= MinimumHz),
-						"The device thread ran at " + string.Join(", ", settled) + " Hz across the emulation toggles, below " + MinimumHz + ".");
-				}
-				finally
-				{
-					Ui.CloseApp(process);
-				}
+					Thread.Sleep(1000);
+					var second = i + 1;
+					var text = label.Current.Name ?? "";
+					var m = Regex.Match(text, @"(\d+)");
+					var hz = m.Success ? int.Parse(m.Groups[1].Value) : -1;
+					Console.WriteLine("{0,3}s  {1}", second, text);
+					// Off, then on again. Each press unplugs or plugs every controller the game enables,
+					// and each of those raises a device change that asks for the device tree again.
+					if (second == 15 || second == 25)
+						PressEmulationHotkey(process);
+					return hz;
+				}).ToArray();
+				// The first seconds cover start-up, when the devices are still being read for the
+				// first time. Everything after that, toggles included, has to hold the rate.
+				var settled = samples.Skip(5).ToArray();
+				Assert.IsTrue(settled.All(hz => hz >= MinimumHz),
+					"The device thread ran at " + string.Join(", ", settled) + " Hz across the emulation toggles, below " + MinimumHz + ".");
 			}
 			finally
 			{
-				File.Copy(backup, OptionsFile, true);
-				File.Delete(backup);
+				Ui.CloseApp(process);
 			}
 		}
 
-		/// <summary>Where the program keeps the options the hotkey is switched on in.</summary>
-		static readonly string OptionsFile = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-			"X360CE", "Settings", "x360ce.Options.xml");
-
 		/// <summary>
-		/// Switches the emulation hotkey on for the run. The hotkey is registered with the system
+		/// Switches the emulation hotkey on in these settings. The hotkey is registered with the system
 		/// only when the option is set, so without this the key press reaches nothing.
 		/// </summary>
-		static void EnableEmulationHotkey()
+		static void EnableEmulationHotkey(string profile)
 		{
-			var xml = File.ReadAllText(OptionsFile);
-			xml = xml.Contains("<EmulationHotkeyEnabled>")
-				? Regex.Replace(xml, "<EmulationHotkeyEnabled>[^<]*</EmulationHotkeyEnabled>",
-					"<EmulationHotkeyEnabled>true</EmulationHotkeyEnabled>")
-				// Indentation of the element it sits next to, so the file stays readable.
-				: Regex.Replace(xml, @"(\s*)<GetXInputStates>",
-					"$1<EmulationHotkeyEnabled>true</EmulationHotkeyEnabled>$1<GetXInputStates>");
-			File.WriteAllText(OptionsFile, xml);
+			var folder = Directory.CreateDirectory(Path.Combine(profile, "Settings")).FullName;
+			File.WriteAllText(Path.Combine(folder, "x360ce.Options.xml"),
+				"<Data Version=\"0\"><Items><Options><EmulationHotkeyEnabled>true</EmulationHotkeyEnabled></Options></Items></Data>");
 		}
 
 		/// <summary>

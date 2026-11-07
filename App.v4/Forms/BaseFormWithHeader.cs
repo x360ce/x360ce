@@ -29,6 +29,23 @@ namespace x360ce.App.Controls
 			base.OnLoad(e);
 		}
 
+		/// <summary>
+		/// While the window's edge is dragged nothing on it is laid out, as Windows moves each child window on its own, which
+		/// takes longer than the mouse takes between two steps. <see cref="OnResizeEnd"/> lays it out once at the size it was left.
+		/// </summary>
+		protected override void OnResizeBegin(EventArgs e)
+		{
+			SuspendLayout();
+			base.OnResizeBegin(e);
+		}
+
+		/// <summary>Lays the window out at the size the drag left it. A drag that only moved the window lays nothing out.</summary>
+		protected override void OnResizeEnd(EventArgs e)
+		{
+			base.OnResizeEnd(e);
+			ResumeLayout();
+		}
+
 		#region WebService loading circle
 
 		private void InitLoadingCircle()

@@ -1,5 +1,6 @@
 ﻿// @under-test: App.v4/Common/SettingsManager.cs, App.v4/Controls/PadControl.cs
 // @area: mapping   @layer: unit
+using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>A game with Controller 1 switched on, as it is once a device has been added there.</summary>
-		static UserGame NewGame()
+		internal static UserGame NewGame()
 		{
 			return new UserGame
 			{
@@ -58,13 +59,13 @@ namespace x360ce.Tests
 			};
 		}
 
-		static UserDevice NewDevice(string name)
+		internal static UserDevice NewDevice(string name)
 		{
 			return new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = name, InstanceName = name };
 		}
 
 		/// <summary>Puts the device on a tab with stored settings that play force feedback.</summary>
-		static UserSetting Map(UserGame game, UserDevice device, MapTo controller)
+		internal static UserSetting Map(UserGame game, UserDevice device, MapTo controller)
 		{
 			var ps = new PadSetting { ForceEnable = "1", ForceOverall = "80" };
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
@@ -359,8 +360,8 @@ namespace x360ce.Tests
 					{
 						timer.Stop();
 						buttons = new[] { "Button1", "Button2", "Button3" }.Select(x => (Button)form.Controls.Find(x, true)[0]).ToArray();
-						heading = (Label)form.Controls.Find("HeadingLabel", true)[0];
-						text = (Label)form.Controls.Find("TextLabel", true)[0];
+						heading = (Label)form.Controls.Find(nameof(MessageBoxForm.HeadingLabel), true)[0];
+						text = (Label)form.Controls.Find(nameof(MessageBoxForm.TextLabel), true)[0];
 						Assert.AreEqual(3, buttons.Count(x => x.Visible));
 						form.DialogResult = DialogResult.Cancel;
 					};

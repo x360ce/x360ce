@@ -22,10 +22,15 @@ namespace x360ce.Tests
 		/// </summary>
 		/// <remarks>
 		/// An entry here must never bring WPF back, which costs about 90 MB for the life of the process.
-		/// The one entry holds the dark theme's colours, embedded as a resource and read as plain XML by
-		/// Windows Forms; WPF never loads it.
+		/// The dark theme's colours are embedded as a resource and read as plain XML by Windows Forms; WPF never
+		/// loads them. The Buttons page drawings are path data read by <c>scripts/art/build_buttons.py</c>, never
+		/// built or shipped.
 		/// </remarks>
-		static readonly string[] Expected = { "Engine/JocysCom/Controls/Themes/Default_DarkTheme.xaml" };
+		static readonly string[] Expected =
+		{
+			"Engine/JocysCom/Controls/Themes/Default_DarkTheme.xaml",
+			"scripts/art/buttons/AxisToButtonControl.xaml",
+		};
 
 		static string[] ActualXamlFiles()
 		{
@@ -34,6 +39,8 @@ namespace x360ce.Tests
 				.Where(x => !x.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar))
 				.Where(x => !x.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar))
 				.Select(x => x.Substring(root.Length).TrimStart(Path.DirectorySeparatorChar).Replace(Path.DirectorySeparatorChar, '/'))
+				// Git-ignored working files, such as design inputs, which are never built or shipped.
+				.Where(x => !x.StartsWith(".tmp/", StringComparison.OrdinalIgnoreCase))
 				.OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
 				.ToArray();
 		}

@@ -4,7 +4,7 @@ using System;
 
 namespace x360ce.App.Issues
 {
-    public class CppX64RuntimeInstallIssue : IssueItem
+    public class CppX64RuntimeInstallIssue : OnChangeIssue
 	{
 
 		public CppX64RuntimeInstallIssue() : base()

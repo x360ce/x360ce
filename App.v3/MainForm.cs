@@ -98,7 +98,7 @@ namespace x360ce.App
 				GamePads[i] = new Controller((UserIndex)i);
 			}
 			GameToCustomizeComboBox.DataSource = SettingManager.Games.Items;
-			GameToCustomizeComboBox.DisplayMember = "DisplayName";
+			GameToCustomizeComboBox.DisplayMember = nameof(x360ce.Engine.Data.UserGame.DisplayName);
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;

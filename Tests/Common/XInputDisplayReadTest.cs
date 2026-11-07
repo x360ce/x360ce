@@ -59,23 +59,23 @@ namespace x360ce.Tests
 		/// <summary>The thread the display reads run on, or null before the first read.</summary>
 		static Thread DisplayReader(DInputHelper helper)
 		{
-			var field = typeof(DInputHelper).GetField("_displayReader", BindingFlags.NonPublic | BindingFlags.Instance);
+			var field = typeof(DInputHelper).GetField(nameof(DInputHelper._displayReader), BindingFlags.NonPublic | BindingFlags.Instance);
 			return field == null ? null : (Thread)field.GetValue(helper);
 		}
 
 		/// <summary>Starts the helper's clock, as starting the engine does, so a display read falls due every 16 ms.</summary>
 		internal static void StartClock(DInputHelper helper)
 		{
-			((Stopwatch)typeof(DInputHelper).GetField("watch", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper)).Start();
+			((Stopwatch)typeof(DInputHelper).GetField(nameof(DInputHelper.watch), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper)).Start();
 		}
 
 		/// <summary>The display read's state, read without boxing, so a loop that watches it makes nothing.</summary>
-		internal static readonly Func<DInputHelper, int> DisplayRead = ReadField<int>("_displayRead");
+		internal static readonly Func<DInputHelper, int> DisplayRead = ReadField<int>(nameof(DInputHelper._displayRead));
 
 		/// <summary>The display read's states: nothing asked, asked of the reader, answered and not yet taken.</summary>
-		internal static readonly int Idle = Constant("DisplayReadIdle");
-		internal static readonly int Asked = Constant("DisplayReadAsked");
-		internal static readonly int Answered = Constant("DisplayReadAnswered");
+		internal static readonly int Idle = Constant(nameof(DInputHelper.DisplayReadIdle));
+		internal static readonly int Asked = Constant(nameof(DInputHelper.DisplayReadAsked));
+		internal static readonly int Answered = Constant(nameof(DInputHelper.DisplayReadAnswered));
 
 		static int Constant(string name)
 		{

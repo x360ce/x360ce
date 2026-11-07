@@ -262,6 +262,7 @@
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapButtonsTextBox, 7, 3);
 			this.HeaderTableLayoutPanel.SetColumnSpan(this.DeviceTypeTextBox, 3);
 			this.HeaderTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HeaderTableLayoutPanel.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
 			this.HeaderTableLayoutPanel.Name = "HeaderTableLayoutPanel";
 			this.HeaderTableLayoutPanel.RowCount = 4;
 			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -297,6 +298,7 @@
 			this.AxisRowTableLayoutPanel.Controls.Add(this.DiSlidersDataGridView, 1, 0);
 			this.AxisRowTableLayoutPanel.Controls.Add(this.DiPovsDataGridView, 2, 0);
 			this.AxisRowTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AxisRowTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
 			this.AxisRowTableLayoutPanel.Name = "AxisRowTableLayoutPanel";
 			this.AxisRowTableLayoutPanel.RowCount = 1;
 			this.AxisRowTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -323,6 +325,7 @@
             this.DiColumnVr});
 			this.DiAxisDataGridView.AccessibleName = "Axis values reported by the device";
 			this.DiAxisDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DiAxisDataGridView.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
 			this.DiAxisDataGridView.Name = "DiAxisDataGridView";
 			this.DiAxisDataGridView.ReadOnly = true;
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -649,6 +652,7 @@
 			this.DeviceDetailsTabControl.Controls.Add(this.DiObjectsTabPage);
 			this.DeviceDetailsTabControl.Controls.Add(this.DiEffectsDataTabPage);
 			this.DeviceDetailsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DeviceDetailsTabControl.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
 			this.DeviceDetailsTabControl.Name = "DeviceDetailsTabControl";
 			this.DeviceDetailsTabControl.SelectedIndex = 0;
 			this.DeviceDetailsTabControl.TabIndex = 2;
@@ -860,6 +864,7 @@
             this.dataGridViewTextBoxColumn7});
 			this.DiPovsDataGridView.AccessibleName = "Point of view hat values";
 			this.DiPovsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DiPovsDataGridView.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
 			this.DiPovsDataGridView.Name = "DiPovsDataGridView";
 			this.DiPovsDataGridView.ReadOnly = true;
 			this.DiPovsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -1097,12 +1102,12 @@
 
 		#endregion
 
-        System.Windows.Forms.DataGridView DiEffectsDataGridView;
+        internal System.Windows.Forms.DataGridView DiEffectsDataGridView;
 		System.Windows.Forms.TableLayoutPanel RootTableLayoutPanel;
 		System.Windows.Forms.TableLayoutPanel HeaderTableLayoutPanel;
 		System.Windows.Forms.TableLayoutPanel AxisRowTableLayoutPanel;
-		System.Windows.Forms.DataGridView DiAxisDataGridView;
-		System.Windows.Forms.TextBox DeviceTypeTextBox;
+		internal System.Windows.Forms.DataGridView DiAxisDataGridView;
+		internal System.Windows.Forms.TextBox DeviceTypeTextBox;
 		System.Windows.Forms.Label DevicePidLabel;
 		System.Windows.Forms.Label DeviceVidLabel;
 		System.Windows.Forms.Label DiDeviceTypeLabel;
@@ -1124,10 +1129,10 @@
         private System.Windows.Forms.Label DiPovsLabel;
         public System.Windows.Forms.TextBox ActuatorsTextBox;
         private System.Windows.Forms.Label ActuatorsLabel;
-        private System.Windows.Forms.TabControl DeviceDetailsTabControl;
-        private System.Windows.Forms.TabPage DiEffectsDataTabPage;
-        private System.Windows.Forms.TabPage DiObjectsTabPage;
-        private System.Windows.Forms.DataGridView DiObjectsDataGridView;
+        internal System.Windows.Forms.TabControl DeviceDetailsTabControl;
+        internal System.Windows.Forms.TabPage DiEffectsDataTabPage;
+        internal System.Windows.Forms.TabPage DiObjectsTabPage;
+        internal System.Windows.Forms.DataGridView DiObjectsDataGridView;
         public System.Windows.Forms.TextBox DiSlidersTextBox;
         private System.Windows.Forms.Label SlidersLabel;
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
@@ -1136,10 +1141,10 @@
 		private System.Windows.Forms.Label DeviceVendorNameLabel;
 		private System.Windows.Forms.Label DeviceRevLabel;
 		public System.Windows.Forms.TextBox DeviceRevTextBox;
-		private System.Windows.Forms.DataGridView DiSlidersDataGridView;
-		private System.Windows.Forms.DataGridView DiPovsDataGridView;
+		internal System.Windows.Forms.DataGridView DiSlidersDataGridView;
+		internal System.Windows.Forms.DataGridView DiPovsDataGridView;
 		private System.Windows.Forms.Label DiButtonsLabel;
-		private System.Windows.Forms.TextBox DiButtonsTextBox;
+		internal System.Windows.Forms.TextBox DiButtonsTextBox;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
@@ -1165,8 +1170,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsGuidColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsAspectColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsFlagsColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn MapsAsColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn ObjectsInstanceColumn;
+		internal System.Windows.Forms.DataGridViewTextBoxColumn MapsAsColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn GranularityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SaturationColumn;

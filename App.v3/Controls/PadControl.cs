@@ -67,7 +67,7 @@ namespace x360ce.App.Controls
 			this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			this.markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
+			this.markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_32x32.png"));
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
@@ -84,11 +84,11 @@ namespace x360ce.App.Controls
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes) playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
-			PassThroughIndexComboBox.DisplayMember = "Key";
-			PassThroughIndexComboBox.ValueMember = "Value";
+			PassThroughIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			PassThroughIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
-			CombinedIndexComboBox.DisplayMember = "Key";
-			CombinedIndexComboBox.ValueMember = "Value";
+			CombinedIndexComboBox.DisplayMember = nameof(KeyValuePair.Key);
+			CombinedIndexComboBox.ValueMember = nameof(KeyValuePair.Value);
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
 			// Attach context strip with button names to every ComboBox on general tab.
@@ -126,9 +126,10 @@ namespace x360ce.App.Controls
 
 		void drawMarkR(PaintEventArgs e, Point position)
 		{
-			int rW = -this.markR.Width / 2;
-			int rH = -this.markR.Height / 2;
-			DrawMark(e.Graphics, this.markR, position.X + rW, position.Y + rH);
+			// Made at twice the size it shows at.
+			int rW = this.markR.Width / 2;
+			int rH = this.markR.Height / 2;
+			e.Graphics.DrawImage(this.markR, position.X - rW / 2, position.Y - rH / 2, rW, rH);
 		}
 
 		void StartRecording()
@@ -297,7 +298,7 @@ namespace x360ce.App.Controls
 		}
 		Bitmap _frontImage;
 
-		/// <summary>A controller picture of the theme in use, as drawn at 100%, with its versions drawn at larger sizes.</summary>
+		/// <summary>A controller picture of the theme in use, made at twice the size it shows at 100%.</summary>
 		static Bitmap LoadPicture(string view)
 		{
 			var theme = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark ? "Dark" : "";
@@ -307,8 +308,8 @@ namespace x360ce.App.Controls
 		/// <summary>Shows the controller pictures in colour while a controller is connected, grey otherwise, at the screen's size.</summary>
 		void ShowPictures(bool connected)
 		{
-			FrontPictureBox.Image = ControlsHelper.ScaleImage(connected ? frontImage : frontDisabledImage);
-			TopPictureBox.Image = ControlsHelper.ScaleImage(connected ? topImage : topDisabledImage);
+			FrontPictureBox.Image = ControlsHelper.ScalePicture(connected ? frontImage : frontDisabledImage);
+			TopPictureBox.Image = ControlsHelper.ScalePicture(connected ? topImage : topDisabledImage);
 		}
 
 		/// <summary>Lets the marks be placed in the picture's own pixels, as it is drawn at 100%, on a screen at any scale.</summary>
@@ -362,9 +363,9 @@ namespace x360ce.App.Controls
 			int mH = -this.markB.Height / 2;
 			// Button coordinates, in the picture's pixels.
 			Point shoulderLeft = new Point(43, 66);
-			Point shoulderRight = new Point(topImage.Width - shoulderLeft.X, shoulderLeft.Y);
+			Point shoulderRight = new Point(topImage.Width / 2 - shoulderLeft.X, shoulderLeft.Y);
 			Point triggerLeft = new Point(63, 27);
-			Point triggerRight = new Point(topImage.Width - triggerLeft.X - 1, triggerLeft.Y);
+			Point triggerRight = new Point(topImage.Width / 2 - triggerLeft.X - 1, triggerLeft.Y);
 			if (!Recording)
 			{
 				var tl = gamePadState.Gamepad.LeftTrigger;
@@ -819,7 +820,7 @@ namespace x360ce.App.Controls
 			if (device == null) return;
 			// Add [Record] button.
 			mi = new ToolStripMenuItem(cRecord);
-			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
+			mi.Image = ControlsHelper.ScalePicture(new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_32x32.png")));
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Add Buttons.

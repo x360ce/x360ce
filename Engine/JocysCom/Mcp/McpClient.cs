@@ -143,7 +143,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// door opens only after start-up, which a slow machine stretches. A copy that is running and
 		/// silent is reported, not doubled.
 		/// </summary>
-		public static void EnsureRunning(int port, string token, string exePath)
+		public static void EnsureRunning(int port, string token, string exePath, string arguments = "")
 		{
 			if (Answers(port, token))
 				return;
@@ -156,7 +156,7 @@ namespace JocysCom.ClassLibrary.Mcp
 				throw new InvalidOperationException(name + " is running but does not answer on port " + port + why);
 			// Started by the shell, so the program does not inherit the caller's output: a caller that reads
 			// the switch's output to its end would otherwise wait until the program exits.
-			Process.Start(new ProcessStartInfo(exePath) { WorkingDirectory = Path.GetDirectoryName(exePath), UseShellExecute = true });
+			Process.Start(new ProcessStartInfo(exePath, arguments) { WorkingDirectory = Path.GetDirectoryName(exePath), UseShellExecute = true });
 			var until = DateTime.Now.AddSeconds(60);
 			while (DateTime.Now < until)
 			{

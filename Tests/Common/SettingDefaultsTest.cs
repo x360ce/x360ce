@@ -32,8 +32,8 @@ namespace x360ce.Tests
 		public void A_button_dead_zone_left_out_is_the_default()
 		{
 			var maps = new PadSetting { ButtonA = "a3", ButtonB = "3" }.Maps;
-			Assert.AreEqual(Default("ButtonADeadZone"), maps.Single(x => x.ButtonFlag == SharpDX.XInput.GamepadButtonFlags.A).DeadZone);
-			Assert.AreEqual(Default("ButtonBDeadZone"), maps.Single(x => x.ButtonFlag == SharpDX.XInput.GamepadButtonFlags.B).DeadZone);
+			Assert.AreEqual(Default(nameof(SettingName.ButtonADeadZone)), maps.Single(x => x.ButtonFlag == SharpDX.XInput.GamepadButtonFlags.A).DeadZone);
+			Assert.AreEqual(Default(nameof(SettingName.ButtonBDeadZone)), maps.Single(x => x.ButtonFlag == SharpDX.XInput.GamepadButtonFlags.B).DeadZone);
 		}
 
 		[TestMethod, TestCategory("presets")]
@@ -57,7 +57,7 @@ namespace x360ce.Tests
 		[Description("A dead zone at its default is stored as nothing, and names the same preset as none")]
 		public void A_dead_zone_at_its_default_is_stored_as_nothing()
 		{
-			var atDefault = Cleaned("a3", Default("ButtonADeadZone").ToString());
+			var atDefault = Cleaned("a3", Default(nameof(SettingName.ButtonADeadZone)).ToString());
 			Assert.AreEqual("", atDefault.ButtonADeadZone, "The default was stored.");
 			Assert.AreEqual(Cleaned("a3", "").PadSettingChecksum, atDefault.PadSettingChecksum, "The default and nothing are two presets.");
 		}
@@ -92,17 +92,17 @@ namespace x360ce.Tests
 		public void Force_settings_left_out_are_the_defaults()
 		{
 			var ps = new PadSetting();
-			Assert.AreEqual(Default("ForceSpringStrength"), ps.GetForceSpringStrength(), "Spring strength");
-			Assert.AreEqual(Default("LeftMotorPeriod"), ps.GetLeftMotorPeriod(), "Left motor period");
-			Assert.AreEqual(Default("RightMotorPeriod"), ps.GetRightMotorPeriod(), "Right motor period");
-			Assert.AreEqual(Default("ForceOverall"), ps.GetForceOverall(), "Overall strength");
-			Assert.AreEqual(Default("LeftMotorStrength"), ps.GetLeftMotorStrength(), "Left motor strength");
-			Assert.AreEqual(Default("RightMotorStrength"), ps.GetRightMotorStrength(), "Right motor strength");
-			Assert.AreEqual(Default("ForceSpringCentre"), ps.GetForceSpringCentre(), "Spring centre");
-			Assert.AreEqual(Default("ForceSpringPeak"), ps.GetForceSpringPeak(), "Spring peak");
-			Assert.AreEqual(Default("ForceSpringLightening"), ps.GetForceSpringLightening(), "Spring lightening");
-			Assert.AreEqual(Default("ForceSpringDamping"), ps.GetForceSpringDamping(), "Spring damping");
-			Assert.AreEqual(Default("ForceSpringSpeed"), ps.GetForceSpringSpeed(), "Spring speed");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringStrength)), ps.GetForceSpringStrength(), "Spring strength");
+			Assert.AreEqual(Default(nameof(SettingName.LeftMotorPeriod)), ps.GetLeftMotorPeriod(), "Left motor period");
+			Assert.AreEqual(Default(nameof(SettingName.RightMotorPeriod)), ps.GetRightMotorPeriod(), "Right motor period");
+			Assert.AreEqual(Default(nameof(SettingName.ForceOverall)), ps.GetForceOverall(), "Overall strength");
+			Assert.AreEqual(Default(nameof(SettingName.LeftMotorStrength)), ps.GetLeftMotorStrength(), "Left motor strength");
+			Assert.AreEqual(Default(nameof(SettingName.RightMotorStrength)), ps.GetRightMotorStrength(), "Right motor strength");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringCentre)), ps.GetForceSpringCentre(), "Spring centre");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringPeak)), ps.GetForceSpringPeak(), "Spring peak");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringLightening)), ps.GetForceSpringLightening(), "Spring lightening");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringDamping)), ps.GetForceSpringDamping(), "Spring damping");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringSpeed)), ps.GetForceSpringSpeed(), "Spring speed");
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("force-feedback")]
@@ -139,8 +139,8 @@ namespace x360ce.Tests
 			foreach (var name in names)
 				Assert.IsFalse(writer.ToString().Contains("<" + name + ">"), name + " at its default was written to the file.");
 			var read = RoundTrip(atDefaults);
-			Assert.AreEqual(Default("ForceSpringCentre"), read.GetForceSpringCentre(), "Left out, the centre is not read back as its default.");
-			Assert.AreEqual(Default("ForceSpringSpeed"), read.GetForceSpringSpeed(), "Left out, the speed is not read back as its default.");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringCentre)), read.GetForceSpringCentre(), "Left out, the centre is not read back as its default.");
+			Assert.AreEqual(Default(nameof(SettingName.ForceSpringSpeed)), read.GetForceSpringSpeed(), "Left out, the speed is not read back as its default.");
 		}
 
 		static PadSetting RoundTrip(PadSetting ps)

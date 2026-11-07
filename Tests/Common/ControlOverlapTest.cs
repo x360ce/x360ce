@@ -62,10 +62,8 @@ namespace x360ce.Tests
 					form.Controls.Add(page);
 					form.Show();
 					Application.DoEvents();
-					var panels = new[] { "GeneralLeftPanel", "GeneralCenterPanel", "GeneralRightPanel" }
-						.Select(name => page.Controls.Find(name, true).Single()).ToList();
-					var boxes = panels.SelectMany(x => x.Controls.OfType<ComboBox>())
-						.Where(x => x.Name != "MapNameComboBox").ToList();
+					var table = page.Controls.Find(nameof(PadControl.GeneralTableLayoutPanel), true).Single();
+					var boxes = table.Controls.OfType<ComboBox>().ToList();
 					Assert.IsTrue(boxes.Count > 0, "The General tab has no mapping boxes.");
 					var widest = MappingTexts()
 						.OrderByDescending(x => TextRenderer.MeasureText(x, boxes[0].Font).Width).First();
@@ -82,8 +80,8 @@ namespace x360ce.Tests
 						"The mapping boxes must all be the same width.");
 					var outside = boxes.Where(x => x.Right > x.Parent.ClientSize.Width)
 						.Select(x => x.Name).ToList();
-					Assert.AreEqual(0, outside.Count, "Past the edge of its panel: " + string.Join(", ", outside));
-					var covered = panels.SelectMany(x => Covered(x)).ToList();
+					Assert.AreEqual(0, outside.Count, "Past the edge of its table: " + string.Join(", ", outside));
+					var covered = Covered(table).ToList();
 					Assert.AreEqual(0, covered.Count, string.Format("{0} control(s) are covered by another:{1}{2}",
 						covered.Count, Environment.NewLine, string.Join(Environment.NewLine, covered)));
 				}
@@ -91,7 +89,7 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>Every text a mapping box can hold: a button, an axis or slider (plain, inverted or half), a POV and a POV direction.</summary>
-		static IEnumerable<string> MappingTexts()
+		internal static IEnumerable<string> MappingTexts()
 		{
 			for (var i = 1; i <= 128; i++)
 				foreach (var type in new[] { MapType.Button, MapType.IButton })

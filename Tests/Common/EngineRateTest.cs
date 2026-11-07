@@ -74,7 +74,7 @@ namespace x360ce.Tests
 				+ "a second. Nothing measured here would describe the program. Remove them from the "
 				+ "Issues tab, which needs Administrator, and run this again.", leftovers.Length));
 			var exe = Ui.FindApp("App.v4");
-			var app = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			try
 			{
 				var window = Ui.WaitForMainWindow(app, TimeSpan.FromSeconds(60));

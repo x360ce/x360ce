@@ -48,7 +48,7 @@ namespace x360ce.Tests
 		/// <summary>Builds a window with the pad on a tab, shown or not, and runs the game changes.</summary>
 		static void SwitchGames(bool padTabShown, bool selectRowFirst)
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
@@ -204,7 +204,7 @@ namespace x360ce.Tests
 							"The page's list has a window, so its tab was shown and this is not the state under test.");
 						Assert.AreEqual(setting.InstanceGuid, pad.GetSelectedSetting()?.InstanceGuid,
 							"The device is not selected on a tab nobody has opened.");
-						Assert.AreEqual("Axis 1", pad.Controls.Find("LeftThumbAxisXComboBox", true).Single().Text,
+						Assert.AreEqual("Axis 1", pad.Controls.Find(nameof(PadControl.LeftThumbAxisXComboBox), true).Single().Text,
 							"The page shows its blank defaults instead of the device's mapping until its tab is opened.");
 					}
 				}
@@ -289,7 +289,7 @@ namespace x360ce.Tests
 
 		/// <summary>
 		/// Runs a body on a shown controller page for a selected game, with every settings change saved
-		/// from the page into the selected row, as the main window saves it (ApplyAllSettingsToXML).
+		/// from the page into the selected row, as the main window saves it (ApplySettingsToXML).
 		/// </summary>
 		static void OnPageThatSavesChanges(Action<PadControl, UserGame> body)
 		{
@@ -403,7 +403,7 @@ namespace x360ce.Tests
 		[Description("A page built before the settings are read shows the game's controller switch once it is given its settings, as the main window starts")]
 		public void A_page_built_before_the_settings_shows_the_game_s_controller_switch()
 		{
-			Ui.OnUiThreadWatched(() =>
+			Ui.OnUiThread(() =>
 			{
 				var existing = SettingsManager.UserSettings.ItemsToArraySynchronized();
 				var oldGame = SettingsManager.CurrentGame;
@@ -429,8 +429,8 @@ namespace x360ce.Tests
 						pad.UpdateSettingsMap();
 						pad.InitPadData();
 						Application.DoEvents();
-						var bar = (ToolStrip)pad.Controls.Find("GamesToolStrip", true).Single();
-						var enable = (ToolStripButton)bar.Items["EnableButton"];
+						var bar = (ToolStrip)pad.Controls.Find(nameof(PadControl.GamesToolStrip), true).Single();
+						var enable = (ToolStripButton)bar.Items[nameof(PadControl.EnableButton)];
 						Assert.IsTrue(enable.Checked, "Controller 2 is on for the game, but its Enable box shows it off: clicking it would turn it off.");
 					}
 				}

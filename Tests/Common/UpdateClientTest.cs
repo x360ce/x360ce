@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using x360ce.App;
 
@@ -214,16 +213,6 @@ namespace x360ce.Tests
 			Assert.IsTrue(UpdateClient.Announced(check, new Version("4.23.0.0")));
 			Assert.IsFalse(UpdateClient.Announced(check, new Version("4.23.1.0")));
 			Assert.IsTrue(UpdateClient.Announced(null, new Version("4.23.1.0")), "Nothing announced, nothing to contradict.");
-		}
-
-		[TestMethod, TestCategory("update"), TestCategory("critical")]
-		[Description("The signature check refuses a file that carries no trusted signature")]
-		public void Signature_check_refuses_an_unsigned_file()
-		{
-			X509Certificate2 certificate;
-			Exception error;
-			// The test assembly is built here and signed by nobody.
-			Assert.IsFalse(CertificateHelper.IsSignedAndTrusted(typeof(UpdateClientTest).Assembly.Location, out certificate, out error));
 		}
 
 		[TestMethod, TestCategory("update"), TestCategory("critical")]

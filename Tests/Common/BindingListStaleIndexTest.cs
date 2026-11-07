@@ -206,7 +206,7 @@ namespace x360ce.Tests
 
 			static void Release()
 			{
-				typeof(ControlsHelper).GetProperty("MainTaskScheduler").SetValue(null, null, null);
+				typeof(ControlsHelper).GetProperty(nameof(ControlsHelper.MainTaskScheduler)).SetValue(null, null, null);
 			}
 		}
 	}

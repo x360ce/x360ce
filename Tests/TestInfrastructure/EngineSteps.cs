@@ -26,44 +26,44 @@ namespace x360ce.Tests
 		/// <summary>The whole pass of <paramref name="helper"/>.</summary>
 		public static Pass RefreshAll(DInputHelper helper)
 		{
-			return Step<Pass>(helper, "RefreshAll");
+			return Step<Pass>(helper, nameof(DInputHelper.RefreshAll));
 		}
 
 		/// <summary>Puts <paramref name="helper"/> in the state every pass has while a worker reads the device list: a list is wanted and a read is under way. No worker is started.</summary>
 		public static void DeviceListReadUnderWay(DInputHelper helper)
 		{
 			helper.UpdateDevicesPending = true;
-			typeof(DInputHelper).GetField("_deviceListReading", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(helper, true);
+			typeof(DInputHelper).GetField(nameof(DInputHelper._deviceListReading), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(helper, true);
 		}
 
 		/// <summary>Step 2 of <paramref name="helper"/>.</summary>
 		public static DiStates UpdateDiStates(DInputHelper helper)
 		{
-			return Step<DiStates>(helper, "UpdateDiStates");
+			return Step<DiStates>(helper, nameof(DInputHelper.UpdateDiStates));
 		}
 
 		/// <summary>Step 3 of <paramref name="helper"/>.</summary>
 		public static XiStates UpdateXiStates(DInputHelper helper)
 		{
-			return Step<XiStates>(helper, "UpdateXiStates");
+			return Step<XiStates>(helper, nameof(DInputHelper.UpdateXiStates));
 		}
 
 		/// <summary>Step 6 of <paramref name="helper"/>.</summary>
 		public static XiRetrieve RetrieveXiStates(DInputHelper helper)
 		{
-			return Step<XiRetrieve>(helper, "RetrieveXiStates");
+			return Step<XiRetrieve>(helper, nameof(DInputHelper.RetrieveXiStates));
 		}
 
 		/// <summary>The display reader's read of the four places, run on the calling thread.</summary>
 		public static Action ReadDisplayStates(DInputHelper helper)
 		{
-			return Step<Action>(helper, "ReadDisplayStates");
+			return Step<Action>(helper, nameof(DInputHelper.ReadDisplayStates));
 		}
 
 		/// <summary>Asks the display reader for one read, making the reader on the first ask.</summary>
 		public static Action AskDisplayRead(DInputHelper helper)
 		{
-			return Step<Action>(helper, "AskDisplayRead");
+			return Step<Action>(helper, nameof(DInputHelper.AskDisplayRead));
 		}
 
 		/// <summary>One of the engine's private steps, as a delegate made once, so calling it makes nothing.</summary>

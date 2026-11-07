@@ -78,67 +78,40 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("An image is made at each size once, always from its original, with hard edges and no faded border")]
-		public void Images_are_enlarged_once_from_the_original()
+		[Description("An image is made at each size once, always from its original, with no faded border")]
+		public void Images_are_made_once_from_the_original()
 		{
-			var original = new Bitmap(16, 16);
+			var original = new Bitmap(32, 32);
 			using (var g = Graphics.FromImage(original))
 			{
 				g.Clear(Color.White);
-				g.FillRectangle(Brushes.Black, 0, 0, 8, 16);
+				g.FillRectangle(Brushes.Black, 0, 0, 16, 32);
 			}
 			var copy = (Bitmap)ControlsHelper.ScaleImage(original, new Size(24, 24));
 			Assert.AreEqual(new Size(24, 24), copy.Size);
 			Assert.AreSame(copy, ControlsHelper.ScaleImage(original, new Size(24, 24)), "The same size was made twice.");
 			Assert.AreSame(original, ControlsHelper.GetOriginal(copy));
-			Assert.AreSame(original, ControlsHelper.ScaleImage(copy, new Size(16, 16)), "A copy asked for at the original's size is the original.");
-			Assert.AreSame(original, ControlsHelper.GetOriginal(ControlsHelper.ScaleImage(copy, new Size(32, 32))),
+			Assert.AreSame(original, ControlsHelper.ScaleImage(copy, new Size(32, 32)), "A copy asked for at the original's size is the original.");
+			Assert.AreSame(original, ControlsHelper.GetOriginal(ControlsHelper.ScaleImage(copy, new Size(16, 16))),
 				"A copy was made from another copy, which blurs it twice.");
-			// The edge between the two halves stays within a pixel or two, where enlarging straight
-			// to 150 % spreads it over three; the outermost pixels are not mixed with the outside.
-			var grey = Enumerable.Range(0, 24).Count(x => { var c = copy.GetPixel(x, 12); return c.R > 25 && c.R < 230; });
-			Assert.IsTrue(grey <= 2, grey + " pixels across the edge are neither black nor white.");
 			foreach (var corner in new[] { copy.GetPixel(0, 0), copy.GetPixel(23, 0), copy.GetPixel(0, 23), copy.GetPixel(23, 23) })
 				Assert.AreEqual(255, corner.A, "A corner faded into the outside of the picture.");
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("An image drawn at larger sizes is handed out as drawn, and reduced from the nearest larger rather than enlarged")]
-		public void Drawn_sizes_are_used_before_enlarging()
+		[Description("A picture made at twice its size shows at half of it times the screen's scale, once, and in whole pixels at every zoom level")]
+		public void A_picture_is_brought_down_from_twice_its_size()
 		{
-			// Each size is one colour, so a copy shows which one it was made from.
-			var original = Filled(16, Color.Red);
-			var at24 = Filled(24, Color.Lime);
-			var at32 = Filled(32, Color.Blue);
-			ControlsHelper.SetDrawnSizes(original, at32, at24);
-			Assert.AreSame(at24, ControlsHelper.ScaleImage(original, new Size(24, 24)), "The version drawn at 24 pixels was not used.");
-			Assert.AreSame(at32, ControlsHelper.ScaleImage(original, new Size(32, 32)), "The version drawn at 32 pixels was not used.");
-			Assert.AreSame(original, ControlsHelper.GetOriginal(at24), "A drawn version is not known as a copy, so it could be enlarged again.");
-			CollectionAssert.AreEqual(new Image[] { at24, at32 }, ControlsHelper.GetDrawnSizes(at24));
-			var at20 = (Bitmap)ControlsHelper.ScaleImage(original, new Size(20, 20));
-			Assert.AreSame(original, ControlsHelper.GetOriginal(at20));
-			Assert.AreEqual(Color.Lime.ToArgb(), at20.GetPixel(10, 10).ToArgb(), "20 pixels was not reduced from the version drawn at 24.");
-			var at48 = (Bitmap)ControlsHelper.ScaleImage(original, new Size(48, 48));
-			Assert.AreEqual(Color.Blue.ToArgb(), at48.GetPixel(24, 24).ToArgb(), "48 pixels was not enlarged from the largest version.");
-		}
-
-		[TestMethod, TestCategory("ui")]
-		[Description("A picture drawn at a changing size is drawn from the smallest version at least that large, the picture itself included, else the largest")]
-		public void The_version_drawn_nearest_above_a_size_is_picked()
-		{
-			var original = Filled(16, Color.Red);
-			var at24 = Filled(24, Color.Lime);
-			var at32 = Filled(32, Color.Blue);
-			ControlsHelper.SetDrawnSizes(original, at32, at24);
-			Assert.AreSame(original, ControlsHelper.GetDrawnSize(original, new Size(12, 12)), "A size below the picture's own was not drawn from the picture.");
-			Assert.AreSame(original, ControlsHelper.GetDrawnSize(original, new Size(16, 16)));
-			Assert.AreSame(at24, ControlsHelper.GetDrawnSize(original, new Size(20, 20)), "20 pixels was not drawn from the version drawn at 24.");
-			Assert.AreSame(at32, ControlsHelper.GetDrawnSize(original, new Size(30, 30)));
-			Assert.AreSame(at32, ControlsHelper.GetDrawnSize(original, new Size(48, 48)), "Past the largest version, the largest was not used.");
-			var copy = ControlsHelper.ScaleImage(original, new Size(18, 18));
-			Assert.AreSame(at24, ControlsHelper.GetDrawnSize(copy, new Size(20, 20)), "A copy was not traced back to the versions of its original.");
-			var plain = Filled(16, Color.Red);
-			Assert.AreSame(plain, ControlsHelper.GetDrawnSize(plain, new Size(32, 32)), "A picture without versions was not drawn as it is.");
+			var original = Filled(32, Color.Red);
+			var shown = ControlsHelper.ScalePicture(original);
+			var side = (int)Math.Round(32 * ControlsHelper.DpiScale / 2);
+			Assert.AreEqual(new Size(side, side), shown.Size);
+			Assert.AreSame(shown, ControlsHelper.ScalePicture(original), "The picture was made again.");
+			Assert.AreSame(shown, ControlsHelper.ScalePicture(shown), "A copy was scaled again.");
+			Assert.AreSame(shown, ControlsHelper.ScaleImage(shown), "A copy was enlarged again.");
+			foreach (var picture in new[] { 32, 48, 64 })
+				foreach (var zoom in new[] { 1.00, 1.25, 1.50, 1.75, 2.00 })
+					Assert.AreEqual(0, picture / 2 * zoom % 1, picture + " px at " + zoom + " is not a whole number of pixels.");
 		}
 
 		static Bitmap Filled(int size, Color color)

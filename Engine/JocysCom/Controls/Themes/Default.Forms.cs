@@ -297,6 +297,262 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		#endregion
 
+		#region Fonts
+
+		/// <summary>
+		/// The interface font, which every control that does not choose a font of its own is drawn in; null while Windows Forms'
+		/// own default font is in use. See <see cref="SetFonts"/>.
+		/// </summary>
+		public static Font Font { get; private set; }
+
+		/// <summary>The family code and values whose letters line up are drawn in, in place of Consolas; null keeps Consolas.</summary>
+		public static FontFamily CodeFamily { get; private set; }
+
+		/// <summary>
+		/// The families Windows and the Windows Forms designer give text, which the interface family stands in for, with Windows
+		/// Forms' own default font's.
+		/// </summary>
+		static readonly string[] WindowsFamilies = { "Microsoft Sans Serif", "Segoe UI" };
+
+		/// <summary>The family Windows shows code in, which <see cref="CodeFamily"/> stands in for.</summary>
+		const string WindowsCodeFamily = "Consolas";
+
+		/// <summary>The size Windows Forms' designer writes for its default font, which a control naming it means as the interface size.</summary>
+		const float DesignerFontSize = 8.25f;
+
+		/// <summary>Windows Forms' own default font, read before <see cref="SetFonts"/> first changed it.</summary>
+		static Font _windowsFont;
+
+		/// <summary>The family given for the interface; null keeps the family each font names.</summary>
+		static FontFamily _interfaceFamily;
+
+		/// <summary>How much larger than in Windows' font the handle windows are measured with lays them out.</summary>
+		static float _layoutScale;
+
+		/// <summary>How much larger the interface font is than Windows Forms' default font, which the fonts it replaces were designed with.</summary>
+		static float _textScale;
+
+		/// <summary>The interface thread, for the Windows setting changes that arrive on another one.</summary>
+		static WindowsFormsSynchronizationContext _fontContext;
+
+		static readonly FieldInfo DefaultFontField = typeof(Control).GetField("defaultFont", BindingFlags.Static | BindingFlags.NonPublic);
+		static readonly FieldInfo DefaultFontHandleField = typeof(Control).GetField("defaultFontHandleWrapper", BindingFlags.Static | BindingFlags.NonPublic);
+		static readonly FieldInfo MenuFontField = typeof(ToolStripManager).GetField("defaultFont", BindingFlags.Static | BindingFlags.NonPublic);
+		static readonly MethodInfo DefaultFontHandleMethod = typeof(Control).GetMethod("GetDefaultFontHandleWrapper", BindingFlags.Static | BindingFlags.NonPublic);
+
+		/// <summary>
+		/// Draws the interface in a family of the program's choice at a size, and code in another. Call it on the interface
+		/// thread before the first window is made. Without an interface family, at Windows Forms' default size and layout, the
+		/// windows made after it have Windows Forms' own fonts again.
+		/// </summary>
+		/// <param name="interfaceFamily">The family text is drawn in; null keeps the family each font names.</param>
+		/// <param name="codeFamily">The family code is drawn in, in place of Consolas; null keeps Consolas. Used with an interface family only.</param>
+		/// <param name="sizeInPoints">The interface font's size; 0 for the size of Windows Forms' default font.</param>
+		/// <param name="layoutScale">How much larger than in Windows Forms' default font windows are laid out, and than Windows' menus the menus are drawn; 1 for both as Windows has them.</param>
+		/// <remarks>
+		/// <para>
+		/// Every window keeps the layout it has in Windows' font, made larger or smaller by the layout scale. Windows Forms
+		/// scales a window by how much larger the font in use is than the one it was designed with (AutoScaleMode.Font), so a
+		/// face whose lines are taller at the same size would make every window taller. It measures a window that has no parent
+		/// with the handle of its default font, and that handle is made here, from Windows' font at the layout scale, before the
+		/// default font changes: the scale stays Windows', or as much larger as asked, and the text is drawn in the new font.
+		/// </para>
+		/// <para>
+		/// Windows' own controls draw with the font handle of the window they are on, which for a window without a font of its
+		/// own is that same handle. So each window is given the interface font as its own when it is themed: the font it
+		/// already has, which lays nothing out again, with a handle of its own made from it.
+		/// </para>
+		/// <para>
+		/// A control, a tool bar item or a grid style that names Windows Forms' default family, Microsoft Sans Serif or Segoe
+		/// UI is drawn in the interface family, one that names Consolas in the code family, in its own style. Every font
+		/// replaced is drawn larger or smaller by as much as the interface font is than Windows Forms' default font, which it
+		/// stands in for: a control that names Windows Forms' default size is drawn at the interface size. A font made from a
+		/// family rather than named, as a program makes one from the interface font, is left as it is. A control holding a
+		/// layout of its own (a <see cref="ContainerControl"/>) keeps a font it names, which would scale it again. The menus
+		/// are drawn in the interface family at the size of Windows' menu font, which is Windows' text size already, made
+		/// larger or smaller by the layout scale.
+		/// </para>
+		/// <para>
+		/// Windows Forms forgets both default fonts when Windows' settings change: they are set again after each change.
+		/// The default fonts are Windows Forms' own fields, as .NET Framework names them; where they are named otherwise,
+		/// the fonts stay Windows Forms' own, and where the handle is named otherwise, windows are laid out in Windows' font.
+		/// </para>
+		/// </remarks>
+		public static void SetFonts(FontFamily interfaceFamily, FontFamily codeFamily, float sizeInPoints = 0, float layoutScale = 1)
+		{
+			if (DefaultFontField == null || DefaultFontHandleMethod == null)
+				return;
+			if (_windowsFont == null)
+			{
+				_windowsFont = Control.DefaultFont;
+				// The handle a window without a parent is measured with, made now, from Windows' font, and kept.
+				DefaultFontHandleMethod.Invoke(null, null);
+				_layoutScale = 1;
+				_fontContext = new WindowsFormsSynchronizationContext();
+				SystemEvents.UserPreferenceChanged += (sender, e) => _fontContext.Post(x => SetDefaultFonts(), null);
+			}
+			if (layoutScale != _layoutScale && DefaultFontHandleField != null)
+			{
+				// Made again from Windows' font at the layout scale, and kept.
+				DefaultFontField.SetValue(null, new Font(_windowsFont.FontFamily, _windowsFont.SizeInPoints * layoutScale, _windowsFont.Style, GraphicsUnit.Point));
+				DefaultFontHandleField.SetValue(null, null);
+				DefaultFontHandleMethod.Invoke(null, null);
+				_layoutScale = layoutScale;
+			}
+			if (sizeInPoints <= 0)
+				sizeInPoints = _windowsFont.SizeInPoints;
+			_textScale = sizeInPoints / DesignerFontSize;
+			_interfaceFamily = interfaceFamily;
+			// Asked for by face name only, so Windows finds the face whatever the language of the default font.
+			Font = interfaceFamily == null && sizeInPoints == _windowsFont.SizeInPoints ? null
+				: new Font(interfaceFamily ?? _windowsFont.FontFamily, sizeInPoints, _windowsFont.Style, GraphicsUnit.Point);
+			CodeFamily = interfaceFamily == null ? null : codeFamily;
+			SetDefaultFonts();
+		}
+
+		/// <summary>A font for code at a size: in <see cref="CodeFamily"/>, or in Consolas while the program has none.</summary>
+		public static Font NewCodeFont(float sizeInPoints)
+		{
+			return CodeFamily == null ? new Font(WindowsCodeFamily, sizeInPoints) : new Font(CodeFamily, sizeInPoints);
+		}
+
+		/// <summary>Gives Windows Forms the interface font as its default, and the menus their size of it; or their own fonts back.</summary>
+		static void SetDefaultFonts()
+		{
+			DefaultFontField.SetValue(null, Font);
+			if (MenuFontField == null)
+				return;
+			// Not set, Windows Forms works the menus' font out again from Windows' menu font.
+			using (var windows = SystemFonts.MenuFont)
+				MenuFontField.SetValue(null, InterfaceFontFor(windows, _layoutScale));
+		}
+
+		/// <summary>
+		/// The program's font in place of one a control, a tool bar item or a grid style names (<see cref="InterfaceFontFor"/>);
+		/// null to keep it. A font made from a family rather than asked for by its name, as a program makes a smaller or a bold
+		/// one from the interface font, is the program's own already, and replacing it would scale it twice.
+		/// </summary>
+		static Font ReplaceFont(Font font)
+		{
+			return string.IsNullOrEmpty(font?.OriginalFontName) ? null : InterfaceFontFor(font, _textScale);
+		}
+
+		/// <summary>
+		/// A font in the interface family in place of one in a family Windows gives text, or in the code family in place of
+		/// Consolas, in its style and larger or smaller by a scale; null for any other font, and while the program draws in
+		/// Windows' fonts. Without an interface or a code family a font keeps its family and only its size changes.
+		/// </summary>
+		static Font InterfaceFontFor(Font font, float scale)
+		{
+			if (font == null || Font == null)
+				return null;
+			var name = font.FontFamily.Name;
+			FontFamily family;
+			if (name == WindowsCodeFamily)
+				family = CodeFamily ?? font.FontFamily;
+			else if (WindowsFamilies.Contains(name) || name == _windowsFont.FontFamily.Name)
+				family = _interfaceFamily ?? font.FontFamily;
+			else
+				return null;
+			if (!family.IsStyleAvailable(font.Style))
+				return null;
+			return new Font(family, font.Size * scale, font.Style, font.Unit);
+		}
+
+		/// <summary>Draws a control in the program's fonts, and gives a window the interface font as its own, as the theme first meets it.</summary>
+		static void ApplyFonts(Control control, State state)
+		{
+			if (Font == null)
+				return;
+			if (control is Form && !state.FontSet)
+			{
+				// Equal to the font it has, so nothing is measured or laid out again: only the handle the controls on it draw
+				// with is made from it from now on, and those already made are given it.
+				if (control.Font.Equals(Font))
+				{
+					control.Font = Font;
+					SetWindowFonts(control);
+				}
+			}
+			else if (state.FontSet && !(control is ContainerControl))
+			{
+				var font = ReplaceFont(control.Font);
+				if (font != null)
+					control.Font = font;
+			}
+			if (control is DataGridView grid)
+				ApplyFonts(grid);
+			if (control is ToolStrip strip)
+				ApplyFonts(strip.Items);
+		}
+
+		/// <summary>
+		/// Gives the Windows controls on a control, made already, the font handle they draw with now. A rich text box is left
+		/// as it is: the font would replace every font its text carries.
+		/// </summary>
+		static void SetWindowFonts(Control control)
+		{
+			foreach (Control child in control.Controls)
+			{
+				if (child.IsHandleCreated && !(child is RichTextBox))
+					SetWindowFontMethod?.Invoke(child, null);
+				SetWindowFonts(child);
+			}
+		}
+
+		/// <summary>Draws a grid's styles that name a font in the program's fonts.</summary>
+		static void ApplyFonts(DataGridView grid)
+		{
+			var style = ReplaceFont(grid.DefaultCellStyle);
+			if (style != null)
+				grid.DefaultCellStyle = style;
+			style = ReplaceFont(grid.ColumnHeadersDefaultCellStyle);
+			if (style != null)
+				grid.ColumnHeadersDefaultCellStyle = style;
+			style = ReplaceFont(grid.RowHeadersDefaultCellStyle);
+			if (style != null)
+				grid.RowHeadersDefaultCellStyle = style;
+			style = ReplaceFont(grid.RowsDefaultCellStyle);
+			if (style != null)
+				grid.RowsDefaultCellStyle = style;
+			style = ReplaceFont(grid.AlternatingRowsDefaultCellStyle);
+			if (style != null)
+				grid.AlternatingRowsDefaultCellStyle = style;
+			foreach (DataGridViewColumn column in grid.Columns)
+			{
+				if (!column.HasDefaultCellStyle)
+					continue;
+				style = ReplaceFont(column.DefaultCellStyle);
+				if (style != null)
+					column.DefaultCellStyle = style;
+			}
+		}
+
+		/// <summary>A copy of a grid style in the program's font in place of the one it names; null to keep the style.</summary>
+		static DataGridViewCellStyle ReplaceFont(DataGridViewCellStyle style)
+		{
+			var font = ReplaceFont(style.Font);
+			return font == null ? null : new DataGridViewCellStyle(style) { Font = font };
+		}
+
+		/// <summary>Draws the tool bar and menu items that name a font in the program's fonts, those of their menus too.</summary>
+		static void ApplyFonts(ToolStripItemCollection items)
+		{
+			foreach (ToolStripItem item in items)
+			{
+				if (TypeDescriptor.GetProperties(item)[nameof(ToolStripItem.Font)].ShouldSerializeValue(item))
+				{
+					var font = ReplaceFont(item.Font);
+					if (font != null)
+						item.Font = font;
+				}
+				if (item is ToolStripDropDownItem menu && menu.HasDropDownItems)
+					ApplyFonts(menu.DropDownItems);
+			}
+		}
+
+		#endregion
+
 		#region Controls
 
 		/// <summary>What a control looked like before the dark theme changed it, so the light theme can put it back.</summary>
@@ -315,15 +571,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Color FlatMouseDownBackColor;
 			public bool UseVisualStyleBackColor;
 			/// <summary>
-			/// A check box's own padding, which the larger box of Default.xaml widens, a drop-down list's, which its height does,
-			/// a number box's, which the room of its frame does, or a tool bar's, which its items' margins replace.
+			/// A check box's own padding, which the larger box of Default.xaml widens, a number box's, which the room of its frame does, or a tool bar's, which its items' margins replace.
 			/// </summary>
 			public Padding Padding;
 			public bool EnableHeadersVisualStyles;
 			public Color LinkColor;
 			public Color VisitedLinkColor;
 			public ToolStripRenderMode RenderMode;
-			/// <summary>Whether the program gave a tool bar a font of its own, which it then keeps.</summary>
+			/// <summary>Whether the program gave the control a font of its own, which a tool bar then keeps.</summary>
 			public bool FontSet;
 			public ControlStyles? PaintStyles;
 			public List<KeyValuePair<DataGridViewButtonColumn, FlatStyle>> ButtonColumns;
@@ -360,6 +615,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Frame Frame;
 			/// <summary>What a grid drawn as the WPF programs draw one had before.</summary>
 			public GridLook Grid;
+			/// <summary>
+			/// A container's own side padding, which a list filling it lent to the controls docked above and below it, and those
+			/// controls; null while the container has its padding.
+			/// </summary>
+			public Padding? LentPadding;
+			public List<Control> LentTo;
 		}
 
 		/// <summary>What a grid drawn as the WPF programs draw one had before, so it can have it back.</summary>
@@ -371,9 +632,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public DataGridViewCellBorderStyle CellBorderStyle;
 			public DataGridViewHeaderBorderStyle HeadersBorderStyle;
 			public Padding HeaderPadding;
+			public DataGridViewColumnHeadersHeightSizeMode HeadersHeightSizeMode;
 			public int HeadersHeight;
 			public int RowHeight;
 			public List<KeyValuePair<DataGridViewImageColumn, Padding>> ImagePadding;
+			/// <summary>The column given the room before its header and cells as the first one shown, and its own paddings.</summary>
+			public DataGridViewColumn First;
+			public Padding FirstPadding;
+			public Padding FirstHeaderPadding;
 		}
 
 		static readonly ConditionalWeakTable<Control, State> States = new ConditionalWeakTable<Control, State>();
@@ -405,6 +671,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{
 				state = Remember(control);
 				States.Add(control, state);
+				ApplyFonts(control, state);
 				// A grid is drawn off the screen first, in every theme, so rows written while it is shown do not flicker.
 				if (control is DataGridView)
 					SetStyleMethod.Invoke(control, new object[] { ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true });
@@ -444,6 +711,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				BackColorSet = properties[nameof(Control.BackColor)].ShouldSerializeValue(control),
 				ForeColor = control.ForeColor,
 				ForeColorSet = properties[nameof(Control.ForeColor)].ShouldSerializeValue(control),
+				FontSet = properties[nameof(Control.Font)].ShouldSerializeValue(control),
 			};
 			var button = control as ButtonBase;
 			if (button != null)
@@ -496,7 +764,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is ToolStrip strip)
 			{
 				state.RenderMode = strip.RenderMode;
-				state.FontSet = properties[nameof(Control.Font)].ShouldSerializeValue(control);
 				state.Padding = strip.Padding;
 			}
 			if (control is TrackBar slider)
@@ -667,7 +934,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				combo.GotFocus -= Repaint;
 				combo.LostFocus -= Repaint;
 				combo.FontChanged -= FitComboBox;
-				combo.SizeChanged -= ComboBox_SizeChanged;
 				if (paint)
 				{
 					combo.MouseEnter += Repaint;
@@ -677,7 +943,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					combo.GotFocus += Repaint;
 					combo.LostFocus += Repaint;
 					combo.FontChanged += FitComboBox;
-					combo.SizeChanged += ComboBox_SizeChanged;
 				}
 				// Made editable, or a list again, it is drawn in its new shape.
 				combo.DropDown -= ComboBox_DropDown;
@@ -715,12 +980,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				grid.Paint -= WpfGrid_Paint;
 				grid.CellMouseEnter -= GridCheckCell_Repaint;
 				grid.CellMouseLeave -= GridCheckCell_Repaint;
+				grid.ColumnAdded -= Grid_ColumnsChanged;
+				grid.ColumnRemoved -= Grid_ColumnsChanged;
+				grid.ColumnDisplayIndexChanged -= Grid_ColumnsChanged;
+				grid.ColumnStateChanged -= Grid_ColumnsChanged;
+				grid.DataBindingComplete -= Grid_ColumnsChanged;
 				if (wpf)
 				{
 					grid.CellPainting += WpfGrid_CellPainting;
 					grid.Paint += WpfGrid_Paint;
 					grid.CellMouseEnter += GridCheckCell_Repaint;
 					grid.CellMouseLeave += GridCheckCell_Repaint;
+					grid.ColumnAdded += Grid_ColumnsChanged;
+					grid.ColumnRemoved += Grid_ColumnsChanged;
+					grid.ColumnDisplayIndexChanged += Grid_ColumnsChanged;
+					grid.ColumnStateChanged += Grid_ColumnsChanged;
+					grid.DataBindingComplete += Grid_ColumnsChanged;
 				}
 				else if (IsDark && HasDarkCheckBox())
 					grid.CellPainting += CheckCell_Painting;
@@ -772,7 +1047,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 								host.Font = strip.Font;
 				}
 				// Its items keep their distance from its edge with their own margins, as a WPF tool bar's do.
-				var padding = wpf ? Padding.Empty : state.Padding;
+				var padding = ToolBarPadding(strip, state, wpf);
 				if (strip.Padding != padding)
 					strip.Padding = padding;
 				strip.Layout -= ToolBar_Layout;
@@ -796,10 +1071,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is TrackBar slider)
 			{
 				SetPaintedHere(slider, state, !SystemInformation.HighContrast, Track_Paint);
-				// Windows repaints a slider where it has the thumb, which is drawn where WPF has it.
+				// Windows repaints a slider where it has the thumb, which is drawn where WPF has it, and its thumb shows
+				// the focus.
 				slider.ValueChanged -= Repaint;
+				slider.GotFocus -= Repaint;
+				slider.LostFocus -= Repaint;
 				if (!SystemInformation.HighContrast)
+				{
 					slider.ValueChanged += Repaint;
+					slider.GotFocus += Repaint;
+					slider.LostFocus += Repaint;
+				}
 				FitSlider(slider, state);
 			}
 			if (control is PropertyGrid properties)
@@ -885,7 +1167,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		static VisualStyleRenderer _checkRenderer;
 
-		static readonly MethodInfo GetContentBoundsMethod = typeof(DataGridViewCell).GetMethod("GetContentBounds",
+		static readonly MethodInfo GetContentBoundsMethod = typeof(DataGridViewCell).GetMethod(nameof(DataGridViewCell.GetContentBounds),
 			BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(Graphics), typeof(DataGridViewCellStyle), typeof(int) }, null);
 
 		/// <summary>True when Windows has a dark check box to draw, on Windows 10 1809 and later.</summary>
@@ -1138,7 +1420,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		{
 			var button = (ButtonBase)sender;
 			Rectangle text, image;
-			if (button.Enabled || button.Text.Length == 0 || !GetButtonLayout(button, e, out text, out image))
+			bool shifted;
+			if (button.Enabled || button.Text.Length == 0 || !GetButtonLayout(button, e, out text, out image, out shifted))
 				return;
 			var behind = button.BackColor.A == 255 ? button.BackColor : button.Parent?.BackColor ?? SystemColors.Control;
 			using (var brush = new SolidBrush(behind))
@@ -1286,23 +1569,40 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				g.FillPath(brush, corners);
 			}
 			// Windows Forms draws a disabled button's text in a shade of its fill, too dark to read on a dark one, so the
-			// face is drawn again at half strength, as WPF draws a disabled control, with the image and text where Windows
-			// Forms put them.
+			// face is drawn again at half strength, as WPF draws a disabled control, with the image and text where the layout
+			// puts them. It draws a button's image a pixel right of and below the place its layout centres it in, as .NET
+			// Framework 1.1 did, so an enabled button's image is moved there: the face's colour over it, the image in its
+			// place, and the text again where it was covered.
 			Rectangle text, image;
-			if (!button.Enabled && GetButtonLayout(button, e, out text, out image))
+			bool shifted;
+			var picture = button.Image;
+			if (!button.Enabled && GetButtonLayout(button, e, out text, out image, out shifted))
 			{
 				using (var brush = new SolidBrush(Half(button.BackColor, behind)))
 				using (var face = RoundedRectangle(bounds, left, right, right, left))
 					g.FillPath(brush, face);
-				var picture = button.Image;
-				if (picture != null)
+				if (picture != null && !image.IsEmpty)
 					using (var attributes = new ImageAttributes())
 					{
 						attributes.SetColorMatrix(new ColorMatrix { Matrix33 = 0.5f });
-						var place = new Rectangle(image.X + (image.Width - picture.Width) / 2, image.Y + (image.Height - picture.Height) / 2, picture.Width, picture.Height);
-						g.DrawImage(picture, place, 0, 0, picture.Width, picture.Height, GraphicsUnit.Pixel, attributes);
+						g.DrawImage(picture, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
 					}
 				TextRenderer.DrawText(g, button.Text, button.Font, text, DisabledText(button.ForeColor, picture != null, behind), TextFlags(button));
+			}
+			else if (button.Enabled && picture != null && CheckStateOf(button) == CheckState.Unchecked
+				&& GetButtonLayout(button, e, out text, out image, out shifted) && shifted)
+			{
+				var drawn = new Rectangle(image.X + 1, image.Y + 1, image.Width, image.Height);
+				var fill = (bool)(MouseIsDownProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseDownBackColor
+					: (bool)(MouseIsOverProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseOverBackColor
+					: button.BackColor;
+				using (var brush = new SolidBrush(fill))
+					g.FillRectangle(brush, drawn);
+				g.DrawImage(picture, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+				var clip = g.Clip;
+				g.SetClip(drawn, CombineMode.Intersect);
+				TextRenderer.DrawText(g, button.Text, button.Font, text, button.ForeColor, TextFlags(button) | TextFormatFlags.PreserveGraphicsClipping);
+				g.Clip = clip;
 			}
 			if (button.Focused && (bool)(ShowFocusCuesProperty?.GetValue(button, null) ?? false))
 				using (var pen = new Pen(Themed("SelectedBackground", SystemColors.Highlight)))
@@ -1312,14 +1612,50 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		static readonly PropertyInfo AdapterProperty = typeof(ButtonBase).GetProperty("Adapter", BindingFlags.Instance | BindingFlags.NonPublic);
+		static readonly PropertyInfo MouseIsDownProperty = typeof(ButtonBase).GetProperty("MouseIsDown", BindingFlags.Instance | BindingFlags.NonPublic);
+		static readonly PropertyInfo MouseIsOverProperty = typeof(ButtonBase).GetProperty("MouseIsOver", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		/// <summary>Where Windows Forms puts a button's text and image, from its own layout; false where the runtime does not show it.</summary>
-		static bool GetButtonLayout(ButtonBase button, PaintEventArgs e, out Rectangle text, out Rectangle image)
+		/// <summary>Whether a check box or radio button is checked; a push button never is.</summary>
+		static CheckState CheckStateOf(ButtonBase button)
+		{
+			return (button as CheckBox)?.CheckState ?? ((button as RadioButton)?.Checked == true ? CheckState.Checked : CheckState.Unchecked);
+		}
+
+		/// <summary>
+		/// Where Windows Forms paints a button's text, and the place its layout centres the button's image in, from its own
+		/// layout; false where the runtime does not show it.
+		/// </summary>
+		/// <param name="button">The button.</param>
+		/// <param name="e">What the button is being painted with.</param>
+		/// <param name="text">Where the text is painted.</param>
+		/// <param name="image">The part of the image painted, in the place the layout centres it in.</param>
+		/// <param name="shifted">
+		/// Whether Windows Forms paints the image whole a pixel right of and below that place, as .NET Framework 1.1 laid a
+		/// button out, which a push button still is; otherwise it paints it there.
+		/// </param>
+		/// <remarks>
+		/// The layout an adapter gives on its own is the one it measures a button with, pressed, its text a pixel right of and
+		/// below where a raised button has it. A button is painted with the layout of its adapter's Paint...Layout, raised unless
+		/// it is a checked check box or radio button that has no colour of its own for that.
+		/// </remarks>
+		static bool GetButtonLayout(ButtonBase button, PaintEventArgs e, out Rectangle text, out Rectangle image, out bool shifted)
 		{
 			text = image = Rectangle.Empty;
+			shifted = false;
 			const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 			var adapter = AdapterProperty?.GetValue(button, null);
-			var options = adapter?.GetType().GetMethod("Layout", flags, null, new[] { typeof(PaintEventArgs) }, null)?.Invoke(adapter, new object[] { e });
+			var up = CheckStateOf(button) == CheckState.Unchecked || !button.FlatAppearance.CheckedBackColor.IsEmpty;
+			var paint = adapter?.GetType().GetMethods(flags).FirstOrDefault(x => !x.IsStatic && x.Name.StartsWith("Paint") && x.Name.EndsWith("Layout")
+				&& x.GetParameters().Any(p => p.Name == "up"));
+			var options = paint != null
+				? paint.Invoke(adapter, paint.GetParameters().Select(p =>
+					p.ParameterType == typeof(PaintEventArgs) ? e
+					: p.Name == "up" ? up
+					: p.Name == "borderSize" ? button.FlatAppearance.BorderSize
+					// A raised pop-up button has a one-pixel border painted.
+					: p.Name == "paintedBorder" ? 1
+					: (object)false).ToArray())
+				: adapter?.GetType().GetMethod("Layout", flags, null, new[] { typeof(PaintEventArgs) }, null)?.Invoke(adapter, new object[] { e });
 			var data = options?.GetType().GetMethod("Layout", flags, null, Type.EmptyTypes, null)?.Invoke(options, null);
 			// .NET Framework names the fields in lower case, later Windows Forms in upper.
 			var type = data?.GetType();
@@ -1328,7 +1664,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (textField == null || imageField == null)
 				return false;
 			text = (Rectangle)textField.GetValue(data);
-			image = (Rectangle)imageField.GetValue(data);
+			var place = (Rectangle)imageField.GetValue(data);
+			var size = button.Image?.Size ?? Size.Empty;
+			var compat = options.GetType().GetField("everettButtonCompat", flags) ?? options.GetType().GetField("DotNetOneButtonCompat", flags);
+			var start = type.GetField("imageStart", flags) ?? type.GetField("ImageStart", flags);
+			shifted = compat != null && start != null && (bool)compat.GetValue(options);
+			image = shifted
+				? new Rectangle((Point)start.GetValue(data), size)
+				: Rectangle.Intersect(new Rectangle(place.Location, size), place);
 			return true;
 		}
 
@@ -1551,6 +1894,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
+		/// The padding of a tool bar: as the WPF programs draw one, none but the room a list beside it lent it; otherwise its own.
+		/// </summary>
+		static Padding ToolBarPadding(ToolStrip strip, State state, bool wpf)
+		{
+			return wpf ? LentRoom(strip) : state.Padding;
+		}
+
+		/// <summary>
 		/// Lays the items out again each time the tool bar is: an item added, or a picture enlarged to the screen's scale after
 		/// the theme was applied, would otherwise keep a padding worked out for what it had before.
 		/// </summary>
@@ -1736,14 +2087,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Gives the window of a drop-down list its font, and makes a list painted here as tall as a push button in the same
-		/// font, as Default.xaml makes both: its text with 5 device-independent pixels above and below. One on a tool bar keeps
-		/// the bar's height, and any other list gets its own size back.
+		/// Makes a list painted here as tall as a push button in the same font, as Default.xaml makes both: its text with 5
+		/// device-independent pixels above and below, and gives the list's window its font. One on a tool bar keeps the bar's
+		/// height.
 		/// </summary>
 		/// <remarks>
-		/// Windows Forms gives its font only to a window it leaves Windows to paint; without it, Windows sizes the field and draws
-		/// the list it opens in the system's bitmap font. The padding is what Windows Forms adds to a list's preferred height, so
-		/// a layout leaves the room.
+		/// A table lays a list out by the height it was given, so the list is given its height. Windows makes the window as
+		/// tall as its field and an edge of its own, which grows with the screen's scale, so the field is made what the height
+		/// leaves of it, read from the window. A list painted here draws its items itself (<see cref="DrawMode.OwnerDrawFixed"/>),
+		/// so its field is its <see cref="ComboBox.ItemHeight"/>, which Windows Forms gives Windows again whenever it makes the
+		/// window. Windows Forms gives its font only to a window it leaves Windows to paint; without it, Windows draws the text
+		/// box of an editable list in the system's bitmap font.
 		/// </remarks>
 		static void FitComboBox(object sender, EventArgs e)
 		{
@@ -1752,27 +2106,19 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (!States.TryGetValue(combo, out state))
 				return;
 			var height = ComboBoxHeight(combo);
-			// The padding makes up what the list's own height lacks: the height it prefers with the program's padding, which
-			// Windows Forms keeps until the font changes and, on .NET Framework, works out without any padding at all.
-			if (combo.Padding != state.Padding)
-				combo.Padding = state.Padding;
-			PreferredHeightField?.SetValue(combo, (short)-1);
-			var extra = Math.Max(0, height - combo.PreferredHeight);
-			var padding = new Padding(state.Padding.Left, state.Padding.Top + extra / 2, state.Padding.Right, state.Padding.Bottom + extra - extra / 2);
-			if (combo.Padding != padding)
-				combo.Padding = padding;
-			PreferredHeightField?.SetValue(combo, (short)-1);
-			// A table lays a list out by the height it was given, which Windows did not keep: the list is given the height it
-			// is raised to below, so a table makes room for all of it and centres it as it does the boxes beside it.
 			if (height > 0 && combo.Height != height)
 				combo.Height = height;
 			if (!combo.IsHandleCreated)
 				return;
 			SetWindowFontMethod?.Invoke(combo, null);
-			// The items of the list it opens as tall as Default.xaml's, their text with 5 above and below.
-			if (PaintsComboBox(combo))
-				NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, IntPtr.Zero, (IntPtr)ControlHeight(combo));
-			RaiseComboBox(combo, height);
+			NativeMethods.RECT r;
+			if (height > 0 && NativeMethods.GetWindowRect(combo.Handle, out r))
+			{
+				var field = (int)NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_GETITEMHEIGHT, (IntPtr)(-1), IntPtr.Zero);
+				var itemHeight = field + height - (r.Bottom - r.Top);
+				if (field > 0 && itemHeight > 0 && combo.ItemHeight != itemHeight)
+					combo.ItemHeight = itemHeight;
+			}
 			var info = new NativeMethods.COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.COMBOBOXINFO)) };
 			if (!NativeMethods.GetComboBoxInfo(combo.Handle, ref info))
 				return;
@@ -1786,22 +2132,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return PaintsComboBox(combo) && !(combo.Parent is ToolStrip) ? ControlHeight(combo) : 0;
 		}
 
-		/// <summary>Makes a drop-down list's field as tall as the list must stand to be the height given, however often it is asked.</summary>
-		/// <remarks>
-		/// Windows makes the window as tall as its field and a fixed edge, both read from the window itself: the height Windows
-		/// Forms keeps lags behind while the field changes, and a field raised by what that height lacks grew each time.
-		/// </remarks>
-		static void RaiseComboBox(ComboBox combo, int height)
-		{
-			var field = (int)NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_GETITEMHEIGHT, (IntPtr)(-1), IntPtr.Zero);
-			NativeMethods.RECT r;
-			if (height <= 0 || field <= 0 || !NativeMethods.GetWindowRect(combo.Handle, out r))
-				return;
-			var wanted = field + height - (r.Bottom - r.Top);
-			if (wanted > 0 && wanted != field)
-				NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, (IntPtr)(-1), (IntPtr)wanted);
-		}
-
 		/// <summary>
 		/// Opens the list as wide as its widest item, as WPF's grows to what it holds, from the field's left edge, so no item
 		/// is cut short.
@@ -1809,6 +2139,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		static void ComboBox_DropDown(object sender, EventArgs e)
 		{
 			var combo = (ComboBox)sender;
+			// The items of the list it opens as tall as Default.xaml's, their text with 5 above and below; Windows Forms gives
+			// them the field's height whenever it gives the field its own.
+			NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, IntPtr.Zero, (IntPtr)ControlHeight(combo));
 			var width = WidestItem(combo) + Pixels(ComboBoxPadding) * 2;
 			if (combo.Items.Count > combo.MaxDropDownItems)
 				width += SystemInformation.VerticalScrollBarWidth;
@@ -2084,14 +2417,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				}
 				base.WndProc(ref m);
 			}
-		}
-
-		/// <summary>Windows fits a drop-down list's field to its font whenever the list is resized, so it is raised again.</summary>
-		static void ComboBox_SizeChanged(object sender, EventArgs e)
-		{
-			var combo = (ComboBox)sender;
-			if (combo.IsHandleCreated)
-				RaiseComboBox(combo, ComboBoxHeight(combo));
 		}
 
 		/// <summary>
@@ -2394,7 +2719,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// A slider as WPF draws one: a thin track, ticks in the theme's control colour and the thumb pointing at them, the
-		/// thumb travelling from half its width in from one end to as far from the other.
+		/// thumb travelling from half its width in from one end to as far from the other. The thumb of the slider with the
+		/// focus is drawn in the selection colours, which show the slider the keys move.
 		/// </summary>
 		/// <remarks>
 		/// Windows keeps its thumb further in, so what it places along the way is drawn as far along WPF's way, and the mouse
@@ -2428,10 +2754,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (track.TickStyle != TickStyle.None)
 				DrawTicks(track, g, first, last, thumb, vertical);
 			DrawThumb(track, g, thumb, vertical);
-			// The focus shows as Windows shows it: while focused, once the keyboard has been used.
-			var uiState = (int)NativeMethods.SendMessage(track.Handle, NativeMethods.WM_QUERYUISTATE, IntPtr.Zero, IntPtr.Zero);
-			if (track.Focused && (uiState & NativeMethods.UISF_HIDEFOCUS) == 0)
-				ControlPaint.DrawFocusRectangle(g, track.ClientRectangle, track.ForeColor, track.BackColor);
 		}
 
 		/// <summary>
@@ -2535,26 +2857,45 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Default.xaml's thumb, 11 by 18, pointing 6 of its 18 at the ticks, or square ended without them, filled as a button
-		/// is in the slider's state and edged in the secondary text colour.
+		/// Default.xaml's thumb, 11 by 18, pointing 6 of its 18 at the ticks, or a plain rectangle without them, filled as a
+		/// button is in the slider's state and edged in the secondary text colour; while the slider has the focus, filled
+		/// as a lit button and edged in the selection colour.
 		/// </summary>
 		static void DrawThumb(TrackBar track, Graphics g, Rectangle thumb, bool vertical)
 		{
+			var focused = track.Enabled && track.Focused;
 			var key = !track.Enabled ? "BackgroundDark"
 				: track.Capture && (Control.MouseButtons & MouseButtons.Left) != 0 ? "BackgroundDarkPressed"
-				: thumb.Contains(track.PointToClient(Control.MousePosition)) ? "BackgroundDarkSelected"
+				: focused || thumb.Contains(track.PointToClient(Control.MousePosition)) ? "BackgroundDarkSelected"
 				: "BackgroundDark";
 			var fill = SliderColor(track, key, SystemColors.ControlLight);
-			var edge = SliderColor(track, "ForegroundGray", SystemColors.ControlDark);
-			// The shape lying flat, pointing down, in its own units; turned to the side the ticks are on.
-			var tip = track.TickStyle == TickStyle.BottomRight || track.TickStyle == TickStyle.TopLeft ? 12f : 18f;
-			var shape = new[] { new PointF(0, 0), new PointF(11, 0), new PointF(11, tip), new PointF(5.5f, 18), new PointF(0, tip) };
+			var edge = focused
+				? SliderColor(track, "SelectedBackground", SystemColors.Highlight)
+				: SliderColor(track, "ForegroundGray", SystemColors.ControlDark);
 			var scale = Dip(g, 1);
 			var width = 11 * scale;
 			var length = 18 * scale;
+			if (track.TickStyle != TickStyle.BottomRight && track.TickStyle != TickStyle.TopLeft)
+			{
+				// Square ended, on whole pixels, with an edge one line wide: every side as sharp as the others.
+				var across = (int)Math.Round(width);
+				var along = (int)Math.Round(length);
+				var box = vertical
+					? new Rectangle(thumb.X + (thumb.Width - along) / 2, thumb.Y + (thumb.Height - across) / 2, along, across)
+					: new Rectangle(thumb.X + (thumb.Width - across) / 2, thumb.Y + (thumb.Height - along) / 2, across, along);
+				using (var brush = new SolidBrush(edge))
+					g.FillRectangle(brush, box);
+				var line = (int)Line(g);
+				box.Inflate(-line, -line);
+				using (var brush = new SolidBrush(fill))
+					g.FillRectangle(brush, box);
+				return;
+			}
+			// The shape lying flat, pointing down, in its own units; turned to the side the ticks are on.
+			var shape = new[] { new PointF(0, 0), new PointF(11, 0), new PointF(11, 12), new PointF(5.5f, 18), new PointF(0, 12) };
 			// Across the slider the shape is 11 wide; along the way to the ticks it is 18 long.
-			var left = thumb.X + (thumb.Width - (vertical ? length : width)) / 2;
-			var top = thumb.Y + (thumb.Height - (vertical ? width : length)) / 2;
+			var left = (float)Math.Round(thumb.X + (thumb.Width - (vertical ? length : width)) / 2);
+			var top = (float)Math.Round(thumb.Y + (thumb.Height - (vertical ? width : length)) / 2);
 			var flip = track.TickStyle == TickStyle.TopLeft;
 			var points = shape.Select(p =>
 			{
@@ -2600,9 +2941,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		#region Grids
 
-		/// <summary>The smallest heights of a grid's headers and rows in Default.xaml, in device-independent pixels.</summary>
-		const int GridHeaderHeight = 24;
+		/// <summary>The smallest height of a grid's rows in Default.xaml, in device-independent pixels.</summary>
 		const int GridRowHeight = 25;
+
+		/// <summary>The room above and below a header's text, in device-independent pixels.</summary>
+		const int GridHeaderRoom = 3;
+
+		/// <summary>
+		/// The room before the header and cells of the first column shown, in device-independent pixels, so its text, picture or
+		/// check box does not stand against the grid's edge.
+		/// </summary>
+		const int GridFirstColumnRoom = 3;
 
 		/// <summary>The room before a cell's check box, in device-independent pixels: CheckBoxCell's margin.</summary>
 		const int GridCheckBoxMargin = 3;
@@ -2621,8 +2970,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// Gives a grid Default.xaml's look, or its own back: no edge, the window colour behind its rows, lines only between
-		/// rows, in the page colour, headers without lines and padded as Default.xaml pads them, and rows and headers at least
-		/// as tall as Default.xaml makes them.
+		/// rows, in the page colour, headers without lines, padded as Default.xaml pads them and with room above and below
+		/// their text, as tall as that text and its room, rows at least as tall as Default.xaml makes them, and room before
+		/// the first column shown.
 		/// </summary>
 		static void ApplyGridLook(DataGridView grid, State state, bool wpf)
 		{
@@ -2639,12 +2989,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					CellBorderStyle = grid.CellBorderStyle,
 					HeadersBorderStyle = grid.ColumnHeadersBorderStyle,
 					HeaderPadding = grid.ColumnHeadersDefaultCellStyle.Padding,
+					HeadersHeightSizeMode = grid.ColumnHeadersHeightSizeMode,
 					HeadersHeight = grid.ColumnHeadersHeight,
 					RowHeight = grid.RowTemplate.Height,
 					ImagePadding = grid.Columns.OfType<DataGridViewImageColumn>()
 						.Select(x => new KeyValuePair<DataGridViewImageColumn, Padding>(x, x.DefaultCellStyle.Padding)).ToList(),
 				};
 			}
+			// The first column's own paddings come back before the pictures' are set, and its room is given again after.
+			UnpadFirstColumn(look);
 			// A picture stands in from each side of its cell by Default.xaml's cell padding, as text does.
 			foreach (var pair in look.ImagePadding)
 				pair.Key.DefaultCellStyle.Padding = wpf ? new Padding(Pixels(GridCellPadding), 0, Pixels(GridCellPadding), 0) : pair.Value;
@@ -2653,20 +3006,153 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			grid.GridColor = wpf ? Themed("BackgroundLight", SystemColors.Control) : look.GridColor;
 			grid.CellBorderStyle = wpf ? DataGridViewCellBorderStyle.SingleHorizontal : look.CellBorderStyle;
 			grid.ColumnHeadersBorderStyle = wpf ? DataGridViewHeaderBorderStyle.None : look.HeadersBorderStyle;
-			// Default.xaml pads a header 16 on the right for the sort triangle; Windows Forms leaves that room itself.
-			grid.ColumnHeadersDefaultCellStyle.Padding = wpf ? new Padding(Pixels(3), 0, 0, 0) : look.HeaderPadding;
-			if (grid.ColumnHeadersHeightSizeMode != DataGridViewColumnHeadersHeightSizeMode.AutoSize)
-				grid.ColumnHeadersHeight = wpf ? Math.Max(look.HeadersHeight, Pixels(GridHeaderHeight)) : look.HeadersHeight;
+			// Default.xaml pads a header 16 on the right for the sort triangle; Windows Forms leaves that room itself. The
+			// headers are as tall as Windows Forms makes them for their text and the room above and below it.
+			var room = Pixels(GridHeaderRoom);
+			grid.ColumnHeadersDefaultCellStyle.Padding = wpf ? new Padding(Pixels(GridHeaderPadding.Left), room, 0, room) : look.HeaderPadding;
+			grid.ColumnHeadersHeightSizeMode = wpf ? DataGridViewColumnHeadersHeightSizeMode.AutoSize : look.HeadersHeightSizeMode;
+			if (!wpf && look.HeadersHeightSizeMode != DataGridViewColumnHeadersHeightSizeMode.AutoSize)
+				grid.ColumnHeadersHeight = look.HeadersHeight;
 			var rowHeight = wpf ? Math.Max(look.RowHeight, Pixels(GridRowHeight)) : look.RowHeight;
 			grid.RowTemplate.Height = rowHeight;
 			if (grid.AutoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
 				for (var i = 0; i < grid.Rows.Count; i++)
 					grid.Rows[i].Height = rowHeight;
+			if (wpf)
+				PadFirstColumn(grid, look);
+			LendPadding(grid, wpf);
+		}
+
+		/// <summary>
+		/// Lets a list that fills its container stand edge to edge in it: the container's side padding goes to the controls
+		/// docked above and below the list, as room inside them, so they stay where the padding put them; and comes back when
+		/// the list is drawn as Windows draws it.
+		/// </summary>
+		/// <remarks>
+		/// Windows Forms docks every control inside its container's padding, and gives a docked control no margin. A tool bar
+		/// takes the room as its padding, before its first button and after its last; any other control as its own padding,
+		/// which moves what it holds. A control whose own edge is drawn, a frame or a line, is put in a container of its own to
+		/// be moved.
+		/// </remarks>
+		static void LendPadding(DataGridView grid, bool wpf)
+		{
+			var parent = grid.Parent;
+			State state;
+			if (parent == null || !States.TryGetValue(parent, out state))
+				return;
+			var own = parent.Padding;
+			if (wpf && state.LentPadding == null && grid.Dock == DockStyle.Fill && !(parent is TableLayoutPanel)
+				&& !(parent is FlowLayoutPanel) && (own.Left > 0 || own.Right > 0))
+			{
+				state.LentPadding = own;
+				state.LentTo = parent.Controls.Cast<Control>()
+					.Where(x => x != grid && (x.Dock == DockStyle.Top || x.Dock == DockStyle.Bottom)).ToList();
+				parent.Padding = new Padding(0, own.Top, 0, own.Bottom);
+				foreach (var control in state.LentTo)
+					Lend(control, own.Left, own.Right);
+			}
+			else if (!wpf && state.LentPadding != null)
+			{
+				own = state.LentPadding.Value;
+				var lentTo = state.LentTo;
+				state.LentPadding = null;
+				state.LentTo = null;
+				foreach (var control in lentTo)
+					Lend(control, -own.Left, -own.Right);
+				parent.Padding = own;
+			}
+		}
+
+		/// <summary>Gives a control docked beside a list the room lent to it, or takes it back.</summary>
+		static void Lend(Control control, int left, int right)
+		{
+			State state;
+			if (control is ToolStrip strip)
+			{
+				// A tool bar the theme has not reached yet takes the room as it is reached.
+				if (!States.TryGetValue(strip, out state))
+					return;
+				var padding = ToolBarPadding(strip, state, IsWpfToolBar(strip) && state.RenderMode != ToolStripRenderMode.Custom);
+				if (strip.Padding != padding)
+					strip.Padding = padding;
+				return;
+			}
+			var p = control.Padding;
+			control.Padding = new Padding(p.Left + left, p.Top, p.Right + right, p.Bottom);
+		}
+
+		/// <summary>The room a list lent a control docked beside it, at its sides; none for any other control.</summary>
+		static Padding LentRoom(Control control)
+		{
+			State state;
+			if (control.Parent == null || !States.TryGetValue(control.Parent, out state) || state.LentPadding == null
+				|| !state.LentTo.Contains(control))
+				return Padding.Empty;
+			var lent = state.LentPadding.Value;
+			return new Padding(lent.Left, 0, lent.Right, 0);
+		}
+
+		/// <summary>
+		/// Gives the first column shown room before its header and cells, in its own styles, so Windows Forms widens a column
+		/// that sizes itself by that room too; and gives the column that had it its own paddings back.
+		/// </summary>
+		/// <remarks>
+		/// A picture or check box moves right with the room, as text does: the theme's check boxes stand in by the cell's
+		/// padding, and Windows Forms puts a picture inside it.
+		/// </remarks>
+		static void PadFirstColumn(DataGridView grid, GridLook look)
+		{
+			var column = grid.Columns.GetFirstColumn(DataGridViewElementStates.Visible);
+			// While a grid makes its columns from its data, the first may not be wholly the grid's yet: the grid is gone
+			// through again once its data is bound.
+			if (column != null && column.HeaderCell.DataGridView != grid)
+				return;
+			if (column == look.First)
+				return;
+			UnpadFirstColumn(look);
+			if (column == null)
+				return;
+			look.First = column;
+			look.FirstPadding = column.DefaultCellStyle.Padding;
+			look.FirstHeaderPadding = column.HeaderCell.Style.Padding;
+			// The room is added to the padding the column's cells and header have: their own, or the grid's.
+			var room = Pixels(GridFirstColumnRoom);
+			var cells = look.FirstPadding == Padding.Empty ? grid.DefaultCellStyle.Padding : look.FirstPadding;
+			column.DefaultCellStyle.Padding = new Padding(cells.Left + room, cells.Top, cells.Right, cells.Bottom);
+			var header = look.FirstHeaderPadding == Padding.Empty ? grid.ColumnHeadersDefaultCellStyle.Padding : look.FirstHeaderPadding;
+			column.HeaderCell.Style.Padding = new Padding(header.Left + room, header.Top, header.Right, header.Bottom);
+		}
+
+		/// <summary>Gives the column that was given the room before its header and cells its own paddings back.</summary>
+		static void UnpadFirstColumn(GridLook look)
+		{
+			var column = look.First;
+			if (column == null)
+				return;
+			look.First = null;
+			column.DefaultCellStyle.Padding = look.FirstPadding;
+			column.HeaderCell.Style.Padding = look.FirstHeaderPadding;
+		}
+
+		/// <summary>
+		/// Gives the room before the first column to the column shown first now, as columns come, go, move, show or hide, and
+		/// once a grid has made its columns from its data.
+		/// </summary>
+		static void Grid_ColumnsChanged(object sender, EventArgs e)
+		{
+			var changed = e as DataGridViewColumnStateChangedEventArgs;
+			if (changed != null && changed.StateChanged != DataGridViewElementStates.Visible)
+				return;
+			var grid = (DataGridView)sender;
+			State state;
+			if (States.TryGetValue(grid, out state) && state.Grid != null && PaintsGrid(grid, state))
+				PadFirstColumn(grid, state.Grid);
 		}
 
 		/// <summary>
 		/// Paints a grid's headers as Default.xaml does, from the window colour at the top to the page colour at the bottom
-		/// and without lines, and its check boxes as CheckBoxCell does: Default.xaml's check box at the cell's left.
+		/// and without lines, and its check boxes as CheckBoxCell does: Default.xaml's check box at the cell's left, in from
+		/// it by the cell's padding too.
 		/// </summary>
 		static void WpfGrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
@@ -2696,7 +3182,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var font = e.CellStyle.Font ?? grid.Font;
 			var size = CheckBoxBox(font, false);
 			var height = Math.Min(size.Height, bounds.Height);
-			var box = new Rectangle(bounds.X + Pixels(GridCheckBoxMargin), bounds.Y + (bounds.Height - height) / 2, size.Width, height);
+			var box = new Rectangle(bounds.X + e.CellStyle.Padding.Left + Pixels(GridCheckBoxMargin), bounds.Y + (bounds.Height - height) / 2, size.Width, height);
+			// Padding can move the box out of the cell, as a program hides one there.
+			if (box.Left >= bounds.Right)
+				return;
 			var check = e.FormattedValue is CheckState checkState ? checkState
 				: e.FormattedValue is bool isChecked && isChecked ? CheckState.Checked : CheckState.Unchecked;
 			var hot = grid.Enabled && bounds.Contains(grid.PointToClient(Control.MousePosition));
@@ -2715,9 +3204,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// A header's text and sort triangle where Default.xaml's DataGridHeader_Sorting puts them, which Windows Forms puts
-		/// further in: the text in the middle of the header's height, clear of the room kept round it, and the triangle in
-		/// from the right, pointing down while the column is sorted ascending and up while sorted descending. Windows Forms
-		/// leaves no room for a triangle in a column that cannot be sorted, nor does the text.
+		/// further in: the text in the middle of the header's height, clear of the room kept round it, in from the left by the
+		/// header's padding, and the triangle in from the right, pointing down while the column is sorted ascending and up while
+		/// sorted descending. Windows Forms leaves no room for a triangle in a column that cannot be sorted, nor does the text.
 		/// </summary>
 		static void PaintGridHeader(DataGridViewCellPaintingEventArgs e, DataGridViewColumn column)
 		{
@@ -2725,7 +3214,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var bounds = e.CellBounds;
 			var style = e.CellStyle;
 			var right = column.SortMode == DataGridViewColumnSortMode.NotSortable ? 0 : Pixels(GridHeaderPadding.Right);
-			var text = Rectangle.FromLTRB(bounds.Left + Pixels(GridHeaderPadding.Left), bounds.Top, bounds.Right - right, bounds.Bottom);
+			var text = Rectangle.FromLTRB(bounds.Left + style.Padding.Left, bounds.Top, bounds.Right - right, bounds.Bottom);
 			var flags = TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis
 				| TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
 			var align = style.Alignment;
@@ -3265,10 +3754,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		static readonly FieldInfo RequestedHeightField = typeof(ListBox).GetField("requestedHeight", BindingFlags.Instance | BindingFlags.NonPublic)
 			?? typeof(ListBox).GetField("_requestedHeight", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		/// <summary>The height Windows Forms worked out for a drop-down list and keeps, a field of its own.</summary>
-		static readonly FieldInfo PreferredHeightField = typeof(ComboBox).GetField("prefHeightCache", BindingFlags.Instance | BindingFlags.NonPublic)
-			?? typeof(ComboBox).GetField("_prefHeightCache", BindingFlags.Instance | BindingFlags.NonPublic);
-
 		/// <summary>The height of a control's font as Windows Forms works out its sizes, a protected property of its own.</summary>
 		static readonly PropertyInfo FontHeightProperty = typeof(Control).GetProperty("FontHeight", BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -3405,8 +3890,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int HCBT_ACTIVATE = 5;
 			public const int DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19;
 			public const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-			public const int WM_QUERYUISTATE = 0x0129;
-			public const int UISF_HIDEFOCUS = 0x1;
 			public const int TBM_GETTHUMBRECT = 0x0419;
 			public const int TBM_GETCHANNELRECT = 0x041A;
 			public const int TCM_SETPADDING = 0x132B;

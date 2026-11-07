@@ -52,7 +52,7 @@ namespace x360ce.App
 		{
 			var manager = new Plugins.PluginManager(
 				System.IO.Path.Combine(EngineHelper.AppDataPath, Plugins.PluginManager.FolderName),
-				Plugins.PluginManager.GetSigner(System.Windows.Forms.Application.ExecutablePath),
+				CertificateHelper.GetSigner(System.Windows.Forms.Application.ExecutablePath),
 				() => SettingsManager.Options.AllowThirdPartyPlugins,
 				typeof(Global).Assembly);
 			Plugins.PluginManager.Current = manager;
@@ -76,24 +76,35 @@ namespace x360ce.App
 			// to select a game into controls that were already being disposed.
 			if (Program.IsClosing)
 				return;
-			SelectOpenGame();
+			SelectOpenGame(e.Data);
 		}
 
 		public static string LastActivePath;
 
-		public static void SelectOpenGame()
+		/// <summary>Chooses the listed game to customise: the one in front, otherwise the first that runs, otherwise x360ce itself.</summary>
+		/// <param name="activeProcess">The process whose window is in front, as the hook found it; null to look it up.</param>
+		public static void SelectOpenGame(Process activeProcess = null)
 		{
-			// Get selected process.
-			var activeProcess = ForegroundWindowHook.GetActiveProcess();
-			var activePath = ForegroundWindowHook.GetProcessFileName(activeProcess);
-			var allPaths = System.Diagnostics.Process.GetProcesses().Select(x => ForegroundWindowHook.GetProcessFileName(x))
-				.Distinct()
-				.ToArray();
 			// Get list of all configured user games.
 			var userGames = SettingsManager.UserGames.ItemsToArraySynchronized().ToList();
 			var currentApp = userGames.FirstOrDefault(x => x.IsCurrentApp());
 			if (currentApp != null)
 				userGames.Remove(currentApp);
+			// With x360ce the only game listed, no process needs to be read: x360ce is chosen.
+			var allPaths = new string[0];
+			if (userGames.Count > 0)
+			{
+				var processes = Process.GetProcesses();
+				try
+				{
+					allPaths = RunningGamePaths(userGames, processes, ForegroundWindowHook.GetProcessFileName);
+				}
+				finally
+				{
+					foreach (var process in processes)
+						process.Dispose();
+				}
+			}
 			// Select all games which are running (execept current app).
 			var runningGames = userGames
 				.Where(x => allPaths.Any(a => string.Equals(x.FullPath, a, StringComparison.OrdinalIgnoreCase)))
@@ -104,6 +115,8 @@ namespace x360ce.App
 				// Do nothing, because user could be trying to adjust mapping on the running game.
 				return;
 			}
+			// The process in front matters only when a listed game runs.
+			var activePath = runningGames.Length == 0 ? null : ActivePath(activeProcess);
 			// Try to get game by active window (except current app).
 			var game = runningGames
 				.FirstOrDefault(x => string.Equals(x.FullPath, activePath, StringComparison.OrdinalIgnoreCase));
@@ -117,6 +130,42 @@ namespace x360ce.App
 				game = currentApp;
 			LastActivePath = game?.FullPath;
 			SettingsManager.UpdateCurrentGame(game);
+		}
+
+		/// <summary>The full path of the process in front: the one the hook found, or the one in front now, which is let go of after.</summary>
+		static string ActivePath(Process activeProcess)
+		{
+			if (activeProcess != null)
+				return ForegroundWindowHook.GetProcessFileName(activeProcess);
+			using (var process = ForegroundWindowHook.GetActiveProcess())
+				return ForegroundWindowHook.GetProcessFileName(process);
+		}
+
+		/// <summary>
+		/// The full paths of the running processes that may be listed games. Windows names each process in its list without
+		/// opening it, so only a process with a listed game's file name is opened, to read the full path that decides.
+		/// </summary>
+		/// <param name="games">The listed games, besides x360ce.</param>
+		/// <param name="processes">The running processes, as Windows listed them.</param>
+		/// <param name="fileName">Opens a process to read its full path.</param>
+		public static string[] RunningGamePaths(System.Collections.Generic.IEnumerable<Engine.Data.UserGame> games, Process[] processes, Func<Process, string> fileName)
+		{
+			var names = new System.Collections.Generic.HashSet<string>(games.Select(x => ProcessNameOf(x.FullPath)).Where(x => x.Length > 0), StringComparer.OrdinalIgnoreCase);
+			if (names.Count == 0)
+				return new string[0];
+			return processes
+				.Where(x => names.Contains(x.ProcessName))
+				.Select(fileName)
+				.Where(x => !string.IsNullOrEmpty(x))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+		}
+
+		/// <summary>The name Windows gives the process of a program: its file name, without ".exe".</summary>
+		static string ProcessNameOf(string path)
+		{
+			var file = System.IO.Path.GetFileName(path ?? "");
+			return file.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) ? file.Substring(0, file.Length - 4) : file;
 		}
 
 		public static void DisposeServices()

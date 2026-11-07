@@ -5,6 +5,7 @@ using SharpDX.XInput;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
@@ -128,8 +129,8 @@ namespace x360ce.Tests
 				using (var page = new x360ce.App.Controls.OptionsUserControl())
 				{
 					page.CreateControl();
-					var field = page.Controls.Find("EmulationButtonsTextBox", true).Single();
-					var box = (CheckBox)page.Controls.Find("EmulationButtonsCheckBox", true).Single();
+					var field = page.Controls.Find(nameof(OptionsUserControl.EmulationButtonsTextBox), true).Single();
+					var box = (CheckBox)page.Controls.Find(nameof(OptionsUserControl.EmulationButtonsCheckBox), true).Single();
 					field.Text = "";
 					page.RecordButtons(GamepadButtonFlags.A);
 					page.RecordButtons(GamepadButtonFlags.None);

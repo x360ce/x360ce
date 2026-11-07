@@ -91,7 +91,7 @@ namespace x360ce.Tests
 		/// <summary>The colour the row is painted in, read where no text is drawn.</summary>
 		static System.Drawing.Color RowColour(DataGridView grid, object item)
 		{
-			var cell = grid.GetCellDisplayRectangle(grid.Columns["MySidColumn"].Index, RowOf(grid, item), false);
+			var cell = grid.GetCellDisplayRectangle(grid.Columns[nameof(UserDevicesUserControl.MySidColumn)].Index, RowOf(grid, item), false);
 			using (var picture = new System.Drawing.Bitmap(grid.Width, grid.Height))
 			{
 				grid.DrawToBitmap(picture, new System.Drawing.Rectangle(0, 0, grid.Width, grid.Height));
@@ -126,7 +126,7 @@ namespace x360ce.Tests
 						form.Show();
 						Application.DoEvents();
 						var grid = panel.DevicesDataGridView;
-						Assert.AreEqual(grid.Columns["MySidColumn"].DisplayIndex + 1, grid.Columns["SourceColumn"].DisplayIndex,
+						Assert.AreEqual(grid.Columns[nameof(UserDevicesUserControl.MySidColumn)].DisplayIndex + 1, grid.Columns["SourceColumn"].DisplayIndex,
 							"The Source column is not beside the Instance ID column.");
 						Assert.AreEqual("DirectInput", SourceShown(grid, diPad));
 						Assert.AreEqual("Raw Input", SourceShown(grid, rawPad));
@@ -237,10 +237,10 @@ namespace x360ce.Tests
 					raw.SourceState.Buttons[2] = true;
 					Assert.IsNull(raw.JoState);
 					tab.UpdateFrom(raw);
-					var axis = Table(tab, "DiAxisTable");
-					var sliders = Table(tab, "DiSlidersTable");
-					var povs = Table(tab, "DiPovsTable");
-					var buttons = tab.Controls.Find("DiButtonsTextBox", true).Single();
+					var axis = Table(tab, nameof(DirectInputUserControl.DiAxisTable));
+					var sliders = Table(tab, nameof(DirectInputUserControl.DiSlidersTable));
+					var povs = Table(tab, nameof(DirectInputUserControl.DiPovsTable));
+					var buttons = tab.Controls.Find(nameof(DirectInputUserControl.DiButtonsTextBox), true).Single();
 					Assert.AreEqual(1234, axis.Rows[0][1], "Axis X.");
 					Assert.AreEqual(55, sliders.Rows[0][1], "Slider 0.");
 					Assert.AreEqual(9000, povs.Rows[0][1], "POV 0.");
@@ -349,19 +349,19 @@ namespace x360ce.Tests
 
 						var grid = pad.MappedDevicesDataGridView;
 						Assert.AreEqual(3, grid.Rows.Count, "The tab lists both rows of the pad and the wheel.");
-						Assert.AreEqual(grid.Columns["InstanceIdColumn"].DisplayIndex + 1, grid.Columns["SourceColumn"].DisplayIndex,
+						Assert.AreEqual(grid.Columns[nameof(PadControl.InstanceIdColumn)].DisplayIndex + 1, grid.Columns["SourceColumn"].DisplayIndex,
 							"The Source column is not beside the Instance ID column.");
 						Assert.AreEqual("DirectInput", SourceShown(grid, twinRow));
 						Assert.AreEqual("Raw Input", SourceShown(grid, rawRow));
 
 						// The wheel's Raw Input row, just added, is the one selected.
 						// Its DirectInput twin takes no force feedback, so the page says none reaches it.
-						var effect = (Label)pad.Controls.Find("EffectDescriptionLabel", true).Single();
+						var effect = (Label)pad.Controls.Find(nameof(PadControl.EffectDescriptionLabel), true).Single();
 						var note = PadControl.RawInputForceNote(rawWheel, SettingsManager.UserDevices.ItemsToArraySynchronized());
 						Assert.IsNotNull(note);
 						Assert.AreEqual(note, effect.Text, "The Force Feedback page does not say no force feedback reaches the Raw Input row.");
 						// The wheel's DirectInput twin is on Controller 3: the same wheel, so the page says it is shared.
-						Assert.AreEqual("Force Feedback - Shared with Controller 3", pad.Controls.Find("ForceFeedbackGroupBox", true).Single().Text,
+						Assert.AreEqual("Force Feedback - Shared with Controller 3", pad.Controls.Find(nameof(PadControl.ForceFeedbackGroupBox), true).Single().Text,
 							"The page does not count the wheel's twin on another tab.");
 						grid.Rows[RowOf(grid, twinRow)].Selected = true;
 						Application.DoEvents();

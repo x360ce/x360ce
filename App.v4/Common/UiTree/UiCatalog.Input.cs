@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using x360ce.App.Controls;
 using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
@@ -8,13 +9,13 @@ namespace x360ce.App.UiTree
 		/// <summary>The INPUT column of the General tab: the device's own controls, lit as they are used.</summary>
 		static void AddInputPanel(Dictionary<string, Text> d)
 		{
-			d["InputUserControl"] = new Text("Input",
+			d[nameof(InputUserControl)] = new Text("Input",
 				"Every control of the selected device, lit while it is used, before anything is mapped.");
-			d["InputUserControl.SourceLabel"] = Live("Input source",
+			d[nameof(InputUserControl) + "." + nameof(InputUserControl.SourceLabel)] = Live("Input source",
 				"The device the chips below belong to, or that none is selected.");
-			d["InputUserControl.ButtonsGroupBox"] = new Text("Buttons",
+			d[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonsGroupBox)] = new Text("Buttons",
 				"One chip per button, lit while it is held. Click or drag a chip into a mapping box.");
-			d["InputUserControl.ButtonChips"] = new Text("Button chips",
+			d[nameof(InputUserControl) + "." + nameof(InputUserControl.ButtonChips)] = new Text("Button chips",
 				"The device's buttons, numbered as the mapping list numbers them.");
 			d["InputUserControl.AxesGroupBox"] = new Text("Axes",
 				"One chip per axis with its reading, lit while it moves and for half a second after.");

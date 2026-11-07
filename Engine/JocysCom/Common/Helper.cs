@@ -471,6 +471,28 @@ namespace JocysCom.ClassLibrary
 
 		#endregion
 
+		#region Versions
+
+		/// <summary>A version written in text: two to four numbers joined by dots, not part of a longer number or run of dots.</summary>
+		static readonly Regex VersionInText = new Regex(@"(?<![\d.])(\d+(?:\.\d+){1,3})(?![\d.])", RegexOptions.CultureInvariant);
+
+		/// <summary>
+		/// Reads the first version written in text that may carry more than the numbers, such as "v1.5.230.0",
+		/// "18.11.0-release-26425-03" or "10.0.26100.1 (WinBuild.160101.0800)": two to four numbers joined by dots,
+		/// followed by anything that is not a digit or a dot.
+		/// </summary>
+		/// <param name="text">The text, such as a release tag or a file's version line; may be null.</param>
+		/// <param name="version">The version read, or null.</param>
+		/// <returns>False when the text holds no such version, or one whose numbers are too large for a version.</returns>
+		public static bool TryParseVersion(string text, out Version version)
+		{
+			version = null;
+			var match = VersionInText.Match(text ?? "");
+			return match.Success && Version.TryParse(match.Groups[1].Value, out version);
+		}
+
+		#endregion
+
 		#region Run functions synchronously.
 
 		/// <summary>

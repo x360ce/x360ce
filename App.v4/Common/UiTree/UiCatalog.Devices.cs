@@ -1,4 +1,6 @@
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.Collections.Generic;
+using x360ce.App.Controls;
 using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
@@ -54,78 +56,78 @@ namespace x360ce.App.UiTree
 		/// <summary>The composite controls themselves, and the device detail page.</summary>
 		static void AddDeviceDetails(Dictionary<string, Text> d)
 		{
-			d["PadControl"] = new Text(null,
+			d[nameof(PadControl)] = new Text(null,
 				"Everything about one emulated Xbox controller: what works it, and how.");
-			d["AxisMapUserControl"] = new Text(null,
+			d[nameof(AxisMapUserControl)] = new Text(null,
 				"Shapes what the game receives from one control, without changing the device.");
-			d["AxisToButtonUserControl"] = new Text(null,
+			d[nameof(AxisToButtonUserControl)] = new Text(null,
 				"How far a stick or pedal must move before the button mapped to it counts as pressed.");
-			d["WheelChartUserControl"] = new Text(null,
+			d[nameof(WheelChartUserControl)] = new Text(null,
 				"The centering spring's force at every angle of the wheel, and the wheel's angle and force now.");
-			d["DirectInputUserControl"] = new Text(null,
+			d[nameof(DirectInputUserControl)] = new Text(null,
 				"What the mapped device reports about itself, and its values as they change.");
-			d["MapExpressionToggle"] = new Text(null,
+			d[nameof(MapExpressionToggle)] = new Text(null,
 				"Switches one mapping between choosing a control and writing a formula.");
-			d["OptionsUserControl"] = new Text(null,
+			d[nameof(OptionsUserControl)] = new Text(null,
 				"Settings for the program itself, rather than for one controller.");
-			d["OptionsInternetUserControl"] = new Text(null,
+			d[nameof(OptionsInternetUserControl)] = new Text(null,
 				"Whether settings are shared with the online database, and the account used.");
-			d["OptionsSettingsUserControl"] = new Text(null,
+			d[nameof(OptionsSettingsUserControl)] = new Text(null,
 				"Where your settings are kept, and how to move them somewhere else.");
-			d["GamesGridUserControl"] = new Text(null,
+			d[nameof(GamesGridUserControl)] = new Text(null,
 				"Games this program is set up for.");
-			d["GameDetailsUserControl"] = new Text(null,
+			d[nameof(GameDetailsUserControl)] = new Text(null,
 				"How the selected game is set up.");
-			d["UserDevicesUserControl"] = new Text(null,
+			d[nameof(UserDevicesUserControl)] = new Text(null,
 				"Every controller the program can see.");
-			d["CloudUserControl"] = new Text(null,
+			d[nameof(CloudUserControl)] = new Text(null,
 				"Settings waiting to be sent to or fetched from the online database.");
-			d["IssuesUserControl"] = new Text("Issues list",
+			d[nameof(IssuesUserControl)] = new Text("Issues list",
 				"Problems the program found, and what to do about each one.");
-			d["AboutControl"] = new Text(null,
-				"Version, licence, and what changed in each release.");
+			d[nameof(AboutControl)] = new Text(null,
+				"Version, who made the program and what it carries, what changed in each release, and the licence.");
 
 			// What the device says about itself. Each of these is read from the device and shown
 			// as it is; none of them can be edited.
-			d["DirectInputUserControl.DeviceProductNameTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceProductNameTextBox)] = new Text(null,
 				"Name the device reports for itself.");
-			d["DirectInputUserControl.DeviceVendorNameTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceVendorNameTextBox)] = new Text(null,
 				"Name of the company that made the device.");
-			d["DirectInputUserControl.DeviceVidTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceVidTextBox)] = new Text(null,
 				"Number identifying the maker, as reported over USB.");
-			d["DirectInputUserControl.DevicePidTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DevicePidTextBox)] = new Text(null,
 				"Number identifying the model, as reported over USB.");
-			d["DirectInputUserControl.DeviceRevTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceRevTextBox)] = new Text(null,
 				"Hardware revision the device reports.");
-			d["DirectInputUserControl.DeviceTypeTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceTypeTextBox)] = new Text(null,
 				"What kind of device Windows considers this to be.");
-			d["DirectInputUserControl.DeviceProductGuidTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceProductGuidTextBox)] = new Text(null,
 				"Identifier shared by every device of this model.");
-			d["DirectInputUserControl.DeviceInstanceGuidTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DeviceInstanceGuidTextBox)] = new Text(null,
 				"Identifier for this one device, which tells two alike apart.");
-			d["DirectInputUserControl.DiCapAxesTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiCapAxesTextBox)] = new Text(null,
 				"How many axes the device has, such as sticks and pedals.");
-			d["DirectInputUserControl.DiCapButtonsTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiCapButtonsTextBox)] = new Text(null,
 				"How many buttons the device has.");
-			d["DirectInputUserControl.DiCapPovsTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiCapPovsTextBox)] = new Text(null,
 				"How many hat switches the device has.");
-			d["DirectInputUserControl.DiSlidersTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiSlidersTextBox)] = new Text(null,
 				"How many sliders the device has.");
-			d["DirectInputUserControl.DiCapFfStateTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiCapFfStateTextBox)] = new Text(null,
 				"Whether force feedback is available on the device right now.");
-			d["DirectInputUserControl.ActuatorsTextBox"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.ActuatorsTextBox)] = new Text(null,
 				"How many motors the device has for force feedback.");
-			d["DirectInputUserControl.DiObjectsDataGridView"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiObjectsDataGridView)] = new Text(null,
 				"Every axis, button and hat the device reports having.");
-			d["DirectInputUserControl.DiEffectsDataGridView"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiEffectsDataGridView)] = new Text(null,
 				"The vibration effects the device says it can produce.");
-			d["DirectInputUserControl.DiAxisDataGridView"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiAxisDataGridView)] = new Text(null,
 				"What each axis reads right now. Move a control to see which line changes.");
-			d["DirectInputUserControl.DiButtonsTextBox"] = new Text("Buttons pressed",
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiButtonsTextBox)] = new Text("Buttons pressed",
 				"Which buttons are pressed right now, by the numbers the mapping boxes use.");
-			d["DirectInputUserControl.DiSlidersDataGridView"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiSlidersDataGridView)] = new Text(null,
 				"What each slider reads right now.");
-			d["DirectInputUserControl.DiPovsDataGridView"] = new Text(null,
+			d[nameof(DirectInputUserControl) + "." + nameof(DirectInputUserControl.DiPovsDataGridView)] = new Text(null,
 				"What each hat switch reads right now.");
 		}
 	}

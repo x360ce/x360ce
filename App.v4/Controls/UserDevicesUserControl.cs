@@ -230,8 +230,8 @@ namespace x360ce.App.Controls
 		private void ShowSystemDevicesButton_CheckedChanged(object sender, EventArgs e)
 		{
 			ControlsHelper.SetImage(ShowSystemDevicesButton, ShowSystemDevicesButton.Checked
-				? Properties.Resources.checkbox_16x16
-				: Properties.Resources.checkbox_unchecked_16x16);
+				? Properties.Resources.checkbox_32x32
+				: Properties.Resources.checkbox_unchecked_32x32);
 			if (MapDeviceToControllerMode)
 				RefreshList();
 		}

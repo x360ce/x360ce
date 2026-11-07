@@ -51,7 +51,7 @@ namespace x360ce.App.DInput
 
 		readonly Func<string, bool> _start;
 		readonly bool _here;
-		InstanceChannel _channel;
+		internal InstanceChannel _channel;
 		Process _copy;
 		string _failure;
 		int _requests;

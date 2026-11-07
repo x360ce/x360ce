@@ -21,12 +21,22 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 		/// <summary>Describes whatever a path named: a control, a bar entry, a grid row, a cell, a property grid's row or a WPF element.</summary>
 		public static UiNode Read(object element, bool raw, string path)
 		{
+			return Read(element, raw, path, true);
+		}
+
+		/// <summary>Describes whatever a path named, as <see cref="Read(object, bool, string)"/> does.</summary>
+		/// <param name="values">
+		/// False leaves out what the controls and the bar entries hold, for a search, which looks at names and reads the
+		/// values of what it found alone. A grid's rows keep theirs: a row's cells are read once, for its name and its value.
+		/// </param>
+		public static UiNode Read(object element, bool raw, string path, bool values)
+		{
 			var control = element as Control;
 			if (control != null)
-				return Read(control, raw, path);
+				return Read(control, raw, path, values);
 			var item = element as ToolStripItem;
 			if (item != null)
-				return Read(item, raw, path);
+				return Read(item, raw, path, values);
 			var row = element as DataGridViewRow;
 			if (row != null)
 				return Read(row, path);
@@ -39,6 +49,19 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			UiNode node = null;
 			ReadWpf(element, raw, path, ref node);
 			return node;
+		}
+
+		/// <summary>Describes one element as a read with its path does, without reading what is inside it: its kind, name and value.</summary>
+		public static UiNode ReadAlone(object element, string path)
+		{
+			var control = element as Control;
+			if (control != null)
+				return Describe(control, path, true);
+			var item = element as ToolStripItem;
+			if (item != null)
+				return Describe(item, path, true);
+			// A row holds only its own cells, and a WPF element is read as it always was.
+			return Read(element, false, path);
 		}
 
 		/// <summary>

@@ -26,12 +26,12 @@ namespace JocysCom.ClassLibrary.IO
 			// icon's size on this screen rather than enlarged.
 			TreeImageList.ImageSize = SystemInformation.SmallIconSize;
 			var icons = ThemeResourceManager.Library;
-			RefreshStripButton.Image = (Image)icons.GetObject("refresh_16x16");
-			DisableButton.Image = (Image)icons.GetObject("disable_16x16");
-			EnableButton.Image = (Image)icons.GetObject("enable_16x16");
-			RemoveButton.Image = (Image)icons.GetObject("remove_16x16");
-			CleanButton.Image = (Image)icons.GetObject("clean_16x16");
-			ScanButton.Image = (Image)icons.GetObject("scan_16x16");
+			RefreshStripButton.Image = (Image)icons.GetObject("refresh_32x32");
+			DisableButton.Image = (Image)icons.GetObject("disable_32x32");
+			EnableButton.Image = (Image)icons.GetObject("enable_32x32");
+			RemoveButton.Image = (Image)icons.GetObject("remove_32x32");
+			CleanButton.Image = (Image)icons.GetObject("clean_32x32");
+			ScanButton.Image = (Image)icons.GetObject("scan_32x32");
 		}
 
 		/// <summary>Puts the tab icons in the list, in the theme in use, at a small icon's size on this screen.</summary>
@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.IO
 			TabsImageList.ImageSize = SystemInformation.SmallIconSize;
 			foreach (var key in new[] { "device_list", "device_tree", "logs" })
 			{
-				var image = (Image)ThemeResourceManager.Library.GetObject(key + "_16x16");
+				var image = (Image)ThemeResourceManager.Library.GetObject(key + "_32x32");
 				TabsImageList.Images.Add(key, ControlsHelper.ScaleImage(image, TabsImageList.ImageSize));
 			}
 			ControlsHelper.ApplyImageStyle(MainTabControl);
@@ -313,7 +313,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// <remarks>
 		/// Temporarily detaches SelectionChanged, sets DataSource, then re-attaches it asynchronously.
 		/// </remarks>
-		private void BindDeviceList(List<DeviceInfo> filtered)
+		internal void BindDeviceList(List<DeviceInfo> filtered)
 		{
 			// WORKAROUND: Remove SelectionChanged event.
 			DeviceDataGridView.SelectionChanged -= DeviceDataGridView_SelectionChanged;

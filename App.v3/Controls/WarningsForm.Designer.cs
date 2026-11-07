@@ -191,11 +191,11 @@
 
 		#endregion
 
-		private System.Windows.Forms.TabControl WarningsTabControl;
+		internal System.Windows.Forms.TabControl WarningsTabControl;
 		private System.Windows.Forms.TabPage WarningsTabPage;
-		private System.Windows.Forms.DataGridView WarningsDataGridView;
-		private System.Windows.Forms.Button Closebutton;
-		private System.Windows.Forms.Button IgnoreButton;
+		internal System.Windows.Forms.DataGridView WarningsDataGridView;
+		internal System.Windows.Forms.Button Closebutton;
+		internal System.Windows.Forms.Button IgnoreButton;
 		private System.Windows.Forms.DataGridViewImageColumn SeverityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;

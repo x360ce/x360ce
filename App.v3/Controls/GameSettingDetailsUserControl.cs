@@ -491,7 +491,7 @@ namespace x360ce.App.Controls
 			var url = "https://www.google.co.uk/?#q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
-			url += System.Web.HttpUtility.UrlEncode(keyName);
+			url += System.Net.WebUtility.UrlEncode(keyName);
 			return url;
 		}
 
@@ -502,7 +502,7 @@ namespace x360ce.App.Controls
 			var url = "http://ngemu.com/search/5815705?q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
-			url += System.Web.HttpUtility.UrlEncode(keyName);
+			url += System.Net.WebUtility.UrlEncode(keyName);
 			return url;
 		}
 		string GetNGemuThreadUrl()
@@ -512,7 +512,7 @@ namespace x360ce.App.Controls
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false);
 			var url = "http://ngemu.com/threads/";
-			url += System.Web.HttpUtility.UrlEncode(keyName) + "/";
+			url += System.Net.WebUtility.UrlEncode(keyName) + "/";
 			return url;
 		}
 

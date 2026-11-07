@@ -225,7 +225,7 @@ namespace x360ce.Tests
 				return _folder;
 			var folder = Path.Combine(Path.GetTempPath(), "x360ce-ui-tree-" + Guid.NewGuid().ToString("N"));
 			var exe = Ui.FindApp("App.v4");
-			var app = Process.Start(new ProcessStartInfo(exe, "/ExportUi=" + folder)
+			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument + " /ExportUi=" + folder)
 			{
 				WorkingDirectory = Path.GetDirectoryName(exe),
 			});

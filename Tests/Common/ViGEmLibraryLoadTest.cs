@@ -31,34 +31,34 @@ namespace x360ce.Tests
 
 		static bool LibraryLoadDue()
 		{
-			return (bool)typeof(ViGEmClient).GetMethod("LibraryLoadDue", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
+			return (bool)typeof(ViGEmClient).GetMethod(nameof(ViGEmClient.LibraryLoadDue), BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
 		}
 
 		static void RecordLoad(bool failed)
 		{
-			typeof(ViGEmClient).GetMethod("RecordLoad", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { failed });
+			typeof(ViGEmClient).GetMethod(nameof(ViGEmClient.RecordLoad), BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { failed });
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
 		[Description("A library that failed to load recently is not due again until the gate opens")]
 		public void A_failed_load_is_not_due_again_until_the_gate_opens()
 		{
-			var oldFailed = StaticField("_LastLoadFailed");
-			var oldTick = StaticField("_LastLoadFailTick");
+			var oldFailed = StaticField(nameof(ViGEmClient._LastLoadFailed));
+			var oldTick = StaticField(nameof(ViGEmClient._LastLoadFailTick));
 			try
 			{
-				SetStaticField("_LastLoadFailed", true);
-				SetStaticField("_LastLoadFailTick", Environment.TickCount);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailed), true);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailTick), Environment.TickCount);
 				Assert.IsFalse(LibraryLoadDue(), "A load that just failed is due again at once.");
-				SetStaticField("_LastLoadFailTick", Environment.TickCount - ViGEmClient.ConnectRetryMs - 1);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailTick), Environment.TickCount - ViGEmClient.ConnectRetryMs - 1);
 				Assert.IsTrue(LibraryLoadDue(), "A load that failed long ago is never tried again.");
-				SetStaticField("_LastLoadFailed", false);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailed), false);
 				Assert.IsTrue(LibraryLoadDue(), "A library that has not failed is gated as if it had.");
 			}
 			finally
 			{
-				SetStaticField("_LastLoadFailed", oldFailed);
-				SetStaticField("_LastLoadFailTick", oldTick);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailed), oldFailed);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailTick), oldTick);
 			}
 		}
 
@@ -66,9 +66,9 @@ namespace x360ce.Tests
 		[Description("A failed load is recorded once, and logged only when the failure state changes")]
 		public void A_failed_load_is_logged_once_per_change()
 		{
-			var oldFailed = StaticField("_LastLoadFailed");
-			var oldTick = StaticField("_LastLoadFailTick");
-			var oldException = StaticField("LastLoadException");
+			var oldFailed = StaticField(nameof(ViGEmClient._LastLoadFailed));
+			var oldTick = StaticField(nameof(ViGEmClient._LastLoadFailTick));
+			var oldException = StaticField(nameof(ViGEmClient.LastLoadException));
 			var faults = new List<Exception>();
 			EventHandler<LogHelperEventArgs> keep = (sender, e) =>
 			{
@@ -79,8 +79,8 @@ namespace x360ce.Tests
 			log.WritingException += keep;
 			try
 			{
-				SetStaticField("_LastLoadFailed", false);
-				SetStaticField("LastLoadException", new InvalidOperationException("load refused"));
+				SetStaticField(nameof(ViGEmClient._LastLoadFailed), false);
+				SetStaticField(nameof(ViGEmClient.LastLoadException), new InvalidOperationException("load refused"));
 				for (var i = 0; i < 1000; i++)
 					RecordLoad(true);
 				Assert.AreEqual(1, faults.Count, "1,000 failed loads alike wrote " + faults.Count + " fault reports.");
@@ -91,9 +91,9 @@ namespace x360ce.Tests
 			finally
 			{
 				log.WritingException -= keep;
-				SetStaticField("_LastLoadFailed", oldFailed);
-				SetStaticField("_LastLoadFailTick", oldTick);
-				SetStaticField("LastLoadException", oldException);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailed), oldFailed);
+				SetStaticField(nameof(ViGEmClient._LastLoadFailTick), oldTick);
+				SetStaticField(nameof(ViGEmClient.LastLoadException), oldException);
 			}
 		}
 

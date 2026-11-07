@@ -84,7 +84,7 @@ namespace x360ce.Tests
 			Assert.AreSame(first, ud.SourceState, "A third poll made a new state rather than filling the one from two polls ago.");
 			Assert.AreSame(second, ud.OldSourceState);
 			// A DirectInput device is read into its own two reserved states in turn, the same way.
-			var next = typeof(DInputHelper).GetMethod("NextJoState", BindingFlags.NonPublic | BindingFlags.Static);
+			var next = typeof(DInputHelper).GetMethod(nameof(DInputHelper.NextJoState), BindingFlags.NonPublic | BindingFlags.Static);
 			var di = new UserDevice();
 			var firstJo = next.Invoke(null, new object[] { di });
 			var secondJo = next.Invoke(null, new object[] { di });
@@ -311,8 +311,8 @@ namespace x360ce.Tests
 					var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Reused state", JoState = new JoystickState { X = 100 } };
 					ud.JoState.Buttons[1] = true;
 					tab.UpdateFrom(ud);
-					var axis = (DataTable)typeof(DirectInputUserControl).GetField("DiAxisTable", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
-					var buttons = tab.Controls.Find("DiButtonsTextBox", true).Single();
+					var axis = (DataTable)typeof(DirectInputUserControl).GetField(nameof(DirectInputUserControl.DiAxisTable), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tab);
+					var buttons = tab.Controls.Find(nameof(DirectInputUserControl.DiButtonsTextBox), true).Single();
 					Assert.AreEqual(100, axis.Rows[0][1]);
 					Assert.AreEqual("02", buttons.Text);
 					// The engine fills the state it replaced two polls ago in place: the object the tab drew last.

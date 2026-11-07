@@ -1,8 +1,67 @@
-﻿## [4.28.16.0] - 2026-10-31
+﻿## [4.29.62.0] - 2026-11-07
+
+- Fixed: Bug report recordings no longer say a controller's centring is off when x360ce never changed it.
+- Fixed: Bug report recordings no longer read the wrong XInput place when a real controller holds an earlier one.
+- Fixed: Pictures on buttons line up with their text, also when greyed out.
+- Fixed: The Cloud page waits longer after each failed send and stops after 4 tries.
+- Fixed: Boxes on the Options page and the Hardware window no longer touch.
+- Fixed: The Devices page shows the Hide box only for devices that can be hidden.
+- Fixed: A change of Windows settings no longer pauses controllers for a second (Issue #1633, KhaledElSaiad).
+- Fixed: Updating x360ce no longer freezes the window or leaves files behind.
+- Fixed: The main window is tall enough for its page when it opens at its saved position.
+- Fixed: The Issues tab says when HID Hide is hiding controllers from x360ce (Issue #1633, KhaledElSaiad).
+- Fixed: The XInput values shown no longer freeze after the error window is closed.
+- Fixed: The window disappears as soon as x360ce is closed, and controllers are released first.
+- Fixed: x360ce checks files and drivers only when something changes.
+- Fixed: x360ce reads empty XInput places only when a device is added or removed.
+- Changed: Vibration updates only the motor that changed, as 4.17 did (Issue #1633, KhaledElSaiad).
+- Changed: The Left Thumb and Right Thumb pages are now Left Stick and Right Stick.
+- Changed: [Invert], [Recentre] and [Turbo] moved under [Adjust] in the mapping menu.
+- Changed: Sliders have their name on the left and no tick marks.
+- Changed: The General page shows each control's value under its name.
+- Changed: The Buttons page has new button pictures and arrows, sharp at any screen scale.
+- Changed: The About page opens on a Program tab with the links, the authors and the credits.
+- Changed: The About page has a smaller heading, so its tabs start higher.
+- Changed: x360ce now connects to the online database at its new address.
+- Changed: [Theme] moved to Options > Appearance.
+- Changed: [Developer Tools...] moved into Options > General > Developing.
+- Changed: The Controller page's General tab spaces its boxes like the other pages.
+- Changed: The main window first opens tall enough for the whole Controller page when the screen has room.
+- Changed: Lists fill the page from edge to edge, with more room for titles and the first column.
+- Changed: Remap All moves to the next control as soon as the controller is back at rest.
+- Changed: The Cloud page does nothing while no tasks wait, and sends them when the network returns.
+- Changed: AI assistants read the program's controls faster.
+- Changed: When you switch windows, x360ce checks only programs named like a listed game.
+- Changed: A change on one controller page saves only that page.
+- Changed: x360ce no longer wakes 20 times a second once it has started.
+- Changed: Controllers no longer wait for the issue check or the tabs at start-up.
+- Changed: Resizing the window and switching the theme are faster.
+- Changed: Dragging the window's edge is smooth: the page is laid out when you let go.
+- Changed: x360ce uses about half as much CPU while idle.
+- Changed: The window appears at once and says Loading. Please wait... until its tabs are ready.
+- Changed: Tabs open as fast the first time as later.
+- Changed: x360ce no longer loads ASP.NET, Microsoft's website engine.
+- Changed: Icons are now drawn from one large picture at every screen scale.
+- Added: Bug report recordings name the force feedback driver, its motors, and the force calls made each second.
+- Added: Bug report recordings show where DirectInput and Raw Input differ, and what games read back.
+- Added: Bug report recordings say why a device was released, and which other controller programs are running.
+- Added: [Adjust] > [Round Dead Zone] gives a stick one round dead zone.
+- Added: Auto Preset maps controllers listed in SDL's controller database.
+- Added: Copy Preset and Paste Preset also work in SDL's format.
+- Added: An SDL page on each controller, and an SDL tab in Load Preset.
+- Added: Options > HID Hide installs and updates HID Hide.
+- Added: Options > HID Hide shows help for HID Hide.
+- Added: [Retry] on the Cloud page sends failed tasks again.
+- Added: Options > Appearance sets the program's font, with Selawik built in.
+- Added: Code and logs use the built-in Inconsolata font once you choose a font.
+- Added: Options > Internet sets where the SDL controller database is downloaded from.
+- Added: Options > Appearance > Size sets the interface font size.
+
+## [4.28.16.0] - 2026-10-31
 
 - Fixed: x360ce could stop with an error as it closed (Issue #1650, Gron21).
 - Fixed: Formulas that switch quickly with now stuttered after a day of running.
-- Fixed: Controller tabs and Options hotkeys were hidden in a short window, as on a 1920 x 1080 screen at 150 % (Issue #1656, charoufamd-cell).
+- Fixed: Controller tabs and Options hotkeys were hidden in a short window (Issue #1656, charoufamd-cell).
 - Fixed: The Issues page could stop x360ce with an error as an issue cleared.
 - Added: [Turbo] in the mapping menu presses a held button ten times a second.
 - Added: Help shows how a held button turns other buttons into a second set.
@@ -31,7 +90,7 @@
 - Fixed: Spacing was uneven between pages, groups, tool bars and buttons; every page now uses one spacing.
 - Fixed: The AI page could stop with "Parameter is not valid" when its font was set again.
 - Fixed: The header said "Help Subject" at start-up.
-- Fixed: Minimizing to the tray and back could stop x360ce with an error; the window is now hidden there, not built again.
+- Fixed: Minimizing to the tray and back could stop x360ce with an error.
 - Fixed: AI assistants read lists and descriptions without their & signs, so a device's ID came out wrong.
 - Removed: Hiding devices through HID Guardian; HID Hide does it.
 - Changed: Create uses the tunnel made earlier for this computer instead of making another.
@@ -47,10 +106,10 @@
 - Changed: Direct Input shows the pressed buttons in a box instead of a list.
 - Changed: Controller pages that are not shown refresh once a second.
 - Changed: On the Remote MCP Controller tab, MCP Server comes before Properties.
-- Changed: The Devices tab's HID Guardian menu is HID Hide, with Show Gaming Devices, Unhide All Devices, Synchronize To HID Hide and Open HID Hide.
-- Changed: The Devices tab's Hide box, and Configure automatically, now on the HID Hide page, hide devices through HID Hide.
+- Changed: The Devices tab's HID Guardian menu is now HID Hide, with its own commands.
+- Changed: The Devices tab's Hide box and the HID Hide page's Configure automatically use HID Hide.
 - Added: Axis to D-Pad: a device's X and Y axes press the D-Pad, with a chart of where each direction presses.
-- Added: The Tunnel ID on the AI page lists the organization's tunnels, so the one a ChatGPT plugin was made with can be picked.
+- Added: The Tunnel ID on the AI page lists the organization's tunnels to pick from.
 - Added: AutoHotkey v2 scripts can watch and drive every device. Off by default.
 - Added: Formulas can read another device on the controller, such as =c1.d2.b1.
 - Added: Remote MCP Controller, a plugin device that an AI or a program drives.
@@ -58,12 +117,12 @@
 - Added: A plugin device can have its own AI assistant access.
 - Added: x360ce's own AI assistant access reaches every plugin device.
 - Added: Help lists the ports x360ce and its plugins use.
-- Added: Adding an Xbox controller through DirectInput offers its Raw Input row, which keeps working in games (Issue #1652, Sterling177).
+- Added: Adding an Xbox controller through DirectInput offers its Raw Input row (Issue #1652, Sterling177).
 - Added: The Issues tab names Xbox controllers mapped through DirectInput, with Use Raw Input to move them.
 
 ## [4.26.38.0] - 2026-10-17
 
-- Fixed: The program stopped at start-up on a PC that allows only FIPS-compliant algorithms (Issue #1648, FuriousZombie3).
+- Fixed: The program stopped at start-up on a PC that allows only FIPS algorithms (Issue #1648, FuriousZombie3).
 - Fixed: A waiting tab's picture showed the real controller holding its place.
 - Fixed: A virtual controller noted in the wrong XInput place is found again.
 - Fixed: A D-Pad direction saved with a minus sign did nothing.
@@ -77,12 +136,12 @@
 - Fixed: A controller tab's light ignored unticked devices and the tab's Enable.
 - Fixed: Adding a device to a controller gave the device already on it the new one's settings (Issue #1334, Kuiriel).
 - Fixed: A running game was not selected when its folder name used another language's letters.
-- Fixed: The Direct Input page numbered buttons from 0, while the mapping boxes number them from 1 (Issue #1498, CtrlAltPizza).
-- Removed: Enable Logging, Enable Console, Debug Mode, Version and Include [Products] on the Options page, which did nothing.
+- Fixed: The Direct Input page numbered buttons from 0, the mapping boxes from 1 (Issue #1498, CtrlAltPizza).
+- Removed: Options that did nothing: Enable Logging, Enable Console, Debug Mode, Version, Include [Products].
 - Changed: Settings that do nothing right now are greyed out, with the reason.
 - Changed: A device on several tabs uses the lowest enabled tab's settings.
 - Changed: Force feedback leaves a pad's own centering as it is; only wheels and flight sticks get theirs switched on.
-- Changed: Friction, the least force that turns the wheel, starts at 20 % and Auto measures it; Strength adds the car's steering on top.
+- Changed: Friction starts at 20 % and Auto measures it; Strength adds the car's steering on top.
 - Changed: The Car list sets the wheel range too.
 - Changed: Recording a hotkey switches it on.
 - Changed: Start with Windows shows the Windows setting, as Task Manager does.
@@ -93,7 +152,7 @@
 - Added: Plugins that add devices, each one DLL built from one .cs file and loaded from its own folder under Plugins.
 - Added: The Plugins page on the Options tab lists every plugin and why one did not load.
 - Added: x360ce.exe /PluginKit writes a folder to start a plugin in; plugins_list and the skill describe each plugin.
-- Added: A plugin device gets a tab on the controller page for its settings and its own controls; the Test Controller has both.
+- Added: A plugin device gets a tab on the controller page for its settings and its own controls.
 - Added: The OpenAI Tunnel tab lets ChatGPT on the web use x360ce.
 
 ## [4.25.67.0] - 2026-10-11
@@ -243,35 +302,35 @@
 - Fixed: A pad vibrated one motor only, or stopped after reconnecting (Issue #1633, KhaledElSaiad).
 - Fixed: A sawtooth effect closed the program on pads with the USB Vibration driver (Issue #1634, mahaman626).
 - Fixed: The AI assistant access Copy buttons could close the program while another program held the clipboard.
-- Fixed: Closing the program while a virtual controller was being connected could leave it plugged in until Windows restarted.
+- Fixed: Closing while a virtual controller was connecting could leave it plugged in until Windows restarted.
 - Fixed: Each Map Device window went on handling every device change after it was closed.
 - Fixed: The /Exit switch did not close a copy running with Allow Only One Copy off.
 - Fixed: Percentage sliders did not say what 100 stands for, so an assistant could not set them.
 - Fixed: Sorting the games list while it showed only enabled or disabled games could close the program.
 - Fixed: Save closed the program when Windows refused a settings file; it now offers to retry or use your own folder.
-- Fixed: With virtual controllers on, every device plugged in or removed left system handles open until the program closed.
+- Fixed: With virtual controllers on, each device plugged in or removed left handles open until the program closed.
 - Fixed: Set to 1000 Hz, the controllers were polled only about 950 times a second.
 - Fixed: On a computer with many old virtual controller records, the controller pages took seconds to appear at start.
 - Fixed: Loading a preset could empty a mapping, such as the B button or the D-Pad.
 - Fixed: Presets made for older versions had their sticks and D-Pad read as buttons.
 - Fixed: A preset pasted and copied again came back changed, under another checksum.
-- Fixed: Settings a preset left out ran at nought, not at the defaults the page shows, such as button dead zones and motor periods.
+- Fixed: Settings a preset left out ran at nought, not at the defaults the page shows.
 - Fixed: An axis-to-button dead zone set to 0 came back as the default, 8192.
 - Fixed: A real controller in XInput 1 pushed every virtual controller one place along.
 - Fixed: Putting controllers in order asked for Administrator twice.
 - Changed: A mapping formula can be up to 128 characters.
 - Changed: Centering spring Auto checks that its strength holds the wheel before setting it.
-- Changed: Motor periods follow the measured Xbox motors, 160 ms left and 64 ms right by default; mappings still on the old pair are updated.
+- Changed: Motor periods follow the measured Xbox motors: 160 ms left and 64 ms right by default.
 - Changed: The period played follows the force, as a real motor slows when driven less.
 - Changed: XInput Devices rows carry their own up and down arrows.
 - Changed: A device added to a controller is selected, ready to set up.
 - Changed: Online settings are reached over HTTPS.
-- Added: Motor Periods presets for wheels, an info button about the motors, and a Defaults button on the Force Feedback page.
+- Added: Motor Periods presets for wheels, a motor info button and a Defaults button on the Force Feedback page.
 - Added: Options has a Test button for the web service address.
 - Added: The Issues tab names force feedback a device refused or plays differently.
 - Added: Map Device can list system devices, such as the Logitech G13 (Issue #1211, bredita).
 - Added: An AI assistant can read and answer the windows that open over the main one.
-- Added: Copy Preset copies as YAML, with XML and JSON under its arrow, also on the Load Preset window; Paste Preset reads all three.
+- Added: Copy Preset copies as YAML, with XML and JSON under its arrow; Paste Preset reads all three.
 
 ## [4.22.21.0] - 2026-09-17
 
@@ -283,7 +342,7 @@
 - Fixed: Removing leftover virtual controllers could freeze the program.
 - Fixed: Windows could slow the program to 125 passes a second behind a game; a wheel then swung side to side.
 - Fixed: A controller tab without a free XInput place slowed the whole program.
-- Fixed: Reading the devices or plugging in a virtual controller stopped the polling for seconds; a wheel then ran to its end stop.
+- Fixed: Reading devices or plugging in a virtual controller stopped polling for seconds; a wheel hit its end stop.
 - Fixed: Reading the devices read every device on the machine; it reads the controllers and their parents.
 - Fixed: The controller pictures went dark while the devices were read.
 - Fixed: The Hardware window could close the program when a device changed.
@@ -503,8 +562,8 @@
 ## [4.17.46.0] - 2026-08-22
 
 - Fixed: Virtual gamepad bus client opened and closed a driver handle hundreds of times per second (PR #1604, ykondury).
-- Fixed: Controller update thread stopped on the first unhandled error, silently ending device polling (PR #1604, ykondury).
-- Fixed: Failed state send to a virtual controller now replugs it instead of ending the update thread (PR #1604, ykondury).
+- Fixed: Device polling silently ended on the first unhandled error (PR #1604, ykondury).
+- Fixed: A failed send to a virtual controller now replugs it and polling continues (PR #1604, ykondury).
 - Fixed: Failed virtual controller connect left placeholder controllers plugged in (PR #1604, ykondury).
 - Fixed: Failed virtual controller disconnect was reported as success (PR #1604, ykondury).
 - Fixed: Virtual controller slot outside 1-4 threw instead of returning a result (PR #1604, ykondury).

@@ -53,18 +53,8 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			lock (SessionParametersLock)
 			{
-				var hc = System.Web.HttpContext.Current;
-				// If application is not website.
-				if (hc is null)
-				{
-					sessionId = _SessionId;
-					userId = _UserId;
-				}
-				else
-				{
-					sessionId = hc.Session is null ? null : (int?)hc.Session["_SessionId"];
-					userId = hc.Session is null ? null : (int?)hc.Session["_UserId"];
-				}
+				sessionId = _SessionId;
+				userId = _UserId;
 			}
 		}
 
@@ -72,18 +62,8 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			lock (SessionParametersLock)
 			{
-				var hc = System.Web.HttpContext.Current;
-				// If application is not website.
-				if (hc is null)
-				{
-					_SessionId = sessionId;
-					_UserId = userId;
-				}
-				else
-				{
-					hc.Session["_SessionId"] = sessionId;
-					hc.Session["_UserId"] = userId;
-				}
+				_SessionId = sessionId;
+				_UserId = userId;
 			}
 		}
 

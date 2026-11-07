@@ -121,7 +121,7 @@
 			//
 			this.ArrowPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.ArrowPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.ArrowPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_gray_16x16;
+			this.ArrowPictureBox.Image = global::x360ce.App.Properties.Resources.arrow_right_gray_32x32;
 			this.ArrowPictureBox.Location = new System.Drawing.Point(81, 6);
 			this.ArrowPictureBox.Name = "ArrowPictureBox";
 			this.ArrowPictureBox.Size = new System.Drawing.Size(16, 16);
@@ -132,7 +132,7 @@
 			// ButtonImagePictureBox
 			//
 			this.ButtonImagePictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_16x16;
+			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_32x32;
 			this.ButtonImagePictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ButtonImagePictureBox.Location = new System.Drawing.Point(103, 0);
 			this.ButtonImagePictureBox.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
@@ -164,11 +164,11 @@
 
         private System.Windows.Forms.TableLayoutPanel LayoutPanel;
         private System.Windows.Forms.PictureBox ButtonImagePictureBox;
-        private System.Windows.Forms.TrackBar DeadZoneTrackBar;
+        internal System.Windows.Forms.TrackBar DeadZoneTrackBar;
         private System.Windows.Forms.Label ButtonNameLabel;
-        private System.Windows.Forms.TextBox MappedAxisTextBox;
+        internal System.Windows.Forms.TextBox MappedAxisTextBox;
         public System.Windows.Forms.NumericUpDown DeadZoneNumericUpDown;
-        private System.Windows.Forms.TextBox DeadZoneTextBox;
+        internal System.Windows.Forms.TextBox DeadZoneTextBox;
         private System.Windows.Forms.PictureBox ArrowPictureBox;
     }
 }
