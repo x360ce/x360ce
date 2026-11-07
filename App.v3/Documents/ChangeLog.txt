@@ -1,8 +1,8 @@
 ﻿## [3.10.9.0] - 2026-11-07
 
-- Changed: The online database is called at its new address.
-- Changed: x360ce no longer loads ASP.NET; Cloud runs on System.Net.
-- Changed: Each icon has one large picture, scaled down when drawn.
+- Changed: x360ce now connects to the online database at its new address.
+- Changed: x360ce no longer loads ASP.NET, Microsoft's website engine.
+- Changed: Icons are now drawn from one large picture at every screen scale.
 
 ## [3.9.7.0] - 2026-10-29
 
@@ -65,7 +65,7 @@
 - Fixed: Starting from a protected game folder closed the program.
 - Fixed: Copying text could close the program while another program held the clipboard.
 - Fixed: Crash when a controller was unplugged and plugged back in.
-- Fixed: Error "SetupDiGetDeviceRegistryPropertyW: 122" on some computers (Issue #830, Psychophage; Issue #1565, ProjectXsent).
+- Fixed: A device list error on some computers (Issue #830, Psychophage; Issue #1565, ProjectXsent).
 - Fixed: Startup warned that a leak detector was missing whenever a debug symbol file sat beside the program.
 - Fixed: Changes and License text on the About screen ran together as one paragraph.
 - Fixed: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.
@@ -74,7 +74,7 @@
 - Fixed: The window froze for seconds at start with controllers attached.
 - Fixed: The new device question hung when online settings were unreachable.
 - Fixed: The window paused whenever Windows reported a device change.
-- Fixed: Cancelling the new device question caused a misconfigured device error (Issue #848, mrmousey23; Issue #578, Thetwistedking).
+- Fixed: Cancelling the new device question caused an error (Issue #848, mrmousey23; Issue #578, Thetwistedking).
 - Fixed: Settings chosen for one new device were lost if the next was cancelled.
 - Fixed: Loading a preset could empty a mapping, such as the B button or the D-Pad.
 - Fixed: Preset sticks and D-Pad were shown as buttons.
@@ -85,7 +85,7 @@
 - Changed: Interface refreshes up to 10 times per second instead of 20.
 - Changed: Online settings are reached over HTTPS.
 - Changed: The status bar shows the refresh rate instead of counters.
-- Added: AI assistant access on the Options page, so an AI assistant or a script can read and operate the program (/Mcp, /Ai).
+- Added: AI assistant access on the Options page, so an assistant or script can operate the program (/Mcp, /Ai).
 - Added: Every control has a name and a purpose, for screen readers and automation tools.
 
 ## [3.2.10.82] - 2015-10-20
