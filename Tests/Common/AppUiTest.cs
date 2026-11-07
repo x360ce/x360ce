@@ -50,7 +50,7 @@ namespace x360ce.Tests
 			var expected = FileVersionInfo.GetVersionInfo(exe).FileVersion;
 
 			// When: it is started.
-			_process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			var window = Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
 
 			// Then: the window is titled with the version that was just built.
@@ -67,7 +67,7 @@ namespace x360ce.Tests
 			if (exe == null)
 				Assert.Inconclusive("App.v4 is not built. Build the solution before running UI tests.");
 
-			_process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			var window = Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
 
 			// A tab control proves the interface finished composing, not merely that a window exists.

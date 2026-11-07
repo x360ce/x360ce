@@ -182,7 +182,7 @@ namespace x360ce.Tests
 					Console.WriteLine("{0} pixels of the controller compared; furthest from halfway: {1}", compared, worst);
 					Assert.IsTrue(compared > 1000, "Only " + compared + " pixels of the controller differ from the background.");
 					Assert.IsTrue(worst <= 3, "A switched-off pixel is " + worst + " away from halfway between the picture and the background.");
-					// Both states are one plain draw of a picture made once at its size; a copy made pixel by pixel cost half a second.
+					// Both states draw the picture kept at its size, switched off with opacity; a copy made pixel by pixel cost half a second.
 					Assert.IsTrue(offMs <= onMs * 3 + 2, "A switched-off paint takes " + offMs.ToString("0.00") + " ms against "
 						+ onMs.ToString("0.00") + " ms switched on.");
 				}
@@ -211,7 +211,7 @@ namespace x360ce.Tests
 			var text = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadTabPages", "General", "XboxImageUserControl.cs"));
 			var paint = Ui.Between(text, "protected override void OnPaint(PaintEventArgs e)", "void DrawGlyph(");
 			var tryAt = paint.IndexOf("\ttry");
-			var firstDraw = paint.IndexOf("e.Graphics.DrawImage(Painted(");
+			var firstDraw = paint.IndexOf("Painted(_Top");
 			var lastDraw = paint.IndexOf("DrawHelpText(e.Graphics);");
 			var catchAt = paint.IndexOf("catch (OutOfMemoryException ex)");
 			Assert.IsTrue(tryAt > 0 && firstDraw > tryAt && lastDraw > firstDraw && catchAt > lastDraw,

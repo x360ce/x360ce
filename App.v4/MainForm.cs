@@ -1650,6 +1650,7 @@ namespace x360ce.App
 				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 				SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 				SettingsManager.Current.ConfigLoaded -= Current_ConfigLoaded;
+				SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 				SettingsManager.AiOptions.PropertyChanged -= AiOptions_PropertyChanged;
 				SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
 				if (Global.DHelper != null)

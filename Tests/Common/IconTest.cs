@@ -41,8 +41,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every interface icon comes at 1.5 and 2 times its size, and for the dark theme at all three")]
-		public void Every_icon_has_its_sizes_and_a_dark_version()
+		[Description("Every interface icon has one picture, and one of the same size for the dark theme")]
+		public void Every_icon_has_a_dark_version_of_its_size()
 		{
 			var versions = new ResourceManager("x360ce.App.Properties.Icons", typeof(App.Properties.Resources).Assembly);
 			var icons = DesignerIcons();
@@ -50,19 +50,10 @@ namespace x360ce.Tests
 			var missing = new List<string>();
 			foreach (var icon in icons)
 			{
-				var sizes = new[] { icon.Value, icon.Value * 3 / 2, icon.Value * 2 };
-				foreach (var size in sizes)
-				{
-					foreach (var suffix in new[] { "", "_dark" })
-					{
-						if (size == icon.Value && suffix == "")
-							continue;
-						var name = icon.Key + "_" + size + "x" + size + suffix;
-						var image = versions.GetObject(name) as Image;
-						if (image == null || image.Size != new Size(size, size))
-							missing.Add(name);
-					}
-				}
+				var name = icon.Key + "_" + icon.Value + "x" + icon.Value + "_dark";
+				var image = versions.GetObject(name) as Image;
+				if (image == null || image.Size != new Size(icon.Value, icon.Value))
+					missing.Add(name);
 			}
 			Assert.AreEqual(0, missing.Count, "Missing or of the wrong size: " + string.Join(", ", missing));
 		}

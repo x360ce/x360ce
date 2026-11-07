@@ -469,12 +469,11 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>Beside the application when it is carried around, otherwise the shared folder.</summary>
+		/// <summary>Beside the application when it is carried around, otherwise the settings folder of the run.</summary>
 		public static IEnumerable<string> ErrorFolders(string exePath)
 		{
 			yield return Path.Combine(Path.GetDirectoryName(exePath), "x360ce", "Errors");
-			yield return Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "X360CE", "Errors");
+			yield return Path.Combine(TestRun.ProfileFolder, "Errors");
 		}
 
 		/// <summary>Minimise the main window, the way a user sends the application to the tray.</summary>

@@ -1,6 +1,8 @@
-﻿## [3.10.7.0] - 2026-11-04
+﻿## [3.10.9.0] - 2026-11-07
 
 - Changed: The online database is called at its new address.
+- Changed: x360ce no longer loads ASP.NET; Cloud runs on System.Net.
+- Changed: Each icon has one large picture, scaled down when drawn.
 
 ## [3.9.7.0] - 2026-10-29
 

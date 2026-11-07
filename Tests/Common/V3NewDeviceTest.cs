@@ -41,7 +41,7 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp("App.v3");
 			if (exe == null)
 				Assert.Inconclusive("App.v3 is not built. Build it before running UI tests.");
-			var app = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
+			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = Path.GetDirectoryName(exe) });
 			var closed = new List<string>();
 			try
 			{
@@ -102,7 +102,7 @@ namespace x360ce.Tests
 			// Found by the question's own search, which looks through the program's folder.
 			var preset = Path.Combine(folder, "V3NewDeviceTest.preset.ini");
 			var original = File.Exists(ini) ? File.ReadAllBytes(ini) : null;
-			var app = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = folder });
+			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = folder });
 			string section = null;
 			try
 			{

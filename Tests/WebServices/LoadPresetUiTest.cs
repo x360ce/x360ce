@@ -97,7 +97,7 @@ namespace x360ce.Tests
 			var exe = Ui.FindApp(appFolder);
 			if (exe == null)
 				Assert.Inconclusive(appFolder + " is not built. Build the solution before running UI tests.");
-			_process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
+			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = Path.GetDirectoryName(exe) });
 			return Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
 		}
 

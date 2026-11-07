@@ -258,9 +258,8 @@ namespace x360ce.App
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
 		/// <remarks>
-		/// Made faded (<see cref="EngineHelper.Faded"/>) from the image as it was drawn at 100% and at each larger size
-		/// it was drawn at, and then scaled to the size of the one given, so a faded icon is as sharp as the full one and
-		/// is known as enlarged, never enlarged again.
+		/// Made faded (<see cref="EngineHelper.Faded"/>) from the original picture, and then scaled to the size of the one
+		/// given, so a faded icon is as sharp as the full one.
 		/// </remarks>
 		public static Bitmap GetDisabledImage(Bitmap image)
 		{

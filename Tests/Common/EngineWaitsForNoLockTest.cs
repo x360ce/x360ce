@@ -264,7 +264,7 @@ namespace x360ce.Tests
 			var retrieve = EngineSteps.RetrieveXiStates(helper);
 			// The clock runs, so the read falls due and is asked of the reader, which then waits for the held lock.
 			XInputDisplayReadTest.StartClock(helper);
-			System.Threading.Thread.Sleep(20);
+			System.Threading.Thread.Sleep(120);
 			var state = -1;
 			try
 			{

@@ -37,7 +37,7 @@ namespace x360ce.Tests
 		{
 			var exe = Ui.FindApp("App.v4");
 			var started = DateTime.UtcNow;
-			_process = Process.Start(new ProcessStartInfo(exe) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(exe) });
+			_process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { UseShellExecute = false, WorkingDirectory = Path.GetDirectoryName(exe) });
 			Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(30));
 			// Requests keep coming for the whole of the close, a few hundred of them.
 			var asking = true;

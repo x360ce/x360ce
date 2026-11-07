@@ -66,7 +66,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				var combos = Ui.WaitFor(() =>
@@ -122,7 +122,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				var tabs = Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(

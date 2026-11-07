@@ -135,7 +135,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				// Let startup settle: device enumeration allocates before it reaches a steady state.
@@ -191,7 +191,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
 
 				for (var i = 0; i < warmupCycles; i++)
@@ -265,7 +265,7 @@ namespace x360ce.Tests
 			Process process = null;
 			try
 			{
-				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				process = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 				var window = Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(60));
 				// The status bar appears once the Warnings window is answered.
 				var rate = Ui.WaitFor(() =>

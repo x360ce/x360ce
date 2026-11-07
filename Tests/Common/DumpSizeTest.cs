@@ -103,7 +103,7 @@ namespace x360ce.Tests
 			var marker = "x360ce-dump-marker-" + Guid.NewGuid().ToString("N");
 			var folder = Path.Combine(Path.GetTempPath(), "x360ce.dump-size." + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(folder);
-			var info = new ProcessStartInfo(exe)
+			var info = new ProcessStartInfo(exe, TestRun.ProfileArgument)
 			{
 				WorkingDirectory = Path.GetDirectoryName(exe),
 				UseShellExecute = false,
