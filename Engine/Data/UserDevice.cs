@@ -83,6 +83,9 @@ namespace x360ce.Engine.Data
 		/// Read in the Raw Input device's place while Raw Input cannot see it. Raw Input stops listing a controller that
 		/// HID Hide hides, whatever programs HID Hide allows, while DirectInput still reads it for an allowed program; and it
 		/// does not list it again when HID Hide shows it, until the controller is plugged in again.
+		///
+		/// HidHide-RawInput-Workaround: removed when a released HID Hide lets Raw Input's own open through
+		/// (nefarius/HidHide pull request 226); `.ai/developer.instructions.md` says how to check.
 		/// </remarks>
 		/// <param name="devices">The devices listed.</param>
 		public UserDevice DirectInputTwin(System.Collections.Generic.IEnumerable<UserDevice> devices)

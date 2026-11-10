@@ -444,6 +444,9 @@ namespace x360ce.App
 		/// When this program hides devices itself, all it hides are shown, as when it closes: a run that ended without
 		/// showing them, as one that crashed, left them hidden. Otherwise only the controllers HID Hide hides now and this
 		/// program lists are shown, and nothing else of HID Hide's settings is changed.
+		///
+		/// HidHide-RawInput-Workaround: removed when a released HID Hide lets Raw Input's own open through
+		/// (nefarius/HidHide pull request 226); `.ai/developer.instructions.md` says how to check.
 		/// </remarks>
 		public static void ShowHiddenForRawInputStart()
 		{
@@ -473,6 +476,8 @@ namespace x360ce.App
 		/// When this program hides devices itself, the devices the game uses are hidden and the others shown. Every listed device
 		/// is judged, so one no longer used by the game, unticked since the last run among them, is shown again. Otherwise exactly
 		/// the controllers that were shown are hidden again, and HID Hide's settings are as they were.
+		///
+		/// HidHide-RawInput-Workaround: removed with <see cref="ShowHiddenForRawInputStart"/>.
 		/// </remarks>
 		public static void HideAgainAfterRawInputStart()
 		{

@@ -21,6 +21,9 @@ namespace x360ce.App.Issues
 	/// Only a controller Raw Input must list is judged: its own HID description names a game controller collection, as
 	/// the Raw Input list goes by. One HID Hide hides now is left to <see cref="HidHideIssue"/>. A controller missing on
 	/// one round only is not named: DirectInput and Raw Input see a controller arrive a moment apart.
+	///
+	/// HidHide-RawInput-Workaround: removed when a released HID Hide lets Raw Input's own open through
+	/// (nefarius/HidHide pull request 226); `.ai/developer.instructions.md` says how to check.
 	/// </remarks>
 	public class RawInputMissingIssue : IssueItem
 	{
@@ -98,13 +101,16 @@ namespace x360ce.App.Issues
 			if (ids.Length == 0)
 				return;
 			string error;
+			bool done;
 			using (var devices = new ElevatedDevices())
 			{
-				var done = devices.Switch(false, ids, out error) && devices.Switch(true, ids, out error);
+				done = devices.Switch(false, ids, out error) && devices.Switch(true, ids, out error);
 				_lastFixResult = done ? null : "The restart did not finish: " + error;
 			}
-			// The controllers come back as new arrivals, which the device list reads as for any controller plugged in.
-			_missingBefore.Clear();
+			// Restarted controllers come back as new arrivals, which the device list reads as for any controller plugged in.
+			// A failed restart keeps them named, so the next round shows why it failed.
+			if (done)
+				_missingBefore.Clear();
 		}
 	}
 }

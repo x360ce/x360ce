@@ -83,7 +83,26 @@ namespace x360ce.Tests
 			int fixType;
 			var text = HidHideIssue.Explain(Installed(true), new[] { Pad(true) }, Exe, out fixType);
 			Assert.AreEqual(HidHideIssue.FixConfigure, fixType);
-			StringAssert.Contains(text, "does not hide RumblePad 2");
+			StringAssert.Contains(text, "RumblePad 2");
+			StringAssert.Contains(text, "tick it under Devices in HID Hide to hide it from games");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("An Xbox controller is seen twice by every game; a wheel only by a game that reads it directly")]
+		public void Only_an_Xbox_controller_is_said_to_be_seen_twice_by_every_game()
+		{
+			var xbox = Pad(true, @"HID\VID_045E&PID_028E&IG_00\7&1A2B3C4D&0&0000");
+			xbox.ProductName = "Controller (XBOX 360 For Windows)";
+			xbox.HidHardwareIds = @"HID\VID_045E&PID_028E&IG_00";
+			var wheel = Pad(true, @"HID\VID_046D&PID_C29B\7&2B3C4D5E&0&0000");
+			wheel.ProductName = "G27 Racing Wheel";
+			wheel.HidHardwareIds = @"HID\VID_046D&PID_C29B";
+			int fixType;
+			var text = HidHideIssue.Explain(Installed(true), new[] { xbox, wheel }, Exe, out fixType);
+			StringAssert.Contains(text, "Every game sees Controller (XBOX 360 For Windows) twice");
+			StringAssert.Contains(text, "A game that reads G27 Racing Wheel directly, as well as Xbox controllers, sees it twice");
+			StringAssert.Contains(text, "A game that reads only Xbox controllers sees it once");
+			Assert.IsFalse(text.Contains("Every game sees G27"), "A wheel XInput cannot see is said to be seen twice by every game.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

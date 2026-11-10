@@ -66,7 +66,11 @@ namespace x360ce.App.DInput
 		public readonly UserDevice[] RowDevices;
 
 		/// <summary>For each of <see cref="Rows"/> that reads a Raw Input device, that device's DirectInput twin, read in its place while Raw Input cannot see it; null otherwise.</summary>
-		/// <remarks>The Raw Input device's layout takes its twin's slots, so the row's mappings read the twin's state as they read its own.</remarks>
+		/// <remarks>
+		/// The Raw Input device's layout takes its twin's slots, so the row's mappings read the twin's state as they read its own.
+		///
+		/// HidHide-RawInput-Workaround: removed with <see cref="UserDevice.DirectInputTwin"/>, as is <see cref="MappedStandsIn"/>.
+		/// </remarks>
 		public readonly UserDevice[] RowStandIns;
 
 		/// <summary>For each of <see cref="Rows"/>, its settings' mappings as <see cref="PadSetting.Maps"/> built them, or null when the settings it points at are not stored.</summary>

@@ -11,6 +11,7 @@
 
 - After Repair, Remove Leftover Pads, a reorder or a virtual controller made again, a game's steady rumble stays off until the game sends it again.
 - A crash inside Microsoft's XInput driver ends the program.
+- HID Hide 1.5.230 and older drop a controller hidden at start from Raw Input until it is plugged in again; x360ce works around it until HID Hide pull request 226 ships.
 - A removed stale virtual controller record keeps its device open until the program closes, one handle per record.
 - A pad whose force feedback keeps failing on one motor plays neither motor.
 - The online database stores an uploaded setting under a new ID, so the next upload adds another row and a Delete finds nothing.

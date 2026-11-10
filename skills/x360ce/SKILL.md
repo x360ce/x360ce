@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.30.14.0"
+  version: "4.30.19.0"
 ---
 
 # X360CE
