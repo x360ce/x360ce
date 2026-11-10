@@ -22,14 +22,17 @@ namespace x360ce.Tests
 	public class HidHideIssueTest
 	{
 		const string Exe = @"C:\Games\x360ce\x360ce.exe";
-		const string PadPath = @"HID\VID_046D&PID_C219\A&1AFDDD43&0&0000";
+		const string PadName = "Controller (XBOX 360 For Windows)";
+		const string PadPath = @"HID\VID_045E&PID_028E&IG_00\7&1A2B3C4D&0&0000";
 
+		/// <summary>An Xbox controller at <see cref="PadPath"/>, or a device of the hardware the path names.</summary>
 		static UserDevice Pad(bool online, string path = PadPath)
 		{
 			var ud = new UserDevice();
-			ud.ProductName = "RumblePad 2";
+			ud.ProductName = PadName;
 			ud.HidDeviceId = path;
 			ud.DevDeviceId = path;
+			ud.HidHardwareIds = path.Contains("\\") ? path.Substring(0, path.LastIndexOf('\\')) : path;
 			ud.IsOnline = online;
 			return ud;
 		}
@@ -53,7 +56,7 @@ namespace x360ce.Tests
 			int fixType;
 			var text = HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { Pad(true) }, Exe, out fixType);
 			Assert.AreEqual(HidHideIssue.FixInstall, fixType);
-			StringAssert.Contains(text, "RumblePad 2");
+			StringAssert.Contains(text, PadName);
 			StringAssert.Contains(text, "Install HID Hide");
 		}
 
@@ -83,26 +86,24 @@ namespace x360ce.Tests
 			int fixType;
 			var text = HidHideIssue.Explain(Installed(true), new[] { Pad(true) }, Exe, out fixType);
 			Assert.AreEqual(HidHideIssue.FixConfigure, fixType);
-			StringAssert.Contains(text, "RumblePad 2");
+			StringAssert.Contains(text, PadName);
 			StringAssert.Contains(text, "tick it under Devices in HID Hide to hide it from games");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("An Xbox controller is seen twice by every game; a wheel only by a game that reads it directly")]
-		public void Only_an_Xbox_controller_is_said_to_be_seen_twice_by_every_game()
+		[Description("Only an Xbox controller is named for hiding; a wheel, which a game reading Xbox controllers takes as the virtual one, is not")]
+		public void Only_an_Xbox_controller_is_named_for_hiding()
 		{
-			var xbox = Pad(true, @"HID\VID_045E&PID_028E&IG_00\7&1A2B3C4D&0&0000");
-			xbox.ProductName = "Controller (XBOX 360 For Windows)";
-			xbox.HidHardwareIds = @"HID\VID_045E&PID_028E&IG_00";
 			var wheel = Pad(true, @"HID\VID_046D&PID_C29B\7&2B3C4D5E&0&0000");
 			wheel.ProductName = "G27 Racing Wheel";
-			wheel.HidHardwareIds = @"HID\VID_046D&PID_C29B";
 			int fixType;
-			var text = HidHideIssue.Explain(Installed(true), new[] { xbox, wheel }, Exe, out fixType);
-			StringAssert.Contains(text, "Every game sees Controller (XBOX 360 For Windows) twice");
-			StringAssert.Contains(text, "A game that reads G27 Racing Wheel directly, as well as Xbox controllers, sees it twice");
-			StringAssert.Contains(text, "A game that reads only Xbox controllers sees it once");
-			Assert.IsFalse(text.Contains("Every game sees G27"), "A wheel XInput cannot see is said to be seen twice by every game.");
+			Assert.IsNull(HidHideIssue.Explain(Installed(true), new[] { wheel }, Exe, out fixType), "A wheel is named for hiding.");
+			Assert.IsNull(HidHideIssue.Explain(Installed(false), new[] { wheel }, Exe, out fixType), "A wheel asks for hiding to be switched on.");
+			Assert.IsNull(HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { wheel }, Exe, out fixType), "A wheel brings the HID Hide install.");
+			Assert.AreEqual(0, fixType);
+			var text = HidHideIssue.Explain(Installed(true), new[] { Pad(true), wheel }, Exe, out fixType);
+			StringAssert.Contains(text, "Every game sees " + PadName + " twice");
+			Assert.IsFalse(text.Contains("G27"), "A wheel is named beside the Xbox controller.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

@@ -18,6 +18,11 @@ namespace x360ce.App.Issues
 	/// named here, and the fix installs HID Hide or opens the program that settles it. Low, because many
 	/// games are not affected and nothing here stops the emulation working.
 	///
+	/// Only Xbox controllers are named for hiding: XInput lists the real one beside the virtual one, so every game
+	/// sees both. A device XInput cannot see, such as a wheel or a PlayStation controller, is not named: a game that
+	/// reads Xbox controllers is expected to use the virtual one. A game that also reads such a device directly
+	/// gets every press twice; Help's HID Hide section covers that.
+	///
 	/// A hidden controller is invisible to a program HID Hide does not allow, so to this program it looks
 	/// unplugged. That case is judged whether or not a controller is online, or mapped at all: waiting for one
 	/// would wait for ever, and a copy of the program in a new folder is a new program to HID Hide, whose
@@ -125,14 +130,14 @@ namespace x360ce.App.Issues
 			var hideable = devices
 				.Where(x => !x.IsKeyboard && !x.IsMouse && VirtualDriverInstaller.GetHidHidePaths(x).Length > 0)
 				.ToArray();
-			var online = hideable.Where(x => x.IsOnline).ToArray();
+			var xbox = hideable.Where(x => x.IsOnline && XInputPlaces.IsXInputCapable(x)).ToArray();
 			if (!state.Installed)
 			{
-				if (online.Length == 0)
+				if (xbox.Length == 0)
 					return null;
 				fixType = FixInstall;
 				var install = new List<string>();
-				AddSeenTwice(install, online, "Install HID Hide to hide {0} from games.");
+				AddSeenTwice(install, xbox, "Install HID Hide to hide {0} from games.");
 				return string.Join(Environment.NewLine, install.ToArray());
 			}
 			// Installed but its program did not answer: nothing can be said about its settings.
@@ -152,8 +157,8 @@ namespace x360ce.App.Issues
 					state.HiddenDevices.Length == 1 ? "a device" : state.HiddenDevices.Length + " devices",
 					state.HiddenDevices.Length == 1 ? "it is" : "they are", allow));
 			if (!state.CloakOn)
-				AddSeenTwice(lines, online, "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide {0} from games.");
-			var shown = state.CloakOn ? online.Where(x => !IsHidden(state, x)).ToArray() : new UserDevice[0];
+				AddSeenTwice(lines, xbox, "HID Hide is installed, but hiding is off: turn hiding on in HID Hide to hide {0} from games.");
+			var shown = state.CloakOn ? xbox.Where(x => !IsHidden(state, x)).ToArray() : new UserDevice[0];
 			AddSeenTwice(lines, shown, "HID Hide does not hide {0} yet: tick {0} under Devices in HID Hide to hide {0} from games.");
 			if (lines.Count == 0)
 				return null;
@@ -161,30 +166,18 @@ namespace x360ce.App.Issues
 			return string.Join(Environment.NewLine, lines.ToArray());
 		}
 
-		/// <summary>Says which games see the devices twice, then what hides them from games.</summary>
-		/// <remarks>
-		/// Every game sees an Xbox controller twice, because XInput lists the real one beside the virtual one. A device
-		/// XInput cannot see, such as a wheel or a PlayStation controller, is seen twice only by a game that reads it
-		/// directly, through DirectInput, Raw Input or HID, as well as Xbox controllers; a game that reads only Xbox
-		/// controllers sees just the virtual one, and needs nothing hidden.
-		/// </remarks>
+		/// <summary>Says that every game sees the Xbox controllers twice, then what hides them from games.</summary>
 		/// <param name="lines">The lines to add to.</param>
-		/// <param name="devices">The devices to name; nothing is added when empty.</param>
+		/// <param name="xbox">The Xbox controllers to name; nothing is added when empty.</param>
 		/// <param name="action">What HID Hide is set to and what to do, with {0} for "it" or "them".</param>
-		static void AddSeenTwice(List<string> lines, UserDevice[] devices, string action)
+		static void AddSeenTwice(List<string> lines, UserDevice[] xbox, string action)
 		{
-			var xinput = devices.Where(XInputPlaces.IsXInputCapable).ToArray();
-			var direct = devices.Where(x => !XInputPlaces.IsXInputCapable(x)).ToArray();
-			if (xinput.Length > 0)
-				lines.Add(string.Format(xinput.Length == 1
-					? "Every game sees {0} twice: the real controller and the virtual one made from it. "
-					: "Every game sees {0} twice: the real controllers and the virtual ones made from them. ",
-					Names(xinput)) + string.Format(action, xinput.Length == 1 ? "it" : "them"));
-			if (direct.Length > 0)
-				lines.Add(string.Format(direct.Length == 1
-					? "A game that reads {0} directly, as well as Xbox controllers, sees it twice: as itself and as the virtual Xbox controller made from it. A game that reads only Xbox controllers sees it once. "
-					: "A game that reads {0} directly, as well as Xbox controllers, sees them twice: as themselves and as the virtual Xbox controllers made from them. A game that reads only Xbox controllers sees them once. ",
-					Names(direct)) + string.Format(action, direct.Length == 1 ? "it" : "them"));
+			if (xbox.Length == 0)
+				return;
+			lines.Add(string.Format(xbox.Length == 1
+				? "Every game sees {0} twice: the real controller and the virtual one made from it. "
+				: "Every game sees {0} twice: the real controllers and the virtual ones made from them. ",
+				Names(xbox)) + string.Format(action, xbox.Length == 1 ? "it" : "them"));
 		}
 
 		static bool IsHidden(VirtualDriverInstaller.HidHideState state, UserDevice ud)

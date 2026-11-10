@@ -32,8 +32,8 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.30.19.0")]
-[assembly: AssemblyFileVersion("4.30.19.0")]
+[assembly: AssemblyVersion("4.30.20.0")]
+[assembly: AssemblyFileVersion("4.30.20.0")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("x360ce.Tests")]

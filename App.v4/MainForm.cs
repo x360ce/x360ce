@@ -1728,8 +1728,16 @@ namespace x360ce.App
 					Global.DHelper.Dispose();
 				Program.StartupTrace.Mark("closing: engine disposed");
 				components.Dispose();
+				Program.StartupTrace.Mark("closing: components disposed");
 				if (Program.IsClosing)
+				{
+					// The window's handle only, which takes its child windows with it, without disposing each control.
+					// About 3,500 windows left for Windows to destroy as the process ends could stop the mouse for most
+					// of a second (Issue #1633).
+					DestroyHandle();
+					Program.StartupTrace.Mark("closing: windows destroyed");
 					Program.EndProcess();
+				}
 				// Not on the window yet when the window is closed while it loads.
 				Main?.Dispose();
 				//lock (checkTimerLock)

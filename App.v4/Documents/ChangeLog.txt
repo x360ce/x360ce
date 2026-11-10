@@ -1,4 +1,4 @@
-﻿## [4.30.19.0] - 2026-11-10
+﻿## [4.30.20.0] - 2026-11-10
 
 - Fixed: A Raw Input controller hidden by HID Hide is read through DirectInput (Issue #1661, dnlrch10-maker).
 - Fixed: A new copy with HID Hide set to configure itself adds itself to HID Hide's list (Issue #1633, KhaledElSaiad).
@@ -7,8 +7,9 @@
 - Fixed: Deleting a record or pressing Retry while cloud messages are added no longer freezes the window.
 - Fixed: Starting x360ce no longer leaves controllers that HID Hide hides unseen in Raw Input until plugged in again.
 - Fixed: The window answers while x360ce starts, rather than freezing for up to 2 seconds (Issue #1633, KhaledElSaiad).
+- Fixed: Closing x360ce no longer stops the mouse for up to a second (Issue #1633, KhaledElSaiad).
 - Fixed: The Issues tab shows each issue's Information, Warning or Error icon again.
-- Changed: HID Hide advice on the Issues tab says which games see a controller twice.
+- Changed: The Issues tab asks to hide only Xbox controllers with HID Hide, as every game sees them twice.
 - Changed: Remap All pauses half a second between controls, so you can follow it (Issue #1633, KhaledElSaiad).
 - Added: Bug report recordings say what a window that stops answering waits for, and how busy the PC is.
 - Added: The Issues tab says when games cannot see a controller until it is plugged in again, and can restart it.

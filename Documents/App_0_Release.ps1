@@ -26,9 +26,17 @@
     carries a trusted signature, so a rerun only asks for the token for files the
     build has actually replaced.
 
+    A build, an application or a file can name the application line it belongs to,
+    such as "v3" or "v4". You are asked which lines to release, one letter per line
+    as App_2_VirusTotal.ps1 offers each output folder, and only their builds and
+    files are built, signed, scanned and reported. A build, application or file
+    that names no line belongs to every line. The other lines' output folders are
+    kept.
+
     The clean step removes every bin, bin64 and obj folder beside a project of
-    the solution, and the output folders holding the zips. Nothing outside the
-    repository is touched and every removed path is printed.
+    the solution, and the output folders holding the zips of the lines being
+    released. Nothing outside the repository is touched and every removed path is
+    printed.
 .PARAMETER Configuration
     Build configuration. Defaults to the value in the JSON file.
 .PARAMETER NoClean
@@ -37,10 +45,17 @@
 .PARAMETER SkipSign
     Builds and zips without signing, for checking the build on a machine without
     the signing token. The zips it produces are not releasable.
+.PARAMETER Line
+    The application lines to release, such as v4. Without it you are asked, and a
+    run nobody can answer releases every line.
 .EXAMPLE
     PS> .\App_0_Release.ps1
-    Asks whether to sign, then runs the full release: clean, build, sign, zip.
-    The question is skipped when -SkipSign is given or nobody can answer.
+    Asks which lines to release and whether to sign, then runs the full release:
+    clean, build, sign, zip. Each question is skipped when its parameter is given
+    or nobody can answer.
+.EXAMPLE
+    PS> .\App_0_Release.ps1 -Line v4
+    Builds, signs and packs v4 only, and keeps the v3 output folder as it is.
 .EXAMPLE
     PS> .\App_0_Release.ps1 -SkipSign -NoClean
     Rebuilds and repacks without the token, keeping existing output.
@@ -56,7 +71,8 @@
 param(
     [string]$Configuration,
     [switch]$NoClean,
-    [switch]$SkipSign
+    [switch]$SkipSign,
+    [string[]]$Line
 )
 
 $ErrorActionPreference = "Stop"
@@ -86,6 +102,20 @@ $solution = Resolve-Path2 $config.Solution
 if (-not (Test-Path -LiteralPath $solution)) { throw "Solution not found: $solution" }
 $root = [System.IO.Path]::GetDirectoryName($solution)
 
+# The application lines the configuration names, in the order the applications list them, so
+# each line gets the same letter as its output folder in App_2_VirusTotal.ps1.
+$allLines = @(@($config.Apps | ForEach-Object { $_.Line; $_.Files.Line }) + @($config.Stages.Builds.Line) |
+    Where-Object { $_ } | Select-Object -Unique)
+foreach ($name in $Line) {
+    if ($allLines -notcontains $name) { throw "Unknown line: $name. The configuration names: $($allLines -join ', ')" }
+}
+
+# Whether a build or an application belongs to the lines being released. One that names no line belongs to every line.
+function Test-Line {
+    param($Item)
+    return -not $Item.Line -or $Line -contains $Item.Line
+}
+
 # The signing module lives outside the repository and its path differs per machine,
 # so the configuration names an environment variable rather than one maintainer's
 # folder. Set SIGN_MODULE_PATH to the full path of the signing module.
@@ -98,14 +128,41 @@ $root = [System.IO.Path]::GetDirectoryName($solution)
 # to answer. Passing -SkipSign either way keeps the script silent for scripted
 # builds, and so does a redirected input stream, which is how build agents run it.
 $canAsk = [Environment]::UserInteractive -and -not [Console]::IsInputRedirected
+
+# One letter per line, as App_2_VirusTotal.ps1 offers one per output folder, and * for all of them.
+if (-not $PSBoundParameters.ContainsKey("Line") -and $allLines.Count -gt 1 -and -not $WhatIfPreference -and $canAsk) {
+    $letterFor = @{}
+    Write-Host ""
+    Write-Host "  What to release" -ForegroundColor Cyan
+    Write-Host ""
+    for ($i = 0; $i -lt $allLines.Count; $i++) {
+        $letterFor[[string][char]([byte][char]"A" + $i)] = $allLines[$i]
+        $folders = @($config.Apps | Where-Object { $_.Line -eq $allLines[$i] -and $_.FilesDir } | ForEach-Object { $_.FilesDir })
+        Write-Host ("    {0} - {1} only{2}" -f [char]([byte][char]"A" + $i), $allLines[$i],
+            $(if ($folders.Count -gt 0) { ", into " + ($folders -join ", ") } else { "" }))
+    }
+    Write-Host "    * - All: $($allLines -join ', ')"
+    Write-Host "    Q - Quit"
+    Write-Host ""
+    while (-not $Line) {
+        $choice = (Read-Host "Choose").Trim().ToUpperInvariant()
+        if ($choice -eq "Q") { Write-Host "Cancelled. Nothing was built."; return }
+        if ($choice -eq "*") { $Line = $allLines }
+        elseif ($letterFor.ContainsKey($choice)) { $Line = @($letterFor[$choice]) }
+        else { Write-Host "Enter a letter, * or Q." -ForegroundColor Yellow }
+    }
+}
+if (-not $Line) { $Line = $allLines }
+$apps = @($config.Apps | Where-Object { Test-Line $_ })
+
 if (-not $PSBoundParameters.ContainsKey("SkipSign") -and -not $WhatIfPreference -and $canAsk) {
     Write-Host ""
     Write-Host "  Release build" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "    1. Build everything and sign it"
+    Write-Host "    1. Build and sign"
     Write-Host "       Needs the signing token. This is what a release is built with."
     Write-Host ""
-    Write-Host "    2. Build everything without signing"
+    Write-Host "    2. Build without signing"
     Write-Host "       No token needed. The zips it produces are not releasable."
     Write-Host ""
     Write-Host "    Q. Quit"
@@ -201,7 +258,7 @@ function Remove-BuildOutput {
             $paths.Add([System.IO.Path]::Combine($dir, $name))
         }
     }
-    foreach ($dir in ($config.Apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
+    foreach ($dir in ($apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
         $paths.Add((Resolve-Path2 $dir))
     }
     foreach ($path in $paths) {
@@ -306,7 +363,7 @@ function Invoke-SignAndZip {
     # and this script stops on errors, so the throw is what stops the release.
     $actions = if ($SkipSign) { "Copy", "Zip" } else { , "All" }
     foreach ($action in $actions) {
-        & $signScript $action -Stage $Stage
+        & $signScript $action -Stage $Stage -Line $Line
     }
 }
 
@@ -344,7 +401,7 @@ function Test-EmbeddedSignatures {
     $temp = Join-Path ([System.IO.Path]::GetTempPath()) ("x360ce-audit-" + [System.Guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Path $temp | Out-Null
     try {
-        foreach ($dir in ($config.Apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
+        foreach ($dir in ($apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
             foreach ($file in Get-ChildItem -LiteralPath (Resolve-Path2 $dir) -Filter *.exe -File) {
                 # The count is printed because a resource that stops being embedded
                 # leaves no error behind, only a shorter list and a smaller file.
@@ -377,7 +434,7 @@ function Test-EmbeddedSignatures {
 function Write-Result {
     Write-Step "Result"
     $missing = 0
-    foreach ($dir in ($config.Apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
+    foreach ($dir in ($apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
         $full = Resolve-Path2 $dir
         Write-Host ""
         Write-Host "  $dir"
@@ -423,7 +480,8 @@ function Test-Detections {
         Write-Host "  The scanning script is missing, so nothing was scanned." -ForegroundColor Yellow
         return
     }
-    & $scan
+    # The output folders of the lines being released; the others were not rebuilt.
+    & $scan -Path @($apps.FilesDir | Where-Object { $_ } | Select-Object -Unique | ForEach-Object { Resolve-Path2 $_ })
 }
 
 # The updater inside the program finds a release by its title and checks the zip it
@@ -433,6 +491,10 @@ function Test-Detections {
 # new one.
 function Write-ReleaseTitle {
     Write-Step "Release title"
+    if ($apps.FilesDir -notcontains "Files.v4") {
+        Write-Host "  x360ce 4 is not in this release, and only its zip carries the title the updater reads."
+        return
+    }
     $assemblyInfo = Join-Path $root "App.v4\Properties\AssemblyInfo.cs"
     $match = [regex]::Match((Get-Content -LiteralPath $assemblyInfo -Raw), 'AssemblyFileVersion\("([\d.]+)"\)')
     if (-not $match.Success) { throw "AssemblyFileVersion not found in $assemblyInfo" }
@@ -447,6 +509,7 @@ $started = Get-Date
 Write-Host "Solution:      $solution"
 Write-Host "Configuration: $Configuration"
 Write-Host "Stages:        $(($config.Stages.Name) -join ', ')"
+if ($allLines.Count -gt 0) { Write-Host "Lines:         $($Line -join ', ')" }
 if ($SkipSign) { Write-Host "Signing:       skipped, the zips are not releasable" -ForegroundColor Yellow }
 
 Write-Step "Check build tools"
@@ -470,8 +533,15 @@ if ($WhatIfPreference) {
 }
 
 foreach ($stage in $config.Stages) {
-    Write-Step "Build $($stage.Name)"
-    foreach ($build in $stage.Builds) {
+    # A stage can hold nothing to build for the lines chosen, only files built elsewhere to sign.
+    $builds = @($stage.Builds | Where-Object { Test-Line $_ })
+    if ($builds.Count -eq 0) {
+        Write-Step "Build $($stage.Name) (nothing for $($Line -join ', '))"
+    }
+    else {
+        Write-Step "Build $($stage.Name)"
+    }
+    foreach ($build in $builds) {
         Invoke-Build $build $stage
     }
     Write-Step "Sign and pack $($stage.Name)"
@@ -483,6 +553,8 @@ Test-Detections
 Write-Result
 Write-ReleaseTitle
 # winget's manifest names the published zip's address and hash, so it is written once the release is out.
-Write-Host "Once the release is published, App_6_Winget.ps1 writes and checks its winget manifest; -Submit opens the pull request."
+if ($apps.FilesDir -contains "Files.v4") {
+    Write-Host "Once the release is published, App_6_Winget.ps1 writes and checks its winget manifest; -Submit opens the pull request."
+}
 Write-Host ""
 Write-Host "Done in $([int]((Get-Date) - $started).TotalMinutes) min $((((Get-Date) - $started).Seconds)) sec."

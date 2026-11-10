@@ -374,15 +374,19 @@ namespace x360ce.App
 			Global.DisposeServices();
 		}
 
-		/// <summary>Ends the program from a closing window, once it has let go of what it holds outside itself.</summary>
+		/// <summary>Ends the program from a closing window, once it has let go of what it holds outside itself and destroyed its windows.</summary>
 		/// <remarks>
-		/// All that is left is the program's own windows, and Windows takes those with the process. Destroyed one at a time
-		/// first, about 3,500 of them held the process for eight seconds, which a second start and the next game wait out.
+		/// The controls are not disposed one at a time: that held the process for eight seconds, which a second start and
+		/// the next game wait out. What is left goes with the process.
 		/// </remarks>
 		internal static void EndProcess()
 		{
 			Global.DisposeCloudClient();
+			StartupTrace.Mark("closing: cloud client disposed");
 			Global.DisposeServices();
+			StartupTrace.Mark("closing: services disposed");
+			// Added last, so it runs once every other exit handler has.
+			AppDomain.CurrentDomain.ProcessExit += (sender, e) => StartupTrace.Mark("closing: exit handlers done");
 			Environment.Exit(Environment.ExitCode);
 		}
 
