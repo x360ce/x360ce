@@ -563,11 +563,17 @@ namespace x360ce.App
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(Main);
 			Program.StartupTrace.Mark("MainControl: themed");
 			yield return null;
-			LoadMainControl();
+			foreach (var step in LoadMainControl())
+				yield return step;
 		}
 
 		/// <summary>Reads the settings, gives the control its data, puts it on the window and starts what waited for it.</summary>
-		void LoadMainControl()
+		/// <remarks>
+		/// Three steps, each of which held the window for about half a second, and together for up to two: the settings,
+		/// the pages' data, and putting the control on the window. Between the second and the third, the work each page
+		/// posted runs before its controls have windows.
+		/// </remarks>
+		IEnumerable<object> LoadMainControl()
 		{
 			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_WHILE_LOADING")))
 				throw new InvalidOperationException("Injected fault: X360CE_THROW_WHILE_LOADING.");
@@ -638,7 +644,9 @@ namespace x360ce.App
 			Main.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			Main.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			Main.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			yield return null;
 			LoadPages();
+			yield return null;
 			AddMainControl();
 			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
 			// the window, the one it was started from or else the main one.
@@ -653,14 +661,6 @@ namespace x360ce.App
 				ClearErrors(true);
 			}
 			MonitorErrors(true);
-			var game = SettingsManager.CurrentGame;
-			if (SettingsManager.Options.HidHideConfigureAutomatically)
-			{
-				// Every listed device is judged, so one no longer used by the game, unticked since the last run among
-				// them, is shown again as well as each one used is hidden.
-				SettingsManager.AutoHideShowMappedDevices(game);
-				AppHelper.SynchronizeToHidHide();
-			}
 			// The issues are checked on their own from now on, and what they find is shown on the Issues tab.
 			InitIssuesIcon();
 			// After the work loading posted for each page, which selects its row and shows that row's settings: a box change
@@ -957,6 +957,7 @@ namespace x360ce.App
 
 		void ArmFaultInjection()
 		{
+			ArmHangInjection();
 			var after = Environment.GetEnvironmentVariable("X360CE_THROW_AFTER");
 			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
 				return;
@@ -976,6 +977,49 @@ namespace x360ce.App
 				}));
 			};
 			_faultTimer.Start();
+		}
+
+		/// <summary>Holds the interface thread as a deadlock would, so what a recording says about a window that stops answering can be seen.</summary>
+		/// <remarks>
+		/// Set X360CE_HANG_AFTER to a number of seconds: a posted call then waits for a .NET lock another thread holds, for
+		/// X360CE_HANG_FOR seconds (15 when not set), and the window answers nothing meanwhile. Nothing is armed unless the
+		/// variable is set.
+		/// </remarks>
+		System.Windows.Forms.Timer _hangTimer;
+
+		void ArmHangInjection()
+		{
+			var after = Environment.GetEnvironmentVariable("X360CE_HANG_AFTER");
+			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
+				return;
+			if (!int.TryParse(Environment.GetEnvironmentVariable("X360CE_HANG_FOR"), out var holdFor) || holdFor <= 0)
+				holdFor = 15;
+			_hangTimer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
+			_hangTimer.Tick += (s, e) =>
+			{
+				_hangTimer.Stop();
+				ControlsHelper.BeginInvoke(() => WaitForInjectedLock(holdFor));
+			};
+			_hangTimer.Start();
+		}
+
+		static void WaitForInjectedLock(int seconds)
+		{
+			var gate = new object();
+			using (var held = new System.Threading.ManualResetEventSlim())
+			{
+				var holder = new System.Threading.Thread(() =>
+				{
+					lock (gate)
+					{
+						held.Set();
+						System.Threading.Thread.Sleep(seconds * 1000);
+					}
+				}) { IsBackground = true, Name = "InjectedHangHolder" };
+				holder.Start();
+				held.Wait();
+			}
+			lock (gate) { }
 		}
 
 		/// <summary>A critical issue this build can be told to report, so a report of one standing can be reproduced.</summary>
@@ -1005,6 +1049,7 @@ namespace x360ce.App
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			Program.StartupTrace.Mark("closing: start");
 			Program.IsClosing = true;
 			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
 			Plugins.PluginMcpDoors.CloseAll();
@@ -1045,9 +1090,12 @@ namespace x360ce.App
 			if (Program.ExportUiFolder == null && AllowDHelperStart)
 			{
 				SaveAll();
+				Program.StartupTrace.Mark("closing: settings saved");
 				AppHelper.UnInitializeHidHide();
+				Program.StartupTrace.Mark("closing: HID Hide restored");
 			}
 			AppHelper.UnInitializeHidGuardian();
+			Program.StartupTrace.Mark("closing: HID Guardian restored");
 		}
 
 		#region Timer
@@ -1146,7 +1194,11 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("UpdateForm2: end");
 			// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 			AllowDHelperStart = true;
+			// The controllers HID Hide hides are shown while the engine starts reading Raw Input, which then has them open
+			// and keeps them readable once they are hidden again.
+			AppHelper.ShowHiddenForRawInputStart();
 			StartLoops();
+			AppHelper.HideAgainAfterRawInputStart();
 			TabSteps = MakeTabsReady().GetEnumerator();
 			TabWindowsTimer = new System.Windows.Forms.Timer { Interval = 1 };
 			TabWindowsTimer.Tick += TabWindowsTimer_Tick;
@@ -1468,6 +1520,7 @@ namespace x360ce.App
 				ToggleEmulation();
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
+				Recording.ReportRecorder.CountDeviceChange();
 				// Reading the message is interface work; deciding whether it is worth a device read is
 				// not, so the rule is asked for rather than restated here. All this does is raise a flag
 				// which the device thread reads once per pass.
@@ -1520,6 +1573,7 @@ namespace x360ce.App
 					new SwitchedOffControllersIssue(),
 					new XboxDirectInputIssue(),
 					new HidHideIssue(),
+					new RawInputMissingIssue(),
 					new AiAccessIssue(),
 					new AiSkillIssue(),
 					new PluginIssue(),
@@ -1668,9 +1722,11 @@ namespace x360ce.App
 				TabWindowsTimer?.Dispose();
 				// Off the screen first, so closing shows at once whatever is left to do.
 				Hide();
+				Program.StartupTrace.Mark("closing: window hidden");
 				// Before the controls, so the devices and the virtual controllers are let go of as soon as the window is closed.
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();
+				Program.StartupTrace.Mark("closing: engine disposed");
 				components.Dispose();
 				if (Program.IsClosing)
 					Program.EndProcess();

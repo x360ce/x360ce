@@ -52,11 +52,22 @@ namespace x360ce.App.DInput
 		/// The engine reads only those online, and checks that itself on every pass. A device that drops out of
 		/// this list, unticked in a tab's list or on the Devices page, taken off its tabs or of another game, is
 		/// let go of by the engine on the first pass of the routing without it.
+		///
+		/// Also the DirectInput twin of each routed Raw Input device, read in its place while Raw Input cannot see it
+		/// (<see cref="MappedStandsIn"/>).
 		/// </remarks>
 		public readonly UserDevice[] MappedDevices;
 
+		/// <summary>For each of <see cref="MappedDevices"/>, the Raw Input device it stands in for, or null for a device read on its own account.</summary>
+		/// <remarks>The engine reads a stand-in only while that Raw Input device is missing from Raw Input or offline.</remarks>
+		public readonly UserDevice[] MappedStandsIn;
+
 		/// <summary>For each of <see cref="Rows"/>, the device it reads, or null when that device is not listed.</summary>
 		public readonly UserDevice[] RowDevices;
+
+		/// <summary>For each of <see cref="Rows"/> that reads a Raw Input device, that device's DirectInput twin, read in its place while Raw Input cannot see it; null otherwise.</summary>
+		/// <remarks>The Raw Input device's layout takes its twin's slots, so the row's mappings read the twin's state as they read its own.</remarks>
+		public readonly UserDevice[] RowStandIns;
 
 		/// <summary>For each of <see cref="Rows"/>, its settings' mappings as <see cref="PadSetting.Maps"/> built them, or null when the settings it points at are not stored.</summary>
 		/// <remarks>An edit builds a new list rather than changing this one, and the edit builds a new routing.</remarks>
@@ -173,8 +184,27 @@ namespace x360ce.App.DInput
 				if (device != null && !byInstance.ContainsKey(device.InstanceGuid))
 					byInstance.Add(device.InstanceGuid, device);
 			var mapped = new HashSet<Guid>(rows.Select(x => x.InstanceGuid));
-			MappedDevices = devices.Where(x => x != null && (mapped.Contains(x.InstanceGuid) || forceTwins.Contains(x))).ToArray();
+			var read = devices.Where(x => x != null && (mapped.Contains(x.InstanceGuid) || forceTwins.Contains(x))).ToList();
+			var standsIn = read.Select(x => (UserDevice)null).ToList();
+			// A routed Raw Input device's DirectInput twin, unless it is read on its own account already.
+			var standIns = new Dictionary<Guid, UserDevice>();
+			foreach (var raw in read.ToArray())
+			{
+				if (raw.InputSource != InputSourceType.RawInput)
+					continue;
+				var twin = raw.DirectInputTwin(devices);
+				if (twin == null)
+					continue;
+				standIns[raw.InstanceGuid] = twin;
+				if (read.Contains(twin))
+					continue;
+				read.Add(twin);
+				standsIn.Add(raw);
+			}
+			MappedDevices = read.ToArray();
+			MappedStandsIn = standsIn.ToArray();
 			RowDevices = new UserDevice[rows.Length];
+			RowStandIns = new UserDevice[rows.Length];
 			RowMaps = new List<Map>[rows.Length];
 			RowDPads = new int[rows.Length];
 			RowAxisToDPadPressPoints = Enumerable.Repeat(-1, rows.Length).ToArray();
@@ -185,6 +215,9 @@ namespace x360ce.App.DInput
 				UserDevice device;
 				byInstance.TryGetValue(rows[i].InstanceGuid, out device);
 				RowDevices[i] = device;
+				UserDevice standIn;
+				if (device != null && standIns.TryGetValue(device.InstanceGuid, out standIn))
+					RowStandIns[i] = standIn;
 				var checksum = rows[i].PadSettingChecksum;
 				var ps = padSettings.FirstOrDefault(x => x != null && x.PadSettingChecksum == checksum);
 				if (ps == null)

@@ -62,10 +62,8 @@ namespace x360ce.App.Controls
 		public void AddTask(TaskName name)
 		{
 			lock (TasksLock)
-			{
 				Tasks.Add(name);
-				UpdateIcon();
-			}
+			UpdateIcon();
 		}
 
 		/// <summary>Deactivate busy spinner if all tasks are gone.</summary>
@@ -75,19 +73,26 @@ namespace x360ce.App.Controls
 			{
 				if (Tasks.Contains(name))
 					Tasks.Remove(name);
-				UpdateIcon();
 			}
+			UpdateIcon();
 		}
 
+		/// <summary>Shows the spinner while any task runs.</summary>
+		/// <remarks>
+		/// From another thread it is posted, never waited for, and outside the lock, so no thread holds the lock while it
+		/// waits for the interface thread, which may itself be waiting for the lock.
+		/// </remarks>
 		private void UpdateIcon()
 		{
 			// Update interface from the same thread.
 			if (InvokeRequired)
 			{
-				Invoke(new Action(() => UpdateIcon()));
+				JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(UpdateIcon);
 				return;
 			}
-			var value = Tasks.Count > 0;
+			bool value;
+			lock (TasksLock)
+				value = Tasks.Count > 0;
 			if (value && !BusyLoadingCircle.Active)
 			{
 				// In pixels, so enlarged with the screen like the box the circle is drawn in.

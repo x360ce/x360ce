@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.29.62.0, built 2026-11-07.
+Version 4.30.14.0, built 2026-11-09.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 

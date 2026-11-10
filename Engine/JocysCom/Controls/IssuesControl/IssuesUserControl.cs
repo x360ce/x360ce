@@ -188,22 +188,25 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void Item_Checked(object sender, EventArgs e)
 		{
-			var ii = (IssueItem)sender;
-			if (ii.LastException != null)
+			ShowException(((IssueItem)sender).LastException);
+		}
+
+		/// <summary>Offers the exception a check or a fix threw, on the interface thread.</summary>
+		/// <remarks>Checks and fixes run on the worker; a control changed from there races the window drawing it.</remarks>
+		void ShowException(Exception ex)
+		{
+			if (ex == null)
+				return;
+			ControlsHelper.BeginInvoke(() =>
 			{
-				LastException = ii.LastException;
+				LastException = ex;
 				ExceptionInfoButton.Visible = true;
-			}
+			});
 		}
 
 		private void Item_Fixed(object sender, EventArgs e)
 		{
-			var ii = (IssueItem)sender;
-			if (ii.LastException != null)
-			{
-				LastException = ii.LastException;
-				ExceptionInfoButton.Visible = true;
-			}
+			ShowException(((IssueItem)sender).LastException);
 			TasksTimer.DoActionNow();
 			TasksTimer.SleepTimerStart();
 		}

@@ -130,6 +130,7 @@
     <Compile Include="Common\DInput\MouseStick.cs" />
     <Compile Include="Common\Recording\ReportRecorder.cs" />
     <Compile Include="Common\Recording\ReportRecorder.Header.cs" />
+    <Compile Include="Common\Recording\ReportRecorder.Stall.cs" />
     <Compile Include="Common\Recording\ShareSafe.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
     <Compile Include="Common\DInput\DeviceSwitch.cs" />
@@ -415,6 +416,7 @@
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HidHideIssue.cs" />
+    <Compile Include="Issues\RawInputMissingIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
     <Compile Include="Issues\VirtualDriverNotWorkingIssue.cs" />

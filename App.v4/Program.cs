@@ -316,6 +316,9 @@ namespace x360ce.App
 			// Known before the window is built: an export opens no door and writes no setting.
 			if (ic.Parameters.ContainsKey(arg_ExportUi))
 				ExportUiFolder = ic.Parameters[arg_ExportUi];
+			// Before the main window, whose making first takes the interface thread's context for posted calls: a recording
+			// then says which posted call the window is in when it stops answering.
+			System.Threading.SynchronizationContext.SetSynchronizationContext(new Recording.ReportRecorder.WatchedContext());
 			MainForm.Current = new MainForm();
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(MainForm.Current);

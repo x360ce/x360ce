@@ -264,8 +264,9 @@ namespace x360ce.App.Controls
 							RemapAllButton.Text = RemapName;
 							return;
 						}
-						// The next control from the list at once: it waits for the device to come to rest before it compares.
-						StartRecording();
+						// The next control from the list after a pause, so the person sees what was recorded and which control is
+						// next; it then waits for the device to come to rest before it compares. Stop meanwhile empties the list.
+						ControlsHelper.BeginInvoke(() => StartRecording(), (int)RemapAllPause.TotalMilliseconds);
 					}
 				}
 			}
@@ -3228,6 +3229,10 @@ namespace x360ce.App.Controls
 
 		/// <summary>The device as it was when Remap All began: at rest, which each next control waits for.</summary>
 		SourceState RemapRest;
+
+		/// <summary>How long Remap All shows a recorded control before it starts the next one.</summary>
+		/// <remarks>Short, as the next control also waits for the device to come to rest; without it the boxes moved on faster than people could follow.</remarks>
+		public static TimeSpan RemapAllPause = TimeSpan.FromMilliseconds(500);
 
 		public string RemapName = "Remap All";
 		public string RemapStopName = "STOP";

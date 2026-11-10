@@ -78,6 +78,29 @@ namespace x360ce.Engine.Data
 			return null;
 		}
 
+		/// <summary>The same controller read through DirectInput, when this is a Raw Input device that has one: the online one first. Null otherwise.</summary>
+		/// <remarks>
+		/// Read in the Raw Input device's place while Raw Input cannot see it. Raw Input stops listing a controller that
+		/// HID Hide hides, whatever programs HID Hide allows, while DirectInput still reads it for an allowed program; and it
+		/// does not list it again when HID Hide shows it, until the controller is plugged in again.
+		/// </remarks>
+		/// <param name="devices">The devices listed.</param>
+		public UserDevice DirectInputTwin(System.Collections.Generic.IEnumerable<UserDevice> devices)
+		{
+			if (InputSource != Engine.InputSourceType.RawInput || devices == null)
+				return null;
+			UserDevice offline = null;
+			foreach (var device in devices)
+			{
+				if (device == null || !device.IsDirectInput || !device.IsTwinOf(this))
+					continue;
+				if (device.IsOnline)
+					return device;
+				offline = offline ?? device;
+			}
+			return offline;
+		}
+
 		/// <summary>The same controller read through Raw Input, when this is a DirectInput device that has one. Null otherwise.</summary>
 		/// <param name="devices">The devices listed.</param>
 		public UserDevice RawInputTwin(System.Collections.Generic.IEnumerable<UserDevice> devices)

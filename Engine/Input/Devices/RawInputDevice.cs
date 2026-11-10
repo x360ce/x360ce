@@ -265,9 +265,9 @@ namespace x360ce.Engine
 			var productId = BitConverter.ToInt32(info, 12);
 			var usagePage = BitConverter.ToUInt16(info, 20);
 			var usage = BitConverter.ToUInt16(info, 22);
-			var description = RawInputDescription.Find(vendorId, productId, usagePage);
-			if (description == null && (usagePage != GenericDesktopPage || (usage != JoystickUsage && usage != GamepadUsage && usage != MultiAxisControllerUsage)))
+			if (!IsGameController(vendorId, productId, usagePage, usage))
 				return null;
+			var description = RawInputDescription.Find(vendorId, productId, usagePage);
 			var path = GetDeviceName(handle);
 			var preparsed = GetPreparsedData(handle);
 			if (string.IsNullOrEmpty(path) || preparsed == null)
@@ -286,6 +286,43 @@ namespace x360ce.Engine
 			device.InstanceGuid = GetInstanceGuid(path);
 			device.ProductGuid = GetProductGuid(device.VendorId, device.ProductId);
 			return device;
+		}
+
+		/// <summary>Whether Raw Input lists a HID device as a game controller: one of <see cref="RawInputDescription.Known"/>, or one whose top-level collection is a joystick, a gamepad or a multi-axis controller.</summary>
+		public static bool IsGameController(int vendorId, int productId, int usagePage, int usage)
+		{
+			return RawInputDescription.Find(vendorId, productId, usagePage) != null
+				|| usagePage == GenericDesktopPage && (usage == JoystickUsage || usage == GamepadUsage || usage == MultiAxisControllerUsage);
+		}
+
+		const int HidpStatusSuccess = 0x00110000;
+
+		/// <summary>Whether Raw Input should list the HID device at this interface path as a game controller, read from the device itself; null when it cannot be opened and read.</summary>
+		public static bool? IsGameControllerAt(string interfacePath)
+		{
+			if (string.IsNullOrEmpty(interfacePath))
+				return null;
+			using (var handle = NativeMethods.CreateFile(interfacePath, 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero))
+			{
+				if (handle.IsInvalid)
+					return null;
+				var attributes = new HIDD_ATTRIBUTES();
+				attributes.Size = Marshal.SizeOf(attributes);
+				var preparsed = IntPtr.Zero;
+				if (!NativeMethods.HidD_GetAttributes(handle, ref attributes) || !NativeMethods.HidD_GetPreparsedData(handle, ref preparsed))
+					return null;
+				try
+				{
+					var caps = new HIDP_CAPS();
+					if (NativeMethods.HidP_GetCaps(preparsed, ref caps) != HidpStatusSuccess)
+						return null;
+					return IsGameController(attributes.VendorID, attributes.ProductID, (ushort)caps.UsagePage, (ushort)caps.Usage);
+				}
+				finally
+				{
+					NativeMethods.HidD_FreePreparsedData(preparsed);
+				}
+			}
 		}
 
 		static RawInputNative.RAWINPUTDEVICELIST[] GetDeviceList()

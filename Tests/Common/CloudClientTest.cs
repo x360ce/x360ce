@@ -472,5 +472,59 @@ namespace x360ce.Tests
 		}
 
 		#endregion
+
+		#region The interface thread and the queue's lock
+
+		/// <summary>Whether a request the interface thread makes of the queue returns while another thread holds the queue's lock and waits for the interface thread.</summary>
+		/// <remarks>
+		/// As on the Cloud page, the queue is drawn by the interface thread, so an item added from another thread, as Upload,
+		/// Download and the error mail add theirs, waits for that thread under the queue's lock. The interface thread starts
+		/// such an add, is busy while the add waits for it, then makes its request, as a Delete on a list page or Retry does.
+		/// </remarks>
+		static bool InterfaceRequestReturns(Action<CloudClient> request)
+		{
+			System.Threading.Tasks.TaskScheduler ui = null;
+			var ready = new ManualResetEventSlim();
+			var thread = new Thread(() =>
+			{
+				SynchronizationContext.SetSynchronizationContext(new System.Windows.Forms.WindowsFormsSynchronizationContext());
+				ui = System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext();
+				ready.Set();
+				System.Windows.Forms.Application.Run();
+			}) { IsBackground = true, Name = "StandInInterfaceThread" };
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
+			ready.Wait();
+			var returned = new ManualResetEventSlim();
+			var page = new System.Windows.Forms.UserControl();
+			var client = Running(page, m => new CloudMessage());
+			client.TasksTimer.Queue.SynchronizingObject = ui;
+			System.Threading.Tasks.Task.Factory.StartNew(() =>
+			{
+				// Added from another thread, under the queue's lock, waiting for this thread to draw it.
+				ThreadPool.QueueUserWorkItem(_ => client.TasksTimer.DoActionNow(DeleteItem()));
+				Thread.Sleep(300);
+				request(client);
+				returned.Set();
+			}, CancellationToken.None, System.Threading.Tasks.TaskCreationOptions.None, ui);
+			var done = returned.Wait(5000);
+			if (done)
+			{
+				client.Dispose();
+				page.Dispose();
+				System.Threading.Tasks.Task.Factory.StartNew(System.Windows.Forms.Application.ExitThread, CancellationToken.None, System.Threading.Tasks.TaskCreationOptions.None, ui);
+			}
+			return done;
+		}
+
+		[TestMethod, TestCategory("cloud"), TestCategory("critical")]
+		[Description("The interface thread asks the queue to send, add or clear without waiting for the lock another thread holds while it waits for the interface thread")]
+		public void The_interface_thread_never_waits_for_the_queue_lock()
+		{
+			Assert.IsTrue(InterfaceRequestReturns(c => c.SendNow()), "Send now from the interface thread waited for the adding thread, which waited for it.");
+			Assert.IsTrue(InterfaceRequestReturns(c => c.ClearQueue()), "Clearing the queue from the interface thread waited for the adding thread, which waited for it.");
+		}
+
+		#endregion
 	}
 }

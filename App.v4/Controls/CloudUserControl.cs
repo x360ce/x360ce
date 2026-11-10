@@ -72,7 +72,7 @@ namespace x360ce.App.Controls
 				return;
 			Task.Run(new Action(() =>
 			{
-				Global.CloudClient.TasksTimer.Queue.Clear();
+				Global.CloudClient.ClearQueue();
 				// Add user configuration data for upload.
 				AddInsert(SettingsManager.UserGames.Items.ToArray());
 				AddInsert(SettingsManager.UserDevices.Items.ToArray());
@@ -124,7 +124,7 @@ namespace x360ce.App.Controls
 			foreach (var item in timer.Queue.ToArraySynchronized())
 				if (item.State == CloudState.Error || item.State == CloudState.Stopped)
 					item.Retry();
-			timer.DoActionNow();
+			Global.CloudClient.SendNow();
 		}
 
 		/// <summary>A task that failed says why when pointed at.</summary>
@@ -139,10 +139,7 @@ namespace x360ce.App.Controls
 
 		private void DeleteButton_Click(object sender, EventArgs e)
 		{
-			Task.Run(new Action(() =>
-			{
-				Global.CloudClient.TasksTimer.Queue.Clear();
-			}));
+			Global.CloudClient.ClearQueue();
 		}
 
 		private void QueueMonitorTimer_Tick(object sender, EventArgs e)

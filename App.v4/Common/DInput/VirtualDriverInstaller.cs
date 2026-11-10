@@ -1399,12 +1399,14 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// The commands that make HID Hide hide some devices and show others, leaving out what it already does. While any
 		/// device is to be hidden, hiding is switched on and this program may see what is hidden, or to this program the
-		/// device it reads would look unplugged.
+		/// device it reads would look unplugged. The same holds while HID Hide keeps hiding any device after the change, one
+		/// this program has not listed yet included: a copy in a new folder is a new program to HID Hide, and the controllers
+		/// hidden for the old copy are missing from its lists until it may see them.
 		/// </summary>
 		/// <param name="state">What HID Hide is set to do now.</param>
 		/// <param name="hide">Device instance paths to hide.</param>
 		/// <param name="show">Device instance paths to show.</param>
-		/// <param name="exePath">Full path of this program, as HID Hide lists programs.</param>
+		/// <param name="exePath">Full path of this program, as HID Hide lists programs; null to change the devices only, leaving this program's place on the list and hiding itself as they are.</param>
 		/// <returns>The arguments for HID Hide's command line program; empty when nothing is to change.</returns>
 		public static string GetHidHideChanges(HidHideState state, string[] hide, string[] show, string exePath)
 		{
@@ -1413,7 +1415,11 @@ namespace x360ce.App.DInput
 				commands.Add("--dev-hide " + Quote(path));
 			foreach (var path in show.Where(state.IsHidden).Distinct(StringComparer.OrdinalIgnoreCase))
 				commands.Add("--dev-unhide " + Quote(path));
-			if (hide.Length > 0 && !state.IsAllowed(exePath))
+			if (exePath == null)
+				return string.Join(" ", commands);
+			var hidesAfter = hide.Length > 0
+				|| state.CloakOn && state.HiddenDevices.Any(x => !show.Contains(x, StringComparer.OrdinalIgnoreCase));
+			if (hidesAfter && !state.IsAllowed(exePath))
 				commands.Add((state.Inverse ? "--app-unreg " : "--app-reg ") + Quote(exePath));
 			if (hide.Length > 0 && !state.CloakOn)
 				commands.Add("--cloak-on");

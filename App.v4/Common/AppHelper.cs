@@ -430,6 +430,67 @@ namespace x360ce.App
 			SynchronizeToHidHide();
 		}
 
+		/// <summary>The devices HID Hide hid that <see cref="ShowHiddenForRawInputStart"/> showed, for <see cref="HideAgainAfterRawInputStart"/> to hide again.</summary>
+		static string[] _shownForRawInputStart = new string[0];
+
+		/// <summary>Shows the controllers HID Hide hides from this program's lists, just before the engine starts reading Raw Input. Interface thread.</summary>
+		/// <remarks>
+		/// Windows opens a controller for Raw Input when a program first asks to read it, and keeps it open. A controller
+		/// HID Hide hides at that moment is refused, whatever programs HID Hide allows, and left out of Raw Input until it is
+		/// plugged in again, for this program and for every game. One Raw Input has open stays readable while hidden. So the
+		/// controllers are shown for as long as the engine takes to start, and hidden again after it
+		/// (<see cref="HideAgainAfterRawInputStart"/>).
+		///
+		/// When this program hides devices itself, all it hides are shown, as when it closes: a run that ended without
+		/// showing them, as one that crashed, left them hidden. Otherwise only the controllers HID Hide hides now and this
+		/// program lists are shown, and nothing else of HID Hide's settings is changed.
+		/// </remarks>
+		public static void ShowHiddenForRawInputStart()
+		{
+			_shownForRawInputStart = new string[0];
+			if (SettingsManager.Options.HidHideConfigureAutomatically)
+			{
+				UnInitializeHidHide();
+				return;
+			}
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered || !state.CloakOn)
+				return;
+			var hidden = SettingsManager.UserDevices.ItemsToArraySynchronized()
+				.Where(x => !x.IsKeyboard && !x.IsMouse)
+				.SelectMany(VirtualDriverInstaller.GetHidHidePaths)
+				.Where(state.IsHidden)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+			if (hidden.Length == 0)
+				return;
+			if (VirtualDriverInstaller.ChangeHidHide(VirtualDriverInstaller.GetHidHideChanges(state, new string[0], hidden, null)))
+				_shownForRawInputStart = hidden;
+		}
+
+		/// <summary>Hides again, once the engine reads Raw Input, what <see cref="ShowHiddenForRawInputStart"/> showed. Interface thread.</summary>
+		/// <remarks>
+		/// When this program hides devices itself, the devices the game uses are hidden and the others shown. Every listed device
+		/// is judged, so one no longer used by the game, unticked since the last run among them, is shown again. Otherwise exactly
+		/// the controllers that were shown are hidden again, and HID Hide's settings are as they were.
+		/// </remarks>
+		public static void HideAgainAfterRawInputStart()
+		{
+			if (SettingsManager.Options.HidHideConfigureAutomatically)
+			{
+				SettingsManager.AutoHideShowMappedDevices(SettingsManager.CurrentGame);
+				SynchronizeToHidHide();
+				return;
+			}
+			var shown = _shownForRawInputStart;
+			_shownForRawInputStart = new string[0];
+			if (shown.Length == 0)
+				return;
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (state.Installed && state.Answered)
+				VirtualDriverInstaller.ChangeHidHide(VirtualDriverInstaller.GetHidHideChanges(state, shown, new string[0], null));
+		}
+
 		/// <summary>Makes HID Hide show every device it hides, and clears every device's Hide box.</summary>
 		/// <returns>False when HID Hide is not installed or did not accept the change, in which case no box is cleared.</returns>
 		public static bool UnhideAllDevices()
@@ -446,13 +507,19 @@ namespace x360ce.App
 		}
 
 		/// <summary>Makes HID Hide hide the devices whose Hide box is ticked and show the others: these devices, or every one listed.</summary>
+		/// <remarks>
+		/// Asked for every device, HID Hide is read even when none is listed, so a copy in a new folder, which has listed
+		/// nothing yet, may see the controllers HID Hide hides (<see cref="VirtualDriverInstaller.GetHidHideChanges"/>).
+		/// After a change the devices are read again, as HID Hide sends no device change for it.
+		/// </remarks>
 		/// <returns>False when HID Hide is not installed or did not accept the change.</returns>
 		public static bool SynchronizeToHidHide(params Guid[] instanceGuids)
 		{
+			var every = instanceGuids == null || instanceGuids.Length == 0;
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
-				devices = instanceGuids == null || instanceGuids.Length == 0
+				devices = every
 					? SettingsManager.UserDevices.Items.ToArray()
 					: SettingsManager.UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			}
@@ -467,13 +534,17 @@ namespace x360ce.App
 				else if (!ud.IsHidden)
 					show.AddRange(paths);
 			}
-			if (hide.Count == 0 && show.Count == 0)
+			if (!every && hide.Count == 0 && show.Count == 0)
 				return true;
 			var state = VirtualDriverInstaller.GetHidHideState(true);
 			if (!state.Installed || !state.Answered)
-				return false;
+				return hide.Count == 0 && show.Count == 0;
 			var changes = VirtualDriverInstaller.GetHidHideChanges(state, hide.ToArray(), show.ToArray(), System.Windows.Forms.Application.ExecutablePath);
-			return VirtualDriverInstaller.ChangeHidHide(changes);
+			if (!VirtualDriverInstaller.ChangeHidHide(changes))
+				return false;
+			if (changes.Length > 0 && Global.DHelper != null)
+				Global.DHelper.UpdateDevicesEnabled = true;
+			return true;
 		}
 
 		#endregion

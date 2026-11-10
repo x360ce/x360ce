@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
-using SharpDX.DirectInput;
+﻿using SharpDX.DirectInput;
 using System;
 using System.Reflection;
 using x360ce.App.DInput;
@@ -12,10 +11,10 @@ namespace x360ce.Tests
 	internal static class EngineSteps
 	{
 		/// <summary>The whole pass, <c>RefreshAll</c>: Steps 1 to 6 for the current game.</summary>
-		public delegate void Pass(DirectInput manager, DeviceDetector detector);
+		public delegate void Pass(DirectInput manager, System.Windows.Forms.NativeWindow window);
 
 		/// <summary>Step 2, <c>UpdateDiStates</c>: reads the devices the routing maps.</summary>
-		public delegate void DiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing);
+		public delegate void DiStates(DirectInput manager, UserGame game, System.Windows.Forms.NativeWindow window, DeviceRouting routing);
 
 		/// <summary>Step 3, <c>UpdateXiStates</c>: converts each routed row.</summary>
 		public delegate void XiStates(DeviceRouting routing);

@@ -1,4 +1,17 @@
-﻿## [4.29.62.0] - 2026-11-07
+﻿## [4.30.16.0] - 2026-11-09
+
+- Fixed: A Raw Input controller hidden by HID Hide is read through DirectInput (Issue #1661, dnlrch10-maker).
+- Fixed: A new copy with HID Hide set to configure itself adds itself to HID Hide's list (Issue #1633, KhaledElSaiad).
+- Fixed: The window no longer freezes for good when Windows changes colours (Issue #1633, KhaledElSaiad).
+- Fixed: Sending to the cloud while a list loads no longer freezes the window.
+- Fixed: Deleting a record or pressing Retry while cloud messages are added no longer freezes the window.
+- Fixed: Starting x360ce no longer leaves controllers that HID Hide hides unseen in Raw Input until plugged in again.
+- Fixed: The window answers while x360ce starts, rather than freezing for up to 2 seconds (Issue #1633, KhaledElSaiad).
+- Changed: Remap All pauses half a second between controls, so you can follow it (Issue #1633, KhaledElSaiad).
+- Added: Bug report recordings say what a window that stops answering waits for, and how busy the PC is.
+- Added: The Issues tab says when games cannot see a controller until it is plugged in again, and can restart it.
+
+## [4.29.62.0] - 2026-11-07
 
 - Fixed: Bug report recordings no longer say a controller's centring is off when x360ce never changed it.
 - Fixed: Bug report recordings no longer read the wrong XInput place when a real controller holds an earlier one.

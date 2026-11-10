@@ -48,6 +48,13 @@ namespace x360ce.App.DInput
 				// If device was not found then continue.
 				if (ud == null)
 					continue;
+				// A Raw Input device Raw Input cannot see is read through its DirectInput twin, which fills the same slots.
+				if (ud.InputSourceType == (int)InputSourceType.RawInput && (ud.RawInputMissing || !ud.IsOnline))
+				{
+					var standIn = routing.RowStandIns[i];
+					if (standIn != null && standIn.IsOnline && standIn.JoState != null)
+						ud = standIn;
+				}
 				// If device Direct Input state failed then...
 				if (ud.JoState == null)
 				{

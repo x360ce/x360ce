@@ -220,8 +220,20 @@ namespace x360ce.Tests
 			// Each hide follows the rule: at start every device is shown or hidden, and a tick changed in either list is
 			// shown or hidden at once.
 			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
-			StringAssert.Contains(Ui.Between(main, "SettingsManager.AutoHideShowMappedDevices(game);", "MainForm_Load: end"),
-				"AppHelper.SynchronizeToHidHide();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+			var helper = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "AppHelper.cs"));
+			StringAssert.Contains(Ui.Between(helper, "public static void HideAgainAfterRawInputStart()", "public static bool UnhideAllDevices()"),
+				"SynchronizeToHidHide();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+			// Shown while the engine starts reading Raw Input, and hidden again after: hidden then, Windows leaves a
+			// controller out of Raw Input until it is plugged in again.
+			var update2 = Ui.Between(main, "private void UpdateForm2()", "#region Tabs slowest to open");
+			var show = update2.IndexOf("AppHelper.ShowHiddenForRawInputStart();", StringComparison.Ordinal);
+			var start = update2.IndexOf("StartLoops();", StringComparison.Ordinal);
+			var hide = update2.IndexOf("AppHelper.HideAgainAfterRawInputStart();", StringComparison.Ordinal);
+			Assert.IsTrue(show >= 0 && show < start && start < hide,
+				"The engine starts reading Raw Input while controllers are hidden, so Windows leaves them out of Raw Input.");
+			StringAssert.DoesNotMatch(Ui.Between(main, "private void MainForm_Load(", "MainForm_Load: end"),
+				new System.Text.RegularExpressions.Regex("SynchronizeToHidHide|AutoHideShowMappedDevices"),
+				"Devices are hidden while the window loads, before the engine reads Raw Input.");
 			var pad = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
 			StringAssert.Contains(Ui.Between(pad, "private void MappedDevicesDataGridView_CellClick(", "#endregion"),
 				"SettingsManager.HideMappedDevices(", "Unticking a row leaves its device hidden from games.");
