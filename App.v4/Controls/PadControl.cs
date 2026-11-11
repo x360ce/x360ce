@@ -492,7 +492,7 @@ namespace x360ce.App.Controls
 					send = true;
 			}
 			if (send)
-				SendVibration();
+				SendVibration(MappedTo, LeftMotorTestTrackBar.Value, RightMotorTestTrackBar.Value);
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -749,7 +749,9 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SetComboBoxValue((ComboBox)sender, text);
 		}
 
-		public void UpdateFromCurrentGame()
+		/// <summary>Shows the game's switch and rows for the controller on the page.</summary>
+		/// <param name="select">The device row to select; null to keep the selection the list has.</param>
+		public void UpdateFromCurrentGame(Guid? select = null)
 		{
 			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
@@ -762,7 +764,7 @@ namespace x360ce.App.Controls
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
-			ShowHideAndSelectGridRows(null);
+			ShowHideAndSelectGridRows(select);
 			UpdateGridButtons();
 			UpdateForceSource();
 		}
@@ -1169,6 +1171,12 @@ namespace x360ce.App.Controls
 
 		public MapTo MappedTo;
 
+		/// <summary>The page's boxes as the settings know them, which follow the page to the controller it shows.</summary>
+		readonly List<SettingsMapItem> _MapItems = new List<SettingsMapItem>();
+
+		/// <summary>The device list as the Mappings section knows it, which follows the page as well; null on a page without one.</summary>
+		internal SettingsMapItem GridMap;
+
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
@@ -1303,11 +1311,152 @@ namespace x360ce.App.Controls
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
 			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
 			item.Code = code;
+			_MapItems.Add(item);
 			// A box that names a control can hold an expression instead, so it gets the switch that
 			// turns one into the other. Every mapping box carries a code and nothing else does, so
 			// this needs no list of its own to fall out of step.
 			if (control is ComboBox && code != default(MapCode))
 				MapExpressionToggle.AttachTo((ComboBox)control);
+		}
+
+		#endregion
+
+		#region Shared page
+
+		/// <summary>What one controller's tab showed on the page, kept while the page shows another controller.</summary>
+		class PadView
+		{
+			/// <summary>The page's selected tab, by name.</summary>
+			public string Page;
+			/// <summary>The Direct Input page's selected tab, by name.</summary>
+			public string DetailsPage;
+			/// <summary>The selected device row, by device instance; null when none was.</summary>
+			public Guid? Row;
+			/// <summary>How far the page was scrolled.</summary>
+			public Point Scroll;
+			/// <summary>The Test sliders, 0 to 100.</summary>
+			public int LeftMotor;
+			public int RightMotor;
+		}
+
+		readonly Dictionary<MapTo, PadView> _Views = new Dictionary<MapTo, PadView>();
+
+		PadView ViewOf(MapTo mapTo)
+		{
+			PadView view;
+			if (!_Views.TryGetValue(mapTo, out view))
+				_Views[mapTo] = view = new PadView();
+			return view;
+		}
+
+		void SaveView()
+		{
+			var view = ViewOf(MappedTo);
+			view.Page = PadTabControl.SelectedTab?.Name;
+			view.DetailsPage = DirectInputPanel.DeviceDetailsTabControl.SelectedTab?.Name;
+			view.Row = GetSelectedSetting()?.InstanceGuid;
+			view.Scroll = new Point(-AutoScrollPosition.X, -AutoScrollPosition.Y);
+			view.LeftMotor = LeftMotorTestTrackBar.Value;
+			view.RightMotor = RightMotorTestTrackBar.Value;
+		}
+
+		/// <summary>Selects a tab by name, or the first tab for a controller whose tab has not been shown, as a page of its own opened.</summary>
+		static void SelectPage(TabControl tabs, string name)
+		{
+			var pages = tabs.TabPages.Cast<TabPage>().ToArray();
+			var page = string.IsNullOrEmpty(name) ? pages.FirstOrDefault() : pages.FirstOrDefault(x => x.Name == name);
+			if (page != null && tabs.SelectedTab != page)
+				tabs.SelectedTab = page;
+		}
+
+		/// <summary>Shows another controller on the page, as that controller's own tab would show it.</summary>
+		/// <remarks>
+		/// One page serves the four Controller tabs, which made and kept about 3,000 windows when each had its own. The
+		/// boxes keep their place in the settings and move to the controller shown: while they move and take its values,
+		/// settings events are held, so the values shown for one controller are never saved as another's. Each controller's
+		/// tab keeps what it showed: the page and the Direct Input page selected, the device row, the scroll position and the
+		/// Test sliders, whose motors run on while another controller is shown. A mapping being recorded stops, as it does on
+		/// Escape: its boxes are about to show another controller.
+		/// </remarks>
+		internal void SwitchTo(MapTo mapTo)
+		{
+			if (mapTo == MappedTo)
+				return;
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			SaveView();
+			StopRecording();
+			var view = ViewOf(mapTo);
+			SettingsManager.Current.SuspendEvents();
+			try
+			{
+				MappedTo = mapTo;
+				Name = string.Format("ControlPad{0}", (int)mapTo);
+				var section = string.Format(@"PAD{0}", (int)mapTo);
+				foreach (var item in _MapItems)
+				{
+					item.MapTo = mapTo;
+					item.IniSection = section;
+				}
+				if (GridMap != null)
+				{
+					var key = string.Format(@"PAD{0}", (int)mapTo);
+					GridMap.MapTo = mapTo;
+					GridMap.PropertyName = key;
+					GridMap.IniKey = key;
+				}
+				XboxImage.InitializeImages(imageInfos, _Imager, mapTo);
+				// What the page knew of the controller shown before.
+				_Announced = false;
+				_AnnouncedSetting = null;
+				_InstanceGuid = Guid.Empty;
+				oldState = default(State);
+				oldConnected = false;
+				newState = default(State);
+				newConnected = false;
+				springNoteShown = false;
+				springNoteHid = null;
+				forceSourceRouting = null;
+				forceSourceSetting = null;
+				forceSourceDevice = null;
+				var row = view.Row ?? MappedItemsFor(mapTo).Select(x => (Guid?)x.InstanceGuid).FirstOrDefault();
+				UpdateFromCurrentGame(row);
+				// A controller with no device shows the defaults, as a tab of its own showed them, not the last one's values.
+				if (GetSelectedSetting() == null)
+					SettingsManager.Current.SyncFormFromPadSetting(mapTo, new PadSetting());
+				UpdateEnabledFromDevice(GetSelectedDevice());
+			}
+			finally
+			{
+				SettingsManager.Current.ResumeEvents();
+			}
+			SelectPage(PadTabControl, view.Page);
+			SelectPage(DirectInputPanel.DeviceDetailsTabControl, view.DetailsPage);
+			LeftMotorTestTrackBar.Value = view.LeftMotor;
+			RightMotorTestTrackBar.Value = view.RightMotor;
+			AutoScrollPosition = view.Scroll;
+			if (Global.DHelper?.PassCount > 0)
+				Global_UpdateControlFromStates(this, EventArgs.Empty);
+			Program.StartupTrace.Mark(string.Format("pad: controller {0} shown in {1} ms", (int)mapTo, watch.ElapsedMilliseconds));
+		}
+
+		/// <summary>The rows a controller's tab lists for the game chosen.</summary>
+		static IEnumerable<UserSetting> MappedItemsFor(MapTo mapTo)
+		{
+			var game = SettingsManager.CurrentGame;
+			return SettingsManager.UserSettings.ItemsToArraySynchronized()
+				.Where(x => x.MapTo == (int)mapTo && game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName);
+		}
+
+		/// <summary>The device row a controller's tab has selected, shown or not, for what reads a tab without opening it.</summary>
+		internal UserSetting GetSelectedSettingFor(MapTo mapTo)
+		{
+			if (mapTo == MappedTo)
+				return GetSelectedSetting();
+			PadView view;
+			var rows = MappedItemsFor(mapTo).ToArray();
+			if (_Views.TryGetValue(mapTo, out view) && view.Row.HasValue)
+				return rows.FirstOrDefault(x => x.InstanceGuid == view.Row.Value) ?? rows.FirstOrDefault();
+			return rows.FirstOrDefault();
 		}
 
 		#endregion
@@ -2280,7 +2429,7 @@ namespace x360ce.App.Controls
 				return;
 			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
-			SendVibration();
+			SendVibration(MappedTo, LeftMotorTestTrackBar.Value, RightMotorTestTrackBar.Value);
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);
 		}
@@ -2295,22 +2444,25 @@ namespace x360ce.App.Controls
 		/// place the tab's controller is in nor a library that is always loaded, so it usually did nothing
 		/// at all.
 		/// </remarks>
-		void SendVibration()
+		/// <param name="mapTo">The controller whose motors are tested.</param>
+		/// <param name="left">The left slider, 0 to 100.</param>
+		/// <param name="right">The right slider, 0 to 100.</param>
+		void SendVibration(MapTo mapTo, int left, int right)
 		{
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
-			var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
-			var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
+			var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, left);
+			var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, right);
 			// Into the same place a game's rumble arrives, so everything downstream of it is exercised:
 			// the mapped device this program drives, and the pass-through to a real controller.
 			if (((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
-				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
+				Global.DHelper.SetVibration(mapTo, largeMotor, smallMotor, 0);
 			// Straight to the real controller when nothing is being emulated, because then there is no
 			// rumble arriving for anything to pass on. Asked of Windows' own XInput rather than the one
 			// this program can put in a game's path: the force has to reach the device, not the emulation.
 			PadSetting ps;
-			var place = AppHelper.GetForcePassThroughPlace(MappedTo, out ps);
+			var place = AppHelper.GetForcePassThroughPlace(mapTo, out ps);
 			if (place >= 0 && !((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				// Scaled by the strengths, the same as a game's rumble is, or the test would say the
 				// motors do something they will not do once a game is running.
@@ -2320,18 +2472,29 @@ namespace x360ce.App.Controls
 					TimeSpan.FromMilliseconds(DInputHelper.XiAnswerMs));
 		}
 
-		/// <summary>Stops the motors the Test sliders set, through the path the sliders set them by.</summary>
+		/// <summary>Stops the motors the Test sliders set, on every controller the page has shown, through the path the sliders set them by.</summary>
 		/// <remarks>
-		/// Both sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
-		/// by the sliders' own handler, which sends only while a controller tab is shown.
+		/// The sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
+		/// by the sliders' own handler, which sends only while a controller tab is shown. A controller shown before keeps
+		/// its sliders in its view, and its motors run on until stopped here.
 		/// </remarks>
 		public bool StopTestVibration()
 		{
+			var stopped = false;
+			foreach (var pair in _Views)
+			{
+				if (pair.Key == MappedTo || (pair.Value.LeftMotor == 0 && pair.Value.RightMotor == 0))
+					continue;
+				pair.Value.LeftMotor = 0;
+				pair.Value.RightMotor = 0;
+				SendVibration(pair.Key, 0, 0);
+				stopped = true;
+			}
 			if (LeftMotorTestTrackBar.Value == 0 && RightMotorTestTrackBar.Value == 0)
-				return false;
+				return stopped;
 			LeftMotorTestTrackBar.Value = 0;
 			RightMotorTestTrackBar.Value = 0;
-			SendVibration();
+			SendVibration(MappedTo, 0, 0);
 			return true;
 		}
 

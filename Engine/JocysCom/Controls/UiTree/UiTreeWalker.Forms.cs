@@ -172,9 +172,17 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return null;
 		}
 
+		/// <summary>Called before a control's children are read or searched, so a program can put on it what it shows only when asked.</summary>
+		/// <remarks>
+		/// Such as one page shared by several tabs: only the tab it is on holds it, so the program moves it to the tab being
+		/// read, with that tab's values. Called for every control walked, so it returns at once for any it does not handle.
+		/// </remarks>
+		public static Action<Control> BeforeChildren;
+
 		/// <summary>Children in the order a person moves through them, rather than drawing order.</summary>
 		static IEnumerable<Control> ChildrenOf(Control control)
 		{
+			BeforeChildren?.Invoke(control);
 			var tabs = control as TabControl;
 			if (tabs != null)
 				return tabs.TabPages.Cast<Control>();

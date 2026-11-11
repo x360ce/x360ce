@@ -144,21 +144,20 @@ namespace x360ce.App
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
 			Main.PadControls = Main.BuiltPadControls;
-			// Each device list belongs to its page, so a tick in it saves that page alone.
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, Main.PadControls[0].MappedDevicesDataGridView, MapTo.Controller1);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, Main.PadControls[1].MappedDevicesDataGridView, MapTo.Controller2);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, Main.PadControls[2].MappedDevicesDataGridView, MapTo.Controller3);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, Main.PadControls[3].MappedDevicesDataGridView, MapTo.Controller4);
-			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
+			var pad = Main.PadControls[0];
+			// The device list follows the page to the controller it shows, so a tick in it saves that controller alone.
+			pad.GridMap = SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, pad.MappedDevicesDataGridView, MapTo.Controller1);
+			// Update settings manager with the [PAD1] section, which follows the page to the controller it shows.
 			// Note: There must be no such sections in new config.
-			for (var i = 0; i < Main.PadControls.Length; i++)
-			{
-				Main.PadControls[i].HoldTables();
-				Main.PadControls[i].UpdateSettingsMap();
-				Main.PadControls[i].InitPadData();
-				Main.PadControls[i].ReleaseTables();
-				Program.StartupTrace.Mark("LoadPages: pad " + (i + 1) + " data");
-			}
+			pad.HoldTables();
+			pad.UpdateSettingsMap();
+			pad.InitPadData();
+			pad.ReleaseTables();
+			Program.StartupTrace.Mark("LoadPages: pad data");
+			// The page is on the first Controller tab; a run that opens on another shows that tab's controller.
+			Main.ShowPadOn(Main.MainTabControl.SelectedTab);
+			// The AI door reads every Controller tab, shown or not.
+			JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.BeforeChildren = Main.PadForDoor;
 			// Allow events after PAD control are loaded.
 			Main.MainTabControl.SelectedIndexChanged += new System.EventHandler(Main.MainTabControl_SelectedIndexChanged);
 			// Name and describe everything, now that every panel exists. This is what a screen
@@ -201,7 +200,6 @@ namespace x360ce.App
 			var routing = x360ce.App.DInput.DeviceRouting.Current;
 			for (var i = 0; i < 4; i++)
 			{
-				var padControl = Main.PadControls[i];
 				// Whether this tab is to have an emulated controller, asked the way the engine asks: the master switch,
 				// the game's emulation and the tab's own Enable. Off is a choice, not a fault, and the lights must not
 				// say otherwise.
@@ -552,11 +550,8 @@ namespace x360ce.App
 			Main = new MainControl { Dock = DockStyle.Fill, Bounds = LoadingLabel.Bounds };
 			Program.StartupTrace.Mark("MainControl: after InitializeComponent");
 			yield return null;
-			for (var i = 0; i < Main.ControlPages.Length; i++)
-			{
-				Main.BuildPad(i);
-				yield return null;
-			}
+			Main.BuildPad();
+			yield return null;
 			Main.BuildAbout();
 			yield return null;
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
@@ -651,7 +646,7 @@ namespace x360ce.App
 			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
 			// the window, the one it was started from or else the main one.
 			if (Main.ControllerIndex >= 0)
-				FitToPage(this, Main.PadControls[Main.ControllerIndex], Screen.FromHandle(Handle).WorkingArea);
+				FitToPage(this, Main.PadControls[0], Screen.FromHandle(Handle).WorkingArea);
 			Program.StartupTrace.Mark("MainForm_Load: window fitted to the page");
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
@@ -706,14 +701,8 @@ namespace x360ce.App
 				if (Controller.IsLoaded)
 				{
 					if (Main?.PadControls != null)
-					{
-						for (var i = 0; i < 4; i++)
-						{
-
-							var currentPadControl = Main.PadControls[i];
-							currentPadControl.UpdateForceFeedBack();
-						}
-					}
+						foreach (var pad in Main.PadControls)
+							pad.UpdateForceFeedBack();
 				}
 				if (e.Error != null)
 				{

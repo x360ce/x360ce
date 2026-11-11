@@ -276,6 +276,7 @@ namespace x360ce.Tests
 
 		/// <summary>The mark for the windows of the tabs inside the controller pages being made, in the background once the control is shown.</summary>
 		const string ControllerTabsReady = "controller tabs ready";
+		const string PadBuilt = "BuildPages: pad built";
 
 		/// <summary>
 		/// Opens a controller tab and reads every control on its page, each with its place within the page. A page settles
@@ -310,19 +311,17 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive"), Timeout(240000)]
-		[Description("Every controller page is built before the main control joins the window, and the tabs are made ready once, after it")]
-		public void Every_page_is_built_before_the_control_joins_the_window_and_the_tabs_made_ready_after()
+		[Description("The controller page the four Controller tabs share is built once, before the main control joins the window, and the tabs are made ready once, after it")]
+		public void The_shared_page_is_built_once_before_the_control_joins_the_window_and_the_tabs_made_ready_after()
 		{
 			StartOnce();
 			var added = Array.IndexOf(_marks, ControlAdded);
 			Assert.IsTrue(added >= 0, "The trace has no mark of the main control joining the window.");
 			Assert.IsTrue(Array.IndexOf(_marks, "StartApp: main form built") < Array.IndexOf(_marks, "MainControl: before InitializeComponent"),
 				"The main control was begun before the window was built.");
-			foreach (var pad in new[] { 1, 2, 3, 4 })
-			{
-				var built = Array.IndexOf(_marks, "BuildPages: pad " + pad + " built");
-				Assert.IsTrue(built >= 0 && built < added, "Controller " + pad + "'s page was not built before the control joined the window.");
-			}
+			var built = Array.IndexOf(_marks, PadBuilt);
+			Assert.IsTrue(built >= 0 && built < added, "The controller page was not built before the control joined the window.");
+			Assert.AreEqual(1, _marks.Count(x => x == PadBuilt), "The controller page was built more than once, while the four Controller tabs share one.");
 			Assert.AreEqual(1, _marks.Count(x => x == TabsReady), "The tabs were not made ready once.");
 			Assert.IsTrue(Array.IndexOf(_marks, "device thread start") < Array.IndexOf(_marks, ControlShown), "The engine waited for the main control to show, while a game may be waiting for its controller.");
 			Assert.AreEqual(1, _marks.Count(x => x == ControllerTabsReady), "The tabs inside the controller pages were not made ready once.");
@@ -446,7 +445,7 @@ namespace x360ce.Tests
 		public void Closing_the_window_while_it_loads_keeps_the_settings()
 		{
 			var closedBeforeTheEngine = 0;
-			foreach (var mark in new[] { null, "BuildPages: pad 2 built", "MainControl: themed", ControlAdded })
+			foreach (var mark in new[] { null, PadBuilt, "MainControl: themed", ControlAdded })
 				using (var copy = new Copy("close-while-loading"))
 				{
 					var row = WriteRow(copy, MapTo.Controller2);
