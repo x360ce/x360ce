@@ -19,7 +19,6 @@ namespace x360ce.App
 		void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.MainStatusStrip = new System.Windows.Forms.StatusStrip();
 			this.LoadingLabel = new System.Windows.Forms.Label();
 			this.StatusTimerLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -35,20 +34,13 @@ namespace x360ce.App
 			this.StatusAiAccessLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusErrorsLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusDllLabel = new System.Windows.Forms.ToolStripStatusLabel();
-			this.HelpBodyLabel = new System.Windows.Forms.Label();
-			this.HelpPictureBox = new System.Windows.Forms.PictureBox();
-			this.HelpSubjectLabel = new System.Windows.Forms.Label();
-			this.HeaderPictureBox = new System.Windows.Forms.PictureBox();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.EmulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.MainStatusStrip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -172,48 +164,6 @@ namespace x360ce.App
 			this.StatusDllLabel.Size = new System.Drawing.Size(85, 20);
 			this.StatusDllLabel.Text = "StatusDllLabel";
 			// 
-			// HelpBodyLabel
-			// 
-			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.HelpBodyLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.HelpBodyLabel.Location = new System.Drawing.Point(42, 29);
-			this.HelpBodyLabel.Name = "HelpBodyLabel";
-			this.HelpBodyLabel.Size = new System.Drawing.Size(582, 32);
-			this.HelpBodyLabel.TabIndex = 7;
-			this.HelpBodyLabel.Text = resources.GetString("HelpBodyLabel.Text");
-			// 
-			// HelpPictureBox
-			// 
-			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_48x48;
-			this.HelpPictureBox.Location = new System.Drawing.Point(6, 29);
-			this.HelpPictureBox.Name = "HelpPictureBox";
-			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
-			this.HelpPictureBox.TabIndex = 8;
-			this.HelpPictureBox.TabStop = false;
-			// 
-			// HelpSubjectLabel
-			// 
-			this.HelpSubjectLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.HelpSubjectLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.HelpSubjectLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.HelpSubjectLabel.Location = new System.Drawing.Point(6, 9);
-			this.HelpSubjectLabel.Name = "HelpSubjectLabel";
-			this.HelpSubjectLabel.Size = new System.Drawing.Size(618, 20);
-			this.HelpSubjectLabel.TabIndex = 5;
-			this.HelpSubjectLabel.Text = "Controller 1 - General";
-			// 
-			// HeaderPictureBox
-			// 
-			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_96x96;
-			this.HeaderPictureBox.Location = new System.Drawing.Point(630, 9);
-			this.HeaderPictureBox.Name = "HeaderPictureBox";
-			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);
-			this.HeaderPictureBox.TabIndex = 6;
-			this.HeaderPictureBox.TabStop = false;
-			// 
 			// TrayNotifyIcon
 			// 
 			this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
@@ -253,22 +203,6 @@ namespace x360ce.App
 			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(173, 26);
 			this.ExitToolStripMenuItem.Text = "Exit";
 			this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(630, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
 			//
 			// LoadingLabel
 			//
@@ -284,7 +218,7 @@ namespace x360ce.App
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(1064, 771);
+			this.ClientSize = new System.Drawing.Size(1064, 807);
 			this.Controls.Add(this.LoadingLabel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Icon = global::x360ce.App.Properties.Resources.app;
@@ -300,8 +234,6 @@ namespace x360ce.App
 			this.Controls.SetChildIndex(this.LoadingLabel, 0);
 			this.MainStatusStrip.ResumeLayout(false);
 			this.MainStatusStrip.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).EndInit();
 			this.TrayContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -325,11 +257,6 @@ namespace x360ce.App
 		internal ToolStripMenuItem OpenApplicationToolStripMenuItem;
 		internal ToolStripMenuItem EmulationToolStripMenuItem;
 		internal ToolStripMenuItem ExitToolStripMenuItem;
-		internal Label HelpBodyLabel;
-		internal PictureBox HelpPictureBox;
-		internal Label HelpSubjectLabel;
-		internal PictureBox HeaderPictureBox;
-		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		public ToolStripStatusLabel CloudMessagesLabel;
 		internal ToolStripStatusLabel UpdateDevicesStatusLabel;
 		internal ToolStripStatusLabel UpdateFrequencyLabel;

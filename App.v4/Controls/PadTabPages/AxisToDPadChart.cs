@@ -12,8 +12,9 @@ namespace x360ce.App.Controls
 	/// sides past the press point, where a direction is, the device's reading as a dot, and the sides it presses lit.
 	/// </summary>
 	/// <remarks>
-	/// The press points and the offset are the engine's own (<see cref="ConvertHelper.GetAxisToDPadButtons"/>), so the chart
-	/// lights exactly the directions the controller gets. As tall as seven lines of its text, and square.
+	/// The press points and the offset are drawn as the engine works them out (<see cref="ConvertHelper.GetAxisToDPadPressPoint"/>,
+	/// <see cref="ConvertHelper.GetAxisToDPadShift"/>), and the sides lit are those the engine pressed for the reading shown,
+	/// so the chart lights exactly the directions the controller gets. As tall as seven lines of its text, and square.
 	/// </remarks>
 	public class AxisToDPadChart : Control
 	{
@@ -41,14 +42,19 @@ namespace x360ce.App.Controls
 				return;
 			_pressPoint = pressPoint;
 			_shift = shift;
-			_pressed = _hasReading ? ConvertHelper.GetAxisToDPadButtons(_x, _y, _pressPoint, _shift, GamepadButtonFlags.None) : GamepadButtonFlags.None;
 			Invalidate();
 		}
 
-		/// <summary>The device's X and Y readings, 0 to 65535; drawn again only when they or what they press change.</summary>
-		public void SetReading(int x, int y)
+		/// <summary>The D-Pad's sides the chart lights.</summary>
+		const GamepadButtonFlags DPad = GamepadButtonFlags.DPadUp | GamepadButtonFlags.DPadDown | GamepadButtonFlags.DPadLeft | GamepadButtonFlags.DPadRight;
+
+		/// <summary>The device's X and Y readings, 0 to 65535, and the buttons the engine's pass pressed from them; drawn again only when they change.</summary>
+		/// <param name="x">X as the engine converted it.</param>
+		/// <param name="y">Y as the engine converted it.</param>
+		/// <param name="pressed">The buttons the row's axes held down in the same pass, <see cref="x360ce.Engine.Data.UserSetting.AxisButtons"/>, whose D-Pad sides are lit.</param>
+		public void SetReading(int x, int y, GamepadButtonFlags pressed)
 		{
-			var pressed = ConvertHelper.GetAxisToDPadButtons(x, y, _pressPoint, _shift, _pressed);
+			pressed &= DPad;
 			if (_hasReading && x == _x && y == _y && pressed == _pressed)
 				return;
 			_x = x;
@@ -83,7 +89,7 @@ namespace x360ce.App.Controls
 		protected override void OnPaint(PaintEventArgs e)
 		{
 			var g = e.Graphics;
-			AppHelper.PaintChartBox(g, this, Enabled);
+			AppHelper.PaintChartBox(g, this);
 			var chart = AppHelper.ChartBounds(this);
 			var side = Math.Min(chart.Width, chart.Height) - 1;
 			if (side <= 0)
@@ -96,10 +102,11 @@ namespace x360ce.App.Controls
 			var left = at(_shift + short.MaxValue - _pressPoint, area.Left, area.Width);
 			var down = at(short.MaxValue + 1 + _shift + _pressPoint, area.Top, area.Height);
 			var up = at(_shift + short.MaxValue - _pressPoint, area.Top, area.Height);
-			var brand = FormsTheme.GetColor("ColorBrand", Color.Blue);
+			// The sides in the theme's normal state colour, and a side pressed in its active one, as the controller picture
+			// marks a control.
 			var alpha = Enabled ? 1f : 0.5f;
-			using (var side1 = new SolidBrush(Color.FromArgb((int)(32 * alpha), brand)))
-			using (var lit = new SolidBrush(Color.FromArgb((int)(128 * alpha), brand)))
+			using (var side1 = new SolidBrush(Color.FromArgb((int)(32 * alpha), FormsTheme.GetColor("ColorNormal"))))
+			using (var lit = new SolidBrush(Color.FromArgb((int)(128 * alpha), FormsTheme.GetColor("ColorActive"))))
 			{
 				g.FillRectangle(Pressed(GamepadButtonFlags.DPadLeft) ? lit : side1, area.Left, area.Top, Math.Max(0, left - area.Left), area.Height);
 				g.FillRectangle(Pressed(GamepadButtonFlags.DPadRight) ? lit : side1, right, area.Top, Math.Max(0, area.Right - right), area.Height);

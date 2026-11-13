@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace x360ce.Engine
 {
@@ -28,17 +30,17 @@ namespace x360ce.Engine
 		/// <summary>Body size in points: the theme's interface font's, or 9 while it has none.</summary>
 		public float FontSize = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Font?.SizeInPoints ?? 9f;
 
-		/// <summary>Colour of a literal value: a file name, a formula, a setting.</summary>
-		public Color Literal = new Color(0, 176, 80);
+		/// <summary>Colour of a literal value: a file name, a formula, a setting. The theme's code colour.</summary>
+		public Color Literal = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundCode"));
 
-		/// <summary>Colour of something on screen the reader is told to click.</summary>
-		public Color Control = new Color(79, 129, 189);
+		/// <summary>Colour of something on screen the reader is told to click: the theme's command colour.</summary>
+		public Color Control = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundCommand"));
 
-		/// <summary>Colour of a warning.</summary>
-		public Color Warning = new Color(255, 0, 0);
+		/// <summary>Colour of a warning: the theme's warning colour.</summary>
+		public Color Warning = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning"));
 
-		/// <summary>Colour of a link: blue, or the theme's link colour when the theme is dark.</summary>
-		public Color Link = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorBrand", System.Drawing.Color.FromArgb(0, 0, 255)));
+		/// <summary>Colour of a link: the theme's link colour, which a box shows the document in with <see cref="MarkdownRtf.Show"/>.</summary>
+		public Color Link = new Color(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundLink"));
 
 		/// <summary>Colour of the text: the window text colour, so it follows the theme.</summary>
 		public Color Text = new Color(System.Drawing.SystemColors.WindowText);
@@ -120,6 +122,121 @@ namespace x360ce.Engine
 				var resolved = ResolveLink(target.Value, m.Value.StartsWith("!", StringComparison.Ordinal));
 				return m.Value.Substring(0, target.Index - m.Index) + resolved + m.Value.Substring(target.Index - m.Index + target.Length);
 			});
+		}
+
+		#endregion
+
+		#region Showing a document
+
+		/// <summary>
+		/// Shows a document in a box, its links in the theme's link colour: over a link's words the pointer is a hand, and a
+		/// click on them calls <paramref name="open"/> with the link's address. Shown again, as in a new theme, the box keeps
+		/// one set of links.
+		/// </summary>
+		/// <remarks>
+		/// The box (RichEdit 3.0) draws whatever it takes for a link, an address it finds or words marked as a link, in the
+		/// Windows link colour, a dark blue the theme cannot change, and it takes no HYPERLINK field for one. So the box finds
+		/// no addresses, nothing in it is marked as a link, and the words of each link, drawn in the document's colour, are
+		/// found and opened here.
+		/// </remarks>
+		public static void Show(RichTextBox box, string markdown, Action<string> open)
+		{
+			var rtf = ToRtf(markdown);
+			box.DetectUrls = false;
+			box.Rtf = rtf;
+			var links = new ShownLinks { Open = open };
+			var text = box.Text;
+			var from = 0;
+			foreach (Match m in HyperlinkField.Matches(rtf))
+			{
+				var words = Unescape(m.Groups[2].Value);
+				var index = text.IndexOf(words, from, StringComparison.Ordinal);
+				if (words.Length == 0 || index < 0)
+					continue;
+				links.Add(new ShownLink { Start = index, Length = words.Length, Address = Unescape(m.Groups[1].Value) });
+				from = index + words.Length;
+			}
+			ShownLinks shown;
+			if (Shown.TryGetValue(box, out shown))
+				Shown.Remove(box);
+			else
+			{
+				box.MouseMove += ShownBox_MouseMove;
+				box.MouseUp += ShownBox_MouseUp;
+			}
+			Shown.Add(box, links);
+		}
+
+		/// <summary>The address of the link a character of a box's document belongs to, or null for none.</summary>
+		/// <param name="box">A box that shows a document through <see cref="Show"/>.</param>
+		/// <param name="index">The character's place in the box's text.</param>
+		public static string LinkAt(RichTextBox box, int index)
+		{
+			ShownLinks links;
+			if (!Shown.TryGetValue(box, out links))
+				return null;
+			var link = links.FirstOrDefault(x => index >= x.Start && index < x.Start + x.Length);
+			return link?.Address;
+		}
+
+		/// <summary>The address of the link under a point of a box, or null: the point must be on a character of it, not only nearest one.</summary>
+		static string LinkAt(RichTextBox box, System.Drawing.Point point)
+		{
+			var index = box.GetCharIndexFromPosition(point);
+			var at = box.GetPositionFromCharIndex(index);
+			var next = box.GetPositionFromCharIndex(index + 1);
+			var right = next.Y == at.Y && next.X > at.X ? next.X : at.X + box.Font.Height / 2;
+			if (point.X < at.X || point.X >= right || point.Y < at.Y || point.Y >= at.Y + box.Font.Height)
+				return null;
+			return LinkAt(box, index);
+		}
+
+		static void ShownBox_MouseMove(object sender, MouseEventArgs e)
+		{
+			var box = (RichTextBox)sender;
+			var cursor = LinkAt(box, e.Location) == null ? Cursors.IBeam : Cursors.Hand;
+			if (box.Cursor != cursor)
+				box.Cursor = cursor;
+		}
+
+		/// <summary>A click on a link opens it; a drag that selects text does not.</summary>
+		static void ShownBox_MouseUp(object sender, MouseEventArgs e)
+		{
+			var box = (RichTextBox)sender;
+			if (e.Button != MouseButtons.Left || box.SelectionLength > 0)
+				return;
+			var address = LinkAt(box, e.Location);
+			ShownLinks links;
+			if (address != null && Shown.TryGetValue(box, out links))
+				links.Open?.Invoke(address);
+		}
+
+		/// <summary>The links of the document each box shows, and what opens them.</summary>
+		static readonly ConditionalWeakTable<RichTextBox, ShownLinks> Shown = new ConditionalWeakTable<RichTextBox, ShownLinks>();
+
+		/// <summary>The links of one box's document, and what opens them.</summary>
+		sealed class ShownLinks : List<ShownLink>
+		{
+			public Action<string> Open;
+		}
+
+		/// <summary>Where a link's words stand in a box's text, and its address.</summary>
+		sealed class ShownLink
+		{
+			public int Start;
+			public int Length;
+			public string Address;
+		}
+
+		/// <summary>A link as <see cref="Hyperlink"/> writes it: its address, then its words.</summary>
+		static readonly Regex HyperlinkField = new Regex(@"\{\\field\{\\\*\\fldinst HYPERLINK (.*?) \}\{\\fldrslt \\cf\d+\\ul (.*?)\\ulnone");
+
+		/// <summary>Text as <see cref="Escape"/> wrote it, back as it was.</summary>
+		static string Unescape(string rtf)
+		{
+			return Regex.Replace(rtf, @"\\u(\d+)\?|\\tab |\\([\\{}])", m =>
+				m.Groups[1].Success ? ((char)int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture)).ToString()
+				: m.Groups[2].Success ? m.Groups[2].Value : "\t");
 		}
 
 		#endregion

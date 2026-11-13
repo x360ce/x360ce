@@ -395,6 +395,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		public string AssemblyPath
 		{
+#if !NETFRAMEWORK
+			[System.Diagnostics.CodeAnalysis.RequiresAssemblyFiles("An embedded assembly has no file path. Use AppContext.BaseDirectory for application files.")]
+#endif
 			get
 			{
 				var codeBase = Assembly.Location;
@@ -408,7 +411,13 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public string AssemblyFullName { get { return Assembly.GetName().FullName.ToString(); } }
 		public string AssemblyName { get { return Assembly.GetName().Name.ToString(); } }
-		public string CodeBase { get { return Assembly.Location; } }
+		public string CodeBase
+		{
+#if !NETFRAMEWORK
+			[System.Diagnostics.CodeAnalysis.RequiresAssemblyFiles("An embedded assembly has no file path. Use AppContext.BaseDirectory for application files.")]
+#endif
+			get { return Assembly.Location; }
+		}
 
 		public string Company { get { return GetAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
 		public string Product { get { return GetAttribute<AssemblyProductAttribute>(a => a.Product); } }

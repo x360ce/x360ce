@@ -1,4 +1,5 @@
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			FormsTheme.IndentUnder(PrivacyLabel, CheckForUpdatesCheckBox);
 			var process = System.Diagnostics.Process.GetCurrentProcess();
 			processFileName = process.MainModule.FileName;
 		}

@@ -129,6 +129,7 @@
             this.PresetRefreshButton});
 			this.PresetsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.PresetsToolStrip.Name = "PresetsToolStrip";
+			this.PresetsToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.PresetsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.PresetsToolStrip.TabIndex = 5;
 			this.PresetsToolStrip.Text = "MySettingsToolStrip";

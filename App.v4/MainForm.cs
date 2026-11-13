@@ -92,40 +92,32 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Gives the window its first height: as tall as the controller page it opens on needs, within the work area of the
-		/// screen it opens on. A window Windows is placing, one with no saved place, is also centred there; one put back in a
-		/// saved place keeps its place and width, and is made taller only, and moved up as far as the work area needs.
+		/// Gives the window its first height when no place is saved: as tall as the controller page it opens on needs, within
+		/// the work area of the screen it opens on, and centred there. A window put back in a saved place opens at exactly that
+		/// place and size.
 		/// </summary>
 		/// <remarks>
 		/// The page's need is its own measure, the one it scrolls by (<see cref="PadControl.NeededHeight"/>), and what the window
 		/// puts around the page (the header, the tool bar, the tab strips, the status bar and the borders) is read from the window
 		/// as it is built, so the size follows the font, the theme and the screen's scale. The other
 		/// controller pages need as much, as they differ only in the devices their lists hold. The window keeps its width, as the
-		/// page never asks for more, and is never made smaller than designed or saved. On a shorter screen it is as tall as the
-		/// work area, and the page scrolls. A maximised window is left as it is.
+		/// page never asks for more, and is never made smaller than designed. On a shorter screen it is as tall as the work
+		/// area, and the page scrolls. A maximised window is left as it is.
 		/// </remarks>
 		/// <param name="window">The window at its designed or saved size, built and laid out, before it is shown.</param>
 		/// <param name="page">The controller page the window opens on, laid out in the window.</param>
 		/// <param name="workArea">The work area of the screen the window opens on.</param>
 		public static void FitToPage(Form window, PadControl page, Rectangle workArea)
 		{
-			if (window.WindowState != FormWindowState.Normal)
+			// A saved place, or a window an export keeps off the screens, is not Windows' to place.
+			if (window.WindowState != FormWindowState.Normal || window.StartPosition != FormStartPosition.WindowsDefaultLocation)
 				return;
 			var height = Math.Max(window.Height, window.Height - page.Height + page.NeededHeight(page.Width));
 			height = Math.Min(height, workArea.Height);
-			if (window.StartPosition == FormStartPosition.WindowsDefaultLocation)
-			{
-				var width = Math.Min(window.Width, workArea.Width);
-				window.StartPosition = FormStartPosition.Manual;
-				window.Bounds = new Rectangle(workArea.Left + (workArea.Width - width) / 2, workArea.Top + (workArea.Height - height) / 2,
-					width, height);
-			}
-			else if (height > window.Height)
-			{
-				// A window kept off the screens, as an export keeps it, stays there.
-				var top = workArea.IntersectsWith(window.Bounds) ? Math.Max(workArea.Top, Math.Min(window.Top, workArea.Bottom - height)) : window.Top;
-				window.Bounds = new Rectangle(window.Left, top, window.Width, height);
-			}
+			var width = Math.Min(window.Width, workArea.Width);
+			window.StartPosition = FormStartPosition.Manual;
+			window.Bounds = new Rectangle(workArea.Left + (workArea.Width - width) / 2, workArea.Top + (workArea.Height - height) / 2,
+				width, height);
 		}
 
 		/// <summary>
@@ -1466,12 +1458,25 @@ namespace x360ce.App
 		/// the message id the others reach it by. Every copy registers, whether or not only one copy is
 		/// allowed, or the /Exit switch cannot reach the copy it is meant to close.
 		/// </summary>
+		/// <remarks>
+		/// Copies are found by the program's name and, for a copy started with /Profile, its settings folder: /Exit and a
+		/// second start reach only the copy on the same folder, and only one copy is allowed per folder. A copy started
+		/// without /Profile is found by the program's name alone.
+		/// </remarks>
 		/// <returns>True when another copy was already running.</returns>
 		public bool RegisterInstance()
 		{
 			if (_Mutex != null)
 				return _OtherCopy;
 			var uid = Application.ProductName;
+			var ic = new System.Configuration.Install.InstallContext(null, Environment.GetCommandLineArgs());
+			if (ic.Parameters.ContainsKey("Profile"))
+			{
+				// A mutex name holds no backslash, so the folder is named by its hash.
+				var folder = System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(EngineHelper.AppDataPath).TrimEnd('\\').ToLowerInvariant());
+				using (var sha = System.Security.Cryptography.SHA256.Create())
+					uid += "_" + BitConverter.ToString(sha.ComputeHash(folder), 0, 16).Replace("-", "");
+			}
 			_Mutex = new System.Threading.Mutex(false, uid);
 			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
 			_OtherCopy = !_Mutex.WaitOne(1, true);
@@ -1582,6 +1587,10 @@ namespace x360ce.App
 						Issues.OnChangeIssue.Changed();
 				};
 				Main.IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
+				// Whether the checks run at all is the person's choice, kept with the settings.
+				Main.IssuesPanel.ChecksButton.Checked = SettingsManager.Options.IssueChecksEnabled;
+				Main.IssuesPanel.ChecksButton.CheckedChanged += (sender, e) =>
+					SettingsManager.Options.IssueChecksEnabled = Main.IssuesPanel.ChecksButton.Checked;
 				// This will start execution of Tasks Timer.
 				Main.IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
 				Main.IssuesPanel.TasksTimer.DoActionNow();
@@ -2305,7 +2314,7 @@ namespace x360ce.App
 			var o = SettingsManager.AiOptions;
 			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
 			StatusAiAccessLabel.Text = "AI: " + word;
-			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.ControlDark;
+			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.GrayText;
 			StatusAiAccessLabel.ForeColor = colour;
 			StatusAiAccessLabel.LinkColor = colour;
 			StatusAiAccessLabel.ActiveLinkColor = colour;
@@ -2326,8 +2335,8 @@ namespace x360ce.App
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			var colour = ErrorFilesCount > 0
-				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed)
-				: System.Drawing.SystemColors.ControlDark;
+				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning")
+				: System.Drawing.SystemColors.GrayText;
 			StatusErrorsLabel.ForeColor = colour;
 			// The count is a link so that it can be clicked at all, which also means its colour
 			// comes from LinkColor rather than ForeColor.

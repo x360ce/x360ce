@@ -139,7 +139,7 @@ namespace x360ce.Tests
 						.Select(name => Descendants(page).FirstOrDefault(x => x.Name == name)).ToList();
 					Assert.IsTrue(columns.All(x => x != null), "The two columns of the General page were not found on the Options page.");
 					Show(columns[0]);
-					// The left column holds Operation, Testing, Direct Input Devices, Guide Button and Hotkeys; the right one the
+					// The left column holds Operation, Testing, Input Devices, Guide Button and Hotkeys; the right one the
 					// scan locations, Appearance, Developing and Configuration.
 					var least = new[] { 5, 4 };
 					for (var c = 0; c < columns.Count; c++)
@@ -363,21 +363,22 @@ namespace x360ce.Tests
 			var side = (int)Math.Round(16 * ControlsHelper.DpiScale);
 			var pictures = new ImageList { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(side, side) };
 			pictures.Images.Add(new Bitmap(side, side));
-			// Padded as the main window's designer pads its pages: one that holds a list, every page but Options, has no padding
-			// at its sides, so the list meets the page's edges.
-			var padding = content is OptionsUserControl ? new Padding(3) : new Padding(0, 3, 0, 3);
-			var page = new TabPage(caption) { Padding = padding, ImageIndex = 0 };
-			// The control that fills its page with a list keeps the page's inset at its sides, which the theme gives to what
-			// stands above and below the list.
-			if (content.Controls.OfType<DataGridView>().Any(x => x.Dock == DockStyle.Fill))
-				content.Padding = new Padding(3, 0, 3, 0);
+			// Padded as the main window's designer pads them: the page, the control that fills it, the area that holds the tabs,
+			// the tool bar, and the main window's pages as a whole.
+			var designer = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainControl.Designer.cs"));
+			var page = new TabPage(caption) { Padding = DesignerPadding(designer, caption.StartsWith("Controller") ? "Pad1TabPage" : caption + "TabPage") ?? Padding.Empty, ImageIndex = 0 };
+			// The control keeps its own padding where the main window gives it none.
+			var field = Regex.Match(designer, @"this\.(\w+) = new [\w\.]*\." + content.GetType().Name + @"\(\);");
+			if (field.Success)
+				content.Padding = DesignerPadding(designer, field.Groups[1].Value) ?? content.Padding;
 			page.Controls.Add(content);
 			var tabs = new TabControl { Dock = DockStyle.Fill, ImageList = pictures };
 			tabs.TabPages.Add(page);
-			var holder = new Panel { Dock = DockStyle.Fill, Padding = new Padding(3) };
+			var holder = new Panel { Dock = DockStyle.Fill, Padding = DesignerPadding(designer, "panel1") ?? Padding.Empty };
 			holder.Controls.Add(tabs);
-			var tools = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden, Padding = new Padding(4, 2, 4, 0) };
-			tools.Items.Add(new ToolStripLabel("Game:"));
+			var tools = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden };
+			tools.Padding = DesignerPadding(designer, "GamesToolStrip") ?? tools.Padding;
+			tools.Items.Add(new ToolStripLabel("Game"));
 			tools.Items.Add(new ToolStripComboBox { DropDownStyle = ComboBoxStyle.DropDownList });
 			tools.Items.Add(new ToolStripButton("Save All", App.Properties.Resources.save_32x32)
 			{
@@ -401,15 +402,29 @@ namespace x360ce.Tests
 			window.AutoScaleDimensions = new SizeF(6F, 13F);
 			window.AutoScaleMode = AutoScaleMode.Font;
 			window.ClientSize = MainWindowSize();
-			window.Controls.Add(holder);
-			window.Controls.Add(tools);
+			// The main window's pages, their tool bar above the tabs, in what the header and the status bar leave.
+			var pages = new Panel { Dock = DockStyle.Fill, Padding = DesignerPadding(designer, "this") ?? Padding.Empty };
+			pages.Controls.Add(holder);
+			pages.Controls.Add(tools);
+			window.Controls.Add(pages);
 			window.Controls.Add(status);
-			// Docked as the main window docks them: the header, the status bar, the tool bar, then the tabs in what is left.
+			// Docked as the main window docks them: the header, the status bar, then the pages in what is left.
 			window.Controls.SetChildIndex(status, 0);
-			window.Controls.SetChildIndex(tools, 0);
-			window.Controls.SetChildIndex(holder, 0);
+			window.Controls.SetChildIndex(pages, 0);
 			window.ResumeLayout(false);
 			return window;
+		}
+
+		/// <summary>The padding a designer file gives a control, or null where it gives none.</summary>
+		/// <param name="designer">The designer file's text.</param>
+		/// <param name="name">The control's field, or <c>this</c> for the control the file makes.</param>
+		static Padding? DesignerPadding(string designer, string name)
+		{
+			var match = Regex.Match(designer, @"this\." + (name == "this" ? "" : Regex.Escape(name) + @"\.") + @"Padding = new System\.Windows\.Forms\.Padding\(([\d, ]+)\);");
+			if (!match.Success)
+				return null;
+			var sides = match.Groups[1].Value.Split(',').Select(x => int.Parse(x.Trim())).ToArray();
+			return sides.Length == 1 ? new Padding(sides[0]) : new Padding(sides[0], sides[1], sides[2], sides[3]);
 		}
 
 		/// <summary>The main window's default size, as its designer file sets it.</summary>
@@ -495,6 +510,171 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("On every tab of the AI page each caption shows its text on one line, the boxes beside the captions start at the same place in every section, and the widest caption's text ends 12 pixels before its box at 100 %, 18 at 150 %, as a label and its box stand on every other page")]
+		public void Ai_page_captions_stand_12_before_their_boxes_on_one_line()
+		{
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetTheme(ThemeType.Light);
+				using (var form = ThemedOptionsWindow(out var options))
+				{
+					var ai = Descendants(options).OfType<AiAccessUserControl>().Single();
+					// The program's settings keep a tunnel, so its tab is shown and measured too.
+					ai.Bind(new AiAccessSettings());
+					Show(ai);
+					var tables = new[] { nameof(AiAccessUserControl.AiHeaderPanel), nameof(AiAccessUserControl.AiSkillPanel), nameof(AiAccessUserControl.AiAccessPanel), nameof(AiAccessUserControl.AiTunnelPanel) }
+						.Select(x => (TableLayoutPanel)ai.Controls.Find(x, true).Single()).ToList();
+					// The header stands above the tabs, so the sections' columns are compared inside each section.
+					AssertCaptionsShareOneColumn(tables, null, 10);
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("On a Controller tab's Advanced page both groups share one caption column, as the AI page's sections do: each caption shows its text on one line, every box beside a caption starts at one place on the page, and the widest caption's text ends 12 pixels before its box at 100 %, 18 at 150 %")]
+		public void Advanced_page_captions_share_one_column_12_before_their_boxes()
+		{
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetTheme(ThemeType.Light);
+				var pad = new PadControl(x360ce.Engine.MapTo.Controller1) { Dock = DockStyle.Fill };
+				using (var form = ThemedWindow(pad))
+				{
+					pad.PadTabControl.SelectedTab = pad.AdvancedTabPage;
+					Application.DoEvents();
+					var tables = new[] { "DeviceTableLayoutPanel", "CombineTableLayoutPanel" }
+						.Select(x => (TableLayoutPanel)pad.Controls.Find(x, true).Single()).ToList();
+					AssertCaptionsShareOneColumn(tables, pad.AdvancedTabPage, 2);
+				}
+			});
+		}
+
+		/// <summary>
+		/// Captions in the first column of tables that share it: each shows its text on one line, the boxes beside them start
+		/// at one place, in <paramref name="common"/>'s coordinates or, with none, inside each table, and the widest caption's
+		/// text ends 12 pixels before its box at 100 %, as a label and its box stand on every page.
+		/// </summary>
+		/// <param name="tables">The tables, each shown in turn.</param>
+		/// <param name="common">What the boxes are compared in; null to compare them inside their tables.</param>
+		/// <param name="least">How many captions with a box beside them there are at least.</param>
+		void AssertCaptionsShareOneColumn(IList<TableLayoutPanel> tables, Control common, int least)
+		{
+			// Label to its box, 12 at 100 %: the caption's margin and the box's.
+			var expected = (int)Math.Round(12 * ControlsHelper.DpiScale);
+			var faults = new List<string>();
+			var starts = new Dictionary<string, int>();
+			var gaps = new List<int>();
+			foreach (var table in tables)
+			{
+				Show(table);
+				Application.DoEvents();
+				foreach (var caption in table.Controls.OfType<Label>().Where(x => x.Visible && table.GetColumn(x) == 0 && table.GetColumnSpan(x) == 1))
+				{
+					// The caption's text as the theme draws it: from its padding, without Windows' room at either side.
+					var text = DrawnText(caption);
+					var line = TextRenderer.MeasureText("Ag", caption.Font, Size.Empty, TextFormatFlags.NoPadding).Height;
+					if (caption.Height >= 2 * line || caption.Width < text.Width + caption.Padding.Horizontal)
+						faults.Add(string.Format("{0} \"{1}\" is {2}, which does not hold its text, {3}, on one line.", caption.Name, caption.Text, caption.Size, text));
+					var row = table.GetRow(caption);
+					var box = table.Controls.Cast<Control>().SingleOrDefault(x => x.Visible && table.GetColumn(x) == 1 && table.GetRow(x) == row);
+					if (box == null)
+						continue;
+					var end = caption.Left + caption.Padding.Left + text.Width;
+					TestContext.WriteLine("{0}: {1} \"{2}\" ends {3} px before {4}", table.Name, caption.Name, caption.Text, box.Left - end, box.Name);
+					gaps.Add(box.Left - end);
+					starts[table.Name + "/" + box.Name] = common == null ? box.Left : common.PointToClient(table.PointToScreen(box.Location)).X;
+					if (box.Left - end < expected)
+						faults.Add(string.Format("{0} \"{1}\" ends {2} px before {3}, less than {4}.", caption.Name, caption.Text, box.Left - end, box.Name, expected));
+				}
+			}
+			Assert.IsTrue(gaps.Count >= least, "Expected " + least + " captions with a box beside them at least, found " + gaps.Count + ".");
+			if (starts.Values.Distinct().Count() != 1)
+				faults.Add("The boxes beside the captions start at more than one place: " + string.Join(", ", starts.Select(x => x.Key + " " + x.Value)));
+			if (gaps.Min() != expected)
+				faults.Add(string.Format("The widest caption ends {0} px before its box, not {1}.", gaps.Min(), expected));
+			Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
+		[Description("On every Options page a note under a check box starts where the check box's text starts: the check box's box and the room after it in from the check box")]
+		public void Notes_under_a_check_box_start_where_its_text_starts()
+		{
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetTheme(ThemeType.Light);
+				using (var form = ThemedOptionsWindow(out var options))
+				{
+					var faults = new List<string>();
+					var notes = 0;
+					foreach (TabPage page in options.MainTabControl.TabPages)
+					{
+						options.MainTabControl.SelectedTab = page;
+						Application.DoEvents();
+						foreach (var table in Descendants(page).OfType<TableLayoutPanel>().Where(x => x.Visible))
+							foreach (var note in table.Controls.OfType<Label>().Where(x => x.Visible && table.GetRow(x) > 0))
+							{
+								var check = table.GetControlFromPosition(table.GetColumn(note), table.GetRow(note) - 1) as CheckBox;
+								if (check == null || !check.Visible)
+									continue;
+								notes++;
+								// The theme makes a check box that sizes itself as wide as its padding, its box, the room after it and its
+								// text, so its text starts that wide before the check box's padding ends; a label's text starts at its padding.
+								var checkText = check.Right - check.Padding.Right - DrawnText(check).Width;
+								var noteText = note.Left + note.Padding.Left;
+								TestContext.WriteLine("{0}: {1} starts at {2}, the text of {3} at {4}", page.Text, note.Name, noteText, check.Name, checkText);
+								if (noteText != checkText)
+									faults.Add(string.Format("On {0} {1} starts at {2}, and the text of {3} above it at {4}.", page.Text, note.Name, noteText, check.Name, checkText));
+							}
+					}
+					Assert.IsTrue(notes >= 3, "Expected the notes under the check boxes of Update and Plugins, found " + notes + ".");
+					Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
+				}
+			});
+		}
+
+		/// <summary>
+		/// The Options page in a window off the screen, at this screen's scale, its text drawn as the program draws it and themed:
+		/// the theme sizes labels and check boxes to their text.
+		/// </summary>
+		static Form ThemedOptionsWindow(out OptionsUserControl options)
+		{
+			options = new OptionsUserControl { Dock = DockStyle.Fill };
+			// The AI page's tunnel tab, off the page until settings that keep a tunnel are shown.
+			return ThemedWindow(options, Descendants(options).OfType<AiAccessUserControl>().Single().AiTunnelTabPage);
+		}
+
+		/// <summary>
+		/// A page in a window off the screen, at this screen's scale, its text, and that of the controls given that are not on it
+		/// yet, drawn as the program draws it, and themed.
+		/// </summary>
+		internal static Form ThemedWindow(Control page, params Control[] notYetOn)
+		{
+			var form = new Form { ClientSize = new Size(1600, 1000), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false };
+			form.SuspendLayout();
+			form.AutoScaleDimensions = new SizeF(6F, 13F);
+			form.AutoScaleMode = AutoScaleMode.Font;
+			form.Controls.Add(page);
+			form.ResumeLayout(false);
+			DrawTextAsTheProgram(form);
+			foreach (var control in notYetOn)
+				DrawTextAsTheProgram(control);
+			FormsTheme.Apply(form);
+			form.Show();
+			return form;
+		}
+
+		/// <summary>
+		/// The size of a control's text on one line as the theme draws it, without the room Windows keeps at either side, which
+		/// .NET Framework leaves out only when it measures on a device context.
+		/// </summary>
+		static Size DrawnText(Control control)
+		{
+			using (var bitmap = new Bitmap(1, 1))
+			using (var g = Graphics.FromImage(bitmap))
+				return TextRenderer.MeasureText(g, control.Text, control.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine);
+		}
+
+		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
 		[Description("On the Settings page the folder's box ends before Open Folder starts, and each list is as wide as its widest choice needs, as the theme draws it")]
 		public void Settings_rows_hold_their_boxes_whole()
 		{
@@ -542,20 +722,23 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("Each Options page starts its content as far inside it as the General page does, a page's padding and a control's margin, and the pages' tab strip stands as far inside the Options tab, at every zoom for what the Options page lays out itself and at 100 % for the pages that hold a control of their own")]
+		[Description("Each Options page starts its content as far inside it as the General page does, 12 in from its side and 12 below its top, a page's padding and a control's margin, and the pages' tab strip stands as far inside the Options tab, at every zoom for what the Options page lays out itself and at 100 % for the pages that hold a control of their own")]
 		public void Options_pages_start_their_content_as_far_inside_as_General()
 		{
 			Ui.OnUiThread(() =>
 			{
 				FormsTheme.SetTheme(ThemeType.Light);
 				var faults = new List<string>();
+				// Where the content starts at 100 %: 12 from the side and the top, Windows' room between a surface's edge and its
+				// content, to the content's own box: a group's top is its caption's line.
+				var inset = new Size(12, 12);
 				// The zooms Windows offers; the page was drawn at 100 %.
 				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 2f })
 					using (var form = new Form { ClientSize = new Size(1600, 1000), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
 					{
 						var options = new OptionsUserControl { Dock = DockStyle.Fill };
 						// The Options tab of the main window: a page with the padding every tab of the window has.
-						var tab = new TabPage("Options") { Padding = new Padding(3) };
+						var tab = new TabPage("Options") { Padding = new Padding(4) };
 						var window = new UserControl { Dock = DockStyle.Fill };
 						window.SuspendLayout();
 						window.Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom / JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
@@ -570,18 +753,23 @@ namespace x360ce.Tests
 						FormsTheme.Apply(form);
 						form.Show();
 						var pages = options.MainTabControl;
+						// Scaled as Windows Forms scales the page: by its font's size against the size it was drawn with.
+						var scale = window.CurrentAutoScaleDimensions;
+						var expected = new Point((int)Math.Round(inset.Width * scale.Width / 6F), (int)Math.Round(inset.Height * scale.Height / 13F));
 						var strip = tab.PointToClient(pages.Parent.PointToScreen(pages.Location));
+						if (!AsFar(expected, strip))
+							faults.Add(string.Format("At {0:P0} the pages' tab strip stands at {1} inside the Options tab, not {2}.", zoom, strip, expected));
 						Point? general = null;
 						foreach (TabPage page in pages.TabPages)
 						{
 							pages.SelectedTab = page;
 							Application.DoEvents();
-							var start = Start(page);
+							var start = Start(page).Value;
 							if (general == null)
 							{
 								general = start;
-								Assert.IsTrue(AsFar(general.Value, strip), string.Format(
-									"At {0:P0} the pages' tab strip stands at {1} inside the Options tab, and {2} starts at {3}.", zoom, strip, page.Text, start));
+								if (!AsFar(expected, start))
+									faults.Add(string.Format("At {0:P0} {1} starts at {2}, not {3}.", zoom, page.Text, start, expected));
 								continue;
 							}
 							// A page that holds a control of its own, which scales itself from the font it is made with: zoomed
@@ -602,13 +790,30 @@ namespace x360ce.Tests
 
 		/// <summary>
 		/// Where a page's content starts, from the page's own edge: the left of its leftmost control and the top of its
-		/// topmost, leaving out the panels and tables that only place them, and the lists, which stand edge to edge.
+		/// topmost, a tool bar's by its buttons, leaving out the panels and tables that only place them, and the lists and the
+		/// texts that fill a page; none when the page shows nothing else.
 		/// </summary>
-		static Point Start(Control page)
+		internal static Point? Start(Control page)
 		{
-			var shown = Shown(page).Where(x => !(x is DataGridView) && !(x.Parent is DataGridView))
-				.Select(x => page.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds))).ToList();
+			var shown = Shown(page).Where(x => !(x is DataGridView) && !(x.Parent is DataGridView) && !ListLayoutTest.IsFillingText(x))
+				.Select(x => page.RectangleToClient(ContentBounds(x))).ToList();
+			if (shown.Count == 0)
+				return null;
 			return new Point(shown.Min(x => x.Left), shown.Min(x => x.Top));
+		}
+
+		/// <summary>
+		/// Where a control stands on the screen; a tool bar where its buttons at its left stand, which it places inside its own
+		/// padding: one with its buttons at its right only, as a whole.
+		/// </summary>
+		static Rectangle ContentBounds(Control control)
+		{
+			var items = control is ToolStrip strip
+				? strip.Items.Cast<ToolStripItem>().Where(x => x.Visible && x.Alignment == ToolStripItemAlignment.Left).ToList() : null;
+			if (items == null || items.Count == 0)
+				return control.Parent.RectangleToScreen(control.Bounds);
+			var bounds = items.Select(x => control.RectangleToScreen(x.Bounds)).ToList();
+			return Rectangle.FromLTRB(bounds.Min(x => x.Left), bounds.Min(x => x.Top), bounds.Max(x => x.Right), bounds.Max(x => x.Bottom));
 		}
 
 		/// <summary>The controls on a page a person sees, leaving out the panels and tables that only place them.</summary>
@@ -778,6 +983,22 @@ namespace x360ce.Tests
 					tabs.SelectedTab = page;
 			}
 			control.PerformLayout();
+		}
+
+		/// <summary>
+		/// Has every label and button below a control draw its text with GDI, as the program draws it
+		/// (Application.SetCompatibleTextRenderingDefault(false)), which the test host cannot ask for once a window is made: the
+		/// theme draws and sizes only text drawn that way.
+		/// </summary>
+		internal static void DrawTextAsTheProgram(Control root)
+		{
+			foreach (var control in Descendants(root))
+			{
+				if (control is Label label)
+					label.UseCompatibleTextRendering = false;
+				else if (control is ButtonBase button)
+					button.UseCompatibleTextRendering = false;
+			}
 		}
 
 		/// <summary>Every control below this one, at any depth.</summary>

@@ -156,7 +156,7 @@ namespace JocysCom.ClassLibrary.Win32
 		/// If the message is successfully registered, the return value is a message identifier in the range 0xC000 through 0xFFFF.
 		/// If the function fails, the return value is zero. To get extended error information, call GetLastError.
 		/// </returns>
-		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+		[DllImport("user32.dll", EntryPoint = "RegisterWindowMessageW", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
 		internal static extern int RegisterWindowMessage(String pString);
 
 		public static int RegisterWindowMessage(string pString, out Exception error)

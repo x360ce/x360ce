@@ -161,12 +161,13 @@ namespace x360ce.App.Controls
 		void InitPaintObjects()
 		{
 			DisposePaintObjects();
-			curvePen = new Pen(Color.Red, 1.5f);
+			curvePen = new Pen(FormsTheme.GetColor("ColorCurve"), 1.5f);
 			curvePen.LineJoin = LineJoin.Round;
 			gridPen = new Pen(AppHelper.ChartLineColor, 1f);
-			// The crosshair and the force are blue and the angle green, as the thumb charts show their two values.
-			var forceColor = FormsTheme.GetColor("ColorBrand", Color.Blue);
-			var angleColor = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
+			// The angle is the reading and the force what the curve gives for it, coloured as the thumb charts colour their
+			// two values; the crosshair takes the force's colour.
+			var forceColor = FormsTheme.GetColor("ForegroundOutput");
+			var angleColor = FormsTheme.GetColor("ForegroundActive");
 			crossPen = new Pen(forceColor, 1f);
 			ForceValueLabel.ForeColor = forceColor;
 			AngleValueLabel.ForeColor = angleColor;
@@ -196,16 +197,100 @@ namespace x360ce.App.Controls
 			MainPictureBox.Invalidate();
 		}
 
+		/// <summary>The picture is filled with its box's colour, which is another while disabled, so it is made again.</summary>
+		protected override void OnEnabledChanged(EventArgs e)
+		{
+			base.OnEnabledChanged(e);
+			pictureOutOfDate = true;
+			MainPictureBox.Invalidate();
+		}
+
 		/// <summary>The small notes in the picture follow the page's font, which arrives once the chart is on the page.</summary>
 		protected override void OnFontChanged(EventArgs e)
 		{
 			base.OnFontChanged(e);
+			// The rows above and below the picture take their height from the font.
+			FitToParent();
 			if (curvePen == null)
 				return;
 			InitPaintObjects();
 			pictureOutOfDate = true;
 			MainPictureBox.Invalidate();
 		}
+
+		#region Square chart
+
+		/// <summary>The page the chart stands on, whose height it fills.</summary>
+		Control _Host;
+
+		/// <summary>Follows the size of the page the chart is put on.</summary>
+		protected override void OnParentChanged(EventArgs e)
+		{
+			base.OnParentChanged(e);
+			if (_Host != null)
+				_Host.SizeChanged -= Host_SizeChanged;
+			_Host = Parent;
+			if (_Host != null)
+				_Host.SizeChanged += Host_SizeChanged;
+			FitToParent();
+		}
+
+		/// <summary>The page has been resized and laid out: the chart takes its width for the new size.</summary>
+		void Host_SizeChanged(object sender, EventArgs e)
+		{
+			FitToParent();
+		}
+
+		/// <summary>
+		/// Takes the width at which the square picture, as wide as the chart, and the rows above and below it fill the
+		/// height the page gives the chart, and never more than half the page's width, so the settings beside it keep the
+		/// other half. A chart held to half the page is shorter than the page, with room left under it.
+		/// </summary>
+		/// <remarks>
+		/// Set when the page has been resized rather than while the page lays the chart out: a width a child takes while its
+		/// table lays it out reaches the table's columns only at the next layout. The legend under the picture wraps to the
+		/// chart's width, so a narrower chart can need another line of it: the width is worked out again until it stays.
+		/// </remarks>
+		void FitToParent()
+		{
+			if (_Host == null)
+				return;
+			var room = _Host.DisplayRectangle;
+			var height = room.Height - Margin.Vertical;
+			var most = room.Width / 2 - Margin.Horizontal;
+			var picture = MainPictureBox;
+			var width = most;
+			for (var i = 0; i < 4; i++)
+			{
+				var side = height - RowsHeight(width) - picture.Margin.Vertical;
+				var next = Math.Max(1, Math.Min(most, side + picture.Margin.Horizontal + MainTableLayoutPanel.Padding.Horizontal));
+				if (next == width)
+					break;
+				width = next;
+			}
+			Width = width;
+		}
+
+		/// <summary>How tall the rows above and below the picture are at a width of the chart: the wheel's values, the stops, and the legend wrapped to that width.</summary>
+		int RowsHeight(int width)
+		{
+			var values = ValuesFlowLayoutPanel.PreferredSize.Height + ValuesFlowLayoutPanel.Margin.Vertical;
+			var stops = 0;
+			foreach (var stop in new Control[] { LeftStopLabel, CentreLabel, RightStopLabel })
+				stops = Math.Max(stops, stop.PreferredSize.Height + stop.Margin.Vertical);
+			var legendWidth = Math.Max(1, width - MainTableLayoutPanel.Padding.Horizontal - LegendLabel.Margin.Horizontal);
+			var legend = LegendLabel.GetPreferredSize(new Size(legendWidth, 0)).Height + LegendLabel.Margin.Vertical;
+			return MainTableLayoutPanel.Padding.Vertical + values + stops + legend;
+		}
+
+		/// <summary>The picture is as wide as the chart and as tall as it is wide.</summary>
+		void MainTableLayoutPanel_SizeChanged(object sender, EventArgs e)
+		{
+			var side = Math.Max(1, MainTableLayoutPanel.DisplayRectangle.Width - MainPictureBox.Margin.Horizontal);
+			MainPictureBox.Size = new Size(side, side);
+		}
+
+		#endregion
 
 		float XOf(int axis, int width)
 		{
@@ -228,7 +313,8 @@ namespace x360ce.App.Controls
 			picture = new Bitmap(w, h, PixelFormat.Format24bppRgb);
 			using (var g = Graphics.FromImage(picture))
 			{
-				g.Clear(SystemColors.Window);
+				// The box's own colour, so that drawn faded while disabled, only what is on it fades.
+				g.Clear(FormsTheme.FrameFace(MainPictureBox));
 				if (friction > 0)
 				{
 					var top = YOf(friction, h);
@@ -287,17 +373,25 @@ namespace x360ce.App.Controls
 			return curve.Force((int)Math.Round((double)x / Math.Max(1, width - 1) * SpringCalibration.AxisMax));
 		}
 
+		/// <summary>Draws the picture, and the wheel over it. Disabled, the picture stays, faded, and no wheel is shown.</summary>
 		void MainPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			var g = e.Graphics;
-			AppHelper.PaintChartBox(g, MainPictureBox, Enabled);
+			AppHelper.PaintChartBox(g, MainPictureBox);
 			var chart = AppHelper.ChartBounds(MainPictureBox);
 			var w = chart.Width;
 			var h = chart.Height;
-			if (!Enabled || w < 2 || h < 2 || curvePen == null)
+			if (w < 2 || h < 2 || curvePen == null)
 				return;
 			if (pictureOutOfDate || picture == null || picture.Width != w || picture.Height != h)
 				DrawPicture(w, h);
+			if (!Enabled)
+			{
+				// Pixel for pixel: the picture is the chart's own size.
+				g.PixelOffsetMode = PixelOffsetMode.Half;
+				ControlsHelper.DrawImageWithOpacity(g, picture, chart, EngineHelper.DisabledOpacity);
+				return;
+			}
 			g.DrawImageUnscaled(picture, chart.Location);
 			if (position < 0)
 				return;
@@ -327,6 +421,8 @@ namespace x360ce.App.Controls
 			if (disposing)
 			{
 				FormsTheme.ThemeChanged -= FormsTheme_ThemeChanged;
+				if (_Host != null)
+					_Host.SizeChanged -= Host_SizeChanged;
 				DisposePaintObjects();
 				if (picture != null)
 					picture.Dispose();

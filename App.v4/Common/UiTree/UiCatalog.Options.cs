@@ -34,7 +34,7 @@ namespace x360ce.App.UiTree
 				"How the program behaves while it runs.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DevelopingGroupBox)] = new Text("Developing",
 				"Aids for working on the program itself.");
-			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DirectInputDevicesGroupBox)] = new Text("Direct Input Devices",
+			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DirectInputDevicesGroupBox)] = new Text("Input Devices",
 				"Which devices the program lists and reads.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.ConfigurationGroupBox)] = new Text("Configuration",
 				"Switching settings to the game in front.");

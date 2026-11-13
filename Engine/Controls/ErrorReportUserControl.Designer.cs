@@ -69,6 +69,7 @@
 			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RootLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
 			this.RootLayoutPanel.RowCount = 3;
 			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -82,9 +83,8 @@
 			this.ReportGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ReportGroupBox.Controls.Add(this.FieldsLayoutPanel);
 			this.ReportGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ReportGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 2);
+			this.ReportGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ReportGroupBox.Name = "ReportGroupBox";
-			this.ReportGroupBox.Padding = new System.Windows.Forms.Padding(4, 2, 4, 4);
 			this.ReportGroupBox.TabIndex = 0;
 			this.ReportGroupBox.TabStop = false;
 			this.ReportGroupBox.Text = "Report";
@@ -123,7 +123,7 @@
 			//
 			this.ErrorsFolderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ErrorsFolderLabel.AutoSize = true;
-			this.ErrorsFolderLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.ErrorsFolderLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ErrorsFolderLabel.Name = "ErrorsFolderLabel";
 			this.ErrorsFolderLabel.TabIndex = 0;
 			this.ErrorsFolderLabel.Text = "Errors Folder";
@@ -132,6 +132,7 @@
 			//
 			this.ErrorsFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ErrorsFolderTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ErrorsFolderTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ErrorsFolderTextBox.Name = "ErrorsFolderTextBox";
 			this.ErrorsFolderTextBox.ReadOnly = true;
 			this.ErrorsFolderTextBox.TabStop = false;
@@ -141,6 +142,7 @@
 			//
 			this.OpenErrorsFolderButton.AutoSize = true;
 			this.OpenErrorsFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.OpenErrorsFolderButton.Margin = new System.Windows.Forms.Padding(4);
 			this.OpenErrorsFolderButton.Name = "OpenErrorsFolderButton";
 			this.OpenErrorsFolderButton.TabIndex = 2;
 			this.OpenErrorsFolderButton.Text = "Open...";
@@ -151,7 +153,7 @@
 			//
 			this.ErrorLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ErrorLabel.AutoSize = true;
-			this.ErrorLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.ErrorLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ErrorLabel.Name = "ErrorLabel";
 			this.ErrorLabel.TabIndex = 3;
 			this.ErrorLabel.Text = "Error";
@@ -161,6 +163,7 @@
 			this.ErrorComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ErrorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ErrorComboBox.FormattingEnabled = true;
+			this.ErrorComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ErrorComboBox.Name = "ErrorComboBox";
 			this.ErrorComboBox.AccessibleName = "Which error to report";
 			this.ErrorComboBox.TabIndex = 4;
@@ -170,7 +173,7 @@
 			//
 			this.FromEmailLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.FromEmailLabel.AutoSize = true;
-			this.FromEmailLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.FromEmailLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.FromEmailLabel.Name = "FromEmailLabel";
 			this.FromEmailLabel.TabIndex = 5;
 			this.FromEmailLabel.Text = "Email From (Optional)";
@@ -178,6 +181,7 @@
 			// FromEmailTextBox
 			//
 			this.FromEmailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.FromEmailTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.FromEmailTextBox.Name = "FromEmailTextBox";
 			this.FromEmailTextBox.AccessibleName = "Your email address, so we can reply";
 			this.FromEmailTextBox.TabIndex = 6;
@@ -186,7 +190,7 @@
 			//
 			this.ToEmailLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ToEmailLabel.AutoSize = true;
-			this.ToEmailLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.ToEmailLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ToEmailLabel.Name = "ToEmailLabel";
 			this.ToEmailLabel.TabIndex = 7;
 			this.ToEmailLabel.Text = "Email To";
@@ -195,6 +199,7 @@
 			//
 			this.ToEmailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ToEmailTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ToEmailTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ToEmailTextBox.Name = "ToEmailTextBox";
 			this.ToEmailTextBox.AccessibleName = "Address the report is sent to";
 			this.ToEmailTextBox.ReadOnly = true;
@@ -205,6 +210,7 @@
 			//
 			this.OpenMailButton.AutoSize = true;
 			this.OpenMailButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.OpenMailButton.Margin = new System.Windows.Forms.Padding(4);
 			this.OpenMailButton.Name = "OpenMailButton";
 			this.OpenMailButton.TabIndex = 9;
 			this.OpenMailButton.Text = "Open...";
@@ -215,7 +221,7 @@
 			//
 			this.SubjectLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SubjectLabel.AutoSize = true;
-			this.SubjectLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.SubjectLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.SubjectLabel.Name = "SubjectLabel";
 			this.SubjectLabel.TabIndex = 10;
 			this.SubjectLabel.Text = "Subject";
@@ -223,6 +229,7 @@
 			// SubjectTextBox
 			//
 			this.SubjectTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.SubjectTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.SubjectTextBox.Name = "SubjectTextBox";
 			this.SubjectTextBox.TabIndex = 11;
 			//
@@ -230,7 +237,7 @@
 			//
 			this.DetailsTabControl.Controls.Add(this.ErrorDetailsTabPage);
 			this.DetailsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DetailsTabControl.Margin = new System.Windows.Forms.Padding(4, 2, 4, 2);
+			this.DetailsTabControl.Margin = new System.Windows.Forms.Padding(4, 12, 4, 4);
 			this.DetailsTabControl.Name = "DetailsTabControl";
 			this.DetailsTabControl.SelectedIndex = 0;
 			this.DetailsTabControl.TabIndex = 1;
@@ -239,7 +246,6 @@
 			//
 			this.ErrorDetailsTabPage.Controls.Add(this.MainBrowser);
 			this.ErrorDetailsTabPage.Name = "ErrorDetailsTabPage";
-			this.ErrorDetailsTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.ErrorDetailsTabPage.TabIndex = 0;
 			this.ErrorDetailsTabPage.Text = "Error Details";
 			this.ErrorDetailsTabPage.UseVisualStyleBackColor = true;
@@ -261,7 +267,7 @@
 			this.ButtonsFlowPanel.Controls.Add(this.StatusLabel);
 			this.ButtonsFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ButtonsFlowPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.ButtonsFlowPanel.Margin = new System.Windows.Forms.Padding(4, 2, 4, 4);
+			this.ButtonsFlowPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ButtonsFlowPanel.Name = "ButtonsFlowPanel";
 			this.ButtonsFlowPanel.TabIndex = 2;
 			this.ButtonsFlowPanel.WrapContents = false;
@@ -270,6 +276,7 @@
 			//
 			this.CloseButton.AutoSize = true;
 			this.CloseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.TabIndex = 2;
 			this.CloseButton.Text = "Close";
@@ -280,6 +287,7 @@
 			//
 			this.ClearErrorsButton.AutoSize = true;
 			this.ClearErrorsButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ClearErrorsButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ClearErrorsButton.Name = "ClearErrorsButton";
 			this.ClearErrorsButton.TabIndex = 1;
 			this.ClearErrorsButton.Text = "Clear Errors and Close";
@@ -291,6 +299,7 @@
 			this.SendErrorButton.AutoSize = true;
 			this.SendErrorButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.SendErrorButton.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+			this.SendErrorButton.Margin = new System.Windows.Forms.Padding(4);
 			this.SendErrorButton.Name = "SendErrorButton";
 			this.SendErrorButton.TabIndex = 0;
 			this.SendErrorButton.Text = "Send Error to X360CE";
@@ -301,7 +310,7 @@
 			//
 			this.StatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.StatusLabel.AutoSize = true;
-			this.StatusLabel.Margin = new System.Windows.Forms.Padding(3, 6, 6, 3);
+			this.StatusLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.StatusLabel.Name = "StatusLabel";
 			this.StatusLabel.TabIndex = 3;
 			//

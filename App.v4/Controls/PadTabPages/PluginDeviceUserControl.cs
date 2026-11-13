@@ -37,7 +37,9 @@ namespace x360ce.App.Controls
 			{
 				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
-				Padding = new Padding(6),
+				// 12 from the page's edges with its controls' margins; the page is made once the Controller page has been
+				// scaled, so its room is given at the screen's scale.
+				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -49,11 +51,12 @@ namespace x360ce.App.Controls
 					AutoSize = true,
 					// Across the column, so the table wraps it at the tab's width.
 					Anchor = AnchorStyles.Left | AnchorStyles.Right,
+					Margin = AppHelper.ScaledPadding(4, 4, 4, 4),
 				});
-			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill };
+			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill, Margin = AppHelper.ScaledPadding(4, 4, 4, 4) };
 			if (type.ControlType != null)
 			{
-				NoteLabel = new Label { Name = nameof(NoteLabel), AutoSize = true, Dock = DockStyle.Top, Padding = new Padding(3), Visible = false };
+				NoteLabel = new Label { Name = nameof(NoteLabel), AutoSize = true, Dock = DockStyle.Top, Padding = AppHelper.ScaledPadding(12, 12, 12, 12), Visible = false };
 				var control = NewPluginControl();
 				if (control != null)
 					control.Dock = DockStyle.Fill;

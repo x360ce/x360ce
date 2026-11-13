@@ -69,13 +69,13 @@ namespace x360ce.App.Controls
 		{
 			var widest = 0;
 			foreach (GamepadButtonFlags button in Enum.GetValues(typeof(GamepadButtonFlags)))
-				widest = Math.Max(widest, TextRenderer.MeasureText(ButtonName(button) + ":", font).Width);
+				widest = Math.Max(widest, TextRenderer.MeasureText(ButtonName(button), font).Width);
 			return widest;
 		}
 
 		void UpdateImage()
 		{
-			ButtonNameLabel.Text = ButtonName(GamepadButton) + ":";
+			ButtonNameLabel.Text = ButtonName(GamepadButton);
 			switch (GamepadButton)
 			{
 				case GamepadButtonFlags.A: enabledImage = Properties.Resources.Button_A; break;
@@ -201,7 +201,7 @@ namespace x360ce.App.Controls
 				var y = ButtonImagePictureBox.Height / 2f;
 				var on = _gamepadState.Gamepad.Buttons.HasFlag(_GamepadButton);
 				if (on) e.Graphics.DrawImage(_markB, x - w / 2, y - h / 2, w, h);
-				Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
+				Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive") : SystemColors.ControlText;
 				if (ButtonNameLabel.ForeColor != c) ButtonNameLabel.ForeColor = c;
 			}
 		}

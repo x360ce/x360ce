@@ -62,6 +62,7 @@
 			// 
 			this.AboutDescriptionLabel.AutoSize = true;
 			this.AboutDescriptionLabel.Location = new System.Drawing.Point(43, 16);
+			this.AboutDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 4);
 			this.AboutDescriptionLabel.Name = "AboutDescriptionLabel";
 			this.AboutDescriptionLabel.Size = new System.Drawing.Size(328, 13);
 			this.AboutDescriptionLabel.TabIndex = 0;
@@ -72,7 +73,7 @@
 			this.AboutProductLabel.AutoSize = true;
 			this.AboutProductLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.AboutProductLabel.Location = new System.Drawing.Point(43, 3);
-			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.AboutProductLabel.Name = "AboutProductLabel";
 			this.AboutProductLabel.Size = new System.Drawing.Size(197, 13);
 			this.AboutProductLabel.TabIndex = 0;
@@ -82,7 +83,7 @@
 			// 
 			this.ProductPictureBox.Image = global::x360ce.App.Properties.Resources.app_128x128;
 			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
-			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.ProductPictureBox.Name = "ProductPictureBox";
 			this.MainTableLayoutPanel.SetRowSpan(this.ProductPictureBox, 2);
 			this.ProductPictureBox.Size = new System.Drawing.Size(34, 26);
@@ -98,6 +99,7 @@
 			this.AboutTabControl.Controls.Add(this.LicenseTabPage);
 			this.AboutTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AboutTabControl.Location = new System.Drawing.Point(3, 32);
+			this.AboutTabControl.Margin = new System.Windows.Forms.Padding(4);
 			this.AboutTabControl.Name = "AboutTabControl";
 			this.AboutTabControl.SelectedIndex = 0;
 			this.AboutTabControl.Size = new System.Drawing.Size(613, 461);

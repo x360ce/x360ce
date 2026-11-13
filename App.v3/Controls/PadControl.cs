@@ -443,15 +443,11 @@ namespace x360ce.App.Controls
 
 			if (!Recording)
 			{
-				var negative = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", Color.DarkRed);
-				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
-				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = negative;
-				setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
-				if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = negative;
-				setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
-				if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = negative;
-				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
-				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = negative;
+				// A stick's name is lit while it is pushed either way; the cross on the picture shows which way.
+				setLabelColor(_leftX > 2000 || _leftX < -2000, LeftThumbAxisXLabel);
+				setLabelColor(_leftY > 2000 || _leftY < -2000, LeftThumbAxisYLabel);
+				setLabelColor(_rightX > 2000 || _rightX < -2000, RightThumbAxisXLabel);
+				setLabelColor(_rightY > 2000 || _rightY < -2000, RightThumbAxisYLabel);
 				// Draw button state green led image.
 				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
 				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
@@ -503,7 +499,7 @@ namespace x360ce.App.Controls
 
 		void setLabelColor(bool on, Label label)
 		{
-			Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
+			Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive") : SystemColors.ControlText;
 			if (label.ForeColor != c) label.ForeColor = c;
 		}
 
@@ -813,7 +809,7 @@ namespace x360ce.App.Controls
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;
 			mi = new ToolStripMenuItem(cEmpty);
-			mi.ForeColor = SystemColors.ControlDarkDark;
+			mi.ForeColor = SystemColors.GrayText;
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Return if direct input device is not available.

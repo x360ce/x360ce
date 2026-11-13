@@ -45,6 +45,7 @@ namespace x360ce.App.Forms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(784, 561);
 			this.Controls.Add(this.ErrorReportPanel);
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(560, 420);
 			this.Name = "ErrorReportForm";

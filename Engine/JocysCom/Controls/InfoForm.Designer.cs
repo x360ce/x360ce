@@ -31,6 +31,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.FormNameLabel = new System.Windows.Forms.Label();
 			this.FormNameValueLabel = new System.Windows.Forms.Label();
 			this.FormLocationValueLabel = new System.Windows.Forms.Label();
@@ -51,21 +52,51 @@ namespace JocysCom.ClassLibrary.Controls
 			this.ControlsTabPage.SuspendLayout();
 			this.PropertiesTabControl.SuspendLayout();
 			this.PropertiesTabPage.SuspendLayout();
+			this.MainLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
+			//
+			// MainLayoutPanel
+			//
+			this.MainLayoutPanel.ColumnCount = 2;
+			this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.MainLayoutPanel.Controls.Add(this.FormNameLabel, 0, 0);
+			this.MainLayoutPanel.Controls.Add(this.FormNameValueLabel, 1, 0);
+			this.MainLayoutPanel.Controls.Add(this.FormSizeLabel, 0, 1);
+			this.MainLayoutPanel.Controls.Add(this.FormSizeValueLabel, 1, 1);
+			this.MainLayoutPanel.Controls.Add(this.FormLocationLabel, 0, 2);
+			this.MainLayoutPanel.Controls.Add(this.FormLocationValueLabel, 1, 2);
+			this.MainLayoutPanel.Controls.Add(this.HelpLabel, 0, 3);
+			this.MainLayoutPanel.Controls.Add(this.ControlsTabControl, 0, 4);
+			this.MainLayoutPanel.Controls.Add(this.PropertiesTabControl, 0, 5);
+			this.MainLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.MainLayoutPanel.Name = "MainLayoutPanel";
+			this.MainLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.MainLayoutPanel.RowCount = 6;
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35F));
+			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 65F));
+			this.MainLayoutPanel.Size = new System.Drawing.Size(554, 547);
+			this.MainLayoutPanel.TabIndex = 0;
 			// 
 			// FormNameLabel
 			// 
 			this.FormNameLabel.AutoSize = true;
-			this.FormNameLabel.Location = new System.Drawing.Point(12, 18);
+			this.FormNameLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.FormNameLabel.Name = "FormNameLabel";
 			this.FormNameLabel.Size = new System.Drawing.Size(64, 13);
 			this.FormNameLabel.TabIndex = 0;
-			this.FormNameLabel.Text = "Form Name:";
+			this.FormNameLabel.Text = "Form Name";
 			// 
 			// FormNameValueLabel
 			// 
 			this.FormNameValueLabel.AutoSize = true;
-			this.FormNameValueLabel.Location = new System.Drawing.Point(95, 18);
+			this.FormNameValueLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.FormNameValueLabel.Name = "FormNameValueLabel";
 			this.FormNameValueLabel.Size = new System.Drawing.Size(117, 13);
 			this.FormNameValueLabel.TabIndex = 1;
@@ -74,7 +105,7 @@ namespace JocysCom.ClassLibrary.Controls
 			// FormLocationValueLabel
 			// 
 			this.FormLocationValueLabel.AutoSize = true;
-			this.FormLocationValueLabel.Location = new System.Drawing.Point(95, 60);
+			this.FormLocationValueLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.FormLocationValueLabel.Name = "FormLocationValueLabel";
 			this.FormLocationValueLabel.Size = new System.Drawing.Size(130, 13);
 			this.FormLocationValueLabel.TabIndex = 7;
@@ -83,16 +114,16 @@ namespace JocysCom.ClassLibrary.Controls
 			// FormLocationLabel
 			// 
 			this.FormLocationLabel.AutoSize = true;
-			this.FormLocationLabel.Location = new System.Drawing.Point(12, 60);
+			this.FormLocationLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.FormLocationLabel.Name = "FormLocationLabel";
 			this.FormLocationLabel.Size = new System.Drawing.Size(77, 13);
 			this.FormLocationLabel.TabIndex = 6;
-			this.FormLocationLabel.Text = "Form Location:";
+			this.FormLocationLabel.Text = "Form Location";
 			// 
 			// FormSizeValueLabel
 			// 
 			this.FormSizeValueLabel.AutoSize = true;
-			this.FormSizeValueLabel.Location = new System.Drawing.Point(95, 39);
+			this.FormSizeValueLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.FormSizeValueLabel.Name = "FormSizeValueLabel";
 			this.FormSizeValueLabel.Size = new System.Drawing.Size(109, 13);
 			this.FormSizeValueLabel.TabIndex = 5;
@@ -101,11 +132,11 @@ namespace JocysCom.ClassLibrary.Controls
 			// FormSizeLabel
 			// 
 			this.FormSizeLabel.AutoSize = true;
-			this.FormSizeLabel.Location = new System.Drawing.Point(12, 39);
+			this.FormSizeLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.FormSizeLabel.Name = "FormSizeLabel";
 			this.FormSizeLabel.Size = new System.Drawing.Size(56, 13);
 			this.FormSizeLabel.TabIndex = 4;
-			this.FormSizeLabel.Text = "Form Size:";
+			this.FormSizeLabel.Text = "Form Size";
 			// 
 			// ControlsDataGridView
 			// 
@@ -150,17 +181,17 @@ namespace JocysCom.ClassLibrary.Controls
 			// ItemPropertyGrid
 			// 
 			this.ItemPropertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ItemPropertyGrid.Location = new System.Drawing.Point(3, 3);
+			this.ItemPropertyGrid.Location = new System.Drawing.Point(0, 0);
 			this.ItemPropertyGrid.Name = "ItemPropertyGrid";
 			this.ItemPropertyGrid.Size = new System.Drawing.Size(516, 259);
 			this.ItemPropertyGrid.TabIndex = 16;
 			// 
 			// ControlsTabControl
 			// 
-			this.ControlsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.ControlsTabControl.Controls.Add(this.ControlsTabPage);
-			this.ControlsTabControl.Location = new System.Drawing.Point(12, 84);
+			this.MainLayoutPanel.SetColumnSpan(this.ControlsTabControl, 2);
+			this.ControlsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ControlsTabControl.Margin = new System.Windows.Forms.Padding(4);
 			this.ControlsTabControl.Name = "ControlsTabControl";
 			this.ControlsTabControl.SelectedIndex = 0;
 			this.ControlsTabControl.Size = new System.Drawing.Size(530, 154);
@@ -177,11 +208,10 @@ namespace JocysCom.ClassLibrary.Controls
 			// 
 			// PropertiesTabControl
 			// 
-			this.PropertiesTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.PropertiesTabControl.Controls.Add(this.PropertiesTabPage);
-			this.PropertiesTabControl.Location = new System.Drawing.Point(12, 244);
+			this.MainLayoutPanel.SetColumnSpan(this.PropertiesTabControl, 2);
+			this.PropertiesTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PropertiesTabControl.Margin = new System.Windows.Forms.Padding(4);
 			this.PropertiesTabControl.Name = "PropertiesTabControl";
 			this.PropertiesTabControl.SelectedIndex = 0;
 			this.PropertiesTabControl.Size = new System.Drawing.Size(530, 291);
@@ -192,7 +222,6 @@ namespace JocysCom.ClassLibrary.Controls
 			this.PropertiesTabPage.Controls.Add(this.ItemPropertyGrid);
 			this.PropertiesTabPage.Location = new System.Drawing.Point(4, 22);
 			this.PropertiesTabPage.Name = "PropertiesTabPage";
-			this.PropertiesTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.PropertiesTabPage.Size = new System.Drawing.Size(522, 265);
 			this.PropertiesTabPage.TabIndex = 0;
 			this.PropertiesTabPage.Text = "Properties";
@@ -200,7 +229,8 @@ namespace JocysCom.ClassLibrary.Controls
 			// HelpLabel
 			// 
 			this.HelpLabel.AutoSize = true;
-			this.HelpLabel.Location = new System.Drawing.Point(287, 88);
+			this.MainLayoutPanel.SetColumnSpan(this.HelpLabel, 2);
+			this.HelpLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.HelpLabel.Name = "HelpLabel";
 			this.HelpLabel.Size = new System.Drawing.Size(255, 13);
 			this.HelpLabel.TabIndex = 10;
@@ -211,15 +241,7 @@ namespace JocysCom.ClassLibrary.Controls
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(554, 547);
-			this.Controls.Add(this.HelpLabel);
-			this.Controls.Add(this.PropertiesTabControl);
-			this.Controls.Add(this.ControlsTabControl);
-			this.Controls.Add(this.FormLocationValueLabel);
-			this.Controls.Add(this.FormLocationLabel);
-			this.Controls.Add(this.FormSizeValueLabel);
-			this.Controls.Add(this.FormSizeLabel);
-			this.Controls.Add(this.FormNameValueLabel);
-			this.Controls.Add(this.FormNameLabel);
+			this.Controls.Add(this.MainLayoutPanel);
 			this.DoubleBuffered = true;
 			this.MinimumSize = new System.Drawing.Size(570, 530);
 			this.Name = "InfoForm";
@@ -229,6 +251,8 @@ namespace JocysCom.ClassLibrary.Controls
 			this.ControlsTabPage.ResumeLayout(false);
 			this.PropertiesTabControl.ResumeLayout(false);
 			this.PropertiesTabPage.ResumeLayout(false);
+			this.MainLayoutPanel.ResumeLayout(false);
+			this.MainLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -248,6 +272,7 @@ namespace JocysCom.ClassLibrary.Controls
 		internal System.Windows.Forms.DataGridViewTextBoxColumn colControlName;
 		internal System.Windows.Forms.DataGridViewTextBoxColumn colType;
 		internal System.Windows.Forms.Label HelpLabel;
+		internal System.Windows.Forms.TableLayoutPanel MainLayoutPanel;
 
 		#endregion
 

@@ -1,4 +1,4 @@
-// @under-test: App.v4/MainForm.cs, App.v4/Controls/PadControl.cs
+// @under-test: App.v4/MainForm.cs, App.v4/Controls/PadControl.cs, App.v4/Forms/BaseFormWithHeader.cs
 // @area: ui   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,7 +14,8 @@ using x360ce.Engine;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The size and place the main window first opens at when it has no saved place.
+	/// The size and place the main window first opens at when it has no saved place, the saved place it reopens at exactly, and
+	/// its header's height, which its text never changes.
 	/// </summary>
 	/// <remarks>
 	/// At its designed size the Controller page needed more height than it had (985 px of 893 at 150 %, 4.29.36.0), so the
@@ -128,8 +129,8 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("A saved place keeps its place and width: the main window opens there, made as tall as the page needs where it was saved shorter, moved up only as far as the work area needs, and kept as it is where it was saved taller, in every interface font, in both themes")]
-		public void A_saved_place_keeps_its_place_and_width_and_opens_as_tall_as_the_page_needs()
+		[Description("A saved place reopens exactly as it was saved, its place, width and height, shorter or taller than the page needs: the main window grows to its page only when no place is saved, in every interface font, in both themes")]
+		public void A_saved_place_reopens_at_its_place_and_size()
 		{
 			AppFontsTest.LoadFonts();
 			var faults = new List<string>();
@@ -152,28 +153,84 @@ namespace x360ce.Tests
 					};
 					foreach (var saved in places)
 					{
-						// As the main window opens at a saved place: there, at that size, then given its first size before it is shown.
+						// As the main window opens at a saved place: put there, at that size, by the saved place, which Windows then
+						// does not place, and given its first size before it is shown.
+						window.StartPosition = FormStartPosition.Manual;
 						window.Bounds = saved.Place;
 						Application.DoEvents();
 						MainForm.FitToPage(window, page, work);
 						Application.DoEvents();
-						var needed = window.Height - page.ClientSize.Height + page.AutoScrollMinSize.Height;
-						var line = string.Format("{0}, saved {1} at {2}: opened at {3} in {4}; the page is {5} and needs {6} px{7}",
-							when, saved.Name, saved.Place, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height,
-							page.VerticalScroll.Visible ? ", with a scroll bar" : "");
+						var line = string.Format("{0}, saved {1} at {2}: opened at {3} in {4}; the page is {5} and needs {6} px",
+							when, saved.Name, saved.Place, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height);
 						report.Add(line);
-						var height = Math.Max(saved.Place.Height, needed);
-						var top = Math.Min(saved.Place.Top, work.Bottom - height);
-						var wanted = new Rectangle(saved.Place.Left, top, saved.Place.Width, height);
-						if (window.Bounds != wanted)
-							faults.Add(line + ": not the wanted " + wanted + ".");
-						if (page.VerticalScroll.Visible || page.AutoScrollMinSize.Height > page.ClientSize.Height)
-							faults.Add(line + ": the page scrolls.");
+						if (window.Bounds != saved.Place)
+							faults.Add(line + ": not where and as large as it was saved.");
 					}
 				}, choice);
 			foreach (var line in report)
 				TestContext.WriteLine(line);
 			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The header of the main window, Load Presets and Map Device is one line of its subject and two of its tip tall whatever they say, a longer tip ending with an ellipsis, and changing them or the status bar's text lays out nothing beside the header and moves nothing, in both themes, at the screen's scale")]
+		public void The_header_stays_as_tall_whatever_it_says()
+		{
+			var faults = new List<string>();
+			var report = new List<string>();
+			var windows = new Func<Control>[] { MainWindowWithControllerPage, () => new LoadPresetsForm(), () => new MapDeviceToControllerForm() };
+			var longTip = string.Join(" ", Enumerable.Repeat("A tip much longer than two lines of the header, so that it is cut and ends with an ellipsis.", 8));
+			ButtonIconTest.OnEverySurface(windows, (form, when) =>
+			{
+				var window = (BaseFormWithHeader)form;
+				var header = window.TopPanel;
+				var tip = window.HelpBodyLabel;
+				when += " " + window.GetType().Name;
+				var height = header.Height;
+				var others = window.Controls.Cast<Control>().Where(x => x != header && x.Visible).ToList();
+				var places = others.ToDictionary(x => x, x => x.Bounds);
+				var layouts = new List<string>();
+				foreach (var control in new Control[] { header, window.HeaderTableLayoutPanel }.Concat(others.Where(x => !(x is ToolStrip))))
+				{
+					var name = control.Name.Length > 0 ? control.Name : control.GetType().Name;
+					control.Layout += (s, e) => layouts.Add(name);
+				}
+				var status = others.OfType<StatusStrip>().SelectMany(x => x.Items.OfType<ToolStripStatusLabel>()).FirstOrDefault();
+				var steps = new List<KeyValuePair<string, Action>>
+				{
+					new KeyValuePair<string, Action>("a long tip", () => window.SetHeaderBody(MessageBoxIcon.None, longTip)),
+					new KeyValuePair<string, Action>("the help of a control", () => window.ShowHelp("A control's name", "What it does.")),
+					new KeyValuePair<string, Action>("a long notice", () => window.SetHeaderInfo(longTip)),
+					new KeyValuePair<string, Action>("an error", () => window.SetHeaderError("Something failed.")),
+					new KeyValuePair<string, Action>("the help cleared", () => window.ClearHelp()),
+				};
+				if (status != null)
+					steps.Add(new KeyValuePair<string, Action>("a status", () => status.Text = "A status message of another length, " + DateTime.Now.Ticks));
+				foreach (var step in steps)
+				{
+					step.Value();
+					Application.DoEvents();
+					var line = string.Format("{0}, {1}: the header is {2} tall (was {3}), its tip {4} for two lines of {5} px",
+						when, step.Key, header.Height, height, tip.Size, tip.Font.Height);
+					report.Add(line);
+					if (header.Height != height)
+						faults.Add(line + ": the header's height changed.");
+					if (tip.Height != BaseFormWithHeader.Lines(tip, 2) + tip.Padding.Vertical || tip.Height >= 3 * tip.Font.Height || !tip.AutoEllipsis)
+						faults.Add(line + ": the tip is not two lines tall with an ellipsis.");
+					foreach (var other in others.Where(x => x.Bounds != places[x]))
+						faults.Add(line + ": " + other.Name + " moved from " + places[other] + " to " + other.Bounds + ".");
+				}
+				window.SetHeaderBody(MessageBoxIcon.None, longTip);
+				Application.DoEvents();
+				if (tip.GetPreferredSize(new Size(tip.Width, 0)).Height <= tip.Height)
+					faults.Add(when + ": the long tip fits two lines, so its cut is not tried.");
+				if (layouts.Count > 0)
+					faults.Add(when + ": text changes laid out " + string.Join(", ", layouts.Distinct()) + ".");
+			});
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+			Assert.IsTrue(report.Count >= 30, "Only " + report.Count + " changes were looked at.");
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults.Distinct()));
 		}
 
 		/// <summary>The main window at its default size holding a Controller page, as task 17's tests hold it.</summary>

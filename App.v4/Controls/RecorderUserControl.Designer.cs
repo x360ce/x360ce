@@ -90,7 +90,7 @@
 			this.NoteLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.NoteLabel.AutoSize = true;
 			this.NoteLabel.Location = new System.Drawing.Point(3, 3);
-			this.NoteLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.NoteLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.NoteLabel.Name = "NoteLabel";
 			this.NoteLabel.Size = new System.Drawing.Size(772, 13);
 			this.NoteLabel.TabIndex = 0;
@@ -117,6 +117,7 @@
 			//
 			this.SettingsCheckBox.AutoSize = true;
 			this.SettingsCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.SettingsCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.SettingsCheckBox.Name = "SettingsCheckBox";
 			this.SettingsCheckBox.Size = new System.Drawing.Size(125, 17);
 			this.SettingsCheckBox.TabIndex = 0;
@@ -127,6 +128,7 @@
 			//
 			this.InputCheckBox.AutoSize = true;
 			this.InputCheckBox.Location = new System.Drawing.Point(134, 3);
+			this.InputCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.InputCheckBox.Name = "InputCheckBox";
 			this.InputCheckBox.Size = new System.Drawing.Size(88, 17);
 			this.InputCheckBox.TabIndex = 1;
@@ -137,6 +139,7 @@
 			//
 			this.OutputCheckBox.AutoSize = true;
 			this.OutputCheckBox.Location = new System.Drawing.Point(228, 3);
+			this.OutputCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.OutputCheckBox.Name = "OutputCheckBox";
 			this.OutputCheckBox.Size = new System.Drawing.Size(111, 17);
 			this.OutputCheckBox.TabIndex = 2;
@@ -147,6 +150,7 @@
 			//
 			this.ForcesCheckBox.AutoSize = true;
 			this.ForcesCheckBox.Location = new System.Drawing.Point(345, 3);
+			this.ForcesCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ForcesCheckBox.Name = "ForcesCheckBox";
 			this.ForcesCheckBox.Size = new System.Drawing.Size(98, 17);
 			this.ForcesCheckBox.TabIndex = 3;
@@ -157,6 +161,7 @@
 			//
 			this.EngineCheckBox.AutoSize = true;
 			this.EngineCheckBox.Location = new System.Drawing.Point(449, 3);
+			this.EngineCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EngineCheckBox.Name = "EngineCheckBox";
 			this.EngineCheckBox.Size = new System.Drawing.Size(92, 17);
 			this.EngineCheckBox.TabIndex = 4;
@@ -167,6 +172,7 @@
 			//
 			this.WindowCheckBox.AutoSize = true;
 			this.WindowCheckBox.Location = new System.Drawing.Point(547, 3);
+			this.WindowCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.WindowCheckBox.Name = "WindowCheckBox";
 			this.WindowCheckBox.Size = new System.Drawing.Size(116, 17);
 			this.WindowCheckBox.TabIndex = 5;
@@ -192,6 +198,7 @@
 			this.RecordButton.AutoSize = true;
 			this.RecordButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.RecordButton.Location = new System.Drawing.Point(3, 3);
+			this.RecordButton.Margin = new System.Windows.Forms.Padding(4);
 			this.RecordButton.Name = "RecordButton";
 			this.RecordButton.Size = new System.Drawing.Size(103, 23);
 			this.RecordButton.TabIndex = 0;
@@ -204,6 +211,7 @@
 			this.OpenFolderButton.AutoSize = true;
 			this.OpenFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OpenFolderButton.Location = new System.Drawing.Point(112, 3);
+			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(4);
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Size = new System.Drawing.Size(87, 23);
 			this.OpenFolderButton.TabIndex = 1;
@@ -216,7 +224,7 @@
 			this.StatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.StatusLabel.AutoSize = true;
 			this.StatusLabel.Location = new System.Drawing.Point(3, 74);
-			this.StatusLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.StatusLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.StatusLabel.Name = "StatusLabel";
 			this.StatusLabel.Size = new System.Drawing.Size(772, 13);
 			this.StatusLabel.TabIndex = 3;
@@ -229,7 +237,7 @@
 			// RecorderUserControl
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Controls.Add(this.RecordGroupBox);
 			this.Name = "RecorderUserControl";
 			this.Size = new System.Drawing.Size(784, 120);

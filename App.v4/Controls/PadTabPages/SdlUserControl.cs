@@ -30,8 +30,9 @@ namespace x360ce.App.Controls
 			{
 				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
-				// None at the sides, so the list meets the tab's edges; the rows above and below it keep that room as margin.
-				Padding = new Padding(0, 6, 0, 6),
+				// None at the sides, so the list meets the tab's edges; the rows above and below it keep that room as margin. The
+				// page is made once the Controller page has been scaled, so its room is given at the screen's scale.
+				Padding = AppHelper.ScaledPadding(0, 8, 0, 8),
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -41,7 +42,7 @@ namespace x360ce.App.Controls
 			{
 				Name = nameof(PositionsDataGridView),
 				Dock = DockStyle.Fill,
-				Margin = new Padding(0, 3, 0, 3),
+				Margin = AppHelper.ScaledPadding(0, 4, 0, 4),
 				AutoGenerateColumns = false,
 				AllowUserToAddRows = false,
 				AllowUserToDeleteRows = false,
@@ -77,7 +78,7 @@ namespace x360ce.App.Controls
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
-				Margin = new Padding(6, 0, 6, 0),
+				Margin = AppHelper.ScaledPadding(8, 0, 8, 0),
 				WrapContents = true,
 			};
 			buttons.Controls.AddRange(new Control[] { ApplyButton, CopyButton, UpdateButton });
@@ -113,12 +114,12 @@ namespace x360ce.App.Controls
 		static Label NewLabel(string name)
 		{
 			// Across the column, so the table wraps it at the page's width.
-			return new Label { Name = name, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(9, 3, 9, 6) };
+			return new Label { Name = name, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = AppHelper.ScaledPadding(12, 4, 12, 4) };
 		}
 
 		static Button NewButton(string name, string text)
 		{
-			return new Button { Name = name, Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, UseVisualStyleBackColor = true };
+			return new Button { Name = name, Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Margin = AppHelper.ScaledPadding(4, 4, 4, 4), UseVisualStyleBackColor = true };
 		}
 
 		DataGridViewTextBoxColumn AddColumn(string name, string header, string property)
@@ -154,9 +155,10 @@ namespace x360ce.App.Controls
 				e.Value = Translation == null ? "" : row.Differs ? "Differs" : "Same";
 				e.FormattingApplied = true;
 			}
-			// Said in words in the last column too, so the mark does not rest on colour alone.
+			// A difference wants a look, and is no error: the theme's caution colour. Said in words in the last column too, so
+			// the mark does not rest on colour alone.
 			if (row.Differs)
-				e.CellStyle.ForeColor = FormsTheme.GetColor("ForegroundWarning", Color.Firebrick);
+				e.CellStyle.ForeColor = FormsTheme.GetColor("ForegroundCaution");
 		}
 
 		/// <summary>What the page was last drawn from.</summary>

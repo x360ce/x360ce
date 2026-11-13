@@ -146,6 +146,9 @@
     <Compile Include="Input\Layouts\DirectInputLayout.cs" />
     <Compile Include="Input\Layouts\RawInputLayout.cs" />
     <Compile Include="Input\Native\RawInputNative.cs" />
+    <Compile Include="Input\Processors\DeviceTestStatistics.cs" />
+    <Compile Include="Input\Processors\DeviceTestGrades.cs" />
+    <Compile Include="Input\Processors\DeviceTestSteps.cs" />
     <Compile Include="Input\Processors\DirectInputChanges.cs" />
     <Compile Include="Input\Processors\RawInputHub.cs" />
     <Compile Include="Input\Processors\RawInputHubDevice.cs" />

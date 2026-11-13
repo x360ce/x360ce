@@ -127,6 +127,8 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Recording.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Test.cs" />
+    <Compile Include="Common\DInput\DeviceTest.cs" />
     <Compile Include="Common\DInput\MouseStick.cs" />
     <Compile Include="Common\Recording\ReportRecorder.cs" />
     <Compile Include="Common\Recording\ReportRecorder.Header.cs" />
@@ -172,12 +174,6 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
-    <Compile Include="Controls\LogUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LogUserControl.Designer.cs">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -242,6 +238,9 @@
       <DependentUpon>WheelChartUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MapExpressionToggle.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WidestTextButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
@@ -342,6 +341,15 @@
     </Compile>
     <Compile Include="Forms\ErrorReportForm.Designer.cs">
       <DependentUpon>ErrorReportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestDeviceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestDeviceForm.Designer.cs">
+      <DependentUpon>TestDeviceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestDeviceViews.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
@@ -478,9 +486,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LogUserControl.resx">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>

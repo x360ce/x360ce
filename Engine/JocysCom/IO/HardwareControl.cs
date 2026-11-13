@@ -51,6 +51,21 @@ namespace JocysCom.ClassLibrary.IO
 		void FormsTheme_ThemeChanged(object sender, EventArgs e)
 		{
 			FillTabsImageList();
+			// The nodes keep the colour they were made with, so they take the new theme's.
+			DevicesTreeView.BeginUpdate();
+			ColorNodes(DevicesTreeView.Nodes);
+			DevicesTreeView.EndUpdate();
+		}
+
+		/// <summary>Gives each node the colour of its device in the theme in use, and its children theirs.</summary>
+		void ColorNodes(TreeNodeCollection nodes)
+		{
+			foreach (TreeNode node in nodes)
+			{
+				if (node.Tag is DeviceInfo di)
+					node.ForeColor = GetForeColor(di);
+				ColorNodes(node.Nodes);
+			}
 		}
 
 		private DeviceDetector detector;
@@ -188,8 +203,9 @@ namespace JocysCom.ClassLibrary.IO
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var item = (DeviceInfo)DeviceDataGridView.Rows[e.RowIndex].DataBoundItem;
-			if (item != null)
-				e.CellStyle.ForeColor = GetForeColor(item);
+			var color = item == null ? Color.Empty : GetForeColor(item);
+			if (!color.IsEmpty)
+				e.CellStyle.ForeColor = color;
 		}
 
 		private void ScanButton_Click(object sender, EventArgs e)
@@ -359,15 +375,15 @@ namespace JocysCom.ClassLibrary.IO
 		}
 
 		/// <summary>
-		/// Determines the text color for a device row: dark red for hidden, default for present, or gray for absent devices.
+		/// Determines the text color for a device row: the theme's warning colour for hidden, the list's own for present (empty), or
+		/// gray for absent devices.
 		/// </summary>
-		/// <remarks>In the dark theme the red is the theme's warning colour, which reads on dark.</remarks>
 		Color GetForeColor(DeviceInfo di)
 		{
 			return di.IsHidden
-					? FormsTheme.GetColor("ForegroundWarning", Color.DarkRed)
+					? FormsTheme.GetColor("ForegroundWarning")
 					: di.IsPresent
-						? ForeColor
+						? Color.Empty
 						: SystemColors.GrayText;
 		}
 

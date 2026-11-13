@@ -42,7 +42,6 @@
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.OkButton = new System.Windows.Forms.Button();
 			this.OpenFileButton = new System.Windows.Forms.Button();
-			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
 			this.RootTableLayoutPanel.SuspendLayout();
 			this.ButtonsTableLayoutPanel.SuspendLayout();
 			this.MainTabControl.SuspendLayout();
@@ -59,7 +58,7 @@
 			this.RootTableLayoutPanel.Controls.Add(this.ButtonsTableLayoutPanel, 0, 1);
 			this.RootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
-			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(9, 3, 9, 9);
+			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
 			this.RootTableLayoutPanel.RowCount = 2;
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -94,6 +93,7 @@
 			this.MainTabControl.Controls.Add(this.SummariesTabPage);
 			this.MainTabControl.Controls.Add(this.PresetsTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainTabControl.Margin = new System.Windows.Forms.Padding(4);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.TabIndex = 0;
@@ -114,6 +114,7 @@
 			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
+			this.SettingsGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.SettingsGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.SettingsGridPanel.TabIndex = 0;
 			// 
@@ -132,6 +133,7 @@
 			this.SummariesGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SummariesGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SummariesGridPanel.Name = "SummariesGridPanel";
+			this.SummariesGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.SummariesGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.SummariesGridPanel.TabIndex = 0;
 			// 
@@ -150,6 +152,7 @@
 			this.PresetsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PresetsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.PresetsGridPanel.Name = "PresetsGridPanel";
+			this.PresetsGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.PresetsGridPanel.TabIndex = 0;
 			//
@@ -159,6 +162,7 @@
 			this.CloseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.CloseButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.TabIndex = 4;
 			this.CloseButton.Text = "Cancel";
@@ -169,6 +173,7 @@
 			this.OkButton.AutoSize = true;
 			this.OkButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OkButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.OkButton.Margin = new System.Windows.Forms.Padding(4);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.TabIndex = 3;
 			this.OkButton.Text = "Load Selected Preset";
@@ -181,6 +186,7 @@
 			this.OpenFileButton.AutoSize = true;
 			this.OpenFileButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OpenFileButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.OpenFileButton.Margin = new System.Windows.Forms.Padding(4);
 			this.OpenFileButton.Name = "OpenFileButton";
 			this.OpenFileButton.TabIndex = 0;
 			this.OpenFileButton.Text = "Open File...";
@@ -192,7 +198,7 @@
 			this.CopyPresetButton.AutoSize = true;
 			this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_32x32;
-			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 4, 0, 4);
 			this.CopyPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CopyPresetButton.Name = "CopyPresetButton";
 			this.CopyPresetButton.TabIndex = 1;
@@ -205,29 +211,13 @@
 			//
 			this.CopyPresetFormatButton.AutoSize = true;
 			this.CopyPresetFormatButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 3, 3, 3);
+			this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
 			this.CopyPresetFormatButton.MinimumSize = new System.Drawing.Size(20, 23);
 			this.CopyPresetFormatButton.Name = "CopyPresetFormatButton";
 			this.CopyPresetFormatButton.TabIndex = 2;
 			this.CopyPresetFormatButton.Text = "▾";
 			this.CopyPresetFormatButton.UseVisualStyleBackColor = true;
 			this.CopyPresetFormatButton.Click += new System.EventHandler(this.CopyPresetFormatButton_Click);
-			// 
-			// BusyLoadingCircle
-			// 
-			this.BusyLoadingCircle.Active = false;
-			this.BusyLoadingCircle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.BusyLoadingCircle.Color = System.Drawing.Color.SteelBlue;
-			this.BusyLoadingCircle.InnerCircleRadius = 8;
-			this.BusyLoadingCircle.Location = new System.Drawing.Point(597, 9);
-			this.BusyLoadingCircle.Name = "BusyLoadingCircle";
-			this.BusyLoadingCircle.NumberSpoke = 24;
-			this.BusyLoadingCircle.OuterCircleRadius = 9;
-			this.BusyLoadingCircle.RotationSpeed = 30;
-			this.BusyLoadingCircle.Size = new System.Drawing.Size(48, 48);
-			this.BusyLoadingCircle.SpokeThickness = 4;
-			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
-			this.BusyLoadingCircle.TabIndex = 9;
 			// 
 			// LoadPresetsForm
 			// 
@@ -268,7 +258,6 @@
 		private System.Windows.Forms.Button CloseButton;
 		internal System.Windows.Forms.Button OpenFileButton;
 		public System.Windows.Forms.Button OkButton;
-		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		public SettingsGridUserControl SettingsGridPanel;
 		public SummariesGridUserControl SummariesGridPanel;
 		public PresetsGridUserControl PresetsGridPanel;

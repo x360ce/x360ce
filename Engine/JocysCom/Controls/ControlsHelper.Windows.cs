@@ -765,6 +765,18 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static bool LookFromTheme { get; set; }
 
+		/// <summary>The text colour of a grid row whose item is unavailable (<see cref="IsItemAvailable"/>).</summary>
+		/// <remarks>
+		/// A shared theme sets its own grey for such rows each time its colours change, fainter than secondary text so an
+		/// unplugged device stands apart from a present one; while it is empty the rows take Windows' grey text.
+		/// </remarks>
+		public static Color UnavailableForeColor
+		{
+			get { return _UnavailableForeColor.IsEmpty ? SystemColors.GrayText : _UnavailableForeColor; }
+			set { _UnavailableForeColor = value; }
+		}
+		static Color _UnavailableForeColor;
+
 		/// <summary>
 		/// Gives a grid its look, without an edge and with plain headers, and its behaviour: sized for the screen, unusable
 		/// rows greyed out, no dialog for a row that is going away, and an Enabled column changed with a click when asked.
@@ -801,14 +813,16 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Windows Forms scales a grid's size and font with the screen, but leaves a column of fixed width as
 		/// it is: on a screen set to 150% a check box no longer fits the column made for it, and the grid
 		/// leaves the cell empty. A new row is as tall as the font and a 9-pixel margin, and the margin
-		/// stays 9, so the rows close in on their text. Nothing is enlarged twice.
+		/// stays 9, so the rows close in on their text: the margin is 4 above and below the text, which are
+		/// enlarged, and the 1-pixel line between rows, which is not. Nothing is enlarged twice.
 		/// </remarks>
 		public static void ScaleGrid(DataGridView grid)
 		{
 			if (grid is null || DpiScale == 1f || ScaledControls.TryGetValue(grid, out _))
 				return;
 			ScaledControls.Add(grid, null);
-			grid.RowTemplate.Height = Math.Max(grid.RowTemplate.Height, Control.DefaultFont.Height + (int)Math.Round(9 * DpiScale));
+			var line = Math.Max(1, (int)Math.Floor(DpiScale));
+			grid.RowTemplate.Height = Math.Max(grid.RowTemplate.Height, Control.DefaultFont.Height + (int)Math.Round(4 * DpiScale) * 2 + line);
 			foreach (DataGridViewColumn column in grid.Columns)
 			{
 				// The width before the minimum: a larger minimum widens the column, which would then be enlarged again.
@@ -892,8 +906,9 @@ namespace JocysCom.ClassLibrary.Controls
 				? row.DataBoundItem
 				: e.RowIndex < list.Count ? list[e.RowIndex] : null;
 			var available = IsItemAvailable(item);
-			var fore = available ? grid.DefaultCellStyle.ForeColor : SystemColors.GrayText;
-			var selectedBack = available ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
+			var fore = available ? grid.DefaultCellStyle.ForeColor : UnavailableForeColor;
+			// Selected, the darker grey, which the selected text reads on in both themes.
+			var selectedBack = available ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDarkDark;
 			// Apply style to row header.
 			if (row.HeaderCell.Style.ForeColor != fore)
 				row.HeaderCell.Style.ForeColor = fore;

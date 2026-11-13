@@ -1,5 +1,6 @@
 ﻿using SharpDX.XInput;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
@@ -48,25 +49,10 @@ namespace x360ce.App.DInput
 				// If device was not found then continue.
 				if (ud == null)
 					continue;
-				// A Raw Input device Raw Input cannot see is read through its DirectInput twin, which fills the same slots.
-				if (ud.InputSourceType == (int)InputSourceType.RawInput && (ud.RawInputMissing || !ud.IsOnline))
-				{
-					var standIn = routing.RowStandIns[i];
-					if (standIn != null && standIn.IsOnline && standIn.JoState != null)
-						ud = standIn;
-				}
-				// If device Direct Input state failed then...
-				if (ud.JoState == null)
-				{
-					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
-					// A plugin device has none either. It is converted once its plugin has given it a state.
-					var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
-					var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
-					if (!rawInput && !plugin)
-						continue;
-				}
-				// If device is offline then continue.
-				if (!ud.IsOnline)
+				// The state the row converts, from the device it is read through this pass.
+				var diState = GetConvertedState(ref ud, routing, i);
+				// If custom directInput state is not available then continue.
+				if (diState == null)
 					continue;
 				//// If device is not set or test device then...
 				//var device = ud.Device;
@@ -77,11 +63,6 @@ namespace x360ce.App.DInput
 				var maps = rowMaps[i];
 				// If setting was not found then continue.
 				if (maps == null)
-					continue;
-				// What an AutoHotkey script made of the device's state, when one changes it.
-				var diState = ud.ScriptState ?? ud.SourceState;
-				// If custom directInput state is not available then continue.
-				if (diState == null)
 					continue;
 				int index;
 
@@ -381,6 +362,46 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>The state a row converts this pass, or null when it converts none, and the device that state is read from.</summary>
+		/// <remarks>
+		/// <see cref="UpdateXiStates"/> converts each row through it, and a controller page's charts read through it the
+		/// reading the row was converted from, so the two cannot differ.
+		///
+		/// HidHide-RawInput-Workaround: the stand-in goes with <see cref="DeviceRouting.RowStandIns"/>.
+		/// </remarks>
+		/// <param name="ud">The row's device; set to the one read in its place, its DirectInput twin, while Raw Input cannot see it.</param>
+		/// <param name="routing">The routing the row is one of.</param>
+		/// <param name="row">The row's place in <see cref="DeviceRouting.Rows"/>.</param>
+		internal static SourceState GetConvertedState(ref UserDevice ud, DeviceRouting routing, int row)
+		{
+			// A Raw Input device Raw Input cannot see is read through its DirectInput twin, which fills the same slots.
+			if (ud.InputSourceType == (int)InputSourceType.RawInput && (ud.RawInputMissing || !ud.IsOnline))
+			{
+				var standIn = routing.RowStandIns[row];
+				if (standIn != null && standIn.IsOnline && standIn.JoState != null)
+					ud = standIn;
+			}
+			// If device Direct Input state failed then...
+			if (ud.JoState == null)
+			{
+				// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
+				// A plugin device has none either. It is converted once its plugin has given it a state.
+				var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
+				var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
+				if (!rawInput && !plugin)
+					return null;
+			}
+			return GetDeviceState(ud);
+		}
+
+		/// <summary>A device's state as this pass reads it: what an AutoHotkey script made of it, when one changes it, or its own; null when the device is missing or offline.</summary>
+		internal static SourceState GetDeviceState(UserDevice ud)
+		{
+			if (ud == null || !ud.IsOnline)
+				return null;
+			return ud.ScriptState ?? ud.SourceState;
+		}
+
 		/// <summary>
 		/// Buffer for a formula's source values, reused rather than allocated on every poll.
 		/// </summary>
@@ -401,10 +422,7 @@ namespace x360ce.App.DInput
 		SourceState GetExpressionSource(int pad, int number)
 		{
 			var routing = _expressionRouting;
-			var ud = routing == null ? null : routing.GetDevice(pad, number);
-			if (ud == null || !ud.IsOnline)
-				return null;
-			return ud.ScriptState ?? ud.SourceState;
+			return GetDeviceState(routing == null ? null : routing.GetDevice(pad, number));
 		}
 
 		/// <summary>

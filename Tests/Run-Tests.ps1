@@ -69,8 +69,11 @@ if (-not (Test-Path $adapter)) { throw "MSTest adapter $version not found at $ad
 
 $assembly = Join-Path $PSScriptRoot "bin\$Configuration\net462\x360ce.Tests.dll"
 $arguments = @($assembly, "/TestAdapterPath:$adapter", '/Logger:console;verbosity=normal')
-if (-not $Interactive) {
-    $arguments += '/TestCaseFilter:TestCategory!=ui-interactive'
+# The load tests run the engine flat out for minutes, so they run only when asked for by their own filter.
+if ($Interactive) {
+    $arguments += '/TestCaseFilter:TestCategory!=load'
+} else {
+    $arguments += '/TestCaseFilter:TestCategory!=ui-interactive&TestCategory!=load'
     Write-Host 'Skipping ui-interactive tests. Pass -Interactive to include them.' -ForegroundColor DarkGray
 }
 

@@ -243,8 +243,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var list = item as ToolStripComboBox;
 			if (list != null)
 			{
-				for (var i = 0; i < list.Items.Count; i++)
-					if (string.Equals(list.ComboBox.GetItemText(list.Items[i]), value, StringComparison.OrdinalIgnoreCase)) { list.SelectedIndex = i; return null; }
+				var index = ItemIndex(list.Items, list.ComboBox.GetItemText, value);
+				if (index >= 0) { list.SelectedIndex = index; return null; }
 				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => list.ComboBox.GetItemText(x)).ToArray());
 			}
 			var text = item as ToolStripTextBox;
@@ -264,7 +264,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			if (!item.Available)
 				return "This button is not offered now.";
 			var strip = StripOf(item);
-			var window = strip == null ? null : strip.FindForm();
+			// A menu open on its own is a window of its own.
+			var window = strip as ToolStripDropDown ?? (strip == null ? null : (Control)strip.FindForm());
 			if (window == null || !window.Visible)
 				return "The window is hidden, so nothing can be pressed. Restore it first.";
 			Reveal(strip);

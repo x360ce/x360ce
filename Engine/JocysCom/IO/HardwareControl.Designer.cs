@@ -130,6 +130,7 @@
 			// 
 			// TreeSplitContainer.Panel2
 			// 
+			this.TreeSplitContainer.Panel2.AutoScroll = true;
 			this.TreeSplitContainer.Panel2.Controls.Add(this.DeviceDetailsPanel);
 			this.TreeSplitContainer.Size = new System.Drawing.Size(749, 465);
 			this.TreeSplitContainer.SplitterDistance = 401;
@@ -165,6 +166,8 @@
 			// 
 			// DeviceDetailsPanel
 			// 
+			this.DeviceDetailsPanel.AutoSize = true;
+			this.DeviceDetailsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DeviceDetailsPanel.ColumnCount = 4;
 			this.DeviceDetailsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.DeviceDetailsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -190,9 +193,10 @@
 			this.DeviceDetailsPanel.Controls.Add(this.DevicePathTextBox, 0, 9);
 			this.DeviceDetailsPanel.Controls.Add(this.DeviceIdLabel, 0, 10);
 			this.DeviceDetailsPanel.Controls.Add(this.DeviceIdTextBox, 0, 11);
-			this.DeviceDetailsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DeviceDetailsPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.DeviceDetailsPanel.Location = new System.Drawing.Point(0, 0);
 			this.DeviceDetailsPanel.Name = "DeviceDetailsPanel";
+			this.DeviceDetailsPanel.Padding = new System.Windows.Forms.Padding(8);
 			this.DeviceDetailsPanel.RowCount = 13;
 			this.DeviceDetailsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.DeviceDetailsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -215,6 +219,7 @@
 			this.ClassDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ClassDescriptionTextBox, 3);
 			this.ClassDescriptionTextBox.Location = new System.Drawing.Point(98, 133);
+			this.ClassDescriptionTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ClassDescriptionTextBox.Name = "ClassDescriptionTextBox";
 			this.ClassDescriptionTextBox.ReadOnly = true;
 			this.ClassDescriptionTextBox.Size = new System.Drawing.Size(243, 20);
@@ -225,6 +230,7 @@
 			this.ClassGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ClassGuidTextBox, 3);
 			this.ClassGuidTextBox.Location = new System.Drawing.Point(98, 107);
+			this.ClassGuidTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ClassGuidTextBox.Name = "ClassGuidTextBox";
 			this.ClassGuidTextBox.ReadOnly = true;
 			this.ClassGuidTextBox.Size = new System.Drawing.Size(243, 20);
@@ -235,26 +241,29 @@
 			this.ClassGuidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ClassGuidLabel.AutoSize = true;
 			this.ClassGuidLabel.Location = new System.Drawing.Point(3, 110);
+			this.ClassGuidLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ClassGuidLabel.Name = "ClassGuidLabel";
 			this.ClassGuidLabel.Size = new System.Drawing.Size(65, 13);
 			this.ClassGuidLabel.TabIndex = 3;
-			this.ClassGuidLabel.Text = "Class GUID:";
+			this.ClassGuidLabel.Text = "Class GUID";
 			// 
 			// ClassDescriptionLabel
 			// 
 			this.ClassDescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ClassDescriptionLabel.AutoSize = true;
 			this.ClassDescriptionLabel.Location = new System.Drawing.Point(3, 136);
+			this.ClassDescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ClassDescriptionLabel.Name = "ClassDescriptionLabel";
 			this.ClassDescriptionLabel.Size = new System.Drawing.Size(91, 13);
 			this.ClassDescriptionLabel.TabIndex = 3;
-			this.ClassDescriptionLabel.Text = "Class Description:";
+			this.ClassDescriptionLabel.Text = "Class Description";
 			// 
 			// ManufacturerTextBox
 			// 
 			this.ManufacturerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ManufacturerTextBox, 3);
 			this.ManufacturerTextBox.Location = new System.Drawing.Point(98, 55);
+			this.ManufacturerTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ManufacturerTextBox.Name = "ManufacturerTextBox";
 			this.ManufacturerTextBox.ReadOnly = true;
 			this.ManufacturerTextBox.Size = new System.Drawing.Size(243, 20);
@@ -265,16 +274,18 @@
 			this.ManufacturerLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ManufacturerLabel.AutoSize = true;
 			this.ManufacturerLabel.Location = new System.Drawing.Point(3, 58);
+			this.ManufacturerLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ManufacturerLabel.Name = "ManufacturerLabel";
 			this.ManufacturerLabel.Size = new System.Drawing.Size(73, 13);
 			this.ManufacturerLabel.TabIndex = 3;
-			this.ManufacturerLabel.Text = "Manufacturer:";
+			this.ManufacturerLabel.Text = "Manufacturer";
 			// 
 			// DescriptionTextBox
 			// 
 			this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.DescriptionTextBox, 3);
 			this.DescriptionTextBox.Location = new System.Drawing.Point(98, 81);
+			this.DescriptionTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DescriptionTextBox.Name = "DescriptionTextBox";
 			this.DescriptionTextBox.ReadOnly = true;
 			this.DescriptionTextBox.Size = new System.Drawing.Size(243, 20);
@@ -285,15 +296,17 @@
 			this.DescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DescriptionLabel.AutoSize = true;
 			this.DescriptionLabel.Location = new System.Drawing.Point(3, 84);
+			this.DescriptionLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.DescriptionLabel.Name = "DescriptionLabel";
 			this.DescriptionLabel.Size = new System.Drawing.Size(63, 13);
 			this.DescriptionLabel.TabIndex = 3;
-			this.DescriptionLabel.Text = "Description:";
+			this.DescriptionLabel.Text = "Description";
 			// 
 			// RevisionTextBox
 			// 
 			this.RevisionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.RevisionTextBox.Location = new System.Drawing.Point(269, 29);
+			this.RevisionTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.RevisionTextBox.Name = "RevisionTextBox";
 			this.RevisionTextBox.ReadOnly = true;
 			this.RevisionTextBox.Size = new System.Drawing.Size(72, 20);
@@ -304,15 +317,17 @@
 			this.RevisionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.RevisionLabel.AutoSize = true;
 			this.RevisionLabel.Location = new System.Drawing.Point(181, 32);
+			this.RevisionLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.RevisionLabel.Name = "RevisionLabel";
 			this.RevisionLabel.Size = new System.Drawing.Size(82, 13);
 			this.RevisionLabel.TabIndex = 3;
-			this.RevisionLabel.Text = "Revision (REV):";
+			this.RevisionLabel.Text = "Revision (REV)";
 			// 
 			// ProductIdTextBox
 			// 
 			this.ProductIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProductIdTextBox.Location = new System.Drawing.Point(98, 29);
+			this.ProductIdTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ProductIdTextBox.Name = "ProductIdTextBox";
 			this.ProductIdTextBox.ReadOnly = true;
 			this.ProductIdTextBox.Size = new System.Drawing.Size(77, 20);
@@ -323,15 +338,17 @@
 			this.ProductIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ProductIdLabel.AutoSize = true;
 			this.ProductIdLabel.Location = new System.Drawing.Point(3, 32);
+			this.ProductIdLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ProductIdLabel.Name = "ProductIdLabel";
 			this.ProductIdLabel.Size = new System.Drawing.Size(86, 13);
 			this.ProductIdLabel.TabIndex = 3;
-			this.ProductIdLabel.Text = "Product Id (PID):";
+			this.ProductIdLabel.Text = "Product Id (PID)";
 			// 
 			// VendorIdTextBox
 			// 
 			this.VendorIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.VendorIdTextBox.Location = new System.Drawing.Point(98, 3);
+			this.VendorIdTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.VendorIdTextBox.Name = "VendorIdTextBox";
 			this.VendorIdTextBox.ReadOnly = true;
 			this.VendorIdTextBox.Size = new System.Drawing.Size(77, 20);
@@ -342,40 +359,44 @@
 			this.VendorIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.VendorIdLabel.AutoSize = true;
 			this.VendorIdLabel.Location = new System.Drawing.Point(3, 6);
+			this.VendorIdLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.VendorIdLabel.Name = "VendorIdLabel";
 			this.VendorIdLabel.Size = new System.Drawing.Size(83, 13);
 			this.VendorIdLabel.TabIndex = 1;
-			this.VendorIdLabel.Text = "Vendor Id (VID):";
+			this.VendorIdLabel.Text = "Vendor Id (VID)";
 			// 
 			// DeviceStatusLabel
 			// 
 			this.DeviceStatusLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceStatusLabel, 4);
 			this.DeviceStatusLabel.Location = new System.Drawing.Point(3, 159);
+			this.DeviceStatusLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.DeviceStatusLabel.Name = "DeviceStatusLabel";
 			this.DeviceStatusLabel.Size = new System.Drawing.Size(77, 13);
 			this.DeviceStatusLabel.TabIndex = 1;
-			this.DeviceStatusLabel.Text = "Device Status:";
+			this.DeviceStatusLabel.Text = "Device Status";
 			// 
 			// DevicePathLabel
 			// 
 			this.DevicePathLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DevicePathLabel, 4);
 			this.DevicePathLabel.Location = new System.Drawing.Point(3, 244);
+			this.DevicePathLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.DevicePathLabel.Name = "DevicePathLabel";
 			this.DevicePathLabel.Size = new System.Drawing.Size(66, 13);
 			this.DevicePathLabel.TabIndex = 1;
-			this.DevicePathLabel.Text = "DevicePath:";
+			this.DevicePathLabel.Text = "Device Path";
 			// 
 			// DeviceIdLabel
 			// 
 			this.DeviceIdLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceIdLabel, 4);
 			this.DeviceIdLabel.Location = new System.Drawing.Point(3, 329);
+			this.DeviceIdLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.DeviceIdLabel.Name = "DeviceIdLabel";
 			this.DeviceIdLabel.Size = new System.Drawing.Size(58, 13);
 			this.DeviceIdLabel.TabIndex = 1;
-			this.DeviceIdLabel.Text = "Device ID:";
+			this.DeviceIdLabel.Text = "Device ID";
 			// 
 			// DeviceStatusTextBox
 			// 
@@ -383,6 +404,7 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceStatusTextBox, 4);
 			this.DeviceStatusTextBox.Location = new System.Drawing.Point(3, 178);
 			this.DeviceStatusTextBox.Multiline = true;
+			this.DeviceStatusTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DeviceStatusTextBox.Name = "DeviceStatusTextBox";
 			this.DeviceStatusTextBox.ReadOnly = true;
 			this.DeviceStatusTextBox.Size = new System.Drawing.Size(338, 60);
@@ -394,6 +416,7 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DevicePathTextBox, 4);
 			this.DevicePathTextBox.Location = new System.Drawing.Point(3, 263);
 			this.DevicePathTextBox.Multiline = true;
+			this.DevicePathTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DevicePathTextBox.Name = "DevicePathTextBox";
 			this.DevicePathTextBox.ReadOnly = true;
 			this.DevicePathTextBox.Size = new System.Drawing.Size(338, 60);
@@ -405,6 +428,7 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceIdTextBox, 4);
 			this.DeviceIdTextBox.Location = new System.Drawing.Point(3, 348);
 			this.DeviceIdTextBox.Multiline = true;
+			this.DeviceIdTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DeviceIdTextBox.Name = "DeviceIdTextBox";
 			this.DeviceIdTextBox.ReadOnly = true;
 			this.DeviceIdTextBox.Size = new System.Drawing.Size(338, 60);
@@ -611,7 +635,7 @@
 			// 
 			this.FilterLabel.Name = "FilterLabel";
 			this.FilterLabel.Size = new System.Drawing.Size(36, 22);
-			this.FilterLabel.Text = "Filter:";
+			this.FilterLabel.Text = "Filter";
 			// 
 			// FilterStripTextBox
 			// 
@@ -638,7 +662,7 @@
 			// 
 			this.toolStripLabel1.Name = "toolStripLabel1";
 			this.toolStripLabel1.Size = new System.Drawing.Size(45, 22);
-			this.toolStripLabel1.Text = "Device:";
+			this.toolStripLabel1.Text = "Device";
 			// 
 			// DisableButton
 			// 
@@ -696,7 +720,7 @@
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(0, 25);
 			this.panel1.Name = "panel1";
-			this.panel1.Padding = new System.Windows.Forms.Padding(3);
+			this.panel1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 12);
 			this.panel1.Size = new System.Drawing.Size(763, 500);
 			this.panel1.TabIndex = 17;
 			// 
@@ -705,6 +729,7 @@
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.MainToolStrip);
 			this.Name = "HardwareControl";
+			this.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.Size = new System.Drawing.Size(763, 525);
 			this.Load += new System.EventHandler(this.HardwareControl_Load);
 			this.MainTabControl.ResumeLayout(false);

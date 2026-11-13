@@ -78,6 +78,7 @@
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
 			this.AllowRemoteControllersGroupBox = new System.Windows.Forms.GroupBox();
+			this.AllowRemoteLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.RemoteEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortLabel = new System.Windows.Forms.Label();
@@ -164,6 +165,7 @@
 			this.VirtualDeviceLayoutPanel.SuspendLayout();
 			this.ViGEmLinkPanel.SuspendLayout();
 			this.AllowRemoteControllersGroupBox.SuspendLayout();
+			this.AllowRemoteLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).BeginInit();
 			this.MainTabControl.SuspendLayout();
 			this.GeneralTabPage.SuspendLayout();
@@ -202,6 +204,7 @@
 			this.TestingGroupBox.AutoSize = true;
 			this.TestingGroupBox.Controls.Add(this.TestingLayoutPanel);
 			this.TestingGroupBox.Location = new System.Drawing.Point(3, 107);
+			this.TestingGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.TestingGroupBox.Name = "TestingGroupBox";
 			this.TestingGroupBox.Size = new System.Drawing.Size(254, 88);
 			this.TestingGroupBox.TabIndex = 1;
@@ -234,6 +237,7 @@
 			this.ShowSettingsTabCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ShowSettingsTabCheckBox.AutoSize = true;
 			this.ShowSettingsTabCheckBox.Location = new System.Drawing.Point(102, 49);
+			this.ShowSettingsTabCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ShowSettingsTabCheckBox.Name = "ShowSettingsTabCheckBox";
 			this.ShowSettingsTabCheckBox.Size = new System.Drawing.Size(122, 17);
 			this.ShowSettingsTabCheckBox.TabIndex = 3;
@@ -246,6 +250,7 @@
 			this.ShowDevicesTabCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ShowDevicesTabCheckBox.AutoSize = true;
 			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(102, 26);
+			this.ShowDevicesTabCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ShowDevicesTabCheckBox.Name = "ShowDevicesTabCheckBox";
 			this.ShowDevicesTabCheckBox.Size = new System.Drawing.Size(123, 17);
 			this.ShowDevicesTabCheckBox.TabIndex = 2;
@@ -258,6 +263,7 @@
 			this.ShowProgramsTabCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ShowProgramsTabCheckBox.AutoSize = true;
 			this.ShowProgramsTabCheckBox.Location = new System.Drawing.Point(102, 3);
+			this.ShowProgramsTabCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ShowProgramsTabCheckBox.Name = "ShowProgramsTabCheckBox";
 			this.ShowProgramsTabCheckBox.Size = new System.Drawing.Size(128, 17);
 			this.ShowProgramsTabCheckBox.TabIndex = 1;
@@ -272,6 +278,7 @@
 			this.XInputEnableCheckBox.Checked = true;
 			this.XInputEnableCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.XInputEnableCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.XInputEnableCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInputEnableCheckBox.Name = "XInputEnableCheckBox";
 			this.XInputEnableCheckBox.Size = new System.Drawing.Size(93, 17);
 			this.XInputEnableCheckBox.TabIndex = 0;
@@ -285,6 +292,7 @@
 			this.OperationGroupBox.AutoSize = true;
 			this.OperationGroupBox.Controls.Add(this.OperationLayoutPanel);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
+			this.OperationGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.OperationGroupBox.Name = "OperationGroupBox";
 			this.OperationGroupBox.Size = new System.Drawing.Size(254, 98);
 			this.OperationGroupBox.TabIndex = 0;
@@ -320,6 +328,7 @@
 			this.AppearanceGroupBox.AutoSize = true;
 			this.AppearanceGroupBox.Controls.Add(this.AppearanceLayoutPanel);
 			this.AppearanceGroupBox.Location = new System.Drawing.Point(3, 232);
+			this.AppearanceGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.AppearanceGroupBox.Name = "AppearanceGroupBox";
 			this.AppearanceGroupBox.Size = new System.Drawing.Size(378, 104);
 			this.AppearanceGroupBox.TabIndex = 1;
@@ -361,6 +370,7 @@
             "Normal",
             "Minimized"});
 			this.StartWithWindowsStateComboBox.Location = new System.Drawing.Point(135, 50);
+			this.StartWithWindowsStateComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.StartWithWindowsStateComboBox.Name = "StartWithWindowsStateComboBox";
 			this.StartWithWindowsStateComboBox.Size = new System.Drawing.Size(90, 21);
 			this.StartWithWindowsStateComboBox.TabIndex = 95;
@@ -370,10 +380,11 @@
 			this.ThemeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ThemeLabel.AutoSize = true;
 			this.ThemeLabel.Location = new System.Drawing.Point(3, 7);
+			this.ThemeLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ThemeLabel.Name = "ThemeLabel";
 			this.ThemeLabel.Size = new System.Drawing.Size(43, 13);
 			this.ThemeLabel.TabIndex = 0;
-			this.ThemeLabel.Text = "Theme:";
+			this.ThemeLabel.Text = "Theme";
 			//
 			// ThemeComboBox
 			//
@@ -381,6 +392,7 @@
 			this.ThemeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ThemeComboBox.FormattingEnabled = true;
 			this.ThemeComboBox.Location = new System.Drawing.Point(52, 3);
+			this.ThemeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ThemeComboBox.Name = "ThemeComboBox";
 			this.ThemeComboBox.Size = new System.Drawing.Size(210, 21);
 			this.ThemeComboBox.TabIndex = 1;
@@ -390,10 +402,11 @@
 			this.FontLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.FontLabel.AutoSize = true;
 			this.FontLabel.Location = new System.Drawing.Point(3, 34);
+			this.FontLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.FontLabel.Name = "FontLabel";
 			this.FontLabel.Size = new System.Drawing.Size(31, 13);
 			this.FontLabel.TabIndex = 2;
-			this.FontLabel.Text = "Font:";
+			this.FontLabel.Text = "Font";
 			//
 			// FontComboBox
 			//
@@ -401,6 +414,7 @@
 			this.FontComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.FontComboBox.FormattingEnabled = true;
 			this.FontComboBox.Location = new System.Drawing.Point(52, 30);
+			this.FontComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.FontComboBox.Name = "FontComboBox";
 			this.FontComboBox.Size = new System.Drawing.Size(210, 21);
 			this.FontComboBox.TabIndex = 3;
@@ -410,10 +424,11 @@
 			this.SizeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SizeLabel.AutoSize = true;
 			this.SizeLabel.Location = new System.Drawing.Point(3, 61);
+			this.SizeLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.SizeLabel.Name = "SizeLabel";
 			this.SizeLabel.Size = new System.Drawing.Size(30, 13);
 			this.SizeLabel.TabIndex = 4;
-			this.SizeLabel.Text = "Size:";
+			this.SizeLabel.Text = "Size";
 			//
 			// SizeComboBox
 			//
@@ -421,6 +436,7 @@
 			this.SizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.SizeComboBox.FormattingEnabled = true;
 			this.SizeComboBox.Location = new System.Drawing.Point(52, 57);
+			this.SizeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.SizeComboBox.Name = "SizeComboBox";
 			this.SizeComboBox.Size = new System.Drawing.Size(210, 21);
 			this.SizeComboBox.TabIndex = 5;
@@ -431,6 +447,7 @@
 			this.RestartButton.AutoSize = true;
 			this.RestartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.RestartButton.Location = new System.Drawing.Point(52, 84);
+			this.RestartButton.Margin = new System.Windows.Forms.Padding(4);
 			this.RestartButton.Name = "RestartButton";
 			this.RestartButton.Size = new System.Drawing.Size(86, 23);
 			this.RestartButton.TabIndex = 6;
@@ -445,10 +462,11 @@
 			this.StartWithWindowsCheckBox.AutoSize = true;
 			this.StartWithWindowsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.StartWithWindowsCheckBox.Location = new System.Drawing.Point(3, 51);
+			this.StartWithWindowsCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.StartWithWindowsCheckBox.Name = "StartWithWindowsCheckBox";
 			this.StartWithWindowsCheckBox.Size = new System.Drawing.Size(126, 18);
 			this.StartWithWindowsCheckBox.TabIndex = 94;
-			this.StartWithWindowsCheckBox.Text = "Start with Windows:";
+			this.StartWithWindowsCheckBox.Text = "Start with Windows";
 			// 
 			// AlwaysOnTopCheckBox
 			// 
@@ -456,6 +474,7 @@
 			this.AlwaysOnTopCheckBox.AutoSize = true;
 			this.AlwaysOnTopCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.AlwaysOnTopCheckBox.Location = new System.Drawing.Point(135, 26);
+			this.AlwaysOnTopCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AlwaysOnTopCheckBox.Name = "AlwaysOnTopCheckBox";
 			this.AlwaysOnTopCheckBox.Size = new System.Drawing.Size(102, 18);
 			this.AlwaysOnTopCheckBox.TabIndex = 93;
@@ -467,6 +486,7 @@
 			this.MinimizeToTrayCheckBox.AutoSize = true;
 			this.MinimizeToTrayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.MinimizeToTrayCheckBox.Location = new System.Drawing.Point(3, 26);
+			this.MinimizeToTrayCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MinimizeToTrayCheckBox.Name = "MinimizeToTrayCheckBox";
 			this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
 			this.MinimizeToTrayCheckBox.TabIndex = 93;
@@ -478,6 +498,7 @@
 			this.AllowOnlyOneCopyCheckBox.AutoSize = true;
 			this.OperationLayoutPanel.SetColumnSpan(this.AllowOnlyOneCopyCheckBox, 2);
 			this.AllowOnlyOneCopyCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.AllowOnlyOneCopyCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowOnlyOneCopyCheckBox.Name = "AllowOnlyOneCopyCheckBox";
 			this.AllowOnlyOneCopyCheckBox.Size = new System.Drawing.Size(230, 17);
 			this.AllowOnlyOneCopyCheckBox.TabIndex = 1;
@@ -490,6 +511,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(3, 3);
+			this.ProgramScanLocationsTabControl.Margin = new System.Windows.Forms.Padding(0, 8, 0, 4);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
 			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(378, 223);
@@ -511,6 +533,7 @@
 			this.GameScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GameScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameScanLocationsListBox.FormattingEnabled = true;
+			this.GameScanLocationsListBox.IntegralHeight = false;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 27);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
 			this.GameScanLocationsListBox.Size = new System.Drawing.Size(370, 164);
@@ -568,6 +591,7 @@
 			this.ConfigurationGroupBox.AutoSize = true;
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationLayoutPanel);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 404);
+			this.ConfigurationGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(378, 42);
 			this.ConfigurationGroupBox.TabIndex = 3;
@@ -595,6 +619,7 @@
 			this.AutoDetectForegroundWindowCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AutoDetectForegroundWindowCheckBox.AutoSize = true;
 			this.AutoDetectForegroundWindowCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.AutoDetectForegroundWindowCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AutoDetectForegroundWindowCheckBox.Name = "AutoDetectForegroundWindowCheckBox";
 			this.AutoDetectForegroundWindowCheckBox.Size = new System.Drawing.Size(244, 17);
 			this.AutoDetectForegroundWindowCheckBox.TabIndex = 0;
@@ -608,11 +633,12 @@
 			this.DirectInputDevicesGroupBox.AutoSize = true;
 			this.DirectInputDevicesGroupBox.Controls.Add(this.DirectInputDevicesLayoutPanel);
 			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 201);
+			this.DirectInputDevicesGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 88);
 			this.DirectInputDevicesGroupBox.TabIndex = 2;
 			this.DirectInputDevicesGroupBox.TabStop = false;
-			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
+			this.DirectInputDevicesGroupBox.Text = "Input Devices";
 			// 
 			// DirectInputDevicesLayoutPanel
 			// 
@@ -639,6 +665,7 @@
 			this.ReadEveryChangeCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ReadEveryChangeCheckBox.AutoSize = true;
 			this.ReadEveryChangeCheckBox.Location = new System.Drawing.Point(3, 49);
+			this.ReadEveryChangeCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ReadEveryChangeCheckBox.Name = "ReadEveryChangeCheckBox";
 			this.ReadEveryChangeCheckBox.Size = new System.Drawing.Size(151, 17);
 			this.ReadEveryChangeCheckBox.TabIndex = 2;
@@ -650,6 +677,7 @@
 			this.ExcludeVirtualDevicesCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ExcludeVirtualDevicesCheckBox.AutoSize = true;
 			this.ExcludeVirtualDevicesCheckBox.Location = new System.Drawing.Point(3, 26);
+			this.ExcludeVirtualDevicesCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ExcludeVirtualDevicesCheckBox.Name = "ExcludeVirtualDevicesCheckBox";
 			this.ExcludeVirtualDevicesCheckBox.Size = new System.Drawing.Size(138, 17);
 			this.ExcludeVirtualDevicesCheckBox.TabIndex = 1;
@@ -661,6 +689,7 @@
 			this.ExcludeSupplementalDevicesCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ExcludeSupplementalDevicesCheckBox.AutoSize = true;
 			this.ExcludeSupplementalDevicesCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.ExcludeSupplementalDevicesCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ExcludeSupplementalDevicesCheckBox.Name = "ExcludeSupplementalDevicesCheckBox";
 			this.ExcludeSupplementalDevicesCheckBox.Size = new System.Drawing.Size(173, 17);
 			this.ExcludeSupplementalDevicesCheckBox.TabIndex = 0;
@@ -673,6 +702,7 @@
 			this.VirtualDeviceGroupBox.AutoSize = true;
 			this.VirtualDeviceGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.VirtualDeviceGroupBox.Controls.Add(this.VirtualDeviceLayoutPanel);
+			this.VirtualDeviceGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
@@ -721,7 +751,7 @@
 			// AboutViGEmLinkLabel
 			//
 			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
 			this.AboutViGEmLinkLabel.TabIndex = 45;
 			this.AboutViGEmLinkLabel.TabStop = true;
@@ -732,6 +762,7 @@
 			//
 			this.ViGEmBusLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ViGEmBusLabel.AutoSize = true;
+			this.ViGEmBusLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ViGEmBusLabel.Name = "ViGEmBusLabel";
 			this.ViGEmBusLabel.TabIndex = 29;
 			this.ViGEmBusLabel.Text = "ViGEm Bus";
@@ -739,7 +770,7 @@
 			// VigemLabel
 			//
 			this.VigemLabel.AutoSize = true;
-			this.VigemLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.VigemLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.VigemLabel.Name = "VigemLabel";
 			this.VigemLabel.TabIndex = 29;
 			this.VigemLabel.Text = "Download latest version from";
@@ -748,6 +779,7 @@
 			//
 			this.PollingRateLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.PollingRateLabel.AutoSize = true;
+			this.PollingRateLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.PollingRateLabel.Name = "PollingRateLabel";
 			this.PollingRateLabel.TabIndex = 29;
 			this.PollingRateLabel.Text = "Polling Rate";
@@ -757,6 +789,7 @@
 			this.PollingRateComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.PollingRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.PollingRateComboBox.FormattingEnabled = true;
+			this.PollingRateComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.PollingRateComboBox.Name = "PollingRateComboBox";
 			this.PollingRateComboBox.Size = new System.Drawing.Size(96, 21);
 			this.PollingRateComboBox.TabIndex = 30;
@@ -766,6 +799,7 @@
 			this.ViGEmBusRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusRefreshButton.AutoSize = true;
 			this.ViGEmBusRefreshButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ViGEmBusRefreshButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ViGEmBusRefreshButton.Name = "ViGEmBusRefreshButton";
 			this.ViGEmBusRefreshButton.TabIndex = 44;
 			this.ViGEmBusRefreshButton.Text = "Refresh";
@@ -778,6 +812,7 @@
 			this.ViGEmBusUninstallButton.AutoSize = true;
 			this.ViGEmBusUninstallButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ViGEmBusUninstallButton.Enabled = false;
+			this.ViGEmBusUninstallButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
 			this.ViGEmBusUninstallButton.TabIndex = 44;
 			this.ViGEmBusUninstallButton.Text = "Uninstall";
@@ -790,6 +825,7 @@
 			this.ViGEmBusInstallButton.AutoSize = true;
 			this.ViGEmBusInstallButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ViGEmBusInstallButton.Enabled = false;
+			this.ViGEmBusInstallButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ViGEmBusInstallButton.Name = "ViGEmBusInstallButton";
 			this.ViGEmBusInstallButton.TabIndex = 44;
 			this.ViGEmBusInstallButton.Text = "Install";
@@ -800,6 +836,7 @@
 			//
 			this.ViGEmBusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ViGEmBusTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ViGEmBusTextBox.Name = "ViGEmBusTextBox";
 			this.ViGEmBusTextBox.TabIndex = 41;
 			// 
@@ -810,6 +847,7 @@
 			this.DeveloperToolsButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DeveloperToolsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 49);
+			this.DeveloperToolsButton.Margin = new System.Windows.Forms.Padding(4);
 			this.DeveloperToolsButton.Name = "DeveloperToolsButton";
 			this.DeveloperToolsButton.Size = new System.Drawing.Size(114, 23);
 			this.DeveloperToolsButton.TabIndex = 2;
@@ -819,28 +857,55 @@
 			// 
 			// AllowRemoteControllersGroupBox
 			// 
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemoteEnabledCheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote4CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePortLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowControlLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote3CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePortNumericUpDown);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordTextBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote2CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote1CheckBox);
+			this.AllowRemoteControllersGroupBox.AutoSize = true;
+			this.AllowRemoteControllersGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemoteLayoutPanel);
 			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(3, 89);
+			this.AllowRemoteControllersGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.AllowRemoteControllersGroupBox.Name = "AllowRemoteControllersGroupBox";
 			this.AllowRemoteControllersGroupBox.Size = new System.Drawing.Size(269, 210);
 			this.AllowRemoteControllersGroupBox.TabIndex = 31;
 			this.AllowRemoteControllersGroupBox.TabStop = false;
 			this.AllowRemoteControllersGroupBox.Text = "Allow Remote Controllers";
 			this.AllowRemoteControllersGroupBox.Visible = false;
+			//
+			// AllowRemoteLayoutPanel
+			//
+			this.AllowRemoteLayoutPanel.AutoSize = true;
+			this.AllowRemoteLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.AllowRemoteLayoutPanel.ColumnCount = 2;
+			this.AllowRemoteLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AllowRemoteLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.AllowRemoteLayoutPanel.Controls.Add(this.AllowControlLabel, 0, 0);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.AllowRemote1CheckBox, 1, 0);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.AllowRemote2CheckBox, 1, 1);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.AllowRemote3CheckBox, 1, 2);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.AllowRemote4CheckBox, 1, 3);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.RemotePasswordLabel, 0, 4);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.RemotePasswordTextBox, 1, 4);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.RemotePortLabel, 0, 5);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.RemotePortNumericUpDown, 1, 5);
+			this.AllowRemoteLayoutPanel.Controls.Add(this.RemoteEnabledCheckBox, 1, 6);
+			this.AllowRemoteLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.AllowRemoteLayoutPanel.Location = new System.Drawing.Point(3, 16);
+			this.AllowRemoteLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.AllowRemoteLayoutPanel.Name = "AllowRemoteLayoutPanel";
+			this.AllowRemoteLayoutPanel.RowCount = 7;
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.AllowRemoteLayoutPanel.Size = new System.Drawing.Size(263, 191);
+			this.AllowRemoteLayoutPanel.TabIndex = 0;
 			// 
 			// RemoteEnabledCheckBox
 			// 
 			this.RemoteEnabledCheckBox.AutoSize = true;
-			this.RemoteEnabledCheckBox.Location = new System.Drawing.Point(104, 182);
+			this.RemoteEnabledCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.RemoteEnabledCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.RemoteEnabledCheckBox.Name = "RemoteEnabledCheckBox";
 			this.RemoteEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
 			this.RemoteEnabledCheckBox.TabIndex = 33;
@@ -850,7 +915,8 @@
 			// AllowRemote4CheckBox
 			// 
 			this.AllowRemote4CheckBox.AutoSize = true;
-			this.AllowRemote4CheckBox.Location = new System.Drawing.Point(105, 107);
+			this.AllowRemote4CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AllowRemote4CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowRemote4CheckBox.Name = "AllowRemote4CheckBox";
 			this.AllowRemote4CheckBox.Size = new System.Drawing.Size(79, 17);
 			this.AllowRemote4CheckBox.TabIndex = 30;
@@ -861,7 +927,8 @@
 			// 
 			this.RemotePortLabel.AutoSize = true;
 			this.RemotePortLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePortLabel.Location = new System.Drawing.Point(6, 158);
+			this.RemotePortLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.RemotePortLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.RemotePortLabel.Name = "RemotePortLabel";
 			this.RemotePortLabel.Size = new System.Drawing.Size(86, 13);
 			this.RemotePortLabel.TabIndex = 32;
@@ -871,7 +938,8 @@
 			// 
 			this.RemotePasswordLabel.AutoSize = true;
 			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 133);
+			this.RemotePasswordLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.RemotePasswordLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
 			this.RemotePasswordLabel.Size = new System.Drawing.Size(93, 13);
 			this.RemotePasswordLabel.TabIndex = 32;
@@ -881,7 +949,8 @@
 			// 
 			this.AllowControlLabel.AutoSize = true;
 			this.AllowControlLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.AllowControlLabel.Location = new System.Drawing.Point(6, 39);
+			this.AllowControlLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AllowControlLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.AllowControlLabel.Name = "AllowControlLabel";
 			this.AllowControlLabel.Size = new System.Drawing.Size(68, 13);
 			this.AllowControlLabel.TabIndex = 32;
@@ -890,7 +959,8 @@
 			// AllowRemote3CheckBox
 			// 
 			this.AllowRemote3CheckBox.AutoSize = true;
-			this.AllowRemote3CheckBox.Location = new System.Drawing.Point(105, 84);
+			this.AllowRemote3CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AllowRemote3CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowRemote3CheckBox.Name = "AllowRemote3CheckBox";
 			this.AllowRemote3CheckBox.Size = new System.Drawing.Size(79, 17);
 			this.AllowRemote3CheckBox.TabIndex = 30;
@@ -899,7 +969,6 @@
 			// 
 			// RemotePortNumericUpDown
 			// 
-			this.RemotePortNumericUpDown.Location = new System.Drawing.Point(104, 156);
 			this.RemotePortNumericUpDown.Maximum = new decimal(new int[] {
             49151,
             0,
@@ -910,6 +979,8 @@
             0,
             0,
             0});
+			this.RemotePortNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.RemotePortNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.RemotePortNumericUpDown.Name = "RemotePortNumericUpDown";
 			this.RemotePortNumericUpDown.Size = new System.Drawing.Size(59, 20);
 			this.RemotePortNumericUpDown.TabIndex = 31;
@@ -922,7 +993,8 @@
 			// 
 			// RemotePasswordTextBox
 			// 
-			this.RemotePasswordTextBox.Location = new System.Drawing.Point(105, 130);
+			this.RemotePasswordTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.RemotePasswordTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.RemotePasswordTextBox.Name = "RemotePasswordTextBox";
 			this.RemotePasswordTextBox.Size = new System.Drawing.Size(150, 20);
 			this.RemotePasswordTextBox.TabIndex = 0;
@@ -931,7 +1003,8 @@
 			// AllowRemote2CheckBox
 			// 
 			this.AllowRemote2CheckBox.AutoSize = true;
-			this.AllowRemote2CheckBox.Location = new System.Drawing.Point(105, 61);
+			this.AllowRemote2CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AllowRemote2CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowRemote2CheckBox.Name = "AllowRemote2CheckBox";
 			this.AllowRemote2CheckBox.Size = new System.Drawing.Size(79, 17);
 			this.AllowRemote2CheckBox.TabIndex = 30;
@@ -941,7 +1014,8 @@
 			// AllowRemote1CheckBox
 			// 
 			this.AllowRemote1CheckBox.AutoSize = true;
-			this.AllowRemote1CheckBox.Location = new System.Drawing.Point(105, 38);
+			this.AllowRemote1CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.AllowRemote1CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowRemote1CheckBox.Name = "AllowRemote1CheckBox";
 			this.AllowRemote1CheckBox.Size = new System.Drawing.Size(79, 17);
 			this.AllowRemote1CheckBox.TabIndex = 30;
@@ -972,7 +1046,7 @@
 			this.GeneralTabPage.Controls.Add(this.GeneralPanel);
 			this.GeneralTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GeneralTabPage.Name = "GeneralTabPage";
-			this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(12, 12, 12, 8);
 			this.GeneralTabPage.Size = new System.Drawing.Size(650, 421);
 			this.GeneralTabPage.TabIndex = 0;
 			this.GeneralTabPage.Text = "General";
@@ -1016,7 +1090,7 @@
 			this.GeneralLeftColumnPanel.Controls.Add(this.GuideButtonGroupBox, 0, 3);
 			this.GeneralLeftColumnPanel.Controls.Add(this.HotkeysGroupBox, 0, 4);
 			this.GeneralLeftColumnPanel.Location = new System.Drawing.Point(0, 0);
-			this.GeneralLeftColumnPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.GeneralLeftColumnPanel.Margin = new System.Windows.Forms.Padding(0, 0, 12, 0);
 			this.GeneralLeftColumnPanel.Name = "GeneralLeftColumnPanel";
 			this.GeneralLeftColumnPanel.RowCount = 5;
 			this.GeneralLeftColumnPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -1057,6 +1131,7 @@
 			this.DevelopingGroupBox.AutoSize = true;
 			this.DevelopingGroupBox.Controls.Add(this.DevelopingLayoutPanel);
 			this.DevelopingGroupBox.Location = new System.Drawing.Point(3, 315);
+			this.DevelopingGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.DevelopingGroupBox.Name = "DevelopingGroupBox";
 			this.DevelopingGroupBox.Size = new System.Drawing.Size(378, 83);
 			this.DevelopingGroupBox.TabIndex = 2;
@@ -1088,6 +1163,7 @@
 			this.ShowTestButtonCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ShowTestButtonCheckBox.AutoSize = true;
 			this.ShowTestButtonCheckBox.Location = new System.Drawing.Point(3, 26);
+			this.ShowTestButtonCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ShowTestButtonCheckBox.Name = "ShowTestButtonCheckBox";
 			this.ShowTestButtonCheckBox.Size = new System.Drawing.Size(126, 17);
 			this.ShowTestButtonCheckBox.TabIndex = 1;
@@ -1099,6 +1175,7 @@
 			this.ShowFormInfoCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ShowFormInfoCheckBox.AutoSize = true;
 			this.ShowFormInfoCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.ShowFormInfoCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ShowFormInfoCheckBox.Name = "ShowFormInfoCheckBox";
 			this.ShowFormInfoCheckBox.Size = new System.Drawing.Size(213, 17);
 			this.ShowFormInfoCheckBox.TabIndex = 0;
@@ -1113,6 +1190,7 @@
 			this.GuideButtonGroupBox.AutoSize = true;
 			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonLayoutPanel);
 			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 295);
+			this.GuideButtonGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
 			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 45);
 			this.GuideButtonGroupBox.TabIndex = 3;
@@ -1141,15 +1219,17 @@
 			this.GuideButtonActionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.GuideButtonActionLabel.AutoSize = true;
 			this.GuideButtonActionLabel.Location = new System.Drawing.Point(3, 6);
+			this.GuideButtonActionLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.GuideButtonActionLabel.Name = "GuideButtonActionLabel";
 			this.GuideButtonActionLabel.Size = new System.Drawing.Size(40, 13);
 			this.GuideButtonActionLabel.TabIndex = 0;
-			this.GuideButtonActionLabel.Text = "Action:";
+			this.GuideButtonActionLabel.Text = "Action";
 			// 
 			// GuideButtonActionTextBox
 			// 
 			this.GuideButtonActionTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.GuideButtonActionTextBox.Location = new System.Drawing.Point(49, 3);
+			this.GuideButtonActionTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
 			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
 			this.GuideButtonActionTextBox.TabIndex = 1;
@@ -1161,6 +1241,7 @@
 			this.HotkeysGroupBox.AutoSize = true;
 			this.HotkeysGroupBox.Controls.Add(this.HotkeysLayoutPanel);
 			this.HotkeysGroupBox.Location = new System.Drawing.Point(3, 391);
+			this.HotkeysGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.HotkeysGroupBox.Name = "HotkeysGroupBox";
 			this.HotkeysGroupBox.Size = new System.Drawing.Size(254, 116);
 			this.HotkeysGroupBox.TabIndex = 4;
@@ -1196,16 +1277,18 @@
 			this.EmulationHotkeyCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EmulationHotkeyCheckBox.AutoSize = true;
 			this.EmulationHotkeyCheckBox.Location = new System.Drawing.Point(3, 6);
+			this.EmulationHotkeyCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationHotkeyCheckBox.Name = "EmulationHotkeyCheckBox";
 			this.EmulationHotkeyCheckBox.Size = new System.Drawing.Size(76, 17);
 			this.EmulationHotkeyCheckBox.TabIndex = 0;
-			this.EmulationHotkeyCheckBox.Text = "Emulation:";
+			this.EmulationHotkeyCheckBox.Text = "Emulation";
 			this.EmulationHotkeyCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// EmulationHotkeyTextBox
 			// 
 			this.EmulationHotkeyTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EmulationHotkeyTextBox.Location = new System.Drawing.Point(85, 4);
+			this.EmulationHotkeyTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationHotkeyTextBox.Name = "EmulationHotkeyTextBox";
 			this.EmulationHotkeyTextBox.Size = new System.Drawing.Size(140, 20);
 			this.EmulationHotkeyTextBox.TabIndex = 1;
@@ -1215,16 +1298,18 @@
 			this.EmulationButtonsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EmulationButtonsCheckBox.AutoSize = true;
 			this.EmulationButtonsCheckBox.Location = new System.Drawing.Point(3, 32);
+			this.EmulationButtonsCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationButtonsCheckBox.Name = "EmulationButtonsCheckBox";
 			this.EmulationButtonsCheckBox.Size = new System.Drawing.Size(76, 17);
 			this.EmulationButtonsCheckBox.TabIndex = 2;
-			this.EmulationButtonsCheckBox.Text = "Controller:";
+			this.EmulationButtonsCheckBox.Text = "Controller";
 			this.EmulationButtonsCheckBox.UseVisualStyleBackColor = true;
 			//
 			// EmulationButtonsTextBox
 			//
 			this.EmulationButtonsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EmulationButtonsTextBox.Location = new System.Drawing.Point(85, 30);
+			this.EmulationButtonsTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationButtonsTextBox.Name = "EmulationButtonsTextBox";
 			this.EmulationButtonsTextBox.Size = new System.Drawing.Size(140, 20);
 			this.EmulationButtonsTextBox.TabIndex = 3;
@@ -1235,6 +1320,7 @@
 			this.EmulationOverlayCheckBox.AutoSize = true;
 			this.HotkeysLayoutPanel.SetColumnSpan(this.EmulationOverlayCheckBox, 2);
 			this.EmulationOverlayCheckBox.Location = new System.Drawing.Point(3, 55);
+			this.EmulationOverlayCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationOverlayCheckBox.Name = "EmulationOverlayCheckBox";
 			this.EmulationOverlayCheckBox.Size = new System.Drawing.Size(214, 17);
 			this.EmulationOverlayCheckBox.TabIndex = 4;
@@ -1247,6 +1333,7 @@
 			this.DeviceChangeOverlayCheckBox.AutoSize = true;
 			this.HotkeysLayoutPanel.SetColumnSpan(this.DeviceChangeOverlayCheckBox, 2);
 			this.DeviceChangeOverlayCheckBox.Location = new System.Drawing.Point(3, 78);
+			this.DeviceChangeOverlayCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DeviceChangeOverlayCheckBox.Name = "DeviceChangeOverlayCheckBox";
 			this.DeviceChangeOverlayCheckBox.Size = new System.Drawing.Size(212, 17);
 			this.DeviceChangeOverlayCheckBox.TabIndex = 5;
@@ -1259,7 +1346,7 @@
 			this.InternetOptionsTabPage.Controls.Add(this.InternetPanel);
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
-			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(12, 12, 12, 8);
 			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
@@ -1270,7 +1357,7 @@
 			this.SettingsTabPage.Controls.Add(this.SettingsPanel);
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.SettingsTabPage.Name = "SettingsTabPage";
-			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(8);
 			this.SettingsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.SettingsTabPage.TabIndex = 5;
 			this.SettingsTabPage.Text = "Settings";
@@ -1289,7 +1376,7 @@
 			this.UpdateTabPage.Controls.Add(this.UpdatePanel);
 			this.UpdateTabPage.Location = new System.Drawing.Point(4, 22);
 			this.UpdateTabPage.Name = "UpdateTabPage";
-			this.UpdateTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.UpdateTabPage.Padding = new System.Windows.Forms.Padding(8);
 			this.UpdateTabPage.Size = new System.Drawing.Size(192, 74);
 			this.UpdateTabPage.TabIndex = 6;
 			this.UpdateTabPage.Text = "Update";
@@ -1300,7 +1387,7 @@
 			this.AiTabPage.Controls.Add(this.AiControl);
 			this.AiTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AiTabPage.Name = "AiTabPage";
-			this.AiTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.AiTabPage.Padding = new System.Windows.Forms.Padding(8);
 			this.AiTabPage.Size = new System.Drawing.Size(650, 421);
 			this.AiTabPage.TabIndex = 7;
 			this.AiTabPage.Text = "AI";
@@ -1319,7 +1406,7 @@
 			this.PluginsTabPage.Controls.Add(this.PluginsPanel);
 			this.PluginsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.PluginsTabPage.Name = "PluginsTabPage";
-			this.PluginsTabPage.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
+			this.PluginsTabPage.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
 			this.PluginsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.PluginsTabPage.TabIndex = 8;
 			this.PluginsTabPage.Text = "Plugins";
@@ -1354,7 +1441,7 @@
 			this.VirtualDeviceTabPage.Controls.Add(this.VirtualDevicePanel);
 			this.VirtualDeviceTabPage.Location = new System.Drawing.Point(4, 22);
 			this.VirtualDeviceTabPage.Name = "VirtualDeviceTabPage";
-			this.VirtualDeviceTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.VirtualDeviceTabPage.Padding = new System.Windows.Forms.Padding(12, 12, 12, 8);
 			this.VirtualDeviceTabPage.Size = new System.Drawing.Size(192, 74);
 			this.VirtualDeviceTabPage.TabIndex = 2;
 			this.VirtualDeviceTabPage.Text = "Virtual Device";
@@ -1379,7 +1466,6 @@
 			this.HidHideTabPage.Controls.Add(this.HidHidePanel);
 			this.HidHideTabPage.Location = new System.Drawing.Point(4, 22);
 			this.HidHideTabPage.Name = "HidHideTabPage";
-			this.HidHideTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.HidHideTabPage.Size = new System.Drawing.Size(192, 74);
 			this.HidHideTabPage.TabIndex = 4;
 			this.HidHideTabPage.Text = "HID Hide";
@@ -1404,8 +1490,8 @@
 			this.HidHideGroupBox.AutoSize = true;
 			this.HidHideGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.HidHideGroupBox.Controls.Add(this.HidHideLayoutPanel);
+			this.HidHideGroupBox.Margin = new System.Windows.Forms.Padding(12, 12, 12, 8);
 			this.HidHideGroupBox.Name = "HidHideGroupBox";
-			this.HidHideGroupBox.Padding = new System.Windows.Forms.Padding(6, 3, 6, 6);
 			this.HidHideGroupBox.TabIndex = 0;
 			this.HidHideGroupBox.TabStop = false;
 			this.HidHideGroupBox.Text = "HID Hide by Nefarius";
@@ -1437,6 +1523,7 @@
 			this.HidHideConfigureAutomaticallyCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HidHideConfigureAutomaticallyCheckBox.AutoSize = true;
 			this.HidHideConfigureAutomaticallyCheckBox.Enabled = false;
+			this.HidHideConfigureAutomaticallyCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideConfigureAutomaticallyCheckBox.Name = "HidHideConfigureAutomaticallyCheckBox";
 			this.HidHideConfigureAutomaticallyCheckBox.TabIndex = 4;
 			this.HidHideConfigureAutomaticallyCheckBox.Text = "Configure automatically: hide a device from games while it is mapped to a controller";
@@ -1446,7 +1533,7 @@
 			// 
 			this.HidHideStatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HidHideStatusLabel.AutoSize = true;
-			this.HidHideStatusLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.HidHideStatusLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.HidHideStatusLabel.Name = "HidHideStatusLabel";
 			this.HidHideStatusLabel.TabIndex = 0;
 			this.HidHideStatusLabel.Text = "HID Hide";
@@ -1455,6 +1542,7 @@
 			// 
 			this.HidHideStatusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidHideStatusTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.HidHideStatusTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideStatusTextBox.Name = "HidHideStatusTextBox";
 			this.HidHideStatusTextBox.ReadOnly = true;
 			this.HidHideStatusTextBox.TabStop = false;
@@ -1464,6 +1552,7 @@
 			// 
 			this.HidHideRefreshButton.AutoSize = true;
 			this.HidHideRefreshButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideRefreshButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideRefreshButton.Name = "HidHideRefreshButton";
 			this.HidHideRefreshButton.TabIndex = 2;
 			this.HidHideRefreshButton.Text = "Refresh";
@@ -1486,6 +1575,7 @@
 			//
 			this.HidHideInstallButton.AutoSize = true;
 			this.HidHideInstallButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideInstallButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideInstallButton.Name = "HidHideInstallButton";
 			this.HidHideInstallButton.TabIndex = 0;
 			this.HidHideInstallButton.Text = "Install HID Hide";
@@ -1496,6 +1586,7 @@
 			// 
 			this.HidHideConfigureButton.AutoSize = true;
 			this.HidHideConfigureButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideConfigureButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideConfigureButton.Name = "HidHideConfigureButton";
 			this.HidHideConfigureButton.TabIndex = 1;
 			this.HidHideConfigureButton.Text = "Open Configuration";
@@ -1506,7 +1597,7 @@
 			//
 			this.HidHideDownloadLinkLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HidHideDownloadLinkLabel.AutoSize = true;
-			this.HidHideDownloadLinkLabel.Margin = new System.Windows.Forms.Padding(3);
+			this.HidHideDownloadLinkLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.HidHideDownloadLinkLabel.Name = "HidHideDownloadLinkLabel";
 			this.HidHideDownloadLinkLabel.TabIndex = 2;
 			this.HidHideDownloadLinkLabel.TabStop = true;
@@ -1518,6 +1609,7 @@
 			this.HidHideHelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HidHideHelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HidHideHelpRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HidHideHelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HidHideHelpRichTextBox.Name = "HidHideHelpRichTextBox";
 			this.HidHideHelpRichTextBox.ReadOnly = true;
 			this.HidHideHelpRichTextBox.TabIndex = 1;
@@ -1529,7 +1621,6 @@
 			this.HidGuardianTabPage.Controls.Add(this.HidGuardianPanel);
 			this.HidGuardianTabPage.Location = new System.Drawing.Point(4, 22);
 			this.HidGuardianTabPage.Name = "HidGuardianTabPage";
-			this.HidGuardianTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.HidGuardianTabPage.Size = new System.Drawing.Size(192, 74);
 			this.HidGuardianTabPage.TabIndex = 3;
 			this.HidGuardianTabPage.Text = "HID Guardian (obsolete)";
@@ -1553,6 +1644,7 @@
 			this.HelpRichTextBox.BackColor = System.Drawing.SystemColors.Window;
 			this.HelpRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.HelpRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
 			this.HelpRichTextBox.TabIndex = 72;
@@ -1564,6 +1656,7 @@
 			this.groupBox1.AutoSize = true;
 			this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.groupBox1.Controls.Add(this.HidGuardianLayoutPanel);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(12, 12, 12, 8);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.TabIndex = 71;
 			this.groupBox1.TabStop = false;
@@ -1595,6 +1688,7 @@
 			this.HidGuardianRefreshButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HidGuardianRefreshButton.AutoSize = true;
 			this.HidGuardianRefreshButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidGuardianRefreshButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidGuardianRefreshButton.Name = "HidGuardianRefreshButton";
 			this.HidGuardianRefreshButton.TabIndex = 46;
 			this.HidGuardianRefreshButton.Text = "Refresh";
@@ -1605,6 +1699,7 @@
 			//
 			this.HidGuardianLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HidGuardianLabel.AutoSize = true;
+			this.HidGuardianLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.HidGuardianLabel.Name = "HidGuardianLabel";
 			this.HidGuardianLabel.TabIndex = 29;
 			this.HidGuardianLabel.Text = "HID Guardian";
@@ -1615,6 +1710,7 @@
 			this.HidGuardianUninstallButton.AutoSize = true;
 			this.HidGuardianUninstallButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.HidGuardianUninstallButton.Enabled = false;
+			this.HidGuardianUninstallButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidGuardianUninstallButton.Name = "HidGuardianUninstallButton";
 			this.HidGuardianUninstallButton.TabIndex = 44;
 			this.HidGuardianUninstallButton.Text = "Uninstall";
@@ -1627,6 +1723,7 @@
 			this.HidGuardianInstallButton.AutoSize = true;
 			this.HidGuardianInstallButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.HidGuardianInstallButton.Enabled = false;
+			this.HidGuardianInstallButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HidGuardianInstallButton.Name = "HidGuardianInstallButton";
 			this.HidGuardianInstallButton.TabIndex = 44;
 			this.HidGuardianInstallButton.Text = "Install";
@@ -1637,6 +1734,7 @@
 			//
 			this.HidGuardianTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.HidGuardianTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
 			this.HidGuardianTextBox.TabIndex = 41;
 			// 
@@ -1645,7 +1743,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.Controls.Add(this.MainTabControl);
 			this.Name = "OptionsUserControl";
-			this.Padding = new System.Windows.Forms.Padding(3);
+			this.Padding = new System.Windows.Forms.Padding(8);
 			this.Size = new System.Drawing.Size(658, 447);
 			this.TestingLayoutPanel.ResumeLayout(false);
 			this.TestingLayoutPanel.PerformLayout();
@@ -1680,6 +1778,8 @@
 			this.VirtualDeviceGroupBox.PerformLayout();
 			this.AllowRemoteControllersGroupBox.ResumeLayout(false);
 			this.AllowRemoteControllersGroupBox.PerformLayout();
+			this.AllowRemoteLayoutPanel.ResumeLayout(false);
+			this.AllowRemoteLayoutPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).EndInit();
 			this.MainTabControl.ResumeLayout(false);
 			this.GeneralTabPage.ResumeLayout(false);
@@ -1779,6 +1879,7 @@
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
 		internal System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
 		internal System.Windows.Forms.GroupBox AllowRemoteControllersGroupBox;
+		private System.Windows.Forms.TableLayoutPanel AllowRemoteLayoutPanel;
 		public System.Windows.Forms.CheckBox AllowRemote3CheckBox;
 		public System.Windows.Forms.CheckBox AllowRemote2CheckBox;
 		public System.Windows.Forms.CheckBox AllowRemote1CheckBox;

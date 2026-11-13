@@ -17,13 +17,14 @@ using x360ce.Engine;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The lists (grids) of every page and window: edge to edge in the area that holds them, their column titles with 3 px
-	/// more room above and below, and their first shown column with 3 px more room on the left, at 100 % and 150 %, in
-	/// both themes.
+	/// The lists (grids) of every page and window: edge to edge in the area that holds them, their column titles their text
+	/// with 4 px above and below, and their first shown column with 4 px more room on the left, at 100 % and 150 %, in
+	/// both themes. The list boxes and the text without a frame of their own that fill a page reach its edges too.
 	/// </summary>
 	/// <remarks>
 	/// The owner's report of 2026-11-04 (4.29): a list stood in from the sides of its page, its titles were cramped, and the
-	/// text of its first column stood against its left edge.
+	/// text of its first column stood against its left edge. His report of 2026-11-08: the text of the About page's Program
+	/// tab stood 1 px below its tab and 3 px in from the frame's other sides, and other lists and texts stood further in.
 	/// </remarks>
 	[TestClass]
 	public class ListLayoutTest
@@ -31,7 +32,10 @@ namespace x360ce.Tests
 		public TestContext TestContext { get; set; }
 
 		/// <summary>The room the owner asked for, in pixels at 100 %: above and below a title, and before the first column.</summary>
-		const int Room = 3;
+		const int Room = 4;
+
+		/// <summary>The padding of the main window's pages and the Add Device window, in pixels at 100 %, which their designers set.</summary>
+		const int PageInset = 3;
 
 		/// <summary>
 		/// The pages and windows that show a list, each made as the program makes it: a page of the main window inside its
@@ -55,13 +59,14 @@ namespace x360ce.Tests
 			() => new LoadPresetsForm(),
 			() => new HardwareForm(),
 			() => new InfoForm { SelectedControl = new Button { Name = "ProbeButton" } },
+			() => OptionsLayoutTest.MainWindowAtDefaultSize(new AboutControl(), "About"),
 		};
 
 		/// <summary>Panels shown beside a list only at times: while games are scanned, and once no issue is left.</summary>
 		static readonly string[] ShownAtTimes = { nameof(GamesGridUserControl.ScanProgressPanel), nameof(IssuesUserControl.NoIssuesPanel), nameof(IssuesUserControl.LinePanel) };
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every list stands edge to edge in the area that holds it, what stands above and below it keeps its place, its titles have 3 px more room above and below, and its first shown column 3 px more on the left, at 100 % and 150 %, in both themes")]
+		[Description("Every list, and every list box and text without a frame that fills a page, stands edge to edge in the area that holds it wherever nothing else stands beside, above or below it, what stands above and below a list keeps its place, its titles are their text with 4 px above and below, and its first shown column 4 px more on the left, at 100 % and 150 %, in both themes")]
 		public void Lists_stand_edge_to_edge_with_room_round_their_titles_and_first_column()
 		{
 			var report = new List<string>();
@@ -74,7 +79,7 @@ namespace x360ce.Tests
 						panel.Visible = true;
 				// The pages of the main window and of the Add Device window keep their content in from their sides; the
 				// other windows hold their lists and tool bars against the sides of their tabs.
-				var inset = form.GetType() == typeof(BaseFormWithHeader) || form is MapDeviceToControllerForm ? Pixels(Room) : 0;
+				var inset = form.GetType() == typeof(BaseFormWithHeader) || form is MapDeviceToControllerForm ? Pixels(PageInset) : 0;
 				foreach (var grid in ButtonIconTest.All(form).OfType<DataGridView>().ToList())
 				{
 					grids++;
@@ -85,11 +90,43 @@ namespace x360ce.Tests
 					CheckTitles(grid, name, report, faults);
 					CheckFirstColumn(grid, name, report, faults);
 				}
+				foreach (var text in ButtonIconTest.All(form).Where(IsFillingText).ToList())
+				{
+					grids++;
+					ShowWhereItStands(text);
+					CheckEdges(text, when + " " + ButtonIconTest.Path(text), report, faults);
+				}
 			});
 			foreach (var line in report)
 				TestContext.WriteLine(line);
 			Assert.IsTrue(grids > 0, "No list was found to look at.");
 			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s) in " + grids + " lists:" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The Map Device window, themed as the program themes a dialog once it is active, opens wide enough for every button of its list's tool bar to stand on the bar, none in its overflow menu, and no wider than its screen's working area, in both themes")]
+		public void Map_device_window_shows_every_tool_bar_button()
+		{
+			var report = new List<string>();
+			var faults = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new MapDeviceToControllerForm() }, (form, when) =>
+			{
+				var strip = (ToolStrip)form.Controls.Find(nameof(UserDevicesUserControl.ControllersToolStrip), true).Single();
+				var shown = strip.Items.Cast<ToolStripItem>().Where(x => x.Available).ToList();
+				var overflow = shown.Where(x => x.IsOnOverflow).Select(x => x.Text).ToList();
+				var work = Screen.FromControl(form).WorkingArea;
+				var line = string.Format("{0}: window {1} px wide, tool bar {2} px of the {3} its {4} buttons take, screen {5} px",
+					when, form.Width, strip.Width, strip.PreferredSize.Width, shown.Count, work.Width);
+				report.Add(line);
+				if (overflow.Count > 0)
+					faults.Add(line + "; in the overflow menu: " + string.Join(", ", overflow));
+				if (form.Width > work.Width)
+					faults.Add(line + "; wider than the screen.");
+			}, themedOnceActive: true);
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+			Assert.AreEqual(2, report.Count, "The window was not looked at in both themes.");
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
 		}
 
 		[TestMethod, TestCategory("ui")]
@@ -108,8 +145,9 @@ namespace x360ce.Tests
 							using (var image = new Bitmap(16, 16))
 							using (var form = new Form { ClientSize = new Size(360, 140), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
 							{
+								// Grey, so the picture stands out from its cell in both themes: black is lost on the dark field.
 								using (var g = Graphics.FromImage(image))
-									g.Clear(Color.Black);
+									g.Clear(Color.Gray);
 								var grid = new DataGridView { Dock = DockStyle.Fill, RowHeadersVisible = false, AllowUserToAddRows = false };
 								DataGridViewColumn first = kind == "text" ? new DataGridViewTextBoxColumn()
 									: kind == "picture" ? (DataGridViewColumn)new DataGridViewImageColumn { AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells }
@@ -188,6 +226,19 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
 		}
 
+		/// <summary>
+		/// Whether a control is a list box, or a text of many lines, that fills what holds it without an edge of its own: a box
+		/// with a frame, which the theme draws in the window's edge, is a box to type in, which keeps its room from the frame
+		/// round the page.
+		/// </summary>
+		internal static bool IsFillingText(Control control)
+		{
+			if (control.Dock != DockStyle.Fill || control.Parent == null || !(control is ListBox
+				|| (control is TextBoxBase box && (box.Multiline || box is RichTextBox))))
+				return false;
+			return control.RectangleToScreen(control.ClientRectangle).Left == control.Parent.RectangleToScreen(control.Bounds).Left;
+		}
+
 		/// <summary>Selects the tab of every tab strip the grid stands on, so it is laid out and drawn as it is seen.</summary>
 		static void ShowWhereItStands(Control control)
 		{
@@ -207,31 +258,42 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>
-		/// Each side of a list that nothing else stands beside meets the area that holds it: the client area of its tab page
-		/// or window. Lists side by side keep the room between them.
+		/// Each side of a list or text that nothing else stands beside, above or below meets the area that holds it: the client
+		/// area of its tab page, which fills the frame drawn round it, or of its window. Lists side by side keep the room between
+		/// them.
 		/// </summary>
-		static void CheckEdges(DataGridView grid, string name, List<string> report, List<string> faults)
+		static void CheckEdges(Control list, string name, List<string> report, List<string> faults)
 		{
-			var area = AreaOf(grid);
-			if (area == null || !grid.Visible)
+			var area = AreaOf(list);
+			if (area == null || !list.Visible)
 				return;
-			var at = area.RectangleToClient(grid.Parent.RectangleToScreen(grid.Bounds));
+			var at = area.RectangleToClient(list.Parent.RectangleToScreen(list.Bounds));
 			var client = area.ClientRectangle;
-			// Anything shown beside the list, level with some of its height, but what holds it or what it holds.
-			var beside = ButtonIconTest.All(area).Where(x => x.Visible && x != grid && !x.Contains(grid) && !grid.Contains(x))
+			// Anything shown in the area but what holds the list or what it holds.
+			var shown = ButtonIconTest.All(area).Where(x => x.Visible && x != list && !x.Contains(list) && !list.Contains(x))
 				.Select(x => area.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds)))
-				.Where(x => x.Width > 0 && x.Height > 0 && x.Top < at.Bottom && x.Bottom > at.Top).ToList();
-			var left = beside.Any(x => x.Right <= at.Left);
-			var right = beside.Any(x => x.Left >= at.Right);
-			var bars = ScrollBarWidth(grid, area);
-			var line = string.Format("{0}: in {1} {2} at {3}{4}{5}{6}; parents {7}", name, area.GetType().Name, client, at,
+				.Where(x => x.Width > 0 && x.Height > 0).ToList();
+			// Beside it, level with some of its height; above or below it, over some of its width.
+			var level = shown.Where(x => x.Top < at.Bottom && x.Bottom > at.Top).ToList();
+			var over = shown.Where(x => x.Left < at.Right && x.Right > at.Left).ToList();
+			var left = level.Any(x => x.Right <= at.Left);
+			var right = level.Any(x => x.Left >= at.Right);
+			var above = over.Any(x => x.Bottom <= at.Top);
+			var below = over.Any(x => x.Top >= at.Bottom);
+			var bars = ScrollBarWidth(list, area);
+			var line = string.Format("{0}: in {1} {2} at {3}{4}{5}{6}{7}{8}; parents {9}", name, area.GetType().Name, client, at,
 				left ? ", something to its left" : "", right ? ", something to its right" : "",
-				bars > 0 ? ", " + bars + " px of scroll bar" : "", Parents(grid, area));
+				above ? ", something above" : "", below ? ", something below" : "",
+				bars > 0 ? ", " + bars + " px of scroll bar" : "", Parents(list, area));
 			report.Add(line);
 			if (!left && at.Left != client.Left)
 				faults.Add(line + ": its left edge is " + (at.Left - client.Left) + " px in from the area's.");
 			if (!right && at.Right != client.Right - bars)
 				faults.Add(line + ": its right edge is " + (client.Right - bars - at.Right) + " px in from the area's.");
+			if (!above && at.Top != client.Top)
+				faults.Add(line + ": its top edge is " + (at.Top - client.Top) + " px below the area's.");
+			if (!below && at.Bottom != client.Bottom)
+				faults.Add(line + ": its bottom edge is " + (client.Bottom - at.Bottom) + " px above the area's.");
 		}
 
 		/// <summary>The scroll bars of the pages between a control and its area that scroll: they stand at the area's right.</summary>
@@ -307,54 +369,21 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>
-		/// The title row is as tall as Windows Forms makes one for the titles' text, with the room added above and below: the
-		/// height a plain grid in the same font and widths sizes its titles to, and twice the room.
+		/// The title row is as tall as its text with the room above and below it, as Default.xaml's column headers: the titles'
+		/// font's height and twice the room.
 		/// </summary>
 		static void CheckTitles(DataGridView grid, string name, List<string> report, List<string> faults)
 		{
 			var columns = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Visible).ToList();
 			if (!grid.ColumnHeadersVisible || columns.Count == 0)
 				return;
-			var plain = PlainTitleHeight(grid, columns);
-			var wanted = plain + 2 * Pixels(Room);
-			var line = string.Format("{0}: titles {1} px tall, a plain grid's {2} px, {3} px wanted ({4})",
-				name, grid.ColumnHeadersHeight, plain, wanted, grid.ColumnHeadersHeightSizeMode);
+			var text = (grid.ColumnHeadersDefaultCellStyle.Font ?? grid.Font).Height;
+			var wanted = text + 2 * Pixels(Room);
+			var line = string.Format("{0}: titles {1} px tall, their text {2} px, {3} px wanted ({4})",
+				name, grid.ColumnHeadersHeight, text, wanted, grid.ColumnHeadersHeightSizeMode);
 			report.Add(line);
 			if (grid.ColumnHeadersHeight != wanted)
 				faults.Add(line);
-		}
-
-		/// <summary>
-		/// The height Windows Forms sizes a grid's titles to by itself: the text, in the titles' font and the columns' widths,
-		/// with what it keeps round it, in a grid without lines between its titles or a visual style.
-		/// </summary>
-		static int PlainTitleHeight(DataGridView grid, List<DataGridViewColumn> columns)
-		{
-			var style = grid.ColumnHeadersDefaultCellStyle;
-			using (var plain = new DataGridView
-			{
-				ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
-				ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None,
-				EnableHeadersVisualStyles = false,
-				RowHeadersVisible = false,
-				Font = grid.Font,
-			})
-			{
-				plain.ColumnHeadersDefaultCellStyle.Font = style.Font ?? grid.Font;
-				plain.ColumnHeadersDefaultCellStyle.WrapMode = style.WrapMode;
-				foreach (var column in columns)
-					plain.Columns.Add(new DataGridViewTextBoxColumn
-					{
-						HeaderText = column.HeaderText,
-						SortMode = column.SortMode,
-						AutoSizeMode = DataGridViewAutoSizeColumnMode.None,
-						MinimumWidth = 2,
-						Width = Math.Max(2, column.Width),
-					});
-				var handle = plain.Handle;
-				plain.AutoResizeColumnHeadersHeight();
-				return plain.ColumnHeadersHeight;
-			}
 		}
 
 		/// <summary>

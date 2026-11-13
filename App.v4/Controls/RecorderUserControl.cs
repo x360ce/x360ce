@@ -14,14 +14,24 @@ namespace x360ce.App.Controls
 		public RecorderUserControl()
 		{
 			InitializeComponent();
+			// Scaled by the font once, after the designer's tables have resumed their layout: scaled in the designer, Windows
+			// Forms scales a table as it resumes and then again with the control. The mode first, as changing it clears the
+			// dimensions.
+			SuspendLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			ResumeLayout(false);
 		}
 
 		/// <summary>Fits the panel's height to where its content ends, whatever the font and the display scale.</summary>
-		/// <remarks>A group box that sizes itself counts its caption twice, once in its content's place and once in its own border, and leaves a line's worth of space below.</remarks>
+		/// <remarks>
+		/// A group box that sizes itself counts its caption twice, once in its content's place and once in its own border, and
+		/// leaves a line's worth of space below. The panel's own room round the group, above and below it, is counted too.
+		/// </remarks>
 		void LayoutPanel_SizeChanged(object sender, EventArgs e)
 		{
 			var below = RecordGroupBox.Height - RecordGroupBox.DisplayRectangle.Bottom;
-			Height = LayoutPanel.Bottom + below;
+			Height = RecordGroupBox.Top + LayoutPanel.Bottom + below + Padding.Bottom;
 		}
 
 		protected override void OnLoad(EventArgs e)

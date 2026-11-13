@@ -102,7 +102,8 @@ namespace x360ce.App.DInput
 
 	/// <summary>
 	/// Turns a control that reports movement, such as a mouse's X and Y, into one stick in the style its controller's Mouse page
-	/// sets. One for each stick of each row that sets a style, made with the routing, and used by the engine thread only.
+	/// sets. One for each stick of each row that sets a style, made with the routing, and moved by the engine thread only;
+	/// a controller page reads its last answer between passes.
 	/// </summary>
 	/// <remarks>
 	/// It reads the device's running totals of counts, which the engine keeps for every moving control, and keeps its own
@@ -231,6 +232,19 @@ namespace x360ce.App.DInput
 			if (Math.Abs(value) < 1e-6)
 				value = 0;
 			_value[axis] = value;
+			return ToReading(value);
+		}
+
+		/// <summary>What <see cref="Value"/> answered last on one axis, for the chart that shows the reading the stick was converted from.</summary>
+		/// <param name="axis">0 across, 1 up and down.</param>
+		public ushort LastValue(int axis)
+		{
+			return ToReading(_value[axis]);
+		}
+
+		/// <summary>A stick's place, -1 to 1, as an axis reads: 0 to 65535, the centre in the middle.</summary>
+		static ushort ToReading(double value)
+		{
 			return (ushort)Math.Round((value + 1) * 32767.5);
 		}
 

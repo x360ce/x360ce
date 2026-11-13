@@ -251,7 +251,8 @@ namespace x360ce.App.Controls
 				Invalidate();
 		}
 
-		/// <summary>Fade the controller when no device is mapped.</summary>
+		/// <summary>Fades the controller while the emulated controller is not connected.</summary>
+		/// <remarks>It is faded while the picture is disabled too, as the boxes beside it are when no device is mapped.</remarks>
 		public void SetEnabled(bool enabled)
 		{
 			if (_Enabled == enabled)
@@ -371,7 +372,8 @@ namespace x360ce.App.Controls
 				e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
 				var top = Painted(_Top, "top", topBounds.Size);
 				var front = Painted(_Front, "front", frontBounds.Size);
-				if (_Enabled)
+				var shown = _Enabled && Enabled;
+				if (shown)
 				{
 					e.Graphics.DrawImage(top, topBounds);
 					e.Graphics.DrawImage(front, frontBounds);
@@ -388,7 +390,7 @@ namespace x360ce.App.Controls
 					foreach (var info in _Infos)
 						DrawGlyph(e.Graphics, info);
 
-				if (_Enabled)
+				if (shown)
 					DrawIndicators(e.Graphics);
 
 				DrawHelpText(e.Graphics);
@@ -501,7 +503,9 @@ namespace x360ce.App.Controls
 		{
 			if (string.IsNullOrEmpty(_HelpText))
 				return;
-			using (var brush = new SolidBrush(Color.Green))
+			// An instruction is a notice, and the end of the mapping a success.
+			var key = _HelpText == MappingDone ? "ForegroundSuccess" : "ForegroundInformation";
+			using (var brush = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor(key)))
 			using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far })
 				g.DrawString(_HelpText, Font, brush, new RectangleF(0, 0, Width, Height), format);
 		}

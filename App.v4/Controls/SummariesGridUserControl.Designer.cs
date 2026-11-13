@@ -101,6 +101,7 @@
 			// 
 			// SummariesUsersColumn
 			// 
+			this.SummariesUsersColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SummariesUsersColumn.DataPropertyName = "Users";
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
 			this.SummariesUsersColumn.DefaultCellStyle = dataGridViewCellStyle2;
@@ -142,6 +143,7 @@
             this.SummariesRefreshButton});
 			this.SummariesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SummariesToolStrip.Name = "SummariesToolStrip";
+			this.SummariesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.SummariesToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SummariesToolStrip.TabIndex = 4;
 			this.SummariesToolStrip.Text = "MySettingsToolStrip";

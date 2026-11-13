@@ -66,10 +66,10 @@
 			this.CommentLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.CommentLabel.Location = new System.Drawing.Point(0, 0);
 			this.CommentLabel.Name = "CommentLabel";
-			this.CommentLabel.Padding = new System.Windows.Forms.Padding(3);
+			this.CommentLabel.Padding = new System.Windows.Forms.Padding(4, 8, 4, 12);
 			this.CommentLabel.Size = new System.Drawing.Size(44, 19);
 			this.CommentLabel.TabIndex = 5;
-			this.CommentLabel.Text = "&Notes:";
+			this.CommentLabel.Text = "&Notes";
 			// 
 			// SettingsDataGridView
 			// 
@@ -171,7 +171,7 @@
             this.SettingsEditNoteButton});
 			this.SettingsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SettingsToolStrip.Name = "SettingsToolStrip";
-			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.SettingsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SettingsToolStrip.TabIndex = 7;
 			this.SettingsToolStrip.Text = "MySettingsToolStrip";

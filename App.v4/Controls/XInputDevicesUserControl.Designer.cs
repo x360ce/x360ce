@@ -15,6 +15,8 @@ namespace x360ce.App.Controls
 
 		private void InitializeComponent()
 		{
+			this.HeaderLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.HeaderLabel = new System.Windows.Forms.Label();
 			this.DevicesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.ApplyButton = new System.Windows.Forms.ToolStripButton();
 			this.AutoOrderButton = new System.Windows.Forms.ToolStripButton();
@@ -31,25 +33,56 @@ namespace x360ce.App.Controls
 			this.PadColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MappedColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.HeaderLayoutPanel.SuspendLayout();
 			this.DevicesToolStrip.SuspendLayout();
 			this.PlanPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.SuspendLayout();
 			//
+			// HeaderLayoutPanel
+			//
+			this.HeaderLayoutPanel.AutoSize = true;
+			this.HeaderLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HeaderLayoutPanel.ColumnCount = 2;
+			this.HeaderLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.HeaderLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderLayoutPanel.Controls.Add(this.HeaderLabel, 0, 0);
+			this.HeaderLayoutPanel.Controls.Add(this.DevicesToolStrip, 1, 0);
+			this.HeaderLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.HeaderLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this.HeaderLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.HeaderLayoutPanel.Name = "HeaderLayoutPanel";
+			this.HeaderLayoutPanel.RowCount = 1;
+			this.HeaderLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderLayoutPanel.Size = new System.Drawing.Size(700, 25);
+			this.HeaderLayoutPanel.TabIndex = 0;
+			//
+			// HeaderLabel
+			//
+			this.HeaderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.HeaderLabel.AutoSize = true;
+			this.HeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.HeaderLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.HeaderLabel.Name = "HeaderLabel";
+			this.HeaderLabel.Size = new System.Drawing.Size(400, 13);
+			this.HeaderLabel.Text = "XInput Devices - what holds each of the four places a game can read";
+			//
 			// DevicesToolStrip
 			//
 			this.DevicesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.ApplyButton,
+			this.RefreshButton,
 			this.AutoOrderButton,
-			this.RefreshButton});
+			this.ApplyButton});
+			this.DevicesToolStrip.Anchor = System.Windows.Forms.AnchorStyles.Right;
+			this.DevicesToolStrip.Dock = System.Windows.Forms.DockStyle.None;
 			this.DevicesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.DevicesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.DevicesToolStrip.Name = "DevicesToolStrip";
+			this.DevicesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.DevicesToolStrip.Size = new System.Drawing.Size(700, 25);
 			//
 			// ApplyButton
 			//
-			this.ApplyButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.ApplyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.ApplyButton.Name = "ApplyButton";
@@ -59,7 +92,6 @@ namespace x360ce.App.Controls
 			//
 			// AutoOrderButton
 			//
-			this.AutoOrderButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.AutoOrderButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this.AutoOrderButton.Image = global::x360ce.App.Properties.Resources.map_to_32x32;
 			this.AutoOrderButton.Name = "AutoOrderButton";
@@ -69,7 +101,6 @@ namespace x360ce.App.Controls
 			//
 			// RefreshButton
 			//
-			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.RefreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_32x32;
 			this.RefreshButton.Name = "RefreshButton";
@@ -92,7 +123,7 @@ namespace x360ce.App.Controls
 			this.PlanPanel.Controls.Add(this.PlanCancelButton, 2, 2);
 			this.PlanPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.PlanPanel.Name = "PlanPanel";
-			this.PlanPanel.Padding = new System.Windows.Forms.Padding(3);
+			this.PlanPanel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
 			this.PlanPanel.RowCount = 3;
 			this.PlanPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.PlanPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -106,8 +137,8 @@ namespace x360ce.App.Controls
 			this.PlanSubjectLabel.AutoSize = true;
 			this.PlanPanel.SetColumnSpan(this.PlanSubjectLabel, 3);
 			this.PlanSubjectLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.PlanSubjectLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.PlanSubjectLabel.Name = "PlanSubjectLabel";
-			this.PlanSubjectLabel.Padding = new System.Windows.Forms.Padding(0, 3, 0, 3);
 			this.PlanSubjectLabel.TabIndex = 0;
 			//
 			// PlanBodyLabel
@@ -115,8 +146,8 @@ namespace x360ce.App.Controls
 			this.PlanBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.PlanBodyLabel.AutoSize = true;
 			this.PlanPanel.SetColumnSpan(this.PlanBodyLabel, 3);
+			this.PlanBodyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.PlanBodyLabel.Name = "PlanBodyLabel";
-			this.PlanBodyLabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 3);
 			this.PlanBodyLabel.TabIndex = 1;
 			//
 			// PlanOkButton
@@ -124,6 +155,7 @@ namespace x360ce.App.Controls
 			this.PlanOkButton.AutoSize = true;
 			this.PlanOkButton.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.PlanOkButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.PlanOkButton.Margin = new System.Windows.Forms.Padding(4, 8, 4, 0);
 			this.PlanOkButton.Name = "PlanOkButton";
 			this.PlanOkButton.TabIndex = 2;
 			this.PlanOkButton.Text = "OK";
@@ -135,6 +167,7 @@ namespace x360ce.App.Controls
 			//
 			this.PlanCancelButton.AutoSize = true;
 			this.PlanCancelButton.MinimumSize = new System.Drawing.Size(75, 23);
+			this.PlanCancelButton.Margin = new System.Windows.Forms.Padding(4, 8, 4, 0);
 			this.PlanCancelButton.Name = "PlanCancelButton";
 			this.PlanCancelButton.TabIndex = 3;
 			this.PlanCancelButton.Text = "Cancel";
@@ -225,10 +258,13 @@ namespace x360ce.App.Controls
 			//
 			this.Controls.Add(this.DevicesDataGridView);
 			this.Controls.Add(this.PlanPanel);
-			this.Controls.Add(this.DevicesToolStrip);
+			this.Controls.Add(this.HeaderLayoutPanel);
 			this.Name = "XInputDevicesUserControl";
 			this.Size = new System.Drawing.Size(700, 300);
+			this.HeaderLayoutPanel.ResumeLayout(false);
+			this.HeaderLayoutPanel.PerformLayout();
 			this.DevicesToolStrip.ResumeLayout(false);
+			this.DevicesToolStrip.PerformLayout();
 			this.PlanPanel.ResumeLayout(false);
 			this.PlanPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).EndInit();
@@ -238,6 +274,8 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		internal System.Windows.Forms.TableLayoutPanel HeaderLayoutPanel;
+		internal System.Windows.Forms.Label HeaderLabel;
 		internal System.Windows.Forms.ToolStrip DevicesToolStrip;
 		internal System.Windows.Forms.ToolStripButton ApplyButton;
 		internal System.Windows.Forms.ToolStripButton AutoOrderButton;

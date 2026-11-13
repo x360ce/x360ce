@@ -38,7 +38,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		{
 			var control = window as Control;
 			if (control != null)
-				return control.Name;
+				return string.IsNullOrEmpty(control.Name) && control is ToolStripDropDown ? MenuName : control.Name;
 			string name = null;
 			WindowNameWpf(window, ref name);
 			return name;

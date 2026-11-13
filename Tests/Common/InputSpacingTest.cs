@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, Engine/JocysCom/IO/HardwareControl.Designer.cs, App.v4/Controls, App.v4/Forms
+// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs, Engine/JocysCom/IO/HardwareControl.Designer.cs, App.v4/Controls, App.v4/Forms
 // @area: ui   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -33,7 +33,7 @@ namespace x360ce.Tests
 
 		/// <summary>The pages and windows the picture test makes, with the dialogs and pages of their own that show a box.</summary>
 		/// <remarks>The Cloud page, made only by the running program, shows no box.</remarks>
-		static readonly Func<Control>[] Surfaces = ButtonIconTest.Surfaces.Concat(new Func<Control>[]
+		internal static readonly Func<Control>[] Surfaces = ButtonIconTest.Surfaces.Concat(new Func<Control>[]
 		{
 			() => new AboutControl(),
 			() => new MapDeviceToControllerForm(),
@@ -41,6 +41,7 @@ namespace x360ce.Tests
 			() => new PromptForm(),
 			() => new DebugForm(),
 			() => new HardwareForm(),
+			() => new TestDeviceForm(),
 			() => new ErrorReportForm(),
 		}).Select(make => (Func<Control>)(() => OnMainWindow(make()))).ToArray();
 
@@ -56,11 +57,12 @@ namespace x360ce.Tests
 				return made;
 			var holder = new UserControl();
 			holder.SuspendLayout();
-			holder.Size = made.Size;
-			made.Dock = DockStyle.Fill;
-			holder.Controls.Add(made);
+			// In the order the main window's designer gives them: the scaling, then what the window holds.
 			holder.AutoScaleDimensions = new SizeF(6F, 13F);
 			holder.AutoScaleMode = AutoScaleMode.Font;
+			made.Dock = DockStyle.Fill;
+			holder.Controls.Add(made);
+			holder.Size = made.Size;
 			holder.ResumeLayout(false);
 			return holder;
 		}
@@ -129,13 +131,13 @@ namespace x360ce.Tests
 		static readonly string[][] GeneralCentre = { new[] { "DPadUp", "DPadLeft", "DPadRight", "DPadDown" } };
 
 		[TestMethod, TestCategory("ui")]
-		[Description("On the General tab the boxes of a group stand as far apart as a layout table stands them, the groups twice as far, and each row's boxes stand level across the left, centre and right columns, at 100 % and 150 %, in both themes")]
+		[Description("On the General tab the boxes of a group stand as far apart as a layout table stands boxes with a control's margin of the 4-pixel grid, a row (8 at 100 %), the groups twice as far, and each row's boxes stand level across the left, centre and right columns, at 100 % and 150 %, in both themes")]
 		public void General_tab_boxes_stand_a_table_gap_apart_and_level_across_the_columns()
 		{
 			var faults = new List<string>();
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new PadControl(x360ce.Engine.MapTo.Controller1) }, (form, when) =>
 			{
-				var gap = TableGap(form);
+				var gap = TableGap(form, new Padding(4));
 				var page = form.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
 				Func<string, Rectangle> at = part =>
 				{
@@ -199,18 +201,80 @@ namespace x360ce.Tests
 			});
 		}
 
+		[TestMethod, TestCategory("ui")]
+		[Description("Remap All is as tall as the map name list beside it, in the program's font, pictures and text drawing, in both themes")]
+		public void General_tab_remap_button_is_as_tall_as_the_list_beside_it()
+		{
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new PadControl(x360ce.Engine.MapTo.Controller1) }, (form, when) =>
+			{
+				var button = form.Controls.Find(nameof(PadControl.RemapAllButton), true).Single();
+				var list = form.Controls.Find(nameof(PadControl.MapNameComboBox), true).Single();
+				Assert.AreEqual(list.Height, button.Height, when + ": Remap All is not as tall as the list beside it.");
+			});
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("Remap All is as wide as Remap All needs, and keeps that width and the list's height while it reads STOP, so the list beside it does not move, in the program's font, pictures and text drawing, in both themes")]
+		public void General_tab_remap_button_keeps_its_size_while_it_reads_STOP()
+		{
+			var report = new List<string>();
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new PadControl(x360ce.Engine.MapTo.Controller1) }, (form, when) =>
+			{
+				var pad = ButtonIconTest.All(form).OfType<PadControl>().Single();
+				var button = (Button)form.Controls.Find(nameof(PadControl.RemapAllButton), true).Single();
+				var list = form.Controls.Find(nameof(PadControl.MapNameComboBox), true).Single();
+				Assert.AreEqual(pad.RemapName, button.Text);
+				// As wide as a button of the same look reading Remap All, the longer of the two.
+				using (var plain = new Button
+				{
+					Text = button.Text,
+					Font = button.Font,
+					Image = button.Image,
+					Padding = button.Padding,
+					TextImageRelation = button.TextImageRelation,
+					FlatStyle = button.FlatStyle,
+					UseCompatibleTextRendering = button.UseCompatibleTextRendering,
+				})
+				{
+					plain.FlatAppearance.BorderSize = button.FlatAppearance.BorderSize;
+					Assert.AreEqual(plain.PreferredSize.Width, button.Width, when + ": Remap All is not as wide as its text needs.");
+				}
+				var idle = button.Bounds;
+				var listIdle = list.Bounds;
+				button.Text = pad.RemapStopName;
+				try
+				{
+					Application.DoEvents();
+					report.Add(string.Format("{0}: Remap All {1} x {2}, STOP {3} x {4}, list {5} x {6} at {7}, then {8}",
+						when, idle.Width, idle.Height, button.Width, button.Height, list.Width, list.Height, listIdle.Left, list.Left));
+					Assert.AreEqual(idle, button.Bounds, when + ": Remap All moved or changed its size when it read STOP.");
+					Assert.AreEqual(listIdle, list.Bounds, when + ": the list beside Remap All moved when it read STOP.");
+					Assert.AreEqual(list.Height, button.Height, when + ": STOP is not as tall as the list beside it.");
+				}
+				finally
+				{
+					button.Text = pad.RemapName;
+				}
+			});
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+		}
+
 		/// <summary>
-		/// How far apart a layout table stands two boxes in its rows, with Windows Forms' margins, on a page scaled as the main
-		/// window scales one, in the theme in use, on the monitor <paramref name="beside"/> is drawn on.
+		/// How far apart a layout table stands two boxes in its rows, with Windows Forms' margins or the ones given at 100 %, on a
+		/// page scaled as the main window scales one, in the theme in use, on the monitor <paramref name="beside"/> is drawn on.
 		/// </summary>
 		/// <param name="beside">A window shown; the table's window is shown where it is and owned by it, so it has its scale.</param>
-		static int TableGap(Form beside)
+		/// <param name="margin">The boxes' margin at 100 %, which the page scales; Windows Forms' own when none is given.</param>
+		static int TableGap(Form beside, Padding? margin = null)
 		{
 			using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = beside.Location, ShowInTaskbar = false, Owner = beside })
 			{
 				var table = new TableLayoutPanel { AutoSize = true, ColumnCount = 1, RowCount = 2 };
 				var upper = new ComboBox();
 				var lower = new ComboBox();
+				if (margin != null)
+					upper.Margin = lower.Margin = margin.Value;
 				table.Controls.Add(upper, 0, 0);
 				table.Controls.Add(lower, 0, 1);
 				var page = new UserControl();

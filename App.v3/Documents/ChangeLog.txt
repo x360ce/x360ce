@@ -1,4 +1,62 @@
-﻿## [3.10.10.0] - 2026-11-07
+﻿## [3.11.29.0] - 2026-11-12
+
+- Fixed: A group's frame line runs through the middle of its caption, so groups stand evenly apart.
+- Fixed: A disabled editable drop-down list shows its text in the disabled colour.
+- Fixed: Every drop-down list is at least as wide as its widest item, and as tall as the others on a tool bar too.
+- Changed: Disabled text is the same grey in every control, as on a disabled label.
+
+## [3.11.28.0] - 2026-11-12
+
+- Fixed: Group boxes keep the same room round their content at every display scale.
+- Fixed: A disabled text box keeps its faded text and its frame in pictures taken of the window.
+- Changed: Check boxes and labels are as large as their text, so the gaps between controls are even.
+- Changed: A disabled text box's text is half as strong, as on other disabled controls.
+
+## [3.11.27.0] - 2026-11-12
+
+- Fixed: A tab with a picture has as much room after its text as before its picture.
+
+## [3.11.26.0] - 2026-11-12
+
+- Fixed: A list's first column no longer moves further right each time the list is filled.
+- Changed: Boxes, lists, buttons and tabs keep 4 pixels between their edge and their text.
+
+## [3.11.25.0] - 2026-11-12
+
+- Changed: Spacing, boxes and corners follow a 4-pixel grid, so they stay sharp at every scale.
+
+## [3.11.24.0] - 2026-11-11
+
+- Changed: Names beside boxes no longer end with a colon.
+
+## [3.11.23.0] - 2026-11-11
+
+- Changed: The Game Scan Locations list has more room round each folder.
+
+## [3.11.22.0] - 2026-11-11
+
+- Changed: In the dark theme, boxes, lists, charts and help text are darker than the page, and group frames look sunken.
+- Changed: Check boxes and radio buttons have a pixel more room before their names.
+
+## [3.11.21.0] - 2026-11-11
+
+- Fixed: Pictures on buttons stand in the middle of the button.
+- Fixed: Sliders show their whole handle at either end.
+- Fixed: The stick charts are square.
+- Fixed: Stick charts on a tab with no controller are greyed out, not hidden.
+- Fixed: Greyed-out boxes show their text in the same grey as their names.
+- Fixed: Message windows show the x360ce icon.
+- Fixed: Dead Zone and Anti-Dead Zone no longer run their words together.
+- Fixed: Red, green and blue text, links and chart lines are light enough to read in the dark theme.
+- Fixed: Grey notes and coloured help text are easier to read in both themes.
+- Changed: Lists and texts on every tab reach the frame round the tab.
+- Changed: Buttons that open a menu have the same arrow as drop-down lists.
+- Changed: Sliders have a plain grey track and a lighter handle.
+- Changed: Scroll bars always show their arrows and full thumb.
+- Changed: Dead Zone, Anti-Dead Zone and Sensitivity are listed in the order they apply.
+- Changed: Notes are blue, and a stick's name lights green whichever way it is pushed.
+
+## [3.10.10.0] - 2026-11-07
 
 - Fixed: The presets tab on Controller Settings has its own title again.
 - Changed: x360ce now connects to the online database at its new address.

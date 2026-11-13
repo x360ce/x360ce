@@ -1,4 +1,4 @@
-﻿namespace x360ce.App.Controls
+namespace x360ce.App.Controls
 {
 	partial class UserDevicesUserControl
 	{
@@ -49,6 +49,7 @@
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.HardwareButton = new System.Windows.Forms.ToolStripButton();
+			this.TestButton = new System.Windows.Forms.ToolStripButton();
 			this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
 			this.CleanupVirtualPadsButton = new System.Windows.Forms.ToolStripButton();
 			this.ShowSystemDevicesButton = new System.Windows.Forms.ToolStripButton();
@@ -67,6 +68,7 @@
 			this.DevicesDataGridView.AllowUserToAddRows = false;
 			this.DevicesDataGridView.AllowUserToDeleteRows = false;
 			this.DevicesDataGridView.AllowUserToResizeRows = false;
+			this.DevicesDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
 			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
 			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
@@ -220,11 +222,13 @@
             this.ControllerDeleteButton,
             this.ShowSystemDevicesButton,
             this.HardwareButton,
+            this.TestButton,
             this.AddDemoDevice,
             this.CleanupVirtualPadsButton,
             this.HidHideDropDownButton});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
+			this.ControllersToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
 			this.ControllersToolStrip.TabIndex = 1;
 			this.ControllersToolStrip.Text = "MySettingsToolStrip";
@@ -257,6 +261,17 @@
 			this.HardwareButton.Size = new System.Drawing.Size(87, 22);
 			this.HardwareButton.Text = "Hardware...";
 			this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
+			// 
+			// TestButton
+			// 
+			this.TestButton.Enabled = false;
+			this.TestButton.Image = global::x360ce.App.Properties.Resources.check_32x32;
+			this.TestButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TestButton.Name = "TestButton";
+			this.TestButton.Size = new System.Drawing.Size(58, 22);
+			this.TestButton.Text = "Test...";
+			this.TestButton.ToolTipText = "Measures how often the selected device reports, and each axis's range, noise and resolution.";
+			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// AddDemoDevice
 			// 
@@ -364,6 +379,7 @@
 		internal System.Windows.Forms.ToolStripButton ControllerDeleteButton;
 		internal System.Windows.Forms.ToolStripButton RefreshButton;
 		internal System.Windows.Forms.ToolStripButton HardwareButton;
+		internal System.Windows.Forms.ToolStripButton TestButton;
 		internal System.Windows.Forms.ToolStripButton AddDemoDevice;
 		internal System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
         internal System.Windows.Forms.ToolStripButton ShowSystemDevicesButton;

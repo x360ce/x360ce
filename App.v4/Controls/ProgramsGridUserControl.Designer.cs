@@ -141,7 +141,7 @@
             this.DeleteProgramsButton});
 			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
-			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.ProgramsToolStrip.Size = new System.Drawing.Size(857, 25);
 			this.ProgramsToolStrip.TabIndex = 6;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";

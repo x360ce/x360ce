@@ -78,7 +78,7 @@
 			this.AllowThirdPartyPluginsCheckBox.AutoSize = true;
 			this.MainTableLayoutPanel.SetColumnSpan(this.AllowThirdPartyPluginsCheckBox, 3);
 			this.AllowThirdPartyPluginsCheckBox.Location = new System.Drawing.Point(9, 9);
-			this.AllowThirdPartyPluginsCheckBox.Margin = new System.Windows.Forms.Padding(6, 3, 6, 3);
+			this.AllowThirdPartyPluginsCheckBox.Margin = new System.Windows.Forms.Padding(12, 4, 12, 4);
 			this.AllowThirdPartyPluginsCheckBox.Name = "AllowThirdPartyPluginsCheckBox";
 			this.AllowThirdPartyPluginsCheckBox.Size = new System.Drawing.Size(140, 17);
 			this.AllowThirdPartyPluginsCheckBox.TabIndex = 0;
@@ -91,7 +91,7 @@
 			this.MainTableLayoutPanel.SetColumnSpan(this.NoteLabel, 3);
 			this.NoteLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.NoteLabel.Location = new System.Drawing.Point(26, 29);
-			this.NoteLabel.Margin = new System.Windows.Forms.Padding(23, 0, 6, 3);
+			this.NoteLabel.Margin = new System.Windows.Forms.Padding(32, 0, 12, 4);
 			this.NoteLabel.Name = "NoteLabel";
 			this.NoteLabel.Size = new System.Drawing.Size(600, 26);
 			this.NoteLabel.TabIndex = 1;
@@ -105,7 +105,7 @@
 			this.AutoHotkeyGroupBox.Controls.Add(this.AutoHotkeyLayoutPanel);
 			this.AutoHotkeyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AutoHotkeyGroupBox.Location = new System.Drawing.Point(9, 300);
-			this.AutoHotkeyGroupBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 3);
+			this.AutoHotkeyGroupBox.Margin = new System.Windows.Forms.Padding(12, 4, 12, 4);
 			this.AutoHotkeyGroupBox.Name = "AutoHotkeyGroupBox";
 			this.AutoHotkeyGroupBox.Size = new System.Drawing.Size(626, 101);
 			this.AutoHotkeyGroupBox.TabIndex = 6;
@@ -143,6 +143,7 @@
 			this.AllowAutoHotkeyScriptsCheckBox.AutoSize = true;
 			this.AutoHotkeyLayoutPanel.SetColumnSpan(this.AllowAutoHotkeyScriptsCheckBox, 5);
 			this.AllowAutoHotkeyScriptsCheckBox.Location = new System.Drawing.Point(3, 3);
+			this.AllowAutoHotkeyScriptsCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AllowAutoHotkeyScriptsCheckBox.Name = "AllowAutoHotkeyScriptsCheckBox";
 			this.AllowAutoHotkeyScriptsCheckBox.Size = new System.Drawing.Size(150, 17);
 			this.AllowAutoHotkeyScriptsCheckBox.TabIndex = 0;
@@ -155,7 +156,7 @@
 			this.AutoHotkeyLayoutPanel.SetColumnSpan(this.ScriptsNoteLabel, 5);
 			this.ScriptsNoteLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.ScriptsNoteLabel.Location = new System.Drawing.Point(20, 23);
-			this.ScriptsNoteLabel.Margin = new System.Windows.Forms.Padding(20, 0, 3, 3);
+			this.ScriptsNoteLabel.Margin = new System.Windows.Forms.Padding(24, 0, 4, 4);
 			this.ScriptsNoteLabel.Name = "ScriptsNoteLabel";
 			this.ScriptsNoteLabel.Size = new System.Drawing.Size(580, 26);
 			this.ScriptsNoteLabel.TabIndex = 1;
@@ -166,6 +167,7 @@
 			this.HeartbeatLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HeartbeatLabel.AutoSize = true;
 			this.HeartbeatLabel.Location = new System.Drawing.Point(3, 59);
+			this.HeartbeatLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.HeartbeatLabel.Name = "HeartbeatLabel";
 			this.HeartbeatLabel.Size = new System.Drawing.Size(105, 13);
 			this.HeartbeatLabel.TabIndex = 2;
@@ -177,6 +179,7 @@
 			this.HeartbeatUpDown.Location = new System.Drawing.Point(114, 55);
 			this.HeartbeatUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
 			this.HeartbeatUpDown.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+			this.HeartbeatUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.HeartbeatUpDown.Name = "HeartbeatUpDown";
 			this.HeartbeatUpDown.Size = new System.Drawing.Size(60, 20);
 			this.HeartbeatUpDown.TabIndex = 3;
@@ -187,7 +190,7 @@
 			this.HangTimeoutLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HangTimeoutLabel.AutoSize = true;
 			this.HangTimeoutLabel.Location = new System.Drawing.Point(190, 59);
-			this.HangTimeoutLabel.Margin = new System.Windows.Forms.Padding(13, 0, 3, 0);
+			this.HangTimeoutLabel.Margin = new System.Windows.Forms.Padding(12, 4, 8, 4);
 			this.HangTimeoutLabel.Name = "HangTimeoutLabel";
 			this.HangTimeoutLabel.Size = new System.Drawing.Size(170, 13);
 			this.HangTimeoutLabel.TabIndex = 4;
@@ -200,6 +203,7 @@
 			this.HangTimeoutUpDown.Location = new System.Drawing.Point(366, 55);
 			this.HangTimeoutUpDown.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
 			this.HangTimeoutUpDown.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
+			this.HangTimeoutUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.HangTimeoutUpDown.Name = "HangTimeoutUpDown";
 			this.HangTimeoutUpDown.Size = new System.Drawing.Size(60, 20);
 			this.HangTimeoutUpDown.TabIndex = 5;
@@ -210,7 +214,7 @@
 			this.FolderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.FolderLabel.AutoSize = true;
 			this.FolderLabel.Location = new System.Drawing.Point(9, 70);
-			this.FolderLabel.Margin = new System.Windows.Forms.Padding(6, 4, 3, 3);
+			this.FolderLabel.Margin = new System.Windows.Forms.Padding(12, 4, 8, 4);
 			this.FolderLabel.Name = "FolderLabel";
 			this.FolderLabel.Size = new System.Drawing.Size(36, 13);
 			this.FolderLabel.TabIndex = 2;
@@ -220,7 +224,7 @@
 			//
 			this.FolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.FolderTextBox.Location = new System.Drawing.Point(51, 66);
-			this.FolderTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 3);
+			this.FolderTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.FolderTextBox.Name = "FolderTextBox";
 			this.FolderTextBox.ReadOnly = true;
 			this.FolderTextBox.Size = new System.Drawing.Size(495, 20);
@@ -231,7 +235,7 @@
 			this.OpenFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.OpenFolderButton.AutoSize = true;
 			this.OpenFolderButton.Location = new System.Drawing.Point(552, 64);
-			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(3, 4, 6, 3);
+			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(4, 4, 12, 4);
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Size = new System.Drawing.Size(80, 23);
 			this.OpenFolderButton.TabIndex = 4;
@@ -255,7 +259,7 @@
 			this.MainTableLayoutPanel.SetColumnSpan(this.PluginsDataGridView, 3);
 			this.PluginsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PluginsDataGridView.Location = new System.Drawing.Point(9, 96);
-			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(0, 6, 0, 3);
+			this.PluginsDataGridView.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
 			this.PluginsDataGridView.Name = "PluginsDataGridView";
 			this.PluginsDataGridView.ReadOnly = true;
 			this.PluginsDataGridView.RowHeadersVisible = false;
@@ -314,7 +318,7 @@
 			// OptionsPluginsUserControl
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Controls.Add(this.MainTableLayoutPanel);
 			this.Name = "OptionsPluginsUserControl";
 			this.Size = new System.Drawing.Size(644, 410);

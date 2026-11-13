@@ -22,6 +22,10 @@ namespace x360ce.Tests
 		public void Header_reports_whatever_the_mouse_is_over()
 		{
 			var exe = Ui.FindApp("App.v4");
+			// The pointer goes back where it was, so a failed wait does not leave it over the place
+			// the next test's window opens, whose header would then name the control under it.
+			POINT cursor;
+			GetCursorPos(out cursor);
 			var app = Process.Start(new ProcessStartInfo(exe, TestRun.ProfileArgument) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
 			try
 			{
@@ -77,6 +81,7 @@ namespace x360ce.Tests
 			}
 			finally
 			{
+				SetCursorPos(cursor.X, cursor.Y);
 				Ui.CloseApp(app);
 			}
 		}
@@ -92,6 +97,12 @@ namespace x360ce.Tests
 			return window.FindFirst(TreeScope.Descendants,
 				new PropertyCondition(AutomationElement.AutomationIdProperty, id));
 		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		struct POINT { public int X; public int Y; }
+
+		[DllImport("user32.dll")]
+		static extern bool GetCursorPos(out POINT point);
 
 		[DllImport("user32.dll")]
 		static extern bool SetCursorPos(int x, int y);

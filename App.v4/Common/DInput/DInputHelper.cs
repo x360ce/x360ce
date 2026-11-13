@@ -104,7 +104,7 @@ namespace x360ce.App.DInput
 		//    UserDevice.State - DirectInput Device (JoystickState)
 		//
 		// Process 1
-		// limited to [125, 250, 500, 1000Hz]
+		// limited to [125, 250, 500, 1000, 4000Hz]
 		// PassLock
 		// {
 		//    Acquire:
@@ -116,7 +116,8 @@ namespace x360ce.App.DInput
 		// }
 		//
 		// Process 2: the window's interface timer, 10 a second in front and 5 behind, only when not minimized.
-		// It draws from the states when PassCount has moved, and takes no lock the input thread takes.
+		// It draws from the states when PassCount has moved, copies a pass's states while PassStarted says none is
+		// under way, and takes no lock the input thread takes.
 
 		public event EventHandler<DInputEventArgs> DevicesUpdated;
 		/// <summary>Raised with an error when XInput does not answer: a display read not answered in time, or the controllers not let go of in time.</summary>
@@ -375,12 +376,12 @@ namespace x360ce.App.DInput
 							Monitor.Exit(PassLock);
 						}
 					}
-					// Until the next pass is due, or the thread is asked to stop.
-					var interval = (int)_Frequency;
-					var late = pacer.Wait(interval);
+					// Until the next pass is due, or the thread is asked to stop. A device test reads with no wait.
+					var intervalUs = _testing != null ? 0 : (int)_Frequency;
+					var late = pacer.WaitMicroseconds(intervalUs);
 					if (late > _longestLate)
 						_longestLate = late;
-					if (late * 2000L > System.Diagnostics.Stopwatch.Frequency * interval)
+					if (late * 2000000L > System.Diagnostics.Stopwatch.Frequency * intervalUs)
 						_lateWaits++;
 				}
 				// Loop until suspended.
@@ -434,13 +435,19 @@ namespace x360ce.App.DInput
 
 		internal void RefreshAll(DirectInput manager, System.Windows.Forms.NativeWindow window)
 		{
+			// Marked before anything is written, so the window can tell a pass is under way.
+			Interlocked.Exchange(ref _passStarted, _passCount + 1);
 			var passStarted = StepMark();
 			// The places the interface shows are read on a worker, only when something has
 			// changed, and never waited for here.
 			XInputPlaces.ReadWhenStale();
 			var game = SettingsManager.CurrentGame;
+			var testing = _testing;
+			// A device test pauses the normal work and reads only its device.
+			if (testing != null)
+				TestPass(manager, window, testing);
 			// If game is not selected.
-			if (game != null)
+			else if (game != null)
 			{
 				// Which rows each controller reads and where each device's force comes from, read once
 				// for the whole pass. The interface replaces it whole when the mappings change.
@@ -515,7 +522,26 @@ namespace x360ce.App.DInput
 		public int PassCount { get { return Volatile.Read(ref _passCount); } }
 		int _passCount;
 
+		/// <summary>The pass started last, counted as <see cref="PassCount"/> counts it once it has finished: one more than it while a pass is under way.</summary>
+		/// <remarks>
+		/// <para>
+		/// Lets the window copy what one pass made without a lock. A pass writes the states in place, the arrays of a device's
+		/// reading included, so a copy taken while one runs can hold two passes' values, or two halves of one value. A copy
+		/// is all one pass when this equals <see cref="PassCount"/> before it is taken and is unchanged once it is taken.
+		/// </para>
+		/// <para>
+		/// Written by the input thread only, first in a pass, and the pass is finished by <see cref="PassCount"/>. The pass
+		/// waits for nothing and pays one interlocked write. What the window copies is written in a pass: a device's reading,
+		/// what a script made of it, each row's conversion, the combined states and those read back from XInput. Two writes
+		/// come from elsewhere and need no mark: the plug worker writes which XInput place a controller holds, one number read
+		/// whole, and the input thread lets go of the scripts' states as it ends, after its last pass.
+		/// </para>
+		/// </remarks>
+		public int PassStarted { get { return Volatile.Read(ref _passStarted); } }
+		int _passStarted;
+
 		/// <summary>How often a pass runs. The update thread reads it before every wait, so a change applies at once.</summary>
+		/// <remarks>0, which no choice on the Options page gives, runs the passes back to back: the setting of <c>EngineLoadTest</c>.</remarks>
 		public UpdateFrequency Frequency
 		{
 			get { return _Frequency; }
@@ -584,7 +610,7 @@ namespace x360ce.App.DInput
 				_longestGap = started - _lastPassStart;
 			_lastPassStart = started;
 			var took = System.Diagnostics.Stopwatch.GetTimestamp() - started;
-			if (took * 1000L > System.Diagnostics.Stopwatch.Frequency * (long)_Frequency)
+			if (took * 1000000L > System.Diagnostics.Stopwatch.Frequency * (long)_Frequency)
 				_slowPasses++;
 			if (took > _longestPass)
 			{
@@ -621,7 +647,7 @@ namespace x360ce.App.DInput
 				// How the wait between passes is timed, and how often it ended late, so a slow loop can be
 				// told from a late timer: waits over half an interval late, and the most any was late by in microseconds.
 				line.Append(",timer=").Append(_pacerHighResolution ? "hires" : "std");
-				line.Append(",interval=").Append((int)_Frequency);
+				line.Append(",interval=").Append((int)_Frequency).Append("us");
 				line.Append(",late=").Append(_lateWaits).Append('/').Append(_longestLate * 1000000L / System.Diagnostics.Stopwatch.Frequency);
 				_lateWaits = 0;
 				_longestLate = 0;
@@ -702,6 +728,7 @@ namespace x360ce.App.DInput
 				if (IsDisposing)
 					return;
 				IsDisposing = true;
+				_testing = null;
 				var stopped = Stop();
 				Program.StartupTrace.Mark("closing: engine stopped");
 				// The update thread has gone, so nothing else touches the effects. Taken off, they give each wheel its own

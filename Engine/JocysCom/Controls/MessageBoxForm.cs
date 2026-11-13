@@ -12,6 +12,8 @@ namespace JocysCom.ClassLibrary.Controls
 		public MessageBoxForm()
 		{
 			InitializeComponent();
+			// The icon of the program that shows it.
+			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 		}
 
 		public bool PlaySounds { get; set; }
@@ -145,16 +147,24 @@ namespace JocysCom.ClassLibrary.Controls
 			HeadingLabel.Text = heading;
 			var size = HeadingLabel.GetPreferredSize(new Size(HeadingLabel.MaximumSize.Width, 0));
 			headingWidth = size.Width;
-			headingOffset = size.Height + HeadingGap;
+			headingOffset = size.Height + Scaled(HeadingGap);
 			TextLabel.Top = HeadingLabel.Top + headingOffset;
 		}
 
-		/// <summary>The space between the heading and the text.</summary>
-		const int HeadingGap = 10;
+		/// <summary>The space between the heading and the text, in pixels at 100 %.</summary>
+		const int HeadingGap = 8;
 
-		/// <summary>The space between the buttons, and between the buttons and the edge.</summary>
-		const int ButtonGap = 6;
+		/// <summary>The space between the buttons, in pixels at 100 %.</summary>
+		const int ButtonGap = 8;
+
+		/// <summary>The space between the buttons and the edge, and round a button's wording, in pixels at 100 %.</summary>
 		const int ButtonMargin = 12;
+
+		/// <summary>Pixels at 100 % at the screen's scale, as the window's own places and sizes are scaled.</summary>
+		static int Scaled(int pixels)
+		{
+			return (int)Math.Round(pixels * ControlsHelper.DpiScale);
+		}
 
 		/// <summary>The width the buttons need, with the room on each side, or 0 before they are laid out.</summary>
 		int buttonsWidth;
@@ -164,18 +174,21 @@ namespace JocysCom.ClassLibrary.Controls
 		void LayoutButtons()
 		{
 			var shown = new[] { Button1, Button2, Button3 }.Where(x => x.DialogResult != DialogResult.None).ToArray();
-			var right = ClientSize.Width - ButtonMargin;
-			var total = ButtonMargin;
+			var margin = Scaled(ButtonMargin);
+			var gap = Scaled(ButtonGap);
+			var right = ClientSize.Width - margin;
+			var total = margin;
 			for (var i = shown.Length - 1; i >= 0; i--)
 			{
 				var button = shown[i];
-				var wording = TextRenderer.MeasureText(button.Text.Replace("&", ""), button.Font).Width + 2 * ButtonMargin;
-				button.Width = Math.Max(button.Width, wording);
+				var wording = TextRenderer.MeasureText(button.Text.Replace("&", ""), button.Font).Width + 2 * margin;
+				// As wide as its wording, and at least as wide as a dialog's button.
+				button.Width = Math.Max(button.MinimumSize.Width, wording);
 				button.Left = right - button.Width;
-				right = button.Left - ButtonGap;
-				total += button.Width + ButtonGap;
+				right = button.Left - gap;
+				total += button.Width + gap;
 			}
-			buttonsWidth = total + ButtonMargin - ButtonGap;
+			buttonsWidth = total + margin - gap;
 		}
 
 		public void AddResizeEvents()

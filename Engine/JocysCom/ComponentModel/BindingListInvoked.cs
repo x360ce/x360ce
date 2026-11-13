@@ -102,7 +102,8 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			var ex = task.Exception == null ? null : task.Exception.GetBaseException();
 			if (ex == null || ex is ObjectDisposedException)
 				return;
-			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
+				System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex).Throw());
 		}
 
 		// Lock to serialize concurrent list modifications.

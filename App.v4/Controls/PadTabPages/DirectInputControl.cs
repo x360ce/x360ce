@@ -53,6 +53,53 @@ namespace x360ce.App.Controls
 			CreateSlidersTable();
 			CreatePovsTable();
 			CreateEffectsTable();
+			foreach (var grid in new[] { DiAxisDataGridView, DiSlidersDataGridView, DiPovsDataGridView })
+			{
+				// A heading stands as its values do: a number's at the right.
+				foreach (DataGridViewColumn column in grid.Columns)
+					column.HeaderCell.Style.Alignment = column.DefaultCellStyle.Alignment;
+				grid.FontChanged += StateGrid_FitColumns;
+				grid.CellStyleContentChanged += StateGrid_FitColumns;
+				StateGrid_FitColumns(grid, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>The widest value a device reports in a state grid: DirectInput's range is 0 to 65535.</summary>
+		const string WidestStateValue = "65535";
+
+		/// <summary>
+		/// Makes each column of a state grid as wide as its heading or its widest value, whichever is wider, a number's at
+		/// least as wide as the widest a device reports; the room left after the last column stays empty. A number's heading
+		/// ends where its values end: as far in from the right as Windows draws a value, the room it keeps beside its text.
+		/// Measured again when the grid's font or padding changes; measured on a device context, as Windows measures a cell,
+		/// since without one Windows Forms measures every text with that room.
+		/// </summary>
+		void StateGrid_FitColumns(object sender, EventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var table = grid.DataSource as DataTable;
+			var line = new System.Drawing.Size(int.MaxValue, int.MaxValue);
+			using (var bitmap = new System.Drawing.Bitmap(1, 1))
+			using (var g = System.Drawing.Graphics.FromImage(bitmap))
+				foreach (DataGridViewColumn column in grid.Columns)
+				{
+					var number = table?.Columns[column.DataPropertyName]?.DataType == typeof(int);
+					var style = column.InheritedStyle;
+					var value = TextRenderer.MeasureText(g, WidestStateValue, style.Font, line, TextFormatFlags.Default).Width;
+					if (number)
+					{
+						var text = TextRenderer.MeasureText(g, WidestStateValue, style.Font, line, TextFormatFlags.NoPadding).Width;
+						var header = grid.ColumnHeadersDefaultCellStyle.Padding;
+						var padding = new Padding(header.Left, header.Top, (value - text) / 2, header.Bottom);
+						if (column.HeaderCell.Style.Padding != padding)
+							column.HeaderCell.Style.Padding = padding;
+					}
+					var width = column.GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
+					if (number)
+						width = Math.Max(width, value + style.Padding.Horizontal);
+					if (column.Width != width)
+						column.Width = width;
+				}
 		}
 
 		/// <summary>
@@ -273,6 +320,7 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetText(DeviceInstanceGuidTextBox, "");
 				ControlsHelper.SetText(DeviceTypeTextBox, "");
 				if (DiEffectsTable.Rows.Count > 0) DiEffectsTable.Rows.Clear();
+				DiObjectsDataGridView.DataSource = null;
 				return;
 			}
 			// This must be done for the first time device is connected in order to retrieve 

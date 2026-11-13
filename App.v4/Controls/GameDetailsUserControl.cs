@@ -464,7 +464,7 @@ namespace x360ce.App.Controls
 			var c = CurrentItem;
 			if (c == null)
 				return "";
-			var url = "https://www.google.co.uk/?#q=";
+			var url = "https://www.google.com/search?q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
 			url += System.Net.WebUtility.UrlEncode(keyName);
@@ -476,23 +476,17 @@ namespace x360ce.App.Controls
 			var c = CurrentItem;
 			if (c == null)
 				return "";
-			var url = "http://ngemu.com/search/5815705?q=";
+			var url = "https://www.ngemu.com/search/?o=relevance&q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
 			url += System.Net.WebUtility.UrlEncode(keyName);
 			return url;
 		}
 
+		/// <summary>NGemu's x360ce forum: a thread is reached by its number, which a game's name does not give.</summary>
 		string GetNGemuThreadUrl()
 		{
-			var c = CurrentItem;
-			if (c == null)
-				return "";
-			var q = "x360ce " + c.FileProductName;
-			var keyName = EngineHelper.GetKey(q, false);
-			var url = "http://ngemu.com/threads/";
-			url += System.Net.WebUtility.UrlEncode(keyName) + "/";
-			return url;
+			return CurrentItem == null ? "" : "https://www.ngemu.com/forums/x360ce.140/";
 		}
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)

@@ -582,7 +582,7 @@
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(297, 13);
 			this.label2.TabIndex = 29;
-			this.label2.Text = "Anonymous ID used when storing game configurations online:";
+			this.label2.Text = "Anonymous ID used when storing game configurations online";
 			// 
 			// label1
 			// 
@@ -592,7 +592,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(45, 13);
 			this.label1.TabIndex = 29;
-			this.label1.Text = "Disk ID:";
+			this.label1.Text = "Disk ID";
 			// 
 			// IncludeEnabledCheckBox
 			// 
@@ -615,7 +615,7 @@
 			this.MinimumInstanceCountLabel.Name = "MinimumInstanceCountLabel";
 			this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(100, 13);
 			this.MinimumInstanceCountLabel.TabIndex = 29;
-			this.MinimumInstanceCountLabel.Text = "Minimum Instances:";
+			this.MinimumInstanceCountLabel.Text = "Minimum Instances";
 			// 
 			// MinimumInstanceCountNumericUpDown
 			// 

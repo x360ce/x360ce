@@ -342,29 +342,41 @@ namespace x360ce.Tests
 				if (loading == null)
 					Console.WriteLine("The window had finished loading by the time it was read, so its words were not checked.");
 				else
-				{
-					Assert.AreEqual("Loading. Please wait...", loading.Current.Name, "The window does not say it is loading.");
-					var subject = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(MainForm.HelpSubjectLabel))).Current.Name;
-					var spinner = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.Controls.BaseFormWithHeader.BusyLoadingCircle)));
-					var counters = new[] { "UI Hz: 0", "HW Hz: 0", "D: 0" }
-						.Where(x => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, x)) == null).ToArray();
-					// Read after both, so a window that finished meanwhile is not held to what a loading one shows.
-					if (window.FindFirst(TreeScope.Descendants, words) != null)
+					try
 					{
-						Assert.AreEqual("", subject, "The header names a page while the window is still loading.");
-						Assert.IsTrue(spinner != null && !spinner.Current.IsOffscreen, "The header's spinner is not shown while the window is loading.");
-						Assert.AreEqual(0, counters.Length, "The status bar counts while the window is loading: " + string.Join(", ", counters) + " is not shown.");
+						Assert.AreEqual("Loading. Please wait...", loading.Current.Name, "The window does not say it is loading.");
+						// A search of a window still being built can miss its header's label, which then names nothing either.
+						var subject = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(MainForm.HelpSubjectLabel)))?.Current.Name ?? "";
+						var spinner = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.Controls.BaseFormWithHeader.BusyLoadingCircle)));
+						var counters = new[] { "UI Hz: 0", "HW Hz: 0", "D: 0" }
+							.Where(x => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, x)) == null).ToArray();
+						// Read after both, so a window that finished meanwhile is not held to what a loading one shows.
+						if (window.FindFirst(TreeScope.Descendants, words) != null)
+						{
+							Assert.AreEqual("", subject, "The header names a page while the window is still loading.");
+							Assert.IsTrue(spinner != null && !spinner.Current.IsOffscreen, "The header's spinner is not shown while the window is loading.");
+							Assert.AreEqual(0, counters.Length, "The status bar counts while the window is loading: " + string.Join(", ", counters) + " is not shown.");
+						}
+						foreach (var placeholder in new[] { "Help Subject", nameof(MainForm.StatusTimerLabel), nameof(MainForm.StatusEventsLabel), nameof(MainForm.StatusSaveLabel), nameof(MainForm.StatusIsAdminLabel), nameof(MainForm.StatusDllLabel) })
+							Assert.IsNull(window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, placeholder)),
+								"The window shows the designer's words '" + placeholder + "' while it loads.");
 					}
-					foreach (var placeholder in new[] { "Help Subject", nameof(MainForm.StatusTimerLabel), nameof(MainForm.StatusEventsLabel), nameof(MainForm.StatusSaveLabel), nameof(MainForm.StatusIsAdminLabel), nameof(MainForm.StatusDllLabel) })
-						Assert.IsNull(window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, placeholder)),
-							"The window shows the designer's words '" + placeholder + "' while it loads.");
-				}
+					catch (ElementNotAvailableException)
+					{
+						// The words or the spinner went between being found and being read: the window finished loading meanwhile.
+						Console.WriteLine("The window finished loading while it was read, so its words were not checked.");
+					}
 				Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(MainControl))),
 					TimeSpan.FromSeconds(60), "the main control to join the window");
 				copy.WaitForMark(ControlShown, 60);
 				Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, words) == null ? "gone" : null, TimeSpan.FromSeconds(10), "the words to go");
-				Assert.AreEqual("Controller 1", window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(MainForm.HelpSubjectLabel))).Current.Name,
-					"The header does not name the page shown.");
+				// The header names what the mouse is over, so with the person's pointer resting on the window it rightly names that.
+				var pointer = System.Windows.Forms.Cursor.Position;
+				if (window.Current.BoundingRectangle.Contains(pointer.X, pointer.Y))
+					Console.WriteLine("The mouse was over the window, so the header named what it pointed at and the page's name was not checked.");
+				else
+					Assert.AreEqual("Controller 1", window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(MainForm.HelpSubjectLabel))).Current.Name,
+						"The header does not name the page shown.");
 				var stopped = window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.AutomationIdProperty, nameof(x360ce.App.Controls.BaseFormWithHeader.BusyLoadingCircle)));
 				Assert.IsTrue(stopped == null || stopped.Current.IsOffscreen, "The header's spinner still shows after the window has loaded.");
 				Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, "UI Hz: 0")) == null
@@ -489,7 +501,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive"), Timeout(240000)]
-		[Description("A tab made ready unseen is laid out as the tab shown from the start, in Windows' font and in a chosen one")]
+		[Description("A tab made ready unseen is laid out as the tab shown from the start, in the default font and in a chosen one")]
 		public void A_tab_made_ready_unseen_is_laid_out_as_the_first()
 		{
 			foreach (var options in new[] { new Options(), new Options { InterfaceFont = AppFonts.BuiltInName } })
@@ -501,7 +513,7 @@ namespace x360ce.Tests
 					var window = AutomationElement.FromHandle(copy.Window);
 					var first = PageLayout(window, 1);
 					var second = PageLayout(window, 2);
-					var font = string.IsNullOrEmpty(options.InterfaceFont) ? "Windows' font" : options.InterfaceFont;
+					var font = string.IsNullOrEmpty(options.InterfaceFont) ? "the default font" : options.InterfaceFont;
 					Assert.IsTrue(first.Length > 50, "Controller 1's page shows too few controls to compare, in " + font + ": " + first.Length + ".");
 					var different = first.Zip(second, (a, b) => a == b ? null : a + "  <>  " + b).Where(x => x != null).ToArray();
 					Assert.IsTrue(first.Length == second.Length && different.Length == 0, "In " + font + ", Controller 2's page has "

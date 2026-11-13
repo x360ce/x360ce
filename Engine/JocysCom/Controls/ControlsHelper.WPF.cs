@@ -44,11 +44,11 @@ namespace JocysCom.ClassLibrary.Controls
 				return true;
 			//If WPF hosted in WinForms.
 			var ea = System.Reflection.Assembly.GetEntryAssembly();
-			if (ea != null && ea.Location.Contains("VisualStudio"))
+			if (ea != null && string.Concat(ea.GetName().Name, " ", AppContext.BaseDirectory).Contains("VisualStudio"))
 				return true;
 			//If WPF hosted in WinForms.
 			ea = System.Reflection.Assembly.GetExecutingAssembly();
-			if (ea != null && ea.Location.Contains("VisualStudio"))
+			if (ea != null && ea.GetName().Name.Contains("VisualStudio"))
 				return true;
 			return false;
 		}

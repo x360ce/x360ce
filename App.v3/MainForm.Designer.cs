@@ -411,7 +411,7 @@ namespace x360ce.App
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(140, 13);
 			this.label1.TabIndex = 5;
-			this.label1.Text = "Select a game to customize:";
+			this.label1.Text = "Select a game to customize";
 			// 
 			// GameToCustomizeComboBox
 			// 

@@ -202,7 +202,7 @@
             this.ShowGamesDropDownButton});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
-			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.GamesToolStrip.Size = new System.Drawing.Size(781, 31);
 			this.GamesToolStrip.TabIndex = 2;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
@@ -307,8 +307,8 @@
 			this.ScanProgressLevel0Label.AutoSize = true;
 			this.ScanProgressLevel0Label.BackColor = System.Drawing.SystemColors.Control;
 			this.ScanProgressLevel0Label.Location = new System.Drawing.Point(3, 0);
+			this.ScanProgressLevel0Label.Margin = new System.Windows.Forms.Padding(4);
 			this.ScanProgressLevel0Label.Name = "ScanProgressLevel0Label";
-			this.ScanProgressLevel0Label.Padding = new System.Windows.Forms.Padding(3);
 			this.ScanProgressLevel0Label.Size = new System.Drawing.Size(163, 21);
 			this.ScanProgressLevel0Label.TabIndex = 0;
 			this.ScanProgressLevel0Label.Text = "[ScanProgressLevel0Label]";
@@ -330,6 +330,7 @@
 			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 0);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
+			this.ScanProgressPanel.Padding = new System.Windows.Forms.Padding(4);
 			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 50);
 			this.ScanProgressPanel.TabIndex = 4;
 			this.ScanProgressPanel.Visible = false;
@@ -342,7 +343,9 @@
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.tableLayoutPanel1.Controls.Add(this.ScanProgressLevel0Label, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.ScanProgressLevel1Label, 0, 1);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -355,8 +358,8 @@
 			this.ScanProgressLevel1Label.AutoSize = true;
 			this.ScanProgressLevel1Label.BackColor = System.Drawing.SystemColors.Control;
 			this.ScanProgressLevel1Label.Location = new System.Drawing.Point(3, 21);
+			this.ScanProgressLevel1Label.Margin = new System.Windows.Forms.Padding(4);
 			this.ScanProgressLevel1Label.Name = "ScanProgressLevel1Label";
-			this.ScanProgressLevel1Label.Padding = new System.Windows.Forms.Padding(3);
 			this.ScanProgressLevel1Label.Size = new System.Drawing.Size(163, 21);
 			this.ScanProgressLevel1Label.TabIndex = 1;
 			this.ScanProgressLevel1Label.Text = "[ScanProgressLevel1Label]";

@@ -237,16 +237,13 @@ namespace x360ce.App
 			// The document is Markdown and there is only one copy of it. It becomes what this box
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
-			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			// A click on a link opens its address.
+			x360ce.Engine.MarkdownRtf.Show(box, text, JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl);
 			// The colours are written into the document, so it is written again in the new ones, for as
 			// long as the box exists: the event outlives it.
-			EventHandler reload = (s, e) => box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			EventHandler reload = (s, e) => x360ce.Engine.MarkdownRtf.Show(box, text, JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl);
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += reload;
 			box.Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= reload;
-			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
-			{
-				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);
-			};
 		}
 
 	
@@ -582,23 +579,28 @@ namespace x360ce.App
 			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
 		}
 
-		/// <summary>The pale background of a device's row in the device list, one for each way the program reads devices.</summary>
+		/// <summary>
+		/// The pale background of a device's row in the device lists and the controller tabs' lists, one for each way the
+		/// program reads devices; the plain window for a mapping whose device is not known.
+		/// </summary>
 		/// <remarks>
 		/// Blue for DirectInput, as x360ce 5 colours it, teal for Raw Input, and violet for the devices plugins make. Green and
 		/// the warm colours are left out: the status lights use them to say how well something works, and a source is no
-		/// verdict. Faint enough for text to read as on the plain window, and dark in the dark theme.
+		/// verdict. Faint enough for text, and the fainter text of an unavailable row, to read as on the plain window: each
+		/// dark tint stands as far above the dark field (BackgroundWhite) in lightness as its light tint stands below white,
+		/// in the same hue, with about twice the strength of colour, which keeps the three apart so near black.
 		/// </remarks>
 		public static Color GetInputSourceTint(Engine.Data.UserDevice device)
 		{
 			var dark = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark;
-			switch (device.InputSource)
+			switch (device?.InputSource)
 			{
 				case InputSourceType.DirectInput:
-					return dark ? Color.FromArgb(0x2A, 0x33, 0x42) : Color.FromArgb(0xEA, 0xF1, 0xFB);
+					return dark ? Color.FromArgb(0x15, 0x1D, 0x2B) : Color.FromArgb(0xEA, 0xF1, 0xFB);
 				case InputSourceType.RawInput:
-					return dark ? Color.FromArgb(0x25, 0x3B, 0x39) : Color.FromArgb(0xE5, 0xF5, 0xF2);
+					return dark ? Color.FromArgb(0x0B, 0x21, 0x1F) : Color.FromArgb(0xE5, 0xF5, 0xF2);
 				case InputSourceType.Plugin:
-					return dark ? Color.FromArgb(0x36, 0x2F, 0x44) : Color.FromArgb(0xF1, 0xEB, 0xFA);
+					return dark ? Color.FromArgb(0x21, 0x1A, 0x2E) : Color.FromArgb(0xF1, 0xEB, 0xFA);
 				default:
 					return SystemColors.Window;
 			}
@@ -759,11 +761,84 @@ namespace x360ce.App
 		#region Chart box
 
 		/// <summary>The room round a chart inside its box, and the rounding of the box's corners, in device-independent pixels.</summary>
-		const int ChartPadding = 10;
-		const int ChartCornerRadius = 5;
+		const int ChartPadding = 12;
+		const int ChartCornerRadius = 4;
 
 		/// <summary>The faint grey of a chart's frame and grid lines.</summary>
 		public static readonly Color ChartLineColor = Color.FromArgb(32, Color.Gray);
+
+		/// <summary>
+		/// The height a table's rows need: each row as tall as its tallest control with its margins, as the table makes it,
+		/// leaving out a control that takes its height from the rows: one that spans several, or stretches to its own.
+		/// </summary>
+		/// <remarks>
+		/// For a control as tall as its rows, which a table that fills it cannot tell it. A control that stretches to its row
+		/// is as tall as the row already is, so counting it would keep a row made taller from ever growing shorter.
+		/// </remarks>
+		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table)
+		{
+			const System.Windows.Forms.AnchorStyles topAndBottom = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
+			var rows = 0;
+			for (var row = 0; row < table.RowCount; row++)
+			{
+				var tallest = 0;
+				foreach (System.Windows.Forms.Control control in table.Controls)
+				{
+					if (table.GetRow(control) != row || table.GetRowSpan(control) > 1)
+						continue;
+					var stretches = control.Dock == System.Windows.Forms.DockStyle.None
+						? (control.Anchor & topAndBottom) == topAndBottom
+						: control.Dock != System.Windows.Forms.DockStyle.Top && control.Dock != System.Windows.Forms.DockStyle.Bottom;
+					if (stretches)
+						continue;
+					tallest = Math.Max(tallest, (control.AutoSize ? control.GetPreferredSize(Size.Empty).Height : control.Height) + control.Margin.Vertical);
+				}
+				rows += tallest;
+			}
+			return rows;
+		}
+
+		/// <summary>
+		/// Room given in pixels at 100 %, at the screen's scale, for a control made after Windows Forms has scaled the window
+		/// it goes on, which it then does not scale.
+		/// </summary>
+		public static System.Windows.Forms.Padding ScaledPadding(int left, int top, int right, int bottom)
+		{
+			var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+			return new System.Windows.Forms.Padding((int)Math.Round(left * scale), (int)Math.Round(top * scale),
+				(int)Math.Round(right * scale), (int)Math.Round(bottom * scale));
+		}
+
+		/// <summary>
+		/// Widens a window, within its screen's working area, by what its tool bars lack to show every item on themselves
+		/// rather than in their overflow menus.
+		/// </summary>
+		/// <remarks>
+		/// Called from the window's own load, when the tool bars' pictures and text are at the screen's scale; the window is
+		/// themed first, as it would otherwise be only when it first becomes active, after it is placed. What stands beside a
+		/// tool bar is anchored or docked to both sides, so it takes the width. Each tool bar is measured and widened with its
+		/// overflow menu off: Windows Forms measures an item in that menu as a menu item, wider than on the bar, and leaves it
+		/// there while the bar is narrower than that.
+		/// </remarks>
+		/// <returns>True when the window was widened, so it is placed again as asked.</returns>
+		public static bool WidenToShowToolBars(System.Windows.Forms.Form form)
+		{
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(form);
+			var strips = JocysCom.ClassLibrary.Controls.ControlsHelper.GetAll<System.Windows.Forms.ToolStrip>(form)
+				.Where(x => x.CanOverflow && !(x is System.Windows.Forms.StatusStrip)).ToList();
+			var lacking = 0;
+			foreach (var strip in strips)
+			{
+				strip.CanOverflow = false;
+				strip.PerformLayout();
+				lacking = Math.Max(lacking, strip.PreferredSize.Width - strip.Width);
+			}
+			if (lacking > 0)
+				form.Width = Math.Min(form.Width + lacking, System.Windows.Forms.Screen.FromControl(form).WorkingArea.Width);
+			foreach (var strip in strips)
+				strip.CanOverflow = true;
+			return lacking > 0;
+		}
 
 		/// <summary>Where a chart stands inside its box: the box less the room round it.</summary>
 		public static Rectangle ChartBounds(System.Windows.Forms.Control box)
@@ -773,15 +848,17 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Paints a chart's box as the WPF version draws it: rounded, without an edge, in the window colour, the control
-		/// colour while disabled. The box's own background is transparent, so its corners show the page.
+		/// Paints a chart's box as the WPF version draws it: rounded, without an edge, in the window colour; while disabled, in
+		/// the colour of a box that cannot be changed, as the disabled boxes beside it. The box's own background is
+		/// transparent, so its corners show the page.
 		/// </summary>
-		public static void PaintChartBox(Graphics g, System.Windows.Forms.Control box, bool enabled)
+		/// <remarks>A disabled chart still shows what it plots, at <see cref="EngineHelper.DisabledOpacity"/>, so the page keeps its look.</remarks>
+		public static void PaintChartBox(Graphics g, System.Windows.Forms.Control box)
 		{
 			var smoothing = g.SmoothingMode;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 			var corner = (int)Math.Round(ChartCornerRadius * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
-			using (var face = new SolidBrush(enabled ? SystemColors.Window : SystemColors.Control))
+			using (var face = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.FrameFace(box)))
 			using (var path = RoundedRectangle(new Rectangle(0, 0, box.Width - 1, box.Height - 1), corner))
 				g.FillPath(face, path);
 			g.SmoothingMode = smoothing;

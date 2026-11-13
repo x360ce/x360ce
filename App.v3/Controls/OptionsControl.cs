@@ -19,6 +19,8 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (DesignMode) return;
+			// Each folder stands with 4 device-independent pixels of room round its name.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetItemRoom(GameScanLocationsListBox, 4);
 			// System until the file says otherwise; a file without the setting leaves it there.
 			ThemeComboBox.SelectedIndex = 0;
 			ThemeComboBox.SelectedIndexChanged += (s, e) =>

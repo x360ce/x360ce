@@ -16,9 +16,42 @@ namespace x360ce.App.Controls
 			// What the header goes back to before anything has set a subject of its own.
 			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
+			// The header's lines follow its fonts, never its text.
+			HelpSubjectLabel.FontChanged += (s, e) => FitHeader();
+			HelpBodyLabel.FontChanged += (s, e) => FitHeader();
+			FitHeader();
+			// The header body's colour is the theme's, so it is taken again in a new one.
+			EventHandler themeChanged = (s, e) => ColorHeaderBody();
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
 		}
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
+
+		/// <summary>
+		/// Makes the header one line of its subject and two of its tip tall, in their fonts, whatever they say: a tip longer
+		/// than two lines ends with an ellipsis. The header, and every page below it, then stays where it is as the text changes.
+		/// </summary>
+		/// <remarks>
+		/// A line is as tall as Windows draws it: at some scales a pixel taller than the font's height, and Windows leaves out a
+		/// last line it cannot draw whole, so the larger of the two is taken.
+		/// </remarks>
+		void FitHeader()
+		{
+			var subject = Lines(HelpSubjectLabel, 1) + HelpSubjectLabel.Padding.Vertical;
+			if (HelpSubjectLabel.Height != subject)
+				HelpSubjectLabel.Height = subject;
+			var tip = Lines(HelpBodyLabel, 2) + HelpBodyLabel.Padding.Vertical;
+			if (HelpBodyLabel.Height != tip)
+				HelpBodyLabel.Height = tip;
+		}
+
+		/// <summary>The height of a number of lines of a label's text as Windows draws them.</summary>
+		internal static int Lines(Label label, int count)
+		{
+			var text = string.Join("\n", System.Linq.Enumerable.Repeat("A", count));
+			return Math.Max(count * label.Font.Height, TextRenderer.MeasureText(text, label.Font).Height);
+		}
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -51,8 +84,9 @@ namespace x360ce.App.Controls
 		private void InitLoadingCircle()
 		{
 			BusyLoadingCircle.Visible = false;
-			BusyLoadingCircle.Top = HeaderPictureBox.Top;
-			BusyLoadingCircle.Left = HeaderPictureBox.Left;
+			// Over the program's picture, wherever the header's table puts it.
+			BusyLoadingCircle.Parent = HeaderPictureBox;
+			BusyLoadingCircle.Dock = DockStyle.Fill;
 		}
 
 		private readonly object TasksLock = new object();
@@ -179,11 +213,20 @@ namespace x360ce.App.Controls
 			else if (args.Length > 0)
 				body = string.Format(body, args);
 			HelpBodyLabel.Text = body;
-			// Update body colors.
-			if (icon == MessageBoxIcon.Error)
-				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", Color.DarkRed);
-			else if (icon == MessageBoxIcon.Information)
-				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.DarkGreen);
+			headerIcon = icon;
+			ColorHeaderBody();
+		}
+
+		/// <summary>What the header body says: an error, information, or neither.</summary>
+		MessageBoxIcon headerIcon;
+
+		/// <summary>The header body in the theme's warning colour for an error, its information colour for information, and the text colour otherwise.</summary>
+		void ColorHeaderBody()
+		{
+			if (headerIcon == MessageBoxIcon.Error)
+				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning");
+			else if (headerIcon == MessageBoxIcon.Information)
+				HelpBodyLabel.ForeColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundInformation");
 			else
 				HelpBodyLabel.ForeColor = SystemColors.ControlText;
 		}

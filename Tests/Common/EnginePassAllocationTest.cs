@@ -157,7 +157,7 @@ namespace x360ce.Tests
 			if (_beside != null)
 				_beside();
 			_pass(null, null);
-			_pacer.Wait((int)_helper.Frequency);
+			_pacer.WaitMicroseconds((int)_helper.Frequency);
 		}
 
 		/// <param name="before">What the scenario measured when the pass made objects, or null when it was not measured.</param>

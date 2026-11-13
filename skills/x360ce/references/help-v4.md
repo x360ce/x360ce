@@ -47,7 +47,7 @@ A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can t
 
 ## DirectInput and Raw Input
 
-x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet. The `[Source]` column says how each row is read.
+x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet, and a controller tab's list tints its rows the same way. The `[Source]` column says how each row is read.
 
 - `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
 - Vibration and wheel forces reach the controller from either row. Raw Input only reads, so a `Raw Input` row's go through the same controller's `DirectInput` side. An Xbox controller's DirectInput side takes none: `[Pass Through]` on the `[Force Feedback]` page reaches its motors from either row.
@@ -144,8 +144,8 @@ The emulated controllers can be switched off without closing the program, so a g
 ## Colours and font
 
 1. `[Options]` tab → `[General]` → `[Appearance]`, on the right under `[Game Scan Locations]`: `[Theme]` chooses light or dark colours. `System` follows the Windows setting for apps. The colours change at once.
-2. `[Font]` chooses the font the windows are drawn in: `Default`, which names Windows' own font; `Selawik (built in)`, which x360ce carries; or a font installed on the computer, such as Segoe UI.
-3. `[Size]` chooses the size of the text: `Default`, Windows' own size for its own font and Windows' text size for any other, or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
+2. `[Font]` chooses the font the windows are drawn in: `Default (Segoe UI)`, Windows' own; `Selawik (built in)`, which x360ce carries; or a font installed on the computer, such as Arial.
+3. `[Size]` chooses the size of the text: `Default`, Windows' text size, or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
 4. A new font or size is used when x360ce starts again. `[Restart x360ce]` appears under the lists to do that now; it saves the settings first.
 5. A font removed from Windows is forgotten when x360ce starts, and the default is used.
 6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
@@ -196,8 +196,10 @@ The right half is mixed rather than picked from that list: the more that is wron
 the further it moves towards red. A tab with two faults therefore looks worse than a tab
 with one, so the tab most in need of attention is the one that stands out.
 
-Blue is not a fault. `[Show XInput State]` only decides where the numbers shown on screen
-come from - read back from the emulated controller, or worked out from your own device.
+Blue is not a fault. `[Show XInput State]` only decides where the `[General]` page's numbers
+and picture come from - read back from the emulated controller, or worked out from your own
+devices. The chart on a trigger's or stick's page always shows the selected device's reading
+and what its mapping makes of it.
 The emulated controller works either way, so with that setting off the program cannot say
 whether one exists and says so rather than guessing.
 

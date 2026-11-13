@@ -77,7 +77,7 @@
 			this.ButtonNameLabel.Name = "ButtonNameLabel";
 			this.ButtonNameLabel.Size = new System.Drawing.Size(72, 13);
 			this.ButtonNameLabel.TabIndex = 5;
-			this.ButtonNameLabel.Text = "Button Name:";
+			this.ButtonNameLabel.Text = "Button Name";
 			// 
 			// MappedAxisTextBox
 			//

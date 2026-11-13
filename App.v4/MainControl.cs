@@ -23,6 +23,11 @@ namespace x360ce.App
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// The room round the controls on the pages that scale themselves, given once the pages are scaled: Windows Forms
+			// scales such a control's own margin again each time a table round it resumes, so the designer's would be scaled
+			// several times over.
+			RecorderPanel.Padding = AppHelper.ScaledPadding(12, 4, 12, 12);
+			OptionsPanel.RemotePortNumericUpDown.Margin = AppHelper.ScaledPadding(4, 4, 4, 4);
 			FillBuletImageList();
 			// Before the tab is shown, so it never shows the controller of the tab before, and drawn once the switch is over.
 			MainTabControl.Selecting += (s, e) =>
@@ -37,7 +42,7 @@ namespace x360ce.App
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
 			Pad4TabPage.Text = "Controller 4";
-			GamesToolStrip_Resize(null, null);
+			GamesToolStrip_Layout(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Other option.
 			TestButton.Visible = SettingsManager.Options.ShowTestButton;
@@ -256,21 +261,36 @@ namespace x360ce.App
 			SettingsManager.UpdateCurrentGame(game);
 		}
 
-		private void GamesToolStrip_Resize(object sender, EventArgs e)
+		/// <summary>
+		/// Gives the game list what the tool bar's other items leave, each time the tool bar lays itself out: when it is
+		/// resized, and when its items change size or are shown or hidden, as the theme, a screen of another scale and the
+		/// options make them, so no item is pushed into the overflow menu. The list ends where neighbours stand apart, 8 pixels
+		/// at 100 %, before the first button to its right.
+		/// </summary>
+		private void GamesToolStrip_Layout(object sender, LayoutEventArgs e)
 		{
 			GameToCustomizeComboBox.AutoSize = false;
 			var width = GamesToolStrip.DisplayRectangle.Width;
+			ToolStripItem next = null;
 			foreach (ToolStripItem tsi in GamesToolStrip.Items)
 			{
-				if (!(tsi == GameToCustomizeComboBox))
-				{
-					width -= tsi.Width;
-					width -= tsi.Margin.Horizontal;
-				}
+				// A hidden item takes no room.
+				if (tsi == GameToCustomizeComboBox || !tsi.Available)
+					continue;
+				// As wide as it stands on the bar: an item in the overflow menu reads the menu's width.
+				width -= tsi.GetPreferredSize(Size.Empty).Width;
+				width -= tsi.Margin.Horizontal;
+				// The items on the right stand from the bar's end in their order, so the last of them is the list's neighbour.
+				if (tsi.Alignment == ToolStripItemAlignment.Right)
+					next = tsi;
 			}
-			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
-			// Resolve disappearing.
-			GamesToolStrip.PerformLayout();
+			var gap = (int)Math.Round(8 * ControlsHelper.DpiScale);
+			// The margins between the list and its neighbour are given to the gap.
+			width -= GameToCustomizeComboBox.Margin.Left + gap - (next?.Margin.Left ?? GameToCustomizeComboBox.Margin.Right);
+			width = Math.Max(0, width);
+			// A new width lays the tool bar out again, which finds the same width and stops.
+			if (GameToCustomizeComboBox.Width != width)
+				GameToCustomizeComboBox.Width = width;
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)

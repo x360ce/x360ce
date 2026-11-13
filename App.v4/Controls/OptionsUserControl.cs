@@ -23,11 +23,14 @@ namespace x360ce.App.Controls
 				return;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
 			AppHelper.LoadHelp(HidHideHelpRichTextBox, AppHelper.HelpHidHideResource);
+			// Each folder stands with 4 device-independent pixels of room round its name.
+			FormsTheme.SetItemRoom(GameScanLocationsListBox, 4);
 			// The theme that follows Windows is named the way Windows names it.
 			ThemeComboBox.Format += (s, e) => { if (e.ListItem is ThemeType theme && theme == ThemeType.Auto) e.Value = "System"; };
 			// The lists hold the choices as the options keep them, and show each by what it is.
 			FontComboBox.Format += (s, e) => e.Value = AppFonts.ChoiceText((string)e.ListItem);
-			SizeComboBox.Format += (s, e) => e.Value = AppFonts.SizeText(SettingsManager.Options.InterfaceFont, (float)e.ListItem);
+			SizeComboBox.Format += (s, e) => e.Value = AppFonts.SizeText((float)e.ListItem);
+			PollingRateComboBox.Format += (s, e) => e.Value = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription((UpdateFrequency)e.ListItem);
 			// The hotkey field records what is pressed, the way every other program's shortcut field
 			// does, rather than being typed into.
 			EmulationHotkeyTextBox.ReadOnly = true;
@@ -36,6 +39,9 @@ namespace x360ce.App.Controls
 			// is parented, so the cue is put back whenever a handle is made.
 			EmulationHotkeyTextBox.HandleCreated += (s, e) => HotkeyHelper.SetCue(EmulationHotkeyTextBox, "Click, then press keys");
 			EmulationHotkeyTextBox.KeyDown += EmulationHotkeyTextBox_KeyDown;
+			EventHandler themeChanged = (s, e) => ColorEmulationHotkey();
+			FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => FormsTheme.ThemeChanged -= themeChanged;
 			// The buttons field records the buttons held on the emulated controllers in the same way, while it has the focus.
 			EmulationButtonsTextBox.ReadOnly = true;
 			EmulationButtonsTextBox.ShortcutsEnabled = false;
@@ -271,7 +277,7 @@ namespace x360ce.App.Controls
 
 		/// <summary>
 		/// Lists the font choices with the saved one selected, writing nothing back, and opens the list wide enough for the
-		/// longest name, however narrow the box; then the sizes, whose default follows the font.
+		/// longest name, however narrow the box; then the sizes.
 		/// </summary>
 		void ShowFontChoices()
 		{
@@ -288,8 +294,8 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Lists the sizes around the default of the font chosen, with the saved one selected, writing nothing back; Restart
-		/// shows while the font or size chosen is not the one in use.
+		/// Lists the sizes around the default, with the saved one selected, writing nothing back; Restart shows while the font
+		/// or size chosen is not the one in use.
 		/// </summary>
 		void ShowSizeChoices()
 		{
@@ -297,7 +303,7 @@ namespace x360ce.App.Controls
 			_LoadingFonts = true;
 			SizeComboBox.BeginUpdate();
 			SizeComboBox.Items.Clear();
-			SizeComboBox.Items.AddRange(AppFonts.Sizes(o.InterfaceFont, o.InterfaceFontSize).Cast<object>().ToArray());
+			SizeComboBox.Items.AddRange(AppFonts.Sizes(o.InterfaceFontSize).Cast<object>().ToArray());
 			SizeComboBox.SelectedItem = o.InterfaceFontSize;
 			SizeComboBox.EndUpdate();
 			_LoadingFonts = false;
@@ -314,14 +320,14 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		/// <summary>Keeps the font chosen, lists the sizes around its default, and says in the header when it is used.</summary>
+		/// <summary>Keeps the font chosen, and says in the header when it is used.</summary>
 		void FontComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var choice = FontComboBox.SelectedItem as string;
 			if (_LoadingFonts || choice == null)
 				return;
 			SettingsManager.Options.InterfaceFont = choice;
-			ShowSizeChoices();
+			RestartButton.Visible = FontWaiting;
 			SayWhenUsed();
 		}
 
@@ -436,9 +442,8 @@ namespace x360ce.App.Controls
 				case nameof(Options.EmulationHotkey):
 					// Red when the box is on and Windows refused the combination, which means another program holds it.
 					var held = MainForm.Current.ApplyEmulationHotkey();
-					EmulationHotkeyTextBox.ForeColor = held || !o.EmulationHotkeyEnabled || string.IsNullOrEmpty(o.EmulationHotkey)
-						? System.Drawing.SystemColors.WindowText
-						: FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.Firebrick);
+					_EmulationHotkeyRefused = !held && o.EmulationHotkeyEnabled && !string.IsNullOrEmpty(o.EmulationHotkey);
+					ColorEmulationHotkey();
 					break;
 				case nameof(Options.EmulationButtonsEnabled):
 				case nameof(Options.EmulationButtons):
@@ -447,6 +452,17 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
+		}
+
+		/// <summary>True while the hotkey is on and Windows refused it, because another program holds it.</summary>
+		bool _EmulationHotkeyRefused;
+
+		/// <summary>Draws the hotkey in the theme's warning colour while it is refused, and in the text colour otherwise.</summary>
+		void ColorEmulationHotkey()
+		{
+			EmulationHotkeyTextBox.ForeColor = _EmulationHotkeyRefused
+				? FormsTheme.GetColor("ForegroundWarning")
+				: System.Drawing.SystemColors.WindowText;
 		}
 
 		/// <summary>Records the keys pressed into the field. Backspace and Delete clear it; Escape puts back what was there.</summary>

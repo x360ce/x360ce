@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 3.8.14.0, built 2026-10-25.
+Version 3.11.25.0, built 2026-11-12.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -111,7 +111,7 @@ not shown in this state of the program.
 [List]      │   │   │   │   ├── D-pad Right                                             # D-Pad right button.
 [List]      │   │   │   │   └── D-pad Down                                              # D-Pad down button.
 [Tab]       │   │   │   ├── Axis to Button                                              # How far an axis must move before a button mapped to it counts as pressed.
-[Section]   │   │   │   │   └── DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):
+[Section]   │   │   │   │   └── DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)
 [Group]     │   │   │   │       └── Axis to button -> AxisToButtonUserControl           # How far an axis must move before the button mapped to it counts as pressed.
 [Tab]       │   │   │   ├── Advanced                                                    # Device type and pass through, combining several devices into one controller, trigger dead zones, and the D-Pad from an axis.
 [Section]   │   │   │   │   ├── Triggers
@@ -166,24 +166,24 @@ not shown in this state of the program.
 [Button]    │   │   └── Save                                                            # Writes every setting to x360ce.ini now.
 [Control]   │   └── ThumbUserControl                                                    # Dead zone, anti dead zone and sensitivity of one axis of a stick.
 [Section]   │       └── X - Horizontal Axis
-[Value]     │           ├── Sensitivity value                                           # The sensitivity slider's setting.
-[Slider]    │           ├── Sensitivity 0..100                                          # How the stick's movement is curved: slower near the centre, or faster.
-[Value]     │           ├── Anti dead zone value                                        # The anti dead zone slider's setting.
-[Value]     │           ├── Dead zone value                                             # The dead zone slider's setting.
-[Slider]    │           ├── Anti dead zone 0..100                                       # How far the game's own dead zone is skipped, so a small move is not lost, in per cent.
+[Toolbar]   │           ├── Presets                                                     # Common pairs of dead zone and anti dead zone.
+[Button]    │           │   └── Apply Preset                                            # Sets the dead zone and anti dead zone to one of the common pairs listed.
+[Button]    │           │       ├── 5% Dead Zone, 100% Controller Anti-Dead Zone
+[Button]    │           │       ├── 100% Controller Anti-Dead Zone
+[Button]    │           │       ├── 80% Controller Anti-Dead Zone
+[Button]    │           │       ├── 60% Controller Anti-Dead Zone
+[Button]    │           │       ├── 40% Controller Anti-Dead Zone
+[Button]    │           │       └── 20% Controller Anti-Dead Zone
 [Slider]    │           ├── Dead zone 0..100                                            # How far the stick must move before the game sees it move, in per cent.
-[Number]    │           ├── Anti dead zone 0..32767                                     # How far the game's own dead zone is skipped, so a small move is not lost, in raw units.
-[Number]    │           ├── Sensitivity -100..100 (hidden)                              # How the stick's movement is curved, as a number.
+[Value]     │           ├── Dead zone value                                             # The dead zone slider's setting.
 [Number]    │           ├── Dead zone 0..32767                                          # How far the stick must move before the game sees it move, in raw units.
+[Slider]    │           ├── Anti dead zone 0..100                                       # How far the game's own dead zone is skipped, so a small move is not lost, in per cent.
+[Value]     │           ├── Anti dead zone value                                        # The anti dead zone slider's setting.
+[Number]    │           ├── Anti dead zone 0..32767                                     # How far the game's own dead zone is skipped, so a small move is not lost, in raw units.
+[Slider]    │           ├── Sensitivity 0..100                                          # How the stick's movement is curved: slower near the centre, or faster.
+[Value]     │           ├── Sensitivity value                                           # The sensitivity slider's setting.
 [CheckBox]  │           ├── Invert                                                      # Turns the sensitivity curve the other way.
-[Toolbar]   │           └── Presets                                                     # Common pairs of dead zone and anti dead zone.
-[Button]    │               └── Apply Preset                                            # Sets the dead zone and anti dead zone to one of the common pairs listed.
-[Button]    │                   ├── 5% DeadZone, 100% Controller Anti-DeadZone
-[Button]    │                   ├── 100% Controller Anti-DeadZone
-[Button]    │                   ├── 80% Controller Anti-DeadZone
-[Button]    │                   ├── 60% Controller Anti-DeadZone
-[Button]    │                   ├── 40% Controller Anti-DeadZone
-[Button]    │                   └── 20% Controller Anti-DeadZone
+[Number]    │           └── Sensitivity -100..100 (hidden)                              # How the stick's movement is curved, as a number.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, how fast it is doing it, and which files it uses.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.

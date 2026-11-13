@@ -12,10 +12,58 @@ namespace JocysCom.ClassLibrary.Mcp
 	{
 		static IEnumerable<object> OtherForms(object root)
 		{
-			return Application.OpenForms.Cast<Form>()
+			var windows = Application.OpenForms.Cast<Form>()
 				.Where(x => x != root && x.Visible && !(x is OverlayForm) && !string.IsNullOrEmpty(x.Name))
 				.Cast<object>()
 				.ToList();
+			windows.AddRange(OpenMenus());
+			return windows;
+		}
+
+		/// <summary>The path a menu open on its own goes by when it has no name of its own.</summary>
+		const string MenuName = "Menu";
+
+		delegate bool EnumThreadWindowsProc(IntPtr window, IntPtr data);
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+		static extern bool EnumThreadWindows(uint threadId, EnumThreadWindowsProc callback, IntPtr data);
+
+		[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+		static extern uint GetCurrentThreadId();
+
+		/// <summary>
+		/// The menus open on their own, such as one a button shows under itself: each is a window of the program while it is
+		/// open, named by its name or <see cref="MenuName"/>, and its entries are read and pressed by path. A menu that drops
+		/// out of an entry is reached through that entry instead. Called on the interface thread, whose windows they are.
+		/// </summary>
+		static List<object> OpenMenus()
+		{
+			var menus = new List<object>();
+			EnumThreadWindowsProc collect = (window, data) =>
+			{
+				var menu = Control.FromHandle(window) as ToolStripDropDown;
+				if (menu != null && menu.Visible && menu.OwnerItem == null)
+					menus.Add(menu);
+				return true;
+			};
+			EnumThreadWindows(GetCurrentThreadId(), collect, IntPtr.Zero);
+			GC.KeepAlive(collect);
+			return menus;
+		}
+
+		/// <summary>What a press tells of a menu it left open: its path and the entries that can be pressed; null when none is open.</summary>
+		static string OpenMenuNote()
+		{
+			var menu = OpenMenus().Cast<ToolStripDropDown>().LastOrDefault();
+			if (menu == null)
+				return null;
+			var name = WindowName(menu);
+			var entries = menu.Items.Cast<ToolStripItem>()
+				.Where(x => x.Available && x.Enabled && !(x is ToolStripSeparator) && !string.IsNullOrEmpty(x.Name))
+				.Select(x => name + "/" + x.Name + " (" + UiTreeWalker.ReadAlone(x, null).Name + ")")
+				.ToArray();
+			return "The menu " + name + " is open." + (entries.Length == 0 ? "" : " Its entries, pressed with ui_invoke: " + string.Join(", ", entries) + ".");
 		}
 
 		/// <summary>What ui_current reports for a Windows Forms window.</summary>

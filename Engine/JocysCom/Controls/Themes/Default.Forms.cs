@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Xml;
@@ -29,8 +30,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 	/// title bars.
 	/// The light theme is the Windows colours. In both themes, push buttons, tool bars, tab strips, check boxes, group boxes
 	/// and drop-down lists are drawn as the WPF programs draw them with Default.xaml: buttons and lists flat, filled and
-	/// rounded, tabs rounded and apart, frames rounded, and a disabled control at half strength. High contrast keeps the
-	/// Windows look.
+	/// rounded, tabs rounded and apart, frames rounded, and a disabled control at half strength. Scroll bars are drawn whole,
+	/// with their arrows, where Windows 11 draws them thin until the mouse is over them. High contrast keeps the Windows look.
 	/// <para>
 	/// The colours are read as XML from Default_DarkTheme.xaml, embedded in the program as a resource, and no
 	/// WPF type is named here: loading WPF makes a Windows Forms process DPI aware mid-run.
@@ -100,6 +101,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var changed = dark != IsDark || SystemInformation.HighContrast != _highContrast;
 			_highContrast = SystemInformation.HighContrast;
 			IsDark = dark;
+			// The grids dim an unavailable row in the theme's disabled text colour; high contrast keeps Windows' grey text.
+			ControlsHelper.UnavailableForeColor = _highContrast ? Color.Empty : GetColor("ForegroundDisabled");
 			if (dark || changed)
 			{
 				ToolStripManager.VisualStylesEnabled = !dark;
@@ -147,8 +150,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		static readonly Dictionary<KnownColor, string> SystemColorKeys = new Dictionary<KnownColor, string>
 		{
 			{ KnownColor.Window, "BackgroundWhite" },
-			{ KnownColor.ControlLightLight, "BackgroundWhite" },
-			{ KnownColor.ButtonHighlight, "BackgroundWhite" },
+			{ KnownColor.ControlLightLight, "BorderHighlight" },
+			{ KnownColor.ButtonHighlight, "BorderHighlight" },
 			{ KnownColor.Control, "BackgroundLight" },
 			{ KnownColor.ButtonFace, "BackgroundLight" },
 			{ KnownColor.Menu, "BackgroundLight" },
@@ -173,7 +176,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{ KnownColor.MenuHighlight, "SelectedBackground" },
 			{ KnownColor.HighlightText, "SelectedForeground" },
 			{ KnownColor.Info, "BackgroundHelp" },
-			{ KnownColor.HotTrack, "ColorBrand" },
+			{ KnownColor.HotTrack, "ForegroundLink" },
 		};
 
 		/// <summary>Dark colours by Default_DarkTheme.xaml key; empty when the program does not carry the file.</summary>
@@ -236,7 +239,25 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return IsDark && Palette.TryGetValue(key, out color) ? color : lightColor;
 		}
 
-		/// <summary>The light colours of the Default.xaml keys the buttons, tool bars and tab strips are drawn with.</summary>
+		/// <summary>
+		/// The colour of a theme key in the theme in use: Default_DarkTheme.xaml's while the theme is dark, Default.xaml's
+		/// (<see cref="LightPalette"/>) while it is light. Text of a role takes its key's colour, one key for each role:
+		/// ForegroundWarning for an error, ForegroundCaution for an issue that is not an error, ForegroundInformation for a
+		/// notice, ForegroundSuccess for success, ForegroundLink for a link, ForegroundGray for secondary text,
+		/// ForegroundDisabled for the text of any disabled control and of a list row whose item is unplugged or switched off,
+		/// ForegroundActive for what a controller does now, ForegroundOutput for what a chart's curve gives, ForegroundCode
+		/// for a value as it is typed and ForegroundCommand for the name of a button to use. A chart's curve takes ColorCurve.
+		/// A colour taken once is taken again on <see cref="ThemeChanged"/>.
+		/// </summary>
+		public static Color GetColor(string key)
+		{
+			return Themed(key, SystemColors.ControlText);
+		}
+
+		/// <summary>
+		/// The light colours of the Default.xaml keys the buttons, tool bars, tab strips, fields, check boxes, groups and grid
+		/// headers are drawn with, the text of each role, and the charts.
+		/// </summary>
 		/// <remarks>Copied here because not every program carries Default.xaml; a test holds them equal to it.</remarks>
 		public static readonly Dictionary<string, Color> LightPalette = new Dictionary<string, Color>
 		{
@@ -246,13 +267,31 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{ "BackgroundDarkSelected", Color.FromArgb(0xC2, 0xE7, 0xFF) },
 			{ "BackgroundDarkPressed", Color.FromArgb(0xC2, 0xFF, 0xE7) },
 			{ "BackgroundTabSelected", Color.FromArgb(0xFF, 0xFF, 0xFF) },
+			{ "BackgroundHeader", Color.FromArgb(0xFF, 0xFF, 0xFF) },
 			{ "BorderDark", Color.FromArgb(0xCC, 0xCC, 0xCC) },
+			{ "BorderGray", Color.FromArgb(0xAC, 0xAC, 0xAC) },
+			{ "BorderField", Color.FromArgb(0xDE, 0xDE, 0xDE) },
+			{ "BorderCheck", Color.FromArgb(0xDE, 0xDE, 0xDE) },
+			{ "BorderShadow", Color.FromArgb(0xCC, 0xCC, 0xCC) },
+			{ "BorderHighlight", Color.FromArgb(0xFF, 0xFF, 0xFF) },
 			{ "ForegroundBlack", Color.FromArgb(0x00, 0x00, 0x00) },
 			{ "ForegroundGray", Color.FromArgb(0x5A, 0x5A, 0x5A) },
+			{ "ForegroundDisabled", Color.FromArgb(0x78, 0x78, 0x78) },
+			{ "ForegroundWarning", Color.FromArgb(0x80, 0x00, 0x00) },
+			{ "ForegroundCaution", Color.FromArgb(0x9F, 0x4F, 0x00) },
+			{ "ForegroundInformation", Color.FromArgb(0x00, 0x5F, 0xB8) },
+			{ "ForegroundSuccess", Color.FromArgb(0x00, 0x64, 0x00) },
+			{ "ForegroundLink", Color.FromArgb(0x00, 0x00, 0xFF) },
+			{ "ForegroundActive", Color.FromArgb(0x00, 0x64, 0x00) },
+			{ "ForegroundOutput", Color.FromArgb(0x00, 0x00, 0xFF) },
+			{ "ForegroundCode", Color.FromArgb(0x00, 0x64, 0x00) },
+			{ "ForegroundCommand", Color.FromArgb(0x00, 0x5F, 0xB8) },
 			{ "ForegroundTab", Color.FromArgb(0x5A, 0x5A, 0x5A) },
 			{ "ForegroundTabSelected", Color.FromArgb(0x00, 0x00, 0x00) },
 			{ "SelectedBackground", Color.FromArgb(0x00, 0x78, 0xD4) },
+			{ "ColorNormal", Color.FromArgb(0x66, 0x99, 0xFF) },
 			{ "ColorActive", Color.FromArgb(0x42, 0xC7, 0x65) },
+			{ "ColorCurve", Color.FromArgb(0xFF, 0x00, 0x00) },
 		};
 
 		/// <summary>The colour of a WPF theme key in the theme in use, light or dark; without the key, the fallback.</summary>
@@ -574,9 +613,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			/// A check box's own padding, which the larger box of Default.xaml widens, a number box's, which the room of its frame does, or a tool bar's, which its items' margins replace.
 			/// </summary>
 			public Padding Padding;
+			/// <summary>Whether the program gave a group box a padding of its own, which the theme then keeps.</summary>
+			public bool PaddingSet;
+			/// <summary>A push button's own largest and smallest sizes, which Default.xaml's height may lower or raise.</summary>
+			public Size MaximumSize;
+			public Size MinimumSize;
 			public bool EnableHeadersVisualStyles;
 			public Color LinkColor;
+			public Color ActiveLinkColor;
 			public Color VisitedLinkColor;
+			/// <summary>A grid's link columns and their own link, pressed and visited colours.</summary>
+			public List<KeyValuePair<DataGridViewLinkColumn, Color[]>> LinkColumns;
 			public ToolStripRenderMode RenderMode;
 			/// <summary>Whether the program gave the control a font of its own, which a tool bar then keeps.</summary>
 			public bool FontSet;
@@ -589,7 +636,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public int HotTab = -1;
 			/// <summary>Whether the window of a tab strip has the tabs of a strip painted here.</summary>
 			public bool TabsPadded;
-			/// <summary>The window of a tab strip or slider painted here, which passes the mouse on to what is drawn under it.</summary>
+			/// <summary>Whether the window of a tab strip sizes its tabs as Default.xaml's, with the padding given here.</summary>
+			public bool TabsSized;
+			/// <summary>The blank pictures Windows sizes the tabs of such a strip by, while its tabs have pictures.</summary>
+			public ImageList TabSizes;
+			/// <summary>
+			/// The window of a tab strip or slider painted here, which passes the mouse on to what is drawn under it, and puts a
+			/// strip's pages inside the frame drawn round them.
+			/// </summary>
 			public MouseMap Mouse;
 			/// <summary>The window of the list a drop-down list painted here opens.</summary>
 			public DropDownList List;
@@ -613,11 +667,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public bool IntegralHeight;
 			/// <summary>The frame drawn in the window's edge, while the control has one.</summary>
 			public Frame Frame;
+			/// <summary>The window of a control that can scroll, whose scroll bars are drawn whole.</summary>
+			public WholeScrollBars ScrollBars;
+			/// <summary>The window of the list a drop-down list opens, whose scroll bar is drawn whole.</summary>
+			public WholeScrollBars ListScrollBars;
 			/// <summary>What a grid drawn as the WPF programs draw one had before.</summary>
 			public GridLook Grid;
 			/// <summary>
-			/// A container's own side padding, which a list filling it lent to the controls docked above and below it, and those
-			/// controls; null while the container has its padding.
+			/// A container's own padding while a list filling it stands edge to edge in it, and the controls docked above and below
+			/// the list that were lent its sides; null while the container has its padding.
 			/// </summary>
 			public Padding? LentPadding;
 			public List<Control> LentTo;
@@ -636,11 +694,21 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public int HeadersHeight;
 			public int RowHeight;
 			public List<KeyValuePair<DataGridViewImageColumn, Padding>> ImagePadding;
-			/// <summary>The column given the room before its header and cells as the first one shown, and its own paddings.</summary>
+			/// <summary>The column given the room before its header and cells as the first one shown.</summary>
 			public DataGridViewColumn First;
-			public Padding FirstPadding;
-			public Padding FirstHeaderPadding;
+			/// <summary>
+			/// The cell and header paddings last given to a first column, with the room, and its own without: a grid making its
+			/// columns from its data again copies them from the columns it had, room and all.
+			/// </summary>
+			public Padding[] LastPadded;
+			public Padding[] LastOwn;
 		}
+
+		/// <summary>
+		/// The paddings each column's cells and header had before the theme first gave it the room of the first column shown:
+		/// the room is added to these each time, so it is never added twice.
+		/// </summary>
+		static readonly ConditionalWeakTable<DataGridViewColumn, Padding[]> OwnColumnPaddings = new ConditionalWeakTable<DataGridViewColumn, Padding[]>();
 
 		static readonly ConditionalWeakTable<Control, State> States = new ConditionalWeakTable<Control, State>();
 
@@ -682,13 +750,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					state.NativeDark = false;
 					state.TabsPadded = false;
 					ApplyNative((Control)sender);
+					AttachScrollBars((Control)sender, state);
 				};
 			}
+			// Whole scroll bars in every theme, also on a control the theme otherwise leaves as it is.
+			if (control.IsHandleCreated)
+				AttachScrollBars(control, state);
 			var highContrast = SystemInformation.HighContrast;
 			if (state.Dark == IsDark && state.HighContrast == highContrast)
 				return;
-			// A control the dark theme never changed is left exactly as it is, but for the buttons, tool bars and tab
-			// strips the light theme draws as the WPF programs do.
+			// A control the dark theme never changed is left exactly as it is, but for the buttons, tool bars, tab strips
+			// and the rest the light theme draws as the WPF programs do.
 			if (state.Dark == null && !IsDark && !DrawnAsWpf(control))
 			{
 				state.Dark = false;
@@ -722,6 +794,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				state.FlatMouseDownBackColor = button.FlatAppearance.MouseDownBackColor;
 				state.UseVisualStyleBackColor = button.UseVisualStyleBackColor;
 				state.Padding = button.Padding;
+				state.AutoSize = button.AutoSize;
+				state.MaximumSize = button.MaximumSize;
+				state.MinimumSize = button.MinimumSize;
 			}
 			if (control is ComboBox combo)
 			{
@@ -732,7 +807,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is TabPage page)
 				state.UseVisualStyleBackColor = page.UseVisualStyleBackColor;
 			if (control is GroupBox groupBox)
+			{
 				state.Padding = groupBox.Padding;
+				state.PaddingSet = PaddingSet(groupBox);
+			}
+			if (control is Label rememberedLabel)
+			{
+				state.AutoSize = rememberedLabel.AutoSize;
+				state.MaximumSize = rememberedLabel.MaximumSize;
+			}
 			if (control is TextBox box)
 			{
 				state.BorderStyle = box.BorderStyle;
@@ -760,6 +843,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				state.EnableHeadersVisualStyles = grid.EnableHeadersVisualStyles;
 				state.ButtonColumns = grid.Columns.OfType<DataGridViewButtonColumn>()
 					.Select(x => new KeyValuePair<DataGridViewButtonColumn, FlatStyle>(x, x.FlatStyle)).ToList();
+				state.LinkColumns = grid.Columns.OfType<DataGridViewLinkColumn>()
+					.Select(x => new KeyValuePair<DataGridViewLinkColumn, Color[]>(x, new[] { x.LinkColor, x.ActiveLinkColor, x.VisitedLinkColor })).ToList();
 			}
 			if (control is ToolStrip strip)
 			{
@@ -771,6 +856,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is LinkLabel link)
 			{
 				state.LinkColor = link.LinkColor;
+				state.ActiveLinkColor = link.ActiveLinkColor;
 				state.VisitedLinkColor = link.VisitedLinkColor;
 			}
 			if (control is PropertyGrid propertyGrid)
@@ -853,16 +939,38 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					button.FlatAppearance.MouseOverBackColor = Themed("BackgroundDarkSelected", SystemColors.ControlLight);
 					button.FlatAppearance.MouseDownBackColor = Themed("BackgroundDarkPressed", SystemColors.ControlDark);
 					button.Paint += Button_Paint;
-					// A button that sizes itself stands as tall as Default.xaml's: its text, padded 5 above and below.
+					// A button that sizes itself stands as tall as Default.xaml's: its text, with its face-coloured line and 4 of
+					// room inside it above and below, or its picture or lines of text with the line and room where they are
+					// taller. Windows Forms keeps other room round a line of text in some fonts and scales, and works its height
+					// out again as its picture is enlarged to the screen's scale, so the button is held to that height.
 					var padding = state.Padding;
+					var minimum = state.MinimumSize;
+					var maximum = state.MaximumSize;
 					if (button.AutoSize)
 					{
+						if (button.MinimumSize != state.MinimumSize)
+							button.MinimumSize = state.MinimumSize;
+						if (button.MaximumSize != state.MaximumSize)
+							button.MaximumSize = state.MaximumSize;
+						var height = ControlHeight(button);
 						var natural = button.GetPreferredSize(Size.Empty).Height - button.Padding.Vertical + state.Padding.Vertical;
-						var extra = Math.Max(0, ControlHeight(button) - natural);
+						var extra = Math.Max(0, height - natural);
 						padding = new Padding(padding.Left, padding.Top + extra / 2, padding.Right, padding.Bottom + extra - extra / 2);
+						// One line of text is as tall as its font; Windows measures a line a pixel or so taller.
+						var lines = TextRenderer.MeasureText(button.Text, button.Font).Height;
+						var text = lines > LineHeight(button.Font) ? lines : button.Font.Height;
+						var held = Math.Max(height, Math.Max(text, button.Image?.Height ?? 0) + (LineWidth() + Pixels(ButtonPadding)) * 2);
+						if (minimum.Height < held)
+							minimum = new Size(minimum.Width, held);
+						if (maximum.Height == 0 || maximum.Height > held)
+							maximum = new Size(maximum.Width, held);
 					}
 					if (button.Padding != padding)
 						button.Padding = padding;
+					if (button.MinimumSize != minimum)
+						button.MinimumSize = minimum;
+					if (button.MaximumSize != maximum)
+						button.MaximumSize = maximum;
 				}
 				else
 				{
@@ -875,6 +983,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					button.UseVisualStyleBackColor = !IsDark && state.UseVisualStyleBackColor;
 					if (!(button is CheckBox || button is RadioButton) && button.Padding != state.Padding)
 						button.Padding = state.Padding;
+					if (button.MinimumSize != state.MinimumSize)
+						button.MinimumSize = state.MinimumSize;
+					if (button.MaximumSize != state.MaximumSize)
+						button.MaximumSize = state.MaximumSize;
 				}
 				if (!IsWpfButton(button, state) && state.BackColor.IsSystemColor)
 				{
@@ -898,13 +1010,20 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						state.Padding.Right, state.Padding.Bottom + taller - taller / 2);
 					if (button.Padding != padding)
 						button.Padding = padding;
+					button.TextChanged -= CheckBox_TextChanged;
+					button.FontChanged -= CheckBox_TextChanged;
 					if (wpf)
 					{
 						if (state.FlatStyle == FlatStyle.System)
 							button.FlatStyle = FlatStyle.Standard;
 						button.Paint += CheckBox_Paint;
+						button.TextChanged += CheckBox_TextChanged;
+						button.FontChanged += CheckBox_TextChanged;
+						FitCheckBox(button, state);
 						button.Invalidate();
 					}
+					else if (button.AutoSize != state.AutoSize)
+						button.AutoSize = state.AutoSize;
 				}
 				// Windows Forms draws the text of any other disabled button in a shade of its back colour, too dark to read on a
 				// dark page, so in the dark theme it is drawn again faded.
@@ -934,6 +1053,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				combo.GotFocus -= Repaint;
 				combo.LostFocus -= Repaint;
 				combo.FontChanged -= FitComboBox;
+				// Given its items later, from a list, it is fitted to them then.
+				combo.DataSourceChanged -= FitComboBox;
+				combo.DataSourceChanged += FitComboBox;
 				if (paint)
 				{
 					combo.MouseEnter += Repaint;
@@ -957,16 +1079,27 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (PaintsGroupBox(group))
 					group.Paint += GroupBox_Paint;
 				// Default.xaml's caption stands lower than Windows Forms puts it: what a layout places on the box moves
-				// down with it.
+				// down with it. A box whose padding the program left to Windows Forms takes Default.xaml's: its content the
+				// room inside the frame's two lines at the sides and below, and the room below the caption.
 				var own = state.Padding;
-				var padding = PaintsGroupBox(group) ? new Padding(own.Left, own.Top + Pixels(GroupBoxCaptionTop), own.Right, own.Bottom) : own;
+				var room = Pixels(GroupBoxRoom);
+				var side = LineWidth() * 2 + room;
+				var padding = !PaintsGroupBox(group) ? own
+					: state.PaddingSet ? new Padding(own.Left, own.Top + Pixels(GroupBoxCaptionTop), own.Right, own.Bottom)
+					: new Padding(side, Pixels(GroupBoxCaptionTop) + room, side, side);
 				if (group.Padding != padding)
 					group.Padding = padding;
 				group.Invalidate();
 			}
-			// A page of a strip painted here is filled plain, as the WPF programs fill one.
+			// A page of a strip painted here is filled plain, as the WPF programs fill one, and takes the shape of the frame round
+			// it whatever its size.
 			if (control is TabPage page)
+			{
 				page.UseVisualStyleBackColor = state.UseVisualStyleBackColor && !PaintsTabs(page.Parent);
+				page.SizeChanged -= TabPage_SizeChanged;
+				page.SizeChanged += TabPage_SizeChanged;
+				ClipTabPage(page);
+			}
 			if (control is DataGridView grid)
 			{
 				var wpf = PaintsGrid(grid, state);
@@ -974,6 +1107,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				// Cells draw their buttons in the light visual style; flat, they take the theme colours.
 				foreach (var pair in state.ButtonColumns)
 					pair.Key.FlatStyle = IsDark ? FlatStyle.Flat : pair.Value;
+				// A link in a cell is in the theme's link colour, as a link label is; on a selected row, in the selection's text colour.
+				foreach (var pair in state.LinkColumns)
+				{
+					pair.Key.LinkColor = GetColor("ForegroundLink", pair.Value[0]);
+					pair.Key.ActiveLinkColor = GetColor("ForegroundLink", pair.Value[1]);
+					pair.Key.VisitedLinkColor = GetColor("ForegroundLink", pair.Value[2]);
+				}
+				grid.RowStateChanged -= LinkGrid_RowStateChanged;
+				grid.CellStateChanged -= LinkGrid_CellStateChanged;
+				if (state.LinkColumns.Count > 0)
+				{
+					grid.RowStateChanged += LinkGrid_RowStateChanged;
+					grid.CellStateChanged += LinkGrid_CellStateChanged;
+					foreach (DataGridViewCell cell in grid.SelectedCells)
+						ColorSelectedLink(cell);
+				}
 				ApplyGridLook(grid, state, wpf);
 				grid.CellPainting -= CheckCell_Painting;
 				grid.CellPainting -= WpfGrid_CellPainting;
@@ -1005,18 +1154,25 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				ApplyFrame(control, state);
 			if (control is ProgressBar)
 				SetPaintedHere(control, state, PaintsProgress(control), Progress_Paint);
+			// A link is in the theme's link colour in the dark theme, pressed or visited too, and in its own in the light one.
 			if (control is LinkLabel link)
 			{
-				link.LinkColor = GetColor("ColorBrand", state.LinkColor);
-				link.VisitedLinkColor = GetColor("ColorBrand", state.VisitedLinkColor);
+				link.LinkColor = GetColor("ForegroundLink", state.LinkColor);
+				link.ActiveLinkColor = GetColor("ForegroundLink", state.ActiveLinkColor);
+				link.VisitedLinkColor = GetColor("ForegroundLink", state.VisitedLinkColor);
 			}
-			// Windows Forms draws a disabled label's text in a shade of its back colour, too dark to read on a dark page, so
-			// in the dark theme it is drawn again faded.
+			// A label's text is drawn again without the room Windows keeps round it, and a disabled label's at half strength,
+			// as the text of every other disabled control: Windows Forms draws it in a shade of its back colour, too dark to
+			// read on a dark page and lighter than the theme's other disabled text on a light one.
 			if (control is Label label && !(control is LinkLabel))
 			{
-				label.Paint -= DisabledLabel_Paint;
-				if (IsDark)
-					label.Paint += DisabledLabel_Paint;
+				label.Paint -= Label_Paint;
+				label.Paint += Label_Paint;
+				label.FontChanged -= Label_FontChanged;
+				label.FontChanged += Label_FontChanged;
+				label.TextChanged -= Label_FontChanged;
+				label.TextChanged += Label_FontChanged;
+				FitLabel(label, state);
 			}
 			// A tool bar without a renderer of its own is drawn as the WPF programs draw one, in both themes. The system
 			// renderer draws a checked button with the Windows colours, so in the dark theme every other strip, a menu
@@ -1028,7 +1184,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (wpf)
 					strip.Renderer = new WpfToolStripRenderer();
 				else if (IsDark)
-					strip.Renderer = new ToolStripProfessionalRenderer(new ProfessionalColorTable());
+					strip.Renderer = new DarkToolStripRenderer();
 				else
 					strip.RenderMode = state.RenderMode;
 				// Its text is in the font of what it stands on, as a WPF tool bar's is, where Windows Forms gives every tool
@@ -1099,10 +1255,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			State state;
 			if (!control.IsHandleCreated || !States.TryGetValue(control, out state))
 				return;
-			if (control is TabControl tabs && state.TabsPadded != PaintsTabs(tabs))
-				ApplyTabPadding(tabs, state);
+			// The window of a tab strip says where its pages stand before the strip lays them out again.
 			if (control is TabControl || control is TrackBar)
 				AttachMouseMap(control, state);
+			if (control is TabControl tabs && state.TabsPadded != PaintsTabs(tabs))
+				ApplyTabPadding(tabs, state);
 			if (control is ComboBox)
 				FitComboBox(control, EventArgs.Empty);
 			if (HasFrame(control) || state.Frame != null)
@@ -1159,8 +1316,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 		static bool? _HasDarkThemeStyle;
 
-		const int SBP_UPPERTRACKVERT = 7;
-
 		/// <summary>The buttons of the Windows dark style, named by class so a check box can be drawn in it without a window.</summary>
 		const string DarkButtonClass = "DarkMode_Explorer::BUTTON";
 		const int BP_CHECKBOX = 3;
@@ -1208,14 +1363,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				e.Graphics.FillRectangle(brush, box);
 			var check = e.FormattedValue is CheckState checkState ? checkState
 				: e.FormattedValue is bool isChecked && isChecked ? CheckState.Checked : CheckState.Unchecked;
-			// Unchecked 1, checked 5, mixed 9; then hot +1, pressed +2, disabled +3.
+			// Unchecked 1, checked 5, mixed 9; then hot +1, pressed +2, disabled +3. Hot under the mouse or with the focus.
 			var state = check == CheckState.Checked ? 5 : check == CheckState.Indeterminate ? 9 : 1;
-			var hot = box.Contains(grid.PointToClient(Control.MousePosition));
+			var over = box.Contains(grid.PointToClient(Control.MousePosition));
 			if (!grid.Enabled)
 				state += 3;
-			else if (hot && (Control.MouseButtons & MouseButtons.Left) != 0)
+			else if (over && (Control.MouseButtons & MouseButtons.Left) != 0)
 				state += 2;
-			else if (hot)
+			else if (over || HasCellFocus(grid, e.ColumnIndex, e.RowIndex))
 				state += 1;
 			if (_checkRenderer == null)
 				_checkRenderer = new VisualStyleRenderer(DarkButtonClass, BP_CHECKBOX, state);
@@ -1225,7 +1380,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>The rounding of a button's corners, a tab's top corners and a tab page's frame, as Default.xaml draws them, in device-independent pixels.</summary>
-		const int CornerRadius = 5;
+		const int CornerRadius = 4;
 
 		/// <summary>A size Default.xaml gives in device-independent pixels, in the pixels of the surface drawn on, as WPF scales it.</summary>
 		static float Dip(Graphics g, float value)
@@ -1278,18 +1433,83 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				&& (state.FlatStyle == FlatStyle.Standard || state.FlatStyle == FlatStyle.System) && !SystemInformation.HighContrast;
 		}
 
+		/// <summary>
+		/// Sizes a check box or radio button drawn here that sizes itself to its content's layout box, as WPF lays one out:
+		/// as tall as its box or its line of text, whichever is taller, and as wide as its box, the gap and its text, with no
+		/// room of Windows' own round them, so its margins are the gaps round it. A program's own smallest size is kept.
+		/// </summary>
+		static void FitCheckBox(ButtonBase button, State state)
+		{
+			if (!state.AutoSize)
+				return;
+			var box = CheckBoxBox(button.Font, button is RadioButton);
+			var flags = TextFormatFlags.NoPadding | (button.UseMnemonic ? TextFormatFlags.Default : TextFormatFlags.NoPrefix);
+			var text = button.Text.Length == 0 ? Size.Empty : MeasureDrawnText(button.Text, button.Font, flags);
+			// One line of text is as tall as its font; Windows measures a line a pixel or so taller.
+			var line = text.Height > LineHeight(button.Font) ? text.Height : button.Text.Length == 0 ? 0 : button.Font.Height;
+			var width = state.Padding.Horizontal + box.Width + (text.Width > 0 ? Pixels(CheckBoxTextGap) + text.Width : 0);
+			var size = new Size(Math.Max(width, state.MinimumSize.Width), Math.Max(state.Padding.Vertical + Math.Max(box.Height, line), state.MinimumSize.Height));
+			// A layout measures a control by the size Windows Forms works out for it: the theme sizes it instead.
+			if (button.AutoSize)
+				button.AutoSize = false;
+			if (button.Size != size)
+				button.Size = size;
+		}
+
+		/// <summary>
+		/// Where a check box's or radio button's text starts, from its own left edge, as it is drawn now: by the theme, after
+		/// its padding, Default.xaml's box and the room after the box; or by Windows, the width Windows Forms works out for it
+		/// less its text's.
+		/// </summary>
+		public static int GetCheckBoxTextLeft(ButtonBase button)
+		{
+			State state;
+			if (States.TryGetValue(button, out state) && IsWpfCheckBox(button, state))
+				return state.Padding.Left + CheckBoxBox(button.Font, button is RadioButton).Width + Pixels(CheckBoxTextGap);
+			var text = button.Text.Length == 0 ? 0 : TextRenderer.MeasureText(button.Text, button.Font).Width;
+			return button.GetPreferredSize(Size.Empty).Width - button.Padding.Right - text;
+		}
+
+		/// <summary>
+		/// Keeps a note under a check box or radio button with its text under the check box's text, at every font and scale
+		/// the box is drawn at: the note's left margin is the check box's and the room before the check box's text.
+		/// </summary>
+		/// <remarks>The theme draws a note's text from its edge, as every label's.</remarks>
+		public static void IndentUnder(Control note, ButtonBase check)
+		{
+			EventHandler indent = (sender, e) =>
+			{
+				var left = check.Margin.Left + GetCheckBoxTextLeft(check);
+				if (note.Margin.Left != left)
+					note.Margin = new Padding(left, note.Margin.Top, note.Margin.Right, note.Margin.Bottom);
+			};
+			// The theme sizes a check box again whenever its font changes, which is when its box changes.
+			check.SizeChanged += indent;
+			check.MarginChanged += indent;
+			indent(check, EventArgs.Empty);
+		}
+
+		/// <summary>Sizes a check box or radio button drawn here to its new text or font.</summary>
+		static void CheckBox_TextChanged(object sender, EventArgs e)
+		{
+			State state;
+			var button = (ButtonBase)sender;
+			if (States.TryGetValue(button, out state) && IsWpfCheckBox(button, state))
+				FitCheckBox(button, state);
+		}
+
 		/// <summary>The size of the box Windows draws a check box with, in device-independent pixels.</summary>
 		const int WindowsCheckBoxSize = 13;
 
 		/// <summary>
-		/// The size of Default.xaml's check box, in device-independent pixels: its tick, 10 by 9.1, with 4 on every side for
-		/// the tick's margin, the box's padding and its edge.
+		/// The size of Default.xaml's check box, in device-independent pixels: its tick, 8 wide, with 4 on every side for its
+		/// edge and the room round the tick.
 		/// </summary>
-		static readonly SizeF CheckBoxSize = new SizeF(18f, 17.1f);
+		static readonly SizeF CheckBoxSize = new SizeF(16f, 16f);
 
 		/// <summary>
 		/// The height of a line of Default.xaml's text, in device-independent pixels: Segoe UI at 12, which WPF uses unless
-		/// told otherwise. Default.xaml's check box is a little taller than it.
+		/// told otherwise. Default.xaml's check box is as tall as it, within a twentieth of a pixel.
 		/// </summary>
 		const float WpfLineHeight = 15.96f;
 
@@ -1317,20 +1537,27 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>The rounding of a check box's corners in Default.xaml, in device-independent pixels.</summary>
-		const int CheckBoxRadius = 3;
+		const int CheckBoxRadius = 4;
 
-		/// <summary>The tick of Default.xaml's check box: its outline, in the 10 by 9.1 units of its own box.</summary>
+		/// <summary>
+		/// The tick of Default.xaml's check box: its outline, as wide as its 8 by 8 room and 7.3 high, keeping its shape, in
+		/// device-independent pixels.
+		/// </summary>
 		static readonly PointF[] CheckMark =
 		{
-			new PointF(9.97498f, 1.22334f), new PointF(4.6983f, 9.09834f), new PointF(4.52164f, 9.09834f), new PointF(0f, 5.19331f),
-			new PointF(1.27664f, 3.52165f), new PointF(4.255f, 6.08833f), new PointF(8.33331f, 0f),
+			new PointF(8f, 0.9812f), new PointF(3.768f, 7.2969f), new PointF(3.6264f, 7.2969f), new PointF(0f, 4.165f),
+			new PointF(1.0239f, 2.8244f), new PointF(3.4125f, 4.8829f), new PointF(6.6834f, 0f),
 		};
 
-		/// <summary>The room between Default.xaml's check box and its text, in device-independent pixels: the box's margin.</summary>
-		const int CheckBoxTextGap = 3;
+		/// <summary>
+		/// The room between Default.xaml's check box and its text, in device-independent pixels: the box's margin, the room
+		/// Windows leaves before the text of its own check box, which the width Windows Forms gives a check box that sizes
+		/// itself counts.
+		/// </summary>
+		const int CheckBoxTextGap = 4;
 
 		/// <summary>The size of Default.xaml's radio button box, in device-independent pixels, and of its dot.</summary>
-		const int RadioButtonSize = 18;
+		const int RadioButtonSize = 16;
 		const int RadioButtonDot = 8;
 
 		/// <summary>
@@ -1355,23 +1582,23 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			// A control the program made shorter than Default.xaml's box gets a box as tall as itself.
 			var height = Math.Min(size.Height, client.Height);
 			var box = new Rectangle(state.Padding.Left, (client.Height - height) / 2, size.Width, height);
-			var hot = button.Enabled && client.Contains(button.PointToClient(Control.MousePosition));
+			var hot = button.Enabled && (button.Focused || client.Contains(button.PointToClient(Control.MousePosition)));
 			var check = radio != null ? (radio.Checked ? CheckState.Checked : CheckState.Unchecked) : ((CheckBox)button).CheckState;
 			DrawWpfCheck(g, box, CheckScale(button.Font), check, radio != null, hot, button.Enabled);
 			var text = Rectangle.FromLTRB(box.Right + Pixels(CheckBoxTextGap), button.Padding.Top,
 				client.Width - button.Padding.Right, client.Height - button.Padding.Bottom);
-			var behind = button.BackColor.A == 255 ? button.BackColor : button.Parent?.BackColor ?? SystemColors.Control;
-			TextRenderer.DrawText(g, button.Text, button.Font, text, button.Enabled ? button.ForeColor : Half(button.ForeColor, behind),
+			TextRenderer.DrawText(g, button.Text, button.Font, text, button.Enabled ? button.ForeColor : DisabledText(),
 				TextFlags(button) | TextFormatFlags.NoPadding);
 			if (button.Focused && (bool)(ShowFocusCuesProperty?.GetValue(button, null) ?? false))
 				DrawFocus(g, client, button.ForeColor);
 		}
 
 		/// <summary>
-		/// Draws Default.xaml's check box: a rounded box in the window colour, edged in the control colour or, under the mouse,
-		/// in the hover colour, with its tick, or a square while it is neither on nor off; or its radio button, round, with a
-		/// dot. Disabled, it is drawn at a quarter strength. Its rounding, tick and dot are drawn larger by the scale of the
-		/// text beside it.
+		/// Draws Default.xaml's check box: a rounded box in the field colour, with its tick, or a square while it is neither on
+		/// nor off; or its radio button, round, with a dot. Its edge is a box to type in's: under the mouse or with the focus,
+		/// the selection colour; at rest, the field edge colour while it is ticked, chosen or neither on nor off, and the check
+		/// box edge colour while it is not. Disabled, it is drawn at a quarter strength. Its rounding, tick and dot are drawn
+		/// larger by the scale of the text beside it.
 		/// </summary>
 		static void DrawWpfCheck(Graphics g, Rectangle box, float size, CheckState check, bool round, bool hot, bool enabled)
 		{
@@ -1379,11 +1606,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var saved = Smooth(g);
 			var line = Line(g);
 			var radius = round ? box.Height / 2f : Dip(g, CheckBoxRadius) * size;
+			var edge = hot ? "BackgroundDarkSelected" : check != CheckState.Unchecked ? "BorderField" : "BorderCheck";
 			using (var face = RoundedRectangle(Inset(box, line / 2), radius, radius, radius, radius))
 			{
 				using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("BackgroundWhite", SystemColors.Window))))
 					g.FillPath(brush, face);
-				using (var pen = new Pen(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "BackgroundDark", SystemColors.ControlLight)), line))
+				using (var pen = new Pen(Color.FromArgb(alpha, Themed(edge, SystemColors.ControlLight)), line))
 					g.DrawPath(pen, face);
 			}
 			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("ForegroundBlack", SystemColors.ControlText))))
@@ -1399,10 +1627,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				}
 				else
 				{
-					// The tick, or the square, stands 4 in from every side of the box, as in Default.xaml; the tick keeps to the
-					// middle of a box made shorter.
+					// The tick's 8 by 8 room, or the square, stands 4 in from every side of the box, as in Default.xaml, and keeps
+					// to the middle of the box's height, also of a box made shorter; the tick is at the top of its room.
 					var inset = 4 * scale;
-					var top = box.Y + (box.Height - 9.1f * scale) / 2;
+					var top = box.Y + (box.Height - 8 * scale) / 2;
 					if (check == CheckState.Checked)
 						g.FillPolygon(brush, CheckMark.Select(p => new PointF(box.X + inset + p.X * scale, top + p.Y * scale)).ToArray());
 					else if (check == CheckState.Indeterminate)
@@ -1426,20 +1654,159 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var behind = button.BackColor.A == 255 ? button.BackColor : button.Parent?.BackColor ?? SystemColors.Control;
 			using (var brush = new SolidBrush(behind))
 				e.Graphics.FillRectangle(brush, Rectangle.Inflate(text, 1, 1));
-			TextRenderer.DrawText(e.Graphics, button.Text, button.Font, text, Half(button.ForeColor, behind), TextFlags(button));
+			DrawButtonText(e.Graphics, button, text, DisabledText(), TextFlags(button));
+		}
+
+		static readonly PropertyInfo DefaultPaddingProperty = typeof(Control).GetProperty("DefaultPadding", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>
+		/// Whether the program gave a control a padding of its own: one other than Windows Forms' default for it, as made or as
+		/// Windows Forms scaled it to the screen, which it does to every padding of a window made at another scale.
+		/// </summary>
+		static bool PaddingSet(Control control)
+		{
+			var own = control.Padding;
+			var standard = (Padding)(DefaultPaddingProperty?.GetValue(control, null) ?? Padding.Empty);
+			Func<int, int, bool> scaled = (value, made) => value == made
+				|| value == (int)Math.Floor(made * ControlsHelper.DpiScale) || value == (int)Math.Ceiling(made * ControlsHelper.DpiScale);
+			return !(scaled(own.Left, standard.Left) && scaled(own.Top, standard.Top) && scaled(own.Right, standard.Right) && scaled(own.Bottom, standard.Bottom));
+		}
+
+		/// <summary>
+		/// Sizes a label that sizes itself to its text's layout box, as a WPF TextBlock is: Windows measures and draws a label's
+		/// text with room of its own at either side, which the label then has no more, so its margins are the gaps beside
+		/// it; <see cref="Label_Paint"/> draws its text without that room. A label whose width the program limits, to wrap its
+		/// text, that a layout stretches or that a table may wrap keeps Windows' sizing; the smallest size the program gives
+		/// it is kept.
+		/// </summary>
+		static void FitLabel(Label label, State state)
+		{
+			// A layout measures a label by the size Windows Forms works out for it, before its smallest and largest sizes:
+			// the theme sizes it instead, and Windows Forms keeps the size it is given.
+			if (state.AutoSize && state.MaximumSize.Width == 0 && DrawsLabelText(label) && !Stretched(label) && !MayWrap(label))
+			{
+				// Only the room at either side is taken away: the height stays Windows Forms' own, its line and padding.
+				var size = new Size(Math.Max(label.MinimumSize.Width, DrawnLabelWidth(label, label.Text)),
+					Math.Max(label.MinimumSize.Height, label.GetPreferredSize(Size.Empty).Height));
+				if (label.AutoSize)
+					label.AutoSize = false;
+				if (label.Size != size)
+					label.Size = size;
+			}
+			else if (label.AutoSize != state.AutoSize)
+				label.AutoSize = state.AutoSize;
+		}
+
+		/// <summary>
+		/// The width a label needs to show a text on one line, its own when none is given, as the label is drawn now: by the
+		/// theme, without the room Windows keeps at either side of its text, with the label's padding and edge; or by Windows,
+		/// its own text as Windows Forms sizes the label, which keeps its smallest size, and another as Windows measures text
+		/// for a label it draws.
+		/// </summary>
+		/// <remarks>Windows Forms measures a label with Windows' room, so a page that sizes something to a label's text asks here.</remarks>
+		public static int GetLabelWidth(Label label, string text = null)
+		{
+			if (States.TryGetValue(label, out _) && DrawsLabelText(label))
+				return DrawnLabelWidth(label, text ?? label.Text);
+			if (text == null || text == label.Text)
+				return label.GetPreferredSize(Size.Empty).Width;
+			var flags = (TextFormatFlags)(LabelTextFlagsMethod?.Invoke(label, null) ?? TextFormatFlags.Default);
+			return TextRenderer.MeasureText(text, label.Font, Size.Empty, flags).Width + label.Padding.Horizontal + LabelEdge(label);
+		}
+
+		/// <summary>
+		/// Makes labels as wide as the widest of them, as each is drawn (<see cref="GetLabelWidth"/>), with their margins, so
+		/// what stands after them in their tables starts at one place: given to each as its smallest width, so a table that
+		/// sizes their column by its labels never measures one itself, with Windows' room round its text, and wraps it.
+		/// </summary>
+		/// <remarks>Lay the tables out once, after: each label changes the width of its column.</remarks>
+		public static void ShareLabelWidth(IEnumerable<Label> labels)
+		{
+			var shared = labels.ToArray();
+			if (shared.Length == 0)
+				return;
+			// Each measured on its own: Windows Forms sizes a label it draws to at least its smallest width.
+			foreach (var label in shared)
+				label.MinimumSize = Size.Empty;
+			var widest = shared.Max(label => GetLabelWidth(label) + label.Margin.Horizontal);
+			foreach (var label in shared)
+			{
+				label.MinimumSize = new Size(widest - label.Margin.Horizontal, 0);
+				// A label the theme sized keeps the width it was given until it is sized again, so it is given this one.
+				if (!label.AutoSize)
+					label.Width = label.MinimumSize.Width;
+			}
+		}
+
+		/// <summary>The width of a label the theme draws, for a text on one line: the text's, as drawn, with its padding and edge.</summary>
+		static int DrawnLabelWidth(Label label, string text)
+		{
+			return MeasureDrawnText(text, label.Font, LabelTextFlags(label)).Width + label.Padding.Horizontal + LabelEdge(label);
+		}
+
+		/// <summary>
+		/// The width of a label's edge at both sides, from its style: while its font changes, the size of its inside is not yet
+		/// its size's.
+		/// </summary>
+		static int LabelEdge(Label label)
+		{
+			return label.BorderStyle == BorderStyle.FixedSingle ? SystemInformation.BorderSize.Width * 2
+				: label.BorderStyle == BorderStyle.Fixed3D ? SystemInformation.Border3DSize.Width * 2 : 0;
+		}
+
+		/// <summary>Whether a layout stretches a control: docked, or anchored to both sides across or down.</summary>
+		static bool Stretched(Control control)
+		{
+			const AnchorStyles across = AnchorStyles.Left | AnchorStyles.Right;
+			const AnchorStyles down = AnchorStyles.Top | AnchorStyles.Bottom;
+			return control.Dock != DockStyle.None || (control.Anchor & across) == across || (control.Anchor & down) == down;
+		}
+
+		/// <summary>
+		/// Whether a table may wrap a label's text: it measures a label that sizes itself at the width the label's place has,
+		/// when that place is a column not sized by its content, or several columns.
+		/// </summary>
+		static bool MayWrap(Label label)
+		{
+			var table = label.Parent as TableLayoutPanel;
+			if (table == null)
+				return false;
+			var place = table.GetPositionFromControl(label);
+			return table.GetColumnSpan(label) > 1
+				|| (place.Column >= 0 && place.Column < table.ColumnStyles.Count && table.ColumnStyles[place.Column].SizeType != SizeType.AutoSize);
+		}
+
+		/// <summary>Sizes a label to its text's layout box again for its new text or font.</summary>
+		static void Label_FontChanged(object sender, EventArgs e)
+		{
+			State state;
+			if (States.TryGetValue((Control)sender, out state))
+				FitLabel((Label)sender, state);
 		}
 
 		static readonly MethodInfo LabelTextFlagsMethod = typeof(Label).GetMethod("CreateTextFormatFlags", BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
 
+		/// <summary>Whether the theme draws a label's text: one with no picture, drawing its text the newer way, with GDI.</summary>
+		static bool DrawsLabelText(Label label)
+		{
+			return label.Image == null && label.BackgroundImage == null && !label.UseCompatibleTextRendering && LabelTextFlagsMethod != null;
+		}
+
+		/// <summary>The flags Windows Forms draws a label's text with, without the room Windows keeps at either side of it.</summary>
+		static TextFormatFlags LabelTextFlags(Label label)
+		{
+			return (TextFormatFlags)LabelTextFlagsMethod.Invoke(label, null) | TextFormatFlags.NoPadding;
+		}
+
 		/// <summary>
-		/// Draws the text of a disabled label again, faded, where Windows Forms put it and with the flags it uses. A label with
-		/// an image, or one drawing its text the older way, is left as it is.
+		/// Draws a label's text again where Windows Forms puts it, with its flags, but without the room Windows keeps at either
+		/// side of it, so it starts where the label does; a disabled label's in the colour of every disabled text. A label with
+		/// a picture, or one drawing its text the older way, is left as it is.
 		/// </summary>
-		static void DisabledLabel_Paint(object sender, PaintEventArgs e)
+		static void Label_Paint(object sender, PaintEventArgs e)
 		{
 			var label = (Label)sender;
-			if (label.Enabled || label.Text.Length == 0 || label.Image != null || label.BackgroundImage != null
-				|| label.UseCompatibleTextRendering || LabelTextFlagsMethod == null)
+			if (label.Text.Length == 0 || !DrawsLabelText(label))
 				return;
 			var g = e.Graphics;
 			var client = label.ClientRectangle;
@@ -1449,24 +1816,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				ButtonRenderer.DrawParentBackground(g, face, label);
 			using (var brush = new SolidBrush(label.BackColor))
 				g.FillRectangle(brush, face);
-			var behind = label.BackColor.A == 255 ? label.BackColor : label.Parent?.BackColor ?? SystemColors.Control;
-			TextRenderer.DrawText(g, label.Text, label.Font, face, Half(label.ForeColor, behind),
-				(TextFormatFlags)LabelTextFlagsMethod.Invoke(label, null));
+			TextRenderer.DrawText(g, label.Text, label.Font, face, label.Enabled ? label.ForeColor : DisabledText(), LabelTextFlags(label));
 		}
 
-		/// <summary>A colour at half strength over the one behind it, as WPF draws a disabled control.</summary>
+		/// <summary>A colour at half strength over the one behind it, as WPF fades a disabled control's face.</summary>
 		static Color Half(Color color, Color behind)
 		{
 			return Color.FromArgb((color.R + behind.R) / 2, (color.G + behind.G) / 2, (color.B + behind.B) / 2);
 		}
 
 		/// <summary>
-		/// The text of a disabled button as WPF draws it: at half strength, and from the grey text colour on a button with a
-		/// picture, whose text the WPF programs put in a label, which WPF greys before the button fades it.
+		/// The colour of the text of every disabled control, in both toolkits: a disabled label's, the text colour at half
+		/// strength over the page (ForegroundDisabled).
 		/// </summary>
-		static Color DisabledText(Color foreColor, bool withPicture, Color behind)
+		static Color DisabledText()
 		{
-			return Half(withPicture ? SystemColors.GrayText : foreColor, behind);
+			return Themed("ForegroundDisabled", SystemColors.GrayText);
 		}
 
 		const System.Drawing.ContentAlignment AnyCenter = System.Drawing.ContentAlignment.TopCenter
@@ -1506,6 +1871,36 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return flags;
 		}
 
+		/// <summary>The method of Windows Forms' button drawing that makes the GDI+ format a button's text is measured and drawn in.</summary>
+		static readonly MethodInfo CreateStringFormatMethod = typeof(ButtonBase).GetProperty("Adapter", BindingFlags.Instance | BindingFlags.NonPublic)?.PropertyType
+			.GetMethod("CreateStringFormat", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+
+		/// <summary>
+		/// Draws a button's text in the colour given where Windows Forms lays it out and as Windows Forms draws it: with GDI+ for a
+		/// button that measures its text with GDI+ (<see cref="ButtonBase.UseCompatibleTextRendering"/>), whose layout has room for
+		/// that text and not for GDI's, which is wider and would put the last letter on a line of its own, out of sight.
+		/// </summary>
+		static void DrawButtonText(Graphics g, ButtonBase button, Rectangle text, Color color, TextFormatFlags flags)
+		{
+			var format = button.UseCompatibleTextRendering ? CreateStringFormatMethod?.Invoke(AdapterProperty.GetValue(button, null), null) as StringFormat : null;
+			if (format == null)
+			{
+				TextRenderer.DrawText(g, button.Text, button.Font, text, color, flags);
+				return;
+			}
+			// As Windows Forms draws it: GDI+ puts text a pixel right of where it is asked to, and a pixel short.
+			if ((button.TextAlign & AnyCenter) == 0)
+				text.X -= 1;
+			text.Width += 1;
+			var saved = g.Save();
+			g.SmoothingMode = SmoothingMode.Default;
+			g.PixelOffsetMode = PixelOffsetMode.Default;
+			using (format)
+			using (var brush = new SolidBrush(color))
+				g.DrawString(button.Text, button.Font, brush, text, format);
+			g.Restore(saved);
+		}
+
 		/// <summary>Default.xaml's focus mark: a dotted line round the control, its corners rounded, in the colour of its text.</summary>
 		static void DrawFocus(Graphics g, Rectangle bounds, Color color)
 		{
@@ -1524,7 +1919,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return !(strip is MenuStrip || strip is StatusStrip || strip is ToolStripDropDown) && !SystemInformation.HighContrast;
 		}
 
-		/// <summary>Whether a control is drawn as the WPF programs draw it, which the light theme does too.</summary>
+		/// <summary>Whether a control is drawn as the WPF programs draw it, which the light theme does too; a label for its disabled text.</summary>
 		static bool DrawnAsWpf(Control control)
 		{
 			State state;
@@ -1539,7 +1934,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				|| PaintsComboBox(control)
 				|| PaintsProgress(control)
 				|| (control is TrackBar && !SystemInformation.HighContrast)
-				|| HasFrame(control);
+				|| HasFrame(control)
+				|| ItemRoom(control as ListBox) > 0
+				|| (control is Label && !(control is LinkLabel));
 		}
 
 		/// <summary>
@@ -1569,46 +1966,100 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				g.FillPath(brush, corners);
 			}
 			// Windows Forms draws a disabled button's text in a shade of its fill, too dark to read on a dark one, so the
-			// face is drawn again at half strength, as WPF draws a disabled control, with the image and text where the layout
-			// puts them. It draws a button's image a pixel right of and below the place its layout centres it in, as .NET
-			// Framework 1.1 did, so an enabled button's image is moved there: the face's colour over it, the image in its
-			// place, and the text again where it was covered.
+			// face is drawn again at half strength, as WPF draws a disabled control, with the text where the layout puts it.
+			// A button that opens a list or a menu shows a drop-down list's triangle in the middle in place of its text.
+			// Windows Forms centres a button's image on the height of its text, and draws it a pixel right of and below that
+			// place, as .NET Framework 1.1 did; the image goes in the middle of the face's height instead, drawn disabled with
+			// the face, or enabled over the face's colour where it was, with the text again where that covered it.
 			Rectangle text, image;
 			bool shifted;
 			var picture = button.Image;
+			var arrow = OpensList(button);
 			if (!button.Enabled && GetButtonLayout(button, e, out text, out image, out shifted))
 			{
 				using (var brush = new SolidBrush(Half(button.BackColor, behind)))
 				using (var face = RoundedRectangle(bounds, left, right, right, left))
 					g.FillPath(brush, face);
-				if (picture != null && !image.IsEmpty)
+				var place = image;
+				var shown = CentrePicture(picture, button.ImageAlign, button.TextImageRelation, button.Text.Length > 0, bounds.Height, ref place);
+				if (shown != null && !place.IsEmpty)
 					using (var attributes = new ImageAttributes())
 					{
 						attributes.SetColorMatrix(new ColorMatrix { Matrix33 = 0.5f });
-						g.DrawImage(picture, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+						g.DrawImage(shown, place, 0, 0, place.Width, place.Height, GraphicsUnit.Pixel, attributes);
 					}
-				TextRenderer.DrawText(g, button.Text, button.Font, text, DisabledText(button.ForeColor, picture != null, behind), TextFlags(button));
+				if (arrow)
+					DrawDropDownArrow(g, bounds.Width / 2f, bounds.Height / 2f, DisabledText());
+				else
+					DrawButtonText(g, button, text, DisabledText(), TextFlags(button));
+			}
+			else if (button.Enabled && arrow && GetButtonLayout(button, e, out text, out image, out shifted))
+			{
+				// The text a pixel round, as a pressed button's text is drawn a pixel right of and below it.
+				using (var brush = new SolidBrush(FaceColor(button)))
+					g.FillRectangle(brush, Rectangle.Inflate(text, 1, 1));
+				DrawDropDownArrow(g, bounds.Width / 2f, bounds.Height / 2f, button.ForeColor);
 			}
 			else if (button.Enabled && picture != null && CheckStateOf(button) == CheckState.Unchecked
-				&& GetButtonLayout(button, e, out text, out image, out shifted) && shifted)
+				&& GetButtonLayout(button, e, out text, out image, out shifted))
 			{
-				var drawn = new Rectangle(image.X + 1, image.Y + 1, image.Width, image.Height);
-				var fill = (bool)(MouseIsDownProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseDownBackColor
-					: (bool)(MouseIsOverProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseOverBackColor
-					: button.BackColor;
-				using (var brush = new SolidBrush(fill))
-					g.FillRectangle(brush, drawn);
-				g.DrawImage(picture, image, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
-				var clip = g.Clip;
-				g.SetClip(drawn, CombineMode.Intersect);
-				TextRenderer.DrawText(g, button.Text, button.Font, text, button.ForeColor, TextFlags(button) | TextFormatFlags.PreserveGraphicsClipping);
-				g.Clip = clip;
+				var drawn = shifted ? new Rectangle(image.X + 1, image.Y + 1, image.Width, image.Height) : image;
+				var place = image;
+				var shown = CentrePicture(picture, button.ImageAlign, button.TextImageRelation, button.Text.Length > 0, bounds.Height, ref place);
+				if (place != drawn || shown != picture)
+				{
+					using (var brush = new SolidBrush(FaceColor(button)))
+						g.FillRectangle(brush, drawn);
+					g.DrawImage(shown, place, 0, 0, place.Width, place.Height, GraphicsUnit.Pixel);
+					var clip = g.Clip;
+					g.SetClip(drawn, CombineMode.Intersect);
+					DrawButtonText(g, button, text, button.ForeColor, TextFlags(button) | TextFormatFlags.PreserveGraphicsClipping);
+					g.Clip = clip;
+				}
 			}
 			if (button.Focused && (bool)(ShowFocusCuesProperty?.GetValue(button, null) ?? false))
 				using (var pen = new Pen(Themed("SelectedBackground", SystemColors.Highlight)))
 				using (var outline = RoundedRectangle(new RectangleF(0.5f, 0.5f, button.Width - 1, button.Height - 1), left, right, right, left))
 					g.DrawPath(pen, outline);
 			g.Restore(saved);
+		}
+
+		/// <summary>The colour an enabled push button's face is filled with: pressed, under the mouse, or at rest.</summary>
+		static Color FaceColor(ButtonBase button)
+		{
+			return (bool)(MouseIsDownProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseDownBackColor
+				: (bool)(MouseIsOverProperty?.GetValue(button, null) ?? false) ? button.FlatAppearance.MouseOverBackColor
+				: button.BackColor;
+		}
+
+		/// <summary>
+		/// Whether a push button opens a list or a menu, as the arrow half of a split button does: its text is a triangle
+		/// pointing down and nothing else, ▾ or ▼, which Windows draws where the theme does not.
+		/// </summary>
+		static bool OpensList(ButtonBase button)
+		{
+			return button.Text == "▾" || button.Text == "▼";
+		}
+
+		/// <summary>
+		/// Where a button's picture stands as the WPF programs centre one: at its own size, in the middle of the face's height,
+		/// as many rows of the face above it as below. A face is as tall as its text and the frame's room above and below it,
+		/// so a picture as tall as the text has an even number of rows to share.
+		/// </summary>
+		/// <param name="picture">The picture, or null.</param>
+		/// <param name="align">How the button aligns its picture: only one aligned to the middle of its height is moved.</param>
+		/// <param name="relation">How the button places its picture and text: one above the other keeps its place.</param>
+		/// <param name="withText">Whether the button shows text.</param>
+		/// <param name="height">The height of the face, from nought at its top.</param>
+		/// <param name="place">Where the layout puts the picture, at its own size; given back where it is drawn.</param>
+		/// <returns>The picture to draw there.</returns>
+		static Image CentrePicture(Image picture, System.Drawing.ContentAlignment align, TextImageRelation relation, bool withText, int height, ref Rectangle place)
+		{
+			var stacked = withText && (relation == TextImageRelation.ImageAboveText || relation == TextImageRelation.TextAboveImage);
+			if (picture == null || place.Size != picture.Size || (align & (AnyTop | AnyBottom)) != 0 || stacked)
+				return picture;
+			place = new Rectangle(place.X, (height - picture.Height) / 2, picture.Width, picture.Height);
+			return picture;
 		}
 
 		static readonly PropertyInfo AdapterProperty = typeof(ButtonBase).GetProperty("Adapter", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -1726,6 +2177,53 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
+		/// Draws a menu or a status bar in the dark theme: as Windows Forms' professional renderer draws it, the lines beside a
+		/// status bar's labels in the theme's line colour (BorderDark), as every other line of the dark theme, where Windows draws
+		/// them in its own light grey.
+		/// </summary>
+		class DarkToolStripRenderer : ToolStripProfessionalRenderer
+		{
+			public DarkToolStripRenderer() : base(new ProfessionalColorTable()) { }
+
+			protected override void OnRenderToolStripStatusLabelBackground(ToolStripItemRenderEventArgs e)
+			{
+				base.OnRenderToolStripStatusLabelBackground(e);
+				var label = e.Item as ToolStripStatusLabel;
+				if (label == null || label.BorderSides == ToolStripStatusLabelBorderSides.None)
+					return;
+				// Windows draws each side two pixels wide, a dark one and a light one: both are covered with what is behind the
+				// label, and the outer one drawn again in the line colour, one pixel wide as every other line.
+				var sides = label.BorderSides;
+				var w = label.Width;
+				var h = label.Height;
+				using (var back = new SolidBrush(label.BackColor))
+				using (var line = new SolidBrush(Themed("BorderDark", SystemColors.ControlDark)))
+				{
+					if ((sides & ToolStripStatusLabelBorderSides.Left) != 0)
+					{
+						e.Graphics.FillRectangle(back, 0, 0, 2, h);
+						e.Graphics.FillRectangle(line, 0, 0, 1, h);
+					}
+					if ((sides & ToolStripStatusLabelBorderSides.Right) != 0)
+					{
+						e.Graphics.FillRectangle(back, w - 2, 0, 2, h);
+						e.Graphics.FillRectangle(line, w - 1, 0, 1, h);
+					}
+					if ((sides & ToolStripStatusLabelBorderSides.Top) != 0)
+					{
+						e.Graphics.FillRectangle(back, 0, 0, w, 2);
+						e.Graphics.FillRectangle(line, 0, 0, w, 1);
+					}
+					if ((sides & ToolStripStatusLabelBorderSides.Bottom) != 0)
+					{
+						e.Graphics.FillRectangle(back, 0, h - 2, w, 2);
+						e.Graphics.FillRectangle(line, 0, h - 1, w, 1);
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// Draws a tool bar as the WPF programs draw one: plain, without an edge, its buttons filled and rounded, lighter
 		/// under the mouse and lighter again pressed. A menu that drops down from it is drawn as before.
 		/// </summary>
@@ -1784,30 +2282,56 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					base.OnRenderItemText(e);
 					return;
 				}
-				var withPicture = e.Item.Image != null && e.Item.DisplayStyle == ToolStripItemDisplayStyle.ImageAndText;
-				TextRenderer.DrawText(e.Graphics, e.Text, e.TextFont, e.TextRectangle, DisabledText(e.Item.ForeColor, withPicture, e.ToolStrip.BackColor), e.TextFormat);
+				TextRenderer.DrawText(e.Graphics, e.Text, e.TextFont, e.TextRectangle, DisabledText(), e.TextFormat);
 			}
 
 			/// <summary>
-			/// Draws a disabled button's picture on the tool bar itself at half strength, as WPF draws a disabled control,
-			/// where Windows Forms draws it in grey; any other picture is drawn as before.
+			/// Draws a button's picture on the tool bar itself in the middle of the button's height, as a push button's, and
+			/// a disabled one at half strength, as WPF draws a disabled control, where Windows Forms draws it in grey; a
+			/// picture on a drop-down is drawn as before.
 			/// </summary>
 			protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
 			{
-				if (e.Item.Enabled || e.Item.IsOnDropDown || e.Image == null)
+				if (e.Item.IsOnDropDown || e.Image == null)
+				{
+					base.OnRenderItemImage(e);
+					return;
+				}
+				var item = e.Item;
+				var place = e.ImageRectangle;
+				var withText = (item.DisplayStyle & ToolStripItemDisplayStyle.Text) != 0 && !string.IsNullOrEmpty(item.Text);
+				var image = CentrePicture(e.Image, item.ImageAlign, item.TextImageRelation, withText, item.Height, ref place);
+				if (item.Enabled && image == e.Image && place == e.ImageRectangle)
 				{
 					base.OnRenderItemImage(e);
 					return;
 				}
 				using (var attributes = new ImageAttributes())
 				{
-					attributes.SetColorMatrix(new ColorMatrix { Matrix33 = 0.5f });
-					var key = e.Item.ImageTransparentColor;
+					if (!item.Enabled)
+						attributes.SetColorMatrix(new ColorMatrix { Matrix33 = 0.5f });
+					var key = item.ImageTransparentColor;
 					if (key != Color.Empty)
 						attributes.SetColorKey(key, key);
-					var image = e.Image;
-					e.Graphics.DrawImage(image, e.ImageRectangle, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+					e.Graphics.DrawImage(image, place, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
 				}
+			}
+
+			/// <summary>
+			/// Draws the arrow of a drop-down button on the tool bar itself as a drop-down list's: Default.xaml's triangle,
+			/// in the column <see cref="PadToolBarItem"/> leaves for it at the button's right; any other arrow is drawn as before.
+			/// </summary>
+			protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+			{
+				var item = e.Item;
+				if (!HasListArrow(item))
+				{
+					base.OnRenderArrow(e);
+					return;
+				}
+				var g = e.Graphics;
+				var color = item.Enabled ? item.ForeColor : DisabledText();
+				DrawDropDownArrow(g, item.Width - Line(g) - Dip(g, ComboBoxPadding + ComboBoxArrowColumn / 2f), item.Height / 2f, color);
 			}
 
 			/// <summary>
@@ -1833,10 +2357,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>The room round each item of a tool bar, in device-independent pixels: Default.xaml's button margin.</summary>
-		const int ButtonMargin = 3;
+		const int ButtonMargin = 4;
 
 		/// <summary>The room between a button's fill and what is on it, in device-independent pixels: Default.xaml's button padding.</summary>
-		const int ButtonPadding = 5;
+		const int ButtonPadding = 4;
 
 		/// <summary>The room Windows Forms leaves inside a tool bar button's edge, in pixels.</summary>
 		const int WindowsToolBarButtonBorder = 2;
@@ -1848,9 +2372,37 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Padding Padding;
 			public System.Drawing.ContentAlignment ImageAlign;
 			public System.Drawing.ContentAlignment TextAlign;
+			/// <summary>The room a drop-down button's layout keeps either side of its arrow.</summary>
+			public Padding ArrowPadding;
 		}
 
 		static readonly ConditionalWeakTable<ToolStripItem, ItemLook> ItemLooks = new ConditionalWeakTable<ToolStripItem, ItemLook>();
+
+		/// <summary>The layout of a tool bar item, a property of its own, made again as the item changes.</summary>
+		static readonly PropertyInfo ItemLayoutProperty = typeof(ToolStripItem).GetProperty("InternalLayout", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>The layout of a drop-down button, a class of its own.</summary>
+		static readonly Type DropDownLayoutType = typeof(ToolStripDropDownButton).GetNestedType("ToolStripDropDownButtonInternalLayout", BindingFlags.NonPublic);
+
+		/// <summary>
+		/// The room a drop-down button's layout keeps either side of its arrow, a field of the layout's own: Windows Forms lays the
+		/// button's picture and text out clear of it and of the arrow.
+		/// </summary>
+		static readonly FieldInfo ArrowPaddingField = DropDownLayoutType?.GetField("scaledDropDownArrowPadding", BindingFlags.Instance | BindingFlags.NonPublic)
+			?? DropDownLayoutType?.GetField("_dropDownArrowPadding", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		/// <summary>The size of the arrow Windows Forms draws on a drop-down button, a field of the layout's class.</summary>
+		static readonly FieldInfo ArrowSizeField = DropDownLayoutType?.GetField("dropDownArrowSize", BindingFlags.Static | BindingFlags.NonPublic)
+			?? DropDownLayoutType?.GetField("s_dropDownArrowSize", BindingFlags.Static | BindingFlags.NonPublic);
+
+		/// <summary>The layout of a drop-down button, or null where the runtime does not show it.</summary>
+		static object DropDownLayout(ToolStripItem item)
+		{
+			if (ItemLayoutProperty == null || ArrowPaddingField == null || ArrowSizeField == null || !(item is ToolStripDropDownButton))
+				return null;
+			var layout = ItemLayoutProperty.GetValue(item, null);
+			return DropDownLayoutType.IsInstanceOfType(layout) ? layout : null;
+		}
 
 		/// <summary>
 		/// Lays an item on a tool bar drawn as the WPF programs draw one out as a control on a WPF tool bar: Default.xaml's
@@ -1870,6 +2422,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (!wpf)
 					return;
 				own = new ItemLook { Margin = item.Margin, Padding = item.Padding, ImageAlign = item.ImageAlign, TextAlign = item.TextAlign };
+				var layout = DropDownLayout(item);
+				if (layout != null)
+					own.ArrowPadding = (Padding)ArrowPaddingField.GetValue(layout);
 				ItemLooks.Add(item, own);
 			}
 			var margin = wpf ? new Padding(Pixels(ButtonMargin)) : own.Margin;
@@ -1885,20 +2440,48 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				item.ImageAlign = imageAlign;
 			if (item.TextAlign != textAlign)
 				item.TextAlign = textAlign;
-			var extra = wpf ? Pixels(ButtonPadding) - WindowsToolBarButtonBorder : 0;
+			// Inside the button's line, the button padding at each side, as tall as Default.xaml's button.
+			var side = LineWidth() + Pixels(ButtonPadding);
+			var extra = wpf ? side - WindowsToolBarButtonBorder : 0;
 			var natural = item.GetPreferredSize(Size.Empty).Height - item.Padding.Vertical + own.Padding.Vertical;
-			var taller = wpf ? Math.Max(0, item.Font.Height + Pixels(ButtonPadding * 2) - natural) : 0;
+			var taller = wpf ? Math.Max(0, item.Font.Height + side * 2 - natural) : 0;
 			var padding = new Padding(own.Padding.Left + extra, own.Padding.Top + taller / 2, own.Padding.Right + extra, own.Padding.Bottom + taller - taller / 2);
 			if (item.Padding != padding)
 				item.Padding = padding;
+			// A drop-down button keeps a drop-down list's arrow column at its right: the room round Windows' arrow is widened, so
+			// its picture and text end where a list's text does, the button's padding short of the column.
+			var dropDown = DropDownLayout(item);
+			if (dropDown != null)
+			{
+				var room = Math.Max(0, Pixels(ComboBoxPadding * 2 + ComboBoxArrowColumn) - Pixels(ButtonPadding) - ((Size)ArrowSizeField.GetValue(null)).Width);
+				var arrowPadding = wpf && HasListArrow(item) ? new Padding(room / 2, 0, room - room / 2, 0) : own.ArrowPadding;
+				if ((Padding)ArrowPaddingField.GetValue(dropDown) != arrowPadding)
+					ArrowPaddingField.SetValue(dropDown, arrowPadding);
+			}
 		}
 
 		/// <summary>
-		/// The padding of a tool bar: as the WPF programs draw one, none but the room a list beside it lent it; otherwise its own.
+		/// Whether a tool bar item shows a drop-down list's arrow: a drop-down button on the tool bar itself with its arrow
+		/// shown, its text across and left to right, where the runtime lets the room round the arrow be widened. Any other keeps
+		/// the arrow Windows Forms draws.
+		/// </summary>
+		static bool HasListArrow(ToolStripItem item)
+		{
+			return item is ToolStripDropDownButton button && button.ShowDropDownArrow && !item.IsOnDropDown
+				&& item.RightToLeft != RightToLeft.Yes && item.TextDirection == ToolStripTextDirection.Horizontal
+				&& ItemLayoutProperty != null && ArrowPaddingField != null && ArrowSizeField != null;
+		}
+
+		/// <summary>
+		/// The padding of a tool bar: as the WPF programs draw one, at its sides none but the room a list beside it lent it,
+		/// above and below its buttons its own; otherwise its own.
 		/// </summary>
 		static Padding ToolBarPadding(ToolStrip strip, State state, bool wpf)
 		{
-			return wpf ? LentRoom(strip) : state.Padding;
+			if (!wpf)
+				return state.Padding;
+			var lent = LentRoom(strip);
+			return new Padding(lent.Left, state.Padding.Top, lent.Right, state.Padding.Bottom);
 		}
 
 		/// <summary>
@@ -1921,14 +2504,21 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// Where a group box's caption breaks its frame, how far its text stands in from there, and how far down its text stands,
 		/// in device-independent pixels, as in Default.xaml.
 		/// </summary>
-		const int GroupBoxCaptionGap = 10;
-		const int GroupBoxCaptionPadding = 5;
-		const int GroupBoxCaptionTop = 5;
+		const int GroupBoxCaptionGap = 12;
+		const int GroupBoxCaptionPadding = 4;
+		const int GroupBoxCaptionTop = 4;
 
 		/// <summary>
-		/// Draws a group box as Default.xaml does, over what Windows Forms drew: its frame rounded, in the border colour, with a
-		/// line in the window colour beside it, a pixel right and down, and its caption in a break in the frame clear of the
-		/// corner, the frame's top line through the caption's middle. The caption never comes closer to the box's controls.
+		/// The room between a group box's content and the inner line of its frame at the sides and below, and between its
+		/// caption's text and its content, in device-independent pixels, as Default.xaml's GroupBox pads its content.
+		/// </summary>
+		const int GroupBoxRoom = 4;
+
+		/// <summary>
+		/// Draws a group box as Default.xaml does, over what Windows Forms drew: its frame rounded and sunken, a shadow line with
+		/// a highlight line beside it, a pixel right and down, and its caption in a break in the frame clear of the corner, the
+		/// frame's top line through the caption's middle. The caption never comes closer to the box's controls. Disabled, the
+		/// caption is at half strength, as a disabled label is.
 		/// </summary>
 		static void GroupBox_Paint(object sender, PaintEventArgs e)
 		{
@@ -1944,15 +2534,17 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			// it. Controls put where they stand keep the room left above them, and the caption stays where Windows Forms has it.
 			var laidOut = box.Controls.Cast<Control>().Any(x => x.Visible && x.Dock != DockStyle.None);
 			var captionTop = laidOut ? (int)Math.Round(Dip(g, GroupBoxCaptionTop)) : 0;
-			var top = captionTop + caption.Height / 2;
+			// Through the middle of the caption's line as WPF lays it out, the font's height: Windows' own line can be a row
+			// shorter, which would put the line half a row high.
+			var top = captionTop + box.Font.Height / 2;
 			var saved = Smooth(g);
 			var line = Line(g);
 			var radius = Dip(g, CornerRadius);
 			var frame = new RectangleF(0, top, client.Width - line, client.Height - top - line);
-			using (var pen = new Pen(Themed("BackgroundWhite", SystemColors.Window), line))
+			using (var pen = new Pen(Themed("BorderHighlight", SystemColors.ControlLightLight), line))
 			using (var path = RoundedRectangle(Inset(new RectangleF(frame.X + line, frame.Y + line, frame.Width, frame.Height), line / 2), radius, radius, radius, radius))
 				g.DrawPath(pen, path);
-			using (var pen = new Pen(Themed("BorderDark", SystemColors.ControlDark), line))
+			using (var pen = new Pen(Themed("BorderShadow", SystemColors.ControlDark), line))
 			using (var path = RoundedRectangle(Inset(frame, line / 2), radius, radius, radius, radius))
 				g.DrawPath(pen, path);
 			g.Restore(saved);
@@ -1965,7 +2557,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			using (var brush = new SolidBrush(box.BackColor))
 				g.FillRectangle(brush, gap, captionTop, width + padding * 2, caption.Height);
 			TextRenderer.DrawText(g, box.Text, box.Font, new Rectangle(gap + padding, captionTop, width, caption.Height),
-				box.Enabled ? box.ForeColor : SystemColors.GrayText, flags);
+				box.Enabled ? box.ForeColor : DisabledText(), flags);
 		}
 
 		#endregion
@@ -2008,7 +2600,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return PaintsTabs(control) || (control is TrackBar && !SystemInformation.HighContrast);
 		}
 
-		/// <summary>Passes the mouse on a tab strip or slider painted here on to what is drawn under it, and leaves any other as it is.</summary>
+		/// <summary>
+		/// Passes the mouse on a tab strip or slider painted here on to what is drawn under it, and puts the pages of such a strip
+		/// inside the frame drawn round them; leaves any other as it is.
+		/// </summary>
 		static void AttachMouseMap(Control control, State state)
 		{
 			if (MapsMouse(control))
@@ -2030,7 +2625,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// The window of a control drawn where Windows does not have it: a tab strip, whose tabs are drawn from the side of
 		/// the window, as the WPF programs draw them, where Windows keeps them a little in from it, or a slider, whose thumb
 		/// travels as far as WPF's, further than Windows lets it. The mouse is passed on to Windows where Windows has what is
-		/// drawn under it.
+		/// drawn under it, and a tab strip's pages are put where the frame drawn round them has them.
 		/// </summary>
 		class MouseMap : NativeWindow
 		{
@@ -2043,6 +2638,24 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 			protected override void WndProc(ref Message m)
 			{
+				// Windows Forms gives the window the strip's pictures, which a strip sizing its tabs as Default.xaml's has sized by
+				// blank ones in their place.
+				State state;
+				if (m.Msg == NativeMethods.TCM_SETIMAGELIST && Control is TabControl strip && States.TryGetValue(strip, out state) && state.TabsSized)
+				{
+					ImageList replaced;
+					m.LParam = TabImageList(strip, state, out replaced);
+					base.WndProc(ref m);
+					replaced?.Dispose();
+					return;
+				}
+				// Windows Forms asks the window where the pages go, for the window's rectangle.
+				if (m.Msg == NativeMethods.TCM_ADJUSTRECT && m.WParam == IntPtr.Zero && Control is TabControl tabs && tabs.TabCount > 0)
+				{
+					var window = (NativeMethods.RECT)Marshal.PtrToStructure(m.LParam, typeof(NativeMethods.RECT));
+					Marshal.StructureToPtr(PageArea(tabs, window), m.LParam, false);
+					return;
+				}
 				var mouse = m.Msg >= NativeMethods.WM_MOUSEMOVE && m.Msg <= NativeMethods.WM_MBUTTONDBLCLK;
 				if (mouse)
 				{
@@ -2063,10 +2676,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (control is TabControl tabs)
 			{
 				var rects = TabRects(tabs);
-				var bottom = 0;
-				foreach (var r in rects)
-					bottom = Math.Max(bottom, r.Bottom);
-				return point.Y < bottom ? new Point(point.X + TabOffset(rects), point.Y) : point;
+				return point.Y < TabsBottom(rects) ? new Point(point.X + TabOffset(rects), point.Y) : point;
 			}
 			if (control is TrackBar track)
 			{
@@ -2087,9 +2697,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Makes a list painted here as tall as a push button in the same font, as Default.xaml makes both: its text with 5
-		/// device-independent pixels above and below, and gives the list's window its font. One on a tool bar keeps the bar's
-		/// height.
+		/// Makes a list painted here as tall as a push button in the same font, as Default.xaml makes both: its text with 4
+		/// device-independent pixels above and below, on a tool bar too, and at least as wide as its widest item, off a tool
+		/// bar, a stretched one by its minimum width, and gives the list's window its font.
 		/// </summary>
 		/// <remarks>
 		/// A table lays a list out by the height it was given, so the list is given its height. Windows makes the window as
@@ -2108,6 +2718,21 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var height = ComboBoxHeight(combo);
 			if (height > 0 && combo.Height != height)
 				combo.Height = height;
+			const AnchorStyles across = AnchorStyles.Left | AnchorStyles.Right;
+			var stretched = combo.Dock != DockStyle.None || (combo.Anchor & across) == across;
+			if (!(combo.Parent is ToolStrip) && combo.Items.Count > 0)
+			{
+				var width = GetComboBoxWidth(combo);
+				if (!stretched)
+				{
+					if (combo.Width < width)
+						combo.Width = width;
+				}
+				// A layout that stretches the list gives it the width of its cell, which only the list can make wide enough:
+				// a table's column sized to its content is as wide as the widest thing in it, the list counted at its minimum.
+				else if (combo.MinimumSize.Width < width)
+					combo.MinimumSize = new Size(width, combo.MinimumSize.Height);
+			}
 			if (!combo.IsHandleCreated)
 				return;
 			SetWindowFontMethod?.Invoke(combo, null);
@@ -2126,10 +2751,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			AttachEditField(combo, state, combo.DropDownStyle == ComboBoxStyle.DropDown ? info.hwndItem : IntPtr.Zero);
 		}
 
-		/// <summary>The height Default.xaml gives a drop-down list painted here, off a tool bar; 0 for any other list.</summary>
+		/// <summary>The height Default.xaml gives a drop-down list painted here, on a tool bar or off it; 0 for any other list.</summary>
 		static int ComboBoxHeight(ComboBox combo)
 		{
-			return PaintsComboBox(combo) && !(combo.Parent is ToolStrip) ? ControlHeight(combo) : 0;
+			return PaintsComboBox(combo) ? ControlHeight(combo) : 0;
 		}
 
 		/// <summary>
@@ -2139,9 +2764,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		static void ComboBox_DropDown(object sender, EventArgs e)
 		{
 			var combo = (ComboBox)sender;
-			// The items of the list it opens as tall as Default.xaml's, their text with 5 above and below; Windows Forms gives
-			// them the field's height whenever it gives the field its own.
-			NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, IntPtr.Zero, (IntPtr)ControlHeight(combo));
+			// The items of the list it opens as tall as Default.xaml's, their text with 4 above and below and no line; Windows
+			// Forms gives them the field's height whenever it gives the field its own.
+			NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_SETITEMHEIGHT, IntPtr.Zero, (IntPtr)(combo.Font.Height + Pixels(ComboBoxPadding * 2)));
 			var width = WidestItem(combo) + Pixels(ComboBoxPadding) * 2;
 			if (combo.Items.Count > combo.MaxDropDownItems)
 				width += SystemInformation.VerticalScrollBarWidth;
@@ -2168,7 +2793,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		public static int GetComboBoxWidth(ComboBox combo)
 		{
 			var room = PaintsComboBox(combo)
-				? Pixels(ComboBoxPadding) + Pixels(ComboBoxPadding * 2 + ComboBoxArrowColumn)
+				? FrameSide() * 2 + Pixels(ComboBoxPadding + ComboBoxArrowColumn)
 				: SystemInformation.VerticalScrollBarWidth + 8;
 			return WidestItem(combo) + room;
 		}
@@ -2183,7 +2808,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// The list a drop-down list painted here opens, as the WPF programs draw it: an item as Default.xaml's ComboBoxItem
-		/// draws one, its text 5 in from the side, on the control colour, and rounded in the hover colour while it is the one the
+		/// draws one, its text 4 in from the side, on the control colour, and rounded in the hover colour while it is the one the
 		/// mouse or the keys stand on. The field is painted with the rest of the drop-down list.
 		/// </summary>
 		static void ComboBox_DrawItem(object sender, DrawItemEventArgs e)
@@ -2285,7 +2910,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (m.Msg == NativeMethods.WM_CTLCOLOREDIT || m.Msg == NativeMethods.WM_CTLCOLORSTATIC)
 				{
 					var back = FrameFace(Combo);
-					NativeMethods.SetTextColor(m.WParam, ColorTranslator.ToWin32(Combo.Enabled ? Combo.ForeColor : Half(Combo.ForeColor, back)));
+					NativeMethods.SetTextColor(m.WParam, ColorTranslator.ToWin32(Combo.Enabled ? Combo.ForeColor : DisabledText()));
 					NativeMethods.SetBkColor(m.WParam, ColorTranslator.ToWin32(back));
 					m.Result = SolidBrush(back);
 					return;
@@ -2312,11 +2937,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		static readonly Dictionary<int, IntPtr> Brushes = new Dictionary<int, IntPtr>();
 
 		/// <summary>
-		/// The text box of an editable drop-down list painted here, where Default.xaml's PART_EditableTextBox stands: 5 in from
+		/// The text box of an editable drop-down list painted here, where Default.xaml's PART_EditableTextBox stands: 4 in from
 		/// the left, clear of the triangle, as tall as its line of text and in the middle of the field. Windows moves it each
 		/// time the list is resized, so it is moved back as it goes.
 		/// </summary>
-		class EditField : NativeWindow
+		class EditField : DisabledTextWindow
 		{
 			readonly ComboBox Combo;
 
@@ -2325,12 +2950,25 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				Combo = combo;
 			}
 
+			/// <summary>Whether the theme draws the text: the list is disabled and has text.</summary>
+			protected override bool DrawsDisabledText()
+			{
+				return !Combo.Enabled && Combo.Text.Length > 0;
+			}
+
+			/// <summary>Draws the list's text again on the field's colour, the colour the list gives its text box.</summary>
+			protected override void PaintDisabledText(IntPtr hdc)
+			{
+				PaintDisabledEdit(Handle, hdc, Combo.Text, Combo.Font, FrameFace(Combo), false, false,
+					Combo.RightToLeft == RightToLeft.Yes ? HorizontalAlignment.Right : HorizontalAlignment.Left);
+			}
+
 			Rectangle Bounds()
 			{
 				var client = Combo.ClientRectangle;
 				var line = Math.Min(LineHeight(Combo.Font), client.Height);
-				var left = Pixels(ComboBoxPadding);
-				var right = Pixels(ComboBoxPadding + ComboBoxArrowColumn);
+				var left = FrameSide();
+				var right = FrameSide() + Pixels(ComboBoxPadding + ComboBoxArrowColumn);
 				return new Rectangle(left, (client.Height - line) / 2, Math.Max(0, client.Width - left - right), line);
 			}
 
@@ -2435,7 +3073,35 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		const int ComboBoxArrowColumn = 16;
 
 		/// <summary>The room between a drop-down list's edge and what is on it, in device-independent pixels: its border and padding.</summary>
-		const int ComboBoxPadding = 5;
+		const int ComboBoxPadding = 4;
+
+		/// <summary>The size of Default.xaml's drop-down triangle, in device-independent pixels: as wide as its column.</summary>
+		static readonly SizeF DropDownTriangle = new SizeF(16, 8);
+
+		/// <summary>
+		/// Default.xaml's drop-down triangle, pointing down with its middle on the point given: the arrow of a drop-down list,
+		/// and of any button that opens a list or a menu.
+		/// </summary>
+		/// <remarks>
+		/// Its top left corner stands on the nearest whole pixel, so its top edge and its sides are as sharp on a face of any
+		/// height or width as on any other: on a half pixel, the top row is drawn at half strength and the triangle looks
+		/// smaller.
+		/// </remarks>
+		static void DrawDropDownArrow(Graphics g, float x, float y, Color color)
+		{
+			var width = Dip(g, DropDownTriangle.Width);
+			var height = Dip(g, DropDownTriangle.Height);
+			var left = (float)Math.Round(x - width / 2, MidpointRounding.AwayFromZero);
+			var top = (float)Math.Round(y - height / 2, MidpointRounding.AwayFromZero);
+			var points = new[]
+			{
+				new PointF(left, top), new PointF(left + width, top), new PointF(left + width / 2, top + height),
+			};
+			var saved = Smooth(g);
+			using (var brush = new SolidBrush(color))
+				g.FillPolygon(brush, points);
+			g.Restore(saved);
+		}
 
 		/// <summary>
 		/// A drop-down list as Default.xaml draws one: a rounded field in the control colour, the hover colour under the mouse,
@@ -2461,22 +3127,15 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed(hot ? "BackgroundDarkSelected" : "BackgroundDark", SystemColors.ControlLight))))
 				using (var face = RoundedRectangle(client, radius, radius, radius, radius))
 					g.FillPath(brush, face);
-			// Default.xaml's triangle, 10 by 5 drawn 1.4 times as large, in the middle of its column.
-			var scale = Dip(g, 1);
-			var x = client.Width - (ComboBoxPadding + ComboBoxArrowColumn / 2f) * scale;
-			var y = client.Height / 2f;
-			var points = new[]
-			{
-				new PointF(x - 7 * scale, y - 3.5f * scale), new PointF(x + 7 * scale, y - 3.5f * scale), new PointF(x, y + 3.5f * scale),
-			};
-			using (var brush = new SolidBrush(Color.FromArgb(alpha, combo.ForeColor)))
-				g.FillPolygon(brush, points);
 			g.Restore(saved);
+			// Inside the face's line, the room before the text and round the triangle, which stands in the middle of its column.
+			var side = (int)Line(g) + (int)Math.Round(Dip(g, ComboBoxPadding));
+			DrawDropDownArrow(g, client.Width - side - Dip(g, ComboBoxArrowColumn / 2f), client.Height / 2f,
+				Color.FromArgb(alpha, combo.ForeColor));
 			if (editable)
 				return;
-			var padding = (int)Math.Round(ComboBoxPadding * scale);
-			var text = Rectangle.FromLTRB(padding, 0, client.Width - (int)Math.Round((ComboBoxPadding * 2 + ComboBoxArrowColumn) * scale), client.Height);
-			TextRenderer.DrawText(g, combo.Text, combo.Font, text, combo.Enabled ? combo.ForeColor : Half(combo.ForeColor, behind),
+			var text = Rectangle.FromLTRB(side, 0, client.Width - side - (int)Math.Round(Dip(g, ComboBoxPadding + ComboBoxArrowColumn)), client.Height);
+			TextRenderer.DrawText(g, combo.Text, combo.Font, text, combo.Enabled ? combo.ForeColor : DisabledText(),
 				TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis
 				| TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding);
 			if (combo.Focused && (bool)(ShowFocusCuesProperty?.GetValue(combo, null) ?? false))
@@ -2484,24 +3143,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>The room between two tabs, as Default.xaml leaves it after a TabItem.</summary>
-		const int TabGap = 3;
+		const int TabGap = 4;
 
-		/// <summary>
-		/// What a TabItem of Default.xaml adds round its text, in device-independent pixels: its padding and edge on either
-		/// side, 5 and 1, and above and below, 4 and 4 with its top edge.
-		/// </summary>
-		static readonly SizeF TabItemPadding = new SizeF(12, 9);
+		/// <summary>The room inside a TabItem's edge on every side of its text, in device-independent pixels, as in Default.xaml.</summary>
+		const int TabTextRoom = 4;
 
 		/// <summary>How far in from the top of its window Windows puts the tabs, in pixels.</summary>
 		const int WindowsTabTop = 2;
 
 		/// <summary>
 		/// Gives the tabs of a strip painted here the size of a TabItem of Default.xaml, and the tabs of any other strip
-		/// their own padding back. A program's own padding is kept.
+		/// their own padding back. A program's own padding and tab size are kept.
 		/// </summary>
 		/// <remarks>
-		/// Windows makes a tab as wide as its text with the padding on either side, gap included, and as high as its font
-		/// with the padding above and below.
+		/// Windows makes a tab as wide as its text with the padding on either side, gap included. Its height is given
+		/// whole: the TabItem's height less the room Windows keeps above the tabs, which the tabs are drawn over, so the page
+		/// starts where Default.xaml's does.
 		/// The padding goes to the window, because setting <see cref="TabControl.Padding"/> makes the window again, and
 		/// a .NET Framework strip that holds the focus then throws as the focus leaves it. Windows measures the tabs
 		/// with the padding when it is given the font, which Windows Forms gives no window painted here.
@@ -2511,23 +3168,76 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			state.TabsPadded = PaintsTabs(tabs);
 			var x = tabs.Padding.X;
 			var y = tabs.Padding.Y;
-			if (state.TabsPadded && !TypeDescriptor.GetProperties(tabs)[nameof(TabControl.Padding)].ShouldSerializeValue(tabs))
-			{
-				var scale = ControlsHelper.DpiScale;
-				x = (int)Math.Round((TabItemPadding.Width + TabGap) * scale / 2);
-				y = (int)Math.Round((TabHeight(tabs.Font, scale) - WindowsTabTop - tabs.Font.Height) / 2);
-			}
+			var padded = state.TabsPadded && !TypeDescriptor.GetProperties(tabs)[nameof(TabControl.Padding)].ShouldSerializeValue(tabs);
+			if (padded)
+				x = TabPaddingX();
 			NativeMethods.SendMessage(tabs.Handle, NativeMethods.TCM_SETPADDING, IntPtr.Zero, (IntPtr)((y << 16) | (x & 0xFFFF)));
 			SetWindowFontMethod?.Invoke(tabs, null);
-			// Setting the tab size makes the strip lay its pages out again, in the room the tabs now leave.
+			state.TabsSized = padded;
+			ImageList replaced;
+			NativeMethods.SendMessage(tabs.Handle, NativeMethods.TCM_SETIMAGELIST, IntPtr.Zero, TabImageList(tabs, state, out replaced));
+			replaced?.Dispose();
 			var itemSize = TypeDescriptor.GetProperties(tabs)[nameof(TabControl.ItemSize)];
+			if (padded && !itemSize.ShouldSerializeValue(tabs))
+			{
+				var height = (int)Math.Round(TabHeight(tabs.Font, ControlsHelper.DpiScale)) - WindowsTabTop;
+				NativeMethods.SendMessage(tabs.Handle, NativeMethods.TCM_SETITEMSIZE, IntPtr.Zero, (IntPtr)(height << 16));
+			}
+			// Setting the tab size makes the strip lay its pages out again, in the room the tabs now leave.
 			tabs.ItemSize = itemSize.ShouldSerializeValue(tabs) ? tabs.ItemSize : Size.Empty;
 		}
 
-		/// <summary>The height of a TabItem of Default.xaml with text in the font given, at the scale given, in pixels.</summary>
+		/// <summary>
+		/// The height of a TabItem of Default.xaml with text in the font given, at the scale given, in pixels: its top edge's
+		/// line and the room above and below the text.
+		/// </summary>
 		static float TabHeight(Font font, float scale)
 		{
-			return font.GetHeight(96f * scale) + TabItemPadding.Height * scale;
+			return font.GetHeight(96f * scale) + LineWidth() + TabTextRoom * 2 * scale;
+		}
+
+		/// <summary>
+		/// The padding Windows is given at either side of a tab's text: the edge's line, the room and half the gap to the next
+		/// tab, which each tab is drawn that much narrower to leave.
+		/// </summary>
+		static int TabPaddingX()
+		{
+			return LineWidth() + Pixels(TabTextRoom) + Pixels(TabGap) / 2;
+		}
+
+		/// <summary>
+		/// The picture list Windows sizes a strip's tabs by: for a strip that sizes its tabs as Default.xaml's, blank pictures as
+		/// wide as the strip's own less the padding Windows puts between a tab's picture and its text, so a tab with a picture
+		/// is as wide as Default.xaml's, the room before its picture as wide as the room after its text; for any other strip its
+		/// own list.
+		/// </summary>
+		/// <remarks>
+		/// Windows makes a tab with a picture as wide as its text, its picture and the padding three times: at either side and
+		/// between the two. The tabs are drawn here from the strip's own list, so Windows draws nothing from this one.
+		/// </remarks>
+		/// <param name="replaced">The blank pictures the strip had before, to dispose of once Windows has the new list.</param>
+		static IntPtr TabImageList(TabControl tabs, State state, out ImageList replaced)
+		{
+			replaced = null;
+			var own = tabs.ImageList;
+			if (own == null || !state.TabsSized)
+			{
+				replaced = state.TabSizes;
+				state.TabSizes = null;
+				return own?.Handle ?? IntPtr.Zero;
+			}
+			// Line, room, picture, room, text, room, line and the gap after, of which Windows gives the text and the padding.
+			var room = Pixels(TabTextRoom);
+			var width = Pixels(TabGap) + (LineWidth() + room) * 2 + own.ImageSize.Width + room - TabPaddingX() * 3;
+			var size = new Size(Math.Max(1, width), own.ImageSize.Height);
+			if (state.TabSizes == null || state.TabSizes.ImageSize != size)
+			{
+				if (state.TabSizes == null)
+					tabs.Disposed += (sender, e) => state.TabSizes?.Dispose();
+				replaced = state.TabSizes;
+				state.TabSizes = new ImageList { ColorDepth = ColorDepth.Depth32Bit, ImageSize = size };
+			}
+			return state.TabSizes.Handle;
 		}
 
 		/// <summary>Where Windows puts each tab of a strip.</summary>
@@ -2537,6 +3247,56 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			for (var i = 0; i < rects.Length; i++)
 				rects[i] = tabs.GetTabRect(i);
 			return rects;
+		}
+
+		/// <summary>Where the tabs end and the page's frame starts: the bottom of the lowest tab.</summary>
+		static int TabsBottom(Rectangle[] rects)
+		{
+			var bottom = 0;
+			foreach (var r in rects)
+				bottom = Math.Max(bottom, r.Bottom);
+			return bottom;
+		}
+
+		/// <summary>
+		/// Where the pages of a tab strip painted here stand, for the strip's window rectangle given: inside the frame drawn round
+		/// them, edge to edge, as Default.xaml's TabControl holds its content a line in from its border. Windows keeps them a
+		/// little further in, more at the sides and the bottom than below the tabs.
+		/// </summary>
+		static NativeMethods.RECT PageArea(TabControl tabs, NativeMethods.RECT window)
+		{
+			var line = LineWidth();
+			var r = window;
+			r.Left += line;
+			r.Top += TabsBottom(TabRects(tabs)) + line;
+			r.Right = Math.Max(r.Left, r.Right - line);
+			r.Bottom = Math.Max(r.Top, r.Bottom - line);
+			return r;
+		}
+
+		/// <summary>Gives a page the shape of the frame round it again at its new size.</summary>
+		static void TabPage_SizeChanged(object sender, EventArgs e)
+		{
+			ClipTabPage((TabPage)sender);
+		}
+
+		/// <summary>
+		/// Gives a page of a strip painted here the shape of the inside of the frame round it, rounded at the frame's rounded
+		/// corners as Default.xaml's TabControl masks its content, so a list or text that fills the page reaches the frame and
+		/// leaves its corners whole; and gives a page of any other strip its own shape back.
+		/// </summary>
+		static void ClipTabPage(TabPage page)
+		{
+			Region region = null;
+			if (PaintsTabs(page.Parent) && page.Width > 0 && page.Height > 0)
+			{
+				var radius = CornerRadius * ControlsHelper.DpiScale;
+				using (var path = RoundedRectangle(new RectangleF(0, 0, page.Width, page.Height), 0, radius, radius, radius))
+					region = new Region(path);
+			}
+			// Windows Forms disposes of the shape it replaces.
+			if (region != null || page.Region != null)
+				page.Region = region;
 		}
 
 		/// <summary>
@@ -2583,9 +3343,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			State state;
 			var hot = States.TryGetValue(tabs, out state) ? state.HotTab : -1;
 			var rects = TabRects(tabs);
-			var bottom = 0;
-			foreach (var r in rects)
-				bottom = Math.Max(bottom, r.Bottom);
+			var bottom = TabsBottom(rects);
 			var offset = TabOffset(rects);
 			var height = (int)Math.Round(TabHeight(tabs.Font, g.DpiY / 96f));
 			var saved = Smooth(g);
@@ -2622,27 +3380,33 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				// reaches over into the page is not part of it.
 				var content = new Rectangle(bounds.X, top + (int)line, bounds.Width, bottom - top - (int)line);
 				var page = tabs.TabPages[i];
+				var text = !tabs.Enabled ? SystemColors.GrayText
+					: Themed(selected ? "ForegroundTabSelected" : "ForegroundTab", SystemColors.ControlText);
+				const TextFormatFlags flags = TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
 				var index = GetTabImageIndex(tabs, page);
 				if (index >= 0)
 				{
-					// Drawn by the list itself: taking an image out of it copies the image on every paint, and
-					// fails for a list read from a resource stream.
+					// The picture where the tab's room starts and the text the room after it, as Default.xaml's header; the tab is
+					// sized for it (TabImageList). Drawn by the list itself: taking an image out of it copies the image on every
+					// paint, and fails for a list read from a resource stream.
 					var size = tabs.ImageList.ImageSize;
-					tabs.ImageList.Draw(g, content.X + 6, content.Y + (content.Height - size.Height) / 2, index);
-					content = new Rectangle(content.X + size.Width + 6, content.Y, content.Width - size.Width - 6, content.Height);
+					var room = (int)Math.Round(Dip(g, TabTextRoom));
+					var left = content.X + (int)line + room;
+					var textLeft = left + size.Width + room;
+					tabs.ImageList.Draw(g, left, content.Y + (content.Height - size.Height) / 2, index);
+					TextRenderer.DrawText(g, page.Text, tabs.Font, new Rectangle(textLeft, content.Y, content.Right - textLeft, content.Height), text, flags);
 				}
-				var text = !tabs.Enabled ? SystemColors.GrayText
-					: Themed(selected ? "ForegroundTabSelected" : "ForegroundTab", SystemColors.ControlText);
-				TextRenderer.DrawText(g, page.Text, tabs.Font, content, text,
-					TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix);
+				else
+					TextRenderer.DrawText(g, page.Text, tabs.Font, content, text, flags | TextFormatFlags.HorizontalCenter);
 			}
 			g.Restore(saved);
-			// Windows marks the chosen tab while the strip has the keyboard focus and focus is being shown.
+			// The chosen tab is marked while the strip has the keyboard focus and focus is being shown, as Default.xaml marks
+			// a TabItem: the theme's focus mark round the tab, over the line below it.
 			if (tabs.SelectedIndex >= 0 && tabs.Focused && (bool)(ShowFocusCuesProperty?.GetValue(tabs, null) ?? false))
 			{
-				var focus = rects[tabs.SelectedIndex];
-				focus = new Rectangle(focus.X - offset + 2, focus.Y + 2, Math.Max(1, focus.Width - gap - 4), Math.Max(1, focus.Height - 4));
-				ControlPaint.DrawFocusRectangle(g, focus);
+				var r = rects[tabs.SelectedIndex];
+				var top = Math.Max(0, Math.Min(r.Y, r.Bottom - height));
+				DrawFocus(g, new Rectangle(r.X - offset, top, Math.Max(1, r.Width - gap), bottom - top + (int)line), Themed("ForegroundBlack", SystemColors.ControlText));
 			}
 		}
 
@@ -2705,21 +3469,24 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		const int SliderTrackHeight = 4;
 
 		/// <summary>How far in from each end of WPF's slider its track starts, in device-independent pixels.</summary>
-		const int SliderTrackMargin = 5;
+		const int SliderTrackMargin = 4;
 
 		/// <summary>The width of WPF's slider thumb, in device-independent pixels.</summary>
-		const int SliderThumbWidth = 11;
+		const int SliderThumbWidth = 12;
 
 		/// <summary>The length of WPF's slider thumb, toward its ticks, in device-independent pixels.</summary>
-		const int SliderThumbLength = 18;
+		const int SliderThumbLength = 16;
+
+		/// <summary>How much of WPF's pointed thumb's length is straight before it points at the ticks, in device-independent pixels.</summary>
+		const int SliderThumbStraight = 12;
 
 		/// <summary>How far WPF's slider ticks stand from its thumb, and how long the longest are, in device-independent pixels.</summary>
-		const int SliderTickGap = 2;
+		const int SliderTickGap = 4;
 		const int SliderTickLength = 4;
 
 		/// <summary>
 		/// A slider as WPF draws one: a thin track, ticks in the theme's control colour and the thumb pointing at them, the
-		/// thumb travelling from half its width in from one end to as far from the other. The thumb of the slider with the
+		/// thumb travelling from one end of the slider to the other and whole at both. The thumb of the slider with the
 		/// focus is drawn in the selection colours, which show the slider the keys move.
 		/// </summary>
 		/// <remarks>
@@ -2737,23 +3504,29 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			GetSliderTravel(track, out nativeFirst, out nativeLast, out first, out last);
 			var thumb = GetTrackRectangle(track, NativeMethods.TBM_GETTHUMBRECT);
 			var middle = vertical ? thumb.Y + thumb.Height / 2f : thumb.X + thumb.Width / 2f;
-			var move = (int)Math.Round(Remap(middle, nativeFirst, nativeLast, first, last) - middle);
 			var across = SliderShift(track);
-			thumb.Offset(vertical ? across : move, vertical ? move : across);
-			// WPF's track: 4 high, edged, 5 in from the ends, through the middle of the thumb.
+			thumb.Offset(vertical ? across : 0, vertical ? 0 : across);
+			var thumbWidth = Pixels(SliderThumbWidth);
+			var thumbLength = Pixels(SliderThumbLength);
+			// Where WPF's thumb starts along the way, in whole pixels: its width in whole pixels is within half a pixel of WPF's,
+			// so it starts on the slider's first pixel at the lowest value and ends on its last at the highest.
+			var start = (int)Math.Round(Remap(middle, nativeFirst, nativeLast, first, last) - thumbWidth / 2f);
+			// Across, its middle where SliderShift puts the middle of Windows' thumb.
+			var box = vertical
+				? new Rectangle(thumb.X + thumb.Width / 2 - thumbLength / 2, start, thumbLength, thumbWidth)
+				: new Rectangle(start, thumb.Y + thumb.Height / 2 - thumbLength / 2, thumbWidth, thumbLength);
+			// WPF's track: 4 high, in the border colour, 4 in from the ends, through the middle of the thumb.
 			var height = (int)Math.Round(Dip(g, SliderTrackHeight));
 			var margin = (int)Math.Round(Dip(g, SliderTrackMargin));
 			var length = vertical ? track.ClientSize.Height : track.ClientSize.Width;
 			var bar = vertical
 				? new Rectangle(thumb.X + (thumb.Width - height) / 2, margin, height, length - margin * 2)
 				: new Rectangle(margin, thumb.Y + (thumb.Height - height) / 2, length - margin * 2, height);
-			using (var brush = new SolidBrush(SliderColor(track, "BackgroundDark", SystemColors.ControlLight)))
+			using (var brush = new SolidBrush(SliderColor(track, "BorderDark", SystemColors.ControlDark)))
 				g.FillRectangle(brush, bar);
-			using (var pen = new Pen(SliderColor(track, "BorderDark", SystemColors.ControlDark)))
-				g.DrawRectangle(pen, bar.X, bar.Y, bar.Width - 1, bar.Height - 1);
 			if (track.TickStyle != TickStyle.None)
 				DrawTicks(track, g, first, last, thumb, vertical);
-			DrawThumb(track, g, thumb, vertical);
+			DrawThumb(track, g, box, vertical);
 		}
 
 		/// <summary>
@@ -2821,7 +3594,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Ticks one pixel wide, as long as WPF's: three, and the two ends four, in the colour WPF's are, as far from WPF's thumb
+		/// Ticks one pixel wide and 4 long, as Default.xaml draws every one, in the colour WPF's are, as far from WPF's thumb
 		/// as WPF has them.
 		/// </summary>
 		static void DrawTicks(TrackBar track, Graphics g, float first, float last, Rectangle thumb, bool vertical)
@@ -2843,7 +3616,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{
 				for (var i = 0; i < places.Count; i++)
 				{
-					var length = (int)Math.Round((i < 2 ? SliderTickLength : SliderTickLength - 1) * scale);
+					var length = (int)Math.Round(SliderTickLength * scale);
 					if (vertical && after)
 						g.FillRectangle(brush, middle + reach, places[i], length, 1);
 					if (vertical && before)
@@ -2857,58 +3630,74 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Default.xaml's thumb, 11 by 18, pointing 6 of its 18 at the ticks, or a plain rectangle without them, filled as a
-		/// button is in the slider's state and edged in the secondary text colour; while the slider has the focus, filled
-		/// as a lit button and edged in the selection colour.
+		/// Default.xaml's thumb, 12 by 16, straight for 12 of its 16 and pointing the last 4 at the ticks, or a plain rectangle
+		/// without them, filled in the page colour, lit and pressed as a button is, and edged in the grey border colour; while
+		/// the slider has the focus, filled as a lit button and edged in the selection colour.
 		/// </summary>
+		/// <remarks>
+		/// The pointed thumb's edge runs through the middle of whole pixels, so each slope is as solid as the straight sides.
+		/// It is drawn once pointing down, its left half copied onto its right as in a mirror, so both slopes are the same
+		/// pixels, as WPF draws them, and turned to the side the ticks are on.
+		/// </remarks>
+		/// <param name="thumb">The place and size of the thumb, in whole pixels; its edge is drawn inside it.</param>
 		static void DrawThumb(TrackBar track, Graphics g, Rectangle thumb, bool vertical)
 		{
 			var focused = track.Enabled && track.Focused;
-			var key = !track.Enabled ? "BackgroundDark"
+			var key = !track.Enabled ? "BackgroundLight"
 				: track.Capture && (Control.MouseButtons & MouseButtons.Left) != 0 ? "BackgroundDarkPressed"
 				: focused || thumb.Contains(track.PointToClient(Control.MousePosition)) ? "BackgroundDarkSelected"
-				: "BackgroundDark";
-			var fill = SliderColor(track, key, SystemColors.ControlLight);
+				: "BackgroundLight";
+			var fill = SliderColor(track, key, SystemColors.Control);
 			var edge = focused
 				? SliderColor(track, "SelectedBackground", SystemColors.Highlight)
-				: SliderColor(track, "ForegroundGray", SystemColors.ControlDark);
-			var scale = Dip(g, 1);
-			var width = 11 * scale;
-			var length = 18 * scale;
+				: SliderColor(track, "BorderGray", SystemColors.ControlDark);
+			var line = Line(g);
 			if (track.TickStyle != TickStyle.BottomRight && track.TickStyle != TickStyle.TopLeft)
 			{
-				// Square ended, on whole pixels, with an edge one line wide: every side as sharp as the others.
-				var across = (int)Math.Round(width);
-				var along = (int)Math.Round(length);
-				var box = vertical
-					? new Rectangle(thumb.X + (thumb.Width - along) / 2, thumb.Y + (thumb.Height - across) / 2, along, across)
-					: new Rectangle(thumb.X + (thumb.Width - across) / 2, thumb.Y + (thumb.Height - along) / 2, across, along);
+				// Square ended, with an edge one line wide: every side as sharp as the others.
 				using (var brush = new SolidBrush(edge))
-					g.FillRectangle(brush, box);
-				var line = (int)Line(g);
-				box.Inflate(-line, -line);
+					g.FillRectangle(brush, thumb);
+				var inside = thumb;
+				inside.Inflate(-(int)line, -(int)line);
 				using (var brush = new SolidBrush(fill))
-					g.FillRectangle(brush, box);
+					g.FillRectangle(brush, inside);
 				return;
 			}
-			// The shape lying flat, pointing down, in its own units; turned to the side the ticks are on.
-			var shape = new[] { new PointF(0, 0), new PointF(11, 0), new PointF(11, 12), new PointF(5.5f, 18), new PointF(0, 12) };
-			// Across the slider the shape is 11 wide; along the way to the ticks it is 18 long.
-			var left = (float)Math.Round(thumb.X + (thumb.Width - (vertical ? length : width)) / 2);
-			var top = (float)Math.Round(thumb.Y + (thumb.Height - (vertical ? width : length)) / 2);
-			var flip = track.TickStyle == TickStyle.TopLeft;
-			var points = shape.Select(p =>
+			// The shape lying flat, pointing down: across the slider as wide as the thumb, along the way to the ticks as long,
+			// the line half its width in from the outside.
+			var width = vertical ? thumb.Height : thumb.Width;
+			var length = vertical ? thumb.Width : thumb.Height;
+			var straight = Math.Min(length, Pixels(SliderThumbStraight));
+			var half = line / 2;
+			// The point ends on the middle of one pixel, or of the two in the middle of an even width.
+			var tipLeft = (width - line) % 2 == 0 ? width / 2f : width / 2f - 0.5f;
+			var tipRight = width - tipLeft;
+			var points = new[]
 			{
-				var across = p.X * scale;
-				var along = (flip ? 18 - p.Y : p.Y) * scale;
-				return vertical ? new PointF(left + along, top + across) : new PointF(left + across, top + along);
-			}).ToArray();
-			var saved = Smooth(g);
-			using (var brush = new SolidBrush(fill))
-				g.FillPolygon(brush, points);
-			using (var pen = new Pen(edge, Line(g)))
-				g.DrawPolygon(pen, points);
-			g.Restore(saved);
+				new PointF(half, half), new PointF(width - half, half), new PointF(width - half, straight - half),
+				new PointF(tipRight, length - half), new PointF(tipLeft, length - half), new PointF(half, straight - half),
+			};
+			// Not premultiplied, so a pixel copied across reads back as it was drawn.
+			using (var shape = new Bitmap(width, length, PixelFormat.Format32bppArgb))
+			{
+				using (var sg = Graphics.FromImage(shape))
+				{
+					sg.SmoothingMode = SmoothingMode.AntiAlias;
+					sg.PixelOffsetMode = PixelOffsetMode.Half;
+					using (var brush = new SolidBrush(fill))
+						sg.FillPolygon(brush, points);
+					using (var pen = new Pen(edge, line))
+						sg.DrawPolygon(pen, points);
+				}
+				for (var y = 0; y < length; y++)
+					for (var x = 0; x < width / 2; x++)
+						shape.SetPixel(width - 1 - x, y, shape.GetPixel(x, y));
+				var turn = vertical
+					? (track.TickStyle == TickStyle.TopLeft ? RotateFlipType.Rotate90FlipNone : RotateFlipType.Rotate270FlipNone)
+					: (track.TickStyle == TickStyle.TopLeft ? RotateFlipType.RotateNoneFlipY : RotateFlipType.RotateNoneFlipNone);
+				shape.RotateFlip(turn);
+				g.DrawImageUnscaled(shape, thumb.Location);
+			}
 		}
 
 		/// <summary>Whether a progress bar is painted here as WPF draws one: one that shows how far it is, while high contrast is off.</summary>
@@ -2941,23 +3730,23 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		#region Grids
 
-		/// <summary>The smallest height of a grid's rows in Default.xaml, in device-independent pixels.</summary>
-		const int GridRowHeight = 25;
+		/// <summary>The room above and below a cell's text, inside the lines between rows, in device-independent pixels.</summary>
+		const int GridCellRoom = 4;
 
 		/// <summary>The room above and below a header's text, in device-independent pixels.</summary>
-		const int GridHeaderRoom = 3;
+		const int GridHeaderRoom = 4;
 
 		/// <summary>
 		/// The room before the header and cells of the first column shown, in device-independent pixels, so its text, picture or
 		/// check box does not stand against the grid's edge.
 		/// </summary>
-		const int GridFirstColumnRoom = 3;
+		const int GridFirstColumnRoom = 4;
 
 		/// <summary>The room before a cell's check box, in device-independent pixels: CheckBoxCell's margin.</summary>
-		const int GridCheckBoxMargin = 3;
+		const int GridCheckBoxMargin = 4;
 
 		/// <summary>The room at each side of a cell's content, in device-independent pixels: DataGridCell_Default's padding.</summary>
-		const int GridCellPadding = 3;
+		const int GridCellPadding = 4;
 
 		/// <summary>
 		/// Whether a grid is drawn as the WPF programs draw one: one whose headers the program left to Windows, while high
@@ -2970,9 +3759,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// Gives a grid Default.xaml's look, or its own back: no edge, the window colour behind its rows, lines only between
-		/// rows, in the page colour, headers without lines, padded as Default.xaml pads them and with room above and below
-		/// their text, as tall as that text and its room, rows at least as tall as Default.xaml makes them, and room before
-		/// the first column shown.
+		/// rows, in the page colour, or none in a grid made without them, which tells its rows apart by colour, headers without
+		/// lines, padded as Default.xaml pads them and with room above and below their text, as tall as that text and its room,
+		/// rows at least as tall as Default.xaml makes them, and room before the first column shown.
 		/// </summary>
 		static void ApplyGridLook(DataGridView grid, State state, bool wpf)
 		{
@@ -3004,16 +3793,20 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			grid.BorderStyle = wpf ? BorderStyle.None : look.BorderStyle;
 			grid.BackgroundColor = wpf ? Themed("BackgroundWhite", SystemColors.Window) : look.BackgroundColor;
 			grid.GridColor = wpf ? Themed("BackgroundLight", SystemColors.Control) : look.GridColor;
-			grid.CellBorderStyle = wpf ? DataGridViewCellBorderStyle.SingleHorizontal : look.CellBorderStyle;
+			grid.CellBorderStyle = wpf && look.CellBorderStyle != DataGridViewCellBorderStyle.None ? DataGridViewCellBorderStyle.SingleHorizontal : look.CellBorderStyle;
 			grid.ColumnHeadersBorderStyle = wpf ? DataGridViewHeaderBorderStyle.None : look.HeadersBorderStyle;
 			// Default.xaml pads a header 16 on the right for the sort triangle; Windows Forms leaves that room itself. The
-			// headers are as tall as Windows Forms makes them for their text and the room above and below it.
+			// headers are as tall as their text and the room above and below it, without a line.
 			var room = Pixels(GridHeaderRoom);
 			grid.ColumnHeadersDefaultCellStyle.Padding = wpf ? new Padding(Pixels(GridHeaderPadding.Left), room, 0, room) : look.HeaderPadding;
-			grid.ColumnHeadersHeightSizeMode = wpf ? DataGridViewColumnHeadersHeightSizeMode.AutoSize : look.HeadersHeightSizeMode;
-			if (!wpf && look.HeadersHeightSizeMode != DataGridViewColumnHeadersHeightSizeMode.AutoSize)
+			grid.ColumnHeadersHeightSizeMode = wpf ? DataGridViewColumnHeadersHeightSizeMode.DisableResizing : look.HeadersHeightSizeMode;
+			if (wpf)
+				grid.ColumnHeadersHeight = (grid.ColumnHeadersDefaultCellStyle.Font ?? grid.Font).Height + room * 2;
+			else if (look.HeadersHeightSizeMode != DataGridViewColumnHeadersHeightSizeMode.AutoSize)
 				grid.ColumnHeadersHeight = look.HeadersHeight;
-			var rowHeight = wpf ? Math.Max(look.RowHeight, Pixels(GridRowHeight)) : look.RowHeight;
+			// A row is as tall as its text, the room above and below it, and the line below it, or as the program made it.
+			var cellFont = grid.RowsDefaultCellStyle.Font ?? grid.DefaultCellStyle.Font ?? grid.Font;
+			var rowHeight = wpf ? Math.Max(look.RowHeight, cellFont.Height + Pixels(GridCellRoom) * 2 + LineWidth()) : look.RowHeight;
 			grid.RowTemplate.Height = rowHeight;
 			if (grid.AutoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
 				for (var i = 0; i < grid.Rows.Count; i++)
@@ -3025,8 +3818,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		/// <summary>
 		/// Lets a list that fills its container stand edge to edge in it: the container's side padding goes to the controls
-		/// docked above and below the list, as room inside them, so they stay where the padding put them; and comes back when
-		/// the list is drawn as Windows draws it.
+		/// docked above and below the list, as room inside them, so they stay where the padding put them, and its padding above
+		/// or below the list goes where nothing is docked there; all of it comes back when the list is drawn as Windows draws it.
 		/// </summary>
 		/// <remarks>
 		/// Windows Forms docks every control inside its container's padding, and gives a docked control no margin. A tool bar
@@ -3041,13 +3834,16 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (parent == null || !States.TryGetValue(parent, out state))
 				return;
 			var own = parent.Padding;
+			var docked = parent.Controls.Cast<Control>()
+				.Where(x => x != grid && (x.Dock == DockStyle.Top || x.Dock == DockStyle.Bottom)).ToList();
+			var top = docked.Any(x => x.Dock == DockStyle.Top) ? own.Top : 0;
+			var bottom = docked.Any(x => x.Dock == DockStyle.Bottom) ? own.Bottom : 0;
 			if (wpf && state.LentPadding == null && grid.Dock == DockStyle.Fill && !(parent is TableLayoutPanel)
-				&& !(parent is FlowLayoutPanel) && (own.Left > 0 || own.Right > 0))
+				&& !(parent is FlowLayoutPanel) && (own.Left > 0 || own.Right > 0 || top != own.Top || bottom != own.Bottom))
 			{
 				state.LentPadding = own;
-				state.LentTo = parent.Controls.Cast<Control>()
-					.Where(x => x != grid && (x.Dock == DockStyle.Top || x.Dock == DockStyle.Bottom)).ToList();
-				parent.Padding = new Padding(0, own.Top, 0, own.Bottom);
+				state.LentTo = docked;
+				parent.Padding = new Padding(0, top, 0, bottom);
 				foreach (var control in state.LentTo)
 					Lend(control, own.Left, own.Right);
 			}
@@ -3112,26 +3908,39 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			UnpadFirstColumn(look);
 			if (column == null)
 				return;
+			// Marked first, so the changes below, which the grid may answer by asking again, find it done.
 			look.First = column;
-			look.FirstPadding = column.DefaultCellStyle.Padding;
-			look.FirstHeaderPadding = column.HeaderCell.Style.Padding;
-			// The room is added to the padding the column's cells and header have: their own, or the grid's.
+			// A column copied from one given the room has its paddings with the room: its own are that column's.
+			var own = OwnColumnPaddings.GetValue(column, x =>
+			{
+				var current = new[] { x.DefaultCellStyle.Padding, x.HeaderCell.Style.Padding };
+				return look.LastPadded != null && current[0] == look.LastPadded[0] && current[1] == look.LastPadded[1] ? look.LastOwn : current;
+			});
+			// The room is added to the padding the column's cells and header have of their own, or the grid's.
 			var room = Pixels(GridFirstColumnRoom);
-			var cells = look.FirstPadding == Padding.Empty ? grid.DefaultCellStyle.Padding : look.FirstPadding;
-			column.DefaultCellStyle.Padding = new Padding(cells.Left + room, cells.Top, cells.Right, cells.Bottom);
-			var header = look.FirstHeaderPadding == Padding.Empty ? grid.ColumnHeadersDefaultCellStyle.Padding : look.FirstHeaderPadding;
-			column.HeaderCell.Style.Padding = new Padding(header.Left + room, header.Top, header.Right, header.Bottom);
+			var cells = own[0] == Padding.Empty ? grid.DefaultCellStyle.Padding : own[0];
+			var header = own[1] == Padding.Empty ? grid.ColumnHeadersDefaultCellStyle.Padding : own[1];
+			look.LastOwn = own;
+			look.LastPadded = new[]
+			{
+				new Padding(cells.Left + room, cells.Top, cells.Right, cells.Bottom),
+				new Padding(header.Left + room, header.Top, header.Right, header.Bottom),
+			};
+			column.DefaultCellStyle.Padding = look.LastPadded[0];
+			column.HeaderCell.Style.Padding = look.LastPadded[1];
 		}
 
 		/// <summary>Gives the column that was given the room before its header and cells its own paddings back.</summary>
 		static void UnpadFirstColumn(GridLook look)
 		{
 			var column = look.First;
-			if (column == null)
+			Padding[] own;
+			if (column == null || !OwnColumnPaddings.TryGetValue(column, out own))
 				return;
+			// Unmarked last, so the changes below, which the grid may answer by asking again, do not pad it again.
+			column.DefaultCellStyle.Padding = own[0];
+			column.HeaderCell.Style.Padding = own[1];
 			look.First = null;
-			column.DefaultCellStyle.Padding = look.FirstPadding;
-			column.HeaderCell.Style.Padding = look.FirstHeaderPadding;
 		}
 
 		/// <summary>
@@ -3149,8 +3958,38 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				PadFirstColumn(grid, state.Grid);
 		}
 
+		static void LinkGrid_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+		{
+			if (e.StateChanged == DataGridViewElementStates.Selected && e.Row.Index >= 0)
+				foreach (DataGridViewCell cell in e.Row.Cells)
+					ColorSelectedLink(cell);
+		}
+
+		static void LinkGrid_CellStateChanged(object sender, DataGridViewCellStateChangedEventArgs e)
+		{
+			if (e.StateChanged == DataGridViewElementStates.Selected)
+				ColorSelectedLink(e.Cell);
+		}
+
 		/// <summary>
-		/// Paints a grid's headers as Default.xaml does, from the window colour at the top to the page colour at the bottom
+		/// Draws a link cell in the selection's text colour while it is selected, as the rest of its row, because the link
+		/// colour does not read on the selection, and in its column's link colours otherwise.
+		/// </summary>
+		static void ColorSelectedLink(DataGridViewCell cell)
+		{
+			var link = cell as DataGridViewLinkCell;
+			var column = cell.OwningColumn as DataGridViewLinkColumn;
+			if (link == null || column == null || cell.RowIndex < 0)
+				return;
+			var selected = (cell.InheritedState & DataGridViewElementStates.Selected) != 0;
+			var text = cell.InheritedStyle.SelectionForeColor;
+			link.LinkColor = selected ? text : column.LinkColor;
+			link.ActiveLinkColor = selected ? text : column.ActiveLinkColor;
+			link.VisitedLinkColor = selected ? text : column.VisitedLinkColor;
+		}
+
+		/// <summary>
+		/// Paints a grid's headers as Default.xaml does, from the header colour at the top to the page colour at the bottom
 		/// and without lines, and its check boxes as CheckBoxCell does: Default.xaml's check box at the cell's left, in from
 		/// it by the cell's padding too.
 		/// </summary>
@@ -3162,7 +4001,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{
 				if (bounds.Width > 0 && bounds.Height > 0)
 					using (var brush = new LinearGradientBrush(new Rectangle(bounds.X, bounds.Y - 1, bounds.Width, bounds.Height + 2),
-						Themed("BackgroundWhite", SystemColors.Window), Themed("BackgroundLight", SystemColors.Control), LinearGradientMode.Vertical))
+						Themed("BackgroundHeader", SystemColors.Window), Themed("BackgroundLight", SystemColors.Control), LinearGradientMode.Vertical))
 						e.Graphics.FillRectangle(brush, bounds);
 				if (e.ColumnIndex >= 0 && grid.RightToLeft != RightToLeft.Yes)
 					PaintGridHeader(e, grid.Columns[e.ColumnIndex]);
@@ -3188,24 +4027,24 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				return;
 			var check = e.FormattedValue is CheckState checkState ? checkState
 				: e.FormattedValue is bool isChecked && isChecked ? CheckState.Checked : CheckState.Unchecked;
-			var hot = grid.Enabled && bounds.Contains(grid.PointToClient(Control.MousePosition));
+			var hot = grid.Enabled && (HasCellFocus(grid, e.ColumnIndex, e.RowIndex) || bounds.Contains(grid.PointToClient(Control.MousePosition)));
 			DrawWpfCheck(e.Graphics, box, CheckScale(font), check, false, hot, grid.Enabled);
 		}
 
 		/// <summary>
-		/// What Default.xaml's DataGridHeader_Sorting keeps round a header's text, in device-independent pixels: 3 on the left,
+		/// What Default.xaml's DataGridHeader_Sorting keeps round a header's text, in device-independent pixels: 4 on the left,
 		/// and 16 on the right for the sort triangle.
 		/// </summary>
-		static readonly Padding GridHeaderPadding = new Padding(3, 0, 16, 0);
+		static readonly Padding GridHeaderPadding = new Padding(4, 0, 16, 0);
 
 		/// <summary>The size of the sort triangle in Default.xaml's DataGridHeader_Sorting, and its room from the right, in device-independent pixels.</summary>
-		static readonly SizeF GridSortTriangle = new SizeF(10, 5);
-		const int GridSortTriangleRight = 3;
+		static readonly SizeF GridSortTriangle = new SizeF(8, 4);
+		const int GridSortTriangleRight = 4;
 
 		/// <summary>
 		/// A header's text and sort triangle where Default.xaml's DataGridHeader_Sorting puts them, which Windows Forms puts
-		/// further in: the text in the middle of the header's height, clear of the room kept round it, in from the left by the
-		/// header's padding, and the triangle in from the right, pointing down while the column is sorted ascending and up while
+		/// further in: the text in the middle of the header's height, clear of the room kept round it, in from either side by
+		/// the header's padding, and the triangle in from the right, pointing down while the column is sorted ascending and up while
 		/// sorted descending. Windows Forms leaves no room for a triangle in a column that cannot be sorted, nor does the text.
 		/// </summary>
 		static void PaintGridHeader(DataGridViewCellPaintingEventArgs e, DataGridViewColumn column)
@@ -3214,9 +4053,18 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var bounds = e.CellBounds;
 			var style = e.CellStyle;
 			var right = column.SortMode == DataGridViewColumnSortMode.NotSortable ? 0 : Pixels(GridHeaderPadding.Right);
-			var text = Rectangle.FromLTRB(bounds.Left + style.Padding.Left, bounds.Top, bounds.Right - right, bounds.Bottom);
+			var text = Rectangle.FromLTRB(bounds.Left + style.Padding.Left, bounds.Top, bounds.Right - right - style.Padding.Right, bounds.Bottom);
 			var flags = TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis
 				| TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
+			// A header whose style wraps its text, in a header row a program made two lines tall or more, breaks it between
+			// words, its lines together in the middle of its height.
+			var font = style.Font ?? column.DataGridView.Font;
+			if (style.WrapMode == DataGridViewTriState.True && text.Width > 0 && text.Height >= font.Height * 2)
+			{
+				flags = TextFormatFlags.WordBreak | TextFormatFlags.EndEllipsis | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding;
+				var lines = TextRenderer.MeasureText(g, e.FormattedValue as string ?? column.HeaderText, font, new Size(text.Width, int.MaxValue), flags).Height;
+				text = new Rectangle(text.X, text.Y + Math.Max(0, (text.Height - lines) / 2), text.Width, Math.Min(text.Height, lines));
+			}
 			var align = style.Alignment;
 			if (align == DataGridViewContentAlignment.TopCenter || align == DataGridViewContentAlignment.MiddleCenter || align == DataGridViewContentAlignment.BottomCenter)
 				flags |= TextFormatFlags.HorizontalCenter;
@@ -3256,7 +4104,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				return;
 			if (grid.ColumnHeadersVisible && grid.ColumnHeadersHeight > 0)
 				using (var brush = new LinearGradientBrush(new Rectangle(right, -1, width, grid.ColumnHeadersHeight + 2),
-					Themed("BackgroundWhite", SystemColors.Window), Themed("BackgroundLight", SystemColors.Control), LinearGradientMode.Vertical))
+					Themed("BackgroundHeader", SystemColors.Window), Themed("BackgroundLight", SystemColors.Control), LinearGradientMode.Vertical))
 					e.Graphics.FillRectangle(brush, right, 0, width, grid.ColumnHeadersHeight);
 			using (var pen = new Pen(grid.GridColor))
 				for (var i = grid.FirstDisplayedScrollingRowIndex; i >= 0 && i < grid.Rows.Count; i++)
@@ -3276,14 +4124,36 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				grid.InvalidateCell(e.ColumnIndex, e.RowIndex);
 		}
 
+		/// <summary>Whether a cell has the keyboard: the current cell of a grid that has the focus.</summary>
+		static bool HasCellFocus(DataGridView grid, int column, int row)
+		{
+			var current = grid.CurrentCellAddress;
+			return grid.ContainsFocus && current.X == column && current.Y == row;
+		}
+
 		#endregion
 
 		#region Frames
 
-		/// <summary>The height Default.xaml gives a control with a line of text: the text, with 5 device-independent pixels above and below.</summary>
+		/// <summary>
+		/// The height Default.xaml gives a control with a line of text: the text, with its edge's line and 4 device-independent
+		/// pixels of room inside the line, above and below.
+		/// </summary>
 		static int ControlHeight(Control control)
 		{
-			return control.Font.Height + Pixels(ComboBoxPadding * 2);
+			return control.Font.Height + FrameSide() * 2;
+		}
+
+		/// <summary>
+		/// The size of text as it is drawn on a window, each letter as wide as it is drawn: its advance width, as WPF lays it
+		/// out. Measured without a window's device context, Windows Forms gives letters wider than they are drawn, by about a
+		/// letter over a short line. The line has no width limit, so text that may wrap stays on its lines.
+		/// </summary>
+		static Size MeasureDrawnText(string text, Font font, TextFormatFlags flags)
+		{
+			using (var bitmap = new Bitmap(1, 1))
+			using (var g = Graphics.FromImage(bitmap))
+				return TextRenderer.MeasureText(g, text, font, new Size(int.MaxValue, int.MaxValue), flags);
 		}
 
 		/// <summary>
@@ -3322,7 +4192,13 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>The room the frame takes at each side of a box's text, in pixels: its line and Default.xaml's room inside it.</summary>
 		static int FrameSide()
 		{
-			return Math.Max(1, (int)Math.Floor(ControlsHelper.DpiScale)) + Pixels(ComboBoxPadding);
+			return LineWidth() + Pixels(ComboBoxPadding);
+		}
+
+		/// <summary>The width of a line Default.xaml draws one device-independent pixel wide, in whole pixels of this program's windows.</summary>
+		static int LineWidth()
+		{
+			return Math.Max(1, (int)Math.Floor(ControlsHelper.DpiScale));
 		}
 
 		/// <summary>
@@ -3419,14 +4295,16 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (!upDown.AutoSize)
 					FitBoxWidth(upDown, state, framed);
 			}
+			var room = ItemRoom(control as ListBox);
 			if (control is ListBox list)
 			{
 				if (list.BorderStyle != border)
 					list.BorderStyle = border;
-				var drawMode = framed ? DrawMode.OwnerDrawFixed : state.DrawMode;
+				// Items the theme draws stand as tall as their text with the room above and below it.
+				var drawMode = room > 0 ? DrawMode.OwnerDrawFixed : state.DrawMode;
 				if (list.DrawMode != drawMode)
 					list.DrawMode = drawMode;
-				list.ItemHeight = framed ? ControlHeight(list) : state.ItemHeight;
+				list.ItemHeight = room > 0 ? list.Font.Height + Pixels(room * 2) : state.ItemHeight;
 				// The list stands the height the program asked for, as WPF's does, not the height of whole items it was cut to.
 				var integral = framed ? false : state.IntegralHeight;
 				if (list.IntegralHeight != integral)
@@ -3437,7 +4315,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						list.Height = requested.Value;
 				}
 				list.DrawItem -= List_DrawItem;
-				if (framed)
+				if (room > 0)
 					list.DrawItem += List_DrawItem;
 			}
 			// The frame shows the mouse, the focus and whether the control can be changed.
@@ -3454,8 +4332,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				control.Enter += RedrawFrame;
 				control.Leave += RedrawFrame;
 				control.EnabledChanged += RedrawFrame;
-				control.FontChanged += Frame_FontChanged;
 			}
+			// The height of a framed box, and of the items the theme draws in a list, follow its font.
+			if (framed || room > 0)
+				control.FontChanged += Frame_FontChanged;
 			SetFrameColor(control);
 			if (control.IsHandleCreated)
 			{
@@ -3507,8 +4387,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			return control.Enabled && !(control is TextBoxBase box && box.ReadOnly) && !(control is UpDownBase upDown && upDown.ReadOnly);
 		}
 
-		/// <summary>The colour inside a frame: the window colour, or the control colour for a list and for a box that cannot be changed.</summary>
-		static Color FrameFace(Control control)
+		/// <summary>The colour inside a frame: the field colour, or the control colour for a list and for a box that cannot be changed.</summary>
+		/// <remarks>A box a program draws itself, such as a chart's, is filled with it too, so it looks as the boxes beside it do.</remarks>
+		public static Color FrameFace(Control control)
 		{
 			return control is ListBox || !IsEditable(control)
 				? Themed("BackgroundDark", SystemColors.Control)
@@ -3530,6 +4411,108 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
+		/// A window whose text the theme draws again while it is disabled, in the colour of every disabled text, where Windows
+		/// draws a disabled edit window's text in its own grey: in one pass with Windows' own paint, so every paint shows it, and
+		/// into every picture taken of the window.
+		/// </summary>
+		abstract class DisabledTextWindow : NativeWindow
+		{
+			/// <summary>Whether the theme draws the window's text: disabled, with text.</summary>
+			protected abstract bool DrawsDisabledText();
+
+			/// <summary>Draws the window's text again, into a device context whose origin is its client area: a paint's or a picture's.</summary>
+			protected abstract void PaintDisabledText(IntPtr hdc);
+
+			protected override void WndProc(ref Message m)
+			{
+				switch (m.Msg)
+				{
+					case NativeMethods.WM_PAINT:
+						if (DrawsDisabledText())
+						{
+							PaintWithDisabledText(ref m);
+							return;
+						}
+						break;
+					case NativeMethods.WM_PRINTCLIENT:
+						base.WndProc(ref m);
+						if (m.WParam != IntPtr.Zero && DrawsDisabledText())
+							PaintDisabledText(m.WParam);
+						return;
+				}
+				base.WndProc(ref m);
+			}
+
+			/// <summary>
+			/// Paints the window in one pass: Windows draws it into the device context of the paint, and its text is drawn again
+			/// over it in the same device context.
+			/// </summary>
+			void PaintWithDisabledText(ref Message m)
+			{
+				var paint = new NativeMethods.PAINTSTRUCT();
+				var hdc = NativeMethods.BeginPaint(Handle, ref paint);
+				try
+				{
+					// An edit control draws into the device context a paint message brings.
+					var own = Message.Create(m.HWnd, m.Msg, hdc, IntPtr.Zero);
+					base.WndProc(ref own);
+					if (hdc != IntPtr.Zero)
+						PaintDisabledText(hdc);
+					m.Result = own.Result;
+				}
+				finally
+				{
+					NativeMethods.EndPaint(Handle, ref paint);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Draws the text of a disabled edit window again in the colour of every disabled text, over its background, into the
+		/// device context given. A disabled edit window cannot be scrolled or have text chosen, so a line of text stands where
+		/// Windows starts it, and the lines of a box of many lines where Windows lays them out, from its first character.
+		/// </summary>
+		/// <param name="handle">The edit window.</param>
+		/// <param name="hdc">A device context whose origin is the window's client area: a paint's or a picture's.</param>
+		static void PaintDisabledEdit(IntPtr handle, IntPtr hdc, string shown, Font font, Color back, bool multiline, bool wordWrap, HorizontalAlignment align)
+		{
+			NativeMethods.RECT r;
+			NativeMethods.GetClientRect(handle, out r);
+			var client = Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom);
+			Rectangle text;
+			Rectangle clip;
+			var flags = TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding | TextFormatFlags.TextBoxControl | TextFormatFlags.PreserveGraphicsClipping;
+			if (multiline)
+			{
+				var lines = new NativeMethods.RECT();
+				NativeMethods.SendMessage(handle, NativeMethods.EM_GETRECT, IntPtr.Zero, ref lines);
+				clip = Rectangle.FromLTRB(lines.Left, lines.Top, lines.Right, lines.Bottom);
+				// The first character stands above or left of the lines' place when the box was scrolled before it was disabled.
+				var first = (int)NativeMethods.SendMessage(handle, NativeMethods.EM_POSFROMCHAR, IntPtr.Zero, IntPtr.Zero);
+				var dy = (short)(first >> 16) - clip.Top;
+				var dx = wordWrap ? 0 : (short)(first & 0xFFFF) - clip.Left;
+				text = Rectangle.FromLTRB(clip.Left + Math.Min(0, dx), clip.Top + Math.Min(0, dy), clip.Right, clip.Bottom);
+				if (wordWrap)
+					flags |= TextFormatFlags.WordBreak;
+			}
+			else
+			{
+				var margins = (int)NativeMethods.SendMessage(handle, NativeMethods.EM_GETMARGINS, IntPtr.Zero, IntPtr.Zero);
+				text = Rectangle.FromLTRB(client.Left + (margins & 0xFFFF), client.Top, client.Right - ((margins >> 16) & 0xFFFF), client.Bottom);
+				clip = client;
+				flags |= TextFormatFlags.SingleLine;
+			}
+			flags |= align == HorizontalAlignment.Center ? TextFormatFlags.HorizontalCenter : align == HorizontalAlignment.Right ? TextFormatFlags.Right : TextFormatFlags.Left;
+			using (var g = Graphics.FromHdc(hdc))
+			{
+				using (var brush = new SolidBrush(back))
+					g.FillRectangle(brush, client);
+				g.SetClip(clip);
+				TextRenderer.DrawText(g, shown, font, text, DisabledText(), back, flags);
+			}
+		}
+
+		/// <summary>
 		/// The frame Default.xaml draws round a text box, a number box or a list, drawn in the window's own edge: rounded, with
 		/// room inside, in the theme colours, its edge in the hover colour under the mouse and while it has the focus.
 		/// </summary>
@@ -3538,7 +4521,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// frame and the room inside it, and drawn here. Windows fills the inside of a box that cannot be changed, and of a
 		/// list, with the colour the frame gives it.
 		/// </remarks>
-		class Frame : NativeWindow
+		class Frame : DisabledTextWindow
 		{
 			readonly Control Control;
 
@@ -3550,7 +4533,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			/// <summary>The edge, in pixels, round a window of the size given: the frame's line and the room inside it.</summary>
 			Padding Insets(Size window)
 			{
-				var line = Math.Max(1, (int)Math.Floor(ControlsHelper.DpiScale));
+				var line = LineWidth();
 				var text = LineHeight(Control.Font);
 				var top = Math.Max(0, (window.Height - text) / 2);
 				var bottom = Math.Max(0, window.Height - text - top);
@@ -3565,15 +4548,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				if (Control is ListBox)
 					return new Padding(line);
 				// The buttons of a number box fill the inside of its frame on their side, up to the line, without a gap.
+				var side = FrameSide();
 				if (Control is UpDownBase upDown)
 					return upDown.UpDownAlign == LeftRightAlignment.Left
-						? new Padding(line, line, line + Pixels(5), line)
-						: new Padding(line + Pixels(5), line, line, line);
-				// Default.xaml's edge and padding. WPF keeps 2 more inside them before and after the text, which a program's box,
-				// sized for Windows' own room, has no room for.
-				var side = line + Pixels(5);
+						? new Padding(line, line, side, line)
+						: new Padding(side, line, line, line);
+				// Default.xaml's edge and padding: the room inside the edge on every side of the text.
 				if (Control is TextBox box && box.Multiline)
-					return new Padding(side, line + Pixels(4), side, line + Pixels(4));
+					return new Padding(side);
 				// A single line of text stands in the middle.
 				return new Padding(side, Math.Max(line, top), side, Math.Max(line, bottom));
 			}
@@ -3596,14 +4578,22 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 						return;
 					case NativeMethods.WM_NCPAINT:
 						base.WndProc(ref m);
-						PaintFrame();
+						PaintFrame(IntPtr.Zero);
 						return;
-					case NativeMethods.WM_PAINT:
+					case NativeMethods.WM_PRINT:
+						// Into the picture taken of the window, where it asks for its edge.
 						base.WndProc(ref m);
-						PaintDisabledText();
+						if (((int)(long)m.LParam & NativeMethods.PRF_NONCLIENT) != 0)
+							PaintFrame(m.WParam);
 						return;
 				}
 				base.WndProc(ref m);
+			}
+
+			/// <summary>Whether the theme draws the box's text: a text box that is disabled and has text.</summary>
+			protected override bool DrawsDisabledText()
+			{
+				return Control is TextBox box && !box.Enabled && box.Text.Length > 0;
 			}
 
 			/// <summary>Windows works out the edge it leaves, scroll bars included, and the frame takes its own from the rest.</summary>
@@ -3628,37 +4618,23 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				}
 			}
 
-			/// <summary>
-			/// Draws the text of a disabled line of text again in the text colour, as Default.xaml leaves it: Windows draws it grey.
-			/// A disabled box cannot be scrolled or have text chosen, so the text stands where Windows starts it.
-			/// </summary>
-			void PaintDisabledText()
+			/// <summary>Draws the text of a disabled box again, as it shows it: a password box its password characters.</summary>
+			protected override void PaintDisabledText(IntPtr hdc)
 			{
-				var box = Control as TextBox;
-				if (box == null || box.Enabled || box.Multiline || box.Text.Length == 0)
-					return;
-				var margins = (int)NativeMethods.SendMessage(Handle, NativeMethods.EM_GETMARGINS, IntPtr.Zero, IntPtr.Zero);
-				var client = box.ClientRectangle;
-				var text = Rectangle.FromLTRB(client.Left + (margins & 0xFFFF), client.Top, client.Right - ((margins >> 16) & 0xFFFF), client.Bottom);
-				var flags = TextFormatFlags.SingleLine | TextFormatFlags.NoPrefix | TextFormatFlags.NoPadding | TextFormatFlags.TextBoxControl;
+				var box = (TextBox)Control;
 				var align = box.RightToLeft == RightToLeft.Yes
 					? (box.TextAlign == HorizontalAlignment.Left ? HorizontalAlignment.Right : box.TextAlign == HorizontalAlignment.Right ? HorizontalAlignment.Left : box.TextAlign)
 					: box.TextAlign;
-				flags |= align == HorizontalAlignment.Center ? TextFormatFlags.HorizontalCenter : align == HorizontalAlignment.Right ? TextFormatFlags.Right : TextFormatFlags.Left;
 				var shown = box.PasswordChar != '\0' || box.UseSystemPasswordChar
 					? new string(box.UseSystemPasswordChar ? '●' : box.PasswordChar, box.Text.Length)
 					: box.Text;
-				using (var g = Graphics.FromHwnd(Handle))
-				{
-					using (var brush = new SolidBrush(box.BackColor))
-						g.FillRectangle(brush, client);
-					TextRenderer.DrawText(g, shown, box.Font, text, box.ForeColor, box.BackColor, flags);
-				}
+				PaintDisabledEdit(Handle, hdc, shown, box.Font, box.BackColor, box.Multiline, box.WordWrap, align);
 			}
 
-			void PaintFrame()
+			/// <summary>Draws the frame in the window's edge, on the window or into the device context given, whose origin is the window's.</summary>
+			void PaintFrame(IntPtr target)
 			{
-				var hdc = NativeMethods.GetWindowDC(Handle);
+				var hdc = target != IntPtr.Zero ? target : NativeMethods.GetWindowDC(Handle);
 				if (hdc == IntPtr.Zero)
 					return;
 				try
@@ -3687,12 +4663,16 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				}
 				finally
 				{
-					NativeMethods.ReleaseDC(Handle, hdc);
+					if (target == IntPtr.Zero)
+						NativeMethods.ReleaseDC(Handle, hdc);
 				}
 			}
 		}
 
-		/// <summary>The frame's line: Default.xaml's, in the hover colour under the mouse or with the focus; none round a box that cannot be changed.</summary>
+		/// <summary>
+		/// The frame's line: Default.xaml's, the field edge colour, or the hover colour under the mouse or with the focus; none
+		/// round a box that cannot be changed.
+		/// </summary>
 		static Color FrameEdge(Control control)
 		{
 			if (control is ListBox)
@@ -3702,7 +4682,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			NativeMethods.RECT r;
 			NativeMethods.GetWindowRect(control.Handle, out r);
 			var hot = control.ContainsFocus || Rectangle.FromLTRB(r.Left, r.Top, r.Right, r.Bottom).Contains(Control.MousePosition);
-			return Themed(hot ? "BackgroundDarkSelected" : "BackgroundDark", SystemColors.ControlDark);
+			return Themed(hot ? "BackgroundDarkSelected" : "BorderField", SystemColors.ControlDark);
 		}
 
 		/// <summary>A control's frame, round its window's bounds given: its face filled and rounded, and its line.</summary>
@@ -3722,9 +4702,42 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			g.Restore(saved);
 		}
 
+		/// <summary>The room round each item's text a program gave a list without an edge, in device-independent pixels.</summary>
+		static readonly ConditionalWeakTable<ListBox, StrongBox<int>> ItemRooms = new ConditionalWeakTable<ListBox, StrongBox<int>>();
+
 		/// <summary>
-		/// A list's item as Default.xaml draws one: on the control colour, or the selection colour while chosen, its text 5 in
-		/// from the side; at half strength while the list is disabled.
+		/// Has the theme draw the items of a list without an edge as it draws a framed list's, in both themes: on the list's own
+		/// colour, or the selection colour while chosen, with the room given round each item's text, in device-independent
+		/// pixels, scaled with the screen. 0 leaves the items to Windows again. A framed list keeps Default.xaml's room, 4.
+		/// </summary>
+		public static void SetItemRoom(ListBox list, int room)
+		{
+			ItemRooms.GetOrCreateValue(list).Value = room;
+			State state;
+			if (States.TryGetValue(list, out state))
+				ApplyFrame(list, state);
+		}
+
+		/// <summary>
+		/// The room round the text of the items the theme draws in a list, in device-independent pixels: Default.xaml's, 4, in a
+		/// framed list, and the room the program gave a list without an edge (<see cref="SetItemRoom"/>); 0, which leaves the
+		/// items to Windows, in any other list, in a list the program draws itself and while high contrast is on.
+		/// </summary>
+		static int ItemRoom(ListBox list)
+		{
+			State state;
+			if (list == null || SystemInformation.HighContrast || !States.TryGetValue(list, out state))
+				return 0;
+			if (HasFrame(list))
+				return ComboBoxPadding;
+			StrongBox<int> room;
+			return state.DrawMode == DrawMode.Normal && !(list is CheckedListBox) && ItemRooms.TryGetValue(list, out room) ? room.Value : 0;
+		}
+
+		/// <summary>
+		/// A list's item as Default.xaml draws one: on the control colour in a framed list, or the list's own colour in one
+		/// without an edge, or the selection colour while chosen, its text in from the side by the list's room; in the colour of
+		/// every disabled text while the list is disabled.
 		/// </summary>
 		static void List_DrawItem(object sender, DrawItemEventArgs e)
 		{
@@ -3732,13 +4745,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			if (e.Index < 0 || e.Index >= list.Items.Count)
 				return;
 			var selected = (e.State & DrawItemState.Selected) != 0;
-			var back = selected ? Themed("SelectedBackground", SystemColors.Highlight) : Themed("BackgroundDark", SystemColors.Control);
+			var back = selected ? Themed("SelectedBackground", SystemColors.Highlight)
+				: HasFrame(list) ? Themed("BackgroundDark", SystemColors.Control) : list.BackColor;
 			var fore = selected ? Themed("SelectedForeground", SystemColors.HighlightText) : list.ForeColor;
 			if (!list.Enabled)
-				fore = Half(fore, back);
+				fore = DisabledText();
 			using (var brush = new SolidBrush(back))
 				e.Graphics.FillRectangle(brush, e.Bounds);
-			var padding = Pixels(ComboBoxPadding);
+			var padding = Pixels(ItemRoom(list));
 			var text = Rectangle.FromLTRB(e.Bounds.Left + padding, e.Bounds.Top, e.Bounds.Right - padding, e.Bounds.Bottom);
 			TextRenderer.DrawText(e.Graphics, list.GetItemText(list.Items[e.Index]), list.Font, text, fore,
 				TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.EndEllipsis
@@ -3748,7 +4762,10 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>The width of a number box's buttons in its Default.xaml template, in device-independent pixels.</summary>
-		const int SpinButtonWidth = 25;
+		const int SpinButtonWidth = 24;
+
+		/// <summary>The size of the triangle on each of a number box's buttons, in device-independent pixels.</summary>
+		static readonly SizeF SpinButtonTriangle = new SizeF(8, 4);
 
 		/// <summary>The height the program asked a list for, before Windows Forms cut it to whole items, a field of its own.</summary>
 		static readonly FieldInfo RequestedHeightField = typeof(ListBox).GetField("requestedHeight", BindingFlags.Instance | BindingFlags.NonPublic)
@@ -3790,34 +4807,429 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var left = upDown.UpDownAlign == LeftRightAlignment.Left;
 			var up = new Rectangle(0, 0, client.Width, half);
 			var down = new Rectangle(0, half, client.Width, client.Height - half);
-			// Default.xaml's triangle, as large as a button's padding allows, 4 and 3 in from the sides and 3 from top and bottom;
-			// both as large, though the buttons may be a pixel apart in height.
-			var scale = Dip(g, 1);
-			var width = Math.Min(client.Width - 7 * scale, (client.Height / 2f - 6 * scale) * 2);
 			using (var face = RoundedRectangle(up, left ? radius : 0, left ? 0 : radius, 0, 0))
-				DrawSpinButton(g, buttons, up, face, width, true, up.Contains(mouse), pressed);
+				DrawSpinButton(g, buttons, face, up.Contains(mouse), pressed);
 			using (var face = RoundedRectangle(down, 0, 0, left ? 0 : radius, left ? radius : 0))
-				DrawSpinButton(g, buttons, down, face, width, false, down.Contains(mouse), pressed);
+				DrawSpinButton(g, buttons, face, down.Contains(mouse), pressed);
 			g.Restore(saved);
+			// Default.xaml's triangles. The up one in the middle of its button, on a whole pixel so its flat side stays sharp;
+			// the down one the same pixels upside down, across the middle of the buttons, though the buttons may be a pixel
+			// apart in height. Drawn once and turned over, as smoothing does not draw a shape and its mirror image alike.
+			var width = Dip(g, SpinButtonTriangle.Width);
+			var height = Dip(g, SpinButtonTriangle.Height);
+			var x = (int)Math.Round(up.X + (up.Width - width) / 2, MidpointRounding.AwayFromZero);
+			var upTop = (int)Math.Floor((up.Height - height) / 2);
+			var downTop = client.Height - upTop - (int)Math.Ceiling(height);
+			using (var triangle = new Bitmap((int)Math.Ceiling(width), (int)Math.Ceiling(height), PixelFormat.Format32bppArgb))
+			{
+				using (var tg = Graphics.FromImage(triangle))
+				{
+					tg.SmoothingMode = SmoothingMode.AntiAlias;
+					tg.PixelOffsetMode = PixelOffsetMode.Half;
+					using (var brush = new SolidBrush(Color.FromArgb(buttons.Enabled ? 255 : 128, Themed("ForegroundBlack", SystemColors.ControlText))))
+						tg.FillPolygon(brush, new[] { new PointF(0, height), new PointF(width, height), new PointF(width / 2, 0) });
+				}
+				g.DrawImageUnscaled(triangle, x, upTop);
+				triangle.RotateFlip(RotateFlipType.RotateNoneFlipY);
+				g.DrawImageUnscaled(triangle, x, downTop);
+			}
 		}
 
-		static void DrawSpinButton(Graphics g, Control buttons, Rectangle bounds, GraphicsPath face, float width, bool up, bool hot, bool pressed)
+		/// <summary>One of a number box's buttons: its half of the face.</summary>
+		static void DrawSpinButton(Graphics g, Control buttons, GraphicsPath face, bool hot, bool pressed)
 		{
-			var alpha = buttons.Enabled ? 255 : 128;
 			var key = !buttons.Enabled ? "BackgroundDark" : hot && pressed ? "BackgroundDarkPressed" : hot ? "BackgroundDarkSelected" : "BackgroundDark";
-			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed(key, SystemColors.ControlLight))))
+			using (var brush = new SolidBrush(Color.FromArgb(buttons.Enabled ? 255 : 128, Themed(key, SystemColors.ControlLight))))
 				g.FillPath(brush, face);
-			var scale = Dip(g, 1);
-			var content = RectangleF.FromLTRB(bounds.Left + 4 * scale, bounds.Top + 3 * scale, bounds.Right - 3 * scale, bounds.Bottom - 3 * scale);
-			var height = width / 2;
-			var x = content.X + (content.Width - width) / 2;
-			// On a whole pixel, so the triangle's flat side stays sharp.
-			var y = (float)Math.Floor(content.Y + (content.Height - height) / 2);
-			var points = up
-				? new[] { new PointF(x, y + height), new PointF(x + width, y + height), new PointF(x + width / 2, y) }
-				: new[] { new PointF(x, y), new PointF(x + width, y), new PointF(x + width / 2, y + height) };
-			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("ForegroundBlack", SystemColors.ControlText))))
-				g.FillPolygon(brush, points);
+		}
+
+		#endregion
+
+		#region Scroll bars
+
+		// The scroll bar parts and states of the Windows visual style.
+		const int SBP_ARROWBTN = 1;
+		const int SBP_THUMBBTNHORZ = 2;
+		const int SBP_THUMBBTNVERT = 3;
+		const int SBP_LOWERTRACKHORZ = 4;
+		const int SBP_UPPERTRACKHORZ = 5;
+		const int SBP_LOWERTRACKVERT = 6;
+		const int SBP_UPPERTRACKVERT = 7;
+		const int ABS_UPNORMAL = 1;
+		const int ABS_UPHOVER = 17;
+		const int SCRBS_HOT = 2;
+		const int SCRBS_PRESSED = 3;
+		const int SCRBS_DISABLED = 4;
+		const int SCRBS_HOVER = 5;
+
+		/// <summary>
+		/// True when the Windows visual style draws a scroll bar's arrow at rest without its triangle, as Windows 11 does: it
+		/// draws a bar the mouse is not over as a thin line, without arrows, and shows the arrows and the whole thumb only under
+		/// the mouse. Such bars are drawn whole here.
+		/// </summary>
+		static bool HidesScrollBarArrows()
+		{
+			if (_HidesScrollBarArrows == null)
+			{
+				var hides = false;
+				var element = VisualStyleElement.CreateElement("ScrollBar", SBP_ARROWBTN, ABS_UPNORMAL);
+				if (VisualStyleRenderer.IsSupported && VisualStyleRenderer.IsElementDefined(element))
+				{
+					var size = SystemInformation.VerticalScrollBarWidth;
+					using (var bitmap = new Bitmap(size, size))
+					{
+						using (var g = Graphics.FromImage(bitmap))
+							new VisualStyleRenderer(element).DrawBackground(g, new Rectangle(0, 0, size, size));
+						// Without its triangle the middle of the arrow, where the triangle stands, is one colour.
+						var middle = bitmap.GetPixel(size / 2, size / 2);
+						hides = true;
+						for (var y = size / 4; y < size - size / 4 && hides; y++)
+							for (var x = size / 4; x < size - size / 4 && hides; x++)
+								hides = bitmap.GetPixel(x, y) == middle;
+					}
+				}
+				_HidesScrollBarArrows = hides;
+			}
+			return _HidesScrollBarArrows.Value;
+		}
+		static bool? _HidesScrollBarArrows;
+
+		/// <summary>Whether a control shows scroll bars of its own: a text box of more than one line, a list, a tree, a scroll bar or a container that scrolls.</summary>
+		static bool Scrolls(Control control)
+		{
+			return control is TextBoxBase box ? box.Multiline
+				: control is ListBox || control is ListView || control is TreeView || control is ScrollBar
+				|| (control is ScrollableControl scrollable && scrollable.AutoScroll);
+		}
+
+		/// <summary>
+		/// Draws the scroll bars of a control that can scroll, and of the list a drop-down list opens, whole, where the Windows
+		/// visual style draws them thin while the mouse is not over them.
+		/// </summary>
+		static void AttachScrollBars(Control control, State state)
+		{
+			if (!HidesScrollBarArrows())
+				return;
+			if (Scrolls(control))
+				AttachScrollBars(ref state.ScrollBars, control.Handle, control is ScrollBar);
+			if (control is ComboBox)
+			{
+				var info = new NativeMethods.COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.COMBOBOXINFO)) };
+				if (NativeMethods.GetComboBoxInfo(control.Handle, ref info))
+					AttachScrollBars(ref state.ListScrollBars, info.hwndList, false);
+			}
+		}
+
+		/// <summary>Draws the bars of the window given whole, from now on and at once.</summary>
+		static void AttachScrollBars(ref WholeScrollBars bars, IntPtr handle, bool isScrollBar)
+		{
+			if (handle == IntPtr.Zero)
+				return;
+			if (bars == null)
+				bars = new WholeScrollBars(isScrollBar);
+			if (bars.Handle == handle)
+				return;
+			if (bars.Handle != IntPtr.Zero)
+				bars.ReleaseHandle();
+			bars.AssignHandle(handle);
+			bars.Paint(IntPtr.Zero, true);
+		}
+
+		/// <summary>
+		/// The window of a control that can scroll, or of a scroll bar, whose scroll bars are drawn here whole whenever they are
+		/// shown: both arrows and a thumb as wide as the bar, in the window's own visual style, light or dark, as Windows draws
+		/// them while the mouse is over them; the part under the mouse lit, and the part held down pressed.
+		/// </summary>
+		/// <remarks>
+		/// Windows draws a bar again as it scrolls or changes, when its window is painted, and as the mouse comes and goes, so
+		/// after each message to the window the bar is drawn again over Windows' drawing if what it shows may have changed.
+		/// Windows also fades a bar from one look to the next on a timer of the common controls that calls no window;
+		/// <see cref="ScrollBarFades"/> ends each such fade before it draws. A mirrored window keeps the bars Windows draws.
+		/// </remarks>
+		class WholeScrollBars : NativeWindow
+		{
+			/// <summary>Whether the window is a scroll bar itself, rather than a window with scroll bars in its edge.</summary>
+			readonly bool IsScrollBar;
+			/// <summary>The bars last drawn, and their parts under the mouse: a window's vertical and horizontal bar, or a scroll bar.</summary>
+			NativeMethods.SCROLLBARINFO _first, _second;
+			int _firstHot = -1, _secondHot = -1;
+			/// <summary>True while the bars are read and drawn: a scroll bar is read with a message to itself.</summary>
+			bool _busy;
+			/// <summary>The filter that ends the fades of this window's bars, on the window's thread, and the window it knows by.</summary>
+			ScrollBarFades _fades;
+			IntPtr _registered;
+
+			public WholeScrollBars(bool isScrollBar)
+			{
+				IsScrollBar = isScrollBar;
+			}
+
+			protected override void OnHandleChange()
+			{
+				_fades?.Painted.Remove(_registered);
+				_registered = Handle;
+				if (Handle != IntPtr.Zero)
+				{
+					_fades = ScrollBarFades.Current;
+					_fades.Painted[Handle] = this;
+				}
+				base.OnHandleChange();
+			}
+
+			protected override void WndProc(ref Message m)
+			{
+				base.WndProc(ref m);
+				if (_busy || Handle == IntPtr.Zero)
+					return;
+				if (m.Msg == NativeMethods.WM_PRINT)
+				{
+					// Into the picture taken of the window, where it asks for the part the bars are in.
+					if (((int)(long)m.LParam & (IsScrollBar ? NativeMethods.PRF_CLIENT : NativeMethods.PRF_NONCLIENT)) != 0)
+						Paint(m.WParam, true);
+					return;
+				}
+				Paint(IntPtr.Zero, Redraws(m.Msg));
+			}
+
+			/// <summary>Whether Windows may have drawn the bars again on a message, even when what they show stayed the same.</summary>
+			bool Redraws(int message)
+			{
+				switch (message)
+				{
+					case NativeMethods.WM_NCPAINT:
+					case NativeMethods.WM_ENABLE:
+					case NativeMethods.WM_THEMECHANGED:
+					case NativeMethods.WM_SYSCOLORCHANGE:
+					case NativeMethods.WM_SETTINGCHANGE:
+					case NativeMethods.WM_CAPTURECHANGED:
+					case NativeMethods.WM_NCMOUSELEAVE:
+					case NativeMethods.WM_MOUSELEAVE:
+						return true;
+					case NativeMethods.WM_PAINT:
+						return IsScrollBar;
+				}
+				// The mouse over the window's edge, where its bars are, or over a scroll bar.
+				return (message >= NativeMethods.WM_NCMOUSEMOVE && message <= NativeMethods.WM_NCMBUTTONDBLCLK)
+					|| (IsScrollBar && message >= NativeMethods.WM_MOUSEMOVE && message <= NativeMethods.WM_MBUTTONDBLCLK);
+			}
+
+			/// <summary>
+			/// Draws the bars shown, on the window or into the device context given, when asked to or when what they show
+			/// changed since they were last drawn.
+			/// </summary>
+			public void Paint(IntPtr target, bool force)
+			{
+				_busy = true;
+				try
+				{
+					var first = Read(IsScrollBar ? NativeMethods.OBJID_CLIENT : NativeMethods.OBJID_VSCROLL);
+					var second = IsScrollBar ? default(NativeMethods.SCROLLBARINFO) : Read(NativeMethods.OBJID_HSCROLL);
+					var firstVertical = !IsScrollBar || (NativeMethods.GetWindowLong(Handle, NativeMethods.GWL_STYLE) & NativeMethods.SBS_VERT) != 0;
+					var cursor = Control.MousePosition;
+					var firstHot = HotPart(first, firstVertical, cursor);
+					var secondHot = HotPart(second, false, cursor);
+					// Lit only while the mouse is over this window, not over another in front of it.
+					if ((firstHot >= 0 || secondHot >= 0) && NativeMethods.WindowFromPoint(cursor) != Handle)
+						firstHot = secondHot = -1;
+					if (!force && first.Equals(_first) && second.Equals(_second) && firstHot == _firstHot && secondHot == _secondHot)
+						return;
+					_first = first;
+					_second = second;
+					_firstHot = firstHot;
+					_secondHot = secondHot;
+					if ((first.cbSize == 0 && second.cbSize == 0)
+						|| (NativeMethods.GetWindowLong(Handle, NativeMethods.GWL_EXSTYLE) & NativeMethods.WS_EX_LAYOUTRTL) != 0)
+						return;
+					// The style the window draws its bars in, which the dark theme sets.
+					var theme = NativeMethods.OpenThemeData(Handle, "ScrollBar");
+					if (theme == IntPtr.Zero)
+						return;
+					var hdc = target != IntPtr.Zero ? target : NativeMethods.GetWindowDC(Handle);
+					try
+					{
+						NativeMethods.RECT window;
+						if (hdc == IntPtr.Zero || !NativeMethods.GetWindowRect(Handle, out window))
+							return;
+						if (first.cbSize != 0)
+							DrawScrollBar(theme, hdc, window, first, firstVertical, firstHot);
+						if (second.cbSize != 0)
+							DrawScrollBar(theme, hdc, window, second, false, secondHot);
+					}
+					finally
+					{
+						if (target == IntPtr.Zero && hdc != IntPtr.Zero)
+							NativeMethods.ReleaseDC(Handle, hdc);
+						NativeMethods.CloseThemeData(theme);
+					}
+				}
+				finally
+				{
+					_busy = false;
+				}
+			}
+
+			/// <summary>A bar of the window while it is shown; all zero while it is not.</summary>
+			NativeMethods.SCROLLBARINFO Read(int bar)
+			{
+				var info = new NativeMethods.SCROLLBARINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.SCROLLBARINFO)) };
+				if (!NativeMethods.GetScrollBarInfo(Handle, bar, ref info)
+					|| (info.Bar & (NativeMethods.STATE_SYSTEM_INVISIBLE | NativeMethods.STATE_SYSTEM_OFFSCREEN)) != 0
+					|| info.rcScrollBar.Right <= info.rcScrollBar.Left || info.rcScrollBar.Bottom <= info.rcScrollBar.Top)
+					return default(NativeMethods.SCROLLBARINFO);
+				return info;
+			}
+		}
+
+		/// <summary>
+		/// A bar's parts, from its top-left corner: the first arrow, the track before the thumb, the thumb, the track after it
+		/// and the last arrow, in the order Windows gives their states; the thumb empty while it is not shown.
+		/// </summary>
+		static Rectangle[] ScrollBarParts(NativeMethods.SCROLLBARINFO info, bool vertical)
+		{
+			var width = info.rcScrollBar.Right - info.rcScrollBar.Left;
+			var height = info.rcScrollBar.Bottom - info.rcScrollBar.Top;
+			var length = vertical ? height : width;
+			var arrow = Math.Min(info.dxyLineButton, length / 2);
+			var thumb = (info.Thumb & (NativeMethods.STATE_SYSTEM_INVISIBLE | NativeMethods.STATE_SYSTEM_OFFSCREEN)) == 0
+				&& info.xyThumbBottom > info.xyThumbTop;
+			var thumbStart = thumb ? info.xyThumbTop : length - arrow;
+			var thumbEnd = thumb ? info.xyThumbBottom : length - arrow;
+			Rectangle Span(int from, int to) => vertical ? Rectangle.FromLTRB(0, from, width, to) : Rectangle.FromLTRB(from, 0, to, height);
+			return new[] { Span(0, arrow), Span(arrow, thumbStart), thumb ? Span(thumbStart, thumbEnd) : Rectangle.Empty, Span(thumbEnd, length - arrow), Span(length - arrow, length) };
+		}
+
+		/// <summary>The part of a bar under a point on the screen, numbered as <see cref="ScrollBarParts"/> gives them; -1 for none.</summary>
+		static int HotPart(NativeMethods.SCROLLBARINFO info, bool vertical, Point point)
+		{
+			if (info.cbSize == 0)
+				return -1;
+			var parts = ScrollBarParts(info, vertical);
+			for (var i = 0; i < parts.Length; i++)
+				if (parts[i].Contains(point.X - info.rcScrollBar.Left, point.Y - info.rcScrollBar.Top))
+					return i;
+			return -1;
+		}
+
+		/// <summary>
+		/// Draws a bar whole in a visual style, as Windows draws it under the mouse: its arrows and thumb in their hover state,
+		/// the part under the mouse lit, a part held down pressed and a disabled one disabled.
+		/// </summary>
+		static void DrawScrollBar(IntPtr theme, IntPtr hdc, NativeMethods.RECT window, NativeMethods.SCROLLBARINFO info, bool vertical, int hot)
+		{
+			var r = info.rcScrollBar;
+			var bar = Rectangle.FromLTRB(r.Left - window.Left, r.Top - window.Top, r.Right - window.Left, r.Bottom - window.Top);
+			var parts = ScrollBarParts(info, vertical);
+			var states = new[] { info.FirstArrow, info.PageBefore, info.Thumb, info.PageAfter, info.LastArrow };
+			var disabled = (info.Bar & NativeMethods.STATE_SYSTEM_UNAVAILABLE) != 0;
+			// Drawn off the screen first and put on the window at once, so the bar never shows half drawn.
+			using (var bitmap = new Bitmap(bar.Width, bar.Height, PixelFormat.Format24bppRgb))
+			{
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					var dc = g.GetHdc();
+					try
+					{
+						// The track under every part, as some are drawn partly see-through.
+						DrawThemePart(theme, dc, vertical ? SBP_UPPERTRACKVERT : SBP_UPPERTRACKHORZ, disabled ? SCRBS_DISABLED : SCRBS_HOVER,
+							new Rectangle(Point.Empty, bar.Size));
+						for (var i = 0; i < parts.Length; i++)
+						{
+							if (parts[i].Width <= 0 || parts[i].Height <= 0)
+								continue;
+							var state = disabled || (states[i] & NativeMethods.STATE_SYSTEM_UNAVAILABLE) != 0 ? SCRBS_DISABLED
+								: (states[i] & NativeMethods.STATE_SYSTEM_PRESSED) != 0 ? SCRBS_PRESSED
+								: hot == i ? SCRBS_HOT : SCRBS_HOVER;
+							int part;
+							if (i == 0 || i == parts.Length - 1)
+							{
+								// An arrow's states come in fours, up, down, left and right, and its hover states after them.
+								var direction = (vertical ? 0 : 2) + (i == 0 ? 0 : 1);
+								part = SBP_ARROWBTN;
+								state = state == SCRBS_HOVER ? ABS_UPHOVER + direction : state + direction * 4;
+							}
+							else if (i == 2)
+								part = vertical ? SBP_THUMBBTNVERT : SBP_THUMBBTNHORZ;
+							else
+								part = vertical ? (i == 1 ? SBP_UPPERTRACKVERT : SBP_LOWERTRACKVERT) : (i == 1 ? SBP_UPPERTRACKHORZ : SBP_LOWERTRACKHORZ);
+							DrawThemePart(theme, dc, part, state, parts[i]);
+						}
+					}
+					finally
+					{
+						g.ReleaseHdc(dc);
+					}
+				}
+				using (var g = Graphics.FromHdc(hdc))
+					g.DrawImageUnscaled(bitmap, bar.X, bar.Y);
+			}
+		}
+
+		/// <summary>Draws a part of a visual style, in a state, filling the bounds given.</summary>
+		static void DrawThemePart(IntPtr theme, IntPtr hdc, int part, int state, Rectangle bounds)
+		{
+			var rect = new NativeMethods.RECT { Left = bounds.Left, Top = bounds.Top, Right = bounds.Right, Bottom = bounds.Bottom };
+			NativeMethods.DrawThemeBackground(theme, hdc, part, state, ref rect, IntPtr.Zero);
+		}
+
+		/// <summary>
+		/// Ends the fades of the scroll bars drawn whole here before they draw: the common controls fade a bar from one look to
+		/// the next, and to the thin one as the mouse leaves it, on a timer that calls the common controls without a message to
+		/// the window. Each tick of such a timer, on a window whose bars are drawn here, stops it, and the bars are drawn again.
+		/// </summary>
+		/// <remarks>One listens on each interface thread with such a window, in its Windows Forms message loop.</remarks>
+		class ScrollBarFades : IMessageFilter
+		{
+			[ThreadStatic]
+			static ScrollBarFades _current;
+
+			/// <summary>The filter of the calling thread, listening from its first use.</summary>
+			public static ScrollBarFades Current
+			{
+				get
+				{
+					if (_current == null)
+					{
+						_current = new ScrollBarFades();
+						Application.AddMessageFilter(_current);
+					}
+					return _current;
+				}
+			}
+
+			/// <summary>The windows of this thread whose bars are drawn here.</summary>
+			public readonly Dictionary<IntPtr, WholeScrollBars> Painted = new Dictionary<IntPtr, WholeScrollBars>();
+
+			/// <summary>Whether the code a timer calls is in the common controls, by its address.</summary>
+			readonly Dictionary<IntPtr, bool> InCommonControls = new Dictionary<IntPtr, bool>();
+
+			public bool PreFilterMessage(ref Message m)
+			{
+				WholeScrollBars bars;
+				// A timer that calls code rather than its window.
+				if (m.Msg != NativeMethods.WM_TIMER || m.LParam == IntPtr.Zero || !Painted.TryGetValue(m.HWnd, out bars)
+					|| bars.Handle != m.HWnd || !IsCommonControls(m.LParam))
+					return false;
+				NativeMethods.KillTimer(m.HWnd, m.WParam);
+				bars.Paint(IntPtr.Zero, true);
+				return true;
+			}
+
+			/// <summary>Whether code at an address is in the common controls library, of whichever version.</summary>
+			bool IsCommonControls(IntPtr address)
+			{
+				bool inside;
+				if (!InCommonControls.TryGetValue(address, out inside))
+				{
+					IntPtr module;
+					var name = new StringBuilder(260);
+					inside = NativeMethods.GetModuleHandleEx(NativeMethods.GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+						| NativeMethods.GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, address, out module)
+						&& NativeMethods.GetModuleFileName(module, name, name.Capacity) > 0
+						&& string.Equals(System.IO.Path.GetFileName(name.ToString()), "comctl32.dll", StringComparison.OrdinalIgnoreCase);
+					InCommonControls.Add(address, inside);
+				}
+				return inside;
+			}
 		}
 
 		#endregion
@@ -3893,6 +5305,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int TBM_GETTHUMBRECT = 0x0419;
 			public const int TBM_GETCHANNELRECT = 0x041A;
 			public const int TCM_SETPADDING = 0x132B;
+			public const int TCM_SETITEMSIZE = 0x1329;
+			public const int TCM_SETIMAGELIST = 0x1303;
+			public const int TCM_ADJUSTRECT = 0x1328;
 			public const int WM_MOUSEMOVE = 0x0200;
 			public const int WM_MBUTTONDBLCLK = 0x0209;
 			public const int CB_SETITEMHEIGHT = 0x0153;
@@ -3901,6 +5316,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int WM_NCPAINT = 0x0085;
 			public const int WM_PAINT = 0x000F;
 			public const int EM_GETMARGINS = 0x00D4;
+			public const int EM_GETRECT = 0x00B2;
+			public const int EM_POSFROMCHAR = 0x00D6;
 			public const int SWP_NOSIZE = 0x0001;
 			public const int SWP_NOMOVE = 0x0002;
 			public const int SWP_NOZORDER = 0x0004;
@@ -3920,6 +5337,67 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public const int DWMWA_BORDER_COLOR = 34;
 			public const int DWMWCP_ROUNDSMALL = 3;
 			public const int DWMWA_COLOR_NONE = unchecked((int)0xFFFFFFFE);
+			public const int WM_ENABLE = 0x000A;
+			public const int WM_SYSCOLORCHANGE = 0x0015;
+			public const int WM_SETTINGCHANGE = 0x001A;
+			public const int WM_NCMOUSEMOVE = 0x00A0;
+			public const int WM_NCMBUTTONDBLCLK = 0x00A9;
+			public const int WM_TIMER = 0x0113;
+			public const int WM_CAPTURECHANGED = 0x0215;
+			public const int WM_NCMOUSELEAVE = 0x02A2;
+			public const int WM_MOUSELEAVE = 0x02A3;
+			public const int WM_PRINT = 0x0317;
+			public const int WM_PRINTCLIENT = 0x0318;
+			public const int WM_THEMECHANGED = 0x031A;
+			public const int PRF_NONCLIENT = 0x0002;
+			public const int PRF_CLIENT = 0x0004;
+			public const int GWL_EXSTYLE = -20;
+			public const int WS_EX_LAYOUTRTL = 0x00400000;
+			public const int SBS_VERT = 0x0001;
+			public const int OBJID_HSCROLL = unchecked((int)0xFFFFFFFA);
+			public const int OBJID_VSCROLL = unchecked((int)0xFFFFFFFB);
+			public const int OBJID_CLIENT = unchecked((int)0xFFFFFFFC);
+			public const int STATE_SYSTEM_UNAVAILABLE = 0x00000001;
+			public const int STATE_SYSTEM_PRESSED = 0x00000008;
+			public const int STATE_SYSTEM_INVISIBLE = 0x00008000;
+			public const int STATE_SYSTEM_OFFSCREEN = 0x00010000;
+			public const int GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT = 0x00000002;
+			public const int GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS = 0x00000004;
+
+			/// <summary>A scroll bar: its place on the screen, its arrows' length, its thumb's ends and the states of it and its parts.</summary>
+			[StructLayout(LayoutKind.Sequential)]
+			public struct SCROLLBARINFO
+			{
+				public int cbSize;
+				public RECT rcScrollBar;
+				public int dxyLineButton, xyThumbTop, xyThumbBottom, reserved;
+				/// <summary>The states Windows gives as rgstate: of the bar, its first arrow, the track before the thumb, the thumb, the track after it and its last arrow.</summary>
+				public int Bar, FirstArrow, PageBefore, Thumb, PageAfter, LastArrow;
+			}
+
+			[DllImport("user32.dll")]
+			public static extern bool GetScrollBarInfo(IntPtr hwnd, int idObject, ref SCROLLBARINFO info);
+
+			[DllImport("user32.dll")]
+			public static extern IntPtr WindowFromPoint(Point point);
+
+			[DllImport("user32.dll")]
+			public static extern bool KillTimer(IntPtr hWnd, IntPtr id);
+
+			[DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
+			public static extern IntPtr OpenThemeData(IntPtr hwnd, string classList);
+
+			[DllImport("uxtheme.dll")]
+			public static extern int CloseThemeData(IntPtr theme);
+
+			[DllImport("uxtheme.dll")]
+			public static extern int DrawThemeBackground(IntPtr theme, IntPtr hdc, int part, int state, ref RECT rect, IntPtr clip);
+
+			[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+			public static extern bool GetModuleHandleEx(int flags, IntPtr address, out IntPtr module);
+
+			[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+			public static extern int GetModuleFileName(IntPtr module, StringBuilder name, int size);
 
 			[StructLayout(LayoutKind.Sequential)]
 			public struct NCCALCSIZE_PARAMS
@@ -3968,8 +5446,30 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			[DllImport("user32.dll")]
 			public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
+			/// <summary>What a paint of a window is drawn with: its device context, whether to erase it, and the part to draw.</summary>
+			[StructLayout(LayoutKind.Sequential)]
+			public struct PAINTSTRUCT
+			{
+				public IntPtr hdc;
+				public bool fErase;
+				public RECT rcPaint;
+				public bool fRestore;
+				public bool fIncUpdate;
+				[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+				public byte[] rgbReserved;
+			}
+
+			[DllImport("user32.dll")]
+			public static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT paint);
+
+			[DllImport("user32.dll")]
+			public static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT paint);
+
 			[DllImport("user32.dll")]
 			public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+			[DllImport("user32.dll")]
+			public static extern bool GetClientRect(IntPtr hWnd, out RECT rect);
 
 			[DllImport("user32.dll")]
 			public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags);

@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.IO;
 using System;
 using System.Linq;
@@ -19,8 +20,19 @@ namespace x360ce.App.Controls
 		public OptionsPluginsUserControl()
 		{
 			InitializeComponent();
+			// Scaled by the font once, after the designer's tables have resumed their layout: scaled in the designer, Windows
+			// Forms scales a table as it resumes and then again with the control. The mode first, as changing it clears the
+			// dimensions.
+			SuspendLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			ResumeLayout(false);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			FormsTheme.IndentUnder(NoteLabel, AllowThirdPartyPluginsCheckBox);
+			FormsTheme.IndentUnder(ScriptsNoteLabel, AllowAutoHotkeyScriptsCheckBox);
+			AutoHotkeyLayoutPanel.SizeChanged += (s, e) => WrapScriptsNote();
+			ScriptsNoteLabel.MarginChanged += (s, e) => WrapScriptsNote();
 			ControlsHelper.ApplyBorderStyle(PluginsDataGridView);
 			PluginsDataGridView.AutoGenerateColumns = false;
 			SettingsManager.LoadAndMonitor(x => x.AllowThirdPartyPlugins, AllowThirdPartyPluginsCheckBox);
@@ -82,6 +94,19 @@ namespace x360ce.App.Controls
 				Source = x.Embedded ? "Embedded" : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
 				Reason = x.Reason ?? string.Join(" ", x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)),
 			}).ToArray();
+		}
+
+		/// <summary>Lets the scripts' note wrap at the width its group has, so the group is as tall as the wrapped note needs.</summary>
+		/// <remarks>
+		/// The group is measured as tall as what it holds needs at no width, and its table measures a note that spans the column
+		/// that takes what the others leave as one line: without a widest size the group would be a line short, and the row of
+		/// number boxes below the note cut off at its edge, the more the narrower the window.
+		/// </remarks>
+		void WrapScriptsNote()
+		{
+			var widest = new System.Drawing.Size(Math.Max(1, AutoHotkeyLayoutPanel.DisplayRectangle.Width - ScriptsNoteLabel.Margin.Horizontal), 0);
+			if (ScriptsNoteLabel.MaximumSize != widest)
+				ScriptsNoteLabel.MaximumSize = widest;
 		}
 
 		void RefreshList()

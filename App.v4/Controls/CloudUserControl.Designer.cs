@@ -154,6 +154,7 @@
             this.ItemDetailsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.ItemDetailsPanel.Location = new System.Drawing.Point(0, 363);
             this.ItemDetailsPanel.Name = "ItemDetailsPanel";
+            this.ItemDetailsPanel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 8);
             this.ItemDetailsPanel.Size = new System.Drawing.Size(654, 100);
             this.ItemDetailsPanel.TabIndex = 9;
             // 
@@ -170,6 +171,7 @@
             this.DeleteButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
             this.toolStrip1.Size = new System.Drawing.Size(654, 25);
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "MySettingsToolStrip";
@@ -212,7 +214,7 @@
             // NextRunLabel
             // 
             this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.NextRunLabel.ForeColor = System.Drawing.SystemColors.GrayText;
             this.NextRunLabel.Name = "NextRunLabel";
             this.NextRunLabel.Size = new System.Drawing.Size(103, 22);
             this.NextRunLabel.Text = "Next Run: 00:00:00";
@@ -220,7 +222,7 @@
             // RunStateLabel
             // 
             this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.RunStateLabel.ForeColor = System.Drawing.SystemColors.GrayText;
             this.RunStateLabel.Name = "RunStateLabel";
             this.RunStateLabel.Size = new System.Drawing.Size(10, 22);
             this.RunStateLabel.Text = " ";

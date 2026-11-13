@@ -86,8 +86,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public void Check()
 		{
+			lock (FixLock)
+			{
+				if (Status != IssueStatus.Idle)
+					return;
+				Status = IssueStatus.Checking;
+			}
 			Debug.WriteLine("---> {0}: {1}", "Check", GetType());
-			Status = IssueStatus.Checking;
 			Checking?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
@@ -98,11 +103,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			catch (Exception ex)
 			{
 				LastException = ex;
+				SetSeverity(IssueSeverity.Moderate, description: "Check failed: " + ex.Message);
 				//throw;
 			}
 			finally
 			{
-				Status = IssueStatus.Idle;
+				lock (FixLock)
+					Status = IssueStatus.Idle;
 				Checked?.Invoke(this, new EventArgs());
 			}
 		}
@@ -118,11 +125,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			lock (FixLock)
 			{
-				// Do not allow for fix to run second time.
-				if (Status == IssueStatus.Fixing)
+				// Checks and repairs on this issue must not overlap.
+				if (Status != IssueStatus.Idle)
 					return;
+				Status = IssueStatus.Fixing;
 			}
-			Status = IssueStatus.Fixing;
 			Fixing?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
@@ -133,11 +140,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			catch (Exception ex)
 			{
 				LastException = ex;
+				SetSeverity(IssueSeverity.Moderate, description: "Fix failed: " + ex.Message);
 				//throw;
 			}
 			finally
 			{
-				Status = IssueStatus.Idle;
+				lock (FixLock)
+					Status = IssueStatus.Idle;
 				Fixed?.Invoke(this, new EventArgs());
 			}
 		}

@@ -217,8 +217,9 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.EnableButton)] = new Text("Enable",
 				"Turns this controller on or off for the selected game.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GetXInputStatesCheckBox)] = new Text("Show XInput State",
-				"Shows the values read back from XInput - what the game actually receives - instead "
-				+ "of the values worked out from your device. The emulated controller works either way.");
+				"Shows on the General page the values read back from XInput - what the game actually receives - instead "
+				+ "of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's "
+				+ "reading and what its mapping makes of it. The emulated controller works either way.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GameControllersButton)] = new Text("Game Controllers...",
 				"Opens the Windows game controller panel for the selected device.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DxTweakButton)] = new Text("DX Tweak...",

@@ -281,7 +281,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(97, 13);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Web Service URL:";
+			this.label1.Text = "Web Service URL";
 			// 
 			// InternetAutoloadCheckBox
 			// 
@@ -330,6 +330,7 @@
 			this.GameScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GameScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameScanLocationsListBox.FormattingEnabled = true;
+			this.GameScanLocationsListBox.IntegralHeight = false;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
 			this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 79);
@@ -399,7 +400,7 @@
 			this.ConfigurationVersionLabel.Name = "ConfigurationVersionLabel";
 			this.ConfigurationVersionLabel.Size = new System.Drawing.Size(45, 13);
 			this.ConfigurationVersionLabel.TabIndex = 0;
-			this.ConfigurationVersionLabel.Text = "Version:";
+			this.ConfigurationVersionLabel.Text = "Version";
 			// 
 			// ConfigurationVersionTextBox
 			// 
@@ -482,7 +483,7 @@
 			this.ThemeLabel.Name = "ThemeLabel";
 			this.ThemeLabel.Size = new System.Drawing.Size(43, 13);
 			this.ThemeLabel.TabIndex = 94;
-			this.ThemeLabel.Text = "Theme:";
+			this.ThemeLabel.Text = "Theme";
 			//
 			// ThemeComboBox
 			//
@@ -552,7 +553,7 @@
 			this.AiAccessLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessLabel.AutoSize = true;
 			this.AiAccessLabel.Name = "AiAccessLabel";
-			this.AiAccessLabel.Text = "Access:";
+			this.AiAccessLabel.Text = "Access";
 			//
 			// AiAccessComboBox
 			//
@@ -566,7 +567,7 @@
 			this.AiAccessPortLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessPortLabel.AutoSize = true;
 			this.AiAccessPortLabel.Name = "AiAccessPortLabel";
-			this.AiAccessPortLabel.Text = "Port:";
+			this.AiAccessPortLabel.Text = "Port";
 			//
 			// AiAccessPortNumericUpDown
 			//
@@ -583,7 +584,7 @@
 			this.AiAccessTokenLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessTokenLabel.AutoSize = true;
 			this.AiAccessTokenLabel.Name = "AiAccessTokenLabel";
-			this.AiAccessTokenLabel.Text = "Token:";
+			this.AiAccessTokenLabel.Text = "Token";
 			//
 			// AiAccessTokenTextBox
 			//

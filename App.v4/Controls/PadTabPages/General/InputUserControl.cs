@@ -32,9 +32,10 @@ namespace x360ce.App.Controls
 				ColumnCount = 1,
 				AutoScroll = true,
 				Margin = new Padding(0),
-				// The right edge keeps the room the vertical scroll bar takes, so the sections never
-				// stay wider than the column that is left once the bar appears.
-				Padding = new Padding(0, 0, SystemInformation.VerticalScrollBarWidth, 0),
+				// The right edge keeps the room the vertical scroll bar takes, so the sections never stay wider than the column
+				// that is left once the bar appears: Windows' width for it on this screen, at 100 %, the size the page is made
+				// at, which Windows Forms scales with the page.
+				Padding = new Padding(0, 0, (int)Math.Round(SystemInformation.VerticalScrollBarWidth / ControlsHelper.DpiScale), 0),
 			};
 			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			SourceLabel = new Label
@@ -43,8 +44,8 @@ namespace x360ce.App.Controls
 				AutoSize = true,
 				Dock = DockStyle.Top,
 				AutoEllipsis = true,
-				Padding = new Padding(2, 3, 2, 3),
-				Margin = new Padding(0, 0, 0, 3),
+				// In line with the groups' frames under it, a row (8) above the first.
+				Margin = new Padding(0, 0, 0, 8),
 				Text = SourceNone,
 			};
 			table.Controls.Add(SourceLabel, 0, 0);
@@ -101,11 +102,17 @@ namespace x360ce.App.Controls
 
 		static GroupBox AddGroup(TableLayoutPanel table, string name, string caption, string chipsName, out InputChipGroup chips, bool showsValues)
 		{
+			// The group and its chips are hidden while they hold no chip, as they do until a device is shown (UpdateFrom). The
+			// chips stand a control's margin inside their strip, so with the room the theme gives a group they stand as far
+			// from the frame's inner line as a group's controls on every page, at the sides, above and below; the page scales
+			// these sizes, made at 100 %.
 			chips = new InputChipGroup
 			{
 				Name = chipsName,
 				Dock = DockStyle.Top,
+				Padding = new Padding(4),
 				ShowsValues = showsValues,
+				Visible = false,
 			};
 			var group = new GroupBox
 			{
@@ -115,7 +122,7 @@ namespace x360ce.App.Controls
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Top,
 				Margin = new Padding(0, 0, 0, 4),
-				Padding = new Padding(6, 3, 6, 6),
+				Visible = false,
 			};
 			group.Controls.Add(chips);
 			table.Controls.Add(group, 0, table.RowStyles.Count);
@@ -166,6 +173,15 @@ namespace x360ce.App.Controls
 				AxisChips.Chips = chips.Where(c => c.Kind == InputChipKind.Axis).ToList();
 				SliderChips.Chips = chips.Where(c => c.Kind == InputChipKind.Slider).ToList();
 				PovChips.Chips = chips.Where(c => c.Kind == InputChipKind.Pov || c.Kind == InputChipKind.PovDirection).ToList();
+				// A device shows a group for each kind of control it has, and the groups below one it lacks close up; with
+				// no device there is none, and the source line stands alone. The chips are hidden with their box, as the AI
+				// door reads each control's own flag and would call them shown.
+				foreach (var group in Groups)
+				{
+					var shown = group.Chips.Count > 0;
+					group.Visible = shown;
+					group.Parent.Visible = shown;
+				}
 				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}
 			var state = ud == null ? null : ud.SourceState;

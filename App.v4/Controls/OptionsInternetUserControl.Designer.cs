@@ -98,7 +98,7 @@
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.MainLayoutPanel.Size = new System.Drawing.Size(966, 631);
+            this.MainLayoutPanel.Size = new System.Drawing.Size(644, 421);
             this.MainLayoutPanel.TabIndex = 0;
             // 
             // GamesGroupBox
@@ -108,11 +108,10 @@
             this.GamesGroupBox.AutoSize = true;
             this.GamesGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.GamesGroupBox.Controls.Add(this.GamesLayoutPanel);
-            this.GamesGroupBox.Location = new System.Drawing.Point(4, 5);
-            this.GamesGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.GamesGroupBox.Location = new System.Drawing.Point(3, 3);
+            this.GamesGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
             this.GamesGroupBox.Name = "GamesGroupBox";
-            this.GamesGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.GamesGroupBox.Size = new System.Drawing.Size(958, 101);
+            this.GamesGroupBox.Size = new System.Drawing.Size(639, 67);
             this.GamesGroupBox.TabIndex = 0;
             this.GamesGroupBox.TabStop = false;
             this.GamesGroupBox.Text = "Games / Cloud - Default Settings";
@@ -128,13 +127,12 @@
             this.GamesLayoutPanel.Controls.Add(this.GetProgramsMinInstancesUpDown, 0, 1);
             this.GamesLayoutPanel.Controls.Add(this.GetProgramsIncludeEnabledCheckBox, 1, 1);
             this.GamesLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.GamesLayoutPanel.Location = new System.Drawing.Point(4, 24);
+            this.GamesLayoutPanel.Location = new System.Drawing.Point(3, 16);
             this.GamesLayoutPanel.Name = "GamesLayoutPanel";
-            this.GamesLayoutPanel.Padding = new System.Windows.Forms.Padding(4);
             this.GamesLayoutPanel.RowCount = 2;
             this.GamesLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.GamesLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.GamesLayoutPanel.Size = new System.Drawing.Size(950, 72);
+            this.GamesLayoutPanel.Size = new System.Drawing.Size(633, 48);
             this.GamesLayoutPanel.TabIndex = 0;
             // 
             // MinimumInstanceCountLabel
@@ -143,21 +141,20 @@
             this.MinimumInstanceCountLabel.AutoSize = true;
             this.MinimumInstanceCountLabel.BackColor = System.Drawing.SystemColors.Control;
             this.GamesLayoutPanel.SetColumnSpan(this.MinimumInstanceCountLabel, 2);
-            this.MinimumInstanceCountLabel.Location = new System.Drawing.Point(8, 4);
-            this.MinimumInstanceCountLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.MinimumInstanceCountLabel.Location = new System.Drawing.Point(5, 3);
+            this.MinimumInstanceCountLabel.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumInstanceCountLabel.Name = "MinimumInstanceCountLabel";
-            this.MinimumInstanceCountLabel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
-            this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(265, 28);
+            this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(177, 19);
             this.MinimumInstanceCountLabel.TabIndex = 0;
             this.MinimumInstanceCountLabel.Text = "Default Settings Minimum Instances";
             // 
             // GetProgramsMinInstancesUpDown
             // 
             this.GetProgramsMinInstancesUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.GetProgramsMinInstancesUpDown.Location = new System.Drawing.Point(8, 37);
-            this.GetProgramsMinInstancesUpDown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.GetProgramsMinInstancesUpDown.Location = new System.Drawing.Point(5, 25);
+            this.GetProgramsMinInstancesUpDown.Margin = new System.Windows.Forms.Padding(4);
             this.GetProgramsMinInstancesUpDown.Name = "GetProgramsMinInstancesUpDown";
-            this.GetProgramsMinInstancesUpDown.Size = new System.Drawing.Size(88, 26);
+            this.GetProgramsMinInstancesUpDown.Size = new System.Drawing.Size(59, 17);
             this.GetProgramsMinInstancesUpDown.TabIndex = 1;
             this.GetProgramsMinInstancesUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.GetProgramsMinInstancesUpDown.Value = new decimal(new int[] {
@@ -172,11 +169,10 @@
             this.GetProgramsIncludeEnabledCheckBox.AutoSize = true;
             this.GetProgramsIncludeEnabledCheckBox.Checked = true;
             this.GetProgramsIncludeEnabledCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GetProgramsIncludeEnabledCheckBox.Location = new System.Drawing.Point(104, 38);
-            this.GetProgramsIncludeEnabledCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.GetProgramsIncludeEnabledCheckBox.Location = new System.Drawing.Point(69, 25);
+            this.GetProgramsIncludeEnabledCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.GetProgramsIncludeEnabledCheckBox.Name = "GetProgramsIncludeEnabledCheckBox";
-            this.GetProgramsIncludeEnabledCheckBox.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.GetProgramsIncludeEnabledCheckBox.Size = new System.Drawing.Size(158, 24);
+            this.GetProgramsIncludeEnabledCheckBox.Size = new System.Drawing.Size(105, 16);
             this.GetProgramsIncludeEnabledCheckBox.TabIndex = 2;
             this.GetProgramsIncludeEnabledCheckBox.Text = "Include Enabled";
             this.GetProgramsIncludeEnabledCheckBox.ThreeState = true;
@@ -189,11 +185,10 @@
             this.InternetGroupBox.AutoSize = true;
             this.InternetGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.InternetGroupBox.Controls.Add(this.InternetLayoutPanel);
-            this.InternetGroupBox.Location = new System.Drawing.Point(4, 116);
-            this.InternetGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.InternetGroupBox.Location = new System.Drawing.Point(3, 77);
+            this.InternetGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
             this.InternetGroupBox.Name = "InternetGroupBox";
-            this.InternetGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.InternetGroupBox.Size = new System.Drawing.Size(958, 153);
+            this.InternetGroupBox.Size = new System.Drawing.Size(639, 102);
             this.InternetGroupBox.TabIndex = 1;
             this.InternetGroupBox.TabStop = false;
             this.InternetGroupBox.Text = "Internet";
@@ -214,13 +209,13 @@
             this.InternetLayoutPanel.Controls.Add(this.SdlDatabaseUrlComboBox, 1, 2);
             this.InternetLayoutPanel.Controls.Add(this.UpdateSdlDatabaseButton, 2, 2);
             this.InternetLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.InternetLayoutPanel.Location = new System.Drawing.Point(4, 24);
+            this.InternetLayoutPanel.Location = new System.Drawing.Point(3, 16);
             this.InternetLayoutPanel.Name = "InternetLayoutPanel";
             this.InternetLayoutPanel.RowCount = 3;
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.InternetLayoutPanel.Size = new System.Drawing.Size(950, 124);
+            this.InternetLayoutPanel.Size = new System.Drawing.Size(633, 83);
             this.InternetLayoutPanel.TabIndex = 0;
             // 
             // InternetCheckBoxesPanel
@@ -235,7 +230,7 @@
             this.InternetCheckBoxesPanel.Location = new System.Drawing.Point(0, 0);
             this.InternetCheckBoxesPanel.Margin = new System.Windows.Forms.Padding(0);
             this.InternetCheckBoxesPanel.Name = "InternetCheckBoxesPanel";
-            this.InternetCheckBoxesPanel.Size = new System.Drawing.Size(649, 34);
+            this.InternetCheckBoxesPanel.Size = new System.Drawing.Size(433, 23);
             this.InternetCheckBoxesPanel.TabIndex = 0;
             this.InternetCheckBoxesPanel.WrapContents = false;
             // 
@@ -243,10 +238,10 @@
             // 
             this.InternetFeaturesCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.InternetFeaturesCheckBox.AutoSize = true;
-            this.InternetFeaturesCheckBox.Location = new System.Drawing.Point(4, 5);
-            this.InternetFeaturesCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.InternetFeaturesCheckBox.Location = new System.Drawing.Point(3, 3);
+            this.InternetFeaturesCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetFeaturesCheckBox.Name = "InternetFeaturesCheckBox";
-            this.InternetFeaturesCheckBox.Size = new System.Drawing.Size(213, 24);
+            this.InternetFeaturesCheckBox.Size = new System.Drawing.Size(142, 16);
             this.InternetFeaturesCheckBox.TabIndex = 0;
             this.InternetFeaturesCheckBox.Text = "Enable Internet Features";
             this.InternetFeaturesCheckBox.UseVisualStyleBackColor = true;
@@ -255,10 +250,10 @@
             // 
             this.InternetAutoLoadCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.InternetAutoLoadCheckBox.AutoSize = true;
-            this.InternetAutoLoadCheckBox.Location = new System.Drawing.Point(225, 5);
-            this.InternetAutoLoadCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.InternetAutoLoadCheckBox.Location = new System.Drawing.Point(150, 3);
+            this.InternetAutoLoadCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetAutoLoadCheckBox.Name = "InternetAutoLoadCheckBox";
-            this.InternetAutoLoadCheckBox.Size = new System.Drawing.Size(215, 24);
+            this.InternetAutoLoadCheckBox.Size = new System.Drawing.Size(143, 16);
             this.InternetAutoLoadCheckBox.TabIndex = 1;
             this.InternetAutoLoadCheckBox.Text = "Load Settings from Cloud";
             this.InternetAutoLoadCheckBox.UseVisualStyleBackColor = true;
@@ -267,10 +262,10 @@
             // 
             this.InternetAutoSaveCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.InternetAutoSaveCheckBox.AutoSize = true;
-            this.InternetAutoSaveCheckBox.Location = new System.Drawing.Point(448, 5);
-            this.InternetAutoSaveCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.InternetAutoSaveCheckBox.Location = new System.Drawing.Point(299, 3);
+            this.InternetAutoSaveCheckBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetAutoSaveCheckBox.Name = "InternetAutoSaveCheckBox";
-            this.InternetAutoSaveCheckBox.Size = new System.Drawing.Size(197, 24);
+            this.InternetAutoSaveCheckBox.Size = new System.Drawing.Size(131, 16);
             this.InternetAutoSaveCheckBox.TabIndex = 2;
             this.InternetAutoSaveCheckBox.Text = "Save Settings to Cloud";
             this.InternetAutoSaveCheckBox.UseVisualStyleBackColor = true;
@@ -279,10 +274,10 @@
             // 
             this.WebServiceUrlLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.WebServiceUrlLabel.AutoSize = true;
-            this.WebServiceUrlLabel.Location = new System.Drawing.Point(4, 46);
-            this.WebServiceUrlLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.WebServiceUrlLabel.Location = new System.Drawing.Point(3, 31);
+            this.WebServiceUrlLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.WebServiceUrlLabel.Name = "WebServiceUrlLabel";
-            this.WebServiceUrlLabel.Size = new System.Drawing.Size(135, 20);
+            this.WebServiceUrlLabel.Size = new System.Drawing.Size(90, 13);
             this.WebServiceUrlLabel.TabIndex = 1;
             this.WebServiceUrlLabel.Text = "Web Service URL";
             // 
@@ -293,20 +288,20 @@
             this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
             "https://www.x360ce.com/x360ce/webservices/x360ce.asmx",
             "https://localhost:44360/webservices/x360ce.asmx"});
-            this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(147, 42);
-            this.InternetDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(98, 28);
+            this.InternetDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-            this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(679, 28);
+            this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(453, 19);
             this.InternetDatabaseUrlComboBox.TabIndex = 2;
             // 
             // TestServiceButton
             // 
             this.TestServiceButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.TestServiceButton.AutoSize = true;
-            this.TestServiceButton.Location = new System.Drawing.Point(834, 39);
-            this.TestServiceButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.TestServiceButton.Location = new System.Drawing.Point(556, 26);
+            this.TestServiceButton.Margin = new System.Windows.Forms.Padding(4);
             this.TestServiceButton.Name = "TestServiceButton";
-            this.TestServiceButton.Size = new System.Drawing.Size(112, 35);
+            this.TestServiceButton.Size = new System.Drawing.Size(75, 23);
             this.TestServiceButton.TabIndex = 3;
             this.TestServiceButton.Text = "Test";
             this.TestServiceButton.UseVisualStyleBackColor = true;
@@ -316,10 +311,10 @@
             //
             this.SdlDatabaseUrlLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.SdlDatabaseUrlLabel.AutoSize = true;
-            this.SdlDatabaseUrlLabel.Location = new System.Drawing.Point(4, 91);
-            this.SdlDatabaseUrlLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.SdlDatabaseUrlLabel.Location = new System.Drawing.Point(3, 61);
+            this.SdlDatabaseUrlLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.SdlDatabaseUrlLabel.Name = "SdlDatabaseUrlLabel";
-            this.SdlDatabaseUrlLabel.Size = new System.Drawing.Size(139, 20);
+            this.SdlDatabaseUrlLabel.Size = new System.Drawing.Size(93, 13);
             this.SdlDatabaseUrlLabel.TabIndex = 4;
             this.SdlDatabaseUrlLabel.Text = "SDL Database URL";
             //
@@ -327,20 +322,20 @@
             //
             this.SdlDatabaseUrlComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.SdlDatabaseUrlComboBox.FormattingEnabled = true;
-            this.SdlDatabaseUrlComboBox.Location = new System.Drawing.Point(151, 87);
-            this.SdlDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.SdlDatabaseUrlComboBox.Location = new System.Drawing.Point(101, 58);
+            this.SdlDatabaseUrlComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.SdlDatabaseUrlComboBox.Name = "SdlDatabaseUrlComboBox";
-            this.SdlDatabaseUrlComboBox.Size = new System.Drawing.Size(603, 28);
+            this.SdlDatabaseUrlComboBox.Size = new System.Drawing.Size(402, 19);
             this.SdlDatabaseUrlComboBox.TabIndex = 5;
             //
             // UpdateSdlDatabaseButton
             //
             this.UpdateSdlDatabaseButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.UpdateSdlDatabaseButton.AutoSize = true;
-            this.UpdateSdlDatabaseButton.Location = new System.Drawing.Point(762, 84);
-            this.UpdateSdlDatabaseButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.UpdateSdlDatabaseButton.Location = new System.Drawing.Point(508, 56);
+            this.UpdateSdlDatabaseButton.Margin = new System.Windows.Forms.Padding(4);
             this.UpdateSdlDatabaseButton.Name = "UpdateSdlDatabaseButton";
-            this.UpdateSdlDatabaseButton.Size = new System.Drawing.Size(184, 35);
+            this.UpdateSdlDatabaseButton.Size = new System.Drawing.Size(123, 23);
             this.UpdateSdlDatabaseButton.TabIndex = 6;
             this.UpdateSdlDatabaseButton.Text = "Update SDL Database";
             this.UpdateSdlDatabaseButton.UseVisualStyleBackColor = true;
@@ -353,11 +348,10 @@
             this.OnlineAccountGroupBox.AutoSize = true;
             this.OnlineAccountGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OnlineAccountGroupBox.Controls.Add(this.OnlineAccountLayoutPanel);
-            this.OnlineAccountGroupBox.Location = new System.Drawing.Point(4, 279);
-            this.OnlineAccountGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.OnlineAccountGroupBox.Location = new System.Drawing.Point(3, 186);
+            this.OnlineAccountGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
             this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-            this.OnlineAccountGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.OnlineAccountGroupBox.Size = new System.Drawing.Size(958, 182);
+            this.OnlineAccountGroupBox.Size = new System.Drawing.Size(639, 121);
             this.OnlineAccountGroupBox.TabIndex = 2;
             this.OnlineAccountGroupBox.TabStop = false;
             this.OnlineAccountGroupBox.Text = "Online Account - Anonymous Computer ID and Profile ID will be used by default";
@@ -380,14 +374,14 @@
             this.OnlineAccountLayoutPanel.Controls.Add(this.ProfileIdLabel, 0, 3);
             this.OnlineAccountLayoutPanel.Controls.Add(this.ProfileIdTextBox, 1, 3);
             this.OnlineAccountLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.OnlineAccountLayoutPanel.Location = new System.Drawing.Point(4, 24);
+            this.OnlineAccountLayoutPanel.Location = new System.Drawing.Point(3, 16);
             this.OnlineAccountLayoutPanel.Name = "OnlineAccountLayoutPanel";
             this.OnlineAccountLayoutPanel.RowCount = 4;
             this.OnlineAccountLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.OnlineAccountLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.OnlineAccountLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.OnlineAccountLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.OnlineAccountLayoutPanel.Size = new System.Drawing.Size(950, 153);
+            this.OnlineAccountLayoutPanel.Size = new System.Drawing.Size(633, 102);
             this.OnlineAccountLayoutPanel.TabIndex = 0;
             // 
             // ComputerDiskLabel
@@ -395,10 +389,10 @@
             this.ComputerDiskLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ComputerDiskLabel.AutoSize = true;
             this.ComputerDiskLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.ComputerDiskLabel.Location = new System.Drawing.Point(4, 8);
-            this.ComputerDiskLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ComputerDiskLabel.Location = new System.Drawing.Point(3, 5);
+            this.ComputerDiskLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.ComputerDiskLabel.Name = "ComputerDiskLabel";
-            this.ComputerDiskLabel.Size = new System.Drawing.Size(114, 20);
+            this.ComputerDiskLabel.Size = new System.Drawing.Size(76, 13);
             this.ComputerDiskLabel.TabIndex = 0;
             this.ComputerDiskLabel.Text = "Computer Disk";
             // 
@@ -407,10 +401,10 @@
             this.ComputerDiskTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ComputerDiskTextBox.BackColor = System.Drawing.SystemColors.Control;
             this.OnlineAccountLayoutPanel.SetColumnSpan(this.ComputerDiskTextBox, 2);
-            this.ComputerDiskTextBox.Location = new System.Drawing.Point(126, 5);
-            this.ComputerDiskTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ComputerDiskTextBox.Location = new System.Drawing.Point(84, 3);
+            this.ComputerDiskTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.ComputerDiskTextBox.Name = "ComputerDiskTextBox";
-            this.ComputerDiskTextBox.Size = new System.Drawing.Size(820, 26);
+            this.ComputerDiskTextBox.Size = new System.Drawing.Size(547, 17);
             this.ComputerDiskTextBox.TabIndex = 1;
             // 
             // ComputerIdLabel
@@ -418,10 +412,10 @@
             this.ComputerIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ComputerIdLabel.AutoSize = true;
             this.ComputerIdLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.ComputerIdLabel.Location = new System.Drawing.Point(4, 44);
-            this.ComputerIdLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ComputerIdLabel.Location = new System.Drawing.Point(3, 29);
+            this.ComputerIdLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.ComputerIdLabel.Name = "ComputerIdLabel";
-            this.ComputerIdLabel.Size = new System.Drawing.Size(100, 20);
+            this.ComputerIdLabel.Size = new System.Drawing.Size(67, 13);
             this.ComputerIdLabel.TabIndex = 2;
             this.ComputerIdLabel.Text = "Computer ID";
             // 
@@ -429,10 +423,10 @@
             // 
             this.ComputerIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ComputerIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.ComputerIdTextBox.Location = new System.Drawing.Point(126, 41);
-            this.ComputerIdTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ComputerIdTextBox.Location = new System.Drawing.Point(84, 27);
+            this.ComputerIdTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.ComputerIdTextBox.Name = "ComputerIdTextBox";
-            this.ComputerIdTextBox.Size = new System.Drawing.Size(700, 26);
+            this.ComputerIdTextBox.Size = new System.Drawing.Size(467, 17);
             this.ComputerIdTextBox.TabIndex = 3;
             // 
             // ProfilePathLabel
@@ -440,10 +434,10 @@
             this.ProfilePathLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ProfilePathLabel.AutoSize = true;
             this.ProfilePathLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.ProfilePathLabel.Location = new System.Drawing.Point(4, 84);
-            this.ProfilePathLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ProfilePathLabel.Location = new System.Drawing.Point(3, 56);
+            this.ProfilePathLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.ProfilePathLabel.Name = "ProfilePathLabel";
-            this.ProfilePathLabel.Size = new System.Drawing.Size(90, 20);
+            this.ProfilePathLabel.Size = new System.Drawing.Size(60, 13);
             this.ProfilePathLabel.TabIndex = 4;
             this.ProfilePathLabel.Text = "Profile Path";
             // 
@@ -451,24 +445,27 @@
             // 
             this.ProfilePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ProfilePathTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.ProfilePathTextBox.Location = new System.Drawing.Point(126, 81);
-            this.ProfilePathTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ProfilePathTextBox.Location = new System.Drawing.Point(84, 54);
+            this.ProfilePathTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.ProfilePathTextBox.Name = "ProfilePathTextBox";
-            this.ProfilePathTextBox.Size = new System.Drawing.Size(700, 26);
+            this.ProfilePathTextBox.Size = new System.Drawing.Size(467, 17);
             this.ProfilePathTextBox.TabIndex = 5;
             // 
             // OpenSettingsFolderButton
             // 
             this.OpenSettingsFolderButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.OpenSettingsFolderButton.AutoSize = true;
+            this.OpenSettingsFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
             this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.OpenSettingsFolderButton.Location = new System.Drawing.Point(834, 77);
-            this.OpenSettingsFolderButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.OpenSettingsFolderButton.Location = new System.Drawing.Point(556, 51);
+            this.OpenSettingsFolderButton.Margin = new System.Windows.Forms.Padding(4);
             this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
-            this.OpenSettingsFolderButton.Size = new System.Drawing.Size(112, 35);
+            this.OpenSettingsFolderButton.Size = new System.Drawing.Size(75, 23);
             this.OpenSettingsFolderButton.TabIndex = 6;
             this.OpenSettingsFolderButton.Text = "Open";
+            this.OpenSettingsFolderButton.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.OpenSettingsFolderButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
             this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
             // 
@@ -477,10 +474,10 @@
             this.ProfileIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ProfileIdLabel.AutoSize = true;
             this.ProfileIdLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.ProfileIdLabel.Location = new System.Drawing.Point(4, 125);
-            this.ProfileIdLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ProfileIdLabel.Location = new System.Drawing.Point(3, 83);
+            this.ProfileIdLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.ProfileIdLabel.Name = "ProfileIdLabel";
-            this.ProfileIdLabel.Size = new System.Drawing.Size(74, 20);
+            this.ProfileIdLabel.Size = new System.Drawing.Size(49, 13);
             this.ProfileIdLabel.TabIndex = 7;
             this.ProfileIdLabel.Text = "Profile ID";
             // 
@@ -488,10 +485,10 @@
             // 
             this.ProfileIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.ProfileIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.ProfileIdTextBox.Location = new System.Drawing.Point(126, 122);
-            this.ProfileIdTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ProfileIdTextBox.Location = new System.Drawing.Point(84, 81);
+            this.ProfileIdTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.ProfileIdTextBox.Name = "ProfileIdTextBox";
-            this.ProfileIdTextBox.Size = new System.Drawing.Size(700, 26);
+            this.ProfileIdTextBox.Size = new System.Drawing.Size(467, 17);
             this.ProfileIdTextBox.TabIndex = 8;
             // 
             // OnlineAccountLoginGroupBox
@@ -501,11 +498,10 @@
             this.OnlineAccountLoginGroupBox.AutoSize = true;
             this.OnlineAccountLoginGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.OnlineAccountLoginGroupBox.Controls.Add(this.OnlineAccountLoginLayoutPanel);
-            this.OnlineAccountLoginGroupBox.Location = new System.Drawing.Point(4, 471);
-            this.OnlineAccountLoginGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.OnlineAccountLoginGroupBox.Location = new System.Drawing.Point(3, 314);
+            this.OnlineAccountLoginGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
             this.OnlineAccountLoginGroupBox.Name = "OnlineAccountLoginGroupBox";
-            this.OnlineAccountLoginGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.OnlineAccountLoginGroupBox.Size = new System.Drawing.Size(958, 110);
+            this.OnlineAccountLoginGroupBox.Size = new System.Drawing.Size(639, 73);
             this.OnlineAccountLoginGroupBox.TabIndex = 3;
             this.OnlineAccountLoginGroupBox.TabStop = false;
             this.OnlineAccountLoginGroupBox.Text = "Online Account - Login";
@@ -525,12 +521,12 @@
             this.OnlineAccountLoginLayoutPanel.Controls.Add(this.PasswordTextBox, 1, 1);
             this.OnlineAccountLoginLayoutPanel.Controls.Add(this.OnlineAccountLoginButtonsPanel, 2, 1);
             this.OnlineAccountLoginLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.OnlineAccountLoginLayoutPanel.Location = new System.Drawing.Point(4, 24);
+            this.OnlineAccountLoginLayoutPanel.Location = new System.Drawing.Point(3, 16);
             this.OnlineAccountLoginLayoutPanel.Name = "OnlineAccountLoginLayoutPanel";
             this.OnlineAccountLoginLayoutPanel.RowCount = 2;
             this.OnlineAccountLoginLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.OnlineAccountLoginLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.OnlineAccountLoginLayoutPanel.Size = new System.Drawing.Size(950, 81);
+            this.OnlineAccountLoginLayoutPanel.Size = new System.Drawing.Size(633, 54);
             this.OnlineAccountLoginLayoutPanel.TabIndex = 0;
             // 
             // UsernameLabel
@@ -538,20 +534,20 @@
             this.UsernameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.UsernameLabel.AutoSize = true;
             this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.UsernameLabel.Location = new System.Drawing.Point(4, 8);
-            this.UsernameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.UsernameLabel.Location = new System.Drawing.Point(3, 5);
+            this.UsernameLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.UsernameLabel.Name = "UsernameLabel";
-            this.UsernameLabel.Size = new System.Drawing.Size(141, 20);
+            this.UsernameLabel.Size = new System.Drawing.Size(94, 13);
             this.UsernameLabel.TabIndex = 0;
             this.UsernameLabel.Text = "Username (E-mail)";
             // 
             // UsernameTextBox
             // 
             this.UsernameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.UsernameTextBox.Location = new System.Drawing.Point(153, 5);
-            this.UsernameTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.UsernameTextBox.Location = new System.Drawing.Point(102, 3);
+            this.UsernameTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.UsernameTextBox.Name = "UsernameTextBox";
-            this.UsernameTextBox.Size = new System.Drawing.Size(433, 26);
+            this.UsernameTextBox.Size = new System.Drawing.Size(289, 17);
             this.UsernameTextBox.TabIndex = 1;
             // 
             // PasswordLabel
@@ -559,20 +555,20 @@
             this.PasswordLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.PasswordLabel.AutoSize = true;
             this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.PasswordLabel.Location = new System.Drawing.Point(4, 48);
-            this.PasswordLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.PasswordLabel.Location = new System.Drawing.Point(3, 32);
+            this.PasswordLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
             this.PasswordLabel.Name = "PasswordLabel";
-            this.PasswordLabel.Size = new System.Drawing.Size(78, 20);
+            this.PasswordLabel.Size = new System.Drawing.Size(52, 13);
             this.PasswordLabel.TabIndex = 2;
             this.PasswordLabel.Text = "Password";
             // 
             // PasswordTextBox
             // 
             this.PasswordTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.PasswordTextBox.Location = new System.Drawing.Point(153, 45);
-            this.PasswordTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.PasswordTextBox.Location = new System.Drawing.Point(102, 30);
+            this.PasswordTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.PasswordTextBox.Name = "PasswordTextBox";
-            this.PasswordTextBox.Size = new System.Drawing.Size(433, 26);
+            this.PasswordTextBox.Size = new System.Drawing.Size(289, 17);
             this.PasswordTextBox.TabIndex = 3;
             // 
             // OnlineAccountLoginButtonsPanel
@@ -583,20 +579,20 @@
             this.OnlineAccountLoginButtonsPanel.Controls.Add(this.LoginButton);
             this.OnlineAccountLoginButtonsPanel.Controls.Add(this.CreateButton);
             this.OnlineAccountLoginButtonsPanel.Controls.Add(this.ResetButton);
-            this.OnlineAccountLoginButtonsPanel.Location = new System.Drawing.Point(590, 36);
+            this.OnlineAccountLoginButtonsPanel.Location = new System.Drawing.Point(393, 24);
             this.OnlineAccountLoginButtonsPanel.Margin = new System.Windows.Forms.Padding(0);
             this.OnlineAccountLoginButtonsPanel.Name = "OnlineAccountLoginButtonsPanel";
-            this.OnlineAccountLoginButtonsPanel.Size = new System.Drawing.Size(360, 45);
+            this.OnlineAccountLoginButtonsPanel.Size = new System.Drawing.Size(240, 30);
             this.OnlineAccountLoginButtonsPanel.TabIndex = 4;
             this.OnlineAccountLoginButtonsPanel.WrapContents = false;
             // 
             // LoginButton
             // 
             this.LoginButton.AutoSize = true;
-            this.LoginButton.Location = new System.Drawing.Point(4, 5);
-            this.LoginButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LoginButton.Location = new System.Drawing.Point(3, 3);
+            this.LoginButton.Margin = new System.Windows.Forms.Padding(4);
             this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(112, 35);
+            this.LoginButton.Size = new System.Drawing.Size(75, 23);
             this.LoginButton.TabIndex = 0;
             this.LoginButton.Text = "Log In";
             this.LoginButton.UseVisualStyleBackColor = true;
@@ -605,10 +601,10 @@
             // CreateButton
             // 
             this.CreateButton.AutoSize = true;
-            this.CreateButton.Location = new System.Drawing.Point(124, 5);
-            this.CreateButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.CreateButton.Location = new System.Drawing.Point(83, 3);
+            this.CreateButton.Margin = new System.Windows.Forms.Padding(4);
             this.CreateButton.Name = "CreateButton";
-            this.CreateButton.Size = new System.Drawing.Size(112, 35);
+            this.CreateButton.Size = new System.Drawing.Size(75, 23);
             this.CreateButton.TabIndex = 1;
             this.CreateButton.Text = "Create...";
             this.CreateButton.UseVisualStyleBackColor = true;
@@ -617,10 +613,10 @@
             // ResetButton
             // 
             this.ResetButton.AutoSize = true;
-            this.ResetButton.Location = new System.Drawing.Point(244, 5);
-            this.ResetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ResetButton.Location = new System.Drawing.Point(163, 3);
+            this.ResetButton.Margin = new System.Windows.Forms.Padding(4);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(112, 35);
+            this.ResetButton.Size = new System.Drawing.Size(75, 23);
             this.ResetButton.TabIndex = 2;
             this.ResetButton.Text = "Reset...";
             this.ResetButton.UseVisualStyleBackColor = true;
@@ -628,12 +624,12 @@
             // 
             // OptionsInternetUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.Controls.Add(this.MainLayoutPanel);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.Name = "OptionsInternetUserControl";
-            this.Size = new System.Drawing.Size(966, 631);
+            this.Size = new System.Drawing.Size(644, 421);
             this.MainLayoutPanel.ResumeLayout(false);
             this.MainLayoutPanel.PerformLayout();
             this.GamesGroupBox.ResumeLayout(false);

@@ -284,7 +284,7 @@
 			this.CombinedIndexLabel.Name = "CombinedIndexLabel";
 			this.CombinedIndexLabel.Size = new System.Drawing.Size(72, 13);
 			this.CombinedIndexLabel.TabIndex = 6;
-			this.CombinedIndexLabel.Text = "Combine Into:";
+			this.CombinedIndexLabel.Text = "Combine Into";
 			// 
 			// CombinedCheckBox
 			// 
@@ -330,7 +330,7 @@
 			this.PassThroughIndexLabel.Name = "PassThroughIndexLabel";
 			this.PassThroughIndexLabel.Size = new System.Drawing.Size(90, 13);
 			this.PassThroughIndexLabel.TabIndex = 4;
-			this.PassThroughIndexLabel.Text = "Pass Through ID:";
+			this.PassThroughIndexLabel.Text = "Pass Through ID";
 			// 
 			// ForceFeedbackPassThroughCheckBox
 			// 
@@ -361,7 +361,7 @@
 			this.DeviceSubTypeLabel.Name = "DeviceSubTypeLabel";
 			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(93, 13);
 			this.DeviceSubTypeLabel.TabIndex = 0;
-			this.DeviceSubTypeLabel.Text = "Device Sub Type:";
+			this.DeviceSubTypeLabel.Text = "Device Sub Type";
 			// 
 			// PassThroughCheckBox
 			// 
@@ -649,7 +649,7 @@
 			// LeftLabel
 			// 
 			this.LeftLabel.AutoSize = true;
-			this.LeftLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.LeftLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.LeftLabel.Location = new System.Drawing.Point(105, 6);
 			this.LeftLabel.Name = "LeftLabel";
 			this.LeftLabel.Size = new System.Drawing.Size(33, 13);
@@ -978,7 +978,7 @@
 			// 
 			this.RightLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightLabel.AutoSize = true;
-			this.RightLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.RightLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.RightLabel.Location = new System.Drawing.Point(10, 6);
 			this.RightLabel.Name = "RightLabel";
 			this.RightLabel.Size = new System.Drawing.Size(41, 13);
@@ -1464,7 +1464,7 @@
 			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(681, 430);
 			this.AxisToButtonGroupBox.TabIndex = 3;
 			this.AxisToButtonGroupBox.TabStop = false;
-			this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):";
+			this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)";
 			// 
 			// AxisToButtonADeadZonePanel
 			// 
@@ -1734,7 +1734,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(230, 13);
 			this.label1.TabIndex = 21;
-			this.label1.Text = "Periodically resend values to the controller (ms):";
+			this.label1.Text = "Periodically resend values to the controller (ms)";
 			// 
 			// TestTimerNumericUpDown
 			// 
@@ -1863,7 +1863,7 @@
 			this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
 			this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
 			this.LeftMotorDirectionLabel.TabIndex = 0;
-			this.LeftMotorDirectionLabel.Text = "Direction:";
+			this.LeftMotorDirectionLabel.Text = "Direction";
 			// 
 			// LeftMotorStrengthTrackBar
 			// 
@@ -1962,7 +1962,7 @@
 			this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
 			this.RightMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
 			this.RightMotorDirectionLabel.TabIndex = 0;
-			this.RightMotorDirectionLabel.Text = "Direction:";
+			this.RightMotorDirectionLabel.Text = "Direction";
 			// 
 			// RightMotorStrengthTrackBar
 			// 

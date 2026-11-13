@@ -18,6 +18,10 @@ namespace x360ce.App.Controls
 			if (IsDesignMode)
 				return;
 			ControlsHelper.ApplyBorderStyle(TasksDataGridView);
+			// The details panel under the list shows nothing until something is put in it, so it is hidden while it is empty.
+			ItemDetailsPanel.Visible = ItemDetailsPanel.HasChildren;
+			ItemDetailsPanel.ControlAdded += (s, e) => ItemDetailsPanel.Visible = true;
+			ItemDetailsPanel.ControlRemoved += (s, e) => ItemDetailsPanel.Visible = ItemDetailsPanel.HasChildren;
 			//TasksTimer.Queue.AsynchronousInvoke = true;
 			TasksDataGridView.AutoGenerateColumns = false;
 			// Suspend errors.

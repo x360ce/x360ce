@@ -168,6 +168,143 @@ namespace x360ce.Tests
 			ShowsBySource(false);
 		}
 
+		/// <summary>
+		/// Shows Controller 1's page, made and themed as the program makes it, with these devices mapped to it for a game of its
+		/// own, then puts the program's settings and devices back as they were.
+		/// </summary>
+		/// <remarks>Call it on the interface thread. The settings are given in the order of the devices.</remarks>
+		internal static void ShowControllerTab(UserDevice[] devices, Action<PadControl, UserSetting[]> look)
+		{
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+			var oldGame = SettingsManager.CurrentGame;
+			var oldStatus = SettingsManager.Current.NotifySettingsStatus;
+			SettingsManager.Current.NotifySettingsStatus = count => { };
+			var game = new UserGame
+			{
+				FileName = "lists.exe",
+				FileProductName = "Lists",
+				EnableMask = (int)MapToMask.Controller1,
+				EmulationType = (int)EmulationType.Virtual,
+			};
+			foreach (var device in devices)
+				SettingsManager.UserDevices.Items.Add(device);
+			try
+			{
+				SettingsManager.UserSettings.Items.Clear();
+				var rows = devices.Select(x => AppHelper.GetNewSetting(x, game, MapTo.Controller1)).ToArray();
+				foreach (var row in rows)
+					SettingsManager.UserSettings.Items.Add(row);
+				SettingsManager.RefreshDeviceIsOnlineValueOnSettings(rows);
+				using (var form = new Form { Width = 1400, Height = 900, StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-5000, -5000), ShowInTaskbar = false })
+				using (var pad = new PadControl(MapTo.Controller1) { Dock = DockStyle.Fill })
+				{
+					form.Controls.Add(pad);
+					pad.InitPadControl();
+					pad.UpdateSettingsMap();
+					pad.InitPadData();
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(form);
+					form.Show();
+					SettingsManager.CurrentGame = game;
+					pad.UpdateFromCurrentGame();
+					Application.DoEvents();
+					look(pad, rows);
+				}
+			}
+			finally
+			{
+				SettingsManager.Current.NotifySettingsStatus = oldStatus;
+				SettingsManager.CurrentGame = oldGame;
+				SettingsManager.UserSettings.Items.Clear();
+				foreach (var setting in settings)
+					SettingsManager.UserSettings.Items.Add(setting);
+				foreach (var device in devices)
+					SettingsManager.UserDevices.Items.Remove(device);
+			}
+		}
+
+		/// <summary>The colour a row is painted in, read in a column where no text is drawn at the cell's top, the row scrolled into view.</summary>
+		static System.Drawing.Color RowColour(DataGridView grid, object item, string column)
+		{
+			var index = RowOf(grid, item);
+			grid.FirstDisplayedScrollingRowIndex = index;
+			Application.DoEvents();
+			var cell = grid.GetCellDisplayRectangle(grid.Columns[column].Index, index, false);
+			using (var picture = new System.Drawing.Bitmap(grid.Width, grid.Height))
+			{
+				grid.DrawToBitmap(picture, new System.Drawing.Rectangle(0, 0, grid.Width, grid.Height));
+				return picture.GetPixel(cell.Left + cell.Width / 2, cell.Top + 1);
+			}
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("ui")]
+		[Description("A controller tab's list tints each row by the source its device is read through, as the Devices page does, and a row whose device is gone in the plain window colour, in both themes")]
+		public void Controller_tab_tints_the_rows_by_source()
+		{
+			var diPad = DirectInputRow("Pad", PadPath);
+			var rawPad = RawInputRow("Pad", PadPath);
+			var plugin = new UserDevice { InstanceGuid = Guid.NewGuid(), InstanceName = "Plugin", ProductName = "Plugin",
+				InputSourceType = (int)InputSourceType.Plugin, IsOnline = true };
+			var gone = DirectInputRow("Wheel", WheelPath);
+			var devices = new[] { diPad, rawPad, plugin, gone };
+			var faults = new List<string>();
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					foreach (var theme in new[] { JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light, JocysCom.ClassLibrary.Controls.Themes.ThemeType.Dark })
+					{
+						JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(theme);
+						ShowControllerTab(devices, (pad, rows) =>
+						{
+							// A setting outlives the device it maps to.
+							SettingsManager.UserDevices.Items.Remove(gone);
+							var grid = pad.MappedDevicesDataGridView;
+							Assert.AreEqual(devices.Length, grid.Rows.Count, "The tab does not list every device mapped to it.");
+							grid.ClearSelection();
+							for (var i = 0; i < devices.Length; i++)
+							{
+								var device = devices[i];
+								var wanted = device == gone ? System.Drawing.SystemColors.Window : AppHelper.GetInputSourceTint(device);
+								var painted = RowColour(grid, rows[i], nameof(PadControl.InstanceIdColumn));
+								if (painted.ToArgb() != wanted.ToArgb())
+									faults.Add(string.Format("{0}: the {1} row is painted #{2:X6}, not #{3:X6}.", theme,
+										device == gone ? "gone device's" : device.InputSource.ToString(), painted.ToArgb() & 0xFFFFFF, wanted.ToArgb() & 0xFFFFFF));
+							}
+							if (devices.Take(3).Select(x => AppHelper.GetInputSourceTint(x).ToArgb()).Distinct().Count() != 3)
+								faults.Add(theme + ": two sources share a tint.");
+						});
+					}
+				}
+				finally
+				{
+					JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetTheme(JocysCom.ClassLibrary.Controls.Themes.ThemeType.Light);
+				}
+			});
+			Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("ui")]
+		[Description("The device lists, which hold DirectInput, Raw Input and plugin devices, and the Options group whose settings read both sources, are named Input Devices")]
+		public void Lists_of_every_source_are_named_input_devices()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var map = new MapDeviceToControllerForm())
+				using (var options = new OptionsUserControl())
+				{
+					Assert.AreEqual("Input Devices", map.Controls.Find("DevicesTabPage", true).Single().Text, "The Map Device window's tab.");
+					Assert.AreEqual("Input Devices", options.DirectInputDevicesGroupBox.Text, "The Options group.");
+				}
+			});
+			var key = nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DirectInputDevicesGroupBox);
+			Assert.AreEqual("Input Devices", x360ce.App.UiTree.UiCatalog.Build()[key].Name, "The Options group in the AI door's description.");
+			// The main window's page is read from its designer: it starts the program's cloud client as it is made.
+			var designer = System.IO.File.ReadAllText(System.IO.Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainControl.Designer.cs"));
+			var heading = System.Text.RegularExpressions.Regex.Match(designer,
+				@"this\." + nameof(MainControl.DirectInputDevicesHeaderLabel) + @"\.Text = ""([^""]*)"";").Groups[1].Value;
+			StringAssert.StartsWith(heading, "Input Devices - ", "The Devices page's heading.");
+		}
+
 		[TestMethod, TestCategory("devices"), TestCategory("ui")]
 		[Description("The list Add opens names each row's source, lists DirectInput rows, then Raw Input, then plugin devices, and tints each source")]
 		public void Add_list_lists_and_tints_the_rows_by_source()

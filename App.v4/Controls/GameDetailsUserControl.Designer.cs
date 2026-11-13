@@ -147,6 +147,7 @@
 			this.HookMaskGroupBox.AutoSize = true;
 			this.HookMaskGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.HookMaskGroupBox.Controls.Add(this.HookMaskLayoutPanel);
+			this.HookMaskGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 12, 4);
 			this.HookMaskGroupBox.Name = "HookMaskGroupBox";
 			this.MainLayoutPanel.SetRowSpan(this.HookMaskGroupBox, 2);
 			this.HookMaskGroupBox.TabIndex = 0;
@@ -184,6 +185,7 @@
 			// 
 			this.HookCOMCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookCOMCheckBox.AutoSize = true;
+			this.HookCOMCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookCOMCheckBox.Name = "HookCOMCheckBox";
 			this.HookCOMCheckBox.TabIndex = 0;
 			this.HookCOMCheckBox.Text = "COM";
@@ -193,6 +195,7 @@
 			// 
 			this.HookDICheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookDICheckBox.AutoSize = true;
+			this.HookDICheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookDICheckBox.Name = "HookDICheckBox";
 			this.HookDICheckBox.TabIndex = 1;
 			this.HookDICheckBox.Text = "DI";
@@ -202,6 +205,7 @@
 			// 
 			this.HookPIDVIDCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookPIDVIDCheckBox.AutoSize = true;
+			this.HookPIDVIDCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookPIDVIDCheckBox.Name = "HookPIDVIDCheckBox";
 			this.HookPIDVIDCheckBox.TabIndex = 2;
 			this.HookPIDVIDCheckBox.Text = "PIDVID";
@@ -212,6 +216,7 @@
 			// 
 			this.HookNAMECheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookNAMECheckBox.AutoSize = true;
+			this.HookNAMECheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookNAMECheckBox.Name = "HookNAMECheckBox";
 			this.HookNAMECheckBox.TabIndex = 3;
 			this.HookNAMECheckBox.Text = "NAME";
@@ -221,6 +226,7 @@
 			// 
 			this.HookSTOPCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookSTOPCheckBox.AutoSize = true;
+			this.HookSTOPCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookSTOPCheckBox.Name = "HookSTOPCheckBox";
 			this.HookSTOPCheckBox.TabIndex = 4;
 			this.HookSTOPCheckBox.Text = "STOP";
@@ -230,6 +236,7 @@
 			// 
 			this.HookLLCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookLLCheckBox.AutoSize = true;
+			this.HookLLCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookLLCheckBox.Name = "HookLLCheckBox";
 			this.HookLLCheckBox.TabIndex = 5;
 			this.HookLLCheckBox.Tag = "";
@@ -240,6 +247,7 @@
 			// 
 			this.HookSACheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookSACheckBox.AutoSize = true;
+			this.HookSACheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookSACheckBox.Name = "HookSACheckBox";
 			this.HookSACheckBox.TabIndex = 6;
 			this.HookSACheckBox.Text = "SA (SetupAPI)";
@@ -249,6 +257,7 @@
 			// 
 			this.HookWTCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookWTCheckBox.AutoSize = true;
+			this.HookWTCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookWTCheckBox.Name = "HookWTCheckBox";
 			this.HookWTCheckBox.TabIndex = 7;
 			this.HookWTCheckBox.Text = "WT (WinVerifyTrust)";
@@ -258,6 +267,7 @@
 			// 
 			this.HookDISABLECheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookDISABLECheckBox.AutoSize = true;
+			this.HookDISABLECheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookDISABLECheckBox.Name = "HookDISABLECheckBox";
 			this.HookDISABLECheckBox.TabIndex = 8;
 			this.HookDISABLECheckBox.Text = "DISABLE";
@@ -271,6 +281,7 @@
 			this.XInputMaskGroupBox.AutoSize = true;
 			this.XInputMaskGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.XInputMaskGroupBox.Controls.Add(this.XInputMaskLayoutPanel);
+			this.XInputMaskGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 12, 4);
 			this.XInputMaskGroupBox.Name = "XInputMaskGroupBox";
 			this.MainLayoutPanel.SetRowSpan(this.XInputMaskGroupBox, 2);
 			this.XInputMaskGroupBox.TabIndex = 1;
@@ -315,46 +326,52 @@
 			// 
 			this.v91.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.v91.AutoSize = true;
+			this.v91.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.v91.Name = "v91";
 			this.v91.TabIndex = 0;
-			this.v91.Text = "v9.1:";
+			this.v91.Text = "v9.1";
 			// 
 			// label1
 			// 
 			this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label1.AutoSize = true;
+			this.label1.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.label1.Name = "label1";
 			this.label1.TabIndex = 3;
-			this.label1.Text = "v1.1:";
+			this.label1.Text = "v1.1";
 			// 
 			// label2
 			// 
 			this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label2.AutoSize = true;
+			this.label2.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.label2.Name = "label2";
 			this.label2.TabIndex = 6;
-			this.label2.Text = "v1.2:";
+			this.label2.Text = "v1.2";
 			// 
 			// label3
 			// 
 			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label3.AutoSize = true;
+			this.label3.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.label3.Name = "label3";
 			this.label3.TabIndex = 9;
-			this.label3.Text = "v1.3:";
+			this.label3.Text = "v1.3";
 			// 
 			// label4
 			// 
 			this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label4.AutoSize = true;
+			this.label4.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.label4.Name = "label4";
 			this.label4.TabIndex = 12;
-			this.label4.Text = "v1.4:";
+			this.label4.Text = "v1.4";
 			// 
 			// XInput91_x86CheckBox
 			// 
 			this.XInput91_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput91_x86CheckBox.AutoSize = true;
+			this.XInput91_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput91_x86CheckBox.Name = "XInput91_x86CheckBox";
 			this.XInput91_x86CheckBox.TabIndex = 1;
 			this.XInput91_x86CheckBox.Text = "32-bit";
@@ -364,6 +381,7 @@
 			// 
 			this.XInput11_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput11_x86CheckBox.AutoSize = true;
+			this.XInput11_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput11_x86CheckBox.Name = "XInput11_x86CheckBox";
 			this.XInput11_x86CheckBox.TabIndex = 4;
 			this.XInput11_x86CheckBox.Text = "32-bit";
@@ -373,6 +391,7 @@
 			// 
 			this.XInput12_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput12_x86CheckBox.AutoSize = true;
+			this.XInput12_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput12_x86CheckBox.Name = "XInput12_x86CheckBox";
 			this.XInput12_x86CheckBox.TabIndex = 7;
 			this.XInput12_x86CheckBox.Text = "32-bit";
@@ -382,6 +401,7 @@
 			// 
 			this.XInput13_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput13_x86CheckBox.AutoSize = true;
+			this.XInput13_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput13_x86CheckBox.Name = "XInput13_x86CheckBox";
 			this.XInput13_x86CheckBox.TabIndex = 10;
 			this.XInput13_x86CheckBox.Text = "32-bit";
@@ -391,6 +411,7 @@
 			// 
 			this.XInput14_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput14_x86CheckBox.AutoSize = true;
+			this.XInput14_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput14_x86CheckBox.Name = "XInput14_x86CheckBox";
 			this.XInput14_x86CheckBox.TabIndex = 13;
 			this.XInput14_x86CheckBox.Text = "32-bit";
@@ -400,6 +421,7 @@
 			// 
 			this.XInput91_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput91_x64CheckBox.AutoSize = true;
+			this.XInput91_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput91_x64CheckBox.Name = "XInput91_x64CheckBox";
 			this.XInput91_x64CheckBox.TabIndex = 2;
 			this.XInput91_x64CheckBox.Text = "64-bit";
@@ -409,6 +431,7 @@
 			// 
 			this.XInput11_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput11_x64CheckBox.AutoSize = true;
+			this.XInput11_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput11_x64CheckBox.Name = "XInput11_x64CheckBox";
 			this.XInput11_x64CheckBox.TabIndex = 5;
 			this.XInput11_x64CheckBox.Text = "64-bit";
@@ -418,6 +441,7 @@
 			// 
 			this.XInput12_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput12_x64CheckBox.AutoSize = true;
+			this.XInput12_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput12_x64CheckBox.Name = "XInput12_x64CheckBox";
 			this.XInput12_x64CheckBox.TabIndex = 8;
 			this.XInput12_x64CheckBox.Text = "64-bit";
@@ -427,6 +451,7 @@
 			// 
 			this.XInput13_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput13_x64CheckBox.AutoSize = true;
+			this.XInput13_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput13_x64CheckBox.Name = "XInput13_x64CheckBox";
 			this.XInput13_x64CheckBox.TabIndex = 11;
 			this.XInput13_x64CheckBox.Text = "64-bit";
@@ -436,6 +461,7 @@
 			// 
 			this.XInput14_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInput14_x64CheckBox.AutoSize = true;
+			this.XInput14_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInput14_x64CheckBox.Name = "XInput14_x64CheckBox";
 			this.XInput14_x64CheckBox.TabIndex = 14;
 			this.XInput14_x64CheckBox.Text = "64-bit";
@@ -449,6 +475,7 @@
 			this.AutoMapMaskGroupBox.AutoSize = true;
 			this.AutoMapMaskGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.AutoMapMaskGroupBox.Controls.Add(this.AutoMapMaskLayoutPanel);
+			this.AutoMapMaskGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 12, 4);
 			this.AutoMapMaskGroupBox.Name = "AutoMapMaskGroupBox";
 			this.AutoMapMaskGroupBox.TabIndex = 2;
 			this.AutoMapMaskGroupBox.TabStop = false;
@@ -477,6 +504,7 @@
 			// 
 			this.Controller1CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.Controller1CheckBox.AutoSize = true;
+			this.Controller1CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Controller1CheckBox.Name = "Controller1CheckBox";
 			this.Controller1CheckBox.TabIndex = 0;
 			this.Controller1CheckBox.Text = "PAD 1";
@@ -486,6 +514,7 @@
 			// 
 			this.Controller2CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.Controller2CheckBox.AutoSize = true;
+			this.Controller2CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Controller2CheckBox.Name = "Controller2CheckBox";
 			this.Controller2CheckBox.TabIndex = 1;
 			this.Controller2CheckBox.Text = "PAD 2";
@@ -495,6 +524,7 @@
 			// 
 			this.Controller3CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.Controller3CheckBox.AutoSize = true;
+			this.Controller3CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Controller3CheckBox.Name = "Controller3CheckBox";
 			this.Controller3CheckBox.TabIndex = 2;
 			this.Controller3CheckBox.Text = "PAD 3";
@@ -504,6 +534,7 @@
 			// 
 			this.Controller4CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.Controller4CheckBox.AutoSize = true;
+			this.Controller4CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Controller4CheckBox.Name = "Controller4CheckBox";
 			this.Controller4CheckBox.TabIndex = 3;
 			this.Controller4CheckBox.Text = "PAD 4";
@@ -517,6 +548,7 @@
 			this.DInputMaskGroupBox.AutoSize = true;
 			this.DInputMaskGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DInputMaskGroupBox.Controls.Add(this.DInputMaskLayoutPanel);
+			this.DInputMaskGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 12, 4);
 			this.DInputMaskGroupBox.Name = "DInputMaskGroupBox";
 			this.DInputMaskGroupBox.TabIndex = 3;
 			this.DInputMaskGroupBox.TabStop = false;
@@ -542,6 +574,7 @@
 			// 
 			this.DInput8_x86CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DInput8_x86CheckBox.AutoSize = true;
+			this.DInput8_x86CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DInput8_x86CheckBox.Name = "DInput8_x86CheckBox";
 			this.DInput8_x86CheckBox.TabIndex = 0;
 			this.DInput8_x86CheckBox.Text = "32-bit";
@@ -552,6 +585,7 @@
 			// 
 			this.DInput8_x64CheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DInput8_x64CheckBox.AutoSize = true;
+			this.DInput8_x64CheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DInput8_x64CheckBox.Name = "DInput8_x64CheckBox";
 			this.DInput8_x64CheckBox.TabIndex = 1;
 			this.DInput8_x64CheckBox.Text = "64-bit";
@@ -566,6 +600,7 @@
 			this.groupBox5.AutoSize = true;
 			this.groupBox5.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.groupBox5.Controls.Add(this.HelpLayoutPanel);
+			this.groupBox5.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.groupBox5.Name = "groupBox5";
 			this.MainLayoutPanel.SetRowSpan(this.groupBox5, 2);
 			this.groupBox5.TabIndex = 4;
@@ -598,6 +633,7 @@
 			this.GoogleSearchButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.GoogleSearchButton.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.GoogleSearchButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.GoogleSearchButton.Margin = new System.Windows.Forms.Padding(4);
 			this.GoogleSearchButton.Name = "GoogleSearchButton";
 			this.GoogleSearchButton.TabIndex = 0;
 			this.GoogleSearchButton.Text = "Search on Google...";
@@ -614,6 +650,7 @@
 			this.button3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.button3.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.button3.Margin = new System.Windows.Forms.Padding(4);
 			this.button3.Name = "button3";
 			this.button3.TabIndex = 1;
 			this.button3.Text = "Search on NGemu...";
@@ -630,6 +667,7 @@
 			this.button4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.button4.Image = global::x360ce.App.Properties.Resources.online_help_32x32;
 			this.button4.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.button4.Margin = new System.Windows.Forms.Padding(4);
 			this.button4.Name = "button4";
 			this.button4.TabIndex = 2;
 			this.button4.Text = "Open NGemu...";
@@ -647,6 +685,7 @@
 			this.OtherOptionsGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainLayoutPanel.SetColumnSpan(this.OtherOptionsGroupBox, 3);
 			this.OtherOptionsGroupBox.Controls.Add(this.OtherOptionsLayoutPanel);
+			this.OtherOptionsGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 12, 4);
 			this.OtherOptionsGroupBox.Name = "OtherOptionsGroupBox";
 			this.OtherOptionsGroupBox.TabIndex = 5;
 			this.OtherOptionsGroupBox.TabStop = false;
@@ -694,9 +733,10 @@
 			// 
 			this.HookModeFakeVidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookModeFakeVidLabel.AutoSize = true;
+			this.HookModeFakeVidLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.HookModeFakeVidLabel.Name = "HookModeFakeVidLabel";
 			this.HookModeFakeVidLabel.TabIndex = 0;
-			this.HookModeFakeVidLabel.Text = "Fake VID:";
+			this.HookModeFakeVidLabel.Text = "Fake VID";
 			// 
 			// HookModeFakeVidNumericUpDown
 			// 
@@ -707,6 +747,7 @@
             0,
             0,
             0});
+			this.HookModeFakeVidNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.HookModeFakeVidNumericUpDown.Name = "HookModeFakeVidNumericUpDown";
 			this.HookModeFakeVidNumericUpDown.TabIndex = 1;
 			this.HookModeFakeVidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -714,6 +755,7 @@
 			// HookModeFakeVidTextBox
 			// 
 			this.HookModeFakeVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.HookModeFakeVidTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
 			this.HookModeFakeVidTextBox.ReadOnly = true;
 			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(64, 20);
@@ -723,9 +765,10 @@
 			// 
 			this.HookModeFakePidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HookModeFakePidLabel.AutoSize = true;
+			this.HookModeFakePidLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.HookModeFakePidLabel.Name = "HookModeFakePidLabel";
 			this.HookModeFakePidLabel.TabIndex = 3;
-			this.HookModeFakePidLabel.Text = "Fake PID:";
+			this.HookModeFakePidLabel.Text = "Fake PID";
 			// 
 			// HookModeFakePidNumericUpDown
 			// 
@@ -736,6 +779,7 @@
             0,
             0,
             0});
+			this.HookModeFakePidNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.HookModeFakePidNumericUpDown.Name = "HookModeFakePidNumericUpDown";
 			this.HookModeFakePidNumericUpDown.TabIndex = 4;
 			this.HookModeFakePidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -743,6 +787,7 @@
 			// HookModeFakePidTextBox
 			// 
 			this.HookModeFakePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.HookModeFakePidTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
 			this.HookModeFakePidTextBox.ReadOnly = true;
 			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(64, 20);
@@ -752,9 +797,10 @@
 			// 
 			this.TimeoutLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.TimeoutLabel.AutoSize = true;
+			this.TimeoutLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.TimeoutLabel.Name = "TimeoutLabel";
 			this.TimeoutLabel.TabIndex = 6;
-			this.TimeoutLabel.Text = "Timeout:";
+			this.TimeoutLabel.Text = "Timeout";
 			// 
 			// TimeoutNumericUpDown
 			// 
@@ -770,6 +816,7 @@
             0,
             0,
             -2147483648});
+			this.TimeoutNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
 			this.TimeoutNumericUpDown.Name = "TimeoutNumericUpDown";
 			this.TimeoutNumericUpDown.TabIndex = 7;
 			this.TimeoutNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -783,14 +830,16 @@
 			// 
 			this.XInputPathLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInputPathLabel.AutoSize = true;
+			this.XInputPathLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.XInputPathLabel.Name = "XInputPathLabel";
 			this.XInputPathLabel.TabIndex = 8;
-			this.XInputPathLabel.Text = "XInput Path:";
+			this.XInputPathLabel.Text = "XInput Path";
 			// 
 			// XInputPathTextBox
 			// 
 			this.XInputPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.OtherOptionsLayoutPanel.SetColumnSpan(this.XInputPathTextBox, 5);
+			this.XInputPathTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.XInputPathTextBox.Name = "XInputPathTextBox";
 			this.XInputPathTextBox.TabIndex = 9;
 			this.XInputPathTextBox.TextChanged += new System.EventHandler(this.XInputPathTextBox_TextChanged);
@@ -799,9 +848,10 @@
 			// 
 			this.ProcessorArchitectureLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ProcessorArchitectureLabel.AutoSize = true;
+			this.ProcessorArchitectureLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
 			this.ProcessorArchitectureLabel.TabIndex = 10;
-			this.ProcessorArchitectureLabel.Text = "Architecture:";
+			this.ProcessorArchitectureLabel.Text = "Architecture";
 			// 
 			// ProcessorArchitectureComboBox
 			// 
@@ -809,6 +859,7 @@
 			this.ProcessorArchitectureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ProcessorArchitectureComboBox.Enabled = false;
 			this.ProcessorArchitectureComboBox.FormattingEnabled = true;
+			this.ProcessorArchitectureComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.ProcessorArchitectureComboBox.Name = "ProcessorArchitectureComboBox";
 			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(64, 21);
 			this.ProcessorArchitectureComboBox.TabIndex = 11;
@@ -817,14 +868,16 @@
 			// 
 			this.DInputFileLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DInputFileLabel.AutoSize = true;
+			this.DInputFileLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.DInputFileLabel.Name = "DInputFileLabel";
 			this.DInputFileLabel.TabIndex = 12;
-			this.DInputFileLabel.Text = "DInput File:";
+			this.DInputFileLabel.Text = "DInput File";
 			// 
 			// DInputFileTextBox
 			// 
 			this.DInputFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.OtherOptionsLayoutPanel.SetColumnSpan(this.DInputFileTextBox, 5);
+			this.DInputFileTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
 			this.DInputFileTextBox.TabIndex = 13;
 			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
@@ -833,15 +886,17 @@
 			// 
 			this.EmulationTypeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EmulationTypeLabel.AutoSize = true;
+			this.EmulationTypeLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.EmulationTypeLabel.Name = "EmulationTypeLabel";
 			this.EmulationTypeLabel.TabIndex = 14;
-			this.EmulationTypeLabel.Text = "Emulation:";
+			this.EmulationTypeLabel.Text = "Emulation";
 			// 
 			// EmulationTypeComboBox
 			// 
 			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.EmulationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.EmulationTypeComboBox.FormattingEnabled = true;
+			this.EmulationTypeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EmulationTypeComboBox.Name = "EmulationTypeComboBox";
 			this.EmulationTypeComboBox.Size = new System.Drawing.Size(64, 21);
 			this.EmulationTypeComboBox.TabIndex = 15;
@@ -854,6 +909,7 @@
 			this.ActionGroupBox.AutoSize = true;
 			this.ActionGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ActionGroupBox.Controls.Add(this.ActionLayoutPanel);
+			this.ActionGroupBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 4);
 			this.ActionGroupBox.Name = "ActionGroupBox";
 			this.ActionGroupBox.TabIndex = 6;
 			this.ActionGroupBox.TabStop = false;
@@ -881,6 +937,7 @@
 			this.ResetToDefaultButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ResetToDefaultButton.Image = global::x360ce.App.Properties.Resources.reset_32x32;
 			this.ResetToDefaultButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ResetToDefaultButton.Margin = new System.Windows.Forms.Padding(4);
 			this.ResetToDefaultButton.Name = "ResetToDefaultButton";
 			this.ResetToDefaultButton.TabIndex = 0;
 			this.ResetToDefaultButton.Text = "Reset to Default";
@@ -895,6 +952,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayoutPanel);
 			this.Name = "GameDetailsUserControl";
+			this.Padding = new System.Windows.Forms.Padding(4, 4, 4, 0);
 			this.MainLayoutPanel.ResumeLayout(false);
 			this.MainLayoutPanel.PerformLayout();
 			this.HookMaskGroupBox.ResumeLayout(false);

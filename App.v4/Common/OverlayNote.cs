@@ -19,8 +19,17 @@ namespace x360ce.App
 	public static class OverlayNote
 	{
 		public const int DefaultSeconds = 2;
-		const int Pad = 14;
+
+		/// <summary>The room round the words and the mark, the mark's size and the rounding of the note's corners, in device-independent pixels.</summary>
+		const int Pad = 16;
 		const int Mark = 12;
+		const int Corner = 12;
+
+		/// <summary>A size in device-independent pixels, in the screen's pixels.</summary>
+		static int Pixels(int value)
+		{
+			return (int)Math.Round(value * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
+		}
 
 		static Note _note;
 		static Timer _timer;
@@ -71,8 +80,10 @@ namespace x360ce.App
 		/// <summary>Where the note goes: centred across the monitor, a tenth of the way down, sized to its words plus the mark and the padding.</summary>
 		public static Rectangle Place(Rectangle screen, Size words)
 		{
-			var width = Pad + Mark + Pad + words.Width + Pad;
-			var height = Math.Max(words.Height, Mark) + Pad * 2;
+			var pad = Pixels(Pad);
+			var mark = Pixels(Mark);
+			var width = pad + mark + pad + words.Width + pad;
+			var height = Math.Max(words.Height, mark) + pad * 2;
 			return new Rectangle(screen.Left + (screen.Width - width) / 2, screen.Top + screen.Height / 10, width, height);
 		}
 
@@ -105,13 +116,15 @@ namespace x360ce.App
 				var g = e.Graphics;
 				// The corners are cut by the see-through colour, so their edge must not be blended with it.
 				g.SmoothingMode = SmoothingMode.None;
-				using (var path = AppHelper.RoundedRectangle(new Rectangle(0, 0, Width - 1, Height - 1), 10))
+				var pad = Pixels(Pad);
+				var size = Pixels(Mark);
+				using (var path = AppHelper.RoundedRectangle(new Rectangle(0, 0, Width - 1, Height - 1), Pixels(Corner)))
 				using (var panel = new SolidBrush(Panel))
 					g.FillPath(panel, path);
 				g.SmoothingMode = SmoothingMode.AntiAlias;
 				using (var mark = new SolidBrush(_mark))
-					g.FillEllipse(mark, Pad, (Height - Mark) / 2, Mark, Mark);
-				var textBox = new Rectangle(Pad + Mark + Pad, 0, Width - (Pad + Mark + Pad) - Pad, Height);
+					g.FillEllipse(mark, pad, (Height - size) / 2, size, size);
+				var textBox = new Rectangle(pad + size + pad, 0, Width - (pad + size + pad) - pad, Height);
 				TextRenderer.DrawText(g, Words, Font, textBox, Color.White,
 					TextFormatFlags.VerticalCenter | TextFormatFlags.Left | TextFormatFlags.SingleLine);
 			}

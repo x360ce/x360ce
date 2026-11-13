@@ -39,10 +39,28 @@ namespace x360ce.Tests
 				options.PollingRate = UpdateFrequency.ms8_125Hz;
 				Assert.AreEqual(UpdateFrequency.ms8_125Hz, Global.DHelper.Frequency,
 					"A second change did not reach the device loop.");
+
+				options.PollingRate = UpdateFrequency.us250_4000Hz;
+				Assert.AreEqual(UpdateFrequency.us250_4000Hz, Global.DHelper.Frequency,
+					"Choosing 4000 Hz did not reach the device loop.");
 			}
 			finally
 			{
 				options.PollingRate = original;
+			}
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("Each polling rate's value is the time between passes, in microseconds, that its name's rate needs, and the list shows both")]
+		public void Each_rate_is_the_interval_its_name_says()
+		{
+			foreach (UpdateFrequency rate in System.Enum.GetValues(typeof(UpdateFrequency)))
+			{
+				var name = rate.ToString();
+				var hz = int.Parse(name.Substring(name.IndexOf('_') + 1).Replace("Hz", ""));
+				Assert.AreEqual(1000000, (int)rate * hz, name + " waits " + (int)rate + " µs between passes, which is not " + hz + " a second.");
+				var shown = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0} Hz ({1:0.##} ms)", hz, (int)rate / 1000.0);
+				Assert.AreEqual(shown, JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(rate), name + " is shown in the Polling Rate list in other words.");
 			}
 		}
 

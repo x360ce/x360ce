@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.30.21.0",
-	"Built":"2026-11-11",
+	"Version":"4.30.60.0",
+	"Built":"2026-11-13",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -21,44 +21,16 @@
 							"Id":"MainGroupBox",
 							"Items":[
 								{
-									"Name":"Sensitivity",
-									"Description":"Bends the middle of the travel and leaves both ends where they are.",
-									"Role":"Value",
-									"Id":"SensitivityTextBox"
-								},
-								{
-									"Name":"Sensitivity",
-									"Description":"Bends the middle of the travel and leaves both ends where they are.",
-									"Role":"Slider",
-									"Id":"SensitivityTrackBar",
-									"Min":0,
-									"Max":100
-								},
-								{
 									"Name":"Response curve",
 									"Description":"Draws what the game receives for every position of the control.",
 									"Role":"Picture",
 									"Id":"MainPictureBox"
 								},
 								{
-									"Name":"Anti-dead zone",
-									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
-									"Role":"Value",
-									"Id":"AntiDeadZoneTextBox"
-								},
-								{
-									"Name":"Dead zone",
-									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
-									"Role":"Value",
-									"Id":"DeadZoneTextBox"
-								},
-								{
-									"Name":"Anti-dead zone",
-									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
-									"Role":"Slider",
-									"Id":"AntiDeadZoneTrackBar",
-									"Min":0,
-									"Max":100
+									"Name":"Preset",
+									"Description":"Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; \"Clear\" sets all three to nought. The list then shows \"Apply Preset\" again.",
+									"Role":"List",
+									"Id":"PresetComboBox"
 								},
 								{
 									"Name":"Dead zone",
@@ -69,16 +41,56 @@
 									"Max":100
 								},
 								{
-									"Name":"Anti-dead zone",
-									"Description":"Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.",
-									"Role":"Number",
-									"Id":"AntiDeadZoneNumericUpDown"
+									"Name":"Dead zone",
+									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
+									"Role":"Value",
+									"Id":"DeadZoneTextBox"
 								},
 								{
 									"Name":"Dead zone",
 									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
 									"Role":"Number",
 									"Id":"DeadZoneNumericUpDown"
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
+									"Role":"Slider",
+									"Id":"AntiDeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
+									"Role":"Value",
+									"Id":"AntiDeadZoneTextBox"
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.",
+									"Role":"Number",
+									"Id":"AntiDeadZoneNumericUpDown"
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"Bends the middle of the travel and leaves both ends where they are.",
+									"Role":"Slider",
+									"Id":"SensitivityTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"Bends the middle of the travel and leaves both ends where they are.",
+									"Role":"Value",
+									"Id":"SensitivityTextBox"
+								},
+								{
+									"Name":"Invert sensitivity",
+									"Description":"Bends the middle the other way: more sensitive in the centre instead of less.",
+									"Role":"CheckBox",
+									"Id":"SensitivityCheckBox"
 								},
 								{
 									"Name":"Sensitivity",
@@ -88,18 +100,6 @@
 									"Min":-100,
 									"Max":100,
 									"Hidden":true
-								},
-								{
-									"Name":"Invert sensitivity",
-									"Description":"Bends the middle the other way: more sensitive in the centre instead of less.",
-									"Role":"CheckBox",
-									"Id":"SensitivityCheckBox"
-								},
-								{
-									"Name":"Preset",
-									"Description":"Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; \"Clear\" sets all three to nought. The list then shows \"Apply Preset\" again.",
-									"Role":"List",
-									"Id":"PresetComboBox"
 								}
 							]
 						}
@@ -317,6 +317,7 @@
 							"Description":"One chip per button, lit while it is held. Click or drag a chip into a mapping box.",
 							"Role":"Section",
 							"Id":"ButtonsGroupBox",
+							"Hidden":true,
 							"Items":[
 								{
 									"Name":"Button chips",
@@ -324,7 +325,8 @@
 									"Role":"Group",
 									"Id":"ButtonChips",
 									"Type":"InputChipGroup",
-									"SameAs":"InputChipGroup"
+									"SameAs":"InputChipGroup",
+									"Hidden":true
 								}
 							]
 						},
@@ -333,6 +335,7 @@
 							"Description":"One chip per axis with its reading, lit while it moves and for half a second after.",
 							"Role":"Section",
 							"Id":"AxesGroupBox",
+							"Hidden":true,
 							"Items":[
 								{
 									"Name":"Axis chips",
@@ -340,7 +343,8 @@
 									"Role":"Group",
 									"Id":"AxisChips",
 									"Type":"InputChipGroup",
-									"SameAs":"InputChipGroup"
+									"SameAs":"InputChipGroup",
+									"Hidden":true
 								}
 							]
 						},
@@ -349,6 +353,7 @@
 							"Description":"One chip per slider with its reading, lit while it moves and for half a second after.",
 							"Role":"Section",
 							"Id":"SlidersGroupBox",
+							"Hidden":true,
 							"Items":[
 								{
 									"Name":"Slider chips",
@@ -356,7 +361,8 @@
 									"Role":"Group",
 									"Id":"SliderChips",
 									"Type":"InputChipGroup",
-									"SameAs":"InputChipGroup"
+									"SameAs":"InputChipGroup",
+									"Hidden":true
 								}
 							]
 						},
@@ -365,6 +371,7 @@
 							"Description":"One chip per POV with its reading in degrees, then its four directions, lit while pressed.",
 							"Role":"Section",
 							"Id":"PovsGroupBox",
+							"Hidden":true,
 							"Items":[
 								{
 									"Name":"POV chips",
@@ -372,7 +379,8 @@
 									"Role":"Group",
 									"Id":"PovChips",
 									"Type":"InputChipGroup",
-									"SameAs":"InputChipGroup"
+									"SameAs":"InputChipGroup",
+									"Hidden":true
 								}
 							]
 						}
@@ -501,7 +509,9 @@
 											"Name":"Remap All",
 											"Description":"Clears the mapping, then asks you to press each control in turn.",
 											"Role":"Button",
-											"Id":"RemapAllButton"
+											"Id":"RemapAllButton",
+											"Type":"WidestTextButton",
+											"SameAs":"WidestTextButton"
 										},
 										{
 											"Name":"Button layout",
@@ -1888,7 +1898,7 @@
 								},
 								{
 									"Name":"Show XInput State",
-									"Description":"Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.",
+									"Description":"Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's reading and what its mapping makes of it. The emulated controller works either way.",
 									"Role":"CheckBox",
 									"Id":"GetXInputStatesCheckBox"
 								}
@@ -2035,6 +2045,11 @@
 							"Id":"MainPictureBox"
 						}
 					]
+				},
+				{
+					"Name":"WidestTextButton",
+					"Description":"Clears the mapping, then asks you to press each control in turn.",
+					"Role":"Control"
 				},
 				{
 					"Name":"XboxImageUserControl",
@@ -2298,7 +2313,7 @@
 																			"Id":"AlwaysOnTopCheckBox"
 																		},
 																		{
-																			"Name":"Start with Windows:",
+																			"Name":"Start with Windows",
 																			"Description":"Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.",
 																			"Role":"CheckBox",
 																			"Id":"StartWithWindowsCheckBox"
@@ -2344,7 +2359,7 @@
 																	]
 																},
 																{
-																	"Name":"Direct Input Devices",
+																	"Name":"Input Devices",
 																	"Description":"Which devices the program lists and reads.",
 																	"Role":"Section",
 																	"Id":"DirectInputDevicesGroupBox",
@@ -2901,7 +2916,8 @@
 																			"Name":"Install",
 																			"Description":"Installs HID Guardian. Use HID Hide instead.",
 																			"Role":"Button",
-																			"Id":"HidGuardianInstallButton"
+																			"Id":"HidGuardianInstallButton",
+																			"Hidden":true
 																		},
 																		{
 																			"Name":"Uninstall",
@@ -3863,6 +3879,32 @@
 											"Type":"XInputDevicesUserControl",
 											"Items":[
 												{
+													"Name":"Emulated controller actions",
+													"Description":"Buttons that act on the emulated controllers shown below.",
+													"Role":"Toolbar",
+													"Id":"DevicesToolStrip",
+													"Items":[
+														{
+															"Name":"Refresh",
+															"Description":"Reads the controllers again, for when one has arrived or left.",
+															"Role":"Button",
+															"Id":"RefreshButton"
+														},
+														{
+															"Name":"Auto-Order",
+															"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
+															"Role":"Button",
+															"Id":"AutoOrderButton"
+														},
+														{
+															"Name":"Apply",
+															"Description":"Recreates the controllers in the order shown. Needs Administrator.",
+															"Role":"Button",
+															"Id":"ApplyButton"
+														}
+													]
+												},
+												{
 													"Name":"XInput devices",
 													"Description":"Every emulated controller and the XInput place it holds, in the order games see them.",
 													"Role":"Grid",
@@ -3898,32 +3940,6 @@
 															"Description":"Closes the notice without touching any controller.",
 															"Role":"Button",
 															"Id":"PlanCancelButton"
-														}
-													]
-												},
-												{
-													"Name":"Emulated controller actions",
-													"Description":"Buttons that act on the emulated controllers shown below.",
-													"Role":"Toolbar",
-													"Id":"DevicesToolStrip",
-													"Items":[
-														{
-															"Name":"Apply",
-															"Description":"Recreates the controllers in the order shown. Needs Administrator.",
-															"Role":"Button",
-															"Id":"ApplyButton"
-														},
-														{
-															"Name":"Auto-Order",
-															"Description":"Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.",
-															"Role":"Button",
-															"Id":"AutoOrderButton"
-														},
-														{
-															"Name":"Refresh",
-															"Description":"Reads the controllers again, for when one has arrived or left.",
-															"Role":"Button",
-															"Id":"RefreshButton"
 														}
 													]
 												}
@@ -3972,6 +3988,12 @@
 															"Description":"Opens the selected device in Windows Device Manager.",
 															"Role":"Button",
 															"Id":"HardwareButton"
+														},
+														{
+															"Name":"Test...",
+															"Description":"Opens the Test Device window for the one connected device selected: a guided test of its sticks, triggers and buttons, graded in plain words. Controllers are paused while the test runs.",
+															"Role":"Button",
+															"Id":"TestButton"
 														},
 														{
 															"Name":"Add Plugin Device",
@@ -4242,6 +4264,12 @@
 															"Description":"How long until the checks run again.",
 															"Role":"Status",
 															"Id":"NextRunLabel"
+														},
+														{
+															"Name":"Run Checks",
+															"Description":"Whether the checks run every few seconds. Off, no check runs and Next Run says off.",
+															"Role":"CheckBox",
+															"Id":"ChecksButton"
 														},
 														{
 															"Name":"Check state",

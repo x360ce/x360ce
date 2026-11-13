@@ -229,13 +229,37 @@ namespace x360ce.Tests
 			{
 				WorkingDirectory = Path.GetDirectoryName(exe),
 			});
-			// Long enough for a slow machine to read every device once, which start-up does.
-			Assert.IsTrue(app.WaitForExit(180000),
-				"The program did not finish exporting. It waits for its window to be fully built.");
-			Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree-v4.json")),
-				"The program exited without writing the navigation tree to " + folder + ".");
-			_folder = folder;
+			try
+			{
+				// Long enough for a slow machine to read every device once, which start-up does.
+				Assert.IsTrue(app.WaitForExit(180000),
+					"The program did not finish exporting. It waits for its window to be fully built.");
+				Assert.IsTrue(File.Exists(Path.Combine(folder, "ui-tree-v4.json")),
+					"The program exited without writing the navigation tree to " + folder + ".");
+				_folder = folder;
+			}
+			finally
+			{
+				// An export that failed leaves nothing behind; one that worked is removed with the class.
+				if (_folder != folder && app.HasExited)
+					RemoveFolder(folder);
+			}
 			return folder;
+		}
+
+		/// <summary>Removes the export folder this class made, once its tests are done, whether they passed or failed.</summary>
+		[ClassCleanup]
+		public static void RemoveExport()
+		{
+			RemoveFolder(_folder);
+			_folder = null;
+			_tree = null;
+		}
+
+		static void RemoveFolder(string folder)
+		{
+			if (folder != null && Directory.Exists(folder))
+				Directory.Delete(folder, true);
 		}
 
 		#endregion

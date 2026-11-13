@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.App;
@@ -69,13 +68,14 @@ namespace x360ce.Tests
 					StringAssert.Contains(box.Text, "Xbox 360 Controller Emulator", "The Program tab is empty.");
 					foreach (var name in Credits)
 						StringAssert.Contains(box.Text, name, "The Program tab does not name " + name + ".");
-					// The box raises LinkClicked, which opens the browser as in the help boxes, only over text Windows marks as a link.
+					// A click on an address opens it, as in the help boxes, over every one of its characters.
 					foreach (Match m in Address.Matches(AppHelper.ReadHelp(AppHelper.ProgramResource)))
 					{
 						var url = m.Groups[1].Value;
 						var at = box.Text.IndexOf(url, StringComparison.Ordinal);
 						Assert.IsTrue(at >= 0, "The Program tab does not show " + url + ".");
-						Assert.IsTrue(IsLink(box, at) && IsLink(box, at + url.Length - 1), url + " is shown, but clicking it opens nothing.");
+						Assert.IsTrue(MarkdownRtf.LinkAt(box, at) != null && MarkdownRtf.LinkAt(box, at + url.Length - 1) != null,
+							url + " is shown, but clicking it opens nothing.");
 					}
 					// The picture, the title and the subtitle stay; the names and links that sat beside them are on the Program tab.
 					Assert.IsNotNull(Find<PictureBox>(about, nameof(AboutControl.ProductPictureBox)).Image);
@@ -169,50 +169,6 @@ namespace x360ce.Tests
 			var section = sections.FirstOrDefault(x => Regex.IsMatch(x, @"^#{1,6}\s+" + Regex.Escape(heading) + @"\b"));
 			Assert.IsNotNull(section, "The Program tab has no heading for " + heading + ".");
 			return section;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-		struct CHARFORMAT2
-		{
-			public int cbSize;
-			public uint dwMask;
-			public uint dwEffects;
-			public int yHeight;
-			public int yOffset;
-			public int crTextColor;
-			public byte bCharSet;
-			public byte bPitchAndFamily;
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-			public string szFaceName;
-			public short wWeight;
-			public short sSpacing;
-			public int crBackColor;
-			public int lcid;
-			public int dwReserved;
-			public short sStyle;
-			public short wKerning;
-			public byte bUnderlineType;
-			public byte bAnimation;
-			public byte bRevAuthor;
-			public byte bReserved1;
-		}
-
-		const int EM_GETCHARFORMAT = 0x043A;
-		const int SCF_SELECTION = 1;
-		const uint CFM_LINK = 0x20;
-		const uint CFE_LINK = 0x20;
-
-		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
-		static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, ref CHARFORMAT2 lParam);
-
-		/// <summary>Whether Windows marks the character at the position as part of a link, which is what a click on it opens.</summary>
-		static bool IsLink(RichTextBox box, int position)
-		{
-			box.Select(position, 1);
-			var format = new CHARFORMAT2 { dwMask = CFM_LINK };
-			format.cbSize = Marshal.SizeOf(format);
-			SendMessage(box.Handle, EM_GETCHARFORMAT, (IntPtr)SCF_SELECTION, ref format);
-			return (format.dwEffects & CFE_LINK) != 0;
 		}
 
 		static IEnumerable<Control> All(Control parent)

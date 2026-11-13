@@ -47,13 +47,15 @@ namespace x360ce.App.Controls
 			this.MainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
-			this.MainTableLayoutPanel.RowCount = 4;
+			this.MainTableLayoutPanel.RowCount = 5;
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.MainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.MainTableLayoutPanel.Size = new System.Drawing.Size(600, 600);
+			this.MainTableLayoutPanel.Size = new System.Drawing.Size(400, 400);
 			this.MainTableLayoutPanel.TabIndex = 0;
+			this.MainTableLayoutPanel.SizeChanged += new System.EventHandler(this.MainTableLayoutPanel_SizeChanged);
 			//
 			// ValuesFlowLayoutPanel
 			//
@@ -67,60 +69,60 @@ namespace x360ce.App.Controls
 			this.ValuesFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.ValuesFlowLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ValuesFlowLayoutPanel.Name = "ValuesFlowLayoutPanel";
-			this.ValuesFlowLayoutPanel.Size = new System.Drawing.Size(201, 30);
+			this.ValuesFlowLayoutPanel.Size = new System.Drawing.Size(134, 20);
 			this.ValuesFlowLayoutPanel.TabIndex = 0;
 			this.ValuesFlowLayoutPanel.WrapContents = false;
 			//
 			// AngleLabel
 			//
 			this.AngleLabel.AutoSize = true;
-			this.AngleLabel.Location = new System.Drawing.Point(4, 5);
-			this.AngleLabel.Margin = new System.Windows.Forms.Padding(4, 5, 0, 5);
+			this.AngleLabel.Location = new System.Drawing.Point(3, 3);
+			this.AngleLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.AngleLabel.Name = "AngleLabel";
-			this.AngleLabel.Size = new System.Drawing.Size(55, 20);
+			this.AngleLabel.Size = new System.Drawing.Size(37, 13);
 			this.AngleLabel.TabIndex = 0;
-			this.AngleLabel.Text = "Wheel:";
+			this.AngleLabel.Text = "Wheel";
 			//
 			// AngleValueLabel
 			//
 			this.AngleValueLabel.AutoSize = true;
-			this.AngleValueLabel.Location = new System.Drawing.Point(63, 5);
-			this.AngleValueLabel.Margin = new System.Windows.Forms.Padding(4, 5, 24, 5);
+			this.AngleValueLabel.Location = new System.Drawing.Point(42, 3);
+			this.AngleValueLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.AngleValueLabel.Name = "AngleValueLabel";
-			this.AngleValueLabel.Size = new System.Drawing.Size(15, 20);
+			this.AngleValueLabel.Size = new System.Drawing.Size(10, 13);
 			this.AngleValueLabel.TabIndex = 1;
 			this.AngleValueLabel.Text = "-";
 			//
 			// ForceLabel
 			//
 			this.ForceLabel.AutoSize = true;
-			this.ForceLabel.Location = new System.Drawing.Point(102, 5);
-			this.ForceLabel.Margin = new System.Windows.Forms.Padding(4, 5, 0, 5);
+			this.ForceLabel.Location = new System.Drawing.Point(68, 3);
+			this.ForceLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
 			this.ForceLabel.Name = "ForceLabel";
-			this.ForceLabel.Size = new System.Drawing.Size(51, 20);
+			this.ForceLabel.Size = new System.Drawing.Size(34, 13);
 			this.ForceLabel.TabIndex = 2;
-			this.ForceLabel.Text = "Force:";
+			this.ForceLabel.Text = "Force";
 			//
 			// ForceValueLabel
 			//
 			this.ForceValueLabel.AutoSize = true;
-			this.ForceValueLabel.Location = new System.Drawing.Point(157, 5);
-			this.ForceValueLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.ForceValueLabel.Location = new System.Drawing.Point(105, 3);
+			this.ForceValueLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.ForceValueLabel.Name = "ForceValueLabel";
-			this.ForceValueLabel.Size = new System.Drawing.Size(15, 20);
+			this.ForceValueLabel.Size = new System.Drawing.Size(10, 13);
 			this.ForceValueLabel.TabIndex = 3;
 			this.ForceValueLabel.Text = "-";
 			//
 			// MainPictureBox
 			//
+			this.MainPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.MainPictureBox.BackColor = System.Drawing.Color.Transparent;
 			this.MainTableLayoutPanel.SetColumnSpan(this.MainPictureBox, 3);
-			this.MainPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MainPictureBox.Location = new System.Drawing.Point(4, 35);
-			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 0);
-			this.MainPictureBox.MinimumSize = new System.Drawing.Size(150, 150);
+			this.MainPictureBox.Location = new System.Drawing.Point(3, 23);
+			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
+			this.MainPictureBox.MinimumSize = new System.Drawing.Size(100, 100);
 			this.MainPictureBox.Name = "MainPictureBox";
-			this.MainPictureBox.Size = new System.Drawing.Size(592, 480);
+			this.MainPictureBox.Size = new System.Drawing.Size(395, 395);
 			this.MainPictureBox.TabIndex = 1;
 			this.MainPictureBox.TabStop = false;
 			this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.MainPictureBox_Paint);
@@ -130,10 +132,10 @@ namespace x360ce.App.Controls
 			//
 			this.LeftStopLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.LeftStopLabel.AutoSize = true;
-			this.LeftStopLabel.Location = new System.Drawing.Point(4, 520);
-			this.LeftStopLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.LeftStopLabel.Location = new System.Drawing.Point(3, 347);
+			this.LeftStopLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.LeftStopLabel.Name = "LeftStopLabel";
-			this.LeftStopLabel.Size = new System.Drawing.Size(48, 20);
+			this.LeftStopLabel.Size = new System.Drawing.Size(32, 13);
 			this.LeftStopLabel.TabIndex = 2;
 			this.LeftStopLabel.Text = "-450°";
 			//
@@ -141,10 +143,10 @@ namespace x360ce.App.Controls
 			//
 			this.CentreLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.CentreLabel.AutoSize = true;
-			this.CentreLabel.Location = new System.Drawing.Point(289, 520);
-			this.CentreLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.CentreLabel.Location = new System.Drawing.Point(193, 347);
+			this.CentreLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.CentreLabel.Name = "CentreLabel";
-			this.CentreLabel.Size = new System.Drawing.Size(23, 20);
+			this.CentreLabel.Size = new System.Drawing.Size(15, 13);
 			this.CentreLabel.TabIndex = 3;
 			this.CentreLabel.Text = "0°";
 			//
@@ -152,10 +154,10 @@ namespace x360ce.App.Controls
 			//
 			this.RightStopLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.RightStopLabel.AutoSize = true;
-			this.RightStopLabel.Location = new System.Drawing.Point(544, 520);
-			this.RightStopLabel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+			this.RightStopLabel.Location = new System.Drawing.Point(363, 347);
+			this.RightStopLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.RightStopLabel.Name = "RightStopLabel";
-			this.RightStopLabel.Size = new System.Drawing.Size(52, 20);
+			this.RightStopLabel.Size = new System.Drawing.Size(35, 13);
 			this.RightStopLabel.TabIndex = 4;
 			this.RightStopLabel.Text = "+450°";
 			//
@@ -164,21 +166,21 @@ namespace x360ce.App.Controls
 			this.LegendLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.LegendLabel.AutoSize = true;
 			this.MainTableLayoutPanel.SetColumnSpan(this.LegendLabel, 3);
-			this.LegendLabel.Location = new System.Drawing.Point(4, 550);
-			this.LegendLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 5);
+			this.LegendLabel.Location = new System.Drawing.Point(3, 367);
+			this.LegendLabel.Margin = new System.Windows.Forms.Padding(4);
 			this.LegendLabel.Name = "LegendLabel";
-			this.LegendLabel.Size = new System.Drawing.Size(592, 40);
+			this.LegendLabel.Size = new System.Drawing.Size(395, 27);
 			this.LegendLabel.TabIndex = 5;
 			this.LegendLabel.Text = "Red: the force towards the centre at each angle. Grey: the wheel\'s own friction, which Auto measures; the wheel rests where the red is inside it.";
 			//
 			// WheelChartUserControl
 			//
-			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MainTableLayoutPanel);
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "WheelChartUserControl";
-			this.Size = new System.Drawing.Size(600, 600);
+			this.Size = new System.Drawing.Size(400, 400);
 			this.MainTableLayoutPanel.ResumeLayout(false);
 			this.MainTableLayoutPanel.PerformLayout();
 			this.ValuesFlowLayoutPanel.ResumeLayout(false);

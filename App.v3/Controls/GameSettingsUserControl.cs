@@ -344,12 +344,14 @@ namespace x360ce.App.Controls
 			var column = grid.Columns[e.ColumnIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
+			// A game switched off is in the secondary text colour, and selected, on the darker grey, which the selected text reads
+			// on in both themes.
 			e.CellStyle.ForeColor = item.IsEnabled
 					? grid.DefaultCellStyle.ForeColor
-					: SystemColors.ControlDark;
+					: SystemColors.GrayText;
 			e.CellStyle.SelectionBackColor = item.IsEnabled
 			 ? grid.DefaultCellStyle.SelectionBackColor
-			 : SystemColors.ControlDark;
+			 : SystemColors.ControlDarkDark;
 			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
 			//	? System.Drawing.Color.Gray
 			//	: grid.DefaultCellStyle.ForeColor;

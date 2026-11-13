@@ -6,8 +6,8 @@
 	<SolidColorBrush x:Key="BackgroundTransparent" Color="Transparent" />
 
 	<!--  Adjusted Backgrounds  -->
-	<SolidColorBrush x:Key="BackgroundWhite" Color="#2D2D2D" />
-	<!--  Originally white, now dark grey  -->
+	<SolidColorBrush x:Key="BackgroundWhite" Color="#131313" />
+	<!--  Field: what is white in the light theme, a box to type in or tick, a grid, a tree, a document or a chart, set darker than the page (WPF Fluent's ControlOnImageFillColorTertiary)  -->
 	<SolidColorBrush x:Key="BackgroundLight" Color="#202020" />
 	<!--  Light background in dark theme  -->
 	<SolidColorBrush x:Key="BackgroundDark" Color="#454545" />
@@ -18,6 +18,8 @@
 	<!--  Pressed background  -->
 	<SolidColorBrush x:Key="BackgroundTabSelected" Color="#202020" />
 	<!--  Selected tab: the tab page colour, so the open tab joins its page  -->
+	<SolidColorBrush x:Key="BackgroundHeader" Color="#2D2D2D" />
+	<!--  Column header: the top of its shading, which runs down to the page colour  -->
 
 	<!--  Adjusted Special Backgrounds  -->
 	<SolidColorBrush x:Key="BackgroundWarning" Color="#442726" />
@@ -28,16 +30,44 @@
 	<!--  Adjusted Borders  -->
 	<SolidColorBrush x:Key="BorderDark" Color="#424242" />
 	<!--  Border color  -->
+	<SolidColorBrush x:Key="BorderGray" Color="#5C5C5C" />
+	<!--  Grey border, as a slider thumb's: as far from the border colour toward the secondary text as #acacac in the light theme  -->
+	<SolidColorBrush x:Key="BorderField" Color="#212121" />
+	<!--  Field edge: the line round a box to type in while the mouse and the focus are elsewhere: the light theme's edge (#DEDEDE) with its lightness inverted  -->
+	<SolidColorBrush x:Key="BorderCheck" Color="#131313" />
+	<!--  Check box edge: the line round a check box or radio button that is not ticked or chosen, at rest: the box's own colour (BackgroundWhite), so it shows no edge until it is ticked (the field edge), pointed at or focused (the selection colour), as a box to type in  -->
+	<SolidColorBrush x:Key="BorderShadow" Color="#2D2D2D" />
+	<!--  Shadow line: the outer line of a sunken edge, such as a group's frame, darker than the highlight line inside it  -->
+	<SolidColorBrush x:Key="BorderHighlight" Color="#424242" />
+	<!--  Highlight line: the inner line of a sunken edge, such as a group's frame, and Windows' 3D highlight: lighter than the shadow line  -->
 
 	<!--  Adjusted Foregrounds  -->
 	<SolidColorBrush x:Key="ForegroundBlack" Color="#BFBFBF" />
 	<!--  Text foreground: a dimmed white, as Microsoft dark themes use, so the selected tab stands out  -->
 	<SolidColorBrush x:Key="ForegroundWarning" Color="#FF99A4" />
-	<!--  Warning text  -->
+	<!--  Error text: an error, a failure or a critical issue  -->
+	<SolidColorBrush x:Key="ForegroundCaution" Color="#FFB25C" />
+	<!--  Caution text: an issue that needs attention but is not an error  -->
+	<SolidColorBrush x:Key="ForegroundInformation" Color="#60CDFF" />
+	<!--  Information text: a status or a notice  -->
 	<SolidColorBrush x:Key="ForegroundGray" Color="#9D9D9D" />
 	<!--  Secondary text  -->
+	<SolidColorBrush x:Key="ForegroundUnavailable" Color="#939393" />
+	<!--  Unavailable text: a list row whose device is unplugged or switched off: the light theme's (#6C6C6C) with its lightness inverted, 4.5:1 or more on the field, the page and every source tint  -->
+	<SolidColorBrush x:Key="ForegroundDisabled" Color="#6F6F6F" />
+	<!--  Disabled text, in every control: the light theme's rule, the text at half strength over the page (#BFBFBF over #202020), as a disabled label  -->
 	<SolidColorBrush x:Key="ForegroundSuccess" Color="#6CCB5F" />
 	<!--  Success text  -->
+	<SolidColorBrush x:Key="ForegroundLink" Color="#99EBFF" />
+	<!--  Link text: the Windows 11 dark link colour, WPF Fluent's HyperlinkForeground (the default accent's Light3)  -->
+	<SolidColorBrush x:Key="ForegroundActive" Color="#6CCB5F" />
+	<!--  Active text: what a controller does now: a control's name while it is pressed, a value read from it, and a chart's line at that reading  -->
+	<SolidColorBrush x:Key="ForegroundOutput" Color="#60CDFF" />
+	<!--  Output text: the value a chart's curve gives for the reading, and the chart's line at that value  -->
+	<SolidColorBrush x:Key="ForegroundCode" Color="#6CCB5F" />
+	<!--  Code text: a value written as it is typed: a file name, a formula, a setting  -->
+	<SolidColorBrush x:Key="ForegroundCommand" Color="#60CDFF" />
+	<!--  Command text: the name of a button, tab or box the reader is told to use  -->
 	<SolidColorBrush x:Key="ForegroundTab" Color="#BFBFBF" />
 	<!--  Unselected tab text: the body text; dimmer fails contrast on the BackgroundDark tab  -->
 	<SolidColorBrush x:Key="ForegroundTabSelected" Color="#EDEDED" />
@@ -60,6 +90,10 @@
 	<!--  Mouse over  -->
 	<SolidColorBrush x:Key="ColorRecord" Color="#FF99A4" />
 	<!--  Record state  -->
+
+	<!--  Adjusted Chart Colors  -->
+	<SolidColorBrush x:Key="ColorCurve" Color="#FF99A4" />
+	<!--  Curve: the line a chart draws through every reading, as its settings shape it  -->
 
 	<!--  Adjusted Brand Colors  -->
 	<SolidColorBrush x:Key="ColorBrand" Color="#3ACDFF" />
@@ -104,7 +138,7 @@
 	<SolidColorBrush x:Key="SolidColorBrush_300D">#D169D1</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_330D">#D1699A</SolidColorBrush>
 
-	<!--  Adjusted GradientBrush: column headers, BackgroundWhite to BackgroundLight as in the light theme  -->
+	<!--  Adjusted GradientBrush: column headers, BackgroundHeader to BackgroundLight as in the light theme  -->
 	<LinearGradientBrush x:Key="GradientBrushStyle" StartPoint="1,0" EndPoint="1,1">
 		<GradientStop Offset="0" Color="#2D2D2D" />
 		<GradientStop Offset="1" Color="#202020" />

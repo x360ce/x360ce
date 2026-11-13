@@ -47,7 +47,6 @@
 			this.Controls.Add(this.HardwarePanel);
 			this.Icon = global::x360ce.App.Properties.Resources.hardware;
 			this.Name = "HardwareForm";
-			this.Padding = new System.Windows.Forms.Padding(3);
 			this.Text = "Hardware";
 			this.ResumeLayout(false);
 

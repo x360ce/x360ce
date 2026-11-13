@@ -29,6 +29,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			NoIssuesPanel.Visible = false;
 			LinePanel.Visible = false;
 			ExceptionInfoButton.Visible = false;
+			// "All OK" is in the theme's success colour, taken again in a new theme.
+			NoIssuesLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess");
+			EventHandler themeChanged = (s, e) => NoIssuesLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess");
+			FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => FormsTheme.ThemeChanged -= themeChanged;
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
@@ -96,7 +101,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// <param name="e">The event arguments.</param>
 		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
-			if (IsSuspended())
+			if (!_checksEnabled || IsSuspended())
 				return;
 			CheckAll();
 			// UpdateDisplayedList() writes to the Warnings list bound to the grid and to
@@ -161,6 +166,19 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 
 		public Func<bool> IsSuspended;
+
+		/// <summary>Whether the round of checks runs: <see cref="ChecksButton"/> pressed. Off, no check runs and Next Run says so.</summary>
+		/// <remarks>Kept apart from the button because the checks' own thread reads it. The host sets the button from its settings.</remarks>
+		public bool ChecksEnabled { get { return _checksEnabled; } }
+		volatile bool _checksEnabled = true;
+
+		private void ChecksButton_CheckedChanged(object sender, EventArgs e)
+		{
+			_checksEnabled = ChecksButton.Checked;
+			// Switched on, the checks run at once rather than at the next wake.
+			if (_checksEnabled && TasksTimer != null)
+				TasksTimer.DoActionNow();
+		}
 
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
@@ -481,7 +499,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)
 				remains = nextRunTime.Subtract(DateTime.Now);
-			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+			var nextRun = _checksEnabled
+				? string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m))
+				: "Next Run: off";
 			ControlsHelper.SetText(NextRunLabel, nextRun);
 			var lrt = TasksTimer.LastActionDoneTime;
 			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));

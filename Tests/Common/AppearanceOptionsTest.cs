@@ -51,7 +51,7 @@ namespace x360ce.Tests
 			OnPage("No Such Font 4.29", 0, (font, size, theme, restart) =>
 			{
 				Assert.AreEqual(AppFonts.ChoiceText(""), font.Text, "The list does not show the default font.");
-				Assert.AreEqual(AppFonts.SizeText("", 0), size.Text, "The list does not show the default font's size.");
+				Assert.AreEqual(AppFonts.SizeText(0), size.Text, "The list does not show the default size.");
 				Assert.AreEqual("", SettingsManager.Options.InterfaceFont, "The font not installed was kept.");
 				Assert.IsFalse(restart.Visible, "Restart is offered while the windows are drawn in the font shown.");
 			}, true);
@@ -70,27 +70,25 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("options")]
-		[Description("The size list shows the default first and then one size for each pixel, saves the size chosen by its text, shows Restart while it is not the size in use, and follows the default of the font chosen")]
+		[Description("The size list shows the default first and then one size for each pixel, saves the size chosen by its text, shows Restart while it is not the size in use, and keeps the size chosen when the font changes")]
 		public void Size_list_shows_and_saves_the_size()
 		{
 			OnPage("", 0, (font, size, theme, restart) =>
 			{
 				var texts = size.Items.Cast<object>().Select(size.GetItemText).ToList();
-				Assert.AreEqual(AppFonts.SizeText("", 0), size.Text, "The list does not show the default size saved.");
-				CollectionAssert.AreEqual(AppFonts.Sizes("", 0).Select(x => AppFonts.SizeText("", x)).ToList(), texts, "The list does not offer the sizes.");
+				Assert.AreEqual(AppFonts.SizeText(0), size.Text, "The list does not show the default size saved.");
+				CollectionAssert.AreEqual(AppFonts.Sizes(0).Select(AppFonts.SizeText).ToList(), texts, "The list does not offer the sizes.");
 				StringAssert.StartsWith(texts[0], "Default (", "The default is not first.");
-				var larger = AppFonts.Sizes("", 0).Last();
-				Choose(size, AppFonts.SizeText("", larger));
+				var larger = AppFonts.Sizes(0).Last();
+				Choose(size, AppFonts.SizeText(larger));
 				Assert.AreEqual(larger, SettingsManager.Options.InterfaceFontSize, "The size chosen was not saved.");
 				Assert.IsTrue(restart.Visible, "Restart is not offered for a size not in use.");
 				Assert.AreEqual(string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", AppFonts.ChoiceText(""), larger),
 					AppFonts.RestartNote("", larger), "The note does not say what is used when x360ce starts again.");
-				// Another font is drawn at Windows' text size by default, and the size chosen stays chosen.
 				Choose(font, "Selawik (built in)");
-				Assert.AreEqual(AppFonts.SizeText(AppFonts.BuiltInName, 0), size.GetItemText(size.Items[0]), "The default size does not follow the font chosen.");
-				Assert.AreEqual(AppFonts.SizeText(AppFonts.BuiltInName, larger), size.Text, "The size chosen is not kept when the font changes.");
+				Assert.AreEqual(AppFonts.SizeText(larger), size.Text, "The size chosen is not kept when the font changes.");
 				Choose(font, AppFonts.ChoiceText(""));
-				Choose(size, AppFonts.SizeText("", 0));
+				Choose(size, AppFonts.SizeText(0));
 				Assert.AreEqual(0f, SettingsManager.Options.InterfaceFontSize, "The default size is not saved as 0.");
 				Assert.IsFalse(restart.Visible, "Restart stays after going back to the size in use.");
 			});
@@ -103,7 +101,7 @@ namespace x360ce.Tests
 			var saved = 20f;
 			OnPage("", saved, (font, size, theme, restart) =>
 			{
-				Assert.AreEqual(AppFonts.SizeText("", saved), size.Text, "The list does not show the saved size.");
+				Assert.AreEqual(AppFonts.SizeText(saved), size.Text, "The list does not show the saved size.");
 				Assert.AreEqual(saved, SettingsManager.Options.InterfaceFontSize, "Showing the page changed the saved size.");
 				Assert.IsTrue(restart.Visible, "Restart is not offered for a size not in use.");
 			});
@@ -161,28 +159,37 @@ namespace x360ce.Tests
 				options.InterfaceFont = saved;
 				options.InterfaceFontSize = savedSize;
 				options.Theme = ThemeType.Light;
-				if (started)
-					AppFonts.Apply(options);
 				Ui.OnUiThread(() =>
 				{
-					using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-3000, -3000), ShowInTaskbar = false })
-					using (var page = new OptionsUserControl())
+					if (started)
+						AppFonts.Apply(options);
+					try
 					{
-						form.Controls.Add(page);
-						page.UpdateAppearanceMap();
-						form.Show();
-						var font = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.FontComboBox), true).Single();
-						var size = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.SizeComboBox), true).Single();
-						var theme = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.ThemeComboBox), true).Single();
-						var restart = (Button)page.Controls.Find(nameof(OptionsUserControl.RestartButton), true).Single();
-						// Shown on its tab, as a person sees it, so Visible reads what the button is set to.
-						((TabControl)page.Controls.Find(nameof(OptionsUserControl.MainTabControl), true).Single()).SelectedIndex = 0;
-						// The installed fonts are read on a worker and listed when they arrive.
-						var watch = Stopwatch.StartNew();
-						while (font.Items.Count <= 4 && watch.ElapsedMilliseconds < 10000)
-							Application.DoEvents();
-						Assert.IsTrue(font.Items.Count > 4, "The installed fonts were not listed within 10 s.");
-						test(font, size, theme, restart);
+						using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-3000, -3000), ShowInTaskbar = false })
+						using (var page = new OptionsUserControl())
+						{
+							form.Controls.Add(page);
+							page.UpdateAppearanceMap();
+							form.Show();
+							var font = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.FontComboBox), true).Single();
+							var size = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.SizeComboBox), true).Single();
+							var theme = (ComboBox)page.Controls.Find(nameof(OptionsUserControl.ThemeComboBox), true).Single();
+							var restart = (Button)page.Controls.Find(nameof(OptionsUserControl.RestartButton), true).Single();
+							// Shown on its tab, as a person sees it, so Visible reads what the button is set to.
+							((TabControl)page.Controls.Find(nameof(OptionsUserControl.MainTabControl), true).Single()).SelectedIndex = 0;
+							// The installed fonts are read on a worker and listed when they arrive.
+							var watch = Stopwatch.StartNew();
+							while (font.Items.Count <= 4 && watch.ElapsedMilliseconds < 10000)
+								Application.DoEvents();
+							Assert.IsTrue(font.Items.Count > 4, "The installed fonts were not listed within 10 s.");
+							test(font, size, theme, restart);
+						}
+					}
+					finally
+					{
+						// The fonts applied belong to the whole process: the tests after this one run in Windows Forms' own.
+						if (started)
+							FormsTheme.SetFonts(null, null);
 					}
 				});
 			}

@@ -1,4 +1,4 @@
-// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.Forms.Elements.cs, Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs
+// @under-test: Engine/JocysCom/Controls/UiTree/UiTreeWalker.Forms.Elements.cs, Engine/JocysCom/Controls/UiTree/UiTreeWalker.cs, Engine/JocysCom/Controls/UiTree/UiTreeWalker.Forms.cs
 // @area: accessibility   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
@@ -73,6 +73,38 @@ namespace x360ce.Tests
 					// with the grid's own name when the door checks what it may touch.
 					Assert.AreEqual("Grid", UiTreeWalker.IdOf(UiTreeWalker.Find(form, "Grid/rows/0/FixColumn")));
 					Assert.AreEqual("Toggle", UiTreeWalker.IdOf(UiTreeWalker.Find(form, "Bar/Toggle")));
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("accessibility"), TestCategory("critical")]
+		[Description("A list that shows its values in words of its own is set by those words, or by the name the settings keep")]
+		public void A_list_is_set_by_what_it_shows_or_by_the_value_name()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var form = new Form { Name = "Main" })
+				{
+					ListControlConvertEventHandler words = (s, e) => e.Value = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription((x360ce.App.UpdateFrequency)e.ListItem);
+					var rates = System.Enum.GetValues(typeof(x360ce.App.UpdateFrequency)).Cast<object>().ToArray();
+					var list = new ComboBox { Name = "Rate", DropDownStyle = ComboBoxStyle.DropDownList, FormattingEnabled = true };
+					list.Format += words;
+					list.Items.AddRange(rates);
+					var entry = new ToolStripComboBox { Name = "BarRate", DropDownStyle = ComboBoxStyle.DropDownList };
+					entry.ComboBox.FormattingEnabled = true;
+					entry.ComboBox.Format += words;
+					entry.Items.AddRange(rates);
+					var bar = new ToolStrip { Name = "Bar" };
+					bar.Items.Add(entry);
+					form.Controls.Add(list);
+					form.Controls.Add(bar);
+					Assert.IsNull(UiTreeWalker.SetValue(list, "250 Hz (4 ms)"), "The words the list shows are refused.");
+					Assert.AreEqual(x360ce.App.UpdateFrequency.ms4_250Hz, list.SelectedItem);
+					Assert.IsNull(UiTreeWalker.SetValue(list, "ms1_1000Hz"), "The name the settings keep is refused, which a caller that used it before would meet.");
+					Assert.AreEqual(x360ce.App.UpdateFrequency.ms1_1000Hz, list.SelectedItem);
+					StringAssert.Contains(UiTreeWalker.SetValue(list, "3000 Hz"), "4000 Hz (0.25 ms)", "A refusal names the items as the list shows them.");
+					Assert.IsNull(UiTreeWalker.SetValue(entry, "us250_4000Hz"), "A bar list refuses the name the settings keep.");
+					Assert.AreEqual(x360ce.App.UpdateFrequency.us250_4000Hz, entry.SelectedItem);
 				}
 			});
 		}

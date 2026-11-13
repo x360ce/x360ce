@@ -58,15 +58,23 @@ namespace x360ce.App.Controls
 
 		/// <summary>At most eight chips a row, as x360ce 5 shows them.</summary>
 		const int ChipsPerRow = 8;
-		const int Gap = 3;
-		const int Radius = 5;
-		const int PadX = 5;
-		const int PadY = 3;
+
+		/// <summary>
+		/// The room between chips, the rounding of a chip's corners, and the room round its caption across and above and below,
+		/// in device-independent pixels.
+		/// </summary>
+		const int Gap = 4;
+		const int Radius = 4;
+		const int PadX = 4;
+		const int PadY = 4;
 
 		int _Columns = ChipsPerRow;
 		Font _ValueFont;
 		int _ChipHeight;
 		int _ValueHeight;
+
+		/// <summary><see cref="Gap"/>, <see cref="Radius"/> and <see cref="PadX"/> in this screen's pixels, set as the chips are laid out.</summary>
+		int _Gap, _Radius, _PadX;
 		InputChip _Pressed;
 		Point _PressedAt;
 		InputChip _Dragging;
@@ -83,8 +91,8 @@ namespace x360ce.App.Controls
 			var flags = TextFormatFlags.NoPadding;
 			var widest = ShowsValues ? TextRenderer.MeasureText(WidestReading, ValueFont, Size.Empty, flags).Width : 0;
 			foreach (var chip in _Chips)
-				widest = Math.Max(widest, TextRenderer.MeasureText(chip.Caption, Font, Size.Empty, flags).Width + PadX * 2);
-			return Math.Max(1, Math.Min(ChipsPerRow, (ClientSize.Width + Gap) / (widest + Gap)));
+				widest = Math.Max(widest, TextRenderer.MeasureText(chip.Caption, Font, Size.Empty, flags).Width + _PadX * 2);
+			return Math.Max(1, Math.Min(ChipsPerRow, (ClientSize.Width - Padding.Horizontal + _Gap) / (widest + _Gap)));
 		}
 
 		Font ValueFont
@@ -114,14 +122,27 @@ namespace x360ce.App.Controls
 			Relayout();
 		}
 
-		/// <summary>Sets the chips a row and the height they need at the current width, so the section above grows with them.</summary>
+		protected override void OnPaddingChanged(EventArgs e)
+		{
+			base.OnPaddingChanged(e);
+			Relayout();
+		}
+
+		/// <summary>
+		/// Sets the chips a row and the height they need at the current width, with the strip's padding round them, so the
+		/// section above grows with them.
+		/// </summary>
 		void Relayout()
 		{
+			var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+			_Gap = (int)Math.Round(Gap * scale);
+			_Radius = (int)Math.Round(Radius * scale);
+			_PadX = (int)Math.Round(PadX * scale);
 			_Columns = Columns();
-			_ChipHeight = Font.Height + PadY * 2;
+			_ChipHeight = Font.Height + (int)Math.Round(PadY * scale) * 2;
 			_ValueHeight = ShowsValues ? ValueFont.Height + 2 : 0;
 			var rows = (_Chips.Count + _Columns - 1) / _Columns;
-			var needed = rows == 0 ? 0 : rows * (_ChipHeight + _ValueHeight) + (rows - 1) * Gap;
+			var needed = rows == 0 ? 0 : rows * (_ChipHeight + _ValueHeight) + (rows - 1) * _Gap + Padding.Vertical;
 			if (Height != needed)
 				Height = needed;
 		}
@@ -133,17 +154,19 @@ namespace x360ce.App.Controls
 				Invalidate();
 		}
 
-		int CellWidth
-		{
-			get { return Math.Max(1, (ClientSize.Width - Gap * (_Columns - 1)) / _Columns); }
-		}
-
+		/// <summary>
+		/// A chip's place, inside the strip's padding. The chips of a row share what the gaps leave of the width, a pixel that does
+		/// not divide evenly going to each of some of them, so a full row ends at the padding's right edge and the padding sets the
+		/// room beside it.
+		/// </summary>
 		Rectangle CellBounds(int index)
 		{
 			var row = index / _Columns;
 			var column = index % _Columns;
-			var width = CellWidth;
-			return new Rectangle(column * (width + Gap), row * (_ChipHeight + _ValueHeight + Gap), width, _ChipHeight + _ValueHeight);
+			var room = Math.Max(_Columns, ClientSize.Width - Padding.Horizontal - _Gap * (_Columns - 1));
+			var left = Padding.Left + column * room / _Columns + column * _Gap;
+			var right = Padding.Left + (column + 1) * room / _Columns + column * _Gap;
+			return new Rectangle(left, Padding.Top + row * (_ChipHeight + _ValueHeight + _Gap), right - left, _ChipHeight + _ValueHeight);
 		}
 
 		/// <summary>Where the chip is drawn, in client coordinates; empty when it is not shown here.</summary>
@@ -173,11 +196,14 @@ namespace x360ce.App.Controls
 				var chip = _Chips[i];
 				var cell = CellBounds(i);
 				var face = new Rectangle(cell.X, cell.Y, cell.Width, _ChipHeight);
+				var marked = chip == _Dragging || chip.Lit;
 				var back = chip == _Dragging ? DragColor : chip.Lit ? LitColor : SystemColors.ControlLight;
-				using (var path = AppHelper.RoundedRectangle(new Rectangle(face.X, face.Y, face.Width - 1, face.Height - 1), Radius))
+				using (var path = AppHelper.RoundedRectangle(new Rectangle(face.X, face.Y, face.Width - 1, face.Height - 1), _Radius))
 				using (var brush = new SolidBrush(back))
 					g.FillPath(brush, path);
-				TextRenderer.DrawText(g, chip.Caption, Font, face, SystemColors.ControlText, flags);
+				// The status colours are as light in both themes, so the text on them is the light theme's.
+				var text = marked ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.LightPalette["ForegroundBlack"] : SystemColors.ControlText;
+				TextRenderer.DrawText(g, chip.Caption, Font, face, text, flags);
 				if (ShowsValues)
 				{
 					var strip = new Rectangle(cell.X, cell.Y + _ChipHeight, cell.Width, _ValueHeight);

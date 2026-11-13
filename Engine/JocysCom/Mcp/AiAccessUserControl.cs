@@ -236,24 +236,28 @@ namespace JocysCom.ClassLibrary.Mcp
 
 		/// <summary>
 		/// Gives the caption column and the button column of every section the width of the widest in any section, so
-		/// captions, values and buttons stay in place from tab to tab, as the WPF grids share theirs.
+		/// captions, values and buttons stay in place from tab to tab, as the WPF grids share theirs. Each caption is as wide
+		/// as the widest caption, as the theme draws it (<see cref="FormsTheme.ShareLabelWidth"/>), and each table still sizes
+		/// the column by its captions.
 		/// </summary>
 		void ShareColumns()
 		{
 			var tables = new[] { AiHeaderPanel, AiAccessPanel, AiTunnelPanel, AiSkillPanel };
-			foreach (var column in new[] { 0, 2 })
+			foreach (var table in tables)
+				table.SuspendLayout();
+			FormsTheme.ShareLabelWidth(tables.SelectMany(table => table.Controls.OfType<Label>()
+				.Where(label => table.GetColumn(label) == 0 && table.GetColumnSpan(label) == 1)));
+			var buttons = 0;
+			foreach (var table in tables)
+				foreach (Control control in table.Controls)
+					if (table.GetColumn(control) == 2 && table.GetColumnSpan(control) == 1)
+						buttons = Math.Max(buttons, control.GetPreferredSize(Size.Empty).Width + control.Margin.Horizontal);
+			foreach (var table in tables)
 			{
-				var width = 0;
-				foreach (var table in tables)
-					foreach (Control control in table.Controls)
-						if (table.GetColumn(control) == column && table.GetColumnSpan(control) == 1)
-							width = Math.Max(width, control.GetPreferredSize(Size.Empty).Width + control.Margin.Horizontal);
-				foreach (var table in tables)
-				{
-					var style = table.ColumnStyles[column];
-					if (style.SizeType != SizeType.Absolute || style.Width != width)
-						table.ColumnStyles[column] = new ColumnStyle(SizeType.Absolute, width);
-				}
+				var style = table.ColumnStyles[2];
+				if (style.SizeType != SizeType.Absolute || style.Width != buttons)
+					table.ColumnStyles[2] = new ColumnStyle(SizeType.Absolute, buttons);
+				table.ResumeLayout();
 			}
 		}
 

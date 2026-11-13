@@ -1,6 +1,7 @@
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.Collections.Generic;
 using x360ce.App.Controls;
+using x360ce.App.Forms;
 using static JocysCom.ClassLibrary.Controls.UiTree.UiText;
 
 namespace x360ce.App.UiTree
@@ -137,6 +138,37 @@ namespace x360ce.App.UiTree
 				"Forgets the selected device and its settings.");
 			d[nameof(UserDevicesUserControl) + "." + nameof(UserDevicesUserControl.HardwareButton)] = new Text("Hardware...",
 				"Opens the selected device in Windows Device Manager.");
+			d[nameof(UserDevicesUserControl) + "." + nameof(UserDevicesUserControl.TestButton)] = new Text("Test...",
+				"Opens the Test Device window for the one connected device selected: a guided test of its sticks, triggers and buttons, graded in plain words. "
+				+ "Controllers are paused while the test runs.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.InstructionLabel)] = new Text("Instruction",
+				"The one thing to do now. The step and its number are in the window's header.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CountdownLabel)] = new Text("Countdown",
+				"The whole seconds left of a timed step, or of a step that waits without movement; empty without one.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CountdownCaptionLabel)] = new Text("Countdown caption",
+				"What happens when the countdown ends, \"Moving on in\" or \"Finishing in\", while a step waits without movement; empty for a timed step.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.HintLabel)] = new Text("Hint",
+				"Why a countdown started again, the control to keep moving until its bar is full, or the next one.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.ControlsFlowLayoutPanel)] = new Text("Sticks and triggers",
+				"Each stick and axis while it is moved: a live picture, a progress bar and how full it is.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CardsFlowLayoutPanel)] = new Text("Results",
+				"The overall grade and its weakest result, then each result with its value, grade and what it tells.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.ButtonsHeadingLabel)] = new Text("Buttons",
+				"How many buttons were pressed, which never were, and which registered one push twice; shown, not graded.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.SummaryLabel)] = new Text("Rates",
+				"The report rate while moving, the time between reports, the values a report carries, and the read rate.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.ResultsDataGridView)] = new Text("Axes",
+				"One row for each axis and slider: its range, centre, rest noise, the dead zone it needs, resolution, steps and update rate.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.LimitsLabel)] = new Text("Limits",
+				"What the test cannot measure.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.StartButton)] = new Text("Start",
+				"The large button under the instruction: starts the test, which then moves on by itself; reads Stop while it runs, which ends it at once, and Test again after the results.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.SkipButton)] = new Text("Skip",
+				"Beside Stop while the test waits on sticks, triggers or buttons: ends the step at once, and what is not done is marked skipped and not graded.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.NotGradedLabel)] = new Text("Not graded",
+				"The controls left out of the grades, and why: never moved, skipped, or unstable, a control that kept changing without getting fuller.");
+			d[nameof(TestDeviceForm) + "." + nameof(TestDeviceForm.CloseButton)] = new Text("Close",
+				"Closes the window, which resumes the controllers.");
 			d[nameof(UserDevicesUserControl) + "." + nameof(UserDevicesUserControl.AddDemoDevice)] = new Text("Add Plugin Device",
 				"Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. "
 				+ "With several plugin devices it opens a list to pick from.");
@@ -192,6 +224,8 @@ namespace x360ce.App.UiTree
 				"What the program is checking right now.");
 			d[nameof(IssuesUserControl) + "." + nameof(IssuesUserControl.NextRunLabel)] = new Text("Next check",
 				"How long until the checks run again.");
+			d[nameof(IssuesUserControl) + "." + nameof(IssuesUserControl.ChecksButton)] = new Text("Run Checks",
+				"Whether the checks run every few seconds. Off, no check runs and Next Run says off.");
 		}
 
 		static void AddAbout(Dictionary<string, Text> d)
