@@ -30,3 +30,4 @@ EXPORTS
 		SdlFind @257
 		SdlTranslate @258
 		IniMapping @259
+		X360ceFind @260

@@ -138,6 +138,10 @@
     <Compile Include="Common\Sdl\SdlDatabase.cs" />
     <Compile Include="Common\Sdl\SdlMapping.cs" />
     <Compile Include="Common\Sdl\SdlPositions.cs" />
+    <Compile Include="Common\Sdl\X360ceDatabase.cs" />
+    <Compile Include="Common\Sdl\X360ceDatabaseServer.cs" />
+    <Compile Include="Common\DailyCache.cs" />
+    <Compile Include="Common\Update\HttpFile.cs" />
     <Compile Include="Input\Devices\DirectInputDevice.cs" />
     <Compile Include="Input\Devices\IInputSourceDevice.cs" />
     <Compile Include="Input\Devices\RawInputControl.cs" />
@@ -511,6 +515,7 @@
     <Compile Include="JocysCom\Windows\UacHelper.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\TargetType.cs" />
+    <Compile Include="Maps\PadSettingIni.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />
     <Compile Include="Maps\MapType.cs" />
@@ -573,6 +578,8 @@
     -->
     <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
     <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
+    <!-- x360ce's controller database (X360ceDatabase); the xinput library embeds the same file. -->
+    <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

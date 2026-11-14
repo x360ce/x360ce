@@ -231,7 +231,7 @@ namespace x360ce.Tests
 		[Description("x360ce 3 is given SDL's mapping by its own x360ce.ini keys, each one its library takes from SDL, a split stick in its direction keys")]
 		public void Version_3_gets_the_mapping_by_its_ini_keys()
 		{
-			var keys = SdlConverter.ToIniSettings(Row(Xbox360Row), Pad(0x1F));
+			var keys = PadSettingIni.MappingKeys(SdlConverter.ToPadSetting(Row(Xbox360Row), Pad(0x1F), false).Setting);
 			Assert.AreEqual(SdlConverter.MappingBoxes.Length, keys.Count, "A box has no x360ce.ini key.");
 			var other = keys.Keys.Where(x => !SettingName.IsMapping(x)).ToArray();
 			Assert.AreEqual(0, other.Length, "Keys x360ce 3 would save over the database: " + string.Join(", ", other));
@@ -241,7 +241,7 @@ namespace x360ce.Tests
 			Assert.AreEqual("p1", keys[SettingName.DPad]);
 			Assert.AreEqual("", keys[SettingName.DPadUp], "A box the row leaves empty is not empty.");
 			// x360ce 3's library reads "Right Analog Y+ Button=x-5" as Ry's lower half pushing the stick up.
-			var split = SdlConverter.ToIniSettings(Row("03000000491900000304000000000000,Ipega PG9087,+righty:+a5,-righty:-a4,a:b0,platform:Windows,"), Pad(0x3F));
+			var split = PadSettingIni.MappingKeys(SdlConverter.ToPadSetting(Row("03000000491900000304000000000000,Ipega PG9087,+righty:+a5,-righty:-a4,a:b0,platform:Windows,"), Pad(0x3F), false).Setting);
 			Assert.AreEqual("", split[SettingName.RightThumbAxisY]);
 			Assert.AreEqual("x-5", split[SettingName.RightThumbUp]);
 			Assert.AreEqual("x6", split[SettingName.RightThumbDown]);

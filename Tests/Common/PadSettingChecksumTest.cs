@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -27,8 +26,8 @@ namespace x360ce.Tests
 	/// line cannot appear; sorted means a line that does appear cannot push another one anywhere.
 	/// Two new settings, both off, therefore cannot change any answer that already exists.
 	///
-	/// These measure that against every preset the program ships, which is real data of the same shape
-	/// as the cloud holds, rather than examples written to agree with the code.
+	/// These measure that against the settings most people use, from x360ce's controller database,
+	/// which is real data from the cloud, rather than examples written to agree with the code.
 	/// </remarks>
 	[TestClass]
 	public class PadSettingChecksumTest
@@ -47,73 +46,14 @@ namespace x360ce.Tests
 			return (string)attribute.Value;
 		}
 
-		#region The presets this program ships, as settings
+		#region The settings most people use, from x360ce's controller database
 
-		/// <summary>The INI key each PadSetting property is written under.</summary>
-		/// <remarks>
-		/// Taken from the map the program itself uses, so a preset is read here exactly as the program
-		/// reads it. The names differ in places - what the code calls GamePadType a file calls
-		/// ControllerType - and a copy of that list would drift.
-		/// </remarks>
-		static Dictionary<string, string> KeyByProperty()
-		{
-			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			var settingType = typeof(PadSetting);
-			foreach (var p in typeof(SettingName).GetProperties(BindingFlags.Public | BindingFlags.Static))
-			{
-				var target = settingType.GetProperty(p.Name);
-				if (target == null || target.PropertyType != typeof(string) || !target.CanWrite)
-					continue;
-				var key = p.GetValue(null, null) as string;
-				if (!string.IsNullOrEmpty(key))
-					map[p.Name] = key;
-			}
-			return map;
-		}
-
-		/// <summary>The values in one section of an INI file.</summary>
-		static Dictionary<string, string> ReadSection(string path)
-		{
-			var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			// The files are UTF-16 with a mark at the front, which the reader honours.
-			foreach (var raw in File.ReadAllLines(path))
-			{
-				var line = raw.Trim();
-				if (line.Length == 0 || line.StartsWith(";") || line.StartsWith("["))
-					continue;
-				var at = line.IndexOf('=');
-				if (at < 1)
-					continue;
-				values[line.Substring(0, at).Trim()] = line.Substring(at + 1).Trim();
-			}
-			return values;
-		}
-
-		/// <summary>Every preset the program ships, read into settings.</summary>
+		/// <summary>The settings of the database's most used rows, by controller name, each a copy of its own.</summary>
 		static List<KeyValuePair<string, PadSetting>> Presets()
 		{
-			var folder = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Presets");
-			var map = KeyByProperty();
-			var list = new List<KeyValuePair<string, PadSetting>>();
-			foreach (var file in Directory.GetFiles(folder, "*.ini").OrderBy(x => x))
-			{
-				var values = ReadSection(file);
-				if (values.Count == 0)
-					continue;
-				var ps = new PadSetting();
-				var filled = 0;
-				foreach (var pair in map)
-				{
-					string value;
-					if (!values.TryGetValue(pair.Value, out value) || value.Length == 0)
-						continue;
-					typeof(PadSetting).GetProperty(pair.Key).SetValue(ps, value, null);
-					filled++;
-				}
-				if (filled > 0)
-					list.Add(new KeyValuePair<string, PadSetting>(Path.GetFileNameWithoutExtension(file), ps));
-			}
-			return list;
+			return X360ceDatabase.Presets().Take(100)
+				.Select(x => new KeyValuePair<string, PadSetting>(x.ProductName, X360ceDatabase.GetSetting(x.PadSettingChecksum)))
+				.ToList();
 		}
 
 		/// <summary>A copy, so a checksum taken from one does not disturb the next.</summary>
@@ -130,13 +70,13 @@ namespace x360ce.Tests
 		#endregion
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
-		[Description("The presets this program ships can be read, so the rest measures real data")]
-		public void The_presets_this_program_ships_can_be_read()
+		[Description("The database's settings can be read, so the rest measures real data")]
+		public void The_database_settings_can_be_read()
 		{
 			// Said out loud rather than assumed. Every test below is worthless if the corpus is empty,
 			// and an empty corpus passes every one of them without a word.
 			var presets = Presets();
-			Assert.IsTrue(presets.Count >= 15,
+			Assert.IsTrue(presets.Count >= 50,
 				"Only " + presets.Count + " preset(s) could be read, so the tests below are measuring " +
 				"almost nothing. They are the real data this rests on.");
 			foreach (var preset in presets)
@@ -146,7 +86,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings"), TestCategory("critical")]
-		[Description("A new setting left alone is absent from the checksum of every shipped preset")]
+		[Description("A new setting left alone is absent from the checksum of every setting in the database")]
 		public void A_new_setting_left_alone_is_absent_from_every_preset()
 		{
 			// The one that matters. A line that never enters the measurement cannot change what comes
@@ -246,9 +186,8 @@ namespace x360ce.Tests
 		public void Two_sets_share_a_name_only_when_they_are_the_same_settings()
 		{
 			// A set of settings is known by its contents and nothing else, so two that hold the same
-			// values are one set stored once, on purpose. Two of the shipped presets are exactly that:
-			// the Driving Force GT and the G27 differ only in the name of the wheel, which belongs to
-			// the preset and not to the settings, so they share a name and should.
+			// values are one set stored once, on purpose: two controllers mapped alike share a name, and
+			// should, as the controller's name belongs to the preset and not to the settings.
 			//
 			// What must never happen is the other way round - two sets that differ being given one
 			// name, because then one is stored over the other and somebody loses what they set up.
@@ -405,7 +344,7 @@ namespace x360ce.Tests
 				typeof(PadSetting).GetProperty(row.Driver).SetValue(unread, "1", null);
 				Assert.AreEqual(0, measured(unread, row.Name), row.Name + " is measured while a button drives " + row.Driver + ", which the script does not.");
 			}
-			// And the whole measurement, made the script's way, against every shipped preset.
+			// And the whole measurement, made the script's way, against the database's settings.
 			using (var md5 = System.Security.Cryptography.MD5.Create())
 			{
 				foreach (var preset in Presets())
@@ -472,7 +411,7 @@ namespace x360ce.Tests
 				expected = new Guid(md5.ComputeHash(System.Text.Encoding.ASCII.GetBytes(text)));
 			Assert.AreEqual(expected, Copy(saved).CleanAndGetCheckSum(), "A setting with the curve never set is named differently than it was saved.");
 			Assert.AreEqual(expected, saved.CleanAndGetCheckSum(), "A setting whose curve was never set at all, rather than set empty, is named differently.");
-			// And every shipped preset, never set or set empty, is named as it was.
+			// And every setting in the database, never set or set empty, is named as it was.
 			foreach (var preset in Presets())
 			{
 				var never = Copy(preset.Value);

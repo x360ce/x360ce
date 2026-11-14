@@ -45,6 +45,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.InternetAutoloadCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetCheckBox = new System.Windows.Forms.CheckBox();
+			this.UpdateControllerDatabaseButton = new System.Windows.Forms.Button();
 			this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
 			this.GameScanLocationsTabPage = new System.Windows.Forms.TabPage();
 			this.GameScanLocationsListBox = new System.Windows.Forms.ListBox();
@@ -250,13 +251,14 @@
 			// 
 			this.InternetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.InternetGroupBox.Controls.Add(this.UpdateControllerDatabaseButton);
 			this.InternetGroupBox.Controls.Add(this.InternetDatabaseUrlComboBox);
 			this.InternetGroupBox.Controls.Add(this.label1);
 			this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(390, 109);
+			this.InternetGroupBox.Size = new System.Drawing.Size(390, 138);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -302,6 +304,17 @@
 			this.InternetCheckBox.TabIndex = 1;
 			this.InternetCheckBox.Text = "Enable Internet Settings Database Features";
 			this.InternetCheckBox.UseVisualStyleBackColor = true;
+			//
+			// UpdateControllerDatabaseButton
+			//
+			this.UpdateControllerDatabaseButton.AutoSize = true;
+			this.UpdateControllerDatabaseButton.Location = new System.Drawing.Point(6, 107);
+			this.UpdateControllerDatabaseButton.Name = "UpdateControllerDatabaseButton";
+			this.UpdateControllerDatabaseButton.Size = new System.Drawing.Size(150, 23);
+			this.UpdateControllerDatabaseButton.TabIndex = 15;
+			this.UpdateControllerDatabaseButton.Text = "Update Controller Database";
+			this.UpdateControllerDatabaseButton.UseVisualStyleBackColor = true;
+			this.UpdateControllerDatabaseButton.Click += new System.EventHandler(this.UpdateControllerDatabaseButton_Click);
 			// 
 			// ProgramScanLocationsTabControl
 			// 
@@ -685,6 +698,7 @@
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
         public System.Windows.Forms.ListBox GameScanLocationsListBox;
         public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
+		internal System.Windows.Forms.Button UpdateControllerDatabaseButton;
         private System.Windows.Forms.GroupBox ConfigurationGroupBox;
         private System.Windows.Forms.Label ConfigurationVersionLabel;
         internal System.Windows.Forms.TextBox ConfigurationVersionTextBox;

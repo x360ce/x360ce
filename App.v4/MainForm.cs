@@ -1821,7 +1821,6 @@ namespace x360ce.App
 				SettingsManager.Summaries.Save();
 				SettingsManager.Programs.Save();
 				SettingsManager.UserGames.Save();
-				SettingsManager.Presets.Save();
 				SettingsManager.Layouts.Save();
 				SettingsManager.UserDevices.Save();
 				SettingsManager.PadSettings.Save();

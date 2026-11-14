@@ -161,7 +161,13 @@ public:
 	/// <summary>Reads a section's mapping keys into a controller, and which of them the section holds.</summary>
 	void ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile);
 
+	/// <summary>Reads a controller's section, or a database row put into one: false for a section that names no controller or passes it through.</summary>
+	bool ReadPad(Controller* pController, const std::string& section, IniFile* pIniFile);
+
 private:
+	/// <summary>Reads a section that maps from the databases again over x360ce's database row for its controller, its own keys winning.</summary>
+	void ReadDatabaseRow(Controller* pController, const std::string& section, IniFile* pIniFile);
+
 	bool ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile);
 
 	void ParsePrefix(const std::string& input, MappingType* pMappingType, s8* pValue);

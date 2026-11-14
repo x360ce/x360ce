@@ -218,6 +218,23 @@ namespace x360ce.App.Controls
 			MainForm.Current.SaveSettings();
 		}
 
+		/// <summary>
+		/// Fetches x360ce's controller database from x360ce's server into the settings folder, off the window's thread, and
+		/// says in the header how it went. The Presets tab and new controllers use the saved copy from then on.
+		/// </summary>
+		private void UpdateControllerDatabaseButton_Click(object sender, EventArgs e)
+		{
+			UpdateControllerDatabaseButton.Enabled = false;
+			X360ceUpdateClient.UpdateSettingsCopy("x360ce/" + Application.ProductVersion).ContinueWith(t =>
+			{
+				UpdateControllerDatabaseButton.Enabled = true;
+				var outcome = t.Result.Value;
+				if (outcome == DatabaseUpdateOutcome.Saved)
+					MainForm.Current.SettingsDatabasePanel.RefreshPresetsGrid(false);
+				MainForm.Current.UpdateHelpHeader(t.Result.Key, outcome == DatabaseUpdateOutcome.Failed ? MessageBoxIcon.Error : MessageBoxIcon.Information);
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
 		{
 			GameDatabaseManager.Current.CheckSettingsFolder();

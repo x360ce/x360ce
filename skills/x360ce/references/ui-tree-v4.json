@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.30.60.0",
-	"Built":"2026-11-13",
+	"Version":"4.30.61.0",
+	"Built":"2026-11-14",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1924,7 +1924,7 @@
 						},
 						{
 							"Name":"Auto Preset",
-							"Description":"Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.",
+							"Description":"Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.",
 							"Role":"Button",
 							"Id":"AutoPresetButton"
 						},
@@ -2647,6 +2647,12 @@
 																					"Description":"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.",
 																					"Role":"Button",
 																					"Id":"UpdateSdlDatabaseButton"
+																				},
+																				{
+																					"Name":"Update x360ce Database",
+																					"Description":"Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went.",
+																					"Role":"Button",
+																					"Id":"UpdateX360ceDatabaseButton"
 																				}
 																			]
 																		},

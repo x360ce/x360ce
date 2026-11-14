@@ -136,6 +136,7 @@ namespace x360ce.App
 		public static XSettingsData<Engine.Data.Summary> Summaries = new XSettingsData<Engine.Data.Summary>("Summaries.xml", "Default PadSettings for most popular Game, Device and Controller combination.");
 
 		/// <summary>Presets - Default PadSettings for most popular Devices (Products).</summary>
+		/// <remarks>The Most Popular list, filled from x360ce's controller database when it is shown; never stored (<see cref="X360ceDatabase.Presets"/>).</remarks>
 		public static XSettingsData<Preset> Presets = new XSettingsData<Preset>("Presets.xml", "Default PadSettings for most popular Devices (Products).");
 
 		/// <summary>MapNames - Most popular layouts for Games.</summary>
@@ -229,11 +230,14 @@ namespace x360ce.App
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
+		/// <summary>The settings stored with this checksum, else x360ce's controller database's; null when neither has them.</summary>
+		/// <remarks>The database's settings are not stored until a controller uses one: the Most Popular list reads them from it.</remarks>
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
 			// Convert to array in order to prevent selection while modified.
 			return PadSettings.ItemsToArraySynchronized()
-				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
+				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum))
+				?? X360ceDatabase.GetSetting(padSettingChecksum);
 		}
 
 		public static List<UserDevice> GetDevices(string fileName, MapTo mapTo)
@@ -278,7 +282,6 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			UserGames.ValidateData = Games_ValidateData;
 			UserGames.Load();
-			Presets.Load();
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();

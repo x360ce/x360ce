@@ -122,11 +122,11 @@ namespace x360ce.App.UiTree
 			d[nameof(ControllerSettingsUserControl) + "." + nameof(ControllerSettingsUserControl.GlobalSettingsRefreshButton)] = new Text("Refresh",
 				"Reads the most popular settings from the online database again.");
 			d[nameof(ControllerSettingsUserControl) + "." + nameof(ControllerSettingsUserControl.PresetsDataGridView)] = new Text("Controller defaults",
-				"Default settings for well-known controllers.");
+				"The setting most people use for each controller, from x360ce's controller database.");
 			d[nameof(ControllerSettingsUserControl) + "." + nameof(ControllerSettingsUserControl.PresetsLoadButton)] = new Text("Load",
 				"Loads the selected defaults into the chosen controller.");
 			d[nameof(ControllerSettingsUserControl) + "." + nameof(ControllerSettingsUserControl.PresetRefreshButton)] = new Text("Refresh",
-				"Reads the controller defaults from the online database again.");
+				"Reads x360ce's controller database again: the built-in copy, or the one Update Controller Database saved.");
 		}
 	}
 }

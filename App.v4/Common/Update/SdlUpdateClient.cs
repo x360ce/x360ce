@@ -150,7 +150,7 @@ namespace x360ce.App
 				var source = SdlSource.Parse(text, SdlSourceKind.Downloaded);
 				if (source.Mappings.Count < MinimumWindowsRows)
 					return string.Format(CultureInfo.InvariantCulture, "The file {0} sent holds {1} Windows rows, so it is not the SDL controller database. Nothing was saved.", sender, source.Mappings.Count);
-				Save(path, SdlSource.WithHeader(text, sha, date, uri.AbsoluteUri));
+				HttpFile.Save(path, SdlSource.WithHeader(text, sha, date, uri.AbsoluteUri));
 				outcome = SdlUpdateOutcome.Saved;
 				return string.Format(CultureInfo.InvariantCulture, "Saved the SDL controller database of {0:yyyy-MM-dd}, {1}, {2} Windows rows, from {3}.", date, sha.Substring(0, 7), source.Mappings.Count, sender);
 			}
@@ -192,20 +192,6 @@ namespace x360ce.App
 			branch = parts[at];
 			file = string.Join("/", parts, at + 1, parts.Length - at - 1);
 			return true;
-		}
-
-		/// <summary>Writes the file whole or not at all: to a file beside it first, which then takes its place.</summary>
-		static void Save(string path, string text)
-		{
-			var folder = Path.GetDirectoryName(path);
-			if (!string.IsNullOrEmpty(folder))
-				Directory.CreateDirectory(folder);
-			var temp = path + ".tmp";
-			File.WriteAllText(temp, text, new UTF8Encoding(false));
-			if (File.Exists(path))
-				File.Replace(temp, path, null);
-			else
-				File.Move(temp, path);
 		}
 	}
 }

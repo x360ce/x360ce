@@ -1,158 +1,33 @@
-﻿## [4.30.60.0] - 2026-11-13
-
-- Fixed: Games and Programs show Emulation Type and Processor Architecture whole.
-- Fixed: The AI door reads and presses menus a button opens, such as Add Plugin Device's.
-- Added: Test... on the Devices page tests a controller step by step and grades it in plain words.
-
-## [4.30.59.0] - 2026-11-13
-
-- Changed: Polling Rate names each rate with its interval, such as "1000 Hz (1 ms)".
-- Added: Run Checks on the Issues page turns the checks off and on.
-- Added: Polling Rate offers 4000 Hz.
-
-## [4.30.58.0] - 2026-11-12
-
-- Fixed: Under the Games and Programs lists the settings groups stand as far down as groups stand apart.
-- Fixed: The Cloud page hides its details panel while it is empty, so its list reaches the bottom.
-- Fixed: The main window's tool bar keeps every button on the bar at every display scale.
-- Fixed: Hardware keeps its tool bar and scrolls its details, and message box gaps grow with the display scale.
-- Fixed: The header stays two lines tall whatever it says, so the pages below stay put; longer tips end in an ellipsis.
-- Fixed: Options > General shows no scroll bar at the window's default size.
-- Fixed: At 150 % the main window no longer opens as tall as the screen; it opens as tall as the page needs.
-- Fixed: The main window reopens at the size it was saved at; only a first start sizes it to its page.
-- Fixed: The game list ends 8 pixels before Add Game..., whichever buttons the tool bar shows.
-- Fixed: The Open button beside Profile Path shows its folder picture, then its text, and is wide enough for both.
-- Fixed: On Options > Plugins the AutoHotkey number boxes are no longer cut off at the bottom.
-- Fixed: In the dark theme the status bar's separators are drawn in the theme's line colour.
-- Fixed: At 150 % the Buttons rows, the stick and trigger pages and the Options pages are scaled once, not twice.
-- Fixed: The SDL page of Load Presets keeps its spacing at every display scale.
-- Fixed: At 150 % the stick, trigger and mouse pages, the Recorder and Remote Port are spaced once, not several times.
-- Fixed: The Recorder on the Issues page shows its whole note.
-- Fixed: /Exit and "Allow only one copy" reach only the copy started on the same /Profile folder.
-- Fixed: Options > AI shows its Level, Address and Port boxes again at 150 %.
-- Fixed: Every drop-down list is at least as wide as its widest item, so Polling Rate shows its whole choice.
-- Fixed: The Game list on the tool bar is as tall as every other drop-down list, and as its buttons.
-- Fixed: Direct Input's axis, slider and POV columns fit their headings and values, each heading over its values.
-- Fixed: Load Presets shows the Users heading of its Summaries list whole.
-- Fixed: The Games page's Search on Google, Search on NGemu and Open NGemu buttons open pages that work.
-- Removed: The Log page, which was never shown.
-- Changed: The main window's header, tool bar and tabs, and every dialog, are spaced as Options > General.
-- Changed: The Devices page shows its XInput heading and its buttons in one row.
-- Changed: The Input Devices list tells its rows apart by colour alone, without lines, in both themes.
-- Changed: Unplugged and switched-off devices are listed in the disabled text colour, clearly dimmer in the dark theme.
-
-## [4.30.57.0] - 2026-11-12
-
-- Fixed: On the Buttons tab each row shows its boxes whole, the rows stand evenly apart and all 14 fit on the page.
-- Fixed: On the Advanced tab the boxes of both groups start at one place.
-- Fixed: The Debug window shows every button and option whole; Cleanup Devices was hidden under another button.
-- Changed: Games, Programs, Devices, Settings, Cloud, About and the Debug window are spaced as Options > General.
-
-## [4.30.56.0] - 2026-11-12
-
-- Fixed: On Options > AI each caption stands as close to its box as on every other page.
-- Fixed: A note under a check box starts where the check box's text starts, at every text size.
-- Changed: Every Controller tab page and the Map Device window are spaced as Options > General.
-
-## [4.30.55.0] - 2026-11-12
-
-- Fixed: The Keep settings here button on Options > Settings shows its whole text.
-- Changed: Every Options page is spaced as Options > General.
-
-## [4.30.54.0] - 2026-11-12
-
-- Fixed: A group's frame line runs through the middle of its caption, so groups stand evenly apart.
-- Fixed: A disabled editable drop-down list shows its text in the disabled colour.
-- Changed: Disabled text is the same grey in every control, as on a disabled label.
-
-## [4.30.53.0] - 2026-11-12
-
-- Fixed: Group boxes keep the same room round their content at every display scale.
-- Fixed: A disabled text box keeps its faded text and its frame in pictures taken of the window.
-- Changed: Check boxes and labels are as large as their text, so the gaps between controls are even.
-- Changed: A disabled text box's text is half as strong, as on other disabled controls.
-- Changed: Every Options page keeps the same space round its content as Options > General.
-
-## [4.30.52.0] - 2026-11-12
-
-- Changed: Options > General: wider, more even space round its groups (trial of new spacing on one page).
-
-## [4.30.51.0] - 2026-11-12
-
-- Fixed: A tab with a picture has as much room after its text as before its picture.
-
-## [4.30.50.0] - 2026-11-12
-
-- Fixed: A list's first column no longer moves further right each time the list is filled.
-- Changed: Boxes, lists, buttons and tabs keep 4 pixels between their edge and their text.
-
-## [4.30.49.0] - 2026-11-12
-
-- Changed: Spacing, boxes and corners follow a 4-pixel grid, so they stay sharp at every scale.
-
-## [4.30.48.0] - 2026-11-11
-
-- Fixed: A stick or trigger chart's dot stays on its curve while the stick moves fast.
-
-## [4.30.47.0] - 2026-11-11
-
-- Fixed: A Controller tab with no device hides its empty Button, Axis, Slider and POV groups.
-- Fixed: The Direct Input page of a Controller tab with no device lists no other device's objects.
-- Changed: The numbers under the General tab's names stand 4 pixels under them, 6 at 150 % scale.
-
-## [4.30.46.0] - 2026-11-11
-
-- Changed: The Game Scan Locations list has more room round each folder.
-
-## [4.30.45.0] - 2026-11-11
-
-- Changed: Controller tab lists are tinted by source; unplugged devices are fainter in the dark theme.
-- Changed: Direct Input Devices is now Input Devices, and the Add window shows every button.
-
-## [4.30.44.0] - 2026-11-11
-
-- Changed: In the dark theme, boxes, lists, charts and help text are darker than the page, and group frames look sunken.
-- Changed: Check boxes and radio buttons have a pixel more room before their names.
-
-## [4.30.43.0] - 2026-11-11
+﻿## [4.30.61.0] - 2026-11-14
 
 - Fixed: A Raw Input controller hidden by HID Hide is read through DirectInput (Issue #1661, dnlrch10-maker).
 - Fixed: A new copy with HID Hide set to configure itself adds itself to HID Hide's list (Issue #1633, KhaledElSaiad).
 - Fixed: The window no longer freezes for good when Windows changes colours (Issue #1633, KhaledElSaiad).
-- Fixed: Sending to the cloud while a list loads no longer freezes the window.
-- Fixed: Deleting a record or pressing Retry while cloud messages are added no longer freezes the window.
-- Fixed: Starting x360ce no longer leaves controllers that HID Hide hides unseen in Raw Input until plugged in again.
 - Fixed: The window answers while x360ce starts, rather than freezing for up to 2 seconds (Issue #1633, KhaledElSaiad).
 - Fixed: Closing x360ce no longer stops the mouse for up to a second (Issue #1633, KhaledElSaiad).
-- Fixed: The Issues tab shows each issue's Information, Warning or Error icon again.
-- Fixed: Pictures on buttons stand in the middle of the button.
-- Fixed: Sliders show their whole handle at either end.
-- Fixed: The arrows on the Buttons tab no longer have a border.
-- Fixed: Charts on a Controller tab with no device are greyed out, not hidden.
-- Fixed: The controller picture is greyed out on a Controller tab with no device.
-- Fixed: Greyed-out boxes show their text in the same grey as their names.
-- Fixed: The error report, help and message windows show the x360ce icon.
-- Fixed: Right Trigger and other names no longer run their words together.
-- Fixed: Red, green and blue text, links and chart lines are light enough to read in the dark theme.
-- Fixed: Grey notes and coloured help text are easier to read in both themes.
-- Changed: The Issues tab asks to hide only Xbox controllers with HID Hide, as every game sees them twice.
-- Changed: Remap All pauses half a second between controls, so you can follow it (Issue #1633, KhaledElSaiad).
+- Fixed: Cloud tasks sent, deleted or retried while a list loads no longer freeze the window.
+- Fixed: Controllers hidden by HID Hide show in Raw Input at start, without plugging them in again.
+- Fixed: The Issues tab shows each issue's icon again.
+- Fixed: /Exit and "Allow only one copy" affect only the copy using the same /Profile folder.
+- Fixed: Search on Google, Search on NGemu and Open NGemu open pages that work.
+- Fixed: Texts, lists and pictures are no longer cut off or crowded, at any display scale.
+- Fixed: Coloured text, links and chart lines are easy to read in both themes.
+- Changed: A cleaner, more even look in both themes, sharp at every display scale.
+- Changed: The windows use Segoe UI, Windows' own font, and names have no trailing colon.
 - Changed: The four Controller tabs share one page: x360ce starts about 3 seconds sooner and uses a fifth less memory.
-- Changed: The windows use Segoe UI, Windows' own font, by default.
-- Changed: Names beside boxes no longer end with a colon.
-- Changed: Lists and texts on every tab reach the frame round the tab.
-- Changed: The General tab's BUTTON, AXIS, SLIDER and POV groups keep even room round their chips.
-- Changed: General tab names line up beside their boxes, with each number just under its name.
-- Changed: Buttons that open a menu have the same arrow as drop-down lists.
-- Changed: Sliders have a plain grey track and a lighter handle.
-- Changed: Trigger, stick and wheel charts are square, with DInput and XInput beside them.
-- Changed: Scroll bars always show their arrows and full thumb.
-- Changed: Dead Zone, Anti-Dead Zone and Sensitivity are listed in the order they apply.
-- Changed: The General tab hides the BUTTON, AXIS, SLIDER or POV group a device lacks.
-- Changed: Each colour keeps one meaning: notes blue, differences orange, pressed parts green.
-- Added: Bug report recordings say what a window that stops answering waits for, and how busy the PC is.
+- Changed: Remap All pauses half a second between controls, so you can follow it (Issue #1633, KhaledElSaiad).
+- Changed: The Issues tab asks to hide only Xbox controllers with HID Hide, as every game sees them twice.
+- Changed: Direct Input Devices is now Input Devices, and unplugged devices are listed dimmer.
+- Changed: The main window reopens at its saved size; only the first start fits it to its page.
+- Added: Auto Preset uses a built-in database of popular settings, with force feedback and dead zones.
+- Added: Most Popular in Load Preset opens at once and works offline.
+- Added: Update x360ce Database, on Options > Internet.
+- Added: Polling Rate offers 4000 Hz, and each rate shows its interval.
+- Added: Run Checks on the Issues page turns the checks off and on.
 - Added: The Issues tab says when games cannot see a controller until it is plugged in again, and can restart it.
 - Added: Copy issues from the Issues tab with Ctrl+C or the right-click menu.
+- Added: Bug report recordings say what a window that stops answering waits for, and how busy the PC is.
+- Added: AI assistants can use menus a button opens, such as Add Plugin Device's.
 
 ## [4.29.62.0] - 2026-11-07
 

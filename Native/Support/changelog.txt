@@ -4,8 +4,11 @@ Google Code Project page: http://code.google.com/p/x360ce
 
 History:
 
-13/11/2026 - version 3.4.2
-Maps controllers from SDL's controller database: every one without x360ce.ini, and a section with AutoMap=1.
+14/11/2026 - version 3.4.3
+Works without x360ce.ini: most controllers are mapped from built-in databases, x360ce's first, then SDL's.
+AutoMap=1 maps a controller from the databases; keys in its section still win.
+A gamecontrollerdb.txt or gamecontrollerdb_x360ce.windows.txt beside x360ce.ini takes priority.
+A controller with motors gets force feedback unless its settings turn it off.
 GuideButton counts from 1, as x360ce 3 writes it; 0 is no guide button.
 
 01/11/2014 - version 3.4.0.956

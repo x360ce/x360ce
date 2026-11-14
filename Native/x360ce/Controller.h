@@ -27,13 +27,17 @@ public:
 	bool m_autoMap;
 	/// <summary>Whether SDL's database had a row for the device when it was opened.</summary>
 	bool m_sdlKnown;
+	/// <summary>Whether the mapping was read over x360ce's database row for the device.</summary>
+	bool m_rowFound;
+	/// <summary>Whether the section or the row says whether to use force feedback.</summary>
+	bool m_forceKey;
 
 private:
 	static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
 	bool ButtonPressed(u32 buttonidx);
 	HRESULT UpdateState();
-	void ApplySdlMapping();
+	void ApplyAutoMapping(bool exclusive);
 	s32 HalfReading(Config::MappingType type, s8 id, const s32* axis, const s32* slider, const bool* dPadButtons);
 
 	std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;

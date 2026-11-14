@@ -40,11 +40,8 @@ namespace x360ce.App
 		/// <summary>Most popular Programs and Games.</summary>
 		public static SettingsData<Engine.Data.Program> Programs = new SettingsData<Engine.Data.Program>("Programs");
 
-		/// <summary>Presets</summary>
+		/// <summary>Presets: the Controller Settings page's list of x360ce's controller database, filled from it, never stored (<see cref="X360ceDatabase.Presets"/>).</summary>
 		public static SettingsData<Preset> Presets = new SettingsData<Preset>("Presets");
-
-		/// <summary>Preset PadSettings</summary>
-		public static SettingsData<Engine.Data.PadSetting> PadSettings = new SettingsData<Engine.Data.PadSetting>("PadSettings");
 
 		static object saveReadFileLock = new object();
 
@@ -429,82 +426,8 @@ namespace x360ce.App
 		public PadSetting GetPadSetting(string padSectionName)
 		{
 			var ini2 = new Ini(IniFileName);
-			var ps = new PadSetting();
+			var ps = PadSettingIni.Read(key => ini2.GetValue(padSectionName, key));
 			ps.PadSettingChecksum = Guid.Empty;
-			ps.AxisToDPadDeadZone = ini2.GetValue(padSectionName, SettingName.AxisToDPadDeadZone);
-			ps.AxisToDPadEnabled = ini2.GetValue(padSectionName, SettingName.AxisToDPadEnabled);
-			ps.AxisToDPadOffset = ini2.GetValue(padSectionName, SettingName.AxisToDPadOffset);
-			ps.ButtonA = ini2.GetValue(padSectionName, SettingName.ButtonA);
-			ps.ButtonB = ini2.GetValue(padSectionName, SettingName.ButtonB);
-			ps.ButtonGuide = ini2.GetValue(padSectionName, SettingName.ButtonGuide);
-			ps.ButtonBack = ini2.GetValue(padSectionName, SettingName.ButtonBack);
-			ps.ButtonStart = ini2.GetValue(padSectionName, SettingName.ButtonStart);
-			ps.ButtonX = ini2.GetValue(padSectionName, SettingName.ButtonX);
-			ps.ButtonY = ini2.GetValue(padSectionName, SettingName.ButtonY);
-			ps.DPad = ini2.GetValue(padSectionName, SettingName.DPad);
-			ps.DPadDown = ini2.GetValue(padSectionName, SettingName.DPadDown);
-			ps.DPadLeft = ini2.GetValue(padSectionName, SettingName.DPadLeft);
-			ps.DPadRight = ini2.GetValue(padSectionName, SettingName.DPadRight);
-			ps.DPadUp = ini2.GetValue(padSectionName, SettingName.DPadUp);
-			ps.ForceEnable = ini2.GetValue(padSectionName, SettingName.ForceEnable);
-			ps.ForceOverall = ini2.GetValue(padSectionName, SettingName.ForceOverall);
-			ps.ForceSwapMotor = ini2.GetValue(padSectionName, SettingName.ForceSwapMotor);
-			ps.ForceType = ini2.GetValue(padSectionName, SettingName.ForceType);
-			ps.GamePadType = ini2.GetValue(padSectionName, SettingName.GamePadType);
-			ps.LeftMotorPeriod = ini2.GetValue(padSectionName, SettingName.LeftMotorPeriod);
-			ps.LeftMotorStrength = ini2.GetValue(padSectionName, SettingName.LeftMotorStrength);
-			ps.LeftMotorDirection = ini2.GetValue(padSectionName, SettingName.LeftMotorDirection);
-			ps.LeftShoulder = ini2.GetValue(padSectionName, SettingName.LeftShoulder);
-			ps.LeftThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX);
-			ps.LeftThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY);
-			ps.LeftThumbLinearX = ini2.GetValue(padSectionName, SettingName.LeftThumbLinearX);
-			ps.LeftThumbLinearY = ini2.GetValue(padSectionName, SettingName.LeftThumbLinearY);
-			ps.LeftThumbAxisX = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisX);
-			ps.LeftThumbAxisY = ini2.GetValue(padSectionName, SettingName.LeftThumbAxisY);
-			ps.LeftThumbButton = ini2.GetValue(padSectionName, SettingName.LeftThumbButton);
-			ps.LeftThumbDeadZoneX = ini2.GetValue(padSectionName, SettingName.LeftThumbDeadZoneX);
-			ps.LeftThumbDeadZoneY = ini2.GetValue(padSectionName, SettingName.LeftThumbDeadZoneY);
-			ps.LeftThumbDown = ini2.GetValue(padSectionName, SettingName.LeftThumbDown);
-			ps.LeftThumbLeft = ini2.GetValue(padSectionName, SettingName.LeftThumbLeft);
-			ps.LeftThumbRight = ini2.GetValue(padSectionName, SettingName.LeftThumbRight);
-			ps.LeftThumbUp = ini2.GetValue(padSectionName, SettingName.LeftThumbUp);
-			ps.LeftTrigger = ini2.GetValue(padSectionName, SettingName.LeftTrigger);
-			ps.LeftTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.LeftTriggerDeadZone);
-			ps.PassThrough = ini2.GetValue(padSectionName, SettingName.PassThrough);
-			ps.RightMotorPeriod = ini2.GetValue(padSectionName, SettingName.RightMotorPeriod);
-			ps.RightMotorStrength = ini2.GetValue(padSectionName, SettingName.RightMotorStrength);
-			ps.RightMotorDirection = ini2.GetValue(padSectionName, SettingName.RightMotorDirection);
-			ps.RightShoulder = ini2.GetValue(padSectionName, SettingName.RightShoulder);
-			ps.RightThumbAntiDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX);
-			ps.RightThumbAntiDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY);
-			ps.RightThumbAxisX = ini2.GetValue(padSectionName, SettingName.RightThumbAxisX);
-			ps.RightThumbAxisY = ini2.GetValue(padSectionName, SettingName.RightThumbAxisY);
-			ps.RightThumbButton = ini2.GetValue(padSectionName, SettingName.RightThumbButton);
-			ps.RightThumbDeadZoneX = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneX);
-			ps.RightThumbDeadZoneY = ini2.GetValue(padSectionName, SettingName.RightThumbDeadZoneY);
-			ps.RightThumbLinearX = ini2.GetValue(padSectionName, SettingName.RightThumbLinearX);
-			ps.RightThumbLinearY = ini2.GetValue(padSectionName, SettingName.RightThumbLinearY);
-			ps.RightThumbDown = ini2.GetValue(padSectionName, SettingName.RightThumbDown);
-			ps.RightThumbLeft = ini2.GetValue(padSectionName, SettingName.RightThumbLeft);
-			ps.RightThumbRight = ini2.GetValue(padSectionName, SettingName.RightThumbRight);
-			ps.RightThumbUp = ini2.GetValue(padSectionName, SettingName.RightThumbUp);
-			ps.RightTrigger = ini2.GetValue(padSectionName, SettingName.RightTrigger);
-			ps.RightTriggerDeadZone = ini2.GetValue(padSectionName, SettingName.RightTriggerDeadZone);
-			// Axis to button dead-zones.
-			ps.ButtonADeadZone = ini2.GetValue(padSectionName, SettingName.ButtonADeadZone);
-			ps.ButtonBDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonBDeadZone);
-			ps.ButtonBackDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonBackDeadZone);
-			ps.ButtonStartDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonStartDeadZone);
-			ps.ButtonXDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonXDeadZone);
-			ps.ButtonYDeadZone = ini2.GetValue(padSectionName, SettingName.ButtonYDeadZone);
-			ps.LeftThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.LeftThumbButtonDeadZone);
-			ps.RightThumbButtonDeadZone = ini2.GetValue(padSectionName, SettingName.RightThumbButtonDeadZone);
-			ps.LeftShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.LeftShoulderDeadZone);
-			ps.RightShoulderDeadZone = ini2.GetValue(padSectionName, SettingName.RightShoulderDeadZone);
-			ps.DPadDownDeadZone = ini2.GetValue(padSectionName, SettingName.DPadDownDeadZone);
-			ps.DPadLeftDeadZone = ini2.GetValue(padSectionName, SettingName.DPadLeftDeadZone);
-			ps.DPadRightDeadZone = ini2.GetValue(padSectionName, SettingName.DPadRightDeadZone);
-			ps.DPadUpDeadZone = ini2.GetValue(padSectionName, SettingName.DPadUpDeadZone);
 			return ps;
 		}
 
@@ -537,81 +460,7 @@ namespace x360ce.App
 		public void SetPadSetting(string padSectionName, PadSetting ps)
 		{
 			var ini2 = new Ini(IniFileName);
-			//ps.PadSettingChecksum = Guid.Empty;
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadDeadZone, ps.AxisToDPadDeadZone);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadEnabled, ps.AxisToDPadEnabled);
-			ini2.SetValue(padSectionName, SettingName.AxisToDPadOffset, ps.AxisToDPadOffset);
-			ini2.SetValue(padSectionName, SettingName.ButtonA, ps.ButtonA);
-			ini2.SetValue(padSectionName, SettingName.ButtonB, ps.ButtonB);
-			ini2.SetValue(padSectionName, SettingName.ButtonGuide, ps.ButtonGuide);
-			ini2.SetValue(padSectionName, SettingName.ButtonBack, ps.ButtonBack);
-			ini2.SetValue(padSectionName, SettingName.ButtonStart, ps.ButtonStart);
-			ini2.SetValue(padSectionName, SettingName.ButtonX, ps.ButtonX);
-			ini2.SetValue(padSectionName, SettingName.ButtonY, ps.ButtonY);
-			ini2.SetValue(padSectionName, SettingName.DPad, ps.DPad);
-			ini2.SetValue(padSectionName, SettingName.DPadDown, ps.DPadDown);
-			ini2.SetValue(padSectionName, SettingName.DPadLeft, ps.DPadLeft);
-			ini2.SetValue(padSectionName, SettingName.DPadRight, ps.DPadRight);
-			ini2.SetValue(padSectionName, SettingName.DPadUp, ps.DPadUp);
-			ini2.SetValue(padSectionName, SettingName.ForceEnable, ps.ForceEnable);
-			ini2.SetValue(padSectionName, SettingName.ForceOverall, ps.ForceOverall);
-			ini2.SetValue(padSectionName, SettingName.ForceSwapMotor, ps.ForceSwapMotor);
-			ini2.SetValue(padSectionName, SettingName.ForceType, ps.ForceType);
-			ini2.SetValue(padSectionName, SettingName.GamePadType, ps.GamePadType);
-			ini2.SetValue(padSectionName, SettingName.LeftMotorPeriod, ps.LeftMotorPeriod);
-			ini2.SetValue(padSectionName, SettingName.LeftMotorStrength, ps.LeftMotorStrength);
-			ini2.SetValue(padSectionName, SettingName.LeftMotorDirection, ps.LeftMotorDirection);
-			ini2.SetValue(padSectionName, SettingName.LeftShoulder, ps.LeftShoulder);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneX, ps.LeftThumbAntiDeadZoneX);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbAntiDeadZoneY, ps.LeftThumbAntiDeadZoneY);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbLinearX, ps.LeftThumbLinearX);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbLinearY, ps.LeftThumbLinearY);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisX, ps.LeftThumbAxisX);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbAxisY, ps.LeftThumbAxisY);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbButton, ps.LeftThumbButton);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbDeadZoneX, ps.LeftThumbDeadZoneX);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbDeadZoneY, ps.LeftThumbDeadZoneY);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbDown, ps.LeftThumbDown);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbLeft, ps.LeftThumbLeft);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbRight, ps.LeftThumbRight);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbUp, ps.LeftThumbUp);
-			ini2.SetValue(padSectionName, SettingName.LeftTrigger, ps.LeftTrigger);
-			ini2.SetValue(padSectionName, SettingName.LeftTriggerDeadZone, ps.LeftTriggerDeadZone);
-			ini2.SetValue(padSectionName, SettingName.PassThrough, ps.PassThrough);
-			ini2.SetValue(padSectionName, SettingName.RightMotorPeriod, ps.RightMotorPeriod);
-			ini2.SetValue(padSectionName, SettingName.RightMotorStrength, ps.RightMotorStrength);
-			ini2.SetValue(padSectionName, SettingName.RightMotorDirection, ps.RightMotorDirection);
-			ini2.SetValue(padSectionName, SettingName.RightShoulder, ps.RightShoulder);
-			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneX, ps.RightThumbAntiDeadZoneX);
-			ini2.SetValue(padSectionName, SettingName.RightThumbAntiDeadZoneY, ps.RightThumbAntiDeadZoneY);
-			ini2.SetValue(padSectionName, SettingName.RightThumbLinearX, ps.RightThumbLinearX);
-			ini2.SetValue(padSectionName, SettingName.RightThumbLinearY, ps.RightThumbLinearY);
-			ini2.SetValue(padSectionName, SettingName.RightThumbAxisX, ps.RightThumbAxisX);
-			ini2.SetValue(padSectionName, SettingName.RightThumbAxisY, ps.RightThumbAxisY);
-			ini2.SetValue(padSectionName, SettingName.RightThumbButton, ps.RightThumbButton);
-			ini2.SetValue(padSectionName, SettingName.RightThumbDeadZoneX, ps.RightThumbDeadZoneX);
-			ini2.SetValue(padSectionName, SettingName.RightThumbDeadZoneY, ps.RightThumbDeadZoneY);
-			ini2.SetValue(padSectionName, SettingName.RightThumbDown, ps.RightThumbDown);
-			ini2.SetValue(padSectionName, SettingName.RightThumbLeft, ps.RightThumbLeft);
-			ini2.SetValue(padSectionName, SettingName.RightThumbRight, ps.RightThumbRight);
-			ini2.SetValue(padSectionName, SettingName.RightThumbUp, ps.RightThumbUp);
-			ini2.SetValue(padSectionName, SettingName.RightTrigger, ps.RightTrigger);
-			ini2.SetValue(padSectionName, SettingName.RightTriggerDeadZone, ps.RightTriggerDeadZone);
-			// Axis to button dead-zones.
-			ini2.SetValue(padSectionName, SettingName.ButtonADeadZone, ps.ButtonADeadZone);
-			ini2.SetValue(padSectionName, SettingName.ButtonBDeadZone, ps.ButtonBDeadZone);
-			ini2.SetValue(padSectionName, SettingName.ButtonBackDeadZone, ps.ButtonBackDeadZone);
-			ini2.SetValue(padSectionName, SettingName.ButtonStartDeadZone, ps.ButtonStartDeadZone);
-			ini2.SetValue(padSectionName, SettingName.ButtonXDeadZone, ps.ButtonXDeadZone);
-			ini2.SetValue(padSectionName, SettingName.ButtonYDeadZone, ps.ButtonYDeadZone);
-			ini2.SetValue(padSectionName, SettingName.LeftThumbButtonDeadZone, ps.LeftThumbButtonDeadZone);
-			ini2.SetValue(padSectionName, SettingName.RightThumbButtonDeadZone, ps.RightThumbButtonDeadZone);
-			ini2.SetValue(padSectionName, SettingName.LeftShoulderDeadZone, ps.LeftShoulderDeadZone);
-			ini2.SetValue(padSectionName, SettingName.RightShoulderDeadZone, ps.RightShoulderDeadZone);
-			ini2.SetValue(padSectionName, SettingName.DPadDownDeadZone, ps.DPadDownDeadZone);
-			ini2.SetValue(padSectionName, SettingName.DPadLeftDeadZone, ps.DPadLeftDeadZone);
-			ini2.SetValue(padSectionName, SettingName.DPadRightDeadZone, ps.DPadRightDeadZone);
-			ini2.SetValue(padSectionName, SettingName.DPadUpDeadZone, ps.DPadUpDeadZone);
+			PadSettingIni.Write(ps, (key, value) => ini2.SetValue(padSectionName, key, value));
 		}
 
 		/// <summary>
@@ -916,7 +765,7 @@ namespace x360ce.App
 			}
 			var oldValue = ini.GetValue(section, key);
 			var saved = false;
-			// A controller mapped from SDL's database keeps no mapping of its own: one saved would win over the database's.
+			// A controller mapped from the controller databases keeps no mapping of its own: one saved would win over theirs.
 			if (padIndex > -1 && SettingName.IsMapping(key) && IsAutoMap(padIndex))
 			{
 				// The library reads an empty value as no value.
@@ -932,7 +781,7 @@ namespace x360ce.App
 				saveCount++;
 				saved = true;
 				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
-				// Map from SDL database ticked lets go of the controller's own mapping; unticked, it keeps the one shown.
+				// Map from controller databases ticked lets go of the controller's own mapping; unticked, it keeps the one shown.
 				if (padIndex > -1 && key == SettingName.AutoMap)
 				{
 					var pad = string.Format("PAD{0}\\", padIndex + 1);
@@ -945,7 +794,7 @@ namespace x360ce.App
 			return saved;
 		}
 
-		/// <summary>Whether the controller in a place is mapped from SDL's controller database: its Map from SDL database box is ticked.</summary>
+		/// <summary>Whether the controller in a place is mapped from x360ce's and SDL's controller databases: its Map from controller databases box is ticked.</summary>
 		public bool IsAutoMap(int padIndex)
 		{
 			Control control;
@@ -1010,6 +859,7 @@ namespace x360ce.App
 			var updated = false;
 			var ini2 = new Ini(IniFileName);
 			var oldCount = diInstancesOld.Length;
+			PadSetting auto;
 			for (int i = 0; i < 4; i++)
 			{
 				var pad = string.Format("PAD{0}", i + 1);
@@ -1034,10 +884,16 @@ namespace x360ce.App
 							MainForm.Current.ResumeEvents();
 						}
 					}
-					// A controller SDL's database knows needs no question: the library maps it from the database.
-					else if (AppHelper.GetSdlMapping(MainForm.Current.ControlPads[i].Device) != null)
+					// A controller x360ce's or SDL's database knows needs no question: its force feedback and dead
+					// zones are the database's, and the library maps it from the databases, so no mapping is saved.
+					else if ((auto = AppHelper.GetAutoSetting(MainForm.Current.ControlPads[i].Device)) != null)
 					{
 						SetPadSetting(section, di);
+						PadSettingIni.Write(auto, (key, value) =>
+						{
+							if (!SettingName.IsMapping(key))
+								ini2.SetValue(section, key, value);
+						});
 						ini2.SetValue(section, SettingName.AutoMap, "1");
 						MainForm.Current.SuspendEvents();
 						ReadPadSettings(IniFileName, section, i);

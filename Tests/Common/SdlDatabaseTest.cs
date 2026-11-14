@@ -187,13 +187,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("Auto Preset maps a pad SDL knows from its row, and guesses only for a device SDL has no row for")]
+		[Description("Auto Preset maps a pad from x360ce's database, then SDL's, and guesses only for a device neither has a row for")]
 		public void Auto_preset_takes_sdl_first_and_guesses_otherwise()
 		{
 			var database = SdlDatabase.Merge(Source(SdlSourceKind.BuiltIn,
 				XboxGuid + ",Xbox 360 Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b8,lefttrigger:+a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b9,righttrigger:-a2,rightx:a3,righty:a4,start:b7,x:b2,y:b3,misc1:b10,platform:Windows,"));
 			string note;
-			var ps = AutoMapHelper.GetAutoPreset(XboxPad(), out note, database);
+			// x360ce's own database first, SDL's where its row maps nothing.
+			var x360ce = SdlDatabase.Merge(Source(SdlSourceKind.BuiltIn, XboxGuid + ",Xbox 360 Pad,users:9,A:2,UseForceFeedback:1,platform:Windows,"));
+			var both = AutoMapHelper.GetAutoPreset(XboxPad(), out note, database, x360ce);
+			StringAssert.Contains(note, "x360ce's controller database");
+			Assert.AreEqual("2", both.ButtonA, "SDL won over x360ce's database.");
+			Assert.AreEqual("x3", both.LeftTrigger, "SDL did not fill what x360ce's row leaves empty.");
+			Assert.AreEqual("1", both.ForceEnable);
+			var none = SdlDatabase.Merge();
+			// A DirectInput device not read yet, as when it is first put on a tab, has no objects: x360ce's row, which needs
+			// none, fills it; SDL's row and the guess wait until it has been read.
+			var unread = XboxPad();
+			unread.DeviceObjects = null;
+			var early = AutoMapHelper.GetAutoPreset(unread, out note, database, x360ce);
+			Assert.AreEqual("2", early.ButtonA, "x360ce's row waited for the device's objects.");
+			Assert.AreEqual("1", early.ForceEnable);
+			Assert.IsTrue(string.IsNullOrEmpty(early.LeftTrigger), "SDL's row was read without the device's axes.");
+			Assert.AreEqual(Guid.Empty, AutoMapHelper.GetAutoPreset(unread, out note, database, none).PadSettingChecksum,
+				"A device only SDL knows was filled before its axes were known.");
+			var ps = AutoMapHelper.GetAutoPreset(XboxPad(), out note, database, none);
 			StringAssert.Contains(note, "SDL's controller database");
 			StringAssert.Contains(note, "misc1:b10", "What was left out is not said.");
 			Assert.AreEqual("x3", ps.LeftTrigger);
@@ -204,7 +222,7 @@ namespace x360ce.Tests
 			// A pad SDL does not know is guessed, as before.
 			var unknown = XboxPad();
 			unknown.DevVendorId = 0x1234;
-			var guessed = AutoMapHelper.GetAutoPreset(unknown, out note, database);
+			var guessed = AutoMapHelper.GetAutoPreset(unknown, out note, database, none);
 			StringAssert.Contains(note, "own guess");
 			Assert.AreEqual("1", guessed.ButtonA, "The guess did not map the first button.");
 			Assert.AreEqual("a1", guessed.LeftThumbAxisX);
@@ -213,11 +231,13 @@ namespace x360ce.Tests
 			{
 				var other = XboxPad();
 				other.CapType = (int)type;
-				Assert.IsNull(AutoMapHelper.GetSdlPreset(other, database), type + " was mapped from SDL.");
+				AutoMapHelper.GetAutoPreset(other, out note, database, x360ce);
+				StringAssert.Contains(note, "own guess", type + " was mapped from a database.");
 			}
 			var plugin = XboxPad();
 			plugin.InputSourceType = (int)InputSourceType.Plugin;
-			Assert.IsNull(AutoMapHelper.GetSdlPreset(plugin, database), "A plugin device was mapped from SDL.");
+			AutoMapHelper.GetAutoPreset(plugin, out note, database, x360ce);
+			StringAssert.Contains(note, "own guess", "A plugin device was mapped from a database.");
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]

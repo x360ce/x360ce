@@ -24,6 +24,8 @@ m_ForceFeedbackInst(this)
 	m_instanceid = GUID_NULL;
 	m_autoMap = false;
 	m_sdlKnown = false;
+	m_rowFound = false;
+	m_forceKey = false;
 	m_stateChanged = false;
 	m_emptyStateIsSet = false;
 }
@@ -644,6 +646,7 @@ DWORD Controller::CreateDevice()
 	if (FAILED(hr)) PrintLog("[PAD%d] SetDataFormat failed with code HR = %X", m_user + 1, hr);
 
 	HRESULT setCooperativeLevelResult = m_pDevice->SetCooperativeLevel(ControllerManager::Get().GetWindow(), DISCL_EXCLUSIVE | DISCL_BACKGROUND);
+	bool exclusive = SUCCEEDED(setCooperativeLevelResult);
 	if (FAILED(setCooperativeLevelResult))
 	{
 		m_useforce = false;
@@ -667,7 +670,7 @@ DWORD Controller::CreateDevice()
 	else
 		PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
-	if (m_autoMap) ApplySdlMapping();
+	if (m_autoMap) ApplyAutoMapping(exclusive);
 
 	if (m_useforce) m_useforce = m_ForceFeedback->IsSupported();
 
@@ -687,22 +690,34 @@ bool Controller::ButtonPressed(u32 buttonidx)
 	return (buttonidx != Config::INVALIDBUTTONINDEX) ? (m_state.rgbButtons[buttonidx] & 0x80) != 0 : 0;
 }
 
-/// <summary>Fills the controls the section does not map from SDL's row for the device.</summary>
-void Controller::ApplySdlMapping()
+/// <summary>
+/// Fills the controls that neither the section nor x360ce's database row maps from SDL's row for the device. When
+/// neither the section nor the row switches force feedback on, a device with motors gets it at the defaults; a
+/// UseForceFeedback key in the section, 0 included, is left as it says.
+/// </summary>
+/// <param name="exclusive">Whether the device is held alone, which force feedback needs.</param>
+void Controller::ApplyAutoMapping(bool exclusive)
 {
 	Sdl::Device device;
 	Sdl::ReadDevice(m_pDevice.get(), &device);
 	std::string row = Sdl::FindRow(device);
 	Config::Mapping sdl;
 	m_sdlKnown = !row.empty() && Sdl::Convert(row, device, &sdl) > 0;
-	if (!m_sdlKnown)
+	if (m_sdlKnown)
 	{
-		PrintLog("[PAD%d] SDL does not know \"%s\" (%04X:%04X)", m_user + 1, device.name.c_str(), device.vendorId, device.productId);
+		Config::MergeSdl(&m_mapping, sdl);
+		PrintLog("[PAD%d] SDL row for \"%s\" (%04X:%04X): %s", m_user + 1, device.name.c_str(), device.vendorId, device.productId, row.c_str());
+	}
+	else if (!m_rowFound)
+	{
+		PrintLog("[PAD%d] Neither database knows \"%s\" (%04X:%04X)", m_user + 1, device.name.c_str(), device.vendorId, device.productId);
 		return;
 	}
-	Config::MergeSdl(&m_mapping, sdl);
-	PrintLog("[PAD%d] SDL row for \"%s\" (%04X:%04X): %s", m_user + 1, device.name.c_str(), device.vendorId, device.productId, row.c_str());
-	PrintLog("[PAD%d] SDL mapping: %s", m_user + 1, Sdl::Describe(m_mapping).c_str());
+	// A row that leaves force feedback off brings none of its force feedback values (Sdl::ReadRowKeys), so the values
+	// read are the section's own, or the defaults.
+	if (!m_forceKey && !m_useforce && device.forceFeedback && exclusive)
+		m_useforce = true;
+	PrintLog("[PAD%d] Mapping: %s; force feedback %s", m_user + 1, Sdl::Describe(m_mapping).c_str(), m_useforce ? "on" : "off");
 }
 
 /// <summary>How far a stick direction is pushed, 0 to 32767: a button or D-Pad direction all the way, a half axis as far as it is turned.</summary>

@@ -398,12 +398,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public void LoadPreset(string controllerName)
-		{
-			string name = controllerName.Replace(" ", "_");
-			mainForm.LoadPreset(name, ControllerComboBox.SelectedIndex);
-		}
-
 		public void LoadSetting(Guid padSettingChecksum)
 		{
 			var ws = new WebServiceClient();
@@ -757,7 +751,14 @@ namespace x360ce.App.Controls
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-			if (result == DialogResult.Yes) LoadPreset(preset.ProductName);
+			var index = ControllerComboBox.SelectedIndex;
+			var device = index >= 0 && index < 4 ? mainForm.PadDevices[index] : null;
+			var setting = X360ceDatabase.GetSetting(preset.PadSettingChecksum);
+			if (result == DialogResult.Yes && device != null && setting != null)
+			{
+				SettingManager.Current.LoadPadSetting(setting, device, index);
+				mainForm.NotifySettingsChange();
+			}
 			else mainForm.UpdateTimer.Start();
 		}
 
@@ -778,50 +779,32 @@ namespace x360ce.App.Controls
 			RefreshPresetsGrid(true);
 		}
 
+		/// <summary>
+		/// Lists the setting most people use for each controller, from x360ce's controller database: the built-in copy, or
+		/// the one [Update Controller Database] saved. Offline; read off the window's thread, as the first read takes a few
+		/// hundred milliseconds, and listed at once rather than row by row.
+		/// </summary>
 		public void RefreshPresetsGrid(bool showResult)
 		{
-			mainForm.LoadingCircle = true;
-			var sp = new List<SearchParameter>();
-			sp.Add(new SearchParameter());
-			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			System.Threading.Tasks.Task.Run(() => X360ceDatabase.Presets()).ContinueWith(t =>
 			{
-				ws.SearchSettingsAsync(sp.ToArray(), showResult);
-			});
-		}
-
-		void wsPresets_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
-		{
-			var ws = (WebServiceClient)sender;
-			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
-            // Make sure method is executed on the same thread as this control.
-            ControlsHelper.BeginInvoke(() =>
-            {
-                refreshed = true;
-				if (e.Error != null || e.Result == null)
+				if (IsDisposed || t.IsFaulted)
+					return;
+				var presets = t.Result;
+				var items = SettingManager.Presets.Items;
+				items.RaiseListChangedEvents = false;
+				try
 				{
-					var showResult = (bool)e.UserState;
-                    if (showResult)
-					{
-						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: No Presets received.", DateTime.Now), MessageBoxIcon.Information);
-					}
+					UpdateList(presets, items);
 				}
-				else
+				finally
 				{
-					var result = (SearchResult)e.Result;
-					UpdateList(result.Presets, SettingManager.Presets.Items);
-					UpdateList(result.PadSettings, SettingManager.PadSettings.Items);
-					if ((bool)e.UserState)
-					{
-						var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
-						var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-						mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: {1} Presets and {2} PAD Settings received.", DateTime.Now, presetsCount, padSettingsCount), MessageBoxIcon.Information);
-					}
+					items.RaiseListChangedEvents = true;
 				}
-				mainForm.LoadingCircle = false;
-			});
+				items.ResetBindings();
+				if (showResult)
+					mainForm.UpdateHelpHeader(string.Format("{0: yyyy-MM-dd HH:mm:ss}: The setting most people use for each of {1} controllers, from x360ce's controller database.", DateTime.Now, presets.Length), MessageBoxIcon.Information);
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		#endregion

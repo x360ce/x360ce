@@ -218,8 +218,13 @@ private:
 	{
 		GUID instance;
 		bool xinput;
-		bool sdlKnown;
+		/// <summary>Whether x360ce's database or SDL's has a row for it.</summary>
+		bool known;
 		bool done;
+		/// <summary>Its vendor, product and name, as the databases find it.</summary>
+		u16 vendorId;
+		u16 productId;
+		std::string name;
 	};
 
 	/// <summary>The controller the scan put in each free place, published whole: a game's call reads it and never waits.</summary>

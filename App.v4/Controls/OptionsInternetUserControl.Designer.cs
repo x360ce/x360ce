@@ -44,6 +44,8 @@
             this.InternetDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
             this.TestServiceButton = new System.Windows.Forms.Button();
             this.SdlDatabaseUrlLabel = new System.Windows.Forms.Label();
+            this.X360ceDatabaseLabel = new System.Windows.Forms.Label();
+            this.UpdateX360ceDatabaseButton = new System.Windows.Forms.Button();
             this.SdlDatabaseUrlComboBox = new System.Windows.Forms.ComboBox();
             this.UpdateSdlDatabaseButton = new System.Windows.Forms.Button();
             this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
@@ -208,10 +210,13 @@
             this.InternetLayoutPanel.Controls.Add(this.SdlDatabaseUrlLabel, 0, 2);
             this.InternetLayoutPanel.Controls.Add(this.SdlDatabaseUrlComboBox, 1, 2);
             this.InternetLayoutPanel.Controls.Add(this.UpdateSdlDatabaseButton, 2, 2);
+            this.InternetLayoutPanel.Controls.Add(this.X360ceDatabaseLabel, 0, 3);
+            this.InternetLayoutPanel.Controls.Add(this.UpdateX360ceDatabaseButton, 2, 3);
             this.InternetLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.InternetLayoutPanel.Location = new System.Drawing.Point(3, 16);
             this.InternetLayoutPanel.Name = "InternetLayoutPanel";
-            this.InternetLayoutPanel.RowCount = 3;
+            this.InternetLayoutPanel.RowCount = 4;
+            this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.InternetLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -340,6 +345,28 @@
             this.UpdateSdlDatabaseButton.Text = "Update SDL Database";
             this.UpdateSdlDatabaseButton.UseVisualStyleBackColor = true;
             this.UpdateSdlDatabaseButton.Click += new System.EventHandler(this.UpdateSdlDatabaseButton_Click);
+            //
+            // X360ceDatabaseLabel
+            //
+            this.X360ceDatabaseLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.X360ceDatabaseLabel.AutoSize = true;
+            this.X360ceDatabaseLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+            this.X360ceDatabaseLabel.Name = "X360ceDatabaseLabel";
+            this.X360ceDatabaseLabel.Size = new System.Drawing.Size(90, 13);
+            this.X360ceDatabaseLabel.TabIndex = 7;
+            this.X360ceDatabaseLabel.Text = "x360ce Database";
+            //
+            // UpdateX360ceDatabaseButton
+            //
+            this.UpdateX360ceDatabaseButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.UpdateX360ceDatabaseButton.AutoSize = true;
+            this.UpdateX360ceDatabaseButton.Margin = new System.Windows.Forms.Padding(4);
+            this.UpdateX360ceDatabaseButton.Name = "UpdateX360ceDatabaseButton";
+            this.UpdateX360ceDatabaseButton.Size = new System.Drawing.Size(140, 23);
+            this.UpdateX360ceDatabaseButton.TabIndex = 8;
+            this.UpdateX360ceDatabaseButton.Text = "Update x360ce Database";
+            this.UpdateX360ceDatabaseButton.UseVisualStyleBackColor = true;
+            this.UpdateX360ceDatabaseButton.Click += new System.EventHandler(this.UpdateX360ceDatabaseButton_Click);
             //
             // OnlineAccountGroupBox
             // 
@@ -675,6 +702,8 @@
 		internal System.Windows.Forms.Label SdlDatabaseUrlLabel;
 		public System.Windows.Forms.ComboBox SdlDatabaseUrlComboBox;
 		public System.Windows.Forms.Button UpdateSdlDatabaseButton;
+		internal System.Windows.Forms.Label X360ceDatabaseLabel;
+		public System.Windows.Forms.Button UpdateX360ceDatabaseButton;
 		public System.Windows.Forms.CheckBox InternetAutoLoadCheckBox;
 		public System.Windows.Forms.CheckBox InternetFeaturesCheckBox;
 		internal System.Windows.Forms.GroupBox OnlineAccountGroupBox;

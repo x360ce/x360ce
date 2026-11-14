@@ -109,14 +109,14 @@ void ControllerManager::Reset()
 	StartScan();
 }
 
-/// <summary>Looks at a DirectInput device once: whether it is an XInput controller, and whether SDL knows it.</summary>
+/// <summary>Looks at a DirectInput device once: whether it is an XInput controller, and whether a controller database knows it.</summary>
 /// <returns>Its place in m_seen.</returns>
 size_t ControllerManager::Examine(const DIDEVICEINSTANCEA& instance)
 {
 	for (size_t i = 0; i < m_seen.size(); ++i)
 		if (IsEqualGUID(m_seen[i].instance, instance.guidInstance))
 			return i;
-	SeenDevice seen = { instance.guidInstance, false, false, false };
+	SeenDevice seen = { instance.guidInstance, false, false, false, 0, 0, std::string() };
 	HooksOff off;
 	IDirectInputDevice8A* created = nullptr;
 	if (SUCCEEDED(m_pDirectInput->CreateDevice(instance.guidInstance, &created, NULL)))
@@ -129,9 +129,15 @@ size_t ControllerManager::Examine(const DIDEVICEINSTANCEA& instance)
 		{
 			Sdl::Device sdl;
 			Sdl::ReadDevice(device.get(), &sdl);
-			seen.sdlKnown = !Sdl::FindRow(sdl).empty();
+			seen.vendorId = sdl.vendorId;
+			seen.productId = sdl.productId;
+			seen.name = sdl.name;
+			bool x360ce = !Sdl::FindX360ceRow(sdl).empty();
+			bool sdlKnows = !Sdl::FindRow(sdl).empty();
+			seen.known = x360ce || sdlKnows;
 			PrintLog("[AUTO] \"%s\" (%04X:%04X): %s", instance.tszProductName, sdl.vendorId, sdl.productId,
-				seen.sdlKnown ? "SDL knows it" : "SDL does not know it, left unmapped");
+				x360ce && sdlKnows ? "x360ce's and SDL's databases know it" : x360ce ? "x360ce's database knows it"
+				: sdlKnows ? "SDL's database knows it" : "neither database knows it, left unmapped");
 		}
 	}
 	m_seen.push_back(seen);
@@ -147,7 +153,7 @@ void ControllerManager::Publish(int place, const std::shared_ptr<ControllerBase>
 
 /// <summary>
 /// Maps the controllers no section lists into free places: Xbox controllers pass through to Windows' own XInput at
-/// their own place when it is free, then every other controller SDL knows takes the next free place, in DirectInput's
+/// their own place when it is free, then every other controller x360ce's or SDL's database knows takes the next free place, in DirectInput's
 /// order. Runs on its own thread, at the start and then every ScanEveryMs, so a controller plugged in is found.
 /// </summary>
 void ControllerManager::Scan()
@@ -222,24 +228,39 @@ void ControllerManager::Scan()
 		}
 	}
 
-	// Every other controller SDL knows; one it does not know stays unmapped.
+	// Every other controller a database knows; one neither knows stays unmapped.
 	for (size_t i = 0; i < devices.size(); ++i)
 	{
 		SeenDevice& s = m_seen[seen[i]];
-		if (isListed[i] || s.xinput || !s.sdlKnown || s.done)
+		if (isListed[i] || s.xinput || !s.known || s.done)
 			continue;
 		int place = FreePlace(used);
 		if (place < 0)
 			break;
 		s.done = true;
+		// Read as a section of its own: its GUIDs, and x360ce's database row for it when there is one.
 		std::shared_ptr<Controller> controller(new Controller(place));
-		controller->m_instanceid = devices[i].guidInstance;
-		controller->m_productid = devices[i].guidProduct;
+		IniFile pad;
+		const std::string section("pad");
+		std::string text;
+		GUIDtoString(&text, devices[i].guidProduct);
+		pad.Set(section, "ProductGUID", text);
+		GUIDtoString(&text, devices[i].guidInstance);
+		pad.Set(section, "InstanceGUID", text);
+		Sdl::Device device;
+		device.vendorId = s.vendorId;
+		device.productId = s.productId;
+		device.name = s.name;
+		std::string row = Sdl::FindX360ceRow(device);
+		Sdl::ReadRowKeys(row, &pad, section);
 		controller->m_autoMap = true;
-		if (controller->CreateDevice() == ERROR_SUCCESS && controller->m_sdlKnown)
+		m_config.ReadPad(controller.get(), section, &pad);
+		controller->m_rowFound = !row.empty();
+		if (controller->CreateDevice() == ERROR_SUCCESS && (controller->m_rowFound || controller->m_sdlKnown))
 		{
 			Publish(place, controller, used);
-			PrintLog("[PAD%d] \"%s\" mapped from SDL", place + 1, devices[i].tszProductName);
+			PrintLog("[PAD%d] \"%s\" mapped from %s", place + 1, devices[i].tszProductName,
+				controller->m_rowFound ? "x360ce's database" : "SDL's database");
 		}
 	}
 }

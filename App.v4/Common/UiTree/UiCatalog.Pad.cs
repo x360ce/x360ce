@@ -227,7 +227,7 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.LoadPresetButton)] = new Text("Load Preset...",
 				"Replaces this controller's settings with a saved set.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AutoPresetButton)] = new Text("Auto Preset",
-				"Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
+				"Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SavePresetButton)] = new Text("Save Preset...",
 				"Writes this controller's settings to a file, to load again or pass on.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ClearPresetButton)] = new Text("Clear",

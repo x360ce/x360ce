@@ -333,7 +333,8 @@ namespace x360ce.App.Mcp
 		{
 			if (controller < 1 || controller > 4)
 				throw new InvalidOperationException("Controller must be 1 to 4.");
-			var preset = SettingsManager.Presets.ItemsToArraySynchronized()
+			// The Load Preset window's Most Popular list, x360ce's controller database.
+			var preset = X360ceDatabase.Presets()
 				.FirstOrDefault(p => string.Equals(p.ProductName, productName, StringComparison.OrdinalIgnoreCase));
 			var ps = preset == null ? null : SettingsManager.GetPadSetting(preset.PadSettingChecksum);
 			if (ps == null)

@@ -156,11 +156,21 @@ The emulated controllers can be switched off without closing the program, so a g
 2. `[Load Preset...]` → `[Open File...]` loads such a file onto the selected controller.
 3. `[Copy Preset]` and `[Paste Preset]` carry the same settings through the clipboard.
 
+## x360ce controller database
+
+x360ce carries its own controller database, `gamecontrollerdb_x360ce.windows.txt`: for each controller, the complete setting most x360ce users chose for it, mapping, force feedback and dead zones. It is written as SDL writes its rows, and it works offline.
+
+1. A controller put on a controller tab of a game that has no settings for it starts from its row, with SDL's mapping for the parts the row leaves empty. A controller only SDL knows gets SDL's mapping. When neither turns force feedback on, a controller with motors gets it at the defaults.
+2. Settings you saved always win: a controller removed from its tab, deleted on the `[Devices]` page, or unplugged gets its own settings back when it returns. The database is used only when there are none.
+3. `[Auto Preset]` fills the controller in the same way.
+4. `[Load Preset...]` → `[Default Settings for Most Popular Controllers]` lists the database's rows, at once and offline.
+5. `[Options]` tab → `[Internet]` → `[Update x360ce Database]` fetches the newest copy from x360ce's server into the settings folder, and x360ce uses that copy from then on. It is the only time x360ce asks the internet for it.
+
 ## SDL controller database
 
 x360ce carries SDL's controller database, [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB), which many games use. For about 870 controllers it says which button, stick and hat is which part of a gamepad. It works offline.
 
-1. `[Auto Preset]` fills the mapping from SDL's row for the device. Only a device SDL has no row for, such as a keyboard, a mouse, a wheel or an unknown pad, gets x360ce's own guess. The status bar says which it was.
+1. `[Auto Preset]` fills the mapping from SDL's row for the parts x360ce's controller database leaves empty. Only a device neither database has a row for, such as a keyboard, a mouse or an unknown pad, gets x360ce's own guess. The status bar says which it was.
 2. `[Controller 1]` tab → `[SDL]` tab shows which copy of the database is in use, whether SDL knows the selected device, and each part of the Xbox controller: SDL's name for it, its label on your pad (A, Cross, B...), SDL's binding, the control of your device that binding names, and what the box holds now. `Differs` marks a box that holds something else. `[Apply SDL Mapping]` fills every mapping box from SDL's row and leaves the dead zones and other settings as they are.
 3. The arrow beside `[Copy Preset]` → `[Copy as SDL]` copies the mapping as a row of SDL's database for the selected device, for an SDL game or to send to SDL_GameControllerDB. Formulas and the other settings are left out. `[Paste Preset]` reads such a row, or a whole `gamecontrollerdb.txt`, and takes the row for the selected device.
 4. `[Load Preset...]` → `[SDL]` lists every row, the selected device's first, with a filter.

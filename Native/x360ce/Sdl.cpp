@@ -116,7 +116,7 @@ namespace Sdl
 			}
 		}
 
-		/// <summary>The rows carried in the library, and those of a gamecontrollerdb.txt found where x360ce.ini is looked for.</summary>
+		/// <summary>The rows carried in the library, and those of a file of the same name found where x360ce.ini is looked for.</summary>
 		class Database
 		{
 		public:
@@ -124,20 +124,22 @@ namespace Sdl
 			std::string fileText;
 			std::vector<Row> file;
 
-			Database()
+			/// <param name="resourceId">The rows the library carries.</param>
+			/// <param name="fileName">The file a person's own rows are in: gamecontrollerdb.txt or gamecontrollerdb_x360ce.windows.txt.</param>
+			Database(WORD resourceId, const char* fileName)
 			{
 				// The library's own rows, sorted by vendor and product when they were written.
 				HMODULE module = CurrentModule();
-				HRSRC resource = FindResource(module, MAKEINTRESOURCE(IDR_SDLDB), RT_RCDATA);
+				HRSRC resource = FindResource(module, MAKEINTRESOURCE(resourceId), RT_RCDATA);
 				HGLOBAL loaded = resource ? LoadResource(module, resource) : NULL;
 				const char* text = loaded ? (const char*)LockResource(loaded) : nullptr;
 				if (text)
 					ReadRows(text, SizeofResource(module, resource), &builtIn);
 				// A person's own rows win over the library's for a device they have a row for.
 				std::string path;
-				if (!FullPathFromPath(&path, "gamecontrollerdb.txt"))
+				if (!FullPathFromPath(&path, fileName))
 				{
-					path = "gamecontrollerdb.txt";
+					path = fileName;
 					if (!CheckCommonDirectory(&path, "x360ce"))
 						path.clear();
 				}
@@ -145,7 +147,7 @@ namespace Sdl
 				{
 					ReadRows(fileText.c_str(), fileText.size(), &file);
 					std::stable_sort(file.begin(), file.end(), KeyLess);
-					PrintLog("Using SDL database file \"%s\": %u rows", path.c_str(), (u32)file.size());
+					PrintLog("Using database file \"%s\": %u rows", path.c_str(), (u32)file.size());
 				}
 			}
 
@@ -170,7 +172,13 @@ namespace Sdl
 
 		Database& GetDatabase()
 		{
-			static Database database;
+			static Database database(IDR_SDLDB, "gamecontrollerdb.txt");
+			return database;
+		}
+
+		Database& GetX360ceDatabase()
+		{
+			static Database database(IDR_X360CEDB, "gamecontrollerdb_x360ce.windows.txt");
 			return database;
 		}
 
@@ -267,6 +275,18 @@ namespace Sdl
 				}
 			}
 			return best;
+		}
+
+		/// <summary>The row for a device in a database: a person's own first, then the library's.</summary>
+		std::string FindIn(Database& db, const Device& device)
+		{
+			u32 key = (u32)device.vendorId << 16 | device.productId;
+			if (key == 0)
+				return std::string();
+			const Row* row = Best(db.file, key, device.name);
+			if (!row)
+				row = Best(db.builtIn, key, device.name);
+			return row ? std::string(row->text, row->length) : std::string();
 		}
 
 		#pragma endregion
@@ -707,6 +727,7 @@ namespace Sdl
 		{
 			out->buttonCount = caps.dwButtons;
 			out->povCount = caps.dwPOVs;
+			out->forceFeedback = (caps.dwFlags & DIDC_FORCEFEEDBACK) != 0;
 		}
 		// Which of X, Y, Z, Rx, Ry, Rz and the two sliders the device has, where the joystick data format puts them.
 		static const DWORD offsets[] =
@@ -740,14 +761,57 @@ namespace Sdl
 
 	std::string FindRow(const Device& device)
 	{
-		u32 key = (u32)device.vendorId << 16 | device.productId;
-		if (key == 0)
-			return std::string();
-		Database& db = GetDatabase();
-		const Row* row = Best(db.file, key, device.name);
-		if (!row)
-			row = Best(db.builtIn, key, device.name);
-		return row ? std::string(row->text, row->length) : std::string();
+		return FindIn(GetDatabase(), device);
+	}
+
+	std::string FindX360ceRow(const Device& device)
+	{
+		return FindIn(GetX360ceDatabase(), device);
+	}
+
+	void ReadRowKeys(const std::string& row, IniFile* ini, const std::string& section)
+	{
+		// Where a controller goes is the section's to say, never a database's.
+		static const char* const placeKeys[] =
+		{
+			"platform", "users", "ProductGUID", "InstanceGUID", "AutoMap", "UserIndex", "MapToPad",
+			"PassThrough", "PassThroughIndex", "ForcesPassThrough", "Combined", "CombinedIndex",
+		};
+		// A row that leaves force feedback off says nothing about it: its strengths and periods, often nought, were set
+		// while nothing used them. Switched on for a device with motors (Controller::ApplyAutoMapping), force feedback
+		// runs at the defaults. x360ce's apps do the same (X360ceDatabase.AutoSetting).
+		static const char* const forceKeys[] =
+		{
+			"FFBType", "ForcePercent", "SwapMotor", "LeftMotorPeriod", "LeftMotorStrength", "LeftMotorDirection",
+			"RightMotorPeriod", "RightMotorStrength", "RightMotorDirection",
+		};
+		auto listed = [](const std::string& key, const char* const* names, size_t count)
+		{
+			for (size_t n = 0; n < count; ++n)
+				if (_stricmp(key.c_str(), names[n]) == 0)
+					return true;
+			return false;
+		};
+		std::vector<std::pair<std::string, std::string>> keys;
+		bool forceOn = false;
+		std::vector<std::string> parts = Split(Trim(row), ',');
+		for (size_t i = 2; i < parts.size(); ++i)
+		{
+			std::string part = Trim(parts[i]);
+			size_t colon = part.find(':');
+			if (colon == std::string::npos || colon == 0 || colon + 1 == part.size())
+				continue;
+			std::string key = part.substr(0, colon);
+			if (listed(key, placeKeys, _countof(placeKeys)))
+				continue;
+			std::string value = part.substr(colon + 1);
+			if (_stricmp(key.c_str(), "UseForceFeedback") == 0)
+				forceOn = value == "1";
+			keys.emplace_back(key, value);
+		}
+		for (const auto& key : keys)
+			if (forceOn || !listed(key.first, forceKeys, _countof(forceKeys)))
+				ini->Set(section, key.first, key.second);
 	}
 
 	int Convert(const std::string& row, const Device& device, Config::Mapping* mapping)
@@ -892,15 +956,27 @@ extern "C" DWORD WINAPI SdlTranslate(LPCSTR row, DWORD axisMask, DWORD sliderMas
 	return (DWORD)text.size() + 1;
 }
 
-/// <summary>Test hook: the row the library finds for a vendor, product and name, empty for none. Returns the length the text needs, its terminating nought included.</summary>
-extern "C" DWORD WINAPI SdlFind(DWORD vendorId, DWORD productId, LPCSTR name, LPSTR buffer, DWORD size)
+/// <summary>The row a database finds for a vendor, product and name, copied for a test hook.</summary>
+static DWORD FindForTest(bool x360ce, DWORD vendorId, DWORD productId, LPCSTR name, LPSTR buffer, DWORD size)
 {
 	Sdl::Device device;
 	device.vendorId = (u16)vendorId;
 	device.productId = (u16)productId;
 	device.name = name ? name : "";
-	std::string text = Sdl::FindRow(device);
+	std::string text = x360ce ? Sdl::FindX360ceRow(device) : Sdl::FindRow(device);
 	if (buffer && size > 0)
 		strncpy_s(buffer, size, text.c_str(), _TRUNCATE);
 	return (DWORD)text.size() + 1;
+}
+
+/// <summary>Test hook: the SDL row the library finds for a vendor, product and name, empty for none. Returns the length the text needs, its terminating nought included.</summary>
+extern "C" DWORD WINAPI SdlFind(DWORD vendorId, DWORD productId, LPCSTR name, LPSTR buffer, DWORD size)
+{
+	return FindForTest(false, vendorId, productId, name, buffer, size);
+}
+
+/// <summary>Test hook: the x360ce database row the library finds for a vendor, product and name, empty for none.</summary>
+extern "C" DWORD WINAPI X360ceFind(DWORD vendorId, DWORD productId, LPCSTR name, LPSTR buffer, DWORD size)
+{
+	return FindForTest(true, vendorId, productId, name, buffer, size);
 }

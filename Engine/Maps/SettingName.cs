@@ -145,7 +145,7 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.")]
 		static public string PassThrough { get { return "PassThrough"; } }
 
-		[DefaultValue("0"), Description("Map this controller from SDL's controller database. A mapping saved for one of its parts wins over the database's. 0 = OFF, 1 = ON.")]
+		[DefaultValue("0"), Description("Map this controller from x360ce's controller database, and from SDL's where it maps nothing. A setting saved for one of its parts wins over the databases'. 0 = OFF, 1 = ON.")]
 		static public string AutoMap { get { return "AutoMap"; } }
 
 		[DefaultValue("0"), Description("Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.")]
@@ -567,7 +567,7 @@ namespace x360ce.Engine
 
 		/// <summary>
 		/// The keys of a controller section that map a part of the Xbox controller: in a section with <see cref="AutoMap"/>,
-		/// the library takes each one it does not hold from SDL's controller database.
+		/// the library takes each one it does not hold from x360ce's or SDL's controller database.
 		/// </summary>
 		public static bool IsMapping(string name)
 		{

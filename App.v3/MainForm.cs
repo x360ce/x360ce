@@ -91,8 +91,6 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			SettingManager.Games.FilterList = Games_FilterList;
 			SettingManager.Games.Load();
-			SettingManager.Presets.Load();
-			SettingManager.PadSettings.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
@@ -283,30 +281,14 @@ namespace x360ce.App
 
 		#region Setting Events
 
-		public void LoadPreset(string name, int index)
+		/// <summary>Empties every setting of a controller's page, and saves it.</summary>
+		public void ClearPreset(int index)
 		{
-			// exit if "Presets:" or "Embedded:".
-			if (name.Contains(":")) return;
-			var prefix = Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-			var ext = Path.GetExtension(SettingManager.IniFileName);
-			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
-			var resource = EngineHelper.GetResourceStream("Presets." + resourceName);
-			// If internal preset was found.
-			if (resource != null)
-			{
-				// Export file.
-				var sr = new StreamReader(resource);
-				File.WriteAllText(resourceName, sr.ReadToEnd());
-			}
 			SuspendEvents();
-			// Preset will be stored in inside [PAD1] section;
-			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", index);
+			SettingManager.Current.ClearPadSettings(index);
 			ResumeEvents();
 			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
-			// remove file if it was from resource.
-			if (resource != null) File.Delete(resourceName);
-			//CleanStatusTimer.Start();
 		}
 
 		int resumed = 0;
@@ -528,8 +510,6 @@ namespace x360ce.App
 			SettingManager.Summaries.Save();
 			SettingManager.Programs.Save();
 			SettingManager.Games.Save();
-			SettingManager.Presets.Save();
-			SettingManager.PadSettings.Save();
 		}
 
 		#region Timer
@@ -1100,6 +1080,9 @@ namespace x360ce.App
 			}
 			else if (MainTabControl.SelectedTab == ControllerSettingsTabPage)
 			{
+				// Filled when first shown, so the interface loads faster: reading the database takes a few hundred milliseconds.
+				if (SettingManager.Presets.Items.Count == 0)
+					SettingsDatabasePanel.RefreshPresetsGrid(false);
 				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
 				{
 					SettingsDatabasePanel.RefreshGrid(true);

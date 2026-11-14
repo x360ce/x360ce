@@ -312,6 +312,10 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Stored Procedures\x360ce_GetControllerDatabase.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
     <Build Include="dbo\Stored Procedures\x360ce_GetTopControllers.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -414,14 +418,16 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Tables\Tools_ProcedureStats.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />
     <None Include="Release.publish.xml" />
-    <None Include="Schema Comparisons\DatabaseToProject.Test.scmp" />
-    <None Include="Schema Comparisons\ProjectToDatabase.Test.scmp" />
-    <None Include="Schema Comparisons\DatabaseToProject.Live.scmp" />
-    <None Include="Schema Comparisons\ProjectToDatabase.Live.scmp" />
+    <None Include="Schema Comparisons\DatabaseToProject.Local.scmp" />
+    <None Include="Schema Comparisons\ProjectToDatabase.Local.scmp" />
     <None Include="StaticCodeAnalysis.SuppressMessages.xml" />
   </ItemGroup>
   <ItemGroup>

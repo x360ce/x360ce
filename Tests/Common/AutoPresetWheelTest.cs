@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using x360ce.App;
 using x360ce.Engine;
@@ -15,8 +14,8 @@ namespace x360ce.Tests
 	/// <summary>
 	/// Auto Preset used to know mice, keyboards and gamepads, so a steering wheel got a gamepad
 	/// guess: pedals on the right stick, nothing on the triggers. The wheel branch is checked
-	/// against the Logitech preset that ships with the program, because that preset is what
-	/// wheel owners have been loading by hand.
+	/// against the G27's row of x360ce's controller database, because that is the mapping most
+	/// G27 owners chose.
 	/// </summary>
 	[TestClass]
 	public class AutoPresetWheelTest
@@ -64,11 +63,15 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("A wheel with separate pedals gets the shipped Logitech G27 preset's mapping")]
-		public void Separated_pedals_match_the_shipped_G27_preset()
+		[Description("A wheel with separate pedals is guessed as most G27 owners map it, by x360ce's controller database")]
+		public void Separated_pedals_match_the_databases_G27_row()
 		{
-			var ps = AutoMapHelper.GetAutoPreset(Wheel(SeparatedPedals()));
-			var preset = new Ini(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Presets", "x360ce.Logitech_G27_Racing_Wheel_USB.ini"));
+			// The guess itself: neither database is asked.
+			string note;
+			var none = SdlDatabase.Merge();
+			var ps = AutoMapHelper.GetAutoPreset(Wheel(SeparatedPedals()), out note, none, none);
+			var preset = X360ceDatabase.Current.Find(new SdlDevice { VendorId = 0x046D, ProductId = 0xC29B, ProductName = "Logitech G27 Racing Wheel USB" });
+			Assert.IsNotNull(preset, "x360ce's controller database has no row for the G27.");
 			var expected = new Dictionary<string, string>
 			{
 				{ "Left Analog X", ps.LeftThumbAxisX },
@@ -88,17 +91,17 @@ namespace x360ce.Tests
 				.Where(x => Shipped(preset, x.Key) != x.Value)
 				.Select(x => string.Format("{0}: preset '{1}', auto '{2}'", x.Key, Shipped(preset, x.Key), x.Value))
 				.ToList();
-			Assert.AreEqual(0, wrong.Count, "Auto Preset differs from the shipped preset:" + Environment.NewLine + string.Join(Environment.NewLine, wrong));
+			Assert.AreEqual(0, wrong.Count, "Auto Preset differs from the database's G27 row:" + Environment.NewLine + string.Join(Environment.NewLine, wrong));
 			Assert.IsTrue(string.IsNullOrEmpty(ps.RightThumbAxisX), "Nothing is guessed onto the right stick; a wheel has none.");
 		}
 
 		/// <summary>
-		/// A preset value in the setting's own notation. The old preset files write a plain axis
+		/// A row's value in the setting's own notation. Settings saved by x360ce 3 write a plain axis
 		/// and the POV as a bare number, which the reader has always taken as that axis or POV.
 		/// </summary>
-		static string Shipped(Ini preset, string key)
+		static string Shipped(SdlMapping preset, string key)
 		{
-			var value = preset.GetValue("PAD1", key);
+			var value = preset.Get(key) ?? "";
 			if (!value.All(char.IsDigit) || value.Length == 0)
 				return value;
 			if (key.Contains("Analog"))

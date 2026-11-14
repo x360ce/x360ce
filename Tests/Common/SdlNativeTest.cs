@@ -1,4 +1,4 @@
-// @under-test: Native/x360ce/Sdl.cpp, Native/x360ce/gamecontrollerdb.windows.txt, Engine/Common/Sdl/SdlConverter.cs
+// @under-test: Native/x360ce/Sdl.cpp, Native/x360ce/gamecontrollerdb.windows.txt, Engine/Common/Sdl/SdlConverter.cs, Engine/Resources/gamecontrollerdb_x360ce.windows.txt
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -15,11 +15,12 @@ namespace x360ce.Tests
 	/// <summary>
 	/// The xinput library of x360ce 3 maps a controller from SDL's database as x360ce 4 does: both converters pass the
 	/// cases in SdlConverterCases.txt, the library carries the Windows rows of the database the engine carries, and finds
-	/// a device's row by its vendor and product, a gamecontrollerdb.txt beside it first.
+	/// a device's row by its vendor and product, a gamecontrollerdb.txt beside it first. It carries x360ce's controller
+	/// database the engine carries too, and finds its rows the same way.
 	/// </summary>
 	/// <remarks>
 	/// The library is the one built for this process's bitness, loaded from a copy under a name of its own through its
-	/// test hooks SdlTranslate and SdlFind. Loaded, it reads no controller and starts nothing.
+	/// test hooks SdlTranslate, SdlFind, X360ceFind and IniMapping. Loaded, it reads no controller and starts nothing.
 	/// </remarks>
 	[TestClass]
 	public class SdlNativeTest
@@ -40,8 +41,9 @@ namespace x360ce.Tests
 		[UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		delegate uint SdlTranslateFunction(string row, uint axisMask, uint sliderMask, uint buttonCount, uint povCount, StringBuilder buffer, uint size);
 
-		[UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
-		delegate uint SdlFindFunction(uint vendorId, uint productId, string name, StringBuilder buffer, uint size);
+		/// <remarks>Names and rows are UTF-8, as the databases are written: x360ce's database holds names in many scripts.</remarks>
+		[UnmanagedFunctionPointer(CallingConvention.StdCall)]
+		delegate uint SdlFindFunction(uint vendorId, uint productId, byte[] name, [In, Out] byte[] buffer, uint size);
 
 		[UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		delegate uint IniMappingFunction(string iniPath, string section, StringBuilder buffer, uint size);
@@ -52,6 +54,7 @@ namespace x360ce.Tests
 			public string Folder;
 			public SdlTranslateFunction Translate;
 			public SdlFindFunction Find;
+			public SdlFindFunction X360ceFind;
 			public IniMappingFunction Ini;
 
 			/// <summary>The mapping a section of a file in the library's folder gives, as the library describes it.</summary>
@@ -71,9 +74,21 @@ namespace x360ce.Tests
 
 			public string Row(int vendorId, int productId, string name)
 			{
-				var buffer = new StringBuilder(8192);
-				Find((uint)vendorId, (uint)productId, name, buffer, (uint)buffer.Capacity);
-				return buffer.ToString();
+				return Found(Find, vendorId, productId, name);
+			}
+
+			/// <summary>The row of x360ce's controller database the library gives a device, empty for none.</summary>
+			public string X360ceRow(int vendorId, int productId, string name)
+			{
+				return Found(X360ceFind, vendorId, productId, name);
+			}
+
+			static string Found(SdlFindFunction find, int vendorId, int productId, string name)
+			{
+				var buffer = new byte[8192];
+				find((uint)vendorId, (uint)productId, Encoding.UTF8.GetBytes((name ?? "") + "\0"), buffer, (uint)buffer.Length);
+				var end = Array.IndexOf(buffer, (byte)0);
+				return Encoding.UTF8.GetString(buffer, 0, end < 0 ? buffer.Length : end);
 			}
 		}
 
@@ -109,6 +124,7 @@ namespace x360ce.Tests
 				Folder = folder,
 				Translate = Hook<SdlTranslateFunction>(module, "SdlTranslate"),
 				Find = Hook<SdlFindFunction>(module, "SdlFind"),
+				X360ceFind = Hook<SdlFindFunction>(module, "X360ceFind"),
 				Ini = Hook<IniMappingFunction>(module, "IniMapping"),
 			};
 		}
@@ -322,6 +338,25 @@ namespace x360ce.Tests
 			}
 			Assert.AreEqual(0, missed.Count, "Rows not found by their own device:" + Environment.NewLine + string.Join(Environment.NewLine, missed.Take(10)));
 			Assert.AreEqual("", library.Row(0xFFFF, 0xFFFE, "No such controller"), "A device SDL does not know was given a row.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("The xinput library carries x360ce's controller database the engine carries and finds every row by its device")]
+		public void Native_library_finds_every_row_of_x360ces_database()
+		{
+			var library = Load();
+			var rows = X360ceDatabase.ReadBuiltIn().Split('\n').Select(x => x.TrimEnd('\r')).Where(x => x.Length > 0 && x[0] != '#').ToArray();
+			Assert.IsTrue(rows.Length > 500, "The engine carries only " + rows.Length + " rows.");
+			var missed = rows.Where(x =>
+			{
+				SdlMapping row;
+				Assert.IsTrue(SdlMapping.TryParse(x, out row), "Not a row: " + x);
+				return library.X360ceRow(row.Guid.VendorId, row.Guid.ProductId, row.Name) != x;
+			}).ToArray();
+			Assert.AreEqual(0, missed.Length, "Rows not found by their own device, or the library was built with another copy; build it again:"
+				+ Environment.NewLine + string.Join(Environment.NewLine, missed.Take(10)));
+			StringAssert.Contains(library.X360ceRow(0x046D, 0xC29B, "Logitech G27 Racing Wheel USB"), ",Logitech G27 Racing Wheel USB,users:", "The G27 has no row.");
+			Assert.AreEqual("", library.X360ceRow(0xFFFF, 0xFFFE, "No such controller"), "A device x360ce's database does not know was given a row.");
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

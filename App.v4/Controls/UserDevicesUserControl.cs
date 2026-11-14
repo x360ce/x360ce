@@ -67,8 +67,9 @@ namespace x360ce.App.Controls
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
-			// A device is tested from the Devices page, not while one is chosen for a controller.
-			TestButton.Visible = !MapDeviceToControllerMode;
+			// The Test Device window waits for a later release: its button is kept off the tool bar, so neither a person
+			// nor the AI door reaches it. Its code and tests stay.
+			ControllersToolStrip.Items.Remove(TestButton);
 			RefreshList();
 		}
 

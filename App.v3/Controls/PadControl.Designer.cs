@@ -381,9 +381,9 @@
 			this.AutoMapCheckBox.AutoSize = true;
 			this.AutoMapCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.AutoMapCheckBox.Name = "AutoMapCheckBox";
-			this.AutoMapCheckBox.Size = new System.Drawing.Size(135, 17);
+			this.AutoMapCheckBox.Size = new System.Drawing.Size(167, 17);
 			this.AutoMapCheckBox.TabIndex = 6;
-			this.AutoMapCheckBox.Text = "Map from SDL database";
+			this.AutoMapCheckBox.Text = "Map from controller databases";
 			this.AutoMapCheckBox.UseVisualStyleBackColor = true;
 			this.AutoMapCheckBox.CheckedChanged += new System.EventHandler(this.AutoMapCheckBox_CheckedChanged);
 			// 

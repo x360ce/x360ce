@@ -1,10 +1,8 @@
-﻿using JocysCom.ClassLibrary.Web.Services;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
-using System.Linq;
 
 namespace x360ce.App.Controls
 {
@@ -24,6 +22,7 @@ namespace x360ce.App.Controls
 		{
 			SettingsManager.Presets.Items.ListChanged += Presets_ListChanged;
 			PresetsDataGridView.DataSource = SettingsManager.Presets.Items;
+			ShowPresets(null);
 			UpdateControlsFromPresets();
 		}
 
@@ -43,65 +42,48 @@ namespace x360ce.App.Controls
 			UpdateControlsFromPresets();
 		}
 
+		/// <summary>Fetches x360ce's controller database, the one file x360ce's server keeps, only when it changed (ETag), then lists it again; off the window's thread.</summary>
 		private void PresetRefreshButton_Click(object sender, EventArgs e)
 		{
-			RefreshPresetsGrid();
-		}
-
-		public void RefreshPresetsGrid()
-		{
-			_ParentForm.AddTask(TaskName.SearchPresets);
 			PresetRefreshButton.Enabled = false;
-			var sp = new List<SearchParameter>();
-			sp.Add(new SearchParameter());
-			var ws = new WebServiceClient();
-			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
-			ws.SearchSettingsCompleted += wsPresets_SearchSettingsCompleted;
-			// Make sure it starts completely on a separate thread.
-			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
+			_ParentForm.AddTask(TaskName.SearchPresets);
+			var version = typeof(PresetsGridUserControl).Assembly.GetName().Version;
+			X360ceUpdateClient.UpdateSettingsCopy("x360ce/" + version).ContinueWith(t =>
 			{
-				ws.SearchSettingsAsync(sp.ToArray());
-			});
+				_ParentForm.RemoveTask(TaskName.SearchPresets);
+				PresetRefreshButton.Enabled = true;
+				if (t.Result.Value == DatabaseUpdateOutcome.Failed)
+					_ParentForm.SetHeaderError("{0}", t.Result.Key);
+				else
+					ShowPresets(t.Result.Key);
+			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		void wsPresets_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
+		/// <summary>
+		/// Lists the setting most people use for each controller, from x360ce's controller database: the built-in copy, or
+		/// the one [Update x360ce Database] saved. Offline; read off the window's thread, as the first read takes a few
+		/// hundred milliseconds, and listed at once rather than row by row.
+		/// </summary>
+		/// <param name="note">What the header says when the list is shown; how many controllers it has when null.</param>
+		void ShowPresets(string note)
 		{
-			// Make sure method is executed on the same thread as this control.
-			if (InvokeRequired)
+			Task.Run(() => X360ceDatabase.Presets()).ContinueWith(t =>
 			{
-				var method = new EventHandler<SoapHttpClientEventArgs>(wsPresets_SearchSettingsCompleted);
-				BeginInvoke(method, new object[] { sender, e });
-				return;
-			}
-			// Detach event handler so resource could be released.
-			var ws = (WebServiceClient)sender;
-			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
-			if (e.Error != null)
-			{
-				var error = e.Error.Message;
-				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-				_ParentForm.SetHeaderError(error);
-			}
-			else if (e.Result == null)
-			{
-				_ParentForm.SetHeaderInfo("No default settings received.");
-			}
-			else
-			{
-				var result = (SearchResult)e.Result;
-				// Listed only with their settings, so every row can be loaded: the server lists some presets
-				// it has no settings for.
-				var sent = (result.PadSettings ?? new Engine.Data.PadSetting[0]).Select(x => x.PadSettingChecksum).ToList();
-				result.Presets = (result.Presets ?? new Preset[0]).Where(x => sent.Contains(x.PadSettingChecksum)).ToArray();
-				AppHelper.UpdateList(result.Presets, SettingsManager.Presets.Items);
-				SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-				SettingsManager.Current.CleanupPadSettings();
-				var presetsCount = result.Presets.Length;
-				var padSettingsCount = sent.Count;
-				_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
-			}
-			_ParentForm.RemoveTask(TaskName.SearchPresets);
-			PresetRefreshButton.Enabled = true;
+				if (IsDisposed || t.IsFaulted)
+					return;
+				var items = SettingsManager.Presets.Items;
+				items.RaiseListChangedEvents = false;
+				try
+				{
+					AppHelper.UpdateList(t.Result, items);
+				}
+				finally
+				{
+					items.RaiseListChangedEvents = true;
+				}
+				items.ResetBindings();
+				_ParentForm.SetHeaderInfo("{0}", note ?? string.Format("The setting most people use for each of {0} controllers, from x360ce's controller database.", t.Result.Length));
+			}, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void PresetsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

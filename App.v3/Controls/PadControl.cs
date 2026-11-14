@@ -667,9 +667,9 @@ namespace x360ce.App.Controls
 		public Joystick Device { get { return _device; } }
 
 		/// <summary>
-		/// With Map from SDL database ticked, the mapping boxes show the mapping SDL's controller database gives the device,
-		/// and cannot be changed: the library maps the controller from the database itself. Unticked, they can, and what
-		/// they show is saved as the controller's own mapping.
+		/// With Map from controller databases ticked, the mapping boxes show the mapping x360ce's and SDL's controller
+		/// databases give the device, and cannot be changed: the library maps the controller from them itself. Unticked, they
+		/// can, and what they show is saved as the controller's own mapping.
 		/// </summary>
 		/// <remarks>Shown again after the settings are read, which empty the boxes the file has no line for.</remarks>
 		void ShowSdlMapping()
@@ -679,7 +679,8 @@ namespace x360ce.App.Controls
 			var boxes = SettingsMap.Where(x => SettingName.IsMapping(x.Key.Substring(pad.Length))).ToArray();
 			if (auto)
 			{
-				var values = AppHelper.GetSdlMapping(_device);
+				var setting = AppHelper.GetAutoSetting(_device);
+				var values = setting == null ? null : PadSettingIni.MappingKeys(setting);
 				foreach (var box in boxes)
 				{
 					var key = box.Key.Substring(pad.Length);
@@ -1068,7 +1069,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				MainForm.Current.ClearPreset(ControllerIndex);
 			}
 		}
 
@@ -1094,13 +1095,17 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
-				// SDL's controller database first; the guess below for a device it does not know.
-				var sdl = AppHelper.GetSdlMapping(d);
-				if (sdl != null)
+				MainForm.Current.ClearPreset(ControllerIndex);
+				// x360ce's and SDL's controller databases first; the guess below for a device neither knows.
+				var setting = AppHelper.GetAutoSetting(d);
+				if (setting != null)
 				{
-					foreach (var value in sdl)
-						AutoPresetRead(value.Key, value.Value);
+					var pad = string.Format("PAD{0}\\", ControllerIndex + 1);
+					PadSettingIni.Write(setting, (key, value) =>
+					{
+						if (SettingsMap.ContainsKey(pad + key))
+							AutoPresetRead(key, value);
+					});
 					return;
 				}
 				var objects = AppHelper.GetDeviceObjects(d);

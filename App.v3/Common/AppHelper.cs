@@ -117,12 +117,18 @@ namespace x360ce.App
 			});
 		}
 
-		/// <summary>The mapping SDL's database gives a device, by x360ce.ini key; null when SDL does not know the device.</summary>
-		public static Dictionary<string, string> GetSdlMapping(Joystick device)
+		/// <summary>
+		/// The setting a device gets when nobody has set it: x360ce's controller database row for it, with SDL's mapping where
+		/// the row maps nothing, without formulas; null when neither database knows the device.
+		/// </summary>
+		public static Engine.Data.PadSetting GetAutoSetting(Joystick device)
 		{
 			var sdl = GetSdlDevice(device);
-			var row = sdl == null ? null : SdlDatabase.Current.Find(sdl);
-			return row == null ? null : SdlConverter.ToIniSettings(row, sdl);
+			if (sdl == null)
+				return null;
+			string note;
+			var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+			return X360ceDatabase.AutoSetting(sdl, forceFeedback, false, out note);
 		}
 
 		#endregion

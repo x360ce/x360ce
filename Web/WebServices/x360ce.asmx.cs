@@ -68,10 +68,12 @@ namespace x360ce.Web.WebServices
 			// If get "Default Settings for Most Popular Controllers" then...
 			if (!hasInstances && !hasProducts && hasArgs)
 			{
-				// Get presets.
-				var ds = EngineHelper.GetPresets(new SearchParameter[0]);
-				sr.Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray();
-				AddToList(ds.Tables[1], ref padSettings);
+				var popular = MostPopular.Get();
+				if (popular != null)
+				{
+					sr.Presets = popular.Presets;
+					padSettings = popular.PadSettings.ToList();
+				}
 			}
 			if (padSettings != null)
 				sr.PadSettings = padSettings.ToArray();
@@ -79,6 +81,20 @@ namespace x360ce.Web.WebServices
 			db = null;
 			return sr;
 		}
+
+		/// <summary>
+		/// "Default Settings for Most Popular Controllers", the same for everybody, so read from the database at most once a
+		/// day and served from memory (<see cref="DailyCache{T}"/>): reading it sums the users of every setting.
+		/// </summary>
+		static readonly DailyCache<SearchResult> MostPopular = new DailyCache<SearchResult>(served =>
+		{
+			var ds = EngineHelper.GetPresets(new SearchParameter[0], commandTimeout: 120);
+			return new SearchResult
+			{
+				Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray(),
+				PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray(),
+			};
+		});
 
 		void AddToList(DataTable source, ref List<PadSetting> dest)
 		{

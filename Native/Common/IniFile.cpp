@@ -144,6 +144,10 @@ bool IniFile::Section::Delete(const std::string& keyName)
 
 void IniFile::Section::Populate(const std::string& filename)
 {
+	// An IniFile never loaded from a file is filled with Set alone, as a database row is read.
+	if (filename.empty())
+		return;
+
 	std::unique_ptr<char[]> data(new char[32767]);
 
 	// read all section data to buffer using WinAPI

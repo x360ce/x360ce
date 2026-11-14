@@ -78,12 +78,16 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="ControllerDatabase.ashx" />
     <Content Include="Statistics.ashx" />
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Engine\JocysCom\Diagnostics\RawDataLogHttpModule.cs">
       <Link>JocysCom\Diagnostics\RawDataLogHttpModule.cs</Link>
+    </Compile>
+    <Compile Include="ControllerDatabase.ashx.cs">
+      <DependentUpon>ControllerDatabase.ashx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

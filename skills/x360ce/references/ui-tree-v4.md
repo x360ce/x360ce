@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.30.60.0, built 2026-11-13.
+Version 4.30.61.0, built 2026-11-14.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -306,7 +306,7 @@ not shown in this state of the program.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
 [Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
-[Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.
+[Button]    │   │   ├── Auto Preset                                                     # Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
 [Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
@@ -416,7 +416,8 @@ not shown in this state of the program.
 [List]      │           │           │       │   ├── Web service address                 # Internet settings database URL.
 [Button]    │           │           │       │   ├── Test                                # Asks the web service at that address who it is and says whether it answers.
 [List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
-[Button]    │           │           │       │   └── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
+[Button]    │           │           │       │   ├── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
+[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went.
 [Section]   │           │           │       ├── Online account                          # Identifies this computer to the online database.
 [Text]      │           │           │       │   ├── Computer disk                       # Disk the computer identifier is taken from.
 [Text]      │           │           │       │   ├── Computer identifier                 # Anonymous identifier for this computer.

@@ -11,22 +11,41 @@ Run this program from the game executable directory.
 
 Copy `xinput1_3.dll` alone into the game executable directory, with no `x360ce.ini` there or in
 `C:\ProgramData\x360ce`, and most controllers work at once. An Xbox controller keeps its own place;
-every other controller SDL's controller database knows takes the next free place, in the order
-Windows lists them, mapped as SDL maps it. A controller the database does not know is left out.
-A controller plugged in while the game runs is found within two seconds.
+every other controller x360ce's or SDL's controller database knows takes the next free place, in the
+order Windows lists them. A controller neither database knows is left out. A controller plugged in
+while the game runs is found within two seconds.
+
+The library carries two databases:
+
+- **x360ce's controller database**, `gamecontrollerdb_x360ce.windows.txt`: for each controller, the
+  complete setting most x360ce users chose for it, mapping, force feedback and dead zones. It is
+  read first.
+- **SDL's controller database**: mapping only. It fills the parts x360ce's row leaves empty, and maps
+  a controller x360ce's database does not know.
+
+When neither turns force feedback on, a controller with motors gets it at the defaults. A
+`UseForceFeedback` line in the controller's section, `UseForceFeedback=0` included, is kept.
 
 With an `x360ce.ini`:
 
-- This program sets up a controller the database knows without asking, and ticks `[Advanced]` tab →
-  `[Map from SDL database]`. While it is ticked the mapping comes from the database; untick it to
-  change the mapping yourself, starting from the database's.
-- In a controller's section, `AutoMap=1` maps it from the database; a mapping line in the section
-  wins over the database for that part. A section with `ProductGUID` and `InstanceGUID` and no
-  mapping lines is mapped from the database too.
+- This program sets up a controller either database knows without asking: it saves the database's
+  force feedback and dead zones in the controller's section, and ticks `[Advanced]` tab →
+  `[Map from controller databases]`. While it is ticked the mapping comes from the databases; untick
+  it to change the mapping yourself, starting from theirs. A controller x360ce.ini already has a
+  section for keeps its settings: the databases never overwrite them. A controller neither database
+  knows is searched for on the internet.
+- In a controller's section, `AutoMap=1` maps it from the databases; a line in the section wins
+  over the databases for that setting. A section with `ProductGUID` and `InstanceGUID` and no
+  mapping lines is mapped from the databases too.
 - `AutoMap=1` in `[Options]` also maps the controllers no section lists, into the free places.
 
-A `gamecontrollerdb.txt` found where `x360ce.ini` is looked for wins over the built-in rows for
-the controllers it has a row for.
+A `gamecontrollerdb_x360ce.windows.txt` or `gamecontrollerdb.txt` found where `x360ce.ini` is looked
+for wins over the built-in rows for the controllers it has a row for.
+
+This program's `[Controller Settings]` tab → `[Default Settings for Most Popular Controllers]` lists
+x360ce's controller database, at once and offline. `[Options]` tab → `[Update Controller Database]`
+fetches the newest copy from x360ce's server into the settings folder, and this program uses that
+copy from then on.
 
 ## Uninstallation
 

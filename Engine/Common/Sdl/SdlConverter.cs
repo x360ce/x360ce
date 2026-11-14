@@ -473,21 +473,6 @@ namespace x360ce.Engine
 			return t;
 		}
 
-		/// <summary>The mapping a row gives a device as x360ce 3 keeps it: by x360ce.ini key, an empty value for a box the row leaves empty.</summary>
-		/// <remarks>Without formulas, as x360ce 3's library reads them (<see cref="ToPadSetting"/>); <see cref="SettingName.IsMapping"/> keys only.</remarks>
-		public static Dictionary<string, string> ToIniSettings(SdlMapping mapping, SdlDevice device)
-		{
-			var setting = ToPadSetting(mapping, device, false).Setting;
-			var values = new Dictionary<string, string>();
-			foreach (var code in Boxes)
-			{
-				var key = typeof(SettingName).GetProperty(code.ToString());
-				if (key != null)
-					values[(string)key.GetValue(null, null)] = GetValue(setting, code);
-			}
-			return values;
-		}
-
 		/// <summary>Fills a box, or names the binding as left out when the box cannot take it or another binding filled it.</summary>
 		static void Set(SdlTranslation t, MapCode code, string value, params Binding[] from)
 		{

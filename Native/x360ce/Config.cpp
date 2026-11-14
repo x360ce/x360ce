@@ -262,11 +262,8 @@ void Config::ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controller
 
 		// Read in configuration
 		Controller* pController = controller.get();
-		if (pController)
-		{
-			if (ReadPadConfig(pController, section, &ini))
-				ReadPadMapping(pController, section, &ini);
-		}
+		if (pController && ReadPad(pController, section, &ini) && pController->m_autoMap)
+			ReadDatabaseRow(pController, section, &ini);
 
 		// If this is a combined device we need to add the combiner instead
 		if (combined)
@@ -350,8 +347,11 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 		return false;
 	}
 
-	// Mapping from SDL's database; the section's own mapping keys win over it.
-	pIniFile->Get(section, "AutoMap", &pController->m_autoMap);
+	// Mapping from the controller databases; the section's own keys win over them.
+	bool autoMap = false;
+	pIniFile->Get(section, "AutoMap", &autoMap);
+	if (autoMap)
+		pController->m_autoMap = true;
 
 	// Forces-only pass through
 	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
@@ -381,9 +381,8 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 	// Device type
 	pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
 
-	// FFB options
-	pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
-	if (pController->m_useforce)
+	// FFB options, read whole so a controller given force feedback later has the defaults.
+	pController->m_forceKey = pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
 	{
 		pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback->m_SwapMotors);
 		pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback->m_Type);
@@ -431,7 +430,7 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 			if (!button.empty())
 				pMapping->iniKeys |= 1u << (KEY_BUTTON + i);
 		}
-		else
+		else if (!pController->m_autoMap)
 		{
 			std::string message = StringFormat("Mapping could not be determined for %s button %s", section.c_str(), buttonNames[i]);
 			PrintLog(message.c_str());
@@ -476,7 +475,7 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 			if (!axis.empty())
 				pMapping->iniKeys |= 1u << (KEY_AXIS + i);
 		}
-		else
+		else if (!pController->m_autoMap)
 		{
 			std::string message = StringFormat("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
 			PrintLog(message.c_str());
@@ -530,6 +529,44 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 	// A section that names its controller and maps none of its controls is mapped from SDL's database.
 	if (!pMapping->iniKeys)
 		pController->m_autoMap = true;
+}
+
+bool Config::ReadPad(Controller* pController, const std::string& section, IniFile* pIniFile)
+{
+	if (!ReadPadConfig(pController, section, pIniFile))
+		return false;
+	ReadPadMapping(pController, section, pIniFile);
+	return true;
+}
+
+void Config::ReadDatabaseRow(Controller* pController, const std::string& section, IniFile* pIniFile)
+{
+	// The section names its controller's vendor and product in its ProductGUID: theirs, then "PIDVID".
+	Sdl::Device device;
+	device.vendorId = LOWORD(pController->m_productid.Data1);
+	device.productId = HIWORD(pController->m_productid.Data1);
+	pIniFile->Get(section, "ProductName", &device.name);
+	if (memcmp(pController->m_productid.Data4 + 2, "PIDVID", 6) != 0)
+		return;
+	std::string row = Sdl::FindX360ceRow(device);
+	if (row.empty())
+		return;
+	// The row's keys, then the section's own over them: read as one section.
+	IniFile merged;
+	const std::string pad("pad");
+	Sdl::ReadRowKeys(row, &merged, pad);
+	std::vector<std::string> keys;
+	pIniFile->GetKeys(section, &keys);
+	for (const auto& key : keys)
+	{
+		std::string value;
+		if (pIniFile->Get(section, key, &value) && !value.empty())
+			merged.Set(pad, key, value);
+	}
+	pController->m_mapping = Mapping();
+	ReadPad(pController, pad, &merged);
+	pController->m_rowFound = true;
+	PrintLog("[PAD%u] x360ce database row: %s", pController->m_user + 1, row.c_str());
 }
 
 void Config::MergeSdl(Mapping* mapping, const Mapping& sdl)
