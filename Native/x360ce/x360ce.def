@@ -25,3 +25,8 @@ EXPORTS
 
         ; reset helper
 		Reset @256
+
+        ; test hooks of the mapping (Sdl.cpp, Config.cpp)
+		SdlFind @257
+		SdlTranslate @258
+		IniMapping @259

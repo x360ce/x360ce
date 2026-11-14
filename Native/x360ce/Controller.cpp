@@ -10,6 +10,7 @@
 #include "ForceFeedback.h"
 #include "ControllerBase.h"
 #include "Controller.h"
+#include "Sdl.h"
 
 #include "XInputModuleManager.h"
 
@@ -21,6 +22,10 @@ m_ForceFeedbackInst(this)
 	m_pDevice.reset();
 	m_productid = GUID_NULL;
 	m_instanceid = GUID_NULL;
+	m_autoMap = false;
+	m_sdlKnown = false;
+	m_stateChanged = false;
+	m_emptyStateIsSet = false;
 }
 
 Controller::~Controller()
@@ -537,6 +542,16 @@ DWORD Controller::GetState(XINPUT_STATE* pState)
 
 			Config::MappingType posType = m_mapping.Axis[i].positiveType;
 			Config::MappingType negType = m_mapping.Axis[i].negativeType;
+			// A stick with no whole axis whose directions read half axes, as an SDL row splitting a stick over two
+			// axes does: its value is the positive direction's reading less the negative direction's.
+			bool isHalf = posType == Config::HAXIS || posType == Config::HSLIDER || negType == Config::HAXIS || negType == Config::HSLIDER;
+			if (m_mapping.Axis[i].analogType == Config::NONE && isHalf)
+			{
+				s32 value = HalfReading(posType, m_mapping.Axis[i].positiveButtonID, axis, slider, dPadButtons)
+					- HalfReading(negType, m_mapping.Axis[i].negativeButtonID, axis, slider, dPadButtons);
+				*(targetAxis[i]) = (s16)clamp(value, -32768, 32767);
+				continue;
+			}
 			s8 posMapId = m_mapping.Axis[i].positiveButtonID - 1;
 			s8 negMapId = m_mapping.Axis[i].negativeButtonID - 1;
 			// Map button to positive axis direction.
@@ -652,6 +667,8 @@ DWORD Controller::CreateDevice()
 	else
 		PrintLog("[PAD%d] Detected axis count: %d", m_user + 1, m_axiscount);
 
+	if (m_autoMap) ApplySdlMapping();
+
 	if (m_useforce) m_useforce = m_ForceFeedback->IsSupported();
 
 	hr = m_pDevice->Acquire();
@@ -668,4 +685,44 @@ DWORD Controller::CreateDevice()
 bool Controller::ButtonPressed(u32 buttonidx)
 {
 	return (buttonidx != Config::INVALIDBUTTONINDEX) ? (m_state.rgbButtons[buttonidx] & 0x80) != 0 : 0;
+}
+
+/// <summary>Fills the controls the section does not map from SDL's row for the device.</summary>
+void Controller::ApplySdlMapping()
+{
+	Sdl::Device device;
+	Sdl::ReadDevice(m_pDevice.get(), &device);
+	std::string row = Sdl::FindRow(device);
+	Config::Mapping sdl;
+	m_sdlKnown = !row.empty() && Sdl::Convert(row, device, &sdl) > 0;
+	if (!m_sdlKnown)
+	{
+		PrintLog("[PAD%d] SDL does not know \"%s\" (%04X:%04X)", m_user + 1, device.name.c_str(), device.vendorId, device.productId);
+		return;
+	}
+	Config::MergeSdl(&m_mapping, sdl);
+	PrintLog("[PAD%d] SDL row for \"%s\" (%04X:%04X): %s", m_user + 1, device.name.c_str(), device.vendorId, device.productId, row.c_str());
+	PrintLog("[PAD%d] SDL mapping: %s", m_user + 1, Sdl::Describe(m_mapping).c_str());
+}
+
+/// <summary>How far a stick direction is pushed, 0 to 32767: a button or D-Pad direction all the way, a half axis as far as it is turned.</summary>
+/// <param name="id">The button or D-Pad direction from 1, or the axis or slider from 1, negative for its lower half.</param>
+s32 Controller::HalfReading(Config::MappingType type, s8 id, const s32* axis, const s32* slider, const bool* dPadButtons)
+{
+	if (id == 0)
+		return 0;
+	if (type == Config::DIGITAL)
+		return id > 0 && ButtonPressed(id - 1) ? 32767 : 0;
+	if (type == Config::DPADBUTTON)
+		return id > 0 && id <= 16 && dPadButtons[id - 1] ? 32767 : 0;
+	u32 index = std::abs(id) - 1;
+	s32 v;
+	if (type == Config::HAXIS && index < 6)
+		v = axis[index];
+	else if (type == Config::HSLIDER && index < 2)
+		v = slider[index];
+	else
+		return 0;
+	// [0;32767] for the upper half, [-32768;-1] turned to [32767;0] for the lower.
+	return id > 0 ? (std::max)(v, 0) : (std::max)(-1 - v, 0);
 }

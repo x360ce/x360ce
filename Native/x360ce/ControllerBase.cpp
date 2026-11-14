@@ -18,6 +18,9 @@ ControllerBase::ControllerBase(u32 user)
 	m_failcount = 0;
 	m_gamepadtype = 1;
 	m_passthrough = false;
+	m_passthroughindex = 0;
+	m_forcespassthrough = false;
+	m_useforce = false;
 	m_user = user;
 }
 

@@ -656,9 +656,6 @@
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
-    <!-- SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is (SdlDatabase), and its zlib licence. -->
-    <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
-    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
     <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>

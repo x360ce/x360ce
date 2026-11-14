@@ -566,6 +566,13 @@
     <EmbeddedResource Include="Data\x360ceModel.msl">
       <LogicalName>Data.x360ceModel.msl</LogicalName>
     </EmbeddedResource>
+    <!--
+      SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is
+      (SdlDatabase), and its zlib licence. Both programs carry it in the engine; the xinput library carries its Windows
+      rows as Native\x360ce\gamecontrollerdb.windows.txt, which SdlNativeTest keeps the same.
+    -->
+    <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
+    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

@@ -4,6 +4,10 @@ Google Code Project page: http://code.google.com/p/x360ce
 
 History:
 
+13/11/2026 - version 3.4.2
+Maps controllers from SDL's controller database: every one without x360ce.ini, and a section with AutoMap=1.
+GuideButton counts from 1, as x360ce 3 writes it; 0 is no guide button.
+
 01/11/2014 - version 3.4.0.956
 New implementation of DeadZone, Anti-DeadZone and Sensitivity feature.
 

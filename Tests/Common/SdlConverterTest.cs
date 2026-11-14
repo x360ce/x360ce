@@ -203,6 +203,11 @@ namespace x360ce.Tests
 			Assert.AreEqual(short.MaxValue, read(-1f, 0f), "Ry pushed to its low end does not put the stick up.");
 			Assert.AreEqual(short.MinValue, read(0f, 1f), "Rz pushed to its high end does not put the stick down.");
 			Assert.AreEqual(0, read(0f, 0f), "At rest the stick is not centred.");
+			// x360ce 3 has no formulas: each half goes to the stick's direction box, read as a half axis.
+			var v3 = SdlConverter.ToPadSetting(Row("03000000491900000304000000000000,Ipega PG9087,+righty:+a5,-righty:-a4,a:b0,platform:Windows,"), Pad(0x3F), false);
+			Assert.AreEqual("", Box(v3, MapCode.RightThumbAxisY));
+			Assert.AreEqual("x-5", Box(v3, MapCode.RightThumbUp), "Ry's lower half does not push the stick up.");
+			Assert.AreEqual("x6", Box(v3, MapCode.RightThumbDown), "Rz's upper half does not push the stick down.");
 			// One axis in two halves is the axis, read the right way round.
 			var halves = SdlConverter.ToPadSetting(Row("03000000300f00000a01000000000000,Pad,-lefty:-a1,+lefty:+a1,-leftx:+a0,+leftx:-a0,platform:Windows,"), Pad(0x3));
 			Assert.AreEqual("a-2", Box(halves, MapCode.LeftThumbAxisY), "-lefty:-a1,+lefty:+a1 is lefty:a1.");
@@ -220,6 +225,26 @@ namespace x360ce.Tests
 			Assert.AreEqual("d2", Box(hat, MapCode.LeftThumbRight));
 			Assert.AreEqual("d3", Box(hat, MapCode.LeftThumbDown));
 			Assert.AreEqual("d4", Box(hat, MapCode.LeftThumbLeft));
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("x360ce 3 is given SDL's mapping by its own x360ce.ini keys, each one its library takes from SDL, a split stick in its direction keys")]
+		public void Version_3_gets_the_mapping_by_its_ini_keys()
+		{
+			var keys = SdlConverter.ToIniSettings(Row(Xbox360Row), Pad(0x1F));
+			Assert.AreEqual(SdlConverter.MappingBoxes.Length, keys.Count, "A box has no x360ce.ini key.");
+			var other = keys.Keys.Where(x => !SettingName.IsMapping(x)).ToArray();
+			Assert.AreEqual(0, other.Length, "Keys x360ce 3 would save over the database: " + string.Join(", ", other));
+			Assert.AreEqual("1", keys[SettingName.ButtonA]);
+			Assert.AreEqual("a-2", keys[SettingName.LeftThumbAxisY]);
+			Assert.AreEqual("x3", keys[SettingName.LeftTrigger]);
+			Assert.AreEqual("p1", keys[SettingName.DPad]);
+			Assert.AreEqual("", keys[SettingName.DPadUp], "A box the row leaves empty is not empty.");
+			// x360ce 3's library reads "Right Analog Y+ Button=x-5" as Ry's lower half pushing the stick up.
+			var split = SdlConverter.ToIniSettings(Row("03000000491900000304000000000000,Ipega PG9087,+righty:+a5,-righty:-a4,a:b0,platform:Windows,"), Pad(0x3F));
+			Assert.AreEqual("", split[SettingName.RightThumbAxisY]);
+			Assert.AreEqual("x-5", split[SettingName.RightThumbUp]);
+			Assert.AreEqual("x6", split[SettingName.RightThumbDown]);
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

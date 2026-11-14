@@ -94,6 +94,37 @@ namespace x360ce.App
 			return items.ToArray();
 		}
 
+		/// <summary>What SDL's controller database needs to know of a device, read as x360ce 4 reads it; null for none.</summary>
+		/// <remarks>The vendor and product come from DirectInput's product GUID, which for a HID device carries them.</remarks>
+		public static SdlDevice GetSdlDevice(Joystick device)
+		{
+			if (device == null)
+				return null;
+			var objects = GetDeviceObjects(device);
+			int axisMask, actuatorMask, actuatorCount, relativeMask, relativeSliderMask;
+			SourceState.GetJoystickAxisMask(objects, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
+			var sliderMask = SourceState.GetJoystickSlidersMask(objects, device, out relativeSliderMask);
+			var info = device.Information;
+			var caps = device.Capabilities;
+			return SdlDevice.From(new Engine.Data.UserDevice
+			{
+				ProductGuid = info.ProductGuid,
+				ProductName = info.ProductName,
+				DiAxeMask = axisMask,
+				DiSliderMask = sliderMask,
+				CapButtonCount = caps.ButtonCount,
+				CapPovCount = caps.PovCount,
+			});
+		}
+
+		/// <summary>The mapping SDL's database gives a device, by x360ce.ini key; null when SDL does not know the device.</summary>
+		public static Dictionary<string, string> GetSdlMapping(Joystick device)
+		{
+			var sdl = GetSdlDevice(device);
+			var row = sdl == null ? null : SdlDatabase.Current.Find(sdl);
+			return row == null ? null : SdlConverter.ToIniSettings(row, sdl);
+		}
+
 		#endregion
 
 		// Use cache so same image won't processed multiple times.

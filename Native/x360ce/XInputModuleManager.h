@@ -35,10 +35,38 @@ public:
 	DWORD(WINAPI* XInputGetBaseBusInformation)(DWORD dwUserIndex, struct XINPUT_BUSINFO* pBusinfo); // 104
 	DWORD(WINAPI* XInputGetCapabilitiesEx)(DWORD unk1, DWORD dwUserIndex, DWORD dwFlags, struct XINPUT_CAPABILITIESEX* pCapabilitiesEx); // 108
 
-	XInputModuleManager()
+	/// <summary>
+	/// The system's XInput library calls pass through to: the one of this library's own name, else XInput 1.4, which
+	/// Windows carries from version 8; empty when neither is there. XInput 1.3 is there only with the DirectX runtime.
+	/// </summary>
+	static std::string SystemLibrary()
 	{
 		std::string current_module;
 		ModuleFileName(&current_module, CurrentModule());
+		const std::string names[] = { current_module, "xinput1_4.dll" };
+		char system_directory[MAX_PATH];
+		GetSystemDirectoryA(system_directory, MAX_PATH);
+		for (const auto& name : names)
+		{
+			std::string path(system_directory);
+			StringPathAppend(&path, name);
+			if (FileExist(path))
+				return name;
+		}
+		return std::string();
+	}
+
+	/// <summary>Whether a system XInput library is there to pass calls through to, so that Get() cannot end the process.</summary>
+	static bool Available()
+	{
+		return !SystemLibrary().empty();
+	}
+
+	XInputModuleManager()
+	{
+		std::string current_module = SystemLibrary();
+		if (current_module.empty())
+			ModuleFileName(&current_module, CurrentModule());
 
 		bool bHookLL = false;
 

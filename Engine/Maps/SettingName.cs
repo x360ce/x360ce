@@ -145,6 +145,9 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.")]
 		static public string PassThrough { get { return "PassThrough"; } }
 
+		[DefaultValue("0"), Description("Map this controller from SDL's controller database. A mapping saved for one of its parts wins over the database's. 0 = OFF, 1 = ON.")]
+		static public string AutoMap { get { return "AutoMap"; } }
+
 		[DefaultValue("0"), Description("Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.")]
 		static public string ForcesPassThrough { get { return "ForcesPassThrough"; } }
 
@@ -560,6 +563,19 @@ namespace x360ce.Engine
 				|| name == LeftThumbAxisY
 				|| name == RightThumbAxisX
 				|| name == RightThumbAxisY;
+		}
+
+		/// <summary>
+		/// The keys of a controller section that map a part of the Xbox controller: in a section with <see cref="AutoMap"/>,
+		/// the library takes each one it does not hold from SDL's controller database.
+		/// </summary>
+		public static bool IsMapping(string name)
+		{
+			return IsButton(name) || IsDPad(name) || IsThumbAxis(name)
+				|| name == ButtonA || name == ButtonB || name == ButtonX || name == ButtonY
+				|| name == ButtonBack || name == ButtonStart || name == ButtonGuide
+				|| name == LeftShoulder || name == RightShoulder
+				|| name == LeftTrigger || name == RightTrigger;
 		}
 
 	}

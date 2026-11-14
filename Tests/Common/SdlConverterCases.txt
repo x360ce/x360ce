@@ -1,0 +1,99 @@
+# The SDL rows both converters read alike: x360ce 4's (Engine\Common\Sdl\SdlConverter.cs) and the xinput library's
+# (Native\x360ce\Sdl.cpp). SdlNativeTest runs every case through both.
+#
+# device: the device's axes X to Rz as bits 0 to 5, its sliders as bits 0 and 1, and how many buttons and hats it has;
+#         nought buttons or hats lets any through.
+# row:    the SDL row.
+# expect: every box the row fills, as x360ce 4 writes it, in any order; nothing after "expect:" means no box.
+# A case ends at its expect line. A comment line before a case says what it shows.
+
+# The Xbox 360 controller: its triggers share Z, so they are its two halves; Y is read upward; the hat is the D-Pad.
+device: axes=0x1F sliders=0x0 buttons=12 povs=1
+row: 030000005e0400008e02000000000000,Xbox 360 Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b8,lefttrigger:+a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b9,righttrigger:-a2,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Windows,
+expect: ButtonA=1 ButtonB=2 ButtonBack=7 ButtonStart=8 ButtonX=3 ButtonY=4 DPad=p1 LeftShoulder=5 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 LeftThumbButton=9 LeftTrigger=x3 RightShoulder=6 RightThumbAxisX=a4 RightThumbAxisY=a-5 RightThumbButton=10 RightTrigger=x-3
+
+# An inverted axis: SDL's Y read the other way round is the Xbox controller's way up; a trigger on it is read inverted.
+device: axes=0x3F sliders=0x0 buttons=12 povs=1
+row: 030000005e0400008e02000000000000,Pad,lefty:a1~,lefttrigger:a2~,righttrigger:a5,platform:Windows,
+expect: LeftThumbAxisY=a2 LeftTrigger=a-3 RightTrigger=a6
+
+# SDL counts only the axes a device has: with X, Y and Rz, a2 is Rz and a3 is none.
+device: axes=0x23 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,a:b0,leftx:a0,lefty:a1,lefttrigger:a2,righttrigger:a3,platform:Windows,
+expect: ButtonA=1 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 LeftTrigger=a6
+
+# The sliders come after the axes: with X, Y and one slider, a2 is the slider.
+device: axes=0x3 sliders=0x1 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,a:b0,leftx:a0,lefty:a1,lefttrigger:a2,righttrigger:a3,platform:Windows,
+expect: ButtonA=1 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 LeftTrigger=s1
+
+# A button or hat the device does not have is left out; so is a half axis read inverted; the first binding of a box wins.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,a:b0,a:b5,b:b20,x:h1.1,y:+a0~,platform:Windows,
+expect: ButtonA=1
+
+# Microsoft SideWinder Plug and Play: its D-Pad is X and Y, whose halves press the D-Pad buttons.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 030000005e0400002700000000000000,Microsoft SideWinder Plug and Play,a:b0,b:b1,dpdown:+a1,dpleft:-a0,dpright:+a0,dpup:-a1,lefttrigger:b4,righttrigger:b5,x:b2,y:b3,platform:Windows,
+expect: ButtonA=1 ButtonB=2 ButtonX=3 ButtonY=4 DPadDown=x2 DPadLeft=x-1 DPadRight=x1 DPadUp=x-2 LeftTrigger=5 RightTrigger=6
+
+# 4Play Adapter: its D-Pad is four buttons, which stay buttons; a device that does not say how many hats it has.
+device: axes=0x1F sliders=0x0 buttons=16 povs=0
+row: 03000000d0160000040d000000000000,4Play Adapter,a:b1,b:b3,back:b4,dpdown:b11,dpleft:b12,dpright:b13,dpup:b10,leftshoulder:b6,leftstick:b14,lefttrigger:b8,leftx:a0,lefty:a1,rightshoulder:b7,rightstick:b15,righttrigger:b9,rightx:a3,righty:a4,start:b5,x:b0,y:b2,platform:Windows,
+expect: ButtonA=2 ButtonB=4 ButtonBack=5 ButtonStart=6 ButtonX=1 ButtonY=3 DPadDown=12 DPadLeft=13 DPadRight=14 DPadUp=11 LeftShoulder=7 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 LeftThumbButton=15 LeftTrigger=9 RightShoulder=8 RightThumbAxisX=a4 RightThumbAxisY=a-5 RightThumbButton=16 RightTrigger=10
+
+# A hat direction presses a face button, and a hat turned a quarter is not the D-Pad: its directions stay single.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,x:h0.1,dpup:h0.2,dpright:h0.4,dpdown:h0.8,dpleft:h0.1,platform:Windows,
+expect: ButtonX=d1 DPadDown=d4 DPadLeft=d1 DPadRight=d3 DPadUp=d2
+
+# The second hat as the D-Pad.
+device: axes=0x3 sliders=0x0 buttons=12 povs=2
+row: 03000000300f00000a01000000000000,Pad,a:b0,dpup:h1.1,dpright:h1.2,dpdown:h1.4,dpleft:h1.8,platform:Windows,
+expect: ButtonA=1 DPad=p2
+
+# Ipega PG9087: the right stick's up half on Ry, its down half on Rz; x360ce 4 writes the stick as a formula.
+device: axes=0x3F sliders=0x0 buttons=12 povs=1
+row: 03000000491900000304000000000000,Ipega PG9087,+righty:+a5,-righty:-a4,a:b0,leftx:a0,lefty:a1,rightx:a3,platform:Windows,
+expect: ButtonA=1 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 RightThumbAxisX=a4 RightThumbAxisY==max(-a5,0)-x6
+
+# One axis in two halves is that axis, read the right way round.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,-lefty:-a1,+lefty:+a1,-leftx:+a0,+leftx:-a0,platform:Windows,
+expect: LeftThumbAxisX=a-1 LeftThumbAxisY=a-2
+
+# 8BitDo N64: the right stick is four buttons, its direction boxes; SDL's +righty is down.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000c82d00000290000000000000,8BitDo N64,+rightx:b9,+righty:b3,-rightx:b4,-righty:b8,a:b0,b:b1,platform:Windows,
+expect: ButtonA=1 ButtonB=2 RightThumbDown=4 RightThumbLeft=5 RightThumbRight=10 RightThumbUp=9
+
+# Gravis Destroyer Tilt: the left stick is the hat.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 030000007d0400000840000000000000,Gravis Destroyer Tilt,+leftx:h0.2,+lefty:h0.4,-leftx:h0.8,-lefty:h0.1,a:b1,platform:Windows,
+expect: ButtonA=2 LeftThumbDown=d3 LeftThumbLeft=d4 LeftThumbRight=d2 LeftThumbUp=d1
+
+# Parts of a pad x360ce has no box for, and the row's own notes, fill nothing.
+device: axes=0x3 sliders=0x0 buttons=16 povs=1
+row: 03000000300f00000a01000000000000,Pad,a:b0,misc1:b12,paddle1:b13,touchpad:b14,face:sony,crc:1234,hint:!SDL_X:=1,platform:Windows,
+expect: ButtonA=1
+
+# The guide button; a whole axis with buttons beside it that push the stick to its ends.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,guide:b10,leftx:a0,-leftx:b1,+leftx:b2,lefty:a1,platform:Windows,
+expect: ButtonGuide=11 LeftThumbAxisX=a1 LeftThumbAxisY=a-2 LeftThumbLeft=2 LeftThumbRight=3
+
+# Sliders: a stick axis, triggers on its halves, a stick split over a slider half and a button, and a trigger half
+# written on the field, which only a trigger's upper half may be.
+device: axes=0x3 sliders=0x3 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,rightx:a2,+righttrigger:+a3,-lefttrigger:b7,lefttrigger:-a3,+righty:b4,-righty:-a2,platform:Windows,
+expect: LeftTrigger=h-2 RightThumbAxisX=s1 RightThumbAxisY==max(1-2*s1,0)-b5 RightTrigger=h2
+
+# A stick with only one half on an axis; a half axis beside a whole axis is not a button and is left out.
+device: axes=0x3F sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,-leftx:-a2,rightx:a3,+rightx:+a4,platform:Windows,
+expect: LeftThumbAxisX==-max(-a3,0) RightThumbAxisX=a4
+
+# A binding that is not one: the row reads, the field does not.
+device: axes=0x3 sliders=0x0 buttons=12 povs=1
+row: 03000000300f00000a01000000000000,Pad,a:b0,b:c1,x:h0,y:a,leftx:a0~~,platform:Windows,
+expect: ButtonA=1

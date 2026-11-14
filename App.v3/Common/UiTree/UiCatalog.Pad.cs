@@ -54,7 +54,7 @@ namespace x360ce.App.UiTree
 
 			// The buttons along the bottom.
 			d[nameof(PadControl) + "." + nameof(PadControl.AutoPresetButton)] = new Text("Auto",
-				"Fills every mapping of this controller from what the device offers, after asking.");
+				"Fills every mapping of this controller from SDL's controller database when it knows the device, otherwise from what the device offers, after asking.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ClearPresetButton)] = new Text("Clear",
 				"Empties every mapping of this controller, after asking.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ResetPresetButton)] = new Text("Reset",

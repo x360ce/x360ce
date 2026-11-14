@@ -410,7 +410,11 @@ namespace x360ce.Engine
 		#region SDL to x360ce
 
 		/// <summary>The mapping a row gives a device: the boxes it fills, where each came from, and what was left out.</summary>
-		public static SdlTranslation ToPadSetting(SdlMapping mapping, SdlDevice device)
+		/// <param name="formulas">
+		/// False for x360ce 3, which has no formulas: a stick split over two axes fills its two direction boxes with half
+		/// axes instead, and its library reads the stick as the one less the other, as the formula does.
+		/// </param>
+		public static SdlTranslation ToPadSetting(SdlMapping mapping, SdlDevice device, bool formulas = true)
 		{
 			var t = new SdlTranslation { Mapping = mapping };
 			if (mapping == null)
@@ -465,8 +469,23 @@ namespace x360ce.Engine
 				Set(t, b.Key, TriggerValue(device, b.Value, b.Key), b.Value);
 			JoinDPad(t, buttons.Select(x => x.Value).ToList());
 			foreach (var stick in sticks)
-				SetStick(t, device, stick.Key, stick.Value);
+				SetStick(t, device, stick.Key, stick.Value, formulas);
 			return t;
+		}
+
+		/// <summary>The mapping a row gives a device as x360ce 3 keeps it: by x360ce.ini key, an empty value for a box the row leaves empty.</summary>
+		/// <remarks>Without formulas, as x360ce 3's library reads them (<see cref="ToPadSetting"/>); <see cref="SettingName.IsMapping"/> keys only.</remarks>
+		public static Dictionary<string, string> ToIniSettings(SdlMapping mapping, SdlDevice device)
+		{
+			var setting = ToPadSetting(mapping, device, false).Setting;
+			var values = new Dictionary<string, string>();
+			foreach (var code in Boxes)
+			{
+				var key = typeof(SettingName).GetProperty(code.ToString());
+				if (key != null)
+					values[(string)key.GetValue(null, null)] = GetValue(setting, code);
+			}
+			return values;
 		}
 
 		/// <summary>Fills a box, or names the binding as left out when the box cannot take it or another binding filled it.</summary>
@@ -501,7 +520,7 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>Fills a stick axis's box, or its direction boxes, from the whole axis and its two halves.</summary>
-		static void SetStick(SdlTranslation t, SdlDevice device, string name, Binding[] parts)
+		static void SetStick(SdlTranslation t, SdlDevice device, string name, Binding[] parts, bool formulas)
 		{
 			var codes = StickFields[name];
 			// SDL's Y grows downward, the Xbox controller's upward.
@@ -548,6 +567,15 @@ namespace x360ce.Engine
 			if ((low != null && lowTerm == null) || (high != null && highTerm == null))
 			{
 				t.Skipped.AddRange(from.Select(x => x.ToString()));
+				return;
+			}
+			if (!formulas)
+			{
+				// Each half in its direction box: a half axis there reads as far as it is turned.
+				if (low != null)
+					Set(t, codes[1], ButtonValue(device, low, codes[1]), low);
+				if (high != null)
+					Set(t, codes[2], ButtonValue(device, high, codes[2]), high);
 				return;
 			}
 			// The stick's value is its high half less its low half, turned round for Y.

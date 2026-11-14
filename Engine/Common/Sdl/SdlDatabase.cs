@@ -55,7 +55,8 @@ namespace x360ce.Engine
 		/// <remarks>
 		/// A comment to SDL, which reads the rest of the file as it is. The built-in copy is the file the update button
 		/// writes, compressed: to ship a newer one, press the button, then gzip the settings folder's gamecontrollerdb.txt,
-		/// without its <see cref="AddressPrefix"/> line, into App.v4\Resources\gamecontrollerdb.txt.gz.
+		/// without its <see cref="AddressPrefix"/> line, into Engine\Resources\gamecontrollerdb.txt.gz. Then write the xinput
+		/// library's copy of its Windows rows again, as SdlNativeTest says.
 		/// </remarks>
 		public const string HeaderPrefix = "# Commit: ";
 

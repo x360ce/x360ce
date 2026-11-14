@@ -49,11 +49,11 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]
-		[Description("The built-in database is read from the program's resource, with its commit, and holds the Windows rows")]
+		[Description("The built-in database is read from the engine's resource, with its commit, and holds the Windows rows")]
 		public void Built_in_database_loads_from_the_resource()
 		{
-			// The resource is the program's; make sure its assembly is loaded where resources are looked for.
-			Assert.IsNotNull(typeof(AutoMapHelper).Assembly);
+			// The resource is the engine's, which both programs carry; make sure it is loaded where resources are looked for.
+			Assert.IsNotNull(typeof(SdlDatabase).Assembly);
 			var text = SdlDatabase.ReadBuiltIn();
 			Assert.IsTrue(text.Length > 500000, "The built-in database is missing or cut short.");
 			var source = SdlSource.Parse(text, SdlSourceKind.BuiltIn);

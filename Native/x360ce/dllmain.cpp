@@ -48,9 +48,7 @@ extern "C" VOID WINAPI Reset()
 
 	// Only x360ce.App will call this so InputHook is not required, disable it.
 	InputHookManager::Get().GetInputHook().Shutdown();
-	auto& manager = ControllerManager::Get();
-	manager.GetControllers().clear();
-	manager.GetConfig().ReadConfig(manager.GetControllers());
+	ControllerManager::Get().Reset();
 }
 
 

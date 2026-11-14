@@ -7,6 +7,27 @@ and does not need to sit beside the game — see [Help.v4](https://github.com/x3
 
 Run this program from the game executable directory.
 
+## Controllers that work without setup
+
+Copy `xinput1_3.dll` alone into the game executable directory, with no `x360ce.ini` there or in
+`C:\ProgramData\x360ce`, and most controllers work at once. An Xbox controller keeps its own place;
+every other controller SDL's controller database knows takes the next free place, in the order
+Windows lists them, mapped as SDL maps it. A controller the database does not know is left out.
+A controller plugged in while the game runs is found within two seconds.
+
+With an `x360ce.ini`:
+
+- This program sets up a controller the database knows without asking, and ticks `[Advanced]` tab →
+  `[Map from SDL database]`. While it is ticked the mapping comes from the database; untick it to
+  change the mapping yourself, starting from the database's.
+- In a controller's section, `AutoMap=1` maps it from the database; a mapping line in the section
+  wins over the database for that part. A section with `ProductGUID` and `InstanceGUID` and no
+  mapping lines is mapped from the database too.
+- `AutoMap=1` in `[Options]` also maps the controllers no section lists, into the free places.
+
+A `gamecontrollerdb.txt` found where `x360ce.ini` is looked for wins over the built-in rows for
+the controllers it has a row for.
+
 ## Uninstallation
 
 Delete `x360ce.*` files, `xbox360cemu.ini` (if used) and `dinput8.dll` (if used) from the game executable directory.

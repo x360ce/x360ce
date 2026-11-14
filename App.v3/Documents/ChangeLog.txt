@@ -1,4 +1,11 @@
-﻿## [3.11.29.0] - 2026-11-12
+﻿## [3.11.30.0] - 2026-11-13
+
+- Changed: Auto takes the mapping from SDL's database first.
+- Added: Without x360ce.ini, most controllers work with no setup.
+- Added: A controller SDL's database knows is set up without questions.
+- Added: Map from SDL database, on the Advanced tab.
+
+## [3.11.29.0] - 2026-11-12
 
 - Fixed: A group's frame line runs through the middle of its caption, so groups stand evenly apart.
 - Fixed: A disabled editable drop-down list shows its text in the disabled colour.

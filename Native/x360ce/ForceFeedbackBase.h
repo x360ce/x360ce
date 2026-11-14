@@ -40,6 +40,6 @@ public:
 	// Create Y effect.
 	LPDIRECTINPUTEFFECT effectY;
 
-	bool m_SwapMotors;
+	bool m_SwapMotors = false;
 
 };

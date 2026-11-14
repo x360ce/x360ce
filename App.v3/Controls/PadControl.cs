@@ -64,6 +64,9 @@ namespace x360ce.App.Controls
 			};
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
 			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
+			EventHandler<SettingEventArgs> configLoaded = (s, e) => ShowSdlMapping();
+			SettingManager.Current.ConfigLoaded += configLoaded;
+			Disposed += (s, e) => SettingManager.Current.ConfigLoaded -= configLoaded;
 			this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
@@ -540,6 +543,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox, sm);
 			SettingManager.AddMap(section, () => SettingName.GamePadType, DeviceSubTypeComboBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThrough, PassThroughCheckBox, sm);
+			SettingManager.AddMap(section, () => SettingName.AutoMap, AutoMapCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThroughIndex, PassThroughIndexComboBox, sm);
 			// Mapping
@@ -658,6 +662,41 @@ namespace x360ce.App.Controls
 		}
 
 		Joystick _device;
+
+		/// <summary>The device this controller reads, or null when none is connected.</summary>
+		public Joystick Device { get { return _device; } }
+
+		/// <summary>
+		/// With Map from SDL database ticked, the mapping boxes show the mapping SDL's controller database gives the device,
+		/// and cannot be changed: the library maps the controller from the database itself. Unticked, they can, and what
+		/// they show is saved as the controller's own mapping.
+		/// </summary>
+		/// <remarks>Shown again after the settings are read, which empty the boxes the file has no line for.</remarks>
+		void ShowSdlMapping()
+		{
+			var auto = AutoMapCheckBox.Checked;
+			var pad = string.Format("PAD{0}\\", ControllerIndex + 1);
+			var boxes = SettingsMap.Where(x => SettingName.IsMapping(x.Key.Substring(pad.Length))).ToArray();
+			if (auto)
+			{
+				var values = AppHelper.GetSdlMapping(_device);
+				foreach (var box in boxes)
+				{
+					var key = box.Key.Substring(pad.Length);
+					string value = null;
+					if (values != null)
+						values.TryGetValue(key, out value);
+					SettingManager.Current.ReadSettingTo(box.Value, key, value ?? "");
+				}
+			}
+			foreach (var box in boxes)
+				box.Value.Enabled = !auto;
+		}
+
+		void AutoMapCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			ShowSdlMapping();
+		}
 
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
@@ -1056,6 +1095,14 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				// SDL's controller database first; the guess below for a device it does not know.
+				var sdl = AppHelper.GetSdlMapping(d);
+				if (sdl != null)
+				{
+					foreach (var value in sdl)
+						AutoPresetRead(value.Key, value.Value);
+					return;
+				}
 				var objects = AppHelper.GetDeviceObjects(d);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);

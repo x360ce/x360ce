@@ -28,6 +28,12 @@
     <ClCompile Include="ControllerBase.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdl.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -69,6 +75,9 @@
     <ClInclude Include="ForceFeedbackBase.h">
       <Filter>x360ce</Filter>
     </ClInclude>
+    <ClInclude Include="Sdl.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="x360ce">
@@ -80,6 +89,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="x360ce.def">
+      <Filter>x360ce</Filter>
+    </None>
+    <None Include="gamecontrollerdb.windows.txt">
       <Filter>x360ce</Filter>
     </None>
   </ItemGroup>

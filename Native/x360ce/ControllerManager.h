@@ -2,6 +2,7 @@
 
 #include "version.h"
 
+#include <atomic>
 #include <vector>
 #include <dinput.h>
 
@@ -62,10 +63,22 @@ public:
 			MessageBox(NULL, "DirectInput cannot be initialized", "x360ce - Error", MB_ICONERROR);
 			exit(ret);
 		}
+
+		StartScan();
 	}
 
 	~ControllerManager()
 	{
+		// The scan has ended with the process; a library still in use is never unloaded while it runs.
+		if (m_scanStop)
+		{
+			SetEvent(m_scanStop);
+			CloseHandle(m_scanStop);
+		}
+		if (m_scanThread)
+			CloseHandle(m_scanThread);
+		m_autoControllers.clear();
+
 		// Remove controllers
 		m_controllers.clear();
 
@@ -96,6 +109,10 @@ public:
 				break;
 			}
 		}
+
+		// A controller the scan mapped into a free place, ready to read: never waits for the scan.
+		if (!pController && m_config.m_autoMap)
+			pController = m_slots[dwUserIndex].load(std::memory_order_acquire);
 
 		if (!pController)
 			return ERROR_DEVICE_NOT_CONNECTED;
@@ -164,6 +181,9 @@ public:
 			return true;
 	}
 
+	/// <summary>Reads x360ce.ini again, forgets the controllers mapped from SDL, and scans again when the file asks for it.</summary>
+	void Reset();
+
 	void XInputEnable(BOOL enable)
 	{
 		/*
@@ -187,6 +207,40 @@ private:
 	Config m_config;
 	std::unique_ptr<IDirectInput8A, COMDeleter> m_pDirectInput;
 	std::vector<std::shared_ptr<ControllerBase>> m_controllers;
+
+	#pragma region Mapping from SDL
+
+	/// <summary>How often the scan looks for controllers plugged in, in milliseconds.</summary>
+	static const DWORD ScanEveryMs = 2000;
+
+	/// <summary>A DirectInput device the scan has looked at, by its instance: what it is, and whether it was dealt with.</summary>
+	struct SeenDevice
+	{
+		GUID instance;
+		bool xinput;
+		bool sdlKnown;
+		bool done;
+	};
+
+	/// <summary>The controller the scan put in each free place, published whole: a game's call reads it and never waits.</summary>
+	std::atomic<ControllerBase*> m_slots[XUSER_MAX_COUNT] = {};
+	/// <summary>The controllers in m_slots, kept until Reset or the end of the process.</summary>
+	std::vector<std::shared_ptr<ControllerBase>> m_autoControllers;
+	std::vector<SeenDevice> m_seen;
+	/// <summary>The system XInput places a controller in m_slots passes through.</summary>
+	bool m_xinputServed[XUSER_MAX_COUNT] = {};
+	/// <summary>Held by a scan and by Reset; never by a game's call.</summary>
+	Mutex m_scanLock;
+	HANDLE m_scanThread = NULL;
+	HANDLE m_scanStop = NULL;
+
+	void StartScan();
+	static DWORD WINAPI ScanThread(LPVOID parameter);
+	void Scan();
+	size_t Examine(const DIDEVICEINSTANCEA& instance);
+	void Publish(int place, const std::shared_ptr<ControllerBase>& controller, bool* used);
+
+	#pragma endregion
 
 	bool enabled;
 	bool useEnabled;

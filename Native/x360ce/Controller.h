@@ -23,11 +23,18 @@ public:
 	GUID m_productid;
 	GUID m_instanceid;
 
+	/// <summary>Whether the mapping comes from SDL's database, the section's own mapping keys winning over it.</summary>
+	bool m_autoMap;
+	/// <summary>Whether SDL's database had a row for the device when it was opened.</summary>
+	bool m_sdlKnown;
+
 private:
 	static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext);
 
 	bool ButtonPressed(u32 buttonidx);
 	HRESULT UpdateState();
+	void ApplySdlMapping();
+	s32 HalfReading(Config::MappingType type, s8 id, const s32* axis, const s32* slider, const bool* dPadButtons);
 
 	std::unique_ptr<IDirectInputDevice8A, COMDeleter> m_pDevice;
 	DIJOYSTATE2 m_state;

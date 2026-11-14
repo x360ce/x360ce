@@ -916,16 +916,41 @@ namespace x360ce.App
 			}
 			var oldValue = ini.GetValue(section, key);
 			var saved = false;
+			// A controller mapped from SDL's database keeps no mapping of its own: one saved would win over the database's.
+			if (padIndex > -1 && SettingName.IsMapping(key) && IsAutoMap(padIndex))
+			{
+				// The library reads an empty value as no value.
+				if (string.IsNullOrEmpty(oldValue))
+					return false;
+				ini.RemoveValue(section, key);
+				v = null;
+			}
 			if (oldValue != v)
 			{
-				ini.SetValue(section, key, v);
+				if (v != null)
+					ini.SetValue(section, key, v);
 				saveCount++;
 				saved = true;
 				if (ConfigSaved != null) ConfigSaved(this, new SettingEventArgs(IniFileName, saveCount));
+				// Map from SDL database ticked lets go of the controller's own mapping; unticked, it keeps the one shown.
+				if (padIndex > -1 && key == SettingName.AutoMap)
+				{
+					var pad = string.Format("PAD{0}\\", padIndex + 1);
+					foreach (var p in SettingsMap.Keys.Where(x => x.StartsWith(pad) && SettingName.IsMapping(x.Substring(pad.Length))).ToArray())
+						SaveSetting(ini, p);
+				}
 			}
 			// Flush XML too.
 			Save();
 			return saved;
+		}
+
+		/// <summary>Whether the controller in a place is mapped from SDL's controller database: its Map from SDL database box is ticked.</summary>
+		public bool IsAutoMap(int padIndex)
+		{
+			Control control;
+			return SettingsMap.TryGetValue(string.Format("PAD{0}\\{1}", padIndex + 1, SettingName.AutoMap), out control)
+				&& ((CheckBox)control).Checked;
 		}
 
 		public string GetInstanceSection(Guid instanceGuid)
@@ -1008,6 +1033,16 @@ namespace x360ce.App
 							ReadPadSettings(IniFileName, section, i);
 							MainForm.Current.ResumeEvents();
 						}
+					}
+					// A controller SDL's database knows needs no question: the library maps it from the database.
+					else if (AppHelper.GetSdlMapping(MainForm.Current.ControlPads[i].Device) != null)
+					{
+						SetPadSetting(section, di);
+						ini2.SetValue(section, SettingName.AutoMap, "1");
+						MainForm.Current.SuspendEvents();
+						ReadPadSettings(IniFileName, section, i);
+						MainForm.Current.ResumeEvents();
+						updated = true;
 					}
 					else
 					{

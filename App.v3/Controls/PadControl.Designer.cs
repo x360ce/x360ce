@@ -30,6 +30,7 @@
 			this.DeviceSubTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceSubTypeLabel = new System.Windows.Forms.Label();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
+			this.AutoMapCheckBox = new System.Windows.Forms.CheckBox();
 			this.TriggersGroupBox = new System.Windows.Forms.GroupBox();
 			this.LeftTriggerDeadZoneLabel = new System.Windows.Forms.Label();
 			this.RightTriggerDeadZoneLabel = new System.Windows.Forms.Label();
@@ -257,7 +258,7 @@
 			this.CombineGroupBox.Controls.Add(this.CombinedIndexComboBox);
 			this.CombineGroupBox.Controls.Add(this.CombinedIndexLabel);
 			this.CombineGroupBox.Controls.Add(this.CombinedCheckBox);
-			this.CombineGroupBox.Location = new System.Drawing.Point(3, 208);
+			this.CombineGroupBox.Location = new System.Drawing.Point(3, 235);
 			this.CombineGroupBox.Margin = new System.Windows.Forms.Padding(2);
 			this.CombineGroupBox.Name = "CombineGroupBox";
 			this.CombineGroupBox.Padding = new System.Windows.Forms.Padding(2);
@@ -298,6 +299,7 @@
 			// 
 			// DeviceGroupBox
 			// 
+			this.DeviceGroupBox.Controls.Add(this.AutoMapCheckBox);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexComboBox);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexLabel);
 			this.DeviceGroupBox.Controls.Add(this.ForceFeedbackPassThroughCheckBox);
@@ -306,7 +308,7 @@
 			this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
 			this.DeviceGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.DeviceGroupBox.Name = "DeviceGroupBox";
-			this.DeviceGroupBox.Size = new System.Drawing.Size(228, 125);
+			this.DeviceGroupBox.Size = new System.Drawing.Size(228, 152);
 			this.DeviceGroupBox.TabIndex = 14;
 			this.DeviceGroupBox.TabStop = false;
 			this.DeviceGroupBox.Text = "Device";
@@ -318,7 +320,7 @@
 			this.PassThroughIndexComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.PassThroughIndexComboBox.Enabled = false;
 			this.PassThroughIndexComboBox.FormattingEnabled = true;
-			this.PassThroughIndexComboBox.Location = new System.Drawing.Point(106, 71);
+			this.PassThroughIndexComboBox.Location = new System.Drawing.Point(106, 98);
 			this.PassThroughIndexComboBox.Name = "PassThroughIndexComboBox";
 			this.PassThroughIndexComboBox.Size = new System.Drawing.Size(117, 21);
 			this.PassThroughIndexComboBox.TabIndex = 5;
@@ -326,7 +328,7 @@
 			// PassThroughIndexLabel
 			// 
 			this.PassThroughIndexLabel.AutoSize = true;
-			this.PassThroughIndexLabel.Location = new System.Drawing.Point(7, 73);
+			this.PassThroughIndexLabel.Location = new System.Drawing.Point(7, 100);
 			this.PassThroughIndexLabel.Name = "PassThroughIndexLabel";
 			this.PassThroughIndexLabel.Size = new System.Drawing.Size(90, 13);
 			this.PassThroughIndexLabel.TabIndex = 4;
@@ -335,7 +337,7 @@
 			// ForceFeedbackPassThroughCheckBox
 			// 
 			this.ForceFeedbackPassThroughCheckBox.AutoSize = true;
-			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
+			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 73);
 			this.ForceFeedbackPassThroughCheckBox.Name = "ForceFeedbackPassThroughCheckBox";
 			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
 			this.ForceFeedbackPassThroughCheckBox.TabIndex = 3;
@@ -349,7 +351,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceSubTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.DeviceSubTypeComboBox.FormattingEnabled = true;
-			this.DeviceSubTypeComboBox.Location = new System.Drawing.Point(105, 98);
+			this.DeviceSubTypeComboBox.Location = new System.Drawing.Point(105, 125);
 			this.DeviceSubTypeComboBox.Name = "DeviceSubTypeComboBox";
 			this.DeviceSubTypeComboBox.Size = new System.Drawing.Size(117, 21);
 			this.DeviceSubTypeComboBox.TabIndex = 1;
@@ -357,7 +359,7 @@
 			// DeviceSubTypeLabel
 			// 
 			this.DeviceSubTypeLabel.AutoSize = true;
-			this.DeviceSubTypeLabel.Location = new System.Drawing.Point(6, 100);
+			this.DeviceSubTypeLabel.Location = new System.Drawing.Point(6, 127);
 			this.DeviceSubTypeLabel.Name = "DeviceSubTypeLabel";
 			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(93, 13);
 			this.DeviceSubTypeLabel.TabIndex = 0;
@@ -366,13 +368,24 @@
 			// PassThroughCheckBox
 			// 
 			this.PassThroughCheckBox.AutoSize = true;
-			this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
 			this.PassThroughCheckBox.Name = "PassThroughCheckBox";
 			this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
 			this.PassThroughCheckBox.TabIndex = 2;
 			this.PassThroughCheckBox.Text = "Pass Through";
 			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
 			this.PassThroughCheckBox.CheckedChanged += new System.EventHandler(this.PassThroughCheckBox_CheckedChanged);
+			// 
+			// AutoMapCheckBox
+			// 
+			this.AutoMapCheckBox.AutoSize = true;
+			this.AutoMapCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.AutoMapCheckBox.Name = "AutoMapCheckBox";
+			this.AutoMapCheckBox.Size = new System.Drawing.Size(135, 17);
+			this.AutoMapCheckBox.TabIndex = 6;
+			this.AutoMapCheckBox.Text = "Map from SDL database";
+			this.AutoMapCheckBox.UseVisualStyleBackColor = true;
+			this.AutoMapCheckBox.CheckedChanged += new System.EventHandler(this.AutoMapCheckBox_CheckedChanged);
 			// 
 			// TriggersGroupBox
 			// 
@@ -384,7 +397,7 @@
 			this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTrackBar);
 			this.TriggersGroupBox.Controls.Add(this.RightTriggerDeadZoneTextBox);
 			this.TriggersGroupBox.Controls.Add(this.LeftTriggerDeadZoneTextBox);
-			this.TriggersGroupBox.Location = new System.Drawing.Point(3, 134);
+			this.TriggersGroupBox.Location = new System.Drawing.Point(3, 161);
 			this.TriggersGroupBox.Name = "TriggersGroupBox";
 			this.TriggersGroupBox.Size = new System.Drawing.Size(681, 68);
 			this.TriggersGroupBox.TabIndex = 0;
@@ -466,7 +479,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(237, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(501, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(501, 152);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -2221,6 +2234,7 @@
 		System.Windows.Forms.ComboBox DeviceSubTypeComboBox;
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
 		System.Windows.Forms.CheckBox PassThroughCheckBox;
+		System.Windows.Forms.CheckBox AutoMapCheckBox;
         System.Windows.Forms.GroupBox AxisToDPadGroupBox;
         System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
         System.Windows.Forms.TrackBar AxisToDPadDeadZoneTrackBar;
