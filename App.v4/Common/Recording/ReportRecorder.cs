@@ -111,6 +111,7 @@ namespace x360ce.App.Recording
 			Held,
 			ForceState,
 			ForceFailed,
+			SpringRefused,
 			ForceSent,
 			SlowCall,
 			PadOutput,
@@ -175,6 +176,7 @@ namespace x360ce.App.Recording
 			public int Held = int.MinValue;
 			public bool HasForce;
 			public int ForceFault;
+			public int SpringRefused;
 		}
 
 		readonly Dictionary<UserDevice, DeviceTrack> _tracks = new Dictionary<UserDevice, DeviceTrack>();
@@ -239,6 +241,14 @@ namespace x360ce.App.Recording
 				{
 					t.ForceFault = ud.ForceFault;
 					Add(now, Kind.ForceFailed, ud, 0, ud.ForceFault, ud.ForceFailures);
+				}
+				var ff = ud.FFState;
+				var springRefused = ff == null ? 0 : ff.SpringRefusedError;
+				if (springRefused != t.SpringRefused)
+				{
+					t.SpringRefused = springRefused;
+					if (springRefused != 0)
+						Add(now, Kind.SpringRefused, ud, 0, springRefused);
 				}
 			}
 		}
@@ -823,6 +833,8 @@ namespace x360ce.App.Recording
 					return d + (e.A != 0 ? " force effects made" : " force effects stopped");
 				case Kind.ForceFailed:
 					return e.A == 0 ? d + " force works again" : d + " force failed with 0x" + e.A.ToString("X8", CultureInfo.InvariantCulture) + ", " + e.B + " time" + (e.B == 1 ? "" : "s");
+				case Kind.SpringRefused:
+					return d + " refused the centering spring with 0x" + e.A.ToString("X8", CultureInfo.InvariantCulture) + ", its own centring left off";
 				case Kind.ForceSent:
 					return d + " force sent: large " + e.A + ", small " + e.B;
 				case Kind.SlowCall:

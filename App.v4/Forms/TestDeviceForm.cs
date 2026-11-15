@@ -37,6 +37,9 @@ namespace x360ce.App.Forms
 			if (device != null)
 				Text = "Test Device - " + (string.IsNullOrEmpty(device.ProductName) ? device.InstanceName : device.ProductName);
 			_buttonsView.Visible = false;
+			// Made after the window was scaled, so their gap is given at the screen's scale.
+			_stepsView.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			_buttonsView.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
 			ContentTableLayoutPanel.Controls.Add(_stepsView, 0, 0);
 			ContentTableLayoutPanel.Controls.Add(_buttonsView, 0, 5);
 			AddColumns();

@@ -30,16 +30,14 @@ namespace x360ce.App.Controls
 			Device = device;
 			_store = store;
 			Name = "PluginDevicePanel";
-			// The tab scrolls rather than the table, which would size each row to its control and never shrink the pages.
-			AutoScroll = true;
 			SuspendLayout();
 			MainTableLayoutPanel = new TableLayoutPanel
 			{
 				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
-				// 12 from the page's edges with its controls' margins; the page is made once the Controller page has been
+				// 8 from the page's edges with its controls' margins; the page is made once the Controller page has been
 				// scaled, so its room is given at the screen's scale.
-				Padding = AppHelper.ScaledPadding(8, 8, 8, 8),
+				Padding = AppHelper.ScaledPadding(0, 0, 0, 0),
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -51,9 +49,9 @@ namespace x360ce.App.Controls
 					AutoSize = true,
 					// Across the column, so the table wraps it at the tab's width.
 					Anchor = AnchorStyles.Left | AnchorStyles.Right,
-					Margin = AppHelper.ScaledPadding(4, 4, 4, 4),
+					Margin = AppHelper.ScaledPadding(8, 8, 0, 0),
 				});
-			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill, Margin = AppHelper.ScaledPadding(4, 4, 4, 4) };
+			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill, Margin = AppHelper.ScaledPadding(8, 8, 0, 0) };
 			if (type.ControlType != null)
 			{
 				NoteLabel = new Label { Name = nameof(NoteLabel), AutoSize = true, Dock = DockStyle.Top, Padding = AppHelper.ScaledPadding(12, 12, 12, 12), Visible = false };
@@ -159,34 +157,6 @@ namespace x360ce.App.Controls
 			var page = new TabPage { Name = name, Text = text, AccessibleName = text, AccessibleDescription = description, UseVisualStyleBackColor = true };
 			page.Controls.Add(content);
 			PluginTabControl.TabPages.Add(page);
-		}
-
-		protected override void OnLayout(LayoutEventArgs e)
-		{
-			KeepMinimumHeight();
-			base.OnLayout(e);
-		}
-
-		/// <summary>
-		/// Keeps the pages at least a few lines tall: a row of the table cannot have a minimum, so the tab scrolls once it
-		/// is shorter than the help and those few lines.
-		/// </summary>
-		void KeepMinimumHeight()
-		{
-			var table = MainTableLayoutPanel;
-			if (table == null)
-				return;
-			var width = ClientSize.Width - table.Padding.Horizontal;
-			var height = table.Padding.Vertical;
-			foreach (Control control in table.Controls)
-			{
-				var style = table.RowStyles[table.GetRow(control)];
-				height += style.SizeType == SizeType.Percent
-					? Font.Height * 16
-					: control.GetPreferredSize(new System.Drawing.Size(width - control.Margin.Horizontal, 0)).Height + control.Margin.Vertical;
-			}
-			if (AutoScrollMinSize.Height != height)
-				AutoScrollMinSize = new System.Drawing.Size(0, height);
 		}
 
 		private void ResetButton_Click(object sender, EventArgs e)

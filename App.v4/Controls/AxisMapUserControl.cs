@@ -27,7 +27,8 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitPaintObjects();
-			MainTableLayoutPanel.Layout += MainTableLayoutPanel_Layout;
+			AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			AutoSize = true;
 			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			// Initialize in constructor and not on "Load" event or it will reset AntiDeadZone value
 			// inside DeadZoneControlsLink(...).
@@ -234,19 +235,20 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Makes the control as tall as its group's rows, so the last row stands the group's room above the group's bottom
-		/// line, as on every other page; the chart beside the rows is then as tall as they are.
+		/// As wide as the page offers, and as tall as its group's rows at that width, so the last row stands the group's room
+		/// above the group's bottom line, as on every other page; the chart beside the rows is then as tall as they are.
 		/// </summary>
 		/// <remarks>
-		/// The chart spans the rows and takes its height from them, so it is left out. The room round the table is read from
-		/// the control, not from the table's height, which waits for the table to be laid out: each pass before then would add
-		/// that room again.
+		/// The chart spans the rows and takes its height from them, so it is left out. The page asks before it lays this control
+		/// out, so a note that wraps at a new width makes its row taller in the same layout: a height set while the page is laid
+		/// out reaches the group and the controls below only at the next layout. The room round the table is the frame's, which
+		/// is the same at every size.
 		/// </remarks>
-		private void MainTableLayoutPanel_Layout(object sender, LayoutEventArgs e)
+		public override Size GetPreferredSize(Size proposedSize)
 		{
-			var height = Height - DisplayRectangle.Height + AppHelper.RowsHeight(MainTableLayoutPanel);
-			if (Height != height)
-				Height = height;
+			var width = proposedSize.Width > 0 && proposedSize.Width < int.MaxValue ? proposedSize.Width : Width;
+			var room = Size - ClientSize + Padding.Size + MainGroupBox.Size - MainGroupBox.DisplayRectangle.Size;
+			return new Size(width, room.Height + AppHelper.RowsHeight(MainTableLayoutPanel, width - room.Width));
 		}
 
 		// Half and Invert values are only in creating xinput path - red line.

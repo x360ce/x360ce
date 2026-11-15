@@ -91,9 +91,6 @@
     <None Include="x360ce.def">
       <Filter>x360ce</Filter>
     </None>
-    <None Include="gamecontrollerdb.windows.txt">
-      <Filter>x360ce</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="x360ce.rc">

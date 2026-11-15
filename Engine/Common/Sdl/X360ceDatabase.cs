@@ -28,18 +28,23 @@ namespace x360ce.Engine
 	/// A row is written as SDL writes one, so <see cref="SdlMapping"/> reads it and <see cref="SdlDatabase"/> finds it:
 	/// <c>{SDL USB GUID},{product name},users:{n},{x360ce.ini key}:{value},...,platform:Windows,</c>. The keys and values
 	/// are x360ce.ini's (<see cref="PadSettingIni"/>), only those not at their default, so the xinput library reads a row
-	/// with the same code that reads a controller's section. One row for each controller, sorted by vendor and product.
+	/// with the same code that reads a controller's section. One row for each controller whose most used setting at least
+	/// <see cref="MinimumUsers"/> people use, sorted by vendor and product.
 	/// </para>
 	/// <para>
-	/// The file is Engine\Resources\gamecontrollerdb_x360ce.windows.txt: the engine carries it for both programs, and the
-	/// xinput library embeds the same file. scripts\Update-X360ceDatabase.ps1 writes it; the server builds it with
-	/// <see cref="Write"/>. A copy the Update button saved in the settings folder wins, row by row.
+	/// The file is carried gzip compressed, as SDL's is: Engine\Resources\gamecontrollerdb_x360ce.windows.txt.gz, in the
+	/// engine for both programs and in the xinput library, which inflates it in memory. scripts\Update-X360ceDatabase.ps1
+	/// writes it; the server builds the file with <see cref="Write"/>. A copy the Update button saved in the settings
+	/// folder wins, row by row.
 	/// </para>
 	/// </remarks>
 	public static class X360ceDatabase
 	{
 		/// <summary>The database's file name, built in and in the settings folder.</summary>
 		public const string FileName = "gamecontrollerdb_x360ce.windows.txt";
+
+		/// <summary>The built-in copy's resource: the file, gzip compressed, as SDL's (<see cref="SdlDatabase.ResourceName"/>).</summary>
+		public const string ResourceName = FileName + ".gz";
 
 		/// <summary>The field that says how many people use a row's setting.</summary>
 		public const string UsersField = "users";
@@ -93,9 +98,27 @@ namespace x360ce.Engine
 			return row != null && int.TryParse(row.Get(UsersField), NumberStyles.None, CultureInfo.InvariantCulture, out users) ? users : 0;
 		}
 
+		/// <summary>The characters a row's value cannot hold: the one between fields and those between rows.</summary>
+		static readonly char[] RowBreaks = { ',', '\r', '\n' };
+
+		/// <summary>How many people must use a controller's chosen setting for it to be written; fewer leave the controller to SDL's database.</summary>
+		public const int MinimumUsers = 10;
+
 		/// <summary>
-		/// The database's text: a header, then one row for each controller that names a vendor and product and whose setting
-		/// sets something, the one most people use when two have the same, sorted by vendor and product.
+		/// Whether a row's text, read as the programs read the file (<see cref="SdlSource.Parse"/>), gives back that one row:
+		/// the same device, name, keys and values.
+		/// </summary>
+		static bool ReadsBack(SdlMapping row)
+		{
+			var text = row.ToString();
+			var back = SdlSource.Parse(text, SdlSourceKind.BuiltIn).Mappings;
+			return back.Count == 1 && back[0].ToString() == text;
+		}
+
+		/// <summary>
+		/// The database's text: a header, then one row for each controller that names a vendor and product, with the setting
+		/// most people use of those that set something and can be written as a row, when at least <see cref="MinimumUsers"/>
+		/// people use it and the row reads back as written, sorted by vendor and product.
 		/// </summary>
 		/// <param name="entries">The controllers, each with its most used setting.</param>
 		/// <param name="source">Where the settings came from, for the header.</param>
@@ -122,22 +145,30 @@ namespace x360ce.Engine
 				// A setting with nothing set maps nothing: such a controller is left to SDL's database.
 				if (row.Fields.Count < 2)
 					continue;
+				// A value holding a comma or a line break would split the row, so that setting is passed over for a less used one.
+				if (row.Fields.Any(x => x.Value.IndexOfAny(RowBreaks) >= 0))
+					continue;
 				KeyValuePair<X360ceDatabaseEntry, SdlMapping> kept;
 				if (!rows.TryGetValue(key, out kept) || kept.Key.Users < entry.Users)
 					rows[key] = new KeyValuePair<X360ceDatabaseEntry, SdlMapping>(clean, row);
 			}
+			// The most used setting is chosen first, then a controller whose chosen setting too few people use is left out,
+			// and last a row that would not read back as written.
+			var written = rows.Where(x => x.Value.Key.Users >= MinimumUsers && ReadsBack(x.Value.Value)).OrderBy(x => (uint)x.Key).ToList();
 			var sb = new StringBuilder();
 			sb.Append("# x360ce's controller database: for each controller, the complete setting most people use with it.\n");
 			sb.Append("# Rows as SDL's gamecontrollerdb.txt writes them: GUID,name,users:{people},{x360ce.ini key}:{value},...\n");
 			sb.Append("# Only settings not at their default; a controller whose setting sets nothing is left to SDL's database.\n");
+			sb.Append("# Only controllers whose most used setting ").Append(MinimumUsers.ToString(CultureInfo.InvariantCulture))
+				.Append(" or more people use; the others are left to SDL's database.\n");
 			sb.Append("# Force feedback on at strength 0 is written at 100; a missing motor period with force feedback on is\n");
 			sb.Append("# written at x360ce 4's default, 160 ms left and 64 ms right.\n");
 			sb.Append("# Do not edit by hand: scripts\\Update-X360ceDatabase.ps1 writes it from x360ce's server.\n");
 			sb.Append(MadePrefix).Append(date.ToUniversalTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)).Append(" from ").Append(source).Append('\n');
-			sb.Append("# Rows: ").Append(rows.Count.ToString(CultureInfo.InvariantCulture)).Append('\n');
+			sb.Append("# Rows: ").Append(written.Count.ToString(CultureInfo.InvariantCulture)).Append('\n');
 			if (!string.IsNullOrEmpty(note))
 				sb.Append("# ").Append(note).Append('\n');
-			foreach (var row in rows.OrderBy(x => (uint)x.Key))
+			foreach (var row in written)
 				sb.Append(row.Value.Value.ToString()).Append('\n');
 			return sb.ToString();
 		}
@@ -276,7 +307,7 @@ namespace x360ce.Engine
 				lock (LoadLock)
 				{
 					if (_current == null)
-						_current = Load();
+						_current = Load(SettingsFilePath);
 					return _current;
 				}
 			}
@@ -349,27 +380,22 @@ namespace x360ce.Engine
 			get { return Path.Combine(EngineHelper.AppDataPath, "Settings", FileName); }
 		}
 
-		/// <summary>The built-in copy's text, read from the engine's resource; empty when it does not carry it.</summary>
+		/// <summary>The built-in copy's text, read from the engine's resource as SDL's is; empty when it does not carry it.</summary>
 		public static string ReadBuiltIn()
 		{
-			using (var stream = EngineHelper.GetResourceStream(FileName))
-			{
-				if (stream == null)
-					return "";
-				using (var reader = new StreamReader(stream, Encoding.UTF8))
-					return reader.ReadToEnd();
-			}
+			return SdlDatabase.ReadCompressedResource(ResourceName);
 		}
 
-		/// <summary>The built-in rows and the settings folder's copy, merged; a file that cannot be read is left out.</summary>
-		public static SdlDatabase Load()
+		/// <summary>The built-in rows and a settings folder's copy, merged; a file that cannot be read is left out.</summary>
+		/// <param name="settingsFile">The Update button's copy: <see cref="SettingsFilePath"/> for the program's own settings folder.</param>
+		public static SdlDatabase Load(string settingsFile)
 		{
 			var builtIn = SdlSource.Parse(ReadBuiltIn(), SdlSourceKind.BuiltIn);
 			SdlSource file = null;
 			try
 			{
-				if (File.Exists(SettingsFilePath))
-					file = SdlSource.Parse(File.ReadAllText(SettingsFilePath), SdlSourceKind.Downloaded, SettingsFilePath);
+				if (File.Exists(settingsFile))
+					file = SdlSource.Parse(File.ReadAllText(settingsFile), SdlSourceKind.Downloaded, settingsFile);
 			}
 			catch (IOException) { }
 			catch (UnauthorizedAccessException) { }

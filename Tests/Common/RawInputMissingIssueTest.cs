@@ -54,6 +54,22 @@ namespace x360ce.Tests
 			Assert.AreEqual(0, RawInputMissingIssue.Missing(new[] { keyboard }, Idle, p => true).Length, "A keyboard is named.");
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Not named: a controller whose Hide box is ticked, and any controller while HID Hide does not answer")]
+		public void A_controller_hidden_on_purpose_is_not_named()
+		{
+			var pad = Pad();
+			pad.IsHidden = true;
+			Assert.AreEqual(0, RawInputMissingIssue.Missing(new[] { pad }, Idle, p => true).Length,
+				"A controller hidden on purpose by its Hide box is named, and restarting it while hidden cannot clear it.");
+			var silent = new VirtualDriverInstaller.HidHideState { Installed = true, Answered = false };
+			Assert.AreEqual(0, RawInputMissingIssue.Missing(new[] { Pad() }, silent, p => true).Length,
+				"A controller is named while HID Hide did not say which controllers it hides.");
+			var none = new VirtualDriverInstaller.HidHideState { Installed = false };
+			Assert.AreEqual(1, RawInputMissingIssue.Missing(new[] { Pad() }, none, p => true).Length,
+				"With no HID Hide a controller missing from Raw Input is not named.");
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("The rule the Raw Input list goes by: a joystick, gamepad or multi-axis collection on the Generic Desktop page")]
 		public void Raw_Input_lists_game_controller_collections()

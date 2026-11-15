@@ -44,8 +44,9 @@ for wins over the built-in rows for the controllers it has a row for.
 
 This program's `[Controller Settings]` tab → `[Default Settings for Most Popular Controllers]` lists
 x360ce's controller database, at once and offline. `[Options]` tab → `[Update Controller Database]`
-fetches the newest copy from x360ce's server into the settings folder, and this program uses that
-copy from then on.
+fetches the newest copy into the settings folder from the site of the `Web Service URL` above it:
+its `/webservices/x360ce.asmx` becomes `/ControllerDatabase.ashx`, and x360ce's server is asked when
+the address does not end that way. This program uses that copy from then on.
 
 ## Uninstallation
 

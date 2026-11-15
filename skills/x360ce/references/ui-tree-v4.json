@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.30.61.0",
-	"Built":"2026-11-14",
+	"Version":"4.30.63.0",
+	"Built":"2026-11-15",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -392,6 +392,50 @@
 					"Role":"Control"
 				},
 				{
+					"Name":"MouseDemoUserControl",
+					"Description":"A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Demo stick",
+							"Description":"The stick group the demo shows and its style, such as Left Stick: Wheel.",
+							"Role":"Label",
+							"Id":"CaptionLabel"
+						},
+						{
+							"Name":"Demo picture",
+							"Description":"The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.",
+							"Role":"Picture",
+							"Id":"DemoPictureBox"
+						},
+						{
+							"Name":"Play demo",
+							"Description":"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.",
+							"Role":"Button",
+							"Id":"PlayButton"
+						},
+						{
+							"Name":"Demo style",
+							"Description":"What the style shown does, in the Style list's words.",
+							"Role":"Label",
+							"Id":"DescriptionLabel"
+						},
+						{
+							"Name":"Demo step",
+							"Description":"What the demo shows now, in words, such as Mouse stops: stick returns to the centre.",
+							"Role":"Label",
+							"Id":"PhaseLabel"
+						},
+						{
+							"Name":"Demo note",
+							"Description":"Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.",
+							"Role":"Label",
+							"Id":"NoteLabel",
+							"Hidden":true
+						}
+					]
+				},
+				{
 					"Name":"MouseStickUserControl",
 					"Description":"How a mouse moves one stick.",
 					"Role":"Control",
@@ -404,7 +448,7 @@
 							"Items":[
 								{
 									"Name":"Style",
-									"Description":"How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.",
+									"Description":"How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.",
 									"Role":"List",
 									"Id":"StyleComboBox"
 								},
@@ -445,12 +489,10 @@
 									"Max":500
 								},
 								{
-									"Name":"Back to centre",
-									"Description":"How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.",
-									"Role":"Slider",
-									"Id":"ReturnTrackBar",
-									"Min":0,
-									"Max":2000
+									"Name":"Active",
+									"Description":"When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.",
+									"Role":"List",
+									"Id":"ActiveComboBox"
 								},
 								{
 									"Name":"Smoothing value",
@@ -459,10 +501,10 @@
 									"Id":"SmoothingTextBox"
 								},
 								{
-									"Name":"Active",
-									"Description":"When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.",
+									"Name":"Button",
+									"Description":"The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.",
 									"Role":"List",
-									"Id":"ActiveComboBox"
+									"Id":"ButtonComboBox"
 								},
 								{
 									"Name":"Back to centre value",
@@ -471,10 +513,12 @@
 									"Id":"ReturnTextBox"
 								},
 								{
-									"Name":"Button",
-									"Description":"The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.",
-									"Role":"List",
-									"Id":"ButtonComboBox"
+									"Name":"Back to centre",
+									"Description":"How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths; in Wheel, the time it takes once the button lets the stick go, 0 at once. Range is 0 to 2000. Default is 0.",
+									"Role":"Slider",
+									"Id":"ReturnTrackBar",
+									"Min":0,
+									"Max":2000
 								}
 							]
 						}
@@ -1829,6 +1873,14 @@
 											"Id":"RightMouseStickPanel",
 											"Type":"MouseStickUserControl",
 											"SameAs":"MouseStickUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.",
+											"Role":"Group",
+											"Id":"MouseDemoPanel",
+											"Type":"MouseDemoUserControl",
+											"SameAs":"MouseDemoUserControl"
 										}
 									]
 								},
@@ -2017,7 +2069,8 @@
 							"Name":"SDL update status",
 							"Description":"How the last update of SDL's controller database went.",
 							"Role":"Label",
-							"Id":"StatusLabel"
+							"Id":"StatusLabel",
+							"Hidden":true
 						}
 					]
 				},
@@ -2650,7 +2703,7 @@
 																				},
 																				{
 																					"Name":"Update x360ce Database",
-																					"Description":"Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went.",
+																					"Description":"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.",
 																					"Role":"Button",
 																					"Id":"UpdateX360ceDatabaseButton"
 																				}

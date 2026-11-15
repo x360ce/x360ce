@@ -112,12 +112,12 @@ namespace x360ce.App.Controls
 			}, null);
 		}
 
-		/// <summary>Fetches x360ce's controller database from x360ce's server into the settings folder, off the window's thread, and says in the header how it went.</summary>
+		/// <summary>Fetches x360ce's controller database from the site of the web service address into the settings folder, off the window's thread, and says in the header how it went.</summary>
 		private void UpdateX360ceDatabaseButton_Click(object sender, EventArgs e)
 		{
 			UpdateX360ceDatabaseButton.Enabled = false;
 			var version = typeof(OptionsInternetUserControl).Assembly.GetName().Version;
-			X360ceUpdateClient.UpdateSettingsCopy("x360ce/" + version).ContinueWith(t =>
+			X360ceUpdateClient.UpdateSettingsCopy(SettingsManager.Options.InternetDatabaseUrl, "x360ce/" + version).ContinueWith(t =>
 			{
 				UpdateX360ceDatabaseButton.Enabled = true;
 				var header = MainForm.Current;

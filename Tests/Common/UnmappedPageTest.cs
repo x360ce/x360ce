@@ -477,5 +477,65 @@ namespace x360ce.Tests
 		{
 			return string.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
 		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The Direct Input page's axis, slider and POV lists show every heading and every value whole, a mouse's long negative count among them, on a page as wide as the Controller page in the smallest window; a column grows to a longer value and keeps that width while the device stays, and fits the next device's values")]
+		public void Direct_input_lists_show_long_values_whole_and_keep_their_width()
+		{
+			Ui.OnUiThread(() =>
+			{
+				// The Controller page's width in the smallest window, 950 at 100 %.
+				var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+				var size = new Size((int)Math.Round(950 * scale), (int)Math.Round(600 * scale));
+				using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ClientSize = size, ShowInTaskbar = false })
+				{
+					var page = new DirectInputUserControl { Dock = DockStyle.Fill };
+					form.Controls.Add(page);
+					form.Show();
+					var mouse = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Mouse", CapType = (int)SharpDX.DirectInput.DeviceType.Mouse, JoState = new SharpDX.DirectInput.JoystickState() };
+					mouse.JoState.X = -2147480000;
+					mouse.JoState.Y = 1234567;
+					mouse.JoState.Sliders[0] = -987654;
+					page.UpdateFrom(mouse);
+					Application.DoEvents();
+					var grids = new[] { page.DiAxisDataGridView, page.DiSlidersDataGridView, page.DiPovsDataGridView };
+					var faults = new List<string>();
+					Action<string> check = when =>
+					{
+						foreach (var grid in grids)
+							foreach (DataGridViewColumn column in grid.Columns)
+							{
+								var shown = grid.GetColumnDisplayRectangle(column.Index, false).Width;
+								if (!column.Visible || shown < column.Width)
+									faults.Add(string.Format("{0}: {1} {2} shows {3} of its {4} px: its heading is cut or pushed out of the list.", when, grid.Name, column.HeaderText, shown, column.Width));
+							}
+						foreach (var grid in grids)
+							foreach (DataGridViewRow row in grid.Rows)
+								foreach (DataGridViewCell cell in row.Cells)
+								{
+									var needs = cell.PreferredSize.Width;
+									if (needs > cell.OwningColumn.Width)
+										faults.Add(string.Format("{0}: {1} {2} \"{3}\" needs {4} px in a column {5} wide.", when, grid.Name, cell.OwningColumn.HeaderText, cell.FormattedValue, needs, cell.OwningColumn.Width));
+								}
+					};
+					check("a mouse");
+					var wide = page.DiAxisDataGridView.Columns["DiColumnM"].Width;
+					// The same device a moment later, its values short again: the columns stay.
+					mouse.JoState.X = 5;
+					page.UpdateFrom(mouse);
+					Application.DoEvents();
+					Assert.AreEqual(wide, page.DiAxisDataGridView.Columns["DiColumnM"].Width, "A shorter value of the same device narrowed the column, so changing values make it jump.");
+					// Another device: the columns fit its values.
+					var pad = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductName = "Pad", JoState = new SharpDX.DirectInput.JoystickState() };
+					pad.JoState.X = 32767;
+					page.UpdateFrom(pad);
+					Application.DoEvents();
+					check("a pad");
+					Assert.IsTrue(page.DiAxisDataGridView.Columns["DiColumnM"].Width < wide, "The next device's short values kept the mouse's wide column.");
+					Assert.AreEqual(0, faults.Count, Environment.NewLine + string.Join(Environment.NewLine, faults));
+					form.Close();
+				}
+			});
+		}
 	}
 }

@@ -448,10 +448,10 @@ namespace x360ce.Engine
 		/// <summary>None.</summary>
 		public const string DefaultMouseButton = "0";
 
-		const string MouseStyleText = " 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.";
+		const string MouseStyleText = " 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.";
 		const string MouseSensitivityText = " in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.";
 		const string MouseSmoothingText = " takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.";
-		const string MouseReturnText = " takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.";
+		const string MouseReturnText = " takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths; in Wheel, the time it takes once the button lets the stick go, 0 at once. Range is 0 to 2000. Default is 0.";
 		const string MouseActiveText = " 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.";
 		const string MouseButtonText = ", counted from 1: the button of the same device. 0 = none. Default is 0.";
 

@@ -62,34 +62,34 @@ namespace x360ce.Tests
 					list.Add(Entry("xbox", 0, false, 0));
 					list.Add(Entry("c2", 1, true, 2));
 					list.Add(Entry("c1", 2, true, 1));
-					var grid = (DataGridView)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.DevicesDataGridView));
+					var grid = (DataGridView)UiTreeWalker.Find(control, "RootLayoutPanel/" + nameof(XInputDevicesUserControl.DevicesDataGridView));
 					var gridHeight = grid.Height;
 
-					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")),
+					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")),
 						"Auto-Order could not be pressed by path.");
 
 					Assert.AreEqual("Put controllers in this order?",
-						UiTreeWalker.GetValue(UiTreeWalker.Find(control, "PlanPanel/PlanSubjectLabel")));
-					StringAssert.Contains(UiTreeWalker.GetValue(UiTreeWalker.Find(control, "PlanPanel/PlanBodyLabel")),
+						UiTreeWalker.GetValue(UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanSubjectLabel")));
+					StringAssert.Contains(UiTreeWalker.GetValue(UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanBodyLabel")),
 						"Switch off xbox", "The notice does not say what will happen.");
 					Assert.AreEqual(gridHeight, grid.Height, string.Format(
 						"The notice took its room from the list instead of adding its own: page {0}, notice {1}.",
-						control.Bounds, ((Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.PlanPanel))).Bounds));
+						control.Bounds, ((Control)UiTreeWalker.Find(control, "RootLayoutPanel/" + nameof(XInputDevicesUserControl.PlanPanel))).Bounds));
 					Assert.IsTrue(control.Height > 180, "The page did not grow to hold the notice.");
 					// Docked in the wrong order, the list took the whole page and the notice was drawn over
 					// the bar and the list, with the room it had been given left empty below.
-					var notice = (Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.PlanPanel));
-					var bar = (Control)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.HeaderLayoutPanel) + "/" + nameof(XInputDevicesUserControl.DevicesToolStrip));
+					var notice = (Control)UiTreeWalker.Find(control, "RootLayoutPanel/" + nameof(XInputDevicesUserControl.PlanPanel));
+					var bar = (Control)UiTreeWalker.Find(control, "RootLayoutPanel/" + nameof(XInputDevicesUserControl.HeaderLayoutPanel) + "/" + nameof(XInputDevicesUserControl.DevicesToolStrip));
 					Assert.IsTrue(bar.Bottom <= grid.Top && grid.Bottom <= notice.Top && notice.Bottom <= control.ClientSize.Height,
 						string.Format("The bar, the list and the notice are not one below the other: bar {0}, list {1}, notice {2}.",
 							bar.Bounds, grid.Bounds, notice.Bounds));
-					Assert.IsFalse(UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/ApplyButton") is ToolStripItem apply && apply.Enabled,
+					Assert.IsFalse(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/ApplyButton") is ToolStripItem apply && apply.Enabled,
 						"Apply can be pressed while an order is waiting for an answer.");
 
-					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "PlanPanel/PlanCancelButton")),
+					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanCancelButton")),
 						"Cancel could not be pressed by path.");
 					Assert.AreEqual(180, control.Height, "Closing the notice did not give the room back.");
-					Assert.IsTrue(((ToolStripItem)UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/ApplyButton")).Enabled,
+					Assert.IsTrue(((ToolStripItem)UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/ApplyButton")).Enabled,
 						"Apply stayed held after the notice closed.");
 				}
 			});
@@ -120,8 +120,8 @@ namespace x360ce.Tests
 						var waiting = Entry("Controller 1", -1, true, 1);
 						waiting.Waiting = true;
 						list.Add(waiting);
-						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")));
-						var grid = (DataGridView)UiTreeWalker.Find(control, nameof(XInputDevicesUserControl.DevicesDataGridView));
+						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")));
+						var grid = (DataGridView)UiTreeWalker.Find(control, "RootLayoutPanel/" + nameof(XInputDevicesUserControl.DevicesDataGridView));
 						var device = grid.Columns[nameof(XInputDevicesUserControl.NameColumn)].Index;
 						var mapped = grid.Columns[nameof(XInputDevicesUserControl.MappedColumn)].Index;
 						Assert.AreEqual(grid.Columns.Count - 1, mapped, "The mapped devices are not the last column.");
@@ -160,13 +160,13 @@ namespace x360ce.Tests
 					list.Add(Entry("a", 0, true, 1));
 					list.Add(Entry("a", 1, true, 2));
 
-					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/ApplyButton")));
+					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/ApplyButton")));
 
 					Assert.AreEqual("Cannot put them in that order",
-						UiTreeWalker.GetValue(UiTreeWalker.Find(control, "PlanPanel/PlanSubjectLabel")));
-					Assert.IsFalse(((Button)UiTreeWalker.Find(control, "PlanPanel/PlanCancelButton")).Visible,
+						UiTreeWalker.GetValue(UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanSubjectLabel")));
+					Assert.IsFalse(((Button)UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanCancelButton")).Visible,
 						"Cancel is offered where there is nothing to cancel.");
-					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "PlanPanel/PlanOkButton")));
+					Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/PlanPanel/PlanOkButton")));
 					Assert.AreEqual(180, control.Height, "OK did not close the notice.");
 				}
 			});
@@ -223,7 +223,7 @@ namespace x360ce.Tests
 			public override SynchronizationContext CreateCopy() => this;
 		}
 		[TestMethod, TestCategory("devices"), TestCategory("ui")]
-		[Description("On the main window's Devices page the notice under the XInput list stands as every page's content: its text and buttons 12 from the page's sides, a row (8) under the list, its subject and body one block of text, its buttons a row under the body, and 16 above the next section's caption, as sections stand apart, at the screen's scale, in the program's font")]
+		[Description("On the main window's Devices page the notice under the XInput list stands as every page's content: each item one gap (8) from the page's left and under the item above it: the subject under the list, the body under the subject, the buttons under the body and the next section's caption under the buttons; Cancel the page's gap from its right, at the screen's scale, in the program's font")]
 		public void Notice_stands_a_row_under_the_list_12_in_and_16_above_the_next_section()
 		{
 			Ui.OnUiThread(() =>
@@ -243,15 +243,13 @@ namespace x360ce.Tests
 						list.Add(Entry("xbox", 0, false, 0));
 						list.Add(Entry("c2", 1, true, 2));
 						list.Add(Entry("c1", 2, true, 1));
-						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")), "Auto-Order could not be pressed by path.");
+						Assert.IsNull(UiTreeWalker.Invoke(UiTreeWalker.Find(control, "RootLayoutPanel/HeaderLayoutPanel/DevicesToolStrip/AutoOrderButton")), "Auto-Order could not be pressed by path.");
 						Application.DoEvents();
 						Assert.IsTrue(control.PlanPanel.Visible, "The notice is not shown.");
 						var page = main.DevicesTabPage;
 						Func<Control, Rectangle> on = x => page.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds));
 						var s = ControlsHelper.DpiScale;
 						var row = (int)Math.Round(8 * s);
-						var edge = (int)Math.Round(12 * s);
-						var section = (int)Math.Round(16 * s);
 						var grid = on(control.DevicesDataGridView);
 						var subject = on(control.PlanSubjectLabel);
 						var body = on(control.PlanBodyLabel);
@@ -264,13 +262,13 @@ namespace x360ce.Tests
 							if (actual != expected)
 								faults.Add(string.Format("{0} is {1}, not {2}.", what, actual, expected));
 						};
-						check("The subject's left from the page's left", subject.Left, edge);
-						check("The body's left from the page's left", body.Left, edge);
+						check("The subject's left from the page's left", subject.Left, row);
+						check("The body's left from the page's left", body.Left, row);
 						check("The subject under the list", subject.Top - grid.Bottom, row);
-						check("The body under the subject", body.Top - subject.Bottom, 0);
+						check("The body under the subject", body.Top - subject.Bottom, row);
 						check("The buttons under the body", ok.Top - body.Bottom, row);
-						check("Cancel's right from the page's right", page.ClientSize.Width - cancel.Right, edge);
-						check("The next section's caption text under the buttons", caption.Top + main.DirectInputDevicesHeaderLabel.Padding.Top - Math.Max(ok.Bottom, cancel.Bottom), section);
+						check("Cancel's right from the page's right", page.ClientSize.Width - cancel.Right, row);
+						check("The next section's caption text under the buttons", caption.Top + main.DirectInputDevicesHeaderLabel.Padding.Top - Math.Max(ok.Bottom, cancel.Bottom), row);
 						Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
 					}
 				}

@@ -291,6 +291,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			{ "SelectedBackground", Color.FromArgb(0x00, 0x78, 0xD4) },
 			{ "ColorNormal", Color.FromArgb(0x66, 0x99, 0xFF) },
 			{ "ColorActive", Color.FromArgb(0x42, 0xC7, 0x65) },
+			{ "ColorAccent", Color.FromArgb(0x2F, 0x9D, 0x4C) },
 			{ "ColorCurve", Color.FromArgb(0xFF, 0x00, 0x00) },
 		};
 
@@ -610,11 +611,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public Color FlatMouseDownBackColor;
 			public bool UseVisualStyleBackColor;
 			/// <summary>
-			/// A check box's own padding, which the larger box of Default.xaml widens, a number box's, which the room of its frame does, or a tool bar's, which its items' margins replace.
+			/// A check box's own padding, which the larger box of Default.xaml widens, a number box's, which the room of its frame does, or a tool bar's, which only arranges its items.
 			/// </summary>
 			public Padding Padding;
-			/// <summary>Whether the program gave a group box a padding of its own, which the theme then keeps.</summary>
-			public bool PaddingSet;
 			/// <summary>A push button's own largest and smallest sizes, which Default.xaml's height may lower or raise.</summary>
 			public Size MaximumSize;
 			public Size MinimumSize;
@@ -673,12 +672,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			public WholeScrollBars ListScrollBars;
 			/// <summary>What a grid drawn as the WPF programs draw one had before.</summary>
 			public GridLook Grid;
-			/// <summary>
-			/// A container's own padding while a list filling it stands edge to edge in it, and the controls docked above and below
-			/// the list that were lent its sides; null while the container has its padding.
-			/// </summary>
-			public Padding? LentPadding;
-			public List<Control> LentTo;
 		}
 
 		/// <summary>What a grid drawn as the WPF programs draw one had before, so it can have it back.</summary>
@@ -806,11 +799,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 			if (control is TabPage page)
 				state.UseVisualStyleBackColor = page.UseVisualStyleBackColor;
-			if (control is GroupBox groupBox)
-			{
-				state.Padding = groupBox.Padding;
-				state.PaddingSet = PaddingSet(groupBox);
-			}
 			if (control is Label rememberedLabel)
 			{
 				state.AutoSize = rememberedLabel.AutoSize;
@@ -1053,9 +1041,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				combo.GotFocus -= Repaint;
 				combo.LostFocus -= Repaint;
 				combo.FontChanged -= FitComboBox;
-				// Given its items later, from a list, it is fitted to them then.
+				// Given its items later, from a list, it is fitted to them then; its window made later, its field then.
 				combo.DataSourceChanged -= FitComboBox;
 				combo.DataSourceChanged += FitComboBox;
+				combo.HandleCreated -= FitComboBox;
+				if (paint)
+					combo.HandleCreated += FitComboBox;
 				if (paint)
 				{
 					combo.MouseEnter += Repaint;
@@ -1078,15 +1069,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				group.Paint -= GroupBox_Paint;
 				if (PaintsGroupBox(group))
 					group.Paint += GroupBox_Paint;
-				// Default.xaml's caption stands lower than Windows Forms puts it: what a layout places on the box moves
-				// down with it. A box whose padding the program left to Windows Forms takes Default.xaml's: its content the
-				// room inside the frame's two lines at the sides and below, and the room below the caption.
-				var own = state.Padding;
-				var room = Pixels(GroupBoxRoom);
-				var side = LineWidth() * 2 + room;
-				var padding = !PaintsGroupBox(group) ? own
-					: state.PaddingSet ? new Padding(own.Left, own.Top + Pixels(GroupBoxCaptionTop), own.Right, own.Bottom)
-					: new Padding(side, Pixels(GroupBoxCaptionTop) + room, side, side);
+				// A box holds its content as every container does: from the inside of its frame and below its caption, one gap
+				// at the right and below; its items keep theirs at the left and above with their margins.
+				var inside = GetGroupBoxInside(group);
+				var gap = Pixels(ItemGap);
+				var padding = new Padding(inside.Left, inside.Top - group.Font.Height,
+					group.Width - inside.Right + gap, group.Height - inside.Bottom + gap);
 				if (group.Padding != padding)
 					group.Padding = padding;
 				group.Invalidate();
@@ -1203,7 +1191,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 								host.Font = strip.Font;
 				}
 				// Its items keep their distance from its edge with their own margins, as a WPF tool bar's do.
-				var padding = ToolBarPadding(strip, state, wpf);
+				var padding = ToolBarPadding(state, wpf);
 				if (strip.Padding != padding)
 					strip.Padding = padding;
 				strip.Layout -= ToolBar_Layout;
@@ -1539,6 +1527,36 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// <summary>The rounding of a check box's corners in Default.xaml, in device-independent pixels.</summary>
 		const int CheckBoxRadius = 4;
 
+		/// <summary>The accent check boxes made, by font, state and theme, so a switch made again reuses its picture.</summary>
+		static readonly Dictionary<string, Bitmap> AccentCheckBoxes = new Dictionary<string, Bitmap>();
+
+		/// <summary>
+		/// The accent check box beside text in a font, as a picture for a button that works as a switch, such as a tool bar's:
+		/// Default.xaml's rounded box with an edge two of the theme's lines wide in <c>ColorAccent</c>, which meets 3:1 against the page in both themes,
+		/// filled with it and a white tick while it is on.
+		/// </summary>
+		/// <remarks>Made once for each font, state and theme, and drawn at the screen's scale: show it unscaled.</remarks>
+		public static Bitmap AccentCheckBox(Font font, bool isChecked, bool enabled = true)
+		{
+			var key = string.Join("|", font.Height, isChecked, enabled, IsDark);
+			Bitmap picture;
+			if (AccentCheckBoxes.TryGetValue(key, out picture))
+				return picture;
+			var size = CheckBoxBox(font, false);
+			picture = new Bitmap(size.Width, size.Height, PixelFormat.Format32bppArgb);
+			using (var g = Graphics.FromImage(picture))
+				DrawWpfCheck(g, new Rectangle(Point.Empty, size), CheckScale(font), isChecked ? CheckState.Checked : CheckState.Unchecked,
+					false, false, enabled, true);
+			AccentCheckBoxes[key] = picture;
+			return picture;
+		}
+
+		/// <summary>Whether a picture is an accent check box the theme drew at the screen's scale, which is shown unscaled.</summary>
+		public static bool IsAccentCheckBox(Image image)
+		{
+			return image is Bitmap picture && AccentCheckBoxes.ContainsValue(picture);
+		}
+
 		/// <summary>
 		/// The tick of Default.xaml's check box: its outline, as wide as its 8 by 8 room and 7.3 high, keeping its shape, in
 		/// device-independent pixels.
@@ -1584,7 +1602,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var box = new Rectangle(state.Padding.Left, (client.Height - height) / 2, size.Width, height);
 			var hot = button.Enabled && (button.Focused || client.Contains(button.PointToClient(Control.MousePosition)));
 			var check = radio != null ? (radio.Checked ? CheckState.Checked : CheckState.Unchecked) : ((CheckBox)button).CheckState;
-			DrawWpfCheck(g, box, CheckScale(button.Font), check, radio != null, hot, button.Enabled);
+			DrawWpfCheck(g, box, CheckScale(button.Font), check, radio != null, hot, button.Enabled, false);
 			var text = Rectangle.FromLTRB(box.Right + Pixels(CheckBoxTextGap), button.Padding.Top,
 				client.Width - button.Padding.Right, client.Height - button.Padding.Bottom);
 			TextRenderer.DrawText(g, button.Text, button.Font, text, button.Enabled ? button.ForeColor : DisabledText(),
@@ -1600,21 +1618,27 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		/// box edge colour while it is not. Disabled, it is drawn at a quarter strength. Its rounding, tick and dot are drawn
 		/// larger by the scale of the text beside it.
 		/// </summary>
-		static void DrawWpfCheck(Graphics g, Rectangle box, float size, CheckState check, bool round, bool hot, bool enabled)
+		/// <param name="accent">Draws the accent check box instead: an edge two lines wide in <c>ColorAccent</c>, filled with it and a
+		/// white tick while it is ticked.</param>
+		static void DrawWpfCheck(Graphics g, Rectangle box, float size, CheckState check, bool round, bool hot, bool enabled, bool accent)
 		{
 			var alpha = enabled ? 255 : 64;
 			var saved = Smooth(g);
-			var line = Line(g);
+			// The accent edge is two of the theme's lines, so it stays twice the standard edge, sharp, at every scale.
+			var line = accent ? Line(g) * 2 : Line(g);
 			var radius = round ? box.Height / 2f : Dip(g, CheckBoxRadius) * size;
-			var edge = hot ? "BackgroundDarkSelected" : check != CheckState.Unchecked ? "BorderField" : "BorderCheck";
+			var edge = accent ? "ColorAccent" : hot ? "BackgroundDarkSelected" : check != CheckState.Unchecked ? "BorderField" : "BorderCheck";
+			var ticked = accent && check != CheckState.Unchecked;
 			using (var face = RoundedRectangle(Inset(box, line / 2), radius, radius, radius, radius))
 			{
-				using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("BackgroundWhite", SystemColors.Window))))
+				var fill = ticked ? Themed("ColorAccent", SystemColors.Highlight) : Themed("BackgroundWhite", SystemColors.Window);
+				using (var brush = new SolidBrush(Color.FromArgb(alpha, fill)))
 					g.FillPath(brush, face);
 				using (var pen = new Pen(Color.FromArgb(alpha, Themed(edge, SystemColors.ControlLight)), line))
 					g.DrawPath(pen, face);
 			}
-			using (var brush = new SolidBrush(Color.FromArgb(alpha, Themed("ForegroundBlack", SystemColors.ControlText))))
+			var mark = ticked ? Color.White : Themed("ForegroundBlack", SystemColors.ControlText);
+			using (var brush = new SolidBrush(Color.FromArgb(alpha, mark)))
 			{
 				var scale = Dip(g, 1) * size;
 				if (round)
@@ -1655,21 +1679,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			using (var brush = new SolidBrush(behind))
 				e.Graphics.FillRectangle(brush, Rectangle.Inflate(text, 1, 1));
 			DrawButtonText(e.Graphics, button, text, DisabledText(), TextFlags(button));
-		}
-
-		static readonly PropertyInfo DefaultPaddingProperty = typeof(Control).GetProperty("DefaultPadding", BindingFlags.Instance | BindingFlags.NonPublic);
-
-		/// <summary>
-		/// Whether the program gave a control a padding of its own: one other than Windows Forms' default for it, as made or as
-		/// Windows Forms scaled it to the screen, which it does to every padding of a window made at another scale.
-		/// </summary>
-		static bool PaddingSet(Control control)
-		{
-			var own = control.Padding;
-			var standard = (Padding)(DefaultPaddingProperty?.GetValue(control, null) ?? Padding.Empty);
-			Func<int, int, bool> scaled = (value, made) => value == made
-				|| value == (int)Math.Floor(made * ControlsHelper.DpiScale) || value == (int)Math.Ceiling(made * ControlsHelper.DpiScale);
-			return !(scaled(own.Left, standard.Left) && scaled(own.Top, standard.Top) && scaled(own.Right, standard.Right) && scaled(own.Bottom, standard.Bottom));
 		}
 
 		/// <summary>
@@ -2356,8 +2365,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			}
 		}
 
-		/// <summary>The room round each item of a tool bar, in device-independent pixels: Default.xaml's button margin.</summary>
-		const int ButtonMargin = 4;
+		/// <summary>
+		/// The one gap of every window, in device-independent pixels: every item keeps it at its left and above, and every
+		/// container at its right and below, so items stand one gap from their container's edges and one gap apart.
+		/// </summary>
+		const int ItemGap = 8;
 
 		/// <summary>The room between a button's fill and what is on it, in device-independent pixels: Default.xaml's button padding.</summary>
 		const int ButtonPadding = 4;
@@ -2405,8 +2417,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Lays an item on a tool bar drawn as the WPF programs draw one out as a control on a WPF tool bar: Default.xaml's
-		/// button margin round it, and a button as Default.xaml's button, its picture and text side by side in the middle,
+		/// Lays an item on a tool bar drawn as the WPF programs draw one out as any other item of the window: one gap at its
+		/// left and above, the tool bar only arranging it, and a button as Default.xaml's button, its picture and text side by side in the middle,
 		/// with the button padding at each side, and as tall as Default.xaml's button; gives any other item its own look back.
 		/// </summary>
 		/// <remarks>
@@ -2427,7 +2439,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					own.ArrowPadding = (Padding)ArrowPaddingField.GetValue(layout);
 				ItemLooks.Add(item, own);
 			}
-			var margin = wpf ? new Padding(Pixels(ButtonMargin)) : own.Margin;
+			var margin = wpf ? new Padding(Pixels(ItemGap), Pixels(ItemGap), 0, 0) : own.Margin;
 			if (item.Margin != margin)
 				item.Margin = margin;
 			if (!(item is ToolStripButton || item is ToolStripDropDownButton || item is ToolStripSplitButton))
@@ -2473,15 +2485,12 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// The padding of a tool bar: as the WPF programs draw one, at its sides none but the room a list beside it lent it,
-		/// above and below its buttons its own; otherwise its own.
+		/// The padding of a tool bar: as the WPF programs draw one, none, as it only arranges its items, which keep their gaps
+		/// with their margins; otherwise its own.
 		/// </summary>
-		static Padding ToolBarPadding(ToolStrip strip, State state, bool wpf)
+		static Padding ToolBarPadding(State state, bool wpf)
 		{
-			if (!wpf)
-				return state.Padding;
-			var lent = LentRoom(strip);
-			return new Padding(lent.Left, state.Padding.Top, lent.Right, state.Padding.Bottom);
+			return wpf ? Padding.Empty : state.Padding;
 		}
 
 		/// <summary>
@@ -2501,24 +2510,29 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		}
 
 		/// <summary>
-		/// Where a group box's caption breaks its frame, how far its text stands in from there, and how far down its text stands,
-		/// in device-independent pixels, as in Default.xaml.
+		/// Where a group box's caption breaks its frame, and how far its text stands in from there, in device-independent
+		/// pixels, as in Default.xaml.
 		/// </summary>
 		const int GroupBoxCaptionGap = 12;
 		const int GroupBoxCaptionPadding = 4;
-		const int GroupBoxCaptionTop = 4;
 
 		/// <summary>
-		/// The room between a group box's content and the inner line of its frame at the sides and below, and between its
-		/// caption's text and its content, in device-independent pixels, as Default.xaml's GroupBox pads its content.
+		/// The inside of a group box as it is drawn, in its own pixels: inside the two lines of its frame at the sides and below,
+		/// and below its caption at the box's top, or below the frame's top lines when it has none. Its items stand one gap in
+		/// from there.
 		/// </summary>
-		const int GroupBoxRoom = 4;
+		public static Rectangle GetGroupBoxInside(GroupBox box)
+		{
+			var lines = LineWidth() * 2;
+			var top = box.Text.Length > 0 ? TextRenderer.MeasureText(box.Text, box.Font).Height : box.Font.Height / 2 + lines;
+			return Rectangle.FromLTRB(lines, top, Math.Max(lines, box.Width - lines), Math.Max(top, box.Height - lines));
+		}
 
 		/// <summary>
 		/// Draws a group box as Default.xaml does, over what Windows Forms drew: its frame rounded and sunken, a shadow line with
-		/// a highlight line beside it, a pixel right and down, and its caption in a break in the frame clear of the corner, the
-		/// frame's top line through the caption's middle. The caption never comes closer to the box's controls. Disabled, the
-		/// caption is at half strength, as a disabled label is.
+		/// a highlight line beside it, a pixel right and down, and its caption at the box's top in a break in the frame clear of
+		/// the corner, the frame's top line through the caption's middle. Disabled, the caption is at half strength, as a
+		/// disabled label is.
 		/// </summary>
 		static void GroupBox_Paint(object sender, PaintEventArgs e)
 		{
@@ -2530,13 +2544,9 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			using (var brush = new SolidBrush(box.BackColor))
 				g.FillRectangle(brush, client);
 			var caption = TextRenderer.MeasureText(g, box.Text.Length > 0 ? box.Text : " ", box.Font);
-			// Default.xaml's caption stands lower than Windows Forms' does, where a layout moves the box's controls down with
-			// it. Controls put where they stand keep the room left above them, and the caption stays where Windows Forms has it.
-			var laidOut = box.Controls.Cast<Control>().Any(x => x.Visible && x.Dock != DockStyle.None);
-			var captionTop = laidOut ? (int)Math.Round(Dip(g, GroupBoxCaptionTop)) : 0;
 			// Through the middle of the caption's line as WPF lays it out, the font's height: Windows' own line can be a row
 			// shorter, which would put the line half a row high.
-			var top = captionTop + box.Font.Height / 2;
+			var top = box.Font.Height / 2;
 			var saved = Smooth(g);
 			var line = Line(g);
 			var radius = Dip(g, CornerRadius);
@@ -2555,8 +2565,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var gap = (int)Math.Round(Dip(g, GroupBoxCaptionGap));
 			var padding = (int)Math.Round(Dip(g, GroupBoxCaptionPadding));
 			using (var brush = new SolidBrush(box.BackColor))
-				g.FillRectangle(brush, gap, captionTop, width + padding * 2, caption.Height);
-			TextRenderer.DrawText(g, box.Text, box.Font, new Rectangle(gap + padding, captionTop, width, caption.Height),
+				g.FillRectangle(brush, gap, 0, width + padding * 2, caption.Height);
+			TextRenderer.DrawText(g, box.Text, box.Font, new Rectangle(gap + padding, 0, width, caption.Height),
 				box.Enabled ? box.ForeColor : DisabledText(), flags);
 		}
 
@@ -2715,9 +2725,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			State state;
 			if (!States.TryGetValue(combo, out state))
 				return;
-			var height = ComboBoxHeight(combo);
-			if (height > 0 && combo.Height != height)
-				combo.Height = height;
 			const AnchorStyles across = AnchorStyles.Left | AnchorStyles.Right;
 			var stretched = combo.Dock != DockStyle.None || (combo.Anchor & across) == across;
 			if (!(combo.Parent is ToolStrip) && combo.Items.Count > 0)
@@ -2733,6 +2740,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				else if (combo.MinimumSize.Width < width)
 					combo.MinimumSize = new Size(width, combo.MinimumSize.Height);
 			}
+			// The height after the width: a list made wider is given the height it has then, which a layout keeps as the
+			// list's own, and Windows only makes the window the height its field gives it.
+			var height = ComboBoxHeight(combo);
+			if (height > 0 && combo.Height != height)
+				combo.Height = height;
 			if (!combo.IsHandleCreated)
 				return;
 			SetWindowFontMethod?.Invoke(combo, null);
@@ -2742,7 +2754,11 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				var field = (int)NativeMethods.SendMessage(combo.Handle, NativeMethods.CB_GETITEMHEIGHT, (IntPtr)(-1), IntPtr.Zero);
 				var itemHeight = field + height - (r.Bottom - r.Top);
 				if (field > 0 && itemHeight > 0 && combo.ItemHeight != itemHeight)
+				{
 					combo.ItemHeight = itemHeight;
+					// Windows makes the window its new height itself: what holds the list measures it again at that height.
+					combo.Parent?.PerformLayout(combo, nameof(Control.Bounds));
+				}
 			}
 			var info = new NativeMethods.COMBOBOXINFO { cbSize = Marshal.SizeOf(typeof(NativeMethods.COMBOBOXINFO)) };
 			if (!NativeMethods.GetComboBoxInfo(combo.Handle, ref info))
@@ -3813,79 +3829,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					grid.Rows[i].Height = rowHeight;
 			if (wpf)
 				PadFirstColumn(grid, look);
-			LendPadding(grid, wpf);
-		}
-
-		/// <summary>
-		/// Lets a list that fills its container stand edge to edge in it: the container's side padding goes to the controls
-		/// docked above and below the list, as room inside them, so they stay where the padding put them, and its padding above
-		/// or below the list goes where nothing is docked there; all of it comes back when the list is drawn as Windows draws it.
-		/// </summary>
-		/// <remarks>
-		/// Windows Forms docks every control inside its container's padding, and gives a docked control no margin. A tool bar
-		/// takes the room as its padding, before its first button and after its last; any other control as its own padding,
-		/// which moves what it holds. A control whose own edge is drawn, a frame or a line, is put in a container of its own to
-		/// be moved.
-		/// </remarks>
-		static void LendPadding(DataGridView grid, bool wpf)
-		{
-			var parent = grid.Parent;
-			State state;
-			if (parent == null || !States.TryGetValue(parent, out state))
-				return;
-			var own = parent.Padding;
-			var docked = parent.Controls.Cast<Control>()
-				.Where(x => x != grid && (x.Dock == DockStyle.Top || x.Dock == DockStyle.Bottom)).ToList();
-			var top = docked.Any(x => x.Dock == DockStyle.Top) ? own.Top : 0;
-			var bottom = docked.Any(x => x.Dock == DockStyle.Bottom) ? own.Bottom : 0;
-			if (wpf && state.LentPadding == null && grid.Dock == DockStyle.Fill && !(parent is TableLayoutPanel)
-				&& !(parent is FlowLayoutPanel) && (own.Left > 0 || own.Right > 0 || top != own.Top || bottom != own.Bottom))
-			{
-				state.LentPadding = own;
-				state.LentTo = docked;
-				parent.Padding = new Padding(0, top, 0, bottom);
-				foreach (var control in state.LentTo)
-					Lend(control, own.Left, own.Right);
-			}
-			else if (!wpf && state.LentPadding != null)
-			{
-				own = state.LentPadding.Value;
-				var lentTo = state.LentTo;
-				state.LentPadding = null;
-				state.LentTo = null;
-				foreach (var control in lentTo)
-					Lend(control, -own.Left, -own.Right);
-				parent.Padding = own;
-			}
-		}
-
-		/// <summary>Gives a control docked beside a list the room lent to it, or takes it back.</summary>
-		static void Lend(Control control, int left, int right)
-		{
-			State state;
-			if (control is ToolStrip strip)
-			{
-				// A tool bar the theme has not reached yet takes the room as it is reached.
-				if (!States.TryGetValue(strip, out state))
-					return;
-				var padding = ToolBarPadding(strip, state, IsWpfToolBar(strip) && state.RenderMode != ToolStripRenderMode.Custom);
-				if (strip.Padding != padding)
-					strip.Padding = padding;
-				return;
-			}
-			var p = control.Padding;
-			control.Padding = new Padding(p.Left + left, p.Top, p.Right + right, p.Bottom);
-		}
-
-		/// <summary>The room a list lent a control docked beside it, at its sides; none for any other control.</summary>
-		static Padding LentRoom(Control control)
-		{
-			State state;
-			if (control.Parent == null || !States.TryGetValue(control.Parent, out state) || state.LentPadding == null
-				|| !state.LentTo.Contains(control))
-				return Padding.Empty;
-			var lent = state.LentPadding.Value;
-			return new Padding(lent.Left, 0, lent.Right, 0);
 		}
 
 		/// <summary>
@@ -4028,7 +3971,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 			var check = e.FormattedValue is CheckState checkState ? checkState
 				: e.FormattedValue is bool isChecked && isChecked ? CheckState.Checked : CheckState.Unchecked;
 			var hot = grid.Enabled && (HasCellFocus(grid, e.ColumnIndex, e.RowIndex) || bounds.Contains(grid.PointToClient(Control.MousePosition)));
-			DrawWpfCheck(e.Graphics, box, CheckScale(font), check, false, hot, grid.Enabled);
+			DrawWpfCheck(e.Graphics, box, CheckScale(font), check, false, hot, grid.Enabled, false);
 		}
 
 		/// <summary>
@@ -5157,6 +5100,14 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 					finally
 					{
 						g.ReleaseHdc(dc);
+					}
+					// The visual style draws the bar's edge that faces the content as a lighter line, which stood out as a white
+					// border in the light theme: the edge takes the track's colour, two pixels in, where no part reaches.
+					if (bar.Width > 4 && bar.Height > 4)
+					{
+						var track = vertical ? bitmap.GetPixel(2, bar.Height / 2) : bitmap.GetPixel(bar.Width / 2, 2);
+						using (var brush = new SolidBrush(track))
+							g.FillRectangle(brush, vertical ? new Rectangle(0, 0, 1, bar.Height) : new Rectangle(0, 0, bar.Width, 1));
 					}
 				}
 				using (var g = Graphics.FromHdc(hdc))

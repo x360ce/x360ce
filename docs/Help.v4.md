@@ -109,16 +109,21 @@ A mouse can move a stick: to steer, fly, aim or turn a camera. Map the mouse's a
 - `Position`: the stick follows how far the mouse has moved, and stays there. For steering and flying. This is how a mouse moved a stick before the page existed, and the page starts with it.
 - `Speed`: the stick follows how fast the mouse moves, and returns to the centre when it stops. For a camera or aiming.
 - `Screen`: the stick follows where the pointer is on the screen, measured from the middle of the screen. For a game that shows a pointer, as a mouse yoke.
+- `Wheel`: the stick follows how far the mouse has moved, and stays there while the mouse moves it, whatever `[Back to centre]` is set to. When the button lets it go, or turns it off, it goes back to the centre over the `[Back to centre]` time, as a steering wheel does; `0` centres it at once. Active always, it never goes back.
 
 The other settings:
 
 - `[Sensitivity across]` and `[Sensitivity up and down]`, in percent. At `100`, the whole stick is 2,048 counts of movement in `Position`, 4,096 counts a second in `Speed`, and half the screen's height in `Screen`. A mouse with a high DPI counts more for the same movement, so it needs less.
 - `[Smoothing]`, in milliseconds: how long the stick takes to follow a change in `Speed` and `Screen`, which evens out the mouse's uneven reports. `30` is barely felt.
-- `[Back to centre]`, in milliseconds: how long the stick takes to go back to the centre. In `Position`, `0` leaves it where the mouse left it, and a value makes a stick that centres itself. In `Speed`, it slows the return after the mouse stops.
-- `[Active]`: always, while a button is held, or turned on and off by a button. A stick turned on by a button starts from the centre each time, and `Screen` takes the pointer's place at that moment as the centre. Let go, the stick returns to the centre, or stays where it was if you choose that.
+- `[Active]`: always, while a button is held, or turned on and off by a button. A stick turned on by a button starts from the centre each time, a `Wheel` from where it is, and `Screen` takes the pointer's place at that moment as the centre. Let go, the stick returns to the centre, or stays where it was if you choose that.
 - `[Button]`: the mouse's button that `[Active]` uses: button 1 is the left button, 2 the right, 3 the middle.
+- `[Back to centre]`, in milliseconds: how long the stick takes to go back to the centre. In `Position`, `0` leaves it where the mouse left it, and a value makes a stick that centres itself. In `Speed`, it slows the return after the mouse stops. In `Wheel`, it is how long the stick takes to centre once it is let go.
 
 The stick's own `[Dead Zone]`, `[Anti-Dead Zone]` and `[Sensitivity]` on the stick's tab shape the result as for any device.
+
+A formula in a stick's box, such as `=a3*2`, reads the value this page gives the stick, as `Axis 3` does. On one stick a mouse axis takes its value from the first box that reads it, and a second mouse axis named in the same formula reads the mouse's plain position.
+
+Under the two sticks a short demo shows the style of the stick you last worked on, with settings of its own that show the style plainly: a mouse on its pad, or for `Screen` a pointer on a screen, and the stick it moves, pausing at the moment that sets the style apart, with a line under it that says what happens. A note says so when the stick's `[Active]` setting keeps it from doing what the demo shows. Choosing a style plays it once, unless Windows' Show animations is off; `[Play]` plays it again, and stops it while it plays.
 
 For example, to steer a car as in GTA, with a camera when not steering: on the left stick, `Position`, active while button 1 is held, then centre; on the right stick, `Speed`, always.
 
@@ -164,7 +169,7 @@ x360ce carries its own controller database, `gamecontrollerdb_x360ce.windows.txt
 2. Settings you saved always win: a controller removed from its tab, deleted on the `[Devices]` page, or unplugged gets its own settings back when it returns. The database is used only when there are none.
 3. `[Auto Preset]` fills the controller in the same way.
 4. `[Load Preset...]` → `[Default Settings for Most Popular Controllers]` lists the database's rows, at once and offline.
-5. `[Options]` tab → `[Internet]` → `[Update x360ce Database]` fetches the newest copy from x360ce's server into the settings folder, and x360ce uses that copy from then on. It is the only time x360ce asks the internet for it.
+5. `[Options]` tab → `[Internet]` → `[Update x360ce Database]`, or `[Refresh]` on the Most Popular list, fetches the newest copy into the settings folder from the site of the `Web Service URL` on that page: its `/webservices/x360ce.asmx` becomes `/ControllerDatabase.ashx`, and x360ce's server is asked when the address does not end that way. x360ce uses that copy from then on. These two buttons are the only times x360ce asks the internet for it.
 
 ## SDL controller database
 

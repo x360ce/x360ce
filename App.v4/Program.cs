@@ -421,7 +421,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>The arguments another process was started with, or null when its command line cannot be read, as one run as administrator's cannot.</summary>
-		static string[] ArgumentsOf(int processId)
+		internal static string[] ArgumentsOf(int processId)
 		{
 			string line = null;
 			try

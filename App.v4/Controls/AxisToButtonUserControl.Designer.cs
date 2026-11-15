@@ -61,7 +61,7 @@
 			this.DeadZoneTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DeadZoneTrackBar.LargeChange = 10;
 			this.DeadZoneTrackBar.Location = new System.Drawing.Point(217, 0);
-			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneTrackBar.Maximum = 100;
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 28);
@@ -73,7 +73,7 @@
 			this.ButtonNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ButtonNameLabel.AutoSize = true;
 			this.ButtonNameLabel.Location = new System.Drawing.Point(134, 6);
-			this.ButtonNameLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.ButtonNameLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ButtonNameLabel.Name = "ButtonNameLabel";
 			this.ButtonNameLabel.Size = new System.Drawing.Size(72, 13);
 			this.ButtonNameLabel.TabIndex = 5;
@@ -83,7 +83,7 @@
 			//
 			this.MappedAxisTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MappedAxisTextBox.Location = new System.Drawing.Point(0, 3);
-			this.MappedAxisTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.MappedAxisTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MappedAxisTextBox.Name = "MappedAxisTextBox";
 			this.MappedAxisTextBox.ReadOnly = true;
 			this.MappedAxisTextBox.Size = new System.Drawing.Size(75, 20);
@@ -94,7 +94,7 @@
 			//
 			this.DeadZoneNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(499, 3);
-			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -109,7 +109,7 @@
 			//
 			this.DeadZoneTextBox.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.DeadZoneTextBox.Location = new System.Drawing.Point(450, 3);
-			this.DeadZoneTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.DeadZoneTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneTextBox.Name = "DeadZoneTextBox";
 			this.DeadZoneTextBox.ReadOnly = true;
 			this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -122,7 +122,7 @@
 			//
 			this.ArrowPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.ArrowPictureBox.Location = new System.Drawing.Point(81, 2);
-			this.ArrowPictureBox.Margin = new System.Windows.Forms.Padding(4);
+			this.ArrowPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ArrowPictureBox.Name = "ArrowPictureBox";
 			this.ArrowPictureBox.Size = new System.Drawing.Size(24, 24);
 			this.ArrowPictureBox.TabIndex = 0;
@@ -135,7 +135,7 @@
 			this.ButtonImagePictureBox.BackgroundImage = global::x360ce.App.Properties.Resources.add_32x32;
 			this.ButtonImagePictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ButtonImagePictureBox.Location = new System.Drawing.Point(103, 0);
-			this.ButtonImagePictureBox.Margin = new System.Windows.Forms.Padding(4, 4, 0, 4);
+			this.ButtonImagePictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ButtonImagePictureBox.Name = "ButtonImagePictureBox";
 			this.ButtonImagePictureBox.Size = new System.Drawing.Size(24, 24);
 			this.ButtonImagePictureBox.TabIndex = 0;

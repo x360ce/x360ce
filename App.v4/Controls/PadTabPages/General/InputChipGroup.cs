@@ -60,10 +60,10 @@ namespace x360ce.App.Controls
 		const int ChipsPerRow = 8;
 
 		/// <summary>
-		/// The room between chips, the rounding of a chip's corners, and the room round its caption across and above and below,
-		/// in device-independent pixels.
+		/// The room between chips, the window's one gap between items, the rounding of a chip's corners, and the room round its
+		/// caption across and above and below, in device-independent pixels.
 		/// </summary>
-		const int Gap = 4;
+		const int Gap = 8;
 		const int Radius = 4;
 		const int PadX = 4;
 		const int PadY = 4;

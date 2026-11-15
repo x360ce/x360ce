@@ -204,13 +204,13 @@ namespace x360ce.Engine
 			return true;
 		}
 
-		/// <summary>A row made from its parts; the name loses the commas SDL cannot carry in it.</summary>
+		/// <summary>A row made from its parts; the name loses the commas and line breaks SDL cannot carry in it.</summary>
 		public static SdlMapping Create(string guid, string name, IEnumerable<KeyValuePair<string, string>> fields, string platform = WindowsPlatform)
 		{
 			return new SdlMapping
 			{
 				Guid = SdlGuid.Parse(guid),
-				Name = (name ?? "").Replace(",", " ").Trim(),
+				Name = (name ?? "").Replace(",", " ").Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ').Trim(),
 				Platform = platform,
 				Fields = fields.ToList().AsReadOnly(),
 			};

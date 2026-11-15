@@ -157,7 +157,10 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>The space between the buttons, in pixels at 100 %.</summary>
 		const int ButtonGap = 8;
 
-		/// <summary>The space between the buttons and the edge, and round a button's wording, in pixels at 100 %.</summary>
+		/// <summary>The space between the buttons and the edge, in pixels at 100 %.</summary>
+		const int ButtonEdge = 8;
+
+		/// <summary>The space round a button's wording, in pixels at 100 %.</summary>
 		const int ButtonMargin = 12;
 
 		/// <summary>Pixels at 100 % at the screen's scale, as the window's own places and sizes are scaled.</summary>
@@ -175,9 +178,10 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			var shown = new[] { Button1, Button2, Button3 }.Where(x => x.DialogResult != DialogResult.None).ToArray();
 			var margin = Scaled(ButtonMargin);
+			var edge = Scaled(ButtonEdge);
 			var gap = Scaled(ButtonGap);
-			var right = ClientSize.Width - margin;
-			var total = margin;
+			var right = ClientSize.Width - edge;
+			var total = edge;
 			for (var i = shown.Length - 1; i >= 0; i--)
 			{
 				var button = shown[i];
@@ -188,7 +192,7 @@ namespace JocysCom.ClassLibrary.Controls
 				right = button.Left - gap;
 				total += button.Width + gap;
 			}
-			buttonsWidth = total + margin - gap;
+			buttonsWidth = total + edge - gap;
 		}
 
 		public void AddResizeEvents()

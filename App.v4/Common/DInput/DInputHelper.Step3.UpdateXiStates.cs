@@ -111,14 +111,24 @@ namespace x360ce.App.DInput
 						gp.Buttons |= GamepadButtonFlags.DPadLeft;
 				}
 
-				// How a mouse moves each stick, when the row's Mouse page sets it: whether it is on this pass, and the pointer.
+				// How a mouse moves each stick, when the row's Mouse page sets it: whether it is on this pass, the pointer, and
+				// the state that stick's mappings read, the device's with its moving controls in the stick's style. Every
+				// other target reads the device's state.
 				var mouse = rowMouse[i];
+				SourceState leftState = null;
+				SourceState rightState = null;
 				if (mouse != null)
 				{
 					if (mouse[0] != null)
+					{
 						mouse[0].BeginPass(diState);
+						leftState = mouse[0].Normalise(diState, ud, maps, TargetType.LeftThumbX, TargetType.LeftThumbY, now);
+					}
 					if (mouse[1] != null)
+					{
 						mouse[1].BeginPass(diState);
+						rightState = mouse[1].Normalise(diState, ud, maps, TargetType.RightThumbX, TargetType.RightThumbY, now);
+					}
 				}
 
 				// --------------------------------------------------------
@@ -139,11 +149,17 @@ namespace x360ce.App.DInput
 
 				foreach (var map in maps)
 				{
+					// The state the target reads: its stick's, when the Mouse page sets one for it, or the device's.
+					var source = diState;
+					if (leftState != null && (map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY))
+						source = leftState;
+					else if (rightState != null && (map.Target == TargetType.RightThumbX || map.Target == TargetType.RightThumbY))
+						source = rightState;
 					// A row driven by a formula names no single control, so it is worked out here and
 					// the rest of this loop, which is entirely about one control, is skipped.
 					if (map.Expression != null)
 					{
-						ApplyExpression(map, diState, ref gp);
+						ApplyExpression(map, source, ref gp);
 						continue;
 					}
 					// If not mapped then continue.
@@ -241,8 +257,8 @@ namespace x360ce.App.DInput
 					{
 						// Get source value.
 						int[] values = map.IsAxis
-							? diState.Axis
-							: diState.Sliders;
+							? source.Axis
+							: source.Sliders;
 
 						// If index is out of range then...
 						if (map.Index > values.Length)
@@ -310,19 +326,6 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target != TargetType.None)
 						{
-							// A control that reports movement, on a stick the Mouse page sets: read in that page's style, from the
-							// device's running totals, which only a DirectInput device that reports movement keeps.
-							if (relative && mouse != null && ud.SourceStateRead != null)
-							{
-								var left = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY;
-								var stick = mouse[left ? 0 : 1];
-								if (stick != null)
-								{
-									var totals = map.IsAxis ? ud.SourceStateRead.Axis : ud.SourceStateRead.Sliders;
-									var across = map.Target == TargetType.LeftThumbX || map.Target == TargetType.RightThumbX;
-									v = stick.Value(across ? 0 : 1, totals[map.Index - 1], ud.OriginSourceStateTime, now);
-								}
-							}
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
 							// Set negative center value (-1) to 0.
 							if (thumbValue == -1)

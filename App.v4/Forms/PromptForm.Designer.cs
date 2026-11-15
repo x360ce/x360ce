@@ -53,7 +53,7 @@
 			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainLayoutPanel.Name = "MainLayoutPanel";
-			this.MainLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.MainLayoutPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.MainLayoutPanel.RowCount = 2;
 			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -65,7 +65,7 @@
 			this.EditTextBox.AcceptsReturn = true;
 			this.MainLayoutPanel.SetColumnSpan(this.EditTextBox, 4);
 			this.EditTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.EditTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.EditTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.EditTextBox.Multiline = true;
 			this.EditTextBox.Name = "EditTextBox";
 			this.EditTextBox.Size = new System.Drawing.Size(440, 208);
@@ -76,7 +76,7 @@
 			// CopyButton
 			//
 			this.CopyButton.AutoSize = true;
-			this.CopyButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CopyButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CopyButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CopyButton.Name = "CopyButton";
 			this.CopyButton.Size = new System.Drawing.Size(76, 24);
@@ -90,7 +90,7 @@
 			this.SizeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SizeLabel.AutoSize = true;
 			this.SizeLabel.ForeColor = System.Drawing.SystemColors.GrayText;
-			this.SizeLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.SizeLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SizeLabel.Name = "SizeLabel";
 			this.SizeLabel.Size = new System.Drawing.Size(53, 13);
 			this.SizeLabel.TabIndex = 2;
@@ -99,7 +99,7 @@
 			// OkButton
 			//
 			this.OkButton.AutoSize = true;
-			this.OkButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OkButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.OkButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.Size = new System.Drawing.Size(76, 24);
@@ -112,7 +112,7 @@
 			//
 			this.CloseButton.AutoSize = true;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CloseButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.Size = new System.Drawing.Size(76, 24);
@@ -129,6 +129,7 @@
 			this.ClientSize = new System.Drawing.Size(464, 264);
 			this.Controls.Add(this.MainLayoutPanel);
 			this.Icon = global::x360ce.App.Properties.Resources.app;
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.Name = "PromptForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Prompt Form";

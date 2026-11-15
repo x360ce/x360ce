@@ -104,7 +104,7 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 				if (string.Equals(shown(items[i]), value, StringComparison.OrdinalIgnoreCase))
 					return i;
 			for (var i = 0; i < items.Count; i++)
-				if (string.Equals(Convert.ToString(items[i], System.Globalization.CultureInfo.InvariantCulture), value, StringComparison.OrdinalIgnoreCase))
+				if (string.Equals(System.Convert.ToString(items[i], System.Globalization.CultureInfo.InvariantCulture), value, StringComparison.OrdinalIgnoreCase))
 					return i;
 			return -1;
 		}

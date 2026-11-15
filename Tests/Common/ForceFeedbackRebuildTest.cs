@@ -174,8 +174,8 @@ namespace x360ce.Tests
 			Assert.IsFalse(source.Contains("if (paramsL != null && effectL == null)") || source.Contains("if (paramsR != null && effectR == null)"),
 				"A missing effect still makes the pair again whatever the pad answered before.");
 			var dispose = source.IndexOf("effectL.Dispose();");
-			var makeLeft = source.IndexOf("effectL = CreateEffect(device, GUID_Force, paramsL);");
-			var makeRight = source.IndexOf("effectR = CreateEffect(device, GUID_Force, paramsR);");
+			var makeLeft = source.IndexOf("effectL = CreateEffect(device, GUID_Force, paramsL, out _);");
+			var makeRight = source.IndexOf("effectR = CreateEffect(device, GUID_Force, paramsR, out _);");
 			Assert.IsTrue(plan < dispose && dispose < makeLeft && makeLeft < makeRight,
 				"The held effects are not stopped and disposed, as planned, before new ones are made.");
 			var rememberLeft = source.IndexOf("motorsRefused |= MotorEffects.Left;");

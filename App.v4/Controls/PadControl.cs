@@ -40,14 +40,30 @@ namespace x360ce.App.Controls
 			// several times over.
 			foreach (var axis in new[] { LeftTriggerUserControl, RightTriggerUserControl, LeftThumbXUserControl, LeftThumbYUserControl,
 				RightThumbXUserControl, RightThumbYUserControl })
-				axis.Margin = AppHelper.ScaledPadding(0, 0, 0, 4);
-			LeftMouseStickPanel.Margin = AppHelper.ScaledPadding(0, 0, 12, 4);
-			RightMouseStickPanel.Margin = AppHelper.ScaledPadding(0, 0, 0, 4);
+			{
+				axis.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+				foreach (var box in new[] { axis.AntiDeadZoneNumericUpDown, axis.DeadZoneNumericUpDown, axis.SensitivityNumericUpDown })
+					box.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			}
+			LeftMouseStickPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			RightMouseStickPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			// The demo shows the stick group last worked on, the left one at first, and plays a style as it is chosen.
+			MouseDemoPanel.Source = LeftMouseStickPanel;
+			foreach (var group in new[] { LeftMouseStickPanel, RightMouseStickPanel })
+			{
+				var stick = group;
+				stick.Enter += (s, e) => MouseDemoPanel.Source = stick;
+				stick.StyleChosen += (s, e) =>
+				{
+					MouseDemoPanel.Source = stick;
+					MouseDemoPanel.PlayChosenStyle();
+				};
+			}
 			// The SDL page, after Direct Input: what SDL's controller database says about the selected device.
 			SdlPanel = new SdlUserControl { Dock = DockStyle.Fill };
 			SdlPanel.ApplyClicked += SdlPanel_ApplyClicked;
 			SdlPanel.CopyClicked += SdlPanel_CopyClicked;
-			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			SdlTabPage.Controls.Add(SdlPanel);
 			// Added, with the pages after Direct Input added again behind it: Insert does nothing while the tab control
 			// has no window yet, as here, so the page was in the list and never shown.
@@ -128,65 +144,6 @@ namespace x360ce.App.Controls
 					Global_UpdateControlFromStates(this, EventArgs.Empty);
 			};
 		}
-
-		/// <summary>Gives the page room to scroll when the window is shorter than its rows need.</summary>
-		/// <remarks>
-		/// The table gives the tabs all the height they ask for even when the window has less, and moves them up
-		/// to find it: on a 1920 x 1080 screen at 150 % the tab strip slid under the tool bar and the device list,
-		/// and no tab could be chosen. Scrolling keeps every row where it belongs.
-		/// </remarks>
-		protected override void OnLayout(LayoutEventArgs e)
-		{
-			var needed = NeededHeight(ClientSize.Width);
-			if (AutoScrollMinSize.Height != needed)
-				AutoScrollMinSize = new Size(0, needed);
-			base.OnLayout(e);
-		}
-
-		/// <summary>The height the page's rows need to be shown whole: the tool bar, the device list, the tabs and the buttons.</summary>
-		/// <remarks>
-		/// What the page scrolls by when it is shorter, and what the main window first opens tall enough for
-		/// (<see cref="MainForm.FitToPage"/>). The height comes from the rows themselves, so it follows the font, the theme and
-		/// the screen's scale. The device list counts at its designed height, whatever devices it holds, and takes any height
-		/// the page has to spare.
-		/// </remarks>
-		/// <param name="width">The width the page is laid out at.</param>
-		public int NeededHeight(int width)
-		{
-			FitTabsToRows();
-			return PadTableLayoutPanel.GetPreferredSize(new Size(width, 0)).Height;
-		}
-
-		/// <summary>
-		/// Makes the controller pages as tall as the rows of the taller of the General and Buttons pages, and never shorter
-		/// than they were drawn.
-		/// </summary>
-		/// <remarks>
-		/// The tabs ask for the height they were drawn at, while the General page's table is as tall as its rows, whose boxes,
-		/// names and numbers are as tall as the font makes them, and the Buttons page's fourteen rows as tall as their boxes.
-		/// In a font taller than the one the pages were drawn in, the last row would run past the bottom of the page and be cut
-		/// off. The height wanted is read from the rows, so it follows the font. The General page is given the room the tabs
-		/// gain or lose, as the tabs give it once they lay their pages out: tabs not shown do not lay their pages out, and without
-		/// it the next call would find the page as before and change the tabs again. The rows are measured again each time, as
-		/// the font and the theme reach them: a measure taken before, in the font the page was made in, is taller than they
-		/// need, and is not kept.
-		/// </remarks>
-		void FitTabsToRows()
-		{
-			if (_DrawnPageHeight == 0)
-				_DrawnPageHeight = GeneralTabPage.ClientSize.Height;
-			var general = GeneralTableLayoutPanel.GetPreferredSize(Size.Empty).Height + GeneralTableLayoutPanel.Margin.Vertical
-				+ GeneralTabPage.Padding.Vertical;
-			var buttons = AxisToButtonPanel.GetPreferredSize(Size.Empty).Height + ButtonsTabPage.Padding.Vertical;
-			var change = Math.Max(_DrawnPageHeight, Math.Max(general, buttons)) - GeneralTabPage.ClientSize.Height;
-			if (change == 0)
-				return;
-			PadTabControl.Height += change;
-			GeneralTabPage.Height += change;
-		}
-
-		/// <summary>The height the controller pages were drawn at, at the screen's scale: they are never made shorter.</summary>
-		int _DrawnPageHeight;
 
 		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
 		const int HiddenUpdateEvery = 10;
@@ -450,11 +407,8 @@ namespace x360ce.App.Controls
 			/// <summary>The device a formula names, or null when the routing reads none there.</summary>
 			public UserDevice Named;
 
-			/// <summary>The row's Mouse page stick that turns a control reporting movement into this stick's reading, or null.</summary>
+			/// <summary>The row's Mouse page stick, whose state this stick's mappings read, or null.</summary>
 			public MouseStick Stick;
-
-			/// <summary>The stick's axis the chart shows: 0 across, 1 up and down.</summary>
-			public int StickAxis;
 
 			/// <summary>True when the pass copied converted the row and gave the chart a reading.</summary>
 			public bool HasInput;
@@ -478,7 +432,6 @@ namespace x360ce.App.Controls
 				Other = false;
 				Named = null;
 				Stick = null;
-				StickAxis = 0;
 				if (map == null)
 					return;
 				if (map.Expression != null)
@@ -492,20 +445,20 @@ namespace x360ce.App.Controls
 					Slider = source.Type == 's' || source.Type == 'h';
 					Other = source.Pad != 0;
 					Named = Other ? routing.GetDevice(source.Pad, source.Device) : null;
-					return;
 				}
-				if (!map.IsAxis && !map.IsSlider)
-					return;
-				Index = map.Index;
-				Slider = map.IsSlider;
+				else
+				{
+					if (!map.IsAxis && !map.IsSlider)
+						return;
+					Index = map.Index;
+					Slider = map.IsSlider;
+				}
+				// A stick the Mouse page sets is read from the stick's state, plain and formula alike, as Step 3 reads it.
 				var left = target == TargetType.LeftThumbX || target == TargetType.LeftThumbY;
 				var right = target == TargetType.RightThumbX || target == TargetType.RightThumbY;
 				var mouse = row < 0 ? null : routing.RowMouse[row];
-				if (mouse != null && (left || right))
-				{
+				if (mouse != null && !Other && (left || right))
 					Stick = mouse[left ? 0 : 1];
-					StickAxis = target == TargetType.LeftThumbX || target == TargetType.RightThumbX ? 0 : 1;
-				}
 			}
 
 			/// <summary>Copies the chart's reading from the state the row was converted from. Run while a pass's states are copied.</summary>
@@ -516,17 +469,15 @@ namespace x360ce.App.Controls
 				HasInput = false;
 				if (input == null || Index <= 0)
 					return;
-				var state = Other ? DInputHelper.GetDeviceState(Named) : input;
+				// Read as Step 3 reads it: on a stick the Mouse page sets, the stick's state.
+				var state = Other ? DInputHelper.GetDeviceState(Named) : Stick?.State ?? input;
 				if (state == null)
 					return;
 				var values = Slider ? state.Sliders : state.Axis;
 				if (Index > values.Length)
 					return;
 				var value = values[Index - 1];
-				// A control that reports movement, read as Step 3 reads it: on a stick the Mouse page sets, the stick's answer.
 				var moving = !Other && Map.Expression == null && ((Slider ? device.DiRelativeSliderMask : device.DiRelativeAxisMask) & (1 << (Index - 1))) != 0;
-				if (moving && Stick != null && device.SourceStateRead != null)
-					value = Stick.LastValue(StickAxis);
 				Input = value;
 				Moving = moving;
 				HasInput = true;
@@ -805,6 +756,18 @@ namespace x360ce.App.Controls
 
 		object GetXInputStatesCheckBoxLock = new object();
 
+		/// <summary>Shows the tool bar's switches as the theme's accent check box, on or off as each is.</summary>
+		void ShowSwitchPictures()
+		{
+			var font = GamesToolStrip.Font;
+			foreach (var item in new[] { EnableButton, GetXInputStatesCheckBox, AutoMapButton })
+			{
+				var picture = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.AccentCheckBox(font, item.Checked);
+				if (item.Image != picture)
+					item.Image = picture;
+			}
+		}
+
 		public void UpdateGetXInputStatesWithNoEvents()
 		{
 			lock (GetXInputStatesCheckBoxLock)
@@ -813,9 +776,7 @@ namespace x360ce.App.Controls
 				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
-				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
-				   ? Properties.Resources.checkbox_32x32
-				   : Properties.Resources.checkbox_unchecked_32x32);
+				ShowSwitchPictures();
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -1000,9 +961,7 @@ namespace x360ce.App.Controls
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
-			ControlsHelper.SetImage(EnableButton, virt
-				? x360ce.App.Properties.Resources.checkbox_32x32
-				: x360ce.App.Properties.Resources.checkbox_unchecked_32x32);
+			ShowSwitchPictures();
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
@@ -1383,9 +1342,17 @@ namespace x360ce.App.Controls
 			{
 				FitPairs();
 				ShareAdvancedCaptions();
+				// Drawn for the tool bar's font as the page is shown in it: made before, they are drawn for the font the page
+				// was made in, half as large again at 150 %.
+				ShowSwitchPictures();
 			};
+			GamesToolStrip.FontChanged += (sender, e) => ShowSwitchPictures();
 			ShareAdvancedCaptions();
-			EventHandler themeChanged = (sender, e) => SetValueColors();
+			EventHandler themeChanged = (sender, e) =>
+			{
+				SetValueColors();
+				ShowSwitchPictures();
+			};
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
 			Disposed += (sender, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
 		}
@@ -2559,10 +2526,13 @@ namespace x360ce.App.Controls
 			}
 			int? position = null;
 			var state = driven == null ? null : driven.SourceState;
-			if (state != null && state.Axis != null)
+			// Only a wheel that is read, on an axis it has, has an angle: one offline, one whose reads fail, as while a game holds
+			// it, or one without the axis reads nought, which the chart would show as the left stop, -450 degrees on a wheel
+			// counted against 900, while the wheel stands at its centre.
+			if (state != null && state.Axis != null && driven.IsOnline && driven.DiReadFailures == 0)
 			{
 				var index = driven.FFState != null && driven.FFState.SpringAxisIndex >= 0 ? driven.FFState.SpringAxisIndex : 0;
-				if (index < state.Axis.Length)
+				if (index < state.Axis.Length && (driven.DiAxeMask & (1 << index)) != 0)
 					position = state.Axis[index];
 			}
 			WheelChartUserControl.UpdateWheel(position,
@@ -3528,7 +3498,7 @@ namespace x360ce.App.Controls
 			if (!show)
 				return;
 			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
-			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
+			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
 			PluginTabPage.Controls.Add(PluginPanel);
 			PadTabControl.TabPages.Add(PluginTabPage);

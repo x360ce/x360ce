@@ -58,7 +58,7 @@
 			this.RootTableLayoutPanel.Controls.Add(this.ButtonsTableLayoutPanel, 0, 1);
 			this.RootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
-			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.RootTableLayoutPanel.RowCount = 2;
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -93,7 +93,7 @@
 			this.MainTabControl.Controls.Add(this.SummariesTabPage);
 			this.MainTabControl.Controls.Add(this.PresetsTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MainTabControl.Margin = new System.Windows.Forms.Padding(4);
+			this.MainTabControl.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.TabIndex = 0;
@@ -103,6 +103,7 @@
 			// 
 			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.SettingsTabPage.Name = "SettingsTabPage";
 			this.SettingsTabPage.Size = new System.Drawing.Size(592, 304);
 			this.SettingsTabPage.TabIndex = 0;
@@ -114,7 +115,7 @@
 			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
-			this.SettingsGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
+			this.SettingsGridPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.SettingsGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.SettingsGridPanel.TabIndex = 0;
 			// 
@@ -122,6 +123,7 @@
 			// 
 			this.SummariesTabPage.Controls.Add(this.SummariesGridPanel);
 			this.SummariesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SummariesTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.SummariesTabPage.Name = "SummariesTabPage";
 			this.SummariesTabPage.Size = new System.Drawing.Size(592, 304);
 			this.SummariesTabPage.TabIndex = 1;
@@ -133,7 +135,7 @@
 			this.SummariesGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SummariesGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SummariesGridPanel.Name = "SummariesGridPanel";
-			this.SummariesGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
+			this.SummariesGridPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.SummariesGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.SummariesGridPanel.TabIndex = 0;
 			// 
@@ -141,6 +143,7 @@
 			// 
 			this.PresetsTabPage.Controls.Add(this.PresetsGridPanel);
 			this.PresetsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.PresetsTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.PresetsTabPage.Name = "PresetsTabPage";
 			this.PresetsTabPage.Size = new System.Drawing.Size(592, 304);
 			this.PresetsTabPage.TabIndex = 2;
@@ -152,7 +155,7 @@
 			this.PresetsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PresetsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.PresetsGridPanel.Name = "PresetsGridPanel";
-			this.PresetsGridPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
+			this.PresetsGridPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
 			this.PresetsGridPanel.TabIndex = 0;
 			//
@@ -162,7 +165,7 @@
 			this.CloseButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.CloseButton.MinimumSize = new System.Drawing.Size(75, 23);
-			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.TabIndex = 4;
 			this.CloseButton.Text = "Cancel";
@@ -173,7 +176,7 @@
 			this.OkButton.AutoSize = true;
 			this.OkButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OkButton.MinimumSize = new System.Drawing.Size(75, 23);
-			this.OkButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OkButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.TabIndex = 3;
 			this.OkButton.Text = "Load Selected Preset";
@@ -186,7 +189,7 @@
 			this.OpenFileButton.AutoSize = true;
 			this.OpenFileButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OpenFileButton.MinimumSize = new System.Drawing.Size(75, 23);
-			this.OpenFileButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OpenFileButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.OpenFileButton.Name = "OpenFileButton";
 			this.OpenFileButton.TabIndex = 0;
 			this.OpenFileButton.Text = "Open File...";
@@ -198,7 +201,7 @@
 			this.CopyPresetButton.AutoSize = true;
 			this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_32x32;
-			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(4, 4, 0, 4);
+			this.CopyPresetButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CopyPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CopyPresetButton.Name = "CopyPresetButton";
 			this.CopyPresetButton.TabIndex = 1;
@@ -211,7 +214,7 @@
 			//
 			this.CopyPresetFormatButton.AutoSize = true;
 			this.CopyPresetFormatButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
+			this.CopyPresetFormatButton.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.CopyPresetFormatButton.MinimumSize = new System.Drawing.Size(20, 23);
 			this.CopyPresetFormatButton.Name = "CopyPresetFormatButton";
 			this.CopyPresetFormatButton.TabIndex = 2;

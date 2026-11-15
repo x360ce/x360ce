@@ -87,7 +87,7 @@
 			//
 			this.EnableCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.EnableCheckBox.AutoSize = true;
-			this.EnableCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.EnableCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.EnableCheckBox.Name = "EnableCheckBox";
 			this.EnableCheckBox.Size = new System.Drawing.Size(59, 17);
 			this.EnableCheckBox.TabIndex = 0;
@@ -109,7 +109,7 @@
 			//
 			// TestButton
 			//
-			this.TestButton.Margin = new System.Windows.Forms.Padding(4);
+			this.TestButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.TestButton.Name = "TestButton";
 			this.TestButton.Size = new System.Drawing.Size(25, 23);
 			this.TestButton.TabIndex = 0;
@@ -121,7 +121,7 @@
 			//
 			this.CpuLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.CpuLabel.AutoSize = true;
-			this.CpuLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.CpuLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CpuLabel.Name = "CpuLabel";
 			this.CpuLabel.Size = new System.Drawing.Size(32, 13);
 			this.CpuLabel.TabIndex = 1;
@@ -130,7 +130,7 @@
 			// CpuTextBox
 			//
 			this.CpuTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.CpuTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.CpuTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CpuTextBox.Name = "CpuTextBox";
 			this.CpuTextBox.ReadOnly = true;
 			this.CpuTextBox.Size = new System.Drawing.Size(71, 20);
@@ -140,7 +140,7 @@
 			// GetDInputStatesCheckBox
 			//
 			this.GetDInputStatesCheckBox.AutoSize = true;
-			this.GetDInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.GetDInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.GetDInputStatesCheckBox.Name = "GetDInputStatesCheckBox";
 			this.GetDInputStatesCheckBox.Size = new System.Drawing.Size(111, 17);
 			this.GetDInputStatesCheckBox.TabIndex = 2;
@@ -150,7 +150,7 @@
 			// GetXInputStatesCheckBox
 			//
 			this.GetXInputStatesCheckBox.AutoSize = true;
-			this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
 			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(118, 17);
 			this.GetXInputStatesCheckBox.TabIndex = 3;
@@ -160,7 +160,7 @@
 			// SetXInputStatesCheckBox
 			//
 			this.SetXInputStatesCheckBox.AutoSize = true;
-			this.SetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SetXInputStatesCheckBox.Name = "SetXInputStatesCheckBox";
 			this.SetXInputStatesCheckBox.Size = new System.Drawing.Size(109, 17);
 			this.SetXInputStatesCheckBox.TabIndex = 4;
@@ -170,7 +170,7 @@
 			// UpdateInterfaceCheckBox
 			//
 			this.UpdateInterfaceCheckBox.AutoSize = true;
-			this.UpdateInterfaceCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.UpdateInterfaceCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.UpdateInterfaceCheckBox.Name = "UpdateInterfaceCheckBox";
 			this.UpdateInterfaceCheckBox.Size = new System.Drawing.Size(106, 17);
 			this.UpdateInterfaceCheckBox.TabIndex = 5;
@@ -180,7 +180,7 @@
 			// TestCheckIssuesCheckBox
 			//
 			this.TestCheckIssuesCheckBox.AutoSize = true;
-			this.TestCheckIssuesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.TestCheckIssuesCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.TestCheckIssuesCheckBox.Name = "TestCheckIssuesCheckBox";
 			this.TestCheckIssuesCheckBox.Size = new System.Drawing.Size(90, 17);
 			this.TestCheckIssuesCheckBox.TabIndex = 6;
@@ -190,7 +190,7 @@
 			// ThrowExceptionButton
 			//
 			this.ThrowExceptionButton.AutoSize = true;
-			this.ThrowExceptionButton.Margin = new System.Windows.Forms.Padding(4);
+			this.ThrowExceptionButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ThrowExceptionButton.Name = "ThrowExceptionButton";
 			this.ThrowExceptionButton.Size = new System.Drawing.Size(106, 23);
 			this.ThrowExceptionButton.TabIndex = 7;
@@ -201,7 +201,7 @@
 			// CleanupDevicesButton
 			//
 			this.CleanupDevicesButton.AutoSize = true;
-			this.CleanupDevicesButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CleanupDevicesButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CleanupDevicesButton.Name = "CleanupDevicesButton";
 			this.CleanupDevicesButton.Size = new System.Drawing.Size(106, 23);
 			this.CleanupDevicesButton.TabIndex = 8;
@@ -213,7 +213,7 @@
 			//
 			this.ShowNavImagesButton.AutoSize = true;
 			this.ShowNavImagesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ShowNavImagesButton.Margin = new System.Windows.Forms.Padding(4);
+			this.ShowNavImagesButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ShowNavImagesButton.Name = "ShowNavImagesButton";
 			this.ShowNavImagesButton.TabIndex = 9;
 			this.ShowNavImagesButton.Text = "Show All Pad Images";
@@ -224,7 +224,7 @@
 			//
 			this.MainLayoutPanel.SetColumnSpan(this.LogTextBox, 2);
 			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.LogTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.LogTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LogTextBox.Name = "LogTextBox";
 			this.LogTextBox.ReadOnly = true;
 			this.LogTextBox.Size = new System.Drawing.Size(236, 20);

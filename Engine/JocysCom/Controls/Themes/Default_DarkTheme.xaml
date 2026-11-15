@@ -85,6 +85,8 @@
 	<SolidColorBrush x:Key="ColorNormal" Color="#60CDFF" />
 	<!--  Normal state  -->
 	<SolidColorBrush x:Key="ColorActive" Color="#6CCB5F" />
+	<!-- ColorActive dark enough for 3:1 against the page and for a white tick on it: the accent check box. -->
+	<SolidColorBrush x:Key="ColorAccent" Color="#FF2F9D4C" />
 	<!--  Active state  -->
 	<SolidColorBrush x:Key="ColorOver" Color="#FCE100" />
 	<!--  Mouse over  -->

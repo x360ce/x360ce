@@ -131,18 +131,29 @@ namespace x360ce.Tests
 		static readonly string[][] GeneralCentre = { new[] { "DPadUp", "DPadLeft", "DPadRight", "DPadDown" } };
 
 		[TestMethod, TestCategory("ui")]
-		[Description("On the General tab the boxes of a group stand as far apart as a layout table stands boxes with a control's margin of the 4-pixel grid, a row (8 at 100 %), the groups twice as far, and each row's boxes stand level across the left, centre and right columns, at 100 % and 150 %, in both themes")]
+		[Description("On the General tab the rows of a group's boxes stand as far apart as a layout table stands items with the window's one gap above each, 8 at 100 %, the groups twice as far, each row as tall as its box or the name over its number beside it, and each row's boxes stand level across the left, centre and right columns, at 100 % and 150 %, in both themes")]
 		public void General_tab_boxes_stand_a_table_gap_apart_and_level_across_the_columns()
 		{
 			var faults = new List<string>();
 			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => new PadControl(x360ce.Engine.MapTo.Controller1) }, (form, when) =>
 			{
-				var gap = TableGap(form, new Padding(4));
+				var gap = TableGap(form, new Padding(8, 8, 0, 0));
 				var page = form.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
 				Func<string, Rectangle> at = part =>
 				{
 					var box = form.Controls.Find(part + "ComboBox", true).Single();
 					return page.RectangleToClient(box.Parent.RectangleToScreen(box.Bounds));
+				};
+				// A box's row less the gap above it: the box is centred in it, beside the name over its number that may be taller.
+				Func<string, Rectangle> slot = part =>
+				{
+					var box = form.Controls.Find(part + "ComboBox", true).Single();
+					var table = (TableLayoutPanel)box.Parent;
+					var heights = table.GetRowHeights();
+					var index = table.GetRow(box);
+					var top = table.DisplayRectangle.Top + heights.Take(index).Sum() + box.Margin.Top;
+					var bounds = new Rectangle(box.Left, top, box.Width, heights[index] - box.Margin.Vertical);
+					return page.RectangleToClient(table.RectangleToScreen(bounds));
 				};
 				TestContext.WriteLine("{0}: a layout table stands boxes {1} px apart, twice that is {2}", when, gap, gap * 2);
 				foreach (var column in new[] { GeneralLeft, GeneralCentre, GeneralRight })
@@ -152,7 +163,7 @@ namespace x360ce.Tests
 					{
 						var between = column.Any(x => x[0] == parts[i]);
 						var wanted = between ? gap * 2 : gap;
-						var apart = at(parts[i]).Top - at(parts[i - 1]).Bottom;
+						var apart = slot(parts[i]).Top - slot(parts[i - 1]).Bottom;
 						var line = string.Format("{0}: {1} over {2}, {3} px apart{4}, wanted {5}",
 							when, parts[i - 1], parts[i], apart, between ? " between groups" : "", wanted);
 						TestContext.WriteLine(line);

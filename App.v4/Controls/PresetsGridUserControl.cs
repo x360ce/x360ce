@@ -42,13 +42,13 @@ namespace x360ce.App.Controls
 			UpdateControlsFromPresets();
 		}
 
-		/// <summary>Fetches x360ce's controller database, the one file x360ce's server keeps, only when it changed (ETag), then lists it again; off the window's thread.</summary>
+		/// <summary>Fetches x360ce's controller database, the one file x360ce's server keeps, from the site of the web service address, only when it changed (ETag), then lists it again; off the window's thread.</summary>
 		private void PresetRefreshButton_Click(object sender, EventArgs e)
 		{
 			PresetRefreshButton.Enabled = false;
 			_ParentForm.AddTask(TaskName.SearchPresets);
 			var version = typeof(PresetsGridUserControl).Assembly.GetName().Version;
-			X360ceUpdateClient.UpdateSettingsCopy("x360ce/" + version).ContinueWith(t =>
+			X360ceUpdateClient.UpdateSettingsCopy(SettingsManager.Options.InternetDatabaseUrl, "x360ce/" + version).ContinueWith(t =>
 			{
 				_ParentForm.RemoveTask(TaskName.SearchPresets);
 				PresetRefreshButton.Enabled = true;

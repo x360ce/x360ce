@@ -402,10 +402,17 @@ namespace x360ce.Tests
 			window.AutoScaleDimensions = new SizeF(6F, 13F);
 			window.AutoScaleMode = AutoScaleMode.Font;
 			window.ClientSize = MainWindowSize();
-			// The main window's pages, their tool bar above the tabs, in what the header and the status bar leave.
-			var pages = new Panel { Dock = DockStyle.Fill, Padding = DesignerPadding(designer, "this") ?? Padding.Empty };
-			pages.Controls.Add(holder);
-			pages.Controls.Add(tools);
+			// The main window's pages, their tool bar above the tabs, in what the header and the status bar leave: the table the
+			// designer lays them out in, its tool bar's row sized to it and the tabs in the rest, with their margins.
+			var pages = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2, Margin = Padding.Empty, Padding = DesignerPadding(designer, "RootLayoutPanel") ?? Padding.Empty };
+			pages.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			pages.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			pages.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			tools.Dock = DockStyle.Fill;
+			tools.Margin = DesignerPadding(designer, "GamesToolStrip", "Margin") ?? Padding.Empty;
+			holder.Margin = DesignerPadding(designer, "panel1", "Margin") ?? Padding.Empty;
+			pages.Controls.Add(tools, 0, 0);
+			pages.Controls.Add(holder, 0, 1);
 			window.Controls.Add(pages);
 			window.Controls.Add(status);
 			// Docked as the main window docks them: the header, the status bar, then the pages in what is left.
@@ -415,12 +422,13 @@ namespace x360ce.Tests
 			return window;
 		}
 
-		/// <summary>The padding a designer file gives a control, or null where it gives none.</summary>
+		/// <summary>The padding, or the margin, a designer file gives a control, or null where it gives none.</summary>
 		/// <param name="designer">The designer file's text.</param>
 		/// <param name="name">The control's field, or <c>this</c> for the control the file makes.</param>
-		static Padding? DesignerPadding(string designer, string name)
+		/// <param name="property">Padding or Margin.</param>
+		static Padding? DesignerPadding(string designer, string name, string property = "Padding")
 		{
-			var match = Regex.Match(designer, @"this\." + (name == "this" ? "" : Regex.Escape(name) + @"\.") + @"Padding = new System\.Windows\.Forms\.Padding\(([\d, ]+)\);");
+			var match = Regex.Match(designer, @"this\." + (name == "this" ? "" : Regex.Escape(name) + @"\.") + property + @" = new System\.Windows\.Forms\.Padding\(([\d, ]+)\);");
 			if (!match.Success)
 				return null;
 			var sides = match.Groups[1].Value.Split(',').Select(x => int.Parse(x.Trim())).ToArray();
@@ -510,7 +518,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("On every tab of the AI page each caption shows its text on one line, the boxes beside the captions start at the same place in every section, and the widest caption's text ends 12 pixels before its box at 100 %, 18 at 150 %, as a label and its box stand on every other page")]
+		[Description("On every tab of the AI page each caption shows its text on one line, the boxes beside the captions start at the same place in every section, and the widest caption's text ends 8 pixels before its box at 100 %, 12 at 150 %, as a label and its box stand on every other page")]
 		public void Ai_page_captions_stand_12_before_their_boxes_on_one_line()
 		{
 			Ui.OnUiThread(() =>
@@ -531,7 +539,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("On a Controller tab's Advanced page both groups share one caption column, as the AI page's sections do: each caption shows its text on one line, every box beside a caption starts at one place on the page, and the widest caption's text ends 12 pixels before its box at 100 %, 18 at 150 %")]
+		[Description("On a Controller tab's Advanced page both groups share one caption column, as the AI page's sections do: each caption shows its text on one line, every box beside a caption starts at one place on the page, and the widest caption's text ends 8 pixels before its box at 100 %, 12 at 150 %")]
 		public void Advanced_page_captions_share_one_column_12_before_their_boxes()
 		{
 			Ui.OnUiThread(() =>
@@ -552,15 +560,15 @@ namespace x360ce.Tests
 		/// <summary>
 		/// Captions in the first column of tables that share it: each shows its text on one line, the boxes beside them start
 		/// at one place, in <paramref name="common"/>'s coordinates or, with none, inside each table, and the widest caption's
-		/// text ends 12 pixels before its box at 100 %, as a label and its box stand on every page.
+		/// text ends 8 pixels before its box at 100 %, as a label and its box stand on every page.
 		/// </summary>
 		/// <param name="tables">The tables, each shown in turn.</param>
 		/// <param name="common">What the boxes are compared in; null to compare them inside their tables.</param>
 		/// <param name="least">How many captions with a box beside them there are at least.</param>
 		void AssertCaptionsShareOneColumn(IList<TableLayoutPanel> tables, Control common, int least)
 		{
-			// Label to its box, 12 at 100 %: the caption's margin and the box's.
-			var expected = (int)Math.Round(12 * ControlsHelper.DpiScale);
+			// Label to its box, 8 at 100 %: the caption's margin and the box's.
+			var expected = (int)Math.Round(8 * ControlsHelper.DpiScale);
 			var faults = new List<string>();
 			var starts = new Dictionary<string, int>();
 			var gaps = new List<int>();
@@ -722,23 +730,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("options-layout"), TestCategory("smoke")]
-		[Description("Each Options page starts its content as far inside it as the General page does, 12 in from its side and 12 below its top, a page's padding and a control's margin, and the pages' tab strip stands as far inside the Options tab, at every zoom for what the Options page lays out itself and at 100 % for the pages that hold a control of their own")]
+		[Description("Each Options page starts its content as far inside it as the General page does, 8 in from its side and 8 below its top, a page's padding and a control's margin, and the pages' tab strip stands as far inside the Options tab, at every zoom for what the Options page lays out itself and at 100 % for the pages that hold a control of their own")]
 		public void Options_pages_start_their_content_as_far_inside_as_General()
 		{
 			Ui.OnUiThread(() =>
 			{
 				FormsTheme.SetTheme(ThemeType.Light);
 				var faults = new List<string>();
-				// Where the content starts at 100 %: 12 from the side and the top, Windows' room between a surface's edge and its
+				// Where the content starts at 100 %: 8 from the side and the top, Windows' room between a surface's edge and its
 				// content, to the content's own box: a group's top is its caption's line.
-				var inset = new Size(12, 12);
+				var inset = new Size(8, 8);
 				// The zooms Windows offers; the page was drawn at 100 %.
 				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 2f })
 					using (var form = new Form { ClientSize = new Size(1600, 1000), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
 					{
 						var options = new OptionsUserControl { Dock = DockStyle.Fill };
-						// The Options tab of the main window: a page with the padding every tab of the window has.
-						var tab = new TabPage("Options") { Padding = new Padding(4) };
+						// The Options tab of the main window: a page with the padding every tab of the window has, the container's
+						// one gap at its right and below.
+						var tab = new TabPage("Options") { Padding = new Padding(0, 0, 8, 8) };
 						var window = new UserControl { Dock = DockStyle.Fill };
 						window.SuspendLayout();
 						window.Font = new Font(Control.DefaultFont.FontFamily, Control.DefaultFont.Size * zoom / JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);

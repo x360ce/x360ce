@@ -58,23 +58,57 @@ namespace x360ce.App.Controls
 				// A heading stands as its values do: a number's at the right.
 				foreach (DataGridViewColumn column in grid.Columns)
 					column.HeaderCell.Style.Alignment = column.DefaultCellStyle.Alignment;
-				grid.FontChanged += StateGrid_FitColumns;
-				grid.CellStyleContentChanged += StateGrid_FitColumns;
-				StateGrid_FitColumns(grid, EventArgs.Empty);
+				grid.FontChanged += StateGrid_AlignHeadings;
+				grid.CellStyleContentChanged += StateGrid_AlignHeadings;
+				// The grid sizes each column to its heading and its values (AllCells), and the room after the last column stays
+				// empty. A column grows to a longer value and keeps that width while the device stays, so values that change
+				// every frame never make the columns jump back and forth. The axis grid is as wide as its columns, so all its
+				// headings show; the other two share what it leaves.
+				grid.ColumnWidthChanged += StateGrid_ColumnWidthChanged;
+				StateGrid_AlignHeadings(grid, EventArgs.Empty);
 			}
+			// Each time the list is laid out, as its columns change width or show, on the page shown or not.
+			DiAxisDataGridView.Layout += (sender, e) => FitAxisGrid();
+			FitAxisGrid();
 		}
 
-		/// <summary>The widest value a device reports in a state grid: DirectInput's range is 0 to 65535.</summary>
-		const string WidestStateValue = "65535";
+		void StateGrid_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
+		{
+			if (e.Column.MinimumWidth < e.Column.Width)
+				e.Column.MinimumWidth = e.Column.Width;
+			if (sender == DiAxisDataGridView)
+				FitAxisGrid();
+		}
 
 		/// <summary>
-		/// Makes each column of a state grid as wide as its heading or its widest value, whichever is wider, a number's at
-		/// least as wide as the widest a device reports; the room left after the last column stays empty. A number's heading
-		/// ends where its values end: as far in from the right as Windows draws a value, the room it keeps beside its text.
-		/// Measured again when the grid's font or padding changes; measured on a device context, as Windows measures a cell,
-		/// since without one Windows Forms measures every text with that room.
+		/// Makes the axis list at least as wide as its columns and its frame: the table sizes its column to the list, which
+		/// a list does not measure by its columns itself, so all eight headings show and the other lists share what it leaves.
 		/// </summary>
-		void StateGrid_FitColumns(object sender, EventArgs e)
+		void FitAxisGrid()
+		{
+			var grid = DiAxisDataGridView;
+			var width = grid.Columns.Cast<DataGridViewColumn>().Where(x => x.Visible).Sum(x => x.Width)
+				+ (grid.RowHeadersVisible ? grid.RowHeadersWidth : 0) + grid.Width - grid.ClientSize.Width;
+			if (grid.MinimumSize.Width == width)
+				return;
+			grid.MinimumSize = new System.Drawing.Size(width, 0);
+			grid.Parent?.PerformLayout(grid, nameof(MinimumSize));
+		}
+
+		/// <summary>Lets the state grids' columns fit the next device's values, narrower ones too.</summary>
+		void ReleaseStateColumns()
+		{
+			foreach (var grid in new[] { DiAxisDataGridView, DiSlidersDataGridView, DiPovsDataGridView })
+				foreach (DataGridViewColumn column in grid.Columns)
+					column.MinimumWidth = 2;
+		}
+
+		/// <summary>
+		/// Ends a number's heading where its values end: as far in from the right as Windows draws a value, the room it keeps
+		/// beside its text. Measured again when the grid's font or padding changes; measured on a device context, as Windows
+		/// measures a cell, since without one Windows Forms measures every text with that room.
+		/// </summary>
+		void StateGrid_AlignHeadings(object sender, EventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			var table = grid.DataSource as DataTable;
@@ -83,22 +117,15 @@ namespace x360ce.App.Controls
 			using (var g = System.Drawing.Graphics.FromImage(bitmap))
 				foreach (DataGridViewColumn column in grid.Columns)
 				{
-					var number = table?.Columns[column.DataPropertyName]?.DataType == typeof(int);
-					var style = column.InheritedStyle;
-					var value = TextRenderer.MeasureText(g, WidestStateValue, style.Font, line, TextFormatFlags.Default).Width;
-					if (number)
-					{
-						var text = TextRenderer.MeasureText(g, WidestStateValue, style.Font, line, TextFormatFlags.NoPadding).Width;
-						var header = grid.ColumnHeadersDefaultCellStyle.Padding;
-						var padding = new Padding(header.Left, header.Top, (value - text) / 2, header.Bottom);
-						if (column.HeaderCell.Style.Padding != padding)
-							column.HeaderCell.Style.Padding = padding;
-					}
-					var width = column.GetPreferredWidth(DataGridViewAutoSizeColumnMode.AllCells, true);
-					if (number)
-						width = Math.Max(width, value + style.Padding.Horizontal);
-					if (column.Width != width)
-						column.Width = width;
+					if (table?.Columns[column.DataPropertyName]?.DataType != typeof(int))
+						continue;
+					var font = column.InheritedStyle.Font;
+					var value = TextRenderer.MeasureText(g, "0", font, line, TextFormatFlags.Default).Width;
+					var text = TextRenderer.MeasureText(g, "0", font, line, TextFormatFlags.NoPadding).Width;
+					var header = grid.ColumnHeadersDefaultCellStyle.Padding;
+					var padding = new Padding(header.Left, header.Top, (value - text) / 2, header.Bottom);
+					if (column.HeaderCell.Style.Padding != padding)
+						column.HeaderCell.Style.Padding = padding;
 				}
 		}
 
@@ -368,10 +395,6 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
 			ControlsHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
 			ControlsHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
-			var maxIndex = DiAxisDataGridView.Columns.Count - 1;
-			// Hide last 4 columns if device is mouse, in order to make more space for axis values.
-			for (int i = maxIndex - 3; i <= maxIndex; i++)
-				DiAxisDataGridView.Columns[i].Visible = !ud.IsMouse;
 		}
 
 		/// <summary>The values the tables show, as the tab's own copy. A cell is written only where the state drawn differs from it.</summary>
@@ -528,6 +551,7 @@ namespace x360ce.App.Controls
 			// If device information changed.
 			if (deviceChanged)
 			{
+				ReleaseStateColumns();
 				ShowDeviceInfo(ud);
 				_DeviceInstanceGuid = instanceGuid;
 				isWheel = ud == null

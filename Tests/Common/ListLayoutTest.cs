@@ -17,9 +17,9 @@ using x360ce.Engine;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The lists (grids) of every page and window: edge to edge in the area that holds them, their column titles their text
-	/// with 4 px above and below, and their first shown column with 4 px more room on the left, at 100 % and 150 %, in
-	/// both themes. The list boxes and the text without a frame of their own that fill a page reach its edges too.
+	/// The lists (grids) of every page and window: their column titles their text with 4 px above and below, and their first
+	/// shown column with 4 px more room on the left, at 100 % and 150 %, in both themes. Where a list stands is the one gap
+	/// every item keeps (<see cref="SpacingGridTest"/>).
 	/// </summary>
 	/// <remarks>
 	/// The owner's report of 2026-11-04 (4.29): a list stood in from the sides of its page, its titles were cramped, and the
@@ -33,9 +33,6 @@ namespace x360ce.Tests
 
 		/// <summary>The room the owner asked for, in pixels at 100 %: above and below a title, and before the first column.</summary>
 		const int Room = 4;
-
-		/// <summary>The padding of the main window's pages and the Add Device window, in pixels at 100 %, which their designers set.</summary>
-		const int PageInset = 3;
 
 		/// <summary>
 		/// The pages and windows that show a list, each made as the program makes it: a page of the main window inside its
@@ -62,39 +59,22 @@ namespace x360ce.Tests
 			() => OptionsLayoutTest.MainWindowAtDefaultSize(new AboutControl(), "About"),
 		};
 
-		/// <summary>Panels shown beside a list only at times: while games are scanned, and once no issue is left.</summary>
-		static readonly string[] ShownAtTimes = { nameof(GamesGridUserControl.ScanProgressPanel), nameof(IssuesUserControl.NoIssuesPanel), nameof(IssuesUserControl.LinePanel) };
-
 		[TestMethod, TestCategory("ui")]
-		[Description("Every list, and every list box and text without a frame that fills a page, stands edge to edge in the area that holds it wherever nothing else stands beside, above or below it, what stands above and below a list keeps its place, its titles are their text with 4 px above and below, and its first shown column 4 px more on the left, at 100 % and 150 %, in both themes")]
-		public void Lists_stand_edge_to_edge_with_room_round_their_titles_and_first_column()
+		[Description("Every list's titles are their text with 4 px above and below, and its first shown column 4 px more on the left, at 100 % and 150 %, in both themes")]
+		public void Lists_have_room_round_their_titles_and_first_column()
 		{
 			var report = new List<string>();
 			var faults = new List<string>();
 			var grids = 0;
 			ButtonIconTest.OnEverySurface(Surfaces, (form, when) =>
 			{
-				foreach (var shown in ShownAtTimes)
-					foreach (var panel in form.Controls.Find(shown, true))
-						panel.Visible = true;
-				// The pages of the main window and of the Add Device window keep their content in from their sides; the
-				// other windows hold their lists and tool bars against the sides of their tabs.
-				var inset = form.GetType() == typeof(BaseFormWithHeader) || form is MapDeviceToControllerForm ? Pixels(PageInset) : 0;
 				foreach (var grid in ButtonIconTest.All(form).OfType<DataGridView>().ToList())
 				{
 					grids++;
 					ShowWhereItStands(grid);
 					var name = when + " " + ButtonIconTest.Path(grid);
-					CheckEdges(grid, name, report, faults);
-					CheckBeside(grid, name, inset, report, faults);
 					CheckTitles(grid, name, report, faults);
 					CheckFirstColumn(grid, name, report, faults);
-				}
-				foreach (var text in ButtonIconTest.All(form).Where(IsFillingText).ToList())
-				{
-					grids++;
-					ShowWhereItStands(text);
-					CheckEdges(text, when + " " + ButtonIconTest.Path(text), report, faults);
 				}
 			});
 			foreach (var line in report)
@@ -246,126 +226,6 @@ namespace x360ce.Tests
 				if (c is TabPage page && page.Parent is TabControl tabs && tabs.SelectedTab != page)
 					tabs.SelectedTab = page;
 			Application.DoEvents();
-		}
-
-		/// <summary>The tab page or window a grid stands in.</summary>
-		static Control AreaOf(Control control)
-		{
-			var c = control.Parent;
-			while (c != null && !(c is TabPage) && !(c is Form))
-				c = c.Parent;
-			return c;
-		}
-
-		/// <summary>
-		/// Each side of a list or text that nothing else stands beside, above or below meets the area that holds it: the client
-		/// area of its tab page, which fills the frame drawn round it, or of its window. Lists side by side keep the room between
-		/// them.
-		/// </summary>
-		static void CheckEdges(Control list, string name, List<string> report, List<string> faults)
-		{
-			var area = AreaOf(list);
-			if (area == null || !list.Visible)
-				return;
-			var at = area.RectangleToClient(list.Parent.RectangleToScreen(list.Bounds));
-			var client = area.ClientRectangle;
-			// Anything shown in the area but what holds the list or what it holds.
-			var shown = ButtonIconTest.All(area).Where(x => x.Visible && x != list && !x.Contains(list) && !list.Contains(x))
-				.Select(x => area.RectangleToClient(x.Parent.RectangleToScreen(x.Bounds)))
-				.Where(x => x.Width > 0 && x.Height > 0).ToList();
-			// Beside it, level with some of its height; above or below it, over some of its width.
-			var level = shown.Where(x => x.Top < at.Bottom && x.Bottom > at.Top).ToList();
-			var over = shown.Where(x => x.Left < at.Right && x.Right > at.Left).ToList();
-			var left = level.Any(x => x.Right <= at.Left);
-			var right = level.Any(x => x.Left >= at.Right);
-			var above = over.Any(x => x.Bottom <= at.Top);
-			var below = over.Any(x => x.Top >= at.Bottom);
-			var bars = ScrollBarWidth(list, area);
-			var line = string.Format("{0}: in {1} {2} at {3}{4}{5}{6}{7}{8}; parents {9}", name, area.GetType().Name, client, at,
-				left ? ", something to its left" : "", right ? ", something to its right" : "",
-				above ? ", something above" : "", below ? ", something below" : "",
-				bars > 0 ? ", " + bars + " px of scroll bar" : "", Parents(list, area));
-			report.Add(line);
-			if (!left && at.Left != client.Left)
-				faults.Add(line + ": its left edge is " + (at.Left - client.Left) + " px in from the area's.");
-			if (!right && at.Right != client.Right - bars)
-				faults.Add(line + ": its right edge is " + (client.Right - bars - at.Right) + " px in from the area's.");
-			if (!above && at.Top != client.Top)
-				faults.Add(line + ": its top edge is " + (at.Top - client.Top) + " px below the area's.");
-			if (!below && at.Bottom != client.Bottom)
-				faults.Add(line + ": its bottom edge is " + (client.Bottom - at.Bottom) + " px above the area's.");
-		}
-
-		/// <summary>The scroll bars of the pages between a control and its area that scroll: they stand at the area's right.</summary>
-		static int ScrollBarWidth(Control control, Control area)
-		{
-			var bars = 0;
-			for (var c = control.Parent; c != null && c != area; c = c.Parent)
-				if (c is ScrollableControl scrolled && scrolled.AutoScroll && scrolled.VerticalScroll.Visible)
-					bars += c.Width - c.ClientSize.Width;
-			return bars;
-		}
-
-		/// <summary>
-		/// What stands above or below a list, or beside it, keeps the room the area's padding gave it before the list stood edge
-		/// to edge: its content, a tool bar's buttons among it, starts no nearer the area's sides than <paramref name="inset"/>.
-		/// </summary>
-		/// <remarks>Controls that hold a list of their own are left to that list's check.</remarks>
-		static void CheckBeside(DataGridView grid, string name, int inset, List<string> report, List<string> faults)
-		{
-			var area = AreaOf(grid);
-			if (area == null || !grid.Visible || inset == 0)
-				return;
-			var client = area.ClientRectangle;
-			var right = client.Right - ScrollBarWidth(grid, area) - inset;
-			for (Control chain = grid; chain != area; chain = chain.Parent)
-				foreach (Control sibling in chain.Parent.Controls)
-				{
-					if (sibling == chain || !sibling.Visible || sibling.Width <= 0 || sibling.Height <= 0
-						|| sibling is DataGridView || ButtonIconTest.All(sibling).OfType<DataGridView>().Any())
-						continue;
-					var content = area.RectangleToClient(Content(sibling));
-					if (content.Width <= 0)
-						continue;
-					var line = string.Format("{0}: {1} beside it has its content at {2} in {3}, {4} px in from each side wanted",
-						name, sibling.Name, content, client, inset);
-					report.Add(line);
-					if (content.Left < client.Left + inset || content.Right > right)
-						faults.Add(line);
-				}
-		}
-
-		/// <summary>
-		/// Where what a control shows stands, on the screen: a tool bar's buttons, inside its padding; the text of a label;
-		/// the frame of a framed control, or a control holding nothing, such as a line; otherwise what it holds.
-		/// </summary>
-		static Rectangle Content(Control control)
-		{
-			if (control is ToolStrip strip)
-				return strip.RectangleToScreen(strip.DisplayRectangle);
-			var held = control.Controls.Cast<Control>().Where(x => x.Visible && x.Width > 0 && x.Height > 0).ToList();
-			var framed = control is Panel panel && panel.BorderStyle != BorderStyle.None;
-			if (framed || held.Count == 0)
-			{
-				var own = control.Parent.RectangleToScreen(control.Bounds);
-				return control is Label ? Rectangle.FromLTRB(own.Left + control.Padding.Left, own.Top, own.Right - control.Padding.Right, own.Bottom) : own;
-			}
-			var bounds = held.Select(x => control.RectangleToScreen(x.Bounds)).ToList();
-			return Rectangle.FromLTRB(bounds.Min(x => x.Left), bounds.Min(x => x.Top), bounds.Max(x => x.Right), bounds.Max(x => x.Bottom));
-		}
-
-		/// <summary>The controls between a grid and its area, with their places, paddings and margins, for the report.</summary>
-		static string Parents(Control control, Control area)
-		{
-			var parts = new List<string>();
-			for (var c = control; c != null && c != area.Parent; c = c.Parent)
-				parts.Add(string.Format("{0} {1} pad {2} margin {3}", c.GetType().Name, c.Bounds, Short(c.Padding), Short(c.Margin)));
-			return string.Join(" < ", parts);
-		}
-
-		static string Short(Padding p)
-		{
-			return p.Left + "," + p.Top + "," + p.Right + "," + p.Bottom;
 		}
 
 		/// <summary>

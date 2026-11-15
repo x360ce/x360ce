@@ -77,7 +77,7 @@ namespace x360ce.App.Controls
 			//
 			this.AngleLabel.AutoSize = true;
 			this.AngleLabel.Location = new System.Drawing.Point(3, 3);
-			this.AngleLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.AngleLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AngleLabel.Name = "AngleLabel";
 			this.AngleLabel.Size = new System.Drawing.Size(37, 13);
 			this.AngleLabel.TabIndex = 0;
@@ -87,7 +87,7 @@ namespace x360ce.App.Controls
 			//
 			this.AngleValueLabel.AutoSize = true;
 			this.AngleValueLabel.Location = new System.Drawing.Point(42, 3);
-			this.AngleValueLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.AngleValueLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AngleValueLabel.Name = "AngleValueLabel";
 			this.AngleValueLabel.Size = new System.Drawing.Size(10, 13);
 			this.AngleValueLabel.TabIndex = 1;
@@ -97,7 +97,7 @@ namespace x360ce.App.Controls
 			//
 			this.ForceLabel.AutoSize = true;
 			this.ForceLabel.Location = new System.Drawing.Point(68, 3);
-			this.ForceLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.ForceLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ForceLabel.Name = "ForceLabel";
 			this.ForceLabel.Size = new System.Drawing.Size(34, 13);
 			this.ForceLabel.TabIndex = 2;
@@ -107,7 +107,7 @@ namespace x360ce.App.Controls
 			//
 			this.ForceValueLabel.AutoSize = true;
 			this.ForceValueLabel.Location = new System.Drawing.Point(105, 3);
-			this.ForceValueLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.ForceValueLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ForceValueLabel.Name = "ForceValueLabel";
 			this.ForceValueLabel.Size = new System.Drawing.Size(10, 13);
 			this.ForceValueLabel.TabIndex = 3;
@@ -119,7 +119,7 @@ namespace x360ce.App.Controls
 			this.MainPictureBox.BackColor = System.Drawing.Color.Transparent;
 			this.MainTableLayoutPanel.SetColumnSpan(this.MainPictureBox, 3);
 			this.MainPictureBox.Location = new System.Drawing.Point(3, 23);
-			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
+			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MainPictureBox.MinimumSize = new System.Drawing.Size(100, 100);
 			this.MainPictureBox.Name = "MainPictureBox";
 			this.MainPictureBox.Size = new System.Drawing.Size(395, 395);
@@ -133,7 +133,7 @@ namespace x360ce.App.Controls
 			this.LeftStopLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.LeftStopLabel.AutoSize = true;
 			this.LeftStopLabel.Location = new System.Drawing.Point(3, 347);
-			this.LeftStopLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.LeftStopLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LeftStopLabel.Name = "LeftStopLabel";
 			this.LeftStopLabel.Size = new System.Drawing.Size(32, 13);
 			this.LeftStopLabel.TabIndex = 2;
@@ -144,7 +144,7 @@ namespace x360ce.App.Controls
 			this.CentreLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.CentreLabel.AutoSize = true;
 			this.CentreLabel.Location = new System.Drawing.Point(193, 347);
-			this.CentreLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.CentreLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CentreLabel.Name = "CentreLabel";
 			this.CentreLabel.Size = new System.Drawing.Size(15, 13);
 			this.CentreLabel.TabIndex = 3;
@@ -155,7 +155,7 @@ namespace x360ce.App.Controls
 			this.RightStopLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.RightStopLabel.AutoSize = true;
 			this.RightStopLabel.Location = new System.Drawing.Point(363, 347);
-			this.RightStopLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.RightStopLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.RightStopLabel.Name = "RightStopLabel";
 			this.RightStopLabel.Size = new System.Drawing.Size(35, 13);
 			this.RightStopLabel.TabIndex = 4;
@@ -167,7 +167,7 @@ namespace x360ce.App.Controls
 			this.LegendLabel.AutoSize = true;
 			this.MainTableLayoutPanel.SetColumnSpan(this.LegendLabel, 3);
 			this.LegendLabel.Location = new System.Drawing.Point(3, 367);
-			this.LegendLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.LegendLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LegendLabel.Name = "LegendLabel";
 			this.LegendLabel.Size = new System.Drawing.Size(395, 27);
 			this.LegendLabel.TabIndex = 5;

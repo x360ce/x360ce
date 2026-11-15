@@ -25,17 +25,17 @@ namespace x360ce.App.Controls
 		{
 			SuspendLayout();
 			Name = "InputUserControl";
+			// The control scrolls, not the table: a table that scrolls stretches its last row to the height it last scrolled
+			// to, and keeps its scroll bar when a device with fewer controls is shown. The table is as tall as its rows.
+			AutoScroll = true;
 			var table = new TableLayoutPanel
 			{
 				Name = "LayoutTable",
-				Dock = DockStyle.Fill,
+				Dock = DockStyle.Top,
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				ColumnCount = 1,
-				AutoScroll = true,
 				Margin = new Padding(0),
-				// The right edge keeps the room the vertical scroll bar takes, so the sections never stay wider than the column
-				// that is left once the bar appears: Windows' width for it on this screen, at 100 %, the size the page is made
-				// at, which Windows Forms scales with the page.
-				Padding = new Padding(0, 0, (int)Math.Round(SystemInformation.VerticalScrollBarWidth / ControlsHelper.DpiScale), 0),
 			};
 			table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 			SourceLabel = new Label
@@ -44,8 +44,7 @@ namespace x360ce.App.Controls
 				AutoSize = true,
 				Dock = DockStyle.Top,
 				AutoEllipsis = true,
-				// In line with the groups' frames under it, a row (8) above the first.
-				Margin = new Padding(0, 0, 0, 8),
+				Margin = new Padding(8, 8, 0, 0),
 				Text = SourceNone,
 			};
 			table.Controls.Add(SourceLabel, 0, 0);
@@ -103,17 +102,28 @@ namespace x360ce.App.Controls
 		static GroupBox AddGroup(TableLayoutPanel table, string name, string caption, string chipsName, out InputChipGroup chips, bool showsValues)
 		{
 			// The group and its chips are hidden while they hold no chip, as they do until a device is shown (UpdateFrom). The
-			// chips stand a control's margin inside their strip, so with the room the theme gives a group they stand as far
-			// from the frame's inner line as a group's controls on every page, at the sides, above and below; the page scales
-			// these sizes, made at 100 %.
+			// chips' strip is an item of the group, one gap inside it, in a table of its own, which keeps its margin; the page
+			// scales these sizes, made at 100 %.
 			chips = new InputChipGroup
 			{
 				Name = chipsName,
 				Dock = DockStyle.Top,
-				Padding = new Padding(4),
+				Margin = new Padding(8, 8, 0, 0),
 				ShowsValues = showsValues,
 				Visible = false,
 			};
+			var layout = new TableLayoutPanel
+			{
+				Name = chipsName + "LayoutPanel",
+				AutoSize = true,
+				AutoSizeMode = AutoSizeMode.GrowAndShrink,
+				Dock = DockStyle.Top,
+				ColumnCount = 1,
+				Margin = new Padding(0),
+			};
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			layout.Controls.Add(chips, 0, 0);
 			var group = new GroupBox
 			{
 				Name = name,
@@ -121,10 +131,10 @@ namespace x360ce.App.Controls
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Top,
-				Margin = new Padding(0, 0, 0, 4),
+				Margin = new Padding(8, 8, 0, 0),
 				Visible = false,
 			};
-			group.Controls.Add(chips);
+			group.Controls.Add(layout);
 			table.Controls.Add(group, 0, table.RowStyles.Count);
 			table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			return group;
@@ -180,7 +190,8 @@ namespace x360ce.App.Controls
 				{
 					var shown = group.Chips.Count > 0;
 					group.Visible = shown;
-					group.Parent.Visible = shown;
+					// The chips' box, round the table that holds them.
+					group.Parent.Parent.Visible = shown;
 				}
 				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}

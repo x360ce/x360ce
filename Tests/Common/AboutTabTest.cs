@@ -62,7 +62,10 @@ namespace x360ce.Tests
 					Assert.AreEqual("Program", tabs.TabPages[0].Text);
 					Assert.AreEqual(0, tabs.SelectedIndex, "The About page does not open on the Program tab.");
 					var box = Find<RichTextBox>(about, nameof(AboutControl.ProgramRichTextBox));
-					Assert.AreSame(tabs.TabPages[0], box.Parent, "The program's details are not on the Program tab.");
+					var page = box.Parent;
+					while (page != null && !(page is TabPage))
+						page = page.Parent;
+					Assert.AreSame(tabs.TabPages[0], page, "The program's details are not on the Program tab.");
 					Assert.AreEqual(DockStyle.Fill, box.Dock);
 					Assert.IsTrue(box.ReadOnly);
 					StringAssert.Contains(box.Text, "Xbox 360 Controller Emulator", "The Program tab is empty.");

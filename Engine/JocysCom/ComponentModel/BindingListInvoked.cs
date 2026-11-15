@@ -39,12 +39,16 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		delegate void ReplaceDelegate(T oldItem, T newItem);
 
-		/// <summary>True while a change made now will be applied later, on another thread.</summary>
+		/// <summary>True while a change made now will be applied on another thread.</summary>
+		/// <remarks>
+		/// Asynchronous or not, that thread applies it after a third one may have changed the list,
+		/// so the change finds its place there.
+		/// </remarks>
 		bool Deferred
 		{
 			get
 			{
-				return AsynchronousInvoke && SynchronizingObject != null
+				return SynchronizingObject != null
 					&& JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired;
 			}
 		}
@@ -87,6 +91,9 @@ namespace JocysCom.ClassLibrary.ComponentModel
 						DynamicInvoke(method, args);
 					});
 					task.RunSynchronously(so);
+					// RunSynchronously does not rethrow: the caller is told now, not the finalizer later.
+					if (task.IsFaulted)
+						System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(task.Exception.GetBaseException()).Throw();
 				}
 			}
 		}

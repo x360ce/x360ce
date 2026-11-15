@@ -50,7 +50,7 @@ install and removal, needs an administrator session), **`requires-wheel`** (a fo
 wheel must be attached; the test is inconclusive without one), **`stress`** (rapid repeated
 clicks) and **`performance`** (timing and memory bounds set at two to three times what this laptop
 measures, so a busy machine passes and a return to the old behaviour fails). `Run-Tests.ps1`
-excludes `ui-interactive` and **`load`**: `EngineLoadTest` runs the engine's own thread on the controllers
+excludes `ui-interactive`, **`scratch`** (probes that drive the force feedback of the wheel and pad attached) and **`load`**: `EngineLoadTest` runs the engine's own thread on the controllers
 connected to the machine for half a minute per rate, passes back to back among them, and reports the rate, processor
 time, allocation, collections, working set and the time of each step. Run it on a quiet machine with
 `/TestCaseFilter:TestCategory=load`.

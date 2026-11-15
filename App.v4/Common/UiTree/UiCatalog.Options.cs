@@ -208,7 +208,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateSdlDatabaseButton)] = new Text("Update SDL Database",
 				"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateX360ceDatabaseButton)] = new Text("Update x360ce Database",
-				"Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went.");
+				"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GamesGroupBox)] = new Text("Default settings",
 				"How settings shared by other people are chosen.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GetProgramsMinInstancesUpDown)] = new Text(

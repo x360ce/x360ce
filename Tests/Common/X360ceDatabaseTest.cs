@@ -1,4 +1,4 @@
-﻿// @under-test: Engine/Common/Sdl/X360ceDatabase.cs, Engine/Common/Sdl/X360ceDatabaseServer.cs, Engine/Maps/PadSettingIni.cs
+﻿// @under-test: Engine/Common/Sdl/X360ceDatabase.cs, Engine/Common/Sdl/X360ceDatabaseServer.cs, Engine/Maps/PadSettingIni.cs, Engine/Common/Update/HttpFile.cs
 // @area: presets   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -120,19 +120,62 @@ namespace x360ce.Tests
 			entries.Add(new X360ceDatabaseEntry { ProductGuid = pad.ProductGuid, ProductName = "Less used", Users = 1, Setting = new PadSetting { ButtonA = "9" } });
 			entries.Add(new X360ceDatabaseEntry { ProductGuid = Guid.NewGuid(), ProductName = "No ids", Users = 999999, Setting = new PadSetting { ButtonA = "1" } });
 			entries.Add(new X360ceDatabaseEntry { ProductGuid = new Guid("beef0e8f-0000-0000-0000-504944564944"), ProductName = "Sets nothing", Users = 11, Setting = new PadSetting() });
+			// The most used setting of the same controller, with a value a row cannot hold, gives way to the next.
+			entries.Add(new X360ceDatabaseEntry { ProductGuid = pad.ProductGuid, ProductName = "Splits the row", Users = pad.Users + 1, Setting = new PadSetting { ButtonA = "1", LeftThumbAntiDeadZoneX = "4709,4" } });
+			// A controller whose most used setting 9 people use is left out; one with 10 is written.
+			Assert.AreEqual(10, X360ceDatabase.MinimumUsers);
+			entries.Add(new X360ceDatabaseEntry { ProductGuid = new Guid("beef0e90-0000-0000-0000-504944564944"), ProductName = "Nine users", Users = 9, Setting = new PadSetting { ButtonA = "1" } });
+			entries.Add(new X360ceDatabaseEntry { ProductGuid = new Guid("beef0e91-0000-0000-0000-504944564944"), ProductName = "Ten users", Users = 10, Setting = new PadSetting { ButtonA = "1" } });
+			// A name with line breaks stays on its row.
+			entries.Add(new X360ceDatabaseEntry { ProductGuid = new Guid("beef0e92-0000-0000-0000-504944564944"), ProductName = "Xbox 360\r\nController for\nWindows", Users = 18, Setting = new PadSetting { ButtonA = "1" } });
 			var text = X360ceDatabase.Write(entries, "a test", new DateTime(2026, 11, 14, 0, 0, 0, DateTimeKind.Utc), "A note.");
 			StringAssert.StartsWith(text, "# x360ce's controller database");
 			StringAssert.Contains(text, "# Made: 2026-11-14 from a test\n");
 			StringAssert.Contains(text, "# A note.\n");
 			Assert.AreEqual(new DateTime(2026, 11, 14), X360ceDatabase.MadeOn(text));
 			var source = SdlSource.Parse(text, SdlSourceKind.BuiltIn);
-			var products = entries.Where(x => x.ProductGuid.ToString().EndsWith("504944564944") && x.ProductName != "Sets nothing").Select(x => x.ProductGuid).Distinct().Count();
+			var products = entries.Where(x => x.ProductGuid.ToString().EndsWith("504944564944") && x.ProductName != "Sets nothing" && x.ProductName != "Nine users").Select(x => x.ProductGuid).Distinct().Count();
 			Assert.AreEqual(products, source.Mappings.Count);
 			StringAssert.Contains(text, "# Rows: " + products + "\n");
 			var keys = source.Mappings.Select(x => (long)x.Guid.VendorId << 16 | (long)x.Guid.ProductId).ToArray();
 			CollectionAssert.AreEqual(keys.OrderBy(x => x).ToArray(), keys, "The rows are not sorted by vendor and product.");
-			Assert.IsFalse(text.Contains("Less used") || text.Contains("No ids") || text.Contains("Sets nothing"));
-			Assert.IsTrue(source.Mappings.All(x => x.IsForWindows && X360ceDatabase.Users(x) > 0));
+			Assert.IsFalse(text.Contains("Less used") || text.Contains("No ids") || text.Contains("Sets nothing") || text.Contains("Splits the row") || text.Contains("Nine users"));
+			StringAssert.Contains(text, ",Ten users,users:10,");
+			StringAssert.Contains(text, ",Xbox 360 Controller for Windows,users:18,");
+			StringAssert.Contains(text, "# Only controllers whose most used setting 10 or more people use;");
+			Assert.IsTrue(source.Mappings.All(x => x.IsForWindows && X360ceDatabase.Users(x) >= X360ceDatabase.MinimumUsers));
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("critical")]
+		[Description("Every row written reads back as written, whatever the names and values hold, and a row that would not is left out")]
+		public void Every_row_written_reads_back()
+		{
+			var n = 0;
+			Func<string, PadSetting, X360ceDatabaseEntry> entry = (name, setting) => new X360ceDatabaseEntry
+			{
+				ProductGuid = new Guid(string.Format(CultureInfo.InvariantCulture, "beef{0:x4}-0000-0000-0000-504944564944", 0x0ea0 + n++)),
+				ProductName = name,
+				Users = 50,
+				Setting = setting,
+			};
+			var entries = new[]
+			{
+				entry("Tab\tPad", new PadSetting { ButtonA = "1" }),
+				entry("Return\rPad", new PadSetting { ButtonA = "1" }),
+				entry("platform:Linux", new PadSetting { ButtonA = "1" }),
+				entry("", new PadSetting { ButtonA = "1" }),
+				entry("Long Pad", new PadSetting { ButtonA = new string('1', 100000) }),
+				entry("Tab Value Pad", new PadSetting { ButtonA = "1", LeftTrigger = "6\t" }),
+			};
+			var text = X360ceDatabase.Write(entries, "a test", DateTime.UtcNow);
+			var lines = text.Split('\n').Where(x => x.Length > 0 && x[0] != '#').ToArray();
+			var source = SdlSource.Parse(text, SdlSourceKind.BuiltIn);
+			StringAssert.Contains(text, "# Rows: " + lines.Length + "\n");
+			Assert.AreEqual(lines.Length, source.Mappings.Count, "The header counts rows that do not read back.");
+			CollectionAssert.AreEqual(lines, source.Mappings.Select(x => x.ToString()).ToArray(), "A row did not read back as written.");
+			var names = source.Mappings.Select(x => x.Name).ToArray();
+			CollectionAssert.AreEquivalent(new[] { "Tab\tPad", "Return Pad", "", "Long Pad" }, names);
+			Assert.AreEqual(100000, source.Mappings.Single(x => x.Name == "Long Pad").Get("A").Length);
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]
@@ -153,7 +196,7 @@ namespace x360ce.Tests
 			Assert.AreEqual("0", off.ForceOverall, "A setting with force feedback off was changed.");
 			Assert.AreEqual("", off.LeftMotorPeriod ?? "");
 			// The writer cleans what it writes.
-			var text = X360ceDatabase.Write(new[] { new X360ceDatabaseEntry { ProductGuid = new Guid("c29b046d-0000-0000-0000-504944564944"), ProductName = "Wheel", Users = 5, Setting = new PadSetting { ForceEnable = "1", ForceOverall = "0" } } }, "a test", DateTime.UtcNow);
+			var text = X360ceDatabase.Write(new[] { new X360ceDatabaseEntry { ProductGuid = new Guid("c29b046d-0000-0000-0000-504944564944"), ProductName = "Wheel", Users = 50, Setting = new PadSetting { ForceEnable = "1", ForceOverall = "0" } } }, "a test", DateTime.UtcNow);
 			StringAssert.Contains(text, "LeftMotorPeriod:160,");
 			Assert.IsFalse(text.Contains("ForcePercent:"), "Strength 100 is the default and is not written.");
 		}
@@ -240,6 +283,19 @@ namespace x360ce.Tests
 			ps.ButtonA = "99";
 			Assert.AreNotEqual("99", X360ceDatabase.GetSetting(g27.PadSettingChecksum).ButtonA, "Changing a loaded setting changed the database's.");
 			Assert.IsNull(X360ceDatabase.GetSetting(Guid.NewGuid()));
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("critical")]
+		[Description("The database is fetched from the site of the web service address, and from x360ce's server when that address names no site's service")]
+		public void Database_address_follows_the_web_service_address()
+		{
+			Assert.AreEqual(X360ceUpdateClient.DefaultUrl, X360ceUpdateClient.DatabaseUrl(SettingName.DefaultInternetDatabaseUrl),
+				"x360ce's own web service does not lead to x360ce's own database.");
+			Assert.AreEqual("https://localhost:44360/ControllerDatabase.ashx", X360ceUpdateClient.DatabaseUrl(SettingName.LocalInternetDatabaseUrl));
+			Assert.AreEqual("https://example.org/x360ce/ControllerDatabase.ashx", X360ceUpdateClient.DatabaseUrl(" https://example.org/x360ce/WebServices/x360ce.asmx "));
+			// An address that does not end with the web service's path says nothing about where the database is.
+			foreach (var other in new[] { null, "", "https://example.org/x360ce.asmx", "https://example.org/webservices/x360ce.asmx?wsdl", "https://example.org/mywebservices/x360ce.asmx" })
+				Assert.AreEqual(X360ceUpdateClient.DefaultUrl, X360ceUpdateClient.DatabaseUrl(other), "For " + (other ?? "null") + ".");
 		}
 
 		/// <summary>The settings database's answer (x360ce_GetControllerDatabase) made from the recorded presets.</summary>

@@ -31,7 +31,7 @@
 			// OkButton
 			// 
 			this.OkButton.AutoSize = true;
-			this.OkButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OkButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.TabIndex = 24;
 			this.OkButton.Text = "Add Selected Device";
@@ -42,7 +42,7 @@
 			// 
 			this.CloseButton.AutoSize = true;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.TabIndex = 25;
 			this.CloseButton.Text = "Cancel";
@@ -56,7 +56,7 @@
 			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
 			this.ControllersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ControllersPanel.Name = "ControllersPanel";
-			this.ControllersPanel.Padding = new System.Windows.Forms.Padding(8, 8, 8, 0);
+			this.ControllersPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.ControllersPanel.Size = new System.Drawing.Size(592, 305);
 			this.ControllersPanel.TabIndex = 26;
 			// 
@@ -70,7 +70,7 @@
 			this.RootTableLayoutPanel.Location = new System.Drawing.Point(0, 64);
 			this.RootTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
-			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.RootTableLayoutPanel.RowCount = 2;
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -94,7 +94,7 @@
 			// 
 			this.MainTabControl.Controls.Add(this.DevicesTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MainTabControl.Margin = new System.Windows.Forms.Padding(4);
+			this.MainTabControl.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.Size = new System.Drawing.Size(600, 331);
@@ -104,6 +104,7 @@
 			// 
 			this.DevicesTabPage.Controls.Add(this.ControllersPanel);
 			this.DevicesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DevicesTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.DevicesTabPage.Name = "DevicesTabPage";
 			this.DevicesTabPage.Size = new System.Drawing.Size(592, 305);
 			this.DevicesTabPage.TabIndex = 0;

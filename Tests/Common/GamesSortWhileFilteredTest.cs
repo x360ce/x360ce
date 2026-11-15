@@ -35,7 +35,7 @@ namespace x360ce.Tests
 					form.Controls.Add(panel);
 					form.Show();
 					var grid = (DataGridView)panel.Controls.Find(nameof(GamesGridUserControl.GamesDataGridView), true).Single();
-					var show = panel.Controls.OfType<ToolStrip>().SelectMany(x => x.Items.OfType<ToolStripDropDownButton>())
+					var show = ButtonIconTest.All(panel).OfType<ToolStrip>().SelectMany(x => x.Items.OfType<ToolStripDropDownButton>())
 						.Single(x => x.Name == nameof(GamesGridUserControl.ShowGamesDropDownButton));
 					show.Text = "Show: Enabled";
 					var games = new SortableBindingList<UserGame>();

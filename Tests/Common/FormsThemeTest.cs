@@ -1279,7 +1279,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("Tool bar buttons stand Default.xaml's button margin from the tool bar's edge and twice that from each other, as push buttons do")]
+		[Description("Tool bar buttons stand one gap from the tool bar's edge and one gap from each other, as every item stands from its container and its neighbour")]
 		public void Tool_bar_buttons_are_spaced_as_buttons()
 		{
 			OnUiThread(() =>
@@ -1295,16 +1295,16 @@ namespace x360ce.Tests
 					FormsTheme.Apply(form);
 					form.Show();
 					Application.DoEvents();
-					var margin = (int)Math.Round(4 * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
+					var margin = (int)Math.Round(8 * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
 					using (var bitmap = new Bitmap(strip.Width, strip.Height))
 					{
 						strip.DrawToBitmap(bitmap, new Rectangle(Point.Empty, strip.Size));
 						// The two fills, along the middle of the tool bar, where their rounded corners are not.
-						var fills = Runs(bitmap, strip.Height / 2, strip.BackColor, true).Where(x => x.Y > margin * 4).ToList();
+						var fills = Runs(bitmap, strip.Height / 2, strip.BackColor, true).Where(x => x.Y > margin * 2).ToList();
 						Assert.AreEqual(2, fills.Count, "The tool bar shows " + fills.Count + " button fills, not two.");
 						Assert.AreEqual(margin, fills[0].X, "The first button stands " + fills[0].X + " px from the tool bar's edge.");
 						var gap = fills[1].X - fills[0].X - fills[0].Y;
-						Assert.AreEqual(margin * 2, gap, "The buttons stand " + gap + " px apart.");
+						Assert.AreEqual(margin, gap, "The buttons stand " + gap + " px apart.");
 					}
 				}
 			});

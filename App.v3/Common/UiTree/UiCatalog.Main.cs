@@ -97,7 +97,7 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsControl) + "." + nameof(OptionsControl.ExcludeVirtualDevicesCheckBox)] = new Text("Exclude Virtual Devices",
 				"Leaves vJoy devices and the controllers this program feeds out of the devices it reads, so its output is not read back as input.");
 			d[nameof(OptionsControl) + "." + nameof(OptionsControl.UpdateControllerDatabaseButton)] = new Text("Update Controller Database",
-				"Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went. New controllers and the Presets tab use it from then on.");
+				"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the settings database address into the settings folder, and says in the header how it went. New controllers and the Presets tab use it from then on.");
 			d[nameof(OptionsControl) + "." + nameof(OptionsControl.InternetAutoloadCheckBox)] = new Text("Auto Load Settings When Tab Selected",
 				"Searches the online database for settings for your controllers each time the Controller Settings page is opened.");
 			d[nameof(OptionsControl) + "." + nameof(OptionsControl.RefreshLocationsButton)] = new Text("Refresh",

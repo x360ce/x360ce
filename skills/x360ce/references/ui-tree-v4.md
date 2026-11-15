@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.30.61.0, built 2026-11-14.
+Version 4.30.63.0, built 2026-11-15.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -85,19 +85,26 @@ not shown in this state of the program.
 [Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
 [Group]     │   │       └── POV chips -> InputChipGroup (hidden)                        # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
+[Control]   │   ├── MouseDemoUserControl                                                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
+[Label]     │   │   ├── Demo stick                                                      # The stick group the demo shows and its style, such as Left Stick: Wheel.
+[Picture]   │   │   ├── Demo picture                                                    # The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
+[Button]    │   │   ├── Play demo                                                       # Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.
+[Label]     │   │   ├── Demo style                                                      # What the style shown does, in the Style list's words.
+[Label]     │   │   ├── Demo step                                                       # What the demo shows now, in words, such as Mouse stops: stick returns to the centre.
+[Label]     │   │   └── Demo note (hidden)                                              # Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.
 [Control]   │   ├── MouseStickUserControl                                               # How a mouse moves one stick.
 [Section]   │   │   └── Left Stick                                                      # How a mouse moves this stick.
-[List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.
+[List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.
 [Slider]    │   │       ├── Sensitivity across 1..400                                   # How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity across value                                    # The sensitivity across the slider is set to, in percent.
 [Slider]    │   │       ├── Sensitivity up and down 1..400                              # How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity up and down value                               # The sensitivity up and down the slider is set to, in percent.
 [Slider]    │   │       ├── Smoothing 0..500                                            # How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.
-[Slider]    │   │       ├── Back to centre 0..2000                                      # How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.
-[Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
 [List]      │   │       ├── Active                                                      # When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.
+[Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
+[List]      │   │       ├── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
 [Value]     │   │       ├── Back to centre value                                        # The time back to the centre the slider is set to, in milliseconds.
-[List]      │   │       └── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
+[Slider]    │   │       └── Back to centre 0..2000                                      # How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths; in Wheel, the time it takes once the button lets the stick go, 0 at once. Range is 0 to 2000. Default is 0.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
 [Tabs]      │   │   ├── Controller pages                                                # Settings for this controller, grouped by the part being mapped.
 [Tab]       │   │   │   ├── General                                                     # Says which control on your device works each part of the Xbox controller.
@@ -292,7 +299,8 @@ not shown in this state of the program.
 [Tab]       │   │   │   ├── Mouse                                                       # How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.
 [Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
 [Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
-[Group]     │   │   │   │   └── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
+[Group]     │   │   │   │   ├── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
+[Group]     │   │   │   │   └── (MouseDemoPanel) -> MouseDemoUserControl                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Tab]       │   │   │   ├── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │   │   └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Tab]       │   │   │   └── SDL                                                         # What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.
@@ -321,7 +329,7 @@ not shown in this state of the program.
 [Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.
 [Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
 [Button]    │   │   ├── Update SDL Database                                             # Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.
-[Label]     │   │   └── SDL update status                                               # How the last update of SDL's controller database went.
+[Label]     │   │   └── SDL update status (hidden)                                      # How the last update of SDL's controller database went.
 [Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
 [Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
@@ -417,7 +425,7 @@ not shown in this state of the program.
 [Button]    │           │           │       │   ├── Test                                # Asks the web service at that address who it is and says whether it answers.
 [List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
 [Button]    │           │           │       │   ├── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
-[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce's controller database, the setting most people use for each controller, from x360ce's server into the settings folder, and says in the header how it went.
+[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.
 [Section]   │           │           │       ├── Online account                          # Identifies this computer to the online database.
 [Text]      │           │           │       │   ├── Computer disk                       # Disk the computer identifier is taken from.
 [Text]      │           │           │       │   ├── Computer identifier                 # Anonymous identifier for this computer.

@@ -91,6 +91,7 @@
 			this.MainTableLayoutPanel.Controls.Add(this.SensitivityTextBox, 3, 4);
 			this.MainTableLayoutPanel.Controls.Add(this.SensitivityFlowLayoutPanel, 4, 4);
 			this.MainTableLayoutPanel.Controls.Add(this.SensitivityNoteLabel, 5, 4);
+			this.MainTableLayoutPanel.SetColumnSpan(this.SensitivityNoteLabel, 2);
 			this.MainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTableLayoutPanel.Location = new System.Drawing.Point(3, 16);
 			this.MainTableLayoutPanel.Name = "MainTableLayoutPanel";
@@ -111,7 +112,7 @@
 			//
 			this.DInputLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DInputLabel.AutoSize = true;
-			this.DInputLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.DInputLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DInputLabel.Name = "DInputLabel";
 			this.DInputLabel.TabIndex = 1;
 			this.DInputLabel.Text = "DInput";
@@ -120,7 +121,7 @@
 			//
 			this.DInputValueLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DInputValueLabel.AutoSize = true;
-			this.DInputValueLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.DInputValueLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DInputValueLabel.Name = "DInputValueLabel";
 			this.DInputValueLabel.TabIndex = 2;
 			this.DInputValueLabel.Text = "0";
@@ -129,7 +130,7 @@
 			//
 			this.XInputLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInputLabel.AutoSize = true;
-			this.XInputLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.XInputLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.XInputLabel.Name = "XInputLabel";
 			this.XInputLabel.TabIndex = 4;
 			this.XInputLabel.Text = "XInput";
@@ -138,7 +139,7 @@
 			//
 			this.XInputValueLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.XInputValueLabel.AutoSize = true;
-			this.XInputValueLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.XInputValueLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.XInputValueLabel.Name = "XInputValueLabel";
 			this.XInputValueLabel.TabIndex = 5;
 			this.XInputValueLabel.Text = "0";
@@ -147,7 +148,7 @@
 			//
 			this.MainPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.MainPictureBox.BackColor = System.Drawing.Color.Transparent;
-			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(4);
+			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MainPictureBox.Name = "MainPictureBox";
 			this.MainPictureBox.Size = new System.Drawing.Size(169, 169);
 			this.MainPictureBox.TabIndex = 0;
@@ -160,7 +161,7 @@
 			this.PresetComboBox.AccessibleName = "Preset";
 			this.PresetComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.PresetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.PresetComboBox.Margin = new System.Windows.Forms.Padding(4);
+			this.PresetComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PresetComboBox.Name = "PresetComboBox";
 			this.PresetComboBox.TabIndex = 3;
 			this.PresetComboBox.SelectedIndexChanged += new System.EventHandler(this.PresetComboBox_SelectedIndexChanged);
@@ -169,7 +170,7 @@
 			//
 			this.AntiDeadZoneLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AntiDeadZoneLabel.AutoSize = true;
-			this.AntiDeadZoneLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.AntiDeadZoneLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AntiDeadZoneLabel.Name = "AntiDeadZoneLabel";
 			this.AntiDeadZoneLabel.TabIndex = 10;
 			this.AntiDeadZoneLabel.Text = "Anti-Dead Zone";
@@ -178,7 +179,7 @@
 			//
 			this.AntiDeadZoneTrackBar.Maximum = 100;
 			this.AntiDeadZoneTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.AntiDeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.AntiDeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AntiDeadZoneTrackBar.Name = "AntiDeadZoneTrackBar";
 			this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.AntiDeadZoneTrackBar.TabIndex = 11;
@@ -187,7 +188,7 @@
 			// AntiDeadZoneTextBox
 			//
 			this.AntiDeadZoneTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.AntiDeadZoneTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.AntiDeadZoneTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AntiDeadZoneTextBox.Name = "AntiDeadZoneTextBox";
 			this.AntiDeadZoneTextBox.ReadOnly = true;
 			this.AntiDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -205,7 +206,7 @@
             0,
             0});
 			this.AntiDeadZoneNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.AntiDeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+			this.AntiDeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AntiDeadZoneNumericUpDown.Name = "AntiDeadZoneNumericUpDown";
 			this.AntiDeadZoneNumericUpDown.TabIndex = 13;
 			this.AntiDeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -214,7 +215,7 @@
 			//
 			this.DeadZoneLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeadZoneLabel.AutoSize = true;
-			this.DeadZoneLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.DeadZoneLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
 			this.DeadZoneLabel.TabIndex = 6;
 			this.DeadZoneLabel.Text = "Dead Zone";
@@ -223,7 +224,7 @@
 			//
 			this.DeadZoneTrackBar.Maximum = 100;
 			this.DeadZoneTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.DeadZoneTrackBar.TabIndex = 7;
@@ -232,7 +233,7 @@
 			// DeadZoneTextBox
 			//
 			this.DeadZoneTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.DeadZoneTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.DeadZoneTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneTextBox.Name = "DeadZoneTextBox";
 			this.DeadZoneTextBox.ReadOnly = true;
 			this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
@@ -250,7 +251,7 @@
             0,
             0});
 			this.DeadZoneNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeadZoneNumericUpDown.Name = "DeadZoneNumericUpDown";
 			this.DeadZoneNumericUpDown.TabIndex = 9;
 			this.DeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -259,16 +260,16 @@
 			//
 			this.SensitivityLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SensitivityLabel.AutoSize = true;
-			this.SensitivityLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.SensitivityLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityLabel.Name = "SensitivityLabel";
 			this.SensitivityLabel.TabIndex = 14;
 			this.SensitivityLabel.Text = "Sensitivity";
 			//
 			// SensitivityNoteLabel
 			//
-			this.SensitivityNoteLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.SensitivityNoteLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.SensitivityNoteLabel.AutoSize = true;
-			this.SensitivityNoteLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityNoteLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityNoteLabel.Name = "SensitivityNoteLabel";
 			this.SensitivityNoteLabel.TabIndex = 18;
 			this.SensitivityNoteLabel.Text = "Make less sensitive in the center";
@@ -277,7 +278,7 @@
 			//
 			this.SensitivityTrackBar.Maximum = 100;
 			this.SensitivityTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.SensitivityTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityTrackBar.Name = "SensitivityTrackBar";
 			this.SensitivityTrackBar.Size = new System.Drawing.Size(227, 32);
 			this.SensitivityTrackBar.TabIndex = 15;
@@ -287,7 +288,7 @@
 			// SensitivityTextBox
 			//
 			this.SensitivityTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.SensitivityTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityTextBox.Name = "SensitivityTextBox";
 			this.SensitivityTextBox.ReadOnly = true;
 			this.SensitivityTextBox.Size = new System.Drawing.Size(43, 20);
@@ -303,7 +304,7 @@
 			this.SensitivityFlowLayoutPanel.Controls.Add(this.SensitivityCheckBox);
 			this.SensitivityFlowLayoutPanel.Controls.Add(this.SensitivityNumericUpDown);
 			this.SensitivityFlowLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
-			this.SensitivityFlowLayoutPanel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.SensitivityFlowLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.SensitivityFlowLayoutPanel.Name = "SensitivityFlowLayoutPanel";
 			this.SensitivityFlowLayoutPanel.WrapContents = false;
 			this.SensitivityFlowLayoutPanel.TabIndex = 17;
@@ -312,7 +313,7 @@
 			//
 			this.SensitivityCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SensitivityCheckBox.AutoSize = true;
-			this.SensitivityCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityCheckBox.Name = "SensitivityCheckBox";
 			this.SensitivityCheckBox.TabIndex = 0;
 			this.SensitivityCheckBox.Text = "Invert";
@@ -328,7 +329,7 @@
             0,
             0,
             -2147483648});
-			this.SensitivityNumericUpDown.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityNumericUpDown.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityNumericUpDown.Name = "SensitivityNumericUpDown";
 			this.SensitivityNumericUpDown.TabIndex = 1;
 			this.SensitivityNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;

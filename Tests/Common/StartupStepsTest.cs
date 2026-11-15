@@ -405,6 +405,22 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("startup"), TestCategory("ui-interactive"), Timeout(240000)]
+		[Description("A Debug panel left open opens again at the next start")]
+		public void A_debug_panel_left_open_opens_again()
+		{
+			using (var copy = new Copy("debug-panel"))
+			{
+				copy.Write("Options.xml", new Options { ShowDebugPanel = true });
+				copy.Start();
+				copy.WaitForMark("device thread start", 60);
+				var panel = Ui.WaitFor(() => AutomationElement.RootElement.FindFirst(TreeScope.Children, new AndCondition(
+					new PropertyCondition(AutomationElement.ProcessIdProperty, copy.Process.Id),
+					new PropertyCondition(AutomationElement.NameProperty, "Debug Form"))), TimeSpan.FromSeconds(30), "the Debug panel");
+				Assert.IsNotNull(panel, "The Debug panel was shown before it was made, so showing it failed and it never opened.");
+			}
+		}
+
 		[System.Runtime.InteropServices.DllImport("user32.dll")]
 		static extern bool IsWindowVisible(IntPtr window);
 

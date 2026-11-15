@@ -50,7 +50,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
-		[Description("No window says how it scales in its own code, where it would undo what its designer code says")]
+		[Description("No window says how it scales in its own code, where it would undo what its designer code says, but a control that scales its tables once: its designer turns its scaling off, and its constructor turns on Font scaling with the designer's dimensions straight after InitializeComponent, because scaled in the designer Windows Forms scales a table as it resumes and then again with the control")]
 		public void No_window_sets_its_scaling_outside_the_designer()
 		{
 			// The main window once set its scaling before its designer code ran. The designer's setting
@@ -62,10 +62,39 @@ namespace x360ce.Tests
 			var offenders = Directory.GetFiles(app, "*.cs", SearchOption.AllDirectories)
 				.Where(x => !x.Contains(@"\bin\") && !x.Contains(@"\obj\") && !x.EndsWith(".Designer.cs"))
 				.Where(x => !builtInCode.Contains(Path.GetFileName(x)))
-				.Where(x => Regex.IsMatch(File.ReadAllText(x), @"^\s*(this\.)?AutoScale(Mode|Dimensions)\s*=", RegexOptions.Multiline))
+				.Where(x => ScalingSet.IsMatch(File.ReadAllText(x)))
+				.Where(x => !ScalesTablesOnce(x))
 				.Select(x => x.Substring(app.Length + 1))
 				.ToList();
 			Assert.AreEqual(0, offenders.Count, "Scaling set outside the designer in: " + string.Join(", ", offenders));
+		}
+
+		/// <summary>A line that sets how a window or control scales.</summary>
+		static readonly Regex ScalingSet = new Regex(@"^\s*(this\.)?AutoScale(Mode|Dimensions)\s*=", RegexOptions.Multiline);
+
+		/// <summary>The designer's dimensions with its own scaling turned off.</summary>
+		static readonly Regex DesignerScalingOff = new Regex(
+			@"this\.AutoScaleDimensions = new System\.Drawing\.SizeF\((?<w>[\d.]+F), (?<h>[\d.]+F)\);\s*this\.AutoScaleMode = System\.Windows\.Forms\.AutoScaleMode\.None;");
+
+		/// <summary>Font scaling turned on with dimensions, straight after the designer's code, with only comments between.</summary>
+		static readonly Regex FontScalingAfterDesigner = new Regex(
+			@"InitializeComponent\(\);\s*(//[^\n]*\n\s*)*SuspendLayout\(\);\s*(this\.)?AutoScaleMode = AutoScaleMode\.Font;\s*(this\.)?AutoScaleDimensions = new (System\.Drawing\.)?SizeF\((?<w>[\d.]+F), (?<h>[\d.]+F)\);\s*ResumeLayout\(false\);");
+
+		/// <summary>
+		/// True for a control that scales its tables once: its designer turns its scaling off, and its constructor turns on Font
+		/// scaling with the designer's dimensions straight after the designer's code, and sets scaling nowhere else.
+		/// </summary>
+		static bool ScalesTablesOnce(string file)
+		{
+			var designer = file.Substring(0, file.Length - ".cs".Length) + ".Designer.cs";
+			if (!File.Exists(designer))
+				return false;
+			var code = File.ReadAllText(file);
+			var off = DesignerScalingOff.Match(File.ReadAllText(designer));
+			var on = FontScalingAfterDesigner.Match(code);
+			return off.Success && on.Success
+				&& off.Groups["w"].Value == on.Groups["w"].Value && off.Groups["h"].Value == on.Groups["h"].Value
+				&& ScalingSet.Matches(code).Count == 2;
 		}
 
 		[TestMethod, TestCategory("ui")]

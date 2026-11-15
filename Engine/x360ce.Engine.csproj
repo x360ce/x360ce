@@ -573,13 +573,13 @@
     </EmbeddedResource>
     <!--
       SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is
-      (SdlDatabase), and its zlib licence. Both programs carry it in the engine; the xinput library carries its Windows
-      rows as Native\x360ce\gamecontrollerdb.windows.txt, which SdlNativeTest keeps the same.
+      (SdlDatabase), and its zlib licence; and x360ce's controller database (X360ceDatabase), carried the same way and
+      written by scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds
+      the same two gzip files (Native\x360ce\x360ce.rc).
     -->
     <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
     <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
-    <!-- x360ce's controller database (X360ceDatabase); the xinput library embeds the same file. -->
-    <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt" />
+    <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt.gz" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

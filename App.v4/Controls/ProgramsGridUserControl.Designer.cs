@@ -44,8 +44,10 @@
 			this.ImportProgramsButton = new System.Windows.Forms.ToolStripButton();
 			this.ExportProgramsButton = new System.Windows.Forms.ToolStripButton();
 			this.DeleteProgramsButton = new System.Windows.Forms.ToolStripButton();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).BeginInit();
 			this.ProgramsToolStrip.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ProgramsDataGridView
@@ -77,6 +79,7 @@
 			this.ProgramsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.ProgramsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgramsDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.ProgramsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ProgramsDataGridView.Name = "ProgramsDataGridView";
 			this.ProgramsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -140,8 +143,9 @@
             this.ExportProgramsButton,
             this.DeleteProgramsButton});
 			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ProgramsToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
-			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.ProgramsToolStrip.Size = new System.Drawing.Size(857, 25);
 			this.ProgramsToolStrip.TabIndex = 6;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";
@@ -154,6 +158,7 @@
 			this.GameDefaultDetailsControl.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.GameDefaultDetailsControl.Enabled = false;
 			this.GameDefaultDetailsControl.Location = new System.Drawing.Point(0, 346);
+			this.GameDefaultDetailsControl.Margin = new System.Windows.Forms.Padding(0);
 			this.GameDefaultDetailsControl.Name = "GameDefaultDetailsControl";
 			this.GameDefaultDetailsControl.Size = new System.Drawing.Size(857, 226);
 			this.GameDefaultDetailsControl.TabIndex = 7;
@@ -196,18 +201,34 @@
 			this.DeleteProgramsButton.Text = "&Delete";
 			this.DeleteProgramsButton.Click += new System.EventHandler(this.DeleteProgramsButton_Click);
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.ProgramsToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.ProgramsDataGridView, 0, 1);
+			this.RootLayoutPanel.Controls.Add(this.GameDefaultDetailsControl, 0, 2);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 3;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// ProgramsGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ProgramsDataGridView);
-			this.Controls.Add(this.GameDefaultDetailsControl);
-			this.Controls.Add(this.ProgramsToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "ProgramsGridUserControl";
 			this.Size = new System.Drawing.Size(857, 572);
 			((System.ComponentModel.ISupportInitialize)(this.ProgramsDataGridView)).EndInit();
 			this.ProgramsToolStrip.ResumeLayout(false);
 			this.ProgramsToolStrip.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -225,8 +246,9 @@
 		private System.Windows.Forms.ToolStripButton ImportProgramsButton;
 		private System.Windows.Forms.ToolStripButton ExportProgramsButton;
 		private System.Windows.Forms.ToolStripButton DeleteProgramsButton;
-		private GameDetailsUserControl GameDefaultDetailsControl;
+		internal GameDetailsUserControl GameDefaultDetailsControl;
 		private System.Windows.Forms.OpenFileDialog ImportOpenFileDialog;
 		private System.Windows.Forms.SaveFileDialog ExportSaveFileDialog;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

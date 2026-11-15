@@ -26,8 +26,11 @@ namespace x360ce.App
 			// The room round the controls on the pages that scale themselves, given once the pages are scaled: Windows Forms
 			// scales such a control's own margin again each time a table round it resumes, so the designer's would be scaled
 			// several times over.
-			RecorderPanel.Padding = AppHelper.ScaledPadding(12, 4, 12, 12);
-			OptionsPanel.RemotePortNumericUpDown.Margin = AppHelper.ScaledPadding(4, 4, 4, 4);
+			RecorderPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			OptionsPanel.RemotePortNumericUpDown.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			foreach (var details in new[] { GameSettingsPanel.GameDetailsControl, ProgramsPanel.GameDefaultDetailsControl })
+				foreach (var box in new[] { details.HookModeFakeVidNumericUpDown, details.HookModeFakePidNumericUpDown, details.TimeoutNumericUpDown })
+					box.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
 			FillBuletImageList();
 			// Before the tab is shown, so it never shows the controller of the tab before, and drawn once the switch is over.
 			MainTabControl.Selecting += (s, e) =>
@@ -269,7 +272,6 @@ namespace x360ce.App
 		/// </summary>
 		private void GamesToolStrip_Layout(object sender, LayoutEventArgs e)
 		{
-			GameToCustomizeComboBox.AutoSize = false;
 			var width = GamesToolStrip.DisplayRectangle.Width;
 			ToolStripItem next = null;
 			foreach (ToolStripItem tsi in GamesToolStrip.Items)
@@ -288,9 +290,11 @@ namespace x360ce.App
 			// The margins between the list and its neighbour are given to the gap.
 			width -= GameToCustomizeComboBox.Margin.Left + gap - (next?.Margin.Left ?? GameToCustomizeComboBox.Margin.Right);
 			width = Math.Max(0, width);
-			// A new width lays the tool bar out again, which finds the same width and stops.
-			if (GameToCustomizeComboBox.Width != width)
-				GameToCustomizeComboBox.Width = width;
+			// The width is the box's, and the item sizes itself to its box, as the buttons do: a tool bar places an item of a
+			// size of its own in the middle of the bar, away from the margin above it that the buttons keep. A new width lays
+			// the tool bar out again, which finds the same width and stops.
+			if (GameToCustomizeComboBox.ComboBox.Width != width)
+				GameToCustomizeComboBox.ComboBox.Width = width;
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)

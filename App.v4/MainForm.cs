@@ -91,33 +91,13 @@ namespace x360ce.App
 			o.WindowPosition?.LoadPosition(this);
 		}
 
-		/// <summary>
-		/// Gives the window its first height when no place is saved: as tall as the controller page it opens on needs, within
-		/// the work area of the screen it opens on, and centred there. A window put back in a saved place opens at exactly that
-		/// place and size.
-		/// </summary>
-		/// <remarks>
-		/// The page's need is its own measure, the one it scrolls by (<see cref="PadControl.NeededHeight"/>), and what the window
-		/// puts around the page (the header, the tool bar, the tab strips, the status bar and the borders) is read from the window
-		/// as it is built, so the size follows the font, the theme and the screen's scale. The other
-		/// controller pages need as much, as they differ only in the devices their lists hold. The window keeps its width, as the
-		/// page never asks for more, and is never made smaller than designed. On a shorter screen it is as tall as the work
-		/// area, and the page scrolls. A maximised window is left as it is.
-		/// </remarks>
-		/// <param name="window">The window at its designed or saved size, built and laid out, before it is shown.</param>
-		/// <param name="page">The controller page the window opens on, laid out in the window.</param>
-		/// <param name="workArea">The work area of the screen the window opens on.</param>
-		public static void FitToPage(Form window, PadControl page, Rectangle workArea)
+		/// <summary>Keeps the smallest size the window takes, the size its General tab shows whole in, within the work area of a smaller screen.</summary>
+		/// <param name="window">The window, scaled to the screen.</param>
+		/// <param name="workArea">The work area of the screen it opens on.</param>
+		public static void KeepMinimumOnScreen(Form window, Rectangle workArea)
 		{
-			// A saved place, or a window an export keeps off the screens, is not Windows' to place.
-			if (window.WindowState != FormWindowState.Normal || window.StartPosition != FormStartPosition.WindowsDefaultLocation)
-				return;
-			var height = Math.Max(window.Height, window.Height - page.Height + page.NeededHeight(page.Width));
-			height = Math.Min(height, workArea.Height);
-			var width = Math.Min(window.Width, workArea.Width);
-			window.StartPosition = FormStartPosition.Manual;
-			window.Bounds = new Rectangle(workArea.Left + (workArea.Width - width) / 2, workArea.Top + (workArea.Height - height) / 2,
-				width, height);
+			var min = window.MinimumSize;
+			window.MinimumSize = new Size(Math.Min(min.Width, workArea.Width), Math.Min(min.Height, workArea.Height));
 		}
 
 		/// <summary>
@@ -599,6 +579,8 @@ namespace x360ce.App
 			Program.StartupTrace.WatchInterfaceWakes();
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
+			if (SettingsManager.Options.ShowDebugPanel)
+				DebugPanel.ShowPanel();
 			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
@@ -635,11 +617,12 @@ namespace x360ce.App
 			LoadPages();
 			yield return null;
 			AddMainControl();
-			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
-			// the window, the one it was started from or else the main one.
-			if (Main.ControllerIndex >= 0)
-				FitToPage(this, Main.PadControls[0], Screen.FromHandle(Handle).WorkingArea);
-			Program.StartupTrace.Mark("MainForm_Load: window fitted to the page");
+			// The door opens as the options left it once the window holds its pages, so an assistant that reaches it reads the
+			// whole window. An export describes the pages and leaves: it opens no door and writes no options file.
+			if (Program.ExportUiFolder == null)
+				Global.ApplyAiAccess();
+			// On the screen Windows chose for the window, the one it was started from or else the main one.
+			KeepMinimumOnScreen(this, Screen.FromHandle(Handle).WorkingArea);
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
 			if (AppVersionChanged)
@@ -1468,19 +1451,36 @@ namespace x360ce.App
 		{
 			if (_Mutex != null)
 				return _OtherCopy;
-			var uid = Application.ProductName;
 			var ic = new System.Configuration.Install.InstallContext(null, Environment.GetCommandLineArgs());
-			if (ic.Parameters.ContainsKey("Profile"))
-			{
-				// A mutex name holds no backslash, so the folder is named by its hash.
-				var folder = System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(EngineHelper.AppDataPath).TrimEnd('\\').ToLowerInvariant());
-				using (var sha = System.Security.Cryptography.SHA256.Create())
-					uid += "_" + BitConverter.ToString(sha.ComputeHash(folder), 0, 16).Replace("-", "");
-			}
+			var uid = InstanceName(ic.Parameters.ContainsKey("Profile") ? EngineHelper.AppDataPath : null);
 			_Mutex = new System.Threading.Mutex(false, uid);
 			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
 			_OtherCopy = !_Mutex.WaitOne(1, true);
 			return _OtherCopy;
+		}
+
+		/// <summary>
+		/// The name a copy is found by, for its mutex and the message the others reach it with: the program's name, and for a
+		/// copy started on a settings folder of its own with /Profile, the folder's hash.
+		/// </summary>
+		/// <param name="profileFolder">The folder a copy was started on with /Profile, or null for one started without it.</param>
+		public static string InstanceName(string profileFolder)
+		{
+			var uid = ((AssemblyProductAttribute)typeof(MainForm).Assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), false).First()).Product;
+			if (profileFolder == null)
+				return uid;
+			// A mutex name holds no backslash, so the folder is named by its hash.
+			var folder = System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(profileFolder).TrimEnd('\\').ToLowerInvariant());
+			using (var sha = System.Security.Cryptography.SHA256.Create())
+				return uid + "_" + BitConverter.ToString(sha.ComputeHash(folder), 0, 16).Replace("-", "");
+		}
+
+		/// <summary>The name a copy started with these arguments is found by, as <see cref="InstanceName"/> names it.</summary>
+		/// <param name="args">The copy's command line, its program first.</param>
+		public static string InstanceNameOf(string[] args)
+		{
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			return InstanceName(ic.Parameters.ContainsKey("Profile") ? EngineHelper.ResolveAppDataPath(args) : null);
 		}
 
 		/// <summary>
@@ -2124,10 +2124,6 @@ namespace x360ce.App
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
 			Program.StartupTrace.Mark("MainForm: shown");
-			if (SettingsManager.Options.ShowDebugPanel)
-			{
-				DebugPanel.ShowPanel();
-			}
 			// Counted at the moment the window opens, before this program has plugged anything in, so
 			// that everything found is by definition somebody else's. Shown a little later, because
 			// loading the settings restores the tip in the header and would wipe it.

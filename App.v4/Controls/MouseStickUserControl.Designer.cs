@@ -86,13 +86,13 @@
 			this.LayoutPanel.Controls.Add(this.SmoothingLabel, 0, 3);
 			this.LayoutPanel.Controls.Add(this.SmoothingTrackBar, 1, 3);
 			this.LayoutPanel.Controls.Add(this.SmoothingTextBox, 2, 3);
-			this.LayoutPanel.Controls.Add(this.ReturnLabel, 0, 4);
-			this.LayoutPanel.Controls.Add(this.ReturnTrackBar, 1, 4);
-			this.LayoutPanel.Controls.Add(this.ReturnTextBox, 2, 4);
-			this.LayoutPanel.Controls.Add(this.ActiveLabel, 0, 5);
-			this.LayoutPanel.Controls.Add(this.ActiveComboBox, 1, 5);
-			this.LayoutPanel.Controls.Add(this.ButtonLabel, 0, 6);
-			this.LayoutPanel.Controls.Add(this.ButtonComboBox, 1, 6);
+			this.LayoutPanel.Controls.Add(this.ReturnLabel, 0, 6);
+			this.LayoutPanel.Controls.Add(this.ReturnTrackBar, 1, 6);
+			this.LayoutPanel.Controls.Add(this.ReturnTextBox, 2, 6);
+			this.LayoutPanel.Controls.Add(this.ActiveLabel, 0, 4);
+			this.LayoutPanel.Controls.Add(this.ActiveComboBox, 1, 4);
+			this.LayoutPanel.Controls.Add(this.ButtonLabel, 0, 5);
+			this.LayoutPanel.Controls.Add(this.ButtonComboBox, 1, 5);
 			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.LayoutPanel.Location = new System.Drawing.Point(3, 16);
 			this.LayoutPanel.Name = "LayoutPanel";
@@ -111,7 +111,7 @@
 			//
 			this.StyleLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.StyleLabel.AutoSize = true;
-			this.StyleLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.StyleLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.StyleLabel.Name = "StyleLabel";
 			this.StyleLabel.TabIndex = 0;
 			this.StyleLabel.Text = "Style";
@@ -121,7 +121,7 @@
 			this.StyleComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.LayoutPanel.SetColumnSpan(this.StyleComboBox, 2);
 			this.StyleComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.StyleComboBox.Margin = new System.Windows.Forms.Padding(4);
+			this.StyleComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.StyleComboBox.Name = "StyleComboBox";
 			this.StyleComboBox.TabIndex = 1;
 			//
@@ -129,7 +129,7 @@
 			//
 			this.SensitivityXLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SensitivityXLabel.AutoSize = true;
-			this.SensitivityXLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.SensitivityXLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityXLabel.Name = "SensitivityXLabel";
 			this.SensitivityXLabel.TabIndex = 2;
 			this.SensitivityXLabel.Text = "Sensitivity across";
@@ -140,7 +140,7 @@
 			this.SensitivityXTrackBar.LargeChange = 10;
 			this.SensitivityXTrackBar.Maximum = 400;
 			this.SensitivityXTrackBar.Minimum = 1;
-			this.SensitivityXTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityXTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityXTrackBar.Name = "SensitivityXTrackBar";
 			this.SensitivityXTrackBar.TabIndex = 3;
 			this.SensitivityXTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -149,7 +149,7 @@
 			// SensitivityXTextBox
 			//
 			this.SensitivityXTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.SensitivityXTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityXTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityXTextBox.Name = "SensitivityXTextBox";
 			this.SensitivityXTextBox.ReadOnly = true;
 			this.SensitivityXTextBox.Size = new System.Drawing.Size(52, 20);
@@ -161,7 +161,7 @@
 			//
 			this.SensitivityYLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SensitivityYLabel.AutoSize = true;
-			this.SensitivityYLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.SensitivityYLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityYLabel.Name = "SensitivityYLabel";
 			this.SensitivityYLabel.TabIndex = 4;
 			this.SensitivityYLabel.Text = "Sensitivity up and down";
@@ -172,7 +172,7 @@
 			this.SensitivityYTrackBar.LargeChange = 10;
 			this.SensitivityYTrackBar.Maximum = 400;
 			this.SensitivityYTrackBar.Minimum = 1;
-			this.SensitivityYTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityYTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityYTrackBar.Name = "SensitivityYTrackBar";
 			this.SensitivityYTrackBar.TabIndex = 5;
 			this.SensitivityYTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -181,7 +181,7 @@
 			// SensitivityYTextBox
 			//
 			this.SensitivityYTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.SensitivityYTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SensitivityYTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SensitivityYTextBox.Name = "SensitivityYTextBox";
 			this.SensitivityYTextBox.ReadOnly = true;
 			this.SensitivityYTextBox.Size = new System.Drawing.Size(52, 20);
@@ -193,7 +193,7 @@
 			//
 			this.SmoothingLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SmoothingLabel.AutoSize = true;
-			this.SmoothingLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.SmoothingLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SmoothingLabel.Name = "SmoothingLabel";
 			this.SmoothingLabel.TabIndex = 6;
 			this.SmoothingLabel.Text = "Smoothing";
@@ -203,7 +203,7 @@
 			this.SmoothingTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.SmoothingTrackBar.LargeChange = 10;
 			this.SmoothingTrackBar.Maximum = 500;
-			this.SmoothingTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.SmoothingTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SmoothingTrackBar.Name = "SmoothingTrackBar";
 			this.SmoothingTrackBar.TabIndex = 7;
 			this.SmoothingTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
@@ -212,7 +212,7 @@
 			// SmoothingTextBox
 			//
 			this.SmoothingTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.SmoothingTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.SmoothingTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SmoothingTextBox.Name = "SmoothingTextBox";
 			this.SmoothingTextBox.ReadOnly = true;
 			this.SmoothingTextBox.Size = new System.Drawing.Size(52, 20);
@@ -224,9 +224,9 @@
 			//
 			this.ReturnLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ReturnLabel.AutoSize = true;
-			this.ReturnLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.ReturnLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ReturnLabel.Name = "ReturnLabel";
-			this.ReturnLabel.TabIndex = 8;
+			this.ReturnLabel.TabIndex = 12;
 			this.ReturnLabel.Text = "Back to centre";
 			//
 			// ReturnTrackBar
@@ -234,16 +234,16 @@
 			this.ReturnTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ReturnTrackBar.LargeChange = 50;
 			this.ReturnTrackBar.Maximum = 2000;
-			this.ReturnTrackBar.Margin = new System.Windows.Forms.Padding(4);
+			this.ReturnTrackBar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ReturnTrackBar.Name = "ReturnTrackBar";
 			this.ReturnTrackBar.SmallChange = 10;
-			this.ReturnTrackBar.TabIndex = 9;
+			this.ReturnTrackBar.TabIndex = 13;
 			this.ReturnTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			//
 			// ReturnTextBox
 			//
 			this.ReturnTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.ReturnTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.ReturnTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ReturnTextBox.Name = "ReturnTextBox";
 			this.ReturnTextBox.ReadOnly = true;
 			this.ReturnTextBox.Size = new System.Drawing.Size(52, 20);
@@ -255,9 +255,9 @@
 			//
 			this.ActiveLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ActiveLabel.AutoSize = true;
-			this.ActiveLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.ActiveLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ActiveLabel.Name = "ActiveLabel";
-			this.ActiveLabel.TabIndex = 10;
+			this.ActiveLabel.TabIndex = 8;
 			this.ActiveLabel.Text = "Active";
 			//
 			// ActiveComboBox
@@ -265,17 +265,17 @@
 			this.ActiveComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.LayoutPanel.SetColumnSpan(this.ActiveComboBox, 2);
 			this.ActiveComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ActiveComboBox.Margin = new System.Windows.Forms.Padding(4);
+			this.ActiveComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ActiveComboBox.Name = "ActiveComboBox";
-			this.ActiveComboBox.TabIndex = 11;
+			this.ActiveComboBox.TabIndex = 9;
 			//
 			// ButtonLabel
 			//
 			this.ButtonLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ButtonLabel.AutoSize = true;
-			this.ButtonLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.ButtonLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ButtonLabel.Name = "ButtonLabel";
-			this.ButtonLabel.TabIndex = 12;
+			this.ButtonLabel.TabIndex = 10;
 			this.ButtonLabel.Text = "Button";
 			//
 			// ButtonComboBox
@@ -283,9 +283,9 @@
 			this.ButtonComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.LayoutPanel.SetColumnSpan(this.ButtonComboBox, 2);
 			this.ButtonComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ButtonComboBox.Margin = new System.Windows.Forms.Padding(4);
+			this.ButtonComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ButtonComboBox.Name = "ButtonComboBox";
-			this.ButtonComboBox.TabIndex = 13;
+			this.ButtonComboBox.TabIndex = 11;
 			//
 			// MouseStickUserControl
 			//

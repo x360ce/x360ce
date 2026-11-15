@@ -1,4 +1,4 @@
-﻿## [3.11.31.0] - 2026-11-14
+﻿## [3.11.32.0] - 2026-11-14
 
 - Fixed: Pictures on buttons stand in the middle, and sliders show their whole handle.
 - Fixed: Texts and lists are no longer cut off or crowded, at any display scale.

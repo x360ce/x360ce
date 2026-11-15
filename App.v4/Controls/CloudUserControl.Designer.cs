@@ -16,6 +16,7 @@
 		private void InitializeComponent()
 		{
             this.components = new System.ComponentModel.Container();
+            this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -40,6 +41,7 @@
             this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.TasksDataGridView)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            this.RootLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // TasksDataGridView
@@ -73,6 +75,7 @@
             this.TasksDataGridView.DefaultCellStyle = dataGridViewCellStyle4;
             this.TasksDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TasksDataGridView.Location = new System.Drawing.Point(0, 25);
+            this.TasksDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.TasksDataGridView.Name = "TasksDataGridView";
             this.TasksDataGridView.ReadOnly = true;
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -153,8 +156,9 @@
             // 
             this.ItemDetailsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.ItemDetailsPanel.Location = new System.Drawing.Point(0, 363);
+            this.ItemDetailsPanel.Margin = new System.Windows.Forms.Padding(0);
             this.ItemDetailsPanel.Name = "ItemDetailsPanel";
-            this.ItemDetailsPanel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 8);
+            this.ItemDetailsPanel.Padding = new System.Windows.Forms.Padding(0);
             this.ItemDetailsPanel.Size = new System.Drawing.Size(654, 100);
             this.ItemDetailsPanel.TabIndex = 9;
             // 
@@ -170,8 +174,9 @@
             this.RunStateLabel,
             this.DeleteButton});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Margin = new System.Windows.Forms.Padding(0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
             this.toolStrip1.Size = new System.Drawing.Size(654, 25);
             this.toolStrip1.TabIndex = 8;
             this.toolStrip1.Text = "MySettingsToolStrip";
@@ -241,18 +246,34 @@
             this.QueueMonitorTimer.Interval = 500;
             this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
             // 
+            // RootLayoutPanel
+            // 
+            this.RootLayoutPanel.ColumnCount = 1;
+            this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RootLayoutPanel.Controls.Add(this.toolStrip1, 0, 0);
+            this.RootLayoutPanel.Controls.Add(this.TasksDataGridView, 0, 1);
+            this.RootLayoutPanel.Controls.Add(this.ItemDetailsPanel, 0, 2);
+            this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.RootLayoutPanel.Name = "RootLayoutPanel";
+            this.RootLayoutPanel.RowCount = 3;
+            this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+            this.RootLayoutPanel.TabIndex = 0;
+            // 
             // CloudUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.TasksDataGridView);
-            this.Controls.Add(this.ItemDetailsPanel);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.RootLayoutPanel);
             this.Name = "CloudUserControl";
             this.Size = new System.Drawing.Size(654, 463);
             ((System.ComponentModel.ISupportInitialize)(this.TasksDataGridView)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.RootLayoutPanel.ResumeLayout(false);
+            this.RootLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,5 +298,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StateColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn TryColumn;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

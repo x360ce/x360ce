@@ -292,7 +292,6 @@
     <ClInclude Include="XInputModuleManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="gamecontrollerdb.windows.txt" />
     <None Include="x360ce.def" />
   </ItemGroup>
   <ItemGroup>

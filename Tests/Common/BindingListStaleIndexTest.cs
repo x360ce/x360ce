@@ -102,6 +102,79 @@ namespace x360ce.Tests
 			}
 		}
 
+		[TestMethod, TestCategory("settings"), TestCategory("critical")]
+		[Description("A synchronous list keeps every item added while another thread removes others")]
+		public void Synchronous_adds_survive_removals_from_another_thread()
+		{
+			using (var owner = new PumpingOwner())
+			{
+				// The cloud queue: added to from one thread, sent items removed by its own, applied on the window's.
+				var list = new BindingListInvoked<Row> { SynchronizingObject = owner, AsynchronousInvoke = false };
+				const int count = 20000;
+				var added = new List<Row>();
+				var removed = 0;
+				Exception failure = null;
+				var adder = new Thread(() =>
+				{
+					try
+					{
+						for (var i = 0; i < count; i++)
+						{
+							var row = new Row { Name = "Row " + i };
+							lock (added)
+								added.Add(row);
+							list.Add(row);
+						}
+					}
+					catch (Exception ex) { failure = ex; }
+				});
+				var remover = new Thread(() =>
+				{
+					try
+					{
+						while (adder.IsAlive)
+						{
+							var rows = list.ToArraySynchronized();
+							if (rows.Length > 0 && list.Remove(rows[0]))
+								Interlocked.Increment(ref removed);
+						}
+					}
+					catch (Exception ex) { failure = ex; }
+				});
+				adder.Start();
+				remover.Start();
+				Assert.IsTrue(adder.Join(TimeSpan.FromSeconds(60)) && remover.Join(TimeSpan.FromSeconds(10)),
+					"Adding and removing never finished.");
+				Assert.IsNull(failure, "A change failed on the thread that made it: " + failure);
+				Assert.AreEqual(count - removed, list.Count,
+					"Items added were lost. Each addition counted its position on its own thread, and a removal "
+					+ "applied first left that position past the end of the list.");
+			}
+		}
+
+		[TestMethod, TestCategory("settings")]
+		[Description("A synchronous change that fails on the owning thread fails for the thread that made it")]
+		public void Synchronous_change_reports_its_failure_to_the_caller()
+		{
+			using (var owner = new PumpingOwner())
+			{
+				var list = new BindingListInvoked<Row> { SynchronizingObject = owner, AsynchronousInvoke = false };
+				list.ListChanged += (s, e) => { throw new InvalidOperationException("Drawing the row failed."); };
+				Exception failure = null;
+				var thread = new Thread(() =>
+				{
+					try { list.Add(new Row { Name = "A" }); }
+					catch (Exception ex) { failure = ex; }
+				});
+				thread.Start();
+				Assert.IsTrue(thread.Join(TimeSpan.FromSeconds(10)), "The change never finished.");
+				// The change is made by reflection, which wraps what it throws, with the list's details on the wrapper.
+				var cause = failure == null ? null : failure.GetBaseException();
+				Assert.IsInstanceOfType(cause, typeof(InvalidOperationException),
+					"The failure was left on the task for the finalizer to report as an unobserved exception.");
+			}
+		}
+
 		static string Describe(IList<Exception> failures)
 		{
 			var names = new List<string>();
@@ -206,6 +279,51 @@ namespace x360ce.Tests
 
 			static void Release()
 			{
+				typeof(ControlsHelper).GetProperty(nameof(ControlsHelper.MainTaskScheduler)).SetValue(null, null, null);
+			}
+		}
+
+		/// <summary>
+		/// Stands in for a window that is free: its own thread runs every change handed to it as it
+		/// arrives, so threads that wait for their change are answered.
+		/// </summary>
+		sealed class PumpingOwner : TaskScheduler, IDisposable
+		{
+			readonly System.Collections.Concurrent.BlockingCollection<Task> _tasks =
+				new System.Collections.Concurrent.BlockingCollection<Task>();
+			readonly Thread _thread;
+
+			public PumpingOwner()
+			{
+				var ready = new ManualResetEventSlim();
+				_thread = new Thread(() =>
+				{
+					// Unbound first: an earlier test may have bound the helper to a thread that has ended.
+					SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+					typeof(ControlsHelper).GetProperty(nameof(ControlsHelper.MainTaskScheduler)).SetValue(null, null, null);
+					ControlsHelper.InitInvokeContext();
+					ready.Set();
+					foreach (var task in _tasks.GetConsumingEnumerable())
+						TryExecuteTask(task);
+				});
+				_thread.IsBackground = true;
+				_thread.Start();
+				ready.Wait();
+			}
+
+			protected override void QueueTask(Task task) { _tasks.Add(task); }
+
+			protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
+			{
+				return Thread.CurrentThread == _thread && TryExecuteTask(task);
+			}
+
+			protected override IEnumerable<Task> GetScheduledTasks() { return _tasks.ToArray(); }
+
+			public void Dispose()
+			{
+				_tasks.CompleteAdding();
+				_thread.Join(TimeSpan.FromSeconds(10));
 				typeof(ControlsHelper).GetProperty(nameof(ControlsHelper.MainTaskScheduler)).SetValue(null, null, null);
 			}
 		}

@@ -46,6 +46,7 @@
 			this.ClientSize = new System.Drawing.Size(744, 501);
 			this.Controls.Add(this.HardwarePanel);
 			this.Icon = global::x360ce.App.Properties.Resources.hardware;
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.Name = "HardwareForm";
 			this.Text = "Hardware";
 			this.ResumeLayout(false);

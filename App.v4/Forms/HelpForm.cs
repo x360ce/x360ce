@@ -36,14 +36,18 @@ namespace x360ce.App.Forms
 			_text.ReadOnly = true;
 			_text.BorderStyle = BorderStyle.None;
 			_text.BackColor = SystemColors.Window;
-			// The document edge to edge; under it its button a row (8) below the text and 12 from the window's edges.
-			var bar = new TableLayoutPanel { Dock = DockStyle.Bottom, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, ColumnCount = 1, Padding = new Padding(8, 4, 8, 8) };
-			bar.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			// The document, and under it its button: each one gap from the window's edges and from the other.
+			Padding = new Padding(0, 0, 8, 8);
+			_text.Margin = new Padding(8, 8, 0, 0);
+			var layout = new TableLayoutPanel { Name = "RootLayoutPanel", Dock = DockStyle.Fill, Margin = new Padding(0), ColumnCount = 1, RowCount = 2 };
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 			// As wide as a dialog's button at least: Windows Forms' button, which the other windows' buttons keep as their smallest size.
-			var ok = new Button { Name = "OkButton", Text = "OK", DialogResult = DialogResult.OK, AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(4), MinimumSize = new Size(75, 23) };
-			bar.Controls.Add(ok, 0, 0);
-			Controls.Add(_text);
-			Controls.Add(bar);
+			var ok = new Button { Name = "OkButton", Text = "OK", DialogResult = DialogResult.OK, AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(8, 8, 0, 0), MinimumSize = new Size(75, 23) };
+			layout.Controls.Add(_text, 0, 0);
+			layout.Controls.Add(ok, 0, 1);
+			Controls.Add(layout);
 			AcceptButton = ok;
 			CancelButton = ok;
 			ResumeLayout(false);

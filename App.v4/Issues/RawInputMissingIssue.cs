@@ -56,6 +56,7 @@ namespace x360ce.App.Issues
 			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var hidHide = VirtualDriverInstaller.GetHidHideState();
 			var missing = Missing(devices, hidHide, RawInputDevice.IsGameControllerAt);
+			Record(engine.Recording, devices, hidHide, missing);
 			// Named only when missing on two rounds in a row.
 			var named = missing.Where(x => _missingBefore.Contains(x.InstanceGuid)).ToArray();
 			_missingBefore = new HashSet<Guid>(missing.Select(x => x.InstanceGuid));
@@ -76,20 +77,47 @@ namespace x360ce.App.Issues
 			SetSeverity(IssueSeverity.Moderate, 1, text);
 		}
 
-		/// <summary>The controllers online through DirectInput that Raw Input must list and does not, leaving out those HID Hide hides now.</summary>
+		/// <summary>What the check read, as last written to a bug report recording, and that recording.</summary>
+		string _recorded;
+		Recording.ReportRecorder _recordedTo;
+
+		/// <summary>Writes what the check read into a running bug report recording, when it changed. Device GUIDs become their labels there.</summary>
+		void Record(Recording.ReportRecorder recording, UserDevice[] devices, VirtualDriverInstaller.HidHideState hidHide, UserDevice[] missing)
+		{
+			if (recording == null)
+				return;
+			var hideBox = devices.Where(x => x.IsDirectInput && x.IsOnline && x.IsHidden).Select(x => x.InstanceGuid.ToString()).ToArray();
+			var text = string.Format("raw input check: HID Hide {0}; Hide box ticked: {1}; missing: {2}",
+				!hidHide.Installed ? "not installed" : !hidHide.Answered ? "did not answer" : hidHide.CloakOn ? "hides " + hidHide.HiddenDevices.Length : "hides nothing",
+				hideBox.Length == 0 ? "none" : string.Join(" ", hideBox),
+				missing.Length == 0 ? "none" : string.Join(" ", missing.Select(x => x.InstanceGuid.ToString()).ToArray()));
+			if (text == _recorded && recording == _recordedTo)
+				return;
+			_recorded = text;
+			_recordedTo = recording;
+			recording.Note(text);
+		}
+
+		/// <summary>The controllers online through DirectInput that Raw Input must list and does not, leaving out those hidden on purpose.</summary>
+		/// <remarks>
+		/// Hidden on purpose: its Hide box is ticked, or HID Hide hides it now. While HID Hide is installed and does not answer,
+		/// which it hides is not known, so none is judged.
+		/// </remarks>
 		/// <param name="devices">The devices listed.</param>
 		/// <param name="hidHide">What HID Hide is set to do.</param>
 		/// <param name="isGameController">Reads a HID interface's own description: whether Raw Input lists it as a game controller, or null when it cannot be read.</param>
 		internal static UserDevice[] Missing(UserDevice[] devices, VirtualDriverInstaller.HidHideState hidHide, Func<string, bool?> isGameController)
 		{
+			if (hidHide.Installed && !hidHide.Answered)
+				return new UserDevice[0];
 			return devices
-				.Where(x => x.IsDirectInput && x.IsOnline && !x.IsKeyboard && !x.IsMouse && !string.IsNullOrEmpty(x.HidDevicePath))
+				.Where(x => x.IsDirectInput && x.IsOnline && !x.IsHidden && !x.IsKeyboard && !x.IsMouse && !string.IsNullOrEmpty(x.HidDevicePath))
 				.Where(x =>
 				{
 					var twin = x.RawInputTwin(devices);
 					return twin == null || !twin.IsOnline;
 				})
-				.Where(x => !(hidHide.Answered && hidHide.CloakOn && VirtualDriverInstaller.GetHidHidePaths(x).Any(hidHide.IsHidden)))
+				.Where(x => !(hidHide.CloakOn && VirtualDriverInstaller.GetHidHidePaths(x).Any(hidHide.IsHidden)))
 				.Where(x => isGameController(x.HidDevicePath) == true)
 				.ToArray();
 		}

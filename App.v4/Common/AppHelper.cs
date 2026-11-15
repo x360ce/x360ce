@@ -777,7 +777,14 @@ namespace x360ce.App
 		/// </remarks>
 		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table)
 		{
+			return RowsHeight(table, table.DisplayRectangle.Width);
+		}
+
+		/// <summary>The height a table's rows need at a width of the table, as <see cref="RowsHeight(System.Windows.Forms.TableLayoutPanel)"/>.</summary>
+		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table, int tableWidth)
+		{
 			const System.Windows.Forms.AnchorStyles topAndBottom = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
+			const System.Windows.Forms.AnchorStyles leftAndRight = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			var rows = 0;
 			for (var row = 0; row < table.RowCount; row++)
 			{
@@ -791,11 +798,41 @@ namespace x360ce.App
 						: control.Dock != System.Windows.Forms.DockStyle.Top && control.Dock != System.Windows.Forms.DockStyle.Bottom;
 					if (stretches)
 						continue;
-					tallest = Math.Max(tallest, (control.AutoSize ? control.GetPreferredSize(Size.Empty).Height : control.Height) + control.Margin.Vertical);
+					// As tall as it is at the width the table gives it: a text stretched across its columns wraps at them.
+					var across = control.Dock != System.Windows.Forms.DockStyle.None || (control.Anchor & leftAndRight) == leftAndRight;
+					var width = control.AutoSize && across ? CellWidth(table, control, tableWidth) : control.Width;
+					tallest = Math.Max(tallest, (control.AutoSize ? control.GetPreferredSize(new Size(Math.Max(0, width), 0)).Height : control.Height) + control.Margin.Vertical);
 				}
 				rows += tallest;
 			}
 			return rows;
+		}
+
+		/// <summary>
+		/// The width a control stretched across its columns gets at a width of the table: its columns' widths, and its share of
+		/// the room the table gains or loses from the width it was last laid out at, which goes to the columns sized in percent.
+		/// </summary>
+		/// <remarks>The widths a table holds are those of its last layout.</remarks>
+		static int CellWidth(System.Windows.Forms.TableLayoutPanel table, System.Windows.Forms.Control control, int tableWidth)
+		{
+			var widths = table.GetColumnWidths();
+			var first = table.GetColumn(control);
+			var last = first + table.GetColumnSpan(control);
+			var cell = 0;
+			var percent = 0f;
+			var spanned = 0f;
+			for (var i = 0; i < widths.Length; i++)
+			{
+				var style = i < table.ColumnStyles.Count ? table.ColumnStyles[i] : null;
+				var share = style != null && style.SizeType == System.Windows.Forms.SizeType.Percent ? style.Width : 0f;
+				percent += share;
+				if (i < first || i >= last)
+					continue;
+				cell += widths[i];
+				spanned += share;
+			}
+			var room = tableWidth - widths.Sum();
+			return cell + (percent > 0 ? (int)(room * spanned / percent) : 0) - control.Margin.Horizontal;
 		}
 
 		/// <summary>

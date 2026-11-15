@@ -113,13 +113,32 @@ namespace x360ce.Engine
 	}
 
 	/// <summary>
-	/// Fetches x360ce's controller database from x360ce's server into the settings folder, only when the person asks: with
-	/// the ETag of the copy kept, so an unchanged file is not sent again.
+	/// Fetches x360ce's controller database into the settings folder, from the site of the web service address (x360ce's
+	/// server by default), only when the person asks: with the ETag of the copy kept, so an unchanged file is not sent again.
 	/// </summary>
 	public class X360ceUpdateClient
 	{
-		/// <summary>Where x360ce's server serves the database (Web\ControllerDatabase.ashx).</summary>
+		/// <summary>Where x360ce's server serves the database (Web\ControllerDatabase.ashx); the address used when the web service address names no site's service.</summary>
 		public const string DefaultUrl = "https://www.x360ce.com/x360ce/ControllerDatabase.ashx";
+
+		/// <summary>The end of a web service address, which the database's address on the same site ends with in its place.</summary>
+		const string ServicePath = "/webservices/x360ce.asmx";
+
+		/// <summary>The end of the database's address on the site of a web service address.</summary>
+		const string DatabasePath = "/ControllerDatabase.ashx";
+
+		/// <summary>
+		/// The database's address on the site of the web service address the person set: <c>/webservices/x360ce.asmx</c> at
+		/// its end becomes <c>/ControllerDatabase.ashx</c>. <see cref="DefaultUrl"/> when the address does not end that way.
+		/// </summary>
+		/// <param name="serviceUrl">The web service address of the program's options.</param>
+		public static string DatabaseUrl(string serviceUrl)
+		{
+			var url = (serviceUrl ?? "").Trim();
+			return url.EndsWith(ServicePath, StringComparison.OrdinalIgnoreCase)
+				? url.Substring(0, url.Length - ServicePath.Length) + DatabasePath
+				: DefaultUrl;
+		}
 
 		/// <summary>The line the kept copy ends with: the server's ETag of it.</summary>
 		public const string ETagPrefix = "# ETag: ";
@@ -136,17 +155,19 @@ namespace x360ce.Engine
 		public readonly Func<UpdateRequest, UpdateResponse> Transport;
 
 		/// <summary>
-		/// Fetches the database from x360ce's server into the settings folder off the caller's thread, as the programs'
-		/// buttons do: what happened, in a sentence, and the outcome.
+		/// Fetches the database from the site of the web service address into the settings folder off the caller's thread,
+		/// as the programs' buttons do: what happened, in a sentence, and the outcome.
 		/// </summary>
+		/// <param name="serviceUrl">The web service address of the program's options; see <see cref="DatabaseUrl"/>.</param>
 		/// <param name="userAgent">The program and its version, the only thing the request says about the machine.</param>
-		public static Task<KeyValuePair<string, DatabaseUpdateOutcome>> UpdateSettingsCopy(string userAgent)
+		public static Task<KeyValuePair<string, DatabaseUpdateOutcome>> UpdateSettingsCopy(string serviceUrl, string userAgent)
 		{
 			var client = new X360ceUpdateClient(r => HttpFile.Get(r, userAgent));
+			var address = DatabaseUrl(serviceUrl);
 			return Task.Run(() =>
 			{
 				DatabaseUpdateOutcome outcome;
-				var text = client.Update(DefaultUrl, X360ceDatabase.SettingsFilePath, out outcome);
+				var text = client.Update(address, X360ceDatabase.SettingsFilePath, out outcome);
 				return new KeyValuePair<string, DatabaseUpdateOutcome>(text, outcome);
 			});
 		}

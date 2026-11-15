@@ -29,6 +29,8 @@
 		private void InitializeComponent()
 		{
 			this.performanceTestUserControl1 = new x360ce.App.Controls.DebugUserControl();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// performanceTestUserControl1
@@ -37,10 +39,24 @@
 			this.performanceTestUserControl1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.performanceTestUserControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.performanceTestUserControl1.Location = new System.Drawing.Point(12, 12);
-			this.performanceTestUserControl1.Margin = new System.Windows.Forms.Padding(0);
+			this.performanceTestUserControl1.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.performanceTestUserControl1.Name = "performanceTestUserControl1";
 			this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 169);
 			this.performanceTestUserControl1.TabIndex = 0;
+			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.performanceTestUserControl1, 0, 0);
+			this.RootLayoutPanel.AutoSize = true;
+			this.RootLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 1;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.TabIndex = 0;
 			// 
 			// DebugForm
 			// 
@@ -49,15 +65,17 @@
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ClientSize = new System.Drawing.Size(258, 193);
-			this.Controls.Add(this.performanceTestUserControl1);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.MaximizeBox = false;
 			this.Name = "DebugForm";
-			this.Padding = new System.Windows.Forms.Padding(12);
+			this.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.Text = "Debug Form";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugForm_FormClosing);
 			this.Load += new System.EventHandler(this.DebugForm_Load);
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -66,5 +84,6 @@
 		#endregion
 
 		private Controls.DebugUserControl performanceTestUserControl1;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

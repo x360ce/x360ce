@@ -59,7 +59,7 @@ namespace x360ce.App.Forms
 			this.RootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RootTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
-			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.RootTableLayoutPanel.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.RootTableLayoutPanel.RowCount = 4;
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -90,7 +90,7 @@ namespace x360ce.App.Forms
 			this.InstructionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.InstructionLabel.AutoSize = true;
 			this.InstructionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.InstructionLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.InstructionLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.InstructionLabel.Name = "InstructionLabel";
 			this.InstructionLabel.TabIndex = 0;
 			this.InstructionLabel.Text = "Press Start to test the controller.";
@@ -99,7 +99,7 @@ namespace x360ce.App.Forms
 			//
 			this.CountdownCaptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.CountdownCaptionLabel.AutoSize = true;
-			this.CountdownCaptionLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
+			this.CountdownCaptionLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CountdownCaptionLabel.Name = "CountdownCaptionLabel";
 			this.CountdownCaptionLabel.TabIndex = 1;
 			//
@@ -108,7 +108,7 @@ namespace x360ce.App.Forms
 			this.CountdownLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
 			this.CountdownLabel.AutoSize = true;
 			this.CountdownLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.CountdownLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.CountdownLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CountdownLabel.Name = "CountdownLabel";
 			this.CountdownLabel.TabIndex = 2;
 			//
@@ -116,7 +116,7 @@ namespace x360ce.App.Forms
 			//
 			this.HintLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.HintLabel.AutoSize = true;
-			this.HintLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.HintLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HintLabel.Name = "HintLabel";
 			this.HintLabel.TabIndex = 1;
 			//
@@ -177,7 +177,7 @@ namespace x360ce.App.Forms
 			//
 			this.ButtonsHeadingLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ButtonsHeadingLabel.AutoSize = true;
-			this.ButtonsHeadingLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.ButtonsHeadingLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ButtonsHeadingLabel.Name = "ButtonsHeadingLabel";
 			this.ButtonsHeadingLabel.TabIndex = 4;
 			this.ButtonsHeadingLabel.Text = "Buttons, shown and not graded.";
@@ -187,7 +187,7 @@ namespace x360ce.App.Forms
 			//
 			this.NotGradedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.NotGradedLabel.AutoSize = true;
-			this.NotGradedLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.NotGradedLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.NotGradedLabel.Name = "NotGradedLabel";
 			this.NotGradedLabel.TabIndex = 3;
 			this.NotGradedLabel.Visible = false;
@@ -208,7 +208,7 @@ namespace x360ce.App.Forms
 			//
 			this.SkipButton.AutoSize = true;
 			this.SkipButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SkipButton.Margin = new System.Windows.Forms.Padding(4);
+			this.SkipButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SkipButton.Name = "SkipButton";
 			this.SkipButton.Padding = new System.Windows.Forms.Padding(32, 0, 32, 0);
 			this.SkipButton.TabIndex = 1;
@@ -239,7 +239,7 @@ namespace x360ce.App.Forms
 			//
 			this.SummaryLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.SummaryLabel.AutoSize = true;
-			this.SummaryLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.SummaryLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SummaryLabel.Name = "SummaryLabel";
 			this.SummaryLabel.TabIndex = 0;
 			//
@@ -251,7 +251,7 @@ namespace x360ce.App.Forms
 			this.ResultsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.ResultsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.ResultsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.ResultsDataGridView.Margin = new System.Windows.Forms.Padding(4);
+			this.ResultsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ResultsDataGridView.Name = "ResultsDataGridView";
 			this.ResultsDataGridView.ReadOnly = true;
 			this.ResultsDataGridView.RowHeadersVisible = false;
@@ -263,7 +263,7 @@ namespace x360ce.App.Forms
 			//
 			this.LimitsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.LimitsLabel.AutoSize = true;
-			this.LimitsLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.LimitsLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LimitsLabel.Name = "LimitsLabel";
 			this.LimitsLabel.TabIndex = 2;
 			this.LimitsLabel.Text = "Distances in mm and forces in grams need measuring equipment.";
@@ -284,7 +284,7 @@ namespace x360ce.App.Forms
 			//
 			this.CloseButton.AutoSize = true;
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Margin = new System.Windows.Forms.Padding(4);
+			this.CloseButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.TabIndex = 1;
 			this.CloseButton.Text = "Close";
@@ -294,7 +294,7 @@ namespace x360ce.App.Forms
 			//
 			this.StartButton.AutoSize = true;
 			this.StartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.StartButton.Margin = new System.Windows.Forms.Padding(4);
+			this.StartButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.StartButton.Padding = new System.Windows.Forms.Padding(32, 0, 32, 0);
 			this.StartButton.Name = "StartButton";
 			this.StartButton.TabIndex = 0;

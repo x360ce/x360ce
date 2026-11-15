@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Updates the built-in x360ce controller database, Engine\Resources\gamecontrollerdb_x360ce.windows.txt.
+    Updates the built-in x360ce controller database, Engine\Resources\gamecontrollerdb_x360ce.windows.txt.gz.
 .DESCRIPTION
     Run by hand when the built-in copy should be renewed, never in a build. By default it downloads the file
-    x360ce's server writes (Web\ControllerDatabase.ashx), checks its header and that it holds as many rows as the
-    header says, and only then replaces the built-in copy. Both programs and the xinput library carry the file, so
-    build them again afterwards.
+    x360ce's server writes (Web\ControllerDatabase.ashx), checks its header and that it holds as many whole rows as the
+    header says, and only then replaces the built-in copy, gzip compressed as SDL's database beside it is. Both
+    programs and the xinput library carry that file, so build them again afterwards.
 
     -FromPublicService makes the file without the server's own page, from x360ce's public settings service, through
     the engine's own writer (X360ceDatabase.Write): every controller SDL's database knows, the most popular list, the
@@ -30,7 +30,29 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$target = Join-Path $root 'Engine\Resources\gamecontrollerdb_x360ce.windows.txt'
+$target = Join-Path $root 'Engine\Resources\gamecontrollerdb_x360ce.windows.txt.gz'
+
+#==============================================================================
+# Function: Save-GzipFile
+#==============================================================================
+<#
+.SYNOPSIS
+    Writes bytes to a file, gzip compressed.
+.DESCRIPTION
+    At the smallest size .NET offers: gzip's level 9 where the runtime has it (PowerShell 7), otherwise its optimal
+    level (Windows PowerShell). The programs and the xinput library read either.
+#>
+function Save-GzipFile {
+	[CmdletBinding()]
+	param([Parameter(Mandatory = $true)][string]$Path, [Parameter(Mandatory = $true)][byte[]]$Bytes)
+	$level = [IO.Compression.CompressionLevel]::Optimal
+	if ([enum]::GetNames([IO.Compression.CompressionLevel]) -contains 'SmallestSize') { $level = [IO.Compression.CompressionLevel]'SmallestSize' }
+	$file = [IO.File]::Create($Path)
+	try {
+		$gzip = New-Object IO.Compression.GZipStream($file, $level)
+		try { $gzip.Write($Bytes, 0, $Bytes.Length) } finally { $gzip.Dispose() }
+	} finally { $file.Dispose() }
+}
 
 #==============================================================================
 # Function: Test-X360ceDatabase
@@ -50,7 +72,8 @@ function Test-X360ceDatabase {
 	$said = $lines | Where-Object { $_ -match '^# Rows: (\d+)$' } | Select-Object -First 1
 	if (-not $made -or -not $said) { throw 'The header does not say when the file was made or how many rows it holds.' }
 	$expected = [int]($said -replace '^# Rows: ', '')
-	$rows = @($lines | Where-Object { $_ -match '^[0-9a-f]{32},' }).Count
+	# Whole rows only: a line break inside a row leaves pieces that do not end with its platform.
+	$rows = @($lines | Where-Object { $_ -match '^[0-9a-f]{32},.*,platform:Windows,$' }).Count
 	if ($rows -ne $expected) { throw "The header says $expected rows; the file holds $rows." }
 	if ($rows -lt 100) { throw "The file holds only $rows rows." }
 	return $rows
@@ -80,9 +103,9 @@ function Get-PublicServiceDatabase {
 		$g = [guid]('{0:x4}{1:x4}-0000-0000-0000-504944564944' -f $product, $vendor)
 		if ($seen.Add($g)) { $guids.Add($g) }
 	}
-	foreach ($line in [IO.File]::ReadAllLines((Join-Path $root 'Native\x360ce\gamecontrollerdb.windows.txt'))) {
-		if ($line -notmatch '^0[35]000000([0-9a-f]{4})0000([0-9a-f]{4})') { continue }
-		& $add ([Convert]::ToInt32($Matches[1].Substring(2, 2) + $Matches[1].Substring(0, 2), 16)) ([Convert]::ToInt32($Matches[2].Substring(2, 2) + $Matches[2].Substring(0, 2), 16))
+	# Every Windows controller of SDL's database the engine carries.
+	foreach ($row in [x360ce.Engine.SdlSource]::Parse([x360ce.Engine.SdlDatabase]::ReadBuiltIn(), [x360ce.Engine.SdlSourceKind]::BuiltIn, $null).Mappings) {
+		if ($row.Guid.HasIds) { & $add $row.Guid.VendorId $row.Guid.ProductId }
 	}
 	# Controllers connected now.
 	foreach ($id in (Get-PnpDevice -PresentOnly -Class HIDClass -ErrorAction SilentlyContinue).InstanceId) {
@@ -141,5 +164,5 @@ if ($FromPublicService) {
 	$text = [Text.Encoding]::UTF8.GetString($response.RawContentStream.ToArray()).TrimStart([char]0xFEFF)
 }
 $rows = Test-X360ceDatabase -Text $text
-[IO.File]::WriteAllText($target, ($text -replace "`r`n", "`n"), (New-Object Text.UTF8Encoding $false))
+Save-GzipFile -Path $target -Bytes (New-Object Text.UTF8Encoding $false).GetBytes(($text -replace "`r`n", "`n"))
 Write-Host "Saved $rows rows to $target. Build the engine, both programs and the xinput library again."

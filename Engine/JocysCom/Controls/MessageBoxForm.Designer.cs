@@ -48,7 +48,7 @@
 			// Button3
 			// 
 			this.Button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.Button3.Location = new System.Drawing.Point(252, 72);
+			this.Button3.Location = new System.Drawing.Point(256, 76);
 			this.Button3.MinimumSize = new System.Drawing.Size(75, 23);
 			this.Button3.Name = "Button3";
 			this.Button3.Size = new System.Drawing.Size(76, 24);
@@ -58,7 +58,7 @@
 			// Button2
 			// 
 			this.Button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.Button2.Location = new System.Drawing.Point(168, 72);
+			this.Button2.Location = new System.Drawing.Point(172, 76);
 			this.Button2.MinimumSize = new System.Drawing.Size(75, 23);
 			this.Button2.Name = "Button2";
 			this.Button2.Size = new System.Drawing.Size(76, 24);
@@ -68,7 +68,7 @@
 			// Button1
 			// 
 			this.Button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.Button1.Location = new System.Drawing.Point(84, 72);
+			this.Button1.Location = new System.Drawing.Point(88, 76);
 			this.Button1.MinimumSize = new System.Drawing.Size(75, 23);
 			this.Button1.Name = "Button1";
 			this.Button1.Size = new System.Drawing.Size(76, 24);
@@ -78,7 +78,7 @@
 			// IconPictureBox
 			// 
 			this.IconPictureBox.BackColor = System.Drawing.Color.Transparent;
-			this.IconPictureBox.Location = new System.Drawing.Point(12, 12);
+			this.IconPictureBox.Location = new System.Drawing.Point(8, 8);
 			this.IconPictureBox.Name = "IconPictureBox";
 			this.IconPictureBox.Size = new System.Drawing.Size(32, 32);
 			this.IconPictureBox.TabIndex = 7;
@@ -90,7 +90,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.TextLabel.ContextMenuStrip = this.CopyContextMenuStrip;
-			this.TextLabel.Location = new System.Drawing.Point(52, 12);
+			this.TextLabel.Location = new System.Drawing.Point(48, 8);
 			this.TextLabel.MaximumSize = new System.Drawing.Size(640, 480);
 			this.TextLabel.Name = "TextLabel";
 			this.TextLabel.Size = new System.Drawing.Size(276, 28);
@@ -101,7 +101,7 @@
 			// 
 			this.HeadingLabel.AutoSize = true;
 			this.HeadingLabel.ContextMenuStrip = this.CopyContextMenuStrip;
-			this.HeadingLabel.Location = new System.Drawing.Point(52, 12);
+			this.HeadingLabel.Location = new System.Drawing.Point(48, 8);
 			this.HeadingLabel.MaximumSize = new System.Drawing.Size(640, 0);
 			this.HeadingLabel.Name = "HeadingLabel";
 			this.HeadingLabel.Size = new System.Drawing.Size(76, 13);
@@ -141,7 +141,7 @@
 			// 
 			// textBox1
 			// 
-			this.textBox1.Location = new System.Drawing.Point(52, 12);
+			this.textBox1.Location = new System.Drawing.Point(48, 8);
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ReadOnly = true;
@@ -153,7 +153,7 @@
 			// 
 			this.MainLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.MainLinkLabel.AutoSize = true;
-			this.MainLinkLabel.Location = new System.Drawing.Point(12, 76);
+			this.MainLinkLabel.Location = new System.Drawing.Point(8, 80);
 			this.MainLinkLabel.Name = "MainLinkLabel";
 			this.MainLinkLabel.Size = new System.Drawing.Size(76, 13);
 			this.MainLinkLabel.TabIndex = 12;

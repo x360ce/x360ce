@@ -2,7 +2,6 @@
 // @area: engine   @layer: integration
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -229,7 +228,7 @@ namespace x360ce.Tests
 
 		#endregion
 
-		#region Notepad
+		#region Real keyboard and mouse
 
 		[DllImport("user32.dll")]
 		static extern IntPtr GetForegroundWindow();
@@ -244,88 +243,76 @@ namespace x360ce.Tests
 		static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
 
 		[DllImport("user32.dll")]
-		static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-		[DllImport("user32.dll")]
 		static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
 
 		struct POINT { public int X, Y; }
 
 		struct RECT { public int Left, Top, Right, Bottom; }
 
-		/// <summary>Types with the real keyboard, but only while the test's Notepad is in front.</summary>
-		const string NotepadScript =
-			"global np := \"ahk_id \" A_Args[1]\r\n" +
-			"WinActivate(np)\r\n" +
+		/// <summary>
+		/// A window with a text box, put in front, which the buttons type into with the real keyboard while it stays there.
+		/// The script's own classic text box takes every key it is sent; Notepad 11 drops some of the keys sent to it.
+		/// </summary>
+		const string KeyboardScript =
+			"global box := Gui(, \"x360ce keyboard test \" A_Args[1])\r\n" +
+			"box.Add(\"Edit\", \"r5 w400\")\r\n" +
+			"box.Show()\r\n" +
+			"global win := \"ahk_id \" box.Hwnd\r\n" +
+			"WinActivate(win)\r\n" +
 			"global dev := X360ce.c1.d1\r\n" +
 			"Hold(button, key) {\r\n" +
-			"\tdev.Hotkey(button, (*) => WinActive(np) && Send(\"{\" key \" down}\"))\r\n" +
+			"\tdev.Hotkey(button, (*) => WinActive(win) && Send(\"{\" key \" down}\"))\r\n" +
 			"\tdev.Hotkey(button \" up\", (*) => Send(\"{\" key \" up}\"))\r\n" +
 			"}\r\n" +
 			"Hold(\"b1\", \"h\")\r\n" +
 			"Hold(\"b2\", \"i\")\r\n" +
 			"Hold(\"b3\", \"Space\")\r\n" +
 			"Hold(\"b4\", \"Enter\")\r\n" +
-			"dev.Hotkey(\"b5\", (*) => WinActive(np) && SendText(\"Hello from x360ce!\"))\r\n" +
-			"dev.Hotkey(\"b6\", (*) => WinActive(np) && Send(\"^s\"))\r\n" +
+			"dev.Hotkey(\"b5\", (*) => WinActive(win) && SendText(\"Hello from x360ce!\"))\r\n" +
 			"SetTimer(MovePointer, 10)\r\n" +
 			"MovePointer() {\r\n" +
 			"\tx := dev.a4\r\n" +
-			"\tif WinActive(np) && x != \"\" && Abs(x) > 0.15\r\n" +
+			"\tif WinActive(win) && x != \"\" && Abs(x) > 0.15\r\n" +
 			"\t\tMouseMove(x * 20, 0, 0, \"R\")\r\n" +
 			"}\r\n";
 
-		/// <summary>Presses and lets go of a button while Notepad stays in front; a person who uses the keyboard or mouse meanwhile stops the test.</summary>
-		static void Tap(AutoHotkeyRun run, int button, IntPtr notepad)
+		/// <summary>Presses and lets go of a button while the test's window stays in front; a person who uses the keyboard or mouse meanwhile stops the test.</summary>
+		static void Tap(AutoHotkeyRun run, int button, IntPtr window)
 		{
-			if (GetForegroundWindow() != notepad)
-				Assert.Inconclusive("Notepad lost the focus while the test typed: the keyboard or mouse was used. Nothing was typed anywhere else.");
+			if (GetForegroundWindow() != window)
+				Assert.Inconclusive("The test's window lost the focus while the test typed: the keyboard or mouse was used. Nothing was typed anywhere else.");
 			Tap(run, button);
 		}
 
 		[TestMethod, TestCategory("ui-interactive")]
-		[Description("Controller buttons type into Notepad and save the file; the stick moves the mouse over it")]
-		public void A_controller_types_into_Notepad_and_moves_the_mouse()
+		[Description("Controller buttons type with the real keyboard into the window in front, and the stick moves the mouse over it")]
+		public void A_controller_types_into_the_window_in_front_and_moves_the_mouse()
 		{
-			if (Process.GetProcessesByName("notepad").Length > 0)
-				Assert.Inconclusive("Notepad is open: close it, so this test types only into a Notepad it opened.");
-			var file = Path.Combine(Path.GetTempPath(), "x360ce-notepad-" + Guid.NewGuid().ToString("N") + ".txt");
-			File.WriteAllText(file, "");
-			IntPtr notepad = IntPtr.Zero;
+			var id = Guid.NewGuid().ToString("N");
 			POINT cursor;
 			GetCursorPos(out cursor);
 			try
 			{
-				Process.Start("notepad.exe", "\"" + file + "\"");
-				// The window is found by its title, which names the file: never a Notepad window of anyone else.
-				var title = Path.GetFileNameWithoutExtension(file);
-				var watch = Stopwatch.StartNew();
-				while (notepad == IntPtr.Zero && watch.ElapsedMilliseconds < 15000)
+				using (var run = new AutoHotkeyRun(KeyboardScript))
 				{
-					var found = Process.GetProcessesByName("notepad").FirstOrDefault(p => p.MainWindowTitle.Contains(title));
-					if (found != null)
-						notepad = found.MainWindowHandle;
-					else
-						System.Threading.Thread.Sleep(100);
-				}
-				Assert.AreNotEqual(IntPtr.Zero, notepad, "Notepad did not open the test's file within 15 seconds.");
-				using (var run = new AutoHotkeyRun(NotepadScript))
-				{
-					run.Start(() => run.SlotInt(run.Slot, ScriptChannel.SlotOwnButtons) == 0x3F, notepad.ToInt64().ToString());
-					Assert.IsTrue(run.PassUntil(() => GetForegroundWindow() == notepad, 3000), "Notepad did not come to the front.");
+					run.Start(() => run.SlotInt(run.Slot, ScriptChannel.SlotOwnButtons) == 0x1F, id);
+					var window = IntPtr.Zero;
+					Assert.IsTrue(run.PassUntil(() => (window = FindWindow(null, "x360ce keyboard test " + id)) != IntPtr.Zero, 5000), "The script's window was not found.");
+					var box = FindWindowEx(window, IntPtr.Zero, "Edit", null);
+					Assert.AreNotEqual(IntPtr.Zero, box, "The script's text box was not found.");
+					Assert.IsTrue(run.PassUntil(() => GetForegroundWindow() == window, 3000), "The script's window did not come to the front.");
 
-					Tap(run, 4, notepad);
-					Tap(run, 3, notepad);
+					Tap(run, 4, window);
+					Tap(run, 3, window);
 					foreach (var button in new[] { 0, 1, 2, 0, 1 })
-						Tap(run, button, notepad);
-					Tap(run, 5, notepad);
-					var hi = KeyText(notepad, System.Windows.Forms.Keys.H) + KeyText(notepad, System.Windows.Forms.Keys.I);
+						Tap(run, button, window);
+					var hi = KeyText(box, System.Windows.Forms.Keys.H) + KeyText(box, System.Windows.Forms.Keys.I);
 					var expected = "Hello from x360ce!\r\n" + hi + " " + hi;
-					Assert.IsTrue(run.PassUntil(() => Saved(file) == expected, 5000),
-						"Notepad did not save what the controller typed. Saved: \"" + (Saved(file) ?? "").Replace("\r", "\\r").Replace("\n", "\\n") + "\"");
+					Assert.IsTrue(run.PassUntil(() => GetText(box) == expected, 2000),
+						"The text box does not hold what the controller typed: \"" + GetText(box).Replace("\r", "\\r").Replace("\n", "\\n") + "\"; " + run.Counters());
 
 					RECT rect;
-					GetWindowRect(notepad, out rect);
+					GetWindowRect(window, out rect);
 					SetCursorPos((rect.Left * 3 + rect.Right) / 4, (rect.Top + rect.Bottom) / 2);
 					POINT start;
 					GetCursorPos(out start);
@@ -342,37 +329,6 @@ namespace x360ce.Tests
 			finally
 			{
 				SetCursorPos(cursor.X, cursor.Y);
-				if (notepad != IntPtr.Zero)
-				{
-					uint id;
-					GetWindowThreadProcessId(notepad, out id);
-					// WM_CLOSE: the test's file is saved, so Notepad closes without asking.
-					PostMessage(notepad, 0x0010, IntPtr.Zero, IntPtr.Zero);
-					try
-					{
-						using (var process = Process.GetProcessById((int)id))
-							process.WaitForExit(5000);
-					}
-					catch (ArgumentException)
-					{
-						// Already closed.
-					}
-				}
-				File.Delete(file);
-			}
-		}
-
-		static string Saved(string file)
-		{
-			try
-			{
-				using (var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
-				using (var reader = new StreamReader(stream, Encoding.UTF8))
-					return reader.ReadToEnd();
-			}
-			catch (IOException)
-			{
-				return null;
 			}
 		}
 

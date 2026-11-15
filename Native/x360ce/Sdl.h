@@ -10,8 +10,10 @@
 /// x360ce's own controller database, whose rows are x360ce.ini keys.
 /// </summary>
 /// <remarks>
-/// The rows are the Windows rows x360ce 4 ships (Engine\Resources\gamecontrollerdb.txt.gz), carried in the library as
-/// the resource gamecontrollerdb.windows.txt, sorted by vendor and product so a device is found by a binary search.
+/// The library carries the gzip compressed files the engine carries, Engine\Resources\gamecontrollerdb.txt.gz and
+/// gamecontrollerdb_x360ce.windows.txt.gz, as resources. The first time a row is asked for, each is inflated in memory,
+/// and its Windows rows are sorted by vendor and product so a device is found by a binary search; nothing is written to
+/// disk, and a file that cannot be read gives no rows.
 /// A gamecontrollerdb.txt found where x360ce.ini is looked for, beside the library and then in %ProgramData%\x360ce,
 /// is read too: a device it has a row for takes its row from there.
 ///

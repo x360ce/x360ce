@@ -59,8 +59,10 @@ namespace x360ce.App.Controls
 			this.UnhideAllDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.SynchronizeToHidHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.OpenHidHideMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DevicesDataGridView
@@ -98,6 +100,7 @@ namespace x360ce.App.Controls
 			this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
 			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.DevicesDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DevicesDataGridView.Name = "DevicesDataGridView";
 			this.DevicesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -227,8 +230,9 @@ namespace x360ce.App.Controls
             this.CleanupVirtualPadsButton,
             this.HidHideDropDownButton});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ControllersToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.ControllersToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
 			this.ControllersToolStrip.TabIndex = 1;
 			this.ControllersToolStrip.Text = "MySettingsToolStrip";
@@ -356,18 +360,33 @@ namespace x360ce.App.Controls
 			this.OpenHidHideMenuItem.Text = "Open HID Hide...";
 			this.OpenHidHideMenuItem.Click += new System.EventHandler(this.OpenHidHideMenuItem_Click);
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.ControllersToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.DevicesDataGridView, 0, 1);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 2;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// UserDevicesUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.DevicesDataGridView);
-			this.Controls.Add(this.ControllersToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "UserDevicesUserControl";
 			this.Size = new System.Drawing.Size(717, 436);
 			this.Load += new System.EventHandler(this.ControllersUserControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).EndInit();
 			this.ControllersToolStrip.ResumeLayout(false);
 			this.ControllersToolStrip.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -399,5 +418,6 @@ namespace x360ce.App.Controls
 		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
 		public System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

@@ -71,7 +71,7 @@
 			//
 			this.CurrentLabel.AutoSize = true;
 			this.CurrentLabel.Location = new System.Drawing.Point(3, 3);
-			this.CurrentLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.CurrentLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CurrentLabel.Name = "CurrentLabel";
 			this.CurrentLabel.Size = new System.Drawing.Size(105, 13);
 			this.CurrentLabel.TabIndex = 0;
@@ -87,7 +87,7 @@
 			this.CurrentPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
 			this.CurrentPanel.Controls.Add(this.CurrentPathTextBox, 0, 0);
 			this.CurrentPanel.Controls.Add(this.OpenFolderButton, 1, 0);
-			this.CurrentPanel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 8);
+			this.CurrentPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.CurrentPanel.Name = "CurrentPanel";
 			this.CurrentPanel.RowCount = 1;
 			this.CurrentPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -96,7 +96,7 @@
 			// CurrentPathTextBox
 			//
 			this.CurrentPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.CurrentPathTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.CurrentPathTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CurrentPathTextBox.Name = "CurrentPathTextBox";
 			this.CurrentPathTextBox.ReadOnly = true;
 			this.CurrentPathTextBox.TabIndex = 0;
@@ -108,7 +108,7 @@
 			this.OpenFolderButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OpenFolderButton.Image = global::x360ce.App.Properties.Resources.folder_32x32;
 			this.OpenFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(4);
+			this.OpenFolderButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.OpenFolderButton.Name = "OpenFolderButton";
 			this.OpenFolderButton.Padding = new System.Windows.Forms.Padding(4, 0, 8, 0);
 			this.OpenFolderButton.Size = new System.Drawing.Size(100, 24);
@@ -122,7 +122,7 @@
 			//
 			this.KeepLabel.AutoSize = true;
 			this.KeepLabel.Location = new System.Drawing.Point(9, 64);
-			this.KeepLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.KeepLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.KeepLabel.Name = "KeepLabel";
 			this.KeepLabel.Size = new System.Drawing.Size(93, 13);
 			this.KeepLabel.TabIndex = 2;
@@ -135,7 +135,7 @@
 			this.LocationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.LocationComboBox.FormattingEnabled = true;
 			this.LocationComboBox.Location = new System.Drawing.Point(9, 83);
-			this.LocationComboBox.Margin = new System.Windows.Forms.Padding(4);
+			this.LocationComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LocationComboBox.Name = "LocationComboBox";
 			this.LocationComboBox.Size = new System.Drawing.Size(542, 21);
 			this.LocationComboBox.TabIndex = 3;
@@ -146,7 +146,7 @@
 			this.PathLabel.AutoSize = true;
 			this.PathLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.PathLabel.Location = new System.Drawing.Point(9, 110);
-			this.PathLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.PathLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PathLabel.Name = "PathLabel";
 			this.PathLabel.Size = new System.Drawing.Size(0, 13);
 			this.PathLabel.TabIndex = 4;
@@ -156,7 +156,7 @@
 			this.StatusLabel.AutoSize = true;
 			this.StatusLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.StatusLabel.Location = new System.Drawing.Point(9, 129);
-			this.StatusLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
+			this.StatusLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.StatusLabel.Name = "StatusLabel";
 			this.StatusLabel.Size = new System.Drawing.Size(0, 13);
 			this.StatusLabel.TabIndex = 5;
@@ -165,7 +165,7 @@
 			//
 			this.MoveModeLabel.AutoSize = true;
 			this.MoveModeLabel.Location = new System.Drawing.Point(9, 157);
-			this.MoveModeLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.MoveModeLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MoveModeLabel.Name = "MoveModeLabel";
 			this.MoveModeLabel.Size = new System.Drawing.Size(175, 13);
 			this.MoveModeLabel.TabIndex = 6;
@@ -178,7 +178,7 @@
 			this.MoveModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.MoveModeComboBox.FormattingEnabled = true;
 			this.MoveModeComboBox.Location = new System.Drawing.Point(9, 176);
-			this.MoveModeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 12);
+			this.MoveModeComboBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.MoveModeComboBox.Name = "MoveModeComboBox";
 			this.MoveModeComboBox.Size = new System.Drawing.Size(542, 21);
 			this.MoveModeComboBox.TabIndex = 7;
@@ -190,7 +190,7 @@
 			this.ApplyButton.Image = global::x360ce.App.Properties.Resources.save_32x32;
 			this.ApplyButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.ApplyButton.Location = new System.Drawing.Point(9, 212);
-			this.ApplyButton.Margin = new System.Windows.Forms.Padding(4);
+			this.ApplyButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ApplyButton.Name = "ApplyButton";
 			this.ApplyButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.ApplyButton.Padding = new System.Windows.Forms.Padding(4, 0, 8, 0);

@@ -1,4 +1,4 @@
-// @under-test: App.v4/Controls/*.Designer.cs, App.v4/Forms/*.Designer.cs, Engine/JocysCom/Controls/*.Designer.cs
+// @under-test: App.v4/Controls/*.Designer.cs, App.v4/Forms/*.Designer.cs, Engine/JocysCom/Controls/*.Designer.cs, Engine/JocysCom/Controls/Themes/Default.Forms.cs
 // @area: interface   @layer: ui
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Controls;
@@ -16,21 +15,18 @@ using x360ce.App.Forms;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// Every page and window lays its controls out on the 4-pixel grid of the Options > General spacing: in a layout table or
-	/// flow, every margin and padding a multiple of 4; placed by position, every place, and every size the program sets, a
-	/// multiple of 4 from the corner of what holds it. Every page has the same room above its content as beside it. Every
-	/// window at its default size shows its texts whole, and its drop-down lists at one height.
+	/// Every window and page keeps one gap round what it shows, measured as it is seen: every item has the gap at its left and
+	/// above it, and every container at its right and below it, so items stand one gap in from the inside of their
+	/// container's frame and one gap apart. Every message box keeps the gap at the screen's scale, and every window at its
+	/// default size shows its texts whole.
 	/// </summary>
-	/// <remarks>
-	/// The values are read as the program sets them, after Windows Forms has scaled the window to the screen and before the
-	/// theme gives its own room: a group box's or other control's padding that is still Windows Forms' default is the theme's
-	/// to set, and is left out. The pages and windows of the steps not yet done are listed in <see cref="NotYetDone"/>; each
-	/// step takes its own out of the list, and the last leaves it empty.
-	/// </remarks>
 	[TestClass]
 	public class SpacingGridTest
 	{
 		public TestContext TestContext { get; set; }
+
+		/// <summary>The one gap of every window, in pixels at 100 %.</summary>
+		const int Gap = 8;
 
 		/// <summary>The pages and windows walked, each made as the program makes it.</summary>
 		static readonly Func<Control>[] Surfaces = InputSpacingTest.Surfaces.Concat(new Func<Control>[]
@@ -40,7 +36,19 @@ namespace x360ce.Tests
 			// The information window, as the program opens it for a window: about that window.
 			() => new JocysCom.ClassLibrary.Controls.InfoForm { SelectedControl = new Form { Name = "ExampleForm" } },
 			() => new WebBrowserForm(),
-			() => MainWindowPages(),
+			// The main window's pages, the controller page on the first Controller tab as the program builds it, as large as
+			// they are in the window at its smallest: less its frame across, and less its title bar, frame, header with a tip
+			// of two lines and status bar down, 16 and 132 at 100 %.
+			() =>
+			{
+				var main = MainWindowPages();
+				main.BuildPad();
+				// Its lists filled before the window is shown, as the main window fills them as it loads.
+				main.OptionsPanel.UpdateAppearanceMap();
+				var smallest = PadPageShortWindowTest.MinimumWindowSize();
+				main.Size = new Size(smallest.Width - (int)Math.Round(16 * ControlsHelper.DpiScale), smallest.Height - (int)Math.Round(132 * ControlsHelper.DpiScale));
+				return main;
+			},
 		}).ToArray();
 
 		/// <summary>The main window's tool bar and pages, made after the cloud client the program starts before them.</summary>
@@ -51,75 +59,367 @@ namespace x360ce.Tests
 			return new MainControl();
 		}
 
-		/// <summary>The pages and windows of the steps still to come, by the type of control made, and the step that does them.</summary>
-		static readonly Dictionary<string, string> NotYetDone = new Dictionary<string, string>
-		{
-		};
-
-		static readonly PropertyInfo DefaultPaddingProperty = typeof(Control).GetProperty("DefaultPadding", BindingFlags.Instance | BindingFlags.NonPublic);
-
-		/// <summary>Where the header a window shares with others stands in its tree.</summary>
-		static readonly string HeaderPath = nameof(BaseFormWithHeader.TopPanel) + "/";
+		#region One gap
 
 		[TestMethod, TestCategory("ui")]
-		[Description("Every page and window of the steps done lays its controls out on the 4-pixel grid at 100 %: in a layout table or flow every margin and padding, placed by position every place and set size, a multiple of 4 in pixels at 100 %, at the screen's scale; the pages of the steps to come are listed, and a listed page already on the grid fails, so the list shrinks")]
-		public void Every_page_lays_its_controls_out_on_the_4_pixel_grid()
+		[Description("Every window and page, in both themes, keeps one gap, 8 pixels at 100 %, as it is seen: inside every window, tab page, group box and panel with a frame or a colour of its own, the items at a side stand one gap from its inside edge and the first ones one gap in from its left and top, a tool bar's buttons as items of the container round the bar; and items side by side or one above the other stand one gap apart")]
+		public void Every_item_stands_one_gap_from_its_container_and_its_neighbours()
 		{
-			var faults = new List<string>();
-			var listed = new Dictionary<string, int>();
-			OnEverySurface((name, form) =>
+			var faults = new SortedDictionary<string, SortedSet<string>>();
+			ButtonIconTest.OnEverySurface(Surfaces, (form, when) =>
 			{
-				var found = new List<string>();
-				Walk(form, form, found);
-				// The header a window shares with others is listed by the window it comes from.
-				foreach (var part in found.GroupBy(x => form is BaseFormWithHeader && x.StartsWith(HeaderPath) ? nameof(BaseFormWithHeader) : name))
-				{
-					if (NotYetDone.ContainsKey(part.Key))
-						listed[part.Key] = (listed.TryGetValue(part.Key, out var count) ? count : 0) + part.Count();
-					else
-						faults.AddRange(part.Select(x => part.Key + ": " + x));
-					foreach (var line in part)
-						TestContext.WriteLine("{0}{1}: {2}", NotYetDone.ContainsKey(part.Key) ? "(step " + NotYetDone[part.Key] + ") " : "", part.Key, line);
-				}
-				if (form is BaseFormWithHeader && NotYetDone.ContainsKey(nameof(BaseFormWithHeader)) && !listed.ContainsKey(nameof(BaseFormWithHeader)))
-					listed[nameof(BaseFormWithHeader)] = 0;
-				if (NotYetDone.ContainsKey(name) && !listed.ContainsKey(name))
-					listed[name] = 0;
-			});
-			foreach (var pair in listed.Where(x => x.Value == 0))
-				faults.Add(pair.Key + " is on the grid: take it out of the list of pages still to do.");
-			Assert.AreEqual(0, faults.Count, faults.Count + " value(s) off the 4-pixel grid:" + Environment.NewLine + string.Join(Environment.NewLine, faults));
-		}
-
-		[TestMethod, TestCategory("ui")]
-		[Description("Every page of the steps done has the same room above its content as beside it, measured to the content's layout box, where a group's top is its caption's line: its first content stands as far below the page's top as its content stands in from the page's left; the pages of the steps to come are listed")]
-		public void Every_page_has_as_much_room_above_its_content_as_beside_it()
-		{
-			var faults = new List<string>();
-			OnEverySurface((name, form) =>
-			{
+				// A page is looked at in the window that shows it, at that window's size: alone it has the size it was drawn at.
+				if (form.GetType() == typeof(Form) && !form.Controls.OfType<MainControl>().Any())
+					return;
+				var gap = (int)Math.Round(Gap * ControlsHelper.DpiScale);
+				MeasureContainers(form, null, when, gap, faults);
+				// A page is looked at as it is seen: its tab, and the tab of every page it stands on, selected.
 				foreach (var page in ButtonIconTest.All(form).OfType<TabPage>().ToList())
 				{
-					// A page is laid out as it is seen: its tab, and the tab of every page it stands on, selected.
 					for (var c = (Control)page; c != null; c = c.Parent)
 						if (c is TabPage shown && shown.Parent is TabControl tabs && tabs.SelectedTab != shown)
 							tabs.SelectedTab = shown;
 					Application.DoEvents();
-					var start = OptionsLayoutTest.Start(page);
-					if (start == null)
-						continue;
-					var line = string.Format("{0}/{1}: content {2} in from the left and {3} below the top", name, page.Name, start.Value.X, start.Value.Y);
-					TestContext.WriteLine("{0}{1}", NotYetDone.ContainsKey(name) ? "(step " + NotYetDone[name] + ") " : "", line);
-					// Within a pixel: a page scaled to the screen rounds its spacing to whole pixels its own way.
-					if (!NotYetDone.ContainsKey(name) && Math.Abs(start.Value.X - start.Value.Y) > 1)
-						faults.Add(line);
+					MeasureContainers(form, page, when, gap, faults);
 				}
 			});
-			Assert.AreEqual(0, faults.Count, faults.Count + " page(s) with other room above their content than beside it:" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+			var lines = faults.Select(x => x.Key + " (" + string.Join(", ", x.Value) + ")").ToList();
+			foreach (var line in lines)
+				TestContext.WriteLine(line);
+			Assert.AreEqual(0, lines.Count, lines.Count + " place(s) not one gap from their container or their neighbours:" + Environment.NewLine + string.Join(Environment.NewLine, lines));
 		}
 
+		/// <summary>
+		/// An item a person sees, where it stands on the screen, whether a panel it stands in scrolls it, and for a tool bar's
+		/// item the side of the bar it keeps to: the room between the two sides is the bar's to share, not a gap.
+		/// </summary>
+		sealed class Item
+		{
+			public string Name;
+			/// <summary>Where it stands in the layout: a control centred in a row or a tool bar's row as high as the row.</summary>
+			public Rectangle Bounds;
+			/// <summary>Where it is seen: the control itself, or the box a tool bar holds.</summary>
+			public Rectangle Seen;
+			public bool ScrolledDown;
+			public bool ScrolledAcross;
+			public ToolStripItemAlignment? Alignment;
+			public bool Button;
+			/// <summary>Whether the layout stretches it to the container's right or bottom: its room there is a gap, not free room.</summary>
+			public bool ReachesRight;
+			public bool ReachesBottom;
+		}
+
+		static readonly string[] SideNames = { "left", "top", "right", "bottom" };
+
+		/// <summary>Measures every container shown on a page, or every one outside the window's pages when none is given.</summary>
+		static void MeasureContainers(Form form, TabPage page, string when, int gap, IDictionary<string, SortedSet<string>> faults)
+		{
+			var root = (Control)page ?? form;
+			foreach (var container in new[] { root }.Concat(ButtonIconTest.All(root)))
+				if (container.Visible && IsContainer(container) && PageOf(container) == page && !InsideBox(container))
+					Measure(form, container, when, gap, faults);
+		}
+
+		/// <summary>
+		/// Adds a fault for each item of a container that does not stand one gap from the inside edge it reaches, or stands
+		/// closer than one gap to an edge, and for each pair of neighbours not one gap apart.
+		/// </summary>
+		static void Measure(Form form, Control container, string when, int gap, IDictionary<string, SortedSet<string>> faults)
+		{
+			var items = new List<Item>();
+			var scrolls = container as ScrollableControl;
+			Collect(form, container, items, scrolls != null && scrolls.AutoScroll && scrolls.VerticalScroll.Visible,
+				scrolls != null && scrolls.AutoScroll && scrolls.HorizontalScroll.Visible, true, true);
+			if (items.Count == 0)
+				return;
+			var inside = Inside(container);
+			var name = container == form ? form.GetType().Name : Path(form, container);
+			Action<string> fault = text => Add(faults, name + ": " + text, when);
+			// An item near the left or the top stands one gap from it. An item the layout stretches to the right or the bottom
+			// stands one gap from it, and any other at least one gap: the rest is free room. What is seen of it keeps at least one
+			// gap from every side, whatever row it is centred in. The side a panel scrolls to has no
+			// edge to measure from, the side of a panel scrolled down is its scroll bar's, and a tool bar's item faces the bar's
+			// free room on the side it does not keep to.
+			foreach (var item in items)
+			{
+				var sides = new[] { item.Bounds.Left - inside.Left, item.Bounds.Top - inside.Top, inside.Right - item.Bounds.Right, inside.Bottom - item.Bounds.Bottom };
+				var seen = new[] { item.Seen.Left - inside.Left, item.Seen.Top - inside.Top, inside.Right - item.Seen.Right, inside.Bottom - item.Seen.Bottom };
+				for (var i = 0; i < sides.Length; i++)
+				{
+					if ((i == 2 && (item.ScrolledAcross || item.ScrolledDown || item.Alignment == ToolStripItemAlignment.Left))
+						|| (i == 3 && item.ScrolledDown) || (i == 0 && item.Alignment == ToolStripItemAlignment.Right))
+						continue;
+					var stretched = i == 2 ? item.ReachesRight : i == 3 ? item.ReachesBottom : sides[i] < 2 * gap;
+					if (stretched ? Math.Abs(sides[i] - gap) > 1 : sides[i] < gap - 1)
+						fault(string.Format("{0} stands {1} from the {2}, not {3}", item.Name, sides[i], SideNames[i], gap));
+					else if (seen[i] < gap - 1)
+						fault(string.Format("{0} is seen {1} from the {2}, closer than {3}", item.Name, seen[i], SideNames[i], gap));
+				}
+			}
+			Neighbours(items, gap, true, fault, false);
+			Neighbours(items, gap, false, fault, false);
+			Neighbours(items, gap, true, fault, true);
+			Neighbours(items, gap, false, fault, true);
+			// A splitter between two panes is their gap: it is one gap wide, and the panes keep no room of their own beside it.
+			foreach (var split in ButtonIconTest.All(container).OfType<SplitContainer>())
+				if (split.Visible && ContainerOf(split) == container && Math.Abs(split.SplitterWidth - gap) > 1)
+					fault(string.Format("{0}'s splitter is {1} wide, not {2}", Path(form, split), split.SplitterWidth, gap));
+		}
+
+		/// <summary>The container a person sees round a control: the nearest that is not a table, flow or plain panel.</summary>
+		static Control ContainerOf(Control control)
+		{
+			for (var c = control.Parent; c != null; c = c.Parent)
+				if (IsContainer(c))
+					return c;
+			return null;
+		}
+
+		/// <summary>
+		/// Adds a fault for each item closer than one gap to the nearest item before it, side by side or one above the other,
+		/// and, by where the layout puts them, for each line items start on whose nearest pair is near but not one gap apart:
+		/// items in a column of a table start on one line, and the widest or tallest before them sets the gap. Measured by
+		/// what is seen, only a pair closer than one gap is a fault: a control centred in a taller row stands further off.
+		/// </summary>
+		static void Neighbours(List<Item> items, int gap, bool across, Action<string> fault, bool seen)
+		{
+			Func<Item, Rectangle> at = x => seen ? x.Seen : x.Bounds;
+			var pairs = new List<Tuple<Item, Item, int>>();
+			foreach (var b in items)
+			{
+				Item nearest = null;
+				foreach (var a in items)
+				{
+					// The room between a tool bar's two sides is the bar's to share.
+					if (a == b || (across && a.Alignment.HasValue && b.Alignment.HasValue && a.Alignment != b.Alignment))
+						continue;
+					var before = across ? at(a).Right <= at(b).Left + 1 : at(a).Bottom <= at(b).Top + 1;
+					var facing = across ? Overlap(at(a).Top, at(a).Bottom, at(b).Top, at(b).Bottom)
+						: Overlap(at(a).Left, at(a).Right, at(b).Left, at(b).Right);
+					if (before && facing && (nearest == null || (across ? at(a).Right > at(nearest).Right : at(a).Bottom > at(nearest).Bottom)))
+						nearest = a;
+				}
+				if (nearest != null)
+					pairs.Add(Tuple.Create(nearest, b, across ? at(b).Left - at(nearest).Right : at(b).Top - at(nearest).Bottom));
+			}
+			var how = (across ? "side by side" : "one above the other") + (seen ? " as seen" : "");
+			foreach (var pair in pairs.Where(x => x.Item3 < gap - 1))
+				fault(string.Format("{0} and {1} stand {2} apart {3}, closer than {4}", pair.Item1.Name, pair.Item2.Name, pair.Item3, how, gap));
+			if (seen)
+				return;
+			foreach (var line in pairs.Where(x => x.Item3 >= gap - 1).GroupBy(x => across ? x.Item2.Bounds.Left : x.Item2.Bounds.Top))
+			{
+				var nearest = line.OrderBy(x => x.Item3).First();
+				if (nearest.Item3 < 2 * gap && Math.Abs(nearest.Item3 - gap) > 1)
+					fault(string.Format("{0} and {1} stand {2} apart {3}, not {4}", nearest.Item1.Name, nearest.Item2.Name, nearest.Item3, how, gap));
+			}
+		}
+
+		static bool Overlap(int start1, int end1, int start2, int end2)
+		{
+			return Math.Min(end1, end2) - Math.Max(start1, start2) > 0;
+		}
+
+		/// <summary>
+		/// Adds the items a container shows: each control a person sees, a tool bar's buttons rather than the bar, and what the
+		/// tables, flows and plain panels that only place them hold. A container inside it is one of its items.
+		/// </summary>
+		static void Collect(Form form, Control parent, List<Item> items, bool scrolledDown, bool scrolledAcross, bool right, bool bottom)
+		{
+			foreach (Control child in parent.Controls)
+			{
+				if (!child.Visible || child is StatusStrip || child is MenuStrip || IsBand(child))
+					continue;
+				var reachesRight = right && Reaches(child, true);
+				var reachesBottom = bottom && Reaches(child, false);
+				if (child is ToolStrip strip)
+				{
+					// Each item stands as high as the bar's row less its margins: a shorter one is centred in it, as a label in
+					// a table's row.
+					foreach (ToolStripItem item in strip.Items)
+						if (item.Available && item.Placement == ToolStripItemPlacement.Main && !(item is ToolStripSeparator))
+							items.Add(new Item
+							{
+								Name = Path(form, strip) + "/" + (string.IsNullOrEmpty(item.Name) ? item.Text : item.Name),
+								Bounds = strip.RectangleToScreen(Rectangle.FromLTRB(item.Bounds.Left, strip.DisplayRectangle.Top + item.Margin.Top,
+									item.Bounds.Right, strip.DisplayRectangle.Bottom - item.Margin.Bottom)),
+								Seen = item is ToolStripControlHost host && host.Control != null
+									? host.Control.Parent.RectangleToScreen(host.Control.Bounds) : strip.RectangleToScreen(item.Bounds),
+								ScrolledDown = scrolledDown,
+								ScrolledAcross = scrolledAcross,
+								Alignment = item.Alignment,
+								ReachesRight = reachesRight && Math.Abs(item.Bounds.Right + item.Margin.Right - strip.DisplayRectangle.Right) <= 1,
+								ReachesBottom = reachesBottom,
+							});
+					continue;
+				}
+				if (IsContainer(child) || child is TabControl || IsBox(child) || child.Controls.Count == 0)
+				{
+					var bounds = Slot(child);
+					var seen = child.Parent.RectangleToScreen(child.Bounds);
+					// Two buttons side by side with nothing between them, as tall as each other, are one split button: the
+					// second opens the first's choices.
+					var joined = child is Button ? items.FirstOrDefault(x => x.Button && (x.Bounds.Right == bounds.Left || bounds.Right == x.Bounds.Left)
+						&& x.Bounds.Top == bounds.Top && x.Bounds.Bottom == bounds.Bottom) : null;
+					if (joined != null)
+					{
+						joined.Bounds = Rectangle.Union(joined.Bounds, bounds);
+						joined.Seen = Rectangle.Union(joined.Seen, seen);
+						joined.ReachesRight |= reachesRight;
+						joined.ReachesBottom |= reachesBottom;
+						continue;
+					}
+					items.Add(new Item
+					{
+						Name = Path(form, child),
+						Bounds = bounds,
+						Seen = seen,
+						ScrolledDown = scrolledDown,
+						ScrolledAcross = scrolledAcross,
+						Button = child is Button,
+						ReachesRight = reachesRight,
+						ReachesBottom = reachesBottom,
+					});
+					continue;
+				}
+				var scrolls = child as ScrollableControl;
+				Collect(form, child, items, scrolledDown || (scrolls != null && scrolls.AutoScroll && scrolls.VerticalScroll.Visible),
+					scrolledAcross || (scrolls != null && scrolls.AutoScroll && scrolls.HorizontalScroll.Visible), reachesRight, reachesBottom);
+			}
+		}
+
+		/// <summary>
+		/// Whether the layout puts a control's right edge, or its bottom, at its parent's content edge: with the margin a
+		/// table or flow keeps round it, or without one where it is docked. A control that ends short of the edge, as its own
+		/// size or a table's free room leaves it, faces free room there.
+		/// </summary>
+		static bool Reaches(Control control, bool right)
+		{
+			var parent = control.Parent;
+			var display = parent.DisplayRectangle;
+			var margin = parent is TableLayoutPanel || parent is FlowLayoutPanel ? control.Margin : Padding.Empty;
+			return right ? Math.Abs(control.Right + margin.Right - display.Right) <= 1 : Math.Abs(control.Bottom + margin.Bottom - display.Bottom) <= 1;
+		}
+
+		/// <summary>
+		/// Where an item stands on the screen: in a table, one centred in its row stands as high as the row less its margins,
+		/// beside the item that sets the row's height, and one centred in its column as wide as the column; in a flow across,
+		/// one centred in its line as high as the line.
+		/// </summary>
+		static Rectangle Slot(Control control)
+		{
+			var bounds = control.Bounds;
+			var flow = control.Parent as FlowLayoutPanel;
+			if (flow != null && (flow.FlowDirection == FlowDirection.LeftToRight || flow.FlowDirection == FlowDirection.RightToLeft)
+				&& (control.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == AnchorStyles.None)
+			{
+				var line = flow.Controls.Cast<Control>().Where(x => x.Visible && Overlap(x.Top, x.Bottom, control.Top, control.Bottom)).ToList();
+				bounds = Rectangle.FromLTRB(bounds.Left, line.Min(x => x.Top - x.Margin.Top) + control.Margin.Top,
+					bounds.Right, line.Max(x => x.Bottom + x.Margin.Bottom) - control.Margin.Bottom);
+			}
+			var table = control.Parent as TableLayoutPanel;
+			if (table != null && control.Dock == DockStyle.None)
+			{
+				var place = table.GetPositionFromControl(control);
+				var display = table.DisplayRectangle;
+				var margin = control.Margin;
+				if (place.Row >= 0 && (control.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == AnchorStyles.None)
+				{
+					var heights = table.GetRowHeights();
+					var top = display.Top + heights.Take(place.Row).Sum();
+					var height = heights.Skip(place.Row).Take(table.GetRowSpan(control)).Sum();
+					bounds = Rectangle.FromLTRB(bounds.Left, top + margin.Top, bounds.Right, top + height - margin.Bottom);
+				}
+				if (place.Column >= 0 && (control.Anchor & (AnchorStyles.Left | AnchorStyles.Right)) == AnchorStyles.None)
+				{
+					var widths = table.GetColumnWidths();
+					var left = display.Left + widths.Take(place.Column).Sum();
+					var width = widths.Skip(place.Column).Take(table.GetColumnSpan(control)).Sum();
+					bounds = Rectangle.FromLTRB(left + margin.Left, bounds.Top, left + width - margin.Right, bounds.Bottom);
+				}
+			}
+			return control.Parent.RectangleToScreen(bounds);
+		}
+
+		/// <summary>
+		/// The inside of a container's frame on the screen: a group box's inside its lines and below its caption, any other's
+		/// its client area, a window's below and above the bands across it.
+		/// </summary>
+		static Rectangle Inside(Control container)
+		{
+			var inside = container is GroupBox box ? FormsTheme.GetGroupBoxInside(box) : container.ClientRectangle;
+			if (container is Form)
+				foreach (Control child in container.Controls)
+					if (child.Visible && IsBand(child))
+						inside = child.Top <= 0
+							? Rectangle.FromLTRB(inside.Left, Math.Max(inside.Top, child.Bottom), inside.Right, inside.Bottom)
+							: Rectangle.FromLTRB(inside.Left, inside.Top, inside.Right, Math.Min(inside.Bottom, child.Top));
+			return container.RectangleToScreen(inside);
+		}
+
+		/// <summary>
+		/// Whether a control is a container a person sees: a window, a tab page, a group box, or a panel with a frame or a
+		/// colour of its own. Tables, flows and plain panels only place what they hold.
+		/// </summary>
+		static bool IsContainer(Control control)
+		{
+			if (control is Form || control is TabPage || control is GroupBox)
+				return true;
+			if (control.Parent == null || !(control is Panel || control is UserControl))
+				return false;
+			var border = control is Panel panel ? panel.BorderStyle : ((UserControl)control).BorderStyle;
+			return border != BorderStyle.None || (control.BackColor.A == 255 && control.BackColor != control.Parent.BackColor);
+		}
+
+		/// <summary>
+		/// Whether a control is a band across a window, a header, a message's own colour, or a menu or status bar: one that
+		/// spans the window's width at its top or bottom, part of the window's frame.
+		/// </summary>
+		static bool IsBand(Control control)
+		{
+			var form = control.Parent as Form;
+			return form != null && (control is StatusStrip || control is MenuStrip || IsContainer(control))
+				&& control.Left <= 0 && control.Right >= form.ClientSize.Width
+				&& (control.Top <= 0 || control.Bottom >= form.ClientSize.Height);
+		}
+
+		/// <summary>Whether a control is a box, list or grid that places its own parts.</summary>
+		static bool IsBox(Control control)
+		{
+			return control is UpDownBase || control is DataGridView || control is TextBoxBase || control is ComboBox
+				|| control is ListControl || control is PropertyGrid || control is WebBrowser;
+		}
+
+		/// <summary>Whether a control is a part of a box, list or grid.</summary>
+		static bool InsideBox(Control control)
+		{
+			for (var c = control.Parent; c != null; c = c.Parent)
+				if (IsBox(c))
+					return true;
+			return false;
+		}
+
+		/// <summary>The page a control stands on, itself when it is one; none outside the window's pages.</summary>
+		static TabPage PageOf(Control control)
+		{
+			for (var c = control; c != null; c = c.Parent)
+				if (c is TabPage page)
+					return page;
+			return null;
+		}
+
+		static void Add(IDictionary<string, SortedSet<string>> faults, string fault, string when)
+		{
+			SortedSet<string> whens;
+			if (!faults.TryGetValue(fault, out whens))
+				faults[fault] = whens = new SortedSet<string>();
+			whens.Add(when);
+		}
+
+		#endregion
+
 		[TestMethod, TestCategory("ui")]
-		[Description("The message box lays its buttons out at the screen's scale: 12 from the window's right edge and 8 apart at 100 %, 18 and 12 at 150 %, each at least as wide as a dialog's button, and the text 8 beside the icon")]
+		[Description("The message box lays its buttons out at the screen's scale: 8 from the window's edges and 8 apart at 100 %, 12 and 12 at 150 %, each at least as wide as a dialog's button, and the text 8 beside the icon")]
 		public void Message_box_gaps_scale_with_the_screen()
 		{
 			var faults = new List<string>();
@@ -144,10 +444,10 @@ namespace x360ce.Tests
 							if (Math.Abs(actual - expected) > within)
 								faults.Add(string.Format("{0} is {1}, not {2}.", what, actual, expected));
 						};
-						check("Cancel's right from the window's right edge", form.ClientSize.Width - cancel.Right, scaled(12), 0);
+						check("Cancel's right from the window's right edge", form.ClientSize.Width - cancel.Right, scaled(8), 0);
 						check("The gap between OK and Cancel", cancel.Left - ok.Right, scaled(8), 0);
 						// Places the window was drawn with, scaled by Windows Forms, round on their own.
-						check("Cancel's bottom from the window's bottom edge", form.ClientSize.Height - cancel.Bottom, scaled(12), 1);
+						check("Cancel's bottom from the window's bottom edge", form.ClientSize.Height - cancel.Bottom, scaled(8), 1);
 						check("The text beside the icon", text.Left - icon.Right, scaled(8), 1);
 						foreach (var button in new[] { ok, cancel })
 							if (button.Width < button.MinimumSize.Width || button.MinimumSize.Width < scaled(75) - 1)
@@ -267,172 +567,6 @@ namespace x360ce.Tests
 				var line = TextRenderer.MeasureText(g, " ", font, new Size(int.MaxValue, int.MaxValue), flags | TextFormatFlags.SingleLine);
 				return new Size(size.Width, size.Height - Math.Max(0, line.Height - font.Height));
 			}
-		}
-
-		/// <summary>
-		/// Makes each page and window as the program makes it, shows it off the screen, and gives it to <paramref name="check"/>
-		/// with the name it is listed by.
-		/// </summary>
-		static void OnEverySurface(Action<string, Form> check)
-		{
-			Ui.OnUiThread(() =>
-			{
-				foreach (var make in Surfaces)
-				{
-					var made = make();
-					var name = Surface(made);
-					var form = made as Form ?? new Form { ClientSize = made.Size };
-					form.StartPosition = FormStartPosition.Manual;
-					form.Location = new Point(-5000, -5000);
-					form.ShowInTaskbar = false;
-					try
-					{
-						if (form != made)
-						{
-							made.Dock = DockStyle.Fill;
-							form.Controls.Add(made);
-						}
-						form.Show();
-						Application.DoEvents();
-						check(name, form);
-					}
-					finally
-					{
-						form.Dispose();
-						made.Dispose();
-					}
-				}
-			}, "Walking every page");
-		}
-
-		/// <summary>The name a page or window is listed by: the type of the control made, inside the holder that scales a page.</summary>
-		static string Surface(Control made)
-		{
-			var inner = made.GetType() == typeof(UserControl) && made.Controls.Count == 1 ? made.Controls[0] : made;
-			return inner.GetType().Name;
-		}
-
-		static void Walk(Control root, Control control, List<string> found)
-		{
-			foreach (Control child in control.Controls)
-			{
-				var path = Path(root, child);
-				var parent = child.Parent;
-				var scale = Scale(child);
-				var laidOut = parent is TableLayoutPanel || parent is FlowLayoutPanel;
-				if (laidOut)
-				{
-					var margin = child.Margin;
-					// A note under a check box starts where the check box's text starts, after the box the theme draws at the
-					// scale of its font (OptionsLayoutTest.Notes_under_a_check_box_start_where_its_text_starts).
-					if (IsNoteUnderCheckBox(child))
-						margin.Left = 0;
-					Check(path, "Margin", margin, scale, found);
-				}
-				var standard = (Padding)(DefaultPaddingProperty?.GetValue(child, null) ?? Padding.Empty);
-				if (!IsStandard(child.Padding, standard))
-				{
-					var padding = child.Padding;
-					// A number under its name stands in from the name's edge as far as its digits need to line up with the name's
-					// letters, the owner's item 4: 2 at 100 %.
-					if (IsNumberUnderName(child))
-						padding = Padding.Empty;
-					// A table that scrolls keeps Windows' width of its scroll bar free at its right, so its rows never stay wider
-					// than what is left once the bar appears.
-					if (child is ScrollableControl scrolled && scrolled.AutoScroll && padding.Right == SystemInformation.VerticalScrollBarWidth)
-						padding.Right = 0;
-					Check(path, "Padding", padding, scale, found);
-				}
-				// Placed by position: not in a layout panel, not docked, and not a page of a tab strip or a split container's, nor a
-				// box a tool bar holds, which the tool bar places as its items.
-				if (!laidOut && child.Dock == DockStyle.None && !(child is TabPage) && !(parent is TabControl) && !(parent is SplitContainer)
-					&& !(child is SplitterPanel) && !(parent is ToolStrip))
-				{
-					if (!OnGrid(child.Left, scale.Width) || !OnGrid(child.Top, scale.Height))
-						found.Add(string.Format("{0} Location {1}", path, child.Location));
-					var across = (child.Anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right);
-					var down = (child.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom);
-					if (!child.AutoSize && ((!across && !OnGrid(child.Width, scale.Width)) || (!down && !OnGrid(child.Height, scale.Height))))
-						found.Add(string.Format("{0} Size {1}", path, child.Size));
-				}
-				// A box, list or grid places its own parts (an up-down's edit and buttons, a grid's scroll bars, a property list's
-				// description and tool bar), and a tool bar its boxes.
-				if (!(child is UpDownBase || child is DataGridView || child is TextBoxBase || child is ComboBox || child is ListControl
-					|| child is PropertyGrid || child is ToolStrip))
-					Walk(root, child, found);
-			}
-		}
-
-		/// <summary>Whether a control is a number under its name: a label docked under a label docked above it in a panel of their own.</summary>
-		static bool IsNumberUnderName(Control control)
-		{
-			return control is Label && control.Dock == DockStyle.Bottom && control.Parent?.GetType() == typeof(Panel)
-				&& control.Parent.Controls.OfType<Label>().Any(x => x != control && x.Dock == DockStyle.Top);
-		}
-
-		/// <summary>Whether a control is a label in a table's cell right under a check box or radio button.</summary>
-		static bool IsNoteUnderCheckBox(Control control)
-		{
-			var table = control.Parent as TableLayoutPanel;
-			if (!(control is Label) || table == null)
-				return false;
-			var place = table.GetPositionFromControl(control);
-			var above = place.Row > 0 ? table.GetControlFromPosition(place.Column, place.Row - 1) : null;
-			return above is CheckBox || above is RadioButton;
-		}
-
-		static void Check(string path, string what, Padding value, SizeF scale, List<string> found)
-		{
-			if (!OnGrid(value.Left, scale.Width) || !OnGrid(value.Top, scale.Height) || !OnGrid(value.Right, scale.Width) || !OnGrid(value.Bottom, scale.Height))
-				found.Add(string.Format("{0} {1} {2},{3},{4},{5}", path, what, value.Left, value.Top, value.Right, value.Bottom));
-		}
-
-		/// <summary>
-		/// Whether a size in pixels on the screen is a multiple of 4 in pixels at 100 %: device pixels x 96 / the screen's DPI,
-		/// or, along the axis given, divided by the factor Windows Forms scaled the control's window or page by. Windows Forms
-		/// rounds each value it scales to a whole pixel, so within a pixel.
-		/// </summary>
-		static bool OnGrid(int pixels, float axis)
-		{
-			Func<double, bool> on = factor =>
-			{
-				var steps = Math.Round(pixels / (4 * factor));
-				return Math.Abs(pixels - steps * 4 * factor) < 1;
-			};
-			return on(ControlsHelper.DpiScale) || on(axis);
-		}
-
-		/// <summary>
-		/// The factors Windows Forms scaled a control by, across and down: a window or page scaled by its font is scaled by how
-		/// much larger its font is than the one it was drawn in (6 x 13 pixels a character), which down is not quite the
-		/// screen's scale; any other by the screen's.
-		/// </summary>
-		static SizeF Scale(Control control)
-		{
-			for (var c = control.Parent; c != null; c = c.Parent)
-			{
-				var scaled = c as ContainerControl;
-				if (scaled == null || scaled.AutoScaleMode == AutoScaleMode.Inherit)
-					continue;
-				if (scaled.AutoScaleMode != AutoScaleMode.Font)
-					break;
-				var current = scaled.CurrentAutoScaleDimensions;
-				return new SizeF(current.Width / 6F, current.Height / 13F);
-			}
-			return new SizeF(ControlsHelper.DpiScale, ControlsHelper.DpiScale);
-		}
-
-		/// <summary>
-		/// Whether a padding is still Windows Forms' default for its control, as made or as Windows Forms scaled it to the screen,
-		/// which it rounds up on some sides and down on others: the theme's to set.
-		/// </summary>
-		static bool IsStandard(Padding value, Padding standard)
-		{
-			var scale = ControlsHelper.DpiScale;
-			Func<int, int, bool> scaled = (own, made) => own == made
-				|| own == (int)Math.Floor(made * scale) || own == (int)Math.Ceiling(made * scale);
-			return scaled(value.Left, standard.Left) && scaled(value.Top, standard.Top)
-				&& scaled(value.Right, standard.Right) && scaled(value.Bottom, standard.Bottom);
 		}
 
 		static string Path(Control root, Control control)

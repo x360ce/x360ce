@@ -119,7 +119,7 @@ namespace x360ce.Tests
 						var room = page.RectangleToClient(box.RectangleToScreen(box.DisplayRectangle));
 						var group = page.RectangleToClient(box.Parent.RectangleToScreen(box.Bounds));
 						// The page's room below its group, as beside it.
-						var below = (int)Math.Round(12 * ControlsHelper.DpiScale);
+						var below = (int)Math.Round(8 * ControlsHelper.DpiScale);
 						if (last.Bottom > room.Bottom || group.Bottom + below > page.ClientSize.Height)
 							faults.Add(string.Format("The last row ends at {0}, its group's room at {1}, the group at {2}, the page at {3}: not every row is shown whole, {4} above the page's bottom.", last.Bottom, room.Bottom, group.Bottom, page.ClientSize.Height, below));
 						var first = rows[0];

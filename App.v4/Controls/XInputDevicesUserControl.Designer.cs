@@ -33,10 +33,12 @@ namespace x360ce.App.Controls
 			this.PadColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MappedColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.HeaderLayoutPanel.SuspendLayout();
 			this.DevicesToolStrip.SuspendLayout();
 			this.PlanPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			//
 			// HeaderLayoutPanel
@@ -62,7 +64,7 @@ namespace x360ce.App.Controls
 			this.HeaderLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HeaderLabel.AutoSize = true;
 			this.HeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.HeaderLabel.Margin = new System.Windows.Forms.Padding(4, 4, 8, 4);
+			this.HeaderLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HeaderLabel.Name = "HeaderLabel";
 			this.HeaderLabel.Size = new System.Drawing.Size(400, 13);
 			this.HeaderLabel.Text = "XInput Devices - what holds each of the four places a game can read";
@@ -77,8 +79,9 @@ namespace x360ce.App.Controls
 			this.DevicesToolStrip.Dock = System.Windows.Forms.DockStyle.None;
 			this.DevicesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.DevicesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.DevicesToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.DevicesToolStrip.Name = "DevicesToolStrip";
-			this.DevicesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.DevicesToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.DevicesToolStrip.Size = new System.Drawing.Size(700, 25);
 			//
 			// ApplyButton
@@ -122,8 +125,9 @@ namespace x360ce.App.Controls
 			this.PlanPanel.Controls.Add(this.PlanOkButton, 1, 2);
 			this.PlanPanel.Controls.Add(this.PlanCancelButton, 2, 2);
 			this.PlanPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.PlanPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.PlanPanel.Name = "PlanPanel";
-			this.PlanPanel.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
+			this.PlanPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.PlanPanel.RowCount = 3;
 			this.PlanPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.PlanPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -137,7 +141,7 @@ namespace x360ce.App.Controls
 			this.PlanSubjectLabel.AutoSize = true;
 			this.PlanPanel.SetColumnSpan(this.PlanSubjectLabel, 3);
 			this.PlanSubjectLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
-			this.PlanSubjectLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
+			this.PlanSubjectLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PlanSubjectLabel.Name = "PlanSubjectLabel";
 			this.PlanSubjectLabel.TabIndex = 0;
 			//
@@ -146,7 +150,7 @@ namespace x360ce.App.Controls
 			this.PlanBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.PlanBodyLabel.AutoSize = true;
 			this.PlanPanel.SetColumnSpan(this.PlanBodyLabel, 3);
-			this.PlanBodyLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.PlanBodyLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PlanBodyLabel.Name = "PlanBodyLabel";
 			this.PlanBodyLabel.TabIndex = 1;
 			//
@@ -155,7 +159,7 @@ namespace x360ce.App.Controls
 			this.PlanOkButton.AutoSize = true;
 			this.PlanOkButton.Image = global::x360ce.App.Properties.Resources.ok_32x32;
 			this.PlanOkButton.MinimumSize = new System.Drawing.Size(75, 23);
-			this.PlanOkButton.Margin = new System.Windows.Forms.Padding(4, 8, 4, 0);
+			this.PlanOkButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PlanOkButton.Name = "PlanOkButton";
 			this.PlanOkButton.TabIndex = 2;
 			this.PlanOkButton.Text = "OK";
@@ -167,7 +171,7 @@ namespace x360ce.App.Controls
 			//
 			this.PlanCancelButton.AutoSize = true;
 			this.PlanCancelButton.MinimumSize = new System.Drawing.Size(75, 23);
-			this.PlanCancelButton.Margin = new System.Windows.Forms.Padding(4, 8, 4, 0);
+			this.PlanCancelButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PlanCancelButton.Name = "PlanCancelButton";
 			this.PlanCancelButton.TabIndex = 3;
 			this.PlanCancelButton.Text = "Cancel";
@@ -193,6 +197,7 @@ namespace x360ce.App.Controls
 			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.DevicesDataGridView.MultiSelect = false;
+			this.DevicesDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DevicesDataGridView.Name = "DevicesDataGridView";
 			this.DevicesDataGridView.ReadOnly = true;
 			this.DevicesDataGridView.RowHeadersVisible = false;
@@ -253,12 +258,26 @@ namespace x360ce.App.Controls
 			this.MappedColumn.Name = "MappedColumn";
 			this.MappedColumn.ReadOnly = true;
 			this.MappedColumn.ToolTipText = "The devices mapped to the controller tab this virtual controller is made for. Blank for a real controller.";
+			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.HeaderLayoutPanel, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.DevicesDataGridView, 0, 1);
+			this.RootLayoutPanel.Controls.Add(this.PlanPanel, 0, 2);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 3;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.TabIndex = 0;
 			//
 			// XInputDevicesUserControl
 			//
-			this.Controls.Add(this.DevicesDataGridView);
-			this.Controls.Add(this.PlanPanel);
-			this.Controls.Add(this.HeaderLayoutPanel);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "XInputDevicesUserControl";
 			this.Size = new System.Drawing.Size(700, 300);
 			this.HeaderLayoutPanel.ResumeLayout(false);
@@ -268,6 +287,8 @@ namespace x360ce.App.Controls
 			this.PlanPanel.ResumeLayout(false);
 			this.PlanPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).EndInit();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
@@ -292,5 +313,6 @@ namespace x360ce.App.Controls
 		private System.Windows.Forms.DataGridViewTextBoxColumn PadColumn;
 		internal System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		internal System.Windows.Forms.DataGridViewTextBoxColumn MappedColumn;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

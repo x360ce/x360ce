@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 			this.CheckForUpdatesCheckBox.AutoSize = true;
 			this.LayoutPanel.SetColumnSpan(this.CheckForUpdatesCheckBox, 3);
 			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(9, 9);
-			this.CheckForUpdatesCheckBox.Margin = new System.Windows.Forms.Padding(4);
+			this.CheckForUpdatesCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CheckForUpdatesCheckBox.Name = "CheckForUpdatesCheckBox";
 			this.CheckForUpdatesCheckBox.Size = new System.Drawing.Size(163, 17);
 			this.CheckForUpdatesCheckBox.TabIndex = 0;
@@ -79,7 +79,7 @@ namespace x360ce.App.Controls
 			this.LayoutPanel.SetColumnSpan(this.PrivacyLabel, 3);
 			this.PrivacyLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.PrivacyLabel.Location = new System.Drawing.Point(26, 29);
-			this.PrivacyLabel.Margin = new System.Windows.Forms.Padding(24, 0, 4, 4);
+			this.PrivacyLabel.Margin = new System.Windows.Forms.Padding(24, 8, 0, 0);
 			this.PrivacyLabel.Name = "PrivacyLabel";
 			this.PrivacyLabel.Size = new System.Drawing.Size(360, 13);
 			this.PrivacyLabel.TabIndex = 1;
@@ -88,7 +88,7 @@ namespace x360ce.App.Controls
 			// CheckButton
 			//
 			this.CheckButton.Location = new System.Drawing.Point(9, 52);
-			this.CheckButton.Margin = new System.Windows.Forms.Padding(4, 12, 4, 4);
+			this.CheckButton.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CheckButton.Name = "CheckButton";
 			this.CheckButton.Size = new System.Drawing.Size(90, 23);
 			this.CheckButton.TabIndex = 2;
@@ -103,7 +103,7 @@ namespace x360ce.App.Controls
 			this.CheckDigitalSignatureCheckBox.Checked = true;
 			this.CheckDigitalSignatureCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.CheckDigitalSignatureCheckBox.Location = new System.Drawing.Point(108, 57);
-			this.CheckDigitalSignatureCheckBox.Margin = new System.Windows.Forms.Padding(4, 12, 4, 4);
+			this.CheckDigitalSignatureCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CheckDigitalSignatureCheckBox.Name = "CheckDigitalSignatureCheckBox";
 			this.CheckDigitalSignatureCheckBox.Size = new System.Drawing.Size(137, 17);
 			this.CheckDigitalSignatureCheckBox.TabIndex = 3;
@@ -117,7 +117,7 @@ namespace x360ce.App.Controls
 			this.CheckVersionCheckBox.Checked = true;
 			this.CheckVersionCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.CheckVersionCheckBox.Location = new System.Drawing.Point(251, 57);
-			this.CheckVersionCheckBox.Margin = new System.Windows.Forms.Padding(4, 12, 4, 4);
+			this.CheckVersionCheckBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CheckVersionCheckBox.Name = "CheckVersionCheckBox";
 			this.CheckVersionCheckBox.Size = new System.Drawing.Size(95, 17);
 			this.CheckVersionCheckBox.TabIndex = 4;
@@ -129,7 +129,7 @@ namespace x360ce.App.Controls
 			this.LayoutPanel.SetColumnSpan(this.LogTextBox, 3);
 			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LogTextBox.Location = new System.Drawing.Point(9, 84);
-			this.LogTextBox.Margin = new System.Windows.Forms.Padding(4);
+			this.LogTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LogTextBox.Multiline = true;
 			this.LogTextBox.Name = "LogTextBox";
 			this.LogTextBox.ReadOnly = true;

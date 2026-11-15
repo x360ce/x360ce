@@ -52,7 +52,7 @@
 			this.TopPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.TopPanel.Location = new System.Drawing.Point(0, 0);
 			this.TopPanel.Name = "TopPanel";
-			this.TopPanel.Padding = new System.Windows.Forms.Padding(8);
+			this.TopPanel.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.TopPanel.Size = new System.Drawing.Size(948, 72);
 			this.TopPanel.TabIndex = 22;
 			//
@@ -84,7 +84,7 @@
 			this.HeaderTableLayoutPanel.SetColumnSpan(this.HelpSubjectLabel, 2);
 			this.HelpSubjectLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.HelpSubjectLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.HelpSubjectLabel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 0);
+			this.HelpSubjectLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HelpSubjectLabel.Name = "HelpSubjectLabel";
 			this.HelpSubjectLabel.Size = new System.Drawing.Size(860, 16);
 			this.HelpSubjectLabel.TabIndex = 5;
@@ -94,7 +94,7 @@
 			//
 			this.HelpPictureBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.HelpPictureBox.Image = global::x360ce.App.Properties.Resources.tip_48x48;
-			this.HelpPictureBox.Margin = new System.Windows.Forms.Padding(4);
+			this.HelpPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HelpPictureBox.Name = "HelpPictureBox";
 			this.HelpPictureBox.Size = new System.Drawing.Size(24, 24);
 			this.HelpPictureBox.TabIndex = 8;
@@ -104,7 +104,7 @@
 			//
 			this.HelpBodyLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.HelpBodyLabel.AutoEllipsis = true;
-			this.HelpBodyLabel.Margin = new System.Windows.Forms.Padding(4);
+			this.HelpBodyLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HelpBodyLabel.Name = "HelpBodyLabel";
 			this.HelpBodyLabel.Size = new System.Drawing.Size(836, 32);
 			this.HelpBodyLabel.TabIndex = 7;
@@ -114,7 +114,7 @@
 			//
 			this.HeaderPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.HeaderPictureBox.Image = global::x360ce.App.Properties.Resources.app_96x96;
-			this.HeaderPictureBox.Margin = new System.Windows.Forms.Padding(8, 4, 4, 4);
+			this.HeaderPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.HeaderPictureBox.Name = "HeaderPictureBox";
 			this.HeaderTableLayoutPanel.SetRowSpan(this.HeaderPictureBox, 2);
 			this.HeaderPictureBox.Size = new System.Drawing.Size(48, 48);

@@ -201,6 +201,12 @@
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MouseDemoUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MouseDemoUserControl.Designer.cs">
+      <DependentUpon>MouseDemoUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MouseStickUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

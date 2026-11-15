@@ -40,8 +40,10 @@
 			this.SummariesDeviceNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.SummariesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.SummariesRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).BeginInit();
 			this.SummariesToolStrip.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// SummariesDataGridView
@@ -74,6 +76,7 @@
 			this.SummariesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SummariesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.SummariesDataGridView.MultiSelect = false;
+			this.SummariesDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SummariesDataGridView.Name = "SummariesDataGridView";
 			this.SummariesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -142,8 +145,9 @@
 			this.SummariesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SummariesRefreshButton});
 			this.SummariesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.SummariesToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.SummariesToolStrip.Name = "SummariesToolStrip";
-			this.SummariesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.SummariesToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.SummariesToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SummariesToolStrip.TabIndex = 4;
 			this.SummariesToolStrip.Text = "MySettingsToolStrip";
@@ -158,17 +162,32 @@
 			this.SummariesRefreshButton.Text = "&Refresh";
 			this.SummariesRefreshButton.Click += new System.EventHandler(this.SummariesRefreshButton_Click);
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.SummariesToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.SummariesDataGridView, 0, 1);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 2;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// SummariesGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.SummariesDataGridView);
-			this.Controls.Add(this.SummariesToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "SummariesGridUserControl";
 			this.Size = new System.Drawing.Size(480, 240);
 			((System.ComponentModel.ISupportInitialize)(this.SummariesDataGridView)).EndInit();
 			this.SummariesToolStrip.ResumeLayout(false);
 			this.SummariesToolStrip.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -184,5 +203,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn SummariesDeviceNameColumn;
 		private System.Windows.Forms.ToolStrip SummariesToolStrip;
 		private System.Windows.Forms.ToolStripButton SummariesRefreshButton;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

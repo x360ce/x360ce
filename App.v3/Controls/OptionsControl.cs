@@ -219,13 +219,14 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Fetches x360ce's controller database from x360ce's server into the settings folder, off the window's thread, and
-		/// says in the header how it went. The Presets tab and new controllers use the saved copy from then on.
+		/// Fetches x360ce's controller database from the site of the settings database address into the settings folder, off
+		/// the window's thread, and says in the header how it went. The Presets tab and new controllers use the saved copy from
+		/// then on.
 		/// </summary>
 		private void UpdateControllerDatabaseButton_Click(object sender, EventArgs e)
 		{
 			UpdateControllerDatabaseButton.Enabled = false;
-			X360ceUpdateClient.UpdateSettingsCopy("x360ce/" + Application.ProductVersion).ContinueWith(t =>
+			X360ceUpdateClient.UpdateSettingsCopy(InternetDatabaseUrlComboBox.Text, "x360ce/" + Application.ProductVersion).ContinueWith(t =>
 			{
 				UpdateControllerDatabaseButton.Enabled = true;
 				var outcome = t.Result.Value;

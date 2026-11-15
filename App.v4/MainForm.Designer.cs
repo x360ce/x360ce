@@ -218,12 +218,12 @@ namespace x360ce.App
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(1064, 807);
+			this.ClientSize = new System.Drawing.Size(1064, 897);
 			this.Controls.Add(this.LoadingLabel);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(1000, 600);
+			this.MinimumSize = new System.Drawing.Size(1024, 936);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

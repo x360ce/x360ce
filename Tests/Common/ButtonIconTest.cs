@@ -179,7 +179,9 @@ namespace x360ce.Tests
 			var image = (Rectangle)layout.GetType().GetProperty("ImageRectangle", Flags).GetValue(layout, null);
 			var shown = item.ImageScaling == ToolStripItemImageScaling.SizeToFit && item.Owner != null ? item.Owner.ImageScalingSize : item.Image.Size;
 			var name = when + " " + Path(item.Owner) + "." + (string.IsNullOrEmpty(item.Name) ? item.Text : item.Name);
-			Check(name, new Rectangle(Point.Empty, item.Size), image, item.Image, shown, report, faults);
+			// A switch on a tool bar shows the theme's check box, or a copy of it at the size it is shown.
+			Check(name, new Rectangle(Point.Empty, item.Size), image, item.Image, shown, report, faults,
+				FormsTheme.IsAccentCheckBox(ControlsHelper.GetOriginal(item.Image)));
 			var strip = item.Owner;
 			// An item that does not fit on its tool bar is not drawn there.
 			if (strip == null || item.Width <= 0 || item.Height <= 0 || !new Rectangle(Point.Empty, strip.Size).Contains(item.Bounds))
@@ -265,11 +267,14 @@ namespace x360ce.Tests
 			}
 		}
 
-		static void Check(string name, Rectangle client, Rectangle image, Image picture, Size shown, List<string> report, List<string> faults)
+		static void Check(string name, Rectangle client, Rectangle image, Image picture, Size shown, List<string> report, List<string> faults, bool drawnByTheme = false)
 		{
 			var inside = client.Contains(image);
 			var original = ControlsHelper.GetOriginal(picture);
-			var wanted = new Size((int)Math.Round(original.Width * ControlsHelper.DpiScale / 2), (int)Math.Round(original.Height * ControlsHelper.DpiScale / 2));
+			// A picture of the program's is drawn at twice its size and scaled to the screen's; one the theme draws for its
+			// button, a tool bar switch's check box, is made at the size it is shown.
+			var wanted = drawnByTheme ? picture.Size
+				: new Size((int)Math.Round(original.Width * ControlsHelper.DpiScale / 2), (int)Math.Round(original.Height * ControlsHelper.DpiScale / 2));
 			var drawn = picture.Size == shown && picture.Size == wanted;
 			var line = string.Format("{0}: client {1}, image {2}, inside {3}, picture {4} shown {5} drawn {6}",
 				name, client, image, inside, picture.Size, shown, drawn);

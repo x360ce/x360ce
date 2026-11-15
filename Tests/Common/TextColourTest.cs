@@ -388,13 +388,18 @@ namespace x360ce.Tests
 				"App.v3/MainForm.cs", // an error in the header
 			} },
 			// An issue that needs attention but is not an error.
-			{ "ForegroundCaution", new[] { "App.v4/Controls/PadTabPages/SdlUserControl.cs" } }, // a box that differs from SDL's map
+			{ "ForegroundCaution", new[]
+			{
+				"App.v4/Controls/PadTabPages/SdlUserControl.cs", // a box that differs from SDL's map
+				"App.v4/Forms/TestDeviceViews.cs", // a reading that would not hold still, a button pressed twice
+			} },
 			// A list row whose item is unplugged or switched off, given to the grids' shared dimming.
 			// A status or a notice.
 			{ "ForegroundInformation", new[]
 			{
 				"App.v4/Forms/BaseFormWithHeader.cs", // information in the header
 				"App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs", // what to press while mapping
+				"App.v4/Forms/TestDeviceViews.cs", // a test step's progress
 				"App.v3/MainForm.cs", // information in the header
 			} },
 			// Something that succeeded.
@@ -403,7 +408,14 @@ namespace x360ce.Tests
 				"Engine/JocysCom/Controls/IssuesControl/IssuesUserControl.cs", // All OK
 				"App.v4/Controls/MapExpressionToggle.cs", // a formula that works
 				"App.v4/Controls/PadTabPages/General/XboxImageUserControl.cs", // Mapping Done
+				"App.v4/Forms/TestDeviceViews.cs", // a test step done
 			} },
+			// The grade of a measured result, always beside its word, from Best to Bad.
+			{ "SolidColorBrush_120D", new[] { "App.v4/Forms/TestDeviceViews.cs" } },
+			{ "SolidColorBrush_090D", new[] { "App.v4/Forms/TestDeviceViews.cs" } },
+			{ "SolidColorBrush_060D", new[] { "App.v4/Forms/TestDeviceViews.cs" } },
+			{ "SolidColorBrush_030D", new[] { "App.v4/Forms/TestDeviceViews.cs" } },
+			{ "SolidColorBrush_000D", new[] { "App.v4/Forms/TestDeviceViews.cs" } },
 			// A link.
 			{ "ForegroundLink", new[] { "Engine/JocysCom/Controls/Themes/Default.Forms.cs", "Engine/Common/MarkdownRtf.cs" } },
 			// What a controller does now: a pressed control's name, a value read from it, a chart's line at the reading.
@@ -414,6 +426,7 @@ namespace x360ce.Tests
 				"App.v4/Controls/AxisToButtonUserControl.cs",
 				"App.v4/Controls/AxisMapUserControl.cs",
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
+				"App.v4/Forms/TestDeviceViews.cs",
 				"App.v3/Controls/PadControl.cs",
 				"App.v3/Controls/AxisToButtonUserControl.cs",
 				"App.v3/Controls/ThumbUserControl.cs",

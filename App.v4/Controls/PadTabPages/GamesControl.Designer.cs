@@ -48,11 +48,13 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.ScanProgressLevel1Label = new System.Windows.Forms.Label();
 			this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.ScanProgressPlacePanel.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// GamesDataGridView
@@ -87,6 +89,7 @@
 			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesDataGridView.Location = new System.Drawing.Point(0, 31);
+			this.GamesDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -201,8 +204,9 @@
             this.OpenGameButton,
             this.ShowGamesDropDownButton});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.GamesToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
-			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(0, 0, 0, 4);
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.GamesToolStrip.Size = new System.Drawing.Size(781, 31);
 			this.GamesToolStrip.TabIndex = 2;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
@@ -307,7 +311,7 @@
 			this.ScanProgressLevel0Label.AutoSize = true;
 			this.ScanProgressLevel0Label.BackColor = System.Drawing.SystemColors.Control;
 			this.ScanProgressLevel0Label.Location = new System.Drawing.Point(3, 0);
-			this.ScanProgressLevel0Label.Margin = new System.Windows.Forms.Padding(4);
+			this.ScanProgressLevel0Label.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ScanProgressLevel0Label.Name = "ScanProgressLevel0Label";
 			this.ScanProgressLevel0Label.Size = new System.Drawing.Size(163, 21);
 			this.ScanProgressLevel0Label.TabIndex = 0;
@@ -319,6 +323,7 @@
 			this.ScanProgressPlacePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ScanProgressPlacePanel.Controls.Add(this.ScanProgressPanel);
 			this.ScanProgressPlacePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.ScanProgressPlacePanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ScanProgressPlacePanel.Name = "ScanProgressPlacePanel";
 			this.ScanProgressPlacePanel.TabIndex = 4;
 			// 
@@ -330,7 +335,7 @@
 			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 0);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
-			this.ScanProgressPanel.Padding = new System.Windows.Forms.Padding(4);
+			this.ScanProgressPanel.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 50);
 			this.ScanProgressPanel.TabIndex = 4;
 			this.ScanProgressPanel.Visible = false;
@@ -358,7 +363,7 @@
 			this.ScanProgressLevel1Label.AutoSize = true;
 			this.ScanProgressLevel1Label.BackColor = System.Drawing.SystemColors.Control;
 			this.ScanProgressLevel1Label.Location = new System.Drawing.Point(3, 21);
-			this.ScanProgressLevel1Label.Margin = new System.Windows.Forms.Padding(4);
+			this.ScanProgressLevel1Label.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ScanProgressLevel1Label.Name = "ScanProgressLevel1Label";
 			this.ScanProgressLevel1Label.Size = new System.Drawing.Size(163, 21);
 			this.ScanProgressLevel1Label.TabIndex = 1;
@@ -371,18 +376,34 @@
 			this.GameDetailsControl.BackColor = System.Drawing.SystemColors.Control;
 			this.GameDetailsControl.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.GameDetailsControl.Location = new System.Drawing.Point(0, 363);
+			this.GameDetailsControl.Margin = new System.Windows.Forms.Padding(0);
 			this.GameDetailsControl.Name = "GameDetailsControl";
 			this.GameDetailsControl.Size = new System.Drawing.Size(781, 226);
 			this.GameDetailsControl.TabIndex = 3;
+			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.GamesToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.GamesDataGridView, 0, 1);
+			this.RootLayoutPanel.Controls.Add(this.ScanProgressPlacePanel, 0, 2);
+			this.RootLayoutPanel.Controls.Add(this.GameDetailsControl, 0, 3);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 4;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.TabIndex = 0;
 			// 
 			// GamesGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.ScanProgressPlacePanel);
-			this.Controls.Add(this.GamesDataGridView);
-			this.Controls.Add(this.GameDetailsControl);
-			this.Controls.Add(this.GamesToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "GamesGridUserControl";
 			this.Size = new System.Drawing.Size(781, 589);
 			this.Load += new System.EventHandler(this.GamesGridUserControl_Load);
@@ -395,6 +416,8 @@
 			this.ScanProgressPanel.PerformLayout();
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -408,7 +431,7 @@
         internal System.Windows.Forms.ToolStripButton SaveGamesButton;
         internal System.Windows.Forms.ToolStripButton ScanGamesButton;
 		internal System.Windows.Forms.ToolStripButton AddGameButton;
-		private GameDetailsUserControl GameDetailsControl;
+		internal GameDetailsUserControl GameDetailsControl;
 		internal System.Windows.Forms.ToolStripButton StartGameButton;
 		internal System.Windows.Forms.ToolStripButton OpenGameButton;
 		internal System.Windows.Forms.ToolStripDropDownButton ShowGamesDropDownButton;
@@ -430,5 +453,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		internal System.Windows.Forms.Label ScanProgressLevel1Label;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

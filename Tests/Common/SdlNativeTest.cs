@@ -1,4 +1,4 @@
-// @under-test: Native/x360ce/Sdl.cpp, Native/x360ce/gamecontrollerdb.windows.txt, Engine/Common/Sdl/SdlConverter.cs, Engine/Resources/gamecontrollerdb_x360ce.windows.txt
+// @under-test: Native/x360ce/Sdl.cpp, Native/x360ce/x360ce.rc, Engine/Common/Sdl/SdlConverter.cs, Engine/Resources/gamecontrollerdb.txt.gz, Engine/Resources/gamecontrollerdb_x360ce.windows.txt.gz
 // @area: mapping   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -14,9 +14,9 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// The xinput library of x360ce 3 maps a controller from SDL's database as x360ce 4 does: both converters pass the
-	/// cases in SdlConverterCases.txt, the library carries the Windows rows of the database the engine carries, and finds
-	/// a device's row by its vendor and product, a gamecontrollerdb.txt beside it first. It carries x360ce's controller
-	/// database the engine carries too, and finds its rows the same way.
+	/// cases in SdlConverterCases.txt, the library carries the gzip compressed database the engine carries and reads its
+	/// Windows rows, and finds a device's row by its vendor and product, a gamecontrollerdb.txt beside it first. It
+	/// carries x360ce's controller database the engine carries too, and finds its rows the same way.
 	/// </summary>
 	/// <remarks>
 	/// The library is the one built for this process's bitness, loaded from a copy under a name of its own through its
@@ -25,15 +25,25 @@ namespace x360ce.Tests
 	[TestClass]
 	public class SdlNativeTest
 	{
-		/// <summary>Set to 1, the database test writes the library's copy instead of failing.</summary>
-		const string WriteVariable = "X360CE_WRITE_SDL_COPY";
-
-		const string CopyPath = @"Native\x360ce\gamecontrollerdb.windows.txt";
-
 		#region The library
 
 		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
 		static extern IntPtr LoadLibrary(string path);
+
+		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+		static extern IntPtr BeginUpdateResource(string fileName, bool deleteExistingResources);
+
+		[DllImport("kernel32", SetLastError = true)]
+		static extern bool UpdateResource(IntPtr update, IntPtr type, IntPtr name, ushort language, byte[] data, uint size);
+
+		[DllImport("kernel32", SetLastError = true)]
+		static extern bool EndUpdateResource(IntPtr update, bool discard);
+
+		/// <summary>The library's resources: RCDATA, and the databases' ids and language in Native\x360ce\resource.h and x360ce.rc.</summary>
+		const int RcData = 10;
+		const int SdlResource = 101;
+		const int X360ceResource = 102;
+		const ushort EnglishUnitedStates = 0x0409;
 
 		[DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true)]
 		static extern IntPtr GetProcAddress(IntPtr module, string name);
@@ -107,6 +117,12 @@ namespace x360ce.Tests
 		/// <summary>Loads a copy of the library from a new folder holding the files given, so it reads its own database.</summary>
 		static Library Load(params KeyValuePair<string, string>[] files)
 		{
+			return Load(null, files);
+		}
+
+		/// <summary>Loads a copy of the library, changed first by <paramref name="change"/>, which is given the copy's path.</summary>
+		static Library Load(Action<string> change, params KeyValuePair<string, string>[] files)
+		{
 			var built = Built();
 			if (built == null)
 				Assert.Inconclusive("The xinput library is not built for " + (Environment.Is64BitProcess ? "x64" : "x86") + ". Build it first.");
@@ -116,6 +132,7 @@ namespace x360ce.Tests
 				File.WriteAllText(Path.Combine(folder, file.Key), file.Value);
 			var path = Path.Combine(folder, "x360ce_sdl_test.dll");
 			built.CopyTo(path);
+			change?.Invoke(path);
 			Console.WriteLine("Library: " + built.FullName + " (built " + built.LastWriteTime + ")");
 			var module = LoadLibrary(path);
 			Assert.AreNotEqual(IntPtr.Zero, module, "The library did not load: error " + Marshal.GetLastWin32Error() + ".");
@@ -275,64 +292,21 @@ namespace x360ce.Tests
 
 		#region The database
 
-		/// <summary>The library's copy of the database: the Windows rows of the one the engine carries, sorted by vendor and product, with its commit and licence.</summary>
-		static string NativeCopy()
-		{
-			var source = SdlSource.Parse(SdlDatabase.ReadBuiltIn(), SdlSourceKind.BuiltIn);
-			Assert.IsNotNull(source.Sha, "The engine's database has no commit line.");
-			var sb = new StringBuilder();
-			sb.Append("# SDL_GameControllerDB's Windows rows, sorted by vendor and product, for x360ce's xinput library (Sdl.cpp).\n");
-			sb.Append("# Written from Engine\\Resources\\gamecontrollerdb.txt.gz by SdlNativeTest; do not edit by hand.\n");
-			sb.Append(SdlSource.HeaderPrefix).Append(source.Sha).Append(' ')
-				.Append(source.Date.Value.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture)).Append('\n');
-			sb.Append("#\n");
-			foreach (var line in SdlDatabase.ReadLicence().Replace("\r\n", "\n").TrimEnd('\n').Split('\n'))
-				sb.Append(("# " + line).TrimEnd()).Append('\n');
-			// Only rows that name a vendor and product can be found by a device's; the "xinput" row is not one.
-			var rows = source.Mappings.Where(x => x.Guid.HasIds)
-				.OrderBy(x => x.Guid.VendorId).ThenBy(x => x.Guid.ProductId);
-			foreach (var row in rows)
-				sb.Append(row.ToString()).Append('\n');
-			return sb.ToString();
-		}
-
-		[TestMethod, TestCategory("mapping"), TestCategory("build"), TestCategory("critical")]
-		[Description("The xinput library carries the Windows rows of the SDL database the engine carries, sorted by vendor and product")]
-		public void Native_library_carries_the_engines_database()
-		{
-			var path = Path.Combine(Ui.RepoRoot.FullName, CopyPath);
-			var expected = NativeCopy();
-			var actual = File.Exists(path) ? File.ReadAllText(path).Replace("\r\n", "\n") : null;
-			if (actual == expected)
-				return;
-			if (Environment.GetEnvironmentVariable(WriteVariable) == "1")
-			{
-				File.WriteAllText(path, expected, new UTF8Encoding(false));
-				Console.WriteLine("Wrote " + path + "; build the xinput library again.");
-				return;
-			}
-			Assert.Fail(CopyPath + " differs from Engine\\Resources\\gamecontrollerdb.txt.gz. Write it again, then build the xinput library:"
-				+ Environment.NewLine + "$env:" + WriteVariable + " = '1'; vstest.console.exe Tests\\bin\\Release\\net462\\x360ce.Tests.dll /Tests:"
-				+ nameof(SdlNativeTest) + "." + nameof(Native_library_carries_the_engines_database) + "; Remove-Item env:" + WriteVariable);
-		}
-
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("The xinput library finds every row it carries by the vendor, product and name the row is for")]
+		[Description("The xinput library finds every Windows row of SDL's database the engine carries by the vendor, product and name the row is for")]
 		public void Native_library_finds_every_row_by_its_device()
 		{
 			var library = Load();
-			var rows = File.ReadAllLines(Path.Combine(Ui.RepoRoot.FullName, CopyPath))
-				.Where(x => x.Length > 0 && x[0] != '#').ToArray();
-			Assert.IsTrue(rows.Length > 800, "The library carries only " + rows.Length + " rows.");
+			// The rows as the engine reads them, one line at a time, as the library gives them back: trimmed. Only rows that
+			// name a vendor and product can be found by a device's; the "xinput" row is not one.
+			var rows = SdlDatabase.ReadBuiltIn().Split('\n').Select(x => x.Trim(' ', '\t', '\r'))
+				.Where(x => SdlSource.Parse(x, SdlSourceKind.BuiltIn).Mappings.Any(m => m.Guid.HasIds)).ToArray();
+			Assert.IsTrue(rows.Length > 800, "The engine carries only " + rows.Length + " Windows rows.");
 			var missed = new List<string>();
-			long key = -1;
 			foreach (var text in rows)
 			{
 				SdlMapping row;
 				Assert.IsTrue(SdlMapping.TryParse(text, out row), "Not a row: " + text);
-				var rowKey = (long)row.Guid.VendorId << 16 | (long)row.Guid.ProductId;
-				Assert.IsTrue(rowKey >= key, "The rows are not sorted by vendor and product at: " + text);
-				key = rowKey;
 				if (library.Row(row.Guid.VendorId, row.Guid.ProductId, row.Name) != text)
 					missed.Add(text);
 			}
@@ -357,6 +331,30 @@ namespace x360ce.Tests
 				+ Environment.NewLine + string.Join(Environment.NewLine, missed.Take(10)));
 			StringAssert.Contains(library.X360ceRow(0x046D, 0xC29B, "Logitech G27 Racing Wheel USB"), ",Logitech G27 Racing Wheel USB,users:", "The G27 has no row.");
 			Assert.AreEqual("", library.X360ceRow(0xFFFF, 0xFFFE, "No such controller"), "A device x360ce's database does not know was given a row.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A built-in database whose gzip check fails reads as no rows, and the library goes on")]
+		public void A_damaged_database_reads_as_empty()
+		{
+			var library = Load(path =>
+			{
+				// Both databases as the engine carries them, each with a CRC-32 that does not match.
+				var update = BeginUpdateResource(path, false);
+				Assert.AreNotEqual(IntPtr.Zero, update, "The library's copy cannot be changed: error " + Marshal.GetLastWin32Error() + ".");
+				foreach (var resource in new[] { new { Id = SdlResource, File = "gamecontrollerdb.txt.gz" }, new { Id = X360ceResource, File = "gamecontrollerdb_x360ce.windows.txt.gz" } })
+				{
+					var bytes = File.ReadAllBytes(Path.Combine(Ui.RepoRoot.FullName, "Engine", "Resources", resource.File));
+					bytes[bytes.Length - 8] ^= 0xFF;
+					Assert.IsTrue(UpdateResource(update, (IntPtr)RcData, (IntPtr)resource.Id, EnglishUnitedStates, bytes, (uint)bytes.Length),
+						"The library's copy cannot be changed: error " + Marshal.GetLastWin32Error() + ".");
+				}
+				Assert.IsTrue(EndUpdateResource(update, false), "The library's copy cannot be changed: error " + Marshal.GetLastWin32Error() + ".");
+			});
+			Assert.AreEqual("", library.Row(0x054C, 0x05C4, "Wireless Controller"), "A damaged SDL database gave a row.");
+			Assert.AreEqual("", library.X360ceRow(0x046D, 0xC29B, "Logitech G27 Racing Wheel USB"), "A damaged x360ce database gave a row.");
+			// The library still works: a row the converter is given is still read.
+			StringAssert.Contains(library.Map("030000004c050000c405000000000000,PS4 Controller,a:b1,platform:Windows,", new SdlDevice { ButtonCount = 12 }), "ButtonA=2");
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]

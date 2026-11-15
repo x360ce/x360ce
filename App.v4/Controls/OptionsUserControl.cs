@@ -373,10 +373,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
-			// The door opens as the options left it, and the AI page reads and changes them from now on. An export
-			// describes the page and leaves: it opens no door and writes no options file.
-			if (Program.ExportUiFolder == null)
-				Global.ApplyAiAccess();
+			// The AI page reads and changes the options from now on; the main window opens the door once it holds its pages.
 			AiControl.Bind(new AiAccessSettings());
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);

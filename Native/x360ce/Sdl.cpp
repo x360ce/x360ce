@@ -7,6 +7,10 @@
 #include "Sdl.h"
 #include "resource.h"
 
+// zlib's inflate only, built with Z_SOLO in Common (Common\zlib\SOURCE.md).
+#define Z_SOLO
+#include "zlib/zlib.h"
+
 namespace Sdl
 {
 	namespace
@@ -117,24 +121,38 @@ namespace Sdl
 		}
 
 		/// <summary>The rows carried in the library, and those of a file of the same name found where x360ce.ini is looked for.</summary>
+		/// <remarks>Made the first time a row is asked for, never while the library loads.</remarks>
 		class Database
 		{
 		public:
+			std::string builtInText;
 			std::vector<Row> builtIn;
 			std::string fileText;
 			std::vector<Row> file;
 
-			/// <param name="resourceId">The rows the library carries.</param>
+			/// <param name="resourceId">The rows the library carries: the engine's gzip compressed file.</param>
 			/// <param name="fileName">The file a person's own rows are in: gamecontrollerdb.txt or gamecontrollerdb_x360ce.windows.txt.</param>
 			Database(WORD resourceId, const char* fileName)
 			{
-				// The library's own rows, sorted by vendor and product when they were written.
+				// The library's own rows, inflated in memory and sorted by vendor and product; the first written stays first.
+				LARGE_INTEGER start, end, frequency;
+				QueryPerformanceCounter(&start);
 				HMODULE module = CurrentModule();
 				HRSRC resource = FindResource(module, MAKEINTRESOURCE(resourceId), RT_RCDATA);
 				HGLOBAL loaded = resource ? LoadResource(module, resource) : NULL;
-				const char* text = loaded ? (const char*)LockResource(loaded) : nullptr;
-				if (text)
-					ReadRows(text, SizeofResource(module, resource), &builtIn);
+				const Bytef* data = loaded ? (const Bytef*)LockResource(loaded) : nullptr;
+				std::string error = data ? Inflate(data, SizeofResource(module, resource), &builtInText) : "not in the library";
+				if (error.empty())
+				{
+					ReadRows(builtInText.c_str(), builtInText.size(), &builtIn);
+					std::stable_sort(builtIn.begin(), builtIn.end(), KeyLess);
+					QueryPerformanceCounter(&end);
+					QueryPerformanceFrequency(&frequency);
+					PrintLog("Built-in database \"%s\": %u rows in %.1f ms", fileName, (u32)builtIn.size(),
+						(end.QuadPart - start.QuadPart) * 1000.0 / frequency.QuadPart);
+				}
+				else
+					PrintLog("Built-in database \"%s\" cannot be read, so it is left empty: %s", fileName, error.c_str());
 				// A person's own rows win over the library's for a device they have a row for.
 				std::string path;
 				if (!FullPathFromPath(&path, fileName))
@@ -152,6 +170,56 @@ namespace Sdl
 			}
 
 		private:
+			static voidpf ZAlloc(voidpf, uInt items, uInt size)
+			{
+				return calloc(items, size);
+			}
+
+			static void ZFree(voidpf, voidpf address)
+			{
+				free(address);
+			}
+
+			/// <summary>Inflates a gzip file held in memory, with zlib, which checks its header, CRC-32 and length.</summary>
+			/// <returns>Empty when the text was read; otherwise why not, and the text is left empty.</returns>
+			static std::string Inflate(const Bytef* data, DWORD size, std::string* text)
+			{
+				z_stream stream = {};
+				stream.zalloc = ZAlloc;
+				stream.zfree = ZFree;
+				// A 32 KB window in a gzip wrapper: 15, plus 16 for gzip.
+				if (inflateInit2(&stream, 15 + 16) != Z_OK)
+					return "zlib could not start";
+				stream.next_in = const_cast<Bytef*>(data);
+				stream.avail_in = size;
+				int result = Z_OK;
+				try
+				{
+					Bytef buffer[16384];
+					do
+					{
+						stream.next_out = buffer;
+						stream.avail_out = sizeof(buffer);
+						result = inflate(&stream, Z_NO_FLUSH);
+						if (result != Z_OK && result != Z_STREAM_END)
+							break;
+						text->append((const char*)buffer, sizeof(buffer) - stream.avail_out);
+					} while (result != Z_STREAM_END && (stream.avail_in > 0 || stream.avail_out == 0));
+				}
+				catch (const std::bad_alloc&)
+				{
+					result = Z_MEM_ERROR;
+				}
+				std::string error;
+				if (result != Z_STREAM_END)
+				{
+					error = stream.msg ? stream.msg : result == Z_MEM_ERROR ? "out of memory" : "the file ends early";
+					text->clear();
+				}
+				inflateEnd(&stream);
+				return error;
+			}
+
 			static bool ReadFileText(const std::string& path, std::string* text)
 			{
 				HANDLE hFile = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
