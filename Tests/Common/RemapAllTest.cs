@@ -5,17 +5,18 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using x360ce.App;
+using x360ce.App.Controls;
 using x360ce.Engine;
 
 namespace x360ce.Tests
 {
-	/// <summary>Remap All records one control after another, and moves on as soon as the controller is at rest.</summary>
+	/// <summary>Remap All records one control after another, and moves on after a short pause once the controller is at rest.</summary>
 	/// <remarks>
 	/// The recorder compares each state with the first one it took and records any difference, a release included.
 	/// Remap All used to wait a fixed second before each next control, so that a button still held was not taken for
-	/// it: sixteen seconds of waiting in a run of seventeen controls. The next control now starts at once and takes
-	/// its first state when the device is back at rest, judged against the state Remap All began with, or after the
-	/// second for a device that never settles.
+	/// it: sixteen seconds of waiting in a run of seventeen controls. The next control now starts after a short pause,
+	/// so the person can follow, and takes its first state when the device is back at rest, judged against the state
+	/// Remap All began with, or after the second for a device that never settles.
 	/// </remarks>
 	[TestClass]
 	public class RemapAllTest
@@ -132,11 +133,14 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
-		[Description("Remap All starts the next control at once, with the state it began with")]
-		public void Remap_all_starts_the_next_control_at_once()
+		[Description("Remap All starts the next control after a short pause, with the state it began with")]
+		public void Remap_all_starts_the_next_control_after_a_short_pause()
 		{
 			var source = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
 			Assert.IsFalse(source.Contains("StartRecording(), 1000"), "Remap All still waits a fixed second before the next control.");
+			StringAssert.Contains(source, "StartRecording(), (int)RemapAllPause.TotalMilliseconds", "The next control starts before the person sees what was recorded.");
+			Assert.IsTrue(PadControl.RemapAllPause > TimeSpan.Zero && PadControl.RemapAllPause < TimeSpan.FromSeconds(1),
+				"The pause is gone, or as long as the fixed second it replaced.");
 			StringAssert.Contains(Ui.Between(source, "void StartRecording(SettingsMapItem map = null)", "XboxImage.SetHelpText(helpText);"),
 				"RemapRest", "The next control is not told the state Remap All began with.");
 		}

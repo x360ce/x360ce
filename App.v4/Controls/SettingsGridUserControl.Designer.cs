@@ -43,9 +43,11 @@
 			this.SettingsRefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.SettingsDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.SettingsEditNoteButton = new System.Windows.Forms.ToolStripButton();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.CommentPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).BeginInit();
 			this.SettingsToolStrip.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// CommentPanel
@@ -55,6 +57,7 @@
 			this.CommentPanel.Controls.Add(this.CommentLabel);
 			this.CommentPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.CommentPanel.Location = new System.Drawing.Point(0, 221);
+			this.CommentPanel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.CommentPanel.Name = "CommentPanel";
 			this.CommentPanel.Size = new System.Drawing.Size(480, 19);
 			this.CommentPanel.TabIndex = 9;
@@ -66,10 +69,10 @@
 			this.CommentLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.CommentLabel.Location = new System.Drawing.Point(0, 0);
 			this.CommentLabel.Name = "CommentLabel";
-			this.CommentLabel.Padding = new System.Windows.Forms.Padding(3);
+			this.CommentLabel.Padding = new System.Windows.Forms.Padding(4, 8, 4, 12);
 			this.CommentLabel.Size = new System.Drawing.Size(44, 19);
 			this.CommentLabel.TabIndex = 5;
-			this.CommentLabel.Text = "&Notes:";
+			this.CommentLabel.Text = "&Notes";
 			// 
 			// SettingsDataGridView
 			// 
@@ -101,6 +104,7 @@
 			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.SettingsDataGridView.MultiSelect = false;
+			this.SettingsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.SettingsDataGridView.Name = "SettingsDataGridView";
 			this.SettingsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -170,8 +174,9 @@
             this.SettingsDeleteButton,
             this.SettingsEditNoteButton});
 			this.SettingsToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.SettingsToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.SettingsToolStrip.Name = "SettingsToolStrip";
-			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
+			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.SettingsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SettingsToolStrip.TabIndex = 7;
 			this.SettingsToolStrip.Text = "MySettingsToolStrip";
@@ -205,13 +210,27 @@
 			this.SettingsEditNoteButton.Text = "Edit Note";
 			this.SettingsEditNoteButton.Click += new System.EventHandler(this.SettingsEditNoteButton_Click);
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.SettingsToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.SettingsDataGridView, 0, 1);
+			this.RootLayoutPanel.Controls.Add(this.CommentPanel, 0, 2);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 3;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// SettingsGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.CommentPanel);
-			this.Controls.Add(this.SettingsDataGridView);
-			this.Controls.Add(this.SettingsToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "SettingsGridUserControl";
 			this.Size = new System.Drawing.Size(480, 240);
 			this.CommentPanel.ResumeLayout(false);
@@ -219,6 +238,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).EndInit();
 			this.SettingsToolStrip.ResumeLayout(false);
 			this.SettingsToolStrip.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -238,5 +259,6 @@
 		private System.Windows.Forms.ToolStripButton SettingsDeleteButton;
 		private System.Windows.Forms.ToolStripButton SettingsEditNoteButton;
 		public System.Windows.Forms.DataGridView SettingsDataGridView;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

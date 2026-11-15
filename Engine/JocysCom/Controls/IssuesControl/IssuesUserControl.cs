@@ -29,6 +29,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			NoIssuesPanel.Visible = false;
 			LinePanel.Visible = false;
 			ExceptionInfoButton.Visible = false;
+			// "All OK" is in the theme's success colour, taken again in a new theme.
+			NoIssuesLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess");
+			EventHandler themeChanged = (s, e) => NoIssuesLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess");
+			FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => FormsTheme.ThemeChanged -= themeChanged;
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
@@ -44,6 +49,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			WarningsDataGridView.CellPainting += WarningsDataGridView_CellPainting;
 			WarningsDataGridView.AutoGenerateColumns = false;
 			WarningsDataGridView.DataSource = Warnings;
+			// Ctrl+C and the menu copy each issue as readable text; the grid's own copy would give "More..." for the link.
+			WarningsDataGridView.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
+			WarningsDataGridView.KeyDown += WarningsDataGridView_KeyDown;
+			WarningsDataGridView.CellMouseDown += WarningsDataGridView_CellMouseDown;
+			var copyMenu = new ContextMenuStrip();
+			var copyItem = new ToolStripMenuItem("&Copy", null, (s, e) => CopySelectedIssues());
+			copyItem.ShortcutKeyDisplayString = "Ctrl+C";
+			copyMenu.Items.Add(copyItem);
+			WarningsDataGridView.ContextMenuStrip = copyMenu;
 			UpdateIgnoreButton();
 			// Timer which checks for the issues.
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
@@ -87,7 +101,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// <param name="e">The event arguments.</param>
 		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
-			if (IsSuspended())
+			if (!_checksEnabled || IsSuspended())
 				return;
 			CheckAll();
 			// UpdateDisplayedList() writes to the Warnings list bound to the grid and to
@@ -153,6 +167,19 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public Func<bool> IsSuspended;
 
+		/// <summary>Whether the round of checks runs: <see cref="ChecksButton"/> pressed. Off, no check runs and Next Run says so.</summary>
+		/// <remarks>Kept apart from the button because the checks' own thread reads it. The host sets the button from its settings.</remarks>
+		public bool ChecksEnabled { get { return _checksEnabled; } }
+		volatile bool _checksEnabled = true;
+
+		private void ChecksButton_CheckedChanged(object sender, EventArgs e)
+		{
+			_checksEnabled = ChecksButton.Checked;
+			// Switched on, the checks run at once rather than at the next wake.
+			if (_checksEnabled && TasksTimer != null)
+				TasksTimer.DoActionNow();
+		}
+
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
 		object checkTimerLock = new object();
@@ -188,22 +215,25 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void Item_Checked(object sender, EventArgs e)
 		{
-			var ii = (IssueItem)sender;
-			if (ii.LastException != null)
+			ShowException(((IssueItem)sender).LastException);
+		}
+
+		/// <summary>Offers the exception a check or a fix threw, on the interface thread.</summary>
+		/// <remarks>Checks and fixes run on the worker; a control changed from there races the window drawing it.</remarks>
+		void ShowException(Exception ex)
+		{
+			if (ex == null)
+				return;
+			ControlsHelper.BeginInvoke(() =>
 			{
-				LastException = ii.LastException;
+				LastException = ex;
 				ExceptionInfoButton.Visible = true;
-			}
+			});
 		}
 
 		private void Item_Fixed(object sender, EventArgs e)
 		{
-			var ii = (IssueItem)sender;
-			if (ii.LastException != null)
-			{
-				LastException = ii.LastException;
-				ExceptionInfoButton.Visible = true;
-			}
+			ShowException(((IssueItem)sender).LastException);
 			TasksTimer.DoActionNow();
 			TasksTimer.SleepTimerStart();
 		}
@@ -357,11 +387,82 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			e.Graphics.DrawIcon(System.Drawing.SystemIcons.Shield, bounds);
 		}
 
-		/// <summary>A severity icon of the theme in use, at the screen's size.</summary>
+		/// <summary>The icon of the theme in use for a severity, at the screen's size; null for none.</summary>
 		/// <remarks>The library hands out the same image every time it is asked, and a cell asks on every paint.</remarks>
-		static System.Drawing.Image SeverityImage(string name)
+		public static System.Drawing.Image SeverityImage(IssueSeverity? severity)
 		{
-			return (System.Drawing.Image)ThemeResourceManager.Library.GetObject("MessageBoxIcon_" + name + "_32x32");
+			var name = SeverityName(severity);
+			return name == null ? null : (System.Drawing.Image)ThemeResourceManager.Library.GetObject("MessageBoxIcon_" + name + "_64x64");
+		}
+
+		/// <summary>The word for a severity, as its icon shows it; null for none.</summary>
+		static string SeverityName(IssueSeverity? severity)
+		{
+			switch (severity)
+			{
+				case IssueSeverity.Low:
+					return "Information";
+				case IssueSeverity.Important:
+				case IssueSeverity.Moderate:
+					return "Warning";
+				case IssueSeverity.Critical:
+					return "Error";
+				default:
+					return null;
+			}
+		}
+
+		/// <summary>The issues as text to paste into a message or a bug report: each one's severity, name, description, fix and link.</summary>
+		public static string IssuesToText(System.Collections.Generic.IEnumerable<IssueItem> items)
+		{
+			var sb = new StringBuilder();
+			foreach (var item in items)
+			{
+				if (sb.Length > 0)
+					sb.AppendLine();
+				sb.AppendFormat("{0}: {1}", SeverityName(item.Severity) ?? "None", item.Name).AppendLine();
+				if (!string.IsNullOrEmpty(item.Description))
+					sb.AppendLine(item.Description);
+				if (!string.IsNullOrEmpty(item.FixName))
+					sb.AppendLine("Solution: " + item.FixName);
+				if (item.MoreInfo != null)
+					sb.AppendLine("More: " + item.MoreInfo.AbsoluteUri);
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>Copies the selected issues, in the order the list shows them.</summary>
+		void CopySelectedIssues()
+		{
+			var items = WarningsDataGridView.SelectedRows.Cast<DataGridViewRow>()
+				.OrderBy(x => x.Index)
+				.Select(x => ItemAt(WarningsDataGridView, x.Index))
+				.Where(x => x != null)
+				.ToArray();
+			if (items.Length > 0)
+				ControlsHelper.CopyToClipboardOrWarn(IssuesToText(items));
+		}
+
+		private void WarningsDataGridView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.C)
+			{
+				CopySelectedIssues();
+				e.Handled = true;
+			}
+		}
+
+		/// <summary>Selects the row a right click lands on, so the menu's Copy takes that issue.</summary>
+		private void WarningsDataGridView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			if (e.Button != MouseButtons.Right || e.RowIndex < 0)
+				return;
+			var row = WarningsDataGridView.Rows[e.RowIndex];
+			if (!row.Selected)
+			{
+				WarningsDataGridView.ClearSelection();
+				row.Selected = true;
+			}
 		}
 
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -375,26 +476,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				return;
 			if (column == SeverityColumn)
 			{
-				switch (item.Severity)
-				{
-					case IssueSeverity.None:
-						e.Value = null;
-						break;
-					case IssueSeverity.Low:
-						e.Value = SeverityImage("Information");
-						break;
-					case IssueSeverity.Important:
-						e.Value = SeverityImage("Warning");
-						break;
-					case IssueSeverity.Moderate:
-						e.Value = SeverityImage("Warning");
-						break;
-					case IssueSeverity.Critical:
-						e.Value = SeverityImage("Error");
-						break;
-					default:
-						break;
-				}
+				e.Value = SeverityImage(item.Severity);
 			}
 			else if (column == SolutionColumn)
 			{
@@ -417,7 +499,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)
 				remains = nextRunTime.Subtract(DateTime.Now);
-			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+			var nextRun = _checksEnabled
+				? string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m))
+				: "Next Run: off";
 			ControlsHelper.SetText(NextRunLabel, nextRun);
 			var lrt = TasksTimer.LastActionDoneTime;
 			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));

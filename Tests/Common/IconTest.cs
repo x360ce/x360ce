@@ -179,9 +179,8 @@ namespace x360ce.Tests
 							{
 								var when = theme + " theme, " + button;
 								var picture = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ButtonImagePictureBox), true).Single();
-								var arrow = (PictureBox)row.Controls.Find(nameof(AxisToButtonUserControl.ArrowPictureBox), true).Single();
 								AssertPicture(Path.Combine(folder, "Button_" + button + "_48x48.png"), picture.BackgroundImage, when);
-								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow_48x48.png"), arrow.Image, when + ", arrow");
+								AssertPicture(Path.Combine(folder, theme == ThemeType.Dark ? "dark" : "", "Axis_Arrow_48x48.png"), row.ArrowPicture, when + ", arrow");
 								var enabled = ControlsHelper.GetOriginal(picture.BackgroundImage);
 								row.Enabled = false;
 								var greyed = ControlsHelper.GetOriginal(picture.BackgroundImage);

@@ -111,7 +111,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 			// Move the window into the screen working area (the part not taken by the taskbar) if
 			// it is outside of it.
-			var screen = screens.FirstOrDefault(x => x.Bounds.IntersectsWith(bounds));
+			var screen = screens.FirstOrDefault(x => x.Bounds.IntersectsWith(bounds))
+				?? screens.FirstOrDefault(x => x.Name == ScreenName)
+				?? screens[0];
 			if (screen != null)
 			{
 				var work = screen.WorkingArea;
@@ -134,9 +136,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		static bool IsFullyVisible(RectangleF bounds, IList<ScreenArea> screens)
 		{
-			var union = Union(screens.Select(x => x.WorkingArea));
-			var seen = RectangleF.Intersect(union, bounds);
-			return seen.Width * seen.Height == bounds.Width * bounds.Height;
+			return screens.Any(x => x.WorkingArea.Contains(bounds));
 		}
 
 		static RectangleF Union(IEnumerable<RectangleF> rectangles)

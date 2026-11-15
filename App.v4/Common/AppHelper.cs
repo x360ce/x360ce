@@ -237,16 +237,13 @@ namespace x360ce.App
 			// The document is Markdown and there is only one copy of it. It becomes what this box
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
-			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			// A click on a link opens its address.
+			x360ce.Engine.MarkdownRtf.Show(box, text, JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl);
 			// The colours are written into the document, so it is written again in the new ones, for as
 			// long as the box exists: the event outlives it.
-			EventHandler reload = (s, e) => box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(text);
+			EventHandler reload = (s, e) => x360ce.Engine.MarkdownRtf.Show(box, text, JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl);
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += reload;
 			box.Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= reload;
-			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
-			{
-				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);
-			};
 		}
 
 	
@@ -430,6 +427,72 @@ namespace x360ce.App
 			SynchronizeToHidHide();
 		}
 
+		/// <summary>The devices HID Hide hid that <see cref="ShowHiddenForRawInputStart"/> showed, for <see cref="HideAgainAfterRawInputStart"/> to hide again.</summary>
+		static string[] _shownForRawInputStart = new string[0];
+
+		/// <summary>Shows the controllers HID Hide hides from this program's lists, just before the engine starts reading Raw Input. Interface thread.</summary>
+		/// <remarks>
+		/// Windows opens a controller for Raw Input when a program first asks to read it, and keeps it open. A controller
+		/// HID Hide hides at that moment is refused, whatever programs HID Hide allows, and left out of Raw Input until it is
+		/// plugged in again, for this program and for every game. One Raw Input has open stays readable while hidden. So the
+		/// controllers are shown for as long as the engine takes to start, and hidden again after it
+		/// (<see cref="HideAgainAfterRawInputStart"/>).
+		///
+		/// When this program hides devices itself, all it hides are shown, as when it closes: a run that ended without
+		/// showing them, as one that crashed, left them hidden. Otherwise only the controllers HID Hide hides now and this
+		/// program lists are shown, and nothing else of HID Hide's settings is changed.
+		///
+		/// HidHide-RawInput-Workaround: removed when a released HID Hide lets Raw Input's own open through
+		/// (nefarius/HidHide pull request 226); `.ai/developer.instructions.md` says how to check.
+		/// </remarks>
+		public static void ShowHiddenForRawInputStart()
+		{
+			_shownForRawInputStart = new string[0];
+			if (SettingsManager.Options.HidHideConfigureAutomatically)
+			{
+				UnInitializeHidHide();
+				return;
+			}
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (!state.Installed || !state.Answered || !state.CloakOn)
+				return;
+			var hidden = SettingsManager.UserDevices.ItemsToArraySynchronized()
+				.Where(x => !x.IsKeyboard && !x.IsMouse)
+				.SelectMany(VirtualDriverInstaller.GetHidHidePaths)
+				.Where(state.IsHidden)
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToArray();
+			if (hidden.Length == 0)
+				return;
+			if (VirtualDriverInstaller.ChangeHidHide(VirtualDriverInstaller.GetHidHideChanges(state, new string[0], hidden, null)))
+				_shownForRawInputStart = hidden;
+		}
+
+		/// <summary>Hides again, once the engine reads Raw Input, what <see cref="ShowHiddenForRawInputStart"/> showed. Interface thread.</summary>
+		/// <remarks>
+		/// When this program hides devices itself, the devices the game uses are hidden and the others shown. Every listed device
+		/// is judged, so one no longer used by the game, unticked since the last run among them, is shown again. Otherwise exactly
+		/// the controllers that were shown are hidden again, and HID Hide's settings are as they were.
+		///
+		/// HidHide-RawInput-Workaround: removed with <see cref="ShowHiddenForRawInputStart"/>.
+		/// </remarks>
+		public static void HideAgainAfterRawInputStart()
+		{
+			if (SettingsManager.Options.HidHideConfigureAutomatically)
+			{
+				SettingsManager.AutoHideShowMappedDevices(SettingsManager.CurrentGame);
+				SynchronizeToHidHide();
+				return;
+			}
+			var shown = _shownForRawInputStart;
+			_shownForRawInputStart = new string[0];
+			if (shown.Length == 0)
+				return;
+			var state = VirtualDriverInstaller.GetHidHideState(true);
+			if (state.Installed && state.Answered)
+				VirtualDriverInstaller.ChangeHidHide(VirtualDriverInstaller.GetHidHideChanges(state, shown, new string[0], null));
+		}
+
 		/// <summary>Makes HID Hide show every device it hides, and clears every device's Hide box.</summary>
 		/// <returns>False when HID Hide is not installed or did not accept the change, in which case no box is cleared.</returns>
 		public static bool UnhideAllDevices()
@@ -446,13 +509,19 @@ namespace x360ce.App
 		}
 
 		/// <summary>Makes HID Hide hide the devices whose Hide box is ticked and show the others: these devices, or every one listed.</summary>
+		/// <remarks>
+		/// Asked for every device, HID Hide is read even when none is listed, so a copy in a new folder, which has listed
+		/// nothing yet, may see the controllers HID Hide hides (<see cref="VirtualDriverInstaller.GetHidHideChanges"/>).
+		/// After a change the devices are read again, as HID Hide sends no device change for it.
+		/// </remarks>
 		/// <returns>False when HID Hide is not installed or did not accept the change.</returns>
 		public static bool SynchronizeToHidHide(params Guid[] instanceGuids)
 		{
+			var every = instanceGuids == null || instanceGuids.Length == 0;
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
-				devices = instanceGuids == null || instanceGuids.Length == 0
+				devices = every
 					? SettingsManager.UserDevices.Items.ToArray()
 					: SettingsManager.UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			}
@@ -467,13 +536,17 @@ namespace x360ce.App
 				else if (!ud.IsHidden)
 					show.AddRange(paths);
 			}
-			if (hide.Count == 0 && show.Count == 0)
+			if (!every && hide.Count == 0 && show.Count == 0)
 				return true;
 			var state = VirtualDriverInstaller.GetHidHideState(true);
 			if (!state.Installed || !state.Answered)
-				return false;
+				return hide.Count == 0 && show.Count == 0;
 			var changes = VirtualDriverInstaller.GetHidHideChanges(state, hide.ToArray(), show.ToArray(), System.Windows.Forms.Application.ExecutablePath);
-			return VirtualDriverInstaller.ChangeHidHide(changes);
+			if (!VirtualDriverInstaller.ChangeHidHide(changes))
+				return false;
+			if (changes.Length > 0 && Global.DHelper != null)
+				Global.DHelper.UpdateDevicesEnabled = true;
+			return true;
 		}
 
 		#endregion
@@ -506,23 +579,28 @@ namespace x360ce.App
 			return device.InputSource == InputSourceType.RawInput ? "Raw Input" : device.InputSource.ToString();
 		}
 
-		/// <summary>The pale background of a device's row in the device list, one for each way the program reads devices.</summary>
+		/// <summary>
+		/// The pale background of a device's row in the device lists and the controller tabs' lists, one for each way the
+		/// program reads devices; the plain window for a mapping whose device is not known.
+		/// </summary>
 		/// <remarks>
 		/// Blue for DirectInput, as x360ce 5 colours it, teal for Raw Input, and violet for the devices plugins make. Green and
 		/// the warm colours are left out: the status lights use them to say how well something works, and a source is no
-		/// verdict. Faint enough for text to read as on the plain window, and dark in the dark theme.
+		/// verdict. Faint enough for text, and the fainter text of an unavailable row, to read as on the plain window: each
+		/// dark tint stands as far above the dark field (BackgroundWhite) in lightness as its light tint stands below white,
+		/// in the same hue, with about twice the strength of colour, which keeps the three apart so near black.
 		/// </remarks>
 		public static Color GetInputSourceTint(Engine.Data.UserDevice device)
 		{
 			var dark = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.IsDark;
-			switch (device.InputSource)
+			switch (device?.InputSource)
 			{
 				case InputSourceType.DirectInput:
-					return dark ? Color.FromArgb(0x2A, 0x33, 0x42) : Color.FromArgb(0xEA, 0xF1, 0xFB);
+					return dark ? Color.FromArgb(0x15, 0x1D, 0x2B) : Color.FromArgb(0xEA, 0xF1, 0xFB);
 				case InputSourceType.RawInput:
-					return dark ? Color.FromArgb(0x25, 0x3B, 0x39) : Color.FromArgb(0xE5, 0xF5, 0xF2);
+					return dark ? Color.FromArgb(0x0B, 0x21, 0x1F) : Color.FromArgb(0xE5, 0xF5, 0xF2);
 				case InputSourceType.Plugin:
-					return dark ? Color.FromArgb(0x36, 0x2F, 0x44) : Color.FromArgb(0xF1, 0xEB, 0xFA);
+					return dark ? Color.FromArgb(0x21, 0x1A, 0x2E) : Color.FromArgb(0xF1, 0xEB, 0xFA);
 				default:
 					return SystemColors.Window;
 			}
@@ -683,11 +761,121 @@ namespace x360ce.App
 		#region Chart box
 
 		/// <summary>The room round a chart inside its box, and the rounding of the box's corners, in device-independent pixels.</summary>
-		const int ChartPadding = 10;
-		const int ChartCornerRadius = 5;
+		const int ChartPadding = 12;
+		const int ChartCornerRadius = 4;
 
 		/// <summary>The faint grey of a chart's frame and grid lines.</summary>
 		public static readonly Color ChartLineColor = Color.FromArgb(32, Color.Gray);
+
+		/// <summary>
+		/// The height a table's rows need: each row as tall as its tallest control with its margins, as the table makes it,
+		/// leaving out a control that takes its height from the rows: one that spans several, or stretches to its own.
+		/// </summary>
+		/// <remarks>
+		/// For a control as tall as its rows, which a table that fills it cannot tell it. A control that stretches to its row
+		/// is as tall as the row already is, so counting it would keep a row made taller from ever growing shorter.
+		/// </remarks>
+		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table)
+		{
+			return RowsHeight(table, table.DisplayRectangle.Width);
+		}
+
+		/// <summary>The height a table's rows need at a width of the table, as <see cref="RowsHeight(System.Windows.Forms.TableLayoutPanel)"/>.</summary>
+		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table, int tableWidth)
+		{
+			const System.Windows.Forms.AnchorStyles topAndBottom = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
+			const System.Windows.Forms.AnchorStyles leftAndRight = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			var rows = 0;
+			for (var row = 0; row < table.RowCount; row++)
+			{
+				var tallest = 0;
+				foreach (System.Windows.Forms.Control control in table.Controls)
+				{
+					if (table.GetRow(control) != row || table.GetRowSpan(control) > 1)
+						continue;
+					var stretches = control.Dock == System.Windows.Forms.DockStyle.None
+						? (control.Anchor & topAndBottom) == topAndBottom
+						: control.Dock != System.Windows.Forms.DockStyle.Top && control.Dock != System.Windows.Forms.DockStyle.Bottom;
+					if (stretches)
+						continue;
+					// As tall as it is at the width the table gives it: a text stretched across its columns wraps at them.
+					var across = control.Dock != System.Windows.Forms.DockStyle.None || (control.Anchor & leftAndRight) == leftAndRight;
+					var width = control.AutoSize && across ? CellWidth(table, control, tableWidth) : control.Width;
+					tallest = Math.Max(tallest, (control.AutoSize ? control.GetPreferredSize(new Size(Math.Max(0, width), 0)).Height : control.Height) + control.Margin.Vertical);
+				}
+				rows += tallest;
+			}
+			return rows;
+		}
+
+		/// <summary>
+		/// The width a control stretched across its columns gets at a width of the table: its columns' widths, and its share of
+		/// the room the table gains or loses from the width it was last laid out at, which goes to the columns sized in percent.
+		/// </summary>
+		/// <remarks>The widths a table holds are those of its last layout.</remarks>
+		static int CellWidth(System.Windows.Forms.TableLayoutPanel table, System.Windows.Forms.Control control, int tableWidth)
+		{
+			var widths = table.GetColumnWidths();
+			var first = table.GetColumn(control);
+			var last = first + table.GetColumnSpan(control);
+			var cell = 0;
+			var percent = 0f;
+			var spanned = 0f;
+			for (var i = 0; i < widths.Length; i++)
+			{
+				var style = i < table.ColumnStyles.Count ? table.ColumnStyles[i] : null;
+				var share = style != null && style.SizeType == System.Windows.Forms.SizeType.Percent ? style.Width : 0f;
+				percent += share;
+				if (i < first || i >= last)
+					continue;
+				cell += widths[i];
+				spanned += share;
+			}
+			var room = tableWidth - widths.Sum();
+			return cell + (percent > 0 ? (int)(room * spanned / percent) : 0) - control.Margin.Horizontal;
+		}
+
+		/// <summary>
+		/// Room given in pixels at 100 %, at the screen's scale, for a control made after Windows Forms has scaled the window
+		/// it goes on, which it then does not scale.
+		/// </summary>
+		public static System.Windows.Forms.Padding ScaledPadding(int left, int top, int right, int bottom)
+		{
+			var scale = JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale;
+			return new System.Windows.Forms.Padding((int)Math.Round(left * scale), (int)Math.Round(top * scale),
+				(int)Math.Round(right * scale), (int)Math.Round(bottom * scale));
+		}
+
+		/// <summary>
+		/// Widens a window, within its screen's working area, by what its tool bars lack to show every item on themselves
+		/// rather than in their overflow menus.
+		/// </summary>
+		/// <remarks>
+		/// Called from the window's own load, when the tool bars' pictures and text are at the screen's scale; the window is
+		/// themed first, as it would otherwise be only when it first becomes active, after it is placed. What stands beside a
+		/// tool bar is anchored or docked to both sides, so it takes the width. Each tool bar is measured and widened with its
+		/// overflow menu off: Windows Forms measures an item in that menu as a menu item, wider than on the bar, and leaves it
+		/// there while the bar is narrower than that.
+		/// </remarks>
+		/// <returns>True when the window was widened, so it is placed again as asked.</returns>
+		public static bool WidenToShowToolBars(System.Windows.Forms.Form form)
+		{
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(form);
+			var strips = JocysCom.ClassLibrary.Controls.ControlsHelper.GetAll<System.Windows.Forms.ToolStrip>(form)
+				.Where(x => x.CanOverflow && !(x is System.Windows.Forms.StatusStrip)).ToList();
+			var lacking = 0;
+			foreach (var strip in strips)
+			{
+				strip.CanOverflow = false;
+				strip.PerformLayout();
+				lacking = Math.Max(lacking, strip.PreferredSize.Width - strip.Width);
+			}
+			if (lacking > 0)
+				form.Width = Math.Min(form.Width + lacking, System.Windows.Forms.Screen.FromControl(form).WorkingArea.Width);
+			foreach (var strip in strips)
+				strip.CanOverflow = true;
+			return lacking > 0;
+		}
 
 		/// <summary>Where a chart stands inside its box: the box less the room round it.</summary>
 		public static Rectangle ChartBounds(System.Windows.Forms.Control box)
@@ -697,15 +885,17 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// Paints a chart's box as the WPF version draws it: rounded, without an edge, in the window colour, the control
-		/// colour while disabled. The box's own background is transparent, so its corners show the page.
+		/// Paints a chart's box as the WPF version draws it: rounded, without an edge, in the window colour; while disabled, in
+		/// the colour of a box that cannot be changed, as the disabled boxes beside it. The box's own background is
+		/// transparent, so its corners show the page.
 		/// </summary>
-		public static void PaintChartBox(Graphics g, System.Windows.Forms.Control box, bool enabled)
+		/// <remarks>A disabled chart still shows what it plots, at <see cref="EngineHelper.DisabledOpacity"/>, so the page keeps its look.</remarks>
+		public static void PaintChartBox(Graphics g, System.Windows.Forms.Control box)
 		{
 			var smoothing = g.SmoothingMode;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 			var corner = (int)Math.Round(ChartCornerRadius * JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale);
-			using (var face = new SolidBrush(enabled ? SystemColors.Window : SystemColors.Control))
+			using (var face = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.FrameFace(box)))
 			using (var path = RoundedRectangle(new Rectangle(0, 0, box.Width - 1, box.Height - 1), corner))
 				g.FillPath(face, path);
 			g.SmoothingMode = smoothing;

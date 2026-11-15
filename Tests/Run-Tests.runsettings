@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The settings Run-Tests.ps1 runs the tests with. The test assembly gets an application domain of its own, so the
+	program's folder is the tests' output folder and the program's file is the process's, as when x360ce runs. In
+	vstest.console's own domain both would be vstest's.
+-->
+<RunSettings>
+	<RunConfiguration>
+		<DisableAppDomain>false</DisableAppDomain>
+	</RunConfiguration>
+	<MSTest>
+		<DisableAppDomain>false</DisableAppDomain>
+	</MSTest>
+</RunSettings>

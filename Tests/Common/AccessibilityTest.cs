@@ -1,10 +1,12 @@
-﻿// @under-test: App.v4/Common/ImageInfos.cs, App.v4/Controls/PadControl.Designer.cs, App.v4/MainForm.Designer.cs
+﻿// @under-test: App.v4/Common/ImageInfos.cs, App.v4/Controls/PadControl.Designer.cs, App.v4/MainForm.Designer.cs, App.v3/Controls/*.Designer.cs, App.v3/Controls/AxisToButtonUserControl.cs
 // @area: accessibility   @layer: ui-wpf
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using x360ce.App;
 using x360ce.App.Controls;
@@ -159,6 +161,29 @@ namespace x360ce.Tests
 			{
 				Ui.CloseApp(process);
 			}
+		}
+
+		[TestMethod, TestCategory("accessibility")]
+		[Description("No name a person reads beside a box, in a group's frame, on a button or over a column ends with a colon, in x360ce 4, x360ce 3 or the library they share, whether a designer or the code sets it, so every name reads alike")]
+		public void No_name_ends_with_a_colon()
+		{
+			// x360ce 3 cannot be referenced beside this version, so the sources of the three are read: each statement that sets
+			// a name, over as many lines as it takes, whose last text ends with a colon.
+			var root = Ui.RepoRoot.FullName;
+			var name = new Regex(@"\.(Text|HeaderText) = [^;]*:""\s*;");
+			var found = new List<string>();
+			foreach (var folder in new[] { "App.v4", "App.v3", Path.Combine("Engine", "JocysCom") })
+				foreach (var file in Directory.GetFiles(Path.Combine(root, folder), "*.cs", SearchOption.AllDirectories))
+				{
+					var relative = file.Substring(root.Length + 1);
+					if (relative.Split(Path.DirectorySeparatorChar).Any(x => x == "obj" || x == "bin"))
+						continue;
+					var source = File.ReadAllText(file);
+					foreach (Match match in name.Matches(source))
+						found.Add(string.Format("{0}:{1}: {2}", relative, source.Take(match.Index).Count(x => x == '\n') + 1,
+							Regex.Replace(match.Value, @"\s+", " ")));
+				}
+			Assert.AreEqual(0, found.Count, found.Count + " name(s) end with a colon:" + Environment.NewLine + string.Join(Environment.NewLine, found));
 		}
 
 	}

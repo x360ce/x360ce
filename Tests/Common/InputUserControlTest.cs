@@ -1,5 +1,8 @@
-// @under-test: App.v4/Controls/PadTabPages/General/InputUserControl.cs
+// @under-test: App.v4/Controls/PadTabPages/General/InputUserControl.cs, App.v4/Controls/PadTabPages/General/InputChipGroup.cs
 // @area: ui   @layer: unit
+using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.Themes;
+using JocysCom.ClassLibrary.Controls.UiTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
 using System;
@@ -149,14 +152,14 @@ namespace x360ce.Tests
 					panel.CreateControl();
 					panel.UpdateFrom(Device(128, 0, 0, 0));
 					panel.PerformLayout();
-					var table = (ScrollableControl)panel.Controls.Find("LayoutTable", false).Single();
+					// The panel scrolls, round the table of its sections, which is as tall as they are.
 					var group = panel.ButtonChips;
-					Assert.IsTrue(group.Height > table.ClientSize.Height, "The test device must be taller than the column.");
-					table.AutoScrollPosition = new Point(0, int.MaxValue / 2);
-					var bottom = table.PointToClient(group.PointToScreen(new Point(0, group.Height))).Y;
-					Assert.IsTrue(bottom <= table.ClientSize.Height, string.Format(
+					Assert.IsTrue(group.Height > panel.ClientSize.Height, "The test device must be taller than the column.");
+					panel.AutoScrollPosition = new Point(0, int.MaxValue / 2);
+					var bottom = panel.PointToClient(group.PointToScreen(new Point(0, group.Height))).Y;
+					Assert.IsTrue(bottom <= panel.ClientSize.Height, string.Format(
 						"Scrolled as far as it goes, the last chip row ends at {0} but the column shows only {1}.",
-						bottom, table.ClientSize.Height));
+						bottom, panel.ClientSize.Height));
 				}
 			});
 		}
@@ -175,15 +178,15 @@ namespace x360ce.Tests
 						panel.CreateControl();
 						panel.UpdateFrom(Device(128, 0xFFFFFF, 0xFF, 4));
 						panel.PerformLayout();
-						var table = (ScrollableControl)panel.Controls.Find("LayoutTable", false).Single();
-						Assert.IsTrue(table.VerticalScroll.Visible, width + " px wide: a device taller than the column must scroll up and down.");
-						Assert.IsFalse(table.HorizontalScroll.Visible, string.Format(
+						// The panel scrolls, round the table of its sections, which is as tall as they are.
+						Assert.IsTrue(panel.VerticalScroll.Visible, width + " px wide: a device taller than the column must scroll up and down.");
+						Assert.IsFalse(panel.HorizontalScroll.Visible, string.Format(
 							"{0} px wide: the column scrolls sideways; its sections are {1} px wide in {2}.",
-							width, panel.ButtonsGroupBox.Width, table.ClientSize.Width));
+							width, panel.ButtonsGroupBox.Width, panel.ClientSize.Width));
 						foreach (var section in new Control[] { panel.ButtonsGroupBox, panel.AxesGroupBox, panel.SlidersGroupBox, panel.PovsGroupBox })
-							Assert.IsTrue(section.Right <= table.ClientSize.Width, string.Format(
+							Assert.IsTrue(section.Right <= panel.ClientSize.Width, string.Format(
 								"{0} px wide: {1} ends at {2} but the column shows {3}.",
-								width, section.Name, section.Right, table.ClientSize.Width));
+								width, section.Name, section.Right, panel.ClientSize.Width));
 					}
 				}
 			});
@@ -201,9 +204,139 @@ namespace x360ce.Tests
 					panel.CreateControl();
 					panel.UpdateFrom(Device(4, 0x1, 0, 0));
 					panel.PerformLayout();
-					Assert.IsTrue(panel.PovsGroupBox.Bottom < panel.Height / 2, string.Format(
+					var last = Sections(panel).Last(ControlsHelper.IsVisible);
+					Assert.IsTrue(last.Bottom < panel.Height / 2, string.Format(
 						"The last section ends at {0} of {1}; the sections must not stretch to fill the column.",
-						panel.PovsGroupBox.Bottom, panel.Height));
+						last.Bottom, panel.Height));
+				}
+			});
+		}
+
+		/// <summary>The panel's four groups, top to bottom.</summary>
+		static Control[] Sections(InputUserControl panel)
+		{
+			return new Control[] { panel.ButtonsGroupBox, panel.AxesGroupBox, panel.SlidersGroupBox, panel.PovsGroupBox };
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("A group the device has nothing in is hidden, and the AI door says so, and the groups below it close up; with no device, before any device and after one, the four groups are hidden and the source line stands alone")]
+		public void Groups_the_device_lacks_are_hidden_and_the_rest_close_up()
+		{
+			Ui.OnUiThread(() =>
+			{
+				using (var form = new Form { ClientSize = new Size(384, 700), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+				using (var panel = new InputUserControl { Dock = DockStyle.Fill })
+				{
+					form.Controls.Add(panel);
+					form.Show();
+					var devices = new[]
+					{
+						new { Name = "no device", Device = (UserDevice)null, Shown = new[] { false, false, false, false } },
+						new { Name = "buttons and axes", Device = Device(12, 0x3, 0, 0), Shown = new[] { true, true, false, false } },
+						new { Name = "pedals", Device = Device(0, 0x7, 0, 0), Shown = new[] { false, true, false, false } },
+						new { Name = "a stick without axes", Device = Device(6, 0, 0x1, 1), Shown = new[] { true, false, true, true } },
+						new { Name = "every kind", Device = Device(12, 0x3, 0x1, 1), Shown = new[] { true, true, true, true } },
+						new { Name = "no device again", Device = (UserDevice)null, Shown = new[] { false, false, false, false } },
+						new { Name = "a device after none", Device = Device(12, 0x3, 0, 0), Shown = new[] { true, true, false, false } },
+					};
+					foreach (var device in devices)
+					{
+						panel.UpdateFrom(device.Device);
+						Application.DoEvents();
+						var sections = Sections(panel);
+						var chips = new Control[] { panel.ButtonChips, panel.AxisChips, panel.SliderChips, panel.PovChips };
+						var tree = UiTreeWalker.Read(panel, false, "");
+						for (var i = 0; i < sections.Length; i++)
+						{
+							var at = device.Name + ", " + sections[i].Name;
+							Assert.AreEqual(device.Shown[i], ControlsHelper.IsVisible(sections[i]), at + (device.Shown[i] ? " is hidden." : " is shown."));
+							// The group and the chips in it, each as the AI door reports it.
+							foreach (var control in new[] { sections[i], chips[i] })
+							{
+								var node = Find(tree, control.Name);
+								Assert.IsNotNull(node, at + ": the AI door does not list " + control.Name + ".");
+								Assert.AreEqual(!device.Shown[i], node.Hidden, at + ": the AI door says " + control.Name + " is " + (node.Hidden ? "hidden." : "shown."));
+							}
+						}
+						// The shown groups follow one another as when none is hidden: the source line, then each group under the one before.
+						var above = (Control)panel.SourceLabel;
+						foreach (var section in sections.Where(ControlsHelper.IsVisible))
+						{
+							Assert.AreEqual(above.Bottom + above.Margin.Bottom + section.Margin.Top, section.Top, string.Format(
+								"{0}: {1} starts at {2}, not under {3}, which ends at {4}.", device.Name, section.Name, section.Top, above.Name, above.Bottom));
+							above = section;
+						}
+					}
+				}
+			});
+		}
+
+		static UiNode Find(UiNode node, string id)
+		{
+			if (node.Id == id)
+				return node;
+			if (node.Items != null)
+				foreach (var item in node.Items)
+				{
+					var found = Find(item, id);
+					if (found != null)
+						return found;
+				}
+			return null;
+		}
+
+		[TestMethod, TestCategory("ui")]
+		[Description("A full row of chips ends at its strip's padding, and the chips keep the same room from the frame at the left and the right, and the button chips below them too, at any width, in both themes")]
+		public void Chips_keep_the_same_room_from_the_frame_on_every_side()
+		{
+			Ui.OnUiThread(() =>
+			{
+				try
+				{
+					// The frame's lines: the dark one at the box's edges, and the light one beside it, inside at the left and
+					// outside at the right and the bottom. Both are ink: a gap is the rows or columns with no ink at all.
+					var line = Math.Max(1, (int)Math.Floor(ControlsHelper.DpiScale));
+					foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
+						foreach (var width in new[] { 260, 384, 437 })
+							using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+							using (var panel = new InputUserControl { Dock = DockStyle.Fill })
+							{
+								// Scaled as the controller page scales the panel, whose sizes are made at 100 %.
+								form.SuspendLayout();
+								form.AutoScaleMode = AutoScaleMode.Font;
+								form.AutoScaleDimensions = new SizeF(6F, 13F);
+								form.Controls.Add(panel);
+								form.ResumeLayout(false);
+								form.ClientSize = new Size(width, 900);
+								FormsTheme.SetTheme(theme);
+								FormsTheme.Apply(form);
+								form.Show();
+								panel.UpdateFrom(Device(23, 0x3F, 0x3, 1));
+								Application.DoEvents();
+								foreach (var chips in new[] { panel.ButtonChips, panel.AxisChips, panel.SliderChips, panel.PovChips })
+								{
+									// The box, round the table that holds the chips, and the chips' place in it.
+									var group = chips.Parent.Parent;
+									var name = string.Format("{0} {1} px {2}", theme, width, group.Name);
+									var at = group.RectangleToClient(chips.Parent.RectangleToScreen(chips.Bounds));
+									// A first row followed by another is full.
+									var first = chips.BoundsOf(chips.Chips[0]);
+									var row = chips.Chips.Select(x => chips.BoundsOf(x)).Where(x => x.Top == first.Top).ToList();
+									if (row.Count < chips.Chips.Count)
+										Assert.AreEqual(chips.ClientSize.Width - chips.Padding.Right, row.Max(x => x.Right), name + ": a full row of chips stops short of its strip's padding.");
+									// The chips stand inside their strip's padding, a control's margin.
+									var left = at.Left + chips.Padding.Left - line * 2;
+									var right = group.ClientSize.Width - line * 2 - (at.Right - chips.Padding.Right);
+									var below = group.ClientSize.Height - line * 2 - (at.Bottom - chips.Padding.Bottom);
+									Assert.AreEqual(left, right, name + ": the chips keep " + left + " px from the frame at the left and " + right + " px at the right.");
+									if (chips == panel.ButtonChips)
+										Assert.AreEqual(left, below, name + ": the chips keep " + left + " px from the frame at the sides and " + below + " px below.");
+								}
+							}
+				}
+				finally
+				{
+					FormsTheme.SetTheme(ThemeType.Light);
 				}
 			});
 		}

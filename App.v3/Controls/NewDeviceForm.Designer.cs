@@ -100,7 +100,7 @@
 			this.BrowseLabel.Name = "BrowseLabel";
 			this.BrowseLabel.Size = new System.Drawing.Size(340, 13);
 			this.BrowseLabel.TabIndex = 0;
-			this.BrowseLabel.Text = "Locate and install settings manually. Search for settings in this location:";
+			this.BrowseLabel.Text = "Locate and install settings manually. Search for settings in this location";
 			this.BrowseLabel.Click += new System.EventHandler(this.BrowseLabel_Click);
 			// 
 			// CloseButton

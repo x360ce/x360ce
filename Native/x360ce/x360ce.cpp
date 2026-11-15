@@ -86,6 +86,9 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 		if ((*it)->m_passthrough)
 			XInputModuleManager::Get().XInputEnable(enable);
 	}
+	// Xbox controllers mapped from SDL pass through, now or once the scan finds them.
+	if (ControllerManager::Get().GetConfig().m_autoMap && XInputModuleManager::Available())
+		XInputModuleManager::Get().XInputEnable(enable);
 
 	ControllerManager::Get().XInputEnable(enable);
 }

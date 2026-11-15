@@ -2,6 +2,7 @@
 // @area: update   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using x360ce.Engine;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;

@@ -24,6 +24,13 @@ namespace x360ce.App.Controls
 		public OptionsSettingsUserControl()
 		{
 			InitializeComponent();
+			// Scaled by the font once, after the designer's tables have resumed their layout: scaled in the designer, Windows
+			// Forms scales a table as it resumes and then again with the control. The mode first, as changing it clears the
+			// dimensions.
+			SuspendLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			ResumeLayout(false);
 			if (IsDesignMode)
 				return;
 			MoveModeComboBox.Items.AddRange(new object[]

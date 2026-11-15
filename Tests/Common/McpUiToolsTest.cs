@@ -1,4 +1,4 @@
-// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpServer.cs
+// @under-test: Engine/JocysCom/Mcp/McpUiTools.cs, Engine/JocysCom/Mcp/McpUiTools.Forms.cs, Engine/JocysCom/Mcp/McpServer.cs
 // @area: mcp   @layer: unit
 using JocysCom.ClassLibrary.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -65,6 +65,46 @@ namespace x360ce.Tests
 				Assert.AreEqual(1, pressed);
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Nowhere", "1")).Message, "No element");
 				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiSet("Box/Slider", "500")).Message, "0 to 100");
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A menu a button shows on its own is a window while it is open: the press names it and its entries, it is listed and read, and an entry is pressed by path; a menu without a name goes by Menu")]
+		public void A_menu_a_button_shows_is_read_and_pressed_by_path()
+		{
+			WithWindow(AiAccess.Configure, form =>
+			{
+				var bar = new ToolStrip { Name = "Bar" };
+				var add = new ToolStripButton { Name = "Add", Text = "Add" };
+				var chosen = new List<string>();
+				string menuName = "KindsMenu";
+				add.Click += (s, e) =>
+				{
+					var menu = new ContextMenuStrip { Name = menuName };
+					foreach (var kind in new[] { "First", "Second" })
+					{
+						var item = new ToolStripMenuItem(kind + " Kind") { Name = kind + "MenuItem" };
+						item.Click += (o, a) => chosen.Add(((ToolStripItem)o).Name);
+						menu.Items.Add(item);
+					}
+					menu.Show(bar, new System.Drawing.Point(0, bar.Height));
+				};
+				bar.Items.Add(add);
+				form.Controls.Add(bar);
+				form.Show();
+				var said = McpUiTools.UiInvoke("Bar/Add");
+				StringAssert.Contains(said, "KindsMenu/SecondMenuItem (Second Kind)", "The press does not say which menu opened, or how to press its entries.");
+				var windows = ((object[])McpUiTools.UiWindows()).Cast<Dictionary<string, object>>().Select(x => (string)x["Path"]).ToArray();
+				CollectionAssert.Contains(windows, "KindsMenu", "The open menu is not listed among the windows.");
+				var read = Serializer.DeserializeFromJson<UiNode>(McpUiTools.UiRead("KindsMenu"));
+				Assert.IsTrue(read.Items.Any(x => x.Path == "KindsMenu/FirstMenuItem"), "The menu's entries cannot be read by path.");
+				Assert.IsNull(McpUiTools.UiInvoke("KindsMenu/SecondMenuItem"));
+				CollectionAssert.AreEqual(new[] { "SecondMenuItem" }, chosen, "Pressing the entry did not choose it.");
+				// A menu given no name of its own.
+				menuName = "";
+				StringAssert.Contains(McpUiTools.UiInvoke("Bar/Add"), "Menu/FirstMenuItem (First Kind)");
+				Assert.IsNull(McpUiTools.UiInvoke("Menu/FirstMenuItem"));
+				CollectionAssert.AreEqual(new[] { "SecondMenuItem", "FirstMenuItem" }, chosen);
 			});
 		}
 
@@ -514,6 +554,21 @@ namespace x360ce.Tests
 				Assert.IsFalse(McpServer.ToJson(McpUiTools.UiCurrent()).Contains(token), "The element with focus carries the token.");
 				StringAssert.Contains(McpUiTools.UiRead("Ai/Port"), "37360", "Withholding the token withheld another box's value too.");
 			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Every window the program opens has a name, as the door lists only named windows beside the main one")]
+		public void Every_window_has_a_name_the_door_lists_it_by()
+		{
+			var unnamed = new List<string>();
+			Ui.OnUiThread(() =>
+			{
+				foreach (var type in WindowIconTest.WindowTypes())
+					using (var window = (Form)Activator.CreateInstance(type, true))
+						if (string.IsNullOrEmpty(window.Name))
+							unnamed.Add(type.FullName);
+			});
+			Assert.AreEqual(0, unnamed.Count, "Windows the door cannot list: " + string.Join(", ", unnamed));
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]

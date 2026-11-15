@@ -1,5 +1,6 @@
 ﻿using SharpDX.XInput;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
@@ -48,18 +49,10 @@ namespace x360ce.App.DInput
 				// If device was not found then continue.
 				if (ud == null)
 					continue;
-				// If device Direct Input state failed then...
-				if (ud.JoState == null)
-				{
-					// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
-					// A plugin device has none either. It is converted once its plugin has given it a state.
-					var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
-					var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
-					if (!rawInput && !plugin)
-						continue;
-				}
-				// If device is offline then continue.
-				if (!ud.IsOnline)
+				// The state the row converts, from the device it is read through this pass.
+				var diState = GetConvertedState(ref ud, routing, i);
+				// If custom directInput state is not available then continue.
+				if (diState == null)
 					continue;
 				//// If device is not set or test device then...
 				//var device = ud.Device;
@@ -70,11 +63,6 @@ namespace x360ce.App.DInput
 				var maps = rowMaps[i];
 				// If setting was not found then continue.
 				if (maps == null)
-					continue;
-				// What an AutoHotkey script made of the device's state, when one changes it.
-				var diState = ud.ScriptState ?? ud.SourceState;
-				// If custom directInput state is not available then continue.
-				if (diState == null)
 					continue;
 				int index;
 
@@ -123,14 +111,24 @@ namespace x360ce.App.DInput
 						gp.Buttons |= GamepadButtonFlags.DPadLeft;
 				}
 
-				// How a mouse moves each stick, when the row's Mouse page sets it: whether it is on this pass, and the pointer.
+				// How a mouse moves each stick, when the row's Mouse page sets it: whether it is on this pass, the pointer, and
+				// the state that stick's mappings read, the device's with its moving controls in the stick's style. Every
+				// other target reads the device's state.
 				var mouse = rowMouse[i];
+				SourceState leftState = null;
+				SourceState rightState = null;
 				if (mouse != null)
 				{
 					if (mouse[0] != null)
+					{
 						mouse[0].BeginPass(diState);
+						leftState = mouse[0].Normalise(diState, ud, maps, TargetType.LeftThumbX, TargetType.LeftThumbY, now);
+					}
 					if (mouse[1] != null)
+					{
 						mouse[1].BeginPass(diState);
+						rightState = mouse[1].Normalise(diState, ud, maps, TargetType.RightThumbX, TargetType.RightThumbY, now);
+					}
 				}
 
 				// --------------------------------------------------------
@@ -151,11 +149,17 @@ namespace x360ce.App.DInput
 
 				foreach (var map in maps)
 				{
+					// The state the target reads: its stick's, when the Mouse page sets one for it, or the device's.
+					var source = diState;
+					if (leftState != null && (map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY))
+						source = leftState;
+					else if (rightState != null && (map.Target == TargetType.RightThumbX || map.Target == TargetType.RightThumbY))
+						source = rightState;
 					// A row driven by a formula names no single control, so it is worked out here and
 					// the rest of this loop, which is entirely about one control, is skipped.
 					if (map.Expression != null)
 					{
-						ApplyExpression(map, diState, ref gp);
+						ApplyExpression(map, source, ref gp);
 						continue;
 					}
 					// If not mapped then continue.
@@ -253,8 +257,8 @@ namespace x360ce.App.DInput
 					{
 						// Get source value.
 						int[] values = map.IsAxis
-							? diState.Axis
-							: diState.Sliders;
+							? source.Axis
+							: source.Sliders;
 
 						// If index is out of range then...
 						if (map.Index > values.Length)
@@ -322,19 +326,6 @@ namespace x360ce.App.DInput
 						// --------------------------------------------------------
 						else if (map.Target != TargetType.None)
 						{
-							// A control that reports movement, on a stick the Mouse page sets: read in that page's style, from the
-							// device's running totals, which only a DirectInput device that reports movement keeps.
-							if (relative && mouse != null && ud.SourceStateRead != null)
-							{
-								var left = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY;
-								var stick = mouse[left ? 0 : 1];
-								if (stick != null)
-								{
-									var totals = map.IsAxis ? ud.SourceStateRead.Axis : ud.SourceStateRead.Sliders;
-									var across = map.Target == TargetType.LeftThumbX || map.Target == TargetType.RightThumbX;
-									v = stick.Value(across ? 0 : 1, totals[map.Index - 1], ud.OriginSourceStateTime, now);
-								}
-							}
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
 							// Set negative center value (-1) to 0.
 							if (thumbValue == -1)
@@ -374,6 +365,46 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>The state a row converts this pass, or null when it converts none, and the device that state is read from.</summary>
+		/// <remarks>
+		/// <see cref="UpdateXiStates"/> converts each row through it, and a controller page's charts read through it the
+		/// reading the row was converted from, so the two cannot differ.
+		///
+		/// HidHide-RawInput-Workaround: the stand-in goes with <see cref="DeviceRouting.RowStandIns"/>.
+		/// </remarks>
+		/// <param name="ud">The row's device; set to the one read in its place, its DirectInput twin, while Raw Input cannot see it.</param>
+		/// <param name="routing">The routing the row is one of.</param>
+		/// <param name="row">The row's place in <see cref="DeviceRouting.Rows"/>.</param>
+		internal static SourceState GetConvertedState(ref UserDevice ud, DeviceRouting routing, int row)
+		{
+			// A Raw Input device Raw Input cannot see is read through its DirectInput twin, which fills the same slots.
+			if (ud.InputSourceType == (int)InputSourceType.RawInput && (ud.RawInputMissing || !ud.IsOnline))
+			{
+				var standIn = routing.RowStandIns[row];
+				if (standIn != null && standIn.IsOnline && standIn.JoState != null)
+					ud = standIn;
+			}
+			// If device Direct Input state failed then...
+			if (ud.JoState == null)
+			{
+				// A Raw Input device has no DirectInput state. It is converted unless the hub has lost it.
+				// A plugin device has none either. It is converted once its plugin has given it a state.
+				var rawInput = ud.InputSourceType == (int)InputSourceType.RawInput && !ud.RawInputMissing;
+				var plugin = ud.InputSourceType == (int)InputSourceType.Plugin && ud.SourceState != null;
+				if (!rawInput && !plugin)
+					return null;
+			}
+			return GetDeviceState(ud);
+		}
+
+		/// <summary>A device's state as this pass reads it: what an AutoHotkey script made of it, when one changes it, or its own; null when the device is missing or offline.</summary>
+		internal static SourceState GetDeviceState(UserDevice ud)
+		{
+			if (ud == null || !ud.IsOnline)
+				return null;
+			return ud.ScriptState ?? ud.SourceState;
+		}
+
 		/// <summary>
 		/// Buffer for a formula's source values, reused rather than allocated on every poll.
 		/// </summary>
@@ -394,10 +425,7 @@ namespace x360ce.App.DInput
 		SourceState GetExpressionSource(int pad, int number)
 		{
 			var routing = _expressionRouting;
-			var ud = routing == null ? null : routing.GetDevice(pad, number);
-			if (ud == null || !ud.IsOnline)
-				return null;
-			return ud.ScriptState ?? ud.SourceState;
+			return GetDeviceState(routing == null ? null : routing.GetDevice(pad, number));
 		}
 
 		/// <summary>

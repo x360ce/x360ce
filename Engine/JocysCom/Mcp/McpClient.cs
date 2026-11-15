@@ -34,6 +34,12 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>Arguments that pick how the program runs rather than what a tool is given. None unless the program says.</summary>
 		public static string[] IgnoredArguments = new string[0];
 
+		/// <summary>Instance-selection switches carried into startup and assistant settings.</summary>
+		public static string[] StartupArguments = new string[0];
+
+		/// <summary>Optional ownership check for applications with independent instances.</summary>
+		public static Func<bool> IsTargetRunning;
+
 		/// <summary>What a switch starts with where the program writes one out, in its usage and in an assistant's settings: '-', or '/' where the program's own documents use that.</summary>
 		public static string SwitchPrefix = "-";
 
@@ -143,6 +149,7 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// door opens only after start-up, which a slow machine stretches. A copy that is running and
 		/// silent is reported, not doubled.
 		/// </summary>
+		/// <param name="arguments">Explicit startup arguments, or empty to use <see cref="StartupArguments"/>.</param>
 		public static void EnsureRunning(int port, string token, string exePath, string arguments = "")
 		{
 			if (Answers(port, token))
@@ -152,10 +159,12 @@ namespace JocysCom.ClassLibrary.Mcp
 			var self = Process.GetCurrentProcess().Id;
 			// The person looks at the program, not the caller: its door may be off, or open on another port.
 			var why = ": its AI assistant access may be off or use another port. The person checks it " + McpCatalog.SettingsPlace + ".";
-			if (Process.GetProcessesByName(name).Any(p => p.Id != self))
+			if (IsTargetRunning != null ? IsTargetRunning() : Process.GetProcessesByName(name).Any(p => p.Id != self))
 				throw new InvalidOperationException(name + " is running but does not answer on port " + port + why);
 			// Started by the shell, so the program does not inherit the caller's output: a caller that reads
 			// the switch's output to its end would otherwise wait until the program exits.
+			if (string.IsNullOrEmpty(arguments))
+				arguments = string.Join(" ", StartupArguments.Select(QuoteArgument));
 			Process.Start(new ProcessStartInfo(exePath, arguments) { WorkingDirectory = Path.GetDirectoryName(exePath), UseShellExecute = true });
 			var until = DateTime.Now.AddSeconds(60);
 			while (DateTime.Now < until)
@@ -170,8 +179,29 @@ namespace JocysCom.ClassLibrary.Mcp
 		/// <summary>What an assistant's MCP settings need to start this program as a server: its name, the program and the switch.</summary>
 		public static string ServerSettings(string exePath)
 		{
-			var server = new Dictionary<string, object> { { "command", exePath }, { "args", new[] { SwitchPrefix + McpArgument } } };
+			var server = new Dictionary<string, object> { { "command", exePath }, { "args", new[] { SwitchPrefix + McpArgument }.Concat(StartupArguments).ToArray() } };
 			return McpServer.ToJson(new Dictionary<string, object> { { "mcpServers", new Dictionary<string, object> { { McpServer.ServerName, server } } } });
+		}
+
+		/// <summary>Quotes one Windows process argument, including embedded quotes and trailing backslashes.</summary>
+		/// <remarks>ProcessStartInfo.ArgumentList is unavailable on .NET Framework.</remarks>
+		static string QuoteArgument(string argument)
+		{
+			var quoted = new StringBuilder("\"");
+			var backslashes = 0;
+			foreach (var character in argument)
+			{
+				if (character == '\\')
+				{
+					backslashes++;
+					continue;
+				}
+				quoted.Append('\\', character == '"' ? backslashes * 2 + 1 : backslashes);
+				quoted.Append(character);
+				backslashes = 0;
+			}
+			quoted.Append('\\', backslashes * 2);
+			return quoted.Append('"').ToString();
 		}
 
 		static bool Answers(int port, string token)

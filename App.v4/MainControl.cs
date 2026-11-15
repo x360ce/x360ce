@@ -23,21 +23,36 @@ namespace x360ce.App
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// The room round the controls on the pages that scale themselves, given once the pages are scaled: Windows Forms
+			// scales such a control's own margin again each time a table round it resumes, so the designer's would be scaled
+			// several times over.
+			RecorderPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			OptionsPanel.RemotePortNumericUpDown.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			foreach (var details in new[] { GameSettingsPanel.GameDetailsControl, ProgramsPanel.GameDefaultDetailsControl })
+				foreach (var box in new[] { details.HookModeFakeVidNumericUpDown, details.HookModeFakePidNumericUpDown, details.TimeoutNumericUpDown })
+					box.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
 			FillBuletImageList();
+			// Before the tab is shown, so it never shows the controller of the tab before, and drawn once the switch is over.
+			MainTabControl.Selecting += (s, e) =>
+			{
+				if (Array.IndexOf(ControlPages, e.TabPage) >= 0 && HoldDrawing())
+					BeginInvoke((Action)ReleaseDrawing);
+				ShowPadOn(e.TabPage);
+			};
 			MainTabControl.Selected += (s, e) => PadOn(e.TabPage)?.HoldTables();
 			MainTabControl.SelectedIndexChanged += (s, e) => PadOn(MainTabControl.SelectedTab)?.ReleaseTables();
 			Pad1TabPage.Text = "Controller 1";
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
 			Pad4TabPage.Text = "Controller 4";
-			GamesToolStrip_Resize(null, null);
+			GamesToolStrip_Layout(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Other option.
 			TestButton.Visible = SettingsManager.Options.ShowTestButton;
 			ControlPages = new[] { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
 			foreach (var item in ControlPages)
 				item.ImageKey = "bullet_square_glass_grey.png";
-			BuiltPadControls = new PadControl[ControlPages.Length];
+			BuiltPadControls = new PadControl[1];
 		}
 
 		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
@@ -45,35 +60,116 @@ namespace x360ce.App
 		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
 		public AboutControl ControlAbout;
-		/// <summary>The controller pages, once they hold their settings; null before.</summary>
+		/// <summary>The controller page, once it holds its settings; null before.</summary>
+		/// <remarks>One page serves the four Controller tabs (<see cref="ShowPadOn"/>), so this holds one.</remarks>
 		public PadControl[] PadControls;
-		/// <summary>The controller pages as built, before they are given their settings.</summary>
+		/// <summary>The controller page as built, before it is given its settings.</summary>
 		internal PadControl[] BuiltPadControls;
 		public TabPage[] ControlPages;
 
-		/// <summary>Builds the controller page of a tab, 0 to 3. Windows makes none of it yet, and the page is given its settings later.</summary>
-		internal void BuildPad(int index)
+		/// <summary>Builds the controller page, on the first Controller tab. Windows makes none of it yet, and the page is given its settings later.</summary>
+		internal void BuildPad()
 		{
-			var mapTo = (MapTo)(index + 1);
-			BuiltPadControls[index] = new PadControl(mapTo)
+			BuiltPadControls[0] = new PadControl(MapTo.Controller1)
 			{
-				Name = string.Format("ControlPad{0}", (int)mapTo),
+				Name = string.Format("ControlPad{0}", (int)MapTo.Controller1),
 				Dock = DockStyle.Fill
 			};
-			Program.StartupTrace.Mark("BuildPages: pad " + (index + 1) + " built");
-			ControlPages[index].Controls.Add(BuiltPadControls[index]);
-			BuiltPadControls[index].HoldTables();
-			BuiltPadControls[index].InitPadControl();
-			BuiltPadControls[index].ReleaseTables();
-			Program.StartupTrace.Mark("BuildPages: pad " + (index + 1) + " initialised");
+			Program.StartupTrace.Mark("BuildPages: pad built");
+			ControlPages[0].Controls.Add(BuiltPadControls[0]);
+			BuiltPadControls[0].HoldTables();
+			BuiltPadControls[0].InitPadControl();
+			BuiltPadControls[0].ReleaseTables();
+			Program.StartupTrace.Mark("BuildPages: pad initialised");
 		}
 
-		/// <summary>The controller page on a tab, or null on any other tab or before the page is built.</summary>
+		/// <summary>The controller page, when it is on this tab; null on any other tab or before the page is built.</summary>
 		internal PadControl PadOn(TabPage page)
 		{
-			var index = Array.IndexOf(ControlPages, page);
-			return index < 0 ? null : BuiltPadControls[index];
+			var pad = BuiltPadControls[0];
+			return Array.IndexOf(ControlPages, page) < 0 || pad == null || pad.Parent != page ? null : pad;
 		}
+
+		/// <summary>Moves the controller page onto a Controller tab and shows that tab's controller on it.</summary>
+		/// <remarks>
+		/// The page's windows move with it rather than being made again. Before the page holds its settings it only moves:
+		/// it is given the tab's controller once it has them (<see cref="MainForm"/>'s loading).
+		/// </remarks>
+		internal void ShowPadOn(TabPage page)
+		{
+			var index = Array.IndexOf(ControlPages, page);
+			var pad = BuiltPadControls[0];
+			if (index < 0 || pad == null)
+				return;
+			if (pad.Parent != page)
+				page.Controls.Add(pad);
+			if (PadControls != null)
+				pad.SwitchTo((MapTo)(index + 1));
+		}
+
+		/// <summary>Whether the move of the controller page back to the tab shown is posted already.</summary>
+		bool _PadBackPosted;
+
+		/// <summary>Puts the controller page on a Controller tab the AI door reads, with that tab's controller, and back on the tab shown once the door's call is over.</summary>
+		/// <remarks>
+		/// The door reads and changes every Controller tab, shown or not, as it did when each tab had a page of its own. It walks
+		/// the window on the interface thread, so the move back, posted to that thread, runs once the call has finished, before
+		/// anything is drawn. Called for every control the door walks, so it returns at once for any other.
+		/// </remarks>
+		internal void PadForDoor(Control control)
+		{
+			var page = control as TabPage;
+			if (page == null || PadControls == null || Program.IsClosing)
+				return;
+			var pad = PadControls[0];
+			if (pad.Parent == page || Array.IndexOf(ControlPages, page) < 0)
+				return;
+			// The page leaves the tab shown for the length of the call, which is not to be seen.
+			if (pad.Parent == MainTabControl.SelectedTab)
+				HoldDrawing();
+			ShowPadOn(page);
+			if (_PadBackPosted || !IsHandleCreated)
+				return;
+			_PadBackPosted = true;
+			BeginInvoke((Action)(() =>
+			{
+				_PadBackPosted = false;
+				ShowPadOn(MainTabControl.SelectedTab);
+				ReleaseDrawing();
+			}));
+		}
+
+		/// <summary>Whether the tabs' drawing is held while the controller page moves.</summary>
+		bool _DrawingHeld;
+
+		/// <summary>Holds the drawing of the Game row and the tabs while the controller page moves and takes another controller's values.</summary>
+		/// <remarks>
+		/// Moved and filled while shown, the page was drawn in parts: it went blank for up to 90 ms and came back a control at
+		/// a time. Locked, nothing on this control is drawn until <see cref="ReleaseDrawing"/>, which draws it once.
+		/// Not by WM_SETREDRAW: on Windows' own tab control it stops only the tab strip, and on a plain window it works by
+		/// marking the window hidden, so a screen reader selecting a Controller tab was told the tab could not be selected.
+		/// Windows lets one window be locked at a time; when another program holds the lock, the switch is drawn as it comes.
+		/// </remarks>
+		/// <returns>True when this call held it, and so must see it released.</returns>
+		bool HoldDrawing()
+		{
+			if (_DrawingHeld || !IsHandleCreated)
+				return false;
+			_DrawingHeld = LockWindowUpdate(Handle);
+			return _DrawingHeld;
+		}
+
+		/// <summary>Lets the Game row and the tabs draw again, and draws them once, whole.</summary>
+		void ReleaseDrawing()
+		{
+			if (!_DrawingHeld)
+				return;
+			_DrawingHeld = false;
+			LockWindowUpdate(IntPtr.Zero);
+		}
+
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool LockWindowUpdate(IntPtr hWndLock);
 
 		/// <summary>Builds the About page.</summary>
 		internal void BuildAbout()
@@ -168,21 +264,37 @@ namespace x360ce.App
 			SettingsManager.UpdateCurrentGame(game);
 		}
 
-		private void GamesToolStrip_Resize(object sender, EventArgs e)
+		/// <summary>
+		/// Gives the game list what the tool bar's other items leave, each time the tool bar lays itself out: when it is
+		/// resized, and when its items change size or are shown or hidden, as the theme, a screen of another scale and the
+		/// options make them, so no item is pushed into the overflow menu. The list ends where neighbours stand apart, 8 pixels
+		/// at 100 %, before the first button to its right.
+		/// </summary>
+		private void GamesToolStrip_Layout(object sender, LayoutEventArgs e)
 		{
-			GameToCustomizeComboBox.AutoSize = false;
 			var width = GamesToolStrip.DisplayRectangle.Width;
+			ToolStripItem next = null;
 			foreach (ToolStripItem tsi in GamesToolStrip.Items)
 			{
-				if (!(tsi == GameToCustomizeComboBox))
-				{
-					width -= tsi.Width;
-					width -= tsi.Margin.Horizontal;
-				}
+				// A hidden item takes no room.
+				if (tsi == GameToCustomizeComboBox || !tsi.Available)
+					continue;
+				// As wide as it stands on the bar: an item in the overflow menu reads the menu's width.
+				width -= tsi.GetPreferredSize(Size.Empty).Width;
+				width -= tsi.Margin.Horizontal;
+				// The items on the right stand from the bar's end in their order, so the last of them is the list's neighbour.
+				if (tsi.Alignment == ToolStripItemAlignment.Right)
+					next = tsi;
 			}
-			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
-			// Resolve disappearing.
-			GamesToolStrip.PerformLayout();
+			var gap = (int)Math.Round(8 * ControlsHelper.DpiScale);
+			// The margins between the list and its neighbour are given to the gap.
+			width -= GameToCustomizeComboBox.Margin.Left + gap - (next?.Margin.Left ?? GameToCustomizeComboBox.Margin.Right);
+			width = Math.Max(0, width);
+			// The width is the box's, and the item sizes itself to its box, as the buttons do: a tool bar places an item of a
+			// size of its own in the middle of the bar, away from the margin above it that the buttons keep. A new width lays
+			// the tool bar out again, which finds the same width and stops.
+			if (GameToCustomizeComboBox.ComboBox.Width != width)
+				GameToCustomizeComboBox.ComboBox.Width = width;
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)

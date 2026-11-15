@@ -98,8 +98,58 @@ namespace x360ce.App
 				Message = message,
 				State = CloudState.None,
 			};
-			TasksTimer.DoActionNow(item);
+			var timer = TasksTimer;
+			if (timer != null)
+				OnQueue(() => timer.DoActionNow(item));
 		}
+
+		/// <summary>Sends what waits in the queue now.</summary>
+		public void SendNow()
+		{
+			var timer = TasksTimer;
+			if (timer != null)
+				OnQueue(() => timer.DoActionNow());
+		}
+
+		/// <summary>Removes every message from the queue.</summary>
+		public void ClearQueue()
+		{
+			var timer = TasksTimer;
+			if (timer != null)
+				OnQueue(() => timer.ClearQueue());
+		}
+
+		#region Handing work to the queue
+
+		/// <summary>The last of the requests handed to the queue; each next one runs after it.</summary>
+		Task _handOff = Task.FromResult(0);
+		readonly object _handOffLock = new object();
+
+		/// <summary>Runs a request of the queue on a thread of its own, after the requests made before it, and returns at once.</summary>
+		/// <remarks>
+		/// The queue is changed under its own lock, and while the Cloud page shows it, a change made on the sending thread
+		/// waits for the interface thread to draw it. An interface thread that waited for that lock would wait for a
+		/// sending thread waiting for it. So nothing that asks the queue for something waits for the lock: not the interface
+		/// thread, and not a caller from another thread, so the requests keep the order they were made in.
+		/// </remarks>
+		void OnQueue(Action request)
+		{
+			lock (_handOffLock)
+				_handOff = _handOff.ContinueWith(_ =>
+				{
+					try
+					{
+						request();
+					}
+					catch (Exception ex)
+					{
+						// On a thread of its own, nobody waits for the request to see it fail.
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					}
+				}, System.Threading.CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.Default);
+		}
+
+		#endregion
 
 		#region Sending
 
@@ -449,7 +499,7 @@ namespace x360ce.App
 			var now = DateTime.Now;
 			foreach (var item in waiting)
 				item.NextTry = now;
-			timer.DoActionNow();
+			SendNow();
 		}
 
 		#endregion

@@ -263,7 +263,7 @@
 			this.HookMaskLabel.Name = "HookMaskLabel";
 			this.HookMaskLabel.Size = new System.Drawing.Size(65, 13);
 			this.HookMaskLabel.TabIndex = 24;
-			this.HookMaskLabel.Text = "Hook Mask:";
+			this.HookMaskLabel.Text = "Hook Mask";
 			// 
 			// XInputFilesLabel
 			// 
@@ -272,7 +272,7 @@
 			this.XInputFilesLabel.Name = "XInputFilesLabel";
 			this.XInputFilesLabel.Size = new System.Drawing.Size(65, 13);
 			this.XInputFilesLabel.TabIndex = 24;
-			this.XInputFilesLabel.Text = "XInput Files:";
+			this.XInputFilesLabel.Text = "XInput Files";
 			// 
 			// ProcessorArchitectureLabel
 			// 
@@ -282,7 +282,7 @@
 			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
 			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(67, 13);
 			this.ProcessorArchitectureLabel.TabIndex = 29;
-			this.ProcessorArchitectureLabel.Text = "Architecture:";
+			this.ProcessorArchitectureLabel.Text = "Architecture";
 			// 
 			// XInput91_x64CheckBox
 			// 
@@ -358,7 +358,7 @@
 			this.DInputFilesLabel.Name = "DInputFilesLabel";
 			this.DInputFilesLabel.Size = new System.Drawing.Size(61, 13);
 			this.DInputFilesLabel.TabIndex = 24;
-			this.DInputFilesLabel.Text = "DInput File:";
+			this.DInputFilesLabel.Text = "DInput File";
 			// 
 			// DInputMaskTextBox
 			// 
@@ -389,7 +389,7 @@
 			this.HookModeFakePidLabel.Name = "HookModeFakePidLabel";
 			this.HookModeFakePidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakePidLabel.TabIndex = 32;
-			this.HookModeFakePidLabel.Text = "Fake PID:";
+			this.HookModeFakePidLabel.Text = "Fake PID";
 			// 
 			// HookModeFakeVidLabel
 			// 
@@ -398,7 +398,7 @@
 			this.HookModeFakeVidLabel.Name = "HookModeFakeVidLabel";
 			this.HookModeFakeVidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakeVidLabel.TabIndex = 33;
-			this.HookModeFakeVidLabel.Text = "Fake VID:";
+			this.HookModeFakeVidLabel.Text = "Fake VID";
 			// 
 			// HookModeFakePidTextBox
 			// 
@@ -457,7 +457,7 @@
 			this.TimeoutLabel.Name = "TimeoutLabel";
 			this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
 			this.TimeoutLabel.TabIndex = 33;
-			this.TimeoutLabel.Text = "Timeout:";
+			this.TimeoutLabel.Text = "Timeout";
 			// 
 			// DInputFileTextBox
 			// 
@@ -474,7 +474,7 @@
 			this.DInputFileLabel.Name = "DInputFileLabel";
 			this.DInputFileLabel.Size = new System.Drawing.Size(61, 13);
 			this.DInputFileLabel.TabIndex = 32;
-			this.DInputFileLabel.Text = "DInput File:";
+			this.DInputFileLabel.Text = "DInput File";
 			// 
 			// HookModeFakePidNumericUpDown
 			// 

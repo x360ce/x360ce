@@ -2,6 +2,7 @@
 // @area: update   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using x360ce.Engine;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;

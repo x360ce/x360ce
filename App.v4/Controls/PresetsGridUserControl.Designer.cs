@@ -38,8 +38,10 @@
 			this.PresetsDeviceNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.PresetsToolStrip = new System.Windows.Forms.ToolStrip();
 			this.PresetRefreshButton = new System.Windows.Forms.ToolStripButton();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).BeginInit();
 			this.PresetsToolStrip.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// PresetsDataGridView
@@ -71,6 +73,7 @@
 			this.PresetsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PresetsDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.PresetsDataGridView.MultiSelect = false;
+			this.PresetsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.PresetsDataGridView.Name = "PresetsDataGridView";
 			this.PresetsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -128,7 +131,9 @@
 			this.PresetsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.PresetRefreshButton});
 			this.PresetsToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.PresetsToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.PresetsToolStrip.Name = "PresetsToolStrip";
+			this.PresetsToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.PresetsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.PresetsToolStrip.TabIndex = 5;
 			this.PresetsToolStrip.Text = "MySettingsToolStrip";
@@ -143,17 +148,32 @@
 			this.PresetRefreshButton.Text = "&Refresh";
 			this.PresetRefreshButton.Click += new System.EventHandler(this.PresetRefreshButton_Click);
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.PresetsToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.PresetsDataGridView, 0, 1);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 2;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// PresetsGridUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.PresetsDataGridView);
-			this.Controls.Add(this.PresetsToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "PresetsGridUserControl";
 			this.Size = new System.Drawing.Size(480, 240);
 			((System.ComponentModel.ISupportInitialize)(this.PresetsDataGridView)).EndInit();
 			this.PresetsToolStrip.ResumeLayout(false);
 			this.PresetsToolStrip.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -167,5 +187,6 @@
 		private System.Windows.Forms.ToolStrip PresetsToolStrip;
 		private System.Windows.Forms.ToolStripButton PresetRefreshButton;
 		public System.Windows.Forms.DataGridView PresetsDataGridView;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

@@ -28,6 +28,12 @@
     <ClCompile Include="ControllerBase.cpp">
       <Filter>x360ce</Filter>
     </ClCompile>
+    <ClCompile Include="ControllerManager.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
+    <ClCompile Include="Sdl.cpp">
+      <Filter>x360ce</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -67,6 +73,9 @@
       <Filter>x360ce</Filter>
     </ClInclude>
     <ClInclude Include="ForceFeedbackBase.h">
+      <Filter>x360ce</Filter>
+    </ClInclude>
+    <ClInclude Include="Sdl.h">
       <Filter>x360ce</Filter>
     </ClInclude>
   </ItemGroup>

@@ -138,6 +138,10 @@
     <Compile Include="Common\Sdl\SdlDatabase.cs" />
     <Compile Include="Common\Sdl\SdlMapping.cs" />
     <Compile Include="Common\Sdl\SdlPositions.cs" />
+    <Compile Include="Common\Sdl\X360ceDatabase.cs" />
+    <Compile Include="Common\Sdl\X360ceDatabaseServer.cs" />
+    <Compile Include="Common\DailyCache.cs" />
+    <Compile Include="Common\Update\HttpFile.cs" />
     <Compile Include="Input\Devices\DirectInputDevice.cs" />
     <Compile Include="Input\Devices\IInputSourceDevice.cs" />
     <Compile Include="Input\Devices\RawInputControl.cs" />
@@ -146,6 +150,9 @@
     <Compile Include="Input\Layouts\DirectInputLayout.cs" />
     <Compile Include="Input\Layouts\RawInputLayout.cs" />
     <Compile Include="Input\Native\RawInputNative.cs" />
+    <Compile Include="Input\Processors\DeviceTestStatistics.cs" />
+    <Compile Include="Input\Processors\DeviceTestGrades.cs" />
+    <Compile Include="Input\Processors\DeviceTestSteps.cs" />
     <Compile Include="Input\Processors\DirectInputChanges.cs" />
     <Compile Include="Input\Processors\RawInputHub.cs" />
     <Compile Include="Input\Processors\RawInputHubDevice.cs" />
@@ -508,6 +515,7 @@
     <Compile Include="JocysCom\Windows\UacHelper.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\TargetType.cs" />
+    <Compile Include="Maps\PadSettingIni.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />
     <Compile Include="Maps\MapType.cs" />
@@ -563,6 +571,15 @@
     <EmbeddedResource Include="Data\x360ceModel.msl">
       <LogicalName>Data.x360ceModel.msl</LogicalName>
     </EmbeddedResource>
+    <!--
+      SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is
+      (SdlDatabase), and its zlib licence; and x360ce's controller database (X360ceDatabase), carried the same way and
+      written by scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds
+      the same two gzip files (Native\x360ce\x360ce.rc).
+    -->
+    <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
+    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
+    <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt.gz" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />

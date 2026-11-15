@@ -30,8 +30,8 @@ namespace x360ce.App.Controls
 			{
 				Name = nameof(MainTableLayoutPanel),
 				Dock = DockStyle.Fill,
-				// None at the sides, so the list meets the tab's edges; the rows above and below it keep that room as margin.
-				Padding = new Padding(0, 6, 0, 6),
+				// The page is made once the Controller page has been scaled, so its room is given at the screen's scale.
+				Padding = AppHelper.ScaledPadding(0, 0, 0, 0),
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -41,7 +41,7 @@ namespace x360ce.App.Controls
 			{
 				Name = nameof(PositionsDataGridView),
 				Dock = DockStyle.Fill,
-				Margin = new Padding(0, 3, 0, 3),
+				Margin = AppHelper.ScaledPadding(8, 8, 0, 0),
 				AutoGenerateColumns = false,
 				AllowUserToAddRows = false,
 				AllowUserToDeleteRows = false,
@@ -67,7 +67,9 @@ namespace x360ce.App.Controls
 			ApplyButton = NewButton(nameof(ApplyButton), "Apply SDL Mapping");
 			CopyButton = NewButton(nameof(CopyButton), "Copy as SDL");
 			UpdateButton = NewButton(nameof(UpdateButton), "Update SDL Database");
+			// Shown with an answer only: empty, its row would leave a band under the buttons.
 			StatusLabel = NewLabel(nameof(StatusLabel));
+			StatusLabel.Visible = false;
 			ApplyButton.Click += (s, e) => ApplyClicked?.Invoke(this, EventArgs.Empty);
 			CopyButton.Click += (s, e) => CopyClicked?.Invoke(this, EventArgs.Empty);
 			UpdateButton.Click += UpdateButton_Click;
@@ -77,7 +79,7 @@ namespace x360ce.App.Controls
 				AutoSize = true,
 				AutoSizeMode = AutoSizeMode.GrowAndShrink,
 				Dock = DockStyle.Fill,
-				Margin = new Padding(6, 0, 6, 0),
+				Margin = AppHelper.ScaledPadding(0, 0, 0, 0),
 				WrapContents = true,
 			};
 			buttons.Controls.AddRange(new Control[] { ApplyButton, CopyButton, UpdateButton });
@@ -113,12 +115,12 @@ namespace x360ce.App.Controls
 		static Label NewLabel(string name)
 		{
 			// Across the column, so the table wraps it at the page's width.
-			return new Label { Name = name, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = new Padding(9, 3, 9, 6) };
+			return new Label { Name = name, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right, Margin = AppHelper.ScaledPadding(8, 8, 0, 0) };
 		}
 
 		static Button NewButton(string name, string text)
 		{
-			return new Button { Name = name, Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, UseVisualStyleBackColor = true };
+			return new Button { Name = name, Text = text, AutoSize = true, AutoSizeMode = AutoSizeMode.GrowAndShrink, Margin = AppHelper.ScaledPadding(8, 8, 0, 0), UseVisualStyleBackColor = true };
 		}
 
 		DataGridViewTextBoxColumn AddColumn(string name, string header, string property)
@@ -154,9 +156,10 @@ namespace x360ce.App.Controls
 				e.Value = Translation == null ? "" : row.Differs ? "Differs" : "Same";
 				e.FormattingApplied = true;
 			}
-			// Said in words in the last column too, so the mark does not rest on colour alone.
+			// A difference wants a look, and is no error: the theme's caution colour. Said in words in the last column too, so
+			// the mark does not rest on colour alone.
 			if (row.Differs)
-				e.CellStyle.ForeColor = FormsTheme.GetColor("ForegroundWarning", Color.Firebrick);
+				e.CellStyle.ForeColor = FormsTheme.GetColor("ForegroundCaution");
 		}
 
 		/// <summary>What the page was last drawn from.</summary>
@@ -239,6 +242,13 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		/// <summary>Shows an answer under the buttons, in a row that is there only while it holds one.</summary>
+		internal static void ShowStatus(Label label, string text)
+		{
+			label.Text = text;
+			label.Visible = !string.IsNullOrEmpty(text);
+		}
+
 		/// <summary>Draws the page again at the next update, as after the database changed.</summary>
 		public void Redraw()
 		{
@@ -250,7 +260,7 @@ namespace x360ce.App.Controls
 
 		void UpdateButton_Click(object sender, EventArgs e)
 		{
-			StartUpdate(UpdateButton, (text, failed) => StatusLabel.Text = text, Redraw);
+			StartUpdate(UpdateButton, (text, failed) => ShowStatus(StatusLabel, text), Redraw);
 		}
 
 		/// <summary>

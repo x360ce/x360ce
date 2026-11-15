@@ -22,6 +22,9 @@
       Stage      - the build stage this application belongs to. Files embedded
                    into another application are signed in an earlier stage than
                    the application embedding them.
+      Line       - the application line, such as "v3" or "v4", the application
+                   belongs to. Optional: without one it belongs to every line.
+                   A file, and a build of a stage, can name a line of its own.
       AppLink    - the link written into the signature.
       SignModule - the shared signing module. Environment variables are expanded,
                    so the path is written as %X360CE_SIGN_MODULE% rather than one
@@ -36,6 +39,8 @@
 
       Source - copied over Target before signing. Optional, leave it out to
                sign a file where it already is.
+      Line   - the line the file belongs to. Optional, defaults to the line of
+               its application.
       Target - the file which is signed. Optional, defaults to the name of the
                source file inside "FilesDir".
       Zip    - the zip built from Target, named inside "FilesDir". Optional,
@@ -73,6 +78,9 @@
 .PARAMETER Stage
     Limits the run to the applications of one build stage. Without it every
     application is offered, which is what the menu does.
+.PARAMETER Line
+    Limits the run to the files of these application lines, and the files that
+    belong to every line. Without it the files of every line are offered.
 .EXAMPLE
     PS> .\App_1_Sign_and_Zip.ps1
     Shows the menu.
@@ -82,6 +90,9 @@
 .EXAMPLE
     PS> .\App_1_Sign_and_Zip.ps1 Sign -Stage Library
     Signs only the files embedded into the applications, before they are built.
+.EXAMPLE
+    PS> .\App_1_Sign_and_Zip.ps1 All -Stage App -Line v4
+    Signs and zips the v4 application only.
 .NOTES
     Paths inside the JSON file can use forward or back slashes. Signing requires
     the USB token or card reader supported by the signing module.
@@ -91,7 +102,8 @@ param(
     [ValidateSet("Sign", "Zip", "Cab", "Copy", "All")]
     [string]$Action,
     [switch]$Force,
-    [string]$Stage
+    [string]$Stage,
+    [string[]]$Line
 )
 
 $ErrorActionPreference = "Stop"
@@ -138,6 +150,11 @@ function Get-Targets {
             $dir = "Files"
         }
         foreach ($file in $app.Files) {
+            # A file of a line not being released is left out; one with no line belongs to every line.
+            $fileLine = if ($file.Line) { $file.Line } else { $app.Line }
+            if ($Line -and $fileLine -and $Line -notcontains $fileLine) {
+                continue
+            }
             $targetText = $file.Target
             if (-not $targetText) {
                 $targetText = "$dir/" + [System.IO.Path]::GetFileName($file.Source)

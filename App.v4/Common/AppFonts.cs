@@ -16,9 +16,9 @@ namespace x360ce.App
 	/// The font and size the windows are drawn in, and the two fonts the program carries: Selawik, an open font made to the
 	/// measures of Segoe UI, for the interface where it is chosen, and Inconsolata Medium for code and values whose letters
 	/// line up, once a font is chosen. Both are read from the program itself, so a computer without them shows them too.
-	/// Windows Forms draws the windows in its own font and size unless another is chosen on the Options page; then the theme
-	/// does (<see cref="Apply"/>, <c>FormsTheme.SetFonts</c>). A font that cannot be read leaves the one the program used
-	/// before it.
+	/// The theme draws the windows in Segoe UI, Windows' interface font, at Windows' text size, or in the font and at the
+	/// size chosen on the Options page (<see cref="Apply"/>, <c>FormsTheme.SetFonts</c>). A font that cannot be read leaves
+	/// the one the program used before it.
 	/// </summary>
 	/// <remarks>
 	/// A font added by a program is known to that program only, and twice: to GDI, which Windows' own controls and
@@ -32,6 +32,9 @@ namespace x360ce.App
 	{
 		/// <summary>The interface font the program carries.</summary>
 		public const string BuiltInName = "Selawik";
+
+		/// <summary>The interface font while none is chosen: Windows' own interface font.</summary>
+		public const string DefaultName = "Segoe UI";
 
 		/// <summary>The code font's family name: Inconsolata's Medium weight is a family of its own to GDI.</summary>
 		public const string CodeName = "Inconsolata Medium";
@@ -117,35 +120,38 @@ namespace x360ce.App
 		public static float AppliedSize { get; private set; }
 
 		/// <summary>
-		/// Draws the windows made from now on in the font and at the size chosen in the options, and code in Inconsolata Medium.
-		/// At a size other than the default, windows are laid out larger or smaller by as much. Interface thread,
-		/// before the first window: a window keeps the font it was made in. With no font and no size chosen, Windows Forms keeps
-		/// its own fonts and the program's fonts are not read. A saved font this computer does not draw is not kept, so the
-		/// Options page says what the windows are drawn in.
+		/// Draws the windows made from now on in the font and at the size chosen in the options, Segoe UI at Windows' text size
+		/// while none is chosen, and code in Inconsolata Medium once a font is chosen, in Consolas before. At a size other than
+		/// the default, windows are laid out larger or smaller by as much. Interface thread, before the first window: a window
+		/// keeps the font it was made in. A saved font this computer does not draw is not kept, so the Options page says what the
+		/// windows are drawn in; the program's own fonts are read only once a font is chosen.
 		/// </summary>
 		public static void Apply(Options options)
 		{
 			var family = InterfaceFamilyFor(options.InterfaceFont);
 			if (family == null && !string.IsNullOrEmpty(options.InterfaceFont))
+			{
 				options.InterfaceFont = "";
+				family = InterfaceFamilyFor("");
+			}
 			Applied = options.InterfaceFont ?? "";
 			AppliedSize = options.InterfaceFontSize;
-			if (family == null && AppliedSize <= 0)
-				return;
-			Load();
-			var interfaceSize = SizeFor(Applied, AppliedSize);
-			FormsTheme.SetFonts(family, CodeFamily, interfaceSize, interfaceSize / DefaultSize(Applied));
+			var chosen = Applied.Length > 0;
+			if (chosen)
+				Load();
+			var interfaceSize = SizeFor(AppliedSize);
+			FormsTheme.SetFonts(family, chosen ? CodeFamily : null, interfaceSize, interfaceSize / DefaultSize());
 		}
 
 		/// <summary>
-		/// The family the interface is drawn in for a choice in <see cref="Options.InterfaceFont"/>: null for Windows' own fonts,
+		/// The family the interface is drawn in for a choice in <see cref="Options.InterfaceFont"/>: Segoe UI for the default,
 		/// which an empty choice holds, the built-in Selawik for Selawik, otherwise the installed family of that name. A family
-		/// no longer installed, or one that cannot draw the interface's letters, gives Windows' own fonts.
+		/// no longer installed, or one that cannot draw the interface's letters, gives null: Windows Forms' own font.
 		/// </summary>
 		public static FontFamily InterfaceFamilyFor(string choice)
 		{
 			if (string.IsNullOrEmpty(choice))
-				return null;
+				choice = DefaultName;
 			return choice == BuiltInName ? BuiltInFamily : Installed(choice);
 		}
 
@@ -205,33 +211,32 @@ namespace x360ce.App
 			return names;
 		}
 
-		/// <summary>A choice as the Options page shows it: the default names Windows' own font.</summary>
+		/// <summary>A choice as the Options page shows it: the default names the font it draws in.</summary>
 		/// <param name="choice">A choice as <see cref="Options.InterfaceFont"/> holds it.</param>
 		public static string ChoiceText(string choice)
 		{
 			if (string.IsNullOrEmpty(choice))
-				using (var font = SystemFonts.DefaultFont)
-					return string.Format("Default ({0})", font.Name);
+				return string.Format("Default ({0})", DefaultName);
 			return choice == BuiltInName ? BuiltInName + " (built in)" : choice;
 		}
 
 		/// <summary>
-		/// The size the interface is drawn at by default, in points: Windows Forms' own size for Windows' own fonts, which an
-		/// empty choice holds; for any other font Windows' text size, larger where Windows' text is made larger.
+		/// The size the interface is drawn at by default, in points, whatever the font: Windows' text size, 9 pt unless Windows'
+		/// text is made larger.
 		/// </summary>
-		public static float DefaultSize(string choice)
+		public static float DefaultSize()
 		{
-			using (var font = string.IsNullOrEmpty(choice) ? SystemFonts.DefaultFont : SystemFonts.MessageBoxFont)
+			using (var font = SystemFonts.MessageBoxFont)
 				return font.SizeInPoints;
 		}
 
 		/// <summary>
-		/// The size the interface is drawn at, in points, for a choice in <see cref="Options.InterfaceFont"/> and a size in
-		/// <see cref="Options.InterfaceFontSize"/>: the size set, whatever the font, or the font's default for 0.
+		/// The size the interface is drawn at, in points, for a size in <see cref="Options.InterfaceFontSize"/>: the size set,
+		/// whatever the font, or the default for 0.
 		/// </summary>
-		public static float SizeFor(string choice, float size)
+		public static float SizeFor(float size)
 		{
-			return size > 0 ? size : DefaultSize(choice);
+			return size > 0 ? size : DefaultSize();
 		}
 
 		/// <summary>
@@ -243,11 +248,10 @@ namespace x360ce.App
 		/// Windows draws text at whole pixels, so a size between two of them looks as one of the two. The pixels are those of the
 		/// scale windows are made at (<see cref="ControlsHelper.DpiScale"/>).
 		/// </remarks>
-		/// <param name="choice">The font chosen, whose default the sizes are around.</param>
 		/// <param name="saved">The size the options hold.</param>
-		public static List<float> Sizes(string choice, float saved)
+		public static List<float> Sizes(float saved)
 		{
-			var pixels = Pixels(DefaultSize(choice));
+			var pixels = Pixels(DefaultSize());
 			var sizes = new List<float>();
 			for (var px = (int)Math.Ceiling(pixels * 0.75); px <= (int)Math.Floor(pixels * 1.5); px++)
 				sizes.Add(px * 72f / (96f * ControlsHelper.DpiScale));
@@ -271,19 +275,18 @@ namespace x360ce.App
 		}
 
 		/// <summary>A size as the Options page shows it: the default with its size, any other in points and in pixels.</summary>
-		/// <param name="choice">The font chosen, whose default 0 stands for.</param>
 		/// <param name="size">A size as <see cref="Options.InterfaceFontSize"/> holds it.</param>
-		public static string SizeText(string choice, float size)
+		public static string SizeText(float size)
 		{
 			return size > 0
 				? string.Format("{0:0.##} pt ({1} px)", size, Pixels(size))
-				: string.Format("Default ({0:0.##} pt)", DefaultSize(choice));
+				: string.Format("Default ({0:0.##} pt)", DefaultSize());
 		}
 
 		/// <summary>What the Options page says while the font or size chosen is not the one in use: what x360ce uses when it starts again.</summary>
 		public static string RestartNote(string choice, float size)
 		{
-			return string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", ChoiceText(choice), SizeFor(choice, size));
+			return string.Format("{0} at {1:0.##} pt is used when x360ce starts again.", ChoiceText(choice), SizeFor(size));
 		}
 
 		/// <summary>Letters and digits every family the interface is drawn in must draw itself.</summary>

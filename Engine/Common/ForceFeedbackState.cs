@@ -89,6 +89,8 @@ namespace x360ce.Engine
         int springMagnitude;
         /// <summary>The device refused the spring effect. Asked once, or every poll would ask and throw.</summary>
         bool springRefused;
+        /// <summary>The error the device refused the spring effect with, or 0 while it has not, for bug report recordings.</summary>
+        public int SpringRefusedError { get; private set; }
 
         // Damping that goes with the spring: the device itself resists the wheel's speed, so the
         // wheel does not swing past the centre and back.
@@ -501,7 +503,7 @@ namespace x360ce.Engine
                 // A refused effect is remembered, so it is not asked for on every force update.
                 if ((make & MotorEffects.Left) != 0)
                 {
-                    effectL = CreateEffect(device, GUID_Force, paramsL);
+                    effectL = CreateEffect(device, GUID_Force, paramsL, out _);
                     if (effectL == null)
                         motorsRefused |= MotorEffects.Left;
                     else
@@ -514,7 +516,7 @@ namespace x360ce.Engine
                         ? ConstantForceR as TypeSpecificParameters : PeriodicForceR;
                     if ((make & MotorEffects.Right) != 0)
                     {
-                        effectR = CreateEffect(device, GUID_Force, paramsR);
+                        effectR = CreateEffect(device, GUID_Force, paramsR, out _);
                         if (effectR == null)
                             motorsRefused |= MotorEffects.Right;
                         else
@@ -747,10 +749,12 @@ namespace x360ce.Engine
                 paramsS.Directions = new int[1] { 1 };
                 paramsS.Gain = DI_FFNOMINALMAX;
                 paramsS.Parameters = springForce;
-                effectS = CreateEffect(device, EffectGuid.ConstantForce, paramsS);
+                int error;
+                effectS = CreateEffect(device, EffectGuid.ConstantForce, paramsS, out error);
                 if (effectS == null)
                 {
                     springRefused = true;
+                    SpringRefusedError = error;
                     return;
                 }
             }
@@ -790,7 +794,7 @@ namespace x360ce.Engine
                 paramsD.Directions = new int[1] { 0 };
                 paramsD.Gain = DI_FFNOMINALMAX;
                 paramsD.Parameters = conditions;
-                effectD = CreateEffect(device, EffectGuid.Damper, paramsD);
+                effectD = CreateEffect(device, EffectGuid.Damper, paramsD, out _);
                 if (effectD == null)
                 {
                     // Remembered as set, so a device with no damper is not asked on every poll.
@@ -826,6 +830,7 @@ namespace x360ce.Engine
             springMagnitude = 0;
             damperCoefficient = 0;
             springRefused = false;
+            SpringRefusedError = 0;
         }
 
         /// <summary>Takes down every effect on the device, whichever state made it.</summary>
@@ -852,14 +857,17 @@ namespace x360ce.Engine
         }
 
         /// <summary>An effect on the device, or null when the device will not take one of that kind.</summary>
-        static Effect CreateEffect(Joystick device, Guid guid, EffectParameters parameters)
+        /// <param name="error">The device's answer when it would not take it, or 0.</param>
+        static Effect CreateEffect(Joystick device, Guid guid, EffectParameters parameters, out int error)
         {
+            error = 0;
             try
             {
                 return new Effect(device, guid, parameters);
             }
             catch (SharpDX.SharpDXException ex) when (IsUnsupported(ex))
             {
+                error = ex.ResultCode.Code;
                 return null;
             }
         }

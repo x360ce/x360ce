@@ -32,9 +32,18 @@ namespace x360ce.Engine
 		/// <summary>True when the last read kept anything. A device kept nothing on most passes, which then cost no more than this.</summary>
 		public bool Any { get; private set; }
 
+		/// <summary>Each entry the last read kept, in the order they happened: the control's offset in DirectInput's joystick state, its value, DirectInput's time stamp in milliseconds, and the sequence number of the report it came in, which the entries of one report share.</summary>
+		/// <remarks>Read by the Test Device window's recording; the first <see cref="EntryCount"/> are this read's.</remarks>
+		public readonly int[] EntryOffsets = new int[DirectInputDevice.BufferSize];
+		public readonly int[] EntryValues = new int[DirectInputDevice.BufferSize];
+		public readonly int[] EntryTimes = new int[DirectInputDevice.BufferSize];
+		public readonly int[] EntrySequences = new int[DirectInputDevice.BufferSize];
+		public int EntryCount { get; private set; }
+
 		/// <summary>Forgets every change, as for a device that kept none.</summary>
 		public void Clear()
 		{
+			EntryCount = 0;
 			if (!Any)
 				return;
 			Array.Clear(Presses, 0, Presses.Length);
@@ -54,10 +63,16 @@ namespace x360ce.Engine
 			if (count <= 0)
 				return;
 			Any = true;
+			count = Math.Min(count, EntryOffsets.Length);
+			EntryCount = count;
 			for (var i = 0; i < count; i++)
 			{
 				var offset = BitConverter.ToInt32(data, i * entrySize);
 				var value = BitConverter.ToInt32(data, i * entrySize + 4);
+				EntryOffsets[i] = offset;
+				EntryValues[i] = value;
+				EntryTimes[i] = BitConverter.ToInt32(data, i * entrySize + 8);
+				EntrySequences[i] = BitConverter.ToInt32(data, i * entrySize + 12);
 				var button = offset - (int)JoystickOffset.Buttons0;
 				if (button >= 0 && button < Presses.Length)
 				{

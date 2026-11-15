@@ -527,6 +527,7 @@ namespace x360ce.App.Recording
 					+ process.HandleCount.ToString("N0", CultureInfo.InvariantCulture) + " handles, "
 					+ (process.PrivateMemorySize64 / 1024 / 1024).ToString("N0", CultureInfo.InvariantCulture) + " MB, "
 					+ process.Threads.Count + " threads");
+				Note(DescribePc(process));
 			}
 		}
 

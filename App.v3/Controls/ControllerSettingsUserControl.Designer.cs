@@ -290,7 +290,7 @@
 			this.ControllerLabel.Name = "ControllerLabel";
 			this.ControllerLabel.Size = new System.Drawing.Size(99, 13);
 			this.ControllerLabel.TabIndex = 1;
-			this.ControllerLabel.Text = "&Controller / Device:";
+			this.ControllerLabel.Text = "&Controller / Device";
 			// 
 			// GameComboBox
 			// 
@@ -310,7 +310,7 @@
 			this.GameLabel.Name = "GameLabel";
 			this.GameLabel.Size = new System.Drawing.Size(88, 13);
 			this.GameLabel.TabIndex = 3;
-			this.GameLabel.Text = "&Program / Game:";
+			this.GameLabel.Text = "&Program / Game";
 			// 
 			// CommentTextBox
 			// 
@@ -329,7 +329,7 @@
 			this.CommentLabel.Name = "CommentLabel";
 			this.CommentLabel.Size = new System.Drawing.Size(38, 13);
 			this.CommentLabel.TabIndex = 5;
-			this.CommentLabel.Text = "&Notes:";
+			this.CommentLabel.Text = "&Notes";
 			// 
 			// CommentSelectedTextBox
 			// 

@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SharpDX.DirectInput;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using x360ce.App;
@@ -234,6 +235,60 @@ namespace x360ce.Tests
 			Assert.AreEqual(Centre, Pass(stick, 3000, 5), "Off, the stick is not at the centre.");
 		}
 
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Wheel, held: the stick stays where the mouse put it, with nothing pulling it to the centre, whatever Back to centre is set to")]
+		public void Wheel_held_stays_where_the_mouse_put_it()
+		{
+			var stick = new MouseStick(new MouseStickSettings { Style = MouseStyle.Wheel, ReturnMs = 100, Active = MouseActive.HeldCentre, Button = 1 });
+			Pass(stick, 0, 0, true);
+			var turned = Pass(stick, 1024, 1, true);
+			Assert.IsTrue(Math.Abs(turned - 49151) < 2, "Held, the mouse did not turn the wheel: " + turned);
+			var later = 0;
+			for (var ms = 2; ms <= 800; ms++)
+				later = Pass(stick, 1024, ms, true);
+			Assert.AreEqual(turned, later, "Held still, the wheel was pulled towards the centre.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Wheel, let go: the stick goes back to the centre over the Back to centre time, not at once, and is held again where it is")]
+		public void Wheel_let_go_returns_over_its_time()
+		{
+			var stick = new MouseStick(new MouseStickSettings { Style = MouseStyle.Wheel, ReturnMs = 200, Active = MouseActive.HeldCentre, Button = 1 });
+			Pass(stick, 0, 0, true);
+			var turned = Pass(stick, 2048, 1, true) - Centre;
+			var soon = Pass(stick, 2048, 11) - Centre;
+			Assert.IsTrue(soon > turned * 0.9 && soon < turned, "10 ms after the wheel was let go it is at " + soon + " of " + turned + ": not on its way back over 200 ms.");
+			var atTime = 0;
+			for (var ms = 12; ms <= 201; ms++)
+				atTime = Pass(stick, 2048, ms) - Centre;
+			Assert.IsTrue(Math.Abs(atTime - turned / Math.E) < turned * 0.05, "At the Back to centre time the wheel is at " + atTime + " of " + turned + ", not as far back as a timed return goes.");
+			var held = Pass(stick, 2048, 202, true) - Centre;
+			Assert.IsTrue(Math.Abs(held - atTime) < turned * 0.02, "Held again on its way back, the wheel was not taken where it was: " + held + ".");
+			var end = 0;
+			for (var ms = 203; ms <= 4000; ms++)
+				end = Pass(stick, 2048, ms);
+			Assert.AreEqual(Centre, end, "Let go, the wheel did not reach the centre.");
+		}
+
+		[TestMethod, TestCategory("mapping")]
+		[Description("Wheel with Back to centre at 0: let go, the stick is at the centre at once")]
+		public void Wheel_with_no_return_time_centres_at_once()
+		{
+			var stick = new MouseStick(new MouseStickSettings { Style = MouseStyle.Wheel, ReturnMs = 0, Active = MouseActive.HeldCentre, Button = 1 });
+			Pass(stick, 0, 0, true);
+			Assert.IsTrue(Pass(stick, 2048, 1, true) > Centre + 10000, "Held, the mouse did not turn the wheel.");
+			Assert.AreEqual(Centre, Pass(stick, 2048, 2), "Let go with no Back to centre time, the wheel did not centre at once.");
+		}
+
+		[TestMethod, TestCategory("mapping")]
+		[Description("A Wheel style saved by this program is read back as Wheel, and an unknown style below it as Wheel; the value is below nought, which an older program reads as Position")]
+		public void Wheel_is_read_back_and_falls_back_to_position()
+		{
+			Assert.AreEqual(MouseStyle.Wheel, MouseStickSettings.From(new PadSetting { MouseLeftThumbStyle = ((int)MouseStyle.Wheel).ToString() }, false).Style);
+			Assert.IsTrue((int)MouseStyle.Wheel < (int)MouseStyle.Position,
+				"An older program keeps a style between Position and Screen, so a Wheel saved above Screen would be read there as Screen.");
+		}
+
 		[TestMethod, TestCategory("mapping")]
 		[Description("A device counting again from somewhere else, as when it is taken again, moves nothing")]
 		public void A_restart_of_the_count_moves_nothing()
@@ -305,6 +360,189 @@ namespace x360ce.Tests
 				Thread.Sleep(5);
 			}
 			Assert.IsTrue(Math.Abs((int)row.XiState.RightThumbX) < 1500, "The right stick did not return when the mouse stopped: " + row.XiState.RightThumbX);
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("engine")]
+		[Description("Through the engine: a formula on a mouse axis reads what the plain mapping reads, in every style and with the Mouse page at its defaults: =a1 is Axis 1, =a1*2 twice it and =a1*0.5 half it up to the stick's ends, =-a1*2 twice it the other way")]
+		public void A_formula_on_a_mouse_axis_reads_what_its_plain_mapping_reads()
+		{
+			var screen = MouseStick.ReadScreen;
+			var faults = new List<string>();
+			try
+			{
+				var pointer = 0;
+				MouseStick.ReadScreen = () => new ScreenPoint { X = pointer, Half = 1000 };
+				// The page at its defaults, then Position, Speed, Screen and Wheel.
+				foreach (var style in new[] { null, "0", "1", "2", "-1" })
+					foreach (var formula in new[] { "=a1", "=a1*2", "=a1*0.5", "=-a1*2" })
+					{
+						var factor = formula == "=a1" ? 1 : formula == "=a1*2" ? 2 : formula == "=a1*0.5" ? 0.5 : -2;
+						var convert = EngineSteps.UpdateXiStates(new DInputHelper());
+						var ud = new UserDevice
+						{
+							InstanceGuid = Guid.NewGuid(), CapType = (int)DeviceType.Mouse, JoState = new JoystickState(),
+							SourceState = new SourceState(), SourceStateRead = new SourceState(), OriginSourceStateTime = 7,
+						};
+						ud.IsOnline = true;
+						ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, 0x1);
+						// The plain mapping on the left stick and the formula on the right, each with a processor of its own set alike, fed
+						// the same counts at the same moment.
+						var ps = new PadSetting { LeftThumbAxisX = "a1", RightThumbAxisX = formula, PadSettingChecksum = Guid.NewGuid() };
+						if (style != null)
+						{
+							ps.MouseLeftThumbStyle = ps.MouseRightThumbStyle = style;
+							// Position at its defaults makes no processor; a sensitivity of its own makes one.
+							ps.MouseLeftThumbSensitivityX = ps.MouseRightThumbSensitivityX = "150";
+						}
+						var routing = Routing(ud, ps);
+						var row = routing.Rows[0];
+						var total = 0;
+						pointer = 0;
+						for (var pass = 0; pass < 80; pass++)
+						{
+							// Right for 50 passes, then still.
+							if (pass < 50)
+							{
+								total += 20;
+								pointer += 15;
+								// The engine's own position of the mouse, which a page at its defaults reads.
+								ud.SourceState.Axis[0] = Math.Min(65535, 32768 + 600 * (pass + 1));
+							}
+							ud.SourceStateRead.Axis[0] = total;
+							convert(routing);
+							var plain = (int)row.XiState.LeftThumbX;
+							var read = (int)row.XiState.RightThumbX;
+							var expected = (int)Math.Max(short.MinValue, Math.Min(short.MaxValue, Math.Round(plain * factor)));
+							if (Math.Abs(read - expected) > 2 + 2 * Math.Abs(factor))
+							{
+								faults.Add(string.Format("{0}, {1}, pass {2}: Axis 1 reads {3}, the formula {4}, not {5}.",
+									style == null ? "defaults" : "style " + style, formula, pass, plain, read, expected));
+								break;
+							}
+							Thread.Sleep(5);
+						}
+					}
+			}
+			finally
+			{
+				MouseStick.ReadScreen = screen;
+			}
+			Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
+		}
+
+		/// <summary>A mouse as the engine holds it, its controls in <paramref name="moving"/> reporting movement.</summary>
+		static UserDevice NewMouse(int moving)
+		{
+			var ud = new UserDevice
+			{
+				InstanceGuid = Guid.NewGuid(), CapType = (int)DeviceType.Mouse, JoState = new JoystickState(),
+				SourceState = new SourceState(), SourceStateRead = new SourceState(), OriginSourceStateTime = 7,
+			};
+			ud.IsOnline = true;
+			ud.DiRelativeAxisMask = SourceState.TrustedRelativeMask(ud.CapType, moving);
+			return ud;
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("engine")]
+		[Description("Through the engine: on one stick, a moving axis read across and up and down is styled once, by its first reader, and the other reads that value")]
+		public void Within_a_stick_the_first_reader_of_a_moving_axis_wins()
+		{
+			var convert = EngineSteps.UpdateXiStates(new DInputHelper());
+			var ud = NewMouse(0x1);
+			// Up and down four times as sensitive as across: styled on its own, it would lean further.
+			var ps = new PadSetting
+			{
+				LeftThumbAxisX = "a1", LeftThumbAxisY = "a1", MouseLeftThumbStyle = "1",
+				MouseLeftThumbSensitivityX = "50", MouseLeftThumbSensitivityY = "200", PadSettingChecksum = Guid.NewGuid(),
+			};
+			var routing = Routing(ud, ps);
+			var row = routing.Rows[0];
+			var total = 0;
+			for (var pass = 0; pass < 40; pass++)
+			{
+				total += 20;
+				ud.SourceStateRead.Axis[0] = total;
+				convert(routing);
+				Thread.Sleep(5);
+			}
+			var x = Math.Abs((int)row.XiState.LeftThumbX);
+			var y = Math.Abs((int)row.XiState.LeftThumbY);
+			Assert.IsTrue(x > 3000, "The stick does not lean across: " + x);
+			Assert.AreEqual(x, y, 2, "Up and down did not read the value across styled the axis to.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("engine")]
+		[Description("Through the engine: a formula naming two moving axes styles the first, and the second reads the engine's own position; =a1*a1 styles a1 once")]
+		public void A_formula_styles_the_first_moving_axis_it_names()
+		{
+			foreach (var formula in new[] { "=a1+a2", "=a1*a1" })
+			{
+				var convert = EngineSteps.UpdateXiStates(new DInputHelper());
+				var ud = NewMouse(0x3);
+				var ps = new PadSetting
+				{
+					LeftThumbAxisX = "a1", RightThumbAxisX = formula, MouseLeftThumbStyle = "1", MouseRightThumbStyle = "1",
+					PadSettingChecksum = Guid.NewGuid(),
+				};
+				var routing = Routing(ud, ps);
+				var row = routing.Rows[0];
+				// The second axis in the middle of the engine's own position while its counts run fast: styled, it would lean.
+				ud.SourceState.Axis[1] = 32768;
+				var total = 0;
+				var other = 0;
+				for (var pass = 0; pass < 40; pass++)
+				{
+					total += 20;
+					other += 500;
+					ud.SourceStateRead.Axis[0] = total;
+					ud.SourceStateRead.Axis[1] = other;
+					convert(routing);
+					var plain = row.XiState.LeftThumbX / 32767.0;
+					var expected = (formula == "=a1+a2" ? plain : plain * plain) * 32767;
+					Assert.AreEqual(expected, row.XiState.RightThumbX, 6, formula + " at pass " + pass + ", with Axis 1 at " + row.XiState.LeftThumbX + ".");
+					Thread.Sleep(5);
+				}
+			}
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("engine")]
+		[Description("Through the engine, the setup Help gives for GTA: the mouse's axes on both sticks, the left in Position while button 1 is held, the right in Speed, each stick in its own style")]
+		public void The_same_mouse_axes_drive_both_sticks_each_in_its_style()
+		{
+			var convert = EngineSteps.UpdateXiStates(new DInputHelper());
+			var ud = NewMouse(0x3);
+			var ps = new PadSetting
+			{
+				LeftThumbAxisX = "a1", LeftThumbAxisY = "a2", RightThumbAxisX = "a1", RightThumbAxisY = "a2",
+				MouseLeftThumbStyle = "0", MouseLeftThumbActive = "1", MouseLeftThumbButton = "1", MouseRightThumbStyle = "1",
+				PadSettingChecksum = Guid.NewGuid(),
+			};
+			var routing = Routing(ud, ps);
+			var row = routing.Rows[0];
+			var total = 0;
+			Action<int, bool, bool> run = (passes, held, moving) =>
+			{
+				for (var pass = 0; pass < passes; pass++)
+				{
+					if (moving)
+						total += 60;
+					ud.SourceState.Buttons[0] = held;
+					ud.SourceStateRead.Axis[0] = total;
+					convert(routing);
+					Thread.Sleep(5);
+				}
+			};
+			// Held and moved right: the left stick steers, and the right turns the camera as the mouse moves.
+			run(40, true, true);
+			Assert.IsTrue(row.XiState.LeftThumbX > 10000, "Held and moved, the left stick in Position did not steer: " + row.XiState.LeftThumbX);
+			Assert.IsTrue(row.XiState.RightThumbX > 10000, "Moving, the right stick in Speed did not turn: " + row.XiState.RightThumbX);
+			// Let go and moving on: the left stick is back at the centre, the right still turns.
+			run(20, false, true);
+			Assert.IsTrue(Math.Abs((int)row.XiState.LeftThumbX) < 1000, "Let go, the left stick did not return: " + row.XiState.LeftThumbX);
+			Assert.IsTrue(row.XiState.RightThumbX > 10000, "Moving, the right stick stopped turning: " + row.XiState.RightThumbX);
+			// Stopped: the right stick returns too.
+			run(40, false, false);
+			Assert.IsTrue(Math.Abs((int)row.XiState.RightThumbX) < 1500, "Stopped, the right stick did not return: " + row.XiState.RightThumbX);
 		}
 
 		[TestMethod, TestCategory("mapping")]

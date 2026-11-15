@@ -172,6 +172,16 @@
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowsVersion.cpp" />
   </ItemGroup>
+  <!-- zlib's inflate, unchanged (zlib\SOURCE.md); Z_SOLO leaves out its file functions, so it allocates through the caller's functions. -->
+  <ItemGroup>
+    <ClCompile Include="zlib\adler32.c;zlib\crc32.c;zlib\inffast.c;zlib\inflate.c;zlib\inftrees.c;zlib\zutil.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>Z_SOLO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClInclude Include="zlib\crc32.h;zlib\inffast.h;zlib\inffixed.h;zlib\inflate.h;zlib\inftrees.h;zlib\zconf.h;zlib\zlib.h;zlib\zutil.h" />
+    <None Include="zlib\LICENSE;zlib\README;zlib\SOURCE.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

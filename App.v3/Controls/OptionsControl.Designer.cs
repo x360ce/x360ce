@@ -45,6 +45,7 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.InternetAutoloadCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetCheckBox = new System.Windows.Forms.CheckBox();
+			this.UpdateControllerDatabaseButton = new System.Windows.Forms.Button();
 			this.ProgramScanLocationsTabControl = new System.Windows.Forms.TabControl();
 			this.GameScanLocationsTabPage = new System.Windows.Forms.TabPage();
 			this.GameScanLocationsListBox = new System.Windows.Forms.ListBox();
@@ -250,13 +251,14 @@
 			// 
 			this.InternetGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.InternetGroupBox.Controls.Add(this.UpdateControllerDatabaseButton);
 			this.InternetGroupBox.Controls.Add(this.InternetDatabaseUrlComboBox);
 			this.InternetGroupBox.Controls.Add(this.label1);
 			this.InternetGroupBox.Controls.Add(this.InternetAutoloadCheckBox);
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(250, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(390, 109);
+			this.InternetGroupBox.Size = new System.Drawing.Size(390, 138);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -281,7 +283,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(97, 13);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Web Service URL:";
+			this.label1.Text = "Web Service URL";
 			// 
 			// InternetAutoloadCheckBox
 			// 
@@ -302,6 +304,17 @@
 			this.InternetCheckBox.TabIndex = 1;
 			this.InternetCheckBox.Text = "Enable Internet Settings Database Features";
 			this.InternetCheckBox.UseVisualStyleBackColor = true;
+			//
+			// UpdateControllerDatabaseButton
+			//
+			this.UpdateControllerDatabaseButton.AutoSize = true;
+			this.UpdateControllerDatabaseButton.Location = new System.Drawing.Point(6, 107);
+			this.UpdateControllerDatabaseButton.Name = "UpdateControllerDatabaseButton";
+			this.UpdateControllerDatabaseButton.Size = new System.Drawing.Size(150, 23);
+			this.UpdateControllerDatabaseButton.TabIndex = 15;
+			this.UpdateControllerDatabaseButton.Text = "Update Controller Database";
+			this.UpdateControllerDatabaseButton.UseVisualStyleBackColor = true;
+			this.UpdateControllerDatabaseButton.Click += new System.EventHandler(this.UpdateControllerDatabaseButton_Click);
 			// 
 			// ProgramScanLocationsTabControl
 			// 
@@ -330,6 +343,7 @@
 			this.GameScanLocationsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GameScanLocationsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameScanLocationsListBox.FormattingEnabled = true;
+			this.GameScanLocationsListBox.IntegralHeight = false;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
 			this.GameScanLocationsListBox.Size = new System.Drawing.Size(383, 79);
@@ -399,7 +413,7 @@
 			this.ConfigurationVersionLabel.Name = "ConfigurationVersionLabel";
 			this.ConfigurationVersionLabel.Size = new System.Drawing.Size(45, 13);
 			this.ConfigurationVersionLabel.TabIndex = 0;
-			this.ConfigurationVersionLabel.Text = "Version:";
+			this.ConfigurationVersionLabel.Text = "Version";
 			// 
 			// ConfigurationVersionTextBox
 			// 
@@ -482,7 +496,7 @@
 			this.ThemeLabel.Name = "ThemeLabel";
 			this.ThemeLabel.Size = new System.Drawing.Size(43, 13);
 			this.ThemeLabel.TabIndex = 94;
-			this.ThemeLabel.Text = "Theme:";
+			this.ThemeLabel.Text = "Theme";
 			//
 			// ThemeComboBox
 			//
@@ -552,7 +566,7 @@
 			this.AiAccessLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessLabel.AutoSize = true;
 			this.AiAccessLabel.Name = "AiAccessLabel";
-			this.AiAccessLabel.Text = "Access:";
+			this.AiAccessLabel.Text = "Access";
 			//
 			// AiAccessComboBox
 			//
@@ -566,7 +580,7 @@
 			this.AiAccessPortLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessPortLabel.AutoSize = true;
 			this.AiAccessPortLabel.Name = "AiAccessPortLabel";
-			this.AiAccessPortLabel.Text = "Port:";
+			this.AiAccessPortLabel.Text = "Port";
 			//
 			// AiAccessPortNumericUpDown
 			//
@@ -583,7 +597,7 @@
 			this.AiAccessTokenLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AiAccessTokenLabel.AutoSize = true;
 			this.AiAccessTokenLabel.Name = "AiAccessTokenLabel";
-			this.AiAccessTokenLabel.Text = "Token:";
+			this.AiAccessTokenLabel.Text = "Token";
 			//
 			// AiAccessTokenTextBox
 			//
@@ -684,6 +698,7 @@
 		private System.Windows.Forms.FolderBrowserDialog LocationFolderBrowserDialog;
         public System.Windows.Forms.ListBox GameScanLocationsListBox;
         public System.Windows.Forms.ComboBox InternetDatabaseUrlComboBox;
+		internal System.Windows.Forms.Button UpdateControllerDatabaseButton;
         private System.Windows.Forms.GroupBox ConfigurationGroupBox;
         private System.Windows.Forms.Label ConfigurationVersionLabel;
         internal System.Windows.Forms.TextBox ConfigurationVersionTextBox;

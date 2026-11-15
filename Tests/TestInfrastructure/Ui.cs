@@ -495,16 +495,16 @@ namespace x360ce.Tests
 			return NativeMethods.IsIconic(window);
 		}
 
-		/// <summary>Asks every running copy of the program to show its window, with the call a second launch makes.</summary>
+		/// <summary>Asks a running copy of the program to show its window, with the call a second launch on its profile makes.</summary>
 		/// <remarks>
-		/// BroadcastSystemMessage, as a second launch sends it, reaches the window while it is hidden in the tray.
+		/// BroadcastSystemMessage, as a second launch sends it, reaches the window while it is hidden in the tray. A copy started
+		/// with /Profile answers only the message named after its folder, as the program names it.
 		/// </remarks>
-		public static void PostRestoreRequest()
+		/// <param name="instanceName">The name the copy is found by (<see cref="InstanceNameOf"/>); the copy on the tests' own profile when not given.</param>
+		public static void PostRestoreRequest(string instanceName = null)
 		{
-			var product = ((System.Reflection.AssemblyProductAttribute)typeof(x360ce.App.MainForm).Assembly
-				.GetCustomAttributes(typeof(System.Reflection.AssemblyProductAttribute), false).First()).Product;
 			Exception error;
-			var message = JocysCom.ClassLibrary.Win32.NativeMethods.RegisterWindowMessage(product, out error);
+			var message = JocysCom.ClassLibrary.Win32.NativeMethods.RegisterWindowMessage(instanceName ?? x360ce.App.MainForm.InstanceName(TestRun.ProfileFolder), out error);
 			var recipients = (int)JocysCom.ClassLibrary.Win32.BSM.BSM_APPLICATIONS;
 			var flags = JocysCom.ClassLibrary.Win32.BSF.BSF_IGNORECURRENTTASK | JocysCom.ClassLibrary.Win32.BSF.BSF_POSTMESSAGE;
 			JocysCom.ClassLibrary.Win32.NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, message, x360ce.App.MainForm.wParam_Restore, 0, out error);
@@ -534,12 +534,23 @@ namespace x360ce.Tests
 			// it was a race: a copy that starts while the first is closing finds nobody to hand off
 			// to, becomes a full instance, plugs its controllers in, and the teardown then finds
 			// them left over and the process still running.
-			PostRestoreRequest();
+			PostRestoreRequest(InstanceNameOf(p));
 			WaitFor(() =>
 			{
 				p.Refresh();
 				return p.HasExited || p.MainWindowHandle != IntPtr.Zero ? "shown" : null;
 			}, TimeSpan.FromSeconds(15), "the window to come back from the tray");
+		}
+
+		/// <summary>
+		/// The name a running copy is found by, from the command line it was started with, as the program names its own: every
+		/// test starts its copies on a profile of its own, and a copy answers only its profile's name. The tests' own profile's
+		/// when the command line cannot be read.
+		/// </summary>
+		public static string InstanceNameOf(Process p)
+		{
+			var args = x360ce.App.Program.ArgumentsOf(p.Id);
+			return args == null ? x360ce.App.MainForm.InstanceName(TestRun.ProfileFolder) : x360ce.App.MainForm.InstanceNameOf(args);
 		}
 
 		/// <summary>

@@ -25,6 +25,10 @@ namespace x360ce.App.Controls
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			// The curve is in the theme's colour, so it is drawn again in a new one; a control not shown yet draws it when it loads.
+			EventHandler themeChanged = (s, e) => { if (IsHandleCreated) RefreshBackgroundImageAsync(); };
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
+			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -66,11 +70,13 @@ namespace x360ce.App.Controls
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
+			var curveColor = Color.Empty;
 			Invoke(new Action(() =>
 			{
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
+				curveColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorCurve");
 			}));
 			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
 			var w = MainPictureBox.Width - borders;
@@ -82,7 +88,7 @@ namespace x360ce.App.Controls
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			var dInputBrush = new SolidBrush(System.Drawing.Color.Gray);
 			var dInputPen = new Pen(dInputBrush);
-			var xInputBrush = new SolidBrush(System.Drawing.Color.Red);
+			var xInputBrush = new SolidBrush(curveColor);
 			var nInputBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, 128, 128, 128));
 			var nInputPen = new Pen(nInputBrush);
 			var radius = 1f;
@@ -109,8 +115,8 @@ namespace x360ce.App.Controls
 			var param = (int)SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
-				? "Sensitivity - Make more sensitive in the center:"
-				: "Sensitivity - Make less sensitive in the center:";
+				? "Sensitivity - Make more sensitive in the center"
+				: "Sensitivity - Make less sensitive in the center";
 		}
 
 		private void LinearUserControl_Load(object sender, EventArgs e)
@@ -137,7 +143,14 @@ namespace x360ce.App.Controls
 		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
 		{
 			MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			MainPictureBox.BackColor = Enabled ? System.Drawing.SystemColors.Window : System.Drawing.SystemColors.Control;
+			MainPictureBox.Invalidate();
+		}
+
+		/// <summary>The chart is as tall as it is wide: scaled to the font, its width and its height grow by different amounts.</summary>
+		private void MainPictureBox_SizeChanged(object sender, EventArgs e)
+		{
+			if (MainPictureBox.Height != MainPictureBox.Width)
+				MainPictureBox.Height = MainPictureBox.Width;
 		}
 
 		bool _invert;
@@ -158,13 +171,26 @@ namespace x360ce.App.Controls
 
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
 		{
-			// Each value label has the colour of its line and dot: XInput blue, DInput green,
-			// in the dark theme's own blue and green.
-			var xColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ColorBrand", System.Drawing.Color.Blue);
-			var dColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", System.Drawing.Color.Green);
+			// Each value label has the colour of its line and dot: DInput, the reading, in the theme's active colour, and
+			// XInput, what the curve gives for it, in its output colour.
+			var xColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundOutput");
+			var dColor = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive");
 			if (XInputValueLabel.ForeColor != xColor) XInputValueLabel.ForeColor = xColor;
 			if (DInputValueLabel.ForeColor != dColor) DInputValueLabel.ForeColor = dColor;
 			var image = LastBackgroundImage;
+			// Disabled, the box takes the colour of a box that cannot be changed, as the boxes beside it, and keeps its line,
+			// faded, without a reading.
+			if (!Enabled)
+			{
+				using (var face = new SolidBrush(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.FrameFace(MainPictureBox)))
+					e.Graphics.FillRectangle(face, MainPictureBox.ClientRectangle);
+				if (image == null) return;
+				// Pixel for pixel: the picture is the chart's own size.
+				e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+				JocysCom.ClassLibrary.Controls.ControlsHelper.DrawImageWithOpacity(e.Graphics, image,
+					new Rectangle(Point.Empty, image.Size), EngineHelper.DisabledOpacity);
+				return;
+			}
 			if (image == null) return;
 			var w = (float)image.Width;
 			var h = (float)image.Width;

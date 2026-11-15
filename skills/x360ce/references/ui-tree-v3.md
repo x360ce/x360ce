@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 3.8.14.0, built 2026-10-25.
+Version 3.11.32.0, built 2026-11-15.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -111,7 +111,7 @@ not shown in this state of the program.
 [List]      │   │   │   │   ├── D-pad Right                                             # D-Pad right button.
 [List]      │   │   │   │   └── D-pad Down                                              # D-Pad down button.
 [Tab]       │   │   │   ├── Axis to Button                                              # How far an axis must move before a button mapped to it counts as pressed.
-[Section]   │   │   │   │   └── DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):
+[Section]   │   │   │   │   └── DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)
 [Group]     │   │   │   │       └── Axis to button -> AxisToButtonUserControl           # How far an axis must move before the button mapped to it counts as pressed.
 [Tab]       │   │   │   ├── Advanced                                                    # Device type and pass through, combining several devices into one controller, trigger dead zones, and the D-Pad from an axis.
 [Section]   │   │   │   │   ├── Triggers
@@ -126,7 +126,8 @@ not shown in this state of the program.
 [List]      │   │   │   │   │   ├── Controller Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
 [CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Bypass x360ce and send all input and vibration data directly to the system. This disables combining, mappings, deadzones, etc. for this controller. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │   │   │   ├── Forces Pass Through                                 # Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.
-[List]      │   │   │   │   │   └── Pass Through Index                                  # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[List]      │   │   │   │   │   ├── Pass Through Index                                  # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
+[CheckBox]  │   │   │   │   │   └── Auto Map                                            # Map this controller from x360ce's controller database, and from SDL's where it maps nothing. A setting saved for one of its parts wins over the databases'. 0 = OFF, 1 = ON.
 [Section]   │   │   │   │   └── Axis To D-Pad
 [Value]     │   │   │   │       ├── D-Pad dead zone value                               # The dead zone slider's setting.
 [Value]     │   │   │   │       ├── D-Pad offset value                                  # The offset slider's setting.
@@ -160,30 +161,30 @@ not shown in this state of the program.
 [Button]    │   │   │           ├── Start Test                                          # Runs both motors at the strengths of the two motor sliders until pressed again.
 [Number]    │   │   │           └── Test resend interval 0..32767                       # Milliseconds between the test strengths being sent again, so a device that stops on its own keeps running.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows Game Controllers panel.
-[Button]    │   │   ├── Auto                                                            # Fills every mapping of this controller from what the device offers, after asking.
+[Button]    │   │   ├── Auto                                                            # Fills this controller from x360ce's controller database, with SDL's mapping where it maps nothing, when either knows the device; otherwise its mapping from what the device offers. After asking.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping of this controller, after asking.
 [Button]    │   │   ├── Reset                                                           # Reloads this controller's settings from x360ce.ini, dropping what was not saved, after asking.
 [Button]    │   │   └── Save                                                            # Writes every setting to x360ce.ini now.
 [Control]   │   └── ThumbUserControl                                                    # Dead zone, anti dead zone and sensitivity of one axis of a stick.
 [Section]   │       └── X - Horizontal Axis
-[Value]     │           ├── Sensitivity value                                           # The sensitivity slider's setting.
-[Slider]    │           ├── Sensitivity 0..100                                          # How the stick's movement is curved: slower near the centre, or faster.
-[Value]     │           ├── Anti dead zone value                                        # The anti dead zone slider's setting.
-[Value]     │           ├── Dead zone value                                             # The dead zone slider's setting.
-[Slider]    │           ├── Anti dead zone 0..100                                       # How far the game's own dead zone is skipped, so a small move is not lost, in per cent.
+[Toolbar]   │           ├── Presets                                                     # Common pairs of dead zone and anti dead zone.
+[Button]    │           │   └── Apply Preset                                            # Sets the dead zone and anti dead zone to one of the common pairs listed.
+[Button]    │           │       ├── 5% Dead Zone, 100% Controller Anti-Dead Zone
+[Button]    │           │       ├── 100% Controller Anti-Dead Zone
+[Button]    │           │       ├── 80% Controller Anti-Dead Zone
+[Button]    │           │       ├── 60% Controller Anti-Dead Zone
+[Button]    │           │       ├── 40% Controller Anti-Dead Zone
+[Button]    │           │       └── 20% Controller Anti-Dead Zone
 [Slider]    │           ├── Dead zone 0..100                                            # How far the stick must move before the game sees it move, in per cent.
-[Number]    │           ├── Anti dead zone 0..32767                                     # How far the game's own dead zone is skipped, so a small move is not lost, in raw units.
-[Number]    │           ├── Sensitivity -100..100 (hidden)                              # How the stick's movement is curved, as a number.
+[Value]     │           ├── Dead zone value                                             # The dead zone slider's setting.
 [Number]    │           ├── Dead zone 0..32767                                          # How far the stick must move before the game sees it move, in raw units.
+[Slider]    │           ├── Anti dead zone 0..100                                       # How far the game's own dead zone is skipped, so a small move is not lost, in per cent.
+[Value]     │           ├── Anti dead zone value                                        # The anti dead zone slider's setting.
+[Number]    │           ├── Anti dead zone 0..32767                                     # How far the game's own dead zone is skipped, so a small move is not lost, in raw units.
+[Slider]    │           ├── Sensitivity 0..100                                          # How the stick's movement is curved: slower near the centre, or faster.
+[Value]     │           ├── Sensitivity value                                           # The sensitivity slider's setting.
 [CheckBox]  │           ├── Invert                                                      # Turns the sensitivity curve the other way.
-[Toolbar]   │           └── Presets                                                     # Common pairs of dead zone and anti dead zone.
-[Button]    │               └── Apply Preset                                            # Sets the dead zone and anti dead zone to one of the common pairs listed.
-[Button]    │                   ├── 5% DeadZone, 100% Controller Anti-DeadZone
-[Button]    │                   ├── 100% Controller Anti-DeadZone
-[Button]    │                   ├── 80% Controller Anti-DeadZone
-[Button]    │                   ├── 60% Controller Anti-DeadZone
-[Button]    │                   ├── 40% Controller Anti-DeadZone
-[Button]    │                   └── 20% Controller Anti-DeadZone
+[Number]    │           └── Sensitivity -100..100 (hidden)                              # How the stick's movement is curved, as a number.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, how fast it is doing it, and which files it uses.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
@@ -225,7 +226,8 @@ not shown in this state of the program.
 [Section]   │   │   │       ├── Internet
 [CheckBox]  │   │   │       │   ├── Internet Features                                   # Enable the use of Internet features like the settings database. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │       │   ├── Auto Load Settings When Tab Selected                # Searches the online database for settings for your controllers each time the Controller Settings page is opened.
-[List]      │   │   │       │   └── Settings database address                           # Web address of the online database the Controller Settings page searches and saves to.
+[List]      │   │   │       │   ├── Settings database address                           # Web address of the online database the Controller Settings page searches and saves to.
+[Button]    │   │   │       │   └── Update Controller Database                          # Downloads x360ce's controller database, the setting most people use for each controller, from the site of the settings database address into the settings folder, and says in the header how it went. New controllers and the Presets tab use it from then on.
 [Tabs]      │   │   │       └── (ProgramScanLocationsTabControl)
 [Tab]       │   │   │           ├── Game Scan Locations
 [List]      │   │   │           │   ├── Game scan locations                             # Folders the Scan button searches for games.
@@ -298,9 +300,9 @@ not shown in this state of the program.
 [Button]    │   │   │       │   │       ├── Refresh                                     # Reads the most popular settings from the online database again.
 [Button]    │   │   │       │   │       └── Load                                        # Loads the selected popular settings into the chosen controller.
 [Tab]       │   │   │       │   └── Default Settings for Most Popular Controllers
-[Grid]      │   │   │       │       ├── Controller defaults                             # Default settings for well-known controllers.
+[Grid]      │   │   │       │       ├── Controller defaults                             # The setting most people use for each controller, from x360ce's controller database.
 [Toolbar]   │   │   │       │       └── Controller defaults actions                     # Reads the controller defaults again, and loads the selected one.
-[Button]    │   │   │       │           ├── Refresh                                     # Reads the controller defaults from the online database again.
+[Button]    │   │   │       │           ├── Refresh                                     # Reads x360ce's controller database again: the built-in copy, or the one Update Controller Database saved.
 [Button]    │   │   │       │           └── Load                                        # Loads the selected defaults into the chosen controller.
 [Value]     │   │   │       └── Selected comment                                        # The note saved with the selected settings.
 [Tab]       │   │   ├── Help                                                            # Instructions for setting up a controller, and answers to common problems.

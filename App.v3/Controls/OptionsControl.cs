@@ -19,6 +19,8 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			if (DesignMode) return;
+			// Each folder stands with 4 device-independent pixels of room round its name.
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.SetItemRoom(GameScanLocationsListBox, 4);
 			// System until the file says otherwise; a file without the setting leaves it there.
 			ThemeComboBox.SelectedIndex = 0;
 			ThemeComboBox.SelectedIndexChanged += (s, e) =>
@@ -214,6 +216,24 @@ namespace x360ce.App.Controls
 		private void SaveSettingsButton_Click(object sender, EventArgs e)
 		{
 			MainForm.Current.SaveSettings();
+		}
+
+		/// <summary>
+		/// Fetches x360ce's controller database from the site of the settings database address into the settings folder, off
+		/// the window's thread, and says in the header how it went. The Presets tab and new controllers use the saved copy from
+		/// then on.
+		/// </summary>
+		private void UpdateControllerDatabaseButton_Click(object sender, EventArgs e)
+		{
+			UpdateControllerDatabaseButton.Enabled = false;
+			X360ceUpdateClient.UpdateSettingsCopy(InternetDatabaseUrlComboBox.Text, "x360ce/" + Application.ProductVersion).ContinueWith(t =>
+			{
+				UpdateControllerDatabaseButton.Enabled = true;
+				var outcome = t.Result.Value;
+				if (outcome == DatabaseUpdateOutcome.Saved)
+					MainForm.Current.SettingsDatabasePanel.RefreshPresetsGrid(false);
+				MainForm.Current.UpdateHelpHeader(t.Result.Key, outcome == DatabaseUpdateOutcome.Failed ? MessageBoxIcon.Error : MessageBoxIcon.Information);
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)

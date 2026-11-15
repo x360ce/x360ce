@@ -149,11 +149,12 @@ namespace x360ce.App.DInput
 		static readonly System.Diagnostics.Stopwatch SpringCalibrationClock = System.Diagnostics.Stopwatch.StartNew();
 
 		/// <param name="routing">Which rows each controller reads and where each device's force comes from, for this pass.</param>
-		internal void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector, DeviceRouting routing)
+		internal void UpdateDiStates(DirectInput manager, UserGame game, System.Windows.Forms.NativeWindow window, DeviceRouting routing)
 		{
 			// The devices on the game's ticked rows, found when the routing was built. Found here, the settings and
 			// devices lists would be copied on every pass, under the lock the interface holds while it draws a change.
 			var userDevices = routing.MappedDevices;
+			var standsIn = routing.MappedStandsIn;
 			// A recording that runs times each device call below, by the name its error reports give it.
 			var recording = Recording;
 			// Acquire copy of feedbacks for processing.
@@ -180,6 +181,12 @@ namespace x360ce.App.DInput
 				// Only connected devices are read; one that is not keeps what it showed last.
 				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				if (!ud.IsOnline)
+					continue;
+				// A Raw Input device's DirectInput twin is read only while it stands in for that device, which Raw Input
+				// cannot see (DeviceRouting.RowStandIns). The Raw Input device comes first in the list, so the pass that
+				// finds it missing reads its twin too.
+				var raw = standsIn[i];
+				if (raw != null && raw.IsOnline && !raw.RawInputMissing)
 					continue;
 				// A Raw Input device is copied from the hub, which has its newest state ready. It has no DirectInput device
 				// to hold or poll, so none of what follows applies to it, and the test option that stops DirectInput reads
@@ -264,7 +271,7 @@ namespace x360ce.App.DInput
 								device.Unacquire();
 								directInput.KeepChanges();
 								step = Calling(recording, ud, "SetCooperativeLevel (Exclusive)");
-								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								device.SetCooperativeLevel(window.Handle, flags);
 								// Set here because it can only be set while the device is let go of.
 								if (autoCenter.HasValue)
 								{
@@ -291,7 +298,7 @@ namespace x360ce.App.DInput
 								device.Unacquire();
 								directInput.KeepChanges();
 								step = Calling(recording, ud, "SetCooperativeLevel (NonExclusive)");
-								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								device.SetCooperativeLevel(window.Handle, flags);
 								step = Calling(recording, ud, "Acquire (NonExclusive)");
 								device.Acquire();
 								ud.IsExclusiveMode = false;

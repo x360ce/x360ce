@@ -7,10 +7,12 @@
       "Comment": "Native and redistributed files, built and signed first. They are embedded into the applications, so they have to carry their signature before the application embedding them is compiled.",
       "Builds": [
         {
-          "Platform": "DLL_x86_v3"
+          "Platform": "DLL_x86_v3",
+          "Line": "v3"
         },
         {
-          "Platform": "DLL_x64_v3"
+          "Platform": "DLL_x64_v3",
+          "Line": "v3"
         }
       ]
     },
@@ -20,19 +22,23 @@
       "Builds": [
         {
           "Project": "../Engine/x360ce.Engine.csproj",
-          "Platform": "x86"
+          "Platform": "x86",
+          "Line": "v3"
         },
         {
           "Project": "../Engine/x360ce.Engine.csproj",
-          "Platform": "x64"
+          "Platform": "x64",
+          "Line": "v3"
         },
         {
           "Project": "../Engine/x360ce.Engine.csproj",
-          "Platform": "AnyCPU"
+          "Platform": "AnyCPU",
+          "Line": "v4"
         },
         {
           "Project": "../PluginApi/x360ce.Plugins.csproj",
-          "Platform": "AnyCPU"
+          "Platform": "AnyCPU",
+          "Line": "v4"
         }
       ]
     },
@@ -45,15 +51,18 @@
       "Builds": [
         {
           "Project": "../App.v3/x360ce.App.v3.csproj",
-          "Platform": "x86"
+          "Platform": "x86",
+          "Line": "v3"
         },
         {
           "Project": "../App.v3/x360ce.App.v3.csproj",
-          "Platform": "x64"
+          "Platform": "x64",
+          "Line": "v3"
         },
         {
           "Project": "../App.v4/x360ce.App.v4.csproj",
-          "Platform": "AnyCPU"
+          "Platform": "AnyCPU",
+          "Line": "v4"
         }
       ]
     }
@@ -62,6 +71,7 @@
     {
       "AppName": "X360CE - DirectInput Library",
       "Stage": "Library",
+      "Line": "v3",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -77,6 +87,7 @@
     {
       "AppName": "X360CE - TocaEdit XBOX 360 Controller Emulator Library",
       "Stage": "Library",
+      "Line": "v3",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -97,25 +108,31 @@
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
-          "Target": "../App.v4/Resources/SharpDX/SharpDX.dll"
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.dll",
+          "Line": "v4"
         },
         {
-          "Target": "../App.v4/Resources/SharpDX/SharpDX.DirectInput.dll"
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.DirectInput.dll",
+          "Line": "v4"
         },
         {
-          "Target": "../App.v4/Resources/SharpDX/SharpDX.RawInput.dll"
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.RawInput.dll",
+          "Line": "v4"
         },
         {
-          "Target": "../App.v3/Resources/SharpDX/SharpDX.dll"
+          "Target": "../App.v3/Resources/SharpDX/SharpDX.dll",
+          "Line": "v3"
         },
         {
-          "Target": "../App.v3/Resources/SharpDX/SharpDX.DirectInput.dll"
+          "Target": "../App.v3/Resources/SharpDX/SharpDX.DirectInput.dll",
+          "Line": "v3"
         }
       ]
     },
     {
       "AppName": "X360CE - Shauleiz Virtual Xbox Interface",
       "Stage": "Library",
+      "Line": "v4",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -131,6 +148,7 @@
     {
       "AppName": "X360CE - DirectInput Tool",
       "Stage": "Library",
+      "Line": "v3",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -148,19 +166,23 @@
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
-          "Target": "../Engine/bin/Release/x360ce.Engine.dll"
+          "Target": "../Engine/bin/Release/x360ce.Engine.dll",
+          "Line": "v4"
         },
         {
-          "Target": "../Engine/bin/Release_x86/x360ce.Engine.dll"
+          "Target": "../Engine/bin/Release_x86/x360ce.Engine.dll",
+          "Line": "v3"
         },
         {
-          "Target": "../Engine/bin/Release_x64/x360ce.Engine.dll"
+          "Target": "../Engine/bin/Release_x64/x360ce.Engine.dll",
+          "Line": "v3"
         }
       ]
     },
     {
       "AppName": "X360CE - Plugins",
       "Stage": "Engine",
+      "Line": "v4",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -179,6 +201,7 @@
     {
       "AppName": "XBOX 360 Controller Emulator",
       "Stage": "App",
+      "Line": "v3",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",
@@ -205,6 +228,7 @@
     {
       "AppName": "XBOX 360 Controller Emulator",
       "Stage": "App",
+      "Line": "v4",
       "AppLink": "https://www.x360ce.com",
       "SignModule": "%SIGN_MODULE_PATH%",
       "ZipScript": "../Resources/ZipFiles.ps1",

@@ -24,7 +24,7 @@ namespace x360ce.App.Controls
 		public const int ToggleWidth = 20;
 
 		/// <summary>The rounding of its corners, in device-independent pixels.</summary>
-		const int ToggleRadius = 3;
+		const int ToggleRadius = 4;
 
 		/// <summary>The two letters on the face, which are the same on every one of these.</summary>
 		/// <remarks>
@@ -208,13 +208,13 @@ namespace x360ce.App.Controls
 				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
 		}
 
-		/// <summary>Colour saying whether the formula works, readable on a light or a dark theme.</summary>
+		/// <summary>Colour saying whether the formula works: the theme's success or warning colour.</summary>
 		private static Color StateColour(FormulaState state)
 		{
 			switch (state)
 			{
-				case FormulaState.Working: return Color.FromArgb(0x2E, 0x9E, 0x2E);
-				case FormulaState.Broken: return Color.FromArgb(0xD1, 0x34, 0x38);
+				case FormulaState.Working: return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess");
+				case FormulaState.Broken: return JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning");
 				default: return SystemColors.WindowText;
 			}
 		}

@@ -47,7 +47,7 @@ A wheel and its pedals work in x360ce but not in a Steam game? Steam Input can t
 
 ## DirectInput and Raw Input
 
-x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet. The `[Source]` column says how each row is read.
+x360ce reads a controller in two ways and lists it once for each, so a controller can appear twice on the `[Devices]` page and in the list `[Add...]` opens. Both lists show the DirectInput rows first, tinted blue, then the Raw Input rows, teal, then plugin devices, violet, and a controller tab's list tints its rows the same way. The `[Source]` column says how each row is read.
 
 - `Raw Input` reads the controller while a game has the focus. Choose it for an Xbox One controller.
 - Vibration and wheel forces reach the controller from either row. Raw Input only reads, so a `Raw Input` row's go through the same controller's `DirectInput` side. An Xbox controller's DirectInput side takes none: `[Pass Through]` on the `[Force Feedback]` page reaches its motors from either row.
@@ -109,16 +109,21 @@ A mouse can move a stick: to steer, fly, aim or turn a camera. Map the mouse's a
 - `Position`: the stick follows how far the mouse has moved, and stays there. For steering and flying. This is how a mouse moved a stick before the page existed, and the page starts with it.
 - `Speed`: the stick follows how fast the mouse moves, and returns to the centre when it stops. For a camera or aiming.
 - `Screen`: the stick follows where the pointer is on the screen, measured from the middle of the screen. For a game that shows a pointer, as a mouse yoke.
+- `Wheel`: the stick follows how far the mouse has moved, and stays there while the mouse moves it, whatever `[Back to centre]` is set to. When the button lets it go, or turns it off, it goes back to the centre over the `[Back to centre]` time, as a steering wheel does; `0` centres it at once. Active always, it never goes back.
 
 The other settings:
 
 - `[Sensitivity across]` and `[Sensitivity up and down]`, in percent. At `100`, the whole stick is 2,048 counts of movement in `Position`, 4,096 counts a second in `Speed`, and half the screen's height in `Screen`. A mouse with a high DPI counts more for the same movement, so it needs less.
 - `[Smoothing]`, in milliseconds: how long the stick takes to follow a change in `Speed` and `Screen`, which evens out the mouse's uneven reports. `30` is barely felt.
-- `[Back to centre]`, in milliseconds: how long the stick takes to go back to the centre. In `Position`, `0` leaves it where the mouse left it, and a value makes a stick that centres itself. In `Speed`, it slows the return after the mouse stops.
-- `[Active]`: always, while a button is held, or turned on and off by a button. A stick turned on by a button starts from the centre each time, and `Screen` takes the pointer's place at that moment as the centre. Let go, the stick returns to the centre, or stays where it was if you choose that.
+- `[Active]`: always, while a button is held, or turned on and off by a button. A stick turned on by a button starts from the centre each time, a `Wheel` from where it is, and `Screen` takes the pointer's place at that moment as the centre. Let go, the stick returns to the centre, or stays where it was if you choose that.
 - `[Button]`: the mouse's button that `[Active]` uses: button 1 is the left button, 2 the right, 3 the middle.
+- `[Back to centre]`, in milliseconds: how long the stick takes to go back to the centre. In `Position`, `0` leaves it where the mouse left it, and a value makes a stick that centres itself. In `Speed`, it slows the return after the mouse stops. In `Wheel`, it is how long the stick takes to centre once it is let go.
 
 The stick's own `[Dead Zone]`, `[Anti-Dead Zone]` and `[Sensitivity]` on the stick's tab shape the result as for any device.
+
+A formula in a stick's box, such as `=a3*2`, reads the value this page gives the stick, as `Axis 3` does. On one stick a mouse axis takes its value from the first box that reads it, and a second mouse axis named in the same formula reads the mouse's plain position.
+
+Under the two sticks a short demo shows the style of the stick you last worked on, with settings of its own that show the style plainly: a mouse on its pad, or for `Screen` a pointer on a screen, and the stick it moves, pausing at the moment that sets the style apart, with a line under it that says what happens. A note says so when the stick's `[Active]` setting keeps it from doing what the demo shows. Choosing a style plays it once, unless Windows' Show animations is off; `[Play]` plays it again, and stops it while it plays.
 
 For example, to steer a car as in GTA, with a camera when not steering: on the left stick, `Position`, active while button 1 is held, then centre; on the right stick, `Speed`, always.
 
@@ -144,8 +149,8 @@ The emulated controllers can be switched off without closing the program, so a g
 ## Colours and font
 
 1. `[Options]` tab → `[General]` → `[Appearance]`, on the right under `[Game Scan Locations]`: `[Theme]` chooses light or dark colours. `System` follows the Windows setting for apps. The colours change at once.
-2. `[Font]` chooses the font the windows are drawn in: `Default`, which names Windows' own font; `Selawik (built in)`, which x360ce carries; or a font installed on the computer, such as Segoe UI.
-3. `[Size]` chooses the size of the text: `Default`, Windows' own size for its own font and Windows' text size for any other, or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
+2. `[Font]` chooses the font the windows are drawn in: `Default (Segoe UI)`, Windows' own; `Selawik (built in)`, which x360ce carries; or a font installed on the computer, such as Arial.
+3. `[Size]` chooses the size of the text: `Default`, Windows' text size, or a size in points, shown with the pixels it is drawn at on this screen. A size applies to every font, and the windows grow or shrink with it.
 4. A new font or size is used when x360ce starts again. `[Restart x360ce]` appears under the lists to do that now; it saves the settings first.
 5. A font removed from Windows is forgotten when x360ce starts, and the default is used.
 6. The scroll bars follow Windows. To always see their arrows and a full-size thumb, turn on Windows `Settings` → `Accessibility` → `Visual effects` → `Always show scroll bars`.
@@ -156,11 +161,21 @@ The emulated controllers can be switched off without closing the program, so a g
 2. `[Load Preset...]` → `[Open File...]` loads such a file onto the selected controller.
 3. `[Copy Preset]` and `[Paste Preset]` carry the same settings through the clipboard.
 
+## x360ce controller database
+
+x360ce carries its own controller database, `gamecontrollerdb_x360ce.windows.txt`: for each controller, the complete setting most x360ce users chose for it, mapping, force feedback and dead zones. It is written as SDL writes its rows, and it works offline.
+
+1. A controller put on a controller tab of a game that has no settings for it starts from its row, with SDL's mapping for the parts the row leaves empty. A controller only SDL knows gets SDL's mapping. When neither turns force feedback on, a controller with motors gets it at the defaults.
+2. Settings you saved always win: a controller removed from its tab, deleted on the `[Devices]` page, or unplugged gets its own settings back when it returns. The database is used only when there are none.
+3. `[Auto Preset]` fills the controller in the same way.
+4. `[Load Preset...]` → `[Default Settings for Most Popular Controllers]` lists the database's rows, at once and offline.
+5. `[Options]` tab → `[Internet]` → `[Update x360ce Database]`, or `[Refresh]` on the Most Popular list, fetches the newest copy into the settings folder from the site of the `Web Service URL` on that page: its `/webservices/x360ce.asmx` becomes `/ControllerDatabase.ashx`, and x360ce's server is asked when the address does not end that way. x360ce uses that copy from then on. These two buttons are the only times x360ce asks the internet for it.
+
 ## SDL controller database
 
 x360ce carries SDL's controller database, [SDL_GameControllerDB](https://github.com/mdqinc/SDL_GameControllerDB), which many games use. For about 870 controllers it says which button, stick and hat is which part of a gamepad. It works offline.
 
-1. `[Auto Preset]` fills the mapping from SDL's row for the device. Only a device SDL has no row for, such as a keyboard, a mouse, a wheel or an unknown pad, gets x360ce's own guess. The status bar says which it was.
+1. `[Auto Preset]` fills the mapping from SDL's row for the parts x360ce's controller database leaves empty. Only a device neither database has a row for, such as a keyboard, a mouse or an unknown pad, gets x360ce's own guess. The status bar says which it was.
 2. `[Controller 1]` tab → `[SDL]` tab shows which copy of the database is in use, whether SDL knows the selected device, and each part of the Xbox controller: SDL's name for it, its label on your pad (A, Cross, B...), SDL's binding, the control of your device that binding names, and what the box holds now. `Differs` marks a box that holds something else. `[Apply SDL Mapping]` fills every mapping box from SDL's row and leaves the dead zones and other settings as they are.
 3. The arrow beside `[Copy Preset]` → `[Copy as SDL]` copies the mapping as a row of SDL's database for the selected device, for an SDL game or to send to SDL_GameControllerDB. Formulas and the other settings are left out. `[Paste Preset]` reads such a row, or a whole `gamecontrollerdb.txt`, and takes the row for the selected device.
 4. `[Load Preset...]` → `[SDL]` lists every row, the selected device's first, with a filter.
@@ -196,8 +211,10 @@ The right half is mixed rather than picked from that list: the more that is wron
 the further it moves towards red. A tab with two faults therefore looks worse than a tab
 with one, so the tab most in need of attention is the one that stands out.
 
-Blue is not a fault. `[Show XInput State]` only decides where the numbers shown on screen
-come from - read back from the emulated controller, or worked out from your own device.
+Blue is not a fault. `[Show XInput State]` only decides where the `[General]` page's numbers
+and picture come from - read back from the emulated controller, or worked out from your own
+devices. The chart on a trigger's or stick's page always shows the selected device's reading
+and what its mapping makes of it.
 The emulated controller works either way, so with that setting off the program cannot say
 whether one exists and says so rather than guessing.
 

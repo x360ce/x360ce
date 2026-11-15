@@ -123,13 +123,14 @@ namespace JocysCom.ClassLibrary.Mcp
 			return null;
 		}
 
-		[McpTool(AiAccess.Configure, "Presses a Button by path, whether it stands on its own, on a bar, or in a grid row; the tabs above it are selected first. A press that opens a window answers as soon as the window waits, with its path and the buttons that answer it; press one with ui_invoke, and the press that opened it carries on. Buttons that administer the computer or run work with the person's access need Administer access.")]
+		[McpTool(AiAccess.Configure, "Presses a Button by path, whether it stands on its own, on a bar, or in a grid row; the tabs above it are selected first. A press that opens a window answers as soon as the window waits, with its path and the buttons that answer it; press one with ui_invoke, and the press that opened it carries on. A press that shows a menu answers with the menu's path and its entries, pressed the same way. Buttons that administer the computer or run work with the person's access need Administer access.")]
 		public static string UiInvoke([Description("Element path from ui_read.")] string path)
 		{
 			var refused = UiTreeWalker.Invoke(Resolve(path));
 			if (refused != null)
 				throw new InvalidOperationException(refused);
-			return null;
+			// A press that shows a menu says so, with the entries that answer it.
+			return OpenMenuNote();
 		}
 
 		/// <summary>How long a walk points at each tab on the way, in milliseconds.</summary>

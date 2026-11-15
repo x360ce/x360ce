@@ -91,41 +91,13 @@ namespace x360ce.App
 			o.WindowPosition?.LoadPosition(this);
 		}
 
-		/// <summary>
-		/// Gives the window its first height: as tall as the controller page it opens on needs, within the work area of the
-		/// screen it opens on. A window Windows is placing, one with no saved place, is also centred there; one put back in a
-		/// saved place keeps its place and width, and is made taller only, and moved up as far as the work area needs.
-		/// </summary>
-		/// <remarks>
-		/// The page's need is its own measure, the one it scrolls by (<see cref="PadControl.NeededHeight"/>), and what the window
-		/// puts around the page (the header, the tool bar, the tab strips, the status bar and the borders) is read from the window
-		/// as it is built, so the size follows the font, the theme and the screen's scale. The other
-		/// controller pages need as much, as they differ only in the devices their lists hold. The window keeps its width, as the
-		/// page never asks for more, and is never made smaller than designed or saved. On a shorter screen it is as tall as the
-		/// work area, and the page scrolls. A maximised window is left as it is.
-		/// </remarks>
-		/// <param name="window">The window at its designed or saved size, built and laid out, before it is shown.</param>
-		/// <param name="page">The controller page the window opens on, laid out in the window.</param>
-		/// <param name="workArea">The work area of the screen the window opens on.</param>
-		public static void FitToPage(Form window, PadControl page, Rectangle workArea)
+		/// <summary>Keeps the smallest size the window takes, the size its General tab shows whole in, within the work area of a smaller screen.</summary>
+		/// <param name="window">The window, scaled to the screen.</param>
+		/// <param name="workArea">The work area of the screen it opens on.</param>
+		public static void KeepMinimumOnScreen(Form window, Rectangle workArea)
 		{
-			if (window.WindowState != FormWindowState.Normal)
-				return;
-			var height = Math.Max(window.Height, window.Height - page.Height + page.NeededHeight(page.Width));
-			height = Math.Min(height, workArea.Height);
-			if (window.StartPosition == FormStartPosition.WindowsDefaultLocation)
-			{
-				var width = Math.Min(window.Width, workArea.Width);
-				window.StartPosition = FormStartPosition.Manual;
-				window.Bounds = new Rectangle(workArea.Left + (workArea.Width - width) / 2, workArea.Top + (workArea.Height - height) / 2,
-					width, height);
-			}
-			else if (height > window.Height)
-			{
-				// A window kept off the screens, as an export keeps it, stays there.
-				var top = workArea.IntersectsWith(window.Bounds) ? Math.Max(workArea.Top, Math.Min(window.Top, workArea.Bottom - height)) : window.Top;
-				window.Bounds = new Rectangle(window.Left, top, window.Width, height);
-			}
+			var min = window.MinimumSize;
+			window.MinimumSize = new Size(Math.Min(min.Width, workArea.Width), Math.Min(min.Height, workArea.Height));
 		}
 
 		/// <summary>
@@ -144,21 +116,20 @@ namespace x360ce.App
 			// The controller pages are offered as ready only now: what finds them before reads their controls as settings,
 			// which hold none yet.
 			Main.PadControls = Main.BuiltPadControls;
-			// Each device list belongs to its page, so a tick in it saves that page alone.
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, Main.PadControls[0].MappedDevicesDataGridView, MapTo.Controller1);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, Main.PadControls[1].MappedDevicesDataGridView, MapTo.Controller2);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, Main.PadControls[2].MappedDevicesDataGridView, MapTo.Controller3);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, Main.PadControls[3].MappedDevicesDataGridView, MapTo.Controller4);
-			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
+			var pad = Main.PadControls[0];
+			// The device list follows the page to the controller it shows, so a tick in it saves that controller alone.
+			pad.GridMap = SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, pad.MappedDevicesDataGridView, MapTo.Controller1);
+			// Update settings manager with the [PAD1] section, which follows the page to the controller it shows.
 			// Note: There must be no such sections in new config.
-			for (var i = 0; i < Main.PadControls.Length; i++)
-			{
-				Main.PadControls[i].HoldTables();
-				Main.PadControls[i].UpdateSettingsMap();
-				Main.PadControls[i].InitPadData();
-				Main.PadControls[i].ReleaseTables();
-				Program.StartupTrace.Mark("LoadPages: pad " + (i + 1) + " data");
-			}
+			pad.HoldTables();
+			pad.UpdateSettingsMap();
+			pad.InitPadData();
+			pad.ReleaseTables();
+			Program.StartupTrace.Mark("LoadPages: pad data");
+			// The page is on the first Controller tab; a run that opens on another shows that tab's controller.
+			Main.ShowPadOn(Main.MainTabControl.SelectedTab);
+			// The AI door reads every Controller tab, shown or not.
+			JocysCom.ClassLibrary.Controls.UiTree.UiTreeWalker.BeforeChildren = Main.PadForDoor;
 			// Allow events after PAD control are loaded.
 			Main.MainTabControl.SelectedIndexChanged += new System.EventHandler(Main.MainTabControl_SelectedIndexChanged);
 			// Name and describe everything, now that every panel exists. This is what a screen
@@ -201,7 +172,6 @@ namespace x360ce.App
 			var routing = x360ce.App.DInput.DeviceRouting.Current;
 			for (var i = 0; i < 4; i++)
 			{
-				var padControl = Main.PadControls[i];
 				// Whether this tab is to have an emulated controller, asked the way the engine asks: the master switch,
 				// the game's emulation and the tab's own Enable. Off is a choice, not a fault, and the lights must not
 				// say otherwise.
@@ -552,22 +522,25 @@ namespace x360ce.App
 			Main = new MainControl { Dock = DockStyle.Fill, Bounds = LoadingLabel.Bounds };
 			Program.StartupTrace.Mark("MainControl: after InitializeComponent");
 			yield return null;
-			for (var i = 0; i < Main.ControlPages.Length; i++)
-			{
-				Main.BuildPad(i);
-				yield return null;
-			}
+			Main.BuildPad();
+			yield return null;
 			Main.BuildAbout();
 			yield return null;
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(Main);
 			Program.StartupTrace.Mark("MainControl: themed");
 			yield return null;
-			LoadMainControl();
+			foreach (var step in LoadMainControl())
+				yield return step;
 		}
 
 		/// <summary>Reads the settings, gives the control its data, puts it on the window and starts what waited for it.</summary>
-		void LoadMainControl()
+		/// <remarks>
+		/// Three steps, each of which held the window for about half a second, and together for up to two: the settings,
+		/// the pages' data, and putting the control on the window. Between the second and the third, the work each page
+		/// posted runs before its controls have windows.
+		/// </remarks>
+		IEnumerable<object> LoadMainControl()
 		{
 			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_WHILE_LOADING")))
 				throw new InvalidOperationException("Injected fault: X360CE_THROW_WHILE_LOADING.");
@@ -606,6 +579,8 @@ namespace x360ce.App
 			Program.StartupTrace.WatchInterfaceWakes();
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
+			if (SettingsManager.Options.ShowDebugPanel)
+				DebugPanel.ShowPanel();
 			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
@@ -638,13 +613,16 @@ namespace x360ce.App
 			Main.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			Main.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			Main.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			yield return null;
 			LoadPages();
+			yield return null;
 			AddMainControl();
-			// The page shown at start is laid out in the font and the theme it is shown in. Placed on the screen Windows chose for
-			// the window, the one it was started from or else the main one.
-			if (Main.ControllerIndex >= 0)
-				FitToPage(this, Main.PadControls[Main.ControllerIndex], Screen.FromHandle(Handle).WorkingArea);
-			Program.StartupTrace.Mark("MainForm_Load: window fitted to the page");
+			// The door opens as the options left it once the window holds its pages, so an assistant that reaches it reads the
+			// whole window. An export describes the pages and leaves: it opens no door and writes no options file.
+			if (Program.ExportUiFolder == null)
+				Global.ApplyAiAccess();
+			// On the screen Windows chose for the window, the one it was started from or else the main one.
+			KeepMinimumOnScreen(this, Screen.FromHandle(Handle).WorkingArea);
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
 			if (AppVersionChanged)
@@ -653,14 +631,6 @@ namespace x360ce.App
 				ClearErrors(true);
 			}
 			MonitorErrors(true);
-			var game = SettingsManager.CurrentGame;
-			if (SettingsManager.Options.HidHideConfigureAutomatically)
-			{
-				// Every listed device is judged, so one no longer used by the game, unticked since the last run among
-				// them, is shown again as well as each one used is hidden.
-				SettingsManager.AutoHideShowMappedDevices(game);
-				AppHelper.SynchronizeToHidHide();
-			}
 			// The issues are checked on their own from now on, and what they find is shown on the Issues tab.
 			InitIssuesIcon();
 			// After the work loading posted for each page, which selects its row and shows that row's settings: a box change
@@ -706,14 +676,8 @@ namespace x360ce.App
 				if (Controller.IsLoaded)
 				{
 					if (Main?.PadControls != null)
-					{
-						for (var i = 0; i < 4; i++)
-						{
-
-							var currentPadControl = Main.PadControls[i];
-							currentPadControl.UpdateForceFeedBack();
-						}
-					}
+						foreach (var pad in Main.PadControls)
+							pad.UpdateForceFeedBack();
 				}
 				if (e.Error != null)
 				{
@@ -957,6 +921,7 @@ namespace x360ce.App
 
 		void ArmFaultInjection()
 		{
+			ArmHangInjection();
 			var after = Environment.GetEnvironmentVariable("X360CE_THROW_AFTER");
 			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
 				return;
@@ -976,6 +941,49 @@ namespace x360ce.App
 				}));
 			};
 			_faultTimer.Start();
+		}
+
+		/// <summary>Holds the interface thread as a deadlock would, so what a recording says about a window that stops answering can be seen.</summary>
+		/// <remarks>
+		/// Set X360CE_HANG_AFTER to a number of seconds: a posted call then waits for a .NET lock another thread holds, for
+		/// X360CE_HANG_FOR seconds (15 when not set), and the window answers nothing meanwhile. Nothing is armed unless the
+		/// variable is set.
+		/// </remarks>
+		System.Windows.Forms.Timer _hangTimer;
+
+		void ArmHangInjection()
+		{
+			var after = Environment.GetEnvironmentVariable("X360CE_HANG_AFTER");
+			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
+				return;
+			if (!int.TryParse(Environment.GetEnvironmentVariable("X360CE_HANG_FOR"), out var holdFor) || holdFor <= 0)
+				holdFor = 15;
+			_hangTimer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
+			_hangTimer.Tick += (s, e) =>
+			{
+				_hangTimer.Stop();
+				ControlsHelper.BeginInvoke(() => WaitForInjectedLock(holdFor));
+			};
+			_hangTimer.Start();
+		}
+
+		static void WaitForInjectedLock(int seconds)
+		{
+			var gate = new object();
+			using (var held = new System.Threading.ManualResetEventSlim())
+			{
+				var holder = new System.Threading.Thread(() =>
+				{
+					lock (gate)
+					{
+						held.Set();
+						System.Threading.Thread.Sleep(seconds * 1000);
+					}
+				}) { IsBackground = true, Name = "InjectedHangHolder" };
+				holder.Start();
+				held.Wait();
+			}
+			lock (gate) { }
 		}
 
 		/// <summary>A critical issue this build can be told to report, so a report of one standing can be reproduced.</summary>
@@ -1005,6 +1013,7 @@ namespace x360ce.App
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			Program.StartupTrace.Mark("closing: start");
 			Program.IsClosing = true;
 			JocysCom.ClassLibrary.Mcp.McpListener.Program.Stop();
 			Plugins.PluginMcpDoors.CloseAll();
@@ -1045,9 +1054,12 @@ namespace x360ce.App
 			if (Program.ExportUiFolder == null && AllowDHelperStart)
 			{
 				SaveAll();
+				Program.StartupTrace.Mark("closing: settings saved");
 				AppHelper.UnInitializeHidHide();
+				Program.StartupTrace.Mark("closing: HID Hide restored");
 			}
 			AppHelper.UnInitializeHidGuardian();
+			Program.StartupTrace.Mark("closing: HID Guardian restored");
 		}
 
 		#region Timer
@@ -1146,7 +1158,11 @@ namespace x360ce.App
 			Program.StartupTrace.Mark("UpdateForm2: end");
 			// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 			AllowDHelperStart = true;
+			// The controllers HID Hide hides are shown while the engine starts reading Raw Input, which then has them open
+			// and keeps them readable once they are hidden again.
+			AppHelper.ShowHiddenForRawInputStart();
 			StartLoops();
+			AppHelper.HideAgainAfterRawInputStart();
 			TabSteps = MakeTabsReady().GetEnumerator();
 			TabWindowsTimer = new System.Windows.Forms.Timer { Interval = 1 };
 			TabWindowsTimer.Tick += TabWindowsTimer_Tick;
@@ -1425,16 +1441,46 @@ namespace x360ce.App
 		/// the message id the others reach it by. Every copy registers, whether or not only one copy is
 		/// allowed, or the /Exit switch cannot reach the copy it is meant to close.
 		/// </summary>
+		/// <remarks>
+		/// Copies are found by the program's name and, for a copy started with /Profile, its settings folder: /Exit and a
+		/// second start reach only the copy on the same folder, and only one copy is allowed per folder. A copy started
+		/// without /Profile is found by the program's name alone.
+		/// </remarks>
 		/// <returns>True when another copy was already running.</returns>
 		public bool RegisterInstance()
 		{
 			if (_Mutex != null)
 				return _OtherCopy;
-			var uid = Application.ProductName;
+			var ic = new System.Configuration.Install.InstallContext(null, Environment.GetCommandLineArgs());
+			var uid = InstanceName(ic.Parameters.ContainsKey("Profile") ? EngineHelper.AppDataPath : null);
 			_Mutex = new System.Threading.Mutex(false, uid);
 			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
 			_OtherCopy = !_Mutex.WaitOne(1, true);
 			return _OtherCopy;
+		}
+
+		/// <summary>
+		/// The name a copy is found by, for its mutex and the message the others reach it with: the program's name, and for a
+		/// copy started on a settings folder of its own with /Profile, the folder's hash.
+		/// </summary>
+		/// <param name="profileFolder">The folder a copy was started on with /Profile, or null for one started without it.</param>
+		public static string InstanceName(string profileFolder)
+		{
+			var uid = ((AssemblyProductAttribute)typeof(MainForm).Assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), false).First()).Product;
+			if (profileFolder == null)
+				return uid;
+			// A mutex name holds no backslash, so the folder is named by its hash.
+			var folder = System.Text.Encoding.UTF8.GetBytes(Path.GetFullPath(profileFolder).TrimEnd('\\').ToLowerInvariant());
+			using (var sha = System.Security.Cryptography.SHA256.Create())
+				return uid + "_" + BitConverter.ToString(sha.ComputeHash(folder), 0, 16).Replace("-", "");
+		}
+
+		/// <summary>The name a copy started with these arguments is found by, as <see cref="InstanceName"/> names it.</summary>
+		/// <param name="args">The copy's command line, its program first.</param>
+		public static string InstanceNameOf(string[] args)
+		{
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			return InstanceName(ic.Parameters.ContainsKey("Profile") ? EngineHelper.ResolveAppDataPath(args) : null);
 		}
 
 		/// <summary>
@@ -1468,6 +1514,7 @@ namespace x360ce.App
 				ToggleEmulation();
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
+				Recording.ReportRecorder.CountDeviceChange();
 				// Reading the message is interface work; deciding whether it is worth a device read is
 				// not, so the rule is asked for rather than restated here. All this does is raise a flag
 				// which the device thread reads once per pass.
@@ -1520,6 +1567,7 @@ namespace x360ce.App
 					new SwitchedOffControllersIssue(),
 					new XboxDirectInputIssue(),
 					new HidHideIssue(),
+					new RawInputMissingIssue(),
 					new AiAccessIssue(),
 					new AiSkillIssue(),
 					new PluginIssue(),
@@ -1539,6 +1587,10 @@ namespace x360ce.App
 						Issues.OnChangeIssue.Changed();
 				};
 				Main.IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
+				// Whether the checks run at all is the person's choice, kept with the settings.
+				Main.IssuesPanel.ChecksButton.Checked = SettingsManager.Options.IssueChecksEnabled;
+				Main.IssuesPanel.ChecksButton.CheckedChanged += (sender, e) =>
+					SettingsManager.Options.IssueChecksEnabled = Main.IssuesPanel.ChecksButton.Checked;
 				// This will start execution of Tasks Timer.
 				Main.IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
 				Main.IssuesPanel.TasksTimer.DoActionNow();
@@ -1668,12 +1720,22 @@ namespace x360ce.App
 				TabWindowsTimer?.Dispose();
 				// Off the screen first, so closing shows at once whatever is left to do.
 				Hide();
+				Program.StartupTrace.Mark("closing: window hidden");
 				// Before the controls, so the devices and the virtual controllers are let go of as soon as the window is closed.
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();
+				Program.StartupTrace.Mark("closing: engine disposed");
 				components.Dispose();
+				Program.StartupTrace.Mark("closing: components disposed");
 				if (Program.IsClosing)
+				{
+					// The window's handle only, which takes its child windows with it, without disposing each control.
+					// About 3,500 windows left for Windows to destroy as the process ends could stop the mouse for most
+					// of a second (Issue #1633).
+					DestroyHandle();
+					Program.StartupTrace.Mark("closing: windows destroyed");
 					Program.EndProcess();
+				}
 				// Not on the window yet when the window is closed while it loads.
 				Main?.Dispose();
 				//lock (checkTimerLock)
@@ -1759,7 +1821,6 @@ namespace x360ce.App
 				SettingsManager.Summaries.Save();
 				SettingsManager.Programs.Save();
 				SettingsManager.UserGames.Save();
-				SettingsManager.Presets.Save();
 				SettingsManager.Layouts.Save();
 				SettingsManager.UserDevices.Save();
 				SettingsManager.PadSettings.Save();
@@ -2063,10 +2124,6 @@ namespace x360ce.App
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
 			Program.StartupTrace.Mark("MainForm: shown");
-			if (SettingsManager.Options.ShowDebugPanel)
-			{
-				DebugPanel.ShowPanel();
-			}
 			// Counted at the moment the window opens, before this program has plugged anything in, so
 			// that everything found is by definition somebody else's. Shown a little later, because
 			// loading the settings restores the tip in the header and would wipe it.
@@ -2252,7 +2309,7 @@ namespace x360ce.App
 			var o = SettingsManager.AiOptions;
 			var word = o.AiAccessEnabled ? o.AiAccess.ToString().ToLowerInvariant() : "off";
 			StatusAiAccessLabel.Text = "AI: " + word;
-			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.ControlDark;
+			var colour = o.AiAccessEnabled ? System.Drawing.SystemColors.ControlText : System.Drawing.SystemColors.GrayText;
 			StatusAiAccessLabel.ForeColor = colour;
 			StatusAiAccessLabel.LinkColor = colour;
 			StatusAiAccessLabel.ActiveLinkColor = colour;
@@ -2273,8 +2330,8 @@ namespace x360ce.App
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			var colour = ErrorFilesCount > 0
-				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed)
-				: System.Drawing.SystemColors.ControlDark;
+				? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning")
+				: System.Drawing.SystemColors.GrayText;
 			StatusErrorsLabel.ForeColor = colour;
 			// The count is a link so that it can be clicked at all, which also means its colour
 			// comes from LinkColor rather than ForeColor.

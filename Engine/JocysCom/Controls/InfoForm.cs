@@ -16,6 +16,8 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsHelper.InitInvokeContext();
 			Load += InfoForm_Load;
 			InitializeComponent();
+			// The icon of the program that shows it.
+			Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
 		}
 
 		[System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)]

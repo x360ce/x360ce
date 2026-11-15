@@ -61,6 +61,36 @@ calls `CrashLog.Expect` first; a test that starts a program checks its exit code
 reach no log at all. After running the real program by hand, read the Windows Application log for
 its crashes too: a crash while closing shows nothing on screen.
 
+## The HID Hide Raw Input workaround goes when HID Hide is fixed
+
+HID Hide 1.5.230 and older refuse Windows' own Raw Input open of a hidden controller, and Windows then
+leaves the controller out of Raw Input until it is plugged in again, even after it is shown. Three parts
+of x360ce work around it, and each carries the tag `HidHide-RawInput-Workaround` in its doc comment:
+
+1. `AppHelper.ShowHiddenForRawInputStart` and `HideAgainAfterRawInputStart`, called around
+   `StartLoops` in `MainForm`.
+2. `UserDevice.DirectInputTwin` and the stand-ins in `DeviceRouting` (`MappedStandsIn`,
+   `RowStandIns`), read in `DInputHelper.Step2` and `Step3`.
+3. `App.v4/Issues/RawInputMissingIssue.cs`.
+
+The fix proposed to HID Hide is pull request 226 (https://github.com/nefarius/HidHide/pull/226). Check
+it when a release branch is made and whenever you change any tagged code:
+
+1. `GET https://api.github.com/repos/nefarius/HidHide/pulls/226`: note `merged` and `merge_commit_sha`.
+   An open pull request has a `merge_commit_sha` too, from GitHub's test merge; use it only when `merged`
+   is true.
+2. If merged, `GET https://api.github.com/repos/nefarius/HidHide/releases/latest`, then
+   `GET https://api.github.com/repos/nefarius/HidHide/compare/{tag_name}...{merge_commit_sha}`.
+   A `status` of `behind` or `identical` means that release contains the fix.
+3. If it was closed without merging, read its last comments and the newer HID Hide release notes: the
+   fix may have landed another way. If it has not, the workaround stays.
+
+When a released HID Hide contains the fix, remove all three parts with their tests, in one change:
+search for the tag, delete what carries it, build, and let the compiler find the remaining callers. Then
+remove this section and the matching line in `docs/TODO.md`, add one changelog line, and make
+`HidHideSetupClient.Outdated` report any HID Hide older than the fixed release, so users with an older
+copy are told to update.
+
 ## Changelog lines are short
 
 `App.v4/Documents/ChangeLog.txt` is read by people who are not technical. A line names what

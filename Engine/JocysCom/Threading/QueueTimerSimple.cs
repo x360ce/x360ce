@@ -341,6 +341,17 @@ namespace JocysCom.ClassLibrary.Threading
 			return string.Join(", ", data.ToArray());
 		}
 
+		/// <summary>Removes every item from the queue, under the lock the queue is read and changed under.</summary>
+		/// <remarks>Cleared without it, the queue could empty between the worker finding an item and taking it.</remarks>
+		public void ClearQueue()
+		{
+			lock (queueLock)
+			{
+				if (Queue.Count > 0)
+					Queue.Clear();
+			}
+		}
+
 		public bool UseThreadPool = true;
 		protected ParameterizedThreadStart _ThreadStart;
 		protected Thread _Thread;

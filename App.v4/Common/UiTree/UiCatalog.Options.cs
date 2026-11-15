@@ -34,7 +34,7 @@ namespace x360ce.App.UiTree
 				"How the program behaves while it runs.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DevelopingGroupBox)] = new Text("Developing",
 				"Aids for working on the program itself.");
-			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DirectInputDevicesGroupBox)] = new Text("Direct Input Devices",
+			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.DirectInputDevicesGroupBox)] = new Text("Input Devices",
 				"Which devices the program lists and reads.");
 			d[nameof(OptionsUserControl) + "." + nameof(OptionsUserControl.ConfigurationGroupBox)] = new Text("Configuration",
 				"Switching settings to the game in front.");
@@ -207,6 +207,8 @@ namespace x360ce.App.UiTree
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.SdlDatabaseUrlComboBox)] = new Text("SDL database address", null);
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateSdlDatabaseButton)] = new Text("Update SDL Database",
 				"Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.");
+			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.UpdateX360ceDatabaseButton)] = new Text("Update x360ce Database",
+				"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GamesGroupBox)] = new Text("Default settings",
 				"How settings shared by other people are chosen.");
 			d[nameof(OptionsInternetUserControl) + "." + nameof(OptionsInternetUserControl.GetProgramsMinInstancesUpDown)] = new Text(

@@ -94,6 +94,70 @@ namespace x360ce.App
 			return items.ToArray();
 		}
 
+		/// <summary>What SDL's controller database needs to know of a device, read as x360ce 4 reads it; null for none.</summary>
+		/// <remarks>The vendor and product come from DirectInput's product GUID, which for a HID device carries them.</remarks>
+		public static SdlDevice GetSdlDevice(Joystick device)
+		{
+			if (device == null)
+				return null;
+			var objects = GetDeviceObjects(device);
+			int axisMask, actuatorMask, actuatorCount, relativeMask, relativeSliderMask;
+			SourceState.GetJoystickAxisMask(objects, device, out axisMask, out actuatorMask, out actuatorCount, out relativeMask);
+			var sliderMask = SourceState.GetJoystickSlidersMask(objects, device, out relativeSliderMask);
+			var info = device.Information;
+			var caps = device.Capabilities;
+			return SdlDevice.From(new Engine.Data.UserDevice
+			{
+				ProductGuid = info.ProductGuid,
+				ProductName = info.ProductName,
+				DiAxeMask = axisMask,
+				DiSliderMask = sliderMask,
+				CapButtonCount = caps.ButtonCount,
+				CapPovCount = caps.PovCount,
+			});
+		}
+
+		/// <summary>
+		/// The setting a device gets when nobody has set it: x360ce's controller database row for it, with SDL's mapping where
+		/// the row maps nothing, without formulas; null when neither database knows the device.
+		/// </summary>
+		/// <remarks>
+		/// Worked out once for each device and the databases it came from, and shared, so callers only read it: every place
+		/// shows it again each time any place's settings are read, and working it out lists the device's objects.
+		/// </remarks>
+		public static Engine.Data.PadSetting GetAutoSetting(Joystick device)
+		{
+			if (device == null)
+				return null;
+			var x360ce = X360ceDatabase.Current;
+			var sdlDatabase = SdlDatabase.Current;
+			var key = device.Information.InstanceGuid;
+			lock (AutoSettingsLock)
+			{
+				if (AutoSettingsX360ce != x360ce || AutoSettingsSdl != sdlDatabase)
+				{
+					AutoSettings.Clear();
+					AutoSettingsX360ce = x360ce;
+					AutoSettingsSdl = sdlDatabase;
+				}
+				Engine.Data.PadSetting setting;
+				if (AutoSettings.TryGetValue(key, out setting))
+					return setting;
+				var sdl = GetSdlDevice(device);
+				string note;
+				var forceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+				setting = sdl == null ? null : X360ceDatabase.AutoSetting(sdl, forceFeedback, false, out note, x360ce, sdlDatabase);
+				AutoSettings[key] = setting;
+				return setting;
+			}
+		}
+
+		/// <summary>The settings <see cref="GetAutoSetting"/> worked out, by device instance, from the databases below.</summary>
+		static readonly Dictionary<Guid, Engine.Data.PadSetting> AutoSettings = new Dictionary<Guid, Engine.Data.PadSetting>();
+		static SdlDatabase AutoSettingsX360ce;
+		static SdlDatabase AutoSettingsSdl;
+		static readonly object AutoSettingsLock = new object();
+
 		#endregion
 
 		// Use cache so same image won't processed multiple times.

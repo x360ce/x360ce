@@ -59,8 +59,8 @@
 			this.DInputLabel.Location = new System.Drawing.Point(6, 20);
 			this.DInputLabel.Name = "DInputLabel";
 			this.DInputLabel.Size = new System.Drawing.Size(21, 13);
-			this.DInputLabel.TabIndex = 7;
-			this.DInputLabel.Text = "DI:";
+			this.DInputLabel.TabIndex = 0;
+			this.DInputLabel.Text = "DI";
 			// 
 			// SensitivityTrackBar
 			// 
@@ -69,7 +69,7 @@
 			this.SensitivityTrackBar.Maximum = 100;
 			this.SensitivityTrackBar.Name = "SensitivityTrackBar";
 			this.SensitivityTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.SensitivityTrackBar.TabIndex = 9;
+			this.SensitivityTrackBar.TabIndex = 15;
 			this.SensitivityTrackBar.TickFrequency = 2;
 			this.SensitivityTrackBar.ValueChanged += new System.EventHandler(this.SensitivityTrackBar_ValueChanged);
 			// 
@@ -81,9 +81,10 @@
 			this.MainPictureBox.Location = new System.Drawing.Point(6, 36);
 			this.MainPictureBox.Name = "MainPictureBox";
 			this.MainPictureBox.Size = new System.Drawing.Size(150, 150);
-			this.MainPictureBox.TabIndex = 10;
+			this.MainPictureBox.TabIndex = 5;
 			this.MainPictureBox.TabStop = false;
 			this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.LinearPictureBox_Paint);
+			this.MainPictureBox.SizeChanged += new System.EventHandler(this.MainPictureBox_SizeChanged);
 			// 
 			// MainGroupBox
 			// 
@@ -121,14 +122,14 @@
 			this.SensitivityCheckBox.Location = new System.Drawing.Point(443, 156);
 			this.SensitivityCheckBox.Name = "SensitivityCheckBox";
 			this.SensitivityCheckBox.Size = new System.Drawing.Size(53, 17);
-			this.SensitivityCheckBox.TabIndex = 20;
+			this.SensitivityCheckBox.TabIndex = 17;
 			this.SensitivityCheckBox.Text = "Invert";
 			this.SensitivityCheckBox.UseVisualStyleBackColor = true;
 			this.SensitivityCheckBox.CheckedChanged += new System.EventHandler(this.SensitivityCheckBox_CheckedChanged);
 			// 
 			// DeadZoneNumericUpDown
 			// 
-			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 103);
+			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 52);
 			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -136,7 +137,7 @@
             0});
 			this.DeadZoneNumericUpDown.Name = "DeadZoneNumericUpDown";
 			this.DeadZoneNumericUpDown.Size = new System.Drawing.Size(52, 20);
-			this.DeadZoneNumericUpDown.TabIndex = 19;
+			this.DeadZoneNumericUpDown.TabIndex = 9;
 			this.DeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// SensitivityNumericUpDown
@@ -156,7 +157,7 @@
 			// 
 			// AntiDeadZoneNumericUpDown
 			// 
-			this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 52);
+			this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 103);
 			this.AntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
@@ -164,65 +165,65 @@
             0});
 			this.AntiDeadZoneNumericUpDown.Name = "AntiDeadZoneNumericUpDown";
 			this.AntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(52, 20);
-			this.AntiDeadZoneNumericUpDown.TabIndex = 18;
+			this.AntiDeadZoneNumericUpDown.TabIndex = 13;
 			this.AntiDeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// AntiDeadZoneLabel
 			// 
 			this.AntiDeadZoneLabel.AutoSize = true;
-			this.AntiDeadZoneLabel.Location = new System.Drawing.Point(159, 36);
+			this.AntiDeadZoneLabel.Location = new System.Drawing.Point(159, 87);
 			this.AntiDeadZoneLabel.Name = "AntiDeadZoneLabel";
 			this.AntiDeadZoneLabel.Size = new System.Drawing.Size(85, 13);
-			this.AntiDeadZoneLabel.TabIndex = 16;
-			this.AntiDeadZoneLabel.Text = "Anti-Dead Zone:";
+			this.AntiDeadZoneLabel.TabIndex = 10;
+			this.AntiDeadZoneLabel.Text = "Anti-Dead Zone";
 			// 
 			// DeadZoneLabel
 			// 
 			this.DeadZoneLabel.AutoSize = true;
-			this.DeadZoneLabel.Location = new System.Drawing.Point(159, 87);
+			this.DeadZoneLabel.Location = new System.Drawing.Point(159, 36);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
 			this.DeadZoneLabel.Size = new System.Drawing.Size(64, 13);
-			this.DeadZoneLabel.TabIndex = 13;
-			this.DeadZoneLabel.Text = "Dead Zone:";
+			this.DeadZoneLabel.TabIndex = 6;
+			this.DeadZoneLabel.Text = "Dead Zone";
 			// 
 			// AntiDeadZoneTrackBar
 			// 
 			this.AntiDeadZoneTrackBar.AutoSize = false;
-			this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(162, 52);
+			this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(162, 103);
 			this.AntiDeadZoneTrackBar.Maximum = 100;
 			this.AntiDeadZoneTrackBar.Name = "AntiDeadZoneTrackBar";
 			this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.AntiDeadZoneTrackBar.TabIndex = 15;
+			this.AntiDeadZoneTrackBar.TabIndex = 11;
 			this.AntiDeadZoneTrackBar.TickFrequency = 2;
 			// 
 			// DeadZoneTrackBar
 			// 
 			this.DeadZoneTrackBar.AutoSize = false;
-			this.DeadZoneTrackBar.Location = new System.Drawing.Point(162, 103);
+			this.DeadZoneTrackBar.Location = new System.Drawing.Point(162, 52);
 			this.DeadZoneTrackBar.Maximum = 100;
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
 			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
-			this.DeadZoneTrackBar.TabIndex = 15;
+			this.DeadZoneTrackBar.TabIndex = 7;
 			this.DeadZoneTrackBar.TickFrequency = 2;
 			// 
 			// AntiDeadZoneTextBox
 			// 
-			this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(395, 52);
+			this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(395, 103);
 			this.AntiDeadZoneTextBox.Name = "AntiDeadZoneTextBox";
 			this.AntiDeadZoneTextBox.ReadOnly = true;
 			this.AntiDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
-			this.AntiDeadZoneTextBox.TabIndex = 14;
+			this.AntiDeadZoneTextBox.TabIndex = 12;
 			this.AntiDeadZoneTextBox.TabStop = false;
 			this.AntiDeadZoneTextBox.Text = "0 % ";
 			this.AntiDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// DeadZoneTextBox
 			// 
-			this.DeadZoneTextBox.Location = new System.Drawing.Point(395, 103);
+			this.DeadZoneTextBox.Location = new System.Drawing.Point(395, 52);
 			this.DeadZoneTextBox.Name = "DeadZoneTextBox";
 			this.DeadZoneTextBox.ReadOnly = true;
 			this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
-			this.DeadZoneTextBox.TabIndex = 14;
+			this.DeadZoneTextBox.TabIndex = 8;
 			this.DeadZoneTextBox.TabStop = false;
 			this.DeadZoneTextBox.Text = "0 % ";
 			this.DeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -233,7 +234,7 @@
 			this.SensitivityTextBox.Name = "SensitivityTextBox";
 			this.SensitivityTextBox.ReadOnly = true;
 			this.SensitivityTextBox.Size = new System.Drawing.Size(43, 20);
-			this.SensitivityTextBox.TabIndex = 8;
+			this.SensitivityTextBox.TabIndex = 16;
 			this.SensitivityTextBox.TabStop = false;
 			this.SensitivityTextBox.Text = "0 %";
 			this.SensitivityTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -244,8 +245,8 @@
 			this.SensitivityLabel.Location = new System.Drawing.Point(159, 138);
 			this.SensitivityLabel.Name = "SensitivityLabel";
 			this.SensitivityLabel.Size = new System.Drawing.Size(57, 13);
-			this.SensitivityLabel.TabIndex = 7;
-			this.SensitivityLabel.Text = "Sensitivity:";
+			this.SensitivityLabel.TabIndex = 14;
+			this.SensitivityLabel.Text = "Sensitivity";
 			// 
 			// XInputLabel
 			// 
@@ -253,26 +254,24 @@
 			this.XInputLabel.Location = new System.Drawing.Point(81, 20);
 			this.XInputLabel.Name = "XInputLabel";
 			this.XInputLabel.Size = new System.Drawing.Size(20, 13);
-			this.XInputLabel.TabIndex = 7;
-			this.XInputLabel.Text = "XI:";
+			this.XInputLabel.TabIndex = 2;
+			this.XInputLabel.Text = "XI";
 			// 
 			// XInputValueLabel
 			// 
-			this.XInputValueLabel.ForeColor = System.Drawing.Color.Blue;
 			this.XInputValueLabel.Location = new System.Drawing.Point(107, 20);
 			this.XInputValueLabel.Name = "XInputValueLabel";
 			this.XInputValueLabel.Size = new System.Drawing.Size(42, 13);
-			this.XInputValueLabel.TabIndex = 7;
+			this.XInputValueLabel.TabIndex = 3;
 			this.XInputValueLabel.Text = "0";
 			this.XInputValueLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// DInputValueLabel
 			// 
-			this.DInputValueLabel.ForeColor = System.Drawing.Color.Green;
 			this.DInputValueLabel.Location = new System.Drawing.Point(33, 20);
 			this.DInputValueLabel.Name = "DInputValueLabel";
 			this.DInputValueLabel.Size = new System.Drawing.Size(42, 13);
-			this.DInputValueLabel.TabIndex = 7;
+			this.DInputValueLabel.TabIndex = 1;
 			this.DInputValueLabel.Text = "0";
 			this.DInputValueLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -286,7 +285,7 @@
 			this.PresetMenuStrip.Name = "PresetMenuStrip";
 			this.PresetMenuStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.PresetMenuStrip.Size = new System.Drawing.Size(160, 20);
-			this.PresetMenuStrip.TabIndex = 22;
+			this.PresetMenuStrip.TabIndex = 4;
 			this.PresetMenuStrip.Text = "ApplyPresetsMenuStrip";
 			// 
 			// ApplyPresetMenuItem
@@ -306,42 +305,42 @@
 			// 
 			this.P_5_100_0_MenuItem.Name = "P_5_100_0_MenuItem";
 			this.P_5_100_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_5_100_0_MenuItem.Text = "5% DeadZone, 100% Controller Anti-DeadZone";
+			this.P_5_100_0_MenuItem.Text = "5% Dead Zone, 100% Controller Anti-Dead Zone";
 			this.P_5_100_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_100_0_MenuItem
 			// 
 			this.P_0_100_0_MenuItem.Name = "P_0_100_0_MenuItem";
 			this.P_0_100_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_100_0_MenuItem.Text = "100% Controller Anti-DeadZone";
+			this.P_0_100_0_MenuItem.Text = "100% Controller Anti-Dead Zone";
 			this.P_0_100_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_80_0_MenuItem
 			// 
 			this.P_0_80_0_MenuItem.Name = "P_0_80_0_MenuItem";
 			this.P_0_80_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_80_0_MenuItem.Text = "80% Controller Anti-DeadZone";
+			this.P_0_80_0_MenuItem.Text = "80% Controller Anti-Dead Zone";
 			this.P_0_80_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_60_0_MenuItem
 			// 
 			this.P_0_60_0_MenuItem.Name = "P_0_60_0_MenuItem";
 			this.P_0_60_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_60_0_MenuItem.Text = "60% Controller Anti-DeadZone";
+			this.P_0_60_0_MenuItem.Text = "60% Controller Anti-Dead Zone";
 			this.P_0_60_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_40_0_MenuItem
 			// 
 			this.P_0_40_0_MenuItem.Name = "P_0_40_0_MenuItem";
 			this.P_0_40_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_40_0_MenuItem.Text = "40% Controller Anti-DeadZone";
+			this.P_0_40_0_MenuItem.Text = "40% Controller Anti-Dead Zone";
 			this.P_0_40_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_20_0_MenuItem
 			// 
 			this.P_0_20_0_MenuItem.Name = "P_0_20_0_MenuItem";
 			this.P_0_20_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_20_0_MenuItem.Text = "20% Controller Anti-DeadZone";
+			this.P_0_20_0_MenuItem.Text = "20% Controller Anti-Dead Zone";
 			this.P_0_20_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// ThumbUserControl

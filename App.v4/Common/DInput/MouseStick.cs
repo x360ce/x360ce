@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using x360ce.Engine;
@@ -9,6 +10,12 @@ namespace x360ce.App.DInput
 	/// <summary>How a mouse moves a stick.</summary>
 	public enum MouseStyle
 	{
+		/// <summary>
+		/// The stick follows how far the mouse has moved and stays there while the mouse moves it; let go, it goes back to the
+		/// centre over the Back to centre time: a steering wheel.
+		/// </summary>
+		/// <remarks>Below nought, so a copy of the program that has no such style reads it as <see cref="Position"/>.</remarks>
+		Wheel = -1,
 		/// <summary>The stick follows how far the mouse has moved, and stays there: steering, a flight stick.</summary>
 		Position = 0,
 		/// <summary>The stick follows how fast the mouse moves, and returns to the centre when it stops: a camera, aiming.</summary>
@@ -63,7 +70,7 @@ namespace x360ce.App.DInput
 				return null;
 			return new MouseStickSettings
 			{
-				Style = (MouseStyle)Clamp(Number(style, SettingName.DefaultMouseStyle), 0, 2),
+				Style = (MouseStyle)Clamp(Number(style, SettingName.DefaultMouseStyle), -1, 2),
 				SensitivityX = Clamp(Number(x, SettingName.DefaultMouseSensitivity), 1, 400),
 				SensitivityY = Clamp(Number(y, SettingName.DefaultMouseSensitivity), 1, 400),
 				SmoothingMs = Clamp(Number(smoothing, SettingName.DefaultMouseSmoothing), 0, 500),
@@ -102,7 +109,8 @@ namespace x360ce.App.DInput
 
 	/// <summary>
 	/// Turns a control that reports movement, such as a mouse's X and Y, into one stick in the style its controller's Mouse page
-	/// sets. One for each stick of each row that sets a style, made with the routing, and used by the engine thread only.
+	/// sets. One for each stick of each row that sets a style, made with the routing, and moved by the engine thread only;
+	/// a controller page reads its last answer between passes.
 	/// </summary>
 	/// <remarks>
 	/// It reads the device's running totals of counts, which the engine keeps for every moving control, and keeps its own
@@ -127,6 +135,9 @@ namespace x360ce.App.DInput
 
 		/// <summary>Where the pointer is, read once a pass while a stick is in <see cref="MouseStyle.Screen"/>. A test stands in its own.</summary>
 		public static Func<ScreenPoint> ReadScreen = ReadPointer;
+
+		/// <summary>Where this stick reads the pointer instead of <see cref="ReadScreen"/>, or null: the Mouse page's demo moves its own.</summary>
+		public Func<ScreenPoint> Screen;
 
 		// For each axis, 0 across and 1 up and down.
 		readonly double[] _value = new double[2];
@@ -169,7 +180,7 @@ namespace x360ce.App.DInput
 			_started = active && !_active;
 			_active = active;
 			if (Settings.Style == MouseStyle.Screen)
-				_screen = ReadScreen();
+				_screen = (Screen ?? ReadScreen)();
 		}
 
 		/// <summary>The stick on one axis this pass, as an axis reads: 0 to 65535, the centre in the middle.</summary>
@@ -191,9 +202,9 @@ namespace x360ce.App.DInput
 			var value = _value[axis];
 			if (!_active)
 			{
-				// Let go: the centre, or where it was.
+				// Let go: the centre, or where it was. A wheel goes back over the Back to centre time.
 				if (Settings.Active != MouseActive.HeldStay)
-					value = 0;
+					value = Settings.Style == MouseStyle.Wheel ? Follow(value, 0, Settings.ReturnMs, seconds) : 0;
 				_speed[axis] = 0;
 			}
 			else if (Settings.Style == MouseStyle.Speed)
@@ -221,16 +232,107 @@ namespace x360ce.App.DInput
 			}
 			else
 			{
-				// Position. Turned on by a button, it starts from the centre, unless it stays where it was let go.
-				if (_started && Settings.Active != MouseActive.HeldStay)
+				// Position. Turned on by a button, it starts from the centre, unless it stays where it was let go. A wheel is
+				// taken where it is, and nothing pulls it back while it is held.
+				if (_started && Settings.Active != MouseActive.HeldStay && Settings.Style != MouseStyle.Wheel)
 					value = 0;
 				value = Clamp(value + delta * scale / PositionCounts);
-				if (Settings.ReturnMs > 0 && seconds > 0)
+				if (Settings.Style != MouseStyle.Wheel && Settings.ReturnMs > 0 && seconds > 0)
 					value *= Math.Exp(-seconds * 1000 / Settings.ReturnMs);
 			}
 			if (Math.Abs(value) < 1e-6)
 				value = 0;
 			_value[axis] = value;
+			return ToReading(value);
+		}
+
+		readonly SourceState _state = new SourceState();
+
+		/// <summary>
+		/// The state this stick's mappings read this pass, plain and formula alike, and the chart beside them: the device's
+		/// values, with each control that reports movement and that the stick reads made the stick's value in its style. Null
+		/// while the device has no such control.
+		/// </summary>
+		public SourceState State { get; private set; }
+
+		/// <summary>
+		/// Fills <see cref="State"/> for this pass. Once a pass, after <see cref="BeginPass"/> and before the mappings.
+		/// </summary>
+		/// <remarks>
+		/// Each moving control the stick reads is styled once, by the first of its mappings that reads it, across or up and
+		/// down, and every later reader on this stick gets that value. A formula styles the first moving control it names; a
+		/// further one it names that no mapping before has styled keeps the engine's own position, as one axis of a stick
+		/// follows one control. The device's own state is never written, so a script, a recording and the door read it as
+		/// before, and nothing is made: the axes and sliders are copied into the stick's own arrays, the rest is the device's.
+		/// </remarks>
+		/// <param name="device">The device's state this pass, as every other target reads it.</param>
+		/// <param name="ud">The device: which controls report movement, and their running totals.</param>
+		/// <param name="maps">The row's mappings.</param>
+		/// <param name="across">The stick's across target, LeftThumbX or RightThumbX.</param>
+		/// <param name="upDown">The stick's up and down target.</param>
+		/// <param name="ticks">Now, in <see cref="Stopwatch"/> ticks.</param>
+		public SourceState Normalise(SourceState device, UserDevice ud, List<Map> maps, TargetType across, TargetType upDown, long ticks)
+		{
+			State = null;
+			var totals = ud.SourceStateRead;
+			if (totals == null || (ud.DiRelativeAxisMask | ud.DiRelativeSliderMask) == 0)
+				return null;
+			var state = _state;
+			Array.Copy(device.Axis, state.Axis, state.Axis.Length);
+			Array.Copy(device.Sliders, state.Sliders, state.Sliders.Length);
+			state.Buttons = device.Buttons;
+			state.Povs = device.Povs;
+			var axesStyled = 0;
+			var slidersStyled = 0;
+			foreach (var map in maps)
+			{
+				var axis = map.Target == across ? 0 : map.Target == upDown ? 1 : -1;
+				if (axis < 0)
+					continue;
+				if (map.Expression == null)
+				{
+					if (map.IsAxis || map.IsSlider)
+						Style(map.IsSlider, map.Index - 1, axis, ud, ticks, ref axesStyled, ref slidersStyled);
+					continue;
+				}
+				// By index: an interface's enumerator would be made on every pass.
+				var references = map.Expression.References;
+				for (var r = 0; r < references.Count; r++)
+				{
+					var reference = references[r];
+					var slider = reference.Type == 's' || reference.Type == 'h';
+					if (reference.Pad != 0 || !slider && reference.Type != 'a' && reference.Type != 'x')
+						continue;
+					if (Style(slider, reference.Index - 1, axis, ud, ticks, ref axesStyled, ref slidersStyled))
+						break;
+				}
+			}
+			State = state;
+			return state;
+		}
+
+		/// <summary>Makes one control this stick's value in its style, unless it is already, when it reports movement. True when it does.</summary>
+		bool Style(bool slider, int index, int axis, UserDevice ud, long ticks, ref int axesStyled, ref int slidersStyled)
+		{
+			var moving = slider ? ud.DiRelativeSliderMask : ud.DiRelativeAxisMask;
+			var totals = slider ? ud.SourceStateRead.Sliders : ud.SourceStateRead.Axis;
+			if (index < 0 || index >= totals.Length || (moving & (1 << index)) == 0)
+				return false;
+			var styled = slider ? slidersStyled : axesStyled;
+			if ((styled & (1 << index)) != 0)
+				return true;
+			var values = slider ? _state.Sliders : _state.Axis;
+			values[index] = Value(axis, totals[index], ud.OriginSourceStateTime, ticks);
+			if (slider)
+				slidersStyled |= 1 << index;
+			else
+				axesStyled |= 1 << index;
+			return true;
+		}
+
+		/// <summary>A stick's place, -1 to 1, as an axis reads: 0 to 65535, the centre in the middle.</summary>
+		static ushort ToReading(double value)
+		{
 			return (ushort)Math.Round((value + 1) * 32767.5);
 		}
 

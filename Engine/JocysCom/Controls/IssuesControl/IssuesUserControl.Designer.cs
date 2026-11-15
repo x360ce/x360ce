@@ -16,6 +16,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
@@ -36,6 +37,7 @@
 			this.StatusLabel = new System.Windows.Forms.ToolStripLabel();
 			this.NextRunSeparator = new System.Windows.Forms.ToolStripSeparator();
 			this.NextRunLabel = new System.Windows.Forms.ToolStripLabel();
+			this.ChecksButton = new System.Windows.Forms.ToolStripButton();
 			this.RunStateLabel = new System.Windows.Forms.ToolStripLabel();
 			this.QueueMonitorTimer = new System.Windows.Forms.Timer(this.components);
 			this.NoIssuesPanel = new System.Windows.Forms.Panel();
@@ -45,6 +47,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.NoIssuesPanel.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// WarningsDataGridView
@@ -83,7 +86,7 @@
 			this.WarningsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.WarningsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 43);
-			this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(0);
+			this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.WarningsDataGridView.Name = "WarningsDataGridView";
 			this.WarningsDataGridView.ReadOnly = true;
 			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -180,10 +183,12 @@
             this.StatusLabel,
             this.NextRunSeparator,
             this.NextRunLabel,
+            this.ChecksButton,
             this.RunStateLabel});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.GamesToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
-			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 1, 1, 0);
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(0);
 			this.GamesToolStrip.Size = new System.Drawing.Size(1072, 43);
 			this.GamesToolStrip.TabIndex = 24;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
@@ -220,7 +225,7 @@
 			// 
 			this.StatusLabel.Name = "StatusLabel";
 			this.StatusLabel.Size = new System.Drawing.Size(83, 36);
-			this.StatusLabel.Text = "Status:";
+			this.StatusLabel.Text = "Status";
 			// 
 			// NextRunSeparator
 			// 
@@ -231,15 +236,28 @@
 			// NextRunLabel
 			// 
 			this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.NextRunLabel.Name = "NextRunLabel";
 			this.NextRunLabel.Size = new System.Drawing.Size(213, 36);
 			this.NextRunLabel.Text = "Next Run: 00:00:00";
-			// 
+			//
+			// ChecksButton
+			//
+			this.ChecksButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.ChecksButton.Checked = true;
+			this.ChecksButton.CheckOnClick = true;
+			this.ChecksButton.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.ChecksButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.ChecksButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.ChecksButton.Name = "ChecksButton";
+			this.ChecksButton.Text = "Run Checks";
+			this.ChecksButton.ToolTipText = "Runs the checks every few seconds. Press to stop them.";
+			this.ChecksButton.CheckedChanged += new System.EventHandler(this.ChecksButton_CheckedChanged);
+			//
 			// RunStateLabel
 			// 
 			this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.GrayText;
 			this.RunStateLabel.Name = "RunStateLabel";
 			this.RunStateLabel.Size = new System.Drawing.Size(21, 36);
 			this.RunStateLabel.Text = " ";
@@ -255,9 +273,9 @@
 			this.NoIssuesPanel.Controls.Add(this.NoIssuesLabel);
 			this.NoIssuesPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.NoIssuesPanel.Location = new System.Drawing.Point(0, 641);
-			this.NoIssuesPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.NoIssuesPanel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.NoIssuesPanel.Name = "NoIssuesPanel";
-			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(19, 16, 16, 16);
+			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(4);
 			this.NoIssuesPanel.Size = new System.Drawing.Size(1072, 61);
 			this.NoIssuesPanel.TabIndex = 25;
 			// 
@@ -266,7 +284,6 @@
 			this.NoIssuesLabel.AutoSize = true;
 			this.NoIssuesLabel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.NoIssuesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.NoIssuesLabel.ForeColor = System.Drawing.Color.Green;
 			this.NoIssuesLabel.Location = new System.Drawing.Point(19, 16);
 			this.NoIssuesLabel.Name = "NoIssuesLabel";
 			this.NoIssuesLabel.Size = new System.Drawing.Size(361, 29);
@@ -278,6 +295,7 @@
 			this.LinePanel.Controls.Add(this.LineFillPanel);
 			this.LinePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.LinePanel.Location = new System.Drawing.Point(0, 640);
+			this.LinePanel.Margin = new System.Windows.Forms.Padding(0);
 			this.LinePanel.Name = "LinePanel";
 			this.LinePanel.Size = new System.Drawing.Size(1072, 1);
 			this.LinePanel.TabIndex = 26;
@@ -289,12 +307,27 @@
 			this.LineFillPanel.Name = "LineFillPanel";
 			this.LineFillPanel.TabIndex = 0;
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.GamesToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.WarningsDataGridView, 0, 1);
+			this.RootLayoutPanel.Controls.Add(this.LinePanel, 0, 2);
+			this.RootLayoutPanel.Controls.Add(this.NoIssuesPanel, 0, 3);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 4;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// IssuesUserControl
 			// 
-			this.Controls.Add(this.WarningsDataGridView);
-			this.Controls.Add(this.LinePanel);
-			this.Controls.Add(this.NoIssuesPanel);
-			this.Controls.Add(this.GamesToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "IssuesUserControl";
 			this.Size = new System.Drawing.Size(1072, 702);
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).EndInit();
@@ -302,6 +335,8 @@
 			this.GamesToolStrip.PerformLayout();
 			this.NoIssuesPanel.ResumeLayout(false);
 			this.NoIssuesPanel.PerformLayout();
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -315,6 +350,7 @@
         public System.Windows.Forms.ToolStripLabel StatusLabel;
         private System.Windows.Forms.ToolStripSeparator NextRunSeparator;
         public System.Windows.Forms.ToolStripLabel NextRunLabel;
+        public System.Windows.Forms.ToolStripButton ChecksButton;
         private System.Windows.Forms.Timer QueueMonitorTimer;
         public System.Windows.Forms.ToolStripLabel RunStateLabel;
         public System.Windows.Forms.ToolStripButton ExceptionInfoButton;
@@ -328,5 +364,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
 		private System.Windows.Forms.DataGridViewLinkColumn MoreColumn;
 		private System.Windows.Forms.DataGridViewButtonColumn SolutionColumn;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
 	}
 }

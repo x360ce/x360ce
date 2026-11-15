@@ -142,6 +142,8 @@ FROM (
 	) t3
 	-- Exclude duplicated names where PAD Setting checksum is the same.
 	WHERE t3.RowNumberT2 = 1
+	-- The most used first, so TOP keeps them; the list is sorted by name below.
+	ORDER BY t3.Users DESC
 ) t4
 ORDER BY ProductName, VendorName
 

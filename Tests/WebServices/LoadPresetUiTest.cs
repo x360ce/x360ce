@@ -1,4 +1,4 @@
-﻿// @under-test: App.v4/Forms/LoadPresetsForm.cs, App.v3/Controls/ControllerSettingsUserControl.cs
+﻿// @under-test: App.v4/Controls/PresetsGridUserControl.cs, App.v3/Controls/ControllerSettingsUserControl.cs, App.v3/Controls/OptionsControl.cs, Engine/Common/Sdl/X360ceDatabase.cs
 // @area: webservice   @layer: ui-wpf
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -14,15 +14,17 @@ using x360ce.App.Controls;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The released programs, not a test client, load presets from the service under test.
+	/// The released programs list their Most Popular presets from x360ce's controller database, and fetch the copy
+	/// x360ce's server keeps when a person asks.
 	/// </summary>
 	/// <remarks>
-	/// The SOAP tests prove the service answers what a program asks. These prove each program
-	/// gets its list: x360ce is started, pointed at <c>X360CE_WEBSERVICE_URL</c> through its own
-	/// Options page, and its "Most Popular" presets must become exactly what the service answers
-	/// right now. Rows alone prove nothing, because both programs keep the last list between
-	/// runs. It is the screen the owner's report of 2026-09-19 showed failing, so the window is
-	/// captured as evidence. The program's web service address is put back afterwards.
+	/// Both programs carry the database built in and list its rows at once and offline: for each controller, the setting
+	/// most people use with it. Version 4's [Refresh] beside the list and version 3's [Update Controller Database] on its
+	/// Options tab fetch the server's copy into the settings folder, from the site of the web service address
+	/// (<see cref="Engine.X360ceUpdateClient.DatabaseUrl"/>), and that copy wins row by row from then on. Each program
+	/// starts on a settings folder of its own, so it asks x360ce's own site, its first list is the built-in database alone,
+	/// and the copy it fetches reaches no other test. The list is the screen the owner's report of 2026-09-19 showed
+	/// failing, so the window is captured as evidence.
 	/// </remarks>
 	[TestClass]
 	public class LoadPresetUiTest
@@ -35,24 +37,14 @@ namespace x360ce.Tests
 		public void Cleanup() => Ui.CloseApp(_process);
 
 		[TestMethod, TestCategory("webservice"), TestCategory("v4"), TestCategory("ui-interactive")]
-		[Description("Version 4 fills its Most Popular presets list from the configured service")]
-		public void V4_loads_popular_presets_from_the_configured_service()
+		[Description("Version 4 lists its Most Popular presets from the built-in controller database, and Refresh fetches the server's copy")]
+		public void V4_lists_popular_presets_from_the_controller_database()
 		{
-			var url = WebServiceTarget.Require();
-			// A folder of its own, as the device added below stays on the controller in the settings it is added to.
-			var window = Start("App.v4", Path.Combine(TestRun.LogsFolder, "load-preset-profile"));
-			// Options > Internet: the address the program will call, and the switch that lets it.
-			SelectTab(window, "Options");
-			SelectTab(window, "Internet");
-			var original = AddressShown(window);
+			// A folder of its own: nothing is saved in it yet, and the device added below stays on the controller in it.
+			var profile = Path.Combine(TestRun.LogsFolder, "load-preset-profile");
+			var window = Start("App.v4", profile);
 			try
 			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
-				var features = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetFeaturesCheckBox));
-				var toggle = (TogglePattern)features.GetCurrentPattern(TogglePattern.Pattern);
-				if (toggle.Current.ToggleState != ToggleState.On)
-					toggle.Toggle();
-
 				// Controller 1 > Load Preset... opens a dialog; the popular tab is inside it.
 				SelectTab(window, "Controller 1");
 				AddDevice(window);
@@ -60,22 +52,27 @@ namespace x360ce.Tests
 				var dialog = Ui.WaitFor(() => TopLevelWindow(_process.Id, "Load Preset"),
 					TimeSpan.FromSeconds(20), "the Load Preset window");
 				SelectTab(dialog, "Default Settings for Most Popular Controllers");
-				PopularPresetsComeFromTheService(dialog, url, "v4-load-preset-popular");
+				var grid = Find(dialog, AutomationElement.AutomationIdProperty, nameof(PresetsGridUserControl.PresetsDataGridView));
+				ListsTheDatabase(dialog, grid, profile, "v4-load-preset-popular-built-in");
+				// A toolbar item has no automation id, only its text; the other tabs' toolbars are off screen.
+				Invoke(Find(dialog, AutomationElement.NameProperty, "Refresh"));
+				WaitForSavedCopy(dialog, profile, "v4-load-preset-refresh-timeout.png");
+				ListsTheDatabase(dialog, grid, profile, "v4-load-preset-popular");
 				Invoke(Find(dialog, AutomationElement.AutomationIdProperty, "CloseButton"));
 			}
 			finally
 			{
 				CloseDialogs();
-				RestoreAddress(window, original, "Internet");
 			}
 		}
 
 		[TestMethod, TestCategory("webservice"), TestCategory("v3"), TestCategory("ui-interactive")]
-		[Description("Version 3 fills its Most Popular presets list from the configured service")]
-		public void V3_loads_popular_presets_from_the_configured_service()
+		[Description("Version 3 lists its Most Popular presets from the built-in controller database, and Update Controller Database fetches the server's copy")]
+		public void V3_lists_popular_presets_from_the_controller_database()
 		{
-			var url = WebServiceTarget.Require();
-			var window = Start("App.v3");
+			// A folder of its own: nothing is saved in it yet, and the copy fetched below reaches no other test.
+			var profile = Path.Combine(TestRun.LogsFolder, "load-preset-profile-v3");
+			var window = Start("App.v3", profile);
 			// On a clean folder version 3 first asks about its warnings and each new controller, in front of the window.
 			Ui.WaitFor(() =>
 			{
@@ -84,29 +81,13 @@ namespace x360ce.Tests
 				var rate = Ui.FindByName(window, V3NewDeviceTest.RateText);
 				return rate != null && Ui.ReadNumber(rate, V3NewDeviceTest.RateText) >= 7 ? rate : null;
 			}, TimeSpan.FromSeconds(60), "the program to read the controllers after its questions were answered");
+			TabCountsTheDatabase(window, profile);
 			SelectTab(window, "Options");
-			var original = AddressShown(window);
-			try
-			{
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), url);
-				// Controller Settings holds the three lists on its own tabs; no dialog in v3.
-				SelectTab(window, "Controller Settings");
-				SelectTab(window, "Default Settings for Most Popular Controllers");
-				int served;
-				using (var ws = WebServiceTarget.Client())
-					served = ws.SearchSettings(new[] { new Engine.SearchParameter() }).Presets.Length;
-				Assert.IsTrue(served > 0, "The service has no popular presets to show");
-				Invoke(Find(window, AutomationElement.NameProperty, "Refresh"));
-				// Version 3's list has no SID column, so its tab says how many arrived.
-				var title = "Default Settings for Most Popular Controllers [" + served + "]";
-				Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, title)),
-					TimeSpan.FromSeconds(60), "the tab to say '" + title + "'");
-				Capture(window, "v3-controller-settings-popular.png");
-			}
-			finally
-			{
-				RestoreAddress(window, original, null);
-			}
+			Invoke(Find(window, AutomationElement.NameProperty, "Update Controller Database"));
+			WaitForSavedCopy(window, profile, "v3-update-controller-database-timeout.png");
+			// The program lists the copy again as soon as it is saved.
+			TabCountsTheDatabase(window, profile);
+			Capture(window, "v3-controller-settings-popular.png");
 		}
 
 		#region The shared walk
@@ -139,26 +120,46 @@ namespace x360ce.Tests
 			return Ui.WaitForMainWindow(_process, TimeSpan.FromSeconds(45));
 		}
 
-		/// <summary>
-		/// Refresh, then wait until the presets grid shows exactly the SIDs the service answers.
-		/// </summary>
-		void PopularPresetsComeFromTheService(AutomationElement scope, string url, string captureName)
+		/// <summary>Where a program on this settings folder saves the server's copy of the database.</summary>
+		static string SavedCopy(string profile)
 		{
-			string[] served;
-			using (var ws = WebServiceTarget.Client())
-			{
-				var answer = ws.SearchSettings(new[] { new Engine.SearchParameter() });
-				// Version 4 lists a preset only with its settings, so every row can be loaded.
-				var settings = answer.PadSettings.Select(x => x.PadSettingChecksum).ToArray();
-				served = answer.Presets.Where(x => settings.Contains(x.PadSettingChecksum))
-					.Select(x => x.PadSettingChecksum.ToString("N").Substring(0, 8).ToUpperInvariant())
-					.OrderBy(x => x).ToArray();
-			}
-			Assert.IsTrue(served.Length > 0, "The service has no popular presets to show");
+			return Path.Combine(profile, "Settings", Engine.X360ceDatabase.FileName);
+		}
 
-			// A toolbar item has no automation id, only its text; the other tabs' toolbars are off screen.
-			Invoke(Find(scope, AutomationElement.NameProperty, "Refresh"));
-			var grid = Find(scope, AutomationElement.AutomationIdProperty, nameof(PresetsGridUserControl.PresetsDataGridView));
+		/// <summary>
+		/// The SIDs of the presets a program on this settings folder lists, read as the program reads them: the built-in
+		/// database, and the copy fetched into the folder, which wins row by row.
+		/// </summary>
+		static string[] DatabaseSids(string profile)
+		{
+			var sids = Engine.X360ceDatabase.Load(SavedCopy(profile)).Mappings
+				.Select(x => Engine.EngineHelper.GetID(Engine.X360ceDatabase.ToPadSetting(x).PadSettingChecksum))
+				.OrderBy(x => x).ToArray();
+			Assert.IsTrue(sids.Length > 0, "x360ce's controller database has no rows to list.");
+			return sids;
+		}
+
+		/// <summary>Waits until the program has saved the server's copy of the database into its settings folder.</summary>
+		void WaitForSavedCopy(AutomationElement scope, string profile, string captureName)
+		{
+			var path = SavedCopy(profile);
+			try
+			{
+				Ui.WaitFor(() => File.Exists(path) ? path : null, TimeSpan.FromSeconds(60),
+					"the program to save the server's copy of x360ce's controller database as " + path);
+			}
+			catch (TimeoutException)
+			{
+				// The picture shows the program's own message: the address, the answer or the file that was not right.
+				Capture(scope, captureName);
+				throw;
+			}
+		}
+
+		/// <summary>Waits until version 4's grid shows exactly the SIDs of the database the program reads from its settings folder.</summary>
+		void ListsTheDatabase(AutomationElement scope, AutomationElement grid, string profile, string captureName)
+		{
+			var expected = DatabaseSids(profile);
 			string[] shown = null;
 			try
 			{
@@ -169,42 +170,31 @@ namespace x360ce.Tests
 						.Cast<AutomationElement>()
 						.Where(x => Regex.IsMatch(x.Current.Name ?? "", @"^Row \d+$"))
 						.Select(SidOf).Where(x => x != null).OrderBy(x => x).ToArray();
-					return shown.SequenceEqual(served) ? shown : null;
-				}, TimeSpan.FromSeconds(60), "the window to show the " + served.Length + " presets the service answers");
+					return shown.SequenceEqual(expected) ? shown : null;
+				}, TimeSpan.FromSeconds(60), "the window to list the " + expected.Length + " presets of x360ce's controller database");
 			}
 			catch (TimeoutException)
 			{
 				// The picture shows the program's own message; the lists show what it kept instead.
 				Capture(scope, captureName + "-timeout.png");
-				Console.WriteLine("served: " + string.Join(",", served));
-				Console.WriteLine("shown : " + string.Join(",", shown ?? new string[0]));
+				Console.WriteLine("database: " + string.Join(",", expected));
+				Console.WriteLine("shown   : " + string.Join(",", shown ?? new string[0]));
 				throw;
 			}
 			Capture(scope, captureName + ".png");
-			Console.WriteLine("{0} preset rows from {1}", shown.Length, url);
+			Console.WriteLine("{0} preset rows from x360ce's controller database{1}", shown.Length,
+				File.Exists(SavedCopy(profile)) ? " and the copy saved as " + SavedCopy(profile) : ", built in");
 		}
 
-		static string AddressShown(AutomationElement window)
+		/// <summary>Version 3's list has no SID column, so its tab says how many rows it holds: one for each row of the database.</summary>
+		void TabCountsTheDatabase(AutomationElement window, string profile)
 		{
-			var box = Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox));
-			return ((ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern)).Current.Value;
-		}
-
-		/// <summary>Leaves the program as it was found; a failure here must not hide the one that brought us here.</summary>
-		void RestoreAddress(AutomationElement window, string original, string innerTab)
-		{
-			try
-			{
-				SelectTab(window, "Options");
-				if (innerTab != null)
-					SelectTab(window, innerTab);
-				// Found again: the element seen before a dialog does not answer after it.
-				TypeInto(Find(window, AutomationElement.AutomationIdProperty, nameof(OptionsInternetUserControl.InternetDatabaseUrlComboBox)), original ?? "");
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Could not restore the web service address: " + ex.Message);
-			}
+			// Controller Settings holds the three lists on its own tabs; no dialog in v3.
+			SelectTab(window, "Controller Settings");
+			SelectTab(window, "Default Settings for Most Popular Controllers");
+			var title = "Default Settings for Most Popular Controllers [" + DatabaseSids(profile).Length + "]";
+			Ui.WaitFor(() => window.FindFirst(TreeScope.Descendants, new PropertyCondition(AutomationElement.NameProperty, title)),
+				TimeSpan.FromSeconds(60), "the tab to say '" + title + "'");
 		}
 
 		/// <summary>A dialog still open because the test failed inside it blocks the main window.</summary>
@@ -225,26 +215,6 @@ namespace x360ce.Tests
 		#endregion
 
 		#region Automation helpers
-
-		/// <summary>
-		/// Types a value into a text box as a user would. Setting the value through the automation
-		/// pattern writes the text without the control raising TextChanged, so the program's
-		/// option behind the box never learns of it; keystrokes go through the same path a user's do.
-		/// </summary>
-		static void TypeInto(AutomationElement box, string text)
-		{
-			box.SetFocus();
-			System.Windows.Forms.SendKeys.SendWait("^a");
-			foreach (var c in text)
-				System.Windows.Forms.SendKeys.SendWait("+^%~(){}[]".IndexOf(c) >= 0 ? "{" + c + "}" : c.ToString());
-			System.Windows.Forms.SendKeys.SendWait("{TAB}");
-			var shown = Ui.WaitFor(() =>
-			{
-				var value = ((ValuePattern)box.GetCurrentPattern(ValuePattern.Pattern)).Current.Value;
-				return value == text ? value : null;
-			}, TimeSpan.FromSeconds(10), "the box to show '" + text + "'");
-			Console.WriteLine("Typed: " + shown);
-		}
 
 		/// <summary>The SID cell of a grid row, as the window shows it.</summary>
 		static string SidOf(AutomationElement row)

@@ -117,10 +117,13 @@ namespace x360ce.Tests
 			Assert.AreSame(other, routing.ForceDevice(other), "A device that drives its own force is said to go through another.");
 			Assert.AreEqual(0, routing.PadRows.Sum(x => x.Count(r => r.InstanceGuid == twin.InstanceGuid)), "The twin's input reaches a controller.");
 
-			// With the tab's force off, nothing reaches the motors, so the twin is neither read nor held.
+			Assert.IsNull(routing.MappedStandsIn[Array.IndexOf(routing.MappedDevices, twin)],
+				"The twin that takes the force is read only while Raw Input cannot see the controller, so its motors stop.");
+
+			// With the tab's force off, nothing reaches the motors, so the twin is only a stand-in, read while Raw Input cannot see it.
 			var off = Force(false);
 			var quiet = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller2, off) }, new[] { off }, new[] { raw, twin });
-			CollectionAssert.DoesNotContain(quiet.MappedDevices, twin, "The twin is held with no force to send.");
+			Assert.AreSame(raw, quiet.MappedStandsIn[Array.IndexOf(quiet.MappedDevices, twin)], "The twin is read and held with no force to send.");
 			Assert.AreSame(raw, quiet.ForceDevice(raw));
 
 			// The twin on a tab of its own: both tabs' force reaches the motors, and the twin is read once.
@@ -142,12 +145,32 @@ namespace x360ce.Tests
 			Assert.AreSame(ownOff, force.PadSetting, "The twin's lower tab does not shape the force, because its force feedback is off.");
 
 			// A twin whose driver takes no force feedback, as an Xbox controller's DirectInput side: nothing would reach the
-			// motors through it, so it is neither read nor held.
+			// motors through it, so it is only a stand-in.
 			twin.IsEnabled = false;
 			twin.CapFlags = 0;
 			var xbox = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller2, on) }, new[] { on }, new[] { raw, twin });
-			CollectionAssert.DoesNotContain(xbox.MappedDevices, twin, "A twin that takes no force feedback is held for it.");
+			Assert.AreSame(raw, xbox.MappedStandsIn[Array.IndexOf(xbox.MappedDevices, twin)], "A twin that takes no force feedback is held for it.");
 			Assert.AreSame(raw, xbox.ForceDevice(raw));
+		}
+
+		[TestMethod, TestCategory("engine"), TestCategory("critical")]
+		[Description("A Raw Input row reads its DirectInput twin in its place while Raw Input cannot see the controller, as HID Hide makes it")]
+		public void A_raw_input_row_reads_its_DirectInput_twin_while_Raw_Input_cannot_see_it()
+		{
+			var path = @"\\?\HID#VID_045E&PID_02FF&IG_00#8&1a2b3c4d&0&0000#{4d1e55b2-f16f-11cf-88cb-001111000030}";
+			var raw = new UserDevice { InstanceGuid = Guid.NewGuid(), InputSourceType = (int)InputSourceType.RawInput, HidDevicePath = path, IsEnabled = true, IsOnline = true };
+			// The twin listed before HID Hide restarted the controller, offline, and the one listed after it.
+			var gone = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDevicePath = path, IsEnabled = true, IsOnline = false };
+			var twin = new UserDevice { InstanceGuid = Guid.NewGuid(), HidDevicePath = path.ToLowerInvariant(), IsEnabled = true, IsOnline = true };
+			var settings = Force(false);
+			var routing = DeviceRouting.Build(Game, new[] { Row(raw.InstanceGuid, MapTo.Controller1, settings) }, new[] { settings }, new[] { raw, gone, twin });
+
+			Assert.AreSame(twin, routing.RowStandIns[0], "The row has nothing to read once Raw Input loses the controller.");
+			var at = Array.IndexOf(routing.MappedDevices, twin);
+			Assert.IsTrue(at > Array.IndexOf(routing.MappedDevices, raw), "The twin is read before the pass finds the Raw Input device missing.");
+			Assert.AreSame(raw, routing.MappedStandsIn[at], "The twin is read on its own account, so it is polled while Raw Input reads the controller.");
+			CollectionAssert.DoesNotContain(routing.MappedDevices, gone, "An offline twin is read in place of the online one.");
+			Assert.AreEqual(0, routing.PadRows.Sum(x => x.Count(r => r.InstanceGuid == twin.InstanceGuid)), "The twin's input reaches a controller of its own.");
 		}
 
 		[TestMethod, TestCategory("engine"), TestCategory("critical")]

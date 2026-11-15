@@ -177,7 +177,13 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static bool ReadsOnlyInFront(Engine.Data.UserDevice ud)
 		{
-			return ud != null && ud.IsDirectInput
+			return ud != null && ud.IsDirectInput && IsXInputCapable(ud);
+		}
+
+		/// <summary>Whether the device is an Xbox controller, one XInput sees, however this program reads it.</summary>
+		public static bool IsXInputCapable(Engine.Data.UserDevice ud)
+		{
+			return ud != null
 				&& (VirtualDriverInstaller.CarriesInputGroup(ud.HidHardwareIds)
 					|| VirtualDriverInstaller.CarriesInputGroup(ud.HidDevicePath));
 		}

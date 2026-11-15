@@ -67,6 +67,9 @@ namespace x360ce.App.Controls
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
+			// The Test Device window waits for a later release: its button is kept off the tool bar, so neither a person
+			// nor the AI door reaches it. Its code and tests stay.
+			ControllersToolStrip.Items.Remove(TestButton);
 			RefreshList();
 		}
 
@@ -268,6 +271,22 @@ namespace x360ce.App.Controls
 		{
 			var grid = DevicesDataGridView;
 			ControllerDeleteButton.Enabled = grid.DataSource != null && grid.SelectedRows.Count > 0;
+			var selected = grid.DataSource == null ? new UserDevice[0] : GetSelected();
+			TestButton.Enabled = selected.Length == 1 && selected[0] != null && selected[0].IsOnline;
+		}
+
+		/// <summary>Opens the Test Device window for the selected device; the engine reads only it until the window closes.</summary>
+		private void TestButton_Click(object sender, EventArgs e)
+		{
+			var selected = GetSelected();
+			if (selected.Length != 1 || selected[0] == null || !selected[0].IsOnline)
+				return;
+			using (var form = new TestDeviceForm(selected[0]))
+			{
+				form.StartPosition = FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				form.ShowDialog(FindForm());
+			}
 		}
 
 		#region Import
@@ -371,10 +390,11 @@ namespace x360ce.App.Controls
 				AddPluginDevice(Plugins.PluginDevices.NewUserDevice(types[0]));
 				return;
 			}
-			var menu = new ContextMenuStrip();
+			// Named, so the AI door reads the menu and presses an entry by path, as it does any other.
+			var menu = new ContextMenuStrip { Name = "AddPluginDeviceMenu" };
 			foreach (var type in types)
 			{
-				var item = new ToolStripMenuItem(type.Name) { Tag = type };
+				var item = new ToolStripMenuItem(type.Name) { Tag = type, Name = new string(type.Name.Where(char.IsLetterOrDigit).ToArray()) + "MenuItem" };
 				item.Click += (s, a) => AddPluginDevice(Plugins.PluginDevices.NewUserDevice((Plugins.PluginDeviceType)((ToolStripMenuItem)s).Tag));
 				menu.Items.Add(item);
 			}

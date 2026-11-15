@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"3.8.14.0",
-	"Built":"2026-10-25",
+	"Version":"3.11.32.0",
+	"Built":"2026-11-15",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -518,7 +518,7 @@
 									"Id":"AxisToButtonTabPage",
 									"Items":[
 										{
-											"Name":"DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):",
+											"Name":"DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)",
 											"Role":"Section",
 											"Id":"AxisToButtonGroupBox",
 											"Items":[
@@ -622,6 +622,12 @@
 													"Description":"The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.",
 													"Role":"List",
 													"Id":"PassThroughIndexComboBox"
+												},
+												{
+													"Name":"Auto Map",
+													"Description":"Map this controller from x360ce's controller database, and from SDL's where it maps nothing. A setting saved for one of its parts wins over the databases'. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"AutoMapCheckBox"
 												}
 											]
 										},
@@ -860,7 +866,7 @@
 						},
 						{
 							"Name":"Auto",
-							"Description":"Fills every mapping of this controller from what the device offers, after asking.",
+							"Description":"Fills this controller from x360ce's controller database, with SDL's mapping where it maps nothing, when either knows the device; otherwise its mapping from what the device offers. After asking.",
 							"Role":"Button",
 							"Id":"AutoPresetButton"
 						},
@@ -895,79 +901,6 @@
 							"Id":"MainGroupBox",
 							"Items":[
 								{
-									"Name":"Sensitivity value",
-									"Description":"The sensitivity slider's setting.",
-									"Role":"Value",
-									"Id":"SensitivityTextBox"
-								},
-								{
-									"Name":"Sensitivity",
-									"Description":"How the stick's movement is curved: slower near the centre, or faster.",
-									"Role":"Slider",
-									"Id":"SensitivityTrackBar",
-									"Min":0,
-									"Max":100
-								},
-								{
-									"Name":"Anti dead zone value",
-									"Description":"The anti dead zone slider's setting.",
-									"Role":"Value",
-									"Id":"AntiDeadZoneTextBox"
-								},
-								{
-									"Name":"Dead zone value",
-									"Description":"The dead zone slider's setting.",
-									"Role":"Value",
-									"Id":"DeadZoneTextBox"
-								},
-								{
-									"Name":"Anti dead zone",
-									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in per cent.",
-									"Role":"Slider",
-									"Id":"AntiDeadZoneTrackBar",
-									"Min":0,
-									"Max":100
-								},
-								{
-									"Name":"Dead zone",
-									"Description":"How far the stick must move before the game sees it move, in per cent.",
-									"Role":"Slider",
-									"Id":"DeadZoneTrackBar",
-									"Min":0,
-									"Max":100
-								},
-								{
-									"Name":"Anti dead zone",
-									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in raw units.",
-									"Role":"Number",
-									"Id":"AntiDeadZoneNumericUpDown",
-									"Min":0,
-									"Max":32767
-								},
-								{
-									"Name":"Sensitivity",
-									"Description":"How the stick's movement is curved, as a number.",
-									"Role":"Number",
-									"Id":"SensitivityNumericUpDown",
-									"Min":-100,
-									"Max":100,
-									"Hidden":true
-								},
-								{
-									"Name":"Dead zone",
-									"Description":"How far the stick must move before the game sees it move, in raw units.",
-									"Role":"Number",
-									"Id":"DeadZoneNumericUpDown",
-									"Min":0,
-									"Max":32767
-								},
-								{
-									"Name":"Invert",
-									"Description":"Turns the sensitivity curve the other way.",
-									"Role":"CheckBox",
-									"Id":"SensitivityCheckBox"
-								},
-								{
 									"Name":"Presets",
 									"Description":"Common pairs of dead zone and anti dead zone.",
 									"Role":"Toolbar",
@@ -980,38 +913,111 @@
 											"Id":"ApplyPresetMenuItem",
 											"Items":[
 												{
-													"Name":"5% DeadZone, 100% Controller Anti-DeadZone",
+													"Name":"5% Dead Zone, 100% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_5_100_0_MenuItem"
 												},
 												{
-													"Name":"100% Controller Anti-DeadZone",
+													"Name":"100% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_0_100_0_MenuItem"
 												},
 												{
-													"Name":"80% Controller Anti-DeadZone",
+													"Name":"80% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_0_80_0_MenuItem"
 												},
 												{
-													"Name":"60% Controller Anti-DeadZone",
+													"Name":"60% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_0_60_0_MenuItem"
 												},
 												{
-													"Name":"40% Controller Anti-DeadZone",
+													"Name":"40% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_0_40_0_MenuItem"
 												},
 												{
-													"Name":"20% Controller Anti-DeadZone",
+													"Name":"20% Controller Anti-Dead Zone",
 													"Role":"Button",
 													"Id":"P_0_20_0_MenuItem"
 												}
 											]
 										}
 									]
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the stick must move before the game sees it move, in per cent.",
+									"Role":"Slider",
+									"Id":"DeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Dead zone value",
+									"Description":"The dead zone slider's setting.",
+									"Role":"Value",
+									"Id":"DeadZoneTextBox"
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the stick must move before the game sees it move, in raw units.",
+									"Role":"Number",
+									"Id":"DeadZoneNumericUpDown",
+									"Min":0,
+									"Max":32767
+								},
+								{
+									"Name":"Anti dead zone",
+									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in per cent.",
+									"Role":"Slider",
+									"Id":"AntiDeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Anti dead zone value",
+									"Description":"The anti dead zone slider's setting.",
+									"Role":"Value",
+									"Id":"AntiDeadZoneTextBox"
+								},
+								{
+									"Name":"Anti dead zone",
+									"Description":"How far the game's own dead zone is skipped, so a small move is not lost, in raw units.",
+									"Role":"Number",
+									"Id":"AntiDeadZoneNumericUpDown",
+									"Min":0,
+									"Max":32767
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"How the stick's movement is curved: slower near the centre, or faster.",
+									"Role":"Slider",
+									"Id":"SensitivityTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Sensitivity value",
+									"Description":"The sensitivity slider's setting.",
+									"Role":"Value",
+									"Id":"SensitivityTextBox"
+								},
+								{
+									"Name":"Invert",
+									"Description":"Turns the sensitivity curve the other way.",
+									"Role":"CheckBox",
+									"Id":"SensitivityCheckBox"
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"How the stick's movement is curved, as a number.",
+									"Role":"Number",
+									"Id":"SensitivityNumericUpDown",
+									"Min":-100,
+									"Max":100,
+									"Hidden":true
 								}
 							]
 						}
@@ -1294,6 +1300,12 @@
 													"Description":"Web address of the online database the Controller Settings page searches and saves to.",
 													"Role":"List",
 													"Id":"InternetDatabaseUrlComboBox"
+												},
+												{
+													"Name":"Update Controller Database",
+													"Description":"Downloads x360ce's controller database, the setting most people use for each controller, from the site of the settings database address into the settings folder, and says in the header how it went. New controllers and the Presets tab use it from then on.",
+													"Role":"Button",
+													"Id":"UpdateControllerDatabaseButton"
 												}
 											]
 										},
@@ -1762,7 +1774,7 @@
 													"Items":[
 														{
 															"Name":"Controller defaults",
-															"Description":"Default settings for well-known controllers.",
+															"Description":"The setting most people use for each controller, from x360ce's controller database.",
 															"Role":"Grid",
 															"Id":"PresetsDataGridView"
 														},
@@ -1774,7 +1786,7 @@
 															"Items":[
 																{
 																	"Name":"Refresh",
-																	"Description":"Reads the controller defaults from the online database again.",
+																	"Description":"Reads x360ce's controller database again: the built-in copy, or the one Update Controller Database saved.",
 																	"Role":"Button",
 																	"Id":"PresetRefreshButton"
 																},

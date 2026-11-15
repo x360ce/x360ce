@@ -49,7 +49,7 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.StickGroupBox)] = new Text(null,
 				"How a mouse moves this stick.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.StyleComboBox)] = new Text("Style",
-				"Position: the stick follows how far the mouse has moved, and stays there, for steering or flying. Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops, for a camera or aiming. Screen: the stick follows where the pointer is on the screen, as a mouse yoke.");
+				"Position: the stick follows how far the mouse has moved, and stays there, for steering or flying. Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops, for a camera or aiming. Screen: the stick follows where the pointer is on the screen, as a mouse yoke. Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go or turns it off, as a steering wheel.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityXTrackBar)] = new Text("Sensitivity across",
 				"How far the stick moves for a movement across, 1 to 400 percent. 100 is the whole stick for 2,048 counts in Position, for 4,096 counts a second in Speed, and half the screen's height in Screen.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityXTextBox)] = Live("Sensitivity across value",
@@ -59,17 +59,31 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SensitivityYTextBox)] = Live("Sensitivity up and down value",
 				"The sensitivity up and down the slider is set to, in percent.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SmoothingTrackBar)] = new Text("Smoothing",
-				"How long the stick takes to follow a change in Speed and Screen, 0 to 500 milliseconds, which evens out a mouse's uneven reports. Greyed out in Position.");
+				"How long the stick takes to follow a change in Speed and Screen, 0 to 500 milliseconds, which evens out a mouse's uneven reports. Greyed out in Position and Wheel.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.SmoothingTextBox)] = Live("Smoothing value",
 				"The smoothing the slider is set to, in milliseconds.");
-			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ReturnTrackBar)] = new Text("Back to centre",
-				"How long the stick takes to go back to the centre, 0 to 2,000 milliseconds. In Position, 0 leaves it where the mouse left it. Greyed out in Screen.");
-			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ReturnTextBox)] = Live("Back to centre value",
-				"The time back to the centre the slider is set to, in milliseconds.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ActiveComboBox)] = new Text("Active",
 				"When the mouse moves the stick: always, while the button is held, then back to the centre or staying where it was, or turned on and off by the button.");
 			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ButtonComboBox)] = new Text("Button",
 				"The button of the same device that turns the mouse on the stick on and off. Greyed out while Active is Always.");
+			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ReturnTrackBar)] = new Text("Back to centre",
+				"How long the stick takes to go back to the centre, 0 to 2,000 milliseconds. In Position, 0 leaves it where the mouse left it. In Wheel, the time it takes once the button lets the stick go or turns it off, 0 at once. Greyed out in Screen, and in Wheel while Active is Always or keeps the stick where it was.");
+			d[nameof(MouseStickUserControl) + "." + nameof(MouseStickUserControl.ReturnTextBox)] = Live("Back to centre value",
+				"The time back to the centre the slider is set to, in milliseconds.");
+			d[nameof(MouseDemoUserControl)] = new Text(null,
+				"A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.CaptionLabel)] = Live("Demo stick",
+				"The stick group the demo shows and its style, such as Left Stick: Wheel.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.DemoPictureBox)] = new Text("Demo picture",
+				"The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.PhaseLabel)] = Live("Demo step",
+				"What the demo shows now, in words, such as Mouse stops: stick returns to the centre.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.NoteLabel)] = Live("Demo note",
+				"Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.PlayButton)] = new Text("Play demo",
+				"Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.");
+			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.DescriptionLabel)] = Live("Demo style",
+				"What the style shown does, in the Style list's words.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DirectInputTabPage)] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SdlTabPage)] = new Text("SDL",
@@ -217,8 +231,9 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.EnableButton)] = new Text("Enable",
 				"Turns this controller on or off for the selected game.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GetXInputStatesCheckBox)] = new Text("Show XInput State",
-				"Shows the values read back from XInput - what the game actually receives - instead "
-				+ "of the values worked out from your device. The emulated controller works either way.");
+				"Shows on the General page the values read back from XInput - what the game actually receives - instead "
+				+ "of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's "
+				+ "reading and what its mapping makes of it. The emulated controller works either way.");
 			d[nameof(PadControl) + "." + nameof(PadControl.GameControllersButton)] = new Text("Game Controllers...",
 				"Opens the Windows game controller panel for the selected device.");
 			d[nameof(PadControl) + "." + nameof(PadControl.DxTweakButton)] = new Text("DX Tweak...",
@@ -226,7 +241,7 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.LoadPresetButton)] = new Text("Load Preset...",
 				"Replaces this controller's settings with a saved set.");
 			d[nameof(PadControl) + "." + nameof(PadControl.AutoPresetButton)] = new Text("Auto Preset",
-				"Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
+				"Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SavePresetButton)] = new Text("Save Preset...",
 				"Writes this controller's settings to a file, to load again or pass on.");
 			d[nameof(PadControl) + "." + nameof(PadControl.ClearPresetButton)] = new Text("Clear",

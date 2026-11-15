@@ -39,12 +39,18 @@
 			this.LicenseTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTextBox = new System.Windows.Forms.TextBox();
 			this.MainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.ProgramLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.ChangesLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.LicenseLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).BeginInit();
 			this.AboutTabControl.SuspendLayout();
 			this.ProgramTabPage.SuspendLayout();
 			this.ChangesTabPage.SuspendLayout();
 			this.LicenseTabPage.SuspendLayout();
 			this.MainTableLayoutPanel.SuspendLayout();
+			this.ProgramLayoutPanel.SuspendLayout();
+			this.ChangesLayoutPanel.SuspendLayout();
+			this.LicenseLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ChangeLogTextBox
@@ -53,6 +59,7 @@
 			this.ChangeLogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ChangeLogTextBox.Location = new System.Drawing.Point(0, 0);
 			this.ChangeLogTextBox.Multiline = true;
+			this.ChangeLogTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ChangeLogTextBox.Name = "ChangeLogTextBox";
 			this.ChangeLogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.ChangeLogTextBox.Size = new System.Drawing.Size(605, 330);
@@ -62,6 +69,7 @@
 			// 
 			this.AboutDescriptionLabel.AutoSize = true;
 			this.AboutDescriptionLabel.Location = new System.Drawing.Point(43, 16);
+			this.AboutDescriptionLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AboutDescriptionLabel.Name = "AboutDescriptionLabel";
 			this.AboutDescriptionLabel.Size = new System.Drawing.Size(328, 13);
 			this.AboutDescriptionLabel.TabIndex = 0;
@@ -72,7 +80,7 @@
 			this.AboutProductLabel.AutoSize = true;
 			this.AboutProductLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.AboutProductLabel.Location = new System.Drawing.Point(43, 3);
-			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AboutProductLabel.Name = "AboutProductLabel";
 			this.AboutProductLabel.Size = new System.Drawing.Size(197, 13);
 			this.AboutProductLabel.TabIndex = 0;
@@ -82,7 +90,7 @@
 			// 
 			this.ProductPictureBox.Image = global::x360ce.App.Properties.Resources.app_128x128;
 			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
-			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ProductPictureBox.Name = "ProductPictureBox";
 			this.MainTableLayoutPanel.SetRowSpan(this.ProductPictureBox, 2);
 			this.ProductPictureBox.Size = new System.Drawing.Size(34, 26);
@@ -98,15 +106,29 @@
 			this.AboutTabControl.Controls.Add(this.LicenseTabPage);
 			this.AboutTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AboutTabControl.Location = new System.Drawing.Point(3, 32);
+			this.AboutTabControl.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.AboutTabControl.Name = "AboutTabControl";
 			this.AboutTabControl.SelectedIndex = 0;
 			this.AboutTabControl.Size = new System.Drawing.Size(613, 461);
 			this.AboutTabControl.TabIndex = 1;
 			// 
+			// ProgramLayoutPanel
+			// 
+			this.ProgramLayoutPanel.ColumnCount = 1;
+			this.ProgramLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ProgramLayoutPanel.Controls.Add(this.ProgramRichTextBox, 0, 0);
+			this.ProgramLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ProgramLayoutPanel.Name = "ProgramLayoutPanel";
+			this.ProgramLayoutPanel.RowCount = 1;
+			this.ProgramLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ProgramLayoutPanel.TabIndex = 0;
+			// 
 			// ProgramTabPage
 			// 
-			this.ProgramTabPage.Controls.Add(this.ProgramRichTextBox);
+			this.ProgramTabPage.Controls.Add(this.ProgramLayoutPanel);
 			this.ProgramTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ProgramTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.ProgramTabPage.Name = "ProgramTabPage";
 			this.ProgramTabPage.Size = new System.Drawing.Size(605, 330);
 			this.ProgramTabPage.TabIndex = 0;
@@ -119,26 +141,53 @@
 			this.ProgramRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.ProgramRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgramRichTextBox.Location = new System.Drawing.Point(0, 0);
+			this.ProgramRichTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ProgramRichTextBox.Name = "ProgramRichTextBox";
 			this.ProgramRichTextBox.ReadOnly = true;
 			this.ProgramRichTextBox.Size = new System.Drawing.Size(605, 330);
 			this.ProgramRichTextBox.TabIndex = 0;
 			this.ProgramRichTextBox.Text = "";
 			// 
+			// ChangesLayoutPanel
+			// 
+			this.ChangesLayoutPanel.ColumnCount = 1;
+			this.ChangesLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ChangesLayoutPanel.Controls.Add(this.ChangeLogTextBox, 0, 0);
+			this.ChangesLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ChangesLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ChangesLayoutPanel.Name = "ChangesLayoutPanel";
+			this.ChangesLayoutPanel.RowCount = 1;
+			this.ChangesLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ChangesLayoutPanel.TabIndex = 0;
+			// 
 			// ChangesTabPage
 			// 
-			this.ChangesTabPage.Controls.Add(this.ChangeLogTextBox);
+			this.ChangesTabPage.Controls.Add(this.ChangesLayoutPanel);
 			this.ChangesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ChangesTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.ChangesTabPage.Name = "ChangesTabPage";
 			this.ChangesTabPage.Size = new System.Drawing.Size(605, 330);
 			this.ChangesTabPage.TabIndex = 1;
 			this.ChangesTabPage.Text = "Changes";
 			this.ChangesTabPage.UseVisualStyleBackColor = true;
 			// 
+			// LicenseLayoutPanel
+			// 
+			this.LicenseLayoutPanel.ColumnCount = 1;
+			this.LicenseLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LicenseLayoutPanel.Controls.Add(this.LicenseTextBox, 0, 0);
+			this.LicenseLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LicenseLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.LicenseLayoutPanel.Name = "LicenseLayoutPanel";
+			this.LicenseLayoutPanel.RowCount = 1;
+			this.LicenseLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LicenseLayoutPanel.TabIndex = 0;
+			// 
 			// LicenseTabPage
 			// 
-			this.LicenseTabPage.Controls.Add(this.LicenseTextBox);
+			this.LicenseTabPage.Controls.Add(this.LicenseLayoutPanel);
 			this.LicenseTabPage.Location = new System.Drawing.Point(4, 22);
+			this.LicenseTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.LicenseTabPage.Name = "LicenseTabPage";
 			this.LicenseTabPage.Size = new System.Drawing.Size(605, 330);
 			this.LicenseTabPage.TabIndex = 2;
@@ -151,6 +200,7 @@
 			this.LicenseTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LicenseTextBox.Location = new System.Drawing.Point(0, 0);
 			this.LicenseTextBox.Multiline = true;
+			this.LicenseTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LicenseTextBox.Name = "LicenseTextBox";
 			this.LicenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.LicenseTextBox.Size = new System.Drawing.Size(605, 330);
@@ -192,6 +242,12 @@
 			this.LicenseTabPage.PerformLayout();
 			this.MainTableLayoutPanel.ResumeLayout(false);
 			this.MainTableLayoutPanel.PerformLayout();
+			this.ProgramLayoutPanel.ResumeLayout(false);
+			this.ProgramLayoutPanel.PerformLayout();
+			this.ChangesLayoutPanel.ResumeLayout(false);
+			this.ChangesLayoutPanel.PerformLayout();
+			this.LicenseLayoutPanel.ResumeLayout(false);
+			this.LicenseLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -209,5 +265,8 @@
 		internal System.Windows.Forms.TabPage LicenseTabPage;
 		internal System.Windows.Forms.TextBox LicenseTextBox;
 		private System.Windows.Forms.TableLayoutPanel MainTableLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel ProgramLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel ChangesLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel LicenseLayoutPanel;
 	}
 }

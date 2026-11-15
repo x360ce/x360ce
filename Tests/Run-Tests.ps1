@@ -68,9 +68,15 @@ $adapter = Join-Path $env:USERPROFILE ".nuget\packages\mstest.testadapter\$versi
 if (-not (Test-Path $adapter)) { throw "MSTest adapter $version not found at $adapter" }
 
 $assembly = Join-Path $PSScriptRoot "bin\$Configuration\net462\x360ce.Tests.dll"
-$arguments = @($assembly, "/TestAdapterPath:$adapter", '/Logger:console;verbosity=normal')
-if (-not $Interactive) {
-    $arguments += '/TestCaseFilter:TestCategory!=ui-interactive'
+# The settings beside this script give the tests an application domain of their own, with the program's folder and file.
+$settings = Join-Path $PSScriptRoot 'Run-Tests.runsettings'
+$arguments = @($assembly, "/TestAdapterPath:$adapter", "/Settings:$settings", '/Logger:console;verbosity=normal')
+# The load tests run the engine flat out for minutes, and the scratch tests drive the force feedback of the wheel and the
+# pad attached to this computer, so both run only when asked for by their own filter.
+if ($Interactive) {
+    $arguments += '/TestCaseFilter:TestCategory!=load&TestCategory!=scratch'
+} else {
+    $arguments += '/TestCaseFilter:TestCategory!=ui-interactive&TestCategory!=load&TestCategory!=scratch'
     Write-Host 'Skipping ui-interactive tests. Pass -Interactive to include them.' -ForegroundColor DarkGray
 }
 

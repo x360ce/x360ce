@@ -16,6 +16,7 @@
 #include "ForceFeedback.h"
 
 #include "ControllerManager.h"
+#include "Sdl.h"
 
 const u16 Config::buttonIDs[14] =
 {
@@ -193,9 +194,15 @@ void Config::ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controller
 {
 	IniFile ini;
 	std::string inipath("x360ce.ini");
+	m_autoMap = false;
 	if (!ini.Load(inipath))
 		CheckCommonDirectory(&inipath, "x360ce");
-	if (!ini.Load(inipath)) return;
+	// Without a configuration file every controller is mapped from SDL's database.
+	if (!ini.Load(inipath))
+	{
+		m_autoMap = true;
+		return;
+	}
 
 	static bool once_flag = false;
 	bool combineEnabled = false;
@@ -221,6 +228,9 @@ void Config::ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controller
 
 	// Is combining enabled at a global level?
 	ini.Get("Options", "CombineEnabled", &combineEnabled);
+
+	// Are controllers no section lists mapped from SDL's database into free places?
+	ini.Get("Options", "AutoMap", &m_autoMap);
 
 	// Read pad mappings
 	for (u32 i = 0; i < XUSER_MAX_COUNT; ++i)
@@ -252,11 +262,8 @@ void Config::ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controller
 
 		// Read in configuration
 		Controller* pController = controller.get();
-		if (pController)
-		{
-			if (ReadPadConfig(pController, section, &ini))
-				ReadPadMapping(pController, section, &ini);
-		}
+		if (pController && ReadPad(pController, section, &ini) && pController->m_autoMap)
+			ReadDatabaseRow(pController, section, &ini);
 
 		// If this is a combined device we need to add the combiner instead
 		if (combined)
@@ -340,6 +347,12 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 		return false;
 	}
 
+	// Mapping from the controller databases; the section's own keys win over them.
+	bool autoMap = false;
+	pIniFile->Get(section, "AutoMap", &autoMap);
+	if (autoMap)
+		pController->m_autoMap = true;
+
 	// Forces-only pass through
 	pIniFile->Get(section, "ForcesPassThrough", &pController->m_forcespassthrough);
 
@@ -368,9 +381,8 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 	// Device type
 	pIniFile->Get<u8>(section, "ControllerType", &pController->m_gamepadtype, 1);
 
-	// FFB options
-	pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
-	if (pController->m_useforce)
+	// FFB options, read whole so a controller given force feedback later has the defaults.
+	pController->m_forceKey = pIniFile->Get(section, "UseForceFeedback", &pController->m_useforce);
 	{
 		pIniFile->Get(section, "SwapMotor", &pController->m_ForceFeedback->m_SwapMotors);
 		pIniFile->Get(section, "FFBType", &pController->m_ForceFeedback->m_Type);
@@ -394,9 +406,18 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 void Config::ReadPadMapping(Controller* pController, const std::string& section, IniFile* pIniFile)
 {
 	Mapping* pMapping = &pController->m_mapping;
+	// A key counts when it holds a value; "0" is a value, the control switched off.
+	auto has = [&](const std::string& key, std::string* value)
+	{
+		return pIniFile->Get(section, key, value) && !value->empty();
+	};
+	std::string value;
 
-	// Guide button
-	pIniFile->Get<s8>(section, "GuideButton", &pMapping->guide, -1);
+	// Guide button: counted from 1, as every other button key and as x360ce 3 writes it; 0 or -1 is none.
+	s8 guide = 0;
+	if (pIniFile->Get<s8>(section, "GuideButton", &guide, 0))
+		pMapping->iniKeys |= 1u << KEY_GUIDE;
+	pMapping->guide = guide > 0 ? guide - 1 : -1;
 
 	// Fire buttons
 	for (u32 i = 0; i < _countof(pMapping->Button); ++i)
@@ -406,20 +427,24 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 		if (pIniFile->Get(section, buttonNames[i], &button))
 		{
 			ParsePrefix(button, &pMapping->Button[i].type, &pMapping->Button[i].id);
+			if (!button.empty())
+				pMapping->iniKeys |= 1u << (KEY_BUTTON + i);
 		}
-		else
+		else if (!pController->m_autoMap)
 		{
 			std::string message = StringFormat("Mapping could not be determined for %s button %s", section.c_str(), buttonNames[i]);
 			PrintLog(message.c_str());
 		}
 		// DeadZones
-		pIniFile->Get(section, buttonDZNames[i], &pMapping->Button[i].buttondz);
+		if (pIniFile->Get(section, buttonDZNames[i], &pMapping->Button[i].buttondz))
+			pMapping->buttonDzKeys |= (u16)(1u << i);
 
 
 	}
 
 	//// D-PAD
-	pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV);
+	if (pIniFile->Get(section, "D-pad POV", &pMapping->DpadPOV))
+		pMapping->iniKeys |= 1u << KEY_DPAD;
 	//if (pMapping->DpadPOV >= 0)
 	//{
 	//	for (u32 i = 0; i < _countof(pMapping->pov); ++i)
@@ -447,8 +472,10 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 		if (pIniFile->Get(section, axisNames[i], &axis))
 		{
 			ParsePrefix(axis, &pMapping->Axis[i].analogType, &pMapping->Axis[i].id);
+			if (!axis.empty())
+				pMapping->iniKeys |= 1u << (KEY_AXIS + i);
 		}
-		else
+		else if (!pController->m_autoMap)
 		{
 			std::string message = StringFormat("Mapping could not be determined for %s axis %s", section.c_str(), axisNames[i]);
 			PrintLog(message.c_str());
@@ -470,29 +497,137 @@ void Config::ReadPadMapping(Controller* pController, const std::string& section,
 
 	
 		// Axis to button mappings
-		std::string posMap;
-		if (pIniFile->Get(section, axisBNames[i * 2], &posMap))
+		if (has(axisBNames[i * 2], &value))
 		{
-			ParsePrefix(posMap, &pMapping->Axis[i].positiveType, &pMapping->Axis[i].positiveButtonID);
+			ParsePrefix(value, &pMapping->Axis[i].positiveType, &pMapping->Axis[i].positiveButtonID);
+			pMapping->iniKeys |= 1u << (KEY_AXIS_POSITIVE + i);
 		}
 
-		if (pIniFile->Get(section, axisBNames[i * 2 + 1], &posMap))
+		if (has(axisBNames[i * 2 + 1], &value))
 		{
-			ParsePrefix(posMap, &pMapping->Axis[i].negativeType, &pMapping->Axis[i].negativeButtonID);
+			ParsePrefix(value, &pMapping->Axis[i].negativeType, &pMapping->Axis[i].negativeButtonID);
+			pMapping->iniKeys |= 1u << (KEY_AXIS_NEGATIVE + i);
 		}
 	}
 
 	// Triggers
 	for (u32 i = 0; i < _countof(pMapping->Trigger); ++i)
 	{
-		std::string trigger;
-		if (pIniFile->Get(section, triggerNames[i], &trigger))
-			ParsePrefix(trigger, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
+		if (has(triggerNames[i], &value))
+		{
+			ParsePrefix(value, &pMapping->Trigger[i].type, &pMapping->Trigger[i].id);
+			pMapping->iniKeys |= 1u << (KEY_TRIGGER + i);
+		}
 
 		pIniFile->Get(section, triggerDZNames[i], &pMapping->Trigger[i].triggerdz);
 
 		// SeDoG mod
-		pIniFile->Get(section, triggerBNames[i], &pMapping->Trigger[i].but);
+		if (pIniFile->Get(section, triggerBNames[i], &pMapping->Trigger[i].but))
+			pMapping->iniKeys |= 1u << (KEY_TRIGGER_BUT + i);
+	}
+
+	// A section that names its controller and maps none of its controls is mapped from SDL's database.
+	if (!pMapping->iniKeys)
+		pController->m_autoMap = true;
+}
+
+bool Config::ReadPad(Controller* pController, const std::string& section, IniFile* pIniFile)
+{
+	if (!ReadPadConfig(pController, section, pIniFile))
+		return false;
+	ReadPadMapping(pController, section, pIniFile);
+	return true;
+}
+
+void Config::ReadDatabaseRow(Controller* pController, const std::string& section, IniFile* pIniFile)
+{
+	// The section names its controller's vendor and product in its ProductGUID: theirs, then "PIDVID".
+	Sdl::Device device;
+	device.vendorId = LOWORD(pController->m_productid.Data1);
+	device.productId = HIWORD(pController->m_productid.Data1);
+	pIniFile->Get(section, "ProductName", &device.name);
+	if (memcmp(pController->m_productid.Data4 + 2, "PIDVID", 6) != 0)
+		return;
+	std::string row = Sdl::FindX360ceRow(device);
+	if (row.empty())
+		return;
+	// The row's keys, then the section's own over them: read as one section.
+	IniFile merged;
+	const std::string pad("pad");
+	Sdl::ReadRowKeys(row, &merged, pad);
+	std::vector<std::string> keys;
+	pIniFile->GetKeys(section, &keys);
+	for (const auto& key : keys)
+	{
+		std::string value;
+		if (pIniFile->Get(section, key, &value) && !value.empty())
+			merged.Set(pad, key, value);
+	}
+	pController->m_mapping = Mapping();
+	ReadPad(pController, pad, &merged);
+	pController->m_rowFound = true;
+	PrintLog("[PAD%u] x360ce database row: %s", pController->m_user + 1, row.c_str());
+}
+
+void Config::MergeSdl(Mapping* mapping, const Mapping& sdl)
+{
+	const u32 keys = mapping->iniKeys;
+	auto unset = [keys](u32 bit) { return (keys & (1u << bit)) == 0; };
+	for (u32 i = 0; i < _countof(mapping->Button); ++i)
+	{
+		if (!unset(KEY_BUTTON + i))
+			continue;
+		mapping->Button[i].type = sdl.Button[i].type;
+		mapping->Button[i].id = sdl.Button[i].id;
+		// An axis pressing a button needs a dead zone, or it presses it at rest.
+		const MappingType t = sdl.Button[i].type;
+		bool onAxis = t == AXIS || t == HAXIS || t == SLIDER || t == HSLIDER;
+		if (onAxis && (mapping->buttonDzKeys & (1u << i)) == 0)
+			mapping->Button[i].buttondz = DEFAULT_BUTTON_DEADZONE;
+	}
+	if (unset(KEY_GUIDE))
+		mapping->guide = sdl.guide;
+	if (unset(KEY_DPAD))
+		mapping->DpadPOV = sdl.DpadPOV;
+	for (u32 i = 0; i < _countof(mapping->Axis); ++i)
+	{
+		if (unset(KEY_AXIS + i))
+		{
+			mapping->Axis[i].analogType = sdl.Axis[i].analogType;
+			mapping->Axis[i].id = sdl.Axis[i].id;
+		}
+		if (unset(KEY_AXIS_POSITIVE + i))
+		{
+			mapping->Axis[i].positiveType = sdl.Axis[i].positiveType;
+			mapping->Axis[i].positiveButtonID = sdl.Axis[i].positiveButtonID;
+		}
+		if (unset(KEY_AXIS_NEGATIVE + i))
+		{
+			mapping->Axis[i].negativeType = sdl.Axis[i].negativeType;
+			mapping->Axis[i].negativeButtonID = sdl.Axis[i].negativeButtonID;
+		}
+	}
+	for (u32 i = 0; i < _countof(mapping->Trigger); ++i)
+	{
+		if (unset(KEY_TRIGGER + i))
+		{
+			mapping->Trigger[i].type = sdl.Trigger[i].type;
+			mapping->Trigger[i].id = sdl.Trigger[i].id;
+		}
 	}
 }
 
+
+/// <summary>Test hook: the mapping a section of an ini file gives, as Sdl::Describe writes it, empty for none.</summary>
+/// <remarks>Tests\Common\SdlNativeTest.cs reads GuideButton through it. Returns the length the text needs, its terminating nought included.</remarks>
+extern "C" DWORD WINAPI IniMapping(LPCSTR iniPath, LPCSTR section, LPSTR buffer, DWORD size)
+{
+	IniFile ini;
+	Controller controller(0);
+	if (iniPath && section && ini.Load(iniPath))
+		Config().ReadPadMapping(&controller, section, &ini);
+	std::string text = Sdl::Describe(controller.m_mapping);
+	if (buffer && size > 0)
+		strncpy_s(buffer, size, text.c_str(), _TRUNCATE);
+	return (DWORD)text.size() + 1;
+}

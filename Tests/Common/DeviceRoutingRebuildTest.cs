@@ -294,7 +294,7 @@ namespace x360ce.Tests
 			var dir = Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "DInput");
 			var main = File.ReadAllText(Path.Combine(dir, "DInputHelper.cs"));
 			StringAssert.Contains(main, "var routing = DeviceRouting.Current;", "The engine does not read the routing once for the pass.");
-			StringAssert.Contains(main, "UpdateDiStates(manager, game, detector, routing);");
+			StringAssert.Contains(main, "UpdateDiStates(manager, game, window, routing);");
 			StringAssert.Contains(main, "UpdateXiStates(routing);");
 			StringAssert.Contains(main, "CombineXiStates(routing);");
 			foreach (var step in new[] { "DInputHelper.Step2.UpdateDiStates.cs", "DInputHelper.Step3.UpdateXiStates.cs", "DInputHelper.Step4.CombineXiStates.cs" })

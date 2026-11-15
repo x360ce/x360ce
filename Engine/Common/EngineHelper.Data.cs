@@ -82,11 +82,14 @@ namespace x360ce.Engine
 			return table;
 		}
 
-		public static DataSet GetPresets(SearchParameter[] args, int? MaxRecords = null, int? MaxPerProduct = null, int? MaxPerProductFile = null)
+		/// <param name="commandTimeout">Seconds the query may take; SqlCommand's 30 when null.</param>
+		public static DataSet GetPresets(SearchParameter[] args, int? MaxRecords = null, int? MaxPerProduct = null, int? MaxPerProductFile = null, int? commandTimeout = null)
 		{
 			var p = SqlHelper.ConvertToTable(args);
 			var cmd = new SqlCommand("x360ce_GetPresets");
 			cmd.CommandType = CommandType.StoredProcedure;
+			if (commandTimeout.HasValue)
+				cmd.CommandTimeout = commandTimeout.Value;
 			cmd.Parameters.AddWithValue("@args", p);
 			if (MaxRecords.HasValue) cmd.Parameters.AddWithValue("@MaxRecords", MaxRecords);
 			if (MaxPerProduct.HasValue) cmd.Parameters.AddWithValue("@MaxPerProduct", MaxPerProduct);
@@ -94,6 +97,17 @@ namespace x360ce.Engine
 			var cn = SqlHelper.GetConnectionString("x360ceModelContainer");
 			var ds = SqlHelper.Current.ExecuteDataSet(cn, cmd);
 			return ds;
+		}
+
+		/// <summary>For each controller, the setting most people use with it (table 0), and those settings (table 1).</summary>
+		/// <remarks>Run at most once a day (<see cref="DailyCache{T}"/>), so it may take up to two minutes.</remarks>
+		public static DataSet GetControllerDatabase()
+		{
+			var cmd = new SqlCommand("x360ce_GetControllerDatabase");
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.CommandTimeout = 120;
+			var cn = SqlHelper.GetConnectionString("x360ceModelContainer");
+			return SqlHelper.Current.ExecuteDataSet(cn, cmd);
 		}
 
 		public static DataSet GetSettings(SearchParameter[] args)

@@ -109,7 +109,8 @@ namespace x360ce.Tests
 		/// <summary>Describes every control that another control is painted over.</summary>
 		/// <remarks>
 		/// Only controls with the same parent share a place to be. Windows paints them back to
-		/// front in reverse order, so of an overlapping pair the earlier one is on top.
+		/// front in reverse order, so of an overlapping pair the earlier one is on top. The one
+		/// overlap allowed is <see cref="IsNameOverItsNumber"/>.
 		/// </remarks>
 		internal static IEnumerable<string> Covered(Control root)
 		{
@@ -124,12 +125,64 @@ namespace x360ce.Tests
 						var a = children[i].Bounds;
 						var b = children[j].Bounds;
 						var over = Rectangle.Intersect(a, b);
-						if (over.Width <= 0 || over.Height <= 0)
+						if (over.Width <= 0 || over.Height <= 0 || IsNameOverItsNumber(children[i], children[j]))
 							continue;
 						yield return string.Format("  '{0}' covers '{1}' by {2}x{3}",
 							Describe(children[i]), Describe(children[j]), over.Width, over.Height);
 					}
 				}
+			}
+		}
+
+		/// <summary>Every character a number under a name on the General tab draws.</summary>
+		internal const string Digits = "-0123456789";
+
+		/// <summary>
+		/// Whether a control on top of another is a name on the General tab over its own number, the
+		/// <c>&lt;Part&gt;ValueLabel</c> made for it, and only over the top rows of the number's line, where it draws no digit.
+		/// </summary>
+		/// <remarks>
+		/// The owner's choice, so that the digits stand 4 px under the name's letters at 100 %: the number's line is empty
+		/// above its digits, and the name's last rows, which hold the tails of letters such as p, g and y, are drawn over that.
+		/// </remarks>
+		internal static bool IsNameOverItsNumber(Control top, Control under)
+		{
+			const string suffix = "Label";
+			var name = top as Label;
+			var value = under as Label;
+			if (name == null || value == null || name.Parent != value.Parent || !name.Name.EndsWith(suffix)
+				|| value.Name != name.Name.Substring(0, name.Name.Length - suffix.Length) + "ValueLabel")
+				return false;
+			var over = Rectangle.Intersect(name.Bounds, value.Bounds);
+			int inkTop, inkBottom;
+			InkRows(value.Font, Digits, out inkTop, out inkBottom);
+			return over.Top == value.Top && over.Height <= inkTop;
+		}
+
+		/// <summary>The first and last rows a text draws ink on, from the top of its line, drawn as a label draws it, with GDI.</summary>
+		internal static void InkRows(Font font, string text, out int top, out int bottom)
+		{
+			var size = TextRenderer.MeasureText(text, font);
+			top = -1;
+			bottom = -1;
+			using (var bitmap = new Bitmap(size.Width, size.Height))
+			{
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					g.Clear(Color.White);
+					TextRenderer.DrawText(g, text, font, new Rectangle(Point.Empty, size), Color.Black,
+						TextFormatFlags.Top | TextFormatFlags.Left | TextFormatFlags.NoPrefix | TextFormatFlags.SingleLine);
+				}
+				var white = Color.White.ToArgb();
+				for (var y = 0; y < size.Height; y++)
+					for (var x = 0; x < size.Width; x++)
+						if (bitmap.GetPixel(x, y).ToArgb() != white)
+						{
+							if (top < 0)
+								top = y;
+							bottom = y;
+							break;
+						}
 			}
 		}
 

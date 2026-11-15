@@ -18,6 +18,20 @@ namespace x360ce.App.Controls
 
 		public UserDevice[] SelectedDevices;
 
+		/// <summary>Widens the window by what the list's tool bar lacks to show every button on itself, and places it again as asked.</summary>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			if (IsDesignMode)
+				return;
+			if (!AppHelper.WidenToShowToolBars(this))
+				return;
+			if (StartPosition == FormStartPosition.CenterParent)
+				CenterToParent();
+			else if (StartPosition == FormStartPosition.CenterScreen)
+				CenterToScreen();
+		}
+
 		private void OkButton_Click(object sender, EventArgs e)
 		{
 			SelectedDevices = ControllersPanel.GetSelected();

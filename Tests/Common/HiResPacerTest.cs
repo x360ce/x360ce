@@ -25,8 +25,8 @@ namespace x360ce.Tests
 		/// <summary>Measured 999.9 here. The multimedia timer and an event measured 945 to 975 on the same machine.</summary>
 		const int MinimumPassesPerSecond = 990;
 
-		/// <summary>Passes a second over <paramref name="seconds"/>, on a thread of its own.</summary>
-		static double PassesPerSecond(int seconds)
+		/// <summary>Passes a second over <paramref name="seconds"/>, on a thread of its own, <paramref name="intervalUs"/> apart.</summary>
+		static double PassesPerSecond(int seconds, int intervalUs = 1000)
 		{
 			var passes = 0;
 			var thread = new Thread(() =>
@@ -37,7 +37,7 @@ namespace x360ce.Tests
 					var end = Stopwatch.GetTimestamp() + Stopwatch.Frequency * seconds;
 					while (Stopwatch.GetTimestamp() < end)
 					{
-						pacer.Wait(1);
+						pacer.WaitMicroseconds(intervalUs);
 						passes++;
 					}
 				}
@@ -57,6 +57,23 @@ namespace x360ce.Tests
 			Assert.IsTrue(rate >= MinimumPassesPerSecond, string.Format(
 				"{0:0.0} passes a second, under {1}. Waits are being lost again.", rate, MinimumPassesPerSecond));
 			Assert.IsTrue(rate <= 1010, string.Format(
+				"{0:0.0} passes a second: the pacer is running faster than it was asked to.", rate));
+		}
+
+		/// <summary>
+		/// A wake on a one millisecond clock can land a whole tick late, four intervals at 4000 Hz. The schedule is kept and
+		/// the passes owed run at once; restarting it from each late wake gave 3680 to 3730 passes a second.
+		/// </summary>
+		[TestMethod, TestCategory("engine"), TestCategory("performance")]
+		[Description("A loop paced at a quarter of a millisecond runs four thousand times a second")]
+		public void A_loop_paced_at_a_quarter_millisecond_runs_four_thousand_times_a_second()
+		{
+			PassesPerSecond(1, 250);
+			var rate = PassesPerSecond(3, 250);
+			Console.WriteLine("{0:0.0} passes a second", rate);
+			Assert.IsTrue(rate >= 3900, string.Format(
+				"{0:0.0} passes a second, under 3900. Late wakes are starting the schedule again.", rate));
+			Assert.IsTrue(rate <= 4040, string.Format(
 				"{0:0.0} passes a second: the pacer is running faster than it was asked to.", rate));
 		}
 

@@ -90,7 +90,7 @@
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
 			this.AboutWikiLabel.Size = new System.Drawing.Size(65, 13);
 			this.AboutWikiLabel.TabIndex = 0;
-			this.AboutWikiLabel.Text = "X360c Wiki:";
+			this.AboutWikiLabel.Text = "X360c Wiki";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
@@ -110,7 +110,7 @@
 			this.AboutTocaLabel.Name = "AboutTocaLabel";
 			this.AboutTocaLabel.Size = new System.Drawing.Size(65, 13);
 			this.AboutTocaLabel.TabIndex = 0;
-			this.AboutTocaLabel.Text = "ToCA EDIT:";
+			this.AboutTocaLabel.Text = "ToCA EDIT";
 			// 
 			// AboutJocysLinkLabel
 			// 
@@ -141,7 +141,7 @@
 			this.AboutJocysLabel.Name = "AboutJocysLabel";
 			this.AboutJocysLabel.Size = new System.Drawing.Size(60, 13);
 			this.AboutJocysLabel.TabIndex = 0;
-			this.AboutJocysLabel.Text = "Jocys.com:";
+			this.AboutJocysLabel.Text = "Jocys.com";
 			// 
 			// AboutVirusLabel
 			// 
@@ -150,7 +150,7 @@
 			this.AboutVirusLabel.Name = "AboutVirusLabel";
 			this.AboutVirusLabel.Size = new System.Drawing.Size(53, 13);
 			this.AboutVirusLabel.TabIndex = 0;
-			this.AboutVirusLabel.Text = "VirusDev:";
+			this.AboutVirusLabel.Text = "VirusDev";
 			// 
 			// AboutProductLabel
 			// 
@@ -178,7 +178,7 @@
 			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
 			this.GoogleProjectLabel.Size = new System.Drawing.Size(79, 13);
 			this.GoogleProjectLabel.TabIndex = 0;
-			this.GoogleProjectLabel.Text = "GitHub Project:";
+			this.GoogleProjectLabel.Text = "GitHub Project";
 			// 
 			// GoogleProjectLinkLabel
 			// 

@@ -514,10 +514,13 @@ namespace JocysCom.ClassLibrary
 	/// under a tenth of a millisecond.
 	///
 	/// Here the loop's own thread waits on a high-resolution waitable timer, armed for the exact next
-	/// due time, with no timer thread in between. A wait that ends late is followed by a shorter one,
-	/// so the loop keeps its rate; one more than a whole interval late starts the schedule again from
-	/// that moment, so a stall is never followed by a burst. Windows older than 10 version 1803 has no
-	/// high-resolution timer, and gets an ordinary one, as precise as its clock.
+	/// due time, with no timer thread in between. The due times stay on one schedule: a wait that ends
+	/// late is followed by shorter ones, or by none while passes are owed, so the loop keeps its rate.
+	/// A wake can land on the next tick of a one millisecond clock, four intervals at 4000 Hz, so up to
+	/// two such ticks, or four intervals when longer, are caught up. Further behind, after a stall or a
+	/// resume from sleep, the schedule starts again from that moment, so a stall is never followed by a
+	/// burst. Windows older than 10 version 1803 has no high-resolution timer, and gets an ordinary one,
+	/// as precise as its clock.
 	///
 	/// The cause of the lost passes is proven by the engine log's per-pass breakdown, a spin loop
 	/// (1000.0 passes a second) and a Windows Performance Recorder trace: timer DPC gaps of 1.1 to
@@ -564,14 +567,25 @@ namespace JocysCom.ClassLibrary
 		/// <summary>Whether the timer is the high-resolution one, rather than one as precise as the clock.</summary>
 		public bool UsesHighResolution { get; private set; }
 
+		/// <summary>How far behind the schedule may fall and still be caught up, in <see cref="Stopwatch"/> ticks: two ticks of a one millisecond clock, or four intervals when that is longer.</summary>
+		/// <remarks>Measured at 4000 Hz: the latest wake in each second ended 1.0 to 1.5 ms late.</remarks>
+		static readonly long CatchUpTicks = Stopwatch.Frequency / 500;
+
 		/// <summary>Waits until the next due time, <paramref name="intervalMs"/> after the last one.</summary>
 		/// <returns>How late the wait ended, in <see cref="Stopwatch"/> ticks; 0 when it ended on time or did not wait.</returns>
 		public long Wait(int intervalMs)
 		{
-			var interval = Stopwatch.Frequency * intervalMs / 1000;
+			return WaitMicroseconds(intervalMs * 1000);
+		}
+
+		/// <summary>Waits until the next due time, <paramref name="intervalUs"/> microseconds after the last one; 0 does not wait.</summary>
+		/// <returns>How late the wait ended, in <see cref="Stopwatch"/> ticks; 0 when it ended on time or did not wait.</returns>
+		public long WaitMicroseconds(int intervalUs)
+		{
+			var interval = Stopwatch.Frequency * intervalUs / 1000000;
 			_due += interval;
 			var now = Stopwatch.GetTimestamp();
-			if (now - _due > interval)
+			if (now - _due > Math.Max(interval * 4, CatchUpTicks))
 				_due = now;
 			var wait = _due - now;
 			// Due times are in 100 nanosecond units, and a negative one is relative to now.
@@ -581,7 +595,7 @@ namespace JocysCom.ClassLibrary
 			HiResTimer.NativeMethods.SetWaitableTimer(_timer.SafeWaitHandle, ref relative, 0, IntPtr.Zero, IntPtr.Zero, false);
 			// 0 is the timer. The wake handle (1), a time-out (258) and a failure all end the wait early. Waited for
 			// natively, because WaitHandle.WaitAny copies its array on every call.
-			if (HiResTimer.NativeMethods.WaitForMultipleObjects(2, _handles, false, (uint)(intervalMs + 50)) != 0)
+			if (HiResTimer.NativeMethods.WaitForMultipleObjects(2, _handles, false, (uint)(intervalUs / 1000 + 50)) != 0)
 				return 0;
 			var late = Stopwatch.GetTimestamp() - _due;
 			return late > 0 ? late : 0;

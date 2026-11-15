@@ -1,5 +1,6 @@
 ﻿// @under-test: App.v4/Controls/PadControl.cs, App.v4/Controls/PadControl.Designer.cs, App.v4/Common/ImageInfo.cs, App.v4/Common/UiTree/UiCatalog.Pad.cs, App.v4/Controls/PadTabPages/General/InputChipGroup.cs
 // @area: ui   @layer: unit
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.Themes;
 using JocysCom.ClassLibrary.Controls.UiTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.Tests
 {
@@ -26,7 +28,7 @@ namespace x360ce.Tests
 		public TestContext TestContext { get; set; }
 
 		[TestMethod, TestCategory("ui"), TestCategory("interface")]
-		[Description("Every name on the General tab has a small green number under it, the pair in the middle of its box's row and clear of every other control, in both themes, in Windows' fonts and in the program's")]
+		[Description("Every name on the General tab has a small green number under it, both at the edge next to its box and the number 2 px in from it at 100 %, its digits 4 px under the name's baseline at 100 % with the empty top of the number's line under the name and every digit whole, the names of a column lined up at that edge, the pair in the middle of its box's row and clear of every other control, in both themes, in Windows' fonts and in the program's")]
 		public void General_tab_shows_a_value_under_each_name()
 		{
 			AppFontsTest.LoadFonts();
@@ -35,7 +37,7 @@ namespace x360ce.Tests
 				foreach (var programFonts in new[] { false, true })
 				{
 					if (programFonts)
-						FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(AppFontsTest.Chosen), AppFonts.CodeFamily, AppFonts.SizeFor(AppFontsTest.Chosen, 0));
+						FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(AppFontsTest.Chosen), AppFonts.CodeFamily, AppFonts.SizeFor(0));
 					try
 					{
 						using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
@@ -53,20 +55,64 @@ namespace x360ce.Tests
 								FormsTheme.Apply(form);
 								Application.DoEvents();
 								var where = (programFonts ? "In the program's fonts" : "In Windows' fonts") + ", " + theme + ": ";
-								var green = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
-								var table = Find(pad, nameof(PadControl.GeneralTableLayoutPanel));
+								var green = FormsTheme.GetColor("ForegroundActive");
+								var table = (TableLayoutPanel)Find(pad, nameof(PadControl.GeneralTableLayoutPanel));
 								Func<Control, Rectangle> at = c => table.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
+								// The owner's 2 px at 100 %, which the page scales as it scales its other sizes.
+								var inset = (int)Math.Round(2 * ControlsHelper.DpiScale, MidpointRounding.AwayFromZero);
+								var valueGap = (int)Math.Round(4 * ControlsHelper.DpiScale, MidpointRounding.AwayFromZero);
+								var edges = new Dictionary<int, HashSet<int>>();
+								var gaps = new SortedSet<int>();
+								var overlaps = new SortedSet<int>();
 								foreach (var code in Codes())
 								{
-									var name = Find(pad, code + "Label");
-									var value = Find(pad, code + "ValueLabel");
+									var name = (Label)Find(pad, code + "Label");
+									var value = (Label)Find(pad, code + "ValueLabel");
 									var box = Find(pad, code + "ComboBox");
 									Assert.AreSame(name.Parent, value.Parent, where + code + "'s number is not beside its name.");
 									Assert.IsTrue(value.Visible, where + code + "'s number is hidden.");
-									Assert.AreEqual(new Point(name.Left, name.Bottom), value.Location, where + code + "'s number is not under its name.");
+									// The empty top of the number's line lies under its name, so its digits stand the owner's 4 px under the
+									// name's baseline at 100 %, 6 at 150 %, counting every row either draws ink on; further only where a font
+									// leaves fewer rows empty above its digits than that takes, as the name never lies over a digit.
+									int capTop, baseline, digitsTop, digitsBottom;
+									ControlOverlapTest.InkRows(name.Font, "H", out capTop, out baseline);
+									ControlOverlapTest.InkRows(value.Font, ControlOverlapTest.Digits, out digitsTop, out digitsBottom);
+									var overlap = name.Bottom - value.Top;
+									var gap = value.Top + digitsTop - (name.Top + baseline) - 1;
+									Assert.IsTrue(overlap <= digitsTop, string.Format("{0}{1}'s name lies {2} px over its number, whose digits start {3} px down.",
+										where, code, overlap, digitsTop));
+									Assert.IsTrue(gap == valueGap || gap > valueGap && overlap == digitsTop, string.Format(
+										"{0}{1}'s digits stand {2} clear rows under its name's baseline, not {3}.", where, code, gap, valueGap));
+									Assert.IsTrue(name.Parent.Controls.GetChildIndex(name) < name.Parent.Controls.GetChildIndex(value),
+										where + code + "'s number is drawn over its name.");
+									Assert.IsTrue(digitsBottom < value.Height, string.Format("{0}{1}'s digits draw on rows {2} to {3} of its number, {4} high.",
+										where, code, digitsTop, digitsBottom, value.Height));
+									gaps.Add(gap);
+									overlaps.Add(overlap);
+									// A name before its box, on the right of the page, ends next to the box; a name after its box starts next to it.
+									var column = table.GetColumn(name.Parent);
+									var right = column < table.GetColumn(box);
+									if (right)
+									{
+										Assert.AreEqual(ContentAlignment.TopRight, name.TextAlign, where + code + "'s name is not drawn at its right edge.");
+										Assert.AreEqual(name.Right - name.Padding.Right - inset, value.Right - value.Padding.Right,
+											where + code + "'s number does not end " + inset + " px in from its name's end.");
+										Assert.AreEqual(ContentAlignment.TopRight, value.TextAlign, where + code + "'s number is not drawn at its right edge.");
+									}
+									else
+									{
+										Assert.AreEqual(ContentAlignment.TopLeft, name.TextAlign, where + code + "'s name is not drawn at its left edge.");
+										Assert.AreEqual(name.Left + name.Padding.Left + inset, value.Left + value.Padding.Left,
+											where + code + "'s number does not start " + inset + " px in from its name's start.");
+										Assert.AreEqual(ContentAlignment.TopLeft, value.TextAlign, where + code + "'s number is not drawn at its left edge.");
+									}
+									HashSet<int> edge;
+									if (!edges.TryGetValue(column, out edge))
+										edges[column] = edge = new HashSet<int>();
+									edge.Add(right ? at(name).Right : at(name).Left);
 									Assert.AreEqual(name.Font.FontFamily.Name, value.Font.FontFamily.Name, where + code + "'s number is in another family than its name.");
 									Assert.IsTrue(value.Font.Size < name.Font.Size, where + code + "'s number is not smaller than its name.");
-									Assert.AreEqual(green.ToArgb(), value.ForeColor.ToArgb(), where + code + "'s number is not the theme's success colour.");
+									Assert.AreEqual(green.ToArgb(), value.ForeColor.ToArgb(), where + code + "'s number is not the theme's active colour.");
 									var contrast = Contrast(value.ForeColor, Behind(value));
 									Assert.IsTrue(contrast >= 4.5, string.Format("{0}{1}'s number has a contrast of {2:0.00}, under 4.5.", where, code, contrast));
 									var offCentre = (at(name).Top + at(value).Bottom) / 2.0 - (box.Top + box.Bottom) / 2.0;
@@ -75,6 +121,11 @@ namespace x360ce.Tests
 									Assert.IsTrue(at(name).Top >= 0 && at(value).Bottom <= height && box.Bottom <= height, string.Format(
 										"{0}{1}'s row runs past the bottom of its table, {2} high: box {3}, name {4}, number {5}.", where, code, height, box.Bounds, at(name), at(value)));
 								}
+								foreach (var pair in edges)
+									Assert.AreEqual(1, pair.Value.Count, string.Format("{0}the names in column {1} do not line up at the edge next to their boxes: {2}.",
+										where, pair.Key, string.Join(", ", pair.Value)));
+								TestContext.WriteLine("{0}{1} clear row(s) from a name's baseline to its number's digits, the number's top {2} row(s) under the name, at {3:P0}.",
+									where, string.Join("/", gaps), string.Join("/", overlaps), ControlsHelper.DpiScale);
 								var covered = ControlOverlapTest.Covered(table).ToList();
 								var rows = Codes().Select(x => string.Format("  {0}: box {1}, name {2}, number {3}",
 									x, Find(pad, x + "ComboBox").Bounds, Find(pad, x + "Label").Bounds, Find(pad, x + "ValueLabel").Bounds));
@@ -91,6 +142,269 @@ namespace x360ce.Tests
 					}
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("Every name on the General tab stands the same number of ink-free pixel rows above the digits under it, 4 at 100 % and 6 at 150 %, counted in the page's own drawing with any pixel unlike the background as ink, in both columns and both themes, in the program's font drawn as the program draws it, with ClearType; names and digits are drawn whole")]
+		public void General_tab_names_stand_the_same_ink_free_rows_above_their_numbers()
+		{
+			AppFontsTest.LoadFonts();
+			var faults = new List<string>();
+			var gaps = new SortedSet<int>();
+			var expected = PadControl.GapAt(ControlsHelper.DpiScale);
+			Ui.OnUiThread(() =>
+			{
+				FormsTheme.SetFonts(AppFonts.InterfaceFamilyFor(AppFontsTest.Chosen), AppFonts.CodeFamily, AppFonts.SizeFor(0));
+				try
+				{
+					using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+					using (var pad = new PadControl(MapTo.Controller1) { Dock = DockStyle.Fill })
+					{
+						// The program draws its labels with GDI (Application.SetCompatibleTextRenderingDefault(false)), which the
+						// test host cannot ask for once a window exists.
+						foreach (var label in ButtonIconTest.All(pad).OfType<Label>())
+							label.UseCompatibleTextRendering = false;
+						// Sized again, as the page sizes each pair, now that the names are measured as they are drawn.
+						foreach (var code in Codes())
+							PadControl.FitPair((Label)Find(pad, code + "Label"), (Label)Find(pad, code + "ValueLabel"), expected);
+						form.ClientSize = pad.Size;
+						form.Controls.Add(pad);
+						foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
+						{
+							FormsTheme.SetTheme(theme);
+							FormsTheme.Apply(form);
+							form.Show();
+							Application.DoEvents();
+							foreach (var code in Codes())
+							{
+								var at = theme + ", " + code + ": ";
+								var rows = InkFreeRows((Label)Find(pad, code + "Label"), (Label)Find(pad, code + "ValueLabel"), at, faults);
+								gaps.Add(rows);
+								if (rows != expected)
+									faults.Add(string.Format("{0}{1} ink-free rows between the name and its digits, not {2}.", at, rows, expected));
+							}
+						}
+					}
+				}
+				finally
+				{
+					FormsTheme.SetFonts(null, null);
+					FormsTheme.SetTheme(ThemeType.Light);
+				}
+			});
+			TestContext.WriteLine("{0} ink-free row(s) between a name and its digits at {1:P0}, {2} expected.", string.Join("/", gaps), ControlsHelper.DpiScale, expected);
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+		}
+
+		[TestMethod, TestCategory("ui"), TestCategory("critical")]
+		[Description("A name and the number under it, built and sized as the General tab builds them, in Segoe UI at the size each Windows scale gives its 9 points, stand 4, 5, 6, 7 and 8 ink-free pixel rows apart at 100, 125, 150, 175 and 200 %, for every name of the General tab, in both themes, names and digits drawn whole")]
+		public void Names_stand_four_ink_free_rows_a_hundred_per_cent_above_their_numbers_at_every_scale()
+		{
+			var faults = new List<string>();
+			var report = new List<string>();
+			Ui.OnUiThread(() =>
+			{
+				List<Tuple<string, bool, ContentAlignment>> names;
+				using (var pad = new PadControl(MapTo.Controller1))
+					names = Codes().Select(x => (Label)Find(pad, x + "Label")).Select(x => Tuple.Create(x.Text, x.UseMnemonic, x.TextAlign)).ToList();
+				try
+				{
+					foreach (var scale in new[] { 1f, 1.25f, 1.5f, 1.75f, 2f })
+						foreach (var theme in new[] { ThemeType.Light, ThemeType.Dark })
+						{
+							FormsTheme.SetTheme(theme);
+							// What the program's 9 point Segoe UI is at that scale, in pixels, and its numbers' four fifths of it.
+							using (var nameFont = new Font("Segoe UI", 12f * scale, FontStyle.Regular, GraphicsUnit.Pixel))
+							using (var valueFont = new Font(nameFont.FontFamily, nameFont.Size * 0.8f, nameFont.Style, nameFont.Unit))
+							using (var form = new Form { StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+							{
+								var flow = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoScroll = true };
+								form.Controls.Add(flow);
+								var pairs = new List<Tuple<Label, Label>>();
+								foreach (var named in names)
+								{
+									var panel = new Panel { Margin = new Padding(4) };
+									var right = named.Item3 == ContentAlignment.TopRight;
+									var name = new Label { Font = nameFont, AutoSize = false, Dock = DockStyle.Top, TextAlign = named.Item3, UseMnemonic = named.Item2, UseCompatibleTextRendering = false, Text = named.Item1 };
+									var value = new Label
+									{
+										Font = valueFont,
+										AutoSize = false,
+										Dock = DockStyle.Bottom,
+										TextAlign = named.Item3,
+										Padding = right ? new Padding(0, 0, (int)Math.Round(2 * scale), 0) : new Padding((int)Math.Round(2 * scale), 0, 0, 0),
+										UseMnemonic = false,
+										UseCompatibleTextRendering = false,
+										Text = "0",
+									};
+									panel.Controls.Add(name);
+									panel.Controls.Add(value);
+									flow.Controls.Add(panel);
+									PadControl.FitPair(name, value, PadControl.GapAt(scale));
+									pairs.Add(Tuple.Create(name, value));
+								}
+								FormsTheme.Apply(form);
+								form.Show();
+								Application.DoEvents();
+								var expected = PadControl.GapAt(scale);
+								var gaps = new SortedSet<int>();
+								foreach (var pair in pairs)
+								{
+									var at = string.Format("{0:P0}, {1}, \"{2}\": ", scale, theme, pair.Item1.Text);
+									var rows = InkFreeRows(pair.Item1, pair.Item2, at, faults);
+									gaps.Add(rows);
+									if (rows != expected)
+										faults.Add(string.Format("{0}{1} ink-free rows between the name and its digits, not {2}.", at, rows, expected));
+								}
+								report.Add(string.Format("{0:P0} {1}: names {2} px, numbers {3} px, {4} ink-free row(s), {5} expected", scale, theme,
+									nameFont.Size, valueFont.Size, string.Join("/", gaps), expected));
+							}
+						}
+				}
+				finally
+				{
+					FormsTheme.SetTheme(ThemeType.Light);
+				}
+			});
+			foreach (var line in report)
+				TestContext.WriteLine(line);
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults.Take(40)));
+		}
+
+		/// <summary>Letters whose tails hang below the baseline, over the empty top of the number's line.</summary>
+		const string Descenders = "gjpqy,;Q";
+
+		/// <summary>
+		/// The pixel rows with no ink at all between a name's letters and the digits under it, as the pair draws them: any pixel
+		/// unlike the background is ink, ClearType's and smoothing's included.
+		/// </summary>
+		/// <remarks>
+		/// The name's letters are those standing on its baseline: a tail, as of g or p, hangs past them over the empty top of the
+		/// number's line, beside the digits, and is not counted. The digits are every one a number can show. Each is drawn alone,
+		/// by a label like the one on the page, and the pair as the page draws it must agree: no ink in those rows but the tails,
+		/// and every pixel of the name's ink and of the number's on it, so nothing is cut.
+		/// <para>
+		/// The pair is put together as Windows puts the two windows on the screen: each label draws itself, the number first and
+		/// the name, which is above it, over it. Drawn as one with DrawToBitmap, the panel draws its children in the opposite order.
+		/// </para>
+		/// </remarks>
+		static int InkFreeRows(Label name, Label value, string at, List<string> faults)
+		{
+			var panel = name.Parent;
+			Assert.IsTrue(panel.Controls.GetChildIndex(name) < panel.Controls.GetChildIndex(value), at + "the name is not above its number.");
+			using (var pair = new Bitmap(panel.Width, panel.Height))
+			{
+				value.DrawToBitmap(pair, value.Bounds);
+				name.DrawToBitmap(pair, name.Bounds);
+				var back = MostCommon(pair);
+				var letters = new string(name.Text.Where(x => Descenders.IndexOf(x) < 0).ToArray());
+				int nameTop, nameBottom, digitsTop, digitsBottom;
+				using (var drawn = DrawnAlone(name, letters, back))
+					InkRows(drawn, back, out nameTop, out nameBottom);
+				using (var drawn = DrawnAlone(value, ControlOverlapTest.Digits, back))
+					InkRows(drawn, back, out digitsTop, out digitsBottom);
+				var first = name.Top + nameBottom + 1;
+				var last = value.Top + digitsTop - 1;
+				// Every pixel of ink the name and its number draw alone is on the pair.
+				using (var whole = DrawnAlone(name, name.Text, back))
+				{
+					int top, bottom;
+					InkRows(whole, back, out top, out bottom);
+					if (bottom >= name.Height || !AllInkOn(whole, name.Location, pair, back))
+						faults.Add(at + "the name is cut: ink rows " + top + " to " + bottom + " of " + name.Height + ".");
+					// In the rows between, nothing but the name's tails.
+					for (var y = first; y <= last; y++)
+						for (var x = 0; x < pair.Width; x++)
+						{
+							var inside = x - name.Left >= 0 && x - name.Left < whole.Width && y - name.Top >= 0 && y - name.Top < whole.Height;
+							var tail = inside && whole.GetPixel(x - name.Left, y - name.Top).ToArgb() != back.ToArgb();
+							if (!tail && pair.GetPixel(x, y).ToArgb() != back.ToArgb())
+							{
+								faults.Add(string.Format("{0}ink at {1},{2} between the name and its digits.", at, x, y));
+								y = last;
+								break;
+							}
+						}
+				}
+				using (var digits = DrawnAlone(value, value.Text, back))
+				{
+					int top, bottom;
+					InkRows(digits, back, out top, out bottom);
+					if (top < 0 || bottom >= value.Height || !AllInkOn(digits, value.Location, pair, back))
+						faults.Add(at + "the number is cut: ink rows " + top + " to " + bottom + " of " + value.Height + ".");
+				}
+				return last - first + 1;
+			}
+		}
+
+		/// <summary>A label like the one given, with the text given, drawn alone on the colour given, and as tall again, so ink the label would cut shows below it.</summary>
+		static Bitmap DrawnAlone(Label like, string text, Color back)
+		{
+			using (var label = new Label
+			{
+				AutoSize = false,
+				Size = new Size(like.Width, like.Height * 2),
+				Font = like.Font,
+				Padding = like.Padding,
+				TextAlign = like.TextAlign,
+				UseMnemonic = like.UseMnemonic,
+				UseCompatibleTextRendering = like.UseCompatibleTextRendering,
+				ForeColor = like.ForeColor,
+				BackColor = back,
+				Text = text,
+			})
+			{
+				// Drawn as the theme draws a label: its text without the room Windows keeps at either side.
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(label);
+				var bitmap = new Bitmap(label.Width, label.Height);
+				label.DrawToBitmap(bitmap, new Rectangle(Point.Empty, label.Size));
+				return bitmap;
+			}
+		}
+
+		/// <summary>The first and last rows holding any pixel unlike the background, or -1 when none does.</summary>
+		static void InkRows(Bitmap bitmap, Color back, out int top, out int bottom)
+		{
+			top = -1;
+			bottom = -1;
+			for (var y = 0; y < bitmap.Height; y++)
+				for (var x = 0; x < bitmap.Width; x++)
+					if (bitmap.GetPixel(x, y).ToArgb() != back.ToArgb())
+					{
+						if (top < 0)
+							top = y;
+						bottom = y;
+						break;
+					}
+		}
+
+		/// <summary>Whether every pixel of ink drawn alone, within the label's own height, is ink on the pair, where the label stands on it.</summary>
+		static bool AllInkOn(Bitmap alone, Point at, Bitmap pair, Color back)
+		{
+			for (var y = 0; y < alone.Height / 2; y++)
+				for (var x = 0; x < alone.Width; x++)
+					if (alone.GetPixel(x, y).ToArgb() != back.ToArgb())
+					{
+						var px = x + at.X;
+						var py = y + at.Y;
+						if (px < 0 || py < 0 || px >= pair.Width || py >= pair.Height || pair.GetPixel(px, py).ToArgb() == back.ToArgb())
+							return false;
+					}
+			return true;
+		}
+
+		/// <summary>The colour most of a picture is.</summary>
+		static Color MostCommon(Bitmap bitmap)
+		{
+			var counts = new Dictionary<int, int>();
+			for (var y = 0; y < bitmap.Height; y++)
+				for (var x = 0; x < bitmap.Width; x++)
+				{
+					var c = bitmap.GetPixel(x, y).ToArgb();
+					int n;
+					counts[c] = counts.TryGetValue(c, out n) ? n + 1 : 1;
+				}
+			return Color.FromArgb(counts.OrderByDescending(x => x.Value).First().Key);
 		}
 
 		[TestMethod, TestCategory("ui"), TestCategory("critical")]
@@ -176,14 +490,14 @@ namespace x360ce.Tests
 			});
 		}
 
-		/// <summary>The interface fonts the General tab is checked in, as the Options page's Font list keeps them: the default, Windows' own, Selawik and four installed families.</summary>
+		/// <summary>The interface fonts the General tab is checked in, as the Options page's Font list keeps them: the default, Segoe UI with code in Consolas, Selawik and four installed families.</summary>
 		internal static readonly string[] FontChoices = { "", AppFonts.BuiltInName, AppFontsTest.Chosen, "Arial", "Tahoma", "Verdana" };
 
 		/// <summary>The widest reading a number shows: an axis at its lowest.</summary>
 		const string WidestReading = "-32768";
 
 		[TestMethod, TestCategory("ui")]
-		[Description("In the main window at its default size, in every interface font, at 100 % and 150 %, in both themes, nothing on the General tab covers another control or leaves the page, every name and number is whole, every box shows the longest mapping the menu writes into it whole, and the Input column's readings show -32768 whole")]
+		[Description("In the main window at its default size, in every interface font, at 100 % and 150 %, in both themes, nothing on the General tab covers another control or leaves the page, but a name the empty top of its own number, every name and number is whole, every box shows the longest mapping the menu writes into it whole, and the Input column's readings show -32768 whole")]
 		public void General_tab_is_whole_in_every_font()
 		{
 			AppFontsTest.LoadFonts();
@@ -203,7 +517,7 @@ namespace x360ce.Tests
 						for (var j = i + 1; j < shown.Count; j++)
 						{
 							var shared = Rectangle.Intersect(at(shown[i]), at(shown[j]));
-							if (shared.Width > 0 && shared.Height > 0)
+							if (shared.Width > 0 && shared.Height > 0 && !ControlOverlapTest.IsNameOverItsNumber(shown[i], shown[j]))
 								faults.Add(string.Format("{0}: {1} {2} and {3} {4} cover each other by {5}x{6} px.", when,
 									shown[i].Name, at(shown[i]), shown[j].Name, at(shown[j]), shared.Width, shared.Height));
 						}
@@ -217,19 +531,25 @@ namespace x360ce.Tests
 						var name = (Label)Find(form, code + "Label");
 						var value = (Label)Find(form, code + "ValueLabel");
 						var box = (ComboBox)Find(form, code + "ComboBox");
-						if (name.Width < name.PreferredWidth)
-							faults.Add(string.Format("{0}: {1} is {2} px wide and \"{3}\" needs {4}.", when, name.Name, name.Width, name.Text, name.PreferredWidth));
+						var nameNeeds = LabelWidthFor(name, name.Text);
+						if (name.Width < nameNeeds)
+							faults.Add(string.Format("{0}: {1} is {2} px wide and \"{3}\" needs {4}.", when, name.Name, name.Width, name.Text, nameNeeds));
 						var valueNeeds = LabelWidthFor(value, WidestReading);
 						if (value.Width < valueNeeds)
 							faults.Add(string.Format("{0}: {1} is {2} px wide and \"{3}\" needs {4}.", when, value.Name, value.Width, WidestReading, valueNeeds));
+						foreach (var label in new[] { name, value })
+						{
+							var line = TextRenderer.MeasureText(" ", label.Font, Size.Empty, TextFormatFlags.NoPadding).Height;
+							if (label.Height < line)
+								faults.Add(string.Format("{0}: {1} is {2} px high and its line needs {3}.", when, label.Name, label.Height, line));
+						}
 						if (box.Width < boxNeeds)
 							faults.Add(string.Format("{0}: {1} is {2} px wide and the longest mapping needs {3}.", when, box.Name, box.Width, boxNeeds));
 					}
-					// The Input column with eight axes and two sliders, each showing its reading under its name.
+					// The Input column given a device with eight axes and two sliders, as the page gives it the selected device,
+					// each axis and slider showing its reading under its name.
 					var input = (InputUserControl)Find(form, nameof(PadControl.InputPanel));
-					var chips = InputChips.Create(0, 0xFF, 0x3, 0);
-					input.AxisChips.Chips = chips.Where(x => x.Kind == InputChipKind.Axis).ToList();
-					input.SliderChips.Chips = chips.Where(x => x.Kind == InputChipKind.Slider).ToList();
+					input.UpdateFrom(new UserDevice { InstanceGuid = Guid.NewGuid(), DiAxeMask = 0xFF, DiSliderMask = 0x3 });
 					Application.DoEvents();
 					foreach (var group in new[] { input.AxisChips, input.SliderChips })
 						using (var font = new Font(group.Font.FontFamily, group.Font.Size * 0.8f, group.Font.Style))
@@ -358,9 +678,18 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>The width a label like the one given needs to show a text whole.</summary>
+		/// <summary>
+		/// The width a label like the one given needs to show a text whole, as it is drawn: text drawn with GDI, as the program
+		/// draws all its text, by the theme, from the label's padding without the room Windows keeps at either side of it, which
+		/// .NET Framework leaves out only when it measures on a device context; other text by Windows, with that room.
+		/// </summary>
 		static int LabelWidthFor(Label like, string text)
 		{
+			if (!like.UseCompatibleTextRendering)
+				using (var bitmap = new Bitmap(1, 1))
+				using (var g = Graphics.FromImage(bitmap))
+					return TextRenderer.MeasureText(g, text, like.Font, new Size(int.MaxValue, int.MaxValue), TextFormatFlags.NoPadding | TextFormatFlags.SingleLine).Width
+						+ like.Padding.Horizontal;
 			using (var label = new Label { Font = like.Font, Padding = like.Padding, UseMnemonic = like.UseMnemonic, UseCompatibleTextRendering = like.UseCompatibleTextRendering, Text = text })
 				return label.PreferredWidth;
 		}

@@ -316,6 +316,9 @@ namespace x360ce.App
 			// Known before the window is built: an export opens no door and writes no setting.
 			if (ic.Parameters.ContainsKey(arg_ExportUi))
 				ExportUiFolder = ic.Parameters[arg_ExportUi];
+			// Before the main window, whose making first takes the interface thread's context for posted calls: a recording
+			// then says which posted call the window is in when it stops answering.
+			System.Threading.SynchronizationContext.SetSynchronizationContext(new Recording.ReportRecorder.WatchedContext());
 			MainForm.Current = new MainForm();
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(MainForm.Current);
@@ -371,15 +374,19 @@ namespace x360ce.App
 			Global.DisposeServices();
 		}
 
-		/// <summary>Ends the program from a closing window, once it has let go of what it holds outside itself.</summary>
+		/// <summary>Ends the program from a closing window, once it has let go of what it holds outside itself and destroyed its windows.</summary>
 		/// <remarks>
-		/// All that is left is the program's own windows, and Windows takes those with the process. Destroyed one at a time
-		/// first, about 3,500 of them held the process for eight seconds, which a second start and the next game wait out.
+		/// The controls are not disposed one at a time: that held the process for eight seconds, which a second start and
+		/// the next game wait out. What is left goes with the process.
 		/// </remarks>
 		internal static void EndProcess()
 		{
 			Global.DisposeCloudClient();
+			StartupTrace.Mark("closing: cloud client disposed");
 			Global.DisposeServices();
+			StartupTrace.Mark("closing: services disposed");
+			// Added last, so it runs once every other exit handler has.
+			AppDomain.CurrentDomain.ProcessExit += (sender, e) => StartupTrace.Mark("closing: exit handlers done");
 			Environment.Exit(Environment.ExitCode);
 		}
 
@@ -414,7 +421,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>The arguments another process was started with, or null when its command line cannot be read, as one run as administrator's cannot.</summary>
-		static string[] ArgumentsOf(int processId)
+		internal static string[] ArgumentsOf(int processId)
 		{
 			string line = null;
 			try

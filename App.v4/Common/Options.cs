@@ -97,12 +97,12 @@ namespace x360ce.App
 		ThemeType _Theme;
 
 		/// <summary>The font the windows are drawn in, as <see cref="AppFonts.InterfaceFamilyFor"/> reads it.</summary>
-		[DefaultValue(""), Description("The font the windows are drawn in: Windows' own when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
+		[DefaultValue(""), Description("The font the windows are drawn in: \"" + AppFonts.DefaultName + "\", Windows' own, when empty; Selawik, built in, for \"" + AppFonts.BuiltInName + "\"; otherwise an installed font's name. Takes effect when x360ce starts again.")]
 		public string InterfaceFont { get { return _InterfaceFont; } set { _InterfaceFont = value; OnPropertyChanged(); } }
 		string _InterfaceFont;
 
 		/// <summary>The size the windows' text is drawn at, in points, as <see cref="AppFonts.SizeFor"/> reads it.</summary>
-		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font. When 0: Windows Forms' own for Windows' own font, Windows' text size for any other. Takes effect when x360ce starts again.")]
+		[DefaultValue(0f), Description("The size the windows' text is drawn at, in points, whatever the font. When 0: Windows' text size. Takes effect when x360ce starts again.")]
 		public float InterfaceFontSize { get { return _InterfaceFontSize; } set { _InterfaceFontSize = value; OnPropertyChanged(); } }
 		float _InterfaceFontSize;
 
@@ -166,6 +166,15 @@ namespace x360ce.App
 			set { _UpdateInterface = value; OnPropertyChanged(); }
 		}
 		bool _UpdateInterface = true;
+
+		/// <summary>Whether the Issues page runs its checks. Off, no check runs and the page says so.</summary>
+		[DefaultValue(true), Description("Run the checks of the Issues page.")]
+		public bool IssueChecksEnabled
+		{
+			get { return _IssueChecksEnabled; }
+			set { _IssueChecksEnabled = value; OnPropertyChanged(); }
+		}
+		bool _IssueChecksEnabled = true;
 
 
 		/// <summary>True: a press or release that comes and goes between two engine passes reaches the controller, for one pass, on every device. False: each pass reads only where each control is then.</summary>

@@ -16,13 +16,16 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			this.RootLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.DeviceListLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.LogsLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.DeviceTreeTabPage = new System.Windows.Forms.TabPage();
+			this.TreeLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.TreeSplitContainer = new System.Windows.Forms.SplitContainer();
-			this.SeparatorPanel = new System.Windows.Forms.Panel();
 			this.DevicesTreeView = new System.Windows.Forms.TreeView();
 			this.TreeImageList = new System.Windows.Forms.ImageList(this.components);
 			this.DeviceDetailsPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -79,6 +82,7 @@
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.MainTabControl.SuspendLayout();
 			this.DeviceTreeTabPage.SuspendLayout();
+			this.TreeLayoutPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TreeSplitContainer)).BeginInit();
 			this.TreeSplitContainer.Panel1.SuspendLayout();
 			this.TreeSplitContainer.Panel2.SuspendLayout();
@@ -89,6 +93,9 @@
 			this.LogsTabPage.SuspendLayout();
 			this.MainToolStrip.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this.RootLayoutPanel.SuspendLayout();
+			this.DeviceListLayoutPanel.SuspendLayout();
+			this.LogsLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
@@ -107,50 +114,55 @@
 			// 
 			// DeviceTreeTabPage
 			// 
-			this.DeviceTreeTabPage.Controls.Add(this.TreeSplitContainer);
+			this.DeviceTreeTabPage.Controls.Add(this.TreeLayoutPanel);
 			this.DeviceTreeTabPage.ImageKey = "device_tree";
 			this.DeviceTreeTabPage.Location = new System.Drawing.Point(4, 25);
+			this.DeviceTreeTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.DeviceTreeTabPage.Name = "DeviceTreeTabPage";
 			this.DeviceTreeTabPage.Size = new System.Drawing.Size(749, 465);
 			this.DeviceTreeTabPage.TabIndex = 2;
 			this.DeviceTreeTabPage.Text = "Device Tree";
 			this.DeviceTreeTabPage.UseVisualStyleBackColor = true;
 			// 
+			// TreeLayoutPanel
+			// 
+			this.TreeLayoutPanel.ColumnCount = 1;
+			this.TreeLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.TreeLayoutPanel.Controls.Add(this.TreeSplitContainer, 0, 0);
+			this.TreeLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.TreeLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.TreeLayoutPanel.Name = "TreeLayoutPanel";
+			this.TreeLayoutPanel.RowCount = 1;
+			this.TreeLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.TreeLayoutPanel.TabIndex = 2;
+			// 
 			// TreeSplitContainer
 			// 
-			this.TreeSplitContainer.BackColor = System.Drawing.SystemColors.Control;
 			this.TreeSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.TreeSplitContainer.Location = new System.Drawing.Point(0, 0);
+			this.TreeSplitContainer.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.TreeSplitContainer.Name = "TreeSplitContainer";
 			// 
 			// TreeSplitContainer.Panel1
 			// 
-			this.TreeSplitContainer.Panel1.Controls.Add(this.SeparatorPanel);
 			this.TreeSplitContainer.Panel1.Controls.Add(this.DevicesTreeView);
 			// 
 			// TreeSplitContainer.Panel2
 			// 
+			this.TreeSplitContainer.Panel2.AutoScroll = true;
 			this.TreeSplitContainer.Panel2.Controls.Add(this.DeviceDetailsPanel);
 			this.TreeSplitContainer.Size = new System.Drawing.Size(749, 465);
 			this.TreeSplitContainer.SplitterDistance = 401;
-			this.TreeSplitContainer.TabIndex = 2;
-			// 
-			// SeparatorPanel
-			// 
-			this.SeparatorPanel.BackColor = System.Drawing.SystemColors.ScrollBar;
-			this.SeparatorPanel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.SeparatorPanel.Location = new System.Drawing.Point(400, 0);
-			this.SeparatorPanel.Name = "SeparatorPanel";
-			this.SeparatorPanel.Size = new System.Drawing.Size(1, 465);
-			this.SeparatorPanel.TabIndex = 1;
+			this.TreeSplitContainer.SplitterWidth = 8;
+			this.TreeSplitContainer.TabIndex = 0;
 			// 
 			// DevicesTreeView
 			// 
-			this.DevicesTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.DevicesTreeView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.DevicesTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesTreeView.ImageIndex = 0;
 			this.DevicesTreeView.ImageList = this.TreeImageList;
 			this.DevicesTreeView.Location = new System.Drawing.Point(0, 0);
+			this.DevicesTreeView.Margin = new System.Windows.Forms.Padding(0);
 			this.DevicesTreeView.Name = "DevicesTreeView";
 			this.DevicesTreeView.SelectedImageIndex = 0;
 			this.DevicesTreeView.Size = new System.Drawing.Size(401, 465);
@@ -165,6 +177,8 @@
 			// 
 			// DeviceDetailsPanel
 			// 
+			this.DeviceDetailsPanel.AutoSize = true;
+			this.DeviceDetailsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DeviceDetailsPanel.ColumnCount = 4;
 			this.DeviceDetailsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.DeviceDetailsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -190,9 +204,11 @@
 			this.DeviceDetailsPanel.Controls.Add(this.DevicePathTextBox, 0, 9);
 			this.DeviceDetailsPanel.Controls.Add(this.DeviceIdLabel, 0, 10);
 			this.DeviceDetailsPanel.Controls.Add(this.DeviceIdTextBox, 0, 11);
-			this.DeviceDetailsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DeviceDetailsPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.DeviceDetailsPanel.Location = new System.Drawing.Point(0, 0);
+			this.DeviceDetailsPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.DeviceDetailsPanel.Name = "DeviceDetailsPanel";
+			this.DeviceDetailsPanel.Padding = new System.Windows.Forms.Padding(0);
 			this.DeviceDetailsPanel.RowCount = 13;
 			this.DeviceDetailsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
 			this.DeviceDetailsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
@@ -215,6 +231,7 @@
 			this.ClassDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ClassDescriptionTextBox, 3);
 			this.ClassDescriptionTextBox.Location = new System.Drawing.Point(98, 133);
+			this.ClassDescriptionTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ClassDescriptionTextBox.Name = "ClassDescriptionTextBox";
 			this.ClassDescriptionTextBox.ReadOnly = true;
 			this.ClassDescriptionTextBox.Size = new System.Drawing.Size(243, 20);
@@ -225,6 +242,7 @@
 			this.ClassGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ClassGuidTextBox, 3);
 			this.ClassGuidTextBox.Location = new System.Drawing.Point(98, 107);
+			this.ClassGuidTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ClassGuidTextBox.Name = "ClassGuidTextBox";
 			this.ClassGuidTextBox.ReadOnly = true;
 			this.ClassGuidTextBox.Size = new System.Drawing.Size(243, 20);
@@ -235,26 +253,29 @@
 			this.ClassGuidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ClassGuidLabel.AutoSize = true;
 			this.ClassGuidLabel.Location = new System.Drawing.Point(3, 110);
+			this.ClassGuidLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.ClassGuidLabel.Name = "ClassGuidLabel";
 			this.ClassGuidLabel.Size = new System.Drawing.Size(65, 13);
 			this.ClassGuidLabel.TabIndex = 3;
-			this.ClassGuidLabel.Text = "Class GUID:";
+			this.ClassGuidLabel.Text = "Class GUID";
 			// 
 			// ClassDescriptionLabel
 			// 
 			this.ClassDescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ClassDescriptionLabel.AutoSize = true;
 			this.ClassDescriptionLabel.Location = new System.Drawing.Point(3, 136);
+			this.ClassDescriptionLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.ClassDescriptionLabel.Name = "ClassDescriptionLabel";
 			this.ClassDescriptionLabel.Size = new System.Drawing.Size(91, 13);
 			this.ClassDescriptionLabel.TabIndex = 3;
-			this.ClassDescriptionLabel.Text = "Class Description:";
+			this.ClassDescriptionLabel.Text = "Class Description";
 			// 
 			// ManufacturerTextBox
 			// 
 			this.ManufacturerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.ManufacturerTextBox, 3);
 			this.ManufacturerTextBox.Location = new System.Drawing.Point(98, 55);
+			this.ManufacturerTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ManufacturerTextBox.Name = "ManufacturerTextBox";
 			this.ManufacturerTextBox.ReadOnly = true;
 			this.ManufacturerTextBox.Size = new System.Drawing.Size(243, 20);
@@ -265,16 +286,18 @@
 			this.ManufacturerLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ManufacturerLabel.AutoSize = true;
 			this.ManufacturerLabel.Location = new System.Drawing.Point(3, 58);
+			this.ManufacturerLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.ManufacturerLabel.Name = "ManufacturerLabel";
 			this.ManufacturerLabel.Size = new System.Drawing.Size(73, 13);
 			this.ManufacturerLabel.TabIndex = 3;
-			this.ManufacturerLabel.Text = "Manufacturer:";
+			this.ManufacturerLabel.Text = "Manufacturer";
 			// 
 			// DescriptionTextBox
 			// 
 			this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsPanel.SetColumnSpan(this.DescriptionTextBox, 3);
 			this.DescriptionTextBox.Location = new System.Drawing.Point(98, 81);
+			this.DescriptionTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DescriptionTextBox.Name = "DescriptionTextBox";
 			this.DescriptionTextBox.ReadOnly = true;
 			this.DescriptionTextBox.Size = new System.Drawing.Size(243, 20);
@@ -285,15 +308,17 @@
 			this.DescriptionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DescriptionLabel.AutoSize = true;
 			this.DescriptionLabel.Location = new System.Drawing.Point(3, 84);
+			this.DescriptionLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DescriptionLabel.Name = "DescriptionLabel";
 			this.DescriptionLabel.Size = new System.Drawing.Size(63, 13);
 			this.DescriptionLabel.TabIndex = 3;
-			this.DescriptionLabel.Text = "Description:";
+			this.DescriptionLabel.Text = "Description";
 			// 
 			// RevisionTextBox
 			// 
 			this.RevisionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.RevisionTextBox.Location = new System.Drawing.Point(269, 29);
+			this.RevisionTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.RevisionTextBox.Name = "RevisionTextBox";
 			this.RevisionTextBox.ReadOnly = true;
 			this.RevisionTextBox.Size = new System.Drawing.Size(72, 20);
@@ -304,15 +329,17 @@
 			this.RevisionLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.RevisionLabel.AutoSize = true;
 			this.RevisionLabel.Location = new System.Drawing.Point(181, 32);
+			this.RevisionLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.RevisionLabel.Name = "RevisionLabel";
 			this.RevisionLabel.Size = new System.Drawing.Size(82, 13);
 			this.RevisionLabel.TabIndex = 3;
-			this.RevisionLabel.Text = "Revision (REV):";
+			this.RevisionLabel.Text = "Revision (REV)";
 			// 
 			// ProductIdTextBox
 			// 
 			this.ProductIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProductIdTextBox.Location = new System.Drawing.Point(98, 29);
+			this.ProductIdTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.ProductIdTextBox.Name = "ProductIdTextBox";
 			this.ProductIdTextBox.ReadOnly = true;
 			this.ProductIdTextBox.Size = new System.Drawing.Size(77, 20);
@@ -323,15 +350,17 @@
 			this.ProductIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ProductIdLabel.AutoSize = true;
 			this.ProductIdLabel.Location = new System.Drawing.Point(3, 32);
+			this.ProductIdLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.ProductIdLabel.Name = "ProductIdLabel";
 			this.ProductIdLabel.Size = new System.Drawing.Size(86, 13);
 			this.ProductIdLabel.TabIndex = 3;
-			this.ProductIdLabel.Text = "Product Id (PID):";
+			this.ProductIdLabel.Text = "Product Id (PID)";
 			// 
 			// VendorIdTextBox
 			// 
 			this.VendorIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.VendorIdTextBox.Location = new System.Drawing.Point(98, 3);
+			this.VendorIdTextBox.Margin = new System.Windows.Forms.Padding(8, 0, 0, 0);
 			this.VendorIdTextBox.Name = "VendorIdTextBox";
 			this.VendorIdTextBox.ReadOnly = true;
 			this.VendorIdTextBox.Size = new System.Drawing.Size(77, 20);
@@ -342,40 +371,44 @@
 			this.VendorIdLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.VendorIdLabel.AutoSize = true;
 			this.VendorIdLabel.Location = new System.Drawing.Point(3, 6);
+			this.VendorIdLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
 			this.VendorIdLabel.Name = "VendorIdLabel";
 			this.VendorIdLabel.Size = new System.Drawing.Size(83, 13);
 			this.VendorIdLabel.TabIndex = 1;
-			this.VendorIdLabel.Text = "Vendor Id (VID):";
+			this.VendorIdLabel.Text = "Vendor Id (VID)";
 			// 
 			// DeviceStatusLabel
 			// 
 			this.DeviceStatusLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceStatusLabel, 4);
 			this.DeviceStatusLabel.Location = new System.Drawing.Point(3, 159);
+			this.DeviceStatusLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DeviceStatusLabel.Name = "DeviceStatusLabel";
 			this.DeviceStatusLabel.Size = new System.Drawing.Size(77, 13);
 			this.DeviceStatusLabel.TabIndex = 1;
-			this.DeviceStatusLabel.Text = "Device Status:";
+			this.DeviceStatusLabel.Text = "Device Status";
 			// 
 			// DevicePathLabel
 			// 
 			this.DevicePathLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DevicePathLabel, 4);
 			this.DevicePathLabel.Location = new System.Drawing.Point(3, 244);
+			this.DevicePathLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DevicePathLabel.Name = "DevicePathLabel";
 			this.DevicePathLabel.Size = new System.Drawing.Size(66, 13);
 			this.DevicePathLabel.TabIndex = 1;
-			this.DevicePathLabel.Text = "DevicePath:";
+			this.DevicePathLabel.Text = "Device Path";
 			// 
 			// DeviceIdLabel
 			// 
 			this.DeviceIdLabel.AutoSize = true;
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceIdLabel, 4);
 			this.DeviceIdLabel.Location = new System.Drawing.Point(3, 329);
+			this.DeviceIdLabel.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DeviceIdLabel.Name = "DeviceIdLabel";
 			this.DeviceIdLabel.Size = new System.Drawing.Size(58, 13);
 			this.DeviceIdLabel.TabIndex = 1;
-			this.DeviceIdLabel.Text = "Device ID:";
+			this.DeviceIdLabel.Text = "Device ID";
 			// 
 			// DeviceStatusTextBox
 			// 
@@ -383,6 +416,7 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceStatusTextBox, 4);
 			this.DeviceStatusTextBox.Location = new System.Drawing.Point(3, 178);
 			this.DeviceStatusTextBox.Multiline = true;
+			this.DeviceStatusTextBox.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DeviceStatusTextBox.Name = "DeviceStatusTextBox";
 			this.DeviceStatusTextBox.ReadOnly = true;
 			this.DeviceStatusTextBox.Size = new System.Drawing.Size(338, 60);
@@ -394,6 +428,7 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DevicePathTextBox, 4);
 			this.DevicePathTextBox.Location = new System.Drawing.Point(3, 263);
 			this.DevicePathTextBox.Multiline = true;
+			this.DevicePathTextBox.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DevicePathTextBox.Name = "DevicePathTextBox";
 			this.DevicePathTextBox.ReadOnly = true;
 			this.DevicePathTextBox.Size = new System.Drawing.Size(338, 60);
@@ -405,17 +440,31 @@
 			this.DeviceDetailsPanel.SetColumnSpan(this.DeviceIdTextBox, 4);
 			this.DeviceIdTextBox.Location = new System.Drawing.Point(3, 348);
 			this.DeviceIdTextBox.Multiline = true;
+			this.DeviceIdTextBox.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
 			this.DeviceIdTextBox.Name = "DeviceIdTextBox";
 			this.DeviceIdTextBox.ReadOnly = true;
 			this.DeviceIdTextBox.Size = new System.Drawing.Size(338, 60);
 			this.DeviceIdTextBox.TabIndex = 0;
 			// 
+			// DeviceListLayoutPanel
+			// 
+			this.DeviceListLayoutPanel.ColumnCount = 1;
+			this.DeviceListLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.DeviceListLayoutPanel.Controls.Add(this.DeviceDataGridView, 0, 0);
+			this.DeviceListLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DeviceListLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.DeviceListLayoutPanel.Name = "DeviceListLayoutPanel";
+			this.DeviceListLayoutPanel.RowCount = 1;
+			this.DeviceListLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.DeviceListLayoutPanel.TabIndex = 0;
+			// 
 			// DeviceListTabPage
 			// 
-			this.DeviceListTabPage.Controls.Add(this.DeviceDataGridView);
+			this.DeviceListTabPage.Controls.Add(this.DeviceListLayoutPanel);
 			this.DeviceListTabPage.ImageKey = "device_list";
 			this.DeviceListTabPage.Location = new System.Drawing.Point(4, 25);
 			this.DeviceListTabPage.Margin = new System.Windows.Forms.Padding(0);
+			this.DeviceListTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.DeviceListTabPage.Name = "DeviceListTabPage";
 			this.DeviceListTabPage.Size = new System.Drawing.Size(749, 465);
 			this.DeviceListTabPage.TabIndex = 1;
@@ -447,6 +496,7 @@
 			this.DeviceDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DeviceDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DeviceDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.DeviceDataGridView.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DeviceDataGridView.Name = "DeviceDataGridView";
 			this.DeviceDataGridView.RowHeadersVisible = false;
 			this.DeviceDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -556,11 +606,24 @@
 			this.DeviceIdColumn.Name = "DeviceIdColumn";
 			this.DeviceIdColumn.Width = 74;
 			// 
+			// LogsLayoutPanel
+			// 
+			this.LogsLayoutPanel.ColumnCount = 1;
+			this.LogsLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LogsLayoutPanel.Controls.Add(this.LogTextBox, 0, 0);
+			this.LogsLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LogsLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.LogsLayoutPanel.Name = "LogsLayoutPanel";
+			this.LogsLayoutPanel.RowCount = 1;
+			this.LogsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LogsLayoutPanel.TabIndex = 0;
+			// 
 			// LogsTabPage
 			// 
-			this.LogsTabPage.Controls.Add(this.LogTextBox);
+			this.LogsTabPage.Controls.Add(this.LogsLayoutPanel);
 			this.LogsTabPage.ImageKey = "logs";
 			this.LogsTabPage.Location = new System.Drawing.Point(4, 25);
+			this.LogsTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.LogsTabPage.Name = "LogsTabPage";
 			this.LogsTabPage.Size = new System.Drawing.Size(749, 465);
 			this.LogsTabPage.TabIndex = 3;
@@ -573,6 +636,7 @@
 			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LogTextBox.Location = new System.Drawing.Point(0, 0);
 			this.LogTextBox.Multiline = true;
+			this.LogTextBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.LogTextBox.Name = "LogTextBox";
 			this.LogTextBox.ReadOnly = true;
 			this.LogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -602,6 +666,7 @@
             this.toolStripSeparator2,
             this.ScanButton});
 			this.MainToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.MainToolStrip.Margin = new System.Windows.Forms.Padding(0);
 			this.MainToolStrip.Name = "MainToolStrip";
 			this.MainToolStrip.Size = new System.Drawing.Size(763, 25);
 			this.MainToolStrip.TabIndex = 16;
@@ -611,7 +676,7 @@
 			// 
 			this.FilterLabel.Name = "FilterLabel";
 			this.FilterLabel.Size = new System.Drawing.Size(36, 22);
-			this.FilterLabel.Text = "Filter:";
+			this.FilterLabel.Text = "Filter";
 			// 
 			// FilterStripTextBox
 			// 
@@ -638,7 +703,7 @@
 			// 
 			this.toolStripLabel1.Name = "toolStripLabel1";
 			this.toolStripLabel1.Size = new System.Drawing.Size(45, 22);
-			this.toolStripLabel1.Text = "Device:";
+			this.toolStripLabel1.Text = "Device";
 			// 
 			// DisableButton
 			// 
@@ -695,24 +760,42 @@
 			this.panel1.Controls.Add(this.MainTabControl);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(0, 25);
+			this.panel1.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.panel1.Name = "panel1";
-			this.panel1.Padding = new System.Windows.Forms.Padding(3);
+			this.panel1.Padding = new System.Windows.Forms.Padding(0);
 			this.panel1.Size = new System.Drawing.Size(763, 500);
 			this.panel1.TabIndex = 17;
 			// 
+			// RootLayoutPanel
+			// 
+			this.RootLayoutPanel.ColumnCount = 1;
+			this.RootLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.Controls.Add(this.MainToolStrip, 0, 0);
+			this.RootLayoutPanel.Controls.Add(this.panel1, 0, 1);
+			this.RootLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.RootLayoutPanel.Name = "RootLayoutPanel";
+			this.RootLayoutPanel.RowCount = 2;
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootLayoutPanel.TabIndex = 0;
+			// 
 			// HardwareControl
 			// 
-			this.Controls.Add(this.panel1);
-			this.Controls.Add(this.MainToolStrip);
+			this.Controls.Add(this.RootLayoutPanel);
 			this.Name = "HardwareControl";
+			this.Padding = new System.Windows.Forms.Padding(0);
 			this.Size = new System.Drawing.Size(763, 525);
 			this.Load += new System.EventHandler(this.HardwareControl_Load);
 			this.MainTabControl.ResumeLayout(false);
 			this.DeviceTreeTabPage.ResumeLayout(false);
 			this.TreeSplitContainer.Panel1.ResumeLayout(false);
 			this.TreeSplitContainer.Panel2.ResumeLayout(false);
+			this.TreeSplitContainer.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TreeSplitContainer)).EndInit();
 			this.TreeSplitContainer.ResumeLayout(false);
+			this.TreeLayoutPanel.ResumeLayout(false);
+			this.TreeLayoutPanel.PerformLayout();
 			this.DeviceDetailsPanel.ResumeLayout(false);
 			this.DeviceDetailsPanel.PerformLayout();
 			this.DeviceListTabPage.ResumeLayout(false);
@@ -722,6 +805,12 @@
 			this.MainToolStrip.ResumeLayout(false);
 			this.MainToolStrip.PerformLayout();
 			this.panel1.ResumeLayout(false);
+			this.RootLayoutPanel.ResumeLayout(false);
+			this.RootLayoutPanel.PerformLayout();
+			this.DeviceListLayoutPanel.ResumeLayout(false);
+			this.DeviceListLayoutPanel.PerformLayout();
+			this.LogsLayoutPanel.ResumeLayout(false);
+			this.LogsLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -746,6 +835,7 @@
 		private System.Windows.Forms.TabPage DeviceTreeTabPage;
 		private System.Windows.Forms.TreeView DevicesTreeView;
 		private System.Windows.Forms.ImageList TreeImageList;
+		private System.Windows.Forms.TableLayoutPanel TreeLayoutPanel;
 		private System.Windows.Forms.SplitContainer TreeSplitContainer;
 		private System.Windows.Forms.TableLayoutPanel DeviceDetailsPanel;
 		private System.Windows.Forms.Label DeviceIdLabel;
@@ -768,7 +858,6 @@
 		private System.Windows.Forms.Label RevisionLabel;
 		private System.Windows.Forms.Label DeviceStatusLabel;
 		private System.Windows.Forms.TextBox DeviceStatusTextBox;
-		private System.Windows.Forms.Panel SeparatorPanel;
 		private System.Windows.Forms.ToolStrip MainToolStrip;
 		private System.Windows.Forms.ToolStripTextBox FilterStripTextBox;
 		private System.Windows.Forms.ToolStripButton RefreshStripButton;
@@ -786,5 +875,8 @@
 		private System.Windows.Forms.TabPage LogsTabPage;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.TextBox LogTextBox;
+		private System.Windows.Forms.TableLayoutPanel RootLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel DeviceListLayoutPanel;
+		private System.Windows.Forms.TableLayoutPanel LogsLayoutPanel;
 	}
 }

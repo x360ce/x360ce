@@ -91,8 +91,6 @@ namespace x360ce.App
 			// Make sure that data will be filtered before loading.
 			SettingManager.Games.FilterList = Games_FilterList;
 			SettingManager.Games.Load();
-			SettingManager.Presets.Load();
-			SettingManager.PadSettings.Load();
 			for (int i = 0; i < 4; i++)
 			{
 				GamePads[i] = new Controller((UserIndex)i);
@@ -283,30 +281,14 @@ namespace x360ce.App
 
 		#region Setting Events
 
-		public void LoadPreset(string name, int index)
+		/// <summary>Empties every setting of a controller's page, and saves it.</summary>
+		public void ClearPreset(int index)
 		{
-			// exit if "Presets:" or "Embedded:".
-			if (name.Contains(":")) return;
-			var prefix = Path.GetFileNameWithoutExtension(SettingManager.IniFileName);
-			var ext = Path.GetExtension(SettingManager.IniFileName);
-			string resourceName = string.Format("{0}.{1}{2}", prefix, name, ext);
-			var resource = EngineHelper.GetResourceStream("Presets." + resourceName);
-			// If internal preset was found.
-			if (resource != null)
-			{
-				// Export file.
-				var sr = new StreamReader(resource);
-				File.WriteAllText(resourceName, sr.ReadToEnd());
-			}
 			SuspendEvents();
-			// Preset will be stored in inside [PAD1] section;
-			SettingManager.Current.ReadPadSettings(resourceName, "PAD1", index);
+			SettingManager.Current.ClearPadSettings(index);
 			ResumeEvents();
 			// Save setting and notify if value changed.
 			if (SettingManager.Current.SaveSettings()) NotifySettingsChange();
-			// remove file if it was from resource.
-			if (resource != null) File.Delete(resourceName);
-			//CleanStatusTimer.Start();
 		}
 
 		int resumed = 0;
@@ -528,8 +510,6 @@ namespace x360ce.App
 			SettingManager.Summaries.Save();
 			SettingManager.Programs.Save();
 			SettingManager.Games.Save();
-			SettingManager.Presets.Save();
-			SettingManager.PadSettings.Save();
 		}
 
 		#region Timer
@@ -1077,7 +1057,7 @@ namespace x360ce.App
 		void FormsTheme_ThemeChanged(object sender, EventArgs e)
 		{
 			if (helpText != null)
-				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(helpText);
+				x360ce.Engine.MarkdownRtf.Show(HelpRichTextBox, helpText, ControlsHelper.OpenUrl);
 			ColorHelpBody();
 			if (Properties.Resources.ResourceManager is ThemeResourceManager manager)
 				ControlsHelper.ReplaceImages(TrayContextMenuStrip, manager.Themed);
@@ -1095,15 +1075,14 @@ namespace x360ce.App
 				// can show here, when it is opened, so nothing has to be generated, committed, or kept
 				// in step with anything else.
 				helpText = sr.ReadToEnd();
-				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(helpText);
-				// The addresses in the page are drawn as links, so they have to behave like them.
-				HelpRichTextBox.LinkClicked += (object s, LinkClickedEventArgs le) =>
-				{
-					ControlsHelper.OpenUrl(le.LinkText);
-				};
+				// The links in the page are drawn as links, so they behave like them: a click opens the link's address.
+				x360ce.Engine.MarkdownRtf.Show(HelpRichTextBox, helpText, ControlsHelper.OpenUrl);
 			}
 			else if (MainTabControl.SelectedTab == ControllerSettingsTabPage)
 			{
+				// Filled when first shown, so the interface loads faster: reading the database takes a few hundred milliseconds.
+				if (SettingManager.Presets.Items.Count == 0)
+					SettingsDatabasePanel.RefreshPresetsGrid(false);
 				if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoloadCheckBox.Checked)
 				{
 					SettingsDatabasePanel.RefreshGrid(true);
@@ -1131,11 +1110,11 @@ namespace x360ce.App
 
 		MessageBoxIcon helpIcon;
 
-		/// <summary>The help text red for an error and green for information, in the theme's shades.</summary>
+		/// <summary>The help text in the theme's warning colour for an error and its information colour for information.</summary>
 		void ColorHelpBody()
 		{
-			if (helpIcon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundWarning", System.Drawing.Color.DarkRed);
-			else if (helpIcon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundSuccess", System.Drawing.Color.DarkGreen);
+			if (helpIcon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundWarning");
+			else if (helpIcon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = FormsTheme.GetColor("ForegroundInformation");
 			else HelpBodyLabel.ForeColor = System.Drawing.SystemColors.ControlText;
 		}
 

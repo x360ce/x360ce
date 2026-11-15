@@ -55,7 +55,8 @@ namespace x360ce.Engine
 		/// <remarks>
 		/// A comment to SDL, which reads the rest of the file as it is. The built-in copy is the file the update button
 		/// writes, compressed: to ship a newer one, press the button, then gzip the settings folder's gamecontrollerdb.txt,
-		/// without its <see cref="AddressPrefix"/> line, into App.v4\Resources\gamecontrollerdb.txt.gz.
+		/// without its <see cref="AddressPrefix"/> line, into Engine\Resources\gamecontrollerdb.txt.gz, and build the engine
+		/// and the xinput library, which embeds the same file.
 		/// </remarks>
 		public const string HeaderPrefix = "# Commit: ";
 
@@ -307,7 +308,14 @@ namespace x360ce.Engine
 		/// <summary>The built-in copy's text, read straight from the program's resource; empty when the program does not carry it.</summary>
 		public static string ReadBuiltIn()
 		{
-			using (var stream = EngineHelper.GetResourceStream(ResourceName))
+			return ReadCompressedResource(ResourceName);
+		}
+
+		/// <summary>A built-in database's text from its gzip compressed resource; empty when the program does not carry it.</summary>
+		/// <remarks>SDL's database and x360ce's (<see cref="X360ceDatabase.ReadBuiltIn"/>) are both carried this way.</remarks>
+		internal static string ReadCompressedResource(string resourceName)
+		{
+			using (var stream = EngineHelper.GetResourceStream(resourceName))
 			{
 				if (stream == null)
 					return "";

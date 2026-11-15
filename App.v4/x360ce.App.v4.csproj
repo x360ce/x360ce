@@ -127,9 +127,12 @@
     <Compile Include="Common\DInput\DInputHelper.Step5.VirtualDevices.cs" />
     <Compile Include="Common\DInput\DInputHelper.Step6.RetrieveXiStates.cs" />
     <Compile Include="Common\DInput\DInputHelper.Recording.cs" />
+    <Compile Include="Common\DInput\DInputHelper.Test.cs" />
+    <Compile Include="Common\DInput\DeviceTest.cs" />
     <Compile Include="Common\DInput\MouseStick.cs" />
     <Compile Include="Common\Recording\ReportRecorder.cs" />
     <Compile Include="Common\Recording\ReportRecorder.Header.cs" />
+    <Compile Include="Common\Recording\ReportRecorder.Stall.cs" />
     <Compile Include="Common\Recording\ShareSafe.cs" />
     <Compile Include="Common\DInput\DInputHelper.XInputLibrarry.cs" />
     <Compile Include="Common\DInput\DeviceSwitch.cs" />
@@ -171,12 +174,6 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
-    <Compile Include="Controls\LogUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LogUserControl.Designer.cs">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -203,6 +200,12 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MouseDemoUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\MouseDemoUserControl.Designer.cs">
+      <DependentUpon>MouseDemoUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MouseStickUserControl.cs">
       <SubType>UserControl</SubType>
@@ -241,6 +244,9 @@
       <DependentUpon>WheelChartUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MapExpressionToggle.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WidestTextButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
@@ -342,6 +348,15 @@
     <Compile Include="Forms\ErrorReportForm.Designer.cs">
       <DependentUpon>ErrorReportForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\TestDeviceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TestDeviceForm.Designer.cs">
+      <DependentUpon>TestDeviceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TestDeviceViews.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -415,6 +430,7 @@
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HidHideIssue.cs" />
+    <Compile Include="Issues\RawInputMissingIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
     <Compile Include="Issues\VirtualDriverNotWorkingIssue.cs" />
@@ -476,9 +492,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LogUserControl.resx">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
@@ -557,14 +570,6 @@
     </EmbeddedResource>
     <!-- Written by scripts\art\build_icons.py: the icons at larger sizes and for the dark theme. -->
     <EmbeddedResource Include="Properties\Icons.resx" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power_Mod.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_G27_Racing_Wheel_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
     <None Include="app.config" />
     <!-- The documents live once, under docs, and are rendered when shown. -->
     <EmbeddedResource Include="..\docs\Help.v4.md">
@@ -649,9 +654,6 @@
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
-    <!-- SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is (SdlDatabase), and its zlib licence. -->
-    <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
-    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
     <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>
@@ -674,20 +676,9 @@
     <EmbeddedResource Include="Presets\Vendors.xml">
       <SubType>Form</SubType>
     </EmbeddedResource>
-    <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Documents\ChangeLog.txt" />
     <!-- The About page's Program tab: the program, who made it, and what it carries from others. -->
     <EmbeddedResource Include="Documents\Program.md" />
-    <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
-    <None Include="Presets\x360ce.SpeedLink_USB_Gamepad_for_Windows.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Trigger_3_in_1_Rumble_Force.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Controller_%28Xbox_360_Wireless_Receiver_for_Windows%29.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Clear.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
   </ItemGroup>
   <ItemGroup>
     <!-- The pictures live once, under Resources\Images: shared by both programs, or this

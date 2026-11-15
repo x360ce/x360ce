@@ -156,6 +156,7 @@
 			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.Button1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.Icon = global::x360ce.App.Properties.Resources.app;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(346, 135);

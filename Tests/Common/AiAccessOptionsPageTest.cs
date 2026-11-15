@@ -117,7 +117,7 @@ namespace x360ce.Tests
 					var header = Find<Label>(ai, nameof(AiAccessUserControl.AiHeaderText)).Text;
 					StringAssert.Contains(header, "An AI assistant you run, such as Claude Code or Codex, can read and use this program for you, only at the level you choose.");
 					StringAssert.Contains(header, "Nothing can reach this program until you tick AI assistant access.");
-					Assert.AreEqual("Example:", Find<Label>(ai, nameof(AiAccessUserControl.AiExampleLabel)).Text);
+					Assert.AreEqual("Example", Find<Label>(ai, nameof(AiAccessUserControl.AiExampleLabel)).Text);
 					var example = Find<TextBox>(ai, nameof(AiAccessUserControl.AiExampleTextBox));
 					Assert.AreEqual("In the running x360ce, map the Thrustmaster device to Controller 2, show me where Controller 2's left stick is mapped, "
 						+ "then round the corners of its square range.", example.Text);

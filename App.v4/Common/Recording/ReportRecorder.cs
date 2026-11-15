@@ -111,6 +111,7 @@ namespace x360ce.App.Recording
 			Held,
 			ForceState,
 			ForceFailed,
+			SpringRefused,
 			ForceSent,
 			SlowCall,
 			PadOutput,
@@ -175,6 +176,7 @@ namespace x360ce.App.Recording
 			public int Held = int.MinValue;
 			public bool HasForce;
 			public int ForceFault;
+			public int SpringRefused;
 		}
 
 		readonly Dictionary<UserDevice, DeviceTrack> _tracks = new Dictionary<UserDevice, DeviceTrack>();
@@ -239,6 +241,14 @@ namespace x360ce.App.Recording
 				{
 					t.ForceFault = ud.ForceFault;
 					Add(now, Kind.ForceFailed, ud, 0, ud.ForceFault, ud.ForceFailures);
+				}
+				var ff = ud.FFState;
+				var springRefused = ff == null ? 0 : ff.SpringRefusedError;
+				if (springRefused != t.SpringRefused)
+				{
+					t.SpringRefused = springRefused;
+					if (springRefused != 0)
+						Add(now, Kind.SpringRefused, ud, 0, springRefused);
 				}
 			}
 		}
@@ -582,6 +592,12 @@ namespace x360ce.App.Recording
 				LogHelper.Current.WritingException += LogHelper_WritingException;
 			if (Has(RecordParts.Settings))
 				SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			if (Has(RecordParts.Window))
+			{
+				WatchInterfaceThread();
+				using (var process = Process.GetCurrentProcess())
+					DescribePc(process);
+			}
 			_writer = new Thread(WriterAction) { IsBackground = true, Name = "ReportRecorder" };
 			_writer.Start();
 			if (engine != null)
@@ -644,8 +660,13 @@ namespace x360ce.App.Recording
 				var nextSample = 0L;
 				while (true)
 				{
+					var asleep = Stopwatch.GetTimestamp();
 					_wake.WaitOne(100);
 					var now = Stopwatch.GetTimestamp();
+					// Asked to wake within a tenth of a second. Half a second later than that, the whole PC was held up,
+					// not x360ce alone: paging to disk, a driver, or the processors held back to save power.
+					if (now - asleep > Stopwatch.Frequency * 6 / 10)
+						Note("the recording itself woke " + Seconds(now - asleep - Stopwatch.Frequency / 10) + " s late: the whole PC was held up");
 					WriteDue();
 					if (now >= nextSecond)
 					{
@@ -674,6 +695,8 @@ namespace x360ce.App.Recording
 				Detach();
 				// What a pass under way still handed over.
 				Thread.Sleep(50);
+				if (_windowStalledSince != 0)
+					Note("window still not answering as the recording ends, for " + Seconds(Stopwatch.GetTimestamp() - _windowStalledSince) + " s; " + DescribeStall(false, Stopwatch.GetTimestamp() - _windowStalledSince));
 				WriteDue();
 				WriteLine(Stamp(Stopwatch.GetTimestamp()) + " recording ended" + (_stopReason == null ? "" : " because " + _stopReason)
 					+ ": " + _lines.ToString("N0", CultureInfo.InvariantCulture) + " lines"
@@ -810,6 +833,8 @@ namespace x360ce.App.Recording
 					return d + (e.A != 0 ? " force effects made" : " force effects stopped");
 				case Kind.ForceFailed:
 					return e.A == 0 ? d + " force works again" : d + " force failed with 0x" + e.A.ToString("X8", CultureInfo.InvariantCulture) + ", " + e.B + " time" + (e.B == 1 ? "" : "s");
+				case Kind.SpringRefused:
+					return d + " refused the centering spring with 0x" + e.A.ToString("X8", CultureInfo.InvariantCulture) + ", its own centring left off";
 				case Kind.ForceSent:
 					return d + " force sent: large " + e.A + ", small " + e.B;
 				case Kind.SlowCall:
@@ -887,7 +912,13 @@ namespace x360ce.App.Recording
 					if (_windowStalledSince == 0)
 					{
 						_windowStalledSince = beat;
-						Note("window stopped answering " + Seconds(now - beat) + " s ago");
+						_stallNoted = now;
+						Note("window stopped answering " + Seconds(now - beat) + " s ago, " + DescribeStall(true, now - beat));
+					}
+					else if (now - _stallNoted >= Stopwatch.Frequency * 10)
+					{
+						_stallNoted = now;
+						Note("window still not answering, for " + Seconds(now - _windowStalledSince) + " s, " + DescribeStall(false, now - _windowStalledSince));
 					}
 				}
 				else if (_windowStalledSince != 0)

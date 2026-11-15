@@ -17,9 +17,18 @@ namespace x360ce.App.Controls
 		public AxisMapUserControl()
 		{
 			InitializeComponent();
+			// Scaled by the font once, after the designer's tables have resumed their layout: scaled in the designer, Windows
+			// Forms scales a table as it resumes and then again with the control. The mode first, as changing it clears the
+			// dimensions.
+			SuspendLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			AutoScaleDimensions = new SizeF(6F, 13F);
+			ResumeLayout(false);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitPaintObjects();
+			AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			AutoSize = true;
 			FormsTheme.ThemeChanged += FormsTheme_ThemeChanged;
 			// Initialize in constructor and not on "Load" event or it will reset AntiDeadZone value
 			// inside DeadZoneControlsLink(...).
@@ -191,8 +200,6 @@ namespace x360ce.App.Controls
 					xInputPoint.Dispose();
 				if (xInputLine != null)
 					xInputLine.Dispose();
-				if (xInputPath != null)
-					xInputPath.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -213,6 +220,35 @@ namespace x360ce.App.Controls
 		private void MainPictureBox_SizeChanged(object sender, EventArgs e)
 		{
 			RefreshBackgroundImageAsync();
+		}
+
+		/// <summary>The chart is as tall as the table and as wide as it is tall, so it is square at any width of the page.</summary>
+		/// <remarks>
+		/// Sized when the table has been resized rather than while the table lays it out: a size a child takes while its
+		/// table lays it out reaches the table's columns only at the next layout, which would leave the chart's column a
+		/// step behind its height.
+		/// </remarks>
+		private void MainTableLayoutPanel_SizeChanged(object sender, EventArgs e)
+		{
+			var side = Math.Max(1, MainTableLayoutPanel.DisplayRectangle.Height - MainPictureBox.Margin.Vertical);
+			MainPictureBox.Size = new Size(side, side);
+		}
+
+		/// <summary>
+		/// As wide as the page offers, and as tall as its group's rows at that width, so the last row stands the group's room
+		/// above the group's bottom line, as on every other page; the chart beside the rows is then as tall as they are.
+		/// </summary>
+		/// <remarks>
+		/// The chart spans the rows and takes its height from them, so it is left out. The page asks before it lays this control
+		/// out, so a note that wraps at a new width makes its row taller in the same layout: a height set while the page is laid
+		/// out reaches the group and the controls below only at the next layout. The room round the table is the frame's, which
+		/// is the same at every size.
+		/// </remarks>
+		public override Size GetPreferredSize(Size proposedSize)
+		{
+			var width = proposedSize.Width > 0 && proposedSize.Width < int.MaxValue ? proposedSize.Width : Width;
+			var room = Size - ClientSize + Padding.Size + MainGroupBox.Size - MainGroupBox.DisplayRectangle.Size;
+			return new Size(width, room.Height + AppHelper.RowsHeight(MainTableLayoutPanel, width - room.Width));
 		}
 
 		// Half and Invert values are only in creating xinput path - red line.
@@ -246,10 +282,6 @@ namespace x360ce.App.Controls
 
 		public void InitPaintObjects()
 		{
-			xInputPath = new Pen(Color.Red, 1f);
-			// Dead zones turn the path into near-right angles. Round the joins so those
-			// corners do not grow mitre spikes.
-			xInputPath.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
 			// The dot is the text colour: it marks a DInput and an XInput value at once, so it
 			// belongs to neither axis colour. The thin lines carry the per-axis colour.
 			xInputPoint = new SolidBrush(SystemColors.WindowText);
@@ -258,13 +290,13 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>
-		/// Colours the values and their marker lines: each line takes the colour of the value it belongs to, so XI is blue
-		/// and DI is green, in the theme's own blue and green.
+		/// Colours the values and their marker lines: each line takes the colour of the value it belongs to. DInput is the
+		/// reading, in the theme's active colour, and XInput what the curve gives for it, in its output colour.
 		/// </summary>
 		void ApplyValueColors()
 		{
-			var xColor = FormsTheme.GetColor("ColorBrand", Color.Blue);
-			var dColor = FormsTheme.GetColor("ForegroundSuccess", Color.Green);
+			var xColor = FormsTheme.GetColor("ForegroundOutput");
+			var dColor = FormsTheme.GetColor("ForegroundActive");
 			XInputValueLabel.ForeColor = xColor;
 			DInputValueLabel.ForeColor = dColor;
 			if (xInputLine != null)
@@ -275,14 +307,14 @@ namespace x360ce.App.Controls
 			dInputLine = new Pen(dColor, 1f);
 		}
 
-		/// <summary>The value colours are the theme's, so they are taken again in a new one.</summary>
+		/// <summary>The value colours and the curve's are the theme's, so they are taken again in a new one.</summary>
 		void FormsTheme_ThemeChanged(object sender, EventArgs e)
 		{
 			ApplyValueColors();
+			RefreshBackgroundImageAsync();
 			MainPictureBox.Invalidate();
 		}
 
-		Pen xInputPath;
 		SolidBrush xInputPoint;
 		Pen xInputLine;
 		Pen dInputLine;
@@ -293,11 +325,13 @@ namespace x360ce.App.Controls
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
+			var curveColor = Color.Empty;
 			Invoke(new Action(() =>
 			{
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
+				curveColor = FormsTheme.GetColor("ColorCurve");
 			}));
 			var chart = AppHelper.ChartBounds(MainPictureBox);
 			var w = chart.Width;
@@ -350,8 +384,11 @@ namespace x360ce.App.Controls
 				// downward, so flip the value.
 				path.Add(new PointF(_invert ? wF - i : i, hF - y));
 			}
-			if (path.Count > 1)
-				g.DrawLines(xInputPath, path.ToArray());
+			// Dead zones turn the path into near-right angles. Round the joins so those
+			// corners do not grow mitre spikes.
+			using (var curvePen = new Pen(curveColor, 1f) { LineJoin = System.Drawing.Drawing2D.LineJoin.Round })
+				if (path.Count > 1)
+					g.DrawLines(curvePen, path.ToArray());
 			Invoke(new Action(() =>
 			{
 				LastBackgroundImage = bmp;
@@ -423,13 +460,21 @@ namespace x360ce.App.Controls
 			g.FillEllipse(brush, x - radius - 0.5f, h - y - radius - 0.5f, radius * 2f, radius * 2f);
 		}
 
+		/// <summary>Draws the chart's line, and the reading over it. Disabled, the line stays, faded, and no reading is shown.</summary>
 		private void LinearPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			var g = e.Graphics;
-			AppHelper.PaintChartBox(g, MainPictureBox, Enabled);
+			AppHelper.PaintChartBox(g, MainPictureBox);
 			var image = LastBackgroundImage;
-			if (image == null || !Enabled) return;
+			if (image == null) return;
 			var chart = AppHelper.ChartBounds(MainPictureBox);
+			if (!Enabled)
+			{
+				// Pixel for pixel: the picture is the chart's own size.
+				g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
+				ControlsHelper.DrawImageWithOpacity(g, image, new Rectangle(chart.Location, image.Size), EngineHelper.DisabledOpacity);
+				return;
+			}
 			g.DrawImageUnscaled(image, chart.Location);
 			// The lines and the dot are drawn in the chart's own place.
 			g.TranslateTransform(chart.X, chart.Y);

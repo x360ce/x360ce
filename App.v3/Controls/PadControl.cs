@@ -64,6 +64,9 @@ namespace x360ce.App.Controls
 			};
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
 			Disposed += (s, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
+			EventHandler<SettingEventArgs> configLoaded = (s, e) => ShowSdlMapping();
+			SettingManager.Current.ConfigLoaded += configLoaded;
+			Disposed += (s, e) => SettingManager.Current.ConfigLoaded -= configLoaded;
 			this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
@@ -443,15 +446,11 @@ namespace x360ce.App.Controls
 
 			if (!Recording)
 			{
-				var negative = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundWarning", Color.DarkRed);
-				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
-				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = negative;
-				setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
-				if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = negative;
-				setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
-				if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = negative;
-				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
-				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = negative;
+				// A stick's name is lit while it is pushed either way; the cross on the picture shows which way.
+				setLabelColor(_leftX > 2000 || _leftX < -2000, LeftThumbAxisXLabel);
+				setLabelColor(_leftY > 2000 || _leftY < -2000, LeftThumbAxisYLabel);
+				setLabelColor(_rightX > 2000 || _rightX < -2000, RightThumbAxisXLabel);
+				setLabelColor(_rightY > 2000 || _rightY < -2000, RightThumbAxisYLabel);
 				// Draw button state green led image.
 				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
 				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
@@ -503,7 +502,7 @@ namespace x360ce.App.Controls
 
 		void setLabelColor(bool on, Label label)
 		{
-			Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green) : SystemColors.ControlText;
+			Color c = on ? JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive") : SystemColors.ControlText;
 			if (label.ForeColor != c) label.ForeColor = c;
 		}
 
@@ -544,6 +543,7 @@ namespace x360ce.App.Controls
 			SettingManager.AddMap(section, () => SettingName.InstanceGuid, diControl.DeviceInstanceGuidTextBox, sm);
 			SettingManager.AddMap(section, () => SettingName.GamePadType, DeviceSubTypeComboBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThrough, PassThroughCheckBox, sm);
+			SettingManager.AddMap(section, () => SettingName.AutoMap, AutoMapCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox, sm);
 			SettingManager.AddMap(section, () => SettingName.PassThroughIndex, PassThroughIndexComboBox, sm);
 			// Mapping
@@ -662,6 +662,42 @@ namespace x360ce.App.Controls
 		}
 
 		Joystick _device;
+
+		/// <summary>The device this controller reads, or null when none is connected.</summary>
+		public Joystick Device { get { return _device; } }
+
+		/// <summary>
+		/// With Map from controller databases ticked, the mapping boxes show the mapping x360ce's and SDL's controller
+		/// databases give the device, and cannot be changed: the library maps the controller from them itself. Unticked, they
+		/// can, and what they show is saved as the controller's own mapping.
+		/// </summary>
+		/// <remarks>Shown again after the settings are read, which empty the boxes the file has no line for.</remarks>
+		void ShowSdlMapping()
+		{
+			var auto = AutoMapCheckBox.Checked;
+			var pad = string.Format("PAD{0}\\", ControllerIndex + 1);
+			var boxes = SettingsMap.Where(x => SettingName.IsMapping(x.Key.Substring(pad.Length))).ToArray();
+			if (auto)
+			{
+				var setting = AppHelper.GetAutoSetting(_device);
+				var values = setting == null ? null : PadSettingIni.MappingKeys(setting);
+				foreach (var box in boxes)
+				{
+					var key = box.Key.Substring(pad.Length);
+					string value = null;
+					if (values != null)
+						values.TryGetValue(key, out value);
+					SettingManager.Current.ReadSettingTo(box.Value, key, value ?? "");
+				}
+			}
+			foreach (var box in boxes)
+				box.Value.Enabled = !auto;
+		}
+
+		void AutoMapCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			ShowSdlMapping();
+		}
 
 		/// <summary>
 		/// This function will be called from UpdateTimer on main form.
@@ -813,7 +849,7 @@ namespace x360ce.App.Controls
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;
 			mi = new ToolStripMenuItem(cEmpty);
-			mi.ForeColor = SystemColors.ControlDarkDark;
+			mi.ForeColor = SystemColors.GrayText;
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Return if direct input device is not available.
@@ -1033,7 +1069,7 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				MainForm.Current.ClearPreset(ControllerIndex);
 			}
 		}
 
@@ -1059,7 +1095,19 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(text, "Auto Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
-				MainForm.Current.LoadPreset("Clear", ControllerIndex);
+				MainForm.Current.ClearPreset(ControllerIndex);
+				// x360ce's and SDL's controller databases first; the guess below for a device neither knows.
+				var setting = AppHelper.GetAutoSetting(d);
+				if (setting != null)
+				{
+					var pad = string.Format("PAD{0}\\", ControllerIndex + 1);
+					PadSettingIni.Write(setting, (key, value) =>
+					{
+						if (SettingsMap.ContainsKey(pad + key))
+							AutoPresetRead(key, value);
+					});
+					return;
+				}
 				var objects = AppHelper.GetDeviceObjects(d);
 				DeviceObjectItem o = null;
 				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);

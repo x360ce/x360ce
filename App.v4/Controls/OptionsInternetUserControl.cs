@@ -13,6 +13,13 @@ namespace x360ce.App.Controls
 		public OptionsInternetUserControl()
 		{
 			InitializeComponent();
+			// Scaled by the font once, after the designer's tables have resumed their layout: scaled in the designer, Windows
+			// Forms scales a table as it resumes and then again with the control. The mode first, as changing it clears the
+			// dimensions.
+			SuspendLayout();
+			AutoScaleMode = AutoScaleMode.Font;
+			AutoScaleDimensions = new SizeF(6F, 13F);
+			ResumeLayout(false);
 			InternetFeaturesCheckBox.CheckedChanged += InternetCheckBox_CheckedChanged;
 			InternetCheckBox_CheckedChanged(null, EventArgs.Empty);
 		}
@@ -103,6 +110,24 @@ namespace x360ce.App.Controls
 				else
 					header.SetHeaderInfo(text);
 			}, null);
+		}
+
+		/// <summary>Fetches x360ce's controller database from the site of the web service address into the settings folder, off the window's thread, and says in the header how it went.</summary>
+		private void UpdateX360ceDatabaseButton_Click(object sender, EventArgs e)
+		{
+			UpdateX360ceDatabaseButton.Enabled = false;
+			var version = typeof(OptionsInternetUserControl).Assembly.GetName().Version;
+			X360ceUpdateClient.UpdateSettingsCopy(SettingsManager.Options.InternetDatabaseUrl, "x360ce/" + version).ContinueWith(t =>
+			{
+				UpdateX360ceDatabaseButton.Enabled = true;
+				var header = MainForm.Current;
+				if (header == null)
+					return;
+				if (t.Result.Value == DatabaseUpdateOutcome.Failed)
+					header.SetHeaderError(t.Result.Key);
+				else
+					header.SetHeaderInfo(t.Result.Key);
+			}, System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

@@ -16,7 +16,11 @@ namespace x360ce.App.Forms
 
 		public HelpForm()
 		{
+			// Laid out as a designer lays a window out, so Windows Forms scales it to the screen when the layout resumes.
+			SuspendLayout();
+			Name = nameof(HelpForm);
 			Text = "Help";
+			Icon = Properties.Resources.app;
 			StartPosition = FormStartPosition.CenterParent;
 			ShowInTaskbar = false;
 			MinimizeBox = false;
@@ -27,18 +31,27 @@ namespace x360ce.App.Forms
 			AutoScaleDimensions = new SizeF(96F, 96F);
 			ClientSize = new Size(900, 560);
 			MinimumSize = new Size(480, 320);
+			_text.Name = "HelpRichTextBox";
 			_text.Dock = DockStyle.Fill;
 			_text.ReadOnly = true;
 			_text.BorderStyle = BorderStyle.None;
 			_text.BackColor = SystemColors.Window;
-			_text.DetectUrls = true;
-			var bar = new FlowLayoutPanel { Dock = DockStyle.Bottom, FlowDirection = FlowDirection.RightToLeft, AutoSize = true, Padding = new Padding(6) };
-			var ok = new Button { Text = "OK", DialogResult = DialogResult.OK, AutoSize = true };
-			bar.Controls.Add(ok);
-			Controls.Add(_text);
-			Controls.Add(bar);
+			// The document, and under it its button: each one gap from the window's edges and from the other.
+			Padding = new Padding(0, 0, 8, 8);
+			_text.Margin = new Padding(8, 8, 0, 0);
+			var layout = new TableLayoutPanel { Name = "RootLayoutPanel", Dock = DockStyle.Fill, Margin = new Padding(0), ColumnCount = 1, RowCount = 2 };
+			layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+			layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+			// As wide as a dialog's button at least: Windows Forms' button, which the other windows' buttons keep as their smallest size.
+			var ok = new Button { Name = "OkButton", Text = "OK", DialogResult = DialogResult.OK, AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(8, 8, 0, 0), MinimumSize = new Size(75, 23) };
+			layout.Controls.Add(_text, 0, 0);
+			layout.Controls.Add(ok, 0, 1);
+			Controls.Add(layout);
 			AcceptButton = ok;
 			CancelButton = ok;
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		/// <summary>Opens the document with this title, in front of the owner, and returns when it is closed.</summary>

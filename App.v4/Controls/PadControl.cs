@@ -25,14 +25,45 @@ namespace x360ce.App.Controls
 
 		public PadControl(MapTo controllerIndex)
 		{
+			// Scaled from the size it is made at only once the numbers under the General page's names are on it, so Windows
+			// Forms scales their room with the page's other sizes.
+			SuspendLayout();
 			InitializeComponent();
-			if (ControlsHelper.IsDesignMode(this))
+			var designMode = ControlsHelper.IsDesignMode(this);
+			if (!designMode)
+				AddValueLabels();
+			ResumeLayout(false);
+			if (designMode)
 				return;
+			// The room round the controls on the pages that scale themselves, given once the page is scaled: Windows Forms
+			// scales such a control's own margin again each time a table round it resumes, so the designer's would be scaled
+			// several times over.
+			foreach (var axis in new[] { LeftTriggerUserControl, RightTriggerUserControl, LeftThumbXUserControl, LeftThumbYUserControl,
+				RightThumbXUserControl, RightThumbYUserControl })
+			{
+				axis.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+				foreach (var box in new[] { axis.AntiDeadZoneNumericUpDown, axis.DeadZoneNumericUpDown, axis.SensitivityNumericUpDown })
+					box.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			}
+			LeftMouseStickPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			RightMouseStickPanel.Margin = AppHelper.ScaledPadding(8, 8, 0, 0);
+			// The demo shows the stick group last worked on, the left one at first, and plays a style as it is chosen.
+			MouseDemoPanel.Source = LeftMouseStickPanel;
+			foreach (var group in new[] { LeftMouseStickPanel, RightMouseStickPanel })
+			{
+				var stick = group;
+				stick.Enter += (s, e) => MouseDemoPanel.Source = stick;
+				stick.StyleChosen += (s, e) =>
+				{
+					MouseDemoPanel.Source = stick;
+					MouseDemoPanel.PlayChosenStyle();
+				};
+			}
 			// The SDL page, after Direct Input: what SDL's controller database says about the selected device.
 			SdlPanel = new SdlUserControl { Dock = DockStyle.Fill };
 			SdlPanel.ApplyClicked += SdlPanel_ApplyClicked;
 			SdlPanel.CopyClicked += SdlPanel_CopyClicked;
-			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true };
+			SdlTabPage = new TabPage { Name = nameof(SdlTabPage), Text = "SDL", UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			SdlTabPage.Controls.Add(SdlPanel);
 			// Added, with the pages after Direct Input added again behind it: Insert does nothing while the tab control
 			// has no window yet, as here, so the page was in the list and never shown.
@@ -57,15 +88,19 @@ namespace x360ce.App.Controls
 			CombineGroupBox.Text = "Combining - x360ce 3 only";
 			AxisToDPadEnabledCheckBox.CheckedChanged += (s, e) => AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
 			AxisToDPadChart.Enabled = AxisToDPadEnabledCheckBox.Checked;
+			_AxisCharts = new[] { LeftTriggerUserControl, RightTriggerUserControl, LeftThumbXUserControl, LeftThumbYUserControl, RightThumbXUserControl, RightThumbYUserControl };
+			_ChartReadings = _AxisCharts.Select(x => new ChartReading()).ToArray();
 
 			RemapName = RemapAllButton.Text;
+			// Remap All reads STOP while it runs, and stays as wide as the longer text so the list beside it stays put.
+			RemapAllButton.Texts = new[] { RemapName, RemapStopName };
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.ImageControl = XboxImage;
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
-			AddValueLabels();
+			FitValueLabels();
 			// These three stay pressed to say that something is on, rather than doing something and
 			// springing back. A bar cannot tell the two apart on its own, so it is said here: a screen
 			// reader then announces the state, and the interface tree offers them to be set.
@@ -108,53 +143,6 @@ namespace x360ce.App.Controls
 				if (Visible && Global.DHelper?.PassCount > 0)
 					Global_UpdateControlFromStates(this, EventArgs.Empty);
 			};
-		}
-
-		/// <summary>Gives the page room to scroll when the window is shorter than its rows need.</summary>
-		/// <remarks>
-		/// The table gives the tabs all the height they ask for even when the window has less, and moves them up
-		/// to find it: on a 1920 x 1080 screen at 150 % the tab strip slid under the tool bar and the device list,
-		/// and no tab could be chosen. Scrolling keeps every row where it belongs.
-		/// </remarks>
-		protected override void OnLayout(LayoutEventArgs e)
-		{
-			var needed = NeededHeight(ClientSize.Width);
-			if (AutoScrollMinSize.Height != needed)
-				AutoScrollMinSize = new Size(0, needed);
-			base.OnLayout(e);
-		}
-
-		/// <summary>The height the page's rows need to be shown whole: the tool bar, the device list, the tabs and the buttons.</summary>
-		/// <remarks>
-		/// What the page scrolls by when it is shorter, and what the main window first opens tall enough for
-		/// (<see cref="MainForm.FitToPage"/>). The height comes from the rows themselves, so it follows the font, the theme and
-		/// the screen's scale. The device list counts at its designed height, whatever devices it holds, and takes any height
-		/// the page has to spare.
-		/// </remarks>
-		/// <param name="width">The width the page is laid out at.</param>
-		public int NeededHeight(int width)
-		{
-			FitTabsToGeneralRows();
-			return PadTableLayoutPanel.GetPreferredSize(new Size(width, 0)).Height;
-		}
-
-		/// <summary>Makes the controller pages as tall as the rows of the General page, and never shorter than they were drawn.</summary>
-		/// <remarks>
-		/// The tabs ask for the height they were drawn at, while the General page's table is as tall as its rows, whose boxes,
-		/// names and numbers are as tall as the font makes them. In a font taller than the one the page was drawn in, the last
-		/// row would run past the bottom of the page and be cut off. The height wanted is read from the table, so it follows
-		/// the font. The General page is given the room the tabs gain, as the tabs give it once they lay their pages out: tabs
-		/// not shown do not lay their pages out, and without it the next call would find the page as before and grow the tabs
-		/// again.
-		/// </remarks>
-		void FitTabsToGeneralRows()
-		{
-			var rows = GeneralTableLayoutPanel.GetPreferredSize(Size.Empty).Height + GeneralTableLayoutPanel.Margin.Vertical;
-			var grow = rows + GeneralTabPage.Padding.Vertical - GeneralTabPage.ClientSize.Height;
-			if (grow <= 0)
-				return;
-			PadTabControl.Height += grow;
-			GeneralTabPage.Height += grow;
 		}
 
 		/// <summary>How many updates a page that is not shown lets pass before it shows the states again.</summary>
@@ -202,7 +190,8 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Enables what needs a device, when the selected row has one.</summary>
-		void UpdateEnabledFromDevice(UserDevice ud)
+		/// <remarks>What needs one stays on its page, disabled, so the page looks the same with a device or without.</remarks>
+		internal void UpdateEnabledFromDevice(UserDevice ud)
 		{
 			var enable = ud != null;
 			ControlsHelper.SetEnabled(LoadPresetButton, enable);
@@ -264,143 +253,348 @@ namespace x360ce.App.Controls
 							RemapAllButton.Text = RemapName;
 							return;
 						}
-						// The next control from the list at once: it waits for the device to come to rest before it compares.
-						StartRecording();
+						// The next control from the list after a pause, so the person sees what was recorded and which control is
+						// next; it then waits for the device to come to rest before it compares. Stop meanwhile empties the list.
+						ControlsHelper.BeginInvoke(() => StartRecording(), (int)RemapAllPause.TotalMilliseconds);
 					}
 				}
 			}
 		}
 
+		/// <summary>Shows the controller's output on the General tab, and the row shown on its charts, from one engine pass.</summary>
+		/// <remarks>
+		/// The General tab shows what the controller is given, combined from all its rows, or Windows' readback of it while Show
+		/// XInput State is on. Each trigger and stick chart shows the selected row's own pair: the reading the engine converted
+		/// for the row and what the row made of it, so its dot stands on its curve. When no copy of one pass's states can be
+		/// taken, everything shows what it showed.
+		/// </remarks>
 		internal void UpdateControlFromXInput()
 		{
-			var i = (int)MappedTo - 1;
-			var useXiStates = SettingsManager.Options.GetXInputStates;
-			if (useXiStates)
+			var helper = Global.DHelper;
+			// What the charts read, found before the engine's states are copied: the row shown, its place in the routing the
+			// engine converts it by, and where each chart's reading comes from.
+			var setting = GetSelectedSetting();
+			var routing = DeviceRouting.Current;
+			var row = setting == null ? -1 : Array.IndexOf(routing.Rows, setting);
+			var ps = setting == null ? null : GetSelectedPadSetting();
+			var maps = ps == null ? null : ps.Maps;
+			for (var c = 0; c < _AxisCharts.Length; c++)
 			{
-				// Windows decides which of the four places a new controller goes into and does not say,
-				// so the place is looked up rather than assumed to match the controller number. On a
-				// computer with all four places empty this program's first controller was put in the
-				// third; reading the first place showed a controller that was never there.
-				var place = Global.DHelper.XiPlaceForPad[i];
-				// No place, or one not known: nothing XInput reads back is this tab's controller. Read by the tab's
-				// number, a real controller holding that place was drawn as this tab's, idle while its device moved.
-				if (place < 0)
-				{
-					newState = new State();
-					newConnected = false;
-				}
-				else
-				{
-					newState = Global.DHelper.LiveXiStates[place];
-					newConnected = Global.DHelper.LiveXiConnected[place];
-				}
+				var target = _AxisCharts[c].TargetType;
+				_ChartReadings[c].Find(maps == null ? null : maps.FirstOrDefault(x => x.Target == target), target, routing, row);
 			}
-			else
-			{
-				newState = Global.DHelper.CombinedXiStates[i];
-				newConnected = Global.DHelper.CombinedXiConencted[i];
-			}
-			// If device is not connected and was not connected then return.
-			if (!newConnected && !oldConnected)
+			if (!CopyOnePass(helper, (int)MappedTo - 1, SettingsManager.Options.GetXInputStates, routing, row, setting))
 				return;
-			// If device disconnected then show disabled images.
-			if (!newConnected && oldConnected)
+			newState = _Copied.State;
+			newConnected = _Copied.Connected;
+			if (newConnected || oldConnected)
 			{
-				_Imager.SetImages(false);
-				RemapAllButton.Enabled = false;
-			}
-			// If device connected then show enabled images.
-			if (newConnected && !oldConnected)
-			{
-				_Imager.SetImages(true);
-				RemapAllButton.Enabled = true;
-			}
-			// Return if controller is not connected.
-			if (newConnected)
-			{
-				//_Imager.DrawController(e, MappedTo);
-				// Process all buttons and axis.
+				// If device disconnected then show disabled images.
+				if (!newConnected && oldConnected)
+				{
+					_Imager.SetImages(false);
+					RemapAllButton.Enabled = false;
+				}
+				// If device connected then show enabled images.
+				if (newConnected && !oldConnected)
+				{
+					_Imager.SetImages(true);
+					RemapAllButton.Enabled = true;
+				}
+				// Return if controller is not connected.
+				if (newConnected)
+				{
+					//_Imager.DrawController(e, MappedTo);
+					// Process all buttons and axis.
+					foreach (var ii in imageInfos)
+						_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+				}
+				// The numbers under the names, from the state the picture is drawn from.
 				foreach (var ii in imageInfos)
-					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+					ii.ShowValue(newState.Gamepad);
+				// Update Axis to Button Images.
+				var AxisToButtonControls = AxisToButtonTableLayoutPanel.Controls.OfType<AxisToButtonUserControl>();
+				foreach (var atbPanel in AxisToButtonControls)
+					atbPanel.Refresh(newState, _Imager.markB);
+				// Store old state.
+				oldState = newState;
+				oldConnected = newConnected;
 			}
-			// The numbers under the names, from the state the picture is drawn from.
-			foreach (var ii in imageInfos)
-				ii.ShowValue(newState.Gamepad);
-			// Process device.
-			var ud = GetSelectedDevice();
-			if (ud != null && ud.SourceState != null)
-			{
-				// Get current pad setting.
-				var ps = GetSelectedPadSetting();
-				Map map;
-				// LeftThumbX
-				var axis = ud.SourceState.Axis;
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
-				DrawMappedPoint(LeftThumbXUserControl, map, axis, newState.Gamepad.LeftThumbX);
-				// LeftThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
-				DrawMappedPoint(LeftThumbYUserControl, map, axis, newState.Gamepad.LeftThumbY);
-				// RightThumbX
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
-				DrawMappedPoint(RightThumbXUserControl, map, axis, newState.Gamepad.RightThumbX);
-				// RightThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
-				DrawMappedPoint(RightThumbYUserControl, map, axis, newState.Gamepad.RightThumbY);
-				// LeftTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
-				DrawMappedPoint(LeftTriggerUserControl, map, axis, newState.Gamepad.LeftTrigger);
-				// RightTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
-				DrawMappedPoint(RightTriggerUserControl, map, axis, newState.Gamepad.RightTrigger);
-				// Axis to D-Pad reads the device's X and Y axes.
-				if (axis.Length >= 2)
-					AxisToDPadChart.SetReading(axis[0], axis[1]);
-				else
-					AxisToDPadChart.ClearReading();
-			}
-			else
+			if (setting == null)
 			{
 				AxisToDPadChart.ClearReading();
+				return;
 			}
-			// Update Axis to Button Images.
-			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
-			foreach (var atbPanel in AxisToButtonControls)
-				atbPanel.Refresh(newState, _Imager.markB);
-			// Store old state.
-			oldState = newState;
-			oldConnected = newConnected;
+			for (var c = 0; c < _AxisCharts.Length; c++)
+				DrawChart(_AxisCharts[c], _ChartReadings[c], _Copied.Output);
+			// Axis to D-Pad reads the X and Y axes the row was converted from, and lights what the engine pressed from them.
+			if (_Copied.HasXY)
+				AxisToDPadChart.SetReading(_Copied.X, _Copied.Y, _Copied.AxisButtons);
+			else
+				AxisToDPadChart.ClearReading();
 		}
 
-		/// <summary>Puts a row's live reading on its chart, whichever way the row is driven.</summary>
+		/// <summary>Puts a row's pair on its chart, whichever way the row is driven: the reading the engine converted and what the row made of it.</summary>
 		/// <remarks>
 		/// A row driven by a formula names no single control, so it has no source number, and the
 		/// chart used to be skipped entirely for one: the picture froze at whatever it last showed
 		/// while the controller picture beside it kept moving. The formula is asked which control it
 		/// reads, and that control's travel is the across of the chart, exactly as a plain mapping's
-		/// own control is.
+		/// own control is. A row the pass did not convert keeps the point it shows.
 		/// </remarks>
 		/// <param name="chart">Chart for this row.</param>
-		/// <param name="map">Row being drawn, or null when the row is unmapped.</param>
-		/// <param name="axis">Readings of the device's axes.</param>
-		/// <param name="produced">What the row produced, in its destination's units.</param>
-		static void DrawMappedPoint(AxisMapUserControl chart, Map map, int[] axis, int produced)
+		/// <param name="reading">Where the chart's reading comes from, and what the pass copied.</param>
+		/// <param name="output">What the row made, as the same pass converted it.</param>
+		static void DrawChart(AxisMapUserControl chart, ChartReading reading, Gamepad output)
 		{
+			var map = reading.Map;
 			chart.SetExpression(map == null ? null : map.Expression);
 			chart.SetTuningEnabled(map != null && map.Expression == null && (map.IsAxis || map.IsSlider));
-			if (map == null)
+			if (!reading.HasInput)
 				return;
-			var index = map.Index;
-			if (map.Expression != null)
+			int produced;
+			var trigger = false;
+			switch (chart.TargetType)
 			{
-				var swept = MapExpressionUnits.GetSweptSource(map.Expression);
-				// A formula of buttons alone has no travel to show, so there is nothing to place.
-				if (!swept.HasValue || swept.Value.Type == 'b' || swept.Value.Type == 'd' || swept.Value.Type == 'p')
+				case TargetType.LeftTrigger:
+					produced = output.LeftTrigger;
+					trigger = true;
+					break;
+				case TargetType.RightTrigger:
+					produced = output.RightTrigger;
+					trigger = true;
+					break;
+				case TargetType.LeftThumbX:
+					produced = output.LeftThumbX;
+					break;
+				case TargetType.LeftThumbY:
+					produced = output.LeftThumbY;
+					break;
+				case TargetType.RightThumbX:
+					produced = output.RightThumbX;
+					break;
+				case TargetType.RightThumbY:
+					produced = output.RightThumbY;
+					break;
+				default:
 					return;
-				index = swept.Value.Index;
 			}
-			if (index <= 0 || index > axis.Length)
-				return;
-			chart.DrawPoint(axis[index - 1], produced, map.IsInverted, map.IsHalf);
+			// A trigger on a control that reports movement reads the half past its middle, as the engine reads it.
+			chart.DrawPoint(reading.Input, produced, map.IsInverted, map.IsHalf || trigger && reading.Moving);
+		}
+
+		/// <summary>The trigger and stick charts, each drawn for the target its <see cref="AxisMapUserControl.TargetType"/> names.</summary>
+		AxisMapUserControl[] _AxisCharts;
+
+		/// <summary>For each of <see cref="_AxisCharts"/>, where its reading comes from and what the last pass copied gave it.</summary>
+		ChartReading[] _ChartReadings;
+
+		/// <summary>Where a trigger or stick chart's reading comes from, worked out from the row's mapping, and the reading one pass gave it.</summary>
+		sealed class ChartReading
+		{
+			/// <summary>The row's mapping for the chart's target, or null when it maps none.</summary>
+			public Map Map;
+
+			/// <summary>The axis or slider read, counted from one, or 0 when the row reads none for the chart: no mapping, a button, a POV, or a formula of buttons alone.</summary>
+			public int Index;
+
+			/// <summary>True when a slider is read, false for an axis.</summary>
+			public bool Slider;
+
+			/// <summary>True when a formula reads its control from another device, <c>c1.d2</c>, rather than the row's own.</summary>
+			public bool Other;
+
+			/// <summary>The device a formula names, or null when the routing reads none there.</summary>
+			public UserDevice Named;
+
+			/// <summary>The row's Mouse page stick, whose state this stick's mappings read, or null.</summary>
+			public MouseStick Stick;
+
+			/// <summary>True when the pass copied converted the row and gave the chart a reading.</summary>
+			public bool HasInput;
+
+			/// <summary>The reading the engine converted, 0 to 65535.</summary>
+			public int Input;
+
+			/// <summary>True when the control reports movement rather than where it is.</summary>
+			public bool Moving;
+
+			/// <summary>Works out where the chart's reading comes from, as Step 3 reads it.</summary>
+			/// <param name="map">The row's mapping for the chart's target, or null.</param>
+			/// <param name="target">The chart's target.</param>
+			/// <param name="routing">The routing the engine converts by.</param>
+			/// <param name="row">The row's place in its <see cref="DeviceRouting.Rows"/>, or -1 when it is not routed.</param>
+			public void Find(Map map, TargetType target, DeviceRouting routing, int row)
+			{
+				Map = map;
+				Index = 0;
+				Slider = false;
+				Other = false;
+				Named = null;
+				Stick = null;
+				if (map == null)
+					return;
+				if (map.Expression != null)
+				{
+					var swept = MapExpressionUnits.GetSweptSource(map.Expression);
+					// A formula of buttons alone has no travel to show, so there is nothing to place.
+					if (!swept.HasValue)
+						return;
+					var source = swept.Value;
+					Index = source.Index;
+					Slider = source.Type == 's' || source.Type == 'h';
+					Other = source.Pad != 0;
+					Named = Other ? routing.GetDevice(source.Pad, source.Device) : null;
+				}
+				else
+				{
+					if (!map.IsAxis && !map.IsSlider)
+						return;
+					Index = map.Index;
+					Slider = map.IsSlider;
+				}
+				// A stick the Mouse page sets is read from the stick's state, plain and formula alike, as Step 3 reads it.
+				var left = target == TargetType.LeftThumbX || target == TargetType.LeftThumbY;
+				var right = target == TargetType.RightThumbX || target == TargetType.RightThumbY;
+				var mouse = row < 0 ? null : routing.RowMouse[row];
+				if (mouse != null && !Other && (left || right))
+					Stick = mouse[left ? 0 : 1];
+			}
+
+			/// <summary>Copies the chart's reading from the state the row was converted from. Run while a pass's states are copied.</summary>
+			/// <param name="input">The state the row was converted from, or null when the pass did not convert it.</param>
+			/// <param name="device">The device that state was read from.</param>
+			public void Copy(SourceState input, UserDevice device)
+			{
+				HasInput = false;
+				if (input == null || Index <= 0)
+					return;
+				// Read as Step 3 reads it: on a stick the Mouse page sets, the stick's state.
+				var state = Other ? DInputHelper.GetDeviceState(Named) : Stick?.State ?? input;
+				if (state == null)
+					return;
+				var values = Slider ? state.Sliders : state.Axis;
+				if (Index > values.Length)
+					return;
+				var value = values[Index - 1];
+				var moving = !Other && Map.Expression == null && ((Slider ? device.DiRelativeSliderMask : device.DiRelativeAxisMask) & (1 << (Index - 1))) != 0;
+				Input = value;
+				Moving = moving;
+				HasInput = true;
+			}
+		}
+
+		/// <summary>What the page shows of one engine pass, as <see cref="CopyOnePass"/> copied it last.</summary>
+		sealed class PassCopy
+		{
+			/// <summary>The controller's output as the General tab shows it, and whether the controller is there.</summary>
+			public State State;
+			public bool Connected;
+
+			/// <summary>What the row shown made, <see cref="UserSetting.XiState"/>, while it is routed.</summary>
+			public Gamepad Output;
+
+			/// <summary>The buttons the row's axes held down, <see cref="UserSetting.AxisButtons"/>, while it is routed.</summary>
+			public GamepadButtonFlags AxisButtons;
+
+			/// <summary>True when the row was converted from a state with an X and a Y, which Axis to D-Pad reads: <see cref="X"/> and <see cref="Y"/>.</summary>
+			public bool HasXY;
+			public int X;
+			public int Y;
+		}
+
+		readonly PassCopy _Copied = new PassCopy();
+
+		/// <summary>How many copies one update takes, at most, before the page keeps what it shows.</summary>
+		const int PassCopyAttempts = 3;
+
+		/// <summary>How long one update waits, at most, for passes under way to end, in <see cref="System.Diagnostics.Stopwatch"/> ticks: a millisecond, far longer than a pass takes.</summary>
+		static readonly long PassWaitTicks = System.Diagnostics.Stopwatch.Frequency / 1000;
+
+		/// <summary>Copies what the page shows from the states of one engine pass, never of two.</summary>
+		/// <remarks>
+		/// <para>
+		/// The engine writes them on its own thread up to a thousand times a second, and refills a device's reading in place,
+		/// while the page draws ten times a second. Read at two moments, a chart put one pass's reading beside another's
+		/// output, or Windows' readback of the controller from up to a tenth of a second before, and its dot left its curve
+		/// whenever the stick moved fast. A copy taken while <see cref="DInputHelper.PassStarted"/> equals
+		/// <see cref="DInputHelper.PassCount"/>, and still does once it is taken, is all one pass's.
+		/// </para>
+		/// <para>
+		/// The engine never waits: a pass that starts meanwhile spoils the copy, and it is taken again. The page waits for a
+		/// pass under way to end, giving the processor up meanwhile, and copies as it ends, so an update that comes during a
+		/// pass still shows something new. While passes run back to back, as they do when each takes longer than the polling
+		/// interval, a copy seldom fits between two, and the page goes on showing the last pass it copied.
+		/// </para>
+		/// </remarks>
+		/// <param name="helper">The engine.</param>
+		/// <param name="pad">The controller's index, from 0.</param>
+		/// <param name="readBack">True to copy Windows' readback of the controller, false for its combined output.</param>
+		/// <param name="routing">The routing the engine converts by.</param>
+		/// <param name="row">The place in it of the row shown, or -1 when the row is not routed or none is shown.</param>
+		/// <param name="setting">The row shown, or null.</param>
+		/// <returns>False when no copy was all one pass's.</returns>
+		bool CopyOnePass(DInputHelper helper, int pad, bool readBack, DeviceRouting routing, int row, UserSetting setting)
+		{
+			var copy = _Copied;
+			var copies = 0;
+			long due = 0;
+			while (true)
+			{
+				var started = helper.PassStarted;
+				// A pass is under way, writing what would be copied: its end is waited for, the processor given up meanwhile.
+				if (started != helper.PassCount)
+				{
+					var now = System.Diagnostics.Stopwatch.GetTimestamp();
+					if (due == 0)
+						due = now + PassWaitTicks;
+					else if (now > due)
+						return false;
+					System.Threading.Thread.Yield();
+					continue;
+				}
+				if (readBack)
+				{
+					// Windows decides which of the four places a new controller goes into and does not say,
+					// so the place is looked up rather than assumed to match the controller number. On a
+					// computer with all four places empty this program's first controller was put in the
+					// third; reading the first place showed a controller that was never there.
+					var place = helper.XiPlaceForPad[pad];
+					// No place, or one not known: nothing XInput reads back is this tab's controller. Read by the tab's
+					// number, a real controller holding that place was drawn as this tab's, idle while its device moved.
+					copy.State = place < 0 ? new State() : helper.LiveXiStates[place];
+					copy.Connected = place >= 0 && helper.LiveXiConnected[place];
+				}
+				else
+				{
+					copy.State = helper.CombinedXiStates[pad];
+					copy.Connected = helper.CombinedXiConencted[pad];
+				}
+				// The state the row was converted from, from the device it was read through, as Step 3 chose them.
+				SourceState input = null;
+				var device = row < 0 ? null : routing.RowDevices[row];
+				if (device != null)
+					input = DInputHelper.GetConvertedState(ref device, routing, row);
+				if (row >= 0)
+				{
+					copy.Output = setting.XiState;
+					copy.AxisButtons = setting.AxisButtons;
+				}
+				for (var c = 0; c < _ChartReadings.Length; c++)
+					_ChartReadings[c].Copy(input, device);
+				copy.HasXY = input != null && input.Axis.Length >= 2;
+				if (copy.HasXY)
+				{
+					copy.X = input.Axis[0];
+					copy.Y = input.Axis[1];
+				}
+				// What was copied is read before the mark is read again.
+				System.Threading.Interlocked.MemoryBarrier();
+				if (helper.PassStarted == started)
+					return true;
+				if (++copies == PassCopyAttempts)
+					return false;
+			}
 		}
 
 
@@ -491,7 +685,7 @@ namespace x360ce.App.Controls
 					send = true;
 			}
 			if (send)
-				SendVibration();
+				SendVibration(MappedTo, LeftMotorTestTrackBar.Value, RightMotorTestTrackBar.Value);
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -562,6 +756,18 @@ namespace x360ce.App.Controls
 
 		object GetXInputStatesCheckBoxLock = new object();
 
+		/// <summary>Shows the tool bar's switches as the theme's accent check box, on or off as each is.</summary>
+		void ShowSwitchPictures()
+		{
+			var font = GamesToolStrip.Font;
+			foreach (var item in new[] { EnableButton, GetXInputStatesCheckBox, AutoMapButton })
+			{
+				var picture = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.AccentCheckBox(font, item.Checked);
+				if (item.Image != picture)
+					item.Image = picture;
+			}
+		}
+
 		public void UpdateGetXInputStatesWithNoEvents()
 		{
 			lock (GetXInputStatesCheckBoxLock)
@@ -570,9 +776,7 @@ namespace x360ce.App.Controls
 				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
-				ControlsHelper.SetImage(GetXInputStatesCheckBox, o.GetXInputStates
-				   ? Properties.Resources.checkbox_32x32
-				   : Properties.Resources.checkbox_unchecked_32x32);
+				ShowSwitchPictures();
 				// Enable events.
 				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
 			}
@@ -748,20 +952,20 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SetComboBoxValue((ComboBox)sender, text);
 		}
 
-		public void UpdateFromCurrentGame()
+		/// <summary>Shows the game's switch and rows for the controller on the page.</summary>
+		/// <param name="select">The device row to select; null to keep the selection the list has.</param>
+		public void UpdateFromCurrentGame(Guid? select = null)
 		{
 			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnableButton.Checked = virt;
-			ControlsHelper.SetImage(EnableButton, virt
-				? x360ce.App.Properties.Resources.checkbox_32x32
-				: x360ce.App.Properties.Resources.checkbox_unchecked_32x32);
+			ShowSwitchPictures();
 			// The theme's window colour: the designer records plain white, which a dark theme does not change.
 			MappedDevicesDataGridView.BackgroundColor = SystemColors.Window;
 			MappedDevicesDataGridView.DefaultCellStyle.BackColor = SystemColors.Window;
-			ShowHideAndSelectGridRows(null);
+			ShowHideAndSelectGridRows(select);
 			UpdateGridButtons();
 			UpdateForceSource();
 		}
@@ -1074,8 +1278,50 @@ namespace x360ce.App.Controls
 		/// One is made for each name in <see cref="imageInfos"/>, under it in the name's panel, which holds the pair in one cell
 		/// of the General page's table, in the middle of its box's row. No second list is kept in step with that one. Each is
 		/// named after its part, as LeftTriggerValueLabel, which is how the interface catalog and the AI door find it.
+		/// <para>
+		/// A number is drawn at the side its name is drawn at, the side next to the name's box (the right side on the right of
+		/// the page), 2 px in from the name's edge at 100 %, the size the page is made at, where its digits line up with the
+		/// name's letters (the owner's item 4), which Windows Forms scales with the page's other sizes: 3 px at 150 %.
+		/// </para>
+		/// <para>
+		/// The name is docked to the top of the panel and its number to the bottom, under the name in the z-order, and the
+		/// panel is <see cref="ValueOverlap"/> shorter than the two: the empty top of the number's line lies under the name's
+		/// last rows, so its digits stand <see cref="ValueGap"/> clear rows under the name's letters.
+		/// </para>
+		/// <para>
+		/// The numbers are made before Windows Forms scales the page from the size it is made at to the screen's, so their
+		/// padding is scaled with it, and fitted to their fonts once it has been (<see cref="FitValueLabels"/>).
+		/// </para>
 		/// </remarks>
 		void AddValueLabels()
+		{
+			foreach (var ii in imageInfos)
+			{
+				var name = (Label)ii.Label;
+				var right = name.TextAlign == ContentAlignment.TopRight;
+				var value = new Label
+				{
+					Name = ii.Code + "ValueLabel",
+					AutoSize = false,
+					Dock = DockStyle.Bottom,
+					TextAlign = name.TextAlign,
+					Padding = right ? new Padding(0, 0, 2, 0) : new Padding(2, 0, 0, 0),
+					UseMnemonic = false,
+					// Measured as it is drawn, with GDI, as the program draws all its text.
+					UseCompatibleTextRendering = false,
+					Text = "0",
+				};
+				ii.ValueLabel = value;
+				// Added after its name, so the name is drawn over the number where the two meet.
+				name.Parent.Controls.Add(value);
+			}
+		}
+
+		/// <summary>
+		/// Sizes each name and its number to their fonts, and again whenever the name's text or font changes, and colours the
+		/// numbers in the theme's colour, in each theme.
+		/// </summary>
+		void FitValueLabels()
 		{
 			// Laid out once, as the page is shown: a panel that grows would lay out the table it is in, for every number.
 			GeneralTableLayoutPanel.SuspendLayout();
@@ -1083,34 +1329,56 @@ namespace x360ce.App.Controls
 			{
 				var name = (Label)ii.Label;
 				name.Parent.SuspendLayout();
-				var value = new Label
-				{
-					Name = ii.Code + "ValueLabel",
-					AutoSize = false,
-					Margin = Padding.Empty,
-					UseMnemonic = false,
-					// Measured as it is drawn, with GDI, as the program draws all its text.
-					UseCompatibleTextRendering = false,
-					Text = "0",
-				};
-				ii.ValueLabel = value;
 				name.AutoSize = false;
-				FitName(name);
 				SetValueFont(ii);
-				name.TextChanged += (sender, e) => FitName(name);
-				name.FontChanged += (sender, e) =>
-				{
-					FitName(name);
-					SetValueFont(ii);
-				};
-				name.Parent.Controls.Add(value);
-				name.Parent.ResumeLayout(false);
+				name.TextChanged += (sender, e) => FitPair(ii);
+				name.FontChanged += (sender, e) => SetValueFont(ii);
+				name.Parent.ResumeLayout(true);
 			}
 			GeneralTableLayoutPanel.ResumeLayout(false);
 			SetValueColors();
-			EventHandler themeChanged = (sender, e) => SetValueColors();
+			// The theme draws the names, numbers and captions once the page is on a themed window, which is before Windows makes it.
+			HandleCreated += (sender, e) =>
+			{
+				FitPairs();
+				ShareAdvancedCaptions();
+				// Drawn for the tool bar's font as the page is shown in it: made before, they are drawn for the font the page
+				// was made in, half as large again at 150 %.
+				ShowSwitchPictures();
+			};
+			GamesToolStrip.FontChanged += (sender, e) => ShowSwitchPictures();
+			ShareAdvancedCaptions();
+			EventHandler themeChanged = (sender, e) =>
+			{
+				SetValueColors();
+				ShowSwitchPictures();
+			};
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged += themeChanged;
 			Disposed += (sender, e) => JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ThemeChanged -= themeChanged;
+		}
+
+		/// <summary>
+		/// The Advanced page's groups share one caption column, as the AI page's sections do, so every box on the page starts
+		/// at one place.
+		/// </summary>
+		void ShareAdvancedCaptions()
+		{
+			var tables = new[] { DeviceTableLayoutPanel, CombineTableLayoutPanel };
+			foreach (var table in tables)
+				table.SuspendLayout();
+			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.ShareLabelWidth(tables.SelectMany(table => table.Controls.OfType<Label>()
+				.Where(label => table.GetColumn(label) == 0 && table.GetColumnSpan(label) == 1)));
+			foreach (var table in tables)
+				table.ResumeLayout();
+		}
+
+		/// <summary>Sizes every name, its number and their panel again, as their labels are drawn now.</summary>
+		void FitPairs()
+		{
+			GeneralTableLayoutPanel.SuspendLayout();
+			foreach (var ii in imageInfos)
+				FitPair(ii);
+			GeneralTableLayoutPanel.ResumeLayout(true);
 		}
 
 		/// <summary>Sizes a number from its name's font: four fifths of it, the size the Input column's readings use.</summary>
@@ -1118,46 +1386,118 @@ namespace x360ce.App.Controls
 		{
 			var font = ii.Label.Font;
 			ii.ValueLabel.Font = new Font(font.FontFamily, font.Size * 0.8f, font.Style, font.Unit);
-			FitValue(ii.ValueLabel);
+			FitPair(ii);
 		}
 
-		/// <summary>A label at a width, one line of its font tall.</summary>
+		/// <summary>How tall a label is: one line of its font.</summary>
 		/// <remarks>
 		/// A label left to size itself is about a third taller than its line, room under the text that holds nothing. A name
 		/// and its number at that height would be taller than a row of boxes, and would push the rows apart.
 		/// </remarks>
-		static Size TextSize(Label label, int width)
+		static int LineHeight(Label label)
 		{
-			return new Size(width, TextRenderer.MeasureText(" ", label.Font, Size.Empty, TextFormatFlags.NoPadding).Height);
+			return TextRenderer.MeasureText(" ", label.Font, Size.Empty, TextFormatFlags.NoPadding).Height;
 		}
 
-		/// <summary>Sizes a name to its text.</summary>
-		static void FitName(Label name)
+		/// <summary>The clear rows between a name's baseline and the digits of the number under it, at the screen's scale.</summary>
+		static int ValueGap
 		{
-			var size = TextSize(name, name.PreferredWidth);
-			if (name.Size != size)
-				name.Size = size;
+			get { return GapAt(ControlsHelper.DpiScale); }
+		}
+
+		/// <summary>
+		/// The clear rows between a name's baseline and the digits of the number under it at a scale: the owner's 4 px at
+		/// 100 %, so 5 at 125 %, 6 at 150 %, 7 at 175 % and 8 at 200 %.
+		/// </summary>
+		internal static int GapAt(float scale)
+		{
+			return (int)Math.Round(4 * scale, MidpointRounding.AwayFromZero);
+		}
+
+		/// <summary>
+		/// The rows at the top of a number's line that lie under its name: as many as leave <paramref name="gap"/> clear rows
+		/// from the name's baseline to the digits, counted from where each font draws its ink, and never a row the digits are
+		/// drawn on, in a font that leaves fewer empty above them. Less than none puts room between the two.
+		/// </summary>
+		static int ValueOverlap(Label name, Font valueFont, int gap)
+		{
+			var baseline = InkRows(name.Font, BaselineCharacters)[1];
+			var digitsTop = InkRows(valueFont, ValueCharacters)[0];
+			return Math.Min(name.Height - 1 - baseline + digitsTop - gap, digitsTop);
+		}
+
+		/// <summary>Every character a number draws.</summary>
+		const string ValueCharacters = "-0123456789";
+
+		/// <summary>A capital, which stands on a name's baseline and draws nothing under it.</summary>
+		const string BaselineCharacters = "H";
+
+		/// <summary>What <see cref="InkRows"/> found, by font and text. The names share one font and the numbers another.</summary>
+		static readonly Dictionary<Tuple<Font, string>, int[]> _InkRows = new Dictionary<Tuple<Font, string>, int[]>();
+
+		/// <summary>The first and last rows of its line a text draws ink on, drawn as a label draws it, with GDI.</summary>
+		static int[] InkRows(Font font, string text)
+		{
+			var key = Tuple.Create(font, text);
+			int[] rows;
+			if (_InkRows.TryGetValue(key, out rows))
+				return rows;
+			var size = TextRenderer.MeasureText(text, font, Size.Empty, TextFormatFlags.NoPadding);
+			rows = new[] { size.Height, -1 };
+			using (var bitmap = new Bitmap(size.Width, size.Height))
+			{
+				using (var g = Graphics.FromImage(bitmap))
+				{
+					g.Clear(Color.White);
+					TextRenderer.DrawText(g, text, font, Point.Empty, Color.Black, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix);
+				}
+				var white = Color.White.ToArgb();
+				for (var y = 0; y < size.Height; y++)
+					for (var x = 0; x < size.Width; x++)
+						if (bitmap.GetPixel(x, y).ToArgb() != white)
+						{
+							rows[0] = Math.Min(rows[0], y);
+							rows[1] = y;
+							break;
+						}
+			}
+			_InkRows[key] = rows;
+			return rows;
 		}
 
 		/// <summary>The widest number a part shows: a stick's axis at its lowest.</summary>
 		const string WidestValue = "-32768";
 
-		/// <summary>Sizes a number to the widest it shows, measured as the label measures its text.</summary>
+		/// <summary>
+		/// Sizes a name and its number one line of their fonts tall, and their panel as wide as the name's text or the widest
+		/// number, whichever is wider, and <see cref="ValueOverlap"/> shorter than the two.
+		/// </summary>
 		/// <remarks>
 		/// The numbers change ten times a second on four controller pages. One that sized itself to each value would lay the
-		/// page out each time its width changed; at one width, a new value is only drawn.
+		/// page out each time its width changed; at one width, a new value is only drawn. A label whose text changes takes back
+		/// the size it was last given, so each is given the size its dock gives it, and a new value lays out nothing.
 		/// </remarks>
-		static void FitValue(Label value)
+		static void FitPair(ImageInfo ii)
 		{
-			var size = TextSize(value, TextRenderer.MeasureText(WidestValue, value.Font).Width + value.Padding.Horizontal);
-			if (value.Size != size)
-				value.Size = size;
+			FitPair((Label)ii.Label, ii.ValueLabel, ValueGap);
 		}
 
-		/// <summary>The numbers are the theme's success colour, the green the lit names and the other values are drawn in.</summary>
+		/// <summary>Sizes a name, the number under it and their panel, with <paramref name="gap"/> clear rows from the name's baseline to the digits.</summary>
+		internal static void FitPair(Label name, Label value, int gap)
+		{
+			var width = Math.Max(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetLabelWidth(name),
+				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetLabelWidth(value, WidestValue));
+			name.Size = new Size(width, LineHeight(name));
+			value.Size = new Size(width, LineHeight(value));
+			var size = new Size(width, name.Height + value.Height - ValueOverlap(name, value.Font, gap));
+			if (name.Parent.Size != size)
+				name.Parent.Size = size;
+		}
+
+		/// <summary>The numbers are the theme's active colour, which the lit names and the other readings are drawn in.</summary>
 		void SetValueColors()
 		{
-			var color = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundSuccess", Color.Green);
+			var color = JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetColor("ForegroundActive");
 			foreach (var ii in imageInfos)
 				ii.ValueLabel.ForeColor = color;
 		}
@@ -1167,6 +1507,12 @@ namespace x360ce.App.Controls
 		#region Settings Map
 
 		public MapTo MappedTo;
+
+		/// <summary>The page's boxes as the settings know them, which follow the page to the controller it shows.</summary>
+		readonly List<SettingsMapItem> _MapItems = new List<SettingsMapItem>();
+
+		/// <summary>The device list as the Mappings section knows it, which follows the page as well; null on a page without one.</summary>
+		internal SettingsMapItem GridMap;
 
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
@@ -1302,11 +1648,184 @@ namespace x360ce.App.Controls
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
 			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
 			item.Code = code;
+			_MapItems.Add(item);
 			// A box that names a control can hold an expression instead, so it gets the switch that
 			// turns one into the other. Every mapping box carries a code and nothing else does, so
 			// this needs no list of its own to fall out of step.
 			if (control is ComboBox && code != default(MapCode))
 				MapExpressionToggle.AttachTo((ComboBox)control);
+		}
+
+		#endregion
+
+		#region Shared page
+
+		/// <summary>What one controller's tab showed on the page, kept while the page shows another controller.</summary>
+		class PadView
+		{
+			/// <summary>The page's selected tab, by name.</summary>
+			public string Page;
+			/// <summary>The Direct Input page's selected tab, by name.</summary>
+			public string DetailsPage;
+			/// <summary>The selected device row, by device instance; null when none was.</summary>
+			public Guid? Row;
+			/// <summary>How far the page was scrolled.</summary>
+			public Point Scroll;
+			/// <summary>The Test sliders, 0 to 100.</summary>
+			public int LeftMotor;
+			public int RightMotor;
+		}
+
+		readonly Dictionary<MapTo, PadView> _Views = new Dictionary<MapTo, PadView>();
+
+		PadView ViewOf(MapTo mapTo)
+		{
+			PadView view;
+			if (!_Views.TryGetValue(mapTo, out view))
+				_Views[mapTo] = view = new PadView();
+			return view;
+		}
+
+		void SaveView()
+		{
+			var view = ViewOf(MappedTo);
+			view.Page = PadTabControl.SelectedTab?.Name;
+			view.DetailsPage = DirectInputPanel.DeviceDetailsTabControl.SelectedTab?.Name;
+			view.Row = GetSelectedSetting()?.InstanceGuid;
+			view.Scroll = new Point(-AutoScrollPosition.X, -AutoScrollPosition.Y);
+			view.LeftMotor = LeftMotorTestTrackBar.Value;
+			view.RightMotor = RightMotorTestTrackBar.Value;
+		}
+
+		/// <summary>Selects a tab by name, or the first tab for a controller whose tab has not been shown, as a page of its own opened.</summary>
+		static void SelectPage(TabControl tabs, string name)
+		{
+			var pages = tabs.TabPages.Cast<TabPage>().ToArray();
+			var page = string.IsNullOrEmpty(name) ? pages.FirstOrDefault() : pages.FirstOrDefault(x => x.Name == name);
+			if (page != null && tabs.SelectedTab != page)
+				tabs.SelectedTab = page;
+		}
+
+		/// <summary>Shows another controller on the page, as that controller's own tab would show it.</summary>
+		/// <remarks>
+		/// One page serves the four Controller tabs, which made and kept about 3,000 windows when each had its own. The
+		/// boxes keep their place in the settings and move to the controller shown: while they move and take its values,
+		/// settings events are held, so the values shown for one controller are never saved as another's. Each controller's
+		/// tab keeps what it showed: the page and the Direct Input page selected, the device row, the scroll position and the
+		/// Test sliders, whose motors run on while another controller is shown. A mapping being recorded stops, as it does on
+		/// Escape: its boxes are about to show another controller.
+		/// </remarks>
+		internal void SwitchTo(MapTo mapTo)
+		{
+			if (mapTo == MappedTo)
+				return;
+			var watch = System.Diagnostics.Stopwatch.StartNew();
+			SaveView();
+			StopRecording();
+			var view = ViewOf(mapTo);
+			SettingsManager.Current.SuspendEvents();
+			try
+			{
+				MappedTo = mapTo;
+				Name = string.Format("ControlPad{0}", (int)mapTo);
+				var section = string.Format(@"PAD{0}", (int)mapTo);
+				foreach (var item in _MapItems)
+				{
+					item.MapTo = mapTo;
+					item.IniSection = section;
+				}
+				if (GridMap != null)
+				{
+					var key = string.Format(@"PAD{0}", (int)mapTo);
+					GridMap.MapTo = mapTo;
+					GridMap.PropertyName = key;
+					GridMap.IniKey = key;
+				}
+				XboxImage.InitializeImages(imageInfos, _Imager, mapTo);
+				// What the page knew of the controller shown before.
+				_Announced = false;
+				_AnnouncedSetting = null;
+				_InstanceGuid = Guid.Empty;
+				oldState = default(State);
+				oldConnected = false;
+				_Imager.SetImages(false);
+				newState = default(State);
+				newConnected = false;
+				ClearReadings();
+				springNoteShown = false;
+				springNoteHid = null;
+				forceSourceRouting = null;
+				forceSourceSetting = null;
+				forceSourceDevice = null;
+				var row = view.Row ?? MappedItemsFor(mapTo).Select(x => (Guid?)x.InstanceGuid).FirstOrDefault();
+				UpdateFromCurrentGame(row);
+				// A controller with no device shows the defaults, as a tab of its own showed them, not the last one's values.
+				if (GetSelectedSetting() == null)
+					SettingsManager.Current.SyncFormFromPadSetting(mapTo, new PadSetting());
+				UpdateEnabledFromDevice(GetSelectedDevice());
+				UpdateWheelChart(true);
+			}
+			finally
+			{
+				SettingsManager.Current.ResumeEvents();
+			}
+			SelectPage(PadTabControl, view.Page);
+			SelectPage(DirectInputPanel.DeviceDetailsTabControl, view.DetailsPage);
+			LeftMotorTestTrackBar.Value = view.LeftMotor;
+			RightMotorTestTrackBar.Value = view.RightMotor;
+			AutoScrollPosition = view.Scroll;
+			if (Global.DHelper?.PassCount > 0)
+				Global_UpdateControlFromStates(this, EventArgs.Empty);
+			Program.StartupTrace.Mark(string.Format("pad: controller {0} shown in {1} ms", (int)mapTo, watch.ElapsedMilliseconds));
+		}
+
+		/// <summary>
+		/// Shows no reading, as a controller's tab of its own showed none before its controller's first state: the General
+		/// page's names unlit, the numbers under them and each axis row's DInput and XInput at 0, the controller picture at
+		/// rest, each axis chart drawn from its settings alone, no reading on the Axis to D-Pad chart and no button pressed
+		/// on the Buttons page.
+		/// </summary>
+		/// <remarks>
+		/// The next state update shows the controller's own readings only while it is connected and has a device, so a
+		/// controller with no device would otherwise go on showing those of the controller shown before.
+		/// </remarks>
+		void ClearReadings()
+		{
+			var rest = default(State);
+			foreach (var ii in imageInfos)
+			{
+				_Imager.DrawState(ii, rest.Gamepad, CurrentCbx);
+				ii.ShowValue(rest.Gamepad);
+			}
+			foreach (var chart in _AxisCharts)
+			{
+				chart.SetExpression(null);
+				chart.SetTuningEnabled(true);
+				chart.DrawPoint(0, 0, false, false);
+			}
+			AxisToDPadChart.ClearReading();
+			foreach (var button in AxisToButtonTableLayoutPanel.Controls.OfType<AxisToButtonUserControl>())
+				button.Refresh(rest, _Imager.markB);
+		}
+
+		/// <summary>The rows a controller's tab lists for the game chosen.</summary>
+		static IEnumerable<UserSetting> MappedItemsFor(MapTo mapTo)
+		{
+			var game = SettingsManager.CurrentGame;
+			return SettingsManager.UserSettings.ItemsToArraySynchronized()
+				.Where(x => x.MapTo == (int)mapTo && game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName);
+		}
+
+		/// <summary>The device row a controller's tab has selected, shown or not, for what reads a tab without opening it.</summary>
+		internal UserSetting GetSelectedSettingFor(MapTo mapTo)
+		{
+			if (mapTo == MappedTo)
+				return GetSelectedSetting();
+			PadView view;
+			var rows = MappedItemsFor(mapTo).ToArray();
+			if (_Views.TryGetValue(mapTo, out view) && view.Row.HasValue)
+				return rows.FirstOrDefault(x => x.InstanceGuid == view.Row.Value) ?? rows.FirstOrDefault();
+			return rows.FirstOrDefault();
 		}
 
 		#endregion
@@ -1430,7 +1949,7 @@ namespace x360ce.App.Controls
 			DiMenuStrip.Items.Clear();
 			ToolStripMenuItem mi;
 			mi = new ToolStripMenuItem(cEmpty);
-			mi.ForeColor = SystemColors.ControlDarkDark;
+			mi.ForeColor = SystemColors.GrayText;
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Return if direct input device is not available.
@@ -1987,9 +2506,10 @@ namespace x360ce.App.Controls
 		/// Read from the device whose motors the engine drives, a Raw Input device's DirectInput twin, as the engine reads
 		/// it for the spring: the axis the spring's motor turns, or the first axis before force feedback has found it.
 		/// </remarks>
-		void UpdateWheelChart()
+		/// <param name="hidden">True to put them there while the tab is not shown too, as when the page shows another controller.</param>
+		void UpdateWheelChart(bool hidden = false)
 		{
-			if (PadTabControl.SelectedTab != WheelTabPage)
+			if (!hidden && PadTabControl.SelectedTab != WheelTabPage)
 				return;
 			// The wheel the range is counted for can change with the selection or arrive after the page was drawn.
 			UpdateSpringChart();
@@ -2006,10 +2526,13 @@ namespace x360ce.App.Controls
 			}
 			int? position = null;
 			var state = driven == null ? null : driven.SourceState;
-			if (state != null && state.Axis != null)
+			// Only a wheel that is read, on an axis it has, has an angle: one offline, one whose reads fail, as while a game holds
+			// it, or one without the axis reads nought, which the chart would show as the left stop, -450 degrees on a wheel
+			// counted against 900, while the wheel stands at its centre.
+			if (state != null && state.Axis != null && driven.IsOnline && driven.DiReadFailures == 0)
 			{
 				var index = driven.FFState != null && driven.FFState.SpringAxisIndex >= 0 ? driven.FFState.SpringAxisIndex : 0;
-				if (index < state.Axis.Length)
+				if (index < state.Axis.Length && (driven.DiAxeMask & (1 << index)) != 0)
 					position = state.Axis[index];
 			}
 			WheelChartUserControl.UpdateWheel(position,
@@ -2279,7 +2802,7 @@ namespace x360ce.App.Controls
 				return;
 			LeftMotorTestTextBox.Text = string.Format("{0} %", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} %", RightMotorTestTrackBar.Value);
-			SendVibration();
+			SendVibration(MappedTo, LeftMotorTestTrackBar.Value, RightMotorTestTrackBar.Value);
 			//UnsafeNativeMethods.Enable(false);
 			//UnsafeNativeMethods.Enable(true);
 		}
@@ -2294,22 +2817,25 @@ namespace x360ce.App.Controls
 		/// place the tab's controller is in nor a library that is always loaded, so it usually did nothing
 		/// at all.
 		/// </remarks>
-		void SendVibration()
+		/// <param name="mapTo">The controller whose motors are tested.</param>
+		/// <param name="left">The left slider, 0 to 100.</param>
+		/// <param name="right">The right slider, 0 to 100.</param>
+		void SendVibration(MapTo mapTo, int left, int right)
 		{
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
-			var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
-			var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
+			var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, left);
+			var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, right);
 			// Into the same place a game's rumble arrives, so everything downstream of it is exercised:
 			// the mapped device this program drives, and the pass-through to a real controller.
 			if (((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
-				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
+				Global.DHelper.SetVibration(mapTo, largeMotor, smallMotor, 0);
 			// Straight to the real controller when nothing is being emulated, because then there is no
 			// rumble arriving for anything to pass on. Asked of Windows' own XInput rather than the one
 			// this program can put in a game's path: the force has to reach the device, not the emulation.
 			PadSetting ps;
-			var place = AppHelper.GetForcePassThroughPlace(MappedTo, out ps);
+			var place = AppHelper.GetForcePassThroughPlace(mapTo, out ps);
 			if (place >= 0 && !((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				// Scaled by the strengths, the same as a game's rumble is, or the test would say the
 				// motors do something they will not do once a game is running.
@@ -2319,18 +2845,29 @@ namespace x360ce.App.Controls
 					TimeSpan.FromMilliseconds(DInputHelper.XiAnswerMs));
 		}
 
-		/// <summary>Stops the motors the Test sliders set, through the path the sliders set them by.</summary>
+		/// <summary>Stops the motors the Test sliders set, on every controller the page has shown, through the path the sliders set them by.</summary>
 		/// <remarks>
-		/// Both sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
-		/// by the sliders' own handler, which sends only while a controller tab is shown.
+		/// The sliders are put at nought and the stop is sent by <see cref="SendVibration"/>. It is sent here as well as
+		/// by the sliders' own handler, which sends only while a controller tab is shown. A controller shown before keeps
+		/// its sliders in its view, and its motors run on until stopped here.
 		/// </remarks>
 		public bool StopTestVibration()
 		{
+			var stopped = false;
+			foreach (var pair in _Views)
+			{
+				if (pair.Key == MappedTo || (pair.Value.LeftMotor == 0 && pair.Value.RightMotor == 0))
+					continue;
+				pair.Value.LeftMotor = 0;
+				pair.Value.RightMotor = 0;
+				SendVibration(pair.Key, 0, 0);
+				stopped = true;
+			}
 			if (LeftMotorTestTrackBar.Value == 0 && RightMotorTestTrackBar.Value == 0)
-				return false;
+				return stopped;
 			LeftMotorTestTrackBar.Value = 0;
 			RightMotorTestTrackBar.Value = 0;
-			SendVibration();
+			SendVibration(MappedTo, 0, 0);
 			return true;
 		}
 
@@ -2728,6 +3265,10 @@ namespace x360ce.App.Controls
 			if (item is null)
 				return;
 			var column = grid.Columns[e.ColumnIndex];
+			// A setting can outlive the device it maps to, so the device is null for a mapping whose device is gone.
+			var device = SettingsManager.GetDevice(item.InstanceGuid);
+			// Tinted by the source the device is read through, as on the Devices page.
+			e.CellStyle.BackColor = AppHelper.GetInputSourceTint(device);
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
@@ -2735,25 +3276,23 @@ namespace x360ce.App.Controls
 			else if (column == IsEnabledColumn)
 			{
 				// A device unticked on the Devices page is left out of every game, whatever its box here says.
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
 				var off = device != null && !device.IsEnabled;
 				grid.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = off ? SwitchedOffOnDevicesPage : "";
 				if (off)
 				{
 					e.CellStyle.BackColor = SystemColors.Control;
-					e.CellStyle.SelectionBackColor = SystemColors.ControlDark;
+					// The darker grey, which the selected text reads on in both themes.
+					e.CellStyle.SelectionBackColor = SystemColors.ControlDarkDark;
 				}
 			}
 			else if (column == XInputPlaceColumn)
 			{
-				e.Value = AppHelper.GetXInputPlaces(SettingsManager.GetDevice(item.InstanceGuid));
+				e.Value = AppHelper.GetXInputPlaces(device);
 			}
 			else if (column == ConnectionClassColumn)
 			{
-				// A setting can outlive the device it maps to, so the lookup returns null for
-				// a mapping whose device is gone. Treat it as an unknown connection class.
-				var connectionClass = SettingsManager.GetDevice(item.InstanceGuid)?.ConnectionClass ?? Guid.Empty;
-				e.Value = AppHelper.GetConnectionClassIcon(connectionClass);
+				// A mapping whose device is gone has an unknown connection class.
+				e.Value = AppHelper.GetConnectionClassIcon(device?.ConnectionClass ?? Guid.Empty);
 			}
 			else if (column == InstanceIdColumn)
 			{
@@ -2762,7 +3301,7 @@ namespace x360ce.App.Controls
 			}
 			else if (column == SourceColumn)
 			{
-				e.Value = AppHelper.GetInputSourceName(SettingsManager.GetDevice(item.InstanceGuid));
+				e.Value = AppHelper.GetInputSourceName(device);
 			}
 			else if (column == ScriptNameColumn)
 			{
@@ -2776,7 +3315,6 @@ namespace x360ce.App.Controls
 			}
 			else if (column == VendorNameColumn)
 			{
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
 				e.Value = device == null
 					? ""
 					: device.DevManufacturer;
@@ -2784,7 +3322,6 @@ namespace x360ce.App.Controls
 			else if (column == ProductNameColumn)
 			{
 				// The device's name as it is now: the setting keeps the one the device had when it was mapped.
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
 				if (device != null && !string.IsNullOrEmpty(device.ProductName))
 					e.Value = device.ProductName;
 			}
@@ -2961,7 +3498,7 @@ namespace x360ce.App.Controls
 			if (!show)
 				return;
 			PluginPanel = new PluginDeviceUserControl(instanceGuid, type, device, Plugins.PluginSettings.Current) { Dock = DockStyle.Fill };
-			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true };
+			PluginTabPage = new TabPage { Name = nameof(PluginTabPage), Text = type.Name, AccessibleName = type.Name, UseVisualStyleBackColor = true, Padding = AppHelper.ScaledPadding(0, 0, 8, 8) };
 			PluginTabPage.AccessibleDescription = "The settings of the plugin device mapped here, and the controls its plugin adds.";
 			PluginTabPage.Controls.Add(PluginPanel);
 			PadTabControl.TabPages.Add(PluginTabPage);
@@ -3228,6 +3765,10 @@ namespace x360ce.App.Controls
 
 		/// <summary>The device as it was when Remap All began: at rest, which each next control waits for.</summary>
 		SourceState RemapRest;
+
+		/// <summary>How long Remap All shows a recorded control before it starts the next one.</summary>
+		/// <remarks>Short, as the next control also waits for the device to come to rest; without it the boxes moved on faster than people could follow.</remarks>
+		public static TimeSpan RemapAllPause = TimeSpan.FromMilliseconds(500);
 
 		public string RemapName = "Remap All";
 		public string RemapStopName = "STOP";

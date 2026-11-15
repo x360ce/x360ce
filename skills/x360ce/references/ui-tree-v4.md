@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.29.62.0, built 2026-11-07.
+Version 4.30.63.0, built 2026-11-15.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -31,18 +31,18 @@ not shown in this state of the program.
 [Section]   ├── Controls                                                                # Controls used in more than one place, described once here.
 [Control]   │   ├── AxisMapUserControl                                                  # Shapes what the game receives from one control, without changing the device.
 [Section]   │   │   └── Mapped control settings                                         # Dead zone, anti-dead zone and sensitivity for this one control.
-[Value]     │   │       ├── Sensitivity                                                 # Bends the middle of the travel and leaves both ends where they are.
-[Slider]    │   │       ├── Sensitivity 0..100                                          # Bends the middle of the travel and leaves both ends where they are.
 [Picture]   │   │       ├── Response curve                                              # Draws what the game receives for every position of the control.
-[Value]     │   │       ├── Anti-dead zone                                              # Skips past a dead zone the game applies of its own, so small movements are felt.
-[Value]     │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
-[Slider]    │   │       ├── Anti-dead zone 0..100                                       # Skips past a dead zone the game applies of its own, so small movements are felt.
+[List]      │   │       ├── Preset                                                      # Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; "Clear" sets all three to nought. The list then shows "Apply Preset" again.
 [Slider]    │   │       ├── Dead zone 0..100                                            # Add deadzone to the left trigger. Range is 0 to 255. Default is 0. The slider shows it as a percentage: 100 is 256.
-[Number]    │   │       ├── Anti-dead zone                                              # Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.
+[Value]     │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
 [Number]    │   │       ├── Dead zone                                                   # How far the control must move before the game sees anything. Removes drift at rest.
-[Number]    │   │       ├── Sensitivity -100..100 (hidden)                              # Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.
+[Slider]    │   │       ├── Anti-dead zone 0..100                                       # Skips past a dead zone the game applies of its own, so small movements are felt.
+[Value]     │   │       ├── Anti-dead zone                                              # Skips past a dead zone the game applies of its own, so small movements are felt.
+[Number]    │   │       ├── Anti-dead zone                                              # Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.
+[Slider]    │   │       ├── Sensitivity 0..100                                          # Bends the middle of the travel and leaves both ends where they are.
+[Value]     │   │       ├── Sensitivity                                                 # Bends the middle of the travel and leaves both ends where they are.
 [CheckBox]  │   │       ├── Invert sensitivity                                          # Bends the middle the other way: more sensitive in the centre instead of less.
-[List]      │   │       └── Preset                                                      # Fills the dead zone, anti-dead zone and sensitivity from a common combination as soon as one is picked; "Clear" sets all three to nought. The list then shows "Apply Preset" again.
+[Number]    │   │       └── Sensitivity -100..100 (hidden)                              # Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.
 [Control]   │   ├── AxisToButtonUserControl                                             # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Value]     │   │   ├── Mapped control                                                  # Which control on your device works this button.
 [Slider]    │   │   ├── Press point 0..100                                              # How far the control must move before this button counts as pressed.
@@ -76,33 +76,40 @@ not shown in this state of the program.
 [Control]   │   ├── InputChipGroup                                                      # The device's buttons, numbered as the mapping list numbers them.
 [Control]   │   ├── InputUserControl                                                    # Every control of the selected device, lit while it is used, before anything is mapped.
 [Label]     │   │   ├── Input source                                                    # The device the chips below belong to, or that none is selected.
-[Section]   │   │   ├── Buttons                                                         # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
-[Group]     │   │   │   └── Button chips -> InputChipGroup                              # The device's buttons, numbered as the mapping list numbers them.
-[Section]   │   │   ├── Axes                                                            # One chip per axis with its reading, lit while it moves and for half a second after.
-[Group]     │   │   │   └── Axis chips -> InputChipGroup                                # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
-[Section]   │   │   ├── Sliders                                                         # One chip per slider with its reading, lit while it moves and for half a second after.
-[Group]     │   │   │   └── Slider chips -> InputChipGroup                              # The device's sliders, numbered as the mapping list numbers them.
-[Section]   │   │   └── POVs                                                            # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
-[Group]     │   │       └── POV chips -> InputChipGroup                                 # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
+[Section]   │   │   ├── Buttons (hidden)                                                # One chip per button, lit while it is held. Click or drag a chip into a mapping box.
+[Group]     │   │   │   └── Button chips -> InputChipGroup (hidden)                     # The device's buttons, numbered as the mapping list numbers them.
+[Section]   │   │   ├── Axes (hidden)                                                   # One chip per axis with its reading, lit while it moves and for half a second after.
+[Group]     │   │   │   └── Axis chips -> InputChipGroup (hidden)                       # The device's axes, numbered by the slot each answers to, as the mapping list numbers them.
+[Section]   │   │   ├── Sliders (hidden)                                                # One chip per slider with its reading, lit while it moves and for half a second after.
+[Group]     │   │   │   └── Slider chips -> InputChipGroup (hidden)                     # The device's sliders, numbered as the mapping list numbers them.
+[Section]   │   │   └── POVs (hidden)                                                   # One chip per POV with its reading in degrees, then its four directions, lit while pressed.
+[Group]     │   │       └── POV chips -> InputChipGroup (hidden)                        # Each POV followed by U, R, D and L: its up, right, down and left as mappable buttons.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
+[Control]   │   ├── MouseDemoUserControl                                                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
+[Label]     │   │   ├── Demo stick                                                      # The stick group the demo shows and its style, such as Left Stick: Wheel.
+[Picture]   │   │   ├── Demo picture                                                    # The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
+[Button]    │   │   ├── Play demo                                                       # Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.
+[Label]     │   │   ├── Demo style                                                      # What the style shown does, in the Style list's words.
+[Label]     │   │   ├── Demo step                                                       # What the demo shows now, in words, such as Mouse stops: stick returns to the centre.
+[Label]     │   │   └── Demo note (hidden)                                              # Shown when the group's Active setting keeps the style from doing what the demo shows, such as a Wheel that is always active and so never goes back.
 [Control]   │   ├── MouseStickUserControl                                               # How a mouse moves one stick.
 [Section]   │   │   └── Left Stick                                                      # How a mouse moves this stick.
-[List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. Default is 0.
+[List]      │   │       ├── Style                                                       # How a mouse moves the left stick. 0 = Position: the stick follows how far the mouse has moved, and stays there. 1 = Speed: the stick follows how fast the mouse moves, and returns to the centre when it stops. 2 = Screen: the stick follows where the pointer is on the screen. -1 = Wheel: the stick follows how far the mouse has moved and stays there, and goes back to the centre over the Back to centre time once the button lets it go. Default is 0.
 [Slider]    │   │       ├── Sensitivity across 1..400                                   # How far the left stick moves for a movement across, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity across value                                    # The sensitivity across the slider is set to, in percent.
 [Slider]    │   │       ├── Sensitivity up and down 1..400                              # How far the left stick moves for a movement up or down, in percent. In Position, 100 moves it from the centre to the end in 2,048 counts; in Speed, 100 reaches the end at 4,096 counts a second; in Screen, 100 reaches it half the screen's height from the centre. Range is 1 to 400. Default is 100.
 [Value]     │   │       ├── Sensitivity up and down value                               # The sensitivity up and down the slider is set to, in percent.
 [Slider]    │   │       ├── Smoothing 0..500                                            # How long the left stick takes to follow a change in Speed and Screen, in milliseconds, which evens out a mouse's uneven reports. Range is 0 to 500. Default is 30.
-[Slider]    │   │       ├── Back to centre 0..2000                                      # How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths. Range is 0 to 2000. Default is 0.
-[Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
 [List]      │   │       ├── Active                                                      # When the mouse moves the left stick. 0 = Always. 1 = While the button is held; let go, the stick returns to the centre. 2 = While the button is held; let go, the stick stays where it was. 3 = The button turns it on and off; off, the stick is at the centre. Default is 0.
+[Value]     │   │       ├── Smoothing value                                             # The smoothing the slider is set to, in milliseconds.
+[List]      │   │       ├── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
 [Value]     │   │       ├── Back to centre value                                        # The time back to the centre the slider is set to, in milliseconds.
-[List]      │   │       └── Button                                                      # The button that turns the mouse on the left stick on and off, counted from 1: the button of the same device. 0 = none. Default is 0.
+[Slider]    │   │       └── Back to centre 0..2000                                      # How long the left stick takes to go back to the centre, in milliseconds. In Position, 0 leaves it where the mouse left it; in Speed, 0 returns it as fast as it smooths; in Wheel, the time it takes once the button lets the stick go, 0 at once. Range is 0 to 2000. Default is 0.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
 [Tabs]      │   │   ├── Controller pages                                                # Settings for this controller, grouped by the part being mapped.
 [Tab]       │   │   │   ├── General                                                     # Says which control on your device works each part of the Xbox controller.
 [Group]     │   │   │   │   ├── Input -> InputUserControl                               # Every control of the selected device, lit while it is used, before anything is mapped.
-[Button]    │   │   │   │   ├── Remap All                                               # Clears the mapping, then asks you to press each control in turn.
+[Button]    │   │   │   │   ├── Remap All -> WidestTextButton                           # Clears the mapping, then asks you to press each control in turn.
 [List]      │   │   │   │   ├── Button layout                                           # Names the buttons after the controller in your hands instead of an Xbox one.
 [CheckBox]  │   │   │   │   ├── Left Trigger formula -> MapExpressionToggle             # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [List]      │   │   │   │   ├── Left Trigger                                            # Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.
@@ -292,7 +299,8 @@ not shown in this state of the program.
 [Tab]       │   │   │   ├── Mouse                                                       # How a mouse, or any control that reports movement, moves each stick: by how far it moved, how fast it moves, or where the pointer is, always or while a button is held.
 [Label]     │   │   │   │   ├── What the Mouse page sets                                # The mouse's axes are chosen in the stick's boxes on the General page; this page sets how they move the stick.
 [Group]     │   │   │   │   ├── (LeftMouseStickPanel) -> MouseStickUserControl          # How a mouse moves one stick.
-[Group]     │   │   │   │   └── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
+[Group]     │   │   │   │   ├── (RightMouseStickPanel) -> MouseStickUserControl         # How a mouse moves one stick.
+[Group]     │   │   │   │   └── (MouseDemoPanel) -> MouseDemoUserControl                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Tab]       │   │   │   ├── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │   │   └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
 [Tab]       │   │   │   └── SDL                                                         # What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.
@@ -302,11 +310,11 @@ not shown in this state of the program.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
 [CheckBox]  │   │   │   ├── Auto Map                                                    # Not available yet, so greyed out: the program does not map devices by itself. Add maps a device.
 [CheckBox]  │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
-[CheckBox]  │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
+[CheckBox]  │   │   │   └── Show XInput State                                           # Shows on the General page the values read back from XInput - what the game actually receives - instead of the values worked out from your devices. A trigger's or stick's chart always shows the selected device's reading and what its mapping makes of it. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
 [Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
-[Button]    │   │   ├── Auto Preset                                                     # Fills the mapping from SDL's controller database when it knows the selected device, otherwise from x360ce's own guess. The status bar says which.
+[Button]    │   │   ├── Auto Preset                                                     # Fills the settings from x360ce's controller database, and the mapping from SDL's where it maps nothing, when either knows the selected device, otherwise from x360ce's own guess. The status bar says which.
 [Button]    │   │   ├── Clear                                                           # Empties every mapping on this controller.
 [Button]    │   │   ├── Reset                                                           # Puts every setting on this controller back to its default. Asks first.
 [Button]    │   │   ├── Save Preset...                                                  # Writes this controller's settings to a file, to load again or pass on.
@@ -321,11 +329,12 @@ not shown in this state of the program.
 [Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.
 [Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
 [Button]    │   │   ├── Update SDL Database                                             # Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.
-[Label]     │   │   └── SDL update status                                               # How the last update of SDL's controller database went.
+[Label]     │   │   └── SDL update status (hidden)                                      # How the last update of SDL's controller database went.
 [Control]   │   ├── WheelChartUserControl                                               # The centering spring's force at every angle of the wheel, and the wheel's angle and force now.
 [Label]     │   │   ├── Wheel angle                                                     # The wheel's angle now, in degrees from the centre; negative is to the left.
 [Label]     │   │   ├── Spring force                                                    # The spring's force at that angle, in percent of the wheel's force, and which way it pushes.
 [Picture]   │   │   └── Centering chart                                                 # The red curve is the spring's force towards the centre at every angle, from one stop to the other, as it is played: above the middle it pushes right, below it pushes left. The grey band is Friction, forces too weak to turn the wheel: the curve stays above it everywhere but a few degrees round the centre, where it rises gently so the wheel settles there instead of shaking. The crosshair and the dot are the wheel's angle and force now.
+[Control]   │   ├── WidestTextButton                                                    # Clears the mapping, then asks you to press each control in turn.
 [Control]   │   └── XboxImageUserControl                                                # Lights up each part of the controller as it is used, so a mapping can be checked by eye.
 [Section]   ├── App                                                                     # The main window.
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
@@ -365,14 +374,14 @@ not shown in this state of the program.
 [CheckBox]  │           │           │   │   ├── Allow only one copy of Application at a time  # Allow only one instance of the application to run at a time.
 [CheckBox]  │           │           │   │   ├── Minimize to Tray                        # Hides the window to the notification area instead of the taskbar.
 [CheckBox]  │           │           │   │   ├── Always on Top                           # Make program Top Window
-[CheckBox]  │           │           │   │   ├── Start with Windows:                     # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
+[CheckBox]  │           │           │   │   ├── Start with Windows                      # Starts this copy of the program when you sign in. The tick is Windows' own setting, the one Task Manager shows on its Startup apps page, so it is unticked while Windows starts another copy or Task Manager has it switched off, and ticking it puts this copy in.
 [List]      │           │           │   │   └── Start with Windows                      # How the window appears when the program starts with Windows. Greyed out while it does not start with Windows.
 [Section]   │           │           │   ├── Testing                                     # Switching the emulated controllers off to try the real ones, and the pages that show more detail.
 [CheckBox]  │           │           │   │   ├── Enable XInput                           # Turns the emulated controllers on. Off leaves games with the real ones.
 [CheckBox]  │           │           │   │   ├── Show [Programs] Tab                     # Shows the Programs page, which lists what has been set up for each program.
 [CheckBox]  │           │           │   │   ├── Show [Devices] Tab                      # Shows the Devices page, which lists every controller found.
 [CheckBox]  │           │           │   │   └── Show [Settings] Tab                     # Shows the Settings page, which lists every stored setting.
-[Section]   │           │           │   ├── Direct Input Devices                        # Which devices the program lists and reads.
+[Section]   │           │           │   ├── Input Devices                               # Which devices the program lists and reads.
 [CheckBox]  │           │           │   │   ├── Exclude Supplemental Devices            # For Auto Map, which is not available yet: leaves out the extra parts a device reports beside its main controls. Nothing uses it until then.
 [CheckBox]  │           │           │   │   ├── Exclude Virtual Devices                 # For Auto Map, which is not available yet: leaves out vJoy virtual devices, so they are not mapped to themselves. Nothing uses it until then.
 [CheckBox]  │           │           │   │   └── Read Every Change                       # Read every change a device reports, not only its state at each pass.
@@ -415,7 +424,8 @@ not shown in this state of the program.
 [List]      │           │           │       │   ├── Web service address                 # Internet settings database URL.
 [Button]    │           │           │       │   ├── Test                                # Asks the web service at that address who it is and says whether it answers.
 [List]      │           │           │       │   ├── SDL database address                # Address every [Update SDL Database] button downloads SDL's controller database from, SDL_GameControllerDB on GitHub unless you choose another. A raw.githubusercontent.com address of any fork or branch is checked against its newest commit; any other http or https address is downloaded as it is.
-[Button]    │           │           │       │   └── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
+[Button]    │           │           │       │   ├── Update SDL Database                 # Downloads SDL's controller database from that address into the settings folder, as the button on each controller's SDL tab does, and says in the header how it went.
+[Button]    │           │           │       │   └── Update x360ce Database              # Downloads x360ce's controller database, the setting most people use for each controller, from the site of the web service address into the settings folder, and says in the header how it went.
 [Section]   │           │           │       ├── Online account                          # Identifies this computer to the online database.
 [Text]      │           │           │       │   ├── Computer disk                       # Disk the computer identifier is taken from.
 [Text]      │           │           │       │   ├── Computer identifier                 # Anonymous identifier for this computer.
@@ -456,7 +466,7 @@ not shown in this state of the program.
 [Tab]       │           │           ├── HID Guardian (obsolete)                         # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Section]   │           │           │   ├── HID Guardian                                # The tool HID Hide replaced. Kept so an old installation can be removed.
 [Text]      │           │           │   │   ├── HID Guardian state                      # Whether HID Guardian is still installed.
-[Button]    │           │           │   │   ├── Install                                 # Installs HID Guardian. Use HID Hide instead.
+[Button]    │           │           │   │   ├── Install (hidden)                        # Installs HID Guardian. Use HID Hide instead.
 [Button]    │           │           │   │   ├── Uninstall                               # Removes HID Guardian. Needs Administrator.
 [Button]    │           │           │   │   └── Refresh                                 # Checks HID Guardian again.
 [Value]     │           │           │   └── HID Guardian notes                          # Explains why HID Guardian is no longer recommended.
@@ -603,16 +613,16 @@ not shown in this state of the program.
 [Button]    │           │               └── Reset to Default                            # Puts this game's settings back the way they started.
 [Tab]       │           ├── Devices                                                     # Every controller the program can see, whether mapped or not.
 [Group]     │           │   ├── (XInputDevicesPanel)
+[Toolbar]   │           │   │   ├── Emulated controller actions                         # Buttons that act on the emulated controllers shown below.
+[Button]    │           │   │   │   ├── Refresh                                         # Reads the controllers again, for when one has arrived or left.
+[Button]    │           │   │   │   ├── Auto-Order                                      # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
+[Button]    │           │   │   │   └── Apply                                           # Recreates the controllers in the order shown. Needs Administrator.
 [Grid]      │           │   │   ├── XInput devices                                      # Every emulated controller and the XInput place it holds, in the order games see them.
-[Group]     │           │   │   ├── Order notice (hidden)                               # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
-[Label]     │           │   │   │   ├── Notice subject                                  # What the notice is about: an order waiting for OK, the order being made, or how it went.
-[Label]     │           │   │   │   ├── Notice text                                     # The steps, what happened at each, and why it stopped when it did.
-[Button]    │           │   │   │   ├── OK                                              # Puts the controllers in the order shown. Once it is over, closes the notice.
-[Button]    │           │   │   │   └── Cancel                                          # Closes the notice without touching any controller.
-[Toolbar]   │           │   │   └── Emulated controller actions                         # Buttons that act on the emulated controllers shown below.
-[Button]    │           │   │       ├── Apply                                           # Recreates the controllers in the order shown. Needs Administrator.
-[Button]    │           │   │       ├── Auto-Order                                      # Orders the list so Controller N's virtual controller takes XInput N and real controllers take the places left, then applies it.
-[Button]    │           │   │       └── Refresh                                         # Reads the controllers again, for when one has arrived or left.
+[Group]     │           │   │   └── Order notice (hidden)                               # Opens under the list after Apply or Auto-Order: the steps that will be taken, each step as it is taken, then how it went.
+[Label]     │           │   │       ├── Notice subject                                  # What the notice is about: an order waiting for OK, the order being made, or how it went.
+[Label]     │           │   │       ├── Notice text                                     # The steps, what happened at each, and why it stopped when it did.
+[Button]    │           │   │       ├── OK                                              # Puts the controllers in the order shown. Once it is over, closes the notice.
+[Button]    │           │   │       └── Cancel                                          # Closes the notice without touching any controller.
 [Group]     │           │   └── (DevicesPanel)                                          # Every controller the program can see.
 [Grid]      │           │       ├── Devices                                             # Every controller the program can see, once for each source it is read through: DirectInput rows first, tinted blue, then Raw Input rows, teal, then plugin devices, violet. Unplugged ones are dimmed. In the list Add opens, each device a loaded plugin offers is listed too, until it has been added.
 [Toolbar]   │           │       └── Device actions                                      # Refreshes the list and works on the selected device.
@@ -620,6 +630,7 @@ not shown in this state of the program.
 [Button]    │           │           ├── Delete                                          # Forgets the selected device and its settings.
 [CheckBox]  │           │           ├── Show System Devices (hidden)                    # Lists devices Windows files as system devices too, such as a Logitech G13, so they can be mapped. Shown when choosing a device for a controller.
 [Button]    │           │           ├── Hardware...                                     # Opens the selected device in Windows Device Manager.
+[Button]    │           │           ├── Test...                                         # Opens the Test Device window for the one connected device selected: a guided test of its sticks, triggers and buttons, graded in plain words. Controllers are paused while the test runs.
 [Button]    │           │           ├── Add Plugin Device                               # Adds a device a plugin offers, such as the Test Controller, a pretend controller for trying the program without hardware. With several plugin devices it opens a list to pick from.
 [Button]    │           │           ├── Remove Leftover Pads                            # Removes emulated controllers left behind by runs that ended badly. Needs Administrator.
 [Button]    │           │           └── HID Hide                                        # Hides devices from games through HID Hide, which must be installed: see the HID Hide page on the Options tab.
@@ -658,6 +669,7 @@ not shown in this state of the program.
 [Button]    │               │       ├── Exception Info (hidden)                         # Shows the fault behind the selected issue in full.
 [Status]    │               │       ├── Check state                                     # What the program is checking right now.
 [Status]    │               │       ├── Next check                                      # How long until the checks run again.
+[CheckBox]  │               │       ├── Run Checks                                      # Whether the checks run every few seconds. Off, no check runs and Next Run says off.
 [Status]    │               │       └── Check state                                     # Whether the checks are running or waiting.
 [Group]     │               └── (RecorderPanel)                                         # Records what the program reads and sends, into a file to post with a bug report.
 [Section]   │                   └── Record for a bug report                             # Records what the program reads from devices and sends to games and devices into a text file to post with a bug report. Names, folders, addresses and keys are left out, devices are written as D1, D2 and so on, and keyboards and mice are not recorded.

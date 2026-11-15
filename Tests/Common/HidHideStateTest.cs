@@ -115,6 +115,32 @@ namespace x360ce.Tests
 			Assert.AreEqual("--dev-unhide \"" + Wheel + "\"", VirtualDriverInstaller.GetHidHideChanges(state, new string[0], new[] { Pad, Wheel }, Exe));
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A copy in a new folder has listed no device, yet may see those HID Hide hides; once nothing stays hidden it is not added")]
+		public void A_new_copy_may_see_what_HID_Hide_hides()
+		{
+			var state = new VirtualDriverInstaller.HidHideState { Answered = true, CloakOn = true, HiddenDevices = new[] { Pad } };
+			Assert.AreEqual("--app-reg \"" + Exe + "\"", VirtualDriverInstaller.GetHidHideChanges(state, new string[0], new string[0], Exe),
+				"A copy that has listed nothing was left unable to see the hidden pad.");
+			Assert.AreEqual("--dev-unhide \"" + Pad + "\"", VirtualDriverInstaller.GetHidHideChanges(state, new string[0], new[] { Pad }, Exe),
+				"Showing the last hidden device added this program to the list as well.");
+			state.CloakOn = false;
+			Assert.AreEqual("", VirtualDriverInstaller.GetHidHideChanges(state, new string[0], new string[0], Exe),
+				"With hiding off, nothing is hidden from this program, yet it was added.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Changing the devices only leaves this program's place on the list and hiding itself as they are")]
+		public void Changing_devices_only_touches_nothing_else()
+		{
+			var state = new VirtualDriverInstaller.HidHideState { Answered = true, CloakOn = false, HiddenDevices = new[] { Wheel } };
+			Assert.AreEqual("--dev-hide \"" + Pad + "\"", VirtualDriverInstaller.GetHidHideChanges(state, new[] { Pad }, new string[0], null),
+				"Hiding a device for a moment also added this program to the list or switched hiding on.");
+			state.CloakOn = true;
+			Assert.AreEqual("--dev-unhide \"" + Wheel + "\"", VirtualDriverInstaller.GetHidHideChanges(state, new string[0], new[] { Wheel }, null),
+				"Showing a device for a moment also changed the program list.");
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("With the inverse list, the program list names those that may not see, so this program is taken off it")]
 		public void The_inverse_list_takes_this_program_off()

@@ -19,3 +19,10 @@ GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Summaries_ProductGuid_FileName_FileProductName_PadSettingChecksum]
     ON [dbo].[x360ce_Summaries]([ProductGuid] ASC, [FileName] ASC, [FileProductName] ASC, [PadSettingChecksum] ASC);
 
+
+GO
+-- The users of each product's settings, summed in index order: x360ce_GetPresets and x360ce_GetControllerDatabase.
+CREATE NONCLUSTERED INDEX [IX_x360ce_Summaries_ProductGuid_PadSettingChecksum]
+    ON [dbo].[x360ce_Summaries]([ProductGuid] ASC, [PadSettingChecksum] ASC)
+    INCLUDE([Users]);
+

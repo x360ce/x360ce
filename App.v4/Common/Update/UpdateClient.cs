@@ -5,27 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
+using x360ce.Engine;
 
 namespace x360ce.App
 {
-	/// <summary>One request the update client makes. Only the address, the last ETag and a time limit.</summary>
-	public class UpdateRequest
-	{
-		public string Url;
-		/// <summary>ETag of the releases list last seen; sent as If-None-Match so an unchanged list costs no download.</summary>
-		public string ETag;
-		public int TimeoutMs = UpdateClient.TimeoutMs;
-	}
-
-	public class UpdateResponse
-	{
-		public int StatusCode;
-		public string ETag;
-		/// <summary>When the server says the file last changed, in UTC; null when it does not say.</summary>
-		public DateTime? LastModified;
-		public byte[] Body;
-	}
-
 	public enum UpdateOutcome
 	{
 		/// <summary>This version is the newest, or nothing has changed since the last look.</summary>
@@ -66,9 +49,9 @@ namespace x360ce.App
 		public const string ReleasesUrl = "https://api.github.com/repos/x360ce/x360ce/releases?per_page=10";
 		/// <summary>The asset every v4 release carries.</summary>
 		public const string ZipName = "x360ce.zip";
-		public const int TimeoutMs = 10000;
+		public const int TimeoutMs = HttpFile.TimeoutMs;
 		/// <summary>The download is given longer than the probe; the zip is a few megabytes.</summary>
-		public const int DownloadTimeoutMs = 120000;
+		public const int DownloadTimeoutMs = HttpFile.DownloadTimeoutMs;
 
 		public UpdateClient(Version localVersion, Func<UpdateRequest, UpdateResponse> transport = null)
 		{
@@ -233,51 +216,7 @@ namespace x360ce.App
 		/// <summary>The real transport: one HTTPS request over TLS 1.2 that says nothing about the machine.</summary>
 		public UpdateResponse Http(UpdateRequest r)
 		{
-			// Windows 7 and 8.1 do not offer TLS 1.2 to .NET Framework unless asked, and GitHub
-			// accepts nothing older.
-			ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-			var request = (HttpWebRequest)WebRequest.Create(r.Url);
-			request.Method = "GET";
-			request.UserAgent = UserAgent;
-			request.Accept = "application/json, application/octet-stream";
-			request.AllowAutoRedirect = true;
-			request.Timeout = r.TimeoutMs;
-			request.ReadWriteTimeout = r.TimeoutMs;
-			if (!string.IsNullOrEmpty(r.ETag))
-				request.Headers[HttpRequestHeader.IfNoneMatch] = r.ETag;
-			HttpWebResponse response;
-			try
-			{
-				response = (HttpWebResponse)request.GetResponse();
-			}
-			catch (WebException ex)
-			{
-				// A 304 and the error statuses arrive as exceptions here; they are answers, and the caller words them.
-				response = ex.Response as HttpWebResponse;
-				if (response == null)
-					throw;
-			}
-			using (response)
-			{
-				var result = new UpdateResponse
-				{
-					StatusCode = (int)response.StatusCode,
-					ETag = response.Headers[HttpResponseHeader.ETag],
-				};
-				// Read from the header itself: HttpWebResponse.LastModified gives the time now when the server says nothing.
-				DateTime lastModified;
-				if (DateTime.TryParse(response.Headers[HttpResponseHeader.LastModified], CultureInfo.InvariantCulture,
-					DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out lastModified))
-					result.LastModified = lastModified;
-				if (result.StatusCode == 200)
-					using (var stream = response.GetResponseStream())
-					using (var memory = new MemoryStream())
-					{
-						stream.CopyTo(memory);
-						result.Body = memory.ToArray();
-					}
-				return result;
-			}
+			return HttpFile.Get(r, UserAgent);
 		}
 	}
 }

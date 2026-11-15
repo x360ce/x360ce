@@ -1,4 +1,4 @@
-// @under-test: App.v4/MainForm.cs, App.v4/Controls/PadControl.cs
+// @under-test: App.v4/MainForm.cs, App.v4/MainForm.Designer.cs, App.v4/Controls/PadControl.cs, App.v4/Forms/BaseFormWithHeader.cs
 // @area: ui   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,113 +14,78 @@ using x360ce.Engine;
 namespace x360ce.Tests
 {
 	/// <summary>
-	/// The size and place the main window first opens at when it has no saved place.
+	/// The main window's smallest size, which shows the Controller page's General tab and bottom buttons whole, and its header's
+	/// height, which its text never changes.
 	/// </summary>
-	/// <remarks>
-	/// At its designed size the Controller page needed more height than it had (985 px of 893 at 150 %, 4.29.36.0), so the
-	/// buttons under the tabs, [Reset] among them, were below the fold. The work areas are handed in, so the tests do not
-	/// depend on the size of the screens of the machine they run on, and lie off every screen, so nothing appears while they
-	/// run.
-	/// </remarks>
 	[TestClass]
 	public class MainWindowFirstSizeTest
 	{
 		public TestContext TestContext { get; set; }
 
-		/// <summary>The work area of a 3840 x 2160 screen with the task bar at the bottom, at 100 %; taller than the page needs.</summary>
-		static readonly Size TallScreen = new Size(2560, 1392);
-
-		/// <summary>The work area of a 1920 x 1200 screen at 150 % with the task bar at the bottom (1152 px tall), at 100 %.</summary>
-		static readonly Size ShortScreen = new Size(1280, 768);
-
 		[TestMethod, TestCategory("ui")]
-		[Description("With no saved place, on a tall screen, the main window first opens as tall as the Controller page needs and centred in the work area, so the page does not scroll and [Reset] is in view, in every interface font, at 100 % and 150 %, in both themes")]
-		public void With_no_saved_place_the_window_opens_as_tall_as_the_page_needs_centred_on_a_tall_screen()
-		{
-			AppFontsTest.LoadFonts();
-			var faults = new List<string>();
-			var report = new List<string>();
-			var untestable = new List<string>();
-			foreach (var choice in PadValueLabelsTest.FontChoices)
-				ButtonIconTest.OnEverySurface(new Func<Control>[] { MainWindowWithControllerPage }, (window, when) =>
-				{
-					var page = Page(window);
-					when += " " + page.Font.Name;
-					var designed = window.Size;
-					var work = WorkArea(TallScreen);
-					OpenWithNoSavedPlace(window, page, work);
-					var reset = page.Controls.Find(nameof(PadControl.ResetPresetButton), true).Single();
-					var resetAt = page.RectangleToClient(reset.Parent.RectangleToScreen(reset.Bounds));
-					var general = page.Controls.Find(nameof(PadControl.GeneralTabPage), true).Single();
-					var table = page.Controls.Find(nameof(PadControl.GeneralTableLayoutPanel), true).Single();
-					var tableAt = general.RectangleToClient(table.Parent.RectangleToScreen(table.Bounds));
-					// As tall as the page needs, or as designed where that is taller; as wide as designed.
-					var measured = new Size(designed.Width,
-						Math.Max(designed.Height, window.Height - page.ClientSize.Height + page.AutoScrollMinSize.Height));
-					var line = string.Format("{0}: designed {1}, opened at {2} in {3}; the page is {4} and needs {5} px{6}; [Reset] at {7}",
-						when, designed, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height,
-						page.VerticalScroll.Visible ? ", with a scroll bar" : "", resetAt);
-					report.Add(line);
-					// Windows makes no window taller than the largest screen attached allows, whatever work area it is given.
-					if (measured.Height > SystemInformation.MaxWindowTrackSize.Height)
-					{
-						untestable.Add(line);
-						return;
-					}
-					if (window.Size != measured)
-						faults.Add(line + ": the window is not the measured " + measured + ".");
-					if (!work.Contains(window.Bounds))
-						faults.Add(line + ": the window is not inside the work area.");
-					if (!IsCentred(window.Bounds, work))
-						faults.Add(line + ": the window is not centred in the work area.");
-					if (page.VerticalScroll.Visible || page.AutoScrollMinSize.Height > page.ClientSize.Height)
-						faults.Add(line + ": the page scrolls.");
-					if (!page.ClientRectangle.Contains(resetAt))
-						faults.Add(line + ": [Reset] is out of view.");
-					if (tableAt.Bottom > general.ClientSize.Height)
-						faults.Add(line + string.Format(": the General tab's rows end at {0} on a tab {1} tall.", tableAt.Bottom, general.ClientSize.Height));
-				}, choice);
-			foreach (var line in report)
-				TestContext.WriteLine(line);
-			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
-			if (untestable.Count > 0)
-				Assert.Inconclusive(string.Format("{0} of {1} case(s) need a window taller than Windows allows here ({2} px, from the largest screen attached); attach a taller screen to check them:{3}{4}",
-					untestable.Count, report.Count, SystemInformation.MaxWindowTrackSize.Height, Environment.NewLine, string.Join(Environment.NewLine, untestable)));
-		}
-
-		[TestMethod, TestCategory("ui")]
-		[Description("With no saved place, on a screen shorter than the page needs, the main window is as tall as the work area and inside it, and the page scrolls with its tab strip below the device list, at 100 % and 150 %, in both themes")]
-		public void On_a_short_screen_the_window_takes_the_work_area_height_and_the_page_scrolls()
+		[Description("The main window's smallest size, in its designer file at 100 %, is a multiple of 4 the Controller page's General tab and bottom buttons show whole in, no smaller than measured here; at that size, at the screen's scale, in both themes, nothing on them is cut")]
+		public void The_smallest_window_shows_the_general_tab_and_the_buttons_whole()
 		{
 			var faults = new List<string>();
 			var report = new List<string>();
-			ButtonIconTest.OnEverySurface(new Func<Control>[] { MainWindowWithControllerPage }, (window, when) =>
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { MainWindowWithControllerPage }, (form, when) =>
 			{
+				var window = (Form)form;
+				window.MinimumSize = PadPageShortWindowTest.MinimumWindowSize();
+				window.Size = window.MinimumSize;
+				Application.DoEvents();
 				var page = Page(window);
-				var work = WorkArea(ShortScreen);
-				OpenWithNoSavedPlace(window, page, work);
-				Func<string, Rectangle> at = name =>
+				var general = page.GeneralTabPage;
+				var table = page.GeneralTableLayoutPanel;
+				var columns = (TableLayoutPanel)table.Parent;
+				var buttons = page.ButtonsPanel;
+				// The narrowest and shortest window the General tab is whole in: made smaller a pixel at a time until two of its
+				// controls overlap, which they do once its columns are squeezed, or its rows need more height than the tab has.
+				var smallest = window.MinimumSize;
+				window.MinimumSize = Size.Empty;
+				var scale = ControlsHelper.DpiScale;
+				var needed = smallest;
+				for (var w = smallest.Width + (int)(32 * scale); w > smallest.Width - (int)(96 * scale); w--)
 				{
-					var c = page.Controls.Find(name, true).Single();
-					return page.RectangleToClient(c.Parent.RectangleToScreen(c.Bounds));
-				};
-				var grid = at(nameof(PadControl.MappedDevicesDataGridView));
-				var tabs = (TabControl)page.Controls.Find(nameof(PadControl.PadTabControl), true).Single();
-				var strip = at(nameof(PadControl.PadTabControl));
-				var line = string.Format("{0}: opened at {1} in {2}; the page is {3} and needs {4} px{5}; device list {6}, tabs {7}",
-					when, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height,
-					page.VerticalScroll.Visible ? ", with a scroll bar" : "", grid, strip);
+					window.Size = new Size(w, smallest.Height + (int)(200 * scale));
+					Application.DoEvents();
+					if (Overlap(table) != null)
+						break;
+					needed.Width = w;
+				}
+				for (var h = smallest.Height + (int)(32 * scale); h > smallest.Height - (int)(96 * scale); h--)
+				{
+					window.Size = new Size(smallest.Width + (int)(200 * scale), h);
+					Application.DoEvents();
+					var tableAtNow = general.RectangleToClient(table.Parent.RectangleToScreen(table.Bounds));
+					if (tableAtNow.Top + table.GetPreferredSize(new Size(table.Width, 0)).Height > general.ClientSize.Height - general.Padding.Bottom)
+						break;
+					needed.Height = h;
+				}
+				window.MinimumSize = smallest;
+				window.Size = smallest;
+				Application.DoEvents();
+				var buttonsNeed = buttons.GetPreferredSize(Size.Empty).Width + buttons.Margin.Horizontal;
+				var tableAt = general.RectangleToClient(table.Parent.RectangleToScreen(table.Bounds));
+				var buttonsAt = page.RectangleToClient(buttons.Parent.RectangleToScreen(buttons.Bounds));
+				// At 100 %, as the designer file holds it.
+				var at100 = new Size((int)Math.Ceiling(needed.Width / scale), (int)Math.Ceiling(needed.Height / scale));
+				var rounded = new Size((at100.Width + 3) / 4 * 4, (at100.Height + 3) / 4 * 4);
+				var overlap = Overlap(table);
+				var line = string.Format("{0}: the smallest window {1}; the General tab is whole down to {2}, {3} at 100 %, {4} rounded up; the buttons need {5} px across, at {6}",
+					when, window.Size, needed, at100, rounded, buttonsNeed, buttonsAt);
 				report.Add(line);
-				if (window.Height != work.Height)
-					faults.Add(line + ": the window is not as tall as the work area.");
-				if (!work.Contains(window.Bounds))
-					faults.Add(line + ": the window is not inside the work area.");
-				if (!page.VerticalScroll.Visible)
-					faults.Add(line + ": the page has rows out of view and nothing to scroll them in with.");
-				if (strip.Top < grid.Bottom || tabs.GetTabRect(0).Height <= 0)
-					faults.Add(line + ": the tab strip is under the device list or has no height.");
-				if (strip.Top + tabs.GetTabRect(0).Bottom > page.DisplayRectangle.Height)
-					faults.Add(line + ": the tab strip is past the end of the page's scroll.");
+				// Measured in the real program at 100 %, 1024 x 936: the controller picture 8 pixels from the names beside it and the
+				// last row 8 above the tab's frame. This window, which stands in for the main one, needs no more, and no less than
+				// a step of 4 under it.
+				var designed = DesignerMinimumSize();
+				if (designed.Width < rounded.Width || designed.Height < rounded.Height || designed.Height - rounded.Height > 8
+					|| designed.Width % 4 != 0 || designed.Height % 4 != 0)
+					faults.Add(line + ": the designer's smallest size " + designed + " is not the measured size rounded up to 4 px at 100 %.");
+				if (overlap != null || tableAt.Top + table.GetPreferredSize(new Size(table.Width, 0)).Height > general.ClientSize.Height - general.Padding.Bottom)
+					faults.Add(line + ": the General tab is cut" + (overlap == null ? "." : ": " + overlap + "."));
+				if (buttonsAt.Right > page.ClientSize.Width || buttonsAt.Bottom > page.ClientSize.Height)
+					faults.Add(line + ": the bottom buttons are cut.");
 			});
 			foreach (var line in report)
 				TestContext.WriteLine(line);
@@ -128,55 +93,103 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("A saved place keeps its place and width: the main window opens there, made as tall as the page needs where it was saved shorter, moved up only as far as the work area needs, and kept as it is where it was saved taller, in every interface font, in both themes")]
-		public void A_saved_place_keeps_its_place_and_width_and_opens_as_tall_as_the_page_needs()
+		[Description("The smallest size the main window takes stays within the work area of a screen smaller than it")]
+		public void The_smallest_size_stays_within_a_small_screen()
 		{
-			AppFontsTest.LoadFonts();
+			Ui.OnUiThread(() =>
+			{
+				using (var window = new Form { MinimumSize = new Size(1056, 948) })
+				{
+					MainForm.KeepMinimumOnScreen(window, new Rectangle(0, 0, 1280, 720));
+					Assert.AreEqual(new Size(1056, 720), window.MinimumSize, "The smallest size is larger than the screen's work area.");
+					MainForm.KeepMinimumOnScreen(window, new Rectangle(0, 0, 2560, 1392));
+					Assert.AreEqual(new Size(1056, 720), window.MinimumSize, "A larger screen changed the smallest size.");
+				}
+			});
+		}
+
+
+		[TestMethod, TestCategory("ui")]
+		[Description("The header of the main window, Load Presets and Map Device is one line of its subject and two of its tip tall whatever they say, a longer tip ending with an ellipsis, and changing them or the status bar's text lays out nothing beside the header and moves nothing, in both themes, at the screen's scale")]
+		public void The_header_stays_as_tall_whatever_it_says()
+		{
 			var faults = new List<string>();
 			var report = new List<string>();
-			foreach (var choice in PadValueLabelsTest.FontChoices)
-				ButtonIconTest.OnEverySurface(new Func<Control>[] { MainWindowWithControllerPage }, (window, when) =>
+			var windows = new Func<Control>[] { MainWindowWithControllerPage, () => new LoadPresetsForm(), () => new MapDeviceToControllerForm() };
+			var longTip = string.Join(" ", Enumerable.Repeat("A tip much longer than two lines of the header, so that it is cut and ends with an ellipsis.", 8));
+			ButtonIconTest.OnEverySurface(windows, (form, when) =>
+			{
+				var window = (BaseFormWithHeader)form;
+				var header = window.TopPanel;
+				var tip = window.HelpBodyLabel;
+				when += " " + window.GetType().Name;
+				var height = header.Height;
+				var others = window.Controls.Cast<Control>().Where(x => x != header && x.Visible).ToList();
+				var places = others.ToDictionary(x => x, x => x.Bounds);
+				var layouts = new List<string>();
+				foreach (var control in new Control[] { header, window.HeaderTableLayoutPanel }.Concat(others.Where(x => !(x is ToolStrip))))
 				{
-					var page = Page(window);
-					when += " " + page.Font.Name;
-					var work = WorkArea(TallScreen);
-					var designed = window.Size;
-					var gap = (int)Math.Round(30 * ControlsHelper.DpiScale);
-					// Saved shorter than designed, near the top and near the bottom of the work area; and taller than the page needs.
-					var shorter = new Size(designed.Width - 30, designed.Height - 100);
-					var places = new[]
-					{
-						new { Name = "shorter", Place = new Rectangle(work.Left + gap, work.Top + gap, shorter.Width, shorter.Height) },
-						new { Name = "shorter, low", Place = new Rectangle(work.Left + gap, work.Bottom - gap - shorter.Height, shorter.Width, shorter.Height) },
-						new { Name = "taller", Place = new Rectangle(work.Left + gap, work.Top + gap, shorter.Width, work.Height - 2 * gap) },
-					};
-					foreach (var saved in places)
-					{
-						// As the main window opens at a saved place: there, at that size, then given its first size before it is shown.
-						window.Bounds = saved.Place;
-						Application.DoEvents();
-						MainForm.FitToPage(window, page, work);
-						Application.DoEvents();
-						var needed = window.Height - page.ClientSize.Height + page.AutoScrollMinSize.Height;
-						var line = string.Format("{0}, saved {1} at {2}: opened at {3} in {4}; the page is {5} and needs {6} px{7}",
-							when, saved.Name, saved.Place, window.Bounds, work, page.ClientSize, page.AutoScrollMinSize.Height,
-							page.VerticalScroll.Visible ? ", with a scroll bar" : "");
-						report.Add(line);
-						var height = Math.Max(saved.Place.Height, needed);
-						var top = Math.Min(saved.Place.Top, work.Bottom - height);
-						var wanted = new Rectangle(saved.Place.Left, top, saved.Place.Width, height);
-						if (window.Bounds != wanted)
-							faults.Add(line + ": not the wanted " + wanted + ".");
-						if (page.VerticalScroll.Visible || page.AutoScrollMinSize.Height > page.ClientSize.Height)
-							faults.Add(line + ": the page scrolls.");
-					}
-				}, choice);
+					var name = control.Name.Length > 0 ? control.Name : control.GetType().Name;
+					control.Layout += (s, e) => layouts.Add(name);
+				}
+				var status = others.OfType<StatusStrip>().SelectMany(x => x.Items.OfType<ToolStripStatusLabel>()).FirstOrDefault();
+				var steps = new List<KeyValuePair<string, Action>>
+				{
+					new KeyValuePair<string, Action>("a long tip", () => window.SetHeaderBody(MessageBoxIcon.None, longTip)),
+					new KeyValuePair<string, Action>("the help of a control", () => window.ShowHelp("A control's name", "What it does.")),
+					new KeyValuePair<string, Action>("a long notice", () => window.SetHeaderInfo(longTip)),
+					new KeyValuePair<string, Action>("an error", () => window.SetHeaderError("Something failed.")),
+					new KeyValuePair<string, Action>("the help cleared", () => window.ClearHelp()),
+				};
+				if (status != null)
+					steps.Add(new KeyValuePair<string, Action>("a status", () => status.Text = "A status message of another length, " + DateTime.Now.Ticks));
+				foreach (var step in steps)
+				{
+					step.Value();
+					Application.DoEvents();
+					var line = string.Format("{0}, {1}: the header is {2} tall (was {3}), its tip {4} for two lines of {5} px",
+						when, step.Key, header.Height, height, tip.Size, tip.Font.Height);
+					report.Add(line);
+					if (header.Height != height)
+						faults.Add(line + ": the header's height changed.");
+					if (tip.Height != BaseFormWithHeader.Lines(tip, 2) + tip.Padding.Vertical || tip.Height >= 3 * tip.Font.Height || !tip.AutoEllipsis)
+						faults.Add(line + ": the tip is not two lines tall with an ellipsis.");
+					foreach (var other in others.Where(x => x.Bounds != places[x]))
+						faults.Add(line + ": " + other.Name + " moved from " + places[other] + " to " + other.Bounds + ".");
+				}
+				window.SetHeaderBody(MessageBoxIcon.None, longTip);
+				Application.DoEvents();
+				if (tip.GetPreferredSize(new Size(tip.Width, 0)).Height <= tip.Height)
+					faults.Add(when + ": the long tip fits two lines, so its cut is not tried.");
+				if (layouts.Count > 0)
+					faults.Add(when + ": text changes laid out " + string.Join(", ", layouts.Distinct()) + ".");
+			});
 			foreach (var line in report)
 				TestContext.WriteLine(line);
-			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults));
+			Assert.IsTrue(report.Count >= 30, "Only " + report.Count + " changes were looked at.");
+			Assert.AreEqual(0, faults.Count, faults.Count + " fault(s):" + Environment.NewLine + string.Join(Environment.NewLine, faults.Distinct()));
 		}
 
 		/// <summary>The main window at its default size holding a Controller page, as task 17's tests hold it.</summary>
+		/// <summary>Two controls of a table that overlap, as its columns do once the table is narrower than they need; null for none.</summary>
+		static string Overlap(TableLayoutPanel table)
+		{
+			var shown = table.Controls.Cast<Control>().Where(x => x.Visible).ToList();
+			for (var i = 0; i < shown.Count; i++)
+				for (var j = i + 1; j < shown.Count; j++)
+					if (shown[i].Bounds.IntersectsWith(shown[j].Bounds))
+						return shown[i].Name + " " + shown[i].Bounds + " over " + shown[j].Name + " " + shown[j].Bounds;
+			return null;
+		}
+
+		/// <summary>The main window's smallest size as its designer file holds it, at 100 %.</summary>
+		static Size DesignerMinimumSize()
+		{
+			var scale = ControlsHelper.DpiScale;
+			var scaled = PadPageShortWindowTest.MinimumWindowSize();
+			return new Size((int)Math.Round(scaled.Width / scale), (int)Math.Round(scaled.Height / scale));
+		}
+
 		static Control MainWindowWithControllerPage()
 		{
 			return OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(MapTo.Controller2), "Controller 2");
@@ -185,31 +198,6 @@ namespace x360ce.Tests
 		static PadControl Page(Form window)
 		{
 			return Descendants(window).OfType<PadControl>().Single();
-		}
-
-		/// <summary>
-		/// Opens the window as the main window opens with no saved place: where Windows puts it, then given its first size and
-		/// place before it is shown.
-		/// </summary>
-		static void OpenWithNoSavedPlace(Form window, PadControl page, Rectangle work)
-		{
-			window.StartPosition = FormStartPosition.WindowsDefaultLocation;
-			MainForm.FitToPage(window, page, work);
-			Application.DoEvents();
-		}
-
-		/// <summary>A work area of <paramref name="logical"/> at the scale windows are made at, off every screen.</summary>
-		static Rectangle WorkArea(Size logical)
-		{
-			var scale = ControlsHelper.DpiScale;
-			return new Rectangle(-12000, -12000, (int)Math.Round(logical.Width * scale), (int)Math.Round(logical.Height * scale));
-		}
-
-		/// <summary>In the middle of the work area, to the pixel the halving rounds to.</summary>
-		static bool IsCentred(Rectangle window, Rectangle work)
-		{
-			return Math.Abs(window.Left - work.Left - (work.Right - window.Right)) <= 1
-				&& Math.Abs(window.Top - work.Top - (work.Bottom - window.Bottom)) <= 1;
 		}
 
 		static IEnumerable<Control> Descendants(Control parent)

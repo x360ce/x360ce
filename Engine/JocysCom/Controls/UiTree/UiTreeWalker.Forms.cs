@@ -96,6 +96,19 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return null;
 		}
 
+		/// <summary>The index of the item named by <paramref name="value"/>: by the words the list shows, else by the item's own name; -1 when none.</summary>
+		/// <remarks>A list can show each value in words of its own, through its Format event, and a caller that knows the name the settings keep still finds it.</remarks>
+		static int ItemIndex(System.Collections.IList items, Func<object, string> shown, string value)
+		{
+			for (var i = 0; i < items.Count; i++)
+				if (string.Equals(shown(items[i]), value, StringComparison.OrdinalIgnoreCase))
+					return i;
+			for (var i = 0; i < items.Count; i++)
+				if (string.Equals(System.Convert.ToString(items[i], System.Globalization.CultureInfo.InvariantCulture), value, StringComparison.OrdinalIgnoreCase))
+					return i;
+			return -1;
+		}
+
 		/// <summary>Sets a control from text. Returns null when done, otherwise why not.</summary>
 		static string SetValue(Control control, string value)
 		{
@@ -113,8 +126,8 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			var list = control as ComboBox;
 			if (list != null)
 			{
-				for (var i = 0; i < list.Items.Count; i++)
-					if (string.Equals(list.GetItemText(list.Items[i]), value, StringComparison.OrdinalIgnoreCase)) { list.SelectedIndex = i; return null; }
+				var index = ItemIndex(list.Items, list.GetItemText, value);
+				if (index >= 0) { list.SelectedIndex = index; return null; }
 				// A list that takes typing takes any words, as a person may type a value not in it.
 				if (list.DropDownStyle != ComboBoxStyle.DropDownList) { list.Text = value; return null; }
 				return "No such item. Items: " + string.Join(", ", list.Items.Cast<object>().Select(x => list.GetItemText(x)));
@@ -172,9 +185,17 @@ namespace JocysCom.ClassLibrary.Controls.UiTree
 			return null;
 		}
 
+		/// <summary>Called before a control's children are read or searched, so a program can put on it what it shows only when asked.</summary>
+		/// <remarks>
+		/// Such as one page shared by several tabs: only the tab it is on holds it, so the program moves it to the tab being
+		/// read, with that tab's values. Called for every control walked, so it returns at once for any it does not handle.
+		/// </remarks>
+		public static Action<Control> BeforeChildren;
+
 		/// <summary>Children in the order a person moves through them, rather than drawing order.</summary>
 		static IEnumerable<Control> ChildrenOf(Control control)
 		{
+			BeforeChildren?.Invoke(control);
 			var tabs = control as TabControl;
 			if (tabs != null)
 				return tabs.TabPages.Cast<Control>();

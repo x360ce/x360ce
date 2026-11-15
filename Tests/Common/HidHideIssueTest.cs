@@ -22,14 +22,17 @@ namespace x360ce.Tests
 	public class HidHideIssueTest
 	{
 		const string Exe = @"C:\Games\x360ce\x360ce.exe";
-		const string PadPath = @"HID\VID_046D&PID_C219\A&1AFDDD43&0&0000";
+		const string PadName = "Controller (XBOX 360 For Windows)";
+		const string PadPath = @"HID\VID_045E&PID_028E&IG_00\7&1A2B3C4D&0&0000";
 
+		/// <summary>An Xbox controller at <see cref="PadPath"/>, or a device of the hardware the path names.</summary>
 		static UserDevice Pad(bool online, string path = PadPath)
 		{
 			var ud = new UserDevice();
-			ud.ProductName = "RumblePad 2";
+			ud.ProductName = PadName;
 			ud.HidDeviceId = path;
 			ud.DevDeviceId = path;
+			ud.HidHardwareIds = path.Contains("\\") ? path.Substring(0, path.LastIndexOf('\\')) : path;
 			ud.IsOnline = online;
 			return ud;
 		}
@@ -53,7 +56,7 @@ namespace x360ce.Tests
 			int fixType;
 			var text = HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { Pad(true) }, Exe, out fixType);
 			Assert.AreEqual(HidHideIssue.FixInstall, fixType);
-			StringAssert.Contains(text, "RumblePad 2");
+			StringAssert.Contains(text, PadName);
 			StringAssert.Contains(text, "Install HID Hide");
 		}
 
@@ -83,7 +86,24 @@ namespace x360ce.Tests
 			int fixType;
 			var text = HidHideIssue.Explain(Installed(true), new[] { Pad(true) }, Exe, out fixType);
 			Assert.AreEqual(HidHideIssue.FixConfigure, fixType);
-			StringAssert.Contains(text, "does not hide RumblePad 2");
+			StringAssert.Contains(text, PadName);
+			StringAssert.Contains(text, "tick it under Devices in HID Hide to hide it from games");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Only an Xbox controller is named for hiding; a wheel, which a game reading Xbox controllers takes as the virtual one, is not")]
+		public void Only_an_Xbox_controller_is_named_for_hiding()
+		{
+			var wheel = Pad(true, @"HID\VID_046D&PID_C29B\7&2B3C4D5E&0&0000");
+			wheel.ProductName = "G27 Racing Wheel";
+			int fixType;
+			Assert.IsNull(HidHideIssue.Explain(Installed(true), new[] { wheel }, Exe, out fixType), "A wheel is named for hiding.");
+			Assert.IsNull(HidHideIssue.Explain(Installed(false), new[] { wheel }, Exe, out fixType), "A wheel asks for hiding to be switched on.");
+			Assert.IsNull(HidHideIssue.Explain(new VirtualDriverInstaller.HidHideState(), new[] { wheel }, Exe, out fixType), "A wheel brings the HID Hide install.");
+			Assert.AreEqual(0, fixType);
+			var text = HidHideIssue.Explain(Installed(true), new[] { Pad(true), wheel }, Exe, out fixType);
+			StringAssert.Contains(text, "Every game sees " + PadName + " twice");
+			Assert.IsFalse(text.Contains("G27"), "A wheel is named beside the Xbox controller.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
@@ -220,8 +240,20 @@ namespace x360ce.Tests
 			// Each hide follows the rule: at start every device is shown or hidden, and a tick changed in either list is
 			// shown or hidden at once.
 			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
-			StringAssert.Contains(Ui.Between(main, "SettingsManager.AutoHideShowMappedDevices(game);", "MainForm_Load: end"),
-				"AppHelper.SynchronizeToHidHide();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+			var helper = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Common", "AppHelper.cs"));
+			StringAssert.Contains(Ui.Between(helper, "public static void HideAgainAfterRawInputStart()", "public static bool UnhideAllDevices()"),
+				"SynchronizeToHidHide();", "At start only the mapped devices are hidden, and one unticked stays hidden.");
+			// Shown while the engine starts reading Raw Input, and hidden again after: hidden then, Windows leaves a
+			// controller out of Raw Input until it is plugged in again.
+			var update2 = Ui.Between(main, "private void UpdateForm2()", "#region Tabs slowest to open");
+			var show = update2.IndexOf("AppHelper.ShowHiddenForRawInputStart();", StringComparison.Ordinal);
+			var start = update2.IndexOf("StartLoops();", StringComparison.Ordinal);
+			var hide = update2.IndexOf("AppHelper.HideAgainAfterRawInputStart();", StringComparison.Ordinal);
+			Assert.IsTrue(show >= 0 && show < start && start < hide,
+				"The engine starts reading Raw Input while controllers are hidden, so Windows leaves them out of Raw Input.");
+			StringAssert.DoesNotMatch(Ui.Between(main, "private void MainForm_Load(", "MainForm_Load: end"),
+				new System.Text.RegularExpressions.Regex("SynchronizeToHidHide|AutoHideShowMappedDevices"),
+				"Devices are hidden while the window loads, before the engine reads Raw Input.");
 			var pad = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "Controls", "PadControl.cs"));
 			StringAssert.Contains(Ui.Between(pad, "private void MappedDevicesDataGridView_CellClick(", "#endregion"),
 				"SettingsManager.HideMappedDevices(", "Unticking a row leaves its device hidden from games.");
