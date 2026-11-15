@@ -333,40 +333,43 @@ namespace x360ce.Engine
 		public static Dictionary<ProcessorArchitecture, Version> _embededVersions;
 		static object EmbededVersionsLock = new object();
 
+		/// <summary>The version of the XInput library the program carries for an architecture, read the first time it is asked for.</summary>
+		/// <remarks>Read from the library's bytes in memory, so nothing is written to disk for a virus scanner to scan.</remarks>
 		public static Version GetEmbeddedDllVersion(ProcessorArchitecture architecture)
 		{
 			lock (EmbededVersionsLock)
 			{
 				if (_embededVersions == null)
-				{
 					_embededVersions = new Dictionary<ProcessorArchitecture, Version>();
-					ProcessorArchitecture[] archs = { ProcessorArchitecture.X86, ProcessorArchitecture.Amd64, ProcessorArchitecture.MSIL };
-					foreach (var a in archs)
-					{
-						string tempPath = Path.GetTempPath();
-						FileStream sw = null;
-						var tempFile = Path.Combine(Path.GetTempPath(), "xinput_" + a.ToString() + ".tmp.dll");
-						sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
-						var buffer = new byte[1024];
-						var assembly = Assembly.GetEntryAssembly();
-						var resourceName = GetXInputResoureceName(architecture);
-						var sr = assembly.GetManifestResourceStream(resourceName);
-						while (true)
-						{
-							var count = sr.Read(buffer, 0, buffer.Length);
-							if (count == 0) break;
-							sw.Write(buffer, 0, count);
-						}
-						sr.Close();
-						sw.Close();
-						var vi = FileVersionInfo.GetVersionInfo(tempFile);
-						var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-						File.Delete(tempFile);
-						_embededVersions.Add(a, v);
-					}
+				Version v;
+				if (_embededVersions.TryGetValue(architecture, out v))
+					return v;
+				using (var sr = Assembly.GetEntryAssembly().GetManifestResourceStream(GetXInputResoureceName(architecture)))
+				using (var ms = new MemoryStream())
+				{
+					sr.CopyTo(ms);
+					v = GetFileVersion(ms.ToArray());
 				}
+				_embededVersions.Add(architecture, v);
+				return v;
 			}
-			return _embededVersions[architecture];
+		}
+
+		/// <summary>
+		/// A library's file version, as Windows reports it, from the library's bytes: its VS_FIXEDFILEINFO, found by the
+		/// signature 0xFEEF04BD and structure version 1.0, holds the version's high and low halves next. 0.0.0.0 when it has none.
+		/// </summary>
+		public static Version GetFileVersion(byte[] library)
+		{
+			for (var i = 0; i + 16 <= library.Length; i++)
+			{
+				if (BitConverter.ToUInt32(library, i) != 0xFEEF04BD || BitConverter.ToUInt32(library, i + 4) != 0x00010000)
+					continue;
+				var high = BitConverter.ToUInt32(library, i + 8);
+				var low = BitConverter.ToUInt32(library, i + 12);
+				return new Version((int)(high >> 16), (int)(high & 0xFFFF), (int)(low >> 16), (int)(low & 0xFFFF));
+			}
+			return new Version(0, 0, 0, 0);
 		}
 
 		public static Version GetDllVersion(string fileName, out bool byMicrosoft)

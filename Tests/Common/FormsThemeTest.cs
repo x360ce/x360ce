@@ -290,6 +290,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
+		[Description("Fitting a label to its text keeps it where its anchor put it, when its container was resized before the theme, and it still follows that anchor")]
+		public void Fitting_a_label_keeps_its_anchored_place()
+		{
+			OnUiThread(() =>
+			{
+				using (var form = new Form { ClientSize = new Size(400, 100), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+				{
+					var panel = new Panel { Bounds = new Rectangle(0, 0, 400, 100) };
+					var label = new Label { AutoSize = true, Text = "VID", Location = new Point(300, 10), Anchor = AnchorStyles.Top | AnchorStyles.Right, UseCompatibleTextRendering = false };
+					panel.Controls.Add(label);
+					form.Controls.Add(panel);
+					// Narrowed before the theme fits the label, as a page docked into a smaller tab is.
+					panel.Width = 300;
+					Assert.AreEqual(200, label.Left, "The right anchor did not move the label with its container.");
+					FormsTheme.SetTheme(ThemeType.Light);
+					FormsTheme.Apply(form);
+					Assert.IsFalse(label.AutoSize, "The theme did not fit the label to its text.");
+					Assert.AreEqual(200, label.Left, "Fitting the label to its text moved it.");
+					panel.Width = 400;
+					Assert.AreEqual(300, label.Left, "The label no longer follows its right anchor.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("interface")]
 		[Description("A check box and a radio button are as tall as Default.xaml's box beside their text, as a grid's check box is, where their text is not")]
 		public void Check_box_is_as_tall_as_its_box()
 		{

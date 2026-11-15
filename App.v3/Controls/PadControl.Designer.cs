@@ -226,7 +226,7 @@
 			// 
 			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
-			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(0, 0, 8, 8);
 			this.DirectInputTabPage.Size = new System.Drawing.Size(693, 509);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";

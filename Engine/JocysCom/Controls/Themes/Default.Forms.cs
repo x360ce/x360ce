@@ -1697,10 +1697,13 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 				// Only the room at either side is taken away: the height stays Windows Forms' own, its line and padding.
 				var size = new Size(Math.Max(label.MinimumSize.Width, DrawnLabelWidth(label, label.Text)),
 					Math.Max(label.MinimumSize.Height, label.GetPreferredSize(Size.Empty).Height));
+				// A label that stops sizing itself goes back where code last placed it, not where its anchors moved it since:
+				// it is put back in its place, so its anchors keep their distances from there.
+				var bounds = new Rectangle(label.Location, size);
 				if (label.AutoSize)
 					label.AutoSize = false;
-				if (label.Size != size)
-					label.Size = size;
+				if (label.Bounds != bounds)
+					label.Bounds = bounds;
 			}
 			else if (label.AutoSize != state.AutoSize)
 				label.AutoSize = state.AutoSize;
