@@ -109,7 +109,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
-		[Description("A press that opens a window answers while the window waits, naming the buttons that answer it, and the window is then answered by path")]
+		[Description("A press that opens a window answers while the window waits, naming the buttons that answer it, and the window is then answered by path or closed as if cancelled")]
 		public void A_press_that_opens_a_window_answers_with_the_window()
 		{
 			McpTools.Register();
@@ -183,6 +183,16 @@ namespace x360ce.Tests
 				StringAssert.Contains((string)one.Result, "Question/Yes (Yes)", "A script that ends with a window waiting does not name it.");
 				Assert.IsNull(Task.Run(() => press.Call(new object[] { "Question/Yes" })).Result);
 				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)));
+				// Closed as the close button on its title bar closes it: the window goes as if cancelled, and the press carries on.
+				var close = McpCatalog.Tools.First(t => t.Name == "ui_close");
+				answered.Reset();
+				StringAssert.Contains((string)Task.Run(() => press.Call(new object[] { "Ask" })).Result, "Question/Yes");
+				var closed = Task.Run(() => close.Call(new object[] { "Question" }));
+				Assert.IsTrue(closed.Wait(TimeSpan.FromSeconds(10)), "Closing the window did not answer.");
+				Assert.IsNull(closed.Result, "Closing a window is an ordinary call.");
+				Assert.IsTrue(answered.Wait(TimeSpan.FromSeconds(10)), "The press that opened the window did not carry on once it was closed.");
+				Assert.AreEqual(DialogResult.Cancel, answer, "A window closed this way was not taken as cancelled.");
+				StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiClose("Question")).Message, "No window");
 			}
 			finally
 			{
@@ -354,6 +364,79 @@ namespace x360ce.Tests
 					McpUiTools.WalkStepMs = stepMs;
 					UiCallout.Hide();
 				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Every page of every open window is listed in order with the pages above it, a page is opened by path, and each window gives its handle")]
+		public void Pages_are_listed_with_the_way_to_them_and_opened_by_path()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var other = new TabPage { Name = "Other", Text = "Options" };
+				var pad = new TabPage { Name = "Pad", Text = "Controller 1" };
+				var pages = new TabControl { Name = "Pages", Dock = DockStyle.Fill };
+				var general = new TabPage { Name = "General", Text = "General" };
+				var force = new TabPage { Name = "Force", Text = "Force Feedback" };
+				force.Controls.Add(new Button { Name = "Go", Text = "Go" });
+				pages.TabPages.AddRange(new[] { general, force });
+				pad.Controls.Add(pages);
+				tabs.TabPages.AddRange(new[] { other, pad });
+				var spare = new TabControl { Name = "Spare", Visible = false };
+				spare.TabPages.Add(new TabPage { Name = "Lost", Text = "Lost" });
+				form.Controls.AddRange(new Control[] { tabs, spare });
+				form.Show();
+				using (var tool = new Form { Name = "Tool", Text = "Tool" })
+				{
+					var inner = new TabControl { Name = "Inner" };
+					inner.TabPages.AddRange(new[] { new TabPage { Name = "A", Text = "A" }, new TabPage { Name = "B", Text = "B" } });
+					tool.Controls.Add(inner);
+					tool.Show(form);
+					var listed = ((object[])McpUiTools.UiPages()).Cast<Dictionary<string, object>>().ToArray();
+					CollectionAssert.AreEqual(new[] { "Tabs/Other", "Tabs/Pad", "Tabs/Pad/Pages/General", "Tabs/Pad/Pages/Force", "Spare/Lost", "Tool/Inner/A", "Tool/Inner/B" },
+						listed.Select(x => (string)x["Path"]).ToArray(), "The pages are not every tab of every window, in order.");
+					var forcePage = listed.First(x => (string)x["Path"] == "Tabs/Pad/Pages/Force");
+					Assert.AreEqual("Force Feedback", forcePage["Name"]);
+					Assert.AreEqual("", forcePage["Window"], "A page of the main window names a window.");
+					CollectionAssert.AreEqual(new[] { "Tabs/Pad" }, (string[])forcePage["Way"], "The page does not name the page to open first.");
+					Assert.AreEqual(true, listed.First(x => (string)x["Path"] == "Spare/Lost")["Hidden"], "A page in a hidden tab control is said to be shown.");
+					Assert.AreEqual(false, forcePage["Hidden"], "A page behind another tab is said to be hidden, though opening it shows it.");
+					Assert.AreEqual("Tool", listed.First(x => (string)x["Path"] == "Tool/Inner/B")["Window"], "A page of another window does not name its window.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Pad/Pages/Force"));
+					Assert.AreSame(pad, tabs.SelectedTab, "The page on the way was not opened.");
+					Assert.AreSame(force, pages.SelectedTab, "The page itself was not opened.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Other"));
+					Assert.AreSame(other, tabs.SelectedTab, "An outer page was not opened.");
+					Assert.IsNull(McpUiTools.UiOpen("Tabs/Pad/Pages/General"));
+					Assert.AreSame(general, pages.SelectedTab, "The page holding the page was not opened first.");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpUiTools.UiOpen("Nowhere")).Message, "No element");
+					var windows = ((object[])McpUiTools.UiWindows()).Cast<Dictionary<string, object>>().ToArray();
+					Assert.AreEqual(tool.Handle.ToInt64(), windows.Single(x => (string)x["Path"] == "Tool")["Handle"], "A window's handle is not given.");
+					var current = (object[])((Dictionary<string, object>)McpUiTools.UiCurrent())["Windows"];
+					Assert.AreEqual(form.Handle.ToInt64(), ((Dictionary<string, object>)current[0])["Handle"], "The main window's handle is not given.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Waiting answers once what waits to be drawn is drawn, so a picture taken next shows it")]
+		public void Waiting_draws_what_waits_to_be_drawn()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var canvas = new Panel { Name = "Canvas", Dock = DockStyle.Fill };
+				var painted = 0;
+				canvas.Paint += (s, e) => painted++;
+				form.Controls.Add(canvas);
+				form.Show();
+				form.Update();
+				canvas.Update();
+				painted = 0;
+				canvas.Invalidate();
+				Assert.AreEqual(0, painted, "The panel painted before anything asked it to, so this proves nothing.");
+				Assert.IsNull(McpUiTools.UiWait());
+				Assert.IsTrue(painted > 0, "Waiting answered while the panel still waited to be drawn.");
 			});
 		}
 
@@ -654,8 +737,9 @@ namespace x360ce.Tests
 			}
 			McpTools.Register();
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
-			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);
-			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
+			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_close", "ui_show", "ui_find", "ui_script", "ui_pages", "ui_open", "ui_wait", "help", "ui_tree" }, names);
+			Assert.AreEqual(AiAccess.Configure, McpCatalog.Tools.First(t => t.Name == "ui_close").Level, "Closing a window answers it, as pressing Cancel does, which needs Configure.");
+			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "ui_pages", "ui_open", "ui_wait", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
 		}
 
 		/// <summary>The Options page has a designer field of that name, of one of those kinds.</summary>

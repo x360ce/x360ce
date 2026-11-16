@@ -10,7 +10,7 @@ description: >-
 license: LGPL-3.0
 metadata:
   # The program writes its own version here when it installs this skill.
-  version: "4.30.63.0"
+  version: "4.31.1.0"
 ---
 
 # X360CE
@@ -80,6 +80,8 @@ their OpenAI keys.
 | `ui_show` | `path`, `text`, `seconds`, `walk` | Brings the page to the front and frames the element with your words; `seconds=0` keeps the frame until the person acts |
 | `ui_hide` | none | Takes the frame away |
 | `ui_script` | `script` | Several show, walk, hide, wait, click and set steps in one call |
+| `ui_pages`, `ui_open`, `ui_wait` | `path` to open | Every page with the pages above it; opens one; answers once the window is drawn |
+| `ui_close` | `path` | Closes a window `ui_windows` lists, as its title bar's close button does (Configure) |
 | `help` | none | The program's help as Markdown, about 34 KB |
 | `ui_set`, `ui_invoke` | `path`, and `value` to set | Sets a value, presses a button (Configure) |
 

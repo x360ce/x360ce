@@ -20,6 +20,24 @@ namespace JocysCom.ClassLibrary.Mcp
 			return windows;
 		}
 
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		[return: System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)]
+		static extern bool RedrawWindow(IntPtr window, IntPtr area, IntPtr region, uint flags);
+
+		const uint RDW_ALLCHILDREN = 0x0080;
+		const uint RDW_UPDATENOW = 0x0100;
+
+		/// <summary>
+		/// Paints now what waits to be painted in the program's shown forms, the controls inside them included, rather than
+		/// when the interface thread next has nothing else to do. Called on the interface thread. A WPF window renders on a
+		/// pass of its own.
+		/// </summary>
+		static void DrawWindows()
+		{
+			foreach (var form in Application.OpenForms.Cast<Form>().Where(x => x.Visible && x.IsHandleCreated).ToArray())
+				RedrawWindow(form.Handle, IntPtr.Zero, IntPtr.Zero, RDW_UPDATENOW | RDW_ALLCHILDREN);
+		}
+
 		/// <summary>The path a menu open on its own goes by when it has no name of its own.</summary>
 		const string MenuName = "Menu";
 
@@ -78,11 +96,11 @@ namespace JocysCom.ClassLibrary.Mcp
 			// Every window, because a dialog waiting behind another one is still what the program is waiting on.
 			var windows = new List<object>
 			{
-				new Dictionary<string, object> { { "Path", "" }, { "Name", main == null ? null : main.Text }, { "Modal", false }, { "Active", window == main } },
+				new Dictionary<string, object> { { "Path", "" }, { "Name", main == null ? null : main.Text }, { "Modal", false }, { "Active", window == main }, { "Handle", HandleOf(main).ToInt64() } },
 			};
 			windows.AddRange(others.Select(x => (object)new Dictionary<string, object>
 			{
-				{ "Path", WindowName(x) }, { "Name", WindowTitle(x) }, { "Modal", IsModal(x) }, { "Active", x == window },
+				{ "Path", WindowName(x) }, { "Name", WindowTitle(x) }, { "Modal", IsModal(x) }, { "Active", x == window }, { "Handle", HandleOf(x).ToInt64() },
 			}));
 			var answer = new Dictionary<string, object> { { "Windows", windows.ToArray() }, { "Window", prefix } };
 			var pages = new List<string>();

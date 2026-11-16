@@ -171,6 +171,10 @@ An assistant can read and answer the windows that open over the main one, such a
 warnings. It can also point: ask it where something is and it brings the page to the front,
 frames the control and shows a balloon with its words beside it.
 
+A script can list every page of every window the program has open, open each page and wait until
+it is drawn, close the windows it opened, and read each window's handle, so it can take a picture
+of every page with no mouse, no keyboard and no AI.
+
 Everything done through the door is written down: the Log button shows each call, its arguments
 and what came of it, with the time.
 

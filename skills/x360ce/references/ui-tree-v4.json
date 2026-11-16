@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.30.63.0",
-	"Built":"2026-11-15",
+	"Version":"4.31.1.0",
+	"Built":"2026-11-16",
 	"Items":[
 		{
 			"Name":"Controls",

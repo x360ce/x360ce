@@ -534,6 +534,10 @@ such steps into a short script, pointing, pausing, pressing and setting in turn,
 through a task rather than describing it, and it can find any control by words from its name or
 purpose, in any order, rather than reading the whole interface first.
 
+A script can list every page of every window the program has open, open each page and wait until
+it is drawn, close the windows it opened, and read each window's handle, so it can take a picture
+of every page with no mouse, no keyboard and no AI.
+
 Everything done through the door is written down: Open log on the AI page shows each call,
 its arguments and what came of it, with the time, so you can see afterwards what an assistant did.
 

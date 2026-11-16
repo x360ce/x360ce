@@ -1,4 +1,8 @@
-﻿## [4.30.63.0] - 2026-11-15
+﻿## [4.31.1.0] - 2026-11-16
+
+- Added: AI assistant access lists and opens every page, and closes windows.
+
+## [4.30.63.0] - 2026-11-15
 
 - Fixed: A Raw Input controller hidden by HID Hide is read through DirectInput (Issue #1661, dnlrch10-maker).
 - Fixed: A new copy with HID Hide set to configure itself adds itself to HID Hide's list (Issue #1633, KhaledElSaiad).
