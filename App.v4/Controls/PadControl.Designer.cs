@@ -2593,7 +2593,7 @@
             this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
             this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(77, 13);
             this.OveralEffectsStengthLabel.TabIndex = 0;
-            this.OveralEffectsStengthLabel.Text = "Overal Stength";
+            this.OveralEffectsStengthLabel.Text = "Overall Strength";
             // 
             // ForceOverallTrackBar
             // 

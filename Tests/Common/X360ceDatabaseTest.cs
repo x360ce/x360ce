@@ -86,13 +86,19 @@ namespace x360ce.Tests
 			Assert.AreEqual("A", PadSettingIni.Key(nameof(PadSetting.ButtonA)));
 			Assert.AreEqual(nameof(PadSetting.ForceEnable), PadSettingIni.NameOf("UseForceFeedback"));
 			Assert.IsNull(PadSettingIni.NameOf(X360ceDatabase.UsersField));
-			// What x360ce 3 writes, it reads back.
+			// What x360ce 3 writes, it reads back and writes again the same. A setting left at its default is written as the
+			// default, and a mapping left empty is written empty.
 			var ps = new PadSetting { ButtonA = "2", LeftThumbAxisY = "-2", ForceEnable = "1", LeftMotorPeriod = "60" };
 			var ini = new Dictionary<string, string>();
-			PadSettingIni.Write(ps, (k, v) => ini[k] = v);
+			PadSettingIni.Write(ps, (k, v) => ini[k] = v ?? "");
 			Assert.AreEqual(PadSettingIni.Names.Length, ini.Count);
 			Assert.AreEqual("2", ini["A"]);
-			Assert.AreEqual(ps.CleanAndGetCheckSum(), PadSettingIni.Read(k => ini[k]).CleanAndGetCheckSum());
+			Assert.AreEqual("", ini["B"]);
+			Assert.AreEqual("60", ini["LeftMotorPeriod"]);
+			Assert.AreEqual("100", ini["ForcePercent"]);
+			var again = new Dictionary<string, string>();
+			PadSettingIni.Write(PadSettingIni.Read(k => ini[k]), (k, v) => again[k] = v ?? "");
+			CollectionAssert.AreEquivalent(ini.ToArray(), again.ToArray());
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]
@@ -248,6 +254,76 @@ namespace x360ce.Tests
 			// A row that switches force feedback on keeps its own values.
 			var loud = SdlDatabase.Merge(SdlSource.Parse("030000005e0400008e02000000000000,Xbox 360 Pad,users:9,A:2,UseForceFeedback:1,LeftMotorPeriod:60,platform:Windows,", SdlSourceKind.BuiltIn));
 			Assert.AreEqual("60", X360ceDatabase.AutoSetting(device, true, true, out note, loud, sdlDb).LeftMotorPeriod);
+		}
+
+		/// <summary>
+		/// A controller's section as x360ce 3 writes it for a controller it has no settings for
+		/// (SettingManager.CheckSettings): the built-in databases' setting, without its mapping.
+		/// </summary>
+		static Dictionary<string, string> SetUpByX360ce3(SdlDevice device, bool forceFeedback, out PadSetting setting)
+		{
+			var x360ce = SdlDatabase.Merge(SdlSource.Parse(X360ceDatabase.ReadBuiltIn(), SdlSourceKind.BuiltIn));
+			var sdl = SdlDatabase.Merge(SdlSource.Parse(SdlDatabase.ReadBuiltIn(), SdlSourceKind.BuiltIn));
+			string note;
+			setting = X360ceDatabase.AutoSetting(device, forceFeedback, false, out note, x360ce, sdl);
+			Assert.IsNotNull(setting, device.ProductName + " is in neither database.");
+			var section = new Dictionary<string, string>();
+			PadSettingIni.Write(setting, (key, value) =>
+			{
+				if (!SettingName.IsMapping(key))
+					section[key] = value;
+			});
+			return section;
+		}
+
+		static SdlDevice Device(int vendor, int product, string name)
+		{
+			return new SdlDevice
+			{
+				VendorId = vendor,
+				ProductId = product,
+				ProductName = name,
+				ProductGuid = new Guid(string.Format(CultureInfo.InvariantCulture, "{0:x4}{1:x4}-0000-0000-0000-504944564944", product, vendor)),
+			};
+		}
+
+		static void AssertForceFeedback(Dictionary<string, string> section, string name, string on, string leftPeriod, string rightPeriod)
+		{
+			Assert.AreEqual(on, section[SettingName.ForceEnable], name + ": " + SettingName.ForceEnable);
+			Assert.AreEqual("100", section[SettingName.ForceOverall], name + ": " + SettingName.ForceOverall);
+			Assert.AreEqual("100", section[SettingName.LeftMotorStrength], name + ": " + SettingName.LeftMotorStrength);
+			Assert.AreEqual("100", section[SettingName.RightMotorStrength], name + ": " + SettingName.RightMotorStrength);
+			Assert.AreEqual(leftPeriod, section[SettingName.LeftMotorPeriod], name + ": " + SettingName.LeftMotorPeriod);
+			Assert.AreEqual(rightPeriod, section[SettingName.RightMotorPeriod], name + ": " + SettingName.RightMotorPeriod);
+		}
+
+		[TestMethod, TestCategory("presets"), TestCategory("critical")]
+		[Description("A controller with motors that x360ce 3 sets up from the built-in databases gets force feedback on at full strength in x360ce.ini")]
+		public void Controllers_set_up_from_the_databases_have_force_feedback()
+		{
+			// x360ce 3's page reads a value its section leaves empty as nought and saves it so, and the xinput library takes
+			// the section's value over the row's: each strength is written as the number it is.
+			PadSetting setting;
+			// The G27's row leaves force feedback off: a wheel with motors gets it on at x360ce's defaults.
+			var g27 = SetUpByX360ce3(Device(0x046D, 0xC29B, "Logitech G27 Racing Wheel USB"), true, out setting);
+			AssertForceFeedback(g27, "G27", "1", SettingName.DefaultLeftMotorPeriod, SettingName.DefaultRightMotorPeriod);
+			// x360ce 4 plays the same setting at full strength.
+			Assert.AreEqual(100 * 100, setting.GetForceScale(true));
+			Assert.AreEqual(100 * 100, setting.GetForceScale(false));
+			// The RumblePad 2's row switches it on, with its own periods and its motors swapped.
+			var pad = SetUpByX360ce3(Device(0x046D, 0xC219, "Logitech Cordless RumblePad 2"), true, out setting);
+			AssertForceFeedback(pad, "RumblePad 2", "1", "60", "120");
+			Assert.AreEqual("1", pad[SettingName.ForceSwapMotor]);
+			// A stick without motors is left without force feedback, its row's strengths of nought, set while nothing used
+			// them, left out: switched on, it runs at the defaults.
+			var stick = SetUpByX360ce3(Device(0x044F, 0xB10A, "T.16000M"), false, out setting);
+			AssertForceFeedback(stick, "T.16000M", "0", SettingName.DefaultLeftMotorPeriod, SettingName.DefaultRightMotorPeriod);
+			// A person's own strength is written as it is, nought too.
+			var own = new Dictionary<string, string>();
+			PadSettingIni.Write(new PadSetting { ForceEnable = "1", ForceOverall = "0", LeftMotorStrength = "40" }, (k, v) => own[k] = v);
+			Assert.AreEqual("0", own[SettingName.ForceOverall]);
+			Assert.AreEqual("40", own[SettingName.LeftMotorStrength]);
+			Assert.AreEqual("100", own[SettingName.RightMotorStrength]);
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]

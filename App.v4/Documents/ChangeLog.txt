@@ -1,5 +1,6 @@
-﻿## [4.31.1.0] - 2026-11-16
+﻿## [4.31.2.0] - 2026-11-16
 
+- Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Added: AI assistant access lists and opens every page, and closes windows.
 
 ## [4.30.63.0] - 2026-11-15
