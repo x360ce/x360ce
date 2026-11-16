@@ -229,32 +229,24 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("The Mouse page shows the demo under its two stick groups, whole, with its picture, caption and Play button")]
+		[Description("In the main window at its smallest size, in the program's font and both themes, the Mouse page shows the demo under its two stick groups, whole, with its picture, caption and Play button")]
 		public void The_mouse_page_shows_the_demo_under_the_sticks()
 		{
-			Ui.OnUiThread(() =>
+			ButtonIconTest.OnEverySurface(new Func<Control>[] { () => OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(x360ce.Engine.MapTo.Controller1), "Controller 1") }, (window, when) =>
 			{
-				using (var form = OptionsLayoutTest.MainWindowAtDefaultSize(new PadControl(x360ce.Engine.MapTo.Controller1), "Controller 1"))
-				{
-					var window = (Form)form;
-					window.MinimumSize = PadPageShortWindowTest.MinimumWindowSize();
-					window.Size = window.MinimumSize;
-					window.StartPosition = FormStartPosition.Manual;
-					window.Location = new Point(-3000, -3000);
-					window.ShowInTaskbar = false;
-					window.Show();
-					var page = (PadControl)window.Controls.Find("ControlPad1", true).FirstOrDefault() ?? PadPageShortWindowTest.Descendants(window).OfType<PadControl>().Single();
-					page.PadTabControl.SelectedTab = page.MouseTabPage;
-					Application.DoEvents();
-					var demo = page.MouseDemoPanel;
-					var tab = page.MouseTabPage;
-					var at = tab.RectangleToClient(demo.Parent.RectangleToScreen(demo.Bounds));
-					var groups = tab.RectangleToClient(page.LeftMouseStickPanel.Parent.RectangleToScreen(page.LeftMouseStickPanel.Bounds));
-					var line = string.Format("The demo is at {0} on a tab {1}, the stick group at {2}, its picture {3}.", at, tab.ClientSize, groups, demo.DemoPictureBox.Size);
-					Assert.IsTrue(demo.Visible && at.Width > 0 && at.Height > 0 && demo.DemoPictureBox.Width > 0 && demo.DemoPictureBox.Height > 0, "The demo is not shown. " + line);
-					Assert.IsTrue(at.Top >= groups.Bottom && at.Bottom <= tab.ClientSize.Height, "The demo is not whole under the stick groups. " + line);
-					window.Close();
-				}
+				window.MinimumSize = PadPageShortWindowTest.MinimumWindowSize();
+				window.Size = window.MinimumSize;
+				Application.DoEvents();
+				var page = PadPageShortWindowTest.Descendants(window).OfType<PadControl>().Single();
+				page.PadTabControl.SelectedTab = page.MouseTabPage;
+				Application.DoEvents();
+				var demo = page.MouseDemoPanel;
+				var tab = page.MouseTabPage;
+				var at = tab.RectangleToClient(demo.Parent.RectangleToScreen(demo.Bounds));
+				var groups = tab.RectangleToClient(page.LeftMouseStickPanel.Parent.RectangleToScreen(page.LeftMouseStickPanel.Bounds));
+				var line = string.Format("{0}: the demo is at {1} on a tab {2}, the stick group at {3}, its picture {4}.", when, at, tab.ClientSize, groups, demo.DemoPictureBox.Size);
+				Assert.IsTrue(demo.Visible && at.Width > 0 && at.Height > 0 && demo.DemoPictureBox.Width > 0 && demo.DemoPictureBox.Height > 0, "The demo is not shown. " + line);
+				Assert.IsTrue(at.Top >= groups.Bottom && at.Bottom <= tab.ClientSize.Height, "The demo is not whole under the stick groups. " + line);
 			});
 		}
 	}

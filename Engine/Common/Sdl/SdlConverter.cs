@@ -148,11 +148,27 @@ namespace x360ce.Engine
 		{
 			Setting = new PadSetting();
 			Sources = new Dictionary<MapCode, string>();
+			From = new Dictionary<MapCode, string>();
 			Skipped = new List<string>();
 		}
 
-		/// <summary>The row translated.</summary>
+		/// <summary><see cref="From"/>'s word for x360ce's controller database.</summary>
+		public const string FromX360ce = "x360ce";
+
+		/// <summary><see cref="From"/>'s word for SDL's controller database.</summary>
+		public const string FromSdl = "SDL";
+
+		/// <summary>The row translated; for the mapping Auto gives (<see cref="X360ceDatabase.AutoMapping"/>), the row it takes first.</summary>
 		public SdlMapping Mapping;
+
+		/// <summary>x360ce's row the boxes come from first, as Auto takes them (<see cref="X360ceDatabase.AutoMapping"/>); null when SDL's row alone fills them.</summary>
+		public SdlMapping X360ceRow;
+
+		/// <summary>For the mapping Auto gives, each box's database: <see cref="FromX360ce"/> or <see cref="FromSdl"/>; empty for SDL's row alone, translated.</summary>
+		public Dictionary<MapCode, string> From { get; private set; }
+
+		/// <summary>For the mapping Auto gives, what filled it, in a sentence, as Auto Preset says it; null otherwise.</summary>
+		public string Note;
 
 		/// <summary>The mapping boxes the row fills; nothing else is set.</summary>
 		public PadSetting Setting { get; private set; }

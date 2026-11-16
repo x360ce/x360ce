@@ -241,9 +241,9 @@ namespace x360ce.App.UiTree
 			d[nameof(AboutControl) + "." + nameof(AboutControl.ChangeLogTextBox)] = new Text("Change log",
 				"What changed in each release.");
 			d[nameof(AboutControl) + "." + nameof(AboutControl.LicenseTabPage)] = new Text("License",
-				"Terms this program is given under.");
+				"Terms this program is given under, then the licence of each part it carries from other projects.");
 			d[nameof(AboutControl) + "." + nameof(AboutControl.LicenseTextBox)] = new Text("Licence text",
-				"Terms this program is given under.");
+				"Terms this program is given under, then the licence of each part it carries from other projects.");
 		}
 	}
 }

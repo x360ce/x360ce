@@ -1,7 +1,9 @@
-﻿## [4.31.2.0] - 2026-11-16
+﻿## [4.31.4.0] - 2026-11-16
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
+- Fixed: A controller's SDL page shows its row from x360ce's database.
 - Added: AI assistant access lists and opens every page, and closes windows.
+- Added: The About page shows the licences of the parts x360ce uses.
 
 ## [4.30.63.0] - 2026-11-15
 

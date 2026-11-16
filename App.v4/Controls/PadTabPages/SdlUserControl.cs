@@ -11,14 +11,15 @@ using x360ce.Engine.Data;
 namespace x360ce.App.Controls
 {
 	/// <summary>
-	/// The SDL page of a controller tab: what SDL's controller database says about the selected device, place by place,
-	/// beside what the controller's boxes hold now.
+	/// The SDL page of a controller tab: the mapping Auto gives the selected device, place by place, beside what the
+	/// controller's boxes hold now: x360ce's controller database row for it, and SDL's where that row maps nothing
+	/// (<see cref="X360ceDatabase.AutoMapping"/>).
 	/// </summary>
 	/// <remarks>
-	/// The page says which copy of the database is in use and whether it has a row for the device. Each row of its list is a
-	/// place on the Xbox controller: SDL's name for it, the place in words, what the pad labels it, the SDL row's binding,
-	/// the device's control that binding is in x360ce's words, and what the box holds now, marked where the two differ.
-	/// Drawn again only when the device, the controller's settings or the database change.
+	/// The page says which copies of the databases are in use and which rows they have for the device. Each row of its list
+	/// is a place on the Xbox controller: SDL's name for it, the place in words, what the pad labels it, the row's binding
+	/// and its database, the device's control that binding is in x360ce's words, and what the box holds now, marked where
+	/// the two differ. Drawn again only when the device, the controller's settings or a database change.
 	/// </remarks>
 	public class SdlUserControl : UserControl
 	{
@@ -56,8 +57,9 @@ namespace x360ce.App.Controls
 			AddColumn("FieldColumn", "SDL field", "Field");
 			AddColumn("PositionColumn", "Position", "Position");
 			AddColumn("LabelColumn", "Label on this pad", "Label");
-			AddColumn("BindingColumn", "SDL binding", "Binding");
-			AddColumn("ControlColumn", "SDL maps", "Control");
+			AddColumn("BindingColumn", "Binding", "Binding");
+			AddColumn("FromColumn", "From", "From");
+			AddColumn("ControlColumn", "Maps", "Control");
 			AddColumn("BoxColumn", "Box now", "Box");
 			var differs = AddColumn("DiffersColumn", "Match", "Differs");
 			differs.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -109,7 +111,7 @@ namespace x360ce.App.Controls
 		/// <summary>[Copy as SDL] was pressed: the controller's mapping goes on the clipboard as an SDL row.</summary>
 		public event EventHandler CopyClicked;
 
-		/// <summary>The device's SDL row translated for it, as the list shows it; null when SDL has no row for the device.</summary>
+		/// <summary>The mapping Auto gives the device, as the list shows it; null when neither database has a row for the device.</summary>
 		public SdlTranslation Translation { get; private set; }
 
 		static Label NewLabel(string name)
@@ -166,43 +168,65 @@ namespace x360ce.App.Controls
 		Guid _instanceGuid;
 		Guid _checksum;
 		SdlDatabase _database;
+		SdlDatabase _x360ceDatabase;
 		bool _drawn;
 
-		/// <summary>Draws the page for the device and the controller's settings, when they or the database changed since it was last drawn.</summary>
+		/// <summary>Draws the page for the device and the controller's settings, when they or a database changed since it was last drawn.</summary>
 		/// <param name="ud">The device selected on the controller, or null.</param>
 		/// <param name="current">The controller's settings now.</param>
-		public void UpdateFrom(UserDevice ud, PadSetting current)
+		/// <param name="sdl">SDL's controller database; the program's own when null.</param>
+		/// <param name="x360ce">x360ce's controller database; the program's own when null.</param>
+		public void UpdateFrom(UserDevice ud, PadSetting current, SdlDatabase sdl = null, SdlDatabase x360ce = null)
 		{
-			var database = SdlDatabase.Current;
+			var database = sdl ?? SdlDatabase.Current;
+			var x360ceDatabase = x360ce ?? X360ceDatabase.Current;
 			var instanceGuid = ud == null ? Guid.Empty : ud.InstanceGuid;
 			var checksum = current == null ? Guid.Empty : current.PadSettingChecksum;
-			if (_drawn && instanceGuid == _instanceGuid && checksum == _checksum && database == _database)
+			if (_drawn && instanceGuid == _instanceGuid && checksum == _checksum && database == _database && x360ceDatabase == _x360ceDatabase)
 				return;
 			_drawn = true;
 			_instanceGuid = instanceGuid;
 			_checksum = checksum;
 			_database = database;
-			ControlsHelper.SetText(VersionLabel, "SDL controller database: " + database.Describe() + ".");
+			_x360ceDatabase = x360ceDatabase;
+			ControlsHelper.SetText(VersionLabel, "x360ce's controller database: " + x360ceDatabase.Describe() + ". SDL controller database: " + database.Describe() + ".");
 			var device = SdlDevice.From(ud);
 			SdlMapping mapping = null;
 			string text;
 			var pad = ud != null && !ud.IsKeyboard && !ud.IsMouse && ud.InputSource != InputSourceType.Plugin;
+			Translation = pad ? X360ceDatabase.AutoMapping(device, true, x360ceDatabase, database) : null;
 			if (ud == null)
-				text = "Select a device on this controller to see what SDL's controller database says about it.";
+				text = "Select a device on this controller to see what x360ce's and SDL's controller databases say about it.";
 			else if (!pad)
-				text = "SDL's controller database describes game controllers, not keyboards, mice or plugin devices.";
+				text = "The controller databases describe game controllers, not keyboards, mice or plugin devices.";
 			else
 			{
 				mapping = database.Find(device);
-				text = mapping == null
-					? string.Format(CultureInfo.InvariantCulture,
-						"SDL's controller database has no row for this controller ({0}), so Auto Preset guesses its mapping. [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB.",
-						Ids(device))
-					: string.Format(CultureInfo.InvariantCulture,
+				var row = Translation == null ? null : Translation.X360ceRow;
+				if (Translation == null && mapping != null)
+					text = string.Format(CultureInfo.InvariantCulture,
+						"SDL knows this controller as \"{0}\" ({1}, {2}), but its row maps none of this device's controls, so Auto Preset guesses its mapping.",
+						mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+				else if (Translation == null)
+					text = string.Format(CultureInfo.InvariantCulture,
+						"Neither x360ce's controller database nor SDL's has a row for this controller ({0}), so Auto Preset guesses its mapping. [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB.",
+						Ids(device));
+				else if (row == null)
+					text = string.Format(CultureInfo.InvariantCulture,
 						"SDL knows this controller as \"{0}\" ({1}, {2}), and Auto Preset fills it from this row.",
 						mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+				else
+				{
+					text = string.Format(CultureInfo.InvariantCulture,
+						"x360ce's controller database knows this controller as \"{0}\" ({1} people use its setting, {2}), ",
+						row.Name, X360ceDatabase.Users(row), Where(x360ceDatabase.SourceOf(row)));
+					text += mapping == null
+						? "and Auto Preset fills it from this row. SDL's controller database has no row for it."
+						: string.Format(CultureInfo.InvariantCulture,
+							"and SDL's as \"{0}\" ({1}, {2}). Auto Preset fills it from x360ce's row, and from SDL's where x360ce's maps nothing, as From says.",
+							mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+				}
 			}
-			Translation = mapping == null ? null : SdlConverter.ToPadSetting(mapping, device);
 			if (pad)
 			{
 				var style = SdlPositions.FaceStyle(mapping, device.VendorId, mapping == null ? device.ProductName : mapping.Name);

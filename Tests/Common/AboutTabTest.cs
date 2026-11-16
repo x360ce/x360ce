@@ -16,8 +16,8 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// Credits and links on the About screen: the Program tab, first, shows App.v4/Documents/Program.md, which names the
-	/// program, who made it and what it carries from other projects, each with a link; the licence tab shows the licences of
-	/// what it carries after its own.
+	/// program, who made it and what it carries from other projects, each with a link. The licence tab is
+	/// <see cref="ThirdPartyLicenceTest"/>'s.
 	/// </summary>
 	/// <remarks>
 	/// vigem.org stopped resolving when that project was archived, and the About screen went on
@@ -140,31 +140,6 @@ namespace x360ce.Tests
 			Assert.IsFalse(Regex.IsMatch(text, @"\]\([^)]*\)"), "A link in the Program tab hides its address, so clicking it opens nothing.");
 			var rtf = MarkdownRtf.ToRtf(text);
 			Assert.AreEqual(rtf.Count(c => c == '{'), rtf.Count(c => c == '}'), "The Program tab's document renders with unbalanced braces, so the tab would be empty.");
-		}
-
-		[TestMethod, TestCategory("about"), TestCategory("ui")]
-		[Description("The licence tab shows x360ce's licence, then SDL's controller database's and both fonts' licences in full")]
-		public void Licence_tab_carries_the_licence_of_what_the_program_carries()
-		{
-			Ui.OnUiThread(() =>
-			{
-				using (var about = new AboutControl())
-				{
-					about.CreateControl();
-					// The tab names the program, not the process that hosts it: in a test, that is the test host.
-					var version = typeof(AboutControl).Assembly.GetName().Version;
-					Assert.AreEqual("X360 Controller Emulator " + version.ToString(2) + " License", Find<TabPage>(about, nameof(AboutControl.LicenseTabPage)).Text);
-					var licence = Find<TextBox>(about, nameof(AboutControl.LicenseTextBox)).Text.TrimStart('\uFEFF');
-					var own = AppHelper.ReadHelp("Documents.License.txt").TrimStart('\uFEFF').Split('\n')[0].Trim();
-					StringAssert.StartsWith(licence.TrimStart(), own, "x360ce's own licence is not shown first.");
-					var at = new[] { "Sam Lantinga", "Reserved Font Name Selawik", "The Inconsolata Project Authors" }
-						.Select(x => licence.IndexOf(x, StringComparison.Ordinal)).ToArray();
-					Assert.IsTrue(at[0] > 0, "SDL's controller database's licence is not shown.");
-					Assert.IsTrue(at[1] > at[0], "Selawik's licence is not shown, after SDL's.");
-					Assert.IsTrue(at[2] > at[1], "Inconsolata's licence is not shown, after Selawik's.");
-					Assert.AreEqual(2, Regex.Matches(licence, "SIL OPEN FONT LICENSE Version 1.1").Count, "The font licence is not shown once for each font.");
-				}
-			});
 		}
 
 		static string Section(string[] sections, string heading)

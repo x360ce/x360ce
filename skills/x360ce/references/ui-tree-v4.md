@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.2.0, built 2026-11-16.
+Version 4.31.4.0, built 2026-11-16.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -87,7 +87,7 @@ not shown in this state of the program.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── MouseDemoUserControl                                                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Label]     │   │   ├── Demo stick                                                      # The stick group the demo shows and its style, such as Left Stick: Wheel.
-[Picture]   │   │   ├── Demo picture                                                    # The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
+[Picture]   │   │   ├── Demo picture                                                    # A mouse walking on its pad, the ear on its button's side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.
 [Button]    │   │   ├── Play demo                                                       # Plays the demo once, or stops it while it plays. Choosing a style plays it once too, unless Windows' Show animations is off.
 [Label]     │   │   ├── Demo style                                                      # What the style shown does, in the Style list's words.
 [Label]     │   │   ├── Demo step                                                       # What the demo shows now, in words, such as Mouse stops: stick returns to the centre.
@@ -303,8 +303,8 @@ not shown in this state of the program.
 [Group]     │   │   │   │   └── (MouseDemoPanel) -> MouseDemoUserControl                # A mouse and the stick it moves, in the style of the stick group last worked on, played once through the same code the engine uses when a style is chosen, with settings of its own that show what the style does.
 [Tab]       │   │   │   ├── Direct Input                                                # What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.
 [Group]     │   │   │   │   └── (DirectInputPanel) -> DirectInputUserControl            # What the mapped device reports about itself, and its values as they change.
-[Tab]       │   │   │   └── SDL                                                         # What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.
-[Group]     │   │   │       └── (SdlPanel) -> SdlUserControl                            # What SDL's controller database says about the selected device.
+[Tab]       │   │   │   └── SDL                                                         # The mapping Auto gives the selected device, place by place, from x360ce's controller database and SDL's, beside what this controller's boxes hold, and which copies of the databases are in use.
+[Group]     │   │   │       └── (SdlPanel) -> SdlUserControl                            # The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.
 [Toolbar]   │   │   ├── Mapped device actions                                           # Adds, removes and enables the devices that work this controller.
 [Button]    │   │   │   ├── Remove                                                      # Stops the selected device working this controller.
 [Button]    │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
@@ -322,11 +322,11 @@ not shown in this state of the program.
 [Button]    │   │   ├── Copy Preset as                                                  # Copies this controller's settings in the format you choose: YAML, XML or JSON, or the mapping as a row of SDL's controller database.
 [Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
-[Control]   │   ├── SdlUserControl                                                      # What SDL's controller database says about the selected device.
-[Label]     │   │   ├── SDL database version                                            # Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.
-[Label]     │   │   ├── SDL's row for the device                                        # Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.
-[Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.
-[Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.
+[Control]   │   ├── SdlUserControl                                                      # The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.
+[Label]     │   │   ├── Database versions                                               # Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, and how many Windows rows each holds; and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.
+[Label]     │   │   ├── The device's rows                                               # Whether x360ce's and SDL's controller databases know the selected device, its name there and where the row is from, which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.
+[Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the row's binding and the database it is from, x360ce or SDL, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.
+[Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller as the page shows it, from x360ce's row and SDL's, and empties those they leave out. Dead zones and the other settings stay as they are.
 [Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
 [Button]    │   │   ├── Update SDL Database                                             # Fetches the newest SDL controller database into the settings folder from the address Options > Internet sets, GitHub unless you choose another. The only time x360ce asks the internet for it.
 [Label]     │   │   └── SDL update status (hidden)                                      # How the last update of SDL's controller database went.
@@ -658,8 +658,8 @@ not shown in this state of the program.
 [Value]     │           │           │   └── Program details                             # What the program is, its website, source code and forum, who made it, and the projects and fonts it carries, with links.
 [Tab]       │           │           ├── Changes                                         # What changed in each release.
 [Text]      │           │           │   └── Change log                                  # What changed in each release.
-[Tab]       │           │           └── License                                         # Terms this program is given under.
-[Text]      │           │               └── Licence text                                # Terms this program is given under.
+[Tab]       │           │           └── License                                         # Terms this program is given under, then the licence of each part it carries from other projects.
+[Text]      │           │               └── Licence text                                # Terms this program is given under, then the licence of each part it carries from other projects.
 [Tab]       │           └── Issues                                                      # Problems the program found, and what to do about each one.
 [Group]     │               ├── Issues list                                             # Problems the program found, and what to do about each one.
 [Grid]      │               │   ├── Issues                                              # Problems the program found, with what to do about each one.

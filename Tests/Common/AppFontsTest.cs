@@ -65,16 +65,17 @@ namespace x360ce.Tests
 			foreach (var family in new[] { AppFonts.BuiltInFamily, AppFonts.CodeFamily })
 				using (var font = new Font(family, 9f))
 					Assert.AreEqual(family.Name, GdiFace(font.ToHfont(), true), "GDI does not find " + family.Name + ".");
+			// Each font's licence is the file the list of licences names for it.
 			var assembly = typeof(AppFonts).Assembly;
+			var parts = ThirdPartyLicences.Parse(ThirdPartyLicences.ReadFile(assembly, ThirdPartyLicences.ListPath) ?? "");
 			foreach (var family in new[] { "Selawik", "Inconsolata" })
 			{
-				using (var stream = assembly.GetManifestResourceStream("x360ce.App.Resources.Fonts." + family + ".OFL.txt"))
-				{
-					Assert.IsNotNull(stream, family + "'s licence is not carried with it.");
-					var text = new StreamReader(stream).ReadToEnd();
-					StringAssert.Contains(text, "SIL OPEN FONT LICENSE Version 1.1", family + "'s licence");
-					StringAssert.Contains(text, family, family + "'s licence names no copyright holder for it.");
-				}
+				var part = parts.FirstOrDefault(x => x.Name == family);
+				Assert.IsNotNull(part, "The list of licences has no row for " + family + ".");
+				var text = ThirdPartyLicences.ReadFile(assembly, part.File);
+				Assert.IsNotNull(text, family + "'s licence is not carried with it.");
+				StringAssert.Contains(text, "SIL OPEN FONT LICENSE Version 1.1", family + "'s licence");
+				StringAssert.Contains(text, family, family + "'s licence names no copyright holder for it.");
 			}
 		}
 

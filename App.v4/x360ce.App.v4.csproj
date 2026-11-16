@@ -758,21 +758,48 @@
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v4\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
-    <!-- The fonts the program carries (Common\AppFonts.cs), each with its SIL Open Font Licence. -->
+    <!-- The fonts the program carries (Common\AppFonts.cs). Their licences are with the others, below. -->
     <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawk.ttf">
       <Link>Resources\Fonts\Selawik\selawk.ttf</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Selawik\selawkb.ttf">
       <Link>Resources\Fonts\Selawik\selawkb.ttf</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Resources\Fonts\Selawik\OFL.txt">
-      <Link>Resources\Fonts\Selawik\OFL.txt</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf">
       <Link>Resources\Fonts\Inconsolata\Inconsolata-Medium.ttf</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+      The parts the program carries from other projects, as ..\Resources\Licenses\README.md lists them, and the licence
+      of each that names x360ce 4, each under its path in the repository: the License tab shows them (ThirdPartyLicences).
+    -->
+    <EmbeddedResource Include="..\Resources\Licenses\README.md">
+      <Link>Resources\Licenses\README.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SharpDX\License.txt">
+      <Link>Resources\Licenses\SharpDX\License.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEmBus_1_21_442\LICENSE">
+      <Link>Resources\Licenses\ViGEmBus_1_21_442\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEmBus_1_16_112\LICENSE">
+      <Link>Resources\Licenses\ViGEmBus_1_16_112\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\ViGEm\LICENSE">
+      <Link>Resources\Licenses\ViGEm\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SDL_GameControllerDB\LICENSE">
+      <Link>Resources\Licenses\SDL_GameControllerDB\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Fonts\Selawik\LICENSE.txt">
+      <Link>Resources\Fonts\Selawik\LICENSE.txt</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\Resources\Fonts\Inconsolata\OFL.txt">
       <Link>Resources\Fonts\Inconsolata\OFL.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\IconExperience\IconExperience.License.txt">
+      <Link>Resources\Licenses\IconExperience\IconExperience.License.txt</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

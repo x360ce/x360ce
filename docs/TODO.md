@@ -15,6 +15,7 @@
 - A removed stale virtual controller record keeps its device open until the program closes, one handle per record.
 - A pad whose force feedback keeps failing on one motor plays neither motor.
 - The online database stores an uploaded setting under a new ID, so the next upload adds another row and a Delete finds nothing.
+- Some parts x360ce carries have no confirmed licence yet, so the About page leaves them out; `Resources/Licenses/README.md` lists them.
 
 ## Settings to finish
 

@@ -448,9 +448,10 @@ namespace x360ce.Tests
 				"App.v4/Controls/PadTabPages/WheelChartUserControl.cs",
 				"App.v3/Controls/ThumbUserControl.cs",
 			} },
-			// A control at rest and a control in use, as the controller picture marks them; and progress made.
+			// A control at rest and a control in use, as the controller picture marks them, as does the Mouse page's demo, its
+			// stick's dot and a held button's ear; and progress made.
 			{ "ColorNormal", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs" } },
-			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
+			{ "ColorActive", new[] { "App.v4/Controls/PadTabPages/AxisToDPadChart.cs", "App.v4/Controls/MouseDemoUserControl.cs", "Engine/JocysCom/Controls/Themes/Default.Forms.cs" } },
 			// The brand is the program's marks, which Windows Forms code does not draw.
 			{ "ColorBrand", new string[0] },
 			{ "ColorBrandCyan", new string[0] },

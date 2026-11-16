@@ -18,7 +18,7 @@ namespace x360ce.Engine
 		Sony,
 	}
 
-	/// <summary>One place on the Xbox controller as the SDL page lists it: what SDL maps there for the device, and what the box holds now.</summary>
+	/// <summary>One place on the Xbox controller as the SDL page lists it: what the device's database row maps there, and what the box holds now.</summary>
 	public sealed class SdlPositionRow
 	{
 		public MapCode Code { get; set; }
@@ -28,8 +28,10 @@ namespace x360ce.Engine
 		public string Position { get; set; }
 		/// <summary>What the place is labelled on this pad, such as "A" or "Cross".</summary>
 		public string Label { get; set; }
-		/// <summary>The SDL row's binding, such as "b0", "+a2" or "h0.1"; empty when the row maps nothing there.</summary>
+		/// <summary>The row's binding: SDL's, such as "b0", "+a2" or "h0.1", or x360ce's row's key and value, such as "A:2"; empty when the row maps nothing there.</summary>
 		public string Binding { get; set; }
+		/// <summary>The database the place's binding comes from, <see cref="SdlTranslation.FromX360ce"/> or <see cref="SdlTranslation.FromSdl"/>; empty when it does not say.</summary>
+		public string From { get; set; }
 		/// <summary>The device's control that binding names, in x360ce's words, such as "Button 1" or "HAxis 3".</summary>
 		public string Control { get; set; }
 		/// <summary>What the box holds now, in the same words.</summary>
@@ -208,8 +210,8 @@ namespace x360ce.Engine
 				: value;
 		}
 
-		/// <summary>The SDL page's list: each place, what the SDL row maps there for the device and what the box holds now.</summary>
-		/// <param name="translation">The device's SDL row translated, or null when SDL does not know the device.</param>
+		/// <summary>The SDL page's list: each place, what the device's row maps there and from which database, and what the box holds now.</summary>
+		/// <param name="translation">The mapping Auto gives the device (<see cref="X360ceDatabase.AutoMapping"/>), or SDL's row alone translated; null when no database knows the device.</param>
 		/// <param name="current">The mapping the controller has now.</param>
 		/// <param name="style">How the pad labels its buttons.</param>
 		public static List<SdlPositionRow> Compare(SdlTranslation translation, PadSetting current, SdlFaceStyle style)
@@ -222,15 +224,21 @@ namespace x360ce.Engine
 				if (!Always.Contains(code) && sdl.Length == 0 && box.Length == 0)
 					continue;
 				string binding = null;
+				string from = null;
 				if (translation != null)
+				{
 					translation.Sources.TryGetValue(code, out binding);
+					translation.From.TryGetValue(code, out from);
+				}
 				rows.Add(new SdlPositionRow
 				{
 					Code = code,
 					Field = SdlConverter.FieldOf(code),
 					Position = Position(code),
 					Label = Label(style, code),
-					Binding = Bindings(binding),
+					// x360ce's row says its key and value, "A:2", as written.
+					Binding = from == SdlTranslation.FromX360ce ? binding : Bindings(binding),
+					From = from ?? "",
 					Control = Words(sdl, code),
 					Box = Words(box, code),
 					Differs = translation != null && Same(sdl, code) != Same(box, code),

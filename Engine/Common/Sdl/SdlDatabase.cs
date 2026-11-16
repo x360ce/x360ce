@@ -56,7 +56,8 @@ namespace x360ce.Engine
 		/// A comment to SDL, which reads the rest of the file as it is. The built-in copy is the file the update button
 		/// writes, compressed: to ship a newer one, press the button, then gzip the settings folder's gamecontrollerdb.txt,
 		/// without its <see cref="AddressPrefix"/> line, into Engine\Resources\gamecontrollerdb.txt.gz, and build the engine
-		/// and the xinput library, which embeds the same file.
+		/// and the xinput library, which embeds the same file. Then take SDL_GameControllerDB's LICENSE at the same commit
+		/// into Resources\Licenses\SDL_GameControllerDB and its row in Resources\Licenses\README.md.
 		/// </remarks>
 		public const string HeaderPrefix = "# Commit: ";
 
@@ -159,9 +160,6 @@ namespace x360ce.Engine
 
 		/// <summary>The built-in copy's resource: the file, gzip compressed.</summary>
 		public const string ResourceName = "gamecontrollerdb.txt.gz";
-
-		/// <summary>The built-in copy's licence, as SDL_GameControllerDB gives it.</summary>
-		public const string LicenceResourceName = "gamecontrollerdb.LICENSE";
 
 		/// <summary>Where SDL_GameControllerDB lives.</summary>
 		public const string ProjectUrl = "https://github.com/mdqinc/SDL_GameControllerDB";
@@ -321,18 +319,6 @@ namespace x360ce.Engine
 					return "";
 				using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
 				using (var reader = new StreamReader(gzip, Encoding.UTF8))
-					return reader.ReadToEnd();
-			}
-		}
-
-		/// <summary>The built-in copy's licence; empty when the program does not carry it.</summary>
-		public static string ReadLicence()
-		{
-			using (var stream = EngineHelper.GetResourceStream(LicenceResourceName))
-			{
-				if (stream == null)
-					return "";
-				using (var reader = new StreamReader(stream, Encoding.UTF8))
 					return reader.ReadToEnd();
 			}
 		}

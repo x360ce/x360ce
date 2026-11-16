@@ -2688,7 +2688,7 @@
             this.MouseDemoPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.MouseDemoPanel.Margin = new System.Windows.Forms.Padding(0);
             this.MouseDemoPanel.Name = "MouseDemoPanel";
-            this.MouseDemoPanel.Size = new System.Drawing.Size(316, 149);
+            this.MouseDemoPanel.Size = new System.Drawing.Size(436, 197);
             this.MouseDemoPanel.TabIndex = 3;
             //
             // WheelTableLayoutPanel

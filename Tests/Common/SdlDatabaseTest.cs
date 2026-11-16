@@ -65,7 +65,10 @@ namespace x360ce.Tests
 			Assert.IsTrue(source.Mappings.Any(x => x.Guid.Form == SdlGuidForm.XInput), "The xinput row is missing.");
 			StringAssert.StartsWith(source.Describe(), "built in, 2026-11-02, 07af1d5, ");
 			Assert.IsNull(source.Address, "The line \"# Source:\" SDL_GameControllerDB writes was read as the address the copy was downloaded from.");
-			StringAssert.Contains(SdlDatabase.ReadLicence(), "Sam Lantinga", "The database's licence is not carried with it.");
+			// Its licence is the one SDL_GameControllerDB gives at the same commit.
+			var list = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, ThirdPartyLicences.ListPath));
+			var licence = ThirdPartyLicences.Parse(list).Single(x => x.Address == SdlDatabase.ProjectUrl);
+			StringAssert.Contains(licence.Provenance, source.Sha, "The licence carried is not taken at the built-in database's commit.");
 		}
 
 		[TestMethod, TestCategory("presets"), TestCategory("critical")]

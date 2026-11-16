@@ -250,22 +250,14 @@ namespace x360ce.Engine
 		public static PadSetting AutoSetting(SdlDevice device, bool forceFeedback, bool formulas, out string note, SdlDatabase x360ce = null, SdlDatabase sdl = null)
 		{
 			note = "";
-			if (device == null)
+			var mapping = AutoMapping(device, formulas, x360ce, sdl);
+			if (mapping == null)
 				return null;
-			var row = (x360ce ?? Current).Find(device);
-			var sdlRow = (sdl ?? SdlDatabase.Current).Find(device);
-			var translation = sdlRow == null ? null : SdlConverter.ToPadSetting(sdlRow, device, formulas);
-			var fromSdl = translation == null || translation.Count == 0 ? null : translation.Setting;
-			if (row == null && fromSdl == null)
-				return null;
-			var skipped = translation == null ? "" : translation.SkippedText();
-			var fromRow = row == null ? null : ToPadSetting(row);
+			var fromRow = mapping.X360ceRow == null ? null : ToPadSetting(mapping.X360ceRow);
 			if (fromRow != null && fromRow.ForceEnable != "1")
 				ClearForceFeedback(fromRow);
-			note = row == null
-				? "Filled from SDL's controller database, as " + sdlRow.Name + "." + (skipped.Length == 0 ? "" : " " + skipped)
-				: "Filled from x360ce's controller database, as " + row.Name + (fromSdl == null ? "." : ", and from SDL's where it maps nothing.");
-			var setting = Merge(fromRow, fromSdl);
+			note = mapping.Note;
+			var setting = Merge(fromRow, mapping.Setting);
 			if (forceFeedback && setting.ForceEnable != "1")
 			{
 				setting.ForceEnable = "1";
@@ -273,6 +265,64 @@ namespace x360ce.Engine
 				setting.PadSettingChecksum = setting.CleanAndGetCheckSum();
 			}
 			return setting;
+		}
+
+		/// <summary>
+		/// The mapping <see cref="AutoSetting"/> gives a device, box by box, as the SDL page shows it: x360ce's database row
+		/// for the device in the boxes it fills, and SDL's row, translated, in those it leaves empty. Each box filled names the
+		/// row's field it came from, "A:2" from x360ce's row or SDL's binding, and its database
+		/// (<see cref="SdlTranslation.From"/>). Null when neither database knows the device.
+		/// </summary>
+		/// <param name="device">The device.</param>
+		/// <param name="formulas">False for x360ce 3, which has no formulas (<see cref="SdlConverter.ToPadSetting"/>).</param>
+		/// <param name="x360ce">x360ce's database; the program's own when null.</param>
+		/// <param name="sdl">SDL's database; the program's own when null.</param>
+		public static SdlTranslation AutoMapping(SdlDevice device, bool formulas = true, SdlDatabase x360ce = null, SdlDatabase sdl = null)
+		{
+			if (device == null)
+				return null;
+			var row = (x360ce ?? Current).Find(device);
+			var sdlRow = (sdl ?? SdlDatabase.Current).Find(device);
+			var fromSdl = sdlRow == null ? null : SdlConverter.ToPadSetting(sdlRow, device, formulas);
+			if (fromSdl != null && fromSdl.Count == 0)
+				fromSdl = null;
+			if (row == null)
+			{
+				if (fromSdl == null)
+					return null;
+				foreach (var code in fromSdl.Sources.Keys)
+					fromSdl.From[code] = SdlTranslation.FromSdl;
+				var skipped = fromSdl.SkippedText();
+				fromSdl.Note = "Filled from SDL's controller database, as " + sdlRow.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+				return fromSdl;
+			}
+			var fromRow = ToPadSetting(row);
+			var mapping = new SdlTranslation
+			{
+				Mapping = row,
+				X360ceRow = row,
+				Note = "Filled from x360ce's controller database, as " + row.Name + (fromSdl == null ? "." : ", and from SDL's where it maps nothing."),
+			};
+			foreach (var code in SdlConverter.MappingBoxes)
+			{
+				var value = SdlConverter.GetValue(fromRow, code);
+				string source;
+				if (value.Length > 0)
+				{
+					source = PadSettingIni.Key(code.ToString()) + ":" + value;
+					mapping.From[code] = SdlTranslation.FromX360ce;
+				}
+				else if (fromSdl != null && fromSdl.Sources.TryGetValue(code, out source))
+				{
+					value = SdlConverter.GetValue(fromSdl.Setting, code);
+					mapping.From[code] = SdlTranslation.FromSdl;
+				}
+				else
+					continue;
+				SdlConverter.SetValue(mapping.Setting, code, value);
+				mapping.Sources[code] = source;
+			}
+			return mapping;
 		}
 
 		/// <summary>Empties a setting's force feedback values but whether it is on, so they read as their defaults.</summary>

@@ -25,13 +25,8 @@ namespace x360ce.App.Controls
 			var program = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(typeof(AboutControl).Assembly);
 			var version = program.Version;
 			AboutProductLabel.Text = string.Format(AboutProductLabel.Text, version);
-			stream = EngineHelper.GetResourceStream("License.txt");
-			sr = new StreamReader(stream);
-			var license = sr.ReadToEnd();
 			// What x360ce carries from other projects is shown under its own licence, as each of those licences asks.
-			license += CarriedLicence("SDL controller database", SdlDatabase.ProjectUrl, "zlib licence", SdlDatabase.ReadLicence());
-			license += CarriedLicence("Selawik font", "https://github.com/microsoft/Selawik", "SIL Open Font License 1.1", AppHelper.ReadHelp("Fonts.Selawik.OFL.txt"));
-			license += CarriedLicence("Inconsolata font", "https://github.com/googlefonts/Inconsolata", "SIL Open Font License 1.1", AppHelper.ReadHelp("Fonts.Inconsolata.OFL.txt"));
+			var license = AppHelper.ReadHelp("Documents.License.txt") + ThirdPartyLicences.Text(program.Assembly);
 			LicenseTextBox.Text = ControlsHelper.NormalizeLineBreaks(license);
 			LicenseTabPage.Text = string.Format("{0} {1} License", program.Product, version.ToString(2));
 			SizeProductPicture();
@@ -51,18 +46,6 @@ namespace x360ce.App.Controls
 				+ AboutDescriptionLabel.Margin.Top + AboutDescriptionLabel.PreferredHeight;
 			ProductPictureBox.Size = new Size(side, side);
 			ProductPictureBox.Image = ControlsHelper.ScaleImage(Properties.Resources.app_128x128, ProductPictureBox.Size);
-		}
-
-		/// <summary>The licence of a project x360ce carries a part of, to put under x360ce's own; empty when the program does not carry its text.</summary>
-		/// <param name="name">What is carried, such as "Selawik font".</param>
-		/// <param name="url">Where the project lives.</param>
-		/// <param name="licence">The licence's name.</param>
-		/// <param name="text">The licence as the project gives it.</param>
-		static string CarriedLicence(string name, string url, string licence, string text)
-		{
-			if (string.IsNullOrEmpty(text))
-				return "";
-			return "\r\n\r\n" + new string('-', 72) + "\r\n\r\n" + name + " (" + url + "), " + licence + ":\r\n\r\n" + text;
 		}
 
 	}

@@ -78,7 +78,11 @@ namespace x360ce.App.Controls
 				if (e.TabPage == GeneralTabPage)
 					HoldTables();
 			};
-			PadTabControl.SelectedIndexChanged += (s, e) => ReleaseTables();
+			PadTabControl.SelectedIndexChanged += (s, e) =>
+			{
+				ReleaseTables();
+				UpdateSdlPage();
+			};
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
@@ -1770,6 +1774,8 @@ namespace x360ce.App.Controls
 				SettingsManager.Current.ResumeEvents();
 			}
 			SelectPage(PadTabControl, view.Page);
+			// Selected already, the SDL page is drawn here for the controller now shown.
+			UpdateSdlPage();
 			SelectPage(DirectInputPanel.DeviceDetailsTabControl, view.DetailsPage);
 			LeftMotorTestTrackBar.Value = view.LeftMotor;
 			RightMotorTestTrackBar.Value = view.RightMotor;
@@ -2952,12 +2958,23 @@ namespace x360ce.App.Controls
 
 		#region SDL page
 
-		/// <summary>The SDL page: what SDL's controller database says about the selected device.</summary>
+		/// <summary>The SDL page: the mapping Auto gives the selected device, from x360ce's controller database and SDL's.</summary>
 		internal TabPage SdlTabPage;
 		SdlUserControl SdlPanel;
 
-		/// <summary>Fills every mapping box from the device's SDL row, as the SDL page shows it, and leaves the controller's other settings as they are.</summary>
-		/// <remarks>A box the row leaves empty is emptied, so nothing mapped before stays beside SDL's mapping.</remarks>
+		/// <summary>
+		/// Draws the SDL page for the controller shown, when it is the page selected: as it is selected, and as another
+		/// controller is shown on it. The state updates draw it too, but only at their next pass, which would leave the
+		/// controller shown before on it until then.
+		/// </summary>
+		void UpdateSdlPage()
+		{
+			if (PadTabControl.SelectedTab == SdlTabPage)
+				SdlPanel.UpdateFrom(GetSelectedDevice(), GetSelectedPadSetting());
+		}
+
+		/// <summary>Fills every mapping box as the SDL page shows it, from x360ce's row and SDL's, and leaves the controller's other settings as they are.</summary>
+		/// <remarks>A box the rows leave empty is emptied, so nothing mapped before stays beside the databases' mapping.</remarks>
 		void SdlPanel_ApplyClicked(object sender, EventArgs e)
 		{
 			var sdl = SdlPanel.Translation;
@@ -2969,8 +2986,7 @@ namespace x360ce.App.Controls
 				SdlConverter.SetValue(ps, code, SdlConverter.GetValue(sdl.Setting, code));
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, setting, ps);
-			var skipped = sdl.SkippedText();
-			MainForm.Current.StatusTimerLabel.Text = "Mapped as SDL's controller database maps " + sdl.Mapping.Name + "." + (skipped.Length == 0 ? "" : " " + skipped);
+			MainForm.Current.StatusTimerLabel.Text = sdl.Note;
 		}
 
 		void SdlPanel_CopyClicked(object sender, EventArgs e)

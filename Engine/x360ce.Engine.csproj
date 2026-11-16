@@ -129,6 +129,7 @@
     <Compile Include="Common\MotorModel.cs" />
     <Compile Include="Common\MapExpressionUnits.cs" />
     <Compile Include="Common\MarkdownRtf.cs" />
+    <Compile Include="Common\ThirdPartyLicences.cs" />
     <Compile Include="Common\ServerInfo.cs" />
     <Compile Include="Common\SettingsLocation.cs" />
     <Compile Include="Common\SettingsTransfer.cs" />
@@ -573,12 +574,12 @@
     </EmbeddedResource>
     <!--
       SDL_GameControllerDB's gamecontrollerdb.txt with x360ce's commit line on top, read from the resource as it is
-      (SdlDatabase), and its zlib licence; and x360ce's controller database (X360ceDatabase), carried the same way and
-      written by scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds
-      the same two gzip files (Native\x360ce\x360ce.rc).
+      (SdlDatabase); and x360ce's controller database (X360ceDatabase), carried the same way and written by
+      scripts\Update-X360ceDatabase.ps1. Both programs carry them in the engine, and the xinput library embeds the same
+      two gzip files (Native\x360ce\x360ce.rc). Each program carries SDL_GameControllerDB's licence with the others, from
+      ..\Resources\Licenses.
     -->
     <EmbeddedResource Include="Resources\gamecontrollerdb.txt.gz" />
-    <EmbeddedResource Include="Resources\gamecontrollerdb.LICENSE" />
     <EmbeddedResource Include="Resources\gamecontrollerdb_x360ce.windows.txt.gz" />
   </ItemGroup>
   <ItemGroup>

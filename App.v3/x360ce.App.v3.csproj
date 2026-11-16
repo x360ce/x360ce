@@ -327,6 +327,31 @@
     <None Include="..\Resources\Images\shared\**;..\Resources\Images\v3\**" Exclude="@(EmbeddedResource)" LinkBase="Images" />
   </ItemGroup>
   <ItemGroup>
+    <!--
+      The parts the program and its xinput library carry from other projects, as ..\Resources\Licenses\README.md lists
+      them, and the licence of each that names x360ce 3, each under its path in the repository: the License tab shows
+      them (ThirdPartyLicences).
+    -->
+    <EmbeddedResource Include="..\Resources\Licenses\README.md">
+      <Link>Resources\Licenses\README.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SharpDX\License.txt">
+      <Link>Resources\Licenses\SharpDX\License.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\SDL_GameControllerDB\LICENSE">
+      <Link>Resources\Licenses\SDL_GameControllerDB\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\MinHook\LICENSE.txt">
+      <Link>MinHook\LICENSE.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Native\Common\zlib\LICENSE">
+      <Link>Native\Common\zlib\LICENSE</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Resources\Licenses\IconExperience\IconExperience.License.txt">
+      <Link>Resources\Licenses\IconExperience\IconExperience.License.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Engine\x360ce.Engine.csproj">
       <Private>True</Private>
     </ProjectReference>

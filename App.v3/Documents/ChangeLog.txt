@@ -1,8 +1,9 @@
-﻿## [3.12.3.0] - 2026-11-16
+﻿## [3.12.4.0] - 2026-11-16
 
 - Fixed: Controllers set up from the built-in databases have force feedback.
 - Fixed: Overall Effects Strength is spelt right on the Force Feedback page.
 - Added: AI assistant access lists and opens every page, and closes windows.
+- Added: The About page shows the licences of the parts x360ce uses.
 
 ## [3.11.32.0] - 2026-11-14
 

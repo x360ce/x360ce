@@ -67,7 +67,7 @@ namespace x360ce.App.Controls
 			this.LayoutPanel.SetColumnSpan(this.PhaseLabel, 2);
 			this.LayoutPanel.SetColumnSpan(this.NoteLabel, 2);
 			this.LayoutPanel.SetRowSpan(this.DemoPictureBox, 3);
-			this.LayoutPanel.Size = new System.Drawing.Size(316, 149);
+			this.LayoutPanel.Size = new System.Drawing.Size(436, 197);
 			this.LayoutPanel.TabIndex = 0;
 			//
 			// CaptionLabel
@@ -84,7 +84,7 @@ namespace x360ce.App.Controls
 			//
 			this.DemoPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DemoPictureBox.Name = "DemoPictureBox";
-			this.DemoPictureBox.Size = new System.Drawing.Size(240, 96);
+			this.DemoPictureBox.Size = new System.Drawing.Size(360, 144);
 			this.DemoPictureBox.TabIndex = 1;
 			this.DemoPictureBox.TabStop = false;
 			this.DemoPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.DemoPictureBox_Paint);
@@ -146,7 +146,7 @@ namespace x360ce.App.Controls
 			this.Controls.Add(this.LayoutPanel);
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "MouseDemoUserControl";
-			this.Size = new System.Drawing.Size(316, 149);
+			this.Size = new System.Drawing.Size(436, 197);
 			this.LayoutPanel.ResumeLayout(false);
 			this.LayoutPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DemoPictureBox)).EndInit();

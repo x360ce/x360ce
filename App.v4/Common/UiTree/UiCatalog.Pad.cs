@@ -75,7 +75,7 @@ namespace x360ce.App.UiTree
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.CaptionLabel)] = Live("Demo stick",
 				"The stick group the demo shows and its style, such as Left Stick: Wheel.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.DemoPictureBox)] = new Text("Demo picture",
-				"The mouse on its pad, its button lit while held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.");
+				"A mouse walking on its pad, the ear on its button's side lit while the button is held, or in Screen the pointer on a screen with its centre marked, and the stick it moves, with a pause at the moment that sets the style apart.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.PhaseLabel)] = Live("Demo step",
 				"What the demo shows now, in words, such as Mouse stops: stick returns to the centre.");
 			d[nameof(MouseDemoUserControl) + "." + nameof(MouseDemoUserControl.NoteLabel)] = Live("Demo note",
@@ -87,18 +87,18 @@ namespace x360ce.App.UiTree
 			d[nameof(PadControl) + "." + nameof(PadControl.DirectInputTabPage)] = new Text("Direct Input",
 				"What the mapped device reports about itself, and its values as they change. Titled Raw Input for a device read through Raw Input.");
 			d[nameof(PadControl) + "." + nameof(PadControl.SdlTabPage)] = new Text("SDL",
-				"What SDL's controller database says about the selected device, place by place, beside what this controller's boxes hold, and which copy of the database is in use.");
+				"The mapping Auto gives the selected device, place by place, from x360ce's controller database and SDL's, beside what this controller's boxes hold, and which copies of the databases are in use.");
 			d[nameof(SdlUserControl)] = new Text(null,
-				"What SDL's controller database says about the selected device.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.VersionLabel)] = Live("SDL database version",
-				"Which copy of SDL's controller database is in use: built in, or downloaded and from where, its date and commit, and how many Windows rows it holds; and any rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("SDL's row for the device",
-				"Whether SDL's controller database knows the selected device, its name and GUID there, how the pad labels its buttons, and what of the row x360ce has no place for.");
+				"The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.");
+			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.VersionLabel)] = Live("Database versions",
+				"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, and how many Windows rows each holds; and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.");
+			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("The device's rows",
+				"Whether x360ce's and SDL's controller databases know the selected device, its name there and where the row is from, which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.PositionsDataGridView)] = new Text("Places",
-				"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the SDL row's binding, the device's control that binding names in x360ce's words, "
+				"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the row's binding and the database it is from, x360ce or SDL, the device's control that binding names in x360ce's words, "
 				+ "and what the box holds now, with Same or Differs beside it.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.ApplyButton)] = new Text("Apply SDL Mapping",
-				"Fills every mapping box of this controller from SDL's row for the device, and empties those the row leaves out. Dead zones and the other settings stay as they are.");
+				"Fills every mapping box of this controller as the page shows it, from x360ce's row and SDL's, and empties those they leave out. Dead zones and the other settings stay as they are.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.CopyButton)] = new Text("Copy as SDL",
 				"Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.UpdateButton)] = new Text("Update SDL Database",

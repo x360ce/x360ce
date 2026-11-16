@@ -52,4 +52,4 @@ A font whose letters line up, for formulas, presets and values.
 
 #### Licences
 
-The License tab shows x360ce's licence, then those of SDL_GameControllerDB, Selawik and Inconsolata in full.
+The License tab shows x360ce's licence, then in full the licence of each part x360ce carries from other projects.
