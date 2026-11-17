@@ -43,25 +43,23 @@ namespace x360ce.App.Controls
 			//
 			// LayoutPanel
 			//
-			this.LayoutPanel.AutoSize = true;
-			this.LayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.LayoutPanel.ColumnCount = 2;
 			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.LayoutPanel.Controls.Add(this.DemoPictureBox, 0, 0);
-			this.LayoutPanel.Controls.Add(this.CaptionLabel, 1, 0);
-			this.LayoutPanel.Controls.Add(this.DescriptionLabel, 1, 1);
-			this.LayoutPanel.Controls.Add(this.PlayButton, 1, 2);
+			this.LayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.LayoutPanel.Controls.Add(this.CaptionLabel, 0, 0);
+			this.LayoutPanel.Controls.Add(this.DescriptionLabel, 0, 1);
+			this.LayoutPanel.Controls.Add(this.PlayButton, 0, 2);
+			this.LayoutPanel.Controls.Add(this.DemoPictureBox, 1, 0);
 			this.LayoutPanel.Controls.Add(this.PhaseLabel, 0, 3);
 			this.LayoutPanel.Controls.Add(this.NoteLabel, 0, 4);
-			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.LayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.LayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.LayoutPanel.Name = "LayoutPanel";
 			this.LayoutPanel.RowCount = 5;
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.LayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.LayoutPanel.SetColumnSpan(this.PhaseLabel, 2);
@@ -82,6 +80,7 @@ namespace x360ce.App.Controls
 			//
 			// DemoPictureBox
 			//
+			this.DemoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DemoPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
 			this.DemoPictureBox.Name = "DemoPictureBox";
 			this.DemoPictureBox.Size = new System.Drawing.Size(360, 144);
@@ -141,8 +140,6 @@ namespace x360ce.App.Controls
 			//
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.LayoutPanel);
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "MouseDemoUserControl";

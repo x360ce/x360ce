@@ -2644,8 +2644,7 @@
             this.MouseTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MouseTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.MouseTableLayoutPanel.Name = "MouseTableLayoutPanel";
-            this.MouseTableLayoutPanel.RowCount = 4;
-            this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.MouseTableLayoutPanel.RowCount = 3;
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.MouseTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -2683,9 +2682,7 @@
             //
             // MouseDemoPanel
             //
-            this.MouseDemoPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.MouseDemoPanel.AutoSize = true;
-            this.MouseDemoPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.MouseDemoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MouseDemoPanel.Margin = new System.Windows.Forms.Padding(0);
             this.MouseDemoPanel.Name = "MouseDemoPanel";
             this.MouseDemoPanel.Size = new System.Drawing.Size(436, 197);

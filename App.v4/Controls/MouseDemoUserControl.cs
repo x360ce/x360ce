@@ -22,7 +22,8 @@ namespace x360ce.App.Controls
 	/// The stick runs with settings of the demo's own, chosen to show the style plainly: the demo explains the style, it does not
 	/// preview the group's sliders. Where the group's Active setting keeps the style from doing what the demo shows, a note says
 	/// so. It plays once when a style is chosen, unless Windows' Show animations is off, and again on [Play]; otherwise it shows
-	/// the script's last moment. It moves only while it plays, on the page shown, in a window that is not minimised. Its stick
+	/// the script's last moment. It moves only while it plays, on the page shown, in a window that is not minimised, and while
+	/// the page's controls are enabled; disabled with them, it is drawn faded. Its stick
 	/// is its own, on its own clock: the engine's sticks are never touched.
 	/// </remarks>
 	public partial class MouseDemoUserControl : UserControl
@@ -121,16 +122,13 @@ namespace x360ce.App.Controls
 			new Phase(1.2, -0.2, 0, false, "Mouse moves left: stick tilts left"),
 			new Phase(1.5, -0.2, 0, false, "Mouse stops: stick returns to the centre"));
 
-		/// <summary>
-		/// Position: the stick follows how far the mouse has moved from where it started, which is not the pad's middle, stays
-		/// while the mouse rests, and comes back with it.
-		/// </summary>
-		static readonly DemoScript PositionScript = new DemoScript(-0.35, 0.25,
-			new Phase(1.0, -0.35, 0.25, false, "Mouse rests: stick at the centre"),
-			new Phase(1.2, 0.35, -0.25, false, "Mouse moves: stick follows"),
-			new Phase(1.5, 0.35, -0.25, false, "Mouse stops: stick stays"),
-			new Phase(1.35, -0.35, 0.25, false, "Mouse moves back: stick comes back"),
-			new Phase(1.0, -0.35, 0.25, false, "Mouse rests: stick at the centre"));
+		/// <summary>Position: the stick follows how far the mouse has moved from where it started, stays while the mouse rests, and comes back with it.</summary>
+		static readonly DemoScript PositionScript = new DemoScript(0, 0,
+			new Phase(1.0, 0, 0, false, "Mouse rests: stick at the centre"),
+			new Phase(1.2, 0.6, -0.4, false, "Mouse moves: stick follows"),
+			new Phase(1.5, 0.6, -0.4, false, "Mouse stops: stick stays"),
+			new Phase(1.35, 0, 0, false, "Mouse moves back: stick comes back"),
+			new Phase(1.0, 0, 0, false, "Mouse rests: stick at the centre"));
 
 		/// <summary>Wheel: held, the stick follows the mouse and stays; let go, it glides back to the centre over Back to centre's time.</summary>
 		static readonly DemoScript WheelScript = new DemoScript(0, 0,
@@ -410,10 +408,18 @@ namespace x360ce.App.Controls
 			UpdateTimer();
 		}
 
-		/// <summary>Whether the demo may move now: playing, on the page shown, in a window that is not minimised.</summary>
+		/// <summary>Disabled with the page's controls, the demo is drawn faded and stands still.</summary>
+		protected override void OnEnabledChanged(EventArgs e)
+		{
+			base.OnEnabledChanged(e);
+			UpdateTimer();
+			DemoPictureBox.Invalidate();
+		}
+
+		/// <summary>Whether the demo may move now: playing, enabled, on the page shown, in a window that is not minimised.</summary>
 		bool CanRun()
 		{
-			return _playing && Visible && _form != null && _form.WindowState != FormWindowState.Minimized;
+			return _playing && Enabled && Visible && _form != null && _form.WindowState != FormWindowState.Minimized;
 		}
 
 		void UpdateTimer()
@@ -474,10 +480,31 @@ namespace x360ce.App.Controls
 		/// <remarks>What is lit, the stick's dot and the ear of a held button, is the theme's lighter green, ColorActive.</remarks>
 		void DemoPictureBox_Paint(object sender, PaintEventArgs e)
 		{
-			var g = e.Graphics;
+			if (Enabled)
+			{
+				DrawDemo(e.Graphics);
+				return;
+			}
+			// Disabled with the page's controls: the picture faded, as the page's charts are.
+			var box = DemoPictureBox.ClientSize;
+			if (box.Width < 1 || box.Height < 1)
+				return;
+			using (var picture = new Bitmap(box.Width, box.Height))
+			{
+				using (var g = Graphics.FromImage(picture))
+					DrawDemo(g);
+				ControlsHelper.DrawImageWithOpacity(e.Graphics, picture, new Rectangle(Point.Empty, box), EngineHelper.DisabledOpacity);
+			}
+		}
+
+		/// <summary>The demo as <see cref="DemoPictureBox_Paint"/> shows it.</summary>
+		void DrawDemo(Graphics g)
+		{
 			g.SmoothingMode = SmoothingMode.AntiAlias;
-			var size = DemoPictureBox.ClientSize;
-			var side = size.Height;
+			// As large as the box lets it be, from its left edge.
+			var box = DemoPictureBox.ClientSize;
+			var side = Math.Min(box.Height, box.Width / PictureWidth);
+			var size = new SizeF(side * PictureWidth, side);
 			float unit;
 			var pad = PadOf(side, out unit);
 			using (var line = new Pen(SystemColors.ControlDark, Math.Max(1f, unit / 2)))
@@ -489,13 +516,13 @@ namespace x360ce.App.Controls
 					DrawScreen(g, pad, unit, line, ink, field);
 				else
 					DrawMouse(g, pad, unit, line, ink, field, lit);
+				// The stick half the pad's size, as a thumbstick is beside a mouse pad, on the right and level with the pad's middle.
+				var diameter = pad.Width / 2;
+				var stick = new RectangleF(size.Width - unit - diameter, (side - diameter) / 2, diameter, diameter);
 				// The arrow from the mouse to the stick.
 				var y = side / 2f;
-				var from = pad.Right + 2 * unit;
-				var to = size.Width - side - unit;
-				DrawArrow(g, ink, new PointF(from, y), new PointF(to, y), unit);
+				DrawArrow(g, ink, new PointF(pad.Right + 2 * unit, y), new PointF(stick.X - 2 * unit, y), unit);
 				// The stick: its circle, its centre, and its dot where the stick is.
-				var stick = new RectangleF(size.Width - side + unit, unit, side - 2 * unit, side - 2 * unit);
 				g.FillEllipse(field, stick);
 				g.DrawEllipse(line, stick);
 				var cx = stick.X + stick.Width / 2;
@@ -540,6 +567,8 @@ namespace x360ce.App.Controls
 
 		/// <summary>The picture's height in its units, which every part of it is measured in.</summary>
 		const float PictureUnits = 24;
+		/// <summary>The picture's width as a share of its height: the pad, the arrow and the stick half the pad's size.</summary>
+		const float PictureWidth = 2f;
 		/// <summary>The gap between the mouse and the arrow beside it, and the arrow's length, in the picture's units.</summary>
 		const float ArrowGap = 0.5f, ArrowLength = 3;
 

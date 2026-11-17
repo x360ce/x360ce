@@ -90,7 +90,10 @@ namespace x360ce.Tests
 						return string.Format("at {0:0.00} s the stick is not as far as the mouse moved", off.Seconds);
 					return rests.Any(x => x.Stick > 0.3) ? null : "the stick never stays away from the centre while the mouse rests";
 				case MouseStyle.Screen:
-					// The stick is where the pointer is from the screen's centre.
+					// The stick is where the pointer is from the screen's centre, away from it before the pointer has moved at all.
+					var still = rests.FirstOrDefault(x => Distance(x.MouseX, x.MouseY, first.MouseX, first.MouseY) < 1e-9);
+					if (still == null || still.Stick < 0.3)
+						return "before the pointer moves the stick is at the centre, not where the pointer is";
 					var apart = rests.FirstOrDefault(x => Distance(x.StickX, x.StickY, x.MouseX, x.MouseY) > 0.05);
 					if (apart != null)
 						return string.Format("at {0:0.00} s the stick is not where the pointer is", apart.Seconds);
@@ -191,7 +194,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("ui")]
-		[Description("The demo rests until Play, and its timer runs only while it plays on a page that is shown, in a window that is not minimised; Play while it plays stops it")]
+		[Description("The demo rests until Play, and its timer runs only while it plays on a page that is shown and enabled, in a window that is not minimised; Play while it plays stops it")]
 		public void The_timer_is_off_while_the_page_is_hidden()
 		{
 			Ui.OnUiThread(() =>
@@ -216,6 +219,13 @@ namespace x360ce.Tests
 					page.Visible = true;
 					Application.DoEvents();
 					Assert.IsTrue(demo.IsRunning, "Shown again, the demo does not move.");
+					// The page disables its controls when the controller has no device.
+					page.Enabled = false;
+					Application.DoEvents();
+					Assert.IsFalse(demo.IsRunning, "The demo moves while the page's controls are disabled.");
+					page.Enabled = true;
+					Application.DoEvents();
+					Assert.IsTrue(demo.IsRunning, "Enabled again, the demo does not move.");
 					form.WindowState = FormWindowState.Minimized;
 					Application.DoEvents();
 					Assert.IsFalse(demo.IsRunning, "The demo moves while its window is minimised.");
