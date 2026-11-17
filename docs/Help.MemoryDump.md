@@ -1,51 +1,107 @@
-# Making a memory dump when x360ce crashes or freezes
+# Sending crash details when x360ce crashes or freezes
 
-When x360ce closes by itself or stops responding, a memory dump shows where it stopped. A small one, a mini dump, is
-usually enough, and it holds little of your data.
+Use the step that matches what happened, then send what it gives you (step 5).
 
-When x360ce shows its own error window, it sends an error report itself, so no dump is needed. A dump helps when it
-closes without one, or freezes.
+While x360ce runs:
 
-For a problem that is not a crash, such as a stick that drifts or a game that will not start, start with a recording from
-the Issues tab instead. It holds no names or folders, so it can be posted on GitHub as it is: see
-[Recording a problem for a bug report](Help.v4.md#recording-a-problem-for-a-bug-report).
+- an error shows on the status bar: step 1;
+- a controller is not mapped or does not work as it should: step 2.
 
-## 1. Get ProcDump from Microsoft
+When x360ce crashes or freezes:
 
-1. Download ProcDump from Microsoft's page: https://learn.microsoft.com/sysinternals/downloads/procdump
-   (the file is https://download.sysinternals.com/files/Procdump.zip).
+- it closes by itself or stops responding: step 3, then step 4 if needed.
+
+## 1. Send errors directly from x360ce
+
+Use this step when x360ce reports an error on the status bar: **Errors** at the bottom of the window shows a number
+above 0.
+
+1. Click **Errors** on the status bar.
+2. In the **X360CE - Error Report** window, click **Send Error to X360CE**.
+
+   ![The status bar's Errors (1) opens the Error Report window (2), with Send Error to X360CE at its bottom](.attachments/x360ce-crash-error-report.png)
+
+x360ce sends the report itself: there is nothing to upload.
+
+## 2. Record a problem with controller mapping
+
+Use this step when x360ce runs, but a controller is not mapped or does not work as it should.
+
+1. Open the **Issues** tab.
+2. Under **Record for a bug report**, keep every box ticked and press **Start Recording**.
+3. Make the problem happen, then press **Stop Recording**. It stops by itself after 30 minutes.
+4. Press **Open Folder** to find the recording.
+
+   ![The Issues tab with Record for a bug report (1): its boxes, Start Recording and Open Folder](.attachments/x360ce-crash-record-bug-report.png)
+
+The recording leaves out names, folders and keys, so it can be attached to a GitHub issue as it is, or sent with step 5.
+
+## 3. Save the crash entries from the Windows Event Log
+
+Use this step when x360ce closes by itself or stops responding, with no error window.
+
+1. Open the Start menu, type `PowerShell` and open **Windows PowerShell**.
+2. Copy this line, paste it into the window with a right-click, and press Enter:
+
+   ```powershell
+   $f = [Environment]::GetFolderPath('Desktop') + '\x360ce-events.txt'; $e = Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName='.NET Runtime','Application Error','Application Hang','Windows Error Reporting'; StartTime=(Get-Date).AddDays(-14)} -ErrorAction SilentlyContinue | Where-Object Message -match 'x360ce'; $e | Format-List TimeCreated, ProviderName, Id, Message | Out-File $f -Encoding utf8 -Width 300; "x360ce entries saved: $($e.Count), in x360ce-events.txt on your Desktop."
+   ```
+
+3. It saves `x360ce-events.txt` on your Desktop and says how many entries it saved.
+
+   ![Windows PowerShell after the command: x360ce entries saved: 63, in x360ce-events.txt on your Desktop](.attachments/x360ce-crash-events-powershell.png)
+
+What will be included: the entries Windows wrote in the last 14 days that name x360ce, with the error and the place in
+x360ce where it stopped. They can hold your Windows user name and folder names, so send them privately (step 5).
+
+If it saved 0 entries, Windows has no note of the crash: make a memory dump (step 4).
+
+**x360ce 3:** it runs inside the game, so put the game's program name in place of `'x360ce'` in the command, for
+example `-match 'Game.exe'`.
+
+## 4. Optional: Make a memory dump
+
+Use this step only when the entries from step 3 do not explain the crash, or there are none.
+
+1. Download ProcDump from Microsoft: https://learn.microsoft.com/sysinternals/downloads/procdump
 2. Unzip it into a folder, for example `C:\ProcDump`.
-3. Open that folder in File Explorer, click the address bar, type `cmd` and press Enter. A Command Prompt opens in
-   the folder.
+3. Open that folder in File Explorer, click the address bar, type `cmd` and press Enter.
+4. Make the folder for the dump: type `mkdir C:\x360ce-dumps` and press Enter. ProcDump does not make it.
+5. Type the command for what happens, press Enter, and leave the window open:
 
-Microsoft lists Windows 11 as the version of Windows ProcDump supports. If it does not start on your PC, see
-[Without ProcDump](#without-procdump).
+   | When x360ce | Command |
+   | --- | --- |
+   | closes by itself | `procdump -accepteula -mm -e -w x360ce.exe C:\x360ce-dumps` |
+   | freezes | `procdump -accepteula -mm -h -w x360ce.exe C:\x360ce-dumps` |
+   | is frozen now | `procdump -accepteula -mm x360ce.exe C:\x360ce-dumps` |
 
-## 2. Make the dump
+6. Start x360ce, or wait for the crash. ProcDump saves a file that starts with `x360ce` and ends in `.dmp` in
+   `C:\x360ce-dumps`.
+7. Zip the dump, because it is too large to send as it is. Type this in the same window and press Enter:
 
-Type the command for what happens, press Enter, and leave the window open.
+   `tar -a -c -f C:\x360ce-dumps\x360ce-dump.zip -C C:\x360ce-dumps *.dmp`
 
-| When x360ce | Command | What ProcDump does |
-| --- | --- | --- |
-| closes by itself | `procdump -accepteula -mm -e -w x360ce.exe` | Waits for x360ce, and writes the dump the moment it fails. Run it before you start x360ce, or while it runs. |
-| freezes | `procdump -accepteula -mm -h -w x360ce.exe` | Writes the dump once x360ce's window has not answered for 5 seconds. |
-| is frozen now | `procdump -accepteula -mm x360ce.exe` | Writes the dump at once. |
+   It saves `x360ce-dump.zip` beside the dump, about a quarter of its size: in a test, 28 MB became 7 MB. Or
+   right-click the `.dmp` file and choose **Compress to** → **ZIP File**. Send the zip in step 5.
 
-ProcDump writes the dump into its own folder, as a file whose name starts with `x360ce` and ends in `.dmp`.
+   ![File Explorer showing C:\x360ce-dumps with the dump file, about 28 MB, and its zip, about 7 MB](.attachments/x360ce-crash-dump-files.png)
 
-**x360ce 3:** it runs inside the game, so when the game closes or freezes, put the game's program name in place of
-`x360ce.exe`, for example `procdump -accepteula -mm -e -w Game.exe`.
+If ProcDump says "Multiple processes match the specified name", two copies of x360ce run: close one, or put the
+**PID** of the one to dump, from Task Manager's **Details**, in place of `x360ce.exe`.
 
-## 3. Send it
+**x360ce 3:** use the game's program name in place of `x360ce.exe`, for example
+`procdump -accepteula -mm -e -w Game.exe C:\x360ce-dumps`.
 
-1. Right-click the `.dmp` file and choose **Send to**, **Compressed (zipped) folder**.
-2. Upload the zip through the private link the developer sends you.
+**Without ProcDump:** while x360ce is frozen, open Task Manager, go to **Details**, right-click `x360ce.exe` and choose
+**Create memory dump file**. This file is much larger and holds more of your data.
 
-Do not attach a dump to a GitHub issue. Anyone can download it there, and a dump can hold your Windows user name,
-folder names and settings.
+## 5. Send the files privately
 
-## Without ProcDump
+1. Email [support@x360ce.com](mailto:support@x360ce.com) and ask for a Request File upload link. Say what happened,
+   and add the link to your GitHub issue if you opened one.
+2. You get a link that starts with `https://www.x360ce.com/request/` followed by a code.
+3. Right-click the file and choose **Compress to** → **ZIP File** (Windows 10: **Send to** → **Compressed (zipped)
+   folder**).
+4. Open the link and upload the zip.
 
-While x360ce is frozen, open Task Manager, go to **Details**, right-click `x360ce.exe` and choose **Create memory dump
-file**. Windows shows where it saved the file. This is a full dump: hundreds of MB, with more of your data in it than a
-mini dump.
+Never attach the files from steps 3 and 4 to a GitHub issue: anyone can download them there.
