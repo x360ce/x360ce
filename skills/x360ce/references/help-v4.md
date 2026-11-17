@@ -275,7 +275,7 @@ What each box adds:
 
 The layers side by side show where a problem starts. A value already wrong in the device input comes from the device or its driver. A value right there but wrong in the controller output comes from the settings. A device call that does not return names the driver that holds everything up.
 
-If `X360CE` closes by itself or freezes completely, a memory dump shows more: see [Help.MemoryDump](https://github.com/x360ce/x360ce/wiki/Help.MemoryDump).
+If `X360CE` closes by itself or freezes completely, see [Help.CrashDetails](https://github.com/x360ce/x360ce/wiki/Help.CrashDetails) for how to send the crash details.
 
 ## Problem: VCRUNTIME140.dll or MSVCP140.dll was not found.
 

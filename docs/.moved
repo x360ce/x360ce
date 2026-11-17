@@ -4,3 +4,4 @@ Reporting-Compatibility = Help.v3#where-hookmasks-are-set
 HID-Guardian = Help.HidGuardian#how-to-uninstall-hid-guardian-when-access-to-keyboard-and-mouse-is-lost
 How-To = Home
 Tutorial = Home
+Help.MemoryDump = Help.CrashDetails
