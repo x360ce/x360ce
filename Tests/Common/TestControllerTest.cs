@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading;
+using x360ce.App;
+using x360ce.App.Plugins;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 using x360ce.Plugins;
@@ -48,15 +50,97 @@ namespace x360ce.Tests
 			Assert.IsTrue(device.IsOnline, "It is online while its plugin is loaded.");
 		}
 
-		[TestMethod, TestCategory("mapping")]
-		[Description("Two test controllers do not share a name or an identity")]
+		/// <summary>The n of a device named "{Name} {n}".</summary>
+		private static int NumberOf(UserDevice device)
+		{
+			return int.Parse(device.InstanceName.Substring(device.InstanceName.LastIndexOf(' ') + 1));
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Two test controllers do not share a name or an identity: one added beside a listed one takes the next number and that number's id, past a name or an id already taken")]
 		public void Two_test_controllers_are_distinct()
 		{
 			// Mapping is stored against the instance, so two devices sharing one would overwrite each
 			// other's settings.
+			var profile = SettingsManager.Options.ProfileId;
+			var product = TestControllerDevice.ProductGuid;
+			// The kind's rows the settings hold are put aside, so the numbers start at 1.
+			UserDevice[] before = null;
+			Ui.OnUiThread(() =>
+			{
+				before = SettingsManager.UserDevices.ItemsToArraySynchronized().Where(x => x.ProductGuid == product).ToArray();
+				foreach (var row in before)
+					SettingsManager.UserDevices.Items.Remove(row);
+			});
+			UserDevice first = null;
+			UserDevice saved = null;
+			try
+			{
+				first = NewDevice();
+				Assert.AreEqual(1, NumberOf(first));
+				Assert.AreEqual(PluginDevices.InstanceGuidOf(profile, product, 1), first.InstanceGuid,
+					"The id is not made from the profile, the kind and the number.");
+				// Listed under another name, as a row saved with the kind's old name, it still holds number 1's id.
+				first.InstanceName = "Renamed " + first.InstanceName;
+				// A row saved before ids were made keeps a random one, and still holds number 2's name.
+				saved = NewDevice();
+				saved.InstanceName = TestControllerDevice.Type.Name + " 2";
+				saved.InstanceGuid = Guid.NewGuid();
+				Ui.OnUiThread(() =>
+				{
+					SettingsManager.UserDevices.Items.Add(first);
+					SettingsManager.UserDevices.Items.Add(saved);
+				});
+				var second = NewDevice();
+				Assert.AreEqual(3, NumberOf(second), "A number whose id or name is taken was given again.");
+				Assert.AreEqual(PluginDevices.InstanceGuidOf(profile, product, 3), second.InstanceGuid);
+				Assert.AreNotEqual(first.InstanceGuid, second.InstanceGuid);
+				Assert.AreNotEqual(saved.InstanceGuid, second.InstanceGuid);
+			}
+			finally
+			{
+				Ui.OnUiThread(() =>
+				{
+					foreach (var row in new[] { first, saved }.Where(x => x != null))
+						SettingsManager.UserDevices.Items.Remove(row);
+					foreach (var row in before)
+						SettingsManager.UserDevices.Items.Add(row);
+				});
+			}
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A test controller removed and added again gets its name and its id back, so what was kept for it is found again")]
+		public void A_test_controller_added_again_gets_its_id_back()
+		{
 			var first = NewDevice();
-			var second = NewDevice();
-			Assert.AreNotEqual(first.InstanceGuid, second.InstanceGuid);
+			Ui.OnUiThread(() =>
+			{
+				SettingsManager.UserDevices.Items.Add(first);
+				SettingsManager.UserDevices.Items.Remove(first);
+			});
+			var again = NewDevice();
+			Assert.AreEqual(first.InstanceName, again.InstanceName);
+			Assert.AreEqual(first.InstanceGuid, again.InstanceGuid, "The same number of the same kind for the same person got another id.");
+			Assert.AreNotEqual(Guid.Empty, first.InstanceGuid);
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("Another person's profile, another kind or another number gives another id, so shared or uploaded settings never meet; an empty profile gives one too")]
+		public void Another_profile_gets_other_ids()
+		{
+			var product = TestControllerDevice.ProductGuid;
+			var mine = new Guid("0f1e2d3c-4b5a-4968-8776-a5b4c3d2e1f0");
+			var theirs = new Guid("1a2b3c4d-5e6f-4708-9192-a3b4c5d6e7f8");
+			var id = PluginDevices.InstanceGuidOf(mine, product, 1);
+			Assert.AreEqual(id, PluginDevices.InstanceGuidOf(mine, product, 1), "The same profile, kind and number gave another id.");
+			Assert.AreNotEqual(id, PluginDevices.InstanceGuidOf(theirs, product, 1), "Another person's device got my id.");
+			Assert.AreNotEqual(id, PluginDevices.InstanceGuidOf(mine, Guid.NewGuid(), 1), "Another kind got the id.");
+			Assert.AreNotEqual(id, PluginDevices.InstanceGuidOf(mine, product, 2), "Another number got the id.");
+			// Before the profile is known, as in a test or early in a start.
+			var empty = PluginDevices.InstanceGuidOf(Guid.Empty, product, 1);
+			Assert.AreNotEqual(Guid.Empty, empty);
+			Assert.AreEqual(empty, PluginDevices.InstanceGuidOf(Guid.Empty, product, 1));
 		}
 
 		[TestMethod, TestCategory("mapping")]

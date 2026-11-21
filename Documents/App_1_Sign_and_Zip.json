@@ -195,6 +195,9 @@
         },
         {
           "Target": "../PluginApi/bin/Release/Plugins/RemoteMcpController/RemoteMcpController.dll"
+        },
+        {
+          "Target": "../PluginApi/bin/Release/Plugins/FitnessMachine/FitnessMachine.dll"
         }
       ]
     },

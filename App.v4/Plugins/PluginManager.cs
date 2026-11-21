@@ -203,8 +203,11 @@ namespace x360ce.App.Plugins
 			{
 				file.Assembly = symbols == null ? Assembly.Load(bytes) : Assembly.Load(bytes, symbols);
 				file.DeviceTypes = FindDeviceTypes(file.Assembly, file);
+				file.PageTypes = FindPageTypes(file.Assembly);
 				file.State = PluginFileState.Loaded;
-				file.Reason = file.DeviceTypes.Length == 0 ? "Loaded, but it has no public class that implements IPluginDevice." : null;
+				file.Reason = file.DeviceTypes.Length == 0 && file.PageTypes.Length == 0
+					? "Loaded, but it has no public class that implements IPluginDevice or IPluginPage."
+					: null;
 			}
 			catch (Exception ex) when (ex is BadImageFormatException || ex is FileLoadException || ex is ReflectionTypeLoadException || ex is TypeLoadException)
 			{
@@ -232,21 +235,13 @@ namespace x360ce.App.Plugins
 
 		/// <summary>Every kind of device an assembly adds: each public class that implements <see cref="IPluginDevice"/> and can be made without arguments.</summary>
 		/// <remarks>
-		/// One instance of each is made and asked for its name, product, controls and the values its settings start with,
-		/// then disposed. The control a kind of device has is a public Windows Forms control in the same assembly whose
-		/// constructor takes the device.
+		/// One instance of each is made and asked for its name, product, controls, recommended mapping and the values its
+		/// settings start with, then disposed. The control a kind of device has is a public Windows Forms control in the
+		/// same assembly whose constructor takes the device.
 		/// </remarks>
 		public static PluginDeviceType[] FindDeviceTypes(Assembly assembly, PluginFile file)
 		{
-			Type[] types;
-			try
-			{
-				types = assembly.GetExportedTypes();
-			}
-			catch (ReflectionTypeLoadException ex)
-			{
-				types = ex.Types.Where(x => x != null && x.IsPublic).ToArray();
-			}
+			var types = ExportedTypes(assembly);
 			var list = new List<PluginDeviceType>();
 			foreach (var type in types)
 			{
@@ -271,6 +266,31 @@ namespace x360ce.App.Plugins
 				list.Add(deviceType);
 			}
 			return list.ToArray();
+		}
+
+		/// <summary>The public types of an assembly, those that load when some do not.</summary>
+		static Type[] ExportedTypes(Assembly assembly)
+		{
+			try
+			{
+				return assembly.GetExportedTypes();
+			}
+			catch (ReflectionTypeLoadException ex)
+			{
+				return ex.Types.Where(x => x != null && x.IsPublic).ToArray();
+			}
+		}
+
+		/// <summary>
+		/// The pages an assembly adds to the main window: each public Windows Forms control that implements
+		/// <see cref="IPluginPage"/> and can be made with an <see cref="IPluginHost"/> or without arguments.
+		/// </summary>
+		/// <remarks>None is made here: the interface makes each once, on its own thread (<see cref="PluginPages"/>).</remarks>
+		public static Type[] FindPageTypes(Assembly assembly)
+		{
+			return ExportedTypes(assembly).Where(x => !x.IsAbstract && typeof(IPluginPage).IsAssignableFrom(x)
+				&& typeof(System.Windows.Forms.Control).IsAssignableFrom(x)
+				&& (x.GetConstructor(new[] { typeof(IPluginHost) }) != null || x.GetConstructor(Type.EmptyTypes) != null)).ToArray();
 		}
 
 		/// <summary>The control a plugin declares for a kind of device: a public Windows Forms control whose constructor takes the device; null when there is none.</summary>
@@ -333,6 +353,14 @@ namespace x360ce.App.Plugins
 			type.Fault(ex);
 			OnChanged();
 		}
+
+		/// <summary>Notes that a plugin's page threw while it was made, and says so.</summary>
+		public void FaultPage(PluginFile file, Type pageType, Exception ex)
+		{
+			var inner = ex is TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+			file.PageFault = "Its page " + pageType.Name + " could not be made: " + inner.GetType().Name + ": " + inner.Message;
+			OnChanged();
+		}
 	}
 
 	/// <summary>Whether a plugin DLL may load.</summary>
@@ -392,6 +420,12 @@ namespace x360ce.App.Plugins
 		public Assembly Assembly { get; set; }
 
 		public PluginDeviceType[] DeviceTypes { get; set; } = new PluginDeviceType[0];
+
+		/// <summary>The classes of the pages the plugin adds to the main window (<see cref="IPluginPage"/>).</summary>
+		public Type[] PageTypes { get; set; } = new Type[0];
+
+		/// <summary>Why a page of the plugin could not be made, or null while none failed.</summary>
+		public string PageFault { get; set; }
 	}
 
 	/// <summary>A kind of device a plugin adds: its class, and what one instance said about itself.</summary>
@@ -417,6 +451,9 @@ namespace x360ce.App.Plugins
 		public int SliderCount { get; private set; }
 		public int PovCount { get; private set; }
 		public int ButtonCount { get; private set; }
+
+		/// <summary>The mapping the plugin recommends for the device, as the fields of an SDL row (<see cref="IPluginMapping"/>); null when it recommends none.</summary>
+		public string Mapping { get; private set; }
 
 		/// <summary>The settings the device's class has, shown on its tab of the controller page.</summary>
 		public PluginSetting[] Settings { get; internal set; } = new PluginSetting[0];
@@ -444,6 +481,8 @@ namespace x360ce.App.Plugins
 			SliderCount = Clamp(device.SliderCount, 8);
 			PovCount = Clamp(device.PovCount, 4);
 			ButtonCount = Clamp(device.ButtonCount, 128);
+			var mapping = device as IPluginMapping;
+			Mapping = mapping == null || string.IsNullOrWhiteSpace(mapping.Mapping) ? null : mapping.Mapping.Trim();
 		}
 
 		internal void Fault(Exception ex)

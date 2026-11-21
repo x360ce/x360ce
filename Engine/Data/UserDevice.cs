@@ -1,7 +1,8 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using System;
-using System.Linq.Expressions;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
@@ -33,12 +34,64 @@ namespace x360ce.Engine.Data
 		/// <remarks>
 		/// The program keeps a DirectInput device at 0, so a file written before the property existed reads back
 		/// unchanged, and the device's checksum, which leaves out a value at 0, stays what it was. 1 is DirectInput
-		/// too and is left out the same way. The database stores both as 1 (<see cref="DatabaseHelper.StoreInputSource"/>).
+		/// too and is left out the same way. The database stores both as 1 (<see cref="StoreInputSource"/>).
 		/// </remarks>
 		public bool ShouldSerializeInputSourceType()
 		{
 			return !IsDirectInput;
 		}
+
+		#region Input source of a device in the database
+
+		/// <summary>
+		/// Gives every device sent without an input source the one the database stores for it: DirectInput.
+		/// </summary>
+		/// <remarks>
+		/// A program before 4.25 sends no input source, and a newer one sends none for a DirectInput device, so a
+		/// device that arrives without one is a DirectInput device. Called before the devices are inserted or copied
+		/// over the stored rows. An older program updating a row that a newer one saved under the same InstanceGuid
+		/// would set it back to DirectInput; that does not happen, because a Raw Input device takes its InstanceGuid
+		/// from its HID path, and no older program knows that device.
+		/// </remarks>
+		public static void StoreInputSource(UserDevice[] devices)
+		{
+			foreach (var device in devices)
+				if (device.InputSourceType == 0)
+					device.InputSourceType = (int)Engine.InputSourceType.DirectInput;
+		}
+
+		/// <summary>
+		/// The stored devices of the kinds the program reads, each with its input source as the program keeps it:
+		/// 0 for DirectInput.
+		/// </summary>
+		/// <param name="devices">Devices as stored. A row at 0 counts as DirectInput.</param>
+		/// <param name="values">
+		/// The values of the program's message. <see cref="CloudKey.InputSourceTypes"/> names the kinds it reads; a
+		/// program that sends none, as every program before 4.25, reads DirectInput only.
+		/// </param>
+		/// <remarks>
+		/// Handing a DirectInput device back at 0 keeps its checksum the one the program took, so an unchanged
+		/// device is not sent again. The devices are changed in place, so they must not be tracked by a context that
+		/// is saved later; the web service reads them untracked.
+		/// </remarks>
+		public static UserDevice[] FilterByInputSource(UserDevice[] devices, KeyValueList values)
+		{
+			var directInput = (int)Engine.InputSourceType.DirectInput;
+			var readable = values.GetValue(CloudKey.InputSourceTypes, directInput);
+			if (readable == 0)
+				readable = directInput;
+			var list = devices.Where(x =>
+			{
+				var kind = x.InputSourceType == 0 ? directInput : x.InputSourceType;
+				return (readable & kind) == kind;
+			}).ToArray();
+			foreach (var device in list)
+				if (device.InputSourceType == directInput)
+					device.InputSourceType = 0;
+			return list;
+		}
+
+		#endregion
 
 		/// <summary>Whether the program reads the device through DirectInput: <see cref="InputSourceType"/> 0, as the program keeps it, or 1.</summary>
 		[XmlIgnore]
@@ -299,6 +352,15 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public long SourceStateTime;
 
+		/// <summary>How many times each button has been pressed in the states the engine has shown, from the device's first read on.</summary>
+		/// <remarks>
+		/// Counted by the input thread as it shows each state, a press that came and went between two passes included, and read
+		/// by the interface, which draws ten times a second: a count that grew since its last look is a press it did not see, so
+		/// a tap shorter than that still lights the button. Made with the device and written in place, so counting makes nothing.
+		/// </remarks>
+		[XmlIgnore]
+		public readonly int[] ButtonPresses = new int[128];
+
 		/// <summary>The state shown before <see cref="SourceState"/>. The input thread fills this object again on the next poll and shows it, so a state stays unchanged for one whole poll after it is replaced. Whoever keeps a state longer takes a <see cref="SourceState.Clone"/>.</summary>
 		[XmlIgnore]
 		public SourceState OldSourceState;
@@ -388,7 +450,7 @@ namespace x360ce.Engine.Data
 		/// the device's force feedback is switched off and on. Written by any thread and read by the engine on every poll,
 		/// so it is held as one number, -1 for none.
 		/// </remarks>
-		[XmlIgnore]
+		[XmlIgnore, NotMapped]
 		public int? ForceSpringSpeedOverride
 		{
 			get { var speed = _ForceSpringSpeedOverride; return speed < 0 ? (int?)null : speed; }
@@ -476,11 +538,11 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public string HidHardwareIds;
 
-		[XmlIgnore]
+		[XmlIgnore, NotMapped]
 		public bool IsOnline
 		{
 			get { return _IsOnline; }
-			set { _IsOnline = value; ReportPropertyChanged(x => x.IsOnline); }
+			set { SetProperty(ref _IsOnline, value); }
 		}
 		bool _IsOnline;
 
@@ -513,20 +575,6 @@ namespace x360ce.Engine.Data
 			}
 		}
 
-
-		#endregion
-
-		#region INotifyPropertyChanged
-
-		/// <summary>
-		/// Use: ReportPropertyChanged(x => x.PropertyName);
-		/// </summary>
-		void ReportPropertyChanged(Expression<Func<UserDevice, object>> selector)
-		{
-			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
-			var name = body.Member.Name;
-			ReportPropertyChanged(name);
-		}
 
 		#endregion
 	}

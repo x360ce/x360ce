@@ -742,6 +742,125 @@ namespace x360ce.Tests
 			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "ui_pages", "ui_open", "ui_wait", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
 		}
 
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("A search and a read through the AI door, which put the controller page on every Controller tab in turn, leave every value it shows as it was: a controller with no device shows what it showed at start, and nothing is stored")]
+		public void Reading_the_controller_tabs_changes_no_value()
+		{
+			var faults = new List<string>();
+			Ui.OnUiThread(() =>
+			{
+				McpTools.Register();
+				McpCatalog.Level = () => AiAccess.Read;
+				McpCatalog.OnUiThread = a => a();
+				var settings = SettingsManager.UserSettings.ItemsToArraySynchronized();
+				var pads = SettingsManager.PadSettings.ItemsToArraySynchronized();
+				var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+				var game = SettingsManager.CurrentGame;
+				var status = SettingsManager.Current.NotifySettingsStatus;
+				SettingsManager.Current.NotifySettingsStatus = count => { };
+				// A page adds its boxes to the settings map and nothing takes them out, so the boxes of a page built earlier in
+				// this process would receive the settings instead of this page's own.
+				var settingsMap = SettingsManager.Current.SettingsMap;
+				Predicate<SettingsMapItem> controllers = x => x.MapTo >= x360ce.Engine.MapTo.Controller1 && x.MapTo <= x360ce.Engine.MapTo.Controller4;
+				var earlier = settingsMap.Where(x => controllers(x)).ToArray();
+				settingsMap.RemoveAll(controllers);
+				var hook = UiTreeWalker.BeforeChildren;
+				try
+				{
+					// Controller 1, the tab shown, has no device; Controller 2 has one, whose values the page takes on the way.
+					SettingsManager.UserSettings.Items.Clear();
+					SettingsManager.PadSettings.Items.Clear();
+					var played = DeviceOnTwoTabsTest.NewGame();
+					var wheel = DeviceOnTwoTabsTest.NewDevice("Wheel");
+					SettingsManager.UserDevices.Items.Add(wheel);
+					var ps = new x360ce.Engine.Data.PadSetting { ButtonA = "b1", ButtonBDeadZone = "4000", LeftThumbAxisX = "a1" };
+					ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+					SettingsManager.PadSettings.Items.Add(ps);
+					var row = AppHelper.GetNewSetting(wheel, played, x360ce.Engine.MapTo.Controller2);
+					row.PadSettingChecksum = ps.PadSettingChecksum;
+					SettingsManager.UserSettings.Items.Add(row);
+					SettingsManager.CurrentGame = played;
+					var stored = SettingsManager.PadSettings.ItemsToArraySynchronized().Select(x => x.PadSettingChecksum).ToArray();
+					using (var form = new Form { Name = "Main", StartPosition = FormStartPosition.Manual, Location = new System.Drawing.Point(-3000, -3000), ShowInTaskbar = false, Width = 1400, Height = 1000 })
+					{
+						// The main window's pages, given the controller page as the main window gives it them when it loads.
+						var main = SpacingGridTest.MainWindowPages();
+						main.Dock = DockStyle.Fill;
+						form.Controls.Add(main);
+						main.BuildPad();
+						main.PadControls = main.BuiltPadControls;
+						var pad = main.PadControls[0];
+						pad.UpdateSettingsMap();
+						pad.InitPadData();
+						form.Show();
+						// The page's first selection is posted.
+						Application.DoEvents();
+						UiTreeWalker.BeforeChildren = main.PadForDoor;
+						McpUiTools.Root = form;
+						var before = Values(pad);
+						Assert.IsTrue(before.Any(x => x.Key.Contains("/AxisToButtonADeadZonePanel/") && x.Key.EndsWith("/DeadZoneNumericUpDown")),
+							"The Buttons page's press points are not read, so the test shows nothing.");
+						foreach (var call in new Dictionary<string, Action>
+						{
+							{ "ui_find", () => McpUiTools.UiFind("dead zone") },
+							{ "ui_read", () => McpUiTools.UiRead() },
+						})
+						{
+							call.Value();
+							// The page goes back to the tab shown once the call is over, as posted.
+							Application.DoEvents();
+							Assert.AreSame(main.ControlPages[0], pad.Parent, call.Key + " left the controller page on another tab.");
+							var after = Values(pad);
+							foreach (var pair in before)
+							{
+								string value;
+								after.TryGetValue(pair.Key, out value);
+								if (value != pair.Value)
+									faults.Add(string.Format("{0}: {1} reads \"{2}\", where it read \"{3}\" before.", call.Key, pair.Key, value, pair.Value));
+							}
+						}
+					}
+					CollectionAssert.AreEquivalent(stored, SettingsManager.PadSettings.ItemsToArraySynchronized().Select(x => x.PadSettingChecksum).ToArray(), "Reading changed the stored settings.");
+				}
+				finally
+				{
+					UiTreeWalker.BeforeChildren = hook;
+					McpUiTools.Root = null;
+					settingsMap.RemoveAll(controllers);
+					settingsMap.AddRange(earlier);
+					SettingsManager.Current.NotifySettingsStatus = status;
+					SettingsManager.CurrentGame = game;
+					SettingsManager.UserSettings.Items.Clear();
+					foreach (var item in settings)
+						SettingsManager.UserSettings.Items.Add(item);
+					SettingsManager.PadSettings.Items.Clear();
+					foreach (var item in pads)
+						SettingsManager.PadSettings.Items.Add(item);
+					SettingsManager.UserDevices.Items.Clear();
+					foreach (var item in devices)
+						SettingsManager.UserDevices.Items.Add(item);
+				}
+			});
+			Assert.AreEqual(0, faults.Count, faults.Count + " value(s) changed:" + Environment.NewLine + string.Join(Environment.NewLine, faults.Take(40)));
+		}
+
+		/// <summary>Every value the page shows, by path, as the door reads it.</summary>
+		static Dictionary<string, string> Values(Control page)
+		{
+			var values = new Dictionary<string, string>();
+			Action<UiNode> add = null;
+			add = node =>
+			{
+				if (node.Path != null && node.Value != null)
+					values[node.Path] = node.Value;
+				if (node.Items != null)
+					foreach (var item in node.Items)
+						add(item);
+			};
+			add(UiTreeWalker.Read(page, true, ""));
+			return values;
+		}
+
 		/// <summary>The Options page has a designer field of that name, of one of those kinds.</summary>
 		public static void AssertField(string name, params Type[] kinds)
 		{

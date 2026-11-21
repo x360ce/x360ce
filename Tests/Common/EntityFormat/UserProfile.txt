@@ -1,0 +1,23 @@
+== XmlSerializer
+<UserProfile xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Id>e8a60a49-cc56-08f2-a054-389e47ce0d06</Id>
+  <ComputerId>de9e53d0-35b3-5255-5554-175c8837d94c</ComputerId>
+  <ProfileId>ab90df05-7c3b-0718-664f-5f7a922990c2</ProfileId>
+  <ProfilePath>ProfilePath</ProfilePath>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <Checksum>6670f389-c3d4-045e-4311-60d607fb2b46</Checksum>
+</UserProfile>
+== [DataMember] properties, with the key
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+Id=e8a60a49-cc56-08f2-a054-389e47ce0d06
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+ProfilePath=ProfilePath
+== [DataMember] properties the checksum is made from
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+ProfilePath=ProfilePath
+== Checksum
+5570f64d-0207-3089-0dd5-45f8b544946c

@@ -40,16 +40,8 @@ namespace JocysCom.ClassLibrary.Runtime
 					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
 						.Where(p => p.CanRead && p.CanWrite)
 						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
-#if NETFRAMEWORK // .NET Framework
-
 					if (skipKey)
-					{
-						var keys = items
-							.Where(p => Attribute.IsDefined(p, typeof(EdmScalarPropertyAttribute)))
-							.Where(p => ((EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute))).EntityKeyProperty);
-						items = items.Except(keys);
-					}
-#endif
+						items = items.Where(p => !IsKeyProperty(p));
 					ps = items
 						// Order properties by name so list will change less with the code changed (important for checksums)
 						.OrderBy(x => x.Name)
@@ -58,6 +50,25 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 			}
 			return ps;
+		}
+
+		/// <summary>
+		/// True for a key property of an entity: one marked [Key], or, in a class of the .NET Framework Entity Framework
+		/// designer, one marked [EdmScalarProperty(EntityKeyProperty = true)].
+		/// </summary>
+		/// <param name="p">Property to test.</param>
+		public static bool IsKeyProperty(PropertyInfo p)
+		{
+			if (p is null)
+				throw new ArgumentNullException(nameof(p));
+			if (Attribute.IsDefined(p, typeof(System.ComponentModel.DataAnnotations.KeyAttribute)))
+				return true;
+#if NETFRAMEWORK // .NET Framework
+			var edm = (EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute));
+			if (edm != null && edm.EntityKeyProperty)
+				return true;
+#endif
+			return false;
 		}
 
 

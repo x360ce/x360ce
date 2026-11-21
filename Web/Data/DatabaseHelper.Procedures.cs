@@ -1,14 +1,12 @@
-﻿using JocysCom.ClassLibrary.Data;
+using JocysCom.ClassLibrary.Data;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 
 namespace x360ce.Engine
 {
-	public partial class EngineHelper
+	/// <summary>The stored procedures the site and the web service read.</summary>
+	public partial class DatabaseHelper
 	{
 
 		public static DataTable GetTopControllers()
@@ -66,20 +64,6 @@ namespace x360ce.Engine
 				info.Error = ex.Message;
 			}
 			return info;
-		}
-
-		public static DataTable GetDataTable(IEnumerable<SearchParameter> list)
-		{
-			DataTable table = new DataTable();
-			table.Columns.Add("ProductGuid", typeof(Guid));
-			table.Columns.Add("InstanceGuid", typeof(Guid));
-			table.Columns.Add("FileName", typeof(string));
-			table.Columns.Add("FileProductName", typeof(string));
-			foreach (var item in list)
-			{
-				table.Rows.Add(item.ProductGuid, item.InstanceGuid, item.FileName, item.FileProductName);
-			}
-			return table;
 		}
 
 		/// <param name="commandTimeout">Seconds the query may take; SqlCommand's 30 when null.</param>

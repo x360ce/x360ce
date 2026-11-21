@@ -54,11 +54,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
-    <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -70,6 +68,10 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The database context only (Data\x360ceModelContainer.cs). The entity classes in the engine carry no Entity Framework. -->
+    <PackageReference Include="EntityFramework" Version="6.5.2" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.htm" />
@@ -89,6 +91,11 @@
     <Compile Include="ControllerDatabase.ashx.cs">
       <DependentUpon>ControllerDatabase.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Data\DatabaseHelper.cs" />
+    <Compile Include="Data\DatabaseHelper.Procedures.cs" />
+    <!-- Written by ..\Engine\Data\Generate-Models.ps1 from the database. -->
+    <Compile Include="Data\x360ceModelContainer.cs" />
+    <Compile Include="Data\x360ceModelContainer.Internal.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

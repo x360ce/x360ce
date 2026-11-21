@@ -26,8 +26,10 @@
          only one of the two, so a page added to the program is seen without changing this script.
       6. Closes the copy and checks that C:\ProgramData\X360CE, where the person's own settings are, was not changed.
 
-    Pictures are named {Version}-{Theme}-{Tab}-{SubTab}.png, such as v4-Dark-Controller1-General.png, and replace the
-    pictures of the last run. Advertisements go into the Ads folder beside them.
+    Pictures are named x360ce-{Version}-{Theme}-{Tab}-{SubTab}.png, such as x360ce-v4-Dark-Controller1-General.png, and
+    replace the pictures of the last run. Advertisements go into the Ads folder beside them. Each picture the website
+    shows, as $SmallPictures names them, also gets a small copy beside it, {Name}-Small.jpg, such as
+    x360ce-v4-Dark-Controller1-General-Small.jpg.
 
     The pictures are at 100 % display scale, 96 DPI, whatever this computer's scale, and the display's own settings are
     never changed:
@@ -97,7 +99,8 @@
     PS> .\App_7_Screenshots.ps1 -V4Exe ..\App.v4\bin\Release\x360ce.exe -V3Exe ..\App.v3\bin\Release_x64\x360ce.exe -SquareCorners
     Pictures this branch's own Release builds, with square corners.
 .OUTPUTS
-    [pscustomobject] One summary per program: pictures per theme, windows, advertisements and what was left out.
+    [pscustomobject] One summary per program: pictures per theme, windows, advertisements, small copies and what was
+    left out.
 #>
 [CmdletBinding()]
 param(
@@ -185,6 +188,25 @@ $SdlPageNeeds = 1
 $SdlPageWords = 'SdlTabPage'
 $SdlLineWords = 'SdlPanel DeviceLabel'
 $SdlMappedWords = 'knows this controller'
+
+# The pictures the website shows, each also saved small beside its PNG as {Name}-Small.jpg: the window as drawn, with
+# square corners, since a JPEG cannot be see-through, shrunk with bicubic resampling until it covers the small size, and
+# cut evenly from both sides of the way it is too long. The window is close to the small size's shape, so little is cut.
+$SmallPictures = @(
+    'x360ce-v4-Light-Controller1-General'
+    'x360ce-v4-Light-Controller1-LeftStick'
+    'x360ce-v4-Light-Controller1-Wheel'
+    'x360ce-v4-Light-Controller1-Buttons'
+    'x360ce-v4-Light-Controller1-ForceFeedback'
+    'x360ce-v4-Dark-Controller1-DirectInput-DeviceObjects'
+    'x360ce-v4-Dark-Controller1-General'
+    'x360ce-v4-Dark-Controller1-Mouse'
+    'x360ce-v4-Dark-Controller1-SDL'
+    'x360ce-v4-Dark-Options-General'
+)
+$SmallWidth = 193
+$SmallHeight = 168
+$SmallJpegQuality = 95
 
 #endregion
 
@@ -1194,17 +1216,25 @@ function ConvertTo-PictureName {
 function Save-WindowPicture {
     <#
     .SYNOPSIS
-        Saves a picture of a window as PNG, with an overlay the process shows drawn over it when asked.
+        Saves a picture of a window as PNG, with an overlay the process shows drawn over it when asked, and a small copy
+        of the window as JPEG when a path is given for it.
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)][long]$Handle,
         [Parameter(Mandatory = $true)][string]$Path,
-        [int]$OverlayOf = 0
+        [int]$OverlayOf = 0,
+        [string]$SmallPath
     )
     $window = [IntPtr]$Handle
     $width = 0; $height = 0; $left = 0; $top = 0
     $pixels = [X360ceScreenshots.WindowPicture]::Capture($window, [ref]$width, [ref]$height, [ref]$left, [ref]$top)
+    if ($SmallPath) {
+        # Taken before the corners are rounded: the window's pixels are all opaque here.
+        $whole = ConvertTo-PictureBitmap -Pixels $pixels -Width $width -Height $height
+        try { Save-SmallPicture -Picture $whole -Path $SmallPath }
+        finally { $whole.Dispose() }
+    }
     if (-not $SquareCorners) {
         $radius = [int][Math]::Round(8 * [X360ceScreenshots.WindowPicture]::Dpi($window) / 96)
         [X360ceScreenshots.WindowPicture]::RoundCorners($pixels, $width, $height, $radius)
@@ -1218,18 +1248,81 @@ function Save-WindowPicture {
         $pixels = [X360ceScreenshots.WindowPicture]::Compose($pixels, $width, $height, $left, $top, $over, $ow, $oh, $ol, $ot, [ref]$cw, [ref]$ch)
         $width = $cw; $height = $ch
     }
-    $bitmap = New-Object System.Drawing.Bitmap $width, $height, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
-    try {
-        # The picture is at 96 DPI and says so; a new bitmap takes the dots per inch of whatever runs the script.
-        $bitmap.SetResolution(96, 96)
-        $area = New-Object System.Drawing.Rectangle 0, 0, $width, $height
-        $data = $bitmap.LockBits($area, [System.Drawing.Imaging.ImageLockMode]::WriteOnly, $bitmap.PixelFormat)
-        [System.Runtime.InteropServices.Marshal]::Copy($pixels, 0, $data.Scan0, $pixels.Length)
-        $bitmap.UnlockBits($data)
-        $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png)
-    }
+    $bitmap = ConvertTo-PictureBitmap -Pixels $pixels -Width $width -Height $height
+    try { $bitmap.Save($Path, [System.Drawing.Imaging.ImageFormat]::Png) }
     finally { $bitmap.Dispose() }
     Set-PngDpi -Path $Path
+}
+
+#--------------------------------------------------------------------------------------------------
+function ConvertTo-PictureBitmap {
+    <#
+    .SYNOPSIS
+        A 32-bit ARGB bitmap at 96 DPI holding the pixels of a picture, as WindowPicture gives them.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][int[]]$Pixels,
+        [Parameter(Mandatory = $true)][int]$Width,
+        [Parameter(Mandatory = $true)][int]$Height
+    )
+    $bitmap = New-Object System.Drawing.Bitmap $Width, $Height, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    # The picture is at 96 DPI and says so; a new bitmap takes the dots per inch of whatever runs the script.
+    $bitmap.SetResolution(96, 96)
+    $area = New-Object System.Drawing.Rectangle 0, 0, $Width, $Height
+    $data = $bitmap.LockBits($area, [System.Drawing.Imaging.ImageLockMode]::WriteOnly, $bitmap.PixelFormat)
+    [System.Runtime.InteropServices.Marshal]::Copy($Pixels, 0, $data.Scan0, $Pixels.Length)
+    $bitmap.UnlockBits($data)
+    return $bitmap
+}
+
+#--------------------------------------------------------------------------------------------------
+function Save-SmallPicture {
+    <#
+    .SYNOPSIS
+        Saves a picture small, $SmallWidth by $SmallHeight, as a JPEG at quality $SmallJpegQuality.
+    .DESCRIPTION
+        The picture is shrunk with high-quality bicubic resampling until it covers the small size, and cut evenly from
+        both sides of the way it is too long. Its edge pixels are repeated past the edge for the resampling, so the
+        small picture's border is not darkened by the see-through nothing beyond it.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][System.Drawing.Bitmap]$Picture,
+        [Parameter(Mandatory = $true)][string]$Path
+    )
+    $scale = [Math]::Max($SmallWidth / $Picture.Width, $SmallHeight / $Picture.Height)
+    $cutWidth = [single]($SmallWidth / $scale)
+    $cutHeight = [single]($SmallHeight / $scale)
+    $cutLeft = [single](($Picture.Width - $cutWidth) / 2)
+    $cutTop = [single](($Picture.Height - $cutHeight) / 2)
+    $small = New-Object System.Drawing.Bitmap $SmallWidth, $SmallHeight, ([System.Drawing.Imaging.PixelFormat]::Format24bppRgb)
+    try {
+        $small.SetResolution(96, 96)
+        $graphics = [System.Drawing.Graphics]::FromImage($small)
+        $edges = New-Object System.Drawing.Imaging.ImageAttributes
+        try {
+            $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+            $graphics.CompositingQuality = [System.Drawing.Drawing2D.CompositingQuality]::HighQuality
+            $edges.SetWrapMode([System.Drawing.Drawing2D.WrapMode]::TileFlipXY)
+            $into = New-Object System.Drawing.Rectangle 0, 0, $SmallWidth, $SmallHeight
+            $graphics.DrawImage($Picture, $into, $cutLeft, $cutTop, $cutWidth, $cutHeight, [System.Drawing.GraphicsUnit]::Pixel, $edges)
+        }
+        finally {
+            $edges.Dispose()
+            $graphics.Dispose()
+        }
+        $jpeg = [System.Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |
+            Where-Object { $_.FormatID -eq [System.Drawing.Imaging.ImageFormat]::Jpeg.Guid } | Select-Object -First 1
+        $settings = New-Object System.Drawing.Imaging.EncoderParameters 1
+        try {
+            $settings.Param[0] = New-Object System.Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality), ([long]$SmallJpegQuality)
+            $small.Save($Path, $jpeg, $settings)
+        }
+        finally { $settings.Dispose() }
+    }
+    finally { $small.Dispose() }
 }
 
 #--------------------------------------------------------------------------------------------------
@@ -1316,7 +1409,8 @@ function Save-Pages {
         if ($taken.ContainsKey($name)) { $taken[$name]++; $name = "$name-$($taken[$name])" } else { $taken[$name] = 1 }
         Invoke-Door -Port $Copy.Port -Tool 'ui_open' -Arguments @{ path = $page.Path } | Out-Null
         $file = Join-Path $Folder "$name.png"
-        Save-WindowPicture -Handle $handle -Path $file
+        $small = if ($SmallPictures -contains $name) { Join-Path $Folder "$name-Small.jpg" } else { '' }
+        Save-WindowPicture -Handle $handle -Path $file -SmallPath $small
         $saved.Add([pscustomobject]@{ Page = $page.Path; File = $file })
     }
     return , $saved.ToArray()
@@ -1485,8 +1579,8 @@ function Invoke-VersionRun {
     $adsFolder = Join-Path $Folder 'Ads'
     $summary = [ordered]@{
         Version = $Version; Program = (Get-Item -LiteralPath $Exe).VersionInfo.FileVersion; Pictures = [ordered]@{}
-        Windows = 0; Ads = 0; AdsLeftOut = @(); WindowsLeftOut = @(); MissingDevices = @(); AnsweredAtStart = @()
-        OnlyWalked = @(); OnlyExported = @(); FolderTimesChanged = @(); Seconds = 0
+        Windows = 0; Ads = 0; Small = 0; AdsLeftOut = @(); WindowsLeftOut = @(); SmallLeftOut = @(); MissingDevices = @()
+        AnsweredAtStart = @(); OnlyWalked = @(); OnlyExported = @(); FolderTimesChanged = @(); Seconds = 0
     }
     $process = $null
     $emptied = $false
@@ -1499,6 +1593,7 @@ function Invoke-VersionRun {
         # The last run's pictures go only once this program can take new ones.
         New-Item -ItemType Directory -Path $adsFolder -Force | Out-Null
         Get-ChildItem -LiteralPath $Folder -Filter '*.png' -File | Remove-Item -Force
+        Get-ChildItem -LiteralPath $Folder -Filter '*-Small.jpg' -File | Remove-Item -Force
         Get-ChildItem -LiteralPath $adsFolder -Filter '*.png' -File | Remove-Item -Force
         $emptied = $true
         $summary.AnsweredAtStart = Complete-StartUp -Copy $copy
@@ -1524,7 +1619,7 @@ function Invoke-VersionRun {
             Invoke-Door -Port $Port -Tool 'ui_set' -Arguments @{ path = $themeList.Path; value = $choice } | Out-Null
             Invoke-Door -Port $Port -Tool 'ui_wait' | Out-Null
             Wait-WorkingController -Copy $copy -Places $places
-            $prefix = "$Version-$choice"
+            $prefix = "x360ce-$Version-$choice"
             # Named apart from the script's $Ads: PowerShell names ignore case, and a local $ads would hide it.
             $pagePictures = Save-Pages -Copy $copy -Folder $Folder -Prefix $prefix
             $windowPictures = Save-OtherWindows -Copy $copy -Folder $Folder -Prefix $prefix
@@ -1539,11 +1634,15 @@ function Invoke-VersionRun {
         $compared = Compare-PagesWithExport -Copy $copy
         $summary.OnlyWalked = $compared.OnlyWalked
         $summary.OnlyExported = $compared.OnlyExported
+        $smallNames = @($SmallPictures | Where-Object { $_ -like "x360ce-$Version-*" })
+        $summary.SmallLeftOut = @($smallNames | Where-Object { -not (Test-Path -LiteralPath (Join-Path $Folder "$_-Small.jpg")) })
+        $summary.Small = $smallNames.Count - $summary.SmallLeftOut.Count
     }
     catch {
         # A run that stops leaves no half set of pictures behind.
         if ($emptied) {
             Get-ChildItem -LiteralPath $Folder -Filter '*.png' -File | Remove-Item -Force
+            Get-ChildItem -LiteralPath $Folder -Filter '*-Small.jpg' -File | Remove-Item -Force
             Get-ChildItem -LiteralPath $adsFolder -Filter '*.png' -File | Remove-Item -Force
         }
         throw
@@ -1555,6 +1654,8 @@ function Invoke-VersionRun {
     }
     foreach ($line in $summary.WindowsLeftOut) { Write-Host "  Window not opened: $line" }
     foreach ($line in $summary.AdsLeftOut) { Write-Host "  Advertisement left out: $line" }
+    if ($summary.Small -gt 0) { Write-Host "  Small copies for the website: $($summary.Small)." }
+    foreach ($line in $summary.SmallLeftOut) { Write-Host "  Small copy not made, as its page was not pictured: $line" }
     foreach ($folderName in $summary.FolderTimesChanged) {
         Write-Host "  $folderName kept every file as it was; only its own time moved, from x360ce's test of whether it can write there."
     }

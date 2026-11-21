@@ -15,22 +15,31 @@ namespace x360ce.App.Plugins
 		static readonly Guid HidClassGuid = new Guid("4d1e55b2-f16f-11cf-88cb-001111000030");
 
 		/// <summary>A new device of this kind for the device list, named "{Name} {n}", with the controls the plugin said it has.</summary>
+		/// <remarks>
+		/// n is the lowest number whose name and instance id no listed device has. The id is made from the person's profile,
+		/// the kind and n (<see cref="InstanceGuidOf"/>), so a device removed and added again gets its id back, and with it
+		/// what was kept for it, while another person's device of the same name has another, so settings shared or uploaded
+		/// never meet a device of theirs. A device saved before keeps the id it has.
+		/// </remarks>
 		public static UserDevice NewUserDevice(PluginDeviceType type)
 		{
 			// Snapshot once: the interface thread can add or remove devices meanwhile.
 			var existing = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var profileId = SettingsManager.Options.ProfileId;
 			string instanceName;
+			Guid instanceGuid;
 			for (var i = 1; ; i++)
 			{
 				instanceName = type.Name + " " + i;
-				if (!existing.Any(x => x.InstanceName == instanceName))
+				instanceGuid = InstanceGuidOf(profileId, type.ProductGuid, i);
+				if (!existing.Any(x => x.InstanceName == instanceName || x.InstanceGuid == instanceGuid))
 					break;
 			}
 			var ud = new UserDevice();
 			ud.InputSourceType = (int)InputSourceType.Plugin;
 			ud.DevManufacturer = VendorOf(type);
 			ud.HidManufacturer = ud.DevManufacturer;
-			ud.InstanceGuid = Guid.NewGuid();
+			ud.InstanceGuid = instanceGuid;
 			ud.InstanceName = instanceName;
 			ud.ProductGuid = type.ProductGuid;
 			ud.ProductName = type.Name;
@@ -40,6 +49,16 @@ namespace x360ce.App.Plugins
 			Describe(ud, type);
 			ud.IsOnline = !type.Faulted;
 			return ud;
+		}
+
+		/// <summary>The instance id of the n-th device of a kind for one person: the same every time, another for another person, kind or number.</summary>
+		/// <param name="profileId">The person's profile (<see cref="Options.ProfileId"/>); empty before it is known, as in a test, which gives the ids every empty profile gets.</param>
+		/// <param name="productGuid">The kind of device.</param>
+		/// <param name="number">The n of "{Name} {n}".</param>
+		public static Guid InstanceGuidOf(Guid profileId, Guid productGuid, int number)
+		{
+			var bytes = profileId.ToByteArray().Concat(productGuid.ToByteArray()).Concat(BitConverter.GetBytes(number)).ToArray();
+			return JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(bytes);
 		}
 
 		/// <summary>Who makes a kind of device, as the Vendor Name columns show it: x360ce for a plugin inside x360ce, otherwise the plugin's name.</summary>
@@ -159,11 +178,37 @@ namespace x360ce.App.Plugins
 		{
 			Type = type;
 			Device = device;
+			Force = device as IPluginForceFeedback;
 		}
 
 		public PluginDeviceType Type { get; }
 		public IPluginDevice Device { get; }
 		public readonly PluginState State = new PluginState();
+
+		/// <summary>The device as one that takes the game's force feedback, or null when its plugin takes none.</summary>
+		public IPluginForceFeedback Force { get; }
+
+		/// <summary>The large motor the device was given last, 0 to 65535, or -1 before it was given any.</summary>
+		int _givenLarge = -1;
+
+		/// <summary>The small motor the device was given last, 0 to 65535, or -1 before it was given any.</summary>
+		int _givenSmall = -1;
+
+		/// <summary>Gives the device the force its game asks for, when that is not what it was given last.</summary>
+		/// <remarks>
+		/// Called on the engine thread before each read of a device that takes force, so while the force stands it compares
+		/// two numbers. The first call always gives, so a new device learns there is no force as well.
+		/// </remarks>
+		/// <param name="largeMotor">The large motor, 0 to 65535.</param>
+		/// <param name="smallMotor">The small motor, 0 to 65535.</param>
+		public void SetForce(int largeMotor, int smallMotor)
+		{
+			if (largeMotor == _givenLarge && smallMotor == _givenSmall)
+				return;
+			_givenLarge = largeMotor;
+			_givenSmall = smallMotor;
+			Force.SetForce(largeMotor, smallMotor);
+		}
 
 		/// <summary>The store's version the device was last given, or -1 before it was given anything.</summary>
 		int _appliedVersion = -1;

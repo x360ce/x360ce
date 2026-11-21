@@ -61,12 +61,20 @@ namespace x360ce.App.Plugins
 			sb.Append("- Source: ").Append(file.Embedded ? "embedded in x360ce.exe" : file.Source).Append('\n');
 			sb.Append("- Signed by: ").Append(file.Embedded ? "part of x360ce" : file.Signer ?? "not signed").Append('\n');
 			sb.Append("- State: ").Append(StateText(file)).Append('\n');
+			if (file.PageTypes.Length > 0)
+				sb.Append("- Adds a page to the main window, on a tab after the Devices tab: ").Append(string.Join(", ", file.PageTypes.Select(x => x.Name)))
+					.Append(". ui_pages lists it, and ui_open opens it.\n");
+			if (file.PageFault != null)
+				sb.Append("- ").Append(file.PageFault).Append('\n');
 			foreach (var type in file.DeviceTypes)
 			{
 				sb.Append("\n## ").Append(type.Name).Append("\n\n");
 				sb.Append("- Product GUID: ").Append(type.ProductGuid).Append('\n');
 				sb.Append("- Controls: axes ").Append(type.AxisCount).Append(", sliders ").Append(type.SliderCount)
 					.Append(", hat switches ").Append(type.PovCount).Append(", buttons ").Append(type.ButtonCount).Append('\n');
+				if (type.Mapping != null)
+					sb.Append("- Recommended mapping, which a controller tab takes when the device is put on it and from Auto Preset, in SDL's form: ")
+						.Append(type.Mapping).Append('\n');
 				if (type.Faulted)
 					sb.Append("- Switched off after it failed, until x360ce starts again: ").Append(type.FaultReason).Append('\n');
 				sb.Append("- To use it: the list a controller tab's Add opens offers one until one is added, and Add Plugin Device on the Devices tab ")

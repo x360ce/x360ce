@@ -1,4 +1,4 @@
-﻿// @under-test: Web/WebServices/x360ce.asmx.v3.cs, Engine/Data/x360ceModel.edmx, Data/dbo/Tables/x360ce_PadSettings.sql
+﻿// @under-test: Web/WebServices/x360ce.asmx.v3.cs, Engine/Data/Model/dbo/PadSetting.cs, Data/dbo/Tables/x360ce_PadSettings.sql
 // @area: webservice   @layer: integration-db
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

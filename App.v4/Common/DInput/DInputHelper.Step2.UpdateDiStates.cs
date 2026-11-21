@@ -197,10 +197,11 @@ namespace x360ce.App.DInput
 					ReadRawInputState(ud, o.ReadEveryChange);
 					continue;
 				}
-				// A plugin device is asked for its state by its plugin, and has nothing else to hold or poll.
+				// A plugin device is asked for its state by its plugin, and given its force when it takes force, and has
+				// nothing else to hold or poll.
 				if (ud.InputSourceType == (int)InputSourceType.Plugin)
 				{
-					ReadPluginState(ud);
+					ReadPluginState(ud, routing);
 					continue;
 				}
 				JoystickState state = null;
@@ -685,15 +686,23 @@ namespace x360ce.App.DInput
 		/// <summary>The width of the steps an axis or slider is logged in: an eighth of its range, so a stick resting at the centre or an end logs nothing.</summary>
 		const int LogAxisStep = 8192;
 
-		/// <summary>Writes what changed between a device's state of the pass before and this pass's into the log, when one runs. Input thread only.</summary>
+		/// <summary>Counts each button pressed between a device's state of the pass before and this pass's in <see cref="UserDevice.ButtonPresses"/>, and writes what changed into the log, when one runs. Input thread only.</summary>
 		/// <remarks>
 		/// Every button and hat change is written. An axis or slider is written when the nearest eighth of its range
 		/// changes, so a moving stick writes a handful of lines on its way and none at rest. Makes nothing.
 		/// </remarks>
 		void LogChanges(UserDevice ud, SourceState previous, SourceState state, long ticks)
 		{
+			if (previous == null)
+				return;
+			var was = previous.Buttons;
+			var now = state.Buttons;
+			var presses = ud.ButtonPresses;
+			for (var i = 0; i < now.Length; i++)
+				if (now[i] && !was[i])
+					presses[i]++;
 			var log = System.Threading.Volatile.Read(ref _inputLog);
-			if (log == null || previous == null)
+			if (log == null)
 				return;
 			for (var i = 0; i < state.Buttons.Length; i++)
 				if (state.Buttons[i] != previous.Buttons[i])

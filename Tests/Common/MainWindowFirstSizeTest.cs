@@ -75,9 +75,9 @@ namespace x360ce.Tests
 				var line = string.Format("{0}: the smallest window {1}; the General tab is whole down to {2}, {3} at 100 %, {4} rounded up; the buttons need {5} px across, at {6}",
 					when, window.Size, needed, at100, rounded, buttonsNeed, buttonsAt);
 				report.Add(line);
-				// Measured in the real program at 100 %, 1024 x 936: the controller picture 8 pixels from the names beside it and the
-				// last row 8 above the tab's frame. This window, which stands in for the main one, needs no more, and no less than
-				// a step of 4 under it.
+				// Measured in the real program at 100 %, 1024 x 904, which the Buttons tab needs: the controller picture 8 pixels
+				// from the names beside it and the last row 8 above the tab's frame. This window, which stands in for the main one,
+				// needs no more, and no less than two steps of 4 under it.
 				var designed = DesignerMinimumSize();
 				if (designed.Width < rounded.Width || designed.Height < rounded.Height || designed.Height - rounded.Height > 8
 					|| designed.Width % 4 != 0 || designed.Height % 4 != 0)

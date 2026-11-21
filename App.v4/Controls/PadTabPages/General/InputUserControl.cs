@@ -157,7 +157,8 @@ namespace x360ce.App.Controls
 
 		/// <summary>
 		/// Brings the panel in line with the device: rebuilds the chips when the device or what it
-		/// reports has changed, then lights them from its last published state.
+		/// reports has changed, then lights them from its last published state and the presses the
+		/// engine counted since the last tick.
 		/// </summary>
 		/// <remarks>
 		/// Called on every interface tick from the pad, on the interface thread. The device's
@@ -196,8 +197,9 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetText(SourceLabel, ud == null ? SourceNone : SourcePrefix + SourceName(ud));
 			}
 			var state = ud == null ? null : ud.SourceState;
+			var presses = ud == null ? null : ud.ButtonPresses;
 			foreach (var group in Groups)
-				group.Refresh(state);
+				group.Refresh(state, presses);
 		}
 	}
 }

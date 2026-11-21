@@ -19,11 +19,11 @@ namespace x360ce.Tests
 	[TestClass]
 	public class NoSystemWebTest
 	{
-		const string Envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>";
-		const string EnvelopeEnd = "</soap:Body></soap:Envelope>";
+		internal const string Envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>";
+		internal const string EnvelopeEnd = "</soap:Body></soap:Envelope>";
 
 		/// <summary>A server for one request on this computer, which answers with the text given and keeps what it was sent.</summary>
-		sealed class FakeService : IDisposable
+		internal sealed class FakeService : IDisposable
 		{
 			readonly TcpListener _listener = new TcpListener(IPAddress.Loopback, 0);
 			readonly Thread _thread;
@@ -83,7 +83,7 @@ namespace x360ce.Tests
 			}
 		}
 
-		static string Http(string status, string type, string body)
+		internal static string Http(string status, string type, string body)
 		{
 			return "HTTP/1.1 " + status + "\r\nContent-Type: " + type + "\r\nConnection: close\r\nContent-Length: " + Encoding.UTF8.GetByteCount(body) + "\r\n\r\n" + body;
 		}

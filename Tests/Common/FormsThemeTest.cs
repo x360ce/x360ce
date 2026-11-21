@@ -39,6 +39,15 @@ namespace x360ce.Tests
 			return Math.Max(1, (int)Math.Floor(scale)) + (int)Math.Round(4 * scale);
 		}
 
+		/// <summary>
+		/// The standard height of a control with a line of text in a font, in pixels: 24 device-independent pixels beside
+		/// Default.xaml's line of text, Segoe UI at 12 px, 15.96 high, and larger or smaller with the font's line.
+		/// </summary>
+		static int StandardHeight(Font font)
+		{
+			return (int)Math.Round(24 * font.Height / 15.96);
+		}
+
 		[TestMethod, TestCategory("interface")]
 		[Description("The dark colours are the ones of the WPF dark theme the program carries")]
 		public void Dark_colours_come_from_the_wpf_theme()
@@ -848,7 +857,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("interface")]
-		[Description("A number box is as tall as Default.xaml's, and a layout makes room for all of it")]
+		[Description("A number box is the standard height, and a layout makes room for all of it")]
 		public void Number_box_is_as_tall_as_default_xaml_s()
 		{
 			OnUiThread(() =>
@@ -863,14 +872,59 @@ namespace x360ce.Tests
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					form.Show();
-					var height = box.Font.Height + FrameSide() * 2;
-					Assert.AreEqual(height, box.Height, "The number box is not as tall as Default.xaml's.");
+					var height = StandardHeight(box.Font);
+					Assert.AreEqual(height, box.Height, "The number box is not the standard height.");
 					Assert.AreEqual(box.Margin.Vertical + height, panel.Height, "The layout left no room for the whole number box.");
 					// Windows Forms repaints its buttons as the mouse moves over them; drawn off the screen, they do not flicker.
 					var buttons = box.Controls[0];
 					var getStyle = typeof(Control).GetMethod("GetStyle", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 					Assert.IsTrue((bool)getStyle.Invoke(buttons, new object[] { ControlStyles.OptimizedDoubleBuffer }), "The buttons are drawn on the screen, so they flicker.");
 				}
+			});
+		}
+
+		[TestMethod, TestCategory("interface")]
+		[Description("In Segoe UI at 9 pt a button, a tool bar button, a drop-down list, a text box, a number box and a tab are 24 px tall at 100 %, a step of the 4 px grid, and as much taller as the screen is zoomed, in whole pixels: 30 at 125 %, 36 at 150 %, 42 at 175 % and 48 at 200 %")]
+		public void Controls_stand_the_standard_height_at_every_zoom()
+		{
+			OnUiThread(() =>
+			{
+				var faults = new System.Collections.Generic.List<string>();
+				foreach (var zoom in new[] { 1f, 1.25f, 1.5f, 1.75f, 2f })
+				{
+					// The screen's zoom reaches the controls as a larger font, which is what Windows Forms scales a window by.
+					using (var font = new Font("Segoe UI", 9f * zoom / JocysCom.ClassLibrary.Controls.ControlsHelper.DpiScale))
+					using (var form = new Form { Font = font, ClientSize = new Size(800, 400), StartPosition = FormStartPosition.Manual, Location = new Point(-3000, -3000), ShowInTaskbar = false })
+					{
+						var button = new Button { Text = "Apply", AutoSize = true, UseCompatibleTextRendering = false };
+						var combo = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList };
+						combo.Items.Add("Gamepad");
+						var box = new TextBox();
+						var number = new NumericUpDown();
+						var flow = new FlowLayoutPanel { Dock = DockStyle.Fill };
+						flow.Controls.AddRange(new Control[] { button, combo, box, number });
+						var bar = new ToolStrip { GripStyle = ToolStripGripStyle.Hidden };
+						var item = new ToolStripButton("Add");
+						bar.Items.Add(item);
+						var tabs = new TabControl { Dock = DockStyle.Bottom, Height = 200 };
+						tabs.TabPages.Add("General");
+						form.Controls.AddRange(new Control[] { flow, bar, tabs });
+						FormsTheme.SetTheme(ThemeType.Light);
+						FormsTheme.Apply(form);
+						form.Show();
+						Application.DoEvents();
+						var expected = (int)Math.Round(24 * zoom);
+						var heights = new[]
+						{
+							Tuple.Create("button", button.Height), Tuple.Create("tool bar button", item.Height),
+							Tuple.Create("drop-down list", combo.Height), Tuple.Create("text box", box.Height),
+							Tuple.Create("number box", number.Height), Tuple.Create("tab", tabs.GetTabRect(0).Bottom),
+						};
+						foreach (var height in heights.Where(x => x.Item2 != expected))
+							faults.Add(string.Format("At {0:P0} the {1} is {2} px tall, not {3}.", zoom, height.Item1, height.Item2, expected));
+					}
+				}
+				Assert.AreEqual(0, faults.Count, string.Join(Environment.NewLine, faults));
 			});
 		}
 
@@ -1971,9 +2025,9 @@ namespace x360ce.Tests
 					FormsTheme.SetTheme(ThemeType.Light);
 					FormsTheme.Apply(form);
 					Assert.IsTrue(tree.BackColor.IsSystemColor, "A tree was changed.");
-					// The text box's edge is the frame the theme draws, and it stands as tall as Default.xaml's text box.
+					// The text box's edge is the frame the theme draws, and it stands the standard height.
 					Assert.AreEqual(BorderStyle.None, box.BorderStyle, "The text box kept Windows' edge.");
-					Assert.AreEqual(box.Font.Height + FrameSide() * 2, box.Height, "The text box is not as tall as Default.xaml's.");
+					Assert.AreEqual(StandardHeight(box.Font), box.Height, "The text box is not the standard height.");
 					Assert.AreEqual(FormsTheme.LightPalette["BackgroundWhite"].ToArgb(), box.BackColor.ToArgb(), "The text box is not filled with Default.xaml's BackgroundWhite.");
 					Assert.AreEqual(FlatStyle.Flat, button.FlatStyle, "A push button kept the Windows look.");
 					Assert.AreEqual(0, button.FlatAppearance.BorderSize, "A push button has a border.");

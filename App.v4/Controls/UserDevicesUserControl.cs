@@ -403,7 +403,9 @@ namespace x360ce.App.Controls
 			menu.Show(button.Owner, new Point(button.Bounds.Left, button.Bounds.Bottom));
 		}
 
-		static void AddPluginDevice(UserDevice ud)
+		/// <summary>Gives a new plugin device its row in the program's device list, and has the devices read again.</summary>
+		/// <remarks>Add Plugin Device, the list Add opens and a plugin's page (<see cref="Plugins.PluginHost.AddDevice"/>) add one through here.</remarks>
+		internal static void AddPluginDevice(UserDevice ud)
 		{
 			lock (SettingsManager.UserDevices.SyncRoot)
 				SettingsManager.UserDevices.Items.Add(ud);

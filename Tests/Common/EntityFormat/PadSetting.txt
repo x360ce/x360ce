@@ -1,0 +1,312 @@
+== XmlSerializer
+<PadSetting xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PadSettingChecksum>b5a589a2-b232-07b1-07e6-bf1ee7175ba7</PadSettingChecksum>
+  <AxisToDPadDeadZone>AxisToDPadDeadZone</AxisToDPadDeadZone>
+  <AxisToDPadEnabled>AxisToDPadEnabled</AxisToDPadEnabled>
+  <AxisToDPadOffset>AxisToDPadOffset</AxisToDPadOffset>
+  <ButtonA>ButtonA</ButtonA>
+  <ButtonB>ButtonB</ButtonB>
+  <ButtonBig>ButtonBig</ButtonBig>
+  <ButtonBack>ButtonBack</ButtonBack>
+  <ButtonGuide>ButtonGuide</ButtonGuide>
+  <ButtonStart>ButtonStart</ButtonStart>
+  <ButtonX>ButtonX</ButtonX>
+  <ButtonY>ButtonY</ButtonY>
+  <DPad>DPad</DPad>
+  <DPadDown>DPadDown</DPadDown>
+  <DPadLeft>DPadLeft</DPadLeft>
+  <DPadRight>DPadRight</DPadRight>
+  <DPadUp>DPadUp</DPadUp>
+  <ForceEnable>ForceEnable</ForceEnable>
+  <ForceOverall>ForceOverall</ForceOverall>
+  <ForcePassThrough>ForcePassThrough</ForcePassThrough>
+  <ForcePassThroughIndex>ForcePassThroughIndex</ForcePassThroughIndex>
+  <ForceSpringEnable>ForceSpringEnable</ForceSpringEnable>
+  <ForceSpringStrength>ForceSpringStrength</ForceSpringStrength>
+  <ForceSpringCentre>ForceSpringCentre</ForceSpringCentre>
+  <ForceSpringPeak>ForceSpringPeak</ForceSpringPeak>
+  <ForceSpringLightening>ForceSpringLightening</ForceSpringLightening>
+  <ForceSpringDamping>ForceSpringDamping</ForceSpringDamping>
+  <ForceSpringSpeed>ForceSpringSpeed</ForceSpringSpeed>
+  <WheelRange>WheelRange</WheelRange>
+  <ForceSwapMotor>ForceSwapMotor</ForceSwapMotor>
+  <ForceType>ForceType</ForceType>
+  <GamePadType>GamePadType</GamePadType>
+  <LeftMotorPeriod>LeftMotorPeriod</LeftMotorPeriod>
+  <LeftMotorStrength>LeftMotorStrength</LeftMotorStrength>
+  <LeftMotorDirection>LeftMotorDirection</LeftMotorDirection>
+  <LeftShoulder>LeftShoulder</LeftShoulder>
+  <LeftThumbAxisX>LeftThumbAxisX</LeftThumbAxisX>
+  <LeftThumbDeadZoneX>LeftThumbDeadZoneX</LeftThumbDeadZoneX>
+  <LeftThumbAntiDeadZoneX>LeftThumbAntiDeadZoneX</LeftThumbAntiDeadZoneX>
+  <LeftThumbLinearX>LeftThumbLinearX</LeftThumbLinearX>
+  <LeftThumbAxisY>LeftThumbAxisY</LeftThumbAxisY>
+  <LeftThumbDeadZoneY>LeftThumbDeadZoneY</LeftThumbDeadZoneY>
+  <LeftThumbAntiDeadZoneY>LeftThumbAntiDeadZoneY</LeftThumbAntiDeadZoneY>
+  <LeftThumbLinearY>LeftThumbLinearY</LeftThumbLinearY>
+  <LeftThumbButton>LeftThumbButton</LeftThumbButton>
+  <LeftThumbDown>LeftThumbDown</LeftThumbDown>
+  <LeftThumbLeft>LeftThumbLeft</LeftThumbLeft>
+  <LeftThumbRight>LeftThumbRight</LeftThumbRight>
+  <LeftThumbUp>LeftThumbUp</LeftThumbUp>
+  <LeftTrigger>LeftTrigger</LeftTrigger>
+  <LeftTriggerDeadZone>LeftTriggerDeadZone</LeftTriggerDeadZone>
+  <LeftTriggerAntiDeadZone>LeftTriggerAntiDeadZone</LeftTriggerAntiDeadZone>
+  <LeftTriggerLinear>LeftTriggerLinear</LeftTriggerLinear>
+  <PassThrough>PassThrough</PassThrough>
+  <RightMotorPeriod>RightMotorPeriod</RightMotorPeriod>
+  <RightMotorStrength>RightMotorStrength</RightMotorStrength>
+  <RightMotorDirection>RightMotorDirection</RightMotorDirection>
+  <RightShoulder>RightShoulder</RightShoulder>
+  <RightThumbAxisX>RightThumbAxisX</RightThumbAxisX>
+  <RightThumbDeadZoneX>RightThumbDeadZoneX</RightThumbDeadZoneX>
+  <RightThumbAntiDeadZoneX>RightThumbAntiDeadZoneX</RightThumbAntiDeadZoneX>
+  <RightThumbLinearX>RightThumbLinearX</RightThumbLinearX>
+  <RightThumbAxisY>RightThumbAxisY</RightThumbAxisY>
+  <RightThumbDeadZoneY>RightThumbDeadZoneY</RightThumbDeadZoneY>
+  <RightThumbAntiDeadZoneY>RightThumbAntiDeadZoneY</RightThumbAntiDeadZoneY>
+  <RightThumbLinearY>RightThumbLinearY</RightThumbLinearY>
+  <RightThumbButton>RightThumbButton</RightThumbButton>
+  <RightThumbDown>RightThumbDown</RightThumbDown>
+  <RightThumbLeft>RightThumbLeft</RightThumbLeft>
+  <RightThumbRight>RightThumbRight</RightThumbRight>
+  <RightThumbUp>RightThumbUp</RightThumbUp>
+  <RightTrigger>RightTrigger</RightTrigger>
+  <RightTriggerDeadZone>RightTriggerDeadZone</RightTriggerDeadZone>
+  <RightTriggerAntiDeadZone>RightTriggerAntiDeadZone</RightTriggerAntiDeadZone>
+  <RightTriggerLinear>RightTriggerLinear</RightTriggerLinear>
+  <ButtonADeadZone>ButtonADeadZone</ButtonADeadZone>
+  <ButtonBDeadZone>ButtonBDeadZone</ButtonBDeadZone>
+  <ButtonBackDeadZone>ButtonBackDeadZone</ButtonBackDeadZone>
+  <ButtonStartDeadZone>ButtonStartDeadZone</ButtonStartDeadZone>
+  <ButtonXDeadZone>ButtonXDeadZone</ButtonXDeadZone>
+  <ButtonYDeadZone>ButtonYDeadZone</ButtonYDeadZone>
+  <LeftThumbButtonDeadZone>LeftThumbButtonDeadZone</LeftThumbButtonDeadZone>
+  <RightThumbButtonDeadZone>RightThumbButtonDeadZone</RightThumbButtonDeadZone>
+  <LeftShoulderDeadZone>LeftShoulderDeadZone</LeftShoulderDeadZone>
+  <RightShoulderDeadZone>RightShoulderDeadZone</RightShoulderDeadZone>
+  <DPadDownDeadZone>DPadDownDeadZone</DPadDownDeadZone>
+  <DPadLeftDeadZone>DPadLeftDeadZone</DPadLeftDeadZone>
+  <DPadRightDeadZone>DPadRightDeadZone</DPadRightDeadZone>
+  <DPadUpDeadZone>DPadUpDeadZone</DPadUpDeadZone>
+  <MouseLeftThumbStyle>MouseLeftThumbStyle</MouseLeftThumbStyle>
+  <MouseLeftThumbSensitivityX>MouseLeftThumbSensitivityX</MouseLeftThumbSensitivityX>
+  <MouseLeftThumbSensitivityY>MouseLeftThumbSensitivityY</MouseLeftThumbSensitivityY>
+  <MouseLeftThumbSmoothing>MouseLeftThumbSmoothing</MouseLeftThumbSmoothing>
+  <MouseLeftThumbReturn>MouseLeftThumbReturn</MouseLeftThumbReturn>
+  <MouseLeftThumbActive>MouseLeftThumbActive</MouseLeftThumbActive>
+  <MouseLeftThumbButton>MouseLeftThumbButton</MouseLeftThumbButton>
+  <MouseRightThumbStyle>MouseRightThumbStyle</MouseRightThumbStyle>
+  <MouseRightThumbSensitivityX>MouseRightThumbSensitivityX</MouseRightThumbSensitivityX>
+  <MouseRightThumbSensitivityY>MouseRightThumbSensitivityY</MouseRightThumbSensitivityY>
+  <MouseRightThumbSmoothing>MouseRightThumbSmoothing</MouseRightThumbSmoothing>
+  <MouseRightThumbReturn>MouseRightThumbReturn</MouseRightThumbReturn>
+  <MouseRightThumbActive>MouseRightThumbActive</MouseRightThumbActive>
+  <MouseRightThumbButton>MouseRightThumbButton</MouseRightThumbButton>
+</PadSetting>
+== [DataMember] properties, with the key
+AxisToDPadDeadZone=AxisToDPadDeadZone
+AxisToDPadEnabled=AxisToDPadEnabled
+AxisToDPadOffset=AxisToDPadOffset
+ButtonA=ButtonA
+ButtonADeadZone=ButtonADeadZone
+ButtonB=ButtonB
+ButtonBack=ButtonBack
+ButtonBackDeadZone=ButtonBackDeadZone
+ButtonBDeadZone=ButtonBDeadZone
+ButtonBig=ButtonBig
+ButtonGuide=ButtonGuide
+ButtonStart=ButtonStart
+ButtonStartDeadZone=ButtonStartDeadZone
+ButtonX=ButtonX
+ButtonXDeadZone=ButtonXDeadZone
+ButtonY=ButtonY
+ButtonYDeadZone=ButtonYDeadZone
+DPad=DPad
+DPadDown=DPadDown
+DPadDownDeadZone=DPadDownDeadZone
+DPadLeft=DPadLeft
+DPadLeftDeadZone=DPadLeftDeadZone
+DPadRight=DPadRight
+DPadRightDeadZone=DPadRightDeadZone
+DPadUp=DPadUp
+DPadUpDeadZone=DPadUpDeadZone
+ForceEnable=ForceEnable
+ForceOverall=ForceOverall
+ForcePassThrough=ForcePassThrough
+ForcePassThroughIndex=ForcePassThroughIndex
+ForceSpringCentre=ForceSpringCentre
+ForceSpringDamping=ForceSpringDamping
+ForceSpringEnable=ForceSpringEnable
+ForceSpringLightening=ForceSpringLightening
+ForceSpringPeak=ForceSpringPeak
+ForceSpringSpeed=ForceSpringSpeed
+ForceSpringStrength=ForceSpringStrength
+ForceSwapMotor=ForceSwapMotor
+ForceType=ForceType
+GamePadType=GamePadType
+LeftMotorDirection=LeftMotorDirection
+LeftMotorPeriod=LeftMotorPeriod
+LeftMotorStrength=LeftMotorStrength
+LeftShoulder=LeftShoulder
+LeftShoulderDeadZone=LeftShoulderDeadZone
+LeftThumbAntiDeadZoneX=LeftThumbAntiDeadZoneX
+LeftThumbAntiDeadZoneY=LeftThumbAntiDeadZoneY
+LeftThumbAxisX=LeftThumbAxisX
+LeftThumbAxisY=LeftThumbAxisY
+LeftThumbButton=LeftThumbButton
+LeftThumbButtonDeadZone=LeftThumbButtonDeadZone
+LeftThumbDeadZoneX=LeftThumbDeadZoneX
+LeftThumbDeadZoneY=LeftThumbDeadZoneY
+LeftThumbDown=LeftThumbDown
+LeftThumbLeft=LeftThumbLeft
+LeftThumbLinearX=LeftThumbLinearX
+LeftThumbLinearY=LeftThumbLinearY
+LeftThumbRight=LeftThumbRight
+LeftThumbUp=LeftThumbUp
+LeftTrigger=LeftTrigger
+LeftTriggerAntiDeadZone=LeftTriggerAntiDeadZone
+LeftTriggerDeadZone=LeftTriggerDeadZone
+LeftTriggerLinear=LeftTriggerLinear
+MouseLeftThumbActive=MouseLeftThumbActive
+MouseLeftThumbButton=MouseLeftThumbButton
+MouseLeftThumbReturn=MouseLeftThumbReturn
+MouseLeftThumbSensitivityX=MouseLeftThumbSensitivityX
+MouseLeftThumbSensitivityY=MouseLeftThumbSensitivityY
+MouseLeftThumbSmoothing=MouseLeftThumbSmoothing
+MouseLeftThumbStyle=MouseLeftThumbStyle
+MouseRightThumbActive=MouseRightThumbActive
+MouseRightThumbButton=MouseRightThumbButton
+MouseRightThumbReturn=MouseRightThumbReturn
+MouseRightThumbSensitivityX=MouseRightThumbSensitivityX
+MouseRightThumbSensitivityY=MouseRightThumbSensitivityY
+MouseRightThumbSmoothing=MouseRightThumbSmoothing
+MouseRightThumbStyle=MouseRightThumbStyle
+PassThrough=PassThrough
+RightMotorDirection=RightMotorDirection
+RightMotorPeriod=RightMotorPeriod
+RightMotorStrength=RightMotorStrength
+RightShoulder=RightShoulder
+RightShoulderDeadZone=RightShoulderDeadZone
+RightThumbAntiDeadZoneX=RightThumbAntiDeadZoneX
+RightThumbAntiDeadZoneY=RightThumbAntiDeadZoneY
+RightThumbAxisX=RightThumbAxisX
+RightThumbAxisY=RightThumbAxisY
+RightThumbButton=RightThumbButton
+RightThumbButtonDeadZone=RightThumbButtonDeadZone
+RightThumbDeadZoneX=RightThumbDeadZoneX
+RightThumbDeadZoneY=RightThumbDeadZoneY
+RightThumbDown=RightThumbDown
+RightThumbLeft=RightThumbLeft
+RightThumbLinearX=RightThumbLinearX
+RightThumbLinearY=RightThumbLinearY
+RightThumbRight=RightThumbRight
+RightThumbUp=RightThumbUp
+RightTrigger=RightTrigger
+RightTriggerAntiDeadZone=RightTriggerAntiDeadZone
+RightTriggerDeadZone=RightTriggerDeadZone
+RightTriggerLinear=RightTriggerLinear
+WheelRange=WheelRange
+== [DataMember] properties the checksum is made from
+AxisToDPadDeadZone=AxisToDPadDeadZone
+AxisToDPadEnabled=AxisToDPadEnabled
+AxisToDPadOffset=AxisToDPadOffset
+ButtonA=ButtonA
+ButtonADeadZone=ButtonADeadZone
+ButtonB=ButtonB
+ButtonBack=ButtonBack
+ButtonBackDeadZone=ButtonBackDeadZone
+ButtonBDeadZone=ButtonBDeadZone
+ButtonBig=ButtonBig
+ButtonGuide=ButtonGuide
+ButtonStart=ButtonStart
+ButtonStartDeadZone=ButtonStartDeadZone
+ButtonX=ButtonX
+ButtonXDeadZone=ButtonXDeadZone
+ButtonY=ButtonY
+ButtonYDeadZone=ButtonYDeadZone
+DPad=DPad
+DPadDown=DPadDown
+DPadDownDeadZone=DPadDownDeadZone
+DPadLeft=DPadLeft
+DPadLeftDeadZone=DPadLeftDeadZone
+DPadRight=DPadRight
+DPadRightDeadZone=DPadRightDeadZone
+DPadUp=DPadUp
+DPadUpDeadZone=DPadUpDeadZone
+ForceEnable=ForceEnable
+ForceOverall=ForceOverall
+ForcePassThrough=ForcePassThrough
+ForcePassThroughIndex=ForcePassThroughIndex
+ForceSpringCentre=ForceSpringCentre
+ForceSpringDamping=ForceSpringDamping
+ForceSpringEnable=ForceSpringEnable
+ForceSpringLightening=ForceSpringLightening
+ForceSpringPeak=ForceSpringPeak
+ForceSpringSpeed=ForceSpringSpeed
+ForceSpringStrength=ForceSpringStrength
+ForceSwapMotor=ForceSwapMotor
+ForceType=ForceType
+GamePadType=GamePadType
+LeftMotorDirection=LeftMotorDirection
+LeftMotorPeriod=LeftMotorPeriod
+LeftMotorStrength=LeftMotorStrength
+LeftShoulder=LeftShoulder
+LeftShoulderDeadZone=LeftShoulderDeadZone
+LeftThumbAntiDeadZoneX=LeftThumbAntiDeadZoneX
+LeftThumbAntiDeadZoneY=LeftThumbAntiDeadZoneY
+LeftThumbAxisX=LeftThumbAxisX
+LeftThumbAxisY=LeftThumbAxisY
+LeftThumbButton=LeftThumbButton
+LeftThumbButtonDeadZone=LeftThumbButtonDeadZone
+LeftThumbDeadZoneX=LeftThumbDeadZoneX
+LeftThumbDeadZoneY=LeftThumbDeadZoneY
+LeftThumbDown=LeftThumbDown
+LeftThumbLeft=LeftThumbLeft
+LeftThumbLinearX=LeftThumbLinearX
+LeftThumbLinearY=LeftThumbLinearY
+LeftThumbRight=LeftThumbRight
+LeftThumbUp=LeftThumbUp
+LeftTrigger=LeftTrigger
+LeftTriggerAntiDeadZone=LeftTriggerAntiDeadZone
+LeftTriggerDeadZone=LeftTriggerDeadZone
+LeftTriggerLinear=LeftTriggerLinear
+MouseLeftThumbActive=MouseLeftThumbActive
+MouseLeftThumbButton=MouseLeftThumbButton
+MouseLeftThumbReturn=MouseLeftThumbReturn
+MouseLeftThumbSensitivityX=MouseLeftThumbSensitivityX
+MouseLeftThumbSensitivityY=MouseLeftThumbSensitivityY
+MouseLeftThumbSmoothing=MouseLeftThumbSmoothing
+MouseLeftThumbStyle=MouseLeftThumbStyle
+MouseRightThumbActive=MouseRightThumbActive
+MouseRightThumbButton=MouseRightThumbButton
+MouseRightThumbReturn=MouseRightThumbReturn
+MouseRightThumbSensitivityX=MouseRightThumbSensitivityX
+MouseRightThumbSensitivityY=MouseRightThumbSensitivityY
+MouseRightThumbSmoothing=MouseRightThumbSmoothing
+MouseRightThumbStyle=MouseRightThumbStyle
+PassThrough=PassThrough
+RightMotorDirection=RightMotorDirection
+RightMotorPeriod=RightMotorPeriod
+RightMotorStrength=RightMotorStrength
+RightShoulder=RightShoulder
+RightShoulderDeadZone=RightShoulderDeadZone
+RightThumbAntiDeadZoneX=RightThumbAntiDeadZoneX
+RightThumbAntiDeadZoneY=RightThumbAntiDeadZoneY
+RightThumbAxisX=RightThumbAxisX
+RightThumbAxisY=RightThumbAxisY
+RightThumbButton=RightThumbButton
+RightThumbButtonDeadZone=RightThumbButtonDeadZone
+RightThumbDeadZoneX=RightThumbDeadZoneX
+RightThumbDeadZoneY=RightThumbDeadZoneY
+RightThumbDown=RightThumbDown
+RightThumbLeft=RightThumbLeft
+RightThumbLinearX=RightThumbLinearX
+RightThumbLinearY=RightThumbLinearY
+RightThumbRight=RightThumbRight
+RightThumbUp=RightThumbUp
+RightTrigger=RightTrigger
+RightTriggerAntiDeadZone=RightTriggerAntiDeadZone
+RightTriggerDeadZone=RightTriggerDeadZone
+RightTriggerLinear=RightTriggerLinear
+WheelRange=WheelRange

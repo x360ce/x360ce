@@ -1,4 +1,4 @@
-// @under-test: App.v3/x360ce.App.v3.csproj, App.v4/x360ce.App.v4.csproj
+// @under-test: App.v3/x360ce.App.v3.csproj, App.v4/x360ce.App.v4.csproj, Engine/x360ce.Engine.csproj
 // @area: build   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -82,27 +82,23 @@ namespace x360ce.Tests
 				.Any(segment => segment.Equals(folder, StringComparison.OrdinalIgnoreCase));
 		}
 
-		/// <summary>
-		/// The names the connection strings in the engine's configuration ask for, each of which
-		/// must be embedded under exactly that name or the data model cannot open.
-		/// </summary>
-		static readonly string[] ModelMetadata =
-		{
-			"Data.x360ceModel.csdl", "Data.x360ceModel.ssdl", "Data.x360ceModel.msl",
-		};
-
 		[TestMethod, TestCategory("build"), TestCategory("critical")]
-		[Description("The engine embeds its data-model metadata under the names its connection strings use")]
-		public void Engine_embeds_the_model_metadata_by_name()
+		[Description("The engine and the programs carry no data-model metadata and no Entity Framework")]
+		public void The_engine_and_the_programs_carry_no_Entity_Framework()
 		{
+			// The data classes are generated from the database (Engine\Data\Generate-Models.ps1). The context that
+			// queries it, and Entity Framework with it, belong to the web site alone.
 			var engine = typeof(x360ce.Engine.EngineHelper).Assembly;
-			var names = engine.GetManifestResourceNames();
-			foreach (var name in ModelMetadata)
-				Assert.IsTrue(names.Contains(name), "Missing embedded resource: " + name + ". Present: " + string.Join(", ", names.Where(x => x.EndsWith("dl", StringComparison.Ordinal))));
-			// Each one is the model section it claims to be, not an empty placeholder.
-			foreach (var name in ModelMetadata)
-				using (var stream = engine.GetManifestResourceStream(name))
-					Assert.IsTrue(stream != null && stream.Length > 1000, name + " is empty.");
+			var metadata = engine.GetManifestResourceNames()
+				.Where(x => x.EndsWith(".csdl", StringComparison.Ordinal) || x.EndsWith(".ssdl", StringComparison.Ordinal) || x.EndsWith(".msl", StringComparison.Ordinal))
+				.ToArray();
+			Assert.AreEqual(0, metadata.Length, "The engine embeds model metadata: " + string.Join(", ", metadata));
+			foreach (var assembly in new[] { engine, typeof(x360ce.App.MainForm).Assembly })
+			{
+				var references = assembly.GetReferencedAssemblies().Select(x => x.Name).ToArray();
+				foreach (var name in new[] { "EntityFramework", "EntityFramework.SqlServer" })
+					Assert.IsFalse(references.Contains(name), assembly.GetName().Name + " references " + name + ".");
+			}
 		}
 
 	}

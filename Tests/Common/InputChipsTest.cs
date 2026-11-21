@@ -103,6 +103,40 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
+		[Description("A button whose count of presses grew since the last reading lights on this one, though it reads let go: a tap shorter than the time between two readings; the first count and a count that went down light nothing")]
+		public void A_press_counted_between_two_readings_lights_once()
+		{
+			var chips = InputChips.Create(5, 0, 0, 0);
+			System.Func<InputChip> side = () => chips.Single(c => c.Index == 3);
+			var state = Rest();
+			var presses = new int[128];
+			presses[3] = 7;
+			InputChips.Update(chips, state, 0, presses);
+			Assert.IsFalse(side().Lit, "The presses counted before the first reading lit the button.");
+			presses[3]++;
+			Assert.IsTrue(InputChips.Update(chips, state, 100, presses), "A press between two readings is not a change.");
+			Assert.IsTrue(side().Lit, "A press between two readings, let go by the second, did not light the button.");
+			Assert.AreEqual(1, chips.Count(c => c.Lit), "A button that was not pressed lit.");
+			InputChips.Update(chips, state, 200, presses);
+			Assert.IsFalse(side().Lit, "A press was shown on two readings.");
+			// Held across a reading: lit by the state, and not again once let go.
+			presses[3]++;
+			state.Buttons[3] = true;
+			InputChips.Update(chips, state, 300, presses);
+			Assert.IsTrue(side().Lit);
+			state.Buttons[3] = false;
+			InputChips.Update(chips, state, 400, presses);
+			Assert.IsFalse(side().Lit, "A press shown while held lit the button again once let go.");
+			// A device listed again counts from nought.
+			presses[3] = 0;
+			InputChips.Update(chips, state, 500, presses);
+			Assert.IsFalse(side().Lit, "A count that went down lit the button.");
+			presses[3] = 1;
+			InputChips.Update(chips, null, 600, presses);
+			Assert.IsFalse(side().Lit, "No state lit a button.");
+		}
+
+		[TestMethod, TestCategory("mapping"), TestCategory("critical")]
 		[Description("No state puts every chip at rest rather than throwing")]
 		public void No_state_is_everything_at_rest()
 		{

@@ -30,7 +30,7 @@ namespace x360ce.Engine
 		public string Label { get; set; }
 		/// <summary>The row's binding: SDL's, such as "b0", "+a2" or "h0.1", or x360ce's row's key and value, such as "A:2"; empty when the row maps nothing there.</summary>
 		public string Binding { get; set; }
-		/// <summary>The database the place's binding comes from, <see cref="SdlTranslation.FromX360ce"/> or <see cref="SdlTranslation.FromSdl"/>; empty when it does not say.</summary>
+		/// <summary>The database the place's binding comes from, <see cref="SdlTranslation.FromX360ce"/> or <see cref="SdlTranslation.FromSdl"/>, or <see cref="SdlTranslation.FromPlugin"/> for a plugin's row; empty when it does not say.</summary>
 		public string From { get; set; }
 		/// <summary>The device's control that binding names, in x360ce's words, such as "Button 1" or "HAxis 3".</summary>
 		public string Control { get; set; }

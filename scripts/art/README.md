@@ -57,9 +57,9 @@ XAML's colours, and writes each picture at 48 pixels, twice the size the page sh
 python scripts/art/build_buttons.py
 ```
 
-It writes `Resources/Images/v4/xbox/Button_*_48x48.png` and `Axis_Arrow_48x48.png`, and lists the dark one in
-`App.v4/Properties/Icons.resx`. The arrow is drawn in a
-colour of the theme, so it also comes for the dark theme, in `xbox/dark`; the buttons are drawn in their own
-colours and are the same in both themes. Every pixel is counted from whole points, so running the script again
+It writes `Resources/Images/v4/xbox/Button_*_48x48.png` and `Axis_Arrow_48x48.png`, and lists the dark ones in
+`App.v4/Properties/Icons.resx`. Each also comes for the dark theme, in `xbox/dark`: the arrow in the theme's
+colour, and the buttons with their dark grey edge and symbol inverted to light, so they show on the dark page.
+Every pixel is counted from whole points, so running the script again
 writes the same bytes. To add a picture: add its line to the list at the top of the script, its 48-pixel entry
 to `App.v4/Properties/Resources.resx`, and run the script.

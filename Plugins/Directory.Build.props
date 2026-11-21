@@ -35,4 +35,20 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+  <!--
+    Windows' own Bluetooth, sensors and other WinRT APIs, read at run time from Windows, so no package is needed; a
+    plugin that uses them needs Windows 10 or later. Without System.Runtime.WindowsRuntime, which needs the Windows SDK,
+    a WinRT operation is awaited through a TaskCompletionSource, as the Fitness Machine plugin does.
+  -->
+  <ItemGroup Condition="Exists('$(WINDIR)\System32\WinMetadata\Windows.Foundation.winmd')">
+    <Reference Include="$(WINDIR)\System32\WinMetadata\Windows.Foundation.winmd">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WINDIR)\System32\WinMetadata\Windows.Devices.winmd">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(WINDIR)\System32\WinMetadata\Windows.Storage.winmd">
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
 </Project>

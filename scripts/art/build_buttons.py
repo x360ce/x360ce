@@ -7,17 +7,16 @@ script reads the Paths in the path mini-language (M, L, H, V, C, S, Q, T, A and 
 the fill rule: F1 fills non-zero, F0 or none even-odd, as WPF does), fills each with its colour, a later Path over
 an earlier one, and writes the square at 48 pixels, twice the size the page shows it at 100%.
 
-- Resources/Images/v4/xbox/Button_*_48x48.png and Axis_Arrow_48x48.png. A picture with a colour of the theme also
-  comes for the dark theme, in xbox/dark with the same file names.
+- Resources/Images/v4/xbox/Button_*_48x48.png and Axis_Arrow_48x48.png. Each also comes for the dark theme, in
+  xbox/dark with the same file names.
 - App.v4/Properties/Icons.resx, through build_icons.write_icons_resx: the dark pictures of those
   Properties/Resources.resx names.
 
 Colours are the XAML's. The arrow's, BackgroundDark, is a colour of the theme rather than of the file: #DEDEDE in
-the light theme (x360ce 5's Default.xaml) and #454545 in the dark one (Default_DarkTheme.xaml), so the arrow comes
-in both. The buttons' colours are the file's own, the same in both themes: a button is a dark body with its
-symbol in it, and the symbol is the body showing through, so lifting the greys for the dark theme would wash the
-symbol out, which is why build_icons.py keeps the dark greys of such icons (KEEP_DARK). The program hands out the
-light picture where there is no dark one.
+the light theme (x360ce 5's Default.xaml) and #454545 in the dark one (Default_DarkTheme.xaml). A button's edge and
+symbol are the file's dark grey, which would sink into the dark theme's page, so in the dark theme the greys in
+INVERTED are inverted: the edge and symbol turn light, and the light body of the bumpers, Back and Start turns dark,
+so their symbol still stands out from it. The buttons' own colours and the mid grey of the D-pad and sticks stay.
 
 Each pixel is split into 16 x 16 points, a point takes the colour of the last Path that covers it, and the pixel
 the average of its points, counted in whole points: running the script again writes the same bytes.
@@ -56,6 +55,10 @@ PICTURES = {
 
 # Colours of the theme the XAML takes from outside the file: (light theme, dark theme).
 THEME = {"BackgroundDark": ("#DEDEDE", "#454545")}
+
+# The file's greys that are inverted in the dark theme, each channel c becoming 255 - c: a button's edge and symbol,
+# #353535, become #CACACA, and the body of the bumpers, Back and Start, #D6D6D6, becomes #292929.
+INVERTED = {"ButtonColorBackground", "ButtonColorLight"}
 
 # The square the paths are drawn in, and the size the page draws a picture at.
 BOX = 142
@@ -280,10 +283,12 @@ def read_templates(xaml):
 
 
 def colour_of(brush, brushes, dark):
-    """A brush's colour in a theme: the theme's own for the ones the file takes from outside."""
+    """A brush's colour in a theme: the theme's own for the ones the file takes from outside, and the file's own,
+    inverted in the dark theme for the greys in INVERTED."""
     if brush in THEME:
         return rgb_of(THEME[brush][1 if dark else 0])
-    return rgb_of(brushes[brush])
+    rgb = rgb_of(brushes[brush])
+    return tuple(255 - c for c in rgb) if dark and brush in INVERTED else rgb
 
 
 def save(image, path, root):
@@ -305,7 +310,7 @@ def main():
     templates, brushes = read_templates(args.xaml)
     for name, key in PICTURES.items():
         paths = [parse_path(data) + (brush,) for data, brush in templates[key]]
-        themed = any(brush in THEME for _, _, brush in paths)
+        themed = any(brush in THEME or brush in INVERTED for _, _, brush in paths)
         for dark in (False, True) if themed else (False,):
             layers = [(figures, even_odd, colour_of(brush, brushes, dark)) for figures, even_odd, brush in paths]
             for multiple in MULTIPLES:

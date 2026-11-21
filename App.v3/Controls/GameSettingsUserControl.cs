@@ -525,7 +525,6 @@ namespace x360ce.App.Controls
 				var programs = SettingManager.Programs.Items.ToList();
 				foreach (var item in programs)
 				{
-					item.EntityKey = null;
 					item.FileProductName = EngineHelper.FixName(item.FileProductName, item.FileName);
 				}
 				try

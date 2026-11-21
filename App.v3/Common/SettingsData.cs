@@ -9,7 +9,6 @@ using System.Linq;
 using x360ce.Engine;
 using x360ce.App.Controls;
 using System.Diagnostics;
-using System.Data.Objects.DataClasses;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.ComponentModel;
 
@@ -83,11 +82,6 @@ namespace x360ce.App
 			lock (saveReadFileLock)
 			{
 				Version = _CurrentVersion;
-				for (int i = 0; i < Items.Count; i++)
-				{
-					var o = Items[i] as EntityObject;
-					if (o != null) o.EntityKey = null;
-				}
 				// The folder chosen for settings is not always there: the check that a folder can be
 				// written takes away again any folder it made.
 				if (!XmlFile.Directory.Exists)

@@ -1,10 +1,21 @@
-﻿## [4.31.5.0] - 2026-11-17
+﻿## [4.31.16.0] - 2026-11-21
 
-- Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
+- Fixed: The Buttons page's pictures are easy to see in the dark theme.
+- Fixed: Quick button taps, such as mouse buttons 4 and 5, always light up.
+- Fixed: AI assistant searches and tab switches no longer change a controller's values.
+- Fixed: The General tab's small green values line up with their names.
+- Fixed: A copy started with /Profile leaves the usual settings folder untouched.
+- Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
+- Changed: The Controller page's tool bar check boxes have a thin edge.
+- Changed: The record icon, as on Remap All, is a plain red dot.
+- Changed: Buttons, lists, boxes and tabs are a little shorter.
+- Changed: The General tab has more room below the bumpers.
 - Added: AI assistant access lists and opens every page, and closes windows.
 - Added: The About page shows the licences of the parts x360ce uses.
+- Added: Fitness tab: an exercise bike drives a controller over Bluetooth. Experimental.
+- Added: A plugin device maps itself as its plugin recommends.
 
 ## [4.30.63.0] - 2026-11-15
 

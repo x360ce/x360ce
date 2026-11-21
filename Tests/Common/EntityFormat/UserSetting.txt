@@ -1,0 +1,56 @@
+== XmlSerializer
+<Setting xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SettingId>8ddc3c74-0de5-3b64-ef90-547e4b3a86b5</SettingId>
+  <InstanceGuid>e12b93e2-8ad9-c8da-abf5-d6ccb280f67a</InstanceGuid>
+  <InstanceName>InstanceName</InstanceName>
+  <ProductGuid>116d4db7-f098-912e-32d2-fe4c161e47a4</ProductGuid>
+  <ProductName>ProductName</ProductName>
+  <DeviceType>19</DeviceType>
+  <MapTo>760</MapTo>
+  <FileName>FileName</FileName>
+  <FileProductName>FileProductName</FileProductName>
+  <Comment>Comment</Comment>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <DateSelected>2001-03-30T05:03:06</DateSelected>
+  <IsEnabled>true</IsEnabled>
+  <PadSettingChecksum>b5a589a2-b232-07b1-07e6-bf1ee7175ba7</PadSettingChecksum>
+  <Completion>343</Completion>
+  <Checksum>6670f389-c3d4-045e-4311-60d607fb2b46</Checksum>
+  <ComputerId>de9e53d0-35b3-5255-5554-175c8837d94c</ComputerId>
+  <ProfileId>ab90df05-7c3b-0718-664f-5f7a922990c2</ProfileId>
+</Setting>
+== [DataMember] properties, with the key
+Comment=Comment
+Completion=343
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+DateCreated=02/23/2001 16:30:06
+DateSelected=03/30/2001 05:03:06
+DateUpdated=03/06/2001 06:41:06
+DeviceType=19
+FileName=FileName
+FileProductName=FileProductName
+InstanceGuid=e12b93e2-8ad9-c8da-abf5-d6ccb280f67a
+InstanceName=InstanceName
+IsEnabled=True
+MapTo=760
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+SettingId=8ddc3c74-0de5-3b64-ef90-547e4b3a86b5
+== [DataMember] properties the checksum is made from
+Comment=Comment
+Completion=343
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+DeviceType=19
+FileName=FileName
+FileProductName=FileProductName
+InstanceGuid=e12b93e2-8ad9-c8da-abf5-d6ccb280f67a
+InstanceName=InstanceName
+IsEnabled=True
+MapTo=760
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductName=ProductName
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+== Checksum
+9a8bbcb3-5659-45e4-7d5a-4151f6d55ef8

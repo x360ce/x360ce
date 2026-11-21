@@ -13,7 +13,8 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// The SDL page of a controller tab: the mapping Auto gives the selected device, place by place, beside what the
 	/// controller's boxes hold now: x360ce's controller database row for it, and SDL's where that row maps nothing
-	/// (<see cref="X360ceDatabase.AutoMapping"/>).
+	/// (<see cref="X360ceDatabase.AutoMapping"/>); for a plugin device, the row its plugin recommends
+	/// (<see cref="AutoMapHelper.GetPluginMapping(UserDevice)"/>).
 	/// </summary>
 	/// <remarks>
 	/// The page says which copies of the databases are in use and which rows they have for the device. Each row of its list
@@ -111,7 +112,7 @@ namespace x360ce.App.Controls
 		/// <summary>[Copy as SDL] was pressed: the controller's mapping goes on the clipboard as an SDL row.</summary>
 		public event EventHandler CopyClicked;
 
-		/// <summary>The mapping Auto gives the device, as the list shows it; null when neither database has a row for the device.</summary>
+		/// <summary>The mapping Auto gives the device, as the list shows it; null when neither database nor the device's plugin has a row for the device.</summary>
 		public SdlTranslation Translation { get; private set; }
 
 		static Label NewLabel(string name)
@@ -194,9 +195,14 @@ namespace x360ce.App.Controls
 			SdlMapping mapping = null;
 			string text;
 			var pad = ud != null && !ud.IsKeyboard && !ud.IsMouse && ud.InputSource != InputSourceType.Plugin;
-			Translation = pad ? X360ceDatabase.AutoMapping(device, true, x360ceDatabase, database) : null;
+			// A plugin device is mapped as its plugin recommends, in a row of SDL's form.
+			var recommended = AutoMapHelper.GetPluginMapping(ud);
+			Translation = pad ? X360ceDatabase.AutoMapping(device, true, x360ceDatabase, database) : recommended;
 			if (ud == null)
 				text = "Select a device on this controller to see what x360ce's and SDL's controller databases say about it.";
+			else if (recommended != null)
+				text = "Its plugin recommends a mapping for it, and Auto Preset fills it from this row: " + recommended.Mapping
+					+ (recommended.Skipped.Count > 0 ? " " + recommended.SkippedText() : "");
 			else if (!pad)
 				text = "The controller databases describe game controllers, not keyboards, mice or plugin devices.";
 			else
@@ -237,7 +243,10 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				PositionsDataGridView.DataSource = new List<SdlPositionRow>();
+				// A plugin's row is listed as on an Xbox pad, whose labels the boxes have.
+				PositionsDataGridView.DataSource = recommended == null
+					? new List<SdlPositionRow>()
+					: SdlPositions.Compare(recommended, current, SdlFaceStyle.Abxy);
 			}
 			ControlsHelper.SetText(DeviceLabel, text);
 			ControlsHelper.SetEnabled(ApplyButton, Translation != null && Translation.Count > 0);

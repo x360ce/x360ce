@@ -89,7 +89,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
@@ -462,6 +461,7 @@
     <Compile Include="Plugins\PluginKit.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\PluginMcpDoors.cs" />
+    <Compile Include="Plugins\PluginPages.cs" />
     <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Plugins\PluginSettingsView.cs" />
     <Compile Include="Program.AdminCommands.cs" />

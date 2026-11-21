@@ -165,15 +165,15 @@ Make every schema change in this order:
 
 1. The local database.
 2. The Data project's table file, under `Data/dbo/Tables`.
-3. The model: the `MaxLength` facets in the SSDL and CSDL of `Engine/Data/x360ceModel.edmx`, and
-   the `.ssdl`, `.csdl` and `.msl` metadata files checked in beside it, which are what the build
-   embeds.
+3. The classes: run `Engine/Data/Generate-Models.ps1`. It reads the local database and writes the
+   data classes into `Engine/Data/Model/` and the web site's database context into `Web/Data/`. A
+   new table's class is also listed in `Engine/x360ce.Engine.csproj`.
 4. Build.
-5. Tests green.
+5. Tests green. `EntityFormatTest` shows what the settings files and the web service now write.
 6. Only then the live database.
 
-Either half alone loses data silently. The model truncates what the database would take, or the
-database refuses what the model passes. A round trip through the service (the `schema-4-23` tests,
+Either half alone loses data silently. The classes refuse what the database would take, or the
+database refuses what the classes pass. A round trip through the service (the `schema-4-23` tests,
 see `Tests/ReadMe.md`) is the check.
 
 Drift check: build the DACPAC with Visual Studio MSBuild and run `sqlpackage /Action:DeployReport`

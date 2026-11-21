@@ -27,6 +27,21 @@ namespace x360ce.Tests
 		}
 	}
 
+	/// <summary>A plugin device that recommends its mapping as a whole SDL row, another device's GUID and name in it: a stick and a button.</summary>
+	public class MappedPluginDevice : IPluginDevice, IPluginMapping
+	{
+		public static readonly Guid Product = new Guid("3c6f0a1e-8d2b-4e7a-b5c9-1f2e3d4c5b6a");
+		public string Name { get { return "Mapped Plugin Device"; } }
+		public Guid ProductGuid { get { return Product; } }
+		public int AxisCount { get { return 2; } }
+		public int SliderCount { get { return 0; } }
+		public int PovCount { get { return 0; } }
+		public int ButtonCount { get { return 1; } }
+		public string Mapping { get { return " 03000000341200007856000000000000,Other Pad,a:b0,b:b5,leftx:a0,lefty:a1,platform:Windows, "; } }
+		public bool Ready { get; set; }
+		public void Read(PluginState state) { }
+	}
+
 	/// <summary>A plugin device that cannot be made, as one whose hardware is missing might be written.</summary>
 	public class ThrowingPluginDevice : IPluginDevice
 	{
@@ -109,6 +124,32 @@ namespace x360ce.Tests
 			var throwing = types.Single(x => x.Type == typeof(ThrowingPluginDevice));
 			Assert.IsTrue(throwing.Faulted);
 			StringAssert.Contains(throwing.FaultReason, "No hardware.");
+			Assert.IsNull(sample.Mapping, "A device that recommends no mapping has one.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("mapping"), TestCategory("critical")]
+		[Description("A plugin's recommended mapping is read as it loads, is no setting, and maps its device as SDL reads the row, under the device's own GUID and name, leaving out what the device lacks")]
+		public void A_recommended_mapping_maps_the_device_as_sdl_reads_it()
+		{
+			var types = PluginManager.FindDeviceTypes(typeof(MappedPluginDevice).Assembly, new PluginFile("test", false));
+			var type = types.Single(x => x.Type == typeof(MappedPluginDevice));
+			Assert.IsFalse(type.Faulted, type.FaultReason);
+			StringAssert.StartsWith(type.Mapping, "03000000341200007856000000000000,Other Pad,", "The mapping was not read, or not trimmed.");
+			CollectionAssert.AreEqual(new[] { "Ready" }, type.Settings.Select(x => x.Name).ToArray(), "A member of the contract's interfaces is a setting.");
+			var ud = PluginDevices.NewUserDevice(type);
+			var mapping = x360ce.App.AutoMapHelper.GetPluginMapping(ud, type);
+			Assert.IsNotNull(mapping, "The row mapped nothing.");
+			Assert.AreEqual(x360ce.Engine.SdlDevice.From(ud).Guid, mapping.Mapping.Guid.Text, "The row keeps another device's GUID.");
+			Assert.AreEqual("Mapped Plugin Device", mapping.Mapping.Name);
+			Assert.AreEqual("1", mapping.Setting.ButtonA);
+			Assert.AreEqual("a1", mapping.Setting.LeftThumbAxisX);
+			Assert.AreEqual("a-2", mapping.Setting.LeftThumbAxisY, "SDL's Y grows downward, the Xbox controller's upward.");
+			Assert.IsTrue(string.IsNullOrEmpty(mapping.Setting.ButtonB), "A button the device lacks was mapped.");
+			StringAssert.Contains(mapping.Note, "b:b5", "What was left out is not said.");
+			Assert.AreEqual(x360ce.Engine.SdlTranslation.FromPlugin, mapping.From[x360ce.Engine.MapCode.ButtonA]);
+			var sample = types.Single(x => x.Type == typeof(SamplePluginDevice));
+			Assert.IsNull(x360ce.App.AutoMapHelper.GetPluginMapping(PluginDevices.NewUserDevice(sample), sample),
+				"A device that recommends nothing was given a mapping.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]

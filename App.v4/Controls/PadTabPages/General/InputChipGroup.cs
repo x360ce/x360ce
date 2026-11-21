@@ -148,9 +148,10 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Repaints only when a reading changed, which the model reports.</summary>
-		public void Refresh(Engine.SourceState state)
+		/// <param name="presses">The device's count of each button's presses, so a press between two readings lights its button.</param>
+		public void Refresh(Engine.SourceState state, int[] presses)
 		{
-			if (InputChips.Update(_Chips, state, InputChips.Now))
+			if (InputChips.Update(_Chips, state, InputChips.Now, presses))
 				Invalidate();
 		}
 

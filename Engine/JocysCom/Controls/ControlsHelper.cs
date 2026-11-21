@@ -299,6 +299,14 @@ namespace JocysCom.ClassLibrary.Controls
 				.FirstOrDefault();
 			if (pi != null)
 				return pi;
+			// Try to find property by KeyAttribute, matched by name: a .NET Framework project need not reference
+			// System.ComponentModel.DataAnnotations.
+			pi = t.GetProperties()
+				.Where(x => x.GetCustomAttributes(true)
+					.Any(a => a.GetType().FullName == "System.ComponentModel.DataAnnotations.KeyAttribute"))
+				.FirstOrDefault();
+			if (pi != null)
+				return pi;
 #else
 			// Try to find property by KeyAttribute.
 			pi = t.GetProperties()

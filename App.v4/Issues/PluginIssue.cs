@@ -36,7 +36,7 @@ namespace x360ce.App.Issues
 				+ string.Join(Environment.NewLine, problems.Select(x => "    " + x).ToArray()));
 		}
 
-		/// <summary>One line for each plugin that did not load, loaded with nothing to offer, or was switched off.</summary>
+		/// <summary>One line for each plugin that did not load, loaded with nothing to offer, was switched off, or whose page could not be made.</summary>
 		public static string[] Problems(PluginManager manager)
 		{
 			var list = new List<string>();
@@ -46,6 +46,8 @@ namespace x360ce.App.Issues
 					list.Add(file.Name + ": " + file.Reason);
 				foreach (var type in file.DeviceTypes.Where(x => x.Faulted))
 					list.Add(file.Name + ", " + type.Name + ": switched off after it failed: " + type.FaultReason);
+				if (file.PageFault != null)
+					list.Add(file.Name + ": " + file.PageFault);
 			}
 			return list.ToArray();
 		}

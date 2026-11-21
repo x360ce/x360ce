@@ -1,0 +1,80 @@
+== XmlSerializer
+<UserGame xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <GameId>c29e6abd-f20b-6b9d-80f6-76880c08bec9</GameId>
+  <ComputerId>de9e53d0-35b3-5255-5554-175c8837d94c</ComputerId>
+  <ProfileId>ab90df05-7c3b-0718-664f-5f7a922990c2</ProfileId>
+  <FileName>FileName</FileName>
+  <FileProductName>FileProductName</FileProductName>
+  <FileVersion>FileVersion</FileVersion>
+  <FullPath>FullPath</FullPath>
+  <EnableMask>546</EnableMask>
+  <CompanyName>CompanyName</CompanyName>
+  <ProcessorArchitecture>750</ProcessorArchitecture>
+  <EmulationType>129</EmulationType>
+  <AutoMapMask>786</AutoMapMask>
+  <HookMask>178</HookMask>
+  <XInputMask>337</XInputMask>
+  <XInputPath>XInputPath</XInputPath>
+  <DInputMask>141</DInputMask>
+  <DInputFile>DInputFile</DInputFile>
+  <FakeVID>117</FakeVID>
+  <FakePID>351</FakePID>
+  <Timeout>98</Timeout>
+  <Weight>531</Weight>
+  <Checksum>6670f389-c3d4-045e-4311-60d607fb2b46</Checksum>
+  <Comment>Comment</Comment>
+  <IsEnabled>true</IsEnabled>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+</UserGame>
+== [DataMember] properties, with the key
+AutoMapMask=786
+Comment=Comment
+CompanyName=CompanyName
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+DInputFile=DInputFile
+DInputMask=141
+EmulationType=129
+EnableMask=546
+FakePID=351
+FakeVID=117
+FileName=FileName
+FileProductName=FileProductName
+FileVersion=FileVersion
+FullPath=FullPath
+GameId=c29e6abd-f20b-6b9d-80f6-76880c08bec9
+HookMask=178
+IsEnabled=True
+ProcessorArchitecture=750
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+Timeout=98
+Weight=531
+XInputMask=337
+XInputPath=XInputPath
+== [DataMember] properties the checksum is made from
+AutoMapMask=786
+Comment=Comment
+CompanyName=CompanyName
+ComputerId=de9e53d0-35b3-5255-5554-175c8837d94c
+DInputFile=DInputFile
+DInputMask=141
+EmulationType=129
+EnableMask=546
+FakePID=351
+FakeVID=117
+FileName=FileName
+FileProductName=FileProductName
+FileVersion=FileVersion
+FullPath=FullPath
+HookMask=178
+IsEnabled=True
+ProcessorArchitecture=750
+ProfileId=ab90df05-7c3b-0718-664f-5f7a922990c2
+Timeout=98
+Weight=531
+XInputMask=337
+XInputPath=XInputPath
+== Checksum
+7ade5a06-0722-a31d-ce30-057e0d41fdc2

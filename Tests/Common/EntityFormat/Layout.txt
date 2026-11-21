@@ -1,0 +1,100 @@
+== XmlSerializer
+<Layout xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Id>e8a60a49-cc56-08f2-a054-389e47ce0d06</Id>
+  <Name>Name</Name>
+  <ButtonA>ButtonA</ButtonA>
+  <ButtonB>ButtonB</ButtonB>
+  <ButtonBack>ButtonBack</ButtonBack>
+  <ButtonGuide>ButtonGuide</ButtonGuide>
+  <ButtonStart>ButtonStart</ButtonStart>
+  <ButtonX>ButtonX</ButtonX>
+  <ButtonY>ButtonY</ButtonY>
+  <DPad>DPad</DPad>
+  <DPadDown>DPadDown</DPadDown>
+  <DPadLeft>DPadLeft</DPadLeft>
+  <DPadRight>DPadRight</DPadRight>
+  <DPadUp>DPadUp</DPadUp>
+  <LeftShoulder>LeftShoulder</LeftShoulder>
+  <LeftThumbAxisX>LeftThumbAxisX</LeftThumbAxisX>
+  <LeftThumbAxisY>LeftThumbAxisY</LeftThumbAxisY>
+  <LeftThumbButton>LeftThumbButton</LeftThumbButton>
+  <LeftThumbDown>LeftThumbDown</LeftThumbDown>
+  <LeftThumbLeft>LeftThumbLeft</LeftThumbLeft>
+  <LeftThumbRight>LeftThumbRight</LeftThumbRight>
+  <LeftThumbUp>LeftThumbUp</LeftThumbUp>
+  <LeftTrigger>LeftTrigger</LeftTrigger>
+  <RightShoulder>RightShoulder</RightShoulder>
+  <RightThumbAxisX>RightThumbAxisX</RightThumbAxisX>
+  <RightThumbAxisY>RightThumbAxisY</RightThumbAxisY>
+  <RightThumbButton>RightThumbButton</RightThumbButton>
+  <RightThumbDown>RightThumbDown</RightThumbDown>
+  <RightThumbLeft>RightThumbLeft</RightThumbLeft>
+  <RightThumbRight>RightThumbRight</RightThumbRight>
+  <RightThumbUp>RightThumbUp</RightThumbUp>
+  <RightTrigger>RightTrigger</RightTrigger>
+</Layout>
+== [DataMember] properties, with the key
+ButtonA=ButtonA
+ButtonB=ButtonB
+ButtonBack=ButtonBack
+ButtonGuide=ButtonGuide
+ButtonStart=ButtonStart
+ButtonX=ButtonX
+ButtonY=ButtonY
+DPad=DPad
+DPadDown=DPadDown
+DPadLeft=DPadLeft
+DPadRight=DPadRight
+DPadUp=DPadUp
+Id=e8a60a49-cc56-08f2-a054-389e47ce0d06
+LeftShoulder=LeftShoulder
+LeftThumbAxisX=LeftThumbAxisX
+LeftThumbAxisY=LeftThumbAxisY
+LeftThumbButton=LeftThumbButton
+LeftThumbDown=LeftThumbDown
+LeftThumbLeft=LeftThumbLeft
+LeftThumbRight=LeftThumbRight
+LeftThumbUp=LeftThumbUp
+LeftTrigger=LeftTrigger
+Name=Name
+RightShoulder=RightShoulder
+RightThumbAxisX=RightThumbAxisX
+RightThumbAxisY=RightThumbAxisY
+RightThumbButton=RightThumbButton
+RightThumbDown=RightThumbDown
+RightThumbLeft=RightThumbLeft
+RightThumbRight=RightThumbRight
+RightThumbUp=RightThumbUp
+RightTrigger=RightTrigger
+== [DataMember] properties the checksum is made from
+ButtonA=ButtonA
+ButtonB=ButtonB
+ButtonBack=ButtonBack
+ButtonGuide=ButtonGuide
+ButtonStart=ButtonStart
+ButtonX=ButtonX
+ButtonY=ButtonY
+DPad=DPad
+DPadDown=DPadDown
+DPadLeft=DPadLeft
+DPadRight=DPadRight
+DPadUp=DPadUp
+LeftShoulder=LeftShoulder
+LeftThumbAxisX=LeftThumbAxisX
+LeftThumbAxisY=LeftThumbAxisY
+LeftThumbButton=LeftThumbButton
+LeftThumbDown=LeftThumbDown
+LeftThumbLeft=LeftThumbLeft
+LeftThumbRight=LeftThumbRight
+LeftThumbUp=LeftThumbUp
+LeftTrigger=LeftTrigger
+Name=Name
+RightShoulder=RightShoulder
+RightThumbAxisX=RightThumbAxisX
+RightThumbAxisY=RightThumbAxisY
+RightThumbButton=RightThumbButton
+RightThumbDown=RightThumbDown
+RightThumbLeft=RightThumbLeft
+RightThumbRight=RightThumbRight
+RightThumbUp=RightThumbUp
+RightTrigger=RightTrigger

@@ -811,6 +811,7 @@ namespace x360ce.App.Controls
 				ControlsHelper.RestoreSelection(MappedDevicesDataGridView, nameof(UserSetting.InstanceGuid), new List<Guid>());
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
+				ShowDefaultsWithoutDevice();
 				// Before the page shows, and before its controls have windows, rather than on the first update after it has appeared.
 				UpdateEnabledFromDevice(GetSelectedDevice());
 			});
@@ -1283,18 +1284,17 @@ namespace x360ce.App.Controls
 		/// of the General page's table, in the middle of its box's row. No second list is kept in step with that one. Each is
 		/// named after its part, as LeftTriggerValueLabel, which is how the interface catalog and the AI door find it.
 		/// <para>
-		/// A number is drawn at the side its name is drawn at, the side next to the name's box (the right side on the right of
-		/// the page), 2 px in from the name's edge at 100 %, the size the page is made at, where its digits line up with the
-		/// name's letters (the owner's item 4), which Windows Forms scales with the page's other sizes: 3 px at 150 %.
+		/// A number is drawn at the edge its name is drawn at, the edge next to the name's box (the right one on the right of
+		/// the page), so the two line up there.
 		/// </para>
 		/// <para>
-		/// The name is docked to the top of the panel and its number to the bottom, under the name in the z-order, and the
-		/// panel is <see cref="ValueOverlap"/> shorter than the two: the empty top of the number's line lies under the name's
-		/// last rows, so its digits stand <see cref="ValueGap"/> clear rows under the name's letters.
+		/// The number lies under its name in the z-order, its line <see cref="ValueOverlap"/> up into the name's: the empty
+		/// top of the number's line lies under the name's last rows, so its digits stand <see cref="ValueGap"/> clear rows under
+		/// the name's letters. The panel is as tall as the box (<see cref="FitPair(Label, Label, int, int)"/>).
 		/// </para>
 		/// <para>
-		/// The numbers are made before Windows Forms scales the page from the size it is made at to the screen's, so their
-		/// padding is scaled with it, and fitted to their fonts once it has been (<see cref="FitValueLabels"/>).
+		/// The numbers are made before Windows Forms scales the page from the size it is made at to the screen's, and fitted
+		/// to their fonts once it has been (<see cref="FitValueLabels"/>).
 		/// </para>
 		/// </remarks>
 		void AddValueLabels()
@@ -1302,14 +1302,11 @@ namespace x360ce.App.Controls
 			foreach (var ii in imageInfos)
 			{
 				var name = (Label)ii.Label;
-				var right = name.TextAlign == ContentAlignment.TopRight;
 				var value = new Label
 				{
 					Name = ii.Code + "ValueLabel",
 					AutoSize = false,
-					Dock = DockStyle.Bottom,
 					TextAlign = name.TextAlign,
-					Padding = right ? new Padding(0, 0, 2, 0) : new Padding(2, 0, 0, 0),
 					UseMnemonic = false,
 					// Measured as it is drawn, with GDI, as the program draws all its text.
 					UseCompatibleTextRendering = false,
@@ -1337,6 +1334,8 @@ namespace x360ce.App.Controls
 				SetValueFont(ii);
 				name.TextChanged += (sender, e) => FitPair(ii);
 				name.FontChanged += (sender, e) => SetValueFont(ii);
+				// The theme gives the box its height after the page is made, and again with a new font.
+				ii.Control.SizeChanged += (sender, e) => FitPair(ii);
 				name.Parent.ResumeLayout(true);
 			}
 			GeneralTableLayoutPanel.ResumeLayout(false);
@@ -1473,27 +1472,55 @@ namespace x360ce.App.Controls
 		const string WidestValue = "-32768";
 
 		/// <summary>
-		/// Sizes a name and its number one line of their fonts tall, and their panel as wide as the name's text or the widest
-		/// number, whichever is wider, and <see cref="ValueOverlap"/> shorter than the two.
+		/// Sizes a name and its number one line of their fonts tall and as wide as the name's text or the widest number,
+		/// whichever is wider, and their panel as tall as the name's box, so the row is as tall as a row of boxes.
 		/// </summary>
 		/// <remarks>
 		/// The numbers change ten times a second on four controller pages. One that sized itself to each value would lay the
-		/// page out each time its width changed; at one width, a new value is only drawn. A label whose text changes takes back
-		/// the size it was last given, so each is given the size its dock gives it, and a new value lays out nothing.
+		/// page out each time its width changed; at one width, a new value is only drawn. A label that does not size itself
+		/// keeps its size as its text changes, so a new value lays out nothing.
 		/// </remarks>
 		static void FitPair(ImageInfo ii)
 		{
-			FitPair((Label)ii.Label, ii.ValueLabel, ValueGap);
+			FitPair((Label)ii.Label, ii.ValueLabel, ValueGap, ii.Control.Height);
 		}
 
-		/// <summary>Sizes a name, the number under it and their panel, with <paramref name="gap"/> clear rows from the name's baseline to the digits.</summary>
-		internal static void FitPair(Label name, Label value, int gap)
+		/// <summary>
+		/// Sizes a name, the number under it and their panel, with <paramref name="gap"/> clear rows from the name's baseline
+		/// to the digits.
+		/// </summary>
+		/// <remarks>
+		/// The two lines stand in the middle of the panel, the number's <see cref="ValueOverlap"/> up into the name's. Their
+		/// lines are taller than their ink: the name's empty top rows and the number's empty bottom rows may reach past the
+		/// panel's edges, where nothing is drawn, so the pair is no taller than the box it names. A pair whose ink is taller
+		/// than the box makes the panel as tall as its ink.
+		/// </remarks>
+		/// <param name="height">The height of the name's box, which the panel takes; 0 for a panel as tall as the two lines.</param>
+		internal static void FitPair(Label name, Label value, int gap, int height)
 		{
 			var width = Math.Max(JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetLabelWidth(name),
 				JocysCom.ClassLibrary.Controls.Themes.FormsTheme.GetLabelWidth(value, WidestValue));
+			// Placed here, so neither is docked.
+			name.Dock = DockStyle.None;
+			value.Dock = DockStyle.None;
 			name.Size = new Size(width, LineHeight(name));
 			value.Size = new Size(width, LineHeight(value));
-			var size = new Size(width, name.Height + value.Height - ValueOverlap(name, value.Font, gap));
+			// Where the number's line starts, from the top of the name's.
+			var below = name.Height - ValueOverlap(name, value.Font, gap);
+			var lines = below + value.Height;
+			var panel = lines;
+			var top = 0;
+			if (height > 0)
+			{
+				var inkTop = Math.Max(0, InkRows(name.Font, name.Text.Length > 0 ? name.Text : BaselineCharacters)[0]);
+				var inkBottom = below + InkRows(value.Font, ValueCharacters)[1];
+				panel = Math.Max(height, inkBottom - inkTop + 1);
+				// In the middle, and never so high that the name's letters are cut, or so low that the digits are.
+				top = Math.Min(Math.Max((panel - lines) / 2, -inkTop), panel - 1 - inkBottom);
+			}
+			name.Location = new Point(0, top);
+			value.Location = new Point(0, top + below);
+			var size = new Size(width, panel);
 			if (name.Parent.Size != size)
 				name.Parent.Size = size;
 		}
@@ -1763,9 +1790,7 @@ namespace x360ce.App.Controls
 				forceSourceDevice = null;
 				var row = view.Row ?? MappedItemsFor(mapTo).Select(x => (Guid?)x.InstanceGuid).FirstOrDefault();
 				UpdateFromCurrentGame(row);
-				// A controller with no device shows the defaults, as a tab of its own showed them, not the last one's values.
-				if (GetSelectedSetting() == null)
-					SettingsManager.Current.SyncFormFromPadSetting(mapTo, new PadSetting());
+				ShowDefaultsWithoutDevice();
 				UpdateEnabledFromDevice(GetSelectedDevice());
 				UpdateWheelChart(true);
 			}
@@ -1783,6 +1808,18 @@ namespace x360ce.App.Controls
 			if (Global.DHelper?.PassCount > 0)
 				Global_UpdateControlFromStates(this, EventArgs.Empty);
 			Program.StartupTrace.Mark(string.Format("pad: controller {0} shown in {1} ms", (int)mapTo, watch.ElapsedMilliseconds));
+		}
+
+		/// <summary>Shows the defaults while the controller on the page has no device, rather than the values the page held before.</summary>
+		/// <remarks>
+		/// Called when the page first takes its settings and each time it shows another controller, so a controller with no
+		/// device shows the same values however it came to be shown: at start, after another controller's tab was opened, or
+		/// after the AI door read every Controller tab, which puts the page on each in turn.
+		/// </remarks>
+		void ShowDefaultsWithoutDevice()
+		{
+			if (GetSelectedSetting() == null)
+				SettingsManager.Current.SyncFormFromPadSetting(MappedTo, new PadSetting());
 		}
 
 		/// <summary>
@@ -3217,22 +3254,36 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
-			devices = PreferRawInput(devices);
+			devices = MapDevices(game, MappedTo, devices);
 			if (devices == null)
 				return;
-			var copy = false;
-			var question = SharedDeviceQuestion(game, MappedTo, devices);
-			if (question != null)
-			{
-				var answer = AskMoveOrCopy(SharedDeviceHeading(game, MappedTo, devices), question);
-				if (answer != DialogResult.Yes && answer != DialogResult.No)
-					return;
-				copy = answer == DialogResult.No;
-			}
-			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
-				SettingsManager.Options.HidHideConfigureAutomatically, copy);
 			// Selecting the row loads its settings into the page and saves the page into it.
 			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
+		}
+
+		/// <summary>Maps the devices to a controller for the game, as Add does, whichever controller the page shows; the devices mapped, or null when the person cancels.</summary>
+		/// <remarks>
+		/// An Xbox controller read through DirectInput is offered through Raw Input instead, and a device already on another
+		/// tab of the game is asked about: moved, copied, or not added. A plugin's page maps its device through here
+		/// (<see cref="Plugins.PluginHost.MapDevice"/>).
+		/// </remarks>
+		public static UserDevice[] MapDevices(UserGame game, MapTo mappedTo, UserDevice[] devices)
+		{
+			devices = PreferRawInput(devices);
+			if (devices == null)
+				return null;
+			var copy = false;
+			var question = SharedDeviceQuestion(game, mappedTo, devices);
+			if (question != null)
+			{
+				var answer = AskMoveOrCopy(SharedDeviceHeading(game, mappedTo, devices), question);
+				if (answer != DialogResult.Yes && answer != DialogResult.No)
+					return null;
+				copy = answer == DialogResult.No;
+			}
+			SettingsManager.MapGamePadDevices(game, mappedTo, devices,
+				SettingsManager.Options.HidHideConfigureAutomatically, copy);
+			return devices;
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)

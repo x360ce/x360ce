@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using x360ce.App.Plugins;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 using System.Text.RegularExpressions;
@@ -24,7 +25,7 @@ namespace x360ce.App
 				: ud.IsOnline && ud.DeviceObjects != null;
 		}
 
-		/// <summary>A preset made for the device: from x360ce's controller database, with SDL's mapping where it maps nothing, when either has a row for the device, otherwise guessed from the device's objects.</summary>
+		/// <summary>A preset made for the device: as its plugin recommends, for a plugin device; from x360ce's controller database, with SDL's mapping where it maps nothing, when either has a row for the device; otherwise guessed from the device's objects.</summary>
 		public static PadSetting GetAutoPreset(UserDevice ud)
 		{
 			string note;
@@ -33,10 +34,12 @@ namespace x360ce.App
 
 		/// <summary>A preset made for the device, and what made it.</summary>
 		/// <remarks>
-		/// x360ce's controller database comes first: the complete setting most people use with the device, force feedback
-		/// and dead zones too. SDL's row fills the parts it leaves empty, and maps a device only SDL knows: it says which
-		/// control is which part of the pad, where the guess can only go by the controls' names and places. The guess is
-		/// used for a device neither database knows: a keyboard, a mouse, a plugin device, a pad nobody has mapped.
+		/// A plugin device whose plugin recommends a mapping (<see cref="x360ce.Plugins.IPluginMapping"/>) is mapped as the
+		/// plugin says. For a pad, x360ce's controller database comes first: the complete setting most people use with the
+		/// device, force feedback and dead zones too. SDL's row fills the parts it leaves empty, and maps a device only SDL
+		/// knows: it says which control is which part of the pad, where the guess can only go by the controls' names and
+		/// places. The guess is used for a device neither database knows: a keyboard, a mouse, a plugin device that
+		/// recommends nothing, a pad nobody has mapped.
 		/// </remarks>
 		/// <param name="ud">The device.</param>
 		/// <param name="note">What filled the preset, in a sentence for the status bar.</param>
@@ -47,7 +50,7 @@ namespace x360ce.App
 			note = "";
 			if (ud == null)
 				return new PadSetting();
-			// Keyboards, mice and plugin devices are left to the guess: the databases describe game controllers.
+			// Keyboards, mice and plugin devices are not looked up: the databases describe game controllers.
 			if (!ud.IsKeyboard && !ud.IsMouse && ud.InputSource != InputSourceType.Plugin)
 			{
 				var forceFeedback = (ud.CapFlags & (int)DeviceFlags.ForceFeedback) != 0;
@@ -63,8 +66,50 @@ namespace x360ce.App
 			}
 			if (ud.DeviceObjects == null)
 				return new PadSetting();
+			var recommended = GetPluginMapping(ud);
+			if (recommended != null)
+			{
+				note = "Auto Preset f" + recommended.Note.Substring(1);
+				var ps = recommended.Setting;
+				ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+				return ps;
+			}
 			note = "Auto Preset filled by x360ce's own guess: neither x360ce's nor SDL's controller database has a row for this device.";
 			return GetGuessedPreset(ud);
+		}
+
+		/// <summary>The mapping a plugin device's plugin recommends for it, translated for the device; null for any other device, or one whose plugin recommends none.</summary>
+		public static SdlTranslation GetPluginMapping(UserDevice ud)
+		{
+			if (ud == null || ud.InputSource != InputSourceType.Plugin)
+				return null;
+			var manager = PluginManager.Current;
+			return GetPluginMapping(ud, manager == null ? null : manager.FindDeviceType(ud.ProductGuid));
+		}
+
+		/// <summary>The mapping a kind of plugin device recommends (<see cref="PluginDeviceType.Mapping"/>), as an SDL row of the device, translated for it; null when it recommends none, or none of the device's controls.</summary>
+		/// <remarks>
+		/// The plugin's text is read as SDL's own, the fields of a row or a whole row, by SDL's parser. The row takes the
+		/// device's GUID and its kind's name, as SDL's database would write it, so the SDL page shows it as one.
+		/// </remarks>
+		/// <param name="ud">The device.</param>
+		/// <param name="type">The device's kind, or null.</param>
+		public static SdlTranslation GetPluginMapping(UserDevice ud, PluginDeviceType type)
+		{
+			if (ud == null || type == null || type.Mapping == null)
+				return null;
+			var device = SdlDevice.From(ud);
+			SdlMapping row;
+			if (!SdlMapping.TryParse(type.Mapping, out row) && !SdlMapping.TryParse(device.Guid + "," + type.Name + "," + type.Mapping, out row))
+				return null;
+			var translation = SdlConverter.ToPadSetting(SdlMapping.Create(device.Guid, type.Name, row.Fields), device, formulas: true);
+			if (translation.Count == 0)
+				return null;
+			foreach (var code in translation.Sources.Keys)
+				translation.From[code] = SdlTranslation.FromPlugin;
+			var skipped = translation.SkippedText();
+			translation.Note = "Filled from the plugin's recommended mapping." + (skipped.Length == 0 ? "" : " " + skipped);
+			return translation;
 		}
 
 		/// <summary>A preset guessed from the device's objects: their kinds, names and places.</summary>

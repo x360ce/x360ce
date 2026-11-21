@@ -129,7 +129,7 @@ namespace x360ce.Tests
 				var built = Run("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -File Build-Plugins.ps1 -Output \"" + plugins + "\"", source);
 				Assert.AreEqual(0, built.Item1, "Build-Plugins.ps1 failed: " + built.Item2);
 				var files = Directory.GetFiles(plugins, "*", SearchOption.AllDirectories).Select(x => x.Substring(plugins.Length + 1)).OrderBy(x => x).ToArray();
-				CollectionAssert.AreEqual(new[] { @"RemoteMcpController\RemoteMcpController.dll", @"TestController\TestController.dll" }, files,
+				CollectionAssert.AreEqual(new[] { @"FitnessMachine\FitnessMachine.dll", @"RemoteMcpController\RemoteMcpController.dll", @"TestController\TestController.dll" }, files,
 					"A plugin builds into one file in a folder of its own; the contract stays out.");
 			}
 			finally

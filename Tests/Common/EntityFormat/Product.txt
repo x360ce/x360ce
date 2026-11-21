@@ -1,0 +1,19 @@
+== XmlSerializer
+<Product xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ProductGuid>116d4db7-f098-912e-32d2-fe4c161e47a4</ProductGuid>
+  <ProductName>ProductName</ProductName>
+  <InstanceCount>491</InstanceCount>
+  <VendorId>646</VendorId>
+  <ProductId>3</ProductId>
+</Product>
+== [DataMember] properties, with the key
+InstanceCount=491
+ProductGuid=116d4db7-f098-912e-32d2-fe4c161e47a4
+ProductId=3
+ProductName=ProductName
+VendorId=646
+== [DataMember] properties the checksum is made from
+InstanceCount=491
+ProductId=3
+ProductName=ProductName
+VendorId=646

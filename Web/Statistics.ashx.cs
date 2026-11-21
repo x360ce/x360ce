@@ -41,13 +41,13 @@ namespace x360ce.Web
 			switch (name)
 			{
 				case "NewDevices":
-					svg = DeviceStatsSvg.Render(EngineHelper.GetNewDeviceStats());
+					svg = DeviceStatsSvg.Render(DatabaseHelper.GetNewDeviceStats());
 					break;
 				case "TopGames":
-					svg = TopListSvg.Render(EngineHelper.GetTopGames(), "FileProductName", "Top Games");
+					svg = TopListSvg.Render(DatabaseHelper.GetTopGames(), "FileProductName", "Top Games");
 					break;
 				case "TopControllers":
-					svg = TopListSvg.Render(EngineHelper.GetTopControllers(), "ProductName", "Top Controllers");
+					svg = TopListSvg.Render(DatabaseHelper.GetTopControllers(), "ProductName", "Top Controllers");
 					break;
 				default:
 					return null;

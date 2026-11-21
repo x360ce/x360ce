@@ -1,0 +1,66 @@
+== XmlSerializer
+<Program xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ProgramId>9d61264d-7922-41fb-b2e3-c3e5755218e9</ProgramId>
+  <FileName>FileName</FileName>
+  <FileProductName>FileProductName</FileProductName>
+  <FileVersion>FileVersion</FileVersion>
+  <ProcessorArchitecture>750</ProcessorArchitecture>
+  <EmulationType>129</EmulationType>
+  <AutoMapMask>786</AutoMapMask>
+  <HookMask>178</HookMask>
+  <XInputMask>337</XInputMask>
+  <XInputPath>XInputPath</XInputPath>
+  <DInputMask>141</DInputMask>
+  <DInputFile>DInputFile</DInputFile>
+  <FakeVID>117</FakeVID>
+  <FakePID>351</FakePID>
+  <Timeout>98</Timeout>
+  <Weight>531</Weight>
+  <SettingChecksum>ee4c6195-f19f-6d5d-5077-9d155b187add</SettingChecksum>
+  <Comment>Comment</Comment>
+  <IsEnabled>true</IsEnabled>
+  <DateCreated>2001-02-23T16:30:06</DateCreated>
+  <DateUpdated>2001-03-06T06:41:06</DateUpdated>
+  <InstanceCount>491</InstanceCount>
+</Program>
+== [DataMember] properties, with the key
+AutoMapMask=786
+Comment=Comment
+DateCreated=02/23/2001 16:30:06
+DateUpdated=03/06/2001 06:41:06
+DInputFile=DInputFile
+DInputMask=141
+EmulationType=129
+FakePID=351
+FakeVID=117
+FileName=FileName
+FileProductName=FileProductName
+FileVersion=FileVersion
+HookMask=178
+InstanceCount=491
+IsEnabled=True
+ProcessorArchitecture=750
+ProgramId=9d61264d-7922-41fb-b2e3-c3e5755218e9
+Timeout=98
+Weight=531
+XInputMask=337
+XInputPath=XInputPath
+== [DataMember] properties the checksum is made from
+AutoMapMask=786
+Comment=Comment
+DInputFile=DInputFile
+DInputMask=141
+EmulationType=129
+FakePID=351
+FakeVID=117
+FileName=FileName
+FileProductName=FileProductName
+FileVersion=FileVersion
+HookMask=178
+InstanceCount=491
+IsEnabled=True
+ProcessorArchitecture=750
+Timeout=98
+Weight=531
+XInputMask=337
+XInputPath=XInputPath

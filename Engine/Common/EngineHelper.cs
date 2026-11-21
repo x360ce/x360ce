@@ -40,8 +40,10 @@ namespace x360ce.Engine
 			// Where settings are kept is decided by SettingsLocation, which knows the
 			// folders they may be in and, more to the point, which of them this user
 			// can actually write. The folder for all users stays the first choice, so
-			// a version that does not know about any of this still finds them.
-			var appDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
+			// a version that does not know about any of this still finds them. It is
+			// asked only when no /Profile folder takes its place, because asking writes
+			// a probe file into the folder it checks.
+			string Default() => SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
 			// An older portable layout kept the files loose in the folder rather than
 			// in a Settings sub-folder. It still wins when it is there: somebody
 			// carrying the program on a stick chose that explicitly.
@@ -52,11 +54,11 @@ namespace x360ce.Engine
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
 			if (!ic.Parameters.ContainsKey("Profile"))
-				return appDataPath;
+				return Default();
 			var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
 			// Name is invalid.
 			if (string.IsNullOrEmpty(name))
-				return appDataPath;
+				return Default();
 			var path = Environment.ExpandEnvironmentVariables(name);
 			// Get invalid path and file name chars.
 			var ipc = Path.GetInvalidPathChars();
@@ -65,7 +67,7 @@ namespace x360ce.Engine
 			if (!name.ToCharArray().Any(x => ifc.Contains(x)))
 			{
 				// Use Profiles sub-folder.
-				return appDataPath + "\\Profiles\\" + name;
+				return Default() + "\\Profiles\\" + name;
 			}
 			// If name is valid path then...
 			if (!name.ToCharArray().Any(x => ipc.Contains(x)))
@@ -77,7 +79,7 @@ namespace x360ce.Engine
 				if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 					return path;
 			}
-			return appDataPath;
+			return Default();
 		}
 
 		/// <summary>
@@ -804,6 +806,22 @@ namespace x360ce.Engine
 				result.Add(JocysCom.ClassLibrary.Security.MD5Helper.GetGuid(total));
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Remove all unchanged items to save network bandwidth.
+		/// </summary>
+		public static T[] FilterByChecksum<T>(T[] items, Guid[] checksums, out string error) where T : IChecksum
+		{
+			error = null;
+			var list = new T[0];
+			if (checksums == null || checksums.Length == 0 || items == null || items.Length == 0)
+				return items;
+			UpdateChecksums(items);
+			// Get only different items.
+			list = items.Where(x => !checksums.Contains(x.Checksum)).ToArray();
+			error = string.Format("{0} record(s) changed", list.Length);
+			return list;
 		}
 	}
 }

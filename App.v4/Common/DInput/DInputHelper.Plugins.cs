@@ -23,13 +23,15 @@ namespace x360ce.App.DInput
 			return _pluginReaders.TryGetValue(instanceGuid, out reader) ? reader.Device : null;
 		}
 
-		/// <summary>Reads a plugin device: gives the plugin the device's settings, asks it, and swaps its state in as a Raw Input device's is.</summary>
+		/// <summary>Reads a plugin device: gives the plugin the device's settings and, if it takes force feedback, the game's force, asks it, and swaps its state in as a Raw Input device's is.</summary>
 		/// <remarks>
 		/// The plugin is called on this thread, so its Read must return at once. A plugin that throws switches its kind of
 		/// device off until the program starts again: the manager says so on the Issues tab and in the Plugins list, and
 		/// the next device refresh takes its devices offline. Until then the device keeps what it showed last.
 		/// </remarks>
-		void ReadPluginState(UserDevice ud)
+		/// <param name="ud">The plugin device.</param>
+		/// <param name="routing">Where each device's force comes from, for this pass.</param>
+		void ReadPluginState(UserDevice ud, DeviceRouting routing)
 		{
 			var manager = PluginManager.Current;
 			PluginDeviceReader reader;
@@ -54,6 +56,19 @@ namespace x360ce.App.DInput
 			try
 			{
 				reader.ApplySettings(PluginSettings.Current, ud.InstanceGuid);
+				// The strongest of each motor over the tabs whose Force feedback enabled switch is on, as their games asked
+				// for it, before the tabs' strengths; nought on no such tab. Looked up only for a plugin that takes force:
+				// a dictionary read and at most four compares, which take no lock and make nothing.
+				if (reader.Force != null)
+				{
+					byte large = 0;
+					byte small = 0;
+					DeviceForce route;
+					if (routing.TryGetForce(ud.InstanceGuid, out route))
+						MergeForces(route.ForcePads, 0, _lastLargeMotor, _lastSmallMotor, out large, out small);
+					// 255 * 257 is 65535.
+					reader.SetForce(large * 257, small * 257);
+				}
 				reader.Device.Read(reader.State);
 			}
 			catch (Exception ex)
