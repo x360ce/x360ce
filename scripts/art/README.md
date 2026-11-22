@@ -59,7 +59,8 @@ python scripts/art/build_buttons.py
 
 It writes `Resources/Images/v4/xbox/Button_*_48x48.png` and `Axis_Arrow_48x48.png`, and lists the dark ones in
 `App.v4/Properties/Icons.resx`. Each also comes for the dark theme, in `xbox/dark`: the arrow in the theme's
-colour, and the buttons with their dark grey edge and symbol inverted to light, so they show on the dark page.
+colour, and the buttons with their dark grey edge and symbol inverted to light, so they show on the dark page. The
+letter of A, B, X and Y stays dark: it lies on the button's colour, not on the page.
 Every pixel is counted from whole points, so running the script again
 writes the same bytes. To add a picture: add its line to the list at the top of the script, its 48-pixel entry
 to `App.v4/Properties/Resources.resx`, and run the script.

@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Mcp;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.App.Plugins;
@@ -9,17 +10,20 @@ using x360ce.Plugins;
 namespace x360ce.App.Controls
 {
 	/// <summary>
-	/// A plugin device's tab on the controller page: the control its plugin declares, its MCP server, and its settings,
-	/// made from its class, each on a page of its own.
+	/// A plugin device's tab on the controller page: the control its plugin declares, its MCP server, its settings and its
+	/// help, each on a page of its own, in that order.
 	/// </summary>
 	/// <remarks>
-	/// The device's help, its class's [Description], heads the tab, so what to know before using the device is in view.
-	/// The pages follow, those the device has: the plugin's own control first, made with the device the engine reads, so
-	/// the page says so while there is none yet; MCP Server, for a kind that declares one, with the AI page's own rows;
-	/// and Properties, the settings in a property grid, as Visual Studio's Properties window shows a component's: a row
-	/// for each, grouped by [Category], with the selected row's help under the grid. A change is kept for the
-	/// device at once, and the engine gives it to the plugin before its next read. A status is read from the device the
-	/// engine reads, and the grid is drawn again whenever <see cref="RefreshStatus"/> finds a value changed.
+	/// The pages are those the device has. The plugin's own control comes first, made with the instance the engine reads,
+	/// or, while it reads none, as when the device is unticked, with an instance of the tab's own: given the device's kept
+	/// values, never read, and disposed with the tab, so the control stays in view and can still set the device up. MCP
+	/// Server follows for a kind that declares one, with the AI page's own rows; then Properties, the settings in a
+	/// property grid, as Visual Studio's Properties window shows a component's: a row for each, grouped by [Category], with
+	/// the selected row's help under the grid; and last Help, its class's [Description], shown as the program's help is.
+	///
+	/// A change is kept for the device at once, and the engine gives it to the plugin before its next read: one made in the
+	/// grid, and one the plugin makes itself, from its own control, and announces with PropertyChanged. A status is read from
+	/// the instance the tab shows, and the grid is drawn again whenever <see cref="RefreshStatus"/> finds a value changed.
 	/// </remarks>
 	public class PluginDeviceUserControl : UserControl
 	{
@@ -30,31 +34,17 @@ namespace x360ce.App.Controls
 			Device = device;
 			_store = store;
 			Name = "PluginDevicePanel";
+			// 8 from the page's edges with the page's own padding; the tab is made once the Controller page has been scaled, so
+			// its room is given at the screen's scale.
+			Padding = AppHelper.ScaledPadding(8, 8, 0, 0);
 			SuspendLayout();
-			MainTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(MainTableLayoutPanel),
-				Dock = DockStyle.Fill,
-				// 8 from the page's edges with its controls' margins; the page is made once the Controller page has been
-				// scaled, so its room is given at the screen's scale.
-				Padding = AppHelper.ScaledPadding(0, 0, 0, 0),
-				ColumnCount = 1,
-			};
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			if (!string.IsNullOrWhiteSpace(type.Description))
-				AddRow(new Label
-				{
-					Name = "DescriptionLabel",
-					Text = type.Description.Trim(),
-					AutoSize = true,
-					// Across the column, so the table wraps it at the tab's width.
-					Anchor = AnchorStyles.Left | AnchorStyles.Right,
-					Margin = AppHelper.ScaledPadding(8, 8, 0, 0),
-				});
-			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill, Margin = AppHelper.ScaledPadding(8, 8, 0, 0) };
+			PluginTabControl = new TabControl { Name = nameof(PluginTabControl), Dock = DockStyle.Fill };
+			Shown = device;
 			if (type.ControlType != null)
 			{
 				NoteLabel = new Label { Name = nameof(NoteLabel), AutoSize = true, Dock = DockStyle.Top, Padding = AppHelper.ScaledPadding(12, 12, 12, 12), Visible = false };
+				if (Shown == null)
+					Shown = NewTabInstance();
 				var control = NewPluginControl();
 				if (control != null)
 					control.Dock = DockStyle.Fill;
@@ -77,7 +67,7 @@ namespace x360ce.App.Controls
 			}
 			if (type.Settings.Length > 0)
 			{
-				View = new PluginSettingsView(instanceGuid, type, device, store);
+				View = new PluginSettingsView(instanceGuid, type, Shown, store);
 				SettingsPropertyGrid = new PropertyGrid
 				{
 					Name = nameof(SettingsPropertyGrid),
@@ -112,8 +102,26 @@ namespace x360ce.App.Controls
 				properties.RowCount = properties.RowStyles.Count;
 				AddPage("PropertiesTabPage", "Properties", "The device's settings, as a property grid.", properties);
 			}
-			AddRow(PluginTabControl, 100F);
-			Controls.Add(MainTableLayoutPanel);
+			if (!string.IsNullOrWhiteSpace(type.Description))
+			{
+				// As the Help tab shows the program's help.
+				HelpRichTextBox = new RichTextBox
+				{
+					Name = nameof(HelpRichTextBox),
+					Dock = DockStyle.Fill,
+					BackColor = System.Drawing.SystemColors.Window,
+					BorderStyle = BorderStyle.None,
+					ReadOnly = true,
+					AccessibleName = "Help",
+					AccessibleDescription = "The device's help, from its plugin: what it is, its controls, and how to use it.",
+				};
+				AppHelper.ShowHelp(HelpRichTextBox, type.Description.Trim());
+				AddPage("HelpTabPage", "Help", "The device's help, from its plugin.", HelpRichTextBox);
+			}
+			Controls.Add(PluginTabControl);
+			_notifying = Shown as INotifyPropertyChanged;
+			if (_notifying != null)
+				_notifying.PropertyChanged += Shown_PropertyChanged;
 			ResumeLayout(false);
 			PerformLayout();
 			UiHelp.Attach(this);
@@ -127,29 +135,29 @@ namespace x360ce.App.Controls
 		/// <summary>The plugin instance the engine reads for the device, or null while it reads none.</summary>
 		public IPluginDevice Device { get; }
 
+		/// <summary>The plugin instance the tab shows: the one the engine reads, or the tab's own while it reads none; null for a device without a control of its own that the engine does not read.</summary>
+		public IPluginDevice Shown { get; }
+
 		/// <summary>The device's settings, as the grid shows them; null for a device without settings.</summary>
 		public PluginSettingsView View { get; }
 
 		readonly PluginSettings _store;
-		readonly TableLayoutPanel MainTableLayoutPanel;
 		readonly TabControl PluginTabControl;
 		readonly AiAccessUserControl McpServerUserControl;
 		readonly PropertyGrid SettingsPropertyGrid;
 		readonly Button ResetButton;
+		readonly RichTextBox HelpRichTextBox;
 		readonly Label NoteLabel;
+
+		/// <summary>The instance the tab made for itself and gives the kept values to; null while it shows the one the engine reads.</summary>
+		PluginDeviceReader _tabReader;
+
+		/// <summary>The instance shown, while it announces the settings it changes itself.</summary>
+		readonly INotifyPropertyChanged _notifying;
 
 		/// <summary>What the status rows said, and the values kept for the other rows, when the grid last read them.</summary>
 		string[] _statuses;
 		string[] _kept;
-
-		/// <summary>Adds a row, sized to its control or, with a percentage, sharing what is left with the other such rows.</summary>
-		void AddRow(Control control, float percent = 0)
-		{
-			MainTableLayoutPanel.RowStyles.Add(percent > 0 ? new RowStyle(SizeType.Percent, percent) : new RowStyle());
-			MainTableLayoutPanel.RowCount = MainTableLayoutPanel.RowStyles.Count;
-			if (control != null)
-				MainTableLayoutPanel.Controls.Add(control, 0, MainTableLayoutPanel.RowCount - 1);
-		}
 
 		/// <summary>Adds a page holding one control, which fills it.</summary>
 		void AddPage(string name, string text, string description, Control content)
@@ -168,14 +176,26 @@ namespace x360ce.App.Controls
 				SettingsPropertyGrid.Refresh();
 		}
 
+		/// <summary>Keeps a setting the plugin changed itself, as from its own control, for the device, as the grid keeps one the person changed.</summary>
+		/// <remarks>Raised by the plugin on the interface thread. A status, or a property that is no setting, is left alone.</remarks>
+		void Shown_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			var setting = Type.Settings.FirstOrDefault(x => x.Name == e.PropertyName && x.Kind != PluginSettingKind.Status);
+			if (setting == null)
+				return;
+			_store.Set(InstanceGuid, setting.Name, setting.ToText(setting.Property.GetValue(sender)));
+		}
+
 		/// <summary>Shows what a status the device reports, or a value kept for it, says now, when it has changed since the grid read it.</summary>
 		/// <remarks>
 		/// A status changes while the device works, and is only drawn again, which reads it afresh and leaves a row being
 		/// typed in as it is. A kept value changes outside the grid when a program sets it over MCP; the grid then reads
-		/// every row again, so the value and its bold are both current.
+		/// every row again, so the value and its bold are both current. The tab's own instance is given the kept values first.
 		/// </remarks>
 		public void RefreshStatus()
 		{
+			if (_tabReader != null)
+				ApplySettings();
 			if (View == null)
 				return;
 			var kept = View.Kept();
@@ -193,34 +213,76 @@ namespace x360ce.App.Controls
 			SettingsPropertyGrid.Invalidate(true);
 		}
 
-		/// <summary>The plugin's own control for the device, or null when it declares none or there is no device yet.</summary>
-		/// <remarks>A control that cannot be made says why on its page; the device goes on working without it.</remarks>
-		Control NewPluginControl()
+		/// <summary>An instance of the device for the tab alone, given the values kept for the device; null when it cannot be made, which the page says.</summary>
+		IPluginDevice NewTabInstance()
 		{
-			if (Type.ControlType == null)
-				return null;
-			if (Device == null)
-			{
-				ShowNote("The plugin's own controls appear here while x360ce reads the device: map it to this controller.");
-				return null;
-			}
 			try
 			{
-				return (Control)Activator.CreateInstance(Type.ControlType, Device);
+				_tabReader = new PluginDeviceReader(Type, Type.NewInstance());
 			}
 			catch (Exception ex)
 			{
-				var inner = ex is System.Reflection.TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
-				ShowNote("The plugin's own controls could not be made: " + inner.GetType().Name + ": " + inner.Message);
+				ShowFault(ex);
+				return null;
+			}
+			return ApplySettings() ? _tabReader.Device : null;
+		}
+
+		/// <summary>Gives the tab's own instance the values kept for the device; false, and the page says why, when the plugin refuses one.</summary>
+		bool ApplySettings()
+		{
+			try
+			{
+				_tabReader.ApplySettings(_store, InstanceGuid);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				ShowFault(ex);
+				return false;
+			}
+		}
+
+		/// <summary>The plugin's own control for the device, or null when it declares none or it cannot be made.</summary>
+		/// <remarks>A control that cannot be made says why on its page; the device goes on working without it.</remarks>
+		Control NewPluginControl()
+		{
+			if (Type.ControlType == null || Shown == null)
+				return null;
+			try
+			{
+				return (Control)Activator.CreateInstance(Type.ControlType, Shown);
+			}
+			catch (Exception ex)
+			{
+				ShowFault(ex);
 				return null;
 			}
 		}
 
-		void ShowNote(string text)
+		void ShowFault(Exception ex)
 		{
+			var inner = ex is System.Reflection.TargetInvocationException && ex.InnerException != null ? ex.InnerException : ex;
+			var text = "The plugin's own controls could not be made: " + inner.GetType().Name + ": " + inner.Message;
 			NoteLabel.Text = text;
 			NoteLabel.AccessibleName = text;
 			NoteLabel.Visible = true;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_notifying != null)
+					_notifying.PropertyChanged -= Shown_PropertyChanged;
+				// The tab's own instance goes with the tab; the engine's is the engine's to let go of.
+				if (_tabReader != null)
+				{
+					_tabReader.Dispose();
+					_tabReader = null;
+				}
+			}
+			base.Dispose(disposing);
 		}
 	}
 }

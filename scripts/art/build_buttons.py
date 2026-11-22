@@ -16,7 +16,9 @@ Colours are the XAML's. The arrow's, BackgroundDark, is a colour of the theme ra
 the light theme (x360ce 5's Default.xaml) and #454545 in the dark one (Default_DarkTheme.xaml). A button's edge and
 symbol are the file's dark grey, which would sink into the dark theme's page, so in the dark theme the greys in
 INVERTED are inverted: the edge and symbol turn light, and the light body of the bumpers, Back and Start turns dark,
-so their symbol still stands out from it. The buttons' own colours and the mid grey of the D-pad and sticks stay.
+so their symbol still stands out from it. The buttons' own colours and the mid grey of the D-pad and sticks stay,
+and so does the dark grey seen through a body in a colour of its own: the letter of A, B, X and Y, a hole in the
+coloured body over the dark disc, lies on the button's colour rather than on the page, so it keeps its grey.
 
 Each pixel is split into 16 x 16 points, a point takes the colour of the last Path that covers it, and the pixel
 the average of its points, counted in whole points: running the script again writes the same bytes.
@@ -232,12 +234,15 @@ def covered(figures, even_odd, size):
 
 
 def draw(layers, size):
-    """A picture of the layers, (figures, even_odd, colour) each, at size x size pixels."""
+    """A picture of the layers, (figures, even_odd, colour, inside) each, at size x size pixels: a layer with an
+    outline inside fills only the points that outline also covers."""
     n = size * POINTS
     colour = np.zeros((n, n, 3), np.int64)
     filled = np.zeros((n, n), bool)
-    for figures, even_odd, rgb in layers:
+    for figures, even_odd, rgb, inside in layers:
         mask = covered(figures, even_odd, size)
+        if inside is not None:
+            mask &= covered([inside], False, size)
         colour[mask] = rgb
         filled |= mask
     count = filled.reshape(size, POINTS, size, POINTS).sum(axis=(1, 3))
@@ -291,6 +296,30 @@ def colour_of(brush, brushes, dark):
     return tuple(255 - c for c in rgb) if dark and brush in INVERTED else rgb
 
 
+def outline(figures):
+    """The outer figure of a body: the one that encloses the most, its holes left out."""
+    def area(figure):
+        x, y = np.array(figure).T
+        return abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+    return max(figures, key=area)
+
+
+def layers_of(paths, brushes, dark):
+    """The layers a picture is drawn from in a theme, (figures, even_odd, colour, inside) each. In the dark theme a
+    grey in INVERTED is drawn inverted, and again in its own grey inside each later body in a colour of its own, so
+    what is seen through that body's holes keeps the grey it has on the button's colour."""
+    layers = []
+    for index, (figures, even_odd, brush) in enumerate(paths):
+        layers.append((figures, even_odd, colour_of(brush, brushes, dark), None))
+        if not dark or brush not in INVERTED:
+            continue
+        for body, _, body_brush in paths[index + 1:]:
+            coloured = body_brush not in THEME and body_brush not in INVERTED and len(set(rgb_of(brushes[body_brush]))) > 1
+            if coloured:
+                layers.append((figures, even_odd, rgb_of(brushes[brush]), outline(body)))
+    return layers
+
+
 def save(image, path, root):
     path.parent.mkdir(parents=True, exist_ok=True)
     # No resolution is written: the programs read that as 96 dpi, one pixel to a pixel.
@@ -312,7 +341,7 @@ def main():
         paths = [parse_path(data) + (brush,) for data, brush in templates[key]]
         themed = any(brush in THEME or brush in INVERTED for _, _, brush in paths)
         for dark in (False, True) if themed else (False,):
-            layers = [(figures, even_odd, colour_of(brush, brushes, dark)) for figures, even_odd, brush in paths]
+            layers = layers_of(paths, brushes, dark)
             for multiple in MULTIPLES:
                 size = round(SIZE * multiple)
                 file = f"{name}_{size}x{size}"

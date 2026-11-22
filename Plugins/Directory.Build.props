@@ -1,6 +1,7 @@
 ﻿<Project>
   <!--
     Build settings for x360ce plugins. A plugin is a folder holding one .cs file named like it, MyDevice\MyDevice.cs,
+    which can take in other files of the folder with #:include lines at its top, such as #:include MyDevice.Page.cs,
     and optionally a Resources folder whose files are carried inside the DLL. Build-Plugins.ps1 builds each plugin
     into bin\MyDevice\MyDevice.dll, one file; so does:
 

@@ -198,18 +198,44 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("The device's help heads its tab, so what to know before using the device is in view")]
-		public void The_device_help_heads_its_tab()
+		[Description("The device's help, its Markdown shown as the program's help is, is the last page of its tab, and nothing else on the tab repeats it")]
+		public void The_device_help_is_the_last_page_of_its_tab()
 		{
 			Ui.OnUiThread(() =>
 			{
 				var type = Type(SettingsPluginDevice.Product);
 				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, new SettingsPluginDevice(), new PluginSettings()))
 				{
-					var help = Find(panel, nameof(HardwareControl.DescriptionLabel));
-					Assert.AreEqual(type.Description, help.Text);
-					Assert.AreEqual(0, ((TableLayoutPanel)help.Parent).GetRow(help), "The help is not at the top of the tab.");
+					var help = (RichTextBox)Find(panel, "HelpRichTextBox");
+					Assert.AreEqual(type.Description, help.Text.Trim());
+					Assert.IsTrue(help.ReadOnly);
+					var pages = ((TabControl)Find(panel, "PluginTabControl")).TabPages;
+					Assert.AreSame(pages[pages.Count - 1], help.Parent, "The help is not the last page.");
+					Assert.AreEqual("HelpTabPage", help.Parent.Name);
+					Assert.AreEqual("Help", help.Parent.Text);
+					Assert.AreEqual(0, panel.Controls.Find(nameof(HardwareControl.DescriptionLabel), true).Length, "The help also heads the tab.");
 				}
+			});
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
+		[Description("A setting the plugin changes itself, as from its own control, is kept for the device when the plugin says so with PropertyChanged; a status it names is not, and the tab let go of keeps nothing more")]
+		public void A_setting_the_plugin_changes_itself_is_kept()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var store = new PluginSettings();
+				var guid = Guid.NewGuid();
+				var device = new SettingsPluginDevice();
+				using (var panel = new PluginDeviceUserControl(guid, Type(SettingsPluginDevice.Product), device, store))
+				{
+					device.Choose("192.168.1.9");
+					Assert.AreEqual("192.168.1.9", store.Get(guid, "Address"), "The value the plugin chose was not kept.");
+					device.Receive();
+					Assert.IsNull(store.Get(guid, "Packets"), "A status was kept as a setting.");
+				}
+				device.Choose("10.0.0.1");
+				Assert.AreEqual("192.168.1.9", store.Get(guid, "Address"), "A tab let go of still keeps what the plugin chooses.");
 			});
 		}
 
@@ -263,7 +289,7 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
-		[Description("A control the plugin declares for its device is placed on a page of its own, first, before the Properties page, with the device x360ce reads, and waits while there is none")]
+		[Description("A control the plugin declares for its device is placed on a page of its own, first, then Properties, then Help, with the device x360ce reads, or while it reads none with one of the tab's own, given the kept values and let go of with the tab")]
 		public void A_declared_control_is_placed_on_the_tab()
 		{
 			var type = Type(SettingsPluginDevice.Product);
@@ -277,17 +303,31 @@ namespace x360ce.Tests
 					var control = (SettingsPluginControl)Find(panel, "SettingsPluginControl");
 					Assert.AreSame(device, control.Device, "The control was given another device than the one x360ce reads.");
 					var pages = ((TabControl)Find(panel, "PluginTabControl")).TabPages.Cast<TabPage>().ToArray();
-					CollectionAssert.AreEqual(new[] { "ControlTabPage", nameof(InfoForm.PropertiesTabPage) }, pages.Select(x => x.Name).ToArray(),
-						"The plugin's control and the properties are not on pages of their own, the control first.");
+					CollectionAssert.AreEqual(new[] { "ControlTabPage", nameof(InfoForm.PropertiesTabPage), "HelpTabPage" }, pages.Select(x => x.Name).ToArray(),
+						"The plugin's control, the properties and the help are not on pages of their own, the control first.");
 					Assert.AreEqual("Properties", pages[1].Text);
 					Assert.AreSame(pages[0], control.Parent, "The control is not on its own page.");
 					Assert.IsTrue(pages[1].Contains(Find(panel, "SettingsPropertyGrid")), "The grid is not on the Properties page.");
 				}
-				using (var panel = new PluginDeviceUserControl(Guid.NewGuid(), type, null, new PluginSettings()))
+				Assert.IsFalse(device.Disposed, "The tab let go of the device x360ce reads.");
+				var store = new PluginSettings();
+				var guid = Guid.NewGuid();
+				store.Set(guid, "Port", "9000");
+				SettingsPluginDevice own;
+				using (var panel = new PluginDeviceUserControl(guid, type, null, store))
 				{
-					Assert.AreEqual(0, panel.Controls.Find("SettingsPluginControl", true).Length, "A control was made without a device.");
-					StringAssert.Contains(Find(panel, "NoteLabel").Text, "while x360ce reads the device", "The tab does not say why the control is missing.");
+					var control = (SettingsPluginControl)Find(panel, "SettingsPluginControl");
+					own = control.Device;
+					Assert.IsNotNull(own, "No control was made while x360ce reads no device: it is hidden, not shown.");
+					Assert.AreSame(own, panel.Shown);
+					Assert.IsNull(panel.Device, "The tab's own device is taken for the one x360ce reads.");
+					Assert.AreEqual(9000, own.Port, "The tab's own device was not given the values kept.");
+					Assert.AreEqual(0, panel.Controls.Find("NoteLabel", true).Length, "The tab says something is wrong while nothing is.");
+					store.Set(guid, "Port", "9001");
+					panel.RefreshStatus();
+					Assert.AreEqual(9001, own.Port, "The tab's own device was not given a value kept later.");
 				}
+				Assert.IsTrue(own.Disposed, "The tab's own device was not let go of with the tab.");
 			});
 		}
 
@@ -323,7 +363,7 @@ namespace x360ce.Tests
 		{
 			Ui.OnUiThread(() =>
 			{
-				// The Test Controller's help runs to two paragraphs, which must wrap at every width.
+				// The Test Controller has a control of its own, and the Settings Device a row of every kind.
 				foreach (var type in new[] { Type(SettingsPluginDevice.Product), TestControllerDevice.Type })
 				foreach (var zoom in new[] { 1f, 1.5f, 2f })
 				{

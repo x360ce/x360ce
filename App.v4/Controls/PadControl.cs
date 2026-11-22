@@ -83,6 +83,9 @@ namespace x360ce.App.Controls
 				ReleaseTables();
 				UpdateSdlPage();
 			};
+			PadTableLayoutPanel.Layout += PadTableLayoutPanel_Layout;
+			// The tab strip tells the room its pages have only once Windows has made it.
+			PadTabControl.HandleCreated += (s, e) => PadTableLayoutPanel.PerformLayout();
 			InputPanel.ChipClicked += InputPanel_ChipClicked;
 			InputPanel.DraggingChanged += InputPanel_DraggingChanged;
 			// Read only by the XInput library of x360ce 3, from the x360ce.ini file this version does not write. Shown and
@@ -191,6 +194,39 @@ namespace x360ce.App.Controls
 			_TablesHeld = false;
 			GeneralTableLayoutPanel.ResumeLayout();
 			tableLayoutPanel1.ResumeLayout();
+		}
+
+		/// <summary>The fewest rows of devices the Mapped devices list keeps room for, however short the window.</summary>
+		const int FewestDeviceRows = 3;
+
+		/// <summary>
+		/// Gives the Mapped devices list the height the window has to spare: the pages are as tall as the tallest of them needs
+		/// (<see cref="AppHelper.ContentHeight"/>), and the list takes the rest, down to <see cref="FewestDeviceRows"/> rows. In
+		/// a window shorter still, the pages take what is left.
+		/// </summary>
+		/// <remarks>
+		/// Set as the table that holds them starts to lay them out: the list's row is as tall as the list, and the pages' row
+		/// takes what the other rows leave.
+		/// </remarks>
+		void PadTableLayoutPanel_Layout(object sender, LayoutEventArgs e)
+		{
+			var tabs = PadTabControl;
+			if (!tabs.IsHandleCreated)
+				return;
+			var table = PadTableLayoutPanel;
+			var grid = MappedDevicesDataGridView;
+			var pages = tabs.DisplayRectangle;
+			var needed = tabs.TabPages.Cast<TabPage>().Max(x => AppHelper.ContentHeight(x, pages.Width));
+			var tabsHeight = tabs.Height - pages.Height + needed + tabs.Margin.Vertical;
+			// The tool bar's and the buttons' rows as the table sizes them, by the height each asks for: a layout that one of them
+			// starts by asking for another runs before it has it.
+			var across = new Size(table.DisplayRectangle.Width, 0);
+			var others = GamesToolStrip.GetPreferredSize(across).Height + GamesToolStrip.Margin.Vertical
+				+ ButtonsPanel.GetPreferredSize(across).Height + ButtonsPanel.Margin.Vertical;
+			var fewest = grid.Height - grid.ClientSize.Height + grid.ColumnHeadersHeight + grid.RowTemplate.Height * FewestDeviceRows;
+			var height = Math.Max(fewest, table.DisplayRectangle.Height - others - tabsHeight - grid.Margin.Vertical);
+			if (grid.Height != height)
+				grid.Height = height;
 		}
 
 		/// <summary>Enables what needs a device, when the selected row has one.</summary>
@@ -3254,36 +3290,22 @@ namespace x360ce.App.Controls
 		/// </remarks>
 		public void MapDevices(UserGame game, UserDevice[] devices)
 		{
-			devices = MapDevices(game, MappedTo, devices);
-			if (devices == null)
-				return;
-			// Selecting the row loads its settings into the page and saves the page into it.
-			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
-		}
-
-		/// <summary>Maps the devices to a controller for the game, as Add does, whichever controller the page shows; the devices mapped, or null when the person cancels.</summary>
-		/// <remarks>
-		/// An Xbox controller read through DirectInput is offered through Raw Input instead, and a device already on another
-		/// tab of the game is asked about: moved, copied, or not added. A plugin's page maps its device through here
-		/// (<see cref="Plugins.PluginHost.MapDevice"/>).
-		/// </remarks>
-		public static UserDevice[] MapDevices(UserGame game, MapTo mappedTo, UserDevice[] devices)
-		{
 			devices = PreferRawInput(devices);
 			if (devices == null)
-				return null;
+				return;
 			var copy = false;
-			var question = SharedDeviceQuestion(game, mappedTo, devices);
+			var question = SharedDeviceQuestion(game, MappedTo, devices);
 			if (question != null)
 			{
-				var answer = AskMoveOrCopy(SharedDeviceHeading(game, mappedTo, devices), question);
+				var answer = AskMoveOrCopy(SharedDeviceHeading(game, MappedTo, devices), question);
 				if (answer != DialogResult.Yes && answer != DialogResult.No)
-					return null;
+					return;
 				copy = answer == DialogResult.No;
 			}
-			SettingsManager.MapGamePadDevices(game, mappedTo, devices,
+			SettingsManager.MapGamePadDevices(game, MappedTo, devices,
 				SettingsManager.Options.HidHideConfigureAutomatically, copy);
-			return devices;
+			// Selecting the row loads its settings into the page and saves the page into it.
+			ShowHideAndSelectGridRows(devices[0].InstanceGuid);
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)

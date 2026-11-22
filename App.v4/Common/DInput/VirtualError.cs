@@ -21,7 +21,7 @@ namespace x360ce.App
 		PlaceNotGiven = 8,
 		[Description("XInput {0} is held by {1}, so Controller {0} makes no virtual controller until it is free. Use Auto-Order on the Devices page to move it, or unplug it.")]
 		PlaceTaken = 9,
-		[Description("Windows put the virtual controller for Controller {0} in another XInput place, where it would push out another controller, so it was taken away again. It is tried again when a controller arrives or leaves.")]
+		[Description("Windows did not give the virtual controller for Controller {0} its own place, XInput {0}, so it is not kept. It is tried again when a controller arrives or leaves.")]
 		PlaceWrong = 10,
 		[Description("XInput did not answer, so the virtual controller for Controller {0} was not made, or was taken away again. It is tried again when XInput answers, or, if it was taken away, when a controller arrives or leaves.")]
 		NotAnswering = 11,

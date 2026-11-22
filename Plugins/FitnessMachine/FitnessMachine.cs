@@ -1,16 +1,16 @@
-﻿using System;
+﻿#:include FitnessMachine.Properties.cs
+#:include FitnessMachine.Connection.cs
+#:include FitnessMachine.Help.cs
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -20,72 +20,45 @@ using x360ce.Plugins;
 
 namespace x360ce.Plugins.Samples
 {
-	/// <summary>What the game's force feedback does to a fitness machine.</summary>
-	public enum FitnessForce
-	{
-		[Description("Off")]
-		Off,
-		[Description("Resistance")]
-		Resistance,
-		[Description("Road grade")]
-		Grade,
-	}
-
 	#region The device
 
 	/// <summary>An exercise bike, treadmill, rower or cross trainer, read over Bluetooth's standard Fitness Machine Service (FTMS), as a controller.</summary>
 	/// <remarks>
-	/// The machine is chosen and connected on the Fitness tab (<see cref="FitnessPage"/>), and held by the session every
-	/// device of the kind shares (<see cref="FitnessSession"/>): a computer has one Bluetooth radio. <see cref="Read"/>
-	/// copies the newest values the machine sent from the session's volatile fields, and the session's worker sends the
-	/// machine what <see cref="NextCommand"/> works out from the game's force, four times a second at most.
+	/// The plugin is four files, which the #:include lines above build as one: this one, the device and its connection to
+	/// the machine; FitnessMachine.Properties.cs, its settings and statuses; FitnessMachine.Connection.cs, its Connection
+	/// page; and FitnessMachine.Help.cs, its help.
 	///
-	/// The first read joins the device to the session, which connects again to the machine connected last when nothing is
-	/// held. Disposing the device, as x360ce does when it is unticked, disabled, taken off every controller or x360ce
-	/// closes, leaves the session; the last device to leave lets go of the machine, without waiting for it.
+	/// Each device holds its own connection (<see cref="FitnessSession"/>) to the one machine its Machine setting names,
+	/// which its Connection page sets when the person selects a machine. x360ce reads a device only while it is ticked, on
+	/// the Devices tab and in its controller's list, and disposes it when it is unticked, removed or x360ce closes. The
+	/// first read connects to the machine, trying again quietly until it connects; a machine chosen later replaces it; and
+	/// Dispose lets go of it, without waiting. A device x360ce never reads, such as the one it makes to learn the plugin's
+	/// name or the one its tab shows while it is unticked, never connects.
 	///
-	/// x360ce sets the settings on the thread that calls <see cref="Read"/>; those the worker reads too are volatile.
+	/// <see cref="Read"/> copies the newest values the machine sent from the session's volatile fields, and the session's
+	/// worker sends the machine what <see cref="NextCommand"/> works out from the game's force, four times a second at most.
+	/// x360ce sets the settings on the thread that calls Read; those the worker or the Connection page read too are volatile.
 	/// </remarks>
-	[Description("An exercise bike, treadmill, rower or cross trainer as a controller, read over Bluetooth: pedal, run or row to drive a game. "
-		+ "Experimental: tested on a Tunturi E60R exercise bike only; use it with care and at your own risk. It reads any machine that uses "
-		+ "Bluetooth's standard Fitness Machine Service (FTMS), as most smart bikes and trainers do, and needs Windows 10 or later. Find and "
-		+ "connect the machine on the Fitness tab, which adds this device to the Devices list as the machine connects.\n\n"
-		+ "Axis 1 is your speed going forward and axis 2 your speed in reverse, from standing still to Max speed. Axis 3 rests in the middle "
-		+ "and moves up as you go forward and down in reverse, as a stick does for walking. Axis 4 is your cadence, axis 5 your power and "
-		+ "axis 6 your heart rate; slider 1 is your speed either way, and slider 2 the machine's resistance. Button 1 is held while you move, "
-		+ "button 2 while in reverse, button 3 for a moment at each heartbeat, and button 4 while your heart rate is at or above Heart rate "
-		+ "limit. A machine that sends nothing for 3 seconds reads as standing still.\n\n"
-		+ "Map to on the Fitness tab, or the device put on a controller, maps it to drive: Right Trigger to Axis 1 and Left Trigger to Axis 2, "
-		+ "as Auto Preset does too. To walk or run on foot, map Left Thumb Axis Y to IAxis 3.\n\n"
-		+ "Reverse: tick Reverse, or set Reverse gear, and turning the machine's own resistance down to that level drives backwards. A cross "
-		+ "trainer pedalled backwards drives backwards by itself.\n\n"
-		+ "Force feedback: tick Enable on the controller's Force Feedback page, and the game's rumble makes the machine harder "
-		+ "to pedal, by up to Extra resistance levels, or makes the road climb, by up to Road grade, as Force feedback to says. When the rumble "
-		+ "stops, the machine goes back to the level you set on it. While your heart rate is at or above Heart rate limit, the rumble adds "
-		+ "nothing.\n\n"
-		+ "Unticked, disabled or taken off every controller, the device lets go of the machine, which goes back to the level you set on it; "
-		+ "read again, it connects to the machine again.\n\n"
-		+ "A computer's Bluetooth cannot connect to itself, so a transmitter such as the Virtual Fitness Machine Transmitter must run on "
-		+ "another device, not on this computer.")]
-	public class FitnessMachine : IPluginDevice, IPluginForceFeedback, IPluginMapping, IDisposable
+	public partial class FitnessMachine : IPluginDevice, IPluginForceFeedback, IPluginMapping, INotifyPropertyChanged, IDisposable
 	{
-		/// <summary>Names the kind of device: the Fitness tab adds and maps the device by it.</summary>
+		/// <summary>Names the kind of device: saved mappings find the device by it.</summary>
 		internal static readonly Guid Product = new Guid("6e1793da-b362-49b0-ad25-08433feac3f8");
 
-		/// <summary>A device of the process's session, as x360ce makes one.</summary>
-		public FitnessMachine() : this(FitnessSession.Shared)
+		/// <summary>A device with a connection of its own, as x360ce makes one.</summary>
+		public FitnessMachine() : this(new FitnessSession())
 		{
 		}
 
-		/// <summary>A device of a session of its own, as a test makes one.</summary>
+		/// <summary>A device with the connection given, as a test makes one.</summary>
 		internal FitnessMachine(FitnessSession session)
 		{
 			_session = session;
+			session.Driver = this;
 		}
 
 		readonly FitnessSession _session;
 
-		/// <summary>The session the device reads.</summary>
+		/// <summary>The device's connection to its machine.</summary>
 		internal FitnessSession Session { get { return _session; } }
 
 		public string Name { get { return "Fitness Machine"; } }
@@ -102,179 +75,55 @@ namespace x360ce.Plugins.Samples
 		/// </remarks>
 		public string Mapping { get { return "righttrigger:a0,lefttrigger:a1"; } }
 
-		#region Settings
+		#region Choosing the machine
 
-		[Category("Ranges"), DisplayName("Max speed (km/h)")]
-		[Description("The speed that moves axes 1, 2 and 3 and slider 1 all the way.")]
-		[Range(1.0, 200.0)]
-		public double MaxSpeed { get; set; } = 40;
+		/// <summary>Raised on the interface thread when the Connection page chooses a machine, so x360ce keeps the Machine setting for the device.</summary>
+		public event PropertyChangedEventHandler PropertyChanged;
 
-		[Category("Ranges"), DisplayName("Max cadence (rpm)")]
-		[Description("The cadence that moves axis 4 all the way.")]
-		[Range(10, 250)]
-		public int MaxCadence { get; set; } = 120;
-
-		[Category("Ranges"), DisplayName("Max power (W)")]
-		[Description("The power that moves axis 5 all the way.")]
-		[Range(50, 3000)]
-		public int MaxPower { get; set; } = 400;
-
-		[Category("Ranges"), DisplayName("Min heart rate (bpm)")]
-		[Description("The heart rate at which axis 6 starts to move.")]
-		[Range(30, 220)]
-		public int MinHeartRate { get; set; } = 60;
-
-		[Category("Ranges"), DisplayName("Max heart rate (bpm)")]
-		[Description("The heart rate that moves axis 6 all the way.")]
-		[Range(60, 240)]
-		public int MaxHeartRate { get; set; } = 190;
-
-		[Category("Reverse"), DisplayName("Reverse")]
-		[Description("Drives in reverse: your speed moves axis 2 in place of axis 1, and axis 3 down in place of up.")]
-		public bool Reverse { get; set; }
-
-		[Category("Reverse"), DisplayName("Reverse gear")]
-		[Description("Drives in reverse while the resistance you set on the machine is at or below this level, so the machine's own gear or "
-			+ "resistance lever puts it in reverse. 0 never does.")]
-		[Range(0, 100)]
-		public int ReverseGear { get; set; }
-
-		[Category("Force feedback"), DisplayName("Force feedback to")]
-		[Description("What the game's rumble does once Enable is ticked on the controller's Force Feedback page. Resistance: "
-			+ "the machine gets harder to pedal. Road grade: the road climbs, on a machine that simulates a road. Off: nothing.")]
-		public FitnessForce ForceTo
+		/// <summary>Chooses the machine the device connects to, as the Connection page does when the person selects one.</summary>
+		/// <remarks>
+		/// Called on the interface thread. It does not connect by itself: a device x360ce reads connects to the machine at its
+		/// next read, and one it does not read connects once it is ticked.
+		/// </remarks>
+		/// <param name="address">The machine's Bluetooth address.</param>
+		/// <param name="name">Its name, as the list shows it.</param>
+		internal void Choose(ulong address, string name)
 		{
-			get { return _forceTo; }
-			set { _forceTo = value; }
+			var text = FitnessSession.Want.Text(address, name);
+			if (text == _machine)
+				return;
+			_machine = text;
+			var changed = PropertyChanged;
+			if (changed != null)
+				changed(this, new PropertyChangedEventArgs(nameof(Machine)));
 		}
-		volatile FitnessForce _forceTo = FitnessForce.Resistance;
-
-		[Category("Force feedback"), DisplayName("Extra resistance (levels)")]
-		[Description("The resistance levels the game's strongest rumble adds to the level you set on the machine; a lighter rumble adds less.")]
-		[Range(0.0, 100.0)]
-		public double ForceResistance
-		{
-			get { return _forceResistance; }
-			set
-			{
-				_forceResistance = value;
-				_forceResistanceTenths = (int)Math.Round(Math.Max(0, Math.Min(100, value)) * Ftms.ResistanceScale);
-			}
-		}
-		double _forceResistance = 10;
-		volatile int _forceResistanceTenths = 100;
-
-		[Category("Force feedback"), DisplayName("Road grade (%)")]
-		[Description("The road grade, in percent, the game's strongest rumble climbs; a lighter rumble climbs less.")]
-		[Range(0.0, 20.0)]
-		public double ForceGrade
-		{
-			get { return _forceGrade; }
-			set
-			{
-				_forceGrade = value;
-				_forceGradeHundredths = (int)Math.Round(Math.Max(0, Math.Min(20, value)) * Ftms.GradeScale);
-			}
-		}
-		double _forceGrade = 8;
-		volatile int _forceGradeHundredths = 800;
-
-		[Category("Heart rate"), DisplayName("Heart rate limit (bpm)")]
-		[Description("While your heart rate is at or above it, the game's rumble adds nothing and button 4 is held. 0 is off.")]
-		[Range(0, 240)]
-		public int HeartRateLimit
-		{
-			get { return _heartRateLimit; }
-			set { _heartRateLimit = value; }
-		}
-		volatile int _heartRateLimit;
-
-		#endregion
-
-		#region Status
-
-		[DisplayName("Connection")]
-		[Description("What the Fitness tab's connection is doing: looking for a machine, connecting, connected, or why it cannot.")]
-		public string Connection { get { return _session.StatusText; } }
-
-		[DisplayName("Features")]
-		[Description("What the machine measures, and the targets it accepts, as it says itself.")]
-		public string Features { get { return _session.FeaturesText; } }
-
-		[DisplayName("Speed")]
-		[Description("Your speed now.")]
-		public string Speed { get { return _session.Shown(_session.Speed, Ftms.SpeedScale, "0.0", " km/h"); } }
-
-		[DisplayName("Cadence")]
-		[Description("Your cadence now: pedal turns, steps or strokes a minute.")]
-		public string Cadence { get { return _session.Shown(_session.Cadence, Ftms.CadenceScale, "0", " rpm"); } }
-
-		[DisplayName("Power")]
-		[Description("Your power now.")]
-		public string Power { get { return _session.Shown(_session.Power, 1, "0", " W"); } }
-
-		[DisplayName("Heart rate")]
-		[Description("Your heart rate now, from the machine's own heart rate sensor or a strap paired with it.")]
-		public string HeartRate { get { return _session.HeartRate > 0 ? _session.Shown(_session.HeartRate, 1, "0", " bpm") : ""; } }
-
-		[DisplayName("Resistance")]
-		[Description("The machine's resistance level now, and the range it goes over.")]
-		public string Resistance
-		{
-			get
-			{
-				var level = _session.Shown(_session.Level, 1, "0", "");
-				var min = _session.RangeMin;
-				var max = _session.RangeMax;
-				return level.Length == 0 || min == FitnessSession.Unknown || max == FitnessSession.Unknown ? level
-					: level + " (" + (min / Ftms.ResistanceScale).ToString("0.#", CultureInfo.InvariantCulture)
-						+ " to " + (max / Ftms.ResistanceScale).ToString("0.#", CultureInfo.InvariantCulture) + ")";
-			}
-		}
-
-		[DisplayName("Distance")]
-		[Description("How far you have gone since the machine started counting.")]
-		public string Distance { get { return _session.Shown(_session.Distance, 1000, "0.00", " km"); } }
-
-		[DisplayName("Elapsed time")]
-		[Description("How long you have trained since the machine started counting.")]
-		public string ElapsedTime
-		{
-			get
-			{
-				var seconds = _session.Elapsed;
-				return _session.Fresh(_session.Now) && seconds != FitnessSession.Unknown
-					? TimeSpan.FromSeconds(seconds).ToString(@"h\:mm\:ss", CultureInfo.InvariantCulture)
-					: "";
-			}
-		}
-
-		[DisplayName("Force")]
-		[Description("How strong the game's rumble is, and the target it sets on the machine.")]
-		public string Force { get { return DescribeForce(); } }
-
-		[DisplayName("Updates per second")]
-		[Description("How many sets of values the machine sent in the last second.")]
-		public int Updates { get { return _session.Updates; } }
 
 		#endregion
 
 		#region Read
 
-		/// <summary>True once the device was read, and so joined the session.</summary>
-		bool _joined;
+		/// <summary>The Machine setting the session was last asked to hold; null before the first read.</summary>
+		string _held;
 
-		/// <summary>True once the device was let go of: it never joins the session again.</summary>
+		/// <summary>True once x360ce read the device.</summary>
+		volatile bool _read;
+
+		/// <summary>True once the device was let go of: it never holds a machine again.</summary>
 		volatile bool _disposed;
+
+		/// <summary>True while x360ce reads the device, which it does while the device is ticked: from the first read until the device is let go of.</summary>
+		internal bool Reading { get { return _read && !_disposed; } }
 
 		public void Read(PluginState state)
 		{
 			var session = _session;
-			// The first read joins the session, which connects to the machine connected last when nothing is held.
-			if (!_joined && !_disposed)
+			// Read, the device is ticked: the first read holds the machine chosen, and a machine chosen later replaces it.
+			var machine = _machine;
+			if (!string.Equals(machine, _held, StringComparison.Ordinal) && !_disposed)
 			{
-				_joined = true;
-				session.Join(this);
+				_held = machine;
+				_read = true;
+				session.Hold(FitnessSession.Want.Parse(machine));
 			}
 			var now = session.Now;
 			session.Count(now);
@@ -334,15 +183,17 @@ namespace x360ce.Plugins.Samples
 			return milliseconds % beat < beat / 4;
 		}
 
-		/// <summary>Leaves the session without waiting: the last device to leave lets go of the machine, which gets back the level the person set.</summary>
-		/// <remarks>Called on x360ce's input thread, which must not wait: the session's worker lets go of the machine.</remarks>
+		/// <summary>Lets go of the machine without waiting: the session's worker gives it back the level the person set and closes the link.</summary>
+		/// <remarks>
+		/// Called on x360ce's input thread when the device is unticked, removed or x360ce closes, which must not wait. The
+		/// device is not read again: ticked again, x360ce makes a new one.
+		/// </remarks>
 		public void Dispose()
 		{
 			if (_disposed)
 				return;
 			_disposed = true;
-			if (_joined)
-				_session.Leave(this);
+			_session.Close();
 		}
 
 		#endregion
@@ -431,6 +282,7 @@ namespace x360ce.Plugins.Samples
 			return limit > 0 && _session.Fresh(_session.Now) && _session.HeartRate >= limit;
 		}
 
+		/// <summary>The Force status: how strong the game's rumble is, and the target it sets on the machine.</summary>
 		string DescribeForce()
 		{
 			var kind = _forceTo;
@@ -555,7 +407,7 @@ namespace x360ce.Plugins.Samples
 			return new[] { RequestControlOp };
 		}
 
-		/// <summary>The command a button or a target of the Fitness tab sends.</summary>
+		/// <summary>The command a button or a target of the Connection page sends.</summary>
 		/// <param name="command">The command.</param>
 		/// <param name="value">A target's value: watts, a resistance level, or a road grade in percent; nothing for the others.</param>
 		public static byte[] Command(FitnessCommand command, double value)
@@ -699,7 +551,7 @@ namespace x360ce.Plugins.Samples
 		#endregion
 	}
 
-	/// <summary>A command a button or a target of the Fitness tab sends.</summary>
+	/// <summary>A command a button or a target of the Connection page sends.</summary>
 	enum FitnessCommand
 	{
 		Start,
@@ -713,33 +565,54 @@ namespace x360ce.Plugins.Samples
 
 	#endregion
 
-	#region The session
+	#region The connection
 
-	/// <summary>
-	/// The one connection to a fitness machine the process holds, shared by the Fitness tab and every Fitness Machine
-	/// device: a computer has one Bluetooth radio. The tab finds machines, connects and sends commands; the devices read
-	/// what the machine sends, and send it the game's force.
-	/// </summary>
+	/// <summary>One connection to a machine, which the session's worker opens, works and closes: Bluetooth's (<see cref="FitnessSession.Link"/>), or a test's.</summary>
+	public interface IFitnessLink : IDisposable
+	{
+		/// <summary>True while the machine is connected.</summary>
+		bool Up { get; }
+
+		/// <summary>Connects, reads what the machine is and asks for its values; null once connected, or why it cannot.</summary>
+		Task<string> Open();
+
+		/// <summary>Writes one command, and waits a moment for the machine's answer; null when there is none.</summary>
+		Task<byte[]> Send(byte[] command);
+
+		/// <summary>Lets go of the machine: gives it back the level the person set, tells it to stop sending, and disposes the link.</summary>
+		Task Close();
+	}
+
+	/// <summary>A device's connection to its machine: what the machine sent, what x360ce sends it, and the worker that holds the link.</summary>
 	/// <remarks>
-	/// Bluetooth is worked on a thread of the session's own, started when first needed. It scans, connects, sends one
-	/// command at a time and lets go of the machine as the tab and the devices ask, through volatile fields, so neither
+	/// One for each device, as each connects to a machine of its own. Bluetooth is worked on a thread of the session's own,
+	/// started when the device first holds a machine and ended once the device let go: it connects, sends one command at a
+	/// time and lets go as the device asks, through volatile fields, so neither the device's Read nor the Connection page
 	/// waits for it. Every value the machine sends passes through <see cref="Take"/>, which keeps the newest in volatile
-	/// fields for a device's Read, and the readings, the activity log and the machines heard for the tab under a lock the
-	/// input thread never takes.
+	/// fields for Read, and the readings and the activity log for the Connection page under a lock the input thread never
+	/// takes.
 	///
-	/// Who connects: the tab's Connect; the tab at start, when Reconnect is ticked, to the machine connected last; and a
-	/// device's first read, to the machine connected last in this run, when nothing is held. Those two retry quietly, a
-	/// little later after each failure, until they connect or the person presses Disconnect. Who lets go: the tab's
-	/// Disconnect; the last device read being disposed; and x360ce closing, which waits a moment for it. Letting go gives
-	/// the machine back the level the person set, asks it to stop sending, and disposes every Bluetooth object.
+	/// The worker connects to the machine the device holds (<see cref="Hold"/>), trying again quietly, a little later after
+	/// each failure, until it connects or the device lets go (<see cref="Close"/>), and connects again when the link is lost.
+	/// Letting go gives the machine back the level the person set, asks it to stop sending, and disposes every Bluetooth
+	/// object; a closing x360ce waits a moment for it.
 	///
-	/// Windows' Bluetooth types are named only in <see cref="Scanner"/> and <see cref="Link"/>, which only the worker uses,
-	/// so on a Windows without them the worker says so and nothing else fails.
+	/// Windows' Bluetooth types are named only in <see cref="Link"/> and <see cref="Scanner"/>, which only threads other than
+	/// the interface's use, so on a Windows without them the worker says so and nothing else fails.
 	/// </remarks>
 	sealed class FitnessSession
 	{
-		/// <summary>The session of the process.</summary>
-		internal static readonly FitnessSession Shared = new FitnessSession();
+		/// <summary>A connection that makes Bluetooth links.</summary>
+		internal FitnessSession()
+		{
+			NewLink = (address, name) => new Link(this, address, name);
+		}
+
+		/// <summary>The device whose game's force drives the machine.</summary>
+		internal volatile FitnessMachine Driver;
+
+		/// <summary>Makes the link to a machine, by its address and its name: Bluetooth's; a test gives one of its own.</summary>
+		internal Func<ulong, string, IFitnessLink> NewLink;
 
 		#region Timing
 
@@ -758,10 +631,10 @@ namespace x360ce.Plugins.Samples
 		/// <summary>How long after a command the resistance the machine reports is not taken for the level the person set: it can still show the level before.</summary>
 		const int QuietMilliseconds = 2000;
 
-		/// <summary>How long a closing x360ce waits for the machine to be let go of: .NET Framework gives the handlers of a closing process two seconds in all.</summary>
+		/// <summary>How long a closing x360ce waits for every machine to be let go of: .NET Framework gives the handlers of a closing process two seconds in all.</summary>
 		const int ExitMilliseconds = 1500;
 
-		/// <summary>How long a quiet connection waits before it tries again after a failure: longer after each, up to the last.</summary>
+		/// <summary>How long the worker waits before it tries again after a failure: longer after each, up to the last.</summary>
 		static readonly int[] BackOffMilliseconds = { 2000, 5000, 10000 };
 
 		/// <summary>How many lines the activity log keeps.</summary>
@@ -845,7 +718,7 @@ namespace x360ce.Plugins.Samples
 		/// Bike Data: the one way a value reaches the session.
 		/// </summary>
 		/// <remarks>
-		/// The worker calls it for every notification and every value it reads, on whichever thread Windows raises them, and
+		/// The link calls it for every notification and every value it reads, on whichever thread Windows raises them, and
 		/// a test calls it with bytes of its own. A packet that ends before all the fields its flags announce keeps the
 		/// fields it holds, and a field it does not hold keeps its value.
 		/// </remarks>
@@ -1056,7 +929,7 @@ namespace x360ce.Plugins.Samples
 			Keep(speed, cadence, power, heartRate, level, distance, elapsed, false, (flags & 0x0001) == 0);
 		}
 
-		/// <summary>Keeps the values one packet held, a value it did not hold keeping what it was, and shows each on the tab.</summary>
+		/// <summary>Keeps the values one packet held, a value it did not hold keeping what it was, and shows each on the Connection page.</summary>
 		/// <param name="complete">True for the last packet of a set of values, which carries no More Data flag.</param>
 		void Keep(int? speed, int? cadence, int? power, int? heartRate, int? level, int? distance, int? elapsed, bool backward, bool complete)
 		{
@@ -1256,10 +1129,10 @@ namespace x360ce.Plugins.Samples
 			}
 		}
 
-		/// <summary>A command of the tab waiting for the worker: its name, for the log, and its bytes.</summary>
-		sealed class TabCommand
+		/// <summary>A command of the Connection page waiting for the worker.</summary>
+		sealed class PageCommand
 		{
-			public TabCommand(byte[] bytes)
+			public PageCommand(byte[] bytes)
 			{
 				Bytes = bytes;
 			}
@@ -1267,16 +1140,16 @@ namespace x360ce.Plugins.Samples
 			public readonly byte[] Bytes;
 		}
 
-		/// <summary>The tab's command the worker sends next; null while none waits.</summary>
-		volatile TabCommand _command;
+		/// <summary>The Connection page's command the worker sends next; null while none waits.</summary>
+		volatile PageCommand _command;
 
-		/// <summary>True while a command of the tab waits or is sent: the tab sends one at a time.</summary>
+		/// <summary>True while a command of the Connection page waits or is sent: the page sends one at a time.</summary>
 		internal bool Busy { get { return _command != null; } }
 
-		/// <summary>Sends the machine a command of the tab, asking for control first when it must, and logs its answer.</summary>
+		/// <summary>Sends the machine a command of the Connection page, asking for control first when it must, and logs its answer.</summary>
 		internal void Send(FitnessCommand command, double value)
 		{
-			_command = new TabCommand(Ftms.Command(command, value));
+			_command = new PageCommand(Ftms.Command(command, value));
 			Changed();
 			Wake();
 		}
@@ -1289,11 +1162,11 @@ namespace x360ce.Plugins.Samples
 
 		#endregion
 
-		#region What the tab shows
+		#region What the Connection page shows
 
 		readonly object _lock = new object();
 
-		/// <summary>Raised by every change the tab shows, so it draws only when something changed.</summary>
+		/// <summary>Raised by every change the Connection page shows, so it draws only when something changed.</summary>
 		internal int Version { get { return Volatile.Read(ref _version); } }
 		int _version;
 
@@ -1312,12 +1185,6 @@ namespace x360ce.Plugins.Samples
 		readonly List<string> _log = new List<string>();
 		string _lastNote;
 
-		/// <summary>The devices heard while scanning, in the order heard.</summary>
-		readonly List<FitnessSeen> _machines = new List<FitnessSeen>();
-
-		/// <summary>The addresses that said they are fitness machines: a machine often says so in another advertisement than the one with its name.</summary>
-		readonly HashSet<ulong> _fitnessMachines = new HashSet<ulong>();
-
 		/// <summary>Called with the lock held.</summary>
 		void Reading(string name, string value, long at)
 		{
@@ -1328,7 +1195,7 @@ namespace x360ce.Plugins.Samples
 				row.Update(value, at);
 		}
 
-		/// <summary>The newest value of every field the machine sent, as the tab shows them, in the order the fields first came.</summary>
+		/// <summary>The newest value of every field the machine sent, as the Connection page shows them, in the order the fields first came.</summary>
 		internal FitnessReading[] Readings()
 		{
 			lock (_lock)
@@ -1357,46 +1224,6 @@ namespace x360ce.Plugins.Samples
 			Changed();
 		}
 
-		/// <summary>The devices heard while scanning, in the order heard.</summary>
-		internal FitnessSeen[] Machines()
-		{
-			lock (_lock)
-				return _machines.ToArray();
-		}
-
-		/// <summary>Notes a device heard while scanning: a fitness machine, or with Show all Bluetooth devices any device that says its name.</summary>
-		/// <param name="address">The device's Bluetooth address.</param>
-		/// <param name="name">Its name, or empty when this advertisement has none.</param>
-		/// <param name="fitness">True when this advertisement says it is a fitness machine.</param>
-		/// <param name="types">The kinds of machine it says it is, or empty.</param>
-		/// <param name="signal">Its signal strength, in dBm.</param>
-		internal void Hear(ulong address, string name, bool fitness, string types, short signal)
-		{
-			lock (_lock)
-			{
-				if (fitness)
-					_fitnessMachines.Add(address);
-				else
-					fitness = _fitnessMachines.Contains(address);
-				if (!fitness && (!_showAll || name.Length == 0))
-					return;
-				var machine = _machines.FirstOrDefault(x => x.Address == address);
-				if (machine == null)
-				{
-					machine = new FitnessSeen(address);
-					_machines.Add(machine);
-				}
-				if (name.Length > 0)
-					machine.Name = name;
-				if (types.Length > 0)
-					machine.Types = types;
-				if (fitness)
-					machine.Fitness = true;
-				machine.Signal = signal;
-			}
-			Changed();
-		}
-
 		/// <summary>The name of the machine connected or connecting last.</summary>
 		internal string MachineName { get { return _name ?? "The machine"; } }
 		volatile string _name;
@@ -1411,13 +1238,13 @@ namespace x360ce.Plugins.Samples
 			}
 		}
 
-		/// <summary>Where the session stands and, when it is stuck, what to do next, in one sentence or two.</summary>
+		/// <summary>Where the connection stands while the device holds a machine, in a sentence or two; null while it holds none.</summary>
 		internal string StatusText
 		{
 			get
 			{
 				if (_tooOld)
-					return "Needs Windows 10 or later.";
+					return NeedsWindows10;
 				var held = _held;
 				if (held != null)
 				{
@@ -1428,26 +1255,20 @@ namespace x360ce.Plugins.Samples
 						every = _sets.ToString();
 					return "Connected to " + held.Name + ". Receiving data" + (every.Length == 0 ? "." : " every " + every + ".");
 				}
-				var problem = _problem;
-				if (problem != null)
-					return problem;
 				var want = _want;
-				if (want != null)
-					return want.Quiet ? "Looking for " + want.Name + "." : "Connecting to " + want.Name + "...";
-				if (_scanning)
-				{
-					var count = Machines().Length;
-					return "Scanning. " + (_showAll ? "Devices" : "Fitness machines") + " found: " + count + "."
-						+ (count > 0 ? " Select one and press Connect." : "");
-				}
-				return IdleText;
+				if (want == null)
+					return null;
+				if (_declined)
+					return "Pairing with " + want.Name + " was declined. Untick and tick this device to try again.";
+				var problem = _problem;
+				return problem == null ? "Connecting to " + want.Name + "..." : problem + " Trying again.";
 			}
 		}
 
-		/// <summary>What the status says while nothing is asked for.</summary>
-		internal const string IdleText = "Press Scan to look for fitness machines.";
+		/// <summary>What a Windows without Bluetooth's WinRT types says.</summary>
+		internal const string NeedsWindows10 = "Needs Windows 10 or later.";
 
-		/// <summary>The last problem, shown until the next scan or connection; null while there is none.</summary>
+		/// <summary>The last problem, shown until the next connection; null while there is none.</summary>
 		volatile string _problem;
 
 		/// <summary>True when Windows has no Bluetooth types: the worker stopped.</summary>
@@ -1455,146 +1276,120 @@ namespace x360ce.Plugins.Samples
 
 		#endregion
 
-		#region What the tab and the devices ask for
+		#region What the device asks for
 
-		/// <summary>A machine to hold: its address and name, and whether it is tried again quietly after a failure.</summary>
+		/// <summary>A machine to hold: its address and its name.</summary>
 		internal sealed class Want
 		{
-			public Want(ulong address, string name, bool quiet)
+			public Want(ulong address, string name)
 			{
 				Address = address;
 				Name = name;
-				Quiet = quiet;
 			}
 
 			public readonly ulong Address;
 			public readonly string Name;
-			public readonly bool Quiet;
+
+			/// <summary>True for the same machine under the same name.</summary>
+			public bool Same(Want other)
+			{
+				return other != null && other.Address == Address && other.Name == Name;
+			}
+
+			/// <summary>A machine as its Machine setting keeps it: "EJT [A1:B2:C3:D4:E5:F6]", or the address alone for a machine without a name.</summary>
+			public static string Text(ulong address, string name)
+			{
+				var shown = AddressText(address);
+				name = (name ?? "").Trim();
+				return name.Length == 0 || name == shown ? shown : name + " [" + shown + "]";
+			}
+
+			/// <summary>The machine a Machine setting names by the Bluetooth address it holds, alone or in brackets after a name; null when it holds none.</summary>
+			public static Want Parse(string text)
+			{
+				text = (text ?? "").Trim();
+				var open = text.LastIndexOf('[');
+				var bracketed = open >= 0 && text.EndsWith("]", StringComparison.Ordinal);
+				var address = ParseAddress(bracketed ? text.Substring(open + 1, text.Length - open - 2) : text);
+				if (address == 0)
+					return null;
+				var name = bracketed ? text.Substring(0, open).Trim() : "";
+				return new Want(address, name.Length > 0 ? name : AddressText(address));
+			}
 		}
 
-		/// <summary>The machine asked for; null to hold none.</summary>
+		/// <summary>The machine the device holds; null to hold none.</summary>
 		volatile Want _want;
 
 		/// <summary>The machine connected now; null while none is.</summary>
 		volatile Want _held;
 
-		/// <summary>The machine connected last in this run, or the one the tab reconnects to at start; null before either.</summary>
-		volatile Want _last;
+		/// <summary>True once the device let go: the worker lets go of the machine and ends.</summary>
+		volatile bool _closing;
 
-		volatile bool _scanning;
-		volatile bool _showAll;
-
-		/// <summary>True while x360ce closes: the worker lets go of the machine and ends.</summary>
-		volatile bool _exiting;
+		/// <summary>True once the person declined to pair with the machine held: it is not tried again until another is held.</summary>
+		volatile bool _declined;
 
 		/// <summary>The machine connected now; null while none is.</summary>
 		internal Want Held { get { return _held; } }
 
-		/// <summary>The machine connected or being connected; null while none is asked for.</summary>
+		/// <summary>The machine the device holds, connected or not; null while it holds none.</summary>
 		internal Want Wanted { get { return _want; } }
 
-		/// <summary>The machine connected last in this run; null before one connected.</summary>
-		internal Want Last { get { return _last; } }
+		/// <summary>True once the device let go of its connection for good.</summary>
+		internal bool Closed { get { return _closing; } }
 
-		internal bool Scanning { get { return _scanning; } }
-
-		internal bool ShowAll { get { return _showAll; } }
-
-		/// <summary>Starts looking for machines, with a new list: fitness machines, and with <paramref name="showAll"/> every device that says its name.</summary>
-		internal void Scan(bool showAll)
+		/// <summary>Connects to a machine, or to none with null, trying again quietly until it connects; the machine held before is let go of.</summary>
+		/// <remarks>Called on the input thread, by the device's read: it takes no lock and waits for nothing.</remarks>
+		internal void Hold(Want want)
 		{
-			lock (_lock)
-			{
-				_machines.Clear();
-				_showAll = showAll;
-			}
+			if (_closing || (want == null ? _want == null : want.Same(_want)))
+				return;
 			_problem = null;
-			_scanning = true;
-			Note(showAll ? "Scanning for all Bluetooth devices." : "Scanning for fitness machines.");
-			Wake();
-		}
-
-		internal void StopScan()
-		{
-			_scanning = false;
+			_declined = false;
+			_want = want;
 			Changed();
+			if (want != null)
+				Wake();
 		}
 
-		/// <summary>Connects to a machine heard, as the person asked: once, saying why when it cannot.</summary>
-		internal void Connect(ulong address, string name)
+		/// <summary>Lets go of the machine for good, as the device is let go of: the worker lets go and ends.</summary>
+		/// <remarks>Called on the input thread: it takes no lock and waits for nothing.</remarks>
+		internal void Close()
 		{
-			_scanning = false;
-			Hold(new Want(address, name, false));
-		}
-
-		/// <summary>Connects to the machine connected last, as the tab does at start: quietly, trying again until it connects or the person presses Disconnect.</summary>
-		internal void Reconnect(ulong address, string name)
-		{
-			var want = new Want(address, name, true);
-			_last = want;
-			Hold(want);
-		}
-
-		/// <summary>Lets go of the machine, and stops trying to connect.</summary>
-		internal void Disconnect()
-		{
+			_closing = true;
 			_want = null;
 			Changed();
 		}
 
-		void Hold(Want want)
-		{
-			_problem = null;
-			_want = want;
-			Changed();
-			Wake();
-		}
+		/// <summary>Asks the person whether to pair with a machine, on the interface thread: set by the Connection page shown last, null while none is.</summary>
+		internal volatile Action<FitnessPairing> AskPerson;
 
-		/// <summary>Devices being read.</summary>
-		int _readers;
-
-		/// <summary>The device read last, whose game's force drives the machine.</summary>
-		volatile FitnessMachine _driver;
-
-		/// <summary>A device starts being read: it reads what the machine sends, and drives it with its game's force. When nothing is held, connects again to the machine connected last.</summary>
-		/// <remarks>Called on the input thread, once for each device: it takes no lock and waits for nothing.</remarks>
-		internal void Join(FitnessMachine device)
-		{
-			_driver = device;
-			if (Interlocked.Increment(ref _readers) != 1 || _want != null)
-				return;
-			var last = _last;
-			if (last != null)
-				Hold(new Want(last.Address, last.Name, true));
-		}
-
-		/// <summary>A device stops being read. The last one lets go of the machine, as Disconnect does.</summary>
-		/// <remarks>Called on the input thread: it takes no lock and waits for nothing; the worker lets go of the machine.</remarks>
-		internal void Leave(FitnessMachine device)
-		{
-			if (_driver == device)
-				_driver = null;
-			if (Interlocked.Decrement(ref _readers) == 0)
-				Disconnect();
-		}
-
-		/// <summary>Raised on a thread of Windows' when a machine asks to be paired; the tab asks the person and answers. Declined when nobody answers.</summary>
-		internal event Action<FitnessPairing> PairingRequested;
-
+		/// <summary>Asks the person, from a thread of Windows'; a person who declines is not asked again until another machine is held.</summary>
 		void AskPairing(FitnessPairing pairing)
 		{
-			var ask = PairingRequested;
+			var ask = AskPerson;
 			if (ask == null)
+			{
 				pairing.Accept(false);
-			else
-				ask(pairing);
+				return;
+			}
+			pairing.Answer.ContinueWith(answer =>
+			{
+				if (!answer.Result)
+				{
+					_declined = true;
+					Changed();
+				}
+			});
+			ask(pairing);
 		}
 
 		#endregion
 
 		#region The worker
 
-		/// <summary>The thread that works Bluetooth, from when it is first needed until x360ce closes.</summary>
+		/// <summary>The thread that works Bluetooth, from when the device first holds a machine until it let go.</summary>
 		Thread _worker;
 
 		/// <summary>Set once the worker ended.</summary>
@@ -1602,6 +1397,9 @@ namespace x360ce.Plugins.Samples
 
 		/// <summary>When the game's force was last looked at, by <see cref="Now"/>.</summary>
 		int _forceAt;
+
+		/// <summary>When a closing x360ce stops waiting for every machine to be let go of, in <see cref="Stopwatch"/> ticks; 0 before it closes.</summary>
+		static long _exitDeadline;
 
 		/// <summary>Starts the worker, the first time only, without a lock: the input thread may call it.</summary>
 		void Wake()
@@ -1616,10 +1414,15 @@ namespace x360ce.Plugins.Samples
 		}
 
 		/// <summary>Lets go of the machine as x360ce closes, waiting for it a moment at most: x360ce ends its process without waiting for threads.</summary>
+		/// <remarks>Every session waits until one deadline, the first handler's, so several devices together wait no longer than one.</remarks>
 		void OnProcessExit(object sender, EventArgs e)
 		{
-			_exiting = true;
-			_ended.Wait(ExitMilliseconds);
+			_closing = true;
+			var now = Stopwatch.GetTimestamp();
+			Interlocked.CompareExchange(ref _exitDeadline, now + ExitMilliseconds * Stopwatch.Frequency / 1000, 0);
+			var left = (Interlocked.Read(ref _exitDeadline) - now) * 1000 / Stopwatch.Frequency;
+			if (left > 0)
+				_ended.Wait((int)left);
 		}
 
 		void Work()
@@ -1636,97 +1439,79 @@ namespace x360ce.Plugins.Samples
 			}
 			finally
 			{
+				_held = null;
+				CanCommand = false;
+				AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
 				_ended.Set();
 			}
 		}
 
-		/// <summary>Scans, connects, sends commands and lets go, as asked, until x360ce closes.</summary>
+		/// <summary>Connects to the machine held, sends commands and lets go, as the device asks, until it let go for good.</summary>
 		async Task Run()
 		{
-			Scanner scanner = null;
-			Link link = null;
-			Want trying = null;
+			IFitnessLink link = null;
+			Want linked = null;
 			var failures = 0;
 			var retryAt = Now;
 			while (true)
 			{
 				try
 				{
-					var want = _exiting ? null : _want;
-					// Scanning stops while a machine is connected or connecting.
-					var scan = _scanning && want == null && link == null && !_exiting;
-					if (scan && scanner == null)
-					{
-						scanner = new Scanner(this);
-						scanner.Start();
-					}
-					else if (!scan && scanner != null)
-					{
-						scanner.Stop();
-						scanner = null;
-					}
+					var want = _closing ? null : _want;
 					if (link != null)
 					{
-						if (want == link.Want && link.Up)
+						if (want == linked && link.Up)
 						{
 							await Serve(link);
 							continue;
 						}
-						// Let go of: Disconnect, the last device read let go of, another machine asked for, x360ce closing, or the link lost.
-						var lost = want == link.Want;
-						var name = link.Want.Name;
+						// Let go of: the device let go, another machine chosen, x360ce closing, or the link lost.
+						var lost = want == linked;
+						var name = linked.Name;
 						_held = null;
 						CanCommand = false;
 						await link.Close();
 						link = null;
+						linked = null;
 						if (lost)
 						{
-							// Connected again quietly, until it connects or the person presses Disconnect.
-							if (_want == want)
-								_want = new Want(want.Address, want.Name, true);
-							_problem = "Lost " + name + "; connecting again.";
+							_problem = "Lost the link to " + name + ".";
 							Note("Link to " + name + " was lost.");
 							failures = 0;
 							retryAt = unchecked(Now + BackOffMilliseconds[0]);
 						}
-						else if (!_exiting)
-							Note("Disconnected.");
+						else
+							Note("Disconnected from " + name + ".");
 						Changed();
 						continue;
 					}
-					if (_exiting)
-					{
-						if (scanner != null)
-							scanner.Stop();
+					if (_closing)
 						return;
-					}
-					if (want != null && unchecked(Now - retryAt) >= 0)
+					if (want != null && !_declined && unchecked(Now - retryAt) >= 0)
 					{
 						Forget();
 						_name = want.Name;
 						Changed();
-						trying = want;
-						link = new Link(this, want);
+						linked = want;
+						link = NewLink(want.Address, want.Name);
 						var problem = await link.Open();
-						if (problem == null && want == _want)
+						if (problem == null && want == _want && !_closing)
 						{
 							_problem = null;
 							_held = want;
-							_last = want;
 							failures = 0;
 							Note("Connected to " + want.Name + ".");
+							Changed();
 							continue;
 						}
 						await link.Close();
 						link = null;
+						linked = null;
 						if (problem == null)
 							continue;
 						Note(problem);
-						if (want.Quiet)
-							retryAt = unchecked(Now + BackOffMilliseconds[Math.Min(failures++, BackOffMilliseconds.Length - 1)]);
-						else if (_want == want)
-							_want = null;
 						_problem = problem;
+						retryAt = unchecked(Now + BackOffMilliseconds[Math.Min(failures++, BackOffMilliseconds.Length - 1)]);
 						Changed();
 						continue;
 					}
@@ -1742,21 +1527,13 @@ namespace x360ce.Plugins.Samples
 						return;
 					}
 					Note(_problem);
-					// A machine held is connected again quietly, as when its link is lost. A connection the person asked for
-					// that failed is not tried again; one asked for quietly is, a little later.
-					if (trying != null && _want == trying)
-						_want = _held != null ? new Want(trying.Address, trying.Name, true) : trying.Quiet ? trying : null;
 					_held = null;
 					CanCommand = false;
 					if (link != null)
 					{
 						link.Dispose();
 						link = null;
-					}
-					if (scanner != null)
-					{
-						scanner.Stop();
-						scanner = null;
+						linked = null;
 					}
 					retryAt = unchecked(Now + BackOffMilliseconds[Math.Min(failures++, BackOffMilliseconds.Length - 1)]);
 					Changed();
@@ -1764,8 +1541,8 @@ namespace x360ce.Plugins.Samples
 			}
 		}
 
-		/// <summary>Sends the machine one command: the tab's first, else the game's force at most four times a second; else waits a moment.</summary>
-		async Task Serve(Link link)
+		/// <summary>Sends the machine one command: the Connection page's first, else the game's force at most four times a second; else waits a moment.</summary>
+		async Task Serve(IFitnessLink link)
 		{
 			var command = _command;
 			if (command != null)
@@ -1791,7 +1568,7 @@ namespace x360ce.Plugins.Samples
 				Changed();
 				return;
 			}
-			var driver = _driver;
+			var driver = Driver;
 			if (driver != null && unchecked(Now - _forceAt) >= CommandMilliseconds)
 			{
 				_forceAt = Now;
@@ -1805,7 +1582,7 @@ namespace x360ce.Plugins.Samples
 			await Task.Delay(TickMilliseconds);
 		}
 
-		/// <summary>Forgets what one connection learned, so the next machine starts from nothing.</summary>
+		/// <summary>Forgets what one connection learned, so the next starts from nothing.</summary>
 		void Forget()
 		{
 			Speed = Unknown;
@@ -1852,90 +1629,28 @@ namespace x360ce.Plugins.Samples
 			return ex is TypeLoadException || ex is FileNotFoundException;
 		}
 
-		static string Problem(Exception ex)
+		/// <summary>An exception from Bluetooth, in words.</summary>
+		internal static string Problem(Exception ex)
 		{
-			return TooOld(ex) ? "Needs Windows 10 or later." : "Bluetooth stopped with an error, so it is tried again: " + Inner(ex).Message;
+			return TooOld(ex) ? NeedsWindows10 : "Bluetooth stopped with an error: " + Inner(ex).Message;
 		}
 
 		#endregion
 
 		#region Bluetooth
 
-		/// <summary>Listens for advertisements while the tab scans, on the worker: one of the two places Windows' Bluetooth types are named.</summary>
-		sealed class Scanner
+		/// <summary>One connection to a machine, made and let go of on the worker: one of the two places Windows' Bluetooth types are named.</summary>
+		sealed class Link : IFitnessLink
 		{
-			public Scanner(FitnessSession owner)
+			public Link(FitnessSession owner, ulong address, string name)
 			{
 				_owner = owner;
+				_address = address;
+				_name = name;
 			}
 
-			readonly FitnessSession _owner;
-			BluetoothLEAdvertisementWatcher _watcher;
-			static readonly Guid ServiceUuid = BluetoothUuidHelper.FromShortId(Ftms.ServiceId);
-
-			public void Start()
-			{
-				_watcher = new BluetoothLEAdvertisementWatcher { ScanningMode = BluetoothLEScanningMode.Active };
-				_watcher.Received += OnReceived;
-				_watcher.Stopped += OnStopped;
-				_watcher.Start();
-			}
-
-			public void Stop()
-			{
-				_watcher.Received -= OnReceived;
-				_watcher.Stopped -= OnStopped;
-				_watcher.Stop();
-			}
-
-			void OnReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
-			{
-				var advertisement = args.Advertisement;
-				var serviceData = FitnessServiceData(advertisement);
-				var fitness = serviceData != null || advertisement.ServiceUuids.Contains(ServiceUuid);
-				_owner.Hear(args.BluetoothAddress, advertisement.LocalName ?? "", fitness,
-					serviceData == null ? "" : Ftms.MachineTypes(serviceData), args.RawSignalStrengthInDBm);
-			}
-
-			/// <summary>Windows stopped the scan by itself, as when Bluetooth is off; a scan stopped by the session says nothing.</summary>
-			void OnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
-			{
-				if (args.Error == BluetoothError.Success)
-					return;
-				var problem = args.Error == BluetoothError.RadioNotAvailable ? "Bluetooth is off. Turn it on in Windows Settings, then press Scan."
-					: args.Error == BluetoothError.DisabledByPolicy ? "Scanning is blocked by a Bluetooth policy on this computer."
-					: "Scanning stopped (" + args.Error + "). Press Scan to try again.";
-				_owner._scanning = false;
-				_owner._problem = problem;
-				_owner.Note(problem);
-			}
-
-			/// <summary>The fitness service data of an advertisement after its service ID, from a section 0x16 that starts with 0x1826; null when it has none.</summary>
-			static byte[] FitnessServiceData(BluetoothLEAdvertisement advertisement)
-			{
-				foreach (var section in advertisement.DataSections)
-				{
-					if (section.DataType != 0x16 || section.Data.Length < 2)
-						continue;
-					var bytes = Link.Bytes(section.Data);
-					if ((bytes[0] | bytes[1] << 8) == Ftms.ServiceId)
-						return bytes.Skip(2).ToArray();
-				}
-				return null;
-			}
-		}
-
-		/// <summary>One connection to a machine, made and let go of on the worker: the other place Windows' Bluetooth types are named.</summary>
-		sealed class Link
-		{
-			public Link(FitnessSession owner, Want want)
-			{
-				_owner = owner;
-				Want = want;
-			}
-
-			/// <summary>The machine the link is for.</summary>
-			public readonly Want Want;
+			readonly ulong _address;
+			readonly string _name;
 
 			/// <summary>The values read once after connecting.</summary>
 			static readonly ushort[] Described = { Ftms.FeatureId, Ftms.ResistanceRangeId, Ftms.PowerRangeId, Ftms.TrainingStatusId };
@@ -1961,16 +1676,14 @@ namespace x360ce.Plugins.Samples
 			GattCharacteristic _controlPoint;
 			volatile bool _lost;
 
-			/// <summary>True while the machine is connected.</summary>
 			public bool Up { get { return _device != null && !_lost; } }
 
-			/// <summary>Connects, reads what the machine is and asks for its values, pairing when it asks for that; null, or why it cannot.</summary>
 			public async Task<string> Open()
 			{
-				var name = Want.Name;
-				_device = await Wait(BluetoothLEDevice.FromBluetoothAddressAsync(Want.Address));
+				var name = _name;
+				_device = await Wait(BluetoothLEDevice.FromBluetoothAddressAsync(_address));
 				if (_device == null)
-					return name + " could not be reached. Make sure it is on and nearby, then try again.";
+					return name + " could not be reached: make sure it is on and nearby.";
 				_device.ConnectionStatusChanged += OnConnectionStatusChanged;
 				_session = await Wait(GattSession.FromDeviceIdAsync(_device.BluetoothDeviceId));
 				_session.MaintainConnection = true;
@@ -1983,7 +1696,7 @@ namespace x360ce.Plugins.Samples
 					services = await Wait(_device.GetGattServicesForUuidAsync(BluetoothUuidHelper.FromShortId(Ftms.ServiceId), BluetoothCacheMode.Uncached));
 				}
 				if (services.Status != GattCommunicationStatus.Success)
-					return name + " did not answer (" + services.Status + "). Make sure no other app is connected to it, then try again.";
+					return name + " did not answer (" + services.Status + "): make sure no other app is connected to it.";
 				if (services.Services.Count == 0)
 					return name + " has no standard Fitness Machine Service, so x360ce cannot read it.";
 				_service = services.Services[0];
@@ -2052,16 +1765,19 @@ namespace x360ce.Plugins.Samples
 
 			/// <summary>
 			/// Pairs with the machine, at least with encryption, which FTMS 1.0.1 asks for commands. Windows pairs as strongly
-			/// as the machine can, so the person compares a number on both whenever the machine can show one: the tab asks them.
+			/// as the machine can, so the person compares a number on both whenever the machine can show one: the device's
+			/// Connection page asks them, and with no page open the machine waits until the next try.
 			/// </summary>
 			/// <returns>Null once paired; else why not.</returns>
 			async Task<string> Pair(string name)
 			{
 				var pairing = _device.DeviceInformation.Pairing;
 				if (pairing.IsPaired)
-					return name + " refused access although it is paired. Remove it in Windows Settings under Bluetooth & devices, then connect again.";
+					return name + " refused access although it is paired: remove it in Windows Settings under Bluetooth & devices.";
 				if (!pairing.CanPair)
 					return name + " asks to be paired, but Windows cannot pair with it.";
+				if (_owner.AskPerson == null)
+					return name + " asks to be paired: open this device's Connection page, which asks you.";
 				_owner.Note(name + " asks to be paired.");
 				var custom = pairing.Custom;
 				custom.PairingRequested += OnPairingRequested;
@@ -2080,13 +1796,13 @@ namespace x360ce.Plugins.Samples
 				}
 			}
 
-			/// <summary>Asks the person through the tab, and accepts once they say yes; Windows waits for the answer.</summary>
+			/// <summary>Asks the person through the Connection page, and accepts once they say yes; Windows waits for the answer.</summary>
 			void OnPairingRequested(DeviceInformationCustomPairing sender, DevicePairingRequestedEventArgs args)
 			{
 				var kind = args.PairingKind == DevicePairingKinds.ConfirmPinMatch ? FitnessPairingKind.ConfirmPinMatch
 					: args.PairingKind == DevicePairingKinds.DisplayPin ? FitnessPairingKind.DisplayPin
 					: FitnessPairingKind.ConfirmOnly;
-				var pairing = new FitnessPairing(Want.Name, kind, args.Pin ?? "");
+				var pairing = new FitnessPairing(_name, kind, args.Pin ?? "");
 				var deferral = args.GetDeferral();
 				pairing.Answer.ContinueWith(answer =>
 				{
@@ -2107,7 +1823,6 @@ namespace x360ce.Plugins.Samples
 						|| error.Value == GattProtocolError.InsufficientAuthorization);
 			}
 
-			/// <summary>Writes one command, and waits two seconds at most for the machine's answer; null when there is none.</summary>
 			public async Task<byte[]> Send(byte[] command)
 			{
 				if (_controlPoint == null)
@@ -2127,10 +1842,7 @@ namespace x360ce.Plugins.Samples
 				}
 			}
 
-			/// <summary>
-			/// Lets go of the machine: gives it back the level the person set, tells it to stop sending, and lets go of every
-			/// Bluetooth object. Windows closes the link once nothing holds it.
-			/// </summary>
+			/// <remarks>Windows closes the link once nothing holds it.</remarks>
 			public async Task Close()
 			{
 				try
@@ -2153,7 +1865,7 @@ namespace x360ce.Plugins.Samples
 							var all = Task.WhenAll(stops);
 							var confirmed = await Task.WhenAny(all, Task.Delay(AnswerMilliseconds)) == all
 								&& stops.All(x => x.Status == TaskStatus.RanToCompletion && x.Result.Status == GattCommunicationStatus.Success);
-							_owner.Note(confirmed ? Want.Name + " stopped sending values to x360ce." : Want.Name + " did not confirm that it stopped sending values.");
+							_owner.Note(confirmed ? _name + " stopped sending values to x360ce." : _name + " did not confirm that it stopped sending values.");
 						}
 					}
 				}
@@ -2198,7 +1910,7 @@ namespace x360ce.Plugins.Samples
 				if (sender.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
 					_lost = true;
 				else
-					_owner.Note("Link to " + Want.Name + " is up.");
+					_owner.Note("Link to " + _name + " is up.");
 			}
 
 			/// <summary>A Windows operation as a task, which continues on another thread than the one Windows completes it on.</summary>
@@ -2235,6 +1947,74 @@ namespace x360ce.Plugins.Samples
 			}
 		}
 
+		/// <summary>Listens for advertisements while a Connection page scans, on a pool thread: the other place Windows' Bluetooth types are named.</summary>
+		internal sealed class Scanner
+		{
+			public Scanner(FitnessScan owner)
+			{
+				_owner = owner;
+			}
+
+			readonly FitnessScan _owner;
+			BluetoothLEAdvertisementWatcher _watcher;
+			static readonly Guid ServiceUuid = BluetoothUuidHelper.FromShortId(Ftms.ServiceId);
+
+			/// <summary>True from Start until Stop, or until Windows stopped the scan by itself.</summary>
+			public bool Running { get { return _running; } }
+			volatile bool _running;
+
+			public void Start()
+			{
+				_watcher = new BluetoothLEAdvertisementWatcher { ScanningMode = BluetoothLEScanningMode.Active };
+				_watcher.Received += OnReceived;
+				_watcher.Stopped += OnStopped;
+				_running = true;
+				_watcher.Start();
+			}
+
+			public void Stop()
+			{
+				_running = false;
+				_watcher.Received -= OnReceived;
+				_watcher.Stopped -= OnStopped;
+				_watcher.Stop();
+			}
+
+			void OnReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+			{
+				var advertisement = args.Advertisement;
+				var serviceData = FitnessServiceData(advertisement);
+				var fitness = serviceData != null || advertisement.ServiceUuids.Contains(ServiceUuid);
+				_owner.Hear(args.BluetoothAddress, advertisement.LocalName ?? "", fitness,
+					serviceData == null ? "" : Ftms.MachineTypes(serviceData), args.RawSignalStrengthInDBm);
+			}
+
+			/// <summary>Windows stopped the scan by itself, as when Bluetooth is off; a scan stopped by x360ce says nothing.</summary>
+			void OnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
+			{
+				_running = false;
+				if (args.Error == BluetoothError.Success)
+					return;
+				_owner.Stopped(args.Error == BluetoothError.RadioNotAvailable ? "Bluetooth is off. Turn it on in Windows Settings, then press Scan."
+					: args.Error == BluetoothError.DisabledByPolicy ? "Scanning is blocked by a Bluetooth policy on this computer."
+					: "Scanning stopped (" + args.Error + "). Press Scan to try again.");
+			}
+
+			/// <summary>The fitness service data of an advertisement after its service ID, from a section 0x16 that starts with 0x1826; null when it has none.</summary>
+			static byte[] FitnessServiceData(BluetoothLEAdvertisement advertisement)
+			{
+				foreach (var section in advertisement.DataSections)
+				{
+					if (section.DataType != 0x16 || section.Data.Length < 2)
+						continue;
+					var bytes = Link.Bytes(section.Data);
+					if ((bytes[0] | bytes[1] << 8) == Ftms.ServiceId)
+						return bytes.Skip(2).ToArray();
+				}
+				return null;
+			}
+		}
+
 		#endregion
 
 		/// <summary>A Bluetooth address as six bytes in hexadecimal, separated by colons.</summary>
@@ -2244,21 +2024,190 @@ namespace x360ce.Plugins.Samples
 			return string.Join(":", Enumerable.Range(0, 6).Select(i => hex.Substring(i * 2, 2)));
 		}
 
-		/// <summary>Reads an address written by <see cref="AddressText"/>; 0 when the text holds none.</summary>
+		/// <summary>Reads an address as <see cref="AddressText"/> writes it, with or without its colons; 0 when the text is not one.</summary>
 		internal static ulong ParseAddress(string text)
 		{
+			var hex = (text ?? "").Trim().Replace(":", "");
 			ulong address;
-			return ulong.TryParse((text ?? "").Replace(":", ""), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out address) ? address : 0;
+			return hex.Length == 12 && ulong.TryParse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out address) ? address : 0;
 		}
 	}
 
-	/// <summary>A device heard while scanning, kept up to date by its later advertisements: a row of the Fitness tab's list.</summary>
+	/// <summary>The machines heard over Bluetooth, which every Fitness Machine device's Connection page lists: a computer has one radio, so one list.</summary>
+	/// <remarks>
+	/// A page starts and stops the scan. Windows' watcher is started and stopped on a pool thread, never on the interface
+	/// thread, and its advertisements come on threads of Windows' (<see cref="Hear"/>); the list is kept under a lock the
+	/// input thread never takes.
+	/// </remarks>
+	sealed class FitnessScan
+	{
+		/// <summary>The list of the process.</summary>
+		internal static readonly FitnessScan Shared = new FitnessScan();
+
+		readonly object _lock = new object();
+
+		/// <summary>Held while the watcher is started or stopped, so the two never overlap.</summary>
+		readonly object _gate = new object();
+
+		/// <summary>The devices heard, in the order heard.</summary>
+		readonly List<FitnessSeen> _machines = new List<FitnessSeen>();
+
+		/// <summary>The addresses that said they are fitness machines: a machine often says so in another advertisement than the one with its name.</summary>
+		readonly HashSet<ulong> _fitnessMachines = new HashSet<ulong>();
+
+		/// <summary>Windows' watcher, touched only on a pool thread with the gate held; null while none runs.</summary>
+		FitnessSession.Scanner _scanner;
+
+		volatile bool _scanning;
+		volatile bool _showAll;
+		volatile string _problem;
+		int _version;
+
+		/// <summary>Raised by every change the Connection page shows, so it draws only when something changed.</summary>
+		internal int Version { get { return Volatile.Read(ref _version); } }
+
+		void Changed()
+		{
+			Interlocked.Increment(ref _version);
+		}
+
+		internal bool Scanning { get { return _scanning; } }
+
+		/// <summary>True while every device that says its name is listed, not only fitness machines.</summary>
+		internal bool ShowAll { get { return _showAll; } }
+
+		/// <summary>Why the last scan stopped or could not start; null while nothing went wrong.</summary>
+		internal string Problem { get { return _problem; } }
+
+		/// <summary>Starts looking for machines, with a new list: fitness machines, and with <paramref name="showAll"/> every device that says its name.</summary>
+		internal void Start(bool showAll)
+		{
+			lock (_lock)
+			{
+				_machines.Clear();
+				_showAll = showAll;
+			}
+			_problem = null;
+			_scanning = true;
+			Changed();
+			Follow();
+		}
+
+		/// <summary>Stops looking; the machines heard stay listed.</summary>
+		internal void Stop()
+		{
+			if (!_scanning)
+				return;
+			_scanning = false;
+			Changed();
+			Follow();
+		}
+
+		/// <summary>Windows stopped the scan by itself: says why.</summary>
+		internal void Stopped(string problem)
+		{
+			_problem = problem;
+			_scanning = false;
+			Changed();
+			Follow();
+		}
+
+		/// <summary>Starts or stops Windows' watcher, on a pool thread, as <see cref="Scanning"/> says: the last call wins, whatever order the threads run in.</summary>
+		void Follow()
+		{
+			Task.Run(() =>
+			{
+				lock (_gate)
+				{
+					try
+					{
+						Apply();
+					}
+					catch (Exception ex)
+					{
+						_scanner = null;
+						_scanning = false;
+						_problem = FitnessSession.Problem(ex);
+						Changed();
+					}
+				}
+			});
+		}
+
+		/// <summary>Makes the watcher run while scanning and stop otherwise. Called with the gate held, on a pool thread, where a Windows without Bluetooth's types throws.</summary>
+		void Apply()
+		{
+			var scanner = _scanner;
+			if (scanner != null && (!_scanning || !scanner.Running))
+			{
+				_scanner = null;
+				scanner.Stop();
+			}
+			if (_scanning && _scanner == null)
+			{
+				scanner = new FitnessSession.Scanner(this);
+				_scanner = scanner;
+				scanner.Start();
+			}
+		}
+
+		/// <summary>The devices heard while scanning, in the order heard.</summary>
+		internal FitnessSeen[] Machines()
+		{
+			lock (_lock)
+				return _machines.ToArray();
+		}
+
+		/// <summary>Notes a device heard while scanning: a fitness machine, or with Show all Bluetooth devices any device that says its name.</summary>
+		/// <param name="address">The device's Bluetooth address.</param>
+		/// <param name="name">Its name, or empty when this advertisement has none.</param>
+		/// <param name="fitness">True when this advertisement says it is a fitness machine.</param>
+		/// <param name="types">The kinds of machine it says it is, or empty.</param>
+		/// <param name="signal">Its signal strength, in dBm.</param>
+		internal void Hear(ulong address, string name, bool fitness, string types, short signal)
+		{
+			lock (_lock)
+			{
+				if (fitness)
+					_fitnessMachines.Add(address);
+				else
+					fitness = _fitnessMachines.Contains(address);
+				if (!fitness && (!_showAll || name.Length == 0))
+					return;
+				var machine = _machines.FirstOrDefault(x => x.Address == address);
+				if (machine == null)
+				{
+					machine = new FitnessSeen(address);
+					_machines.Add(machine);
+				}
+				if (name.Length > 0)
+					machine.Name = name;
+				if (types.Length > 0)
+					machine.Types = types;
+				if (fitness)
+					machine.Fitness = true;
+				machine.Signal = signal;
+			}
+			Changed();
+		}
+	}
+
+	/// <summary>A device heard while scanning, kept up to date by its later advertisements, or the machine chosen: a row of the Connection page's list.</summary>
 	sealed class FitnessSeen
 	{
 		public FitnessSeen(ulong address)
 		{
 			Address = address;
 		}
+
+		/// <summary>The machine a device's Machine setting names, listed while the scan has not heard it.</summary>
+		public static FitnessSeen Chosen(FitnessSession.Want want)
+		{
+			return new FitnessSeen(want.Address) { Name = want.Name, Types = "chosen, not heard yet", Signal = NoSignal };
+		}
+
+		/// <summary>The signal of a machine not heard.</summary>
+		public const int NoSignal = int.MinValue;
 
 		public readonly ulong Address;
 		public volatile string Name = "";
@@ -2278,9 +2227,19 @@ namespace x360ce.Plugins.Samples
 				return types.Length > 0 ? types : Fitness ? "fitness machine" : "not advertising the fitness service";
 			}
 		}
+
+		/// <summary>The signal, such as "-78 dBm", or empty while the device was not heard.</summary>
+		public string SignalText
+		{
+			get
+			{
+				var signal = Signal;
+				return signal == NoSignal ? "" : signal.ToString(CultureInfo.InvariantCulture) + " dBm";
+			}
+		}
 	}
 
-	/// <summary>One line of the values on the Fitness tab: its name, its newest value, and how often it changes.</summary>
+	/// <summary>One line of the values on the Connection page: its name, its newest value, and how often it changes.</summary>
 	/// <remarks>
 	/// How often a value changes tells one the machine measures all the time from one it works out only every few seconds.
 	/// The same value sent again is no change.
@@ -2381,7 +2340,7 @@ namespace x360ce.Plugins.Samples
 		DisplayPin,
 	}
 
-	/// <summary>A machine asking to be paired, as the Fitness tab asks the person: the question, and the answer once given.</summary>
+	/// <summary>A machine asking to be paired, as the Connection page asks the person: the question, and the answer once given.</summary>
 	sealed class FitnessPairing
 	{
 		public FitnessPairing(string name, FitnessPairingKind kind, string pin)
@@ -2419,927 +2378,6 @@ namespace x360ce.Plugins.Samples
 						return "Pair with " + Name + "?\n\nNo number is shown, so this cannot confirm that it is the right machine.";
 				}
 			}
-		}
-	}
-
-	#endregion
-
-	#region The Fitness tab
-
-	/// <summary>
-	/// The Fitness tab: finds fitness machines over Bluetooth, connects to one, shows what it sends and sends it commands,
-	/// as the Virtual Fitness Machine Receiver does, and puts it on a controller as a Fitness Machine device.
-	/// </summary>
-	/// <remarks>
-	/// Machines, commands and help on the left; the status, the values and the activity on the right. The two columns
-	/// share their rows, so the list of machines and the box of values start and end level, and the log is as tall as the
-	/// commands and help beside it. Each column is as wide as what is in it, the help and the status wrapping at a width
-	/// in the font's units, and a wide window leaves the room beside them empty. Drawn in the system colours, so x360ce's
-	/// theme applies, and laid out by tables and automatic sizes, with the room between controls taken from the font, so it
-	/// follows the font and the zoom.
-	///
-	/// Every control is named, and the AI door reaches each: it reads the machines as the grid's rows and selects one by
-	/// setting the grid to its index, and it reads each value by its name in the box of values.
-	///
-	/// The tab drives the session (<see cref="FitnessSession"/>) and reads it back four times a second, drawing only what
-	/// changed. As a machine connects, the tab adds a Fitness Machine device to the Devices list when there is none.
-	/// </remarks>
-	public class FitnessPage : UserControl, IPluginPage
-	{
-		/// <summary>The tab of the process's session, as x360ce makes it.</summary>
-		public FitnessPage(IPluginHost host) : this(host, FitnessSession.Shared)
-		{
-		}
-
-		/// <summary>The tab of a session of its own, as a test makes it.</summary>
-		internal FitnessPage(IPluginHost host, FitnessSession session)
-		{
-			_host = host;
-			_session = session;
-			Name = "FitnessPage";
-			AccessibleName = "Fitness";
-			AccessibleDescription = "Finds fitness machines over Bluetooth, connects to one, shows what it sends, and puts it on a controller.";
-			SuspendLayout();
-			Build();
-			ResumeLayout(false);
-			PerformLayout();
-			ReconnectCheckBox.Checked = _host.GetValue(ReconnectValue) == bool.TrueString;
-			ReconnectCheckBox.CheckedChanged += ReconnectCheckBox_CheckedChanged;
-			// A machine that asks to be paired is asked about on this thread.
-			_ui = SynchronizationContext.Current;
-			_session.PairingRequested += Session_PairingRequested;
-			// At start, to the machine connected last, when the person asked for that.
-			var last = FitnessSession.ParseAddress(_host.GetValue(LastMachineValue));
-			if (ReconnectCheckBox.Checked && last != 0 && _session.Wanted == null)
-				_session.Reconnect(last, _host.GetValue(LastMachineNameValue) ?? FitnessSession.AddressText(last));
-			_timer = new System.Windows.Forms.Timer { Interval = 250 };
-			_timer.Tick += (s, e) => ShowSession();
-			_timer.Start();
-			ShowSession();
-		}
-
-		public string PageName { get { return "Fitness"; } }
-
-		/// <summary>The name the Reconnect choice is kept under.</summary>
-		internal const string ReconnectValue = "Reconnect";
-
-		/// <summary>The names the machine connected last is kept under: its address and its name.</summary>
-		internal const string LastMachineValue = "LastMachine";
-		internal const string LastMachineNameValue = "LastMachineName";
-
-		readonly IPluginHost _host;
-		readonly FitnessSession _session;
-		readonly SynchronizationContext _ui;
-		readonly System.Windows.Forms.Timer _timer;
-
-		/// <summary>The session's version the tab shows; -1 before it showed any.</summary>
-		int _shownVersion = -1;
-
-		/// <summary>The machine connected when the tab last looked, so it adds a device once for each connection.</summary>
-		FitnessSession.Want _shownHeld;
-
-		/// <summary>The machine connected last, as kept for the next start.</summary>
-		FitnessSession.Want _keptLast;
-
-		#region Controls
-
-		internal TableLayoutPanel MainTableLayoutPanel;
-		internal Label NoteLabel;
-		internal FlowLayoutPanel ScanFlowLayoutPanel;
-		internal Button ScanButton;
-		internal Button ConnectButton;
-		internal CheckBox ShowAllCheckBox;
-		internal DataGridView MachinesDataGridView;
-		internal DataGridViewTextBoxColumn NameColumn;
-		internal DataGridViewTextBoxColumn TypeColumn;
-		internal DataGridViewTextBoxColumn SignalColumn;
-		internal FlowLayoutPanel MapFlowLayoutPanel;
-		internal Button MapButton;
-		internal ComboBox ControllerComboBox;
-		internal CheckBox ReconnectCheckBox;
-		internal FlowLayoutPanel CommandsFlowLayoutPanel;
-		internal Button StartButton;
-		internal Button PauseButton;
-		internal Button StopButton;
-		internal Button ResetButton;
-		internal TableLayoutPanel TargetsTableLayoutPanel;
-		internal TrackBar PowerTrackBar;
-		internal Label PowerValueLabel;
-		internal Button SetPowerButton;
-		internal TrackBar ResistanceTrackBar;
-		internal Label ResistanceValueLabel;
-		internal Button SetResistanceButton;
-		internal TrackBar GradeTrackBar;
-		internal Label GradeValueLabel;
-		internal Button SetGradeButton;
-		internal TableLayoutPanel HelpTableLayoutPanel;
-		internal Label HelpHeadingLabel;
-		internal TableLayoutPanel StatusTableLayoutPanel;
-		internal Label StatusLabel;
-		internal Label FeaturesLabel;
-		internal System.Windows.Forms.Panel ReadingsPanel;
-		internal TableLayoutPanel ReadingsTableLayoutPanel;
-		internal TextBox LogTextBox;
-
-		/// <summary>Gives each control its room from the font: run again when the font changes.</summary>
-		readonly List<Action<int>> _spacing = new List<Action<int>>();
-
-		/// <summary>The width of the left column, the machines, commands and help, in gaps (half a line): the help wraps at it.</summary>
-		/// <remarks>
-		/// The receiver's columns at its own window's width: the two keep it on a wide window, and the room beside them stays
-		/// empty. A wider control, in a larger font or other words, widens its column.
-		/// </remarks>
-		const int LeftGaps = 70;
-
-		/// <summary>The width of the right column, the status, values and activity, in gaps: the status wraps at it.</summary>
-		const int RightGaps = 46;
-
-		/// <summary>The bold font of the status and the help's heading, made from the tab's font.</summary>
-		Font _boldFont;
-
-		void Build()
-		{
-			MainTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(MainTableLayoutPanel),
-				Dock = DockStyle.Fill,
-				ColumnCount = 3,
-				RowCount = 7,
-			};
-			// The two columns as wide as what is in them; the third, empty, takes the rest of a wide window.
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			for (var i = 0; i < 7; i++)
-				MainTableLayoutPanel.RowStyles.Add(i == 2 ? new RowStyle(SizeType.Percent, 100F) : new RowStyle());
-			_spacing.Add(g => MainTableLayoutPanel.Padding = new Padding(g, g, 0, 0));
-			Controls.Add(MainTableLayoutPanel);
-
-			// The note across both columns, in the colours of a tip.
-			NoteLabel = new Label
-			{
-				Name = nameof(NoteLabel),
-				Text = "Experimental: walk, drive or row in games with a fitness machine. Tested on a Tunturi E60R exercise bike only. "
-					+ "Use it with care and at your own risk.",
-				AutoSize = true,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				BackColor = SystemColors.Info,
-				ForeColor = SystemColors.InfoText,
-				AccessibleName = "Experimental feature",
-			};
-			_spacing.Add(g =>
-			{
-				NoteLabel.Padding = new Padding(g / 2);
-				// As wide as the two columns and the room between them, where a longer note wraps.
-				NoteLabel.MaximumSize = new Size((LeftGaps + 2 + RightGaps) * g, 0);
-			});
-			Place(NoteLabel, 0, 0);
-			MainTableLayoutPanel.SetColumnSpan(NoteLabel, 2);
-
-			// Left: machines.
-			ScanButton = NewButton(nameof(ScanButton), "Scan", "Looks for fitness machines nearby, or stops looking.", 14);
-			ScanButton.Click += ScanButton_Click;
-			ConnectButton = NewButton(nameof(ConnectButton), "Connect", "Connects to the machine selected, or lets go of the machine connected.", 14);
-			ConnectButton.Click += ConnectButton_Click;
-			ShowAllCheckBox = NewCheckBox(nameof(ShowAllCheckBox), "Show all Bluetooth devices",
-				"Lists every device that says its name, for machines that show the fitness service only once connected.");
-			ScanFlowLayoutPanel = NewFlow(nameof(ScanFlowLayoutPanel), ScanButton, ConnectButton, ShowAllCheckBox);
-			Place(ScanFlowLayoutPanel, 0, 1);
-
-			// A grid, as x360ce's other lists are: the theme draws it, and the AI door reads its rows and selects one by its index.
-			MachinesDataGridView = new DataGridView
-			{
-				Name = nameof(MachinesDataGridView),
-				Dock = DockStyle.Fill,
-				AllowUserToAddRows = false,
-				AllowUserToDeleteRows = false,
-				AllowUserToResizeRows = false,
-				AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-				ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,
-				MultiSelect = false,
-				ReadOnly = true,
-				RowHeadersVisible = false,
-				SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-				AccessibleName = "Fitness machines",
-				AccessibleDescription = "The machines heard: each one's name, what kind it is, and its signal. Select one and press Connect, or double-click it.",
-			};
-			NameColumn = NewMachineColumn(nameof(NameColumn), "Name", DataGridViewAutoSizeColumnMode.Fill);
-			TypeColumn = NewMachineColumn(nameof(TypeColumn), "Type", DataGridViewAutoSizeColumnMode.AllCells);
-			SignalColumn = NewMachineColumn(nameof(SignalColumn), "Signal", DataGridViewAutoSizeColumnMode.AllCells);
-			SignalColumn.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-			MachinesDataGridView.Columns.AddRange(NameColumn, TypeColumn, SignalColumn);
-			MachinesDataGridView.SelectionChanged += (s, e) => ShowSession(true);
-			MachinesDataGridView.CellDoubleClick += (s, e) =>
-			{
-				if (e.RowIndex >= 0)
-					Connect();
-			};
-			Place(MachinesDataGridView, 0, 2);
-
-			// Left: the controller the machine drives, and the start.
-			MapButton = NewButton(nameof(MapButton), "Map to", "Puts the Fitness Machine device on the controller chosen beside it, mapped to drive.", 10);
-			MapButton.Click += MapButton_Click;
-			ControllerComboBox = new ComboBox
-			{
-				Name = nameof(ControllerComboBox),
-				DropDownStyle = ComboBoxStyle.DropDownList,
-				AccessibleName = "Controller",
-				AccessibleDescription = "The controller Map to puts the Fitness Machine device on.",
-			};
-			ControllerComboBox.Items.AddRange(new object[] { "Controller 1", "Controller 2", "Controller 3", "Controller 4" });
-			ControllerComboBox.SelectedIndex = 0;
-			ReconnectCheckBox = NewCheckBox(nameof(ReconnectCheckBox), "Reconnect to the last machine when x360ce starts",
-				"When x360ce starts, connects to the machine connected last, trying again until it connects or Disconnect is pressed.");
-			MapFlowLayoutPanel = NewFlow(nameof(MapFlowLayoutPanel), MapButton, ControllerComboBox, ReconnectCheckBox);
-			Place(MapFlowLayoutPanel, 0, 3);
-
-			// Left: commands.
-			StartButton = NewButton(nameof(StartButton), "Start", "Starts or resumes the machine's training.", 10);
-			StartButton.Click += (s, e) => _session.Send(FitnessCommand.Start, 0);
-			PauseButton = NewButton(nameof(PauseButton), "Pause", "Pauses the machine's training.", 10);
-			PauseButton.Click += (s, e) => _session.Send(FitnessCommand.Pause, 0);
-			StopButton = NewButton(nameof(StopButton), "Stop", "Stops the machine's training.", 10);
-			StopButton.Click += (s, e) => _session.Send(FitnessCommand.Stop, 0);
-			ResetButton = NewButton(nameof(ResetButton), "Reset", "Resets the machine.", 10);
-			ResetButton.Click += (s, e) => _session.Send(FitnessCommand.Reset, 0);
-			CommandsFlowLayoutPanel = NewFlow(nameof(CommandsFlowLayoutPanel), StartButton, PauseButton, StopButton, ResetButton);
-			Place(CommandsFlowLayoutPanel, 0, 4);
-
-			// Left: targets, each greyed while the machine does not take it.
-			TargetsTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(TargetsTableLayoutPanel),
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				ColumnCount = 4,
-				RowCount = 3,
-			};
-			TargetsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-			TargetsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			TargetsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-			TargetsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-			for (var i = 0; i < 3; i++)
-				TargetsTableLayoutPanel.RowStyles.Add(new RowStyle());
-			PowerTrackBar = AddTarget(0, "Power", "Target power", 0, 1500, 150, 5, 25);
-			PowerValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 0);
-			SetPowerButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 0);
-			SetPowerButton.Click += (s, e) => _session.Send(FitnessCommand.Power, PowerTrackBar.Value);
-			ResistanceTrackBar = AddTarget(1, "Resistance", "Target resistance", 0, 20, 5, 1, 2);
-			ResistanceValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 1);
-			SetResistanceButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 1);
-			SetResistanceButton.Click += (s, e) => _session.Send(FitnessCommand.Resistance, ResistanceTrackBar.Value);
-			// Half percents, so the slider steps by half a percent.
-			GradeTrackBar = AddTarget(2, "Grade", "Road grade", -40, 40, 0, 1, 4);
-			GradeValueLabel = (Label)TargetsTableLayoutPanel.GetControlFromPosition(2, 2);
-			SetGradeButton = (Button)TargetsTableLayoutPanel.GetControlFromPosition(3, 2);
-			SetGradeButton.Click += (s, e) => _session.Send(FitnessCommand.Grade, GradeTrackBar.Value / 2.0);
-			Place(TargetsTableLayoutPanel, 0, 5);
-
-			// Left: how to receive from a machine.
-			HelpTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(HelpTableLayoutPanel),
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				ColumnCount = 1,
-				BackColor = SystemColors.ControlLight,
-				AccessibleName = "How to receive from a fitness machine",
-			};
-			HelpTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			_spacing.Add(g =>
-			{
-				HelpTableLayoutPanel.Padding = new Padding(g, g, g, g / 2);
-				HelpTableLayoutPanel.MinimumSize = new Size(LeftGaps * g, 0);
-			});
-			HelpHeadingLabel = AddHelp(nameof(HelpHeadingLabel), "To receive from a fitness machine:");
-			AddHelp("HelpStepsLabel",
-				"1. Turn on the machine, or press (Start) in the Jocys.com Virtual Fitness Machine Transmitter app on another device.\n"
-				+ "2. Press (Scan) and select the machine.\n"
-				+ "3. Press (Connect). If it asks to pair, accept only if both devices show the same number.\n"
-				+ "4. The machine's values appear on the right. (Start), (Pause) and the target (Set) buttons send it standard commands.\n"
-				+ "5. Press (Map to) to drive that controller with the machine: your speed on the triggers.");
-			AddHelp("HelpNoteLabel",
-				"If a machine does not appear, tick 'Show all Bluetooth devices': some only show the fitness service after connecting. "
-				+ "A machine connected to another app may not appear at all. When the Bluetooth connection between the app and the console "
-				+ "is established, the console display may be dimmed. A computer's Bluetooth cannot connect to itself, so a transmitter "
-				+ "must run on another device.");
-			Place(HelpTableLayoutPanel, 0, 6);
-
-			// Right: where the session stands, and what the machine measures and accepts.
-			StatusLabel = new Label
-			{
-				Name = nameof(StatusLabel),
-				AutoSize = true,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				AccessibleName = "Status",
-				AccessibleDescription = "Where the connection stands and, when it is stuck, what to do next.",
-			};
-			FeaturesLabel = new Label
-			{
-				Name = nameof(FeaturesLabel),
-				AutoSize = true,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				ForeColor = SystemColors.GrayText,
-				AccessibleName = "Features",
-				AccessibleDescription = "What the machine connected measures, and the targets it accepts.",
-			};
-			StatusTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(StatusTableLayoutPanel),
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				ColumnCount = 1,
-				RowCount = 2,
-			};
-			StatusTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			StatusTableLayoutPanel.RowStyles.Add(new RowStyle());
-			StatusTableLayoutPanel.RowStyles.Add(new RowStyle());
-			StatusTableLayoutPanel.Controls.Add(StatusLabel, 0, 0);
-			StatusTableLayoutPanel.Controls.Add(FeaturesLabel, 0, 1);
-			_spacing.Add(g =>
-			{
-				StatusTableLayoutPanel.MinimumSize = new Size(RightGaps * g, 0);
-				StatusLabel.MaximumSize = new Size(RightGaps * g, 0);
-				StatusLabel.Margin = new Padding(0, 0, 0, g / 2);
-				FeaturesLabel.MaximumSize = new Size(RightGaps * g, 0);
-				FeaturesLabel.Margin = new Padding(0);
-			});
-			Place(StatusTableLayoutPanel, 1, 1);
-
-			// Right: the values, beside the list of machines.
-			// Unnamed, so the AI door lists its rows' values in the box of values, as it lists any panel's.
-			ReadingsTableLayoutPanel = new TableLayoutPanel
-			{
-				Name = nameof(ReadingsTableLayoutPanel),
-				Dock = DockStyle.Top,
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				ColumnCount = 3,
-			};
-			ReadingsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-			ReadingsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			ReadingsTableLayoutPanel.ColumnStyles.Add(new ColumnStyle());
-			ReadingsPanel = new System.Windows.Forms.Panel
-			{
-				Name = nameof(ReadingsPanel),
-				Dock = DockStyle.Fill,
-				AutoScroll = true,
-				BorderStyle = BorderStyle.FixedSingle,
-				BackColor = SystemColors.ControlLight,
-				AccessibleName = "Values",
-				AccessibleDescription = "The newest value of every field the machine sent, and how often each changes.",
-			};
-			ReadingsPanel.Controls.Add(ReadingsTableLayoutPanel);
-			_spacing.Add(g => ReadingsPanel.Padding = new Padding(g, g / 2, g, g / 2));
-			Place(ReadingsPanel, 1, 2);
-
-			// Right: what happened, as tall as the commands and help beside it.
-			LogTextBox = new TextBox
-			{
-				Name = nameof(LogTextBox),
-				Dock = DockStyle.Fill,
-				Multiline = true,
-				ReadOnly = true,
-				WordWrap = true,
-				BackColor = SystemColors.ControlLight,
-				AccessibleName = "Activity",
-				AccessibleDescription = "What happened, newest first.",
-			};
-			LogTextBox.SizeChanged += (s, e) => ShowLogScrollBar();
-			// Once its window is made, after the call that makes it, which a change of scroll bars makes again.
-			LogTextBox.HandleCreated += (s, e) => LogTextBox.BeginInvoke((Action)ShowLogScrollBar);
-			Place(LogTextBox, 1, 3);
-			MainTableLayoutPanel.SetRowSpan(LogTextBox, 4);
-			ApplyFont();
-		}
-
-		/// <summary>Puts a control in a cell of the main table, with the room after it the font gives, and twice that between the columns.</summary>
-		void Place(Control control, int column, int row)
-		{
-			_spacing.Add(g => control.Margin = new Padding(column == 1 ? g : 0, 0, g, g));
-			MainTableLayoutPanel.Controls.Add(control, column, row);
-		}
-
-		/// <summary>A button named by its words, as the AI door reads it: Connect reads Disconnect while it disconnects.</summary>
-		Button NewButton(string name, string text, string description, int widthInGaps)
-		{
-			var button = new Button
-			{
-				Name = name,
-				Text = text,
-				AutoSize = true,
-				UseVisualStyleBackColor = true,
-				AccessibleDescription = description,
-			};
-			_spacing.Add(g => button.MinimumSize = new Size(g * widthInGaps, 0));
-			return button;
-		}
-
-		CheckBox NewCheckBox(string name, string text, string description)
-		{
-			return new CheckBox
-			{
-				Name = name,
-				Text = text,
-				AutoSize = true,
-				Anchor = AnchorStyles.Left,
-				AccessibleName = text,
-				AccessibleDescription = description,
-			};
-		}
-
-		/// <summary>A column of the list of machines, kept in the order the machines were heard rather than sorted.</summary>
-		static DataGridViewTextBoxColumn NewMachineColumn(string name, string header, DataGridViewAutoSizeColumnMode size)
-		{
-			return new DataGridViewTextBoxColumn
-			{
-				Name = name,
-				HeaderText = header,
-				AutoSizeMode = size,
-				SortMode = DataGridViewColumnSortMode.NotSortable,
-			};
-		}
-
-		/// <summary>A row of controls, each the room the font gives after the one before it.</summary>
-		FlowLayoutPanel NewFlow(string name, params Control[] controls)
-		{
-			var flow = new FlowLayoutPanel
-			{
-				Name = name,
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				WrapContents = true,
-			};
-			flow.Controls.AddRange(controls);
-			_spacing.Add(g =>
-			{
-				foreach (Control control in flow.Controls)
-					control.Margin = new Padding(0, 0, g, 0);
-			});
-			return flow;
-		}
-
-		/// <summary>Adds a target's row: its label, its slider, its value and its Set button.</summary>
-		TrackBar AddTarget(int row, string key, string text, int minimum, int maximum, int value, int smallChange, int largeChange)
-		{
-			var label = new Label { Name = key + "Label", Text = text, AutoSize = true, Anchor = AnchorStyles.Left };
-			var slider = new TrackBar
-			{
-				Name = key + "TrackBar",
-				Minimum = minimum,
-				Maximum = maximum,
-				Value = value,
-				SmallChange = smallChange,
-				LargeChange = largeChange,
-				TickStyle = TickStyle.None,
-				Anchor = AnchorStyles.Left | AnchorStyles.Right,
-				AccessibleName = text,
-				AccessibleDescription = "The " + text.ToLowerInvariant() + " Set sends to the machine.",
-			};
-			var shown = new Label { Name = key + "ValueLabel", AutoSize = true, Anchor = AnchorStyles.Right, TextAlign = ContentAlignment.MiddleRight, AccessibleName = text };
-			var set = new Button
-			{
-				Name = "Set" + key + "Button",
-				Text = "Set",
-				AutoSize = true,
-				Anchor = AnchorStyles.Left,
-				UseVisualStyleBackColor = true,
-				AccessibleName = "Set " + text.ToLowerInvariant(),
-				AccessibleDescription = "Sends the " + text.ToLowerInvariant() + " to the machine.",
-			};
-			slider.ValueChanged += (s, e) => ShowTargets();
-			_spacing.Add(g =>
-			{
-				label.Margin = new Padding(0, 0, g, 0);
-				slider.Margin = new Padding(0, 0, g, 0);
-				shown.Margin = new Padding(0, 0, g, 0);
-				shown.MinimumSize = new Size(g * 8, 0);
-				set.Margin = new Padding(0, 0, 0, g / 2);
-				set.MinimumSize = new Size(g * 8, 0);
-			});
-			TargetsTableLayoutPanel.Controls.Add(label, 0, row);
-			TargetsTableLayoutPanel.Controls.Add(slider, 1, row);
-			TargetsTableLayoutPanel.Controls.Add(shown, 2, row);
-			TargetsTableLayoutPanel.Controls.Add(set, 3, row);
-			return slider;
-		}
-
-		Label AddHelp(string name, string text)
-		{
-			var label = new Label { Name = name, Text = text, AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Right };
-			_spacing.Add(g =>
-			{
-				label.Margin = new Padding(0, 0, 0, g / 2);
-				// Wraps inside the help's room: the left column's width less the help's padding.
-				label.MaximumSize = new Size((LeftGaps - 2) * g, 0);
-			});
-			HelpTableLayoutPanel.RowStyles.Add(new RowStyle());
-			HelpTableLayoutPanel.Controls.Add(label, 0, HelpTableLayoutPanel.RowCount++);
-			return label;
-		}
-
-		/// <summary>Gives the controls their room and the bold font from the tab's font, which follows x360ce's font and zoom.</summary>
-		void ApplyFont()
-		{
-			var old = _boldFont;
-			_boldFont = new Font(Font, FontStyle.Bold);
-			StatusLabel.Font = _boldFont;
-			HelpHeadingLabel.Font = _boldFont;
-			if (old != null)
-				old.Dispose();
-			// Half a line, 8 pixels at 100 % in x360ce's font.
-			var gap = Math.Max(1, (Font.Height + 1) / 2);
-			foreach (var space in _spacing)
-				space(gap);
-		}
-
-		protected override void OnFontChanged(EventArgs e)
-		{
-			base.OnFontChanged(e);
-			if (MainTableLayoutPanel != null)
-				ApplyFont();
-		}
-
-		#endregion
-
-		#region What the tab shows
-
-		/// <summary>The machine selected in the list, by a click or by the AI door setting the list to its row; null while none is.</summary>
-		/// <remarks>Read from the rows selected, which the grid changes before the current row it raises SelectionChanged for.</remarks>
-		FitnessSeen SelectedMachine
-		{
-			get
-			{
-				var rows = MachinesDataGridView.SelectedRows;
-				return rows.Count == 1 ? rows[0].Tag as FitnessSeen : null;
-			}
-		}
-
-		/// <summary>Shows what the session holds, when it changed since the tab showed it, or at once.</summary>
-		void ShowSession(bool now = false)
-		{
-			// Listing the machines changes the selection, which asks for this again.
-			if (IsDisposed || _showing)
-				return;
-			var version = _session.Version;
-			if (!now && version == _shownVersion)
-				return;
-			_shownVersion = version;
-			_showing = true;
-			try
-			{
-				Draw();
-			}
-			finally
-			{
-				_showing = false;
-			}
-		}
-
-		/// <summary>True while the tab shows the session.</summary>
-		bool _showing;
-
-		void Draw()
-		{
-			var held = _session.Held;
-			var wanted = _session.Wanted;
-			var connected = held != null;
-			var busy = wanted != null;
-			ShowMachines();
-			var selected = SelectedMachine;
-			var status = _session.StatusText;
-			if (selected != null && status == FitnessSession.IdleText)
-				status = "Press Connect to connect to " + selected.DisplayName + ".";
-			SetText(StatusLabel, status);
-			SetText(FeaturesLabel, _session.FeaturesText);
-			ScanButton.Text = _session.Scanning ? "Stop scanning" : "Scan";
-			ScanButton.Enabled = !busy;
-			ConnectButton.Text = busy ? "Disconnect" : "Connect";
-			ConnectButton.Enabled = busy || selected != null;
-			ShowAllCheckBox.Enabled = !_session.Scanning;
-			MachinesDataGridView.Enabled = !busy;
-			var commands = connected && _session.CanCommand && !_session.Busy;
-			StartButton.Enabled = commands;
-			PauseButton.Enabled = commands;
-			StopButton.Enabled = commands;
-			ResetButton.Enabled = commands;
-			ShowRange(PowerTrackBar, _session.PowerMin, _session.PowerMax, 1);
-			ShowRange(ResistanceTrackBar, _session.RangeMin, _session.RangeMax, (int)Ftms.ResistanceScale);
-			EnableTarget(PowerTrackBar, SetPowerButton, commands && _session.Supports(Ftms.PowerTargetBit));
-			EnableTarget(ResistanceTrackBar, SetResistanceButton, commands && _session.Supports(Ftms.ResistanceTargetBit));
-			EnableTarget(GradeTrackBar, SetGradeButton, commands && _session.Supports(Ftms.SimulationTargetBit));
-			ShowTargets();
-			ShowReadings();
-			var log = string.Join(Environment.NewLine, _session.Log());
-			if (LogTextBox.Text != log)
-			{
-				LogTextBox.Text = log;
-				ShowLogScrollBar();
-			}
-			// A machine just connected: put a device for it in the Devices list, and keep it for the next start.
-			if (held != null && held != _shownHeld)
-				AddDevice();
-			_shownHeld = held;
-			var last = _session.Last;
-			if (last != null && last != _keptLast)
-			{
-				_keptLast = last;
-				_host.SetValue(LastMachineValue, FitnessSession.AddressText(last.Address));
-				_host.SetValue(LastMachineNameValue, last.Name);
-			}
-		}
-
-		static void SetText(Control control, string text)
-		{
-			if (control.Text != text)
-				control.Text = text;
-		}
-
-		static void EnableTarget(TrackBar slider, Button set, bool enabled)
-		{
-			slider.Enabled = enabled;
-			set.Enabled = enabled;
-		}
-
-		/// <summary>Takes a slider's range from the one the machine reported, in its units, keeping its value inside.</summary>
-		static void ShowRange(TrackBar slider, int min, int max, int scale)
-		{
-			if (min == FitnessSession.Unknown || max == FitnessSession.Unknown)
-				return;
-			var minimum = (int)Math.Ceiling(min / (double)scale);
-			var maximum = (int)Math.Floor(max / (double)scale);
-			if (maximum <= minimum || (slider.Minimum == minimum && slider.Maximum == maximum))
-				return;
-			var value = Math.Max(minimum, Math.Min(maximum, slider.Value));
-			slider.Minimum = Math.Min(minimum, slider.Minimum);
-			slider.Maximum = Math.Max(maximum, slider.Maximum);
-			slider.Value = value;
-			slider.Minimum = minimum;
-			slider.Maximum = maximum;
-		}
-
-		/// <summary>Shows the log's scroll bar only while its lines, wrapped, are more than it shows.</summary>
-		void ShowLogScrollBar()
-		{
-			// Its lines are counted by its window, which is not made before it is shown.
-			if (!LogTextBox.IsHandleCreated)
-				return;
-			var lines = LogTextBox.TextLength == 0 ? 0 : LogTextBox.GetLineFromCharIndex(LogTextBox.TextLength) + 1;
-			var bars = lines * LogTextBox.Font.Height > LogTextBox.ClientSize.Height ? ScrollBars.Vertical : ScrollBars.None;
-			if (LogTextBox.ScrollBars != bars)
-				LogTextBox.ScrollBars = bars;
-		}
-
-		void ShowTargets()
-		{
-			SetText(PowerValueLabel, PowerTrackBar.Value.ToString(CultureInfo.InvariantCulture) + " W");
-			SetText(ResistanceValueLabel, ResistanceTrackBar.Value.ToString(CultureInfo.InvariantCulture));
-			SetText(GradeValueLabel, (GradeTrackBar.Value / 2.0).ToString("0.0", CultureInfo.InvariantCulture) + " %");
-		}
-
-		/// <summary>Lists the machines heard, a row each in the order heard, keeping the one selected.</summary>
-		void ShowMachines()
-		{
-			var machines = _session.Machines();
-			var grid = MachinesDataGridView;
-			var rows = grid.Rows;
-			if (rows.Count != machines.Length || machines.Where((x, i) => !ReferenceEquals(rows[i].Tag, x)).Any())
-			{
-				var keep = Array.IndexOf(machines, SelectedMachine);
-				rows.Clear();
-				foreach (var machine in machines)
-					rows[rows.Add()].Tag = machine;
-				// Only a machine the person chose is selected: a grid with the focus makes the first row it is given current by itself.
-				grid.CurrentCell = keep < 0 ? null : rows[keep].Cells[NameColumn.Index];
-				if (keep < 0)
-					grid.ClearSelection();
-			}
-			// Names and signals change in place.
-			foreach (DataGridViewRow row in rows)
-			{
-				var machine = (FitnessSeen)row.Tag;
-				SetCell(row.Cells[NameColumn.Index], machine.DisplayName);
-				SetCell(row.Cells[TypeColumn.Index], machine.Description);
-				SetCell(row.Cells[SignalColumn.Index], machine.Signal.ToString(CultureInfo.InvariantCulture) + " dBm");
-			}
-		}
-
-		static void SetCell(DataGridViewCell cell, string text)
-		{
-			if (!Equals(cell.Value, text))
-				cell.Value = text;
-		}
-
-		/// <summary>Shows the values, a row for each in the order they first came: its name, its value, and how often it changes.</summary>
-		/// <remarks>
-		/// The value and how often it changes are named and described, so the AI door lists them under the box of values,
-		/// such as SpeedValueLabel, named Speed; the name before them only captions the value, which carries it.
-		/// </remarks>
-		void ShowReadings()
-		{
-			var readings = _session.Readings();
-			var table = ReadingsTableLayoutPanel;
-			// A new connection starts from no values.
-			if (readings.Length < table.RowCount)
-			{
-				table.SuspendLayout();
-				while (table.Controls.Count > 0)
-					table.Controls[0].Dispose();
-				table.RowStyles.Clear();
-				table.RowCount = 0;
-				table.ResumeLayout();
-			}
-			for (var i = 0; i < readings.Length; i++)
-			{
-				var reading = readings[i];
-				if (i >= table.RowCount)
-				{
-					// "Heart rate" is HeartRate.
-					var key = new string(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(reading.Name).Where(char.IsLetterOrDigit).ToArray());
-					var words = reading.Name.ToLowerInvariant();
-					var gap = Math.Max(1, (Font.Height + 1) / 2);
-					table.RowStyles.Add(new RowStyle());
-					table.RowCount++;
-					table.Controls.Add(new Label { Name = key + "NameLabel", Text = reading.Name, AutoSize = true, ForeColor = SystemColors.GrayText,
-						Margin = new Padding(0, gap / 4, gap * 2, gap / 4) }, 0, i);
-					table.Controls.Add(new Label { Name = key + "ValueLabel", AutoSize = true, AccessibleName = reading.Name,
-						AccessibleDescription = "The newest " + words + " the machine sent.",
-						Margin = new Padding(0, gap / 4, 0, gap / 4) }, 1, i);
-					table.Controls.Add(new Label { Name = key + "IntervalLabel", AutoSize = true, ForeColor = SystemColors.GrayText,
-						Margin = new Padding(gap * 2, gap / 4, 0, gap / 4), AccessibleName = reading.Name + " changes",
-						AccessibleDescription = "How often the " + words + " changes, such as every 1.0 s; empty until it changed three times." }, 2, i);
-				}
-				SetText(table.GetControlFromPosition(1, i), reading.Value);
-				SetText(table.GetControlFromPosition(2, i), reading.Interval);
-			}
-		}
-
-		#endregion
-
-		#region What the tab does
-
-		void ScanButton_Click(object sender, EventArgs e)
-		{
-			if (_session.Scanning)
-				_session.StopScan();
-			else
-				_session.Scan(ShowAllCheckBox.Checked);
-			ShowSession(true);
-		}
-
-		void ConnectButton_Click(object sender, EventArgs e)
-		{
-			if (_session.Wanted != null)
-				_session.Disconnect();
-			else
-				Connect();
-			ShowSession(true);
-		}
-
-		/// <summary>Connects to the machine selected.</summary>
-		void Connect()
-		{
-			var machine = SelectedMachine;
-			if (machine == null || _session.Wanted != null)
-				return;
-			_session.Connect(machine.Address, machine.DisplayName);
-			ShowSession(true);
-		}
-
-		/// <summary>Adds a Fitness Machine device to the Devices list when there is none, as a machine connects.</summary>
-		void AddDevice()
-		{
-			try
-			{
-				_host.AddDevice(FitnessMachine.Product);
-			}
-			// The plugin's device was switched off after it failed: the Plugins page says why.
-			catch (InvalidOperationException ex)
-			{
-				_session.Note(ex.Message);
-			}
-		}
-
-		void MapButton_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				_host.MapDevice(FitnessMachine.Product, ControllerComboBox.SelectedIndex + 1);
-			}
-			// No game is chosen, or the device was switched off: said in the log.
-			catch (InvalidOperationException ex)
-			{
-				_session.Note(ex.Message);
-			}
-		}
-
-		void ReconnectCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			_host.SetValue(ReconnectValue, ReconnectCheckBox.Checked ? bool.TrueString : bool.FalseString);
-		}
-
-		/// <summary>Asks the person whether to pair, on the interface thread, and gives the session the answer.</summary>
-		void Session_PairingRequested(FitnessPairing pairing)
-		{
-			if (_ui == null)
-			{
-				pairing.Accept(false);
-				return;
-			}
-			_ui.Post(_ =>
-			{
-				if (IsDisposed)
-				{
-					pairing.Accept(false);
-					return;
-				}
-				using (var form = new FitnessQuestionForm("Pair with fitness machine", pairing.Question, pairing.Kind == FitnessPairingKind.DisplayPin))
-				{
-					var answer = form.ShowDialog(FindForm());
-					pairing.Accept(answer == DialogResult.Yes || answer == DialogResult.OK);
-				}
-			}, null);
-		}
-
-		#endregion
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (_timer != null)
-					_timer.Dispose();
-				_session.PairingRequested -= Session_PairingRequested;
-				if (_boldFont != null)
-					_boldFont.Dispose();
-			}
-			base.Dispose(disposing);
-		}
-	}
-
-	/// <summary>A question the Fitness tab asks: Yes and No, or OK and Cancel. A window of x360ce's interface thread, so x360ce's theme draws it.</summary>
-	sealed class FitnessQuestionForm : Form
-	{
-		public FitnessQuestionForm(string caption, string question, bool okCancel)
-		{
-			Name = "FitnessQuestionForm";
-			Text = caption;
-			FormBorderStyle = FormBorderStyle.FixedDialog;
-			StartPosition = FormStartPosition.CenterParent;
-			MaximizeBox = false;
-			MinimizeBox = false;
-			ShowInTaskbar = false;
-			AutoSize = true;
-			AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			var gap = Math.Max(1, (Font.Height + 1) / 2);
-			var table = new TableLayoutPanel
-			{
-				Name = "QuestionTableLayoutPanel",
-				AutoSize = true,
-				AutoSizeMode = AutoSizeMode.GrowAndShrink,
-				ColumnCount = 1,
-				Padding = new Padding(gap),
-			};
-			var label = new Label
-			{
-				Name = "QuestionLabel",
-				Text = question,
-				AutoSize = true,
-				MaximumSize = new Size(Font.Height * 28, 0),
-				Margin = new Padding(0, 0, 0, gap * 2),
-			};
-			var yes = new Button
-			{
-				Name = "YesButton",
-				Text = okCancel ? "OK" : "&Yes",
-				DialogResult = okCancel ? DialogResult.OK : DialogResult.Yes,
-				AutoSize = true,
-				UseVisualStyleBackColor = true,
-				MinimumSize = new Size(gap * 10, 0),
-				Margin = new Padding(0, 0, gap, 0),
-			};
-			var no = new Button
-			{
-				Name = "NoButton",
-				Text = okCancel ? "Cancel" : "&No",
-				DialogResult = okCancel ? DialogResult.Cancel : DialogResult.No,
-				AutoSize = true,
-				UseVisualStyleBackColor = true,
-				MinimumSize = new Size(gap * 10, 0),
-				Margin = new Padding(0),
-			};
-			var buttons = new FlowLayoutPanel { Name = "QuestionButtonsFlowLayoutPanel", AutoSize = true, Anchor = AnchorStyles.Right };
-			buttons.Controls.Add(yes);
-			buttons.Controls.Add(no);
-			table.Controls.Add(label, 0, 0);
-			table.Controls.Add(buttons, 0, 1);
-			Controls.Add(table);
-			AcceptButton = yes;
-			CancelButton = no;
 		}
 	}
 

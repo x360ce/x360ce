@@ -526,12 +526,6 @@ namespace x360ce.App
 			yield return null;
 			Main.BuildAbout();
 			yield return null;
-			// The pages of the plugins loaded now; a plugin that loads later adds its page as it loads.
-			Main.AddPluginPages();
-			if (Plugins.PluginManager.Current != null)
-				Plugins.PluginManager.Current.Changed += PluginManager_Changed;
-			Program.StartupTrace.Mark("BuildPages: plugin pages built");
-			yield return null;
 			// Themed before Windows makes any of it, so nothing is drawn in Windows' own style first and made again after.
 			JocysCom.ClassLibrary.Controls.Themes.FormsTheme.Apply(Main);
 			Program.StartupTrace.Mark("MainControl: themed");
@@ -643,14 +637,6 @@ namespace x360ce.App
 			// is saved into a row only once the page shows it.
 			ControlsHelper.BeginInvoke(UpdateForm2);
 			Program.StartupTrace.Mark("MainForm_Load: end");
-		}
-
-		/// <summary>Puts the page of a plugin just loaded on its tab, on the interface thread.</summary>
-		/// <remarks>Raised on whichever thread found or switched off a plugin.</remarks>
-		void PluginManager_Changed(object sender, EventArgs e)
-		{
-			if (!Program.IsClosing)
-				ControlsHelper.BeginInvoke(() => Main?.AddPluginPages());
 		}
 
 		/// <summary>Puts the control on the window, behind the words that say it is loading, which stay until its tabs are ready.</summary>
@@ -1714,8 +1700,6 @@ namespace x360ce.App
 				SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 				SettingsManager.AiOptions.PropertyChanged -= AiOptions_PropertyChanged;
 				SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
-				if (Plugins.PluginManager.Current != null)
-					Plugins.PluginManager.Current.Changed -= PluginManager_Changed;
 				if (Global.DHelper != null)
 				{
 					Global.DHelper.DevicesUpdated -= DHelper_DevicesUpdated;

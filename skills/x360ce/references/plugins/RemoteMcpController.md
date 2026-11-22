@@ -16,7 +16,7 @@ A pretend controller whose controls are set from outside, so a mapping, a formul
 
 ### Its tab
 
-A tab named Remote MCP Controller on the controller page the device is mapped to. Each device keeps its own values; Reset gives back the first ones.
+A tab named Remote MCP Controller on the controller page the device is mapped to, with a page for each part: the plugin's own control first, then MCP Server, Properties with the settings below, and Help with the text above. Each device keeps its own values; Reset gives back the first ones.
 
 - MCP server: closed until the person opens it on the tab, as AI assistant access is opened on the AI page. It listens on the port x360ce's port plan gives the controller and place the device is mapped to, 371CD: 37141 for the first device on controller 4. It serves this device's tools alone: read, set_state.
 - State (Remote, text, starts empty): The controls to change, as JSON named and valued as in formulas: b1 to b128 a button, 1 or 0; a1 to a6 an axis, -1 to 1; s1 to s8 a slider, 0 to 1; p1 to p4 a hat, degrees clockwise from up or -1 at rest. "rest":1 puts every control at rest before the others are set.

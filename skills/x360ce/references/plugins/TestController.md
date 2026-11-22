@@ -18,7 +18,7 @@ Windows takes a controller x360ce makes for an Xbox controller, and sends what i
 
 ### Its tab
 
-A tab named Test Controller on the controller page the device is mapped to. Each device keeps its own values; Reset gives back the first ones.
+A tab named Test Controller on the controller page the device is mapped to, with a page for each part: the plugin's own control first, then MCP Server, Properties with the settings below, and Help with the text above. Each device keeps its own values; Reset gives back the first ones.
 
 - Move the axes (Movement, true or false, starts at True): Moves the axes by themselves. Off, they rest: the even ones in the middle, the odd ones at their start.
 - Turn the hat (Movement, true or false, starts at False): Turns the hat once round and back while the axes move. Off, it stays released. x360ce's own mapping makes the hat the D-pad, which moves focus in the window in front.

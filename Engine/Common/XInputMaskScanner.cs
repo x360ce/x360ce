@@ -306,9 +306,9 @@ namespace x360ce.Engine
         /// may not enter - the junctions Windows keeps in a profile, such as "My Music", are such
         /// folders - and the whole game folder went unscanned for one of them. Walked folder by
         /// folder, one that refuses is left out and the rest are read.
-        /// A name ending in a space or a dot is left out as well. The folder lists it, but Windows opens it as the name
-        /// without that ending: the file beside it, which was then scanned twice and ended the scan on the second, or no
-        /// file at all.
+        /// A file or folder name ending in a space or a dot is left out as well. The folder lists it, but Windows opens it
+        /// as the name without that ending: the file or folder beside it, whose files were then scanned twice and ended
+        /// the scan on the second, or nothing at all.
         /// </remarks>
         static List<FileInfo> ReadableFiles(string path, SearchOption searchOption, params string[] patterns)
         {
@@ -322,11 +322,10 @@ namespace x360ce.Engine
                 {
                     foreach (var pattern in patterns)
                         files.AddRange(Directory.GetFiles(folder, pattern, SearchOption.TopDirectoryOnly)
-                            // Windows opens a name ending in a space or a dot as the name without it: another file, or none.
-                            .Where(x => !x.EndsWith(" ", StringComparison.Ordinal) && !x.EndsWith(".", StringComparison.Ordinal))
+                            .Where(x => !OpensAsAnotherName(x))
                             .Select(x => new FileInfo(x)));
                     if (searchOption == SearchOption.AllDirectories)
-                        foreach (var sub in Directory.GetDirectories(folder))
+                        foreach (var sub in Directory.GetDirectories(folder).Where(x => !OpensAsAnotherName(x)))
                             folders.Push(sub);
                 }
                 catch (UnauthorizedAccessException) { }
@@ -334,6 +333,10 @@ namespace x360ce.Engine
             }
             return files;
         }
+
+        /// <summary>Windows opens a name ending in a space or a dot as the name without it: another file or folder, or none.</summary>
+        static bool OpensAsAnotherName(string path)
+            => path.EndsWith(" ", StringComparison.Ordinal) || path.EndsWith(".", StringComparison.Ordinal);
 
         /// <summary>
         /// Look inside file for "XInput..." strings and return XInput mask.

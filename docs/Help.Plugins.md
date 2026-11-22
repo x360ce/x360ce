@@ -4,13 +4,13 @@ A plugin adds a device to x360ce: a controller that exists only in code, or one 
 a controller fed over the network or a Bluetooth device decoded in code. x360ce lists it as a **Plugin** device, and
 it is mapped to a controller like any other.
 
-A plugin is one .NET Framework DLL, built from **one `.cs` file**.
+A plugin is one .NET Framework DLL, built from **one `.cs` file**, which can take in other files of its folder.
 
 ## Where plugins come from
 
 - **Inside x360ce.** The Test Controller, a pretend controller that moves by itself, the Remote MCP Controller, whose
   controls a program sets over MCP, and the Fitness Machine, which reads an exercise bike, treadmill, rower or cross
-  trainer over Bluetooth from its own Fitness tab, are part of x360ce.exe.
+  trainer over Bluetooth, chosen on its tab's Connection page, are part of x360ce.exe.
 - **The plugins folder:** `Plugins` in the x360ce data folder, usually `C:\ProgramData\X360CE\Plugins`. Each plugin
   has a folder of its own there, holding the DLL named like the folder and any DLLs it needs:
   `Plugins\MyDevice\MyDevice.dll`. A plugin put there loads at once; x360ce watches the folder. **Open Folder** on the
@@ -50,7 +50,9 @@ load. The **Issues** tab says so too. A plugin that throws an error is switched 
 3. Copy the `TestController` folder, and give the folder and the `.cs` file in it the plugin's name:
    `MyDevice\MyDevice.cs`. Or start from the example below. Give the class a new name, a new `Name`, and a new
    `ProductGuid` (PowerShell: `[guid]::NewGuid()`). Files in a `Resources` folder beside the `.cs` file go inside the
-   DLL; read one with `GetType().Assembly.GetManifestResourceStream("MyDevice.Resources.<file name>")`.
+   DLL; read one with `GetType().Assembly.GetManifestResourceStream("MyDevice.Resources.<file name>")`. A plugin too
+   long for one file can be split: the first lines of `MyDevice.cs` name each other file of the folder, such as
+   `#:include MyDevice.Page.cs`, and the build takes them in, as the Fitness Machine's four files are built.
 4. Build every plugin in the folder:
 
    ```
@@ -107,7 +109,6 @@ A plugin implements `x360ce.Plugins.IPluginDevice`, in `x360ce.Plugins.dll`:
 | `void Read(PluginState state)` | Writes where the controls are now. |
 | `void SetForce(int largeMotor, int smallMotor)` | Optional, from `IPluginForceFeedback`: takes the game's force. |
 | `string Mapping` | Optional, from `IPluginMapping`: how the device is mapped, as a row of SDL's controller database. |
-| `string PageName` | Optional, from `IPluginPage`, on a control of its own: the text of its tab after the Devices tab. |
 
 A device that also implements `x360ce.Plugins.IPluginForceFeedback` feels the game. x360ce calls its `SetForce` on the
 input thread just before `Read`, whenever the force changes: each motor 0 to 65535, as the game asks for it, before the
@@ -146,10 +147,16 @@ Rules:
 - **`Read` must return at once.** It is called on x360ce's input thread, up to a thousand times a second. Anything
   slow, such as a network or Bluetooth read, belongs on a thread of the plugin's own, which keeps the newest values for
   `Read` to copy. Make nothing in `Read` that the garbage collector must clean up.
-- **Let go of what you open.** A class that also implements `IDisposable` is disposed when its device is removed and
-  when x360ce closes.
-- **Explain the device.** The class's `[Description("...")]` is its help, Markdown allowed. x360ce shows it at the top
-  of the device's tab, as plain text, and to AI agents with the device's controls.
+- **x360ce reads a device only while it is ticked.** That is while it is ticked on the **Devices** tab and in the list
+  of a controller tab of the game chosen. Unticked there, removed, or as x360ce closes, the device is let go of; ticked
+  again, x360ce makes a new instance. So the first `Read` is the moment to connect to what the device reads, and
+  `Dispose` the moment to let go of it.
+- **Let go of what you open.** A class that also implements `IDisposable` is disposed when x360ce stops reading its
+  device: when it is unticked or removed, and when x360ce closes. `Dispose` is called on the input thread, so it must
+  not wait: it asks the plugin's own thread to let go.
+- **Explain the device.** The class's `[Description("...")]` is its help, Markdown allowed. x360ce shows it on the
+  **Help** page of the device's tab, as it shows its own help, and gives it to AI agents with the device's controls. A
+  long help can be a `const string` the attribute names.
 - **Errors switch it off.** An exception from any member switches that kind of device off until x360ce starts again;
   the Plugins page and the Issues tab say why. A control of its own that cannot be made says why on its tab instead,
   and the device keeps working.
@@ -164,8 +171,8 @@ Rules:
 
 ### Settings, an MCP server, and a control of its own
 
-A device can have a tab of its own on the controller page it is mapped to, named after it. The device's help heads the
-tab, and under it a page for each part the plugin has: its own control first, then **MCP Server**, then **Properties**.
+A device can have a tab of its own on the controller page it is mapped to, named after it, with a page for each part
+the plugin has: its own control first, then **MCP Server**, then **Properties**, and last **Help**, the device's help.
 
 - **Settings, on the Properties page: the class's public properties**, but for those of the interfaces above. They are shown as rows of a property grid, as Visual Studio's
   Properties window shows a component's: grouped, or in A to Z order with the buttons above the grid, and the selected
@@ -190,9 +197,13 @@ tab, and under it a page for each part the plugin has: its own control first, th
   A server a plugin opens itself, such as a UDP one, takes a port in the plan's range for plugins: 37150 to 37199.
 
 - **A control of its own: a Windows Forms control whose constructor takes the device.** x360ce places it on the first
-  page, made with the instance it reads; the control's `Text` names the page, or it is called Control. The control runs
-  on the interface thread while `Read` runs on the input thread, so a value the two share must be safe to read from
-  both, such as a `volatile` field.
+  page, made with the instance it reads; the control's `Text` names the page, or it is called Control. While x360ce
+  reads none, as while the device is unticked, the control is made with an instance of the tab's own: given the
+  device's values, never read, and disposed with the tab. The control runs on the interface thread while `Read` runs
+  on the input thread, so a value the two share must be safe to read from both, such as a `volatile` field. A setting
+  the control changes is kept for the device when the class implements `INotifyPropertyChanged` and raises
+  `PropertyChanged` with the setting's name, on the interface thread: the Fitness Machine's Connection page keeps the
+  machine chosen so.
 
 Attributes shape the settings:
 
@@ -236,42 +247,10 @@ public int Packets { get { return _packets; } }
 
 The Test Controller shows settings for its movement and its buttons, and `TestControllerPad`, a square that steers its
 stick by hand. The Remote MCP Controller shows an MCP server, and `State`, which sets its controls. The Fitness
-Machine's statuses show what the machine sends.
-
-### A page of its own
-
-A plugin can add a page to the main window, on a tab after the **Devices** tab: a public Windows Forms control that
-implements `x360ce.Plugins.IPluginPage`, whose `PageName` is the tab's text, and whose constructor takes an
-`IPluginHost`, or nothing. x360ce makes the page once, on its interface thread, after the plugin loads, and keeps it
-until it closes. A page that throws while it is made is left out, and the **Plugins** page and the **Issues** tab say
-why. Draw it in the system colours and lay it out with tables and automatic sizes, so it follows the theme, the font
-and the zoom, and give every control a name: AI assistant access reaches a control by its name. The Fitness Machine's
-**Fitness** tab is one: it finds the machine, connects, and puts it on a controller.
-
-The host is what the page may ask of x360ce, on the interface thread:
-
-| `IPluginHost` member | What x360ce does |
-|---|---|
-| `void AddDevice(Guid productGuid)` | Adds a device of that kind to the Devices list, as **Add Plugin Device** does, when the list holds none. |
-| `void MapDevice(Guid productGuid, int controller)` | Maps the first device of that kind to controller 1 to 4 for the game chosen, as the controller tab's **Add** does: filled as the device recommends. Adds the device first when the list holds none. |
-| `string GetValue(string name)` | A value the plugin kept, or null. |
-| `void SetValue(string name, string value)` | Keeps a value for the plugin, not for one of its devices, with the other settings; null forgets it. |
-
-```csharp
-public class SwingPage : UserControl, IPluginPage
-{
-	public SwingPage(IPluginHost host)
-	{
-		Name = "SwingPage";
-		var map = new Button { Name = "MapButton", Text = "Put on Controller 1", AutoSize = true };
-		// The Swing Controller's ProductGuid.
-		map.Click += (s, e) => host.MapDevice(new Guid("3b4e2f8a-1c5d-4e6f-9a7b-8c9d0e1f2a3b"), 1);
-		Controls.Add(map);
-	}
-
-	public string PageName { get { return "Swing"; } }
-}
-```
+Machine shows `FitnessConnection`, its **Connection** page, which finds the machine and chooses it as the device's
+`Machine` setting, and statuses that show what the machine sends. Draw a control of your own in the system colours
+and lay it out with tables and automatic sizes, so it follows the theme, the font and the zoom, and give every
+control a name: AI assistant access reaches a control by its name.
 
 ### Sign a plugin
 
@@ -285,10 +264,13 @@ A plugin signed with the same certificate as x360ce.exe loads without **Allow th
 - The skill holds one document for each plugin, under `references/plugins/`; `x360ce.exe -Skill=plugins/TestController`
   prints one.
 - `devices_list` and `device_map` work on plugin devices as on any device.
-- A plugin's page is a tab like any other: `ui_pages` lists it, `ui_open` opens it, and `ui_read`, `ui_set` and
-  `ui_invoke` reach its controls by their names, such as the Fitness tab's `ScanButton`. On that tab, `ui_read` of
-  `MachinesDataGridView` lists the machines heard as rows, `ui_set` with a row's index selects one, and `ConnectButton`
-  connects to it; `ui_read` of `ReadingsPanel` lists each value by its name, such as `SpeedValueLabel`.
+- A plugin's own control is a page of its device's tab like any other: with the device selected on its controller page,
+  `ui_pages` lists it, `ui_open` opens it, and `ui_read`, `ui_set` and `ui_invoke` reach its controls by their names,
+  such as the Fitness Machine's `ScanButton` on its `ControlTabPage`, the Connection page. There, `ui_read` of
+  `MachinesDataGridView` lists the machines heard as rows, `ui_set` with a row's index chooses one for the device, and
+  `ui_read` of `ReadingsPanel` lists each value by its name, such as `SpeedValueLabel`. `ui_set` of the device's row's
+  `IsEnabledColumn`, in the controller tab's `MappedDevicesDataGridView` or the Devices tab's `DevicesDataGridView`,
+  connects it and lets it go.
 - `devices_list` lists each plugin device's `Tools`, and `device_call` calls one by the device's `InstanceGuid`:
   `device_call` with `tool=read` returns its settings and their values, and `tool=set_state` with `value` sets one, at
   the Configure level. These are the tools a device's own MCP server serves, reached through x360ce's door, so a program

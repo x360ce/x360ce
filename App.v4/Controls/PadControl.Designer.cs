@@ -158,7 +158,7 @@
             this.PadTabControl = new System.Windows.Forms.TabControl();
             this.ButtonsTabPage = new System.Windows.Forms.TabPage();
             this.AxisToButtonPanel = new System.Windows.Forms.Panel();
-            this.AxisToButtonGroupBox = new System.Windows.Forms.GroupBox();
+            this.AxisToButtonNoteLabel = new System.Windows.Forms.Label();
             this.AxisToButtonTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.AxisToButtonADeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
             this.AxisToDPadRightDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
@@ -355,7 +355,6 @@
             this.PadTabControl.SuspendLayout();
             this.ButtonsTabPage.SuspendLayout();
             this.AxisToButtonPanel.SuspendLayout();
-            this.AxisToButtonGroupBox.SuspendLayout();
             this.AxisToButtonTableLayoutPanel.SuspendLayout();
             this.DPadTabPage.SuspendLayout();
             this.DPadPanel.SuspendLayout();
@@ -1971,13 +1970,15 @@
             // 
             this.AxisToButtonLayoutPanel.ColumnCount = 1;
             this.AxisToButtonLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonGroupBox, 0, 0);
+            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonNoteLabel, 0, 0);
+            this.AxisToButtonLayoutPanel.Controls.Add(this.AxisToButtonTableLayoutPanel, 0, 1);
             this.AxisToButtonLayoutPanel.AutoSize = true;
             this.AxisToButtonLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.AxisToButtonLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.AxisToButtonLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             this.AxisToButtonLayoutPanel.Name = "AxisToButtonLayoutPanel";
-            this.AxisToButtonLayoutPanel.RowCount = 1;
+            this.AxisToButtonLayoutPanel.RowCount = 2;
+            this.AxisToButtonLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
             this.AxisToButtonLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
             this.AxisToButtonLayoutPanel.TabIndex = 0;
             // 
@@ -1994,20 +1995,13 @@
             this.AxisToButtonPanel.Size = new System.Drawing.Size(931, 499);
             this.AxisToButtonPanel.TabIndex = 1;
             // 
-            // AxisToButtonGroupBox
-            // 
-            this.AxisToButtonGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AxisToButtonGroupBox.AutoSize = true;
-            this.AxisToButtonGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AxisToButtonGroupBox.Controls.Add(this.AxisToButtonTableLayoutPanel);
-            this.AxisToButtonGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.AxisToButtonGroupBox.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
-            this.AxisToButtonGroupBox.Name = "AxisToButtonGroupBox";
-            this.AxisToButtonGroupBox.Size = new System.Drawing.Size(925, 441);
-            this.AxisToButtonGroupBox.TabIndex = 3;
-            this.AxisToButtonGroupBox.TabStop = false;
-            this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)";
+            // AxisToButtonNoteLabel
+            //
+            this.AxisToButtonNoteLabel.AutoSize = true;
+            this.AxisToButtonNoteLabel.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
+            this.AxisToButtonNoteLabel.Name = "AxisToButtonNoteLabel";
+            this.AxisToButtonNoteLabel.TabIndex = 0;
+            this.AxisToButtonNoteLabel.Text = "DInput Axis To Virtual XInput Button Dead Zones (Map on [General] Tab First)";
             // 
             // AxisToButtonTableLayoutPanel
             // 
@@ -2049,7 +2043,7 @@
             this.AxisToButtonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.AxisToButtonTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.AxisToButtonTableLayoutPanel.Size = new System.Drawing.Size(554, 392);
-            this.AxisToButtonTableLayoutPanel.TabIndex = 0;
+            this.AxisToButtonTableLayoutPanel.TabIndex = 1;
             // 
             // AxisToButtonADeadZonePanel
             // 
@@ -4005,8 +3999,6 @@
             this.PadTabControl.ResumeLayout(false);
             this.ButtonsTabPage.ResumeLayout(false);
             this.AxisToButtonPanel.ResumeLayout(false);
-            this.AxisToButtonGroupBox.ResumeLayout(false);
-            this.AxisToButtonGroupBox.PerformLayout();
             this.AxisToButtonTableLayoutPanel.ResumeLayout(false);
             this.DPadTabPage.ResumeLayout(false);
             this.DPadPanel.ResumeLayout(false);
@@ -4314,7 +4306,7 @@
         private System.Windows.Forms.Panel RightThumbLeftNamePanel;
         private System.Windows.Forms.Panel RightThumbRightNamePanel;
         private System.Windows.Forms.Panel RightThumbDownNamePanel;
-        internal System.Windows.Forms.GroupBox AxisToButtonGroupBox;
+        internal System.Windows.Forms.Label AxisToButtonNoteLabel;
         internal System.Windows.Forms.TableLayoutPanel AxisToButtonTableLayoutPanel;
 		private AxisToButtonUserControl AxisToDPadRightDeadZonePanel;
 		private AxisToButtonUserControl AxisToDPadLeftDeadZonePanel;

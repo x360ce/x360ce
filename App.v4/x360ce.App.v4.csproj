@@ -461,7 +461,6 @@
     <Compile Include="Plugins\PluginKit.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Plugins\PluginMcpDoors.cs" />
-    <Compile Include="Plugins\PluginPages.cs" />
     <Compile Include="Plugins\PluginSettings.cs" />
     <Compile Include="Plugins\PluginSettingsView.cs" />
     <Compile Include="Program.AdminCommands.cs" />

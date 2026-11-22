@@ -1,4 +1,4 @@
-﻿// @under-test: Plugins/FitnessMachine/FitnessMachine.cs, PluginApi/IPluginForceFeedback.cs, PluginApi/IPluginPage.cs, App.v4/Plugins/PluginDevices.cs, App.v4/Common/DInput/DInputHelper.Plugins.cs
+﻿// @under-test: Plugins/FitnessMachine/FitnessMachine.cs, Plugins/FitnessMachine/FitnessMachine.Connection.cs, Plugins/FitnessMachine/FitnessMachine.Properties.cs, Plugins/FitnessMachine/FitnessMachine.Help.cs, PluginApi/IPluginForceFeedback.cs, App.v4/Plugins/PluginDevices.cs, App.v4/Common/DInput/DInputHelper.Plugins.cs, App.v4/Controls/PadTabPages/PluginDeviceUserControl.cs
 // @area: plugins   @layer: unit
 using JocysCom.ClassLibrary.Controls.UiTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,11 +8,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Proxies;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using x360ce.App.Controls;
 using x360ce.App.DInput;
 using x360ce.App.Plugins;
 using x360ce.Engine;
@@ -24,11 +29,11 @@ namespace x360ce.Tests
 {
 	/// <summary>
 	/// The Fitness Machine, a plugin embedded in x360ce, makes an exercise bike read over Bluetooth a controller, and the
-	/// game's force the machine's resistance or road grade; its Fitness tab finds the machine and connects. Every value
-	/// reaches the session the tab and the devices share through Take, and every force command leaves a device through
-	/// NextCommand, so these tests give a session of their own the bytes a machine sends and read the bytes it would send,
-	/// with no Bluetooth: its worker is taken, so nothing it is asked reaches the radio. And x360ce gives a plugin that takes
-	/// force the game's force, only when it changes.
+	/// game's force the machine's resistance or road grade; its device's Connection page finds the machine and chooses it.
+	/// Every value reaches a device's session through Take, and every force command leaves a device through NextCommand,
+	/// so these tests give a session of their own the bytes a machine sends and read the bytes it would send, with no
+	/// Bluetooth: either its worker is taken, so nothing it is asked reaches the radio, or its links are fakes that count
+	/// what the worker asks of them. And x360ce gives a plugin that takes force the game's force, only when it changes.
 	/// </summary>
 	[TestClass]
 	public class FitnessMachineTest
@@ -163,16 +168,29 @@ namespace x360ce.Tests
 			Assert.IsTrue(device is IPluginMapping, "It recommends no mapping.");
 			Assert.AreEqual("righttrigger:a0,lefttrigger:a1", Type().Mapping, "Its recommended mapping was not read as it loaded.");
 			Assert.IsFalse(string.IsNullOrWhiteSpace(Type().Description), "It does not explain itself.");
-			// The machine is chosen on the Fitness tab, not by a setting.
+			// The machine the Connection page chooses is a setting, kept for each device.
 			CollectionAssert.AreEqual(new[]
 			{
-				"MaxSpeed", "MaxCadence", "MaxPower", "MinHeartRate", "MaxHeartRate", "Reverse", "ReverseGear",
+				"Machine", "MaxSpeed", "MaxCadence", "MaxPower", "MinHeartRate", "MaxHeartRate", "Reverse", "ReverseGear",
 				"ForceTo", "ForceResistance", "ForceGrade", "HeartRateLimit",
 				"Connection", "Features", "Speed", "Cadence", "Power", "HeartRate", "Resistance", "Distance", "ElapsedTime", "Force", "Updates",
 			}, Type().Settings.Select(x => x.Name).ToArray());
-			CollectionAssert.AreEqual(new[] { "FitnessPage" }, Type().File.PageTypes.Select(x => x.Name).ToArray(), "The plugin adds no Fitness tab.");
-			StringAssert.Contains(Type().Description, "Fitness tab");
-			StringAssert.Contains(Type().Description, "Experimental");
+			Assert.AreEqual("FitnessConnection", Type().ControlType?.Name, "The device's Connection page is not its own control.");
+			Assert.AreEqual(1, Type().File.Assembly.GetExportedTypes().Count(x => typeof(Control).IsAssignableFrom(x)),
+				"The plugin adds a control other than the Connection page.");
+			var help = Type().Description;
+			foreach (var part in new[]
+			{
+				"Experimental: walk, drive or row in games with a fitness machine. Tested on a Tunturi E60R exercise bike only. Use it with care and at your own risk.",
+				"`[Connection]`", "`[Scan]`", "`[Show all Bluetooth devices]`", "`[Enabled]`",
+				"| Axis 1 | Forward |", "| Axis 2 | Reverse |", "| Axis 3 | Walk |", "| Axis 4 | Cadence |", "| Axis 5 | Power |", "| Axis 6 | HeartRate |",
+				"| Slider 1 | Speed |", "| Slider 2 | Resistance |", "| Button 1 | Moving |", "| Button 2 | Reverse |", "| Button 3 | Heartbeat |", "| Button 4 | HR high |",
+				"65535, all the way, at `[Max speed (km/h)]`", "`[Reverse]`", "`[Reverse gear]`", "`=s1*(1-c1.d2.b1)`",
+				"`[Force Feedback]`", "`[Heart rate limit (bpm)]`", "`[Right Trigger]` takes `Axis 1`", "`IAxis 3`",
+				"`[Start]`", "`[Target power]`", "`[Set]`", "Bluetooth cannot connect to itself",
+			})
+				StringAssert.Contains(help, part, "The help does not explain it.");
+			Assert.IsFalse(help.Contains("Fitness tab"), "The help sends the person to a Fitness tab x360ce no longer has.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
@@ -480,7 +498,9 @@ namespace x360ce.Tests
 			StringAssert.Contains(text, "## Fitness Machine");
 			StringAssert.Contains(text, "- Product GUID: " + Product);
 			StringAssert.Contains(text, "axes 6, sliders 2, hat switches 0, buttons 4");
-			Assert.IsFalse(text.Contains("- Machine ("), "The machine is chosen on the Fitness tab, not by a setting.");
+			StringAssert.Contains(text, "- Machine (Machine, text, starts empty): ");
+			Assert.IsFalse(text.Contains("Adds a page to the main window"), "The plugin claims a page of the main window.");
+			StringAssert.Contains(text, "- The plugin's own control, FitnessConnection, on the first page, before Properties.");
 			StringAssert.Contains(text, "- Max speed (km/h) (Ranges, a number from 1 to 200, starts at 40): ");
 			StringAssert.Contains(text, "- Reverse gear (Reverse, a number from 0 to 100, starts at 0): ");
 			StringAssert.Contains(text, "- Force feedback to (Force feedback, one of: Off, Resistance, Road grade, starts at Resistance): ");
@@ -556,79 +576,299 @@ namespace x360ce.Tests
 			});
 		}
 
-		#region The session and the Fitness tab
+		#region Connecting, and the Connection page
 
 		const ulong Address = 0xA1B2C3D4E5F6;
+		const ulong RowerAddress = 0xB1B2C3D4E5F6;
 
-		/// <summary>The machine a session is asked to hold: its address, its name and whether it is tried again quietly; null for none.</summary>
+		/// <summary>The machine a session is asked to hold, as its address and name; null for none.</summary>
 		static string Wanted(object session)
 		{
 			var want = Get(session, "Wanted");
-			return want == null ? null : ((ulong)Get(want, "Address")).ToString("X12") + " " + Get(want, "Name") + ((bool)Get(want, "Quiet") ? " quietly" : "");
+			return want == null ? null : ((ulong)Get(want, "Address")).ToString("X12") + " " + Get(want, "Name");
+		}
+
+		/// <summary>True once the session's worker ended, as it does once its device let go.</summary>
+		static bool Ended(object session)
+		{
+			return ((ManualResetEventSlim)Get(session, "_ended")).IsSet;
+		}
+
+		/// <summary>Waits a few seconds at most for a condition the session's worker brings about on its own thread.</summary>
+		static void WaitUntil(Func<bool> condition, string message, int milliseconds = 5000)
+		{
+			var watch = Stopwatch.StartNew();
+			while (!condition())
+			{
+				if (watch.ElapsedMilliseconds > milliseconds)
+					Assert.Fail(message);
+				Thread.Sleep(20);
+			}
+		}
+
+		/// <summary>
+		/// Links to machines with no Bluetooth: each link the worker makes is a fake that connects when <see cref="Problems"/>
+		/// has nothing left to say, answers every command with success, and notes what the worker asked of it.
+		/// </summary>
+		sealed class FakeRadio
+		{
+			/// <summary>What the next links say when they cannot connect, one each, before one connects.</summary>
+			public readonly Queue<string> Problems = new Queue<string>();
+
+			readonly List<string> _calls = new List<string>();
+
+			/// <summary>What the worker asked, in order, such as "Open EJT" and "Close EJT".</summary>
+			public string[] Calls { get { lock (_calls) return _calls.ToArray(); } }
+
+			public void Add(string call)
+			{
+				lock (_calls)
+					_calls.Add(call);
+			}
+
+			/// <summary>A new link to a machine, as the session's NewLink makes one.</summary>
+			public object Make(ulong address, string name)
+			{
+				string problem;
+				lock (Problems)
+					problem = Problems.Count > 0 ? Problems.Dequeue() : null;
+				return new FakeLink(Internal("IFitnessLink"), this, name, problem).GetTransparentProxy();
+			}
+		}
+
+		/// <summary>One fake link, as the plugin's interface for a link sees it.</summary>
+		sealed class FakeLink : RealProxy
+		{
+			public FakeLink(System.Type type, FakeRadio radio, string name, string problem) : base(type)
+			{
+				_radio = radio;
+				_name = name;
+				_problem = problem;
+			}
+
+			readonly FakeRadio _radio;
+			readonly string _name;
+			readonly string _problem;
+			volatile bool _up;
+
+			public override IMessage Invoke(IMessage message)
+			{
+				var call = (IMethodCallMessage)message;
+				object result = null;
+				switch (call.MethodName)
+				{
+					case "get_Up":
+						result = _up;
+						break;
+					case "Open":
+						_radio.Add("Open " + _name);
+						_up = _problem == null;
+						result = Task.FromResult(_problem);
+						break;
+					case "Send":
+						var command = (byte[])call.Args[0];
+						_radio.Add("Send " + _name + " " + BitConverter.ToString(command));
+						result = Task.FromResult(new byte[] { 0x80, command[0], 0x01 });
+						break;
+					case "Close":
+						_radio.Add("Close " + _name);
+						_up = false;
+						result = Task.FromResult(0);
+						break;
+					case "Dispose":
+						_up = false;
+						break;
+				}
+				return new ReturnMessage(result, null, 0, call.LogicalCallContext, call);
+			}
+		}
+
+		/// <summary>A session whose links are the radio's fakes, with a worker of its own that runs as x360ce's does.</summary>
+		static object NewLinkedSession(FakeRadio radio)
+		{
+			var session = Activator.CreateInstance(Internal("FitnessSession"), true);
+			var linkType = Internal("IFitnessLink");
+			var address = Expression.Parameter(typeof(ulong), "address");
+			var name = Expression.Parameter(typeof(string), "name");
+			var make = Expression.Lambda(typeof(Func<,,>).MakeGenericType(typeof(ulong), typeof(string), linkType),
+				Expression.Convert(Expression.Call(Expression.Constant(radio), typeof(FakeRadio).GetMethod(nameof(FakeRadio.Make)), address, name), linkType),
+				address, name).Compile();
+			session.GetType().GetField("NewLink", Any).SetValue(session, make);
+			return session;
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
-		[Description("A device read joins the session and connects again to the machine connected last; the last device let go of lets go of the machine, and Disconnect does too")]
-		public void The_last_device_let_go_of_lets_go_of_the_machine()
+		[Description("A device x360ce reads, as it does while the device is ticked, connects to its machine; a machine chosen later replaces it; and the device let go of, as when it is unticked or removed, lets go of the machine and its worker ends")]
+		public void Reading_the_device_connects_and_letting_go_disconnects()
 		{
-			var session = NewSession();
-			var first = NewDevice(session);
-			var second = NewDevice(session);
-			Read(first);
-			Assert.IsNull(Wanted(session), "A device read connected to a machine nobody connected to.");
-			// As the tab does at start, with Reconnect ticked.
-			Call(session, "Reconnect", Address, "EJT");
-			Assert.AreEqual("A1B2C3D4E5F6 EJT quietly", Wanted(session));
-			Read(second);
-			((IDisposable)first).Dispose();
-			Assert.IsNotNull(Wanted(session), "One device let go of let go of the machine while another was read.");
-			((IDisposable)second).Dispose();
-			Assert.IsNull(Wanted(session), "The last device let go of did not let go of the machine.");
-			// Unticked and ticked again, the device is a new instance, which connects again, quietly.
-			var third = NewDevice(session);
-			Read(third);
-			Assert.AreEqual("A1B2C3D4E5F6 EJT quietly", Wanted(session), "A device read again did not connect again to the machine connected last.");
-			// Disconnect lets go, and a device still read does not connect again.
-			Call(session, "Disconnect");
-			Read(third);
-			Assert.IsNull(Wanted(session), "Disconnect did not let go of the machine.");
-			// A device never read, as the one x360ce makes to read a plugin's name, leaves nothing when let go of.
-			Call(session, "Connect", Address, "EJT");
-			Assert.AreEqual("A1B2C3D4E5F6 EJT", Wanted(session), "Connect asks quietly, as only a reconnection does.");
-			((IDisposable)NewDevice(session)).Dispose();
-			Assert.IsNotNull(Wanted(session), "A device never read let go of the machine.");
-			((IDisposable)third).Dispose();
-			Assert.IsNull(Wanted(session));
-			Read(third);
-			Assert.IsNull(Wanted(session), "A device let go of joined the session again.");
+			var radio = new FakeRadio();
+			var session = NewLinkedSession(radio);
+			var device = NewDevice(session);
+			Set(device, "Machine", "EJT [A1:B2:C3:D4:E5:F6]");
+			Assert.IsNull(Wanted(session), "The machine was connected to before the device was read.");
+			StringAssert.StartsWith(Status(device, "Connection"), "EJT is chosen. x360ce connects to it while this device is ticked");
+
+			Read(device);
+			Assert.AreEqual("A1B2C3D4E5F6 EJT", Wanted(session), "The first read did not connect to the machine chosen.");
+			WaitUntil(() => Get(session, "Held") != null, "The worker did not connect: " + string.Join(", ", radio.Calls));
+			Assert.AreEqual("Connected to EJT. Waiting for data.", Status(device, "Connection"));
+			Read(device);
+			CollectionAssert.AreEqual(new[] { "Open EJT" }, radio.Calls, "Each read connected again.");
+
+			// A machine chosen while the device is read: the first is let go of, and the new one connected to.
+			Set(device, "Machine", "Rower [B1:B2:C3:D4:E5:F6]");
+			Read(device);
+			Assert.AreEqual("B1B2C3D4E5F6 Rower", Wanted(session));
+			WaitUntil(() => radio.Calls.Contains("Open Rower") && Get(session, "Held") != null, "The machine chosen later was not connected to: " + string.Join(", ", radio.Calls));
+			CollectionAssert.AreEqual(new[] { "Open EJT", "Close EJT", "Open Rower" }, radio.Calls);
+
+			// Let go of: unticked, removed, or x360ce closing.
+			((IDisposable)device).Dispose();
+			Assert.IsNull(Wanted(session), "The device let go of still holds its machine.");
+			WaitUntil(() => Ended(session), "The worker did not end once the device let go.");
+			CollectionAssert.AreEqual(new[] { "Open EJT", "Close EJT", "Open Rower", "Close Rower" }, radio.Calls, "The machine was not let go of.");
+			Assert.IsNull(Get(session, "Held"));
+			Read(device);
+			Assert.IsNull(Wanted(session), "A device let go of connected again.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A device ticked when x360ce starts connects to the machine kept for it, trying again quietly until it connects, and says why meanwhile")]
+		public void A_device_ticked_at_start_connects_to_its_machine_trying_again()
+		{
+			var radio = new FakeRadio();
+			radio.Problems.Enqueue("EJT could not be reached: make sure it is on and nearby.");
+			var session = NewLinkedSession(radio);
+			var device = NewDevice(session);
+			// As the engine gives a new device the values kept for it, before its first read.
+			var store = new PluginSettings();
+			var guid = Guid.NewGuid();
+			store.Set(guid, "Machine", "EJT [A1:B2:C3:D4:E5:F6]");
+			new PluginDeviceReader(Type(), device).ApplySettings(store, guid);
+			Read(device);
+			WaitUntil(() => Status(device, "Connection").EndsWith("Trying again.", StringComparison.Ordinal),
+				"A failed connection does not say so: " + Status(device, "Connection"));
+			Assert.AreEqual("EJT could not be reached: make sure it is on and nearby. Trying again.", Status(device, "Connection"));
+			CollectionAssert.AreEqual(new[] { "Open EJT", "Close EJT" }, radio.Calls, "The link that failed was not let go of.");
+			WaitUntil(() => Get(session, "Held") != null, "The worker did not try again: " + string.Join(", ", radio.Calls), 8000);
+			CollectionAssert.AreEqual(new[] { "Open EJT", "Close EJT", "Open EJT" }, radio.Calls);
+			((IDisposable)device).Dispose();
+			WaitUntil(() => Ended(session), "The worker did not end once the device let go.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
+		[Description("A device x360ce never reads, as the one it makes to learn the plugin's name or the one a tab shows while the device is unticked, never connects")]
+		public void A_device_never_read_never_connects()
+		{
+			var radio = new FakeRadio();
+			var session = NewLinkedSession(radio);
+			var device = NewDevice(session);
+			Set(device, "Machine", "EJT [A1:B2:C3:D4:E5:F6]");
+			Assert.AreEqual("No machine chosen. Press Scan on the Connection page, then select the machine.", Status(NewDevice(NewLinkedSession(radio)), "Connection"));
+			((IDisposable)device).Dispose();
+			Assert.IsNull(Get(session, "_worker"), "A device never read started a worker.");
+			Assert.AreEqual(0, radio.Calls.Length, "A device never read connected.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("engine"), TestCategory("critical")]
+		[Description("The engine reads a Fitness Machine ticked in its controller's list and on the Devices tab, which connects it; unticked in either, removed, or x360ce closing, the engine lets go of it, which disconnects it")]
+		public void Ticking_the_device_connects_and_unticking_disconnects()
+		{
+			var radio = new FakeRadio();
+			var ud = new UserDevice { InstanceGuid = Guid.NewGuid(), ProductGuid = Product, IsEnabled = true };
+			ud.InputSourceType = (int)InputSourceType.Plugin;
+			ud.IsOnline = true;
+			var helper = new DInputHelper();
+			var readers = (ConcurrentDictionary<Guid, PluginDeviceReader>)typeof(DInputHelper)
+				.GetField("_pluginReaders", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(helper);
+			var di = EngineSteps.UpdateDiStates(helper);
+			var ticked = DeviceRouting.Build(Game, new[] { Row(ud.InstanceGuid, MapTo.Controller1) }, new PadSetting[0], new[] { ud });
+			// Each time the device is ticked the engine makes a new one; here, one whose links are fakes.
+			Func<object> tick = () =>
+			{
+				var session = NewLinkedSession(radio);
+				var device = NewDevice(session);
+				Set(device, "Machine", "EJT [A1:B2:C3:D4:E5:F6]");
+				readers[ud.InstanceGuid] = new PluginDeviceReader(Type(), device);
+				di(null, Game, null, ticked);
+				WaitUntil(() => Get(session, "Held") != null, "The device ticked did not connect: " + string.Join(", ", radio.Calls));
+				return session;
+			};
+			var first = tick();
+			// Unticked in the controller's list.
+			var unticked = Row(ud.InstanceGuid, MapTo.Controller1);
+			unticked.IsEnabled = false;
+			di(null, Game, null, DeviceRouting.Build(Game, new[] { unticked }, new PadSetting[0], new[] { ud }));
+			Assert.IsFalse(readers.ContainsKey(ud.InstanceGuid), "The engine did not let go of the device unticked.");
+			WaitUntil(() => Ended(first), "The device unticked did not let go of the machine.");
+			CollectionAssert.AreEqual(new[] { "Open EJT", "Close EJT" }, radio.Calls);
+
+			// Ticked again, then unticked on the Devices tab.
+			var second = tick();
+			ud.IsEnabled = false;
+			di(null, Game, null, DeviceRouting.Build(Game, new[] { Row(ud.InstanceGuid, MapTo.Controller1) }, new PadSetting[0], new[] { ud }));
+			WaitUntil(() => Ended(second), "The device unticked on the Devices tab did not let go of the machine.");
+			ud.IsEnabled = true;
+
+			// Ticked again, then removed from the device list.
+			var third = tick();
+			di(null, Game, null, DeviceRouting.Build(Game, new UserSetting[0], new PadSetting[0], new UserDevice[0]));
+			WaitUntil(() => Ended(third), "The device removed did not let go of the machine.");
+
+			// Ticked again, then x360ce closes: the engine lets go of every device as it ends.
+			var fourth = tick();
+			typeof(DInputHelper).GetMethod("ReleasePluginReaders", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(helper, null);
+			WaitUntil(() => Ended(fourth), "Closing x360ce did not let go of the machine.");
+			CollectionAssert.AreEqual(Enumerable.Repeat(new[] { "Open EJT", "Close EJT" }, 4).SelectMany(x => x).ToArray(), radio.Calls);
 		}
 
 		[TestMethod, TestCategory("plugins")]
 		[Description("The machines heard are listed as the receiver lists them: fitness machines, a name from any advertisement, and every named device with Show all")]
 		public void Machines_heard_are_listed_as_the_receiver_lists_them()
 		{
-			var session = NewSession();
-			Call(session, "Hear", 1UL, "", true, "indoor bike", (short)-78);
+			var scan = Activator.CreateInstance(Internal("FitnessScan"), true);
+			Call(scan, "Hear", 1UL, "", true, "indoor bike", (short)-78);
 			// The name comes in another advertisement, which does not say it is a fitness machine.
-			Call(session, "Hear", 1UL, "EJT", false, "", (short)-70);
-			Call(session, "Hear", 2UL, "Phone", false, "", (short)-60);
-			Call(session, "Hear", 4UL, "", true, "", (short)-90);
-			var rows = ((Array)Call(session, "Machines")).Cast<object>().ToArray();
+			Call(scan, "Hear", 1UL, "EJT", false, "", (short)-70);
+			Call(scan, "Hear", 2UL, "Phone", false, "", (short)-60);
+			Call(scan, "Hear", 4UL, "", true, "", (short)-90);
+			var rows = ((Array)Call(scan, "Machines")).Cast<object>().ToArray();
 			Assert.AreEqual(2, rows.Length, "A device that is not a fitness machine was listed.");
 			Assert.AreEqual("EJT", Get(rows[0], "DisplayName"));
 			Assert.AreEqual("indoor bike", Get(rows[0], "Description"));
-			Assert.AreEqual(-70, Get(rows[0], "Signal"));
+			Assert.AreEqual("-70 dBm", Get(rows[0], "SignalText"));
 			Assert.AreEqual("00:00:00:00:00:04", Get(rows[1], "DisplayName"), "A machine without a name is not shown by its address.");
 			Assert.AreEqual("fitness machine", Get(rows[1], "Description"));
-			Internal("FitnessSession").GetField("_showAll", Any).SetValue(session, true);
-			Call(session, "Hear", 2UL, "Phone", false, "", (short)-60);
-			Call(session, "Hear", 3UL, "", false, "", (short)-60);
-			rows = ((Array)Call(session, "Machines")).Cast<object>().ToArray();
+			Internal("FitnessScan").GetField("_showAll", Any).SetValue(scan, true);
+			Call(scan, "Hear", 2UL, "Phone", false, "", (short)-60);
+			Call(scan, "Hear", 3UL, "", false, "", (short)-60);
+			rows = ((Array)Call(scan, "Machines")).Cast<object>().ToArray();
 			Assert.AreEqual(3, rows.Length, "Show all did not add the named device alone.");
 			Assert.AreEqual("not advertising the fitness service", Get(rows[2], "Description"));
 		}
 
 		[TestMethod, TestCategory("plugins")]
+		[Description("A machine is kept as its name and Bluetooth address, and read back from them, from the address alone, and from nothing else")]
+		public void A_machine_is_kept_by_its_name_and_address()
+		{
+			var want = Internal("FitnessSession").GetNestedType("Want", Any);
+			Func<ulong, string, string> text = (address, name) => (string)want.GetMethod("Text", Any).Invoke(null, new object[] { address, name });
+			Func<string, string> parse = value =>
+			{
+				var read = want.GetMethod("Parse", Any).Invoke(null, new object[] { value });
+				return read == null ? null : ((ulong)Get(read, "Address")).ToString("X12") + " " + Get(read, "Name");
+			};
+			Assert.AreEqual("EJT [A1:B2:C3:D4:E5:F6]", text(Address, "EJT"));
+			Assert.AreEqual("A1:B2:C3:D4:E5:F6", text(Address, "A1:B2:C3:D4:E5:F6"), "A machine without a name repeats its address.");
+			Assert.AreEqual("A1B2C3D4E5F6 EJT", parse("EJT [A1:B2:C3:D4:E5:F6]"));
+			Assert.AreEqual("A1B2C3D4E5F6 Bike [2]", parse(" Bike [2] [a1b2c3d4e5f6] "), "The last brackets do not hold the address.");
+			Assert.AreEqual("A1B2C3D4E5F6 A1:B2:C3:D4:E5:F6", parse("A1:B2:C3:D4:E5:F6"));
+			Assert.IsNull(parse(""));
+			Assert.IsNull(parse("EJT"), "A name alone was read as an address.");
+			Assert.IsNull(parse("ABC"), "A name of hexadecimal letters was read as an address.");
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("ui")]
 		[Description("How often a value changes is the middle of its last gaps once there are three, and a pause does not move it; a value sent again unchanged is no change")]
 		public void An_interval_is_the_middle_of_the_last_gaps()
 		{
@@ -653,7 +893,7 @@ namespace x360ce.Tests
 		{
 			var device = NewDevice();
 			var session = Session(device);
-			Assert.AreEqual("Press Scan to look for fitness machines.", Get(session, "StatusText"));
+			Assert.AreEqual("No machine chosen. Press Scan on the Connection page, then select the machine.", Status(device, "Connection"));
 			Take(device, 0x2AD3, 0x00, 0x0D);
 			Take(device, IndoorBikeDataId, BikeData);
 			var readings = ((Array)Call(session, "Readings")).Cast<object>().Select(x => Get(x, "Name") + " = " + Get(x, "Value")).ToArray();
@@ -662,18 +902,18 @@ namespace x360ce.Tests
 				"Training status = manual mode (quick start)", "Speed = 25.00 km/h", "Cadence = 80 rpm", "Distance = 1234 m", "Resistance = 5",
 				"Power = 150 W", "Heart rate = 120 bpm", "Elapsed time = 0:10:00",
 			}, readings);
-			Call(session, "Note", "Scanning for fitness machines.");
+			Call(session, "Note", "Connected to EJT.");
 			Take(device, 0x2ADA, 0x02, 0x02);
 			Take(device, 0x2ADA, 0x02, 0x02);
 			var log = (string[])Call(session, "Log");
 			Assert.AreEqual(2, log.Length, "A line the same as the last was added again.");
 			StringAssert.Matches(log[0], new Regex(@"^\d\d:\d\d:\d\d  Machine status: paused\.$"));
-			StringAssert.EndsWith(log[1], "  Scanning for fitness machines.");
+			StringAssert.EndsWith(log[1], "  Connected to EJT.");
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("critical")]
-		[Description("Each button and target of the Fitness tab sends the standard FTMS command, one at a time, and its answer reads in words")]
-		public void The_tab_sends_the_standard_commands()
+		[Description("Each button and target of the Connection page sends the standard FTMS command, one at a time, and its answer reads in words")]
+		public void The_connection_page_sends_the_standard_commands()
 		{
 			Func<string, double, byte[]> command = (name, value) => (byte[])Internal("Ftms").GetMethod("Command", Any)
 				.Invoke(null, new object[] { Enum.Parse(Internal("FitnessCommand"), name), value });
@@ -689,39 +929,8 @@ namespace x360ce.Tests
 			var session = NewSession();
 			Assert.IsFalse((bool)Get(session, "Busy"));
 			Call(session, "Send", Enum.Parse(Internal("FitnessCommand"), "Power"), 150.0);
-			Assert.IsTrue((bool)Get(session, "Busy"), "The tab can send another command before the first is answered.");
+			Assert.IsTrue((bool)Get(session, "Busy"), "The page can send another command before the first is answered.");
 			CollectionAssert.AreEqual(new byte[] { 0x05, 150, 0 }, (byte[])Get(Get(session, "_command"), "Bytes"));
-		}
-
-		/// <summary>What a plugin's page asks of x360ce, kept for the test to read.</summary>
-		sealed class FakeHost : IPluginHost
-		{
-			public readonly Dictionary<string, string> Values = new Dictionary<string, string>();
-			public readonly List<string> Calls = new List<string>();
-
-			public void AddDevice(Guid productGuid)
-			{
-				Calls.Add("AddDevice " + productGuid);
-			}
-
-			public void MapDevice(Guid productGuid, int controller)
-			{
-				Calls.Add("MapDevice " + productGuid + " " + controller);
-			}
-
-			public string GetValue(string name)
-			{
-				string value;
-				return Values.TryGetValue(name, out value) ? value : null;
-			}
-
-			public void SetValue(string name, string value)
-			{
-				if (value == null)
-					Values.Remove(name);
-				else
-					Values[name] = value;
-			}
 		}
 
 		/// <summary>Every control inside one, as the AI door walks them: a grid is one control, read by its rows, not by its scroll bars.</summary>
@@ -737,10 +946,16 @@ namespace x360ce.Tests
 			}
 		}
 
-		/// <summary>The Fitness tab of a session of its own, as a test makes it.</summary>
-		static UserControl NewPage(IPluginHost host, object session)
+		/// <summary>A list of machines heard of its own, which reaches no radio while it is not started.</summary>
+		static object NewScan()
 		{
-			return (UserControl)Activator.CreateInstance(Internal("FitnessPage"), Any, null, new object[] { host, session }, null);
+			return Activator.CreateInstance(Internal("FitnessScan"), true);
+		}
+
+		/// <summary>The Connection page of a device, listing the machines of a scan of its own, as a test makes it.</summary>
+		static UserControl NewPage(IPluginDevice device, object scan)
+		{
+			return (UserControl)Activator.CreateInstance(Internal("FitnessConnection"), Any, null, new[] { device, scan }, null);
 		}
 
 		/// <summary>The element of a tree read by the AI door at a path, or null.</summary>
@@ -752,86 +967,88 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
-		[Description("The Fitness tab names every control, keeps Reconnect, lists the machines and values the session holds, greys what cannot be used, connects, maps the device, and reconnects at start to the machine kept")]
-		public void The_fitness_tab_shows_the_session_and_keeps_reconnect()
+		[Description("The Connection page names every control, lists the machines and values, greys what cannot be used, and selecting a machine chooses it for the device, kept as its Machine setting, without connecting by itself")]
+		public void Selecting_a_machine_chooses_it_without_connecting()
 		{
 			Ui.OnUiThread(() =>
 			{
-				var host = new FakeHost();
 				var session = NewSession();
-				using (var page = NewPage(host, session))
+				var device = NewDevice(session);
+				var changed = new List<string>();
+				((System.ComponentModel.INotifyPropertyChanged)device).PropertyChanged += (s, e) => changed.Add(e.PropertyName);
+				var scan = NewScan();
+				Call(scan, "Hear", Address, "EJT", true, "indoor bike", (short)-78);
+				Call(scan, "Hear", RowerAddress, "Rower", true, "rower", (short)-60);
+				using (var page = NewPage(device, scan))
 				{
-					Assert.AreEqual("Fitness", ((IPluginPage)page).PageName);
-					var reconnect = (CheckBox)Get(page, "ReconnectCheckBox");
-					Assert.IsFalse(reconnect.Checked);
-					reconnect.Checked = true;
-					Assert.AreEqual("True", host.GetValue("Reconnect"), "Reconnect was not kept.");
-					reconnect.Checked = false;
-					Assert.AreEqual("False", host.GetValue("Reconnect"));
-					Assert.IsNull(Wanted(session), "The tab connected at start with Reconnect unticked.");
-
-					Call(session, "Hear", Address, "EJT", true, "indoor bike", (short)-78);
+					Assert.AreEqual("Connection", page.Text, "The page is not named Connection.");
 					Call(session, "Take", (ushort)IndoorBikeDataId, BikeData);
 					Call(page, "ShowSession", true);
 					var list = (DataGridView)Get(page, "MachinesDataGridView");
-					CollectionAssert.AreEqual(new[] { "EJT|indoor bike|-78 dBm" },
+					CollectionAssert.AreEqual(new[] { "EJT|indoor bike|-78 dBm", "Rower|rower|-60 dBm" },
 						list.Rows.Cast<DataGridViewRow>().Select(x => string.Join("|", x.Cells.Cast<DataGridViewCell>().Select(c => c.Value))).ToArray());
+					Assert.AreEqual(0, list.SelectedRows.Count, "A machine is selected that nobody chose.");
 					var values = (TableLayoutPanel)Get(page, "ReadingsTableLayoutPanel");
 					Assert.AreEqual("Speed", values.GetControlFromPosition(0, 0).Text);
 					Assert.AreEqual("25.00 km/h", values.GetControlFromPosition(1, 0).Text);
-					var connect = (Button)Get(page, "ConnectButton");
-					Assert.IsFalse(connect.Enabled, "Connect is on with no machine selected.");
-					list.CurrentCell = list.Rows[0].Cells[0];
-					Assert.IsTrue(connect.Enabled, "Connect is off with a machine selected.");
-					Assert.AreEqual("Press Connect to connect to EJT.", ((Label)Get(page, "StatusLabel")).Text);
-					// Greyed, never hidden.
+					Assert.AreEqual("No machine chosen. Press Scan on the Connection page, then select the machine.", ((Label)Get(page, "StatusLabel")).Text);
+					// Greyed, never hidden, while nothing is connected.
 					foreach (var name in new[] { "StartButton", "PauseButton", "StopButton", "ResetButton", "SetPowerButton", "SetResistanceButton", "SetGradeButton", "PowerTrackBar" })
 					{
 						var control = (Control)Get(page, name);
 						Assert.IsFalse(control.Enabled, name + " is on with no machine connected.");
 						Assert.IsTrue(JocysCom.ClassLibrary.Controls.ControlsHelper.IsVisible(control), name + " is hidden, not greyed.");
 					}
-					connect.PerformClick();
-					Assert.AreEqual("A1B2C3D4E5F6 EJT", Wanted(session), "Connect did not connect to the machine selected.");
-					Assert.AreEqual("Disconnect", connect.Text);
-					connect.PerformClick();
-					Assert.IsNull(Wanted(session), "Disconnect did not let go.");
-					((Button)Get(page, "MapButton")).PerformClick();
-					CollectionAssert.AreEqual(new[] { "MapDevice " + Product + " 1" }, host.Calls, "Map to did not map the device to Controller 1.");
+
+					// Selected, the machine is chosen and kept; the device does not connect by itself.
+					list.CurrentCell = list.Rows[0].Cells[0];
+					Assert.AreEqual("EJT [A1:B2:C3:D4:E5:F6]", Get(device, "Machine"), "Selecting the machine did not choose it.");
+					CollectionAssert.AreEqual(new[] { "Machine" }, changed, "x360ce is not told to keep the machine chosen.");
+					Assert.IsNull(Wanted(session), "Selecting a machine connected the device by itself.");
+					StringAssert.StartsWith(((Label)Get(page, "StatusLabel")).Text, "EJT is chosen. x360ce connects to it while this device is ticked");
+					// Read, as while the device is ticked, it connects; another machine chosen replaces it.
+					Read(device);
+					Assert.AreEqual("A1B2C3D4E5F6 EJT", Wanted(session));
+					list.CurrentCell = list.Rows[1].Cells[0];
+					Read(device);
+					Assert.AreEqual("B1B2C3D4E5F6 Rower", Wanted(session), "The machine chosen later was not connected to.");
+
+					// A machine chosen that no scan heard is listed first, selected, so the page always shows it.
+					var fresh = NewScan();
+					using (var other = NewPage(device, fresh))
+					{
+						var rows = ((DataGridView)Get(other, "MachinesDataGridView")).Rows;
+						Assert.AreEqual(1, rows.Count);
+						Assert.AreEqual("Rower|chosen, not heard yet|", string.Join("|", rows[0].Cells.Cast<DataGridViewCell>().Select(c => c.Value)));
+						Assert.IsTrue(rows[0].Selected, "The machine chosen is not selected.");
+					}
 					var unnamed = All(page).Where(x => string.IsNullOrEmpty(x.Name)).Select(x => x.GetType().Name + " in " + x.Parent.Name).ToArray();
 					Assert.AreEqual(0, unnamed.Length, "The AI door cannot reach: " + string.Join(", ", unnamed));
-				}
-				// Ticked, the tab connects at start to the machine kept, quietly.
-				host.SetValue("Reconnect", "True");
-				host.SetValue("LastMachine", "A1:B2:C3:D4:E5:F6");
-				host.SetValue("LastMachineName", "EJT");
-				var started = NewSession();
-				using (var page = NewPage(host, started))
-				{
-					Assert.IsTrue(((CheckBox)Get(page, "ReconnectCheckBox")).Checked);
-					Assert.AreEqual("A1B2C3D4E5F6 EJT quietly", Wanted(started), "The tab did not reconnect at start to the machine kept.");
+					foreach (var gone in new[] { "ConnectButton", "MapButton", "ControllerComboBox", "ReconnectCheckBox" })
+						Assert.AreEqual(0, page.Controls.Find(gone, true).Length, gone + " is still on the page: the Enabled box connects, and the controller page maps.");
 				}
 			});
 		}
 
 		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("accessibility"), TestCategory("critical")]
-		[Description("The AI door reads the Fitness tab's machines as rows, selects one by its index so Connect connects to it, and reads each value by its name")]
-		public void The_ai_door_lists_selects_and_connects_a_machine_and_reads_its_values()
+		[Description("The AI door reads the Connection page's machines as rows, chooses one by its index, and reads each value by its name")]
+		public void The_ai_door_lists_and_chooses_a_machine_and_reads_its_values()
 		{
-			const string table = "FitnessPage/MainTableLayoutPanel/";
+			const string table = "FitnessConnection/MainTableLayoutPanel/";
 			const string list = table + "MachinesDataGridView";
-			const string connectPath = table + "ScanFlowLayoutPanel/ConnectButton";
 			const string values = table + "ReadingsPanel";
 			Ui.OnUiThread(() =>
 			{
 				var session = NewSession();
-				Call(session, "Hear", Address, "EJT", true, "indoor bike", (short)-78);
-				Call(session, "Hear", 0xB1B2C3D4E5F6UL, "Rower", true, "rower", (short)-60);
+				var device = NewDevice(session);
+				var scan = NewScan();
+				Call(scan, "Hear", Address, "EJT", true, "indoor bike", (short)-78);
+				Call(scan, "Hear", RowerAddress, "Rower", true, "rower", (short)-60);
 				// Training status: manual mode, then Indoor Bike Data.
 				Call(session, "Take", (ushort)0x2AD3, new byte[] { 0x00, 0x0D });
 				Call(session, "Take", (ushort)IndoorBikeDataId, BikeData);
 				using (var form = new Form { Name = "Main" })
-				using (var page = NewPage(new FakeHost(), session))
+				using (var page = NewPage(device, scan))
 				{
 					page.Dock = DockStyle.Fill;
 					form.Controls.Add(page);
@@ -848,17 +1065,12 @@ namespace x360ce.Tests
 					Assert.AreEqual("EJT", rows[0].Name, "A machine's row is not named by the machine's name.");
 					Assert.AreEqual("Name: EJT; Type: indoor bike; Signal: -78 dBm", rows[0].Value);
 					Assert.AreEqual("Name: Rower; Type: rower; Signal: -60 dBm", rows[1].Value);
-					var connect = UiTreeWalker.Find(form, connectPath);
-					StringAssert.Contains(UiTreeWalker.Invoke(connect), "disabled", "Connect connects with no machine selected.");
 
-					// ui_set of the list to a row's index selects that machine, and ui_invoke of Connect connects to it.
-					Assert.IsNull(UiTreeWalker.SetValue(grid, "1"), "The door cannot select a machine.");
+					// ui_set of the list to a row's index chooses that machine.
+					Assert.IsNull(UiTreeWalker.SetValue(grid, "1"), "The door cannot choose a machine.");
 					Assert.AreEqual("1", UiTreeWalker.GetValue(grid));
-					Assert.AreEqual("Press Connect to connect to Rower.", UiTreeWalker.GetValue(UiTreeWalker.Find(form, table + "StatusTableLayoutPanel/StatusLabel")));
-					Assert.IsNull(UiTreeWalker.Invoke(connect), "The door cannot press Connect with a machine selected.");
-					Assert.AreEqual("B1B2C3D4E5F6 Rower", Wanted(session), "Connect did not connect to the machine the door selected.");
-					Assert.AreEqual("Disconnect", UiTreeWalker.Read(connect, false, connectPath).Name);
-					StringAssert.Contains(UiTreeWalker.SetValue(grid, "0"), "disabled", "Another machine can be selected while one is held.");
+					Assert.AreEqual("Rower [B1:B2:C3:D4:E5:F6]", Get(device, "Machine"), "The door's selection did not choose the machine.");
+					StringAssert.StartsWith(UiTreeWalker.GetValue(UiTreeWalker.Find(form, table + "StatusTableLayoutPanel/StatusLabel")), "Rower is chosen.");
 
 					// ui_read of the box of values: each value by its name, and how often it changes.
 					var box = UiTreeWalker.Read(UiTreeWalker.Find(form, values), false, values);
@@ -867,16 +1079,88 @@ namespace x360ce.Tests
 					{
 						"Training status = manual mode (quick start)", "Speed = 25.00 km/h", "Cadence = 80 rpm", "Distance = 1234 m", "Resistance = 5",
 						"Power = 150 W", "Heart rate = 120 bpm", "Elapsed time = 0:10:00",
-					}, shown, "The door does not read the values the tab shows.");
+					}, shown, "The door does not read the values the page shows.");
 					var speed = Find(box, values + "/ReadingsTableLayoutPanel/SpeedValueLabel");
 					Assert.IsNotNull(speed, "The speed has no path of its own.");
 					Assert.AreEqual("25.00 km/h", UiTreeWalker.GetValue(UiTreeWalker.Find(form, speed.Path)));
 					Assert.IsNotNull(Find(box, values + "/ReadingsTableLayoutPanel/HeartRateIntervalLabel"), "How often a value changes is out of the door's reach.");
 					Assert.IsFalse(box.Items.Any(x => x.Id.EndsWith("NameLabel", StringComparison.Ordinal)), "A value's caption is listed beside the value that carries its name.");
+				}
+			});
+		}
 
-					// Disconnect, through the door too.
-					Assert.IsNull(UiTreeWalker.Invoke(connect));
-					Assert.IsNull(Wanted(session), "Disconnect did not let go.");
+		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
+		[Description("The device's tab has the Connection page, Properties and Help, in that order; a machine the page chooses is kept for the device; and while the engine reads no device the page shows one of the tab's own, given the kept values, which never connects")]
+		public void Its_tab_has_connection_properties_and_help()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var store = new PluginSettings();
+				var guid = Guid.NewGuid();
+				store.Set(guid, "MaxSpeed", "60");
+				var radio = new FakeRadio();
+				var device = NewDevice(NewLinkedSession(radio));
+				using (var form = new Form { Width = 1100, Height = 700 })
+				using (var panel = new PluginDeviceUserControl(guid, Type(), device, store) { Dock = DockStyle.Fill })
+				{
+					form.Controls.Add(panel);
+					form.Show();
+					var tabs = (TabControl)panel.Controls.Find("PluginTabControl", true).Single();
+					CollectionAssert.AreEqual(new[] { "Connection", "Properties", "Help" }, tabs.TabPages.Cast<TabPage>().Select(x => x.Text).ToArray());
+					Assert.AreSame(device, Get(tabs.TabPages[0].Controls[0], "_device"), "The Connection page shows another device than the one the engine reads.");
+					var help = (RichTextBox)panel.Controls.Find("HelpRichTextBox", true).Single();
+					StringAssert.Contains(help.Text, "Experimental: walk, drive or row in games with a fitness machine.");
+					Assert.AreEqual(0, panel.Controls.Find("DescriptionLabel", true).Length, "The help heads the tab as well as having a page.");
+					// Chosen on the page, kept for the device, as a row of the grid would keep it.
+					Call(device, "Choose", Address, "EJT");
+					Assert.AreEqual("EJT [A1:B2:C3:D4:E5:F6]", store.Get(guid, "Machine"), "The machine chosen is not kept for the device.");
+				}
+				// Unticked, the engine reads none: the page shows an instance of the tab's own, never read.
+				using (var form = new Form { Width = 1100, Height = 700 })
+				using (var panel = new PluginDeviceUserControl(guid, Type(), null, store) { Dock = DockStyle.Fill })
+				{
+					form.Controls.Add(panel);
+					form.Show();
+					var own = (IPluginDevice)panel.Shown;
+					Assert.IsNotNull(own, "The tab shows no device while the engine reads none.");
+					var page = panel.Controls.Find("FitnessConnection", true).Single();
+					Assert.AreSame(own, Get(page, "_device"));
+					Assert.AreEqual("EJT [A1:B2:C3:D4:E5:F6]", Get(own, "Machine"), "The tab's own device was not given the machine kept.");
+					Assert.AreEqual(60.0, Get(own, "MaxSpeed"), "The tab's own device was not given the values kept.");
+					StringAssert.StartsWith(((Label)Get(page, "StatusLabel")).Text, "EJT is chosen. x360ce connects to it while this device is ticked");
+					Assert.IsNull(Get(Get(own, "Session"), "_worker"), "The tab's own device connected.");
+					Call(own, "Choose", RowerAddress, "Rower");
+					Assert.AreEqual("Rower [B1:B2:C3:D4:E5:F6]", store.Get(guid, "Machine"), "A machine chosen while the device is unticked is not kept.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("plugins"), TestCategory("ui"), TestCategory("critical")]
+		[Description("The device's tab made again on a window already shown, with activity in the log, as when the device is ticked while its Connection page is in view, makes its windows without an error, and the log's scroll bar shows")]
+		public void Its_tab_is_made_on_a_shown_window_without_error()
+		{
+			Ui.OnUiThread(() =>
+			{
+				var session = NewSession();
+				var device = NewDevice(session);
+				for (var i = 0; i < 40; i++)
+					Call(session, "Note", "Line " + i + ": Nobody could not be reached: make sure it is on and nearby.");
+				using (var form = new Form { Width = 1100, Height = 700 })
+				{
+					var tabs = new TabControl { Name = "PadTabControl", Dock = DockStyle.Fill };
+					tabs.TabPages.Add(new TabPage("General"));
+					form.Controls.Add(tabs);
+					form.Show();
+					Application.DoEvents();
+					var panel = new PluginDeviceUserControl(Guid.NewGuid(), Type(), device, new PluginSettings()) { Dock = DockStyle.Fill };
+					var tab = new TabPage("Fitness Machine");
+					tab.Controls.Add(panel);
+					tabs.TabPages.Add(tab);
+					tabs.SelectedTab = tab;
+					Application.DoEvents();
+					var log = (TextBox)panel.Controls.Find("LogTextBox", true).Single();
+					Assert.IsTrue(log.IsHandleCreated, "The log has no window.");
+					Assert.AreEqual(ScrollBars.Vertical, log.ScrollBars, "The log's scroll bar does not show while its lines are more than it shows.");
 				}
 			});
 		}

@@ -39,10 +39,12 @@ namespace x360ce.Tests
 		public void After()
 		{
 			Allow(barred);
-			// The name ending in a space is deleted the way it was made, past the path rules.
-			foreach (var file in Directory.GetFiles(folder, "*", SearchOption.AllDirectories))
-				File.Delete(@"\\?\" + file);
-			Directory.Delete(folder, true);
+			// Names ending in a space or a dot are deleted the way they were made, past the path rules.
+			foreach (var file in Directory.GetFiles(@"\\?\" + folder, "*", SearchOption.AllDirectories))
+				File.Delete(file);
+			foreach (var sub in Directory.GetDirectories(@"\\?\" + folder, "*", SearchOption.AllDirectories).OrderByDescending(x => x.Length))
+				Directory.Delete(sub);
+			Directory.Delete(folder);
 		}
 
 		[TestMethod, TestCategory("games"), TestCategory("critical")]
@@ -72,6 +74,26 @@ namespace x360ce.Tests
 			// Made past the path rules, so the name really ends in a space.
 			File.Copy(source, @"\\?\" + Path.Combine(folder, "twin.exe "));
 			Assert.AreEqual(2, Directory.GetFiles(folder, "*.exe").Length, "The folder does not list both names, so this test proves nothing.");
+
+			// The engine is built for any processor, which the scan reads as 32-bit, so it is read on any test host.
+			var masks = new XInputMaskScanner().GetMasks(folder, SearchOption.AllDirectories, false);
+
+			Assert.AreEqual(1, masks.Count, "The file was not scanned once.");
+		}
+
+		[TestMethod, TestCategory("games"), TestCategory("critical")]
+		[Description("A folder whose name ends in a dot, beside the same name without it, does not scan its twin's files twice")]
+		public void A_folder_ending_in_a_dot_beside_its_twin_is_scanned_once()
+		{
+			// Windows opens "game." as "game", so the files of "game" are listed under both names, with the same path;
+			// the second of them ended the scan with "An item with the same key has already been added".
+			var source = typeof(XInputMaskScanner).Assembly.Location;
+			var twin = Path.Combine(folder, "game");
+			Directory.CreateDirectory(twin);
+			File.Copy(source, Path.Combine(twin, "twin.exe"));
+			// Made past the path rules, so the name really ends in a dot.
+			Directory.CreateDirectory(@"\\?\" + twin + ".");
+			Assert.AreEqual(2, Directory.GetDirectories(folder, "game*").Length, "The folder does not list both names, so this test proves nothing.");
 
 			// The engine is built for any processor, which the scan reads as 32-bit, so it is read on any test host.
 			var masks = new XInputMaskScanner().GetMasks(folder, SearchOption.AllDirectories, false);

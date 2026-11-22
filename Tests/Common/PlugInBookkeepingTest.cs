@@ -14,7 +14,9 @@ namespace x360ce.Tests
 	/// controllers first and taken away again afterwards. With a real controller in the first place
 	/// the brief one took the second, the one wanted landed in the third, and the second was left
 	/// empty - so a pad that belongs in XInput 2 could never get there. Some brief ones were left
-	/// behind as well, holding a place until the program ended.
+	/// behind as well, holding a place until the program ended. A free place below a pad's own is held by the plug
+	/// worker instead, only while it is free, by a temporary controller that is taken away once the pad has arrived;
+	/// <see cref="PlacesBelowHeldTest"/> covers it.
 	///
 	/// This is checked by reading the source rather than by running it, because making a controller
 	/// needs the bus driver and a machine with it installed.

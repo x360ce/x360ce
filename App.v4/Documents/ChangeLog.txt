@@ -1,4 +1,4 @@
-﻿## [4.31.16.0] - 2026-11-21
+﻿## [4.31.20.0] - 2026-11-22
 
 - Fixed: Overall Strength is spelt right on the Force Feedback page.
 - Fixed: A controller's SDL page shows its row from x360ce's database.
@@ -7,14 +7,18 @@
 - Fixed: AI assistant searches and tab switches no longer change a controller's values.
 - Fixed: The General tab's small green values line up with their names.
 - Fixed: A copy started with /Profile leaves the usual settings folder untouched.
+- Fixed: A controller tab works when the tabs before it are not used.
+- Fixed: Scanning a game folder no longer stops with an error on odd folder names.
 - Changed: The Mouse page's demo fills the space below the sticks, its mouse starts at the pad's centre, its stick is half the pad's size, and it is greyed out with the page's controls.
 - Changed: The Controller page's tool bar check boxes have a thin edge.
 - Changed: The record icon, as on Remap All, is a plain red dot.
 - Changed: Buttons, lists, boxes and tabs are a little shorter.
 - Changed: The General tab has more room below the bumpers.
+- Changed: A taller window shows more mapped devices.
+- Changed: A plugin device's help is on its own Help page.
 - Added: AI assistant access lists and opens every page, and closes windows.
 - Added: The About page shows the licences of the parts x360ce uses.
-- Added: Fitness tab: an exercise bike drives a controller over Bluetooth. Experimental.
+- Added: Fitness Machine device: an exercise bike drives a controller over Bluetooth. Experimental.
 - Added: A plugin device maps itself as its plugin recommends.
 
 ## [4.30.63.0] - 2026-11-15

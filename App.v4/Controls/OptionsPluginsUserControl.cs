@@ -92,8 +92,7 @@ namespace x360ce.App.Controls
 				Signer = x.Embedded ? "Part of x360ce" : x.Signer ?? "Not signed",
 				// The folder is shown above the list: each row names the file within it.
 				Source = x.Embedded ? "Embedded" : PathHelper.GetRelativePath(manager.Folder.TrimEnd('\\') + "\\", x.Source, false),
-				Reason = x.Reason ?? string.Join(" ", x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)
-					.Concat(x.PageFault == null ? new string[0] : new[] { x.PageFault })),
+				Reason = x.Reason ?? string.Join(" ", x.DeviceTypes.Where(t => t.Faulted).Select(t => t.Name + ": " + t.FaultReason)),
 			}).ToArray();
 		}
 

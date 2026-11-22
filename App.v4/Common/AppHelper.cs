@@ -237,6 +237,13 @@ namespace x360ce.App
 			// The document is Markdown and there is only one copy of it. It becomes what this box
 			// can show here, when it is opened, so nothing has to be generated, committed, or kept
 			// in step with anything else.
+			ShowHelp(box, text);
+		}
+
+		/// <summary>Shows help written in Markdown in a box, in the theme's colours, and again in the new ones whenever the theme changes.</summary>
+		/// <remarks>The program's help documents, and the help a plugin gives its device, are shown through here.</remarks>
+		public static void ShowHelp(System.Windows.Forms.RichTextBox box, string text)
+		{
 			// A click on a link opens its address.
 			x360ce.Engine.MarkdownRtf.Show(box, text, JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl);
 			// The colours are written into the document, so it is written again in the new ones, for as
@@ -783,6 +790,16 @@ namespace x360ce.App
 		/// <summary>The height a table's rows need at a width of the table, as <see cref="RowsHeight(System.Windows.Forms.TableLayoutPanel)"/>.</summary>
 		public static int RowsHeight(System.Windows.Forms.TableLayoutPanel table, int tableWidth)
 		{
+			return RowsHeight(table, tableWidth, false);
+		}
+
+		/// <summary>The height a table's rows need at a width of the table.</summary>
+		/// <param name="content">
+		/// True to count a control that stretches to its row by what it holds (<see cref="ContentHeight"/>) and to leave out a
+		/// hidden one; false to leave out every control that stretches.
+		/// </param>
+		static int RowsHeight(System.Windows.Forms.TableLayoutPanel table, int tableWidth, bool content)
+		{
 			const System.Windows.Forms.AnchorStyles topAndBottom = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom;
 			const System.Windows.Forms.AnchorStyles leftAndRight = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			var rows = 0;
@@ -793,11 +810,17 @@ namespace x360ce.App
 				{
 					if (table.GetRow(control) != row || table.GetRowSpan(control) > 1)
 						continue;
+					if (content && !JocysCom.ClassLibrary.Controls.ControlsHelper.IsVisible(control))
+						continue;
 					var stretches = control.Dock == System.Windows.Forms.DockStyle.None
 						? (control.Anchor & topAndBottom) == topAndBottom
 						: control.Dock != System.Windows.Forms.DockStyle.Top && control.Dock != System.Windows.Forms.DockStyle.Bottom;
 					if (stretches)
+					{
+						if (content)
+							tallest = Math.Max(tallest, ContentHeight(control, CellWidth(table, control, tableWidth)) + control.Margin.Vertical);
 						continue;
+					}
 					// As tall as it is at the width the table gives it: a text stretched across its columns wraps at them.
 					var across = control.Dock != System.Windows.Forms.DockStyle.None || (control.Anchor & leftAndRight) == leftAndRight;
 					var width = control.AutoSize && across ? CellWidth(table, control, tableWidth) : control.Width;
@@ -806,6 +829,41 @@ namespace x360ce.App
 				rows += tallest;
 			}
 			return rows;
+		}
+
+		/// <summary>
+		/// The height a control needs to show what it holds whole, at a width: one that sizes itself, the height it asks for; a
+		/// table, its rows, a control stretched to its row as tall as it needs in turn; a panel or a page, what is docked in it,
+		/// one docked to fill it as tall as it needs; any other, such as a list, a drawing or a control of its own, which takes
+		/// the room it is given, its smallest height. What is hidden needs none.
+		/// </summary>
+		/// <remarks>
+		/// For the room pages that share it need, as a tab strip's pages do, read from what they hold rather than from the
+		/// height they were given. A page the strip does not show is hidden itself, so the control asked about is measured
+		/// whether it is shown or not, and what it holds by whether it is.
+		/// </remarks>
+		public static int ContentHeight(System.Windows.Forms.Control control, int width)
+		{
+			if (control.AutoSize)
+				return control.GetPreferredSize(new Size(Math.Max(0, width), 0)).Height;
+			var table = control as System.Windows.Forms.TableLayoutPanel;
+			if (table != null)
+				return table.Padding.Vertical + RowsHeight(table, width - table.Padding.Horizontal, true);
+			if (control.GetType() != typeof(System.Windows.Forms.Panel) && !(control is System.Windows.Forms.TabPage))
+				return control.MinimumSize.Height;
+			var inside = width - control.Padding.Horizontal;
+			var docked = 0;
+			var filled = 0;
+			foreach (System.Windows.Forms.Control child in control.Controls)
+			{
+				if (!JocysCom.ClassLibrary.Controls.ControlsHelper.IsVisible(child))
+					continue;
+				if (child.Dock == System.Windows.Forms.DockStyle.Top || child.Dock == System.Windows.Forms.DockStyle.Bottom)
+					docked += child.AutoSize ? child.GetPreferredSize(new Size(Math.Max(0, inside), 0)).Height : child.Height;
+				else if (child.Dock != System.Windows.Forms.DockStyle.None)
+					filled = Math.Max(filled, ContentHeight(child, inside));
+			}
+			return control.Padding.Vertical + docked + filled;
 		}
 
 		/// <summary>

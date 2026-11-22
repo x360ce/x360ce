@@ -368,15 +368,14 @@ namespace x360ce.App.DInput
 
 		bool MakeDecoy(XInputReorderPlan.Step step)
 		{
-			var decoy = new Xbox360Controller(Nefarius.ViGEm.Client.ViGEmClient.Current);
 			Arriving();
+			Xbox360Controller decoy;
 			try
 			{
-				decoy.Connect();
+				decoy = Nefarius.ViGEm.Client.ViGEmClient.Current.PlugTemporary();
 			}
 			catch (Exception ex)
 			{
-				decoy.Dispose();
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 				return Fail(string.Format("{0} failed: the bus would not make it. {1}", step, ex.Message));
 			}
@@ -392,15 +391,13 @@ namespace x360ce.App.DInput
 			_decoys.Remove(step.Decoy);
 			try
 			{
-				decoy.Disconnect();
+				Nefarius.ViGEm.Client.ViGEmClient.UnplugTemporary(decoy);
 			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				decoy.Dispose();
 				return Fail(string.Format("{0} failed: the bus would not let go of it. {1}", step, ex.Message));
 			}
-			decoy.Dispose();
 			return Done(step);
 		}
 

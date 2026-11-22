@@ -2,9 +2,10 @@
 .SYNOPSIS
     Builds each plugin in this folder into one DLL.
 .DESCRIPTION
-    A plugin is a folder holding one .cs file named like it: MyDevice\MyDevice.cs. Each is built with
-    dotnet build into Output\MyDevice\MyDevice.dll, the layout of the Plugins folder in the x360ce
-    settings folder, so a built plugin's folder is copied there whole. Needs the .NET SDK 10 or newer.
+    A plugin is a folder holding one .cs file named like it: MyDevice\MyDevice.cs, which can take in
+    other files of the folder with #:include lines at its top. Each is built with dotnet build into
+    Output\MyDevice\MyDevice.dll, the layout of the Plugins folder in the x360ce settings folder, so a
+    built plugin's folder is copied there whole. Needs the .NET SDK 10 or newer.
 .PARAMETER Output
     The folder the plugins' folders are written into. Default: bin beside this script.
 .PARAMETER Configuration

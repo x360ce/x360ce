@@ -637,6 +637,13 @@ namespace x360ce.App.DInput
 			return string.Format("Virtual {0} (waiting)", pad);
 		}
 
+		/// <summary>How a place kept free reads in the order list.</summary>
+		/// <param name="place">The place, counting from zero.</param>
+		public static string FreePlace(int place)
+		{
+			return string.Format("Free {0}", place + 1);
+		}
+
 		/// <summary>How the places a device reaches read to a person, as one line.</summary>
 		/// <remarks>
 		/// A device can reach a game in more than one place at once, and by two different routes. It

@@ -149,7 +149,9 @@ namespace x360ce.App.Controls
 				var index = DevicesDataGridView.Rows.Add(
 					i > 0 ? Properties.Resources.nav_up_32x32 : null,
 					i < _entries.Count - 1 ? Properties.Resources.nav_down_32x32 : null,
-					entry.Waiting
+					entry.Free
+						? XInputPlaces.FreePlace(entry.Place)
+						: entry.Waiting
 						? XInputPlaces.Waiting(entry.Pad)
 						: XInputPlaces.Describe(entry.Place, entry.IsVirtual, entry.IsOurs),
 					entry.Controller > 0 ? string.Format("Controller {0}", entry.Controller) : "",

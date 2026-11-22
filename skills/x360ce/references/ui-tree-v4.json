@@ -1,8 +1,8 @@
 {
 	"Name":"X360 Controller Emulator",
 	"Role":"Program",
-	"Version":"4.31.16.0",
-	"Built":"2026-11-21",
+	"Version":"4.31.20.0",
+	"Built":"2026-11-22",
 	"Items":[
 		{
 			"Name":"Controls",
@@ -1236,122 +1236,120 @@
 										{
 											"Name":"Press points",
 											"Description":"For each button mapped to a stick or pedal, how far it must move to count as pressed.",
-											"Role":"Section",
-											"Id":"AxisToButtonGroupBox",
-											"Items":[
-												{
-													"Name":"A Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonADeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"B Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonBDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"X Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonXDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Y Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonYDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Left Bumper press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToLeftShoulderDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Back press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonBackDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Start press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToButtonStartDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"D-Pad Up press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToDPadUpDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Right Bumper press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToRightShoulderDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"D-Pad Down press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToDPadDownDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Left Stick Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToLeftThumbButtonDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"Right Stick Button press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToRightThumbButtonDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"D-Pad Left press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToDPadLeftDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												},
-												{
-													"Name":"D-Pad Right press point",
-													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
-													"Role":"Group",
-													"Id":"AxisToDPadRightDeadZonePanel",
-													"Type":"AxisToButtonUserControl",
-													"SameAs":"AxisToButtonUserControl"
-												}
-											]
+											"Role":"Label",
+											"Id":"AxisToButtonNoteLabel"
+										},
+										{
+											"Name":"A Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonADeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"B Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonBDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"X Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonXDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Y Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonYDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Left Bumper press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToLeftShoulderDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Back press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonBackDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Start press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToButtonStartDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"D-Pad Up press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToDPadUpDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Right Bumper press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToRightShoulderDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"D-Pad Down press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToDPadDownDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Left Stick Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToLeftThumbButtonDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"Right Stick Button press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToRightThumbButtonDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"D-Pad Left press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToDPadLeftDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
+										},
+										{
+											"Name":"D-Pad Right press point",
+											"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+											"Role":"Group",
+											"Id":"AxisToDPadRightDeadZonePanel",
+											"Type":"AxisToButtonUserControl",
+											"SameAs":"AxisToButtonUserControl"
 										}
 									]
 								},
@@ -2030,14 +2028,8 @@
 					"Role":"Control",
 					"Items":[
 						{
-							"Name":"Database versions",
-							"Description":"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, and how many Windows rows each holds; and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.",
-							"Role":"Label",
-							"Id":"VersionLabel"
-						},
-						{
-							"Name":"The device's rows",
-							"Description":"Whether x360ce's and SDL's controller databases know the selected device, its name there and where the row is from, which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.",
+							"Name":"Databases and the device's rows",
+							"Description":"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.",
 							"Role":"Label",
 							"Id":"DeviceLabel"
 						},

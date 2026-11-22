@@ -1354,47 +1354,163 @@ namespace x360ce.App.DInput
 				_heldAtChange[own] = change;
 				return client.HasKept(userIndex) ? VirtualError.RemovalRefused : VirtualError.PlaceTaken;
 			}
-			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
-			// was not before is ours, which is the only way of knowing that does not rest on reading a
-			// number off a name and hoping it means what it looks like.
-			var padsBefore = XInputPlaces.VirtualHardwareNow();
-			VIGEM_ERROR plugError;
-			if (!client.PlugIn(userIndex, out plugError))
+			// The places as they were before anything was made, which a pad held back waits to see change.
+			var mask = PlacesMask(before);
+			// The places as this plug fills them, so a temporary controller's place is not taken for this one's.
+			var placed = (bool[])before.Clone();
+			var fillers = new List<Xbox360Controller>();
+			var fillerPlaces = new List<int>();
+			var fillersMade = System.Diagnostics.Stopwatch.StartNew();
+			try
 			{
-				// What the bus said, so the Issues tab can name it. A refusal without an answer leaves the
-				// last one standing rather than wiping it.
-				if (plugError != VIGEM_ERROR.VIGEM_ERROR_NONE)
-					BusErrors[own] = plugError;
-				return VirtualError.Other;
+				// Windows gives a new controller the lowest free place, so with a place below its own free this one would
+				// land there. Each such place is held first by a temporary controller, lowest first, and once this one has
+				// arrived they go; the places stay as they are. A temporary one put in this one's own place or above it
+				// means Windows is not giving out the lowest free place, and this one could not reach its own either.
+				while (FirstFreeBelow(placed, own) >= 0)
+				{
+					try
+					{
+						fillers.Add(client.PlugTemporary());
+					}
+					catch (ViGEmException ex)
+					{
+						BusErrors[own] = ex.Code;
+						return VirtualError.Other;
+					}
+					bool fillerAnswered;
+					var filled = WaitForPlace(placed, out fillerAnswered);
+					if (filled >= 0)
+						fillerPlaces.Add(filled);
+					if (filled < 0 || filled >= own)
+					{
+						var fillerHeldAs = !fillerAnswered ? VirtualError.NotAnswering : filled < 0 ? VirtualError.PlaceNotGiven : VirtualError.PlaceWrong;
+						return HoldBack(own, mask, filled, fillerHeldAs);
+					}
+					placed[filled] = true;
+				}
+				// Which controllers are on the bus before we ask for one. The one that is there afterwards and
+				// was not before is ours, which is the only way of knowing that does not rest on reading a
+				// number off a name and hoping it means what it looks like.
+				var padsBefore = XInputPlaces.VirtualHardwareNow();
+				VIGEM_ERROR plugError;
+				if (!client.PlugIn(userIndex, out plugError))
+				{
+					// What the bus said, so the Issues tab can name it. A refusal without an answer leaves the
+					// last one standing rather than wiping it.
+					if (plugError != VIGEM_ERROR.VIGEM_ERROR_NONE)
+						BusErrors[own] = plugError;
+					return VirtualError.Other;
+				}
+				// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
+				// controller, which is not the same as Windows having given it the place we need.
+				bool answered;
+				var place = WaitForPlace(placed, out answered);
+				// Kept only in its own place. Windows cannot be asked for one, and anywhere else it holds
+				// another tab's place. The places it saw are kept, so it is not tried again until they change.
+				if (place != own)
+				{
+					// Once the bus lets it go, what its game asked for there goes too, dropped when this plug is taken in.
+					// Only ever set here, never cleared, so a controller replaced above still has its game's force dropped.
+					_takenAgain[own] |= client.UnPlug(userIndex);
+					// XInput said nothing for the whole wait, so where it went is not known and the bus is not to blame: said as
+					// XInput not answering. Held back all the same: made again at once, it would be made and taken away for as
+					// long as Windows keeps XInput silent over each new controller. Each held attempt says what this one found.
+					var heldAs = !answered ? VirtualError.NotAnswering : place < 0 ? VirtualError.PlaceNotGiven : VirtualError.PlaceWrong;
+					return HoldBack(own, mask, place, heldAs);
+				}
+				// In its own place, so the temporary controllers have done their work, and go before anything slower.
+				TakeAwayFillers(userIndex, fillers, fillerPlaces, fillersMade);
+				// Written down now, while it is certain. Nothing reports where a controller was put,
+				// so the only moment the answer exists is the moment it arrives.
+				var appeared = XInputPlaces.VirtualHardwareNow();
+				appeared.ExceptWith(padsBefore);
+				// Exactly one should have appeared. None means Windows has not finished building it yet, and
+				// more than one means somebody else made theirs in the same moment - neither can be claimed.
+				RememberOurPlace(userIndex, place, appeared.Count == 1 ? appeared.First() : null);
+				_misplacedWith[own] = -1;
+				return VirtualError.None;
 			}
-			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
-			// controller, which is not the same as Windows having given it the place we need.
-			bool answered;
-			var place = WaitForPlace(before, out answered);
-			// Kept only in its own place. Windows cannot be asked for one, and anywhere else it holds
-			// another tab's place. The places it saw are kept, so it is not tried again until they change.
-			if (place != own)
+			finally
 			{
-				// Once the bus lets it go, what its game asked for there goes too, dropped when this plug is taken in.
-				// Only ever set here, never cleared, so a controller replaced above still has its game's force dropped.
-				_takenAgain[own] |= client.UnPlug(userIndex);
-				_misplacedWith[own] = PlacesMask(before);
-				MisplacedIn[own] = place;
-				// XInput said nothing for the whole wait, so where it went is not known and the bus is not to blame: said as
-				// XInput not answering. Held back all the same: made again at once, it would be made and taken away for as
-				// long as Windows keeps XInput silent over each new controller. Each held attempt says what this one found.
-				_heldAs[own] = !answered ? VirtualError.NotAnswering : place < 0 ? VirtualError.PlaceNotGiven : VirtualError.PlaceWrong;
-				return _heldAs[own];
+				TakeAwayFillers(userIndex, fillers, fillerPlaces, fillersMade);
 			}
-			// Written down now, while it is certain. Nothing reports where a controller was put,
-			// so the only moment the answer exists is the moment it arrives.
-			var appeared = XInputPlaces.VirtualHardwareNow();
-			appeared.ExceptWith(padsBefore);
-			// Exactly one should have appeared. None means Windows has not finished building it yet, and
-			// more than one means somebody else made theirs in the same moment - neither can be claimed.
-			RememberOurPlace(userIndex, place, appeared.Count == 1 ? appeared.First() : null);
-			_misplacedWith[own] = -1;
-			return VirtualError.None;
+		}
+
+		/// <summary>The lowest free place below a pad's own, or -1 when every place below it is taken.</summary>
+		/// <remarks>
+		/// Windows gives a new controller the lowest free place, so this is where a controller made now lands, and the place
+		/// a temporary controller must hold first for the pad's own to arrive in its own place. With none, the pad needs none.
+		/// </remarks>
+		/// <param name="taken">Which places XInput reports a controller in.</param>
+		/// <param name="own">The pad's own place, 0 to 3.</param>
+		public static int FirstFreeBelow(bool[] taken, int own)
+		{
+			for (var place = 0; place < own && place < taken.Length; place++)
+				if (!taken[place])
+					return place;
+			return -1;
+		}
+
+		/// <summary>The places below a pad's own that a temporary controller holds while the pad's controller arrives, lowest first.</summary>
+		/// <param name="taken">Which places XInput reports a controller in.</param>
+		/// <param name="own">The pad's own place, 0 to 3.</param>
+		public static int[] PlacesToHold(bool[] taken, int own)
+		{
+			var held = (bool[])taken.Clone();
+			var places = new List<int>();
+			for (var place = FirstFreeBelow(held, own); place >= 0; place = FirstFreeBelow(held, own))
+			{
+				places.Add(place);
+				held[place] = true;
+			}
+			return places.ToArray();
+		}
+
+		/// <summary>Holds a pad back until the places change, saying what this plug found.</summary>
+		/// <param name="own">The pad, 0 to 3.</param>
+		/// <param name="mask">The places taken when the plug began, one bit each.</param>
+		/// <param name="place">Where Windows put the controller this plug made last, or -1 for nowhere.</param>
+		/// <param name="heldAs">What the plug came to: PlaceWrong, PlaceNotGiven or NotAnswering.</param>
+		VirtualError HoldBack(int own, int mask, int place, VirtualError heldAs)
+		{
+			_misplacedWith[own] = mask;
+			MisplacedIn[own] = place;
+			_heldAs[own] = heldAs;
+			return heldAs;
+		}
+
+		/// <summary>Takes away the temporary controllers a plug made, and says once, in the log and a running recording, which places they held and for how long.</summary>
+		/// <param name="userIndex">The pad they were made for, 1 to 4.</param>
+		/// <param name="fillers">The plug's temporary controllers, emptied here.</param>
+		/// <param name="places">Where Windows put each one that was seen, counting from zero; emptied here.</param>
+		/// <param name="made">Started as the first was asked for.</param>
+		/// <remarks>Runs on the plug worker. A game running meanwhile sees a controller come and go in each of those places.</remarks>
+		void TakeAwayFillers(uint userIndex, List<Xbox360Controller> fillers, List<int> places, System.Diagnostics.Stopwatch made)
+		{
+			if (fillers.Count == 0)
+				return;
+			foreach (var filler in fillers)
+			{
+				try
+				{
+					ViGEmClient.UnplugTemporary(filler);
+				}
+				catch (ViGEmException ex)
+				{
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				}
+			}
+			var text = string.Format("Controller {0}: {1} temporary controller{2} held {3} for {4} ms, for its virtual "
+				+ "controller to arrive in XInput {0}, and {5} taken away.", userIndex, fillers.Count, fillers.Count == 1 ? "" : "s",
+				places.Count == 0 ? "no place" : "XInput " + string.Join(" and ", places.Select(x => (x + 1).ToString()).ToArray()),
+				made.ElapsedMilliseconds, fillers.Count == 1 ? "was" : "were");
+			fillers.Clear();
+			places.Clear();
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(text, System.Diagnostics.TraceLevel.Info);
+			var recording = Recording;
+			if (recording != null)
+				recording.Note(text);
 		}
 
 		/// <summary>Plugs this pad's controller in while controllers are put in order, without asking XInput where it went.</summary>

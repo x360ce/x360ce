@@ -329,6 +329,41 @@ namespace x360ce.Tests
 			CollectionAssert.AreEqual(new[] { "c1", "xbox", "c3" }, Ids(XInputReorderPlan.ByController(found)));
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Auto-Order keeps the place of a tab that makes no controller free, so a tab after it is already in order in its own place")]
+		public void Auto_order_keeps_an_unused_tabs_place_free()
+		{
+			// As reported: nothing on Controller 1, and Controller 2's controller in XInput 2. Moved up into XInput 1, it was
+			// refused with "can only take XInput 2", and Auto-Order did nothing.
+			var ordered = XInputReorderPlan.ByController(new[] { Ours("c2", 1, 2) });
+			CollectionAssert.AreEqual(new[] { XInputPlaces.FreePlace(0), "c2" }, Ids(ordered));
+			Assert.IsTrue(ordered[0].Free, "The unused tab's place is not kept free.");
+			Assert.AreEqual(1, ordered[0].Controller, "The free place does not name Controller 1.");
+			var plan = XInputReorderPlan.For(ordered);
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			Assert.AreEqual(0, plan.Steps.Count, "An order already right was changed:" + System.Environment.NewLine + plan);
+			// Controllers 2 and 4, each in its own place, with XInput 1 and 3 free.
+			var two = XInputReorderPlan.ByController(new[] { Ours("c4", 3, 4), Ours("c2", 1, 2) });
+			CollectionAssert.AreEqual(new[] { XInputPlaces.FreePlace(0), "c2", XInputPlaces.FreePlace(2), "c4" }, Ids(two));
+			Assert.AreEqual(0, XInputReorderPlan.For(two).Steps.Count, "Controllers 2 and 4 in their own places were moved.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A tab waiting while the place below it is free is made in its own place, and nothing acts on the free place")]
+		public void A_waiting_tab_after_a_free_place_is_made_in_its_own_place()
+		{
+			var ordered = XInputReorderPlan.ByController(new[] { Waiting(2) });
+			var plan = XInputReorderPlan.For(ordered);
+			Assert.IsNull(plan.Refusal, plan.Refusal);
+			Assert.IsFalse(plan.Steps.Any(s => s.HardwareId == XInputPlaces.FreePlace(0)), "A step acts on the free place:" + System.Environment.NewLine + plan);
+			Assert.IsFalse(plan.NeedsElevation, "A plan with no real controller asks for Administrator.");
+			var made = plan.Steps.Single(s => s.Kind == Kind.CreateVirtual);
+			Assert.AreEqual(2, made.Pad);
+			Assert.AreEqual(1, made.ExpectedPlace, "Controller 2 is not expected in XInput 2.");
+			Assert.AreEqual(plan.Steps.Count(s => s.Kind == Kind.CreateDecoy), plan.Steps.Count(s => s.Kind == Kind.RemoveDecoy),
+				"A temporary controller is left in the free place:" + System.Environment.NewLine + plan);
+		}
+
 		[TestMethod, TestCategory("devices")]
 		[Description("Auto-Order leaves real controllers in their order when no tab makes a controller")]
 		public void Auto_order_without_virtual_controllers_changes_nothing()

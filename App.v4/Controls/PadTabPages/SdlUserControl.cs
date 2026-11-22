@@ -37,7 +37,6 @@ namespace x360ce.App.Controls
 				ColumnCount = 1,
 			};
 			MainTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-			VersionLabel = NewLabel(nameof(VersionLabel));
 			DeviceLabel = NewLabel(nameof(DeviceLabel));
 			PositionsDataGridView = new DataGridView
 			{
@@ -86,7 +85,6 @@ namespace x360ce.App.Controls
 				WrapContents = true,
 			};
 			buttons.Controls.AddRange(new Control[] { ApplyButton, CopyButton, UpdateButton });
-			AddRow(VersionLabel);
 			AddRow(DeviceLabel);
 			AddRow(PositionsDataGridView, 100F);
 			AddRow(buttons);
@@ -98,7 +96,7 @@ namespace x360ce.App.Controls
 		}
 
 		readonly TableLayoutPanel MainTableLayoutPanel;
-		public readonly Label VersionLabel;
+		/// <summary>Which copies of the databases are in use, and what they say about the device.</summary>
 		public readonly Label DeviceLabel;
 		public readonly DataGridView PositionsDataGridView;
 		public readonly Button ApplyButton;
@@ -190,7 +188,9 @@ namespace x360ce.App.Controls
 			_checksum = checksum;
 			_database = database;
 			_x360ceDatabase = x360ceDatabase;
-			ControlsHelper.SetText(VersionLabel, "x360ce's controller database: " + x360ceDatabase.Describe() + ". SDL controller database: " + database.Describe() + ".");
+			// Each database is named with the copies of it in use.
+			var x360ceNamed = "x360ce's database (" + x360ceDatabase.Describe() + ")";
+			var sdlNamed = "SDL's database (" + database.Describe() + ")";
 			var device = SdlDevice.From(ud);
 			SdlMapping mapping = null;
 			string text;
@@ -199,38 +199,36 @@ namespace x360ce.App.Controls
 			var recommended = AutoMapHelper.GetPluginMapping(ud);
 			Translation = pad ? X360ceDatabase.AutoMapping(device, true, x360ceDatabase, database) : recommended;
 			if (ud == null)
-				text = "Select a device on this controller to see what x360ce's and SDL's controller databases say about it.";
+				text = x360ceNamed + " and " + sdlNamed + " are in use. Select a device on this controller to see what they say about it.";
 			else if (recommended != null)
-				text = "Its plugin recommends a mapping for it, and Auto Preset fills it from this row: " + recommended.Mapping
+				text = x360ceNamed + " and " + sdlNamed + " describe game controllers, not this device."
+					+ " Its plugin recommends a mapping for it, and Auto Preset fills it from this row: " + recommended.Mapping
 					+ (recommended.Skipped.Count > 0 ? " " + recommended.SkippedText() : "");
 			else if (!pad)
-				text = "The controller databases describe game controllers, not keyboards, mice or plugin devices.";
+				text = x360ceNamed + " and " + sdlNamed + " describe game controllers, not keyboards, mice or plugin devices.";
 			else
 			{
 				mapping = database.Find(device);
 				var row = Translation == null ? null : Translation.X360ceRow;
+				var sdlKnows = mapping == null ? null : string.Format(CultureInfo.InvariantCulture, "{0} knows it as \"{1}\" ({2}{3})",
+					sdlNamed, mapping.Name, mapping.Guid.Text, Where(database, mapping, ", {0}"));
 				if (Translation == null && mapping != null)
-					text = string.Format(CultureInfo.InvariantCulture,
-						"SDL knows this controller as \"{0}\" ({1}, {2}), but its row maps none of this device's controls, so Auto Preset guesses its mapping.",
-						mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+					text = x360ceNamed + " has no row for this controller. " + sdlKnows
+						+ ", but its row maps none of this device's controls, so Auto Preset guesses its mapping.";
 				else if (Translation == null)
 					text = string.Format(CultureInfo.InvariantCulture,
-						"Neither x360ce's controller database nor SDL's has a row for this controller ({0}), so Auto Preset guesses its mapping. [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB.",
-						Ids(device));
+						"Neither {0} nor {1} has a row for this controller ({2}), so Auto Preset guesses its mapping."
+						+ " [Copy as SDL] writes a row for it, to share with SDL_GameControllerDB.",
+						x360ceNamed, sdlNamed, Ids(device));
 				else if (row == null)
-					text = string.Format(CultureInfo.InvariantCulture,
-						"SDL knows this controller as \"{0}\" ({1}, {2}), and Auto Preset fills it from this row.",
-						mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+					text = x360ceNamed + " has no row for this controller. " + sdlKnows + ", and Auto Preset fills it from that row.";
 				else
 				{
-					text = string.Format(CultureInfo.InvariantCulture,
-						"x360ce's controller database knows this controller as \"{0}\" ({1} people use its setting, {2}), ",
-						row.Name, X360ceDatabase.Users(row), Where(x360ceDatabase.SourceOf(row)));
+					text = string.Format(CultureInfo.InvariantCulture, "{0} knows this controller as \"{1}\"{2}, used by {3} people",
+						x360ceNamed, row.Name, Where(x360ceDatabase, row, " ({0})"), X360ceDatabase.Users(row));
 					text += mapping == null
-						? "and Auto Preset fills it from this row. SDL's controller database has no row for it."
-						: string.Format(CultureInfo.InvariantCulture,
-							"and SDL's as \"{0}\" ({1}, {2}). Auto Preset fills it from x360ce's row, and from SDL's where x360ce's maps nothing, as From says.",
-							mapping.Name, mapping.Guid.Text, Where(database.SourceOf(mapping)));
+						? ", and Auto Preset fills it from that row. " + sdlNamed + " has no row for it."
+						: "; " + sdlKnows + ". Auto Preset fills from x360ce's row and takes SDL's where x360ce's maps nothing; From shows which.";
 				}
 			}
 			if (pad)
@@ -261,18 +259,27 @@ namespace x360ce.App.Controls
 				: "no vendor or product id";
 		}
 
-		/// <summary>Where a row came from, in words.</summary>
-		static string Where(SdlSource source)
+		/// <summary>
+		/// Which copy of a database a row came from, in words, as "from the downloaded copy", put into a format; empty when the
+		/// database is one copy, which the page names already.
+		/// </summary>
+		/// <param name="database">The database the row is in.</param>
+		/// <param name="mapping">The row.</param>
+		/// <param name="format">Where the words go, as ", {0}".</param>
+		static string Where(SdlDatabase database, SdlMapping mapping, string format)
 		{
-			if (source == null)
+			var source = database.SourceOf(mapping);
+			if (source == null || database.Sources.Count < 2)
 				return "";
+			string where;
 			switch (source.Kind)
 			{
-				case SdlSourceKind.Downloaded: return "from the downloaded database";
-				case SdlSourceKind.File: return "from " + SdlDatabase.FileName + " in the settings folder";
-				case SdlSourceKind.Environment: return "from " + SdlDatabase.EnvironmentVariable;
-				default: return "from the built-in database";
+				case SdlSourceKind.Downloaded: where = "from the downloaded copy"; break;
+				case SdlSourceKind.File: where = "from " + SdlDatabase.FileName + " in the settings folder"; break;
+				case SdlSourceKind.Environment: where = "from " + SdlDatabase.EnvironmentVariable; break;
+				default: where = "from the built-in copy"; break;
 			}
+			return string.Format(CultureInfo.InvariantCulture, format, where);
 		}
 
 		/// <summary>Shows an answer under the buttons, in a row that is there only while it holds one.</summary>

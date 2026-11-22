@@ -60,7 +60,7 @@ A few devices do not tell Windows what their controls are, so Windows does not l
 
 ## Plugin devices
 
-A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. So is the Fitness Machine, which reads an exercise bike, treadmill, rower or cross trainer over Bluetooth from its own `[Fitness]` tab: see "An exercise bike as a controller" below. A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[MCP Server]` for a device with an MCP server of its own. A plugin can recommend how its device is mapped: the device put on a controller tab, and `[Auto Preset]`, fill the tab from it, and the `[SDL]` page shows it. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](Help.Plugins.md).
+A plugin adds a device x360ce cannot read by itself, or one that exists only in code; its rows say `Plugin` in the `Source` column. The Test Controller, a pretend controller that moves by itself for trying a mapping without hardware, is a plugin inside x360ce: `[Devices]` tab → `[Add Plugin Device]` adds one. So is the Remote MCP Controller, whose controls a program or an AI assistant sets over MCP, through x360ce's own AI assistant access or an MCP server of its own that its tab opens. So is the Fitness Machine, which reads an exercise bike, treadmill, rower or cross trainer over Bluetooth: see "An exercise bike as a controller" below. A plugin device has a tab of its own on the controller page it is mapped to, with a page for each part: the plugin's own control, `[MCP Server]` for a device with an MCP server of its own, `[Properties]`, its settings in a grid like Visual Studio's Properties window, and `[Help]`, what the plugin says about the device. A plugin can recommend how its device is mapped: the device put on a controller tab, and `[Auto Preset]`, fill the tab from it, and the `[SDL]` page shows it. Other plugins load from the `Plugins` folder of the x360ce data folder, each from a folder of its own; `[Options]` tab → `[Plugins]` lists every plugin found and why any did not load. Writing a plugin, one `.cs` file: [Help.Plugins](Help.Plugins.md).
 
 ## One device on several controller tabs
 
@@ -195,6 +195,12 @@ Each tab owns one of the four XInput places, and the place never moves: `[Contro
 is XInput 1. Three things can be in it - the controller this program makes, a real
 controller you plugged in, or nothing.
 
+A tab works without the tabs before it. Windows gives a new controller the lowest free
+place, so while a place below a tab's own is free, the program holds it for a moment with a
+temporary controller, until the tab's controller has arrived in its own place, and then takes
+the temporary one away. A game already running may see a controller come and go in that
+place. A temporary controller is never sent any input.
+
 | Half | Colour | Meaning |
 | --- | --- | --- |
 | Left (your device) | Green | A device mapped here is connected. |
@@ -226,7 +232,8 @@ another of this program's own virtual controllers, or a virtual controller this 
 not make, such as one from DS4Windows or one left behind, which the `[Devices]` page lists
 as Leftover. Until its place is free, the `[Devices]` page lists the tab's own controller as
 `Virtual N (waiting)`. `[Auto-Order]` on the `[Devices]` page moves a real controller or another of
-this program's own virtual controllers out of the way; a Leftover has to be removed with
+this program's own virtual controllers out of the way, and lists the place of a tab that makes no
+controller as `Free N`; a Leftover has to be removed with
 `[Remove Leftover Pads]` on the same page instead. While a tab waits, its controller picture
 stays grey: the controller in its place is not the tab's own.
 
@@ -382,13 +389,15 @@ with care and at your own risk.
 
 An exercise bike, treadmill, rower or cross trainer that uses Bluetooth's standard Fitness Machine Service, as most
 smart bikes and trainers do, can drive a game: pedal to drive a car, or to run on foot, as in GTA. x360ce reads it with
-its Fitness Machine plugin, on Windows 10 or later, from the `[Fitness]` tab.
+its Fitness Machine plugin, on Windows 10 or later. The device's tab on the controller page, `[Fitness Machine]`, has
+three pages: `[Connection]` finds the machine, `[Properties]` holds its settings and what it reads now, and `[Help]`
+explains every axis, slider and button.
 
 1. Turn the machine on, and Bluetooth on the computer.
-2. On the `[Fitness]` tab click `[Scan]`, select the machine, and click `[Connect]`. If it asks to pair, accept only if both show the same number. Its values appear on the right, and `[Start]`, `[Pause]` and the target `[Set]` buttons send it standard commands. As it connects, a `Fitness Machine 1` device is added to the `[Devices]` tab.
-3. Choose a controller beside `[Map to]` and click `[Map to]`. That fills the triggers, as `[Auto Preset]` does: `[Right Trigger]` takes `Axis 1`, your speed forward, and `[Left Trigger]` takes `Axis 2`, your speed in reverse. At `[Max speed (km/h)]` a trigger is pressed all the way. To walk or run on foot, map `[Left Thumb Axis Y]` to `IAxis 3`. The device's settings are on the controller page's `[Fitness Machine]` tab, under `[Properties]`.
-4. Tick `[Reconnect to the last machine when x360ce starts]`, and x360ce connects to it by itself when it starts, trying again until it connects or you click `[Disconnect]`.
-5. `[Disconnect]` lets go of the machine, and so does unticking the device on the `[Devices]` tab, taking it off every controller, or closing x360ce; the machine goes back to the level you set on it. A device read again connects again to the machine connected last.
+2. On a controller tab click `[Add...]`, select `Fitness Machine` and click `[Add Selected Device]`. That fills the triggers, as `[Auto Preset]` does: `[Right Trigger]` takes `Axis 1`, your speed forward, and `[Left Trigger]` takes `Axis 2`, your speed in reverse. At `[Max speed (km/h)]` a trigger is pressed all the way. To walk or run on foot, map `[Left Thumb Axis Y]` to `IAxis 3`.
+3. On the `[Fitness Machine]` tab's `[Connection]` page click `[Scan]` and select the machine in the list. That chooses it for this device; it does not connect by itself. If the machine is not listed, tick `[Show all Bluetooth devices]`.
+4. The device's `[Enabled]` box connects: ticked, in the controller's list and on the `[Devices]` tab, x360ce connects to the machine, trying again until it connects, and does so by itself whenever x360ce starts. If it asks to pair, accept only if both show the same number. Its values appear on the right, and `[Start]`, `[Pause]` and the target `[Set]` buttons send it standard commands.
+5. Unticking the device, removing it, taking it off every controller, or closing x360ce lets go of the machine, which goes back to the level you set on it. Each device connects to its own machine: two devices can read two machines.
 6. Reverse: tick `[Reverse]`; or set `[Reverse gear]` to a resistance level, and turning the machine's own resistance down to it drives backwards. A cross trainer pedalled backwards drives backwards by itself. A button of another device can shift into reverse while it is held, with formulas: for button 1 of device 2 on Controller 1, write `=s1*(1-c1.d2.b1)` in `[Right Trigger]` and `=s1*c1.d2.b1` in `[Left Trigger]`, where `Slider 1` is your speed either way. See "Expressions" below.
 7. Force feedback: on the `[Force Feedback]` page tick `[Enable]`. The game's rumble then makes the machine harder to pedal, by up to `[Extra resistance (levels)]`, or makes the road climb, by up to `[Road grade (%)]`, as `[Force feedback to]` says. When the rumble stops, or x360ce lets go of the machine, it goes back to the level you set on it.
 8. `[Heart rate limit (bpm)]`: while your heart rate is at or above it, the rumble adds nothing and `Button 4` is held.

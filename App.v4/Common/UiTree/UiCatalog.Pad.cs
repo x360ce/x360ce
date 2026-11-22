@@ -90,10 +90,9 @@ namespace x360ce.App.UiTree
 				"The mapping Auto gives the selected device, place by place, from x360ce's controller database and SDL's, beside what this controller's boxes hold, and which copies of the databases are in use.");
 			d[nameof(SdlUserControl)] = new Text(null,
 				"The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.VersionLabel)] = Live("Database versions",
-				"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, and how many Windows rows each holds; and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.");
-			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("The device's rows",
-				"Whether x360ce's and SDL's controller databases know the selected device, its name there and where the row is from, which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.");
+			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.DeviceLabel)] = Live("Databases and the device's rows",
+				"Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. "
+				+ "Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.");
 			d[nameof(SdlUserControl) + "." + nameof(SdlUserControl.PositionsDataGridView)] = new Text("Places",
 				"Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the row's binding and the database it is from, x360ce or SDL, the device's control that binding names in x360ce's words, "
 				+ "and what the box holds now, with Same or Differs beside it.");
@@ -114,7 +113,7 @@ namespace x360ce.App.UiTree
 				"Clears the mapping, then asks you to press each control in turn.");
 
 			// Buttons page.
-			d[nameof(PadControl) + "." + nameof(PadControl.AxisToButtonGroupBox)] = new Text("Press points",
+			d[nameof(PadControl) + "." + nameof(PadControl.AxisToButtonNoteLabel)] = new Text("Press points",
 				"For each button mapped to a stick or pedal, how far it must move to count as pressed.");
 
 			// D-Pad page.

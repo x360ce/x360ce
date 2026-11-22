@@ -313,9 +313,8 @@ namespace x360ce.App.Plugins
 
 	/// <summary>The values kept for plugin devices' settings: what a device's settings tab shows, and the engine gives its plugin.</summary>
 	/// <remarks>
-	/// Only values a person changed are kept; a setting without one has the value a new device starts with. A plugin's
-	/// page keeps values of its own here too, on rows of no device (<see cref="GetPluginValue"/>). Kept in
-	/// x360ce.PluginSettings.xml, read when first needed, so a program with no plugin device with settings never reads
+	/// Only values a person changed are kept, in the property grid, over MCP or in the plugin's own control; a setting
+	/// without one has the value a new device starts with. Kept in x360ce.PluginSettings.xml, read when first needed, so a program with no plugin device with settings never reads
 	/// it. Read and changed on any thread: each change is made under one lock and raises <see cref="Version"/>, which the
 	/// engine compares on each read to learn there is something to give the plugin.
 	/// </remarks>
@@ -411,24 +410,6 @@ namespace x360ce.App.Plugins
 			}
 		}
 
-		/// <summary>The value a plugin kept for itself, not for one of its devices, or null when it kept none (<see cref="IPluginHost.GetValue"/>).</summary>
-		/// <remarks>Kept on a row of no device, named after the plugin and the value: "FitnessMachine/Reconnect".</remarks>
-		/// <param name="plugin">The plugin's name (<see cref="PluginFile.Name"/>).</param>
-		/// <param name="name">The value's name.</param>
-		public string GetPluginValue(string plugin, string name)
-		{
-			return Get(Guid.Empty, plugin + "/" + name);
-		}
-
-		/// <summary>Keeps a value for a plugin, not for one of its devices; null forgets it (<see cref="IPluginHost.SetValue"/>).</summary>
-		public void SetPluginValue(string plugin, string name, string value)
-		{
-			if (value == null)
-				Remove(Guid.Empty, plugin + "/" + name);
-			else
-				Set(Guid.Empty, plugin + "/" + name, value);
-		}
-
 		/// <summary>Forgets every value kept for a device, so each setting has the value a new device starts with.</summary>
 		public void Reset(Guid instanceGuid)
 		{
@@ -456,12 +437,12 @@ namespace x360ce.App.Plugins
 			}
 		}
 
-		/// <summary>Writes the values to a file, without those of a device no longer listed; the values plugins keep for themselves stay.</summary>
+		/// <summary>Writes the values to a file, without those of a device no longer listed.</summary>
 		public void SaveAs(string path, IEnumerable<Guid> devices)
 		{
 			lock (_lock)
 			{
-				var keep = new HashSet<Guid>(devices) { Guid.Empty };
+				var keep = new HashSet<Guid>(devices);
 				foreach (var row in _data.Items.Where(x => !keep.Contains(x.InstanceGuid)).ToArray())
 					_data.Items.Remove(row);
 				_data.SaveAs(path);

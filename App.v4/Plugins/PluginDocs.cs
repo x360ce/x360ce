@@ -61,11 +61,6 @@ namespace x360ce.App.Plugins
 			sb.Append("- Source: ").Append(file.Embedded ? "embedded in x360ce.exe" : file.Source).Append('\n');
 			sb.Append("- Signed by: ").Append(file.Embedded ? "part of x360ce" : file.Signer ?? "not signed").Append('\n');
 			sb.Append("- State: ").Append(StateText(file)).Append('\n');
-			if (file.PageTypes.Length > 0)
-				sb.Append("- Adds a page to the main window, on a tab after the Devices tab: ").Append(string.Join(", ", file.PageTypes.Select(x => x.Name)))
-					.Append(". ui_pages lists it, and ui_open opens it.\n");
-			if (file.PageFault != null)
-				sb.Append("- ").Append(file.PageFault).Append('\n');
 			foreach (var type in file.DeviceTypes)
 			{
 				sb.Append("\n## ").Append(type.Name).Append("\n\n");
@@ -86,13 +81,14 @@ namespace x360ce.App.Plugins
 			return sb.ToString();
 		}
 
-		/// <summary>What the device's tab on the controller page holds: its MCP server, each setting, and the plugin's own control.</summary>
+		/// <summary>What the device's tab on the controller page holds: the plugin's own control, its MCP server, each setting, and its help.</summary>
 		static void AppendTab(StringBuilder sb, PluginDeviceType type)
 		{
 			if (!type.HasTab)
 				return;
 			sb.Append("\n### Its tab\n\n");
-			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to. ");
+			sb.Append("A tab named ").Append(type.Name).Append(" on the controller page the device is mapped to, with a page for each part: ");
+			sb.Append("the plugin's own control first, then MCP Server, Properties with the settings below, and Help with the text above. ");
 			sb.Append("Each device keeps its own values; Reset gives back the first ones.\n\n");
 			if (type.McpServer != null)
 				sb.Append("- MCP server: closed until the person opens it on the tab, as AI assistant access is opened on the AI page. ")

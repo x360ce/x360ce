@@ -212,6 +212,20 @@ namespace x360ce.App.DInput
 			/// <summary>A virtual controller a tab is set to have, not made yet because its place is taken.</summary>
 			public bool Waiting;
 
+			/// <summary>A place kept free, held by no controller: a tab that makes none, with nothing else to put there.</summary>
+			/// <remarks>
+			/// Without it, the tabs after it would each be asked for the place before their own, which they never take.
+			/// <see cref="Place"/> is the place it keeps free.
+			/// </remarks>
+			public bool Free;
+
+			/// <summary>A row for a place kept free.</summary>
+			/// <param name="place">The place, counting from zero.</param>
+			public static Entry FreePlace(int place)
+			{
+				return new Entry { HardwareId = XInputPlaces.FreePlace(place), Name = "", Place = place, Free = true };
+			}
+
 			/// <summary>The controller tab whose place this holds, one to four, or zero when it holds none.</summary>
 			/// <remarks>
 			/// XInput N belongs to Controller N, so a real controller in the first place sits in
@@ -282,8 +296,10 @@ namespace x360ce.App.DInput
 			}
 
 			// Already right, so nothing to do. Saying so beats switching a controller off to arrive at
-			// where it already was.
-			var already = wanted.Select((e, i) => e.Place == PlaceFor(i)).All(x => x);
+			// where it already was. A place kept free is right while nothing else is in it.
+			var already = wanted.Select((e, i) => e.Free
+				? !wanted.Any(x => !x.Free && x.Place >= 0 && x.Place == PlaceFor(i))
+				: e.Place == PlaceFor(i)).All(x => x);
 			if (already)
 				return plan;
 
@@ -312,7 +328,7 @@ namespace x360ce.App.DInput
 				plan.Steps.Add(new Step { Kind = StepKind.RemoveVirtual, HardwareId = entry.HardwareId, Name = entry.Name, Pad = entry.Pad });
 			// Every real one, including one holding no place: switching on what is already on changes
 			// nothing, and off and on again is what gets it a place.
-			foreach (var entry in wanted.Where(x => !x.IsVirtual))
+			foreach (var entry in wanted.Where(x => !x.IsVirtual && !x.Free))
 				plan.Steps.Add(new Step { Kind = StepKind.DisableReal, HardwareId = entry.HardwareId, Name = entry.Name, Pad = entry.Pad });
 
 			// Then back, one at a time. The order of arrival is what decides the order of places.
@@ -340,7 +356,7 @@ namespace x360ce.App.DInput
 				});
 			}
 			// Past the fourth there is no place left to give, so they come back last.
-			foreach (var entry in wanted.Skip(PlaceCount))
+			foreach (var entry in wanted.Skip(PlaceCount).Where(x => !x.Free))
 				plan.Steps.Add(new Step
 				{
 					Kind = entry.IsVirtual ? StepKind.CreateVirtual : StepKind.EnableReal,
@@ -428,7 +444,8 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		static List<Move> Arrivals(IList<Entry> top)
 		{
-			for (var limit = top.Count; limit <= top.Count + 2 * MaxDecoys; limit++)
+			var arrivals = top.Count(x => !x.Free);
+			for (var limit = arrivals; limit <= arrivals + 2 * MaxDecoys; limit++)
 			{
 				var path = new List<Move>();
 				if (Extend(top, new Ladder(), limit, path, new Dictionary<string, int>()))
@@ -439,7 +456,8 @@ namespace x360ce.App.DInput
 
 		static bool Extend(IList<Entry> top, Ladder now, int left, List<Move> path, Dictionary<string, int> failed)
 		{
-			if (now.Arrived == (1 << top.Count) - 1 && now.DecoyOn == 0)
+			// A place kept free has nothing to arrive, and stays free at the end: no temporary controller is left in it.
+			if (now.Arrived == ArrivalsOf(top) && now.DecoyOn == 0)
 				return true;
 			if (left == 0)
 				return false;
@@ -450,7 +468,7 @@ namespace x360ce.App.DInput
 			// Real controllers last where it makes no difference: each is switched on while the person waits.
 			foreach (var i in Enumerable.Range(0, top.Count).OrderBy(x => top[x].IsVirtual ? 0 : 1))
 			{
-				if ((now.Arrived & (1 << i)) != 0)
+				if ((now.Arrived & (1 << i)) != 0 || top[i].Free)
 					continue;
 				var next = now.Copy();
 				var place = next.Arrive(i, top[i].IsVirtual);
@@ -489,6 +507,16 @@ namespace x360ce.App.DInput
 			return false;
 		}
 
+		/// <summary>A bit for each position whose controller arrives: every one but a place kept free.</summary>
+		static int ArrivalsOf(IList<Entry> top)
+		{
+			var mask = 0;
+			for (var i = 0; i < top.Count; i++)
+				if (!top[i].Free)
+					mask |= 1 << i;
+			return mask;
+		}
+
 		/// <summary>The place the controller at this position in the list gets: none past the fourth.</summary>
 		static int PlaceFor(int position)
 		{
@@ -500,8 +528,9 @@ namespace x360ce.App.DInput
 		/// Controller N's virtual controller goes to place N, because a game reading place N gets what is
 		/// mapped on Controller N only then. Everything else fills the places no tab needs, first free
 		/// first, in the order it is in now. So a real controller that arrived first and took place one
-		/// moves out of the way instead of pushing every tab's controller one place along. A controller
-		/// that <see cref="Entry.TakesNoPart"/> is left out.
+		/// moves out of the way instead of pushing every tab's controller one place along. A tab's place
+		/// that nothing fills is kept free (<see cref="Entry.Free"/>). A controller that
+		/// <see cref="Entry.TakesNoPart"/> is left out.
 		/// </remarks>
 		/// <param name="entries">The controllers on the machine, as <see cref="ReadEntries"/> reads them.</param>
 		public static List<Entry> ByController(IList<Entry> entries)
@@ -519,6 +548,9 @@ namespace x360ce.App.DInput
 					ordered.Add(entry);
 				else if (rest.Count > 0)
 					ordered.Add(rest.Dequeue());
+				else
+					// Nothing to put in this tab's place, so it is kept free, and every tab after it keeps its own.
+					ordered.Add(Entry.FreePlace(pad - 1));
 			}
 			ordered.AddRange(rest);
 			return ordered;

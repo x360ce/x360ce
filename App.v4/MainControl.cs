@@ -384,58 +384,6 @@ namespace x360ce.App
 			ShowTab(show, DevicesTabPage);
 		}
 
-		/// <summary>The page classes of plugins tried, made or not, so each is made once.</summary>
-		readonly HashSet<Type> PluginPageTypes = new HashSet<Type>();
-
-		/// <summary>The tabs of the plugins' pages, in the order they were placed.</summary>
-		internal readonly List<TabPage> PluginTabPages = new List<TabPage>();
-
-		/// <summary>Puts each page the loaded plugins add, and that was not tried yet, on a tab after the Devices tab, in the order the plugins loaded.</summary>
-		/// <remarks>
-		/// Called while the tabs are built and whenever a plugin loads. The tab is named after the page's name, as the
-		/// program's own are: "Fitness" is on FitnessTabPage. An export describes the program as every computer has it, so
-		/// it shows no plugin's page.
-		/// </remarks>
-		internal void AddPluginPages()
-		{
-			var manager = Plugins.PluginManager.Current;
-			if (manager == null || Program.ExportUiFolder != null || IsDisposed)
-				return;
-			foreach (var page in Plugins.PluginPages.Make(manager, Plugins.PluginSettings.Current, PluginPageTypes))
-			{
-				var name = ((x360ce.Plugins.IPluginPage)page).PageName;
-				var tab = new TabPage
-				{
-					Name = new string((name ?? "").Where(char.IsLetterOrDigit).ToArray()) + "TabPage",
-					Text = name,
-					AccessibleName = name,
-					BackColor = SystemColors.Control,
-					Padding = AppHelper.ScaledPadding(0, 0, 8, 8),
-				};
-				page.Dock = DockStyle.Fill;
-				tab.Controls.Add(page);
-				var tabs = MainTabControl.TabPages;
-				// After the tabs ShowTab keeps after Games, Devices last of them, and the plugins' pages placed before it.
-				var index = tabs.IndexOf(GamesTabPage) + 1 + PluginTabPages.Count
-					+ new[] { ProgramsTabPage, SettingsTabPage, DevicesTabPage }.Count(x => tabs.Contains(x));
-				if (MainTabControl.IsHandleCreated)
-				{
-					tabs.Insert(index, tab);
-				}
-				else
-				{
-					// Before its window is made, a tab control's Insert adds the page as a control but not as a tab, so the tabs
-					// after the place are taken off and put back after it.
-					var later = tabs.Cast<TabPage>().Skip(index).ToArray();
-					foreach (var other in later)
-						tabs.Remove(other);
-					tabs.Add(tab);
-					tabs.AddRange(later);
-				}
-				PluginTabPages.Add(tab);
-			}
-		}
-
 		#endregion
 	}
 }

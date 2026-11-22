@@ -1,6 +1,6 @@
 # X360 Controller Emulator navigation tree
 
-Version 4.31.16.0, built 2026-11-21.
+Version 4.31.20.0, built 2026-11-22.
 Written by the program itself, so it describes the build it came from.
 Regenerate with `x360ce.exe /ExportUi=<folder>`.
 
@@ -211,21 +211,21 @@ not shown in this state of the program.
 [List]      │   │   │   │       ├── Pass Through ID                                     # The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.
 [List]      │   │   │   │       └── Device Sub Type                                     # Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.
 [Tab]       │   │   │   ├── Buttons                                                     # How far a stick or pedal must move before a button mapped to it counts as pressed.
-[Section]   │   │   │   │   └── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
-[Group]     │   │   │   │       ├── A Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── B Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── X Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Y Button press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Left Bumper press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Back press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Start press point -> AxisToButtonUserControl        # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Up press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Right Bumper press point -> AxisToButtonUserControl # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Down press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Left Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       ├── D-Pad Left press point -> AxisToButtonUserControl   # How far a stick or pedal must move before the button mapped to it counts as pressed.
-[Group]     │   │   │   │       └── D-Pad Right press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Label]     │   │   │   │   ├── Press points                                            # For each button mapped to a stick or pedal, how far it must move to count as pressed.
+[Group]     │   │   │   │   ├── A Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── B Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── X Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Y Button press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Left Bumper press point -> AxisToButtonUserControl      # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Back press point -> AxisToButtonUserControl             # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Start press point -> AxisToButtonUserControl            # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Up press point -> AxisToButtonUserControl         # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Right Bumper press point -> AxisToButtonUserControl     # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Down press point -> AxisToButtonUserControl       # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Left Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── Right Stick Button press point -> AxisToButtonUserControl  # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   ├── D-Pad Left press point -> AxisToButtonUserControl       # How far a stick or pedal must move before the button mapped to it counts as pressed.
+[Group]     │   │   │   │   └── D-Pad Right press point -> AxisToButtonUserControl      # How far a stick or pedal must move before the button mapped to it counts as pressed.
 [Tab]       │   │   │   ├── D-Pad                                                       # Axis to D-Pad, which only x360ce 3's XInput library reads. Greyed out, and kept with the settings.
 [Section]   │   │   │   │   └── Axis to D-Pad                                           # Turns the device's X and Y axes, its main stick, into the four D-Pad directions, as well as whatever else the D-Pad is mapped to: for a pad whose direction buttons report as a stick. The stick's own mappings stay as they are.
 [Value]     │   │   │   │       ├── Dead zone                                           # How far an axis must move from the centre before a direction is pressed. 100 % presses close to the end, where a pad's direction buttons put it even when it falls a little short.
@@ -323,8 +323,7 @@ not shown in this state of the program.
 [Button]    │   │   ├── Paste Preset                                                    # Applies settings from the clipboard to this controller; YAML, XML, JSON and rows of SDL's controller database are recognised.
 [Grid]      │   │   └── Mapped devices                                                  # Configuration name of the section which is mapped to PAD1.
 [Control]   │   ├── SdlUserControl                                                      # The mapping Auto gives the selected device: x360ce's controller database row, and SDL's where it maps nothing.
-[Label]     │   │   ├── Database versions                                               # Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, and how many Windows rows each holds; and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG.
-[Label]     │   │   ├── The device's rows                                               # Whether x360ce's and SDL's controller databases know the selected device, its name there and where the row is from, which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.
+[Label]     │   │   ├── Databases and the device's rows                                 # Which copies of x360ce's and SDL's controller databases are in use: built in, or downloaded and from where, SDL's date and commit, how many Windows rows each holds, and any SDL rows from a file in the settings folder or from SDL_GAMECONTROLLERCONFIG. Whether they know the selected device, its name there and, when a database holds several copies, which copy the row is from; which Auto takes first, how the pad labels its buttons, and what of SDL's row x360ce has no place for.
 [Grid]      │   │   ├── Places                                                          # Each place on the Xbox controller: SDL's name for it, the place in words, its label on this pad, the row's binding and the database it is from, x360ce or SDL, the device's control that binding names in x360ce's words, and what the box holds now, with Same or Differs beside it.
 [Button]    │   │   ├── Apply SDL Mapping                                               # Fills every mapping box of this controller as the page shows it, from x360ce's row and SDL's, and empties those they leave out. Dead zones and the other settings stay as they are.
 [Button]    │   │   ├── Copy as SDL                                                     # Copies this controller's mapping to the clipboard as a row of SDL's controller database for the device: its buttons, axes and hats, without formulas or other settings.
